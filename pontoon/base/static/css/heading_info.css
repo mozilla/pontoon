@@ -136,6 +136,14 @@ ul {
   float: right;
 }
 
+#heading .legend li a span.value {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a span.value {
+  color: #7BC876;
+}
+
 #heading .banner .title {
   color: #7BC876;
 }
