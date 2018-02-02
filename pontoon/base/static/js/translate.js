@@ -2993,41 +2993,26 @@ var Pontoon = (function (my) {
           $forAuthors = $('#filter').find('.for-authors').toggle(authors.length > 0);
 
       var selectedAuthors = $('#filter .menu li.author.selected').map(function() {
-                                return $.trim($(this).data("type"));
-                            }).get();
+        return $.trim($(this).data("type"));
+      }).get();
 
       $('#filter .menu li.author').remove();
 
       $.each(authors, function() {
-        if (selectedAuthors.includes(this.email)) {
-          $forAuthors.after('<li class="author selected" data-type="' + this.email + '">' +
-            '<figure>' +
-              '<span class="sel">' +
-                '<span class="status fa"></span>' +
-                '<img class="rounded" src="' + this.gravatar_url + '">' +
-              '</span>' +
-              '<figcaption>' +
-                '<p class="name">' + this.display_name + '</p>' +
-                '<p class="role">' + this.role + '</p>' +
-              '</figcaption>' +
-              '<span class="count">' + self.numberWithCommas(this.translation_count) + '</span>' +
-            '</figure>' +
-          '</li>');
-        } else {
-          $forAuthors.after('<li class="author" data-type="' + this.email + '">' +
-            '<figure>' +
-              '<span class="sel">' +
-                '<span class="status fa"></span>' +
-                '<img class="rounded" src="' + this.gravatar_url + '">' +
-              '</span>' +
-              '<figcaption>' +
-                '<p class="name">' + this.display_name + '</p>' +
-                '<p class="role">' + this.role + '</p>' +
-              '</figcaption>' +
-              '<span class="count">' + self.numberWithCommas(this.translation_count) + '</span>' +
-            '</figure>' +
-          '</li>');
-        }
+        var selected = (selectedAuthors.includes(this.email)) ? ' selected' : '';
+        $forAuthors.after('<li class="author' + selected + '" data-type="' + this.email + '">' +
+          '<figure>' +
+            '<span class="sel">' +
+              '<span class="status fa"></span>' +
+              '<img class="rounded" src="' + this.gravatar_url + '">' +
+            '</span>' +
+            '<figcaption>' +
+              '<p class="name">' + this.display_name + '</p>' +
+              '<p class="role">' + this.role + '</p>' +
+            '</figcaption>' +
+            '<span class="count">' + self.numberWithCommas(this.translation_count) + '</span>' +
+          '</figure>' +
+        '</li>');
       });
     },
 
