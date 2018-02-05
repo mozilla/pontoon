@@ -545,9 +545,6 @@ def update_translation(request):
                     fuzzy=False,
                 )
 
-                if t.user is None:
-                    t.user = user
-
                 t.approved = True
                 t.approved_date = timezone.now()
                 t.fuzzy = False
@@ -573,9 +570,6 @@ def update_translation(request):
                     warnings = utils.quality_check(original, string, l, ignore)
                     if warnings:
                         return warnings
-
-                    if t.user is None:
-                        t.user = user
 
                     t.approved = False
                     t.approved_user = None
