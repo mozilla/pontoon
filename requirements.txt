@@ -67,6 +67,8 @@ django-webpack-loader==0.5.0 \
 factory-boy==2.5.2 \
     --hash=sha256:102c8141511443df01d354610d3b268924100654316709b43ac04648b50bf703 \
     --hash=sha256:cd8306e64c3a115deca136685e945db88ffe171382012ec938ed241a20dd7eba
+fluent==0.6.0 \
+    --hash=sha256:aa7ea3f052adc6556ccbb8b6601801f0586161d18dbb7af3035dc09d28a8371e
 gunicorn==19.3.0 \
     --hash=sha256:a5179cde922d2b4e045ee5b11e87323ee77d363ae40294fc8252f25d6a0eaf06 \
     --hash=sha256:8bc835082882ad9a012cd790c460011e4d96bf3512d98a04d3dabbe45393a089
@@ -110,8 +112,6 @@ whitenoise==1.0.6 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
 
 # Dependencies loaded from outside pypi.
-https://github.com/projectfluent/python-fluent/archive/c7819dd.zip#egg=fluent==0.4.2 \
-    --hash=sha256:3d479bf226ebeaa5419842cd58c9324217fb1600b2cf94c62b339775a8ace14d
 https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
     --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
 
