@@ -103,8 +103,8 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.type === 'SelectExpression') {
-        element.variants.forEach(function (item) {
+      if (element.expression && element.expression.variants) {
+        element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
       }
@@ -139,8 +139,8 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.type === 'SelectExpression') {
-        var expression = serializeExpression(element.expression);
+      if (element.expression && element.expression.variants) {
+        var expression = serializeExpression(element.expression.expression);
         content = '<li data-expression="' + expression + '"><ul>' + content;
 
         var isPlural = Pontoon.fluent.isPluralElement(element);
@@ -150,7 +150,7 @@ var Pontoon = (function (my) {
           });
         }
         else {
-          element.variants.forEach(function (item) {
+          element.expression.variants.forEach(function (item) {
             content += renderEditorElement(
               item.key.value || item.key.name,
               item.value.elements,
@@ -424,13 +424,13 @@ var Pontoon = (function (my) {
        * CLDR plurals or numbers.
        */
       isPluralElement: function (element) {
-        if (!element.variants) {
+        if (!(element.expression && element.expression.variants)) {
           return false;
         }
 
         var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
-        return element.variants.every(function (item) {
+        return element.expression.variants.every(function (item) {
           return (
             CLDRplurals.indexOf(item.key.name) !== -1 ||
             item.key.type === 'NumberExpression'
