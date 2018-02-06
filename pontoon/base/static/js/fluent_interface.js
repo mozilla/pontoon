@@ -5,27 +5,6 @@ var Pontoon = (function (my) {
   var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
   var fluentSerializer = new FluentSyntax.FluentSerializer();
 
-  // TODO: Replace with fluentSerializer.serializeExpression() on fluent.js 0.6 update
-  function serializeExpression(expression) {
-    switch (expression.type) {
-      case 'MessageReference':
-        return expression.id.name;
-      case 'ExternalArgument':
-        return '$' + expression.id.name;
-      case 'NumberExpression':
-        return expression.value || expression.val.value;
-      case 'StringExpression':
-        return '"' + (expression.value || expression.val.value) + '"';
-      case 'NamedArgument':
-        return expression.name.name + ': ' + serializeExpression(expression.val);
-      case 'CallExpression':
-        var args = expression.args.map(function (arg) {
-          return serializeExpression(arg);
-        });
-        return expression.callee.name + '(' + args.join(', ') + ')';
-    }
-  }
-
   /*
    * Render original string element: simple string value or a variant.
    */
@@ -140,7 +119,7 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.variants) {
-        var expression = serializeExpression(element.expression.expression);
+        var expression = fluentSerializer.serializeExpression(element.expression.expression);
         content = '<li data-expression="' + expression + '"><ul>' + content;
 
         var isPlural = Pontoon.fluent.isPluralElement(element);
