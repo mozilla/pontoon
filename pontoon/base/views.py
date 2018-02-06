@@ -524,8 +524,7 @@ def update_translation(request):
             if can_translate:
 
                 # Unless there's nothing to be changed
-                if t.user is not None and t.approved and t.approved_user \
-                        and t.approved_date and not t.fuzzy:
+                if t.approved and not t.fuzzy:
                     return JsonResponse({
                         'same': True,
                         'message': 'Same translation already exists.',
@@ -546,7 +545,6 @@ def update_translation(request):
                 )
 
                 t.approved = True
-                t.approved_date = timezone.now()
                 t.fuzzy = False
                 t.rejected = False
                 t.rejected_user = None
