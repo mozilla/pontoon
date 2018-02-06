@@ -459,26 +459,27 @@ var Pontoon = (function (my) {
               translatedValue += item.value;
             }
           }
-          else if (item.type === 'ExternalArgument') {
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="External Argument">';
-              endMarker = '</mark>';
+          else if (item.type === 'Placeable') {
+            if (item.expression.type === 'ExternalArgument') {
+              if (markPlaceables) {
+                startMarker = '<mark class="placeable" title="External Argument">';
+                endMarker = '</mark>';
+              }
+              translatedValue += startMarker + '{$' + item.expression.id.name + '}' + endMarker;
             }
-            translatedValue += startMarker + '{$' + item.id.name + '}' + endMarker;
-          }
-          else if (item.type === 'MessageReference') {
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="Message Reference">';
-              endMarker = '</mark>';
+            else if (item.expression.type === 'MessageReference') {
+              if (markPlaceables) {
+                startMarker = '<mark class="placeable" title="Message Reference">';
+                endMarker = '</mark>';
+              }
+              translatedValue += startMarker + '{' + item.expression.id.name + '}' + endMarker;
             }
-            translatedValue += startMarker + '{' + item.id.name + '}' + endMarker;
-          }
-          else if (item.variants) {
-            var variantElements = item.variants.filter(function (item) {
-              return item.default;
-            })[0].value.elements;
-
-            translatedValue += self.serializePlaceables(variantElements);
+            else if (item.expression.variants) {
+              var variantElements = item.expression.variants.filter(function (item) {
+                return item.default;
+              })[0].value.elements;
+              translatedValue += self.serializePlaceables(variantElements);
+            }
           }
         });
 
