@@ -450,33 +450,33 @@ var Pontoon = (function (my) {
         var startMarker = '';
         var endMarker = '';
 
-        elements.forEach(function (item) {
-          if (item.type === 'TextElement') {
+        elements.forEach(function (element) {
+          if (element.type === 'TextElement') {
             if (markPlaceables) {
-              translatedValue += Pontoon.markXMLTags(item.value);
+              translatedValue += Pontoon.markXMLTags(element.value);
             }
             else {
-              translatedValue += item.value;
+              translatedValue += element.value;
             }
           }
-          else if (item.type === 'Placeable') {
-            if (item.expression.type === 'ExternalArgument') {
+          else if (element.type === 'Placeable') {
+            if (element.expression.type === 'ExternalArgument') {
               if (markPlaceables) {
                 startMarker = '<mark class="placeable" title="External Argument">';
                 endMarker = '</mark>';
               }
-              translatedValue += startMarker + '{$' + item.expression.id.name + '}' + endMarker;
+              translatedValue += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
             }
-            else if (item.expression.type === 'MessageReference') {
+            else if (element.expression.type === 'MessageReference') {
               if (markPlaceables) {
                 startMarker = '<mark class="placeable" title="Message Reference">';
                 endMarker = '</mark>';
               }
-              translatedValue += startMarker + '{' + item.expression.id.name + '}' + endMarker;
+              translatedValue += startMarker + '{' + element.expression.id.name + '}' + endMarker;
             }
-            else if (item.expression.variants) {
-              var variantElements = item.expression.variants.filter(function (item) {
-                return item.default;
+            else if (element.expression.variants) {
+              var variantElements = element.expression.variants.filter(function (variant) {
+                return variant.default;
               })[0].value.elements;
               translatedValue += self.serializePlaceables(variantElements);
             }
