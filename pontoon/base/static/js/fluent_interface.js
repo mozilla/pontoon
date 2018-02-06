@@ -397,7 +397,6 @@ var Pontoon = (function (my) {
         if (
           ast &&
           !ast.attributes.length &&
-          !ast.tags.length &&
           ast.value &&
           ast.value.elements.every(function(item) {
             return self.isSimpleElement(item);
