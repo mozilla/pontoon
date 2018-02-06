@@ -339,19 +339,17 @@ var Pontoon = (function (my) {
        * Message is supported if all value elements
        * and all attribute elements are of type:
        * - TextElement
-       * - ExternalArgument
-       * - MessageReference
-       * - SelectExpression?
+       * - Placeable with expression type ExternalArgument, MessageReference or SelectExpression
        */
       isSupportedMessage: function (ast) {
+        var self = this;
+
         function elementsSupported(elements) {
-          return elements.every(function(item) {
-            return [
-              'TextElement',
-              'ExternalArgument',
-              'MessageReference',
-              'SelectExpression'
-            ].indexOf(item.type) >= 0;
+          return elements.every(function(element) {
+            return (
+              self.isSimpleElement(element) ||
+              (element.expression && element.expression.variants)
+            );
           });
         }
 
