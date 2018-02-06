@@ -36,6 +36,8 @@ def entity_factory(factory):
     def instance_attrs(instance, i):
         if not instance.string:
             instance.string = "Entity %s" % i
+        if not instance.order:
+            instance.order = i
 
     return functools.partial(
         factory, Model=Entity, instance_attrs=instance_attrs)
