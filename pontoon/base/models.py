@@ -2232,7 +2232,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
 
-        return entities.distinct().order_by('resource__path', 'order')
+        return entities.order_by('resource__path', 'order')
 
     @classmethod
     def map_entities(cls, locale, entities, visible_entities=None):
