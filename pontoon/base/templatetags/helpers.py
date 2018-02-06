@@ -268,7 +268,7 @@ def _serialize_elements(elements):
             elif type(element.expression) == ast.MessageReference:
                 response += '{ ' + element.expression.id.name + ' }'
 
-            elif hasattr(element, 'expression') and hasattr(element.expression, 'variants'):
+            elif hasattr(element.expression, 'variants'):
                 variant_elements = filter(
                     lambda x: x.default, element.expression.variants
                 )[0].value.elements
