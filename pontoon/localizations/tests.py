@@ -19,9 +19,11 @@ class LocaleProjectTests(ViewTestCase):
         locale = LocaleFactory.create(code='test')
         project = ProjectFactory.create(locales=[locale], slug='test-project')
         resource = ResourceFactory.create(project=project, path='has/stats.po')
+        resource2 = ResourceFactory.create(project=project, path='has/stats2.po')
+
         translation = TranslationFactory.create(entity__resource=resource, locale=locale)
         TranslatedResourceFactory.create(
-            resource=resource, locale=locale, latest_translation=translation
+            resource=resource2, locale=locale, latest_translation=translation
         )
 
         with patch.object(Locale, 'parts_stats') as mock_parts_stats, \

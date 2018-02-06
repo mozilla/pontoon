@@ -2625,6 +2625,9 @@ class TranslatedResource(AggregatedStats):
 
     objects = TranslatedResourceQuerySet.as_manager()
 
+    class Meta(object):
+        unique_together = (('locale', 'resource'), )
+
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
         resource = self.resource
