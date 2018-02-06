@@ -372,15 +372,25 @@ var Pontoon = (function (my) {
       /*
        * Is element of type that can be presented as a simple string:
        * - TextElement
-       * - ExternalArgument
-       * - MessageReference
+       * - Placeable with expression type ExternalArgument or MessageReference
        */
       isSimpleElement: function (element) {
-        return [
-          'TextElement',
-          'ExternalArgument',
-          'MessageReference'
-        ].indexOf(element.type) >= 0;
+        if (element.type === 'TextElement') {
+          return true;
+        }
+
+        // Placeable
+        if (
+          element.expression &&
+          [
+            'ExternalArgument',
+            'MessageReference'
+          ].indexOf(element.expression.type) >= 0
+        ) {
+          return true;
+        }
+
+        return false;
       },
 
 
