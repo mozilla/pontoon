@@ -228,7 +228,7 @@ var Pontoon = (function (my) {
           (translationAST && !self.isSupportedMessage(translationAST)) ||
           (!translationAST && !self.isSupportedMessage(entityAST))
         ) {
-          value = entity.key + ' = \n';
+          value = entity.key + ' = ';
 
           if (translationAST) {
             value = translation.string;
@@ -644,7 +644,7 @@ var Pontoon = (function (my) {
           ).join('');
 
           if (!richTranslation.length) {
-            translation = entity.key + ' = \n';
+            translation = entity.key + ' = ';
           }
         }
 
@@ -844,7 +844,7 @@ $(function () {
 
       // If translation broken, incomplete or empty
       if (translation.error) {
-        translation = entity.key + ' = \n';
+        translation = entity.key + ' = ';
       }
 
       $('#translation').val(translation);
