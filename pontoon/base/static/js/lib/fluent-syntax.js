@@ -1,8 +1,8 @@
-/* fluent-syntax@0.5.0 */
+/* fluent-syntax@0.6.0 */
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
-	(factory((global.FluentSyntax = global.FluentSyntax || {})));
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
+  (factory((global.FluentSyntax = {})));
 }(this, (function (exports) { 'use strict';
 
 var classCallCheck = function (instance, Constructor) {
@@ -151,14 +151,12 @@ var Resource = function (_SyntaxNode) {
 
   function Resource() {
     var body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var comment = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     classCallCheck(this, Resource);
 
     var _this2 = possibleConstructorReturn(this, (Resource.__proto__ || Object.getPrototypeOf(Resource)).call(this));
 
     _this2.type = 'Resource';
     _this2.body = body;
-    _this2.comment = comment;
     return _this2;
   }
 
@@ -193,8 +191,7 @@ var Message = function (_Entry) {
   function Message(id) {
     var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-    var tags = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-    var comment = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+    var comment = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
     classCallCheck(this, Message);
 
     var _this4 = possibleConstructorReturn(this, (Message.__proto__ || Object.getPrototypeOf(Message)).call(this));
@@ -203,12 +200,32 @@ var Message = function (_Entry) {
     _this4.id = id;
     _this4.value = value;
     _this4.attributes = attributes;
-    _this4.tags = tags;
     _this4.comment = comment;
     return _this4;
   }
 
   return Message;
+}(Entry);
+
+var Term = function (_Entry2) {
+  inherits(Term, _Entry2);
+
+  function Term(id, value) {
+    var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+    var comment = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    classCallCheck(this, Term);
+
+    var _this5 = possibleConstructorReturn(this, (Term.__proto__ || Object.getPrototypeOf(Term)).call(this));
+
+    _this5.type = 'Term';
+    _this5.id = id;
+    _this5.value = value;
+    _this5.attributes = attributes;
+    _this5.comment = comment;
+    return _this5;
+  }
+
+  return Term;
 }(Entry);
 
 var Pattern = function (_SyntaxNode3) {
@@ -217,11 +234,11 @@ var Pattern = function (_SyntaxNode3) {
   function Pattern(elements) {
     classCallCheck(this, Pattern);
 
-    var _this5 = possibleConstructorReturn(this, (Pattern.__proto__ || Object.getPrototypeOf(Pattern)).call(this));
+    var _this6 = possibleConstructorReturn(this, (Pattern.__proto__ || Object.getPrototypeOf(Pattern)).call(this));
 
-    _this5.type = 'Pattern';
-    _this5.elements = elements;
-    return _this5;
+    _this6.type = 'Pattern';
+    _this6.elements = elements;
+    return _this6;
   }
 
   return Pattern;
@@ -233,26 +250,42 @@ var TextElement = function (_SyntaxNode4) {
   function TextElement(value) {
     classCallCheck(this, TextElement);
 
-    var _this6 = possibleConstructorReturn(this, (TextElement.__proto__ || Object.getPrototypeOf(TextElement)).call(this));
+    var _this7 = possibleConstructorReturn(this, (TextElement.__proto__ || Object.getPrototypeOf(TextElement)).call(this));
 
-    _this6.type = 'TextElement';
-    _this6.value = value;
-    return _this6;
+    _this7.type = 'TextElement';
+    _this7.value = value;
+    return _this7;
   }
 
   return TextElement;
 }(SyntaxNode);
 
-var Expression = function (_SyntaxNode5) {
-  inherits(Expression, _SyntaxNode5);
+var Placeable = function (_SyntaxNode5) {
+  inherits(Placeable, _SyntaxNode5);
+
+  function Placeable(expression) {
+    classCallCheck(this, Placeable);
+
+    var _this8 = possibleConstructorReturn(this, (Placeable.__proto__ || Object.getPrototypeOf(Placeable)).call(this));
+
+    _this8.type = 'Placeable';
+    _this8.expression = expression;
+    return _this8;
+  }
+
+  return Placeable;
+}(SyntaxNode);
+
+var Expression = function (_SyntaxNode6) {
+  inherits(Expression, _SyntaxNode6);
 
   function Expression() {
     classCallCheck(this, Expression);
 
-    var _this7 = possibleConstructorReturn(this, (Expression.__proto__ || Object.getPrototypeOf(Expression)).call(this));
+    var _this9 = possibleConstructorReturn(this, (Expression.__proto__ || Object.getPrototypeOf(Expression)).call(this));
 
-    _this7.type = 'Expression';
-    return _this7;
+    _this9.type = 'Expression';
+    return _this9;
   }
 
   return Expression;
@@ -264,11 +297,11 @@ var StringExpression = function (_Expression) {
   function StringExpression(value) {
     classCallCheck(this, StringExpression);
 
-    var _this8 = possibleConstructorReturn(this, (StringExpression.__proto__ || Object.getPrototypeOf(StringExpression)).call(this));
+    var _this10 = possibleConstructorReturn(this, (StringExpression.__proto__ || Object.getPrototypeOf(StringExpression)).call(this));
 
-    _this8.type = 'StringExpression';
-    _this8.value = value;
-    return _this8;
+    _this10.type = 'StringExpression';
+    _this10.value = value;
+    return _this10;
   }
 
   return StringExpression;
@@ -280,11 +313,11 @@ var NumberExpression = function (_Expression2) {
   function NumberExpression(value) {
     classCallCheck(this, NumberExpression);
 
-    var _this9 = possibleConstructorReturn(this, (NumberExpression.__proto__ || Object.getPrototypeOf(NumberExpression)).call(this));
+    var _this11 = possibleConstructorReturn(this, (NumberExpression.__proto__ || Object.getPrototypeOf(NumberExpression)).call(this));
 
-    _this9.type = 'NumberExpression';
-    _this9.value = value;
-    return _this9;
+    _this11.type = 'NumberExpression';
+    _this11.value = value;
+    return _this11;
   }
 
   return NumberExpression;
@@ -296,11 +329,11 @@ var MessageReference = function (_Expression3) {
   function MessageReference(id) {
     classCallCheck(this, MessageReference);
 
-    var _this10 = possibleConstructorReturn(this, (MessageReference.__proto__ || Object.getPrototypeOf(MessageReference)).call(this));
+    var _this12 = possibleConstructorReturn(this, (MessageReference.__proto__ || Object.getPrototypeOf(MessageReference)).call(this));
 
-    _this10.type = 'MessageReference';
-    _this10.id = id;
-    return _this10;
+    _this12.type = 'MessageReference';
+    _this12.id = id;
+    return _this12;
   }
 
   return MessageReference;
@@ -312,11 +345,11 @@ var ExternalArgument = function (_Expression4) {
   function ExternalArgument(id) {
     classCallCheck(this, ExternalArgument);
 
-    var _this11 = possibleConstructorReturn(this, (ExternalArgument.__proto__ || Object.getPrototypeOf(ExternalArgument)).call(this));
+    var _this13 = possibleConstructorReturn(this, (ExternalArgument.__proto__ || Object.getPrototypeOf(ExternalArgument)).call(this));
 
-    _this11.type = 'ExternalArgument';
-    _this11.id = id;
-    return _this11;
+    _this13.type = 'ExternalArgument';
+    _this13.id = id;
+    return _this13;
   }
 
   return ExternalArgument;
@@ -328,12 +361,12 @@ var SelectExpression = function (_Expression5) {
   function SelectExpression(expression, variants) {
     classCallCheck(this, SelectExpression);
 
-    var _this12 = possibleConstructorReturn(this, (SelectExpression.__proto__ || Object.getPrototypeOf(SelectExpression)).call(this));
+    var _this14 = possibleConstructorReturn(this, (SelectExpression.__proto__ || Object.getPrototypeOf(SelectExpression)).call(this));
 
-    _this12.type = 'SelectExpression';
-    _this12.expression = expression;
-    _this12.variants = variants;
-    return _this12;
+    _this14.type = 'SelectExpression';
+    _this14.expression = expression;
+    _this14.variants = variants;
+    return _this14;
   }
 
   return SelectExpression;
@@ -345,12 +378,12 @@ var AttributeExpression = function (_Expression6) {
   function AttributeExpression(id, name) {
     classCallCheck(this, AttributeExpression);
 
-    var _this13 = possibleConstructorReturn(this, (AttributeExpression.__proto__ || Object.getPrototypeOf(AttributeExpression)).call(this));
+    var _this15 = possibleConstructorReturn(this, (AttributeExpression.__proto__ || Object.getPrototypeOf(AttributeExpression)).call(this));
 
-    _this13.type = 'AttributeExpression';
-    _this13.id = id;
-    _this13.name = name;
-    return _this13;
+    _this15.type = 'AttributeExpression';
+    _this15.id = id;
+    _this15.name = name;
+    return _this15;
   }
 
   return AttributeExpression;
@@ -362,12 +395,12 @@ var VariantExpression = function (_Expression7) {
   function VariantExpression(id, key) {
     classCallCheck(this, VariantExpression);
 
-    var _this14 = possibleConstructorReturn(this, (VariantExpression.__proto__ || Object.getPrototypeOf(VariantExpression)).call(this));
+    var _this16 = possibleConstructorReturn(this, (VariantExpression.__proto__ || Object.getPrototypeOf(VariantExpression)).call(this));
 
-    _this14.type = 'VariantExpression';
-    _this14.id = id;
-    _this14.key = key;
-    return _this14;
+    _this16.type = 'VariantExpression';
+    _this16.id = id;
+    _this16.key = key;
+    return _this16;
   }
 
   return VariantExpression;
@@ -379,48 +412,32 @@ var CallExpression = function (_Expression8) {
   function CallExpression(callee, args) {
     classCallCheck(this, CallExpression);
 
-    var _this15 = possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this));
+    var _this17 = possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this));
 
-    _this15.type = 'CallExpression';
-    _this15.callee = callee;
-    _this15.args = args;
-    return _this15;
+    _this17.type = 'CallExpression';
+    _this17.callee = callee;
+    _this17.args = args;
+    return _this17;
   }
 
   return CallExpression;
 }(Expression);
 
-var Attribute = function (_SyntaxNode6) {
-  inherits(Attribute, _SyntaxNode6);
+var Attribute = function (_SyntaxNode7) {
+  inherits(Attribute, _SyntaxNode7);
 
   function Attribute(id, value) {
     classCallCheck(this, Attribute);
 
-    var _this16 = possibleConstructorReturn(this, (Attribute.__proto__ || Object.getPrototypeOf(Attribute)).call(this));
+    var _this18 = possibleConstructorReturn(this, (Attribute.__proto__ || Object.getPrototypeOf(Attribute)).call(this));
 
-    _this16.type = 'Attribute';
-    _this16.id = id;
-    _this16.value = value;
-    return _this16;
+    _this18.type = 'Attribute';
+    _this18.id = id;
+    _this18.value = value;
+    return _this18;
   }
 
   return Attribute;
-}(SyntaxNode);
-
-var Tag = function (_SyntaxNode7) {
-  inherits(Tag, _SyntaxNode7);
-
-  function Tag(name) {
-    classCallCheck(this, Tag);
-
-    var _this17 = possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this));
-
-    _this17.type = 'Tag';
-    _this17.name = name;
-    return _this17;
-  }
-
-  return Tag;
 }(SyntaxNode);
 
 var Variant = function (_SyntaxNode8) {
@@ -430,13 +447,13 @@ var Variant = function (_SyntaxNode8) {
     var def = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     classCallCheck(this, Variant);
 
-    var _this18 = possibleConstructorReturn(this, (Variant.__proto__ || Object.getPrototypeOf(Variant)).call(this));
+    var _this19 = possibleConstructorReturn(this, (Variant.__proto__ || Object.getPrototypeOf(Variant)).call(this));
 
-    _this18.type = 'Variant';
-    _this18.key = key;
-    _this18.value = value;
-    _this18.default = def;
-    return _this18;
+    _this19.type = 'Variant';
+    _this19.key = key;
+    _this19.value = value;
+    _this19.default = def;
+    return _this19;
   }
 
   return Variant;
@@ -448,12 +465,12 @@ var NamedArgument = function (_SyntaxNode9) {
   function NamedArgument(name, val) {
     classCallCheck(this, NamedArgument);
 
-    var _this19 = possibleConstructorReturn(this, (NamedArgument.__proto__ || Object.getPrototypeOf(NamedArgument)).call(this));
+    var _this20 = possibleConstructorReturn(this, (NamedArgument.__proto__ || Object.getPrototypeOf(NamedArgument)).call(this));
 
-    _this19.type = 'NamedArgument';
-    _this19.name = name;
-    _this19.val = val;
-    return _this19;
+    _this20.type = 'NamedArgument';
+    _this20.name = name;
+    _this20.val = val;
+    return _this20;
   }
 
   return NamedArgument;
@@ -465,64 +482,90 @@ var Identifier = function (_SyntaxNode10) {
   function Identifier(name) {
     classCallCheck(this, Identifier);
 
-    var _this20 = possibleConstructorReturn(this, (Identifier.__proto__ || Object.getPrototypeOf(Identifier)).call(this));
+    var _this21 = possibleConstructorReturn(this, (Identifier.__proto__ || Object.getPrototypeOf(Identifier)).call(this));
 
-    _this20.type = 'Identifier';
-    _this20.name = name;
-    return _this20;
+    _this21.type = 'Identifier';
+    _this21.name = name;
+    return _this21;
   }
 
   return Identifier;
 }(SyntaxNode);
 
-var _Symbol = function (_Identifier) {
-  inherits(_Symbol, _Identifier);
+var VariantName = function (_Identifier) {
+  inherits(VariantName, _Identifier);
 
-  function _Symbol(name) {
-    classCallCheck(this, _Symbol);
+  function VariantName(name) {
+    classCallCheck(this, VariantName);
 
-    var _this21 = possibleConstructorReturn(this, (_Symbol.__proto__ || Object.getPrototypeOf(_Symbol)).call(this, name));
+    var _this22 = possibleConstructorReturn(this, (VariantName.__proto__ || Object.getPrototypeOf(VariantName)).call(this, name));
 
-    _this21.type = 'Symbol';
-    return _this21;
+    _this22.type = 'VariantName';
+    return _this22;
   }
 
-  return _Symbol;
+  return VariantName;
 }(Identifier);
 
-var Comment = function (_Entry2) {
-  inherits(Comment, _Entry2);
+var BaseComment = function (_Entry3) {
+  inherits(BaseComment, _Entry3);
+
+  function BaseComment(content) {
+    classCallCheck(this, BaseComment);
+
+    var _this23 = possibleConstructorReturn(this, (BaseComment.__proto__ || Object.getPrototypeOf(BaseComment)).call(this));
+
+    _this23.type = 'BaseComment';
+    _this23.content = content;
+    return _this23;
+  }
+
+  return BaseComment;
+}(Entry);
+
+var Comment = function (_BaseComment) {
+  inherits(Comment, _BaseComment);
 
   function Comment(content) {
     classCallCheck(this, Comment);
 
-    var _this22 = possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this));
+    var _this24 = possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, content));
 
-    _this22.type = 'Comment';
-    _this22.content = content;
-    return _this22;
+    _this24.type = 'Comment';
+    return _this24;
   }
 
   return Comment;
-}(Entry);
+}(BaseComment);
 
-var Section = function (_Entry3) {
-  inherits(Section, _Entry3);
+var GroupComment = function (_BaseComment2) {
+  inherits(GroupComment, _BaseComment2);
 
-  function Section(name) {
-    var comment = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    classCallCheck(this, Section);
+  function GroupComment(content) {
+    classCallCheck(this, GroupComment);
 
-    var _this23 = possibleConstructorReturn(this, (Section.__proto__ || Object.getPrototypeOf(Section)).call(this));
+    var _this25 = possibleConstructorReturn(this, (GroupComment.__proto__ || Object.getPrototypeOf(GroupComment)).call(this, content));
 
-    _this23.type = 'Section';
-    _this23.name = name;
-    _this23.comment = comment;
-    return _this23;
+    _this25.type = 'GroupComment';
+    return _this25;
   }
 
-  return Section;
-}(Entry);
+  return GroupComment;
+}(BaseComment);
+var ResourceComment = function (_BaseComment3) {
+  inherits(ResourceComment, _BaseComment3);
+
+  function ResourceComment(content) {
+    classCallCheck(this, ResourceComment);
+
+    var _this26 = possibleConstructorReturn(this, (ResourceComment.__proto__ || Object.getPrototypeOf(ResourceComment)).call(this, content));
+
+    _this26.type = 'ResourceComment';
+    return _this26;
+  }
+
+  return ResourceComment;
+}(BaseComment);
 
 var Function$1 = function (_Identifier2) {
   inherits(Function, _Identifier2);
@@ -530,10 +573,10 @@ var Function$1 = function (_Identifier2) {
   function Function(name) {
     classCallCheck(this, Function);
 
-    var _this24 = possibleConstructorReturn(this, (Function.__proto__ || Object.getPrototypeOf(Function)).call(this, name));
+    var _this27 = possibleConstructorReturn(this, (Function.__proto__ || Object.getPrototypeOf(Function)).call(this, name));
 
-    _this24.type = 'Function';
-    return _this24;
+    _this27.type = 'Function';
+    return _this27;
   }
 
   return Function;
@@ -545,11 +588,11 @@ var Junk = function (_Entry4) {
   function Junk(content) {
     classCallCheck(this, Junk);
 
-    var _this25 = possibleConstructorReturn(this, (Junk.__proto__ || Object.getPrototypeOf(Junk)).call(this));
+    var _this28 = possibleConstructorReturn(this, (Junk.__proto__ || Object.getPrototypeOf(Junk)).call(this));
 
-    _this25.type = 'Junk';
-    _this25.content = content;
-    return _this25;
+    _this28.type = 'Junk';
+    _this28.content = content;
+    return _this28;
   }
 
   return Junk;
@@ -561,12 +604,12 @@ var Span = function (_BaseNode2) {
   function Span(start, end) {
     classCallCheck(this, Span);
 
-    var _this26 = possibleConstructorReturn(this, (Span.__proto__ || Object.getPrototypeOf(Span)).call(this));
+    var _this29 = possibleConstructorReturn(this, (Span.__proto__ || Object.getPrototypeOf(Span)).call(this));
 
-    _this26.type = 'Span';
-    _this26.start = start;
-    _this26.end = end;
-    return _this26;
+    _this29.type = 'Span';
+    _this29.start = start;
+    _this29.end = end;
+    return _this29;
   }
 
   return Span;
@@ -580,13 +623,13 @@ var Annotation = function (_SyntaxNode11) {
     var message = arguments[2];
     classCallCheck(this, Annotation);
 
-    var _this27 = possibleConstructorReturn(this, (Annotation.__proto__ || Object.getPrototypeOf(Annotation)).call(this));
+    var _this30 = possibleConstructorReturn(this, (Annotation.__proto__ || Object.getPrototypeOf(Annotation)).call(this));
 
-    _this27.type = 'Annotation';
-    _this27.code = code;
-    _this27.args = args;
-    _this27.message = message;
-    return _this27;
+    _this30.type = 'Annotation';
+    _this30.code = code;
+    _this30.args = args;
+    _this30.message = message;
+    return _this30;
   }
 
   return Annotation;
@@ -709,9 +752,16 @@ var ParserStream = function () {
     }
   }, {
     key: "resetPeek",
-    value: function resetPeek() {
-      this.peekIndex = this.index;
-      this.peekEnd = this.iterEnd;
+    value: function resetPeek(pos) {
+      if (pos) {
+        if (pos < this.peekIndex) {
+          this.peekEnd = false;
+        }
+        this.peekIndex = pos;
+      } else {
+        this.peekIndex = this.index;
+        this.peekEnd = this.iterEnd;
+      }
     }
   }, {
     key: "skipToPeek",
@@ -780,6 +830,7 @@ var ParseError = function (_extendableBuiltin2) {
   return ParseError;
 }(_extendableBuiltin(Error));
 
+/* eslint-disable complexity */
 function getErrorMessage(code, args) {
   switch (code) {
     case 'E0001':
@@ -805,39 +856,56 @@ function getErrorMessage(code, args) {
         var _args3 = slicedToArray(args, 1),
             id = _args3[0];
 
-        return 'Expected entry "' + id + '" to have a value, attributes or tags';
+        return 'Expected message "' + id + '" to have a value or attributes';
       }
     case 'E0006':
       {
         var _args4 = slicedToArray(args, 1),
-            field = _args4[0];
+            _id = _args4[0];
 
-        return 'Expected field: "' + field + '"';
+        return 'Expected term "' + _id + '" to have a value';
       }
     case 'E0007':
       return 'Keyword cannot end with a whitespace';
     case 'E0008':
-      return 'Callee has to be a simple identifier';
+      return 'The callee has to be a simple, upper-case identifier';
     case 'E0009':
-      return 'Key has to be a simple identifier';
+      return 'The key has to be a simple identifier';
     case 'E0010':
       return 'Expected one of the variants to be marked as default (*)';
     case 'E0011':
       return 'Expected at least one variant after "->"';
     case 'E0012':
-      return 'Tags cannot be added to messages with attributes';
+      return 'Expected value';
     case 'E0013':
       return 'Expected variant key';
     case 'E0014':
       return 'Expected literal';
     case 'E0015':
       return 'Only one variant can be marked as default (*)';
+    case 'E0016':
+      return 'Message references cannot be used as selectors';
+    case 'E0017':
+      return 'Variants cannot be used as selectors';
+    case 'E0018':
+      return 'Attributes of messages cannot be used as selectors';
+    case 'E0019':
+      return 'Attributes of terms cannot be used as placeables';
+    case 'E0020':
+      return 'Unterminated string expression';
     default:
       return code;
   }
 }
 
+function includes(arr, elem) {
+  return arr.indexOf(elem) > -1;
+}
+
 /* eslint no-magic-numbers: "off" */
+
+var INLINE_WS = [' ', '\t'];
+var SPECIAL_LINE_START_CHARS = ['}', '.', '[', '*'];
 
 var FTLParserStream = function (_ParserStream) {
   inherits(FTLParserStream, _ParserStream);
@@ -848,23 +916,33 @@ var FTLParserStream = function (_ParserStream) {
   }
 
   createClass(FTLParserStream, [{
-    key: 'peekLineWS',
-    value: function peekLineWS() {
+    key: 'skipInlineWS',
+    value: function skipInlineWS() {
+      while (this.ch) {
+        if (!includes(INLINE_WS, this.ch)) {
+          break;
+        }
+        this.next();
+      }
+    }
+  }, {
+    key: 'peekInlineWS',
+    value: function peekInlineWS() {
       var ch = this.currentPeek();
       while (ch) {
-        if (ch !== ' ' && ch !== '\t') {
+        if (!includes(INLINE_WS, ch)) {
           break;
         }
         ch = this.peek();
       }
     }
   }, {
-    key: 'skipWSLines',
-    value: function skipWSLines() {
+    key: 'skipBlankLines',
+    value: function skipBlankLines() {
       while (true) {
-        this.peekLineWS();
+        this.peekInlineWS();
 
-        if (this.currentPeek() === '\n') {
+        if (this.currentPeekIs('\n')) {
           this.skipToPeek();
           this.next();
         } else {
@@ -874,14 +952,26 @@ var FTLParserStream = function (_ParserStream) {
       }
     }
   }, {
-    key: 'skipLineWS',
-    value: function skipLineWS() {
-      while (this.ch) {
-        if (this.ch !== ' ' && this.ch !== '\t') {
+    key: 'peekBlankLines',
+    value: function peekBlankLines() {
+      while (true) {
+        var lineStart = this.getPeekIndex();
+
+        this.peekInlineWS();
+
+        if (this.currentPeekIs('\n')) {
+          this.peek();
+        } else {
+          this.resetPeek(lineStart);
           break;
         }
-        this.next();
       }
+    }
+  }, {
+    key: 'skipIndent',
+    value: function skipIndent() {
+      this.skipBlankLines();
+      this.skipInlineWS();
     }
   }, {
     key: 'expectChar',
@@ -897,6 +987,14 @@ var FTLParserStream = function (_ParserStream) {
       }
 
       throw new ParseError('E0003', ch);
+    }
+  }, {
+    key: 'expectIndent',
+    value: function expectIndent() {
+      this.expectChar('\n');
+      this.skipBlankLines();
+      this.expectChar(' ');
+      this.skipInlineWS();
     }
   }, {
     key: 'takeCharIf',
@@ -918,33 +1016,111 @@ var FTLParserStream = function (_ParserStream) {
       return undefined;
     }
   }, {
-    key: 'isIDStart',
-    value: function isIDStart() {
-      if (this.ch === undefined) {
+    key: 'isCharIDStart',
+    value: function isCharIDStart(ch) {
+      if (ch === undefined) {
         return false;
       }
 
-      var cc = this.ch.charCodeAt(0);
+      var cc = ch.charCodeAt(0);
       return cc >= 97 && cc <= 122 || // a-z
-      cc >= 65 && cc <= 90 || // A-Z
-      cc === 95; // _
+      cc >= 65 && cc <= 90; // A-Z
+    }
+  }, {
+    key: 'isEntryIDStart',
+    value: function isEntryIDStart() {
+      if (this.currentIs('-')) {
+        this.peek();
+      }
+
+      var ch = this.currentPeek();
+      var isID = this.isCharIDStart(ch);
+      this.resetPeek();
+      return isID;
     }
   }, {
     key: 'isNumberStart',
     value: function isNumberStart() {
-      var cc = this.ch.charCodeAt(0);
-      return cc >= 48 && cc <= 57 || cc === 45; // 0-9
+      if (this.currentIs('-')) {
+        this.peek();
+      }
+
+      var cc = this.currentPeek().charCodeAt(0);
+      var isDigit = cc >= 48 && cc <= 57; // 0-9
+      this.resetPeek();
+      return isDigit;
     }
   }, {
-    key: 'isPeekNextLineIndented',
-    value: function isPeekNextLineIndented() {
+    key: 'isCharPatternStart',
+    value: function isCharPatternStart(ch) {
+      return !includes(SPECIAL_LINE_START_CHARS, ch);
+    }
+  }, {
+    key: 'isPeekPatternStart',
+    value: function isPeekPatternStart() {
+      this.peekInlineWS();
+
+      var ch = this.currentPeek();
+
+      if (ch === '\n') {
+        return this.isPeekNextLinePatternStart();
+      }
+
+      var isPattern = this.isCharPatternStart(this.currentPeek());
+      this.resetPeek();
+      return isPattern;
+    }
+  }, {
+    key: 'isPeekNextLineZeroFourStyleComment',
+    value: function isPeekNextLineZeroFourStyleComment() {
       if (!this.currentPeekIs('\n')) {
         return false;
       }
 
       this.peek();
 
-      if (this.currentPeekIs(' ')) {
+      if (this.currentPeekIs('/')) {
+        this.peek();
+        if (this.currentPeekIs('/')) {
+          this.resetPeek();
+          return true;
+        }
+      }
+
+      this.resetPeek();
+      return false;
+    }
+
+    // -1 - any
+    //  0 - comment
+    //  1 - group comment
+    //  2 - resource comment
+
+  }, {
+    key: 'isPeekNextLineComment',
+    value: function isPeekNextLineComment() {
+      var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
+
+      if (!this.currentPeekIs('\n')) {
+        return false;
+      }
+
+      var i = 0;
+
+      while (i <= level || level === -1 && i < 3) {
+        this.peek();
+        if (!this.currentPeekIs('#')) {
+          if (i !== level && level !== -1) {
+            this.resetPeek();
+            return false;
+          }
+          break;
+        }
+        i++;
+      }
+
+      this.peek();
+      if ([' ', '\n'].includes(this.currentPeek())) {
         this.resetPeek();
         return true;
       }
@@ -961,9 +1137,11 @@ var FTLParserStream = function (_ParserStream) {
 
       this.peek();
 
+      this.peekBlankLines();
+
       var ptr = this.getPeekIndex();
 
-      this.peekLineWS();
+      this.peekInlineWS();
 
       if (this.getPeekIndex() - ptr === 0) {
         this.resetPeek();
@@ -990,9 +1168,11 @@ var FTLParserStream = function (_ParserStream) {
 
       this.peek();
 
+      this.peekBlankLines();
+
       var ptr = this.getPeekIndex();
 
-      this.peekLineWS();
+      this.peekInlineWS();
 
       if (this.getPeekIndex() - ptr === 0) {
         this.resetPeek();
@@ -1008,24 +1188,26 @@ var FTLParserStream = function (_ParserStream) {
       return false;
     }
   }, {
-    key: 'isPeekNextLinePattern',
-    value: function isPeekNextLinePattern() {
+    key: 'isPeekNextLinePatternStart',
+    value: function isPeekNextLinePatternStart() {
       if (!this.currentPeekIs('\n')) {
         return false;
       }
 
       this.peek();
 
+      this.peekBlankLines();
+
       var ptr = this.getPeekIndex();
 
-      this.peekLineWS();
+      this.peekInlineWS();
 
       if (this.getPeekIndex() - ptr === 0) {
         this.resetPeek();
         return false;
       }
 
-      if (this.currentPeekIs('}') || this.currentPeekIs('.') || this.currentPeekIs('#') || this.currentPeekIs('[') || this.currentPeekIs('*')) {
+      if (!this.isCharPatternStart(this.currentPeek())) {
         this.resetPeek();
         return false;
       }
@@ -1034,52 +1216,34 @@ var FTLParserStream = function (_ParserStream) {
       return true;
     }
   }, {
-    key: 'isPeekNextLineTagStart',
-    value: function isPeekNextLineTagStart() {
-      if (!this.currentPeekIs('\n')) {
-        return false;
-      }
-
-      this.peek();
-
-      var ptr = this.getPeekIndex();
-
-      this.peekLineWS();
-
-      if (this.getPeekIndex() - ptr === 0) {
-        this.resetPeek();
-        return false;
-      }
-
-      if (this.currentPeekIs('#')) {
-        this.resetPeek();
-        return true;
-      }
-
-      this.resetPeek();
-      return false;
-    }
-  }, {
     key: 'skipToNextEntryStart',
     value: function skipToNextEntryStart() {
-      while (this.next()) {
+      while (this.ch) {
         if (this.currentIs('\n') && !this.peekCharIs('\n')) {
           this.next();
-          if (this.ch === undefined || this.isIDStart() || this.currentIs('/') && this.peekCharIs('/') || this.currentIs('[') && this.peekCharIs('[')) {
+          if (this.ch === undefined || this.isEntryIDStart() || this.currentIs('#') || this.currentIs('/') && this.peekCharIs('/') || this.currentIs('[') && this.peekCharIs('[')) {
             break;
           }
         }
+        this.next();
       }
     }
   }, {
     key: 'takeIDStart',
-    value: function takeIDStart() {
-      if (this.isIDStart()) {
+    value: function takeIDStart(allowTerm) {
+      if (allowTerm && this.currentIs('-')) {
+        this.next();
+        return '-';
+      }
+
+      if (this.isCharIDStart(this.ch)) {
         var ret = this.ch;
         this.next();
         return ret;
       }
-      throw new ParseError('E0004', 'a-zA-Z');
+
+      var allowedRange = allowTerm ? 'a-zA-Z-' : 'a-zA-Z';
+      throw new ParseError('E0004', allowedRange);
     }
   }, {
     key: 'takeIDChar',
@@ -1095,18 +1259,14 @@ var FTLParserStream = function (_ParserStream) {
       return this.takeChar(closure);
     }
   }, {
-    key: 'takeSymbChar',
-    value: function takeSymbChar() {
+    key: 'takeVariantNameChar',
+    value: function takeVariantNameChar() {
       var closure = function closure(ch) {
-        if (ch === undefined) {
-          return false;
-        }
-
         var cc = ch.charCodeAt(0);
         return cc >= 97 && cc <= 122 || // a-z
         cc >= 65 && cc <= 90 || // A-Z
         cc >= 48 && cc <= 57 || // 0-9
-        cc === 95 || cc === 45 || cc === 32; // _-
+        cc === 95 || cc === 45 || cc === 32; // _-<space>
       };
 
       return this.takeChar(closure);
@@ -1147,7 +1307,7 @@ function withSpan(fn) {
     }
 
     // Spans of Messages and Sections should include the attached Comment.
-    if (node.type === 'Message' || node.type === 'Section') {
+    if (node.type === 'Message') {
       if (node.comment !== null) {
         start = node.comment.span.start;
       }
@@ -1172,7 +1332,7 @@ var FluentParser = function () {
     this.withSpans = withSpans;
 
     // Poor man's decorators.
-    ['getComment', 'getSection', 'getMessage', 'getAttribute', 'getTag', 'getIdentifier', 'getVariant', 'getSymbol', 'getNumber', 'getPattern', 'getExpression', 'getSelectorExpression', 'getCallArg', 'getString', 'getLiteral'].forEach(function (name) {
+    ['getComment', 'getMessage', 'getAttribute', 'getIdentifier', 'getVariant', 'getVariantName', 'getNumber', 'getPattern', 'getTextElement', 'getPlaceable', 'getExpression', 'getSelectorExpression', 'getCallArg', 'getString', 'getLiteral', 'getGroupCommentFromSection'].forEach(function (name) {
       return _this[name] = withSpan(_this[name]);
     });
   }
@@ -1180,26 +1340,32 @@ var FluentParser = function () {
   createClass(FluentParser, [{
     key: 'parse',
     value: function parse(source) {
-      var comment = null;
-
       var ps = new FTLParserStream(source);
-      ps.skipWSLines();
+      ps.skipBlankLines();
 
       var entries = [];
 
       while (ps.current()) {
         var entry = this.getEntryOrJunk(ps);
 
-        if (entry.type === 'Comment' && entries.length === 0) {
-          comment = entry;
+        if (entry === null) {
+          // That happens when we get a 0.4 style section
+          continue;
+        }
+
+        if (entry.type === 'Comment' && ps.lastCommentZeroFourSyntax && entries.length === 0) {
+          var comment = new ResourceComment(entry.content);
+          comment.span = entry.span;
+          entries.push(comment);
         } else {
           entries.push(entry);
         }
 
-        ps.skipWSLines();
+        ps.lastCommentZeroFourSyntax = false;
+        ps.skipBlankLines();
       }
 
-      var res = new Resource(entries, comment);
+      var res = new Resource(entries);
 
       if (this.withSpans) {
         res.addSpan(0, ps.getIndex());
@@ -1211,7 +1377,7 @@ var FluentParser = function () {
     key: 'parseEntry',
     value: function parseEntry(source) {
       var ps = new FTLParserStream(source);
-      ps.skipWSLines();
+      ps.skipBlankLines();
       return this.getEntryOrJunk(ps);
     }
   }, {
@@ -1220,11 +1386,7 @@ var FluentParser = function () {
       var entryStartPos = ps.getIndex();
 
       try {
-        var entry = this.getEntry(ps);
-        if (this.withSpans) {
-          entry.addSpan(entryStartPos, ps.getIndex());
-        }
-        return entry;
+        return this.getEntry(ps);
       } catch (err) {
         if (!(err instanceof ParseError)) {
           throw err;
@@ -1251,26 +1413,37 @@ var FluentParser = function () {
     value: function getEntry(ps) {
       var comment = void 0;
 
-      if (ps.currentIs('/')) {
+      if (ps.currentIs('/') || ps.currentIs('#')) {
         comment = this.getComment(ps);
+
+        // The Comment content doesn't include the trailing newline. Consume
+        // this newline here to be ready for the next entry.  undefined stands
+        // for EOF.
+        ps.expectChar(ps.current() ? '\n' : undefined);
       }
 
       if (ps.currentIs('[')) {
-        return this.getSection(ps, comment);
+        var groupComment = this.getGroupCommentFromSection(ps, comment);
+        if (comment && this.withSpans) {
+          // The Group Comment should start where the section comment starts.
+          groupComment.span.start = comment.span.start;
+        }
+        return groupComment;
       }
 
-      if (ps.isIDStart()) {
+      if (ps.isEntryIDStart() && (!comment || comment.type === 'Comment')) {
         return this.getMessage(ps, comment);
       }
 
       if (comment) {
         return comment;
       }
+
       throw new ParseError('E0002');
     }
   }, {
-    key: 'getComment',
-    value: function getComment(ps) {
+    key: 'getZeroFourStyleComment',
+    value: function getZeroFourStyleComment(ps) {
       ps.expectChar('/');
       ps.expectChar('/');
       ps.takeCharIf(' ');
@@ -1285,74 +1458,138 @@ var FluentParser = function () {
           content += ch;
         }
 
-        ps.next();
-
-        if (ps.current() === '/') {
+        if (ps.isPeekNextLineZeroFourStyleComment()) {
           content += '\n';
           ps.next();
+          ps.expectChar('/');
           ps.expectChar('/');
           ps.takeCharIf(' ');
         } else {
           break;
         }
       }
-      return new Comment(content);
+
+      var comment = new Comment(content);
+      ps.lastCommentZeroFourSyntax = true;
+      return comment;
     }
   }, {
-    key: 'getSection',
-    value: function getSection(ps, comment) {
+    key: 'getComment',
+    value: function getComment(ps) {
+      if (ps.currentIs('/')) {
+        return this.getZeroFourStyleComment(ps);
+      }
+
+      // 0 - comment
+      // 1 - group comment
+      // 2 - resource comment
+      var level = -1;
+      var content = '';
+
+      while (true) {
+        var i = -1;
+        while (ps.currentIs('#') && i < (level === -1 ? 2 : level)) {
+          ps.next();
+          i++;
+        }
+
+        if (level === -1) {
+          level = i;
+        }
+
+        if (!ps.currentIs('\n')) {
+          ps.expectChar(' ');
+          var ch = void 0;
+          while (ch = ps.takeChar(function (x) {
+            return x !== '\n';
+          })) {
+            content += ch;
+          }
+        }
+
+        if (ps.isPeekNextLineComment(level, false)) {
+          content += '\n';
+          ps.next();
+        } else {
+          break;
+        }
+      }
+
+      var Comment$$1 = void 0;
+      switch (level) {
+        case 0:
+          Comment$$1 = Comment;
+          break;
+        case 1:
+          Comment$$1 = GroupComment;
+          break;
+        case 2:
+          Comment$$1 = ResourceComment;
+          break;
+      }
+      return new Comment$$1(content);
+    }
+  }, {
+    key: 'getGroupCommentFromSection',
+    value: function getGroupCommentFromSection(ps, comment) {
       ps.expectChar('[');
       ps.expectChar('[');
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
-      var symb = this.getSymbol(ps);
+      this.getVariantName(ps);
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       ps.expectChar(']');
       ps.expectChar(']');
 
-      ps.skipLineWS();
+      if (comment) {
+        return new GroupComment(comment.content);
+      }
 
-      ps.expectChar('\n');
-
-      return new Section(symb, comment);
+      // A Section without a comment is like an empty Group Comment. Semantically
+      // it ends the previous group and starts a new one.
+      return new GroupComment('');
     }
   }, {
     key: 'getMessage',
     value: function getMessage(ps, comment) {
-      var id = this.getIdentifier(ps);
+      var id = this.getEntryIdentifier(ps);
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       var pattern = void 0;
       var attrs = void 0;
-      var tags = void 0;
 
+      // XXX Syntax 0.4 compatibility.
+      // XXX Replace with ps.expectChar('=').
       if (ps.currentIs('=')) {
         ps.next();
-        ps.skipLineWS();
 
-        pattern = this.getPattern(ps);
+        if (ps.isPeekPatternStart()) {
+          ps.skipIndent();
+          pattern = this.getPattern(ps);
+        }
+      }
+
+      if (id.name.startsWith('-') && pattern === undefined) {
+        throw new ParseError('E0006', id.name);
       }
 
       if (ps.isPeekNextLineAttributeStart()) {
         attrs = this.getAttributes(ps);
       }
 
-      if (ps.isPeekNextLineTagStart()) {
-        if (attrs !== undefined) {
-          throw new ParseError('E0012');
-        }
-        tags = this.getTags(ps);
+      if (id.name.startsWith('-')) {
+        return new Term(id, pattern, attrs, comment);
       }
 
-      if (pattern === undefined && attrs === undefined && tags === undefined) {
+      if (pattern === undefined && attrs === undefined) {
         throw new ParseError('E0005', id.name);
       }
 
-      return new Message(id, pattern, attrs, tags, comment);
+      return new Message(id, pattern, attrs, comment);
     }
   }, {
     key: 'getAttribute',
@@ -1361,17 +1598,16 @@ var FluentParser = function () {
 
       var key = this.getIdentifier(ps);
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
       ps.expectChar('=');
-      ps.skipLineWS();
 
-      var value = this.getPattern(ps);
-
-      if (value === undefined) {
-        throw new ParseError('E0006', 'value');
+      if (ps.isPeekPatternStart()) {
+        ps.skipIndent();
+        var value = this.getPattern(ps);
+        return new Attribute(key, value);
       }
 
-      return new Attribute(key, value);
+      throw new ParseError('E0012');
     }
   }, {
     key: 'getAttributes',
@@ -1379,9 +1615,7 @@ var FluentParser = function () {
       var attrs = [];
 
       while (true) {
-        ps.expectChar('\n');
-        ps.skipLineWS();
-
+        ps.expectIndent();
         var attr = this.getAttribute(ps);
         attrs.push(attr);
 
@@ -1392,36 +1626,17 @@ var FluentParser = function () {
       return attrs;
     }
   }, {
-    key: 'getTag',
-    value: function getTag(ps) {
-      ps.expectChar('#');
-      var symb = this.getSymbol(ps);
-      return new Tag(symb);
-    }
-  }, {
-    key: 'getTags',
-    value: function getTags(ps) {
-      var tags = [];
-
-      while (true) {
-        ps.expectChar('\n');
-        ps.skipLineWS();
-
-        var tag = this.getTag(ps);
-        tags.push(tag);
-
-        if (!ps.isPeekNextLineTagStart()) {
-          break;
-        }
-      }
-      return tags;
+    key: 'getEntryIdentifier',
+    value: function getEntryIdentifier(ps) {
+      return this.getIdentifier(ps, true);
     }
   }, {
     key: 'getIdentifier',
     value: function getIdentifier(ps) {
-      var name = '';
+      var allowTerm = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-      name += ps.takeIDStart();
+      var name = '';
+      name += ps.takeIDStart(allowTerm);
 
       var ch = void 0;
       while (ch = ps.takeIDChar()) {
@@ -1446,7 +1661,7 @@ var FluentParser = function () {
         return this.getNumber(ps);
       }
 
-      return this.getSymbol(ps);
+      return this.getVariantName(ps);
     }
   }, {
     key: 'getVariant',
@@ -1468,15 +1683,13 @@ var FluentParser = function () {
 
       ps.expectChar(']');
 
-      ps.skipLineWS();
-
-      var value = this.getPattern(ps);
-
-      if (!value) {
-        throw new ParseError('E0006', 'value');
+      if (ps.isPeekPatternStart()) {
+        ps.skipIndent();
+        var value = this.getPattern(ps);
+        return new Variant(key, value, defaultIndex);
       }
 
-      return new Variant(key, value, defaultIndex);
+      throw new ParseError('E0012');
     }
   }, {
     key: 'getVariants',
@@ -1485,9 +1698,7 @@ var FluentParser = function () {
       var hasDefault = false;
 
       while (true) {
-        ps.expectChar('\n');
-        ps.skipLineWS();
-
+        ps.expectIndent();
         var variant = this.getVariant(ps, hasDefault);
 
         if (variant.default) {
@@ -1508,14 +1719,14 @@ var FluentParser = function () {
       return variants;
     }
   }, {
-    key: 'getSymbol',
-    value: function getSymbol(ps) {
+    key: 'getVariantName',
+    value: function getVariantName(ps) {
       var name = '';
 
-      name += ps.takeIDStart();
+      name += ps.takeIDStart(false);
 
       while (true) {
-        var ch = ps.takeSymbChar();
+        var ch = ps.takeVariantNameChar();
         if (ch) {
           name += ch;
         } else {
@@ -1523,7 +1734,7 @@ var FluentParser = function () {
         }
       }
 
-      return new _Symbol(name.trimRight());
+      return new VariantName(name.trimRight());
     }
   }, {
     key: 'getDigits',
@@ -1564,80 +1775,77 @@ var FluentParser = function () {
   }, {
     key: 'getPattern',
     value: function getPattern(ps) {
-      var buffer = '';
       var elements = [];
-      var firstLine = true;
-
-      if (this.withSpans) {
-        var spanStart = ps.getIndex();
-      }
+      ps.skipInlineWS();
 
       var ch = void 0;
       while (ch = ps.current()) {
-        if (ch === '\n') {
-          if (firstLine && buffer.length !== 0) {
-            break;
-          }
 
-          if (!ps.isPeekNextLinePattern()) {
-            break;
+        // The end condition for getPattern's while loop is a newline
+        // which is not followed by a valid pattern continuation.
+        if (ch === '\n' && !ps.isPeekNextLinePatternStart()) {
+          break;
+        }
+
+        if (ch === '{') {
+          var element = this.getPlaceable(ps);
+          elements.push(element);
+        } else {
+          var _element = this.getTextElement(ps);
+          elements.push(_element);
+        }
+      }
+
+      return new Pattern(elements);
+    }
+  }, {
+    key: 'getTextElement',
+    value: function getTextElement(ps) {
+      var buffer = '';
+
+      var ch = void 0;
+      while (ch = ps.current()) {
+        if (ch === '{') {
+          return new TextElement(buffer);
+        }
+
+        if (ch === '\n') {
+          if (!ps.isPeekNextLinePatternStart()) {
+            return new TextElement(buffer);
           }
 
           ps.next();
-          ps.skipLineWS();
+          ps.skipInlineWS();
 
-          if (!firstLine) {
-            buffer += ch;
-          }
-          firstLine = false;
+          // Add the new line to the buffer
+          buffer += ch;
           continue;
-        } else if (ch === '\\') {
-          var ch2 = ps.peek();
+        }
+
+        if (ch === '\\') {
+          var ch2 = ps.next();
+
           if (ch2 === '{' || ch2 === '"') {
             buffer += ch2;
           } else {
             buffer += ch + ch2;
           }
-          ps.next();
-        } else if (ch === '{') {
-          ps.next();
-
-          ps.skipLineWS();
-
-          if (buffer.length !== 0) {
-            var text = new TextElement(buffer);
-            if (this.withSpans) {
-              text.addSpan(spanStart, ps.getIndex());
-            }
-            elements.push(text);
-          }
-
-          buffer = '';
-
-          elements.push(this.getExpression(ps));
-
-          ps.expectChar('}');
-
-          if (this.withSpans) {
-            spanStart = ps.getIndex();
-          }
-
-          continue;
         } else {
           buffer += ps.ch;
         }
+
         ps.next();
       }
 
-      if (buffer.length !== 0) {
-        var _text = new TextElement(buffer);
-        if (this.withSpans) {
-          _text.addSpan(spanStart, ps.getIndex());
-        }
-        elements.push(_text);
-      }
-
-      return new Pattern(elements);
+      return new TextElement(buffer);
+    }
+  }, {
+    key: 'getPlaceable',
+    value: function getPlaceable(ps) {
+      ps.expectChar('{');
+      var expression = this.getExpression(ps);
+      ps.expectChar('}');
+      return new Placeable(expression);
     }
   }, {
     key: 'getExpression',
@@ -1645,39 +1853,53 @@ var FluentParser = function () {
       if (ps.isPeekNextLineVariantStart()) {
         var variants = this.getVariants(ps);
 
-        ps.expectChar('\n');
-        ps.expectChar(' ');
-        ps.skipLineWS();
+        ps.expectIndent();
 
         return new SelectExpression(null, variants);
       }
 
+      ps.skipInlineWS();
+
       var selector = this.getSelectorExpression(ps);
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       if (ps.currentIs('-')) {
         ps.peek();
+
         if (!ps.currentPeekIs('>')) {
           ps.resetPeek();
-        } else {
-          ps.next();
-          ps.next();
-
-          ps.skipLineWS();
-
-          var _variants = this.getVariants(ps);
-
-          if (_variants.length === 0) {
-            throw new ParseError('E0011');
-          }
-
-          ps.expectChar('\n');
-          ps.expectChar(' ');
-          ps.skipLineWS();
-
-          return new SelectExpression(selector, _variants);
+          return selector;
         }
+
+        if (selector.type === 'MessageReference') {
+          throw new ParseError('E0016');
+        }
+
+        if (selector.type === 'AttributeExpression' && !selector.id.name.startsWith('-')) {
+          throw new ParseError('E0018');
+        }
+
+        if (selector.type === 'VariantExpression') {
+          throw new ParseError('E0017');
+        }
+
+        ps.next();
+        ps.next();
+
+        ps.skipInlineWS();
+
+        var _variants = this.getVariants(ps);
+
+        if (_variants.length === 0) {
+          throw new ParseError('E0011');
+        }
+
+        ps.expectIndent();
+
+        return new SelectExpression(selector, _variants);
+      } else if (selector.type === 'AttributeExpression' && selector.id.name.startsWith('-')) {
+        throw new ParseError('E0019');
       }
 
       return selector;
@@ -1717,7 +1939,11 @@ var FluentParser = function () {
 
         ps.expectChar(')');
 
-        return new CallExpression(literal.id, args);
+        if (!/^[A-Z][A-Z_?-]*$/.test(literal.id.name)) {
+          throw new ParseError('E0008');
+        }
+
+        return new CallExpression(new Function$1(literal.id.name), args);
       }
 
       return literal;
@@ -1727,7 +1953,7 @@ var FluentParser = function () {
     value: function getCallArg(ps) {
       var exp = this.getSelectorExpression(ps);
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       if (ps.current() !== ':') {
         return exp;
@@ -1738,7 +1964,7 @@ var FluentParser = function () {
       }
 
       ps.next();
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       var val = this.getArgVal(ps);
 
@@ -1749,7 +1975,7 @@ var FluentParser = function () {
     value: function getCallArgs(ps) {
       var args = [];
 
-      ps.skipLineWS();
+      ps.skipInlineWS();
 
       while (true) {
         if (ps.current() === ')') {
@@ -1759,11 +1985,11 @@ var FluentParser = function () {
         var arg = this.getCallArg(ps);
         args.push(arg);
 
-        ps.skipLineWS();
+        ps.skipInlineWS();
 
         if (ps.current() === ',') {
           ps.next();
-          ps.skipLineWS();
+          ps.skipInlineWS();
           continue;
         } else {
           break;
@@ -1779,7 +2005,7 @@ var FluentParser = function () {
       } else if (ps.currentIs('"')) {
         return this.getString(ps);
       }
-      throw new ParseError('E0006', 'value');
+      throw new ParseError('E0012');
     }
   }, {
     key: 'getString',
@@ -1790,9 +2016,13 @@ var FluentParser = function () {
 
       var ch = void 0;
       while (ch = ps.takeChar(function (x) {
-        return x !== '"';
+        return x !== '"' && x !== '\n';
       })) {
         val += ch;
+      }
+
+      if (ps.currentIs('\n')) {
+        throw new ParseError('E0020');
       }
 
       ps.next();
@@ -1808,18 +2038,26 @@ var FluentParser = function () {
         throw new ParseError('E0014');
       }
 
-      if (ps.isNumberStart()) {
-        return this.getNumber(ps);
-      } else if (ch === '"') {
-        return this.getString(ps);
-      } else if (ch === '$') {
+      if (ch === '$') {
         ps.next();
-        var _name = this.getIdentifier(ps);
-        return new ExternalArgument(_name);
+        var name = this.getIdentifier(ps);
+        return new ExternalArgument(name);
       }
 
-      var name = this.getIdentifier(ps);
-      return new MessageReference(name);
+      if (ps.isEntryIDStart()) {
+        var _name = this.getEntryIdentifier(ps);
+        return new MessageReference(_name);
+      }
+
+      if (ps.isNumberStart()) {
+        return this.getNumber(ps);
+      }
+
+      if (ch === '"') {
+        return this.getString(ps);
+      }
+
+      throw new ParseError('E0014');
     }
   }]);
   return FluentParser;
@@ -1831,10 +2069,13 @@ function indent(content) {
 
 function containNewLine(elems) {
   var withNewLine = elems.filter(function (elem) {
-    return elem.type === 'TextElement' && elem.value.includes('\n');
+    return elem.type === 'TextElement' && includes(elem.value, '\n');
   });
   return !!withNewLine.length;
 }
+
+// Bit masks representing the state of the serializer.
+var HAS_ENTRIES = 1;
 
 var FluentSerializer = function () {
   function FluentSerializer() {
@@ -1850,11 +2091,12 @@ var FluentSerializer = function () {
   createClass(FluentSerializer, [{
     key: 'serialize',
     value: function serialize(resource) {
-      var parts = [];
-
-      if (resource.comment) {
-        parts.push(serializeComment(resource.comment) + '\n\n');
+      if (resource.type !== 'Resource') {
+        throw new Error('Unknown resource type: ' + resource.type);
       }
+
+      var state = 0;
+      var parts = [];
 
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -1864,8 +2106,11 @@ var FluentSerializer = function () {
         for (var _iterator = resource.body[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var entry = _step.value;
 
-          if (entry.types !== 'Junk' || this.withJunk) {
-            parts.push(this.serializeEntry(entry));
+          if (entry.type !== 'Junk' || this.withJunk) {
+            parts.push(this.serializeEntry(entry, state));
+            if (!(state & HAS_ENTRIES)) {
+              state |= HAS_ENTRIES;
+            }
           }
         }
       } catch (err) {
@@ -1888,18 +2133,37 @@ var FluentSerializer = function () {
   }, {
     key: 'serializeEntry',
     value: function serializeEntry(entry) {
+      var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
       switch (entry.type) {
         case 'Message':
+        case 'Term':
           return serializeMessage(entry);
-        case 'Section':
-          return serializeSection(entry);
         case 'Comment':
-          return serializeComment(entry);
+          if (state & HAS_ENTRIES) {
+            return '\n' + serializeComment(entry) + '\n\n';
+          }
+          return serializeComment(entry) + '\n\n';
+        case 'GroupComment':
+          if (state & HAS_ENTRIES) {
+            return '\n' + serializeGroupComment(entry) + '\n\n';
+          }
+          return serializeGroupComment(entry) + '\n\n';
+        case 'ResourceComment':
+          if (state & HAS_ENTRIES) {
+            return '\n' + serializeResourceComment(entry) + '\n\n';
+          }
+          return serializeResourceComment(entry) + '\n\n';
         case 'Junk':
           return serializeJunk(entry);
         default:
           throw new Error('Unknown entry type: ' + entry.type);
       }
+    }
+  }, {
+    key: 'serializeExpression',
+    value: function serializeExpression(expr) {
+      return _serializeExpression(expr);
     }
   }]);
   return FluentSerializer;
@@ -1907,19 +2171,20 @@ var FluentSerializer = function () {
 
 function serializeComment(comment) {
   return comment.content.split('\n').map(function (line) {
-    return '// ' + line;
+    return line.length ? '# ' + line : '#';
   }).join('\n');
 }
 
-function serializeSection(section) {
-  var name = serializeSymbol(section.name);
+function serializeGroupComment(comment) {
+  return comment.content.split('\n').map(function (line) {
+    return line.length ? '## ' + line : '##';
+  }).join('\n');
+}
 
-  if (section.comment) {
-    var comment = serializeComment(section.comment);
-    return '\n\n' + comment + '\n[[ ' + name + ' ]]\n\n';
-  }
-
-  return '\n\n[[ ' + name + ' ]]\n\n';
+function serializeResourceComment(comment) {
+  return comment.content.split('\n').map(function (line) {
+    return line.length ? '### ' + line : '###';
+  }).join('\n');
 }
 
 function serializeJunk(junk) {
@@ -1935,9 +2200,9 @@ function serializeMessage(message) {
   }
 
   parts.push(serializeIdentifier(message.id));
+  parts.push(' =');
 
   if (message.value) {
-    parts.push(' =');
     parts.push(serializeValue(message.value));
   }
 
@@ -1946,10 +2211,10 @@ function serializeMessage(message) {
   var _iteratorError2 = undefined;
 
   try {
-    for (var _iterator2 = message.tags[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var tag = _step2.value;
+    for (var _iterator2 = message.attributes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+      var attribute = _step2.value;
 
-      parts.push(serializeTag(tag));
+      parts.push(serializeAttribute(attribute));
     }
   } catch (err) {
     _didIteratorError2 = true;
@@ -1966,38 +2231,8 @@ function serializeMessage(message) {
     }
   }
 
-  var _iteratorNormalCompletion3 = true;
-  var _didIteratorError3 = false;
-  var _iteratorError3 = undefined;
-
-  try {
-    for (var _iterator3 = message.attributes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-      var attribute = _step3.value;
-
-      parts.push(serializeAttribute(attribute));
-    }
-  } catch (err) {
-    _didIteratorError3 = true;
-    _iteratorError3 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion3 && _iterator3.return) {
-        _iterator3.return();
-      }
-    } finally {
-      if (_didIteratorError3) {
-        throw _iteratorError3;
-      }
-    }
-  }
-
   parts.push('\n');
   return parts.join('');
-}
-
-function serializeTag(tag) {
-  var name = serializeSymbol(tag.name);
-  return '\n    #' + name;
 }
 
 function serializeAttribute(attribute) {
@@ -2025,10 +2260,10 @@ function serializeElement(element) {
   switch (element.type) {
     case 'TextElement':
       return serializeTextElement(element);
-    case 'SelectExpression':
-      return '{' + serializeSelectExpression(element) + '}';
+    case 'Placeable':
+      return serializePlaceable(element);
     default:
-      return '{ ' + serializeExpression(element) + ' }';
+      throw new Error('Unknown element type: ' + element.type);
   }
 }
 
@@ -2036,7 +2271,26 @@ function serializeTextElement(text) {
   return text.value;
 }
 
-function serializeExpression(expr) {
+function serializePlaceable(placeable) {
+  var expr = placeable.expression;
+
+  switch (expr.type) {
+    case 'Placeable':
+      return '{' + serializePlaceable(expr) + '}';
+    case 'SelectExpression':
+      // Special-case select expression to control the whitespace around the
+      // opening and the closing brace.
+      return expr.expression
+      // A select expression with a selector.
+      ? '{ ' + serializeSelectExpression(expr) + '}'
+      // A variant list without a selector.
+      : '{' + serializeSelectExpression(expr) + '}';
+    default:
+      return '{ ' + _serializeExpression(expr) + ' }';
+  }
+}
+
+function _serializeExpression(expr) {
   switch (expr.type) {
     case 'StringExpression':
       return serializeStringExpression(expr);
@@ -2052,6 +2306,8 @@ function serializeExpression(expr) {
       return serializeVariantExpression(expr);
     case 'CallExpression':
       return serializeCallExpression(expr);
+    case 'SelectExpression':
+      return serializeSelectExpression(expr);
     default:
       throw new Error('Unknown expression type: ' + expr.type);
   }
@@ -2077,31 +2333,31 @@ function serializeSelectExpression(expr) {
   var parts = [];
 
   if (expr.expression) {
-    var selector = ' ' + serializeExpression(expr.expression) + ' ->';
+    var selector = _serializeExpression(expr.expression) + ' ->';
     parts.push(selector);
   }
 
-  var _iteratorNormalCompletion4 = true;
-  var _didIteratorError4 = false;
-  var _iteratorError4 = undefined;
+  var _iteratorNormalCompletion3 = true;
+  var _didIteratorError3 = false;
+  var _iteratorError3 = undefined;
 
   try {
-    for (var _iterator4 = expr.variants[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-      var variant = _step4.value;
+    for (var _iterator3 = expr.variants[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+      var variant = _step3.value;
 
       parts.push(serializeVariant(variant));
     }
   } catch (err) {
-    _didIteratorError4 = true;
-    _iteratorError4 = err;
+    _didIteratorError3 = true;
+    _iteratorError3 = err;
   } finally {
     try {
-      if (!_iteratorNormalCompletion4 && _iterator4.return) {
-        _iterator4.return();
+      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+        _iterator3.return();
       }
     } finally {
-      if (_didIteratorError4) {
-        throw _iteratorError4;
+      if (_didIteratorError3) {
+        throw _iteratorError3;
       }
     }
   }
@@ -2144,7 +2400,7 @@ function serializeCallArgument(arg) {
     case 'NamedArgument':
       return serializeNamedArgument(arg);
     default:
-      return serializeExpression(arg);
+      return _serializeExpression(arg);
   }
 }
 
@@ -2169,14 +2425,14 @@ function serializeIdentifier(identifier) {
   return identifier.name;
 }
 
-function serializeSymbol(symbol) {
-  return symbol.name;
+function serializeVariantName(VariantName) {
+  return VariantName.name;
 }
 
 function serializeVariantKey(key) {
   switch (key.type) {
-    case 'Symbol':
-      return serializeSymbol(key);
+    case 'VariantName':
+      return serializeVariantName(key);
     case 'NumberExpression':
       return serializeNumberExpression(key);
     default:
@@ -2199,15 +2455,24 @@ function serialize(resource, opts) {
 }
 
 function lineOffset(source, pos) {
-  // Substract 1 to get the offset.
+  // Subtract 1 to get the offset.
   return source.substring(0, pos).split('\n').length - 1;
 }
 
 function columnOffset(source, pos) {
-  var lastLineBreak = source.lastIndexOf('\n', pos);
-  return lastLineBreak === -1 ? pos
-  // Substracting two offsets gives length; substract 1 to get the offset.
-  : pos - lastLineBreak - 1;
+  // Find the last line break starting backwards from the index just before
+  // pos.  This allows us to correctly handle ths case where the character at
+  // pos  is a line break as well.
+  var fromIndex = pos - 1;
+  var prevLineBreak = source.lastIndexOf('\n', fromIndex);
+
+  // pos is a position in the first line of source.
+  if (prevLineBreak === -1) {
+    return pos;
+  }
+
+  // Subtracting two offsets gives length; subtract 1 to get the offset.
+  return pos - prevLineBreak - 1;
 }
 
 exports.FluentParser = FluentParser;
@@ -2219,8 +2484,10 @@ exports.columnOffset = columnOffset;
 exports.Resource = Resource;
 exports.Entry = Entry;
 exports.Message = Message;
+exports.Term = Term;
 exports.Pattern = Pattern;
 exports.TextElement = TextElement;
+exports.Placeable = Placeable;
 exports.Expression = Expression;
 exports.StringExpression = StringExpression;
 exports.NumberExpression = NumberExpression;
@@ -2231,13 +2498,14 @@ exports.AttributeExpression = AttributeExpression;
 exports.VariantExpression = VariantExpression;
 exports.CallExpression = CallExpression;
 exports.Attribute = Attribute;
-exports.Tag = Tag;
 exports.Variant = Variant;
 exports.NamedArgument = NamedArgument;
 exports.Identifier = Identifier;
-exports.Symbol = _Symbol;
+exports.VariantName = VariantName;
+exports.BaseComment = BaseComment;
 exports.Comment = Comment;
-exports.Section = Section;
+exports.GroupComment = GroupComment;
+exports.ResourceComment = ResourceComment;
 exports.Function = Function$1;
 exports.Junk = Junk;
 exports.Span = Span;
