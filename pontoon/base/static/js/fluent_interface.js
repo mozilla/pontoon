@@ -372,6 +372,28 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Is element representing a pluralized string?
+       *
+       * Keys of all variants of such elements are either
+       * CLDR plurals or numbers.
+       */
+      isPluralElement: function (element) {
+        if (!(element.expression && element.expression.variants)) {
+          return false;
+        }
+
+        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
+
+        return element.expression.variants.every(function (item) {
+          return (
+            CLDRplurals.indexOf(item.key.name) !== -1 ||
+            item.key.type === 'NumberExpression'
+          );
+        });
+      },
+
+
+      /*
        * Is ast of a simple string?
        *
        * A simple string has no attributes or tags,
@@ -393,28 +415,6 @@ var Pontoon = (function (my) {
         }
 
         return false;
-      },
-
-
-      /*
-       * Is element representing a pluralized string?
-       *
-       * Keys of all variants of such elements are either
-       * CLDR plurals or numbers.
-       */
-      isPluralElement: function (element) {
-        if (!(element.expression && element.expression.variants)) {
-          return false;
-        }
-
-        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
-
-        return element.expression.variants.every(function (item) {
-          return (
-            CLDRplurals.indexOf(item.key.name) !== -1 ||
-            item.key.type === 'NumberExpression'
-          );
-        });
       },
 
 
