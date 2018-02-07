@@ -82,7 +82,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.variants) {
+      if (Pontoon.fluent.isSelectExpressionElement(element)) {
         element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
@@ -118,7 +118,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.variants) {
+      if (Pontoon.fluent.isSelectExpressionElement(element)) {
         var expression = fluentSerializer.serializeExpression(element.expression.expression);
         content = '<li data-expression="' + expression + '"><ul>' + content;
 
@@ -327,7 +327,7 @@ var Pontoon = (function (my) {
           return elements.every(function(element) {
             return (
               self.isSimpleElement(element) ||
-              (element.expression && element.expression.variants)
+              self.isSelectExpressionElement(element)
             );
           });
         }
@@ -372,13 +372,25 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Is element a SelectExpression?
+       *
+       * We evaluate that by checking if element expression has variants defined.
+       * If yes, the element must be a SelectExpression according to Fluent ASDL:
+       * https://github.com/projectfluent/fluent/blob/master/spec/fluent.asdl
+       */
+      isSelectExpressionElement: function (element) {
+        return element.expression && element.expression.variants;
+      },
+
+
+      /*
        * Is element representing a pluralized string?
        *
        * Keys of all variants of such elements are either
        * CLDR plurals or numbers.
        */
       isPluralElement: function (element) {
-        if (!(element.expression && element.expression.variants)) {
+        if (!this.isSelectExpressionElement(element)) {
           return false;
         }
 
@@ -453,7 +465,7 @@ var Pontoon = (function (my) {
               }
               translatedValue += startMarker + '{' + element.expression.id.name + '}' + endMarker;
             }
-            else if (element.expression.variants) {
+            else if (self.isSelectExpressionElement(element)) {
               var variantElements = element.expression.variants.filter(function (variant) {
                 return variant.default;
               })[0].value.elements;
