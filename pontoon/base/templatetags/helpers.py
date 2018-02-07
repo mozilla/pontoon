@@ -258,14 +258,14 @@ def _serialize_elements(elements):
     response = ''
 
     for element in elements:
-        if type(element) == ast.TextElement:
+        if isinstance(element, ast.TextElement):
             response += element.value
 
-        elif type(element) == ast.Placeable:
-            if type(element.expression) == ast.ExternalArgument:
+        elif isinstance(element, ast.Placeable):
+            if isinstance(element.expression, ast.ExternalArgument):
                 response += '{ $' + element.expression.id.name + ' }'
 
-            elif type(element.expression) == ast.MessageReference:
+            elif isinstance(element.expression, ast.MessageReference):
                 response += '{ ' + element.expression.id.name + ' }'
 
             elif hasattr(element.expression, 'variants'):
@@ -284,7 +284,7 @@ def as_simple_translation(source):
     translation_ast = parser.parse_entry(source)
 
     # Non-FTL string or string with an error
-    if type(translation_ast) == ast.Junk:
+    if isinstance(translation_ast, ast.Junk):
         return source
 
     # Value: use entire AST
