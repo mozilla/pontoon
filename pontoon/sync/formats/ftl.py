@@ -74,7 +74,7 @@ class FTLResource(ParsedResource):
             else:
                 raise
 
-        group_comment = None
+        group_comment = []
         for obj in self.structure.body:
             if type(obj) in (ast.Message, ast.Term):
                 key = obj.id.name
@@ -91,7 +91,7 @@ class FTLResource(ParsedResource):
                     translation,
                     '',
                     {None: translation},
-                    (group_comment or []) + comment,
+                    group_comment + comment,
                     self.order
                 )
                 self.order += 1
