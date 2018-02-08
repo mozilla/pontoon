@@ -155,13 +155,17 @@ def _calculate_tags(**kwargs):
     attrs = ['total_strings'] + attrs
     # iterate through associated tags for all matching translated resources
     for tr, (_pk, _slug, _name) in translated_resource_tags:
-        if _slug not in totals:
+        if kwargs.get('groupby'):
+            key = tr[kwargs['groupby']]
+        else:
+            key = _slug
+        if key not in totals:
             # create a totals[tag] with zeros for this tag
-            totals[_slug] = dict((attr, 0) for attr in attrs)
-            totals[_slug].update(dict(name=_name, pk=_pk, last_change=None))
+            totals[key] = dict((attr, 0) for attr in attrs)
+            totals[key].update(dict(name=_name, pk=_pk, last_change=None))
         for attr in attrs:
             # add the total for this translated resource to the tags total
-            totals[_slug][attr] += tr[attr]
+            totals[key][attr] += tr[attr]
     return totals
 
 
@@ -194,13 +198,17 @@ def _calculate_tags_latest(**kwargs):
     translation_tags = _tag_iterator(qs, **kwargs)
     # iterate through associated tags for all matching translations
     for translation, (tag, __, __) in translation_tags:
+        if kwargs.get('groupby'):
+            key = translation[kwargs['groupby']]
+        else:
+            key = tag
         # get the current latest for this tag
         _pk, _date = latest_dates.get(
-            tag, (None, timezone.make_aware(datetime.min)))
+            key, (None, timezone.make_aware(datetime.min)))
         if translation['date'] > _date:
             # set this translation if its newer than the current latest
             # for this tag
-            latest_dates[tag] = (translation['pk'], translation['date'])
+            latest_dates[key] = (translation['pk'], translation['date'])
     return latest_dates
 
 
@@ -320,7 +328,7 @@ def tag_test_kwargs(request, tag_matrix):
     return request.param, kwargs
 
 
-_tag_init_kwargs = OrderedDict(
+_tag_data_init_kwargs = OrderedDict(
     (('no_args',
       dict(annotations=None,
            groupby=None,
@@ -337,6 +345,33 @@ _tag_init_kwargs = OrderedDict(
            priority=5,
            projects=6,
            slug=7))))
+
+
+@pytest.fixture(params=_tag_data_init_kwargs)
+def tag_data_init_kwargs(request):
+    """This is a parametrized fixture that provides 2 sets
+    of possible **kwargs to instantiate the TagsDataTools with
+
+    The first set of kwargs, are all set to `None` and the
+    second contain numeric values for testing against
+    """
+
+    return _tag_data_init_kwargs.get(request.param).copy()
+
+
+_tag_init_kwargs = OrderedDict(
+    (('no_args',
+      dict(locales=None,
+           path=None,
+           priority=None,
+           projects=None,
+           slug=None)),
+     ('args',
+      dict(locales=1,
+           path=2,
+           priority=3,
+           projects=4,
+           slug=5))))
 
 
 @pytest.fixture(params=_tag_init_kwargs)
