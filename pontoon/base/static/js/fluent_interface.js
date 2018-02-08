@@ -634,7 +634,8 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Return translation in the editor as FTL source
+       * Return translation in the editor as FTL source to be used
+       * in unsaved changes check
        */
       getTranslationSource: function () {
         var entity = Pontoon.getEditorEntity();
@@ -646,6 +647,11 @@ var Pontoon = (function (my) {
         }
 
         var translation = this.serializeTranslation(entity, fallback);
+
+        // If translation broken, incomplete or empty
+        if (translation.error) {
+          return fallback;
+        }
 
         // Special case: empty translations in rich FTL editor don't serialize properly
         if (this.isFTLEditorEnabled()) {
