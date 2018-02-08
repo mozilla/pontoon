@@ -55,7 +55,7 @@ def sorted_project_locale0_translators(
         }
         for u in user_factory(batch=3)
     ]
-    
+
     sorted_translators = sorted(
         translators,
         key=lambda u: u['email']
