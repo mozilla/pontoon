@@ -673,7 +673,7 @@ var Pontoon = (function (my) {
         }
 
         var entityAST = fluentParser.parseEntry(entity.original);
-        var content = entity.key + ' = '; // Initialize untranslated string
+        var content = entity.key + ' = ';
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
         var value = '';
@@ -719,6 +719,12 @@ var Pontoon = (function (my) {
           if (attributes) {
             content = (value ? content : entity.key) + attributes;
           }
+        }
+
+        // Overcome bug in fluent-syntax 0.6.0 that incorrectly parses
+        // empty messages without trailing newlines as Messages instead of Junk
+        if (content === (entity.key + ' = ')) {
+          content += '\n';
         }
 
         var ast = fluentParser.parseEntry(content);
