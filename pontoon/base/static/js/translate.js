@@ -976,6 +976,9 @@ var Pontoon = (function (my) {
       if(!$('#from').data('id')) $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
       if(!$('#to').data('id')) $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
 
+      if(!$('#from').data('id')||!$('#to').data('id')){
+        return;
+      }
       // Render range selector
       Highcharts.setOptions({
         global: {
