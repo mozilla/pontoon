@@ -286,9 +286,9 @@ def _save_new_strings(project, source):
 
         # Insert all new strings into Entity objects, associated to the fake resource.
         new_entities = []
-        for new_string in new_strings:
+        for i, new_string in enumerate(new_strings):
             string = new_string.strip()
-            new_entities.append(Entity(string=string, resource=resource))
+            new_entities.append(Entity(string=string, resource=resource, order=i))
 
         Entity.objects.bulk_create(new_entities)
 

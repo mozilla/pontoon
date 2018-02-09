@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
     Group,
     User,
 )
+from django.db.models import Max
 from django.template.defaultfilters import slugify
 from django.test import (
     TestCase as BaseTestCase,
@@ -145,6 +146,14 @@ class EntityFactory(DjangoModelFactory):
 
     class Meta:
         model = Entity
+
+    @factory.lazy_attribute
+    def order(self):
+        order_max = self.resource.entities.aggregate(Max('order'))['order__max']
+        return (
+            order_max + 1
+            if order_max is not None
+            else 0)
 
 
 class PluralEntityFactory(DjangoModelFactory):
