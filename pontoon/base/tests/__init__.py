@@ -123,7 +123,7 @@ class RepositoryFactory(DjangoModelFactory):
 
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    path = '/fake/path.po'
+    path = Sequence(lambda n: '/fake/path{0}.po'.format(n))
     format = 'po'
     total_strings = 1
 
