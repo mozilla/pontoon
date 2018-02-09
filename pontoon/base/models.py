@@ -893,9 +893,8 @@ class Locale(AggregatedStats):
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
-            resource__entities__obsolete=False,
             locale=self
-        ).distinct().aggregate_stats(self)
+        ).aggregate_stats(self)
 
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
