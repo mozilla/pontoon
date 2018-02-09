@@ -1731,6 +1731,9 @@ class Resource(models.Model):
 
     objects = ResourceQuerySet.as_manager()
 
+    class Meta:
+        unique_together = (('project', 'path'), )
+
     @property
     def is_asymmetric(self):
         """Return True if this resource is in an asymmetric format."""
