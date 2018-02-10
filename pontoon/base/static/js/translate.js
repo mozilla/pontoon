@@ -231,8 +231,6 @@ var Pontoon = (function (my) {
 
 
     getApproveButtonTitle: function(translation) {
-      var approveButtonTitle = '';
-
       if (translation.approved && translation.approved_user) {
         return 'Approved by ' + translation.approved_user;
       } else {
@@ -539,7 +537,7 @@ var Pontoon = (function (my) {
           try {
             self.translationLengthLimit = parseInt(split[0].split('MAX_LENGTH: ')[1].split(' ')[0], 10);
             splitComment = split.length > 1 ? entity.comment.substring(entity.comment.indexOf('\n') + 1) : '';
-          } catch (e) {} // Catch unexpected comment structure
+          } catch (e) {} // Catch unexpected comment structure <-- silently fail
         }
 
         var comment = this.linkify(splitComment);
@@ -666,7 +664,9 @@ var Pontoon = (function (my) {
      */
     getEntityStatus: function (entity) {
       var translation = entity.translation,
-          translated = fuzzy = suggested = 0;
+          translated = 0,
+          fuzzy = 0,
+          suggested = 0;
 
       for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
@@ -819,8 +819,7 @@ var Pontoon = (function (my) {
      * Render list of entities to translate
      */
     renderEntityList: function () {
-      var self = this,
-          list = $('#entitylist');
+      var self = this;
 
       $($(self.entities).map($.proxy(self.renderEntity, self))).each(function (idx, entity) {
         self.appendEntity(entity);
@@ -946,7 +945,7 @@ var Pontoon = (function (my) {
       try {
         var utc = new Date(reverse).toISOString();
         return utc.replace(/-/gi, '').replace(/T/gi, '').replace(/:/gi, '').substring(0, 12);
-      } catch (e) {}
+      } catch (e) {} // <-- fail silently
     },
 
 
@@ -1229,7 +1228,7 @@ var Pontoon = (function (my) {
      * Validate Time range input field
      */
     validateTimeRangeInput: function() {
-      var from = this.local2server($('#from').val());
+      var from = this.local2server($('#from').val()),
           to = this.local2server($('#to').val());
 
       if (from && to) {
@@ -1388,7 +1387,7 @@ var Pontoon = (function (my) {
       });
 
       // Filter entities by a single filter
-      $('#filter').on('click', 'li[data-type]:not(".editing")', function(e) {
+      $('#filter').on('click', 'li[data-type]:not(".editing")', function() {
         var el = $(this),
             value = el.data('type'),
             filter = self.getEmptyFilterObject();
@@ -1439,7 +1438,7 @@ var Pontoon = (function (my) {
       });
 
       // Update authors and time range
-      $('#filter:not(".opened") .selector').click(function(e) {
+      $('#filter:not(".opened") .selector').click(function() {
         if ($('#filter').is('.opened')) {
           return;
         }
@@ -1458,12 +1457,12 @@ var Pontoon = (function (my) {
       });
 
       // Time range editing toggle
-      $('#filter .horizontal-separator .edit').click(function(e) {
+      $('#filter .horizontal-separator .edit').click(function() {
         self.toggleRangeEditing();
       });
 
       // Initialize date & time range picker
-      $('#filter .time-range').on('focusin', 'input:not(".hasDatepicker")', function(e) {
+      $('#filter .time-range').on('focusin', 'input:not(".hasDatepicker")', function() {
         $.timepicker.datetimeRange($('#from'), $('#to'), {
           showTime: false,
           showHour: false,
@@ -1508,7 +1507,7 @@ var Pontoon = (function (my) {
       })();
 
       // Search entities (keyup event also triggered on modifier keys etc.)
-      $('#search').off('input').on('input', function (e) {
+      $('#search').off('input').on('input', function () {
         delay(function () {
           self.searchEntities();
         }, 500);
@@ -1539,7 +1538,6 @@ var Pontoon = (function (my) {
 
         // Prevents from firing multiple calls during onscroll event
         if (entitiesHeight > 0 && (list.scrollTop() >= entitiesHeight * 0.75 - list.height()) && self.hasNext && !self.isLoading()) {
-          var currentTop = list.scrollTop();
           self.loadNextEntities('scroll');
         }
       });
@@ -1555,7 +1553,7 @@ var Pontoon = (function (my) {
         initial.right.width(right).css('left', left);
       }
 
-      function mouseUpHandler(e) {
+      function mouseUpHandler() {
         $(document)
           .unbind('mousemove', mouseMoveHandler)
           .unbind('mouseup', mouseUpHandler);
@@ -1672,9 +1670,9 @@ var Pontoon = (function (my) {
      * Update in-place translation if applicable
      */
     updateInPlaceTranslation: function (translation) {
+      translation = translation || $('#editor textarea:visible:first').val();
       var entity = this.getEditorEntity(),
-          pluralForm = this.getPluralForm(true),
-          translation = translation || $('#editor textarea:visible:first').val();
+          pluralForm = this.getPluralForm(true);
 
       if (entity.body && pluralForm === 0 && (this.user.canTranslate() || !entity.translation[pluralForm].approved)) {
         this.postMessage("SAVE", {
@@ -1718,7 +1716,7 @@ var Pontoon = (function (my) {
       });
 
       // Zoom in screenshot
-      $('#screenshots').on('click', 'img', function (e) {
+      $('#screenshots').on('click', 'img', function () {
         $('body').append('<div id="overlay">' + this.outerHTML + '</div>');
         $('#overlay').fadeIn('fast');
       });
@@ -1889,7 +1887,7 @@ var Pontoon = (function (my) {
         }
 
       // Update length (keydown is triggered too early)
-      }).unbind("input propertychange").bind("input propertychange", function (e) {
+      }).unbind("input propertychange").bind("input propertychange", function () {
         self.updateCurrentTranslationLength();
         self.updateInPlaceTranslation();
         $('.warning-overlay:visible .cancel').click();
@@ -2010,7 +2008,7 @@ var Pontoon = (function (my) {
       });
 
       // Approve and delete translations
-      $('#helpers .history').on('click', 'menu .approve', function (e) {
+      $('#helpers .history').on('click', 'menu .approve', function () {
         $(this).parents('li').click();
 
         var entity = self.getEditorEntity(),
@@ -2026,7 +2024,7 @@ var Pontoon = (function (my) {
         self.updateOnServer(entity, translation, true);
       });
 
-      $('#helpers .history').on('click', 'menu .unapprove', function (e) {
+      $('#helpers .history').on('click', 'menu .unapprove', function () {
         var button = $(this),
             translationId = parseInt($(this).parents('li').data('id'));
 
@@ -2074,7 +2072,7 @@ var Pontoon = (function (my) {
         });
       });
 
-      $('#helpers .history').on('click', 'menu .reject', function (e) {
+      $('#helpers .history').on('click', 'menu .reject', function () {
         var button = $(this);
         // Reject a translation.
         $.ajax({
@@ -2106,7 +2104,7 @@ var Pontoon = (function (my) {
         });
       });
 
-      $('#helpers .history').on('click', 'menu .unreject', function (e) {
+      $('#helpers .history').on('click', 'menu .unreject', function () {
         var button = $(this),
             translationId = parseInt($(this).parents('li').data('id'));
 
@@ -2283,11 +2281,11 @@ var Pontoon = (function (my) {
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
                   var checkedEntities = self.getEntitiesIds('#entitylist .entity.selected');
-                  self.getEntities({entity_ids: checkedEntities.join(',')}).then(function(entitiesData, state, hasNext) {
+                  self.getEntities({entity_ids: checkedEntities.join(',')}).then(function(entitiesData) {
                     self.stats = entitiesData.stats;
                     self.updateFilterUI();
 
-                    entitiesMap = {};
+                    var entitiesMap = {};
                     $.each(entitiesData.entities, function() {
                       entitiesMap[this.pk] = this;
                     });
@@ -2323,7 +2321,7 @@ var Pontoon = (function (my) {
                 $('#batch .replace').focus();
               }
             },
-            error: function(error) {
+            error: function() {
               message = 'Oops, something went wrong';
             },
             complete: function() {
@@ -2388,7 +2386,7 @@ var Pontoon = (function (my) {
             radius = (this.width - context.lineWidth)/2,
             end = null;
 
-        $('#progress .details > div').each(function(i) {
+        $('#progress .details > div').each(function() {
           var type = $(this).attr('class'),
               length = fraction[type] * 2,
               start = (end !== null) ? end : -0.5;
@@ -2685,7 +2683,7 @@ var Pontoon = (function (my) {
             self.approvedNotSubmitted = null;
           }
         },
-        complete: function(e) {
+        complete: function() {
           self.reattachSaveButtonHandler();
         }
       });
@@ -2705,7 +2703,7 @@ var Pontoon = (function (my) {
         .attr('title', title)
         .find('.title')
           // Only show filename instead of full path
-          .html(title.replace(/^.*[\\\/]/, ''));
+          .html(title.replace(/^.*[/]/, ''));
     },
 
 
@@ -2767,7 +2765,7 @@ var Pontoon = (function (my) {
     updatePartMenu: function () {
       var locale = this.getSelectedLocale(),
           parts = this.getProjectData('parts')[locale],
-          currentPart = this.getSelectedPart();
+          currentPart = this.getSelectedPart(),
           part = $.grep(parts, function (e) { return e.title === currentPart; });
 
       // Fallback if selected part not available for the selected locale & project
@@ -2811,7 +2809,7 @@ var Pontoon = (function (my) {
       });
 
       // iFrame fix on hiding menus
-      $('body').bind("click.main", function (e) {
+      $('body').bind("click.main", function () {
         $('#iframe-cover').hide();
       });
 
@@ -2863,7 +2861,7 @@ var Pontoon = (function (my) {
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match")').click(function (e) {
+      $('.project .menu li:not(".no-match")').click(function () {
         var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug'),
@@ -2903,7 +2901,6 @@ var Pontoon = (function (my) {
         var locale = self.getSelectedLocale(),
             parts = self.getProjectData('parts')[locale],
             menu = $(this).siblings('.menu').find('ul'),
-            project = self.getSelectedProject(),
             currentProject = self.getProjectData('slug') === self.project.slug,
             currentLocale = self.getLocaleData('code') === self.locale.code;
 
@@ -2936,7 +2933,7 @@ var Pontoon = (function (my) {
       });
 
       // Parts menu handler
-      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources', function (e) {
+      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources', function () {
         var title = $(this).find('span:first').html();
         self.updatePartSelector(title);
         self.updateGoButton();
@@ -3227,10 +3224,9 @@ var Pontoon = (function (my) {
       if (Pontoon.project && !Pontoon.project.win) {
         return false;
       }
-
-      var otherWindow = otherWindow || Pontoon.project.win,
-          targetOrigin = targetOrigin || Pontoon.project.url,
-          message = {
+      otherWindow = otherWindow || Pontoon.project.win;
+      targetOrigin = targetOrigin || Pontoon.project.url;
+      var message = {
             type: messageType,
             value: messageValue
           };
@@ -3256,9 +3252,9 @@ var Pontoon = (function (my) {
      */
     waitForAttribute: function(propery, times, mainDeferred) {
       var self = this,
-          d = mainDeferred || $.Deferred(),
-          // How many times should we check entities before displaying an error.
-          times = typeof times === 'undefined' ? 100 : times;
+          d = mainDeferred || $.Deferred();
+      // How many times should we check entities before displaying an error.
+      times = typeof times === 'undefined' ? 100 : times;
 
       if (times === -1) {
         d.reject();
@@ -3645,9 +3641,9 @@ var Pontoon = (function (my) {
      * Load entities, store data, prepare UI
      */
     getEntities: function(opts) {
+      opts = opts || {};
       var self = this,
           state = self.state,
-          opts = opts || {},
           params = {
             'project': state.project,
             'locale': state.locale,
@@ -3844,8 +3840,8 @@ var Pontoon = (function (my) {
     },
 
     highlightQuery: function(item) {
-      var searchQuery = this.getSearch(),
-          item = item || $('#entitylist .source-string, #entitylist .translation-string');
+      var searchQuery = this.getSearch();
+      item = item || $('#entitylist .source-string, #entitylist .translation-string');
 
       item.unmark();
       if (searchQuery) {
@@ -3932,7 +3928,7 @@ var Pontoon = (function (my) {
      * Get currently selected part name
      */
     getSelectedPart: function() {
-      part = $('.part .selector').attr('title');
+      var part = $('.part .selector').attr('title');
       if (part === 'All Resources') {
         part = 'all-resources';
       }
@@ -3963,7 +3959,7 @@ var Pontoon = (function (my) {
      *
      * title Part title
      */
-    updateCurrentPart: function(title) {
+    updateCurrentPart: function() {
       var locale = this.getSelectedLocale(),
           part = this.getSelectedPart(),
           availableParts = this.getProjectData('parts')[locale],
@@ -3996,8 +3992,8 @@ var Pontoon = (function (my) {
      * Updates Pontoon and history state, and the URL
      */
     pushState: function(state) {
+      state = state || self.getState();
       var self = this,
-          state = state || self.getState(),
           url = '/' + state.locale + '/' + state.project + '/' + state.paths + '/',
           queryParams = {};
 
@@ -4046,8 +4042,8 @@ var Pontoon = (function (my) {
      * Get value from the querystring
      */
     getQueryParam: function(name) {
+      name = name.replace(/[[\]]/g, "\\$&");
       var url = window.location.href,
-          name = name.replace(/[\[\]]/g, "\\$&"),
           regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
           results = regex.exec(url);
 
@@ -4107,7 +4103,8 @@ var Pontoon = (function (my) {
       this.updateFilterUI(state.filter);
 
       // Fallback to first available part if no matches found (mistyped URL)
-      var paths = requestedPaths = this.getSelectedPart();
+      var requestedPaths = this.getSelectedPart(),
+          paths = requestedPaths;
       this.updateCurrentPart(requestedPaths);
       paths = this.currentPart.title;
 

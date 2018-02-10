@@ -22,7 +22,7 @@ script:
   - pylama pontoon
   - pylama tests
   - ./node_modules/.bin/webpack
-  - python manage.py collectstatic --noinput
+  - python manage.py collectstatic -v0 --noinput
   - npm test
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v

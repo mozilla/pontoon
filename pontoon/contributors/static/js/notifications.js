@@ -1,6 +1,6 @@
 $(function() {
   // Filter notifications
-  $('.left-column a').on('click', function(e) {
+  $('.left-column a').on('click', function() {
     var notifications = $(this).data('notifications');
 
     // Show all notifications

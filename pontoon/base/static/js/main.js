@@ -274,9 +274,9 @@ var Pontoon = (function (my) {
      */
     linkify: function (string) {
       // http://, https://, ftp://
-      var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+      var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#/%?=~_|!:,.;]*[a-z0-9-+&@#/%=~_|]/gim;
       // www. sans http:// or https://
-      var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+      var pseudoUrlPattern = /(^|[^/])(www\.[\S]+(\b|$))/gim;
 
       return this.doNotRender(string)
         .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
@@ -304,8 +304,8 @@ var Pontoon = (function (my) {
      * loader Loader element id
      */
     getMachinery: function (original, target, loader) {
+      loader = loader || 'helpers li a[href="#machinery"]';
       var self = this,
-          loader = loader || 'helpers li a[href="#machinery"]',
           ul = $('#helpers > .machinery').children('ul').empty(),
           tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
@@ -393,7 +393,7 @@ var Pontoon = (function (my) {
         ul.html(listitems);
 
         // Sort sources inside results.
-        ul.find('.sources').each(function (index) {
+        ul.find('.sources').each(function () {
           var $sourcesList = $(this),
               sources = $sourcesList.children('li'),
               sortedItems = sources.sort(function(a, b) {
@@ -605,7 +605,7 @@ $(function() {
   }
 
   // Sign in button action
-  $('#fxa-sign-in, #standalone-signin a, #sidebar-signin').on('click', function(ev) {
+  $('#fxa-sign-in, #standalone-signin a, #sidebar-signin').on('click', function() {
     var $this = $(this);
     var loginUrl = $this.prop('href'),
         startSign = loginUrl.match(/\?/) ? '&': '?';
@@ -637,7 +637,7 @@ $(function() {
   });
 
   // Hide menus on click outside
-  $('body').bind('click.main', function (e) {
+  $('body').bind('click.main', function () {
     $('.menu:not(".permanent")').hide();
     $('.select').removeClass('opened');
     $('.menu:not(".permanent") li').removeClass('hover');

@@ -1,7 +1,7 @@
 $(function() {
 
   // Before submitting the form
-  $('#admin-form').submit(function (e) {
+  $('#admin-form').submit(function () {
     // Update locales
     var arr = [];
     $("#selected").parent().siblings('ul').find('li:not(".no-match")').each(function() {
@@ -85,7 +85,7 @@ $(function() {
   });
 
   // Copy locales from another project
-  $('#copy-locales option').on('click', function(e) {
+  $('#copy-locales option').on('click', function() {
     var projectLocales = [];
 
     try {
@@ -162,11 +162,11 @@ $(function() {
   });
 
   // Toggle branch input
-  function toggleBranchInput(element, value) {
+  function toggleBranchInput(element) {
     $(element).parents('.repository').toggleClass('git', $(element).val() === 'git');
   }
   // On select change
-  $('body').on('change', '.repository .type-wrapper select', function(e) {
+  $('body').on('change', '.repository .type-wrapper select', function() {
     toggleBranchInput(this);
   });
   // On page load

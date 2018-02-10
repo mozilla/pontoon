@@ -42,7 +42,7 @@ $(function() {
         Pontoon.endLoader('Notification sent.');
         container.empty().append(data);
       },
-      error: function(data) {
+      error: function() {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
       }
     });

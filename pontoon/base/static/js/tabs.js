@@ -10,7 +10,7 @@ $(function() {
   loadTabContent(window.location.pathname + window.location.search);
 
   // History
-  window.onpopstate = function(event) {
+  window.onpopstate = function() {
     loadTabContent(window.location.pathname + window.location.search);
   };
 

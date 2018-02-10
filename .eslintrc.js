@@ -33,7 +33,12 @@ module.exports = {
         sorttable: false,
         $: false,
         Pontoon: false,
-        jQuery: false
+        jQuery: false,
+        Clipboard: false,
+        NProgress: false,
+        diff_match_patch: false,
+        Highcharts: false,
+        editor: false
     },
     plugins: [
         'react',

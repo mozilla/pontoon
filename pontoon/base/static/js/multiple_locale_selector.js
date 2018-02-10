@@ -6,8 +6,7 @@ $(function() {
   function updateSelectedLocales() {
     var $selectedList = $('.multiple-locale-selector .locale.selected'),
         $selectedLocalesField = $selectedList.find('input[type=hidden]'),
-        selectedLocalesLength = $selectedList.find('li[data-id]').length,
-        selectedLocales = $selectedList.find('li[data-id]').map(function(index) {
+        selectedLocales = $selectedList.find('li[data-id]').map(function() {
            return $(this).data('id');
         }).get();
 
@@ -15,7 +14,7 @@ $(function() {
   }
 
   // Choose locales
-  $('body').on('click', '.multiple-locale-selector .locale.select li', function (e) {
+  $('body').on('click', '.multiple-locale-selector .locale.select li', function () {
     var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
         clone = $(this).remove();
 
@@ -43,7 +42,7 @@ $(function() {
     });
   }
 
-  $('body').on('submit', '.form.user-locales-settings', function (e) {
+  $('body').on('submit', '.form.user-locales-settings', function () {
     updateSelectedLocales();
   });
 });

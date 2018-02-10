@@ -150,7 +150,7 @@ var Pontoon = (function (my) {
           });
         }
         else {
-          element.variants.forEach(function (item, i) {
+          element.variants.forEach(function (item) {
             content += renderEditorElement(
               item.key.value || item.key.name,
               item.value.elements,
@@ -300,7 +300,6 @@ var Pontoon = (function (my) {
         // Attributes
         if (attributesTree.length) {
           attributesTree.forEach(function (attr) {
-            var ast = translationAST || entityAST;
             var id = attr.id.name;
 
             attributes += (
