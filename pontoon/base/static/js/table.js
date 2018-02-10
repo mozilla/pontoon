@@ -87,7 +87,7 @@ var Pontoon = (function (my) {
        * Sort table
        */
       sort: function() {
-        $('body').on('click', 'table.table-sort th', function (e) {
+        $('body').on('click', 'table.table-sort th', function () {
           function getProgress(el) {
             var legend = $(el).find('.progress .legend'),
                 all = legend.find('.all .value').data('value') || 0,

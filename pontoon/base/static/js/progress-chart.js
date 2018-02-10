@@ -34,7 +34,7 @@ $(function() {
 
     progress.siblings('.legend').find('li:not(.all)').each(function() {
       var length = fraction[$(this).attr('class')] * 2,
-          start = (end !== null) ? end : -0.5;
+          start = (end !== null) ? end : -0.5,
           color = window.getComputedStyle(
             $(this).find('.status')[0], ':before'
           ).getPropertyValue('color');
