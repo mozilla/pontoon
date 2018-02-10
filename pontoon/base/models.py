@@ -2380,7 +2380,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             ('entity', 'user'),
             ('entity', 'locale', 'approved'),
             ('entity', 'locale', 'fuzzy'),
-        )
+            ('locale', 'user', 'entity'))
 
     @classmethod
     def for_locale_project_paths(self, locale, project, paths):
