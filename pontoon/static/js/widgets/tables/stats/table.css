@@ -1,0 +1,250 @@
+
+.ReactTable {
+    border: none;
+    overflow: initial;
+    font-weight: 300;
+    color: #aaa;
+}
+
+.ReactTable a,
+.ReactTable a:link,
+.ReactTable a:visited {
+    font-weight: 300;
+    color: #aaa;
+}
+
+
+.ReactTable .rt-table {
+    overflow: initial;
+    text-align: center;
+}
+
+
+.rt-thead .rt-tr {
+    border-bottom: 1px solid #4D5967;
+}
+
+.ReactTable .rt-thead .rt-th.-sort-asc,
+.ReactTable .rt-thead .rt-th.-sort-desc  {
+    box-shadow: none;
+}
+
+.rt-th.-sort-asc i.fa,
+.rt-th.-sort-desc i.fa {
+    position: absolute;
+    height: 13px;
+    display: inline-block;
+}
+
+.rt-th i.fa:after {
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.rt-th.-sort-asc i.fa:after {
+    content: "";
+}
+
+.rt-th.-sort-desc i.fa:after {
+    content: "";
+    margin-top: -5px;
+}
+
+.rt-table .rt-th:first-child {
+    text-align: left;
+}
+
+
+.ReactTable .rt-tbody {
+    font-weight: 300;
+    overflow: initial;
+}
+
+.ReactTable .rt-tbody .rt-tr-group {
+    border: none;
+    overflow: initial;
+}
+
+.ReactTable .rt-tr {
+    position: relative;
+    top: 0;
+}
+
+.ReactTable.-striped .rt-tr.-even {
+    background: #333941;
+}
+
+.ReactTable.-highlighted .rt-tbody .rt-tr:hover {
+  background: #333941;
+}
+
+.ReactTable .rt-td {
+    overflow: inherit;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+.ReactTable .rt-td .wrapper {
+    position: relative;
+    top: 50%;
+    z-index: 10;
+    transform: translateY(-50%);
+}
+
+.rt-table h4 {
+    text-align: left;
+    overflow: hidden;
+    padding-left: 1px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rt-table h4 a {
+    font-size: 15px;
+    line-height: 47px;
+    padding: 12px 0 11px;
+}
+
+/* specific tables */
+
+.ReactTable .rt-table .rt-th {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgb(170, 170, 170);
+    padding: 10px;
+    line-height: 16px;
+}
+
+.stats-table .rt-table .rt-th:hover {
+    color: inherit;
+}
+
+
+.rt-tr:hover .progress-inline .chart-wrapper {
+  display: none;
+}
+
+.rt-tr:hover .progress-inline .legend {
+  display: block;
+}
+
+.rt-th .progress {
+    text-align: right;
+}
+
+.progress-table .rt-tr {
+    min-height: 3em;
+}
+
+.progress-table {
+    text-align: left;
+}
+
+.rt-table .code a {
+    color: #7BC876;
+    line-height: 47px;
+    padding: 15px 5px 14px;
+}
+
+.rt-table .progress-inline {
+    text-align: right;
+    width: auto;
+}
+
+
+.deadline time.overdue {
+    color: #F36;
+}
+
+.tooltip {
+    z-index: 100000;
+}
+
+
+.rt-table .rt-th.rank {
+    text-align: center;
+}
+
+.rt-th.name {
+    text-align: left;
+}
+
+.rt-td.rank {
+    text-align: center;
+    color: #ebebeb;
+    font-size: 36px;
+    padding: 15px 10px;
+}
+
+
+.rt-td.name {
+    text-align: left;
+    font-size: 13px;
+    position: relative;
+    top: 0;
+    padding: 15px 10px;
+}
+
+.rt-td.name img {
+    margin-right: 5px;
+}
+
+.rt-td.translations {
+    padding: 15px 10px;
+}
+
+
+.rt-td.name .user-name {
+    display: inline-block;
+    font-size: 1.5em;
+    height: 1.5em;
+    vertical-align: top;
+    padding-left: 2px;
+}
+
+.rt-td.name .user-role {
+    display: inline-block;
+    color: #ebebeb;
+    left: 67px;
+    position: absolute;
+    top: 42px;
+    padding-left: 2px;
+}
+
+
+.rt-td.translations .stat .title {
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.rt-td.translations .stat .value {
+    font-size: 20px;
+    padding: 3px 0 0;
+}
+
+.rt-td.translations .stat.translated .title {
+    color: #7bc876;
+}
+
+.rt-td.translations .stat.suggested .title {
+    color: #4fc4f6;
+}
+
+.rt-td.translations .stat.fuzzy .title {
+    color: #fed271;
+}
+
+.rt-td.priority {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+    padding: 16px 0 11px;
+}
+
+.rt-td.priority .stars {
+    margin: auto;
+    display: inline-block;
+}
