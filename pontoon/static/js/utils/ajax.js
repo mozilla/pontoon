@@ -34,7 +34,7 @@ export class DjangoAjax {
 
     appendParams (container, data)  {
         /**
-         * For a given data container - either FormData/URLSearchParameters
+         * For a given data container - either FormData/URLSearchParams
          * appends data from an object
          *
          * If any of the object values are arrayish, it will append k=v[n]
@@ -52,9 +52,9 @@ export class DjangoAjax {
 
     asGetParams (data) {
         /**
-         * Mangle a data object to URLSearchParameters
+         * Mangle a data object to URLSearchParams
          */
-        return this.appendParams(new URLSearchParameters(), data);
+        return this.appendParams(new URLSearchParams(), data);
     }
 
     asMultipartForm (data) {

@@ -39,7 +39,7 @@ test('PontoonDjangoAjax headers', () => {
 test('PontoonDjangoAjax asGetParams', () => {
     const _ajax = new PontoonDjangoAjax();
     const parameters = {append: jest.fn()}
-    window.URLSearchParameters = jest.fn(() => parameters)
+    window.URLSearchParams = jest.fn(() => parameters)
     expect(_ajax.asGetParams({foo: 7, bar: 23, baz: 43})).toBe(parameters)
     expect(parameters.append.mock.calls).toEqual(
         [["foo", 7], ["bar", 23], ["baz", 43]])
