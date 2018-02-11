@@ -1,0 +1,91 @@
+
+
+.latest-activity-inline .latest-inline {
+  display: block;
+  width: 140px;
+  margin: 0 auto;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.latest-activity-inline time {
+  white-space: nowrap;
+}
+
+.latest-activity-inline time:hover {
+  color: #EBEBEB;
+}
+
+.latest-activity-inline .tooltip {
+  display: block;
+  background: #1C1E21;
+  border-radius: 10px;
+  bottom: 30px;
+  color: #EBEBEB;
+  left: -100px;
+  padding: 10px;
+  position: absolute;
+  text-align: left;
+  width: 320px;
+  z-index: 20;
+}
+
+.latest-activity-inline .tooltip:after {
+  content: "";
+  position: absolute;
+  border: 10px solid;
+  border-color: #1C1E21 transparent transparent transparent;
+  bottom: -20px;
+  left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+  clip: rect(0 20px 10px 0);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+}
+
+.latest-activity-inline .tooltip .quote {
+  color: #7BC876;
+  font-size: 30px;
+}
+
+.latest-activity-inline .tooltip .translation {
+  display: block;
+  margin: -20px 0 0 40px;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.latest-activity-inline .tooltip footer {
+  color: #888888;
+  font-style: italic;
+  height: 48px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.latest-activity-inline .tooltip footer .wrapper {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+.latest-activity-inline .tooltip footer .translation-details {
+  display: inline-block;
+  padding-top: 8px;
+  text-align: right;
+}
+
+.latest-activity-inline .tooltip footer .translation-action {
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 264px;
+}
+
+.latest-activity-inline .tooltip footer .translation-author {
+  color: #7BC876;
+}
+
+.latest-activity-inline .tooltip footer img {
+  display: inline-block;
+  margin-left: 8px;
+}
