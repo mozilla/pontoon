@@ -1,0 +1,15 @@
+{# Menu widget #}
+{% macro submenu(class='submenu') %}
+<div class="{{ class }}">
+  <ul class="links">
+    {{ caller() }}
+  </ul>
+</div>
+{% endmacro %}
+
+{# ReactMenu item #}
+{% macro item(label, url, api, is_active, count=0, class=None) %}
+  <li {% if is_active %}class="active"{% endif %}>
+    <a href="{{ url }}" data-api="{{ api }}" class="{% if class %}{{ class }} {% endif %}js-menu-button">{{ label }}{% if count > 0 %}<span class="count">{{ count }}</span>{% endif %}</a>
+  </li>
+{% endmacro %}
