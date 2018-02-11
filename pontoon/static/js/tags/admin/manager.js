@@ -1,33 +1,26 @@
 
 import React from 'react';
 
-import {ajax} from 'utils/ajax';
 import TagResourceSearch from './search';
 import TagResourceTable from './table';
 import {ErrorList} from 'widgets/errors';
 
 import "./tag-resources.css";
 
+import {DataManager, dataManager} from 'utils/data';
 
-export default class TagResourceManager extends React.Component {
+
+export class TagResourceManagerWidget extends React.Component {
 
     constructor (props) {
         super(props);
-        this.handleResponse = this.handleResponse.bind(this);
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.state = {type: 'assoc', search: "*", data: [], errors: {}};
+        this.state = {type: 'assoc', search: "*"};
     }
 
-    async handleResponse (response) {
-        const {status} = response;
-        const json = await response.json();
-        if (status === 200) {
-            const {result} = json;
-            return this.setState({data: result, errors: {}});
-        }
-        const {errors} = json;
-        return this.setState({errors});
+    componentDidMount () {
+        return this.props.refreshData({...this.state});
     }
 
     async handleSearchChange (evt) {
@@ -39,44 +32,38 @@ export default class TagResourceManager extends React.Component {
             await this.setState({type: evt.target.value});
             break;
         }
-        return this.refreshData();
+        return this.props.refreshData({...this.state});
     }
 
-    async handleSubmit (data) {
-        let {search, type} = this.state;
-        return this.handleResponse(
-            await ajax.post(
-                this.props.api,
-                {type: type,
-                 search: search,
-                 paths: data}));
-    }
-
-    async refreshData () {
-        let {search, type} = this.state;
-        return this.handleResponse(
-            await ajax.post(
-                this.props.api,
-                {type: type,
-                 search: search}));
-    }
-
-    componentDidMount () {
-        return this.refreshData();
+    handleSubmit (checked) {
+        return this.props.handleSubmit(
+            Object.assign({}, {...this.state}, checked));
     }
 
     render () {
-        const {data, errors, type} = this.state;
+        const {data, errors} = this.props;
+        const {type} = this.state;
         return (
             <div className="tag-resource-widget">
               <TagResourceSearch
                  handleSearchChange={this.handleSearchChange} />
               <ErrorList
-                 errors={errors} />
+                 errors={errors || {}} />
               <TagResourceTable
-                 data={data}
+                 data={data || []}
                  type={type}
                  handleSubmit={this.handleSubmit}  />
             </div>);
     }
 }
+
+
+export class TagResourceDataManager extends DataManager {
+
+    get requestMethod () {
+        return 'post';
+    }
+
+}
+
+export const TagResourceManager = dataManager(TagResourceManagerWidget, TagResourceDataManager);

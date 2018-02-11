@@ -4,7 +4,7 @@ import React from 'react';
 import {Columns} from 'widgets/columns';
 
 
-export default class TagResourceSearch extends Columns {
+export default class TagResourceSearch extends React.PureComponent {
 
     get columns () {
         return [[this.renderSearchInput(), 3],
@@ -28,5 +28,9 @@ export default class TagResourceSearch extends Columns {
               <option value="assoc">Linked</option>
               <option value="nonassoc">Not linked</option>
             </select>);
+    }
+
+    render () {
+        return <Columns columns={this.columns} />
     }
 }
