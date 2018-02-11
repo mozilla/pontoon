@@ -1,0 +1,153 @@
+
+.ReactTable {
+    border: none;
+    overflow: initial;
+}
+
+.ReactTable .rt-table {
+    overflow: initial;
+}
+
+.ReactTable .rt-tbody .rt-tr-group {
+    border: none;
+    overflow: initial;
+}
+
+.ReactTable .rt-tbody {
+    font-weight: 300;
+    overflow: initial;
+}
+
+.ReactTable a {
+    color: #EBEBEB;
+}
+
+.ReactTable .rt-tbody .rt-tr:hover {
+  background: #333941;
+}
+
+.stats-table .rt-table .rt-th {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgb(170, 170, 170);
+    padding: 10px;
+    line-height: 16px;
+}
+
+.stats-table .rt-table .rt-th:hover {
+    color: inherit;
+}
+
+.rt-thead .rt-tr {
+    border-bottom: 1px solid #4D5967;
+}
+
+.ReactTable .rt-thead .rt-th.-sort-asc,
+.ReactTable .rt-thead .rt-th.-sort-desc  {
+    box-shadow: none;
+}
+
+.rt-th.-sort-asc i.fa,
+.rt-th.-sort-desc i.fa {
+    position: absolute;
+    height: 13px;
+    display: inline-block;
+}
+
+.rt-th.-sort-asc i.fa:after {
+    content: "";
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.rt-th.-sort-desc i.fa:after {
+    content: "";
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: -5px;
+}
+
+
+.rt-tr:hover .progress-inline .chart-wrapper {
+  display: none;
+}
+
+.rt-tr:hover .progress-inline .legend {
+  display: block;
+}
+
+.rt-th .progress {
+    text-align: right;
+}
+
+.progress-table .rt-tr {
+    min-height: 3em;
+}
+
+.progress-table {
+    text-align: left;
+}
+
+.ReactTable .rt-tr {
+    position: relative;
+    top: 0;
+}
+
+.ReactTable .rt-td {
+    overflow: inherit;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+.ReactTable .rt-td .wrapper {
+    position: relative;
+    top: 50%;
+    z-index: 1000;
+    transform: translateY(-50%);
+}
+
+.rt-table h4 {
+    text-align: left;
+    overflow: hidden;
+    padding-left: 1px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rt-table h4 a {
+ font-size: 15px;
+ line-height: 47px;
+ padding: 12px 0 11px;
+}
+
+.rt-table .code a {
+    color: #7BC876;
+    line-height: 47px;
+    padding: 15px 5px 14px;
+}
+
+.rt-table {
+    text-align: center;
+}
+
+.rt-table .rt-th:first-child {
+    text-align: left;
+}
+
+.rt-table .progress-inline {
+    text-align: right;
+    width: auto;
+}
+
+
+.deadline time.overdue {
+    color: #F36;
+}
+
+.tooltip {
+    z-index: 100000;
+}
