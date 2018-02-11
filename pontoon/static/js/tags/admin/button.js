@@ -10,6 +10,7 @@ export default class TagResourcesButton extends React.Component {
     handleClick = (evt) => {
         evt.preventDefault();
         this.setState((prevState) => ({open: !prevState.open}));
+
     }
 
     renderButton () {

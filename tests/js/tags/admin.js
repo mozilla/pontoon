@@ -7,9 +7,11 @@ import {Columns} from 'widgets/columns';
 
 import CheckboxTable from 'widgets/tables/checkbox';
 
+import {Loader} from 'loaders';
+import TagResourcesLoader from 'tags/admin';
+
 import TagResourcesButton from 'tags/admin/button';
 import {TagResourceManagerWidget} from 'tags/admin/manager';
-import {TagResourcesLoader} from 'tags/admin/';
 import TagResourceSearch from 'tags/admin/search';
 import TagResourceTable from 'tags/admin/table';
 
@@ -293,4 +295,39 @@ test('TagResourceTable renderResource', () => {
 
     // and our resource has happily rendered
     expect(resource.props.children).toEqual('FOO');
+});
+
+
+test('TagResourcesLoader constructor', () => {
+    // checks for expected properties on loader
+
+    const loader = new TagResourcesLoader();
+    expect(loader instanceof Loader).toBe(true);
+    expect(loader.selector).toBe('.js-tag-resources');
+    expect(loader.component).toBe(TagResourcesButton);
+});
+
+
+test('TagResourcesLoader getProps', () => {
+    // checks properties are passed through correctly by loader
+
+    const loader = new TagResourcesLoader();
+    expect(loader.getProps(
+        {dataset: {api: 7, tag: 23, project: 113}})).toEqual(
+            {api: 7, tag: 23, project: 113});
+});
+
+
+test('TagResourcesLoader loaded', () => {
+    // When the DOMContentLoaded is fired the TagResourceLoader.load is
+    // fired
+    TagResourcesLoader.prototype.load = jest.fn();
+
+    // create a fake event and fire it
+    const DOMContentLoaded_event = document.createEvent("Event");
+    DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
+    window.document.dispatchEvent(DOMContentLoaded_event);
+
+    // load was called once and with no args
+    expect(TagResourcesLoader.prototype.load.mock.calls).toEqual([[]]);
 });

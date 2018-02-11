@@ -1,80 +1,25 @@
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import {Loader} from 'loaders'
 
-import TagResourceManager from './manager';
+import TagResourcesButton from './button';
 
 
-export class TagResourcesButton extends React.Component {
+export default class TagResourcesLoader extends Loader {
 
-    constructor (props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-        this.state = {open: false};
+    get selector () {
+        return '.js-tag-resources';
     }
 
-    handleClick (evt) {
-        evt.preventDefault();
-        const {open} = this.state;
-        this.setState({open: !open});
+    get component () {
+        return TagResourcesButton;
     }
 
-    renderButton () {
-        const {open} = this.state;
-        let message = "Manage resources for this tag";
-        if (open) {
-            message = "Hide the resource manager for this tag";
-        }
-        return (
-              <button onClick={this.handleClick}>
-                {message}
-              </button>);
-    }
-
-    renderResourceManager () {
-        const {open} = this.state;
-        if (!open) {
-            return '';
-        }
-        return (
-            <TagResourceManager
-               tag={this.props.tag}
-               api={this.props.api}
-               project={this.props.project} />);
-    }
-
-    render () {
-        return (
-            <div>
-              {this.renderButton()}
-              {this.renderResourceManager()}
-            </div>);
+    getProps (node) {
+        return {
+            api: node.dataset.api,
+            tag: node.dataset.tag,
+            project: node.dataset.project}
     }
 }
 
-
-export class TagResourcesLoader {
-
-    get tagResourceNodes () {
-        return [...document.querySelectorAll('div.js-tag-resources')];
-    }
-
-    addButton (node) {
-        ReactDOM.render(
-            <TagResourcesButton
-               api={node.dataset.api}
-               tag={node.dataset.tag}
-               project={node.dataset.project} />,
-            node);
-    }
-
-    addButtons () {
-        this.tagResourceNodes.forEach(this.addButton);
-    }
-}
-
-
-document.addEventListener("DOMContentLoaded",function(){
-    const loader = new TagResourcesLoader();
-    loader.addButtons();
-});
+document.addEventListener("DOMContentLoaded", () => new TagResourcesLoader().load())
