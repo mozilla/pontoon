@@ -727,12 +727,6 @@ var Pontoon = (function (my) {
           }
         }
 
-        // Overcome bug in fluent-syntax 0.6.0 that incorrectly parses
-        // empty messages without trailing newlines as Messages instead of Junk
-        if (content === (entity.key + ' = ')) {
-          content += '\n';
-        }
-
         var ast = fluentParser.parseEntry(content);
         var error = null;
 

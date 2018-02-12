@@ -1,8 +1,8 @@
-/* fluent-syntax@0.6.0 */
+/* fluent-syntax@0.6.2 */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
-  (factory((global.FluentSyntax = {})));
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
+	(factory((global.FluentSyntax = {})));
 }(this, (function (exports) { 'use strict';
 
 var classCallCheck = function (instance, Constructor) {
@@ -409,7 +409,8 @@ var VariantExpression = function (_Expression7) {
 var CallExpression = function (_Expression8) {
   inherits(CallExpression, _Expression8);
 
-  function CallExpression(callee, args) {
+  function CallExpression(callee) {
+    var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     classCallCheck(this, CallExpression);
 
     var _this17 = possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this));
@@ -1051,24 +1052,22 @@ var FTLParserStream = function (_ParserStream) {
       return isDigit;
     }
   }, {
-    key: 'isCharPatternStart',
-    value: function isCharPatternStart(ch) {
+    key: 'isCharPatternContinuation',
+    value: function isCharPatternContinuation(ch) {
       return !includes(SPECIAL_LINE_START_CHARS, ch);
     }
   }, {
     key: 'isPeekPatternStart',
     value: function isPeekPatternStart() {
       this.peekInlineWS();
-
       var ch = this.currentPeek();
 
-      if (ch === '\n') {
-        return this.isPeekNextLinePatternStart();
+      // Inline Patterns may start with any char.
+      if (ch !== undefined && ch !== '\n') {
+        return true;
       }
 
-      var isPattern = this.isCharPatternStart(this.currentPeek());
-      this.resetPeek();
-      return isPattern;
+      return this.isPeekNextLinePatternStart();
     }
   }, {
     key: 'isPeekNextLineZeroFourStyleComment',
@@ -1207,7 +1206,7 @@ var FTLParserStream = function (_ParserStream) {
         return false;
       }
 
-      if (!this.isCharPatternStart(this.currentPeek())) {
+      if (!this.isCharPatternContinuation(this.currentPeek())) {
         this.resetPeek();
         return false;
       }
