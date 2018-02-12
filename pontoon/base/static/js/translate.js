@@ -3992,7 +3992,7 @@ var Pontoon = (function (my) {
      * Updates Pontoon and history state, and the URL
      */
     pushState: function(state) {
-      state = state || self.getState();
+      state = state || this.getState();
       var self = this,
           url = '/' + state.locale + '/' + state.project + '/' + state.paths + '/',
           queryParams = {};
