@@ -1,0 +1,62 @@
+{% macro render(title, type, formset, project) %}
+<h4>
+    <span>{{ title }}</span>
+    <a href="#" class="add-inline" data-type="{{ type }}">Add more</a>
+</h4>
+
+{{ formset.management_form }}
+{% for form in formset %}
+{{ form.id }}
+<div class="{{ type }} inline clearfix">
+  {{ form.name.label_tag(label_suffix='') }}
+  {{ form.slug.label_tag(label_suffix='') }}
+  {{ form.priority.label_tag(label_suffix='') }}
+  {{ form.name }}
+  {{ form.slug }}
+  {{ form.priority }}
+
+  <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+  {{ form.DELETE }}
+
+  {% if form.name.errors or form.slug.errors %}
+  <div class="form-errors">
+    <div class="name-errors">
+      {{ form.name.errors }}
+    </div>
+    <div class="slug-errors">
+      {{ form.slug.errors }}
+    </div>
+    <div class="priority-errors">
+      {{ form.priority.errors }}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+
+<div class="{{ type }} inline clearfix" data-count="{{ formset.total_form_count() }}">
+    {{ formset.empty_form.name.label_tag(label_suffix='') }}
+    {{ formset.empty_form.slug.label_tag(label_suffix='') }}
+    {{ formset.empty_form.priority.label_tag(label_suffix='') }}
+    <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+
+    {{ formset.empty_form.name }}
+    {{ formset.empty_form.slug }}
+    {{ formset.empty_form.priority }}
+    {{ formset.empty_form.DELETE }}
+
+    {% if formset.empty_form.name.errors or formset.empty_form.slug.errors %}
+    <div class="form-errors">
+      <div class="name-errors">
+        {{ formset.empty_form.name.errors }}
+      </div>
+      <div class="slug-errors">
+        {{ formset.empty_form.slug.errors }}
+      </div>
+      <div class="priority-errors">
+        {{ formset.empty_form.priority.errors }}
+      </div>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}

@@ -407,3 +407,65 @@ textarea.strings-source {
 .strings-list .entity {
   margin-bottom: 30px;
 }
+
+
+/* Code specific to the manage tags widget */
+
+.tag.inline label[for*=name] {
+  float: left;
+  width: 210px;
+}
+
+.tag.inline input[id*=name] {
+  float: left;
+  width: 204px;
+  margin-right: 6px;
+}
+
+.tag.inline label[for*=slug] {
+  float: left;
+  width: 211px;
+}
+
+.tag.inline input[id*=slug] {
+  float: left;
+  width: 201px;
+  margin-right: 6px;
+}
+
+.tag.inline label[for*=priority] {
+  float: left;
+  width: 191px;
+}
+
+.tag.inline input[id*=priority] {
+  float: left;
+  width: 150px;
+  margin-right: 6px;
+}
+
+.tag.inline .form-errors {
+  clear: both;
+}
+
+.tag.inline .form-errors .name-errors {
+  float: left;
+  width: 204px;
+  margin-right: 5px;
+  min-height: 1px;
+}
+
+.tag.inline .form-errors .slug-errors {
+  float: left;
+  width: 201px;
+}
+
+.tag.inline .form-errors .priority-errors {
+  float: left;
+  width: 191px;
+}
+
+.tag.inline select[name^=tag_set-][name$=-priority] {
+  width: 156px;
+  margin-top: 0;
+}
