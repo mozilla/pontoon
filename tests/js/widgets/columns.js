@@ -1,65 +1,9 @@
 
 import React from 'react';
 
-import {mount, shallow} from 'enzyme';
+import {shallow} from 'enzyme';
 
 import {Columns, Container, Column} from 'widgets/columns';
-import Checkbox from 'widgets/checkbox';
-import {ErrorList, Error} from 'widgets/errors';
-
-
-test('Error render', () => {
-    let error = shallow(<Error name='FOO' error='BAR' />);
-    expect(error.text()).toBe("FOO: BAR");
-    let li = error.find('li.error');
-    expect(li.length).toBe(1);
-});
-
-
-test('ErrorList render', () => {
-    let errors = shallow(<ErrorList errors={{}} />);
-    expect(errors.text()).toBe("");
-    expect(errors.find('ul').length).toBe(0);
-    errors = shallow(<ErrorList errors={{foo: 'Did a foo', bar: 'Bars happen'}} />);
-    let ul = errors.find('ul.errors');
-    expect(ul.length).toBe(1);
-    let lis = ul.find(Error);
-    expect(lis.length).toBe(2);
-    expect(errors.text()).toBe("<Error /><Error />");
-});
-
-
-test('Checkbox render', () => {
-    let checkbox = shallow(<Checkbox />);
-    expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(false);
-
-    checkbox = shallow(<Checkbox indeterminate="true" />);
-    expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toBe(undefined);
-
-    checkbox = mount(<Checkbox />);
-    // this time el is an HTML node
-    expect(checkbox.instance().el.indeterminate).toBe(false);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-
-    checkbox = mount(<Checkbox indeterminate={true} />);
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-
-    let prevProp = checkbox.props();
-    checkbox.setProps({indeterminate: false});
-    checkbox.instance().componentDidUpdate(prevProp);
-    expect(checkbox.instance().el.indeterminate).toBe(false);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-
-    prevProp = checkbox.props();
-    checkbox.setProps({indeterminate: true});
-    checkbox.instance().componentDidUpdate(prevProp);
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-});
 
 
 test('Columns render', () => {
@@ -132,7 +76,7 @@ test('Container render', () => {
 
 
 test('Container render children', () => {
-    const children = [<div>FOO...</div>, <div>...BAR</div>];
+    const children = [<div key={1}>FOO...</div>, <div key={2}>...BAR</div>];
     const styles = jest.fn(() => {
         return [
             {background: 'black', color: 'red'},
