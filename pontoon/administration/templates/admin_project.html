@@ -2,6 +2,7 @@
 
 {% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
+{% import 'tag_inline_formset.html' as tag_inline_formset %}
 
 {% block title %}{{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
@@ -255,6 +256,18 @@
   </div>
 
   {{ inline_formset.render(title='Subpages', type='subpage', formset=subpage_formset) }}
+
+  <section class="tags">
+    <h3>
+      <span>Tags</span>
+    </h3>
+      <label for="id_tags_enabled">
+          {{ form.tags_enabled }}{{ form.tags_enabled.label }}
+      </label>
+      {% if tag_formset %}
+      {{ tag_inline_formset.render(title='Linked tags', type='tag', formset=tag_formset, project=project) }}
+      {% endif %}
+  </section>
 
   <div class="controls clearfix">
       {% if settings.MANUAL_SYNC %}

@@ -1,8 +1,7 @@
 
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from pontoon.base.models import Project, Resource
+from pontoon.base.models import PRIORITY_CHOICES, Project, Resource
 
 
 class Tag(models.Model):
@@ -13,9 +12,7 @@ class Tag(models.Model):
     priority = models.IntegerField(
         blank=True,
         null=True,
-        validators=[
-            MaxValueValidator(5),
-            MinValueValidator(1)])
+        choices=PRIORITY_CHOICES)
 
     class Meta(object):
         unique_together = [['slug', 'project']]

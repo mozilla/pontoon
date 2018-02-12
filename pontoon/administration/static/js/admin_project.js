@@ -84,6 +84,29 @@ $(function() {
     });
   });
 
+  $("[id^=id_tag_set-][id$=-name]").blur(function() {
+    var target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
+    var $this = this;
+    if (target.val() || !$(this).val()) {
+      return;
+    }
+    target.attr('placeholder', 'Retrieving...');
+    $.ajax({
+      url: '/admin/get-slug/',
+      data: {
+        name: $($this).val()
+      },
+      success: function(data) {
+        var value = (data === "error") ? "" : data;
+        target.val(value);
+        target.attr('placeholder', '');
+      },
+      error: function() {
+        target.attr('placeholder', '');
+      }
+    });
+  });
+
   // Copy locales from another project
   $('#copy-locales option').on('click', function() {
     var projectLocales = [];
@@ -146,6 +169,7 @@ $(function() {
     'subpage': $('.subpage:last').data('count'),
     'externalresource': $('.externalresource:last').data('count'),
     'entity': $('.entity:last').data('count'),
+    'tag': $('.tag:last').data('count'),
   };
   $('.add-inline').click(function(e) {
     e.preventDefault();
