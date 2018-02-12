@@ -10,6 +10,7 @@ from pontoon.base.models import (
     Subpage,
 )
 from pontoon.base.forms import HtmlField
+from pontoon.tags.models import Tag
 
 
 class ContactChoiceField(forms.ModelChoiceField):
@@ -38,7 +39,7 @@ class ProjectForm(forms.ModelForm):
             'priority',
             'contact',
             'disabled',
-        )
+            'tags_enabled')
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
@@ -86,4 +87,16 @@ EntityFormSet = forms.modelformset_factory(
     Entity,
     fields=('string', 'comment', 'obsolete'),
     extra=1,
+)
+
+
+class TagInlineForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ('project', 'slug', 'name', 'priority')
+
+TagInlineFormSet = inlineformset_factory(
+    Project, Tag,
+    form=TagInlineForm,
+    extra=1
 )
