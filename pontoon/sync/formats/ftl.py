@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 parser = FluentParser()
 serializer = FluentSerializer()
+localizable_entries = (ast.Message, ast.Term)
 
 
 class FTLEntity(VCSTranslation):
@@ -74,12 +75,9 @@ class FTLResource(ParsedResource):
             else:
                 raise
 
-        def get_comment(obj):
-            return [obj.comment.content] if obj.comment else []
-
-        section_comment = None
+        group_comment = []
         for obj in self.structure.body:
-            if type(obj) == ast.Message:
+            if isinstance(obj, localizable_entries):
                 key = obj.id.name
 
                 # Do not store translation comments in the database
@@ -87,19 +85,20 @@ class FTLResource(ParsedResource):
                     obj.comment = None
 
                 translation = serializer.serialize_entry(obj)
+                comment = [obj.comment.content] if obj.comment else []
 
                 self.entities[key] = FTLEntity(
                     key,
                     translation,
                     '',
                     {None: translation},
-                    (section_comment or []) + get_comment(obj),
+                    group_comment + comment,
                     self.order
                 )
                 self.order += 1
 
-            elif type(obj) == ast.Section:
-                section_comment = get_comment(obj)
+            elif isinstance(obj, ast.GroupComment):
+                group_comment = [obj.content]
 
     @property
     def translations(self):
@@ -122,7 +121,7 @@ class FTLResource(ParsedResource):
 
         # Use list() to iterate over a copy, leaving original free to modify
         for obj in list(entities):
-            if type(obj) == ast.Message:
+            if isinstance(obj, localizable_entries):
                 index = entities.index(obj)
                 entity = self.entities[obj.id.name]
 
