@@ -1744,7 +1744,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus'),
+        var textarea = $('#editor textarea:visible:focus, #editor textarea:visible:first');
             selectionStart = textarea.prop('selectionStart'),
             selectionEnd = textarea.prop('selectionEnd'),
             placeable = $(this).text(),
