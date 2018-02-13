@@ -366,6 +366,7 @@ PIPELINE_JS = {
             'js/lib/jquery.timeago.js',
             'js/lib/jquery.color-2.1.2.js',
             'js/lib/nprogress.js',
+            'webpack_bundles/placeables.js',
             'js/main.js',
         ),
         'output_filename': 'js/base.min.js',
