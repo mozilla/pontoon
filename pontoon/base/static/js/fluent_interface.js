@@ -728,29 +728,7 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(content);
-        var error = null;
-
-        // Parse error
-        if (ast.type === 'Junk') {
-          error = ast.annotations[0].message;
-        }
-        // TODO: Should be removed by bug 1237667
-        // Detect missing values
-        else if (entityAST.value && !ast.value) {
-          error = 'Please make sure to fill in the value';
-        }
-        // Detect missing attributes
-        else if (
-          entityAST.attributes &&
-          ast.attributes &&
-          entityAST.attributes.length !== ast.attributes.length
-        ) {
-          error = 'Please make sure to fill in all the attributes';
-        }
-        // Detect missing values
-        else if (entityAST.id.name !== ast.id.name) {
-          error = 'Please make sure the translation key matches the source string key';
-        }
+        var error = this.runChecks(ast, entityAST);
 
         if (error) {
           return {
@@ -759,6 +737,37 @@ var Pontoon = (function (my) {
         }
 
         return fluentSerializer.serializeEntry(ast);
+      },
+
+
+      /*
+       * Perform error checks for provided translationAST and entityAST.
+       */
+      runChecks: function (translationAST, entityAST) {
+        // Parse error
+        if (translationAST.type === 'Junk') {
+          return translationAST.annotations[0].message;
+        }
+
+        // TODO: Should be removed by bug 1237667
+        // Detect missing values
+        else if (entityAST.value && !translationAST.value) {
+          return 'Please make sure to fill in the value';
+        }
+
+        // Detect missing attributes
+        else if (
+          entityAST.attributes &&
+          translationAST.attributes &&
+          entityAST.attributes.length !== translationAST.attributes.length
+        ) {
+          return 'Please make sure to fill in all the attributes';
+        }
+
+        // Detect missing values
+        else if (entityAST.id.name !== translationAST.id.name) {
+          return 'Please make sure the translation key matches the source string key';
+        }
       },
 
 
