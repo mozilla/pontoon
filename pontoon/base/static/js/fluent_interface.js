@@ -764,7 +764,7 @@ var Pontoon = (function (my) {
           return 'Please make sure to fill in all the attributes';
         }
 
-        // Detect missing values
+        // Detect Message ID mismatch
         else if (entityAST.id.name !== translationAST.id.name) {
           return 'Please make sure the translation key matches the source string key';
         }
