@@ -1,30 +1,9 @@
 /* global FluentSyntax */
+var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+var fluentSerializer = new FluentSyntax.FluentSerializer();
 
 /* Public functions used across different files */
 var Pontoon = (function (my) {
-  var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
-  var fluentSerializer = new FluentSyntax.FluentSerializer();
-
-  // TODO: Replace with fluentSerializer.serializeExpression() on fluent.js 0.6 update
-  function serializeExpression(expression) {
-    switch (expression.type) {
-      case 'MessageReference':
-        return expression.id.name;
-      case 'ExternalArgument':
-        return '$' + expression.id.name;
-      case 'NumberExpression':
-        return expression.value || expression.val.value;
-      case 'StringExpression':
-        return '"' + (expression.value || expression.val.value) + '"';
-      case 'NamedArgument':
-        return expression.name.name + ': ' + serializeExpression(expression.val);
-      case 'CallExpression':
-        var args = expression.args.map(function (arg) {
-          return serializeExpression(arg);
-        });
-        return expression.callee.name + '(' + args.join(', ') + ')';
-    }
-  }
 
   /*
    * Render original string element: simple string value or a variant.
@@ -103,8 +82,8 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.type === 'SelectExpression') {
-        element.variants.forEach(function (item) {
+      if (Pontoon.fluent.isSelectExpressionElement(element)) {
+        element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
       }
@@ -139,9 +118,9 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.type === 'SelectExpression') {
-        var expression = serializeExpression(element.expression);
-        content = '<li data-expression="' + expression + '"><ul>' + content;
+      if (Pontoon.fluent.isSelectExpressionElement(element)) {
+        var expression = fluentSerializer.serializeExpression(element.expression.expression);
+        content += '<li data-expression="' + expression + '"><ul>';
 
         var isPlural = Pontoon.fluent.isPluralElement(element);
         if (isPlural && !isTranslated) {
@@ -150,7 +129,7 @@ var Pontoon = (function (my) {
           });
         }
         else {
-          element.variants.forEach(function (item) {
+          element.expression.variants.forEach(function (item) {
             content += renderEditorElement(
               item.key.value || item.key.name,
               item.value.elements,
@@ -249,7 +228,7 @@ var Pontoon = (function (my) {
           (translationAST && !self.isSupportedMessage(translationAST)) ||
           (!translationAST && !self.isSupportedMessage(entityAST))
         ) {
-          value = entity.key + ' = \n';
+          value = entity.key + ' = ';
 
           if (translationAST) {
             value = translation.string;
@@ -339,19 +318,17 @@ var Pontoon = (function (my) {
        * Message is supported if all value elements
        * and all attribute elements are of type:
        * - TextElement
-       * - ExternalArgument
-       * - MessageReference
-       * - SelectExpression?
+       * - Placeable with expression type ExternalArgument, MessageReference or SelectExpression
        */
       isSupportedMessage: function (ast) {
+        var self = this;
+
         function elementsSupported(elements) {
-          return elements.every(function(item) {
-            return [
-              'TextElement',
-              'ExternalArgument',
-              'MessageReference',
-              'SelectExpression'
-            ].indexOf(item.type) >= 0;
+          return elements.every(function(element) {
+            return (
+              self.isSimpleElement(element) ||
+              self.isSelectExpressionElement(element)
+            );
           });
         }
 
@@ -372,15 +349,59 @@ var Pontoon = (function (my) {
       /*
        * Is element of type that can be presented as a simple string:
        * - TextElement
-       * - ExternalArgument
-       * - MessageReference
+       * - Placeable with expression type ExternalArgument or MessageReference
        */
       isSimpleElement: function (element) {
-        return [
-          'TextElement',
-          'ExternalArgument',
-          'MessageReference'
-        ].indexOf(element.type) >= 0;
+        if (element.type === 'TextElement') {
+          return true;
+        }
+
+        // Placeable
+        if (
+          element.expression &&
+          [
+            'ExternalArgument',
+            'MessageReference'
+          ].indexOf(element.expression.type) >= 0
+        ) {
+          return true;
+        }
+
+        return false;
+      },
+
+
+      /*
+       * Is element a SelectExpression?
+       *
+       * We evaluate that by checking if element expression has variants defined.
+       * If yes, the element must be a SelectExpression according to Fluent ASDL:
+       * https://github.com/projectfluent/fluent/blob/master/spec/fluent.asdl
+       */
+      isSelectExpressionElement: function (element) {
+        return element.expression && element.expression.variants;
+      },
+
+
+      /*
+       * Is element representing a pluralized string?
+       *
+       * Keys of all variants of such elements are either
+       * CLDR plurals or numbers.
+       */
+      isPluralElement: function (element) {
+        if (!this.isSelectExpressionElement(element)) {
+          return false;
+        }
+
+        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
+
+        return element.expression.variants.every(function (item) {
+          return (
+            CLDRplurals.indexOf(item.key.name) !== -1 ||
+            item.key.type === 'NumberExpression'
+          );
+        });
       },
 
 
@@ -397,7 +418,6 @@ var Pontoon = (function (my) {
         if (
           ast &&
           !ast.attributes.length &&
-          !ast.tags.length &&
           ast.value &&
           ast.value.elements.every(function(item) {
             return self.isSimpleElement(item);
@@ -407,28 +427,6 @@ var Pontoon = (function (my) {
         }
 
         return false;
-      },
-
-
-      /*
-       * Is element representing a pluralized string?
-       *
-       * Keys of all variants of such elements are either
-       * CLDR plurals or numbers.
-       */
-      isPluralElement: function (element) {
-        if (!element.variants) {
-          return false;
-        }
-
-        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
-
-        return element.variants.every(function (item) {
-          return (
-            CLDRplurals.indexOf(item.key.name) !== -1 ||
-            item.key.type === 'NumberExpression'
-          );
-        });
       },
 
 
@@ -443,35 +441,36 @@ var Pontoon = (function (my) {
         var startMarker = '';
         var endMarker = '';
 
-        elements.forEach(function (item) {
-          if (item.type === 'TextElement') {
+        elements.forEach(function (element) {
+          if (element.type === 'TextElement') {
             if (markPlaceables) {
-              translatedValue += Pontoon.markXMLTags(item.value);
+              translatedValue += Pontoon.markXMLTags(element.value);
             }
             else {
-              translatedValue += item.value;
+              translatedValue += element.value;
             }
           }
-          else if (item.type === 'ExternalArgument') {
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="External Argument">';
-              endMarker = '</mark>';
+          else if (element.type === 'Placeable') {
+            if (element.expression.type === 'ExternalArgument') {
+              if (markPlaceables) {
+                startMarker = '<mark class="placeable" title="External Argument">';
+                endMarker = '</mark>';
+              }
+              translatedValue += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
             }
-            translatedValue += startMarker + '{$' + item.id.name + '}' + endMarker;
-          }
-          else if (item.type === 'MessageReference') {
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="Message Reference">';
-              endMarker = '</mark>';
+            else if (element.expression.type === 'MessageReference') {
+              if (markPlaceables) {
+                startMarker = '<mark class="placeable" title="Message Reference">';
+                endMarker = '</mark>';
+              }
+              translatedValue += startMarker + '{' + element.expression.id.name + '}' + endMarker;
             }
-            translatedValue += startMarker + '{' + item.id.name + '}' + endMarker;
-          }
-          else if (item.variants) {
-            var variantElements = item.variants.filter(function (item) {
-              return item.default;
-            })[0].value.elements;
-
-            translatedValue += self.serializePlaceables(variantElements);
+            else if (self.isSelectExpressionElement(element)) {
+              var variantElements = element.expression.variants.filter(function (variant) {
+                return variant.default;
+              })[0].value.elements;
+              translatedValue += self.serializePlaceables(variantElements);
+            }
           }
         });
 
@@ -635,7 +634,8 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Return translation in the editor as FTL source
+       * Return translation in the editor as FTL source to be used
+       * in unsaved changes check
        */
       getTranslationSource: function () {
         var entity = Pontoon.getEditorEntity();
@@ -648,6 +648,11 @@ var Pontoon = (function (my) {
 
         var translation = this.serializeTranslation(entity, fallback);
 
+        // If translation broken, incomplete or empty
+        if (translation.error) {
+          return fallback;
+        }
+
         // Special case: empty translations in rich FTL editor don't serialize properly
         if (this.isFTLEditorEnabled()) {
           var richTranslation = $.map(
@@ -657,7 +662,7 @@ var Pontoon = (function (my) {
           ).join('');
 
           if (!richTranslation.length) {
-            translation = entity.key + ' = \n';
+            translation = entity.key + ' = ';
           }
         }
 
@@ -674,7 +679,7 @@ var Pontoon = (function (my) {
         }
 
         var entityAST = fluentParser.parseEntry(entity.original);
-        var content = entity.key + ' = '; // Initialize untranslated string
+        var content = entity.key + ' = ';
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
         var value = '';
@@ -723,25 +728,7 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(content);
-        var error = null;
-
-        // Parse error
-        if (ast.type === 'Junk') {
-          error = ast.annotations[0].message;
-        }
-        // TODO: Should be removed by bug 1237667
-        // Detect missing values
-        else if (entityAST && ast && entityAST.value && !ast.value) {
-          error = 'Please make sure to fill in the value';
-        }
-        // Detect missing attributes
-        else if (
-          entityAST.attributes &&
-          ast.attributes &&
-          entityAST.attributes.length !== ast.attributes.length
-        ) {
-          error = 'Please make sure to fill in all the attributes';
-        }
+        var error = this.runChecks(ast, entityAST);
 
         if (error) {
           return {
@@ -750,6 +737,37 @@ var Pontoon = (function (my) {
         }
 
         return fluentSerializer.serializeEntry(ast);
+      },
+
+
+      /*
+       * Perform error checks for provided translationAST and entityAST.
+       */
+      runChecks: function (translationAST, entityAST) {
+        // Parse error
+        if (translationAST.type === 'Junk') {
+          return translationAST.annotations[0].message;
+        }
+
+        // TODO: Should be removed by bug 1237667
+        // Detect missing values
+        else if (entityAST.value && !translationAST.value) {
+          return 'Please make sure to fill in the value';
+        }
+
+        // Detect missing attributes
+        else if (
+          entityAST.attributes &&
+          translationAST.attributes &&
+          entityAST.attributes.length !== translationAST.attributes.length
+        ) {
+          return 'Please make sure to fill in all the attributes';
+        }
+
+        // Detect Message ID mismatch
+        else if (entityAST.id.name !== translationAST.id.name) {
+          return 'Please make sure the translation key matches the source string key';
+        }
       },
 
 
@@ -841,6 +859,16 @@ $(function () {
 
       var translated = (translation && translation !== entity.key + ' = ');
 
+      // Perform error checks
+      if (translated) {
+        var translationAST = fluentParser.parseEntry(translation);
+        var entityAST = fluentParser.parseEntry(entity.original);
+        var error = Pontoon.fluent.runChecks(translationAST, entityAST);
+        if (error) {
+          return Pontoon.endLoader(error, 'error', 5000);
+        }
+      }
+
       var isRichEditorSupported = Pontoon.fluent.renderEditor({
         pk: translated, // An indicator that the string is translated
         string: translation,
@@ -857,7 +885,7 @@ $(function () {
 
       // If translation broken, incomplete or empty
       if (translation.error) {
-        translation = entity.key + ' = \n';
+        translation = entity.key + ' = ';
       }
 
       $('#translation').val(translation);
