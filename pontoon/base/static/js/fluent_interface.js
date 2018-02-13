@@ -736,7 +736,7 @@ var Pontoon = (function (my) {
         }
         // TODO: Should be removed by bug 1237667
         // Detect missing values
-        else if (entityAST && ast && entityAST.value && !ast.value) {
+        else if (entityAST.value && !ast.value) {
           error = 'Please make sure to fill in the value';
         }
         // Detect missing attributes
@@ -746,6 +746,10 @@ var Pontoon = (function (my) {
           entityAST.attributes.length !== ast.attributes.length
         ) {
           error = 'Please make sure to fill in all the attributes';
+        }
+        // Detect missing values
+        else if (entityAST.id.name !== ast.id.name) {
+          error = 'Please make sure the translation key matches the source string key';
         }
 
         if (error) {
