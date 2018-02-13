@@ -861,9 +861,9 @@ $(function () {
 
       // Perform error checks
       if (translated) {
-        var entityAST = fluentParser.parseEntry(entity.original);
         var translationAST = fluentParser.parseEntry(translation);
-        var error = Pontoon.fluent.runChecks(entityAST, translationAST);
+        var entityAST = fluentParser.parseEntry(entity.original);
+        var error = Pontoon.fluent.runChecks(translationAST, entityAST);
         if (error) {
           return Pontoon.endLoader(error, 'error', 5000);
         }
