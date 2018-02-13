@@ -27,8 +27,7 @@ script:
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
   # This temporarily exits 0 while we cleanup
-  - ./node_modules/.bin/eslint pontoon/static tests/js
-  - (./node_modules/.bin/eslint .; exit 0)
+  - ./node_modules/.bin/eslint .
   - codecov
 
   # Heroku deployment file is valid
