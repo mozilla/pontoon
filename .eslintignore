@@ -10,3 +10,4 @@ static/*
 **/app/error_pages/**/*.js
 **/*blockrain*js
 assets/*
+pontoon/base/templates/js/pontoon.js

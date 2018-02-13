@@ -537,7 +537,9 @@ var Pontoon = (function (my) {
           try {
             self.translationLengthLimit = parseInt(split[0].split('MAX_LENGTH: ')[1].split(' ')[0], 10);
             splitComment = split.length > 1 ? entity.comment.substring(entity.comment.indexOf('\n') + 1) : '';
-          } catch (e) {} // Catch unexpected comment structure <-- silently fail
+          } catch (e) {
+            // Catch unexpected comment structure
+          }
         }
 
         var comment = this.linkify(splitComment);
@@ -945,7 +947,9 @@ var Pontoon = (function (my) {
       try {
         var utc = new Date(reverse).toISOString();
         return utc.replace(/-/gi, '').replace(/T/gi, '').replace(/:/gi, '').substring(0, 12);
-      } catch (e) {} // <-- fail silently
+      } catch (e) {
+        // fail silently ?
+      }
     },
 
 
@@ -1744,7 +1748,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus, #editor textarea:visible:first');
+        var textarea = $('#editor textarea:visible:focus, #editor textarea:visible:first'),
             selectionStart = textarea.prop('selectionStart'),
             selectionEnd = textarea.prop('selectionEnd'),
             placeable = $(this).text(),
