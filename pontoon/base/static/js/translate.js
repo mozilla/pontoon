@@ -976,7 +976,7 @@ var Pontoon = (function (my) {
       if(!$('#from').data('id')) $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
       if(!$('#to').data('id')) $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
 
-      if(!$('#from').data('id')||!$('#to').data('id')){
+      if($('#from').data('id')||$('#to').data('id')){
         return;
       }
       // Render range selector
@@ -1027,6 +1027,7 @@ var Pontoon = (function (my) {
             setExtremes: function (e) {
               $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.min));
               $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.max));
+              $('#filter .time-range input').data("id", 1);
             }
           }
         },
