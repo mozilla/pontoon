@@ -120,7 +120,7 @@ var Pontoon = (function (my) {
       // Render SelectExpression
       if (Pontoon.fluent.isSelectExpressionElement(element)) {
         var expression = fluentSerializer.serializeExpression(element.expression.expression);
-        content = '<li data-expression="' + expression + '"><ul>' + content;
+        content += '<li data-expression="' + expression + '"><ul>';
 
         var isPlural = Pontoon.fluent.isPluralElement(element);
         if (isPlural && !isTranslated) {
