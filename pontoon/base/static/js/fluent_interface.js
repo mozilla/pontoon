@@ -1,9 +1,9 @@
 /* global FluentSyntax */
+var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+var fluentSerializer = new FluentSyntax.FluentSerializer();
 
 /* Public functions used across different files */
 var Pontoon = (function (my) {
-  var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
-  var fluentSerializer = new FluentSyntax.FluentSerializer();
 
   /*
    * Render original string element: simple string value or a variant.
@@ -858,6 +858,16 @@ $(function () {
       translation = translation.replace(/\n$/, '');
 
       var translated = (translation && translation !== entity.key + ' = ');
+
+      // Perform error checks
+      if (translated) {
+        var entityAST = fluentParser.parseEntry(entity.original);
+        var translationAST = fluentParser.parseEntry(translation);
+        var error = Pontoon.fluent.runChecks(entityAST, translationAST);
+        if (error) {
+          return Pontoon.endLoader(error, 'error', 5000);
+        }
+      }
 
       var isRichEditorSupported = Pontoon.fluent.renderEditor({
         pk: translated, // An indicator that the string is translated
