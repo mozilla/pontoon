@@ -970,15 +970,17 @@ var Pontoon = (function (my) {
         return;
       }
 
+      if ($('#from').val() || $('#to').val()){
+        return;
+      }
+
       // Set default input values and limits
       var from = counts[0][0],
           to = counts[counts.length - 1][0];
-      if(!$('#from').data('id')) $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
-      if(!$('#to').data('id')) $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
+          
+       $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
+       $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
 
-      if($('#from').data('id')||$('#to').data('id')){
-        return;
-      }
       // Render range selector
       Highcharts.setOptions({
         global: {
@@ -1027,7 +1029,6 @@ var Pontoon = (function (my) {
             setExtremes: function (e) {
               $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.min));
               $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', e.max));
-              $('#filter .time-range input').data("id", 1);
             }
           }
         },
@@ -1482,13 +1483,13 @@ var Pontoon = (function (my) {
 
       // Clear error styling on value change
       $('#filter .time-range input').on('input propertychange change', function() {
-        $('#filter .time-range input').data("id", 1);
         var from = self.local2chart($('#from').val()),
             to = self.local2chart($('#to').val());
 
         $('#range-picker').highcharts().xAxis[0].setExtremes(from, to);
         $(this).removeClass('error');
       });
+
       // Do not close the filter menu if clicked inside the menu
       $('#filter').on('click', '.menu', function (e) {
         e.stopPropagation();
