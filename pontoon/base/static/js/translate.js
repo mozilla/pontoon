@@ -972,12 +972,15 @@ var Pontoon = (function (my) {
         return;
       }
 
-      // Set default input values and limits
-      var from = counts[0][0],
-          to = counts[counts.length - 1][0];
+      // Set default input values and limits if values not set
 
-      $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
-      $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
+      if (!$('#from').val() || !$('#to').val()) {
+        var from = counts[0][0],
+            to = counts[counts.length - 1][0];
+
+        $('#from').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', from));
+        $('#to').val(Highcharts.dateFormat('%d/%m/%Y %H:%M', to));
+      }
 
       // Render range selector
       Highcharts.setOptions({
@@ -2992,10 +2995,15 @@ var Pontoon = (function (my) {
       var self = this,
           $forAuthors = $('#filter').find('.for-authors').toggle(authors.length > 0);
 
+      var selectedAuthors = $('#filter .menu li.author.selected').map(function() {
+        return $.trim($(this).data("type"));
+      }).get();
+
       $('#filter .menu li.author').remove();
 
       $.each(authors, function() {
-        $forAuthors.after('<li class="author" data-type="' + this.email + '">' +
+        var selected = (selectedAuthors.includes(this.email)) ? ' selected' : '';
+        $forAuthors.after('<li class="author' + selected + '" data-type="' + this.email + '">' +
           '<figure>' +
             '<span class="sel">' +
               '<span class="status fa"></span>' +
