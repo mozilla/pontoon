@@ -1,8 +1,6 @@
 
 import pytest
 
-from django.db.models import Max
-
 from pontoon.base.models import Entity
 
 
@@ -151,14 +149,12 @@ def test_entity_project_locale_order(entity_test_models):
     resource0 = entity_test_models[0].entity.resource
     locale0 = entity_test_models[0].locale
     project0 = resource0.project
-    max_order = Entity.objects.filter(
-        resource=resource0).aggregate(Max('order'))['order__max']
     Entity.objects.create(
-        order=max_order + 2,
+        order=1,
         resource=resource0,
         string='Second String')
     Entity.objects.create(
-        order=max_order + 1,
+        order=0,
         resource=resource0,
         string='First String')
     entities = Entity.map_entities(
