@@ -21,7 +21,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.db import models
-from django.db.models import Count, F, Max, Prefetch, Q, Sum
+from django.db.models import Count, F, Prefetch, Q, Sum
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -1775,17 +1775,6 @@ class Subpage(models.Model):
 
 
 class EntityQuerySet(models.QuerySet):
-
-    def create(self, *args, **kwargs):
-        if kwargs.get('order') is None:
-            max_order = self.filter(
-                resource=kwargs['resource']).aggregate(Max('order'))['order__max']
-            kwargs['order'] = (
-                max_order + 1
-                if max_order is not None
-                else 0)
-        return super(EntityQuerySet, self).create(*args, **kwargs)
-
     def get_filtered_entities(self, locale, query, rule, match_all=True):
         """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
@@ -2085,8 +2074,6 @@ class Entity(DirtyFieldsMixin, models.Model):
     objects = EntityQuerySet.as_manager()
 
     class Meta:
-        unique_together = (
-            ('resource', 'order'), )
         index_together = (
             ('resource', 'obsolete', 'string_plural'),
         )
