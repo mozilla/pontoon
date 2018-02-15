@@ -49,6 +49,12 @@ DATABASES = {
     'default': dj_database_url.config(default='mysql://root@localhost/pontoon')
 }
 
+# Ensure that psycopg2 uses a secure SSL connection.
+if not DEV and not DEBUG:
+    if 'OPTIONS' not in DATABASES['default']:
+        DATABASES['default']['OPTIONS'] = {}
+    DATABASES['default']['OPTIONS']['sslmode'] = 'require'
+
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
