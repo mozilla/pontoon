@@ -190,15 +190,7 @@ var Pontoon = (function (my) {
      * Markup placeables
      */
     markPlaceables: function (string) {
-      function getReplacement(title, replacement) {
-        return '<mark class="placeable" title="' + title + '">' + replacement + '</mark>';
-      }
-
-      function markup(string, regex, title, replacement) {
-        replacement = replacement || '$&';
-        return string.replace(regex, getReplacement(title, replacement));
-      }
-
+      return string;
       string = this.doNotRender(string);
 
       /* Special spaces */
@@ -249,17 +241,17 @@ var Pontoon = (function (my) {
 
         // Inserted
         if (type === 1) {
-          output += '<ins>' + self.markPlaceables(slice) + '</ins>';
+          output += '<ins>' + placeables.markAll(slice) + '</ins>';
         }
 
         // Deleted
         if (type === -1) {
-          output += '<del>' + self.markPlaceables(slice) + '</del>';
+          output += '<del>' + placeables.markAll(slice) + '</del>';
         }
 
         // Equal
         if (type === 0) {
-          output += self.markPlaceables(slice);
+          output += placeables.markAll(slice);
         }
       });
 

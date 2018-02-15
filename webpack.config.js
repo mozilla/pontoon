@@ -3,15 +3,43 @@ const webpack = require('webpack');
 var BundleTracker = require('webpack-bundle-tracker');
 
 
-module.exports = {
+module.exports = [{
+    entry: {
+        placeables: 'legacy/placeables',
+    },
+    output: {
+        // This copies each source entry into the extension dist folder named
+        // after its entry config key.
+        path: path.resolve(__dirname, 'assets/webpack_bundles/'),
+        filename: '[name].js',
+        library: '[name]',
+        libraryTarget: "window",
+    },
+
+    module: {
+        // This transpiles all code (except for third party modules) using Babel.
+        loaders: [{
+            exclude: /node_modules/,
+            test: /placeables\.js$/,
+            loaders: ['babel-loader'],
+        }]
+    },
+
+    resolve: {
+        // This allows you to import modules just like you would in a NodeJS app.
+        extensions: ['.js', '.jsx'],
+        modules: [path.resolve(__dirname, 'pontoon/static/js/'), "node_modules"]
+    },
+    devtool: "sourcemap"
+}, {
   entry: {
-      'placeholder': 'placeholder/placeholder'
+      'placeholder': 'placeholder/placeholder',
   },
   output: {
     // This copies each source entry into the extension dist folder named
     // after its entry config key.
       path: path.resolve(__dirname, 'assets/webpack_bundles/'),
-      filename: '[name].js'
+      filename: '[name].js',
   },
   module: {
     // This transpiles all code (except for third party modules) using Babel.
@@ -44,4 +72,4 @@ module.exports = {
   // This will expose source map files so that errors will point to your
   // original source files instead of the transpiled files.
   devtool: 'sourcemap',
-};
+}];

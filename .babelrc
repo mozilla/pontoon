@@ -1,13 +1,19 @@
 {
   "presets": [
-     "env",
+     ["env", {
+      "modules": false,
+      "targets": {
+        "yuglify": true,
+      }
+     }],
      "stage-2",
      "react"
   ],
   "plugins": [
-     "transform-runtime"
+     "transform-runtime",
+     "transform-es2015-modules-commonjs"
   ],
   "ignore": [
-     "node_modules",
+     "node_modules"
   ]
 }
