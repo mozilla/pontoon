@@ -1,0 +1,82 @@
+
+#heading h1 a {
+    color: #EBEBEB;
+    font-weight: bold;
+    font-size: 32px;
+}
+
+header {
+  background: #272A2F;
+  border-bottom: 1px solid #333941;
+  height: 60px;
+}
+
+
+header, section#heading .wrapper, section#middle .wrapper, section#main {
+  margin: 0 auto;
+  width: 980px;
+}
+
+section#middle {
+    border-bottom: 1px solid #5E6475;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+}
+
+
+
+
+
+#heading .legend {
+  float: right;
+}
+
+#heading .legend li {
+  color: #AAAAAA;
+  padding-left: 25px;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#heading .legend li a {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a {
+  color: #7BC876;
+}
+
+#heading .legend li.banner {
+  padding: 0;
+}
+
+#heading .legend li .status.fa {
+  left: 0;
+  top: 4px;
+}
+
+#heading .legend li span.value {
+  color: #AAA;
+  float: right;
+}
+
+#heading .legend li a span.value {
+  color: #FFFFFF;
+}
+
+#heading .legend li:hover a span.value {
+  color: #7BC876;
+}
+
+#heading .banner .title {
+  color: #7BC876;
+}
+
+
+#heading .legend .all .fa.status:before {
+    color: transparent;
+}
