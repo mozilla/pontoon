@@ -1,0 +1,31 @@
+
+.wheel-chart {
+    float: inherit;
+    margin: -10px auto 0 auto;
+    position: relative;
+    text-align: center;
+}
+
+.wheel-chart .number {
+  display: none;
+  font-size: 50px;
+  font-weight: bold;
+  left: 0;
+  right: 0;
+  top: 25px;
+  margin: 0;
+  position: absolute;
+}
+
+.wheel-chart .number:after {
+  content: "%";
+  color: #888888;
+  display: block;
+  font-size: 20px;
+  font-weight: 100;
+  line-height: 10px;
+}
+
+.wheel-chart .react-number {
+    display: inherit;
+}
