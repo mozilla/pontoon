@@ -4,7 +4,7 @@
 
 {% macro details_item(title, class, value, title_link=None, value_link=None, value_class=None) %}
 <li class="{{ class }}">
-  <span class="title">{{ title }}{% if title_link %}<sup><a href="{{ title_link }}" target="_blank">*</a></sup>{% endif %}</span>
+  <span class="title">{{ title }}{% if title_link %}<sup><a href="{{ title_link }}" target="_blank" rel="noopener noreferrer">*</a></sup>{% endif %}</span>
   <span class="value{% if value_class %} {{ value_class }}{% endif %}">
     {% if value_link %}<a href="{{ value_link }}">{% endif %}
     {{ value }}
