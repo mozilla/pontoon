@@ -279,8 +279,8 @@ var Pontoon = (function (my) {
       var pseudoUrlPattern = /(^|[^/])(www\.[\S]+(\b|$))/gim;
 
       return this.doNotRender(string)
-        .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
-        .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>');
+        .replace(urlPattern, '<a href="$&" target="_blank" rel="noopener noreferrer">$&</a>')
+        .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank" rel="noopener noreferrer">$2</a>');
     },
 
     /*
@@ -322,7 +322,7 @@ var Pontoon = (function (my) {
 
         if (sources) {
           sources.append(
-            '<li><a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+            '<li><a class="translation-source" href="' + data.url + '" target="_blank" rel="noopener noreferrer" title="' + data.title + '">' +
               '<span>' + data.source + '</span>' +
               (data.count ? '<sup title="' + occurrencesTitle + '">' + data.count  + '</sup>' : '') +
             '</a></li>'
@@ -337,7 +337,7 @@ var Pontoon = (function (my) {
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
               '<ul class="sources">' +
                 '<li data-source="' + data.source + '">' +
-                  '<a class="translation-source" href="' + data.url + '" target="_blank" title="' + data.title + '">' +
+                  '<a class="translation-source" href="' + data.url + '" target="_blank" rel="noopener noreferrer" title="' + data.title + '">' +
                     '<span>' + data.source + '</span>' +
                     (data.count ? '<sup title="' + occurrencesTitle + '">' + data.count + '</sup>' : '') +
                   '</a>' +
