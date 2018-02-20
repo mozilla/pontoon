@@ -15,22 +15,9 @@
     <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/nprogress.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
-    {% if settings.GOOGLE_ANALYTICS_KEY %}
-    <!-- Google Analytics -->
-    <script type="text/javascript">
 
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', '{{ settings.GOOGLE_ANALYTICS_KEY }}']);
-      _gaq.push(['_trackPageview']);
+    {% include "tracker.html" %}
 
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-    {% endif %}
     {% block extend_css %}
     {% endblock %}
     {% block extend_js %}
