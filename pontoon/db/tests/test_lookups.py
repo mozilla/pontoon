@@ -56,5 +56,5 @@ class TestIContainsCollationLookup(TestCase):
 
         # Force evaluation of query on the real database.
         assert_equal(entities.count(), 10)
-        assert_true(query_sql.endswith('WHERE UPPER("base_entity"."string"::text COLLATE "C") '
+        assert_true(query_sql.endswith('WHERE UPPER("base_entity"."string") '
                                        'LIKE UPPER(%s COLLATE "C")'))

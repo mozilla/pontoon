@@ -28,8 +28,6 @@ class IContainsCollate(IContains):
 
     def process_lhs(self, qn, connection):
         lhs, params = super(IContainsCollate, self).process_lhs(qn, connection)
-        if self.collation:
-            lhs = lhs.replace('::text', '::text COLLATE "{}"'.format(self.collation))
         return lhs, params
 
     def get_rhs_op(self, connection, rhs):
