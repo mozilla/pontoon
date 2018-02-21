@@ -642,15 +642,17 @@ CSP_IMG_SRC = (
     "'self'",
     "https:",
     "https://*.wp.com/pontoon.mozilla.org/",
-    "https://ssl.google-analytics.com",
+    "https://www.google-analytics.com",
     "https://www.gravatar.com/avatar/",
 )
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",
-    "'sha256-x3niK4UU+vG6EGT2NK2rwi2j/etQodJd840oRpEnqd4='",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
-    "https://ssl.google-analytics.com/ga.js",
+
+    # Rules related to Google Analytics
+    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
+    "https://www.google-analytics.com/analytics.js",
 )
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
 
