@@ -30,13 +30,10 @@ services:
     volumes:
       - .:/app
 
-  # -----------------------------
-  # External services
-  # -----------------------------
-
-  # https://hub.docker.com/_/postgres/
   postgresql:
-    image: postgres:9.4
+    build:
+      context: ./docker/postgres
+      dockerfile: ./Dockerfile
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
