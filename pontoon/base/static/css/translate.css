@@ -1457,12 +1457,12 @@ body > header aside p {
 }
 
 .ftl-area section .id {
-  font-weight: 300;
   border: 1px solid #5E6475;
   background: transparent;
   color: #AAAAAA;
   display: inline-block;
   font-weight: normal;
+  float: left;
   margin: 2px 5px 2px 0;
   padding: 0 4px;
   position: relative;
