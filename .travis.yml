@@ -7,6 +7,11 @@ cache:
   directories:
     - node_modules
 before_install:
+  - sudo apt-get update
+  - sudo apt-get install language-pack-tr
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/postgresql start 9.4
+  - psql -c "CREATE COLLATION tr_tr (LOCALE = 'tr_TR.utf8');" -U postgres
   - git submodule update --init --recursive
 install:
   - pip install -U --force pip
