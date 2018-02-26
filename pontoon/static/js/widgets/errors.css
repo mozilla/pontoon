@@ -1,0 +1,12 @@
+
+ul.errors {
+    padding: .3em;
+    margin: 0;
+    list-style: none;
+    background: #ccc;
+}
+
+ul.errors li.error {
+    color: #F36;
+    font-size: 1.1em;
+}
