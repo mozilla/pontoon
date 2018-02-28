@@ -3,7 +3,7 @@
 import pytest
 
 from pontoon.base.models import Entity, Translation
-from pontoon.db import IContainsCollate
+
 
 @pytest.mark.django_db
 def test_mgr_entity_filter_translated(resource0, locale0):
@@ -602,43 +602,26 @@ def test_lookup_collation(resource0, locale0, translation_factory):
         resource=resource0,
         string="string")
 
-    batch_kwargs = sum(
-        [[dict(
-            locale=locale0,
-            entity=entity,
-            string='this is string')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is STRİNG')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is Strıng')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is StrInG')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is sTriNg')]],
-        [])
+    batch_kwargs = [
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is string'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is STRİNG'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is Strıng'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is StrInG'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is sTriNg')]
     translations = translation_factory(
         batch_kwargs=batch_kwargs)
     assert (
-        set( Translation.objects.filter(
-            string__icontains_collate=(u'string', 'tr_TR')))
-        == {translations[0], translations[1], translations[4],})
-    assert (
-        set( Translation.objects.filter(
-            string__icontains_collate=(u'strıng', 'tr_TR')))
-        == {translations[2], translations[3],}) 
-    assert (
-        set( Translation.objects.filter(
-            string__icontains='string'))
-        == {translations[0], translations[3], translations[4],})
-    assert (
-        set( Translation.objects.filter(
-            string__icontains_collate=('string', 'C')))
-        == {translations[0], translations[3], translations[4],})
+        list(Translation.objects.filter(
+            string__icontains_collate=(
+                u'string', 'tr_tr')).values_list('string', flat=True))
+        == [translations[n].string for n in [0, 1, 4]])
