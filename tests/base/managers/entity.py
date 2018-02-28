@@ -3,7 +3,7 @@
 import pytest
 
 from pontoon.base.models import Entity, Translation
-
+from pontoon.db import IContainsCollate
 
 @pytest.mark.django_db
 def test_mgr_entity_filter_translated(resource0, locale0):
@@ -591,3 +591,54 @@ def test_mgr_entity_search_translation(entity_test_search):
     assert search('first translation') == [entities[0]]
     assert search('second translation') == [entities[1]]
     assert search('third translation') == [entities[2]]
+
+
+@pytest.mark.django_db
+def test_lookup_collation(resource0, locale0, translation_factory):
+    """
+    Filter translations according to collation.
+    """
+    entity = Entity.objects.create(
+        resource=resource0,
+        string="string")
+
+    batch_kwargs = sum(
+        [[dict(
+            locale=locale0,
+            entity=entity,
+            string='this is string')],
+         [dict(
+            locale=locale0,
+            entity=entity,
+            string='this is STRİNG')],
+         [dict(
+            locale=locale0,
+            entity=entity,
+            string='this is Strıng')],
+         [dict(
+            locale=locale0,
+            entity=entity,
+            string='this is StrInG')],
+         [dict(
+            locale=locale0,
+            entity=entity,
+            string='this is sTriNg')]],
+        [])
+    translations = translation_factory(
+        batch_kwargs=batch_kwargs)
+    assert (
+        set( Translation.objects.filter(
+            string__icontains_collate=(u'string', 'tr_TR')))
+        == {translations[0], translations[1], translations[4],})
+    assert (
+        set( Translation.objects.filter(
+            string__icontains_collate=(u'strıng', 'tr_TR')))
+        == {translations[2], translations[3],}) 
+    assert (
+        set( Translation.objects.filter(
+            string__icontains='string'))
+        == {translations[0], translations[3], translations[4],})
+    assert (
+        set( Translation.objects.filter(
+            string__icontains_collate=('string', 'C')))
+        == {translations[0], translations[3], translations[4],})
