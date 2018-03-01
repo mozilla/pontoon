@@ -1,0 +1,38 @@
+
+.buttons .button a {
+  color: #aaa;
+  display: inline-block;
+  padding: 6px;
+  text-transform: uppercase;
+  background: #333941;
+  border: 0;
+  border-radius: 2px;
+  color: #aaa;
+  font-weight: 400;
+  height: auto;
+  padding: 6px;
+  text-align: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+
+.buttons .button a:hover,
+.buttons li.active.button a {
+  background: #7BC876;
+  color: #272A2F;
+}
+
+.buttons {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.buttons .button {
+    padding: 0;
+    margin-right: .28em;
+    height: auto;
+}
+
+.buttons .button:last-child {
+    margin-right: 0;
+}
