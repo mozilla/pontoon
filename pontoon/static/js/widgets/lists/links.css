@@ -1,0 +1,6 @@
+
+.links li {
+    list-style: none;
+    display: inline-block;
+    margin-left: 20px;
+}
