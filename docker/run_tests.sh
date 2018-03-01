@@ -49,8 +49,3 @@ echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Running Python tests with pytest"
 $PYTEST --cov-append --cov-report=term --cov=.
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
-echo "Generating code coverage report"
-$CODECOV
