@@ -591,3 +591,37 @@ def test_mgr_entity_search_translation(entity_test_search):
     assert search('first translation') == [entities[0]]
     assert search('second translation') == [entities[1]]
     assert search('third translation') == [entities[2]]
+
+
+@pytest.mark.django_db
+def test_lookup_collation(resource0, locale0, translation_factory):
+    """
+    Filter translations according to collation.
+    """
+    entity = Entity.objects.create(
+        resource=resource0,
+        string="string")
+
+    batch_kwargs = [
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is string'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is STRİNG'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is Strıng'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is StrInG'),
+        dict(locale=locale0,
+             entity=entity,
+             string=u'this is sTriNg')]
+    translations = translation_factory(
+        batch_kwargs=batch_kwargs)
+    assert (
+        list(Translation.objects.filter(
+            string__icontains_collate=(
+                u'string', 'tr_tr')).values_list('string', flat=True))
+        == [translations[n].string for n in [0, 1, 4]])
