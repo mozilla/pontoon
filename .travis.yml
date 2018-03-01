@@ -7,11 +7,6 @@ cache:
   directories:
     - node_modules
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install language-pack-tr
-  - sudo /etc/init.d/postgresql stop
-  - sudo /etc/init.d/postgresql start 9.4
-  - psql -c "CREATE COLLATION tr_tr (LOCALE = 'tr_TR.utf8');" -U postgres
   - git submodule update --init --recursive
 install:
   - pip install -U --force pip
@@ -21,8 +16,6 @@ install:
   - nvm install node
   - nvm use node
   - npm install .
-before_script:
-  - psql -c 'create database pontoon;' -U postgres
 script:
   - pylama pontoon
   - pylama tests
@@ -31,14 +24,18 @@ script:
   - npm test
   - python manage.py test --with-coverage
   - py.test --cov-append --cov-report=term --cov=. -v
-  # This temporarily exits 0 while we cleanup
   - ./node_modules/.bin/eslint .
   - codecov
 
   # Heroku deployment file is valid
   - cat app.json | python -m json.tool > /dev/null
+
 addons:
   postgresql: "9.4"
+  apt:
+    packages:
+      - language-pack-tr
+
 env:
   global:
     - SECRET_KEY=asdf

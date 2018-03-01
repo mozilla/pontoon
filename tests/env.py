@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.db import connection
 
 from pontoon.base.models import (
     Entity, Locale, Project, ProjectLocale, Resource,
@@ -10,9 +11,21 @@ from django.contrib.auth import get_user_model
 class Environment(object):
 
     def setup(self):
+        self.setup_collations()
         for i in range(0, 2):
             self.setup_translations(i)
         self.setup_x()
+
+    def setup_collations(self):
+        """Required for collation lookup tests
+
+        At the moment this is only set up for Turkish
+
+        cf: Bug 1440940
+        """
+
+        cursor = connection.cursor()
+        cursor.execute("CREATE COLLATION tr_tr (LOCALE = 'tr_TR.utf8');")
 
     def setup_translations(self, i):
         translators_group = Group.objects.create(
