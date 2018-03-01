@@ -38,7 +38,10 @@ module.exports = {
         NProgress: false,
         diff_match_patch: false,
         Highcharts: false,
-        editor: false
+        editor: false,
+        DIFF_INSERT: false,
+        DIFF_EQUAL: false,
+        DIFF_DELETE: false
     },
     plugins: [
         'react',

@@ -187,25 +187,34 @@ var Pontoon = (function (my) {
     },
 
     /*
+     * Get markup for a placeable instance.
+     */
+    getPlaceableMarkup: function (title, replacement) {
+        return '<mark class="placeable" title="' + title + '">' + replacement + '</mark>';
+    },
+
+    /*
+     * Mark single instance of a placeable in string
+     */
+    markPlaceable: function(string, regex, title, replacement) {
+      replacement = replacement || '$&';
+      return string.replace(regex, this.getPlaceableMarkup(title, replacement));
+    },
+
+    /*
      * Markup placeables
      */
-    markPlaceables: function (string) {
-      function getReplacement(title, replacement) {
-        return '<mark class="placeable" title="' + title + '">' + replacement + '</mark>';
-      }
+    markPlaceables: function (string, whiteSpaces) {
+      var self = this;
+      whiteSpaces = whiteSpaces !== false;
 
-      function markup(string, regex, title, replacement) {
-        replacement = replacement || '$&';
-        return string.replace(regex, getReplacement(title, replacement));
-      }
-
-      string = this.doNotRender(string);
+      string = self.doNotRender(string);
 
       /* Special spaces */
       // Pontoon.doNotRender() replaces \u00A0 with &nbsp;
-      string = markup(string, /&nbsp;/gi, 'Non-breaking space');
-      string = markup(string, /[\u202F]/gi, 'Narrow non-breaking space');
-      string = markup(string, /[\u2009]/gi, 'Thin space');
+      string = self.markPlaceable(string, /&nbsp;/gi, 'Non-breaking space');
+      string = self.markPlaceable(string, /[\u202F]/gi, 'Narrow non-breaking space');
+      string = self.markPlaceable(string, /[\u2009]/gi, 'Thin space');
 
       /* Multiple spaces */
       string = string.replace(/  +/gi, function(match) {
@@ -215,20 +224,40 @@ var Pontoon = (function (my) {
         for (var i=0; i<match.length; i++) {
           replacement += ' &middot; ';
         }
-
-        return getReplacement(title, replacement);
+        return self.getPlaceableMarkup(title, replacement);
       });
 
-      /* Leading and Trailing spaces */
-      string = markup(string, /^ /gi, 'Leading space');
-      string = markup(string, / $/gi, 'Trailing space');
+      if (whiteSpaces) {
+        string = self.markWhiteSpaces(string);
+      }
 
-      /* Tab */
-      string = markup(string, /\t/gi, 'Tab character', '&rarr;');
+      return string;
+    },
+
+    /*
+     * Mark leading/trailing spaces in multiline strings (that contain newlines inside).
+     * Should be applied to a fully concatenated string, doesn't handle substrings well.
+     */
+    markWhiteSpaces: function (string) {
+      /* 'm' modifier makes regex applicable to every separate line in string, not the string as the whole. */
+
+      /* Leading space */
+      string = string.replace(
+        /^(<(ins|del)>)*( )/gmi,
+        '$1' + this.getPlaceableMarkup('Leading space', ' ')
+      );
+
+      /* Trailing space */
+      string = string.replace(
+        /( )(<\/(ins|del)>)*$/gmi,
+        this.getPlaceableMarkup('Trailing space', ' ') + '$2'
+      );
 
       /* Newline */
-      string = markup(string, /\n/gi, 'Newline character', '¶$&');
+      string = this.markPlaceable(string, /\n/gi, 'Newline character', '¶$&');
 
+      /* Tab */
+      string = this.markPlaceable(string, /\t/gi, 'Tab character', '&rarr;');
       return string;
     },
 
@@ -247,23 +276,23 @@ var Pontoon = (function (my) {
         var type = this[0],
             slice = this[1];
 
-        // Inserted
-        if (type === 1) {
-          output += '<ins>' + self.markPlaceables(slice) + '</ins>';
-        }
+        switch(type) {
+          case DIFF_INSERT:
+            output += '<ins>' + self.markPlaceables(slice, false) + '</ins>';
+            break;
 
-        // Deleted
-        if (type === -1) {
-          output += '<del>' + self.markPlaceables(slice) + '</del>';
-        }
+          case DIFF_DELETE:
+            output += '<del>' + self.markPlaceables(slice, false) + '</del>';
+            break;
 
-        // Equal
-        if (type === 0) {
-          output += self.markPlaceables(slice);
+          case DIFF_EQUAL:
+            output += self.markPlaceables(slice, false);
+            break;
         }
       });
 
-      return output;
+      /* Marking of leading/trailing spaces has to be the last step to avoid false positives. */
+      return self.markWhiteSpaces(output);
     },
 
     /*
