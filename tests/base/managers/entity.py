@@ -609,6 +609,8 @@ def test_lookup_collation(resource0, locale0, translation_factory):
             u'this is sTriNg']]
     translations = translation_factory(
         batch_kwargs=batch_kwargs)
+    #Check if 'Iı' and 'İi' are appropriately distinguished and filtered
+    #according to turkish(tr_tr) collation
     assert (
         set( Translation.objects.filter(
             string__icontains_collate=(u'string', 'tr_tr')))
@@ -617,10 +619,12 @@ def test_lookup_collation(resource0, locale0, translation_factory):
         set( Translation.objects.filter(
             string__icontains_collate=(u'strıng', 'tr_tr')))
         == set([translations[n] for n in [2, 3]]))
+    #Check if differentiation fails without any collation(C)
     assert (
         set( Translation.objects.filter(
             string__icontains_collate=(u'string', 'C')))
         == set([translations[n] for n in [0, 3, 4]]))
+    #Compare the icontains_collate query with regular i_contains query
     assert (
         list(Translation.objects.filter(
             string__icontains=u'string'))
