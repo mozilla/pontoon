@@ -601,31 +601,31 @@ def test_lookup_collation(resource0, locale0, translation_factory):
     entity = Entity.objects.create(
         resource=resource0,
         string="string")
-    batch_kwargs = [dict(entity=entity, locale=locale0, string=s) 
-        for s in [u'this is string',
-            u'this is STRİNG',
-            u'this is Strıng',
-            u'this is StrInG',
-            u'this is sTriNg']]
+    batch_kwargs = [dict(entity=entity, locale=locale0, string=s)
+                    for s in [u'this is string',
+                              u'this is STRİNG',
+                              u'this is Strıng',
+                              u'this is StrInG',
+                              u'this is sTriNg']]
     translations = translation_factory(
         batch_kwargs=batch_kwargs)
-    #Check if 'Iı' and 'İi' are appropriately distinguished and filtered
-    #according to turkish(tr_tr) collation
+    # Check if 'Iı' and 'İi' are appropriately distinguished and filtered
+    # according to turkish(tr_tr) collation
     assert (
-        set( Translation.objects.filter(
+        set(Translation.objects.filter(
             string__icontains_collate=(u'string', 'tr_tr')))
         == set([translations[n] for n in [0, 1, 4]]))
     assert (
-        set( Translation.objects.filter(
+        set(Translation.objects.filter(
             string__icontains_collate=(u'strıng', 'tr_tr')))
         == set([translations[n] for n in [2, 3]]))
-    #Check if differentiation fails without any collation(C)
+    # Check if differentiation fails without any collation(C)
     assert (
-        set( Translation.objects.filter(
+        set(Translation.objects.filter(
             string__icontains_collate=(u'string', 'C')))
         == set([translations[n] for n in [0, 3, 4]]))
-    #Compare the icontains_collate query with regular i_contains query
+    # Compare the icontains_collate query with regular i_contains query
     assert (
         list(Translation.objects.filter(
             string__icontains=u'string'))
-        == [translations[n] for n in [0, 2, 3, 4]])       
+        == [translations[n] for n in [0, 2, 3, 4]])
