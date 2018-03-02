@@ -601,45 +601,26 @@ def test_lookup_collation(resource0, locale0, translation_factory):
     entity = Entity.objects.create(
         resource=resource0,
         string="string")
-
-    batch_kwargs = sum(
-        [[dict(
-            locale=locale0,
-            entity=entity,
-            string='this is string')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is STRİNG')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is Strıng')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is StrInG')],
-         [dict(
-            locale=locale0,
-            entity=entity,
-            string='this is sTriNg')]],
-        [])
+    batch_kwargs = [dict(entity=entity, locale=locale0, string=s) 
+        for s in [u'this is string',
+            u'this is STRİNG',
+            u'this is Strıng',
+            u'this is StrInG',
+            u'this is sTriNg']]
     translations = translation_factory(
         batch_kwargs=batch_kwargs)
     assert (
         set( Translation.objects.filter(
             string__icontains_collate=(u'string', 'tr_tr')))
-        == {translations[0], translations[1], translations[4],})
+        == set([translations[n] for n in [0, 1, 4]]))
     assert (
         set( Translation.objects.filter(
             string__icontains_collate=(u'strıng', 'tr_tr')))
-        == {translations[2], translations[3],})
-    print(Translation.objects.filter(
-            string__icontains=u'string'))
+        == set([translations[n] for n in [2, 3]]))
     assert (
         set( Translation.objects.filter(
-            string__icontains_collate=('string', 'C')))
-        == {translations[0], translations[3], translations[4],})
+            string__icontains_collate=(u'string', 'C')))
+        == set([translations[n] for n in [0, 3, 4]]))
     assert (
         list(Translation.objects.filter(
             string__icontains=u'string'))
