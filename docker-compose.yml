@@ -1,41 +1,38 @@
 # docker-compose for Pontoon development.
 #
 # Note: Requires docker-compose 1.10+.
+# TODO: use mozilla/pontoon not phlax/pontoon dockerhub
 version: "2"
 services:
-  # Pontoon base image
-  # This image handles user creation and permissions, so that code can be
-  # shared from your local folder into the docker container.
-  base:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.base
-    image: local/pontoon_base
-
-  # Webapp app
+  # Webapp dev
   webapp:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-    image: local/pontoon
+    image: phlax/pontoon:dev
     env_file:
-      - docker/config/webapp.env
+      - docker/dev/config/webapp.env
     environment:
       - LOCAL_USER_ID=1000
     depends_on:
       - postgresql
-    command: ["/app/docker/run_webapp.sh"]
+    command: ["/app/docker/dev/run_webapp.sh"]
     ports:
       - "8000:8000"
     volumes:
       - .:/app
 
+  # -----------------------------
+  # External services
+  # -----------------------------
+
+  # https://hub.docker.com/_/phlax/pontoon/
   postgresql:
-    build:
-      context: ./docker/postgres
-      dockerfile: ./Dockerfile
+    image: phlax/pontoon:postgres
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
+    volumes:
+      - data-volume:/var/lib/db
+
+volumes:
+  data-volume:

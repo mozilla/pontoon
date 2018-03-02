@@ -1,28 +1,29 @@
-FROM local/pontoon_base
+FROM phlax/pontoon:base
 
 WORKDIR /app
 
 # Install OS-level things
-COPY docker/set_up_ubuntu.sh /app/
+COPY ./set_up_ubuntu.sh /app/
 RUN DEBIAN_FRONTEND=noninteractive /app/set_up_ubuntu.sh
 
 # Create the app user
 RUN useradd --shell /bin/bash -c "" -m app
 
 # Setup apps's env
-COPY docker/set_up_env.sh /app/
+COPY ./set_up_env.sh /app/
 RUN sudo -u app /app/set_up_env.sh
 
 # Install Pontoon Python requirements
-COPY requirements.txt /app/requirements.txt
-COPY requirements-dev.txt /app/requirements-dev.txt
-COPY requirements-test.txt /app/requirements-test.txt
+# gets from github to keep the build context nice and small
+ADD https://raw.githubusercontent.com/mozilla/pontoon/master/requirements.txt /app/requirements.txt
+ADD https://raw.githubusercontent.com/mozilla/pontoon/master/requirements-dev.txt /app/requirements-dev.txt
+ADD https://raw.githubusercontent.com/mozilla/pontoon/master/requirements-test.txt /app/requirements-test.txt
+
 RUN pip install -U 'pip>=8'
 RUN pip install --no-cache-dir --require-hashes -r requirements-dev.txt
 RUN pip install --no-cache-dir --require-hashes -r requirements-test.txt
 
-COPY . /app/
-COPY ./docker/config/webapp.env /app/.env
+COPY ./config/webapp.env /app/.env
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
