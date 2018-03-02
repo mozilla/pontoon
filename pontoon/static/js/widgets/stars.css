@@ -1,0 +1,10 @@
+
+.stars .star {
+  color: #637283;
+  float: left;
+  width: inherit;
+}
+
+.stars .star.active {
+  color: #7BC876;
+}
