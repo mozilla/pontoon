@@ -621,6 +621,24 @@ var Pontoon = (function (my) {
 
 /* Main code */
 $(function() {
+  /*
+   * If Google Analytics is enabled, frontend will send additional about Ajax calls.
+   *
+   * To send an event to GA, We pass following informations:
+   * event category - hardcoded 'ajax' string.
+   * event action - hardcoded 'request' string.
+   * event label - contains url that was called by $.ajax() call.
+   *
+   * GA Analytics enriches every event with additional information like e.g. browser, resolution, country etc.
+   */
+  $(document).ajaxComplete(function(event, jqXHR, settings) {
+      if (typeof(ga) !== 'function') {
+        return;
+      }
+
+      ga('send', 'event', 'ajax', 'request', settings.url);
+  });
+
   Pontoon.NProgressBind();
 
   // Display any notifications
