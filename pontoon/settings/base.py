@@ -537,7 +537,7 @@ def _allowed_hosts():
 
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
     host = host.rsplit(':', 1)[0]  # Remove port
-    return [host]
+    return [host] + ['0.0.0.0']
 
 
 ALLOWED_HOSTS = lazy(_allowed_hosts, list)()

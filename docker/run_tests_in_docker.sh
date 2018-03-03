@@ -33,6 +33,7 @@ if [ "$1" == "--shell" ]; then
            -e LOCAL_USER_ID=$UID \
            --tty \
            --interactive \
+           -p 8000:8000 \
            local/pontoon /bin/bash "${@:2}"
 
 else
