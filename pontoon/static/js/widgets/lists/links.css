@@ -1,6 +1,10 @@
 
-.links li {
+.links .link {
     list-style: none;
     display: inline-block;
     margin-left: 20px;
+}
+
+.links .link a:link, .links .link a:visited {
+    color: #EBEBEB;
 }
