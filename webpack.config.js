@@ -29,6 +29,9 @@ module.exports = {
     },{
 	test: /\.json$/,
 	loader: 'json-loader',
+    },{
+        test: /\.(eot|svg|ttf|woff|woff2)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader?outputPath=fonts&publicPath=/static/webpack_bundles/fonts'
     }],
   },
   resolve: {
