@@ -20,6 +20,7 @@ from xml.sax.saxutils import (
     quoteattr,
 )
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -693,3 +694,15 @@ def get_m2m_changes(current_qs, new_qs):
     )
 
     return list(add_items), list(remove_items)
+
+
+class DjangoJSONMultiEncoder(DjangoJSONEncoder):
+    encoders = ()
+
+    def default(self, obj):
+        for encoder in self.encoders:
+            try:
+                return encoder().default(obj)
+            except TypeError:
+                pass
+        return super(DjangoJSONMultiEncoder, self).default(obj)
