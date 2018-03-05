@@ -18,6 +18,7 @@ class TagEncoder(json.JSONEncoder):
             name=obj.name,
             url=obj.url(project=project),
             activity=obj.latest_activity and obj.latest_activity.as_dict(),
+            priority=obj.object.priority,
             chart=obj.chart)
         return as_dict
 
