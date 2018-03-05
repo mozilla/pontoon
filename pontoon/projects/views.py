@@ -16,6 +16,7 @@ from pontoon.base.models import Project
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.projects import forms
+from pontoon.tags.utils import TagsTool
 
 
 def projects(request):
@@ -35,9 +36,12 @@ def projects(request):
 def project(request, slug):
     """Project dashboard."""
     project = get_object_or_404(Project.objects.available(), slug=slug)
-
     return render(request, 'projects/project.html', {
         'project': project,
+        'tags': (
+            len(TagsTool(projects=[project], priority=True)) or False
+            if project.tags_enabled
+            else None)
     })
 
 
