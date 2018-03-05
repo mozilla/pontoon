@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Q
 from django.http import (
@@ -26,6 +27,7 @@ from django.views.decorators.http import (
     condition,
     require_POST
 )
+from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 
 from pontoon.base import forms
@@ -41,6 +43,8 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
+
+from dj.debug import debug
 
 
 log = logging.getLogger(__name__)
@@ -765,3 +769,18 @@ class AjaxFormPostView(AjaxFormView):
 
     def get(self, *args, **kwargs):
         raise Http404
+
+
+class AjaxDetailView(DetailView):
+
+    @property
+    def encoder(self):
+        return DjangoJSONEncoder
+
+    @method_decorator(debug)
+    @method_decorator(utils.require_AJAX)
+    def get(self, *args, **kwargs):
+        self.object = self.get_object()
+        return JsonResponse(
+            dict(data=self.get_context_data()),
+            encoder=self.encoder)
