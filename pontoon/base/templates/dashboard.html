@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+<div id="app" data-api="{{ api }}"></div>
+{% endblock content %}
+
+{% block site_css %}
+
+<script type="text/javascript" {{ script_nonce }}>
+const logo = new Image();
+logo.src = '/static/img/logo.svg';
+</script>
+
+{{ render_bundle(bundle, 'css') }}
+{% endblock %}
+
+{% block site_js %}
+<script type="text/javascript" {{ script_nonce }}>
+document.fonts.load('32px "FontAwesome"')
+document.fonts.load('32px "Open Sans"')
+document.fonts.load('normal 300 32px "Open Sans"')
+document.fonts.load('normal 700 32px "Open Sans"')
+const DATA = JSON.parse(unescape("{{ data|safe|escapejs }}"))
+</script>
+
+{{ render_bundle(bundle, 'js') }}
+{% endblock %}
