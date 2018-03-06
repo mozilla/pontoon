@@ -617,6 +617,10 @@ def test_lookup_collation(resource0, locale0, translation_factory):
         == set([translations[n] for n in [0, 1, 4]]))
     assert (
         set(Translation.objects.filter(
+            string__icontains_collate=(u'strİng', 'tr_tr')))
+        == set([translations[n] for n in [0, 1, 4]]))
+    assert (
+        set(Translation.objects.filter(
             string__icontains_collate=(u'strıng', 'tr_tr')))
         == set([translations[n] for n in [2, 3]]))
     # Check if differentiation fails without any collation(C)
