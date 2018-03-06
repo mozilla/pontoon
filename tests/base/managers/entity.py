@@ -594,13 +594,23 @@ def test_mgr_entity_search_translation(entity_test_search):
 
 
 @pytest.mark.django_db
-def test_lookup_collation(resource0, locale0, translation_factory):
+def test_lookup_collation(resource0, locale0, entity_factory, translation_factory):
     """
     Filter translations according to collation.
     """
     entity = Entity.objects.create(
         resource=resource0,
         string="string")
+    entities = entity_factory(
+        resource=resource0,
+        batch_kwargs=[
+            {'string': u'First string',
+             'comment': u'random Strıng'},
+            {'string': u'Second strİng',
+             'comment': u'random string'},
+            {'string': u'Third Strıng',
+             'comment': u'random strİng'}])
+
     batch_kwargs = [dict(entity=entity, locale=locale0, string=s)
                     for s in [u'this is string',
                               u'this is STRİNG',
@@ -611,6 +621,18 @@ def test_lookup_collation(resource0, locale0, translation_factory):
         batch_kwargs=batch_kwargs)
     # Check if 'Iı' and 'İi' are appropriately distinguished and filtered
     # according to turkish(tr_tr) collation
+    assert (
+        set(Entity.objects.filter(
+            string__icontains_collate=(u'string', 'tr_tr')))
+        == set([entities[n] for n in [0, 1]] + [entity]))
+    assert (
+        set(Entity.objects.filter(
+            comment__icontains_collate=(u'strİng', 'tr_tr')))
+        == set([entities[n] for n in [1, 2]]))
+    assert (
+        set(Translation.objects.filter(
+            string__icontains_collate=(u'string', 'tr_tr')))
+        == set([translations[n] for n in [0, 1, 4]]))
     assert (
         set(Translation.objects.filter(
             string__icontains_collate=(u'string', 'tr_tr')))

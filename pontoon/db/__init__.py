@@ -32,7 +32,8 @@ class IContainsCollate(IContains):
             lhs = lhs.replace('::text', '::text COLLATE "{}"'.format(self.collation))
             if '::text' not in lhs:
                 lhs = lhs.replace(
-                    '."string"', '."string"::text COLLATE "{}"'.format(self.collation))
+                    '."{}"'.format(self.lhs.target.column), '."{}"::text COLLATE "{}"'.format(
+                        self.lhs.target.column, self.collation))
         return lhs, params
 
     def get_rhs_op(self, connection, rhs):
