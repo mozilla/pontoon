@@ -1,0 +1,101 @@
+
+.toolbar nav {
+    width: 980px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* LOGO */
+
+.toolbar nav .logo {
+  display: inline-block;
+  float: left;
+  margin: 14px 15px 0 0;
+}
+
+
+/* LINKS */
+
+.toolbar nav .links {
+  display: inline-block;
+  float: left;
+  padding-top: 22px;
+}
+
+.toolbar nav .links .link {
+  margin: 0 15px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+
+.toolbar nav .links .link::after {
+    content: "\00a0";
+}
+
+/* MENU */
+
+.toolbar nav .menus {
+    float: right;
+}
+
+.toolbar nav .menus > .menu-item {
+    float: left;
+    padding-left: 0;
+    position: relative;
+    top: 0;
+}
+
+.toolbar nav .menus > .menu-item .button img {
+    height: 44px;
+    width: 44px;
+    margin: 6px 0 6px 5px;
+}
+
+.toolbar nav .menus > .menu-item .button .icon {
+    color: #4D5967;
+    font-size: 26px;
+    margin-top: 17px;
+}
+
+/* notifications */
+
+.toolbar nav .no-notifications {
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+
+.toolbar nav .no-notifications .icon {
+    color: #333941;
+    font-size: 92px;
+    padding-bottom: 8px;
+    margin: auto;
+}
+
+.toolbar nav .no-notifications .title {
+    color: #EBEBEB;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.toolbar nav .no-notifications .description {
+    color: #AAAAAA;
+    font-size: 12px;
+    padding-top: 4px;
+}
+
+.toolbar nav #notification .menu.dropdown {
+    padding: 0;
+    width: 350px;
+}
+
+.toolbar nav #notification .horizontal-separator {
+    margin: 0;
+    border-color: #333941;
+}
+
+.toolbar nav #notification .menu-item .see-all {
+    padding: 10px;
+    text-align: center;
+}
