@@ -6,7 +6,7 @@
 # Pass --shell to run a shell in the test container.
 
 # Failures should cause setup to fail.
-set -v -e -x
+set -e
 
 DC="$(which docker-compose)"
 
@@ -36,43 +36,16 @@ if [ "$1" == "--shell" ]; then
            local/pontoon /bin/bash "${@:2}"
 
 else
-    # Create a data container to hold the repo directory contents and copy the
-    # contents into it.
-    if [ "$(docker container ls --all | grep pontoon-tests)" != "" ]; then
-        echo "Removing previously existing container"
-        docker rm pontoon-tests
-    fi
-
-    echo "Creating pontoon-tests container..."
-    docker create \
+    docker run \
+           --rm \
            --volume "$(pwd)":/app \
-           -e LOCAL_USER_ID=$UID \
-           --name pontoon-tests \
-           ${BASEIMAGENAME} /bin/true
-
-    # Run cmd in that environment and then remove the container.
-    echo "Running tests..."
-    docker run \
-           --rm \
-           --volumes-from pontoon-tests \
            --workdir /app \
            --network pontoon_default \
            --link "${DC} ps -q postgresql" \
            --env-file ./docker/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
            local/pontoon \
-           python manage.py test $@
-
-    docker run \
-           --rm \
-           --volumes-from pontoon-tests \
-           --workdir /app \
-           --network pontoon_default \
-           --link "${DC} ps -q postgresql" \
-           --env-file ./docker/config/webapp.env \
-           -e LOCAL_USER_ID=$UID \
-           local/pontoon \
-           py.test
+           /app/docker/run_tests.sh
 
     echo "Done!"
 fi
