@@ -986,12 +986,10 @@ class Locale(AggregatedStats):
         else:
             stats = self
 
-        all_paths = translatedresources.values_list("resource__path", flat=True)
-
         details_list = list(details) + list(unbound_details)
         details_list.append({
             'title': 'all-resources',
-            'resource__path': list(all_paths),
+            'resource__path': [],
             'resource__total_strings': stats.total_strings,
             'fuzzy_strings': stats.fuzzy_strings,
             'translated_strings': stats.translated_strings,
@@ -2623,14 +2621,18 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         translated_resources = self.filter(
             locale=locale,
-            resource__project__disabled=False
+            resource__project__disabled=False,
         )
 
         if project.slug != 'all-projects':
             translated_resources = translated_resources.filter(
                 resource__project=project,
-                resource__path__in=paths
             )
+
+            if paths:
+                translated_resources = translated_resources.filter(
+                    resource__path__in=paths,
+                )
 
         return translated_resources.aggregated_stats()
 
