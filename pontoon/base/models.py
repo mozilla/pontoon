@@ -896,6 +896,17 @@ class Locale(AggregatedStats):
             locale=self
         ).aggregate_stats(self)
 
+    def stats(self):
+        """Get locale stats used in All Resources part."""
+        return [{
+            'title': 'all-resources',
+            'resource__path': [],
+            'resource__total_strings': self.total_strings,
+            'fuzzy_strings': self.fuzzy_strings,
+            'translated_strings': self.translated_strings,
+            'approved_strings': self.approved_strings,
+        }]
+
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
         def get_details(parts):
@@ -909,19 +920,12 @@ class Locale(AggregatedStats):
                 'approved_strings',
             )
 
-        if project.slug != 'all-projects':
-            pages = project.subpage_set.all()
-        else:
-            pages = Subpage.objects.filter(project__in=self.project_set.all())
-
+        pages = project.subpage_set.all()
         translatedresources = TranslatedResource.objects.filter(
+            resource__project=project,
             resource__entities__obsolete=False,
             locale=self
-        )
-        if project.slug != 'all-projects':
-            translatedresources = translatedresources.filter(resource__project=project)
-        translatedresources = translatedresources.distinct()
-
+        ).distinct()
         details = []
         unbound_details = []
 
@@ -938,7 +942,7 @@ class Locale(AggregatedStats):
         # only include stats for page resources.
         elif len(pages) > 0:
             # Each subpage must have resources defined
-            if pages[0].resources.exists() or project.slug == 'all-projects':
+            if pages[0].resources.exists():
                 locale_pages = pages.filter(resources__translatedresources__locale=self)
                 details = get_details(
                     # List only subpages, whose resources are available for locale
@@ -981,19 +985,16 @@ class Locale(AggregatedStats):
                 url=F('resource__project__url')
             ))
 
-        if project.slug != 'all-projects':
-            stats = ProjectLocale.objects.get(project=project, locale=self)
-        else:
-            stats = self
+        all_resources = ProjectLocale.objects.get(project=project, locale=self)
 
         details_list = list(details) + list(unbound_details)
         details_list.append({
             'title': 'all-resources',
             'resource__path': [],
-            'resource__total_strings': stats.total_strings,
-            'fuzzy_strings': stats.fuzzy_strings,
-            'translated_strings': stats.translated_strings,
-            'approved_strings': stats.approved_strings,
+            'resource__total_strings': all_resources.total_strings,
+            'fuzzy_strings': all_resources.fuzzy_strings,
+            'translated_strings': all_resources.translated_strings,
+            'approved_strings': all_resources.approved_strings,
         })
 
         return details_list

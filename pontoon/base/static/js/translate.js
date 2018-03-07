@@ -2907,8 +2907,15 @@ var Pontoon = (function (my) {
             self.updatePartMenu();
 
           } else {
+            var url;
+            if (slug !== 'all-projects') {
+              url = '/' + locale + '/' + slug + '/parts/';
+            } else {
+              url = '/teams/' + locale + '/stats/';
+            }
+
             $.ajax({
-              url: '/' + locale + '/' + slug + '/parts/',
+              url: url,
               success: function(parts) {
                 if (projectParts) {
                   projectParts[locale] = parts;

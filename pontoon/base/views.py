@@ -114,14 +114,17 @@ def locale_projects(request, locale):
 
 
 @utils.require_AJAX
+def locale_stats(request, locale):
+    """Get locale stats used in All Resources part."""
+    locale = get_object_or_404(Locale, code=locale)
+    return JsonResponse(locale.stats(), safe=False)
+
+
+@utils.require_AJAX
 def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
     locale = get_object_or_404(Locale, code=locale)
-
-    if slug == 'all-projects':
-        project = Project(slug=slug)
-    else:
-        project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project, slug=slug)
 
     try:
         return JsonResponse(locale.parts_stats(project), safe=False)
