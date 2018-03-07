@@ -1,5 +1,5 @@
 <!-- Resource selector -->
-<div class="part select">
+<div class="part select {% if project.slug == 'all-projects' %}hidden{% endif %}">
   <div class="button breadcrumbs selector" title="{{ part }}">
     <span class="title noselect">{% if part == 'all-resources' %}{{ 'All Resources' }}{% else %}{{ part.rsplit('/')[-1] }}{% endif %}</span>
   </div>

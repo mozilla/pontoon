@@ -2792,6 +2792,7 @@ var Pontoon = (function (my) {
      */
     updatePartMenu: function () {
       var locale = this.getSelectedLocale(),
+          project = this.getSelectedProject(),
           parts = this.getProjectData('parts')[locale],
           currentPart = this.getSelectedPart(),
           part = $.grep(parts, function (e) { return e.title === currentPart; });
@@ -2800,6 +2801,9 @@ var Pontoon = (function (my) {
       if (!part.length) {
         this.updatePartSelector(parts[0].title);
       }
+
+      // Hide part menu for All Projects
+      $('.part.select').toggleClass('hidden', project === 'all-projects');
 
       this.updateGoButton();
     },
