@@ -10,6 +10,9 @@ from django.contrib.auth.models import Group
 User = get_user_model()
 
 
+User = get_user_model()
+
+
 @pytest.fixture
 def member0(client, user0):
     """Provides a `LoggedInMember` with the attributes `user` and `client`
