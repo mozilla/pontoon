@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 var BundleTracker = require('webpack-bundle-tracker');
 
 
@@ -21,7 +22,10 @@ module.exports = {
       loaders: ['babel-loader'],
     },{
         test: /\.css$/,
-        loaders: [ 'style-loader', 'css-loader' ]
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
     },{
 	test: /\.json$/,
 	loader: 'json-loader',
@@ -40,6 +44,7 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new BundleTracker({filename: './webpack-stats.json'}),
+    new ExtractTextPlugin("[name].css"),
   ],
   // This will expose source map files so that errors will point to your
   // original source files instead of the transpiled files.
