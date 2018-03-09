@@ -163,6 +163,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'csp_nonce.middleware.CSPNonceMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
 )
@@ -174,6 +175,7 @@ CONTEXT_PROCESSORS = (
     'django.template.context_processors.request',
     'session_csrf.context_processor',
     'django.contrib.messages.context_processors.messages',
+    'csp_nonce.context_processors.nonce',
     'pontoon.base.context_processors.globals',
 )
 
@@ -649,12 +651,13 @@ CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
-
     # Rules related to Google Analytics
     "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
     "https://www.google-analytics.com/analytics.js",
 )
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)
+
+CSP_NONCE_SCRIPT = True
 
 # Needed if site not hosted on HTTPS domains (like local setup)
 if not (HEROKU_DEMO or SITE_URL.startswith('https')):
