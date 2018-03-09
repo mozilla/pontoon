@@ -40,6 +40,7 @@ module.exports = {
         diff_match_patch: false,
         Highcharts: false,
         editor: false,
+        DATA: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
         DIFF_DELETE: false,
