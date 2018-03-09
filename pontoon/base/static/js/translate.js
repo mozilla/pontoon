@@ -3896,11 +3896,14 @@ var Pontoon = (function (my) {
 
       item.unmark();
       if (searchQuery) {
-        item.mark(searchQuery, {
+        queries = searchQuery.split(' ');
+        queries.forEach(function(query) {
+          item.mark(query, {
           acrossElements: true,
           caseSensitive: false,
           className: 'search',
           separateWordSearch: false
+          });
         });
       }
     },
