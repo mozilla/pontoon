@@ -77,8 +77,8 @@ lxml==3.4.4 \
     --hash=sha256:b3d362bac471172747cda3513238f115cbd6c5f8b8e6319bf6a97a7892724099
 mercurial==4.5.2 \
     --hash=sha256:a44a9ffd1c9502a4f97298a6bbcb8a79fc8192424c760c67f17b45c12114e390
-newrelic==2.50.0.39 \
-    --hash=sha256:fddd47a8d048e0c5f42eee511a8aaf35891c996d6c959553c7bec8b3ac74b3cb
+newrelic==2.106.1.88 \
+    --hash=sha256:0594dd63d7883d30c560e292d063a8dbc7b2ae11b889bec1e8eb9d0f11ab73a6
 parsimonious==0.6.2 \
     --hash=sha256:423ae2e16061504418ab7abf0a740e26a781f9bc7674a6cf5e2f11edb4ae8029
 polib==1.0.6 \
