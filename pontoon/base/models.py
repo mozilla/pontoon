@@ -2218,6 +2218,28 @@ class Entity(DirtyFieldsMixin, models.Model):
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             search_list = shlex.split(search)
             search_list = [s.strip() for s in search_list]
+            search_query_list = [(s, locale.db_collation) for s in search_list]
+            query = reduce(operator.and_, (
+                Q(translation__string__icontains_collate=search_query) &
+                Q(translation__locale=locale
+                  )
+                for search_query in search_query_list)
+            )
+            translation_matches = (entities.filter(query).values_list('id', flat=True))
+            
+            query = reduce(operator.and_, (
+                Q(string__icontains=search) |
+                Q(string_plural__icontains=search) |
+                Q(comment__icontains=search) |
+                Q(key__icontains=search
+                  )
+                for search in search_list)
+            )
+            entity_matches = (entities.filter(query).values_list('id', flat=True))
+            entities = Entity.objects.filter(
+                pk__in=set(list(translation_matches) + list(entity_matches))
+            )
+            """
             translation_matches_list = []
             entity_matches_list = []
             for search in search_list:
@@ -2240,9 +2262,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                     .values_list('id', flat=True)
                 )
                 entity_matches_list += list(entity_matches)
+
             entities = Entity.objects.filter(
                 pk__in=set(translation_matches_list + entity_matches_list)
             )
+            """
 
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
