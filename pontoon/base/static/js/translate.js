@@ -3901,6 +3901,10 @@ var Pontoon = (function (my) {
         while(i--){
           queries[i] = queries[i].replace(/"/g,"");
         }
+        // sort array in decreasing order of string length
+        queries.sort(function(a,b) {
+          return b.length - a.length;
+        });
         queries.forEach(function(query) {
           item.mark(query, {
           acrossElements: true,
