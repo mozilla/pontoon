@@ -8,6 +8,7 @@ import math
 import operator
 import os.path
 import re
+import shlex
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
@@ -2215,9 +2216,11 @@ class Entity(DirtyFieldsMixin, models.Model):
         # Filter by search parameters
         if search:
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+            search_list = shlex.split(search)
+            search_list = [s.strip() for s in search_list]
             translation_matches_list = []
             entity_matches_list = []
-            for search in search.split():
+            for search in search_list:
                 search_query = (search, locale.db_collation)
                 translation_matches = (
                     entities.filter(
