@@ -43,8 +43,10 @@ def delete_ftl_duplicates(apps, schema):
         translations = Translation.objects.filter(pk__in=duplicates)
         tms = TranslationMemoryEntry.objects.filter(translation__pk__in=duplicates)
 
-        translations.delete()
+        # Delete TranslationMemoryEntry instances first, because the tms QuerySet
+        # gets empty after the Translation instances are deleted.
         tms.delete()
+        translations.delete()
 
 
 class Migration(migrations.Migration):
