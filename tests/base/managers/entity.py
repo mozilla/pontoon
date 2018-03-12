@@ -570,11 +570,23 @@ def test_mgr_entity_search_entities(entity_test_search):
     entities, search = entity_test_search
 
     assert search(u'e') == entities
-    assert search(u'entity string') == entities
+    assert search(u'entity string') == [entities[i] for i in [0, 1, 2, 3, 5]]
 
-    assert search(u'first entity') == [entities[0]]
     assert search(u'second entity') == [entities[1]]
     assert search(u'third entity') == [entities[2]]
+
+    # Check if quoted queries use full string string and
+    # unquoted use full text search
+    assert search(u'first entity') == [entities[i] for i in [0, 3, 4, 5]]
+    assert search(u'"first entity"') == [entities[i] for i in [0, 4, 5]]
+
+    assert search(u'first entity string') == [entities[i] for i in [0, 3, 5]]
+    assert search(u'"first entity" string') == [entities[0], entities[5]]
+    assert search(u'"first entity string"') == [entities[0]]
+
+    # Check if strings with unclosed quotes follow full text search
+    assert search(u'"first entity string') == [entities[0]]
+    assert search(u'first "entity string') == [entities[0]]
 
     # Check if we're able search by unicode characters.
     assert search(u'gęślą') == [entities[2]]

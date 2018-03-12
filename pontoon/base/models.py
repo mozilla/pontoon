@@ -8,7 +8,6 @@ import math
 import operator
 import os.path
 import re
-# import shlex
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
@@ -2218,19 +2217,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
             search = search + '"' if(search.count('"') % 2) else search
             search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
-            search_list = [s.replace('"', '').strip("'").strip() for s in search_list]
-            """
-            Alternate way to create the above list.
-            def newSplit(value):
-                lex = shlex.shlex(value)
-                lex.quotes = '"'
-                lex.whitespace_split = True
-                lex.commenters = ''
-                return list(lex)
-            search = search+'"' if(search.count('"')%2) else search
-            search_list = newSplit(search)
-            search_list = [s.strip("'").strip(' ').strip('"') for s in search_list]
-            """
+            search_list = [s.strip('"').strip("'").strip() for s in search_list]
             search_query_list = [(s, locale.db_collation) for s in search_list]
             query = reduce(operator.and_, (
                 Q(translation__string__icontains_collate=search_query) &
@@ -2252,34 +2239,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
-            """
-            translation_matches_list = []
-            entity_matches_list = []
-            for search in search_list:
-                search_query = (search, locale.db_collation)
-                translation_matches = (
-                    entities.filter(
-                        translation__string__icontains_collate=search_query,
-                        translation__locale=locale,
-                    )
-                    .values_list('id', flat=True)
-                )
-                translation_matches_list += list(translation_matches)
-                entity_matches = (
-                    entities.filter(
-                        Q(string__icontains=search) |
-                        Q(string_plural__icontains=search) |
-                        Q(comment__icontains=search) |
-                        Q(key__icontains=search)
-                    )
-                    .values_list('id', flat=True)
-                )
-                entity_matches_list += list(entity_matches)
-
-            entities = Entity.objects.filter(
-                pk__in=set(translation_matches_list + entity_matches_list)
-            )
-            """
 
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)

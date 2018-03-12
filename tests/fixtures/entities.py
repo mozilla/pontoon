@@ -90,7 +90,7 @@ def entity_test_search(entity_factory, translation_factory,
                        resourceX, localeX):
     """This fixture provides:
 
-    - 3 translated entities
+    - 4 translated entities
     - A lambda for searching for entities using Entity.for_project_locale
     """
     TranslatedResource.objects.create(
@@ -110,13 +110,28 @@ def entity_test_search(entity_factory, translation_factory,
             {'key': 'third.key',
              'string': u'Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ',
              'string_plural': 'Third plural',
-             'comment': 'even more random notes'}])
+             'comment': 'even more random notes'},
+            {'key': 'fourth.key',
+             'string': 'Entity with first string',
+             'string_plural': 'Entity with plural first string',
+             'comment': 'random notes'},
+            {'key': 'fifth.key',
+             'string': 'First Entity',
+             'string_plural': 'First plural entity',
+             'comment': 'random notes'},
+            {'key': 'sixth.key',
+             'string': 'First Entity with string',
+             'string_plural': 'First plural entity',
+             'comment': 'random notes'}])
     translation_factory(
         locale=localeX,
         batch_kwargs=[
             {'string': 'First translation', 'entity': entities[0]},
             {'string': 'Second translation', 'entity': entities[1]},
-            {'string': 'Third translation', 'entity': entities[2]}])
+            {'string': 'Third translation', 'entity': entities[2]},
+            {'string': 'Fourth translation', 'entity': entities[3]},
+            {'string': 'Fifth translation', 'entity': entities[4]},
+            {'string': 'Sixth translation', 'entity': entities[5]}])
     return (
         entities,
         lambda q: list(
