@@ -8,7 +8,7 @@ import math
 import operator
 import os.path
 import re
-import shlex
+# import shlex
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
@@ -2214,10 +2214,23 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = entities.filter(Q(*post_filters))
 
         # Filter by search parameters
-        if search:
+        if search and search != '"':
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-            search_list = shlex.split(search)
-            search_list = [s.strip() for s in search_list]
+            search = search + '"' if(search.count('"') % 2) else search
+            search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
+            search_list = [s.replace('"', '').strip("'").strip() for s in search_list]
+            """
+            Alternate way to create the above list.
+            def newSplit(value):
+                lex = shlex.shlex(value)
+                lex.quotes = '"'
+                lex.whitespace_split = True
+                lex.commenters = ''
+                return list(lex)
+            search = search+'"' if(search.count('"')%2) else search
+            search_list = newSplit(search)
+            search_list = [s.strip("'").strip(' ').strip('"') for s in search_list]
+            """
             search_query_list = [(s, locale.db_collation) for s in search_list]
             query = reduce(operator.and_, (
                 Q(translation__string__icontains_collate=search_query) &
