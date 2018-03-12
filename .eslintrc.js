@@ -41,7 +41,8 @@ module.exports = {
         editor: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
-        DIFF_DELETE: false
+        DIFF_DELETE: false,
+        ga: false
     },
     plugins: [
         'react',
