@@ -2215,7 +2215,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         # Filter by search parameters
         if search and search != '"':
             # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-            search = search + '"' if(search.count('"') % 2) else search
+            search = (
+                '%s"' % search
+                if search.count('"') % 2
+                else search)
             search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
             search_list = [s.strip('"').strip("'").strip() for s in search_list]
             search_query_list = [(s, locale.db_collation) for s in search_list]
@@ -2225,7 +2228,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                   )
                 for search_query in search_query_list)
             )
-            translation_matches = (entities.filter(query).values_list('id', flat=True))
+            translation_matches = entities.filter(query).values_list('id', flat=True)
             
             query = reduce(operator.and_, (
                 Q(string__icontains=search) |

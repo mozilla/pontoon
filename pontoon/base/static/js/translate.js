@@ -3896,7 +3896,7 @@ var Pontoon = (function (my) {
 
       item.unmark();
       if (searchQuery) {
-        searchQuery = ((searchQuery.split('"').length-1)%2)? searchQuery+'"':searchQuery;
+        searchQuery = ((searchQuery.split('"').length-1) % 2) ? searchQuery+'"':searchQuery;
         var queries = searchQuery.match(/\w+|"[^"]+"/g);
         if (!queries) return;
         var i = queries.length;
