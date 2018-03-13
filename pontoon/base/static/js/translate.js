@@ -3897,11 +3897,11 @@ var Pontoon = (function (my) {
       item.unmark();
       if (searchQuery) {
         searchQuery = ((searchQuery.split('"').length-1) % 2) ? searchQuery+'"':searchQuery;
-        var queries = searchQuery.match(/\w+|"[^"]+"/g);
+        var queries = searchQuery.match(/[^\s"]+|"[^"]+"/g);
         if (!queries) return;
         var i = queries.length;
         while(i--){
-          queries[i] = queries[i].replace(/"/g,"");
+          queries[i] = queries[i].replace(/^["']|["']$/g, '');
         }
         // sort array in decreasing order of string length
         queries.sort(function(a,b) {
