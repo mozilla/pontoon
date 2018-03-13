@@ -1,6 +1,6 @@
 
 import {strip} from './strip';
-import {PontoonCSRF} from './csrf';
+import {getCSRFToken} from './csrf';
 
 
 export class DjangoAjax {
@@ -181,7 +181,7 @@ export class PontoonDjangoAjax extends DjangoAjax {
 
     get csrf () {
         // this is a bit sketchy but the only afaict way due to session_csrf
-        return new PontoonCSRF().value;
+        return getCSRFToken();
     }
 }
 
