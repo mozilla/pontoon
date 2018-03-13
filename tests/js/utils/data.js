@@ -55,7 +55,7 @@ test('DataManager refreshData', async () => {
     expect(manager.handleResponse.mock.calls).toEqual([[37]]);
 
     // and ajax.get was called with the expected vars
-    expect(ajax.get.mock.calls).toEqual([[43, {"foo": "BAR"}]]);
+    expect(ajax.get.mock.calls).toEqual([[43, {"foo": "BAR"}, {"method": "get"}]]);
 });
 
 
@@ -80,7 +80,7 @@ test('DataManager handleSubmit', async () => {
     expect(manager.handleResponse.mock.calls).toEqual([[response]]);
 
     // and ajax got called with all of the expected post data.
-    expect(ajax.get.mock.calls).toEqual([[43, 7]]);
+    expect(ajax.get.mock.calls).toEqual([[43, 7, {"method": "get"}]]);
 });
 
 

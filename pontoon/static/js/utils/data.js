@@ -8,19 +8,14 @@ export class DataManager {
 
     constructor (component) {
         this.component = component;
-        this.handleResponse = this.handleResponse.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.refreshData = this.refreshData.bind(this);
     }
 
     get data () {
-        const {data} = this.component.state;
-        return data;
+        return this.component.state.data;
     }
 
     get errors () {
-        const {errors} = this.component.state;
-        return errors;
+        return this.component.state.errors;
     }
 
     get api () {
@@ -35,12 +30,15 @@ export class DataManager {
         return this.component.props.submitMethod || this.requestMethod;
     }
 
-    async refreshData (params) {
+    refreshData = async (params) => {
         return this.handleResponse(
-            await ajax[this.requestMethod](this.api, params));
+            await ajax.fetch(
+                this.api,
+                params,
+                {method: this.requestMethod}));
     }
 
-    async handleResponse (response) {
+    handleResponse = async (response) => {
         const {status} = response;
         const json = await response.json();
         if (status === 200) {
@@ -52,9 +50,12 @@ export class DataManager {
         this.component.setState({errors});
     }
 
-    async handleSubmit (params) {
+    handleSubmit = async (params) => {
         return this.handleResponse(
-            await ajax[this.submitMethod](this.api, params));
+            await ajax.fetch(
+                this.api,
+                params,
+                {method: this.requestMethod}));
     }
 }
 
@@ -67,7 +68,7 @@ export function dataManager(WrappedComponent, Manager, data) {
             super(props);
             Manager = Manager || DataManager;
             this.manager = new Manager(this);
-            this.state = {errors: {}, data: data || []};
+            this.state = {errors: {}, data: data};
         }
 
         render() {
