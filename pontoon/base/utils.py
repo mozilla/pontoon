@@ -20,8 +20,10 @@ from xml.sax.saxutils import (
     quoteattr,
 )
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Prefetch
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import (
+    Http404, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import trans_real
@@ -340,6 +342,22 @@ def require_AJAX(f):
     def wrap(request, *args, **kwargs):
         if not request.is_ajax():
             return HttpResponseBadRequest('Bad Request: Request must be AJAX')
+        return f(request, *args, **kwargs)
+    return wrap
+
+
+def require_superuser(f):
+    """
+    Superuser request required decorator
+    """
+
+    @functools.wraps(f)
+    def wrap(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            if request.user.is_anonymous:
+                raise Http404
+            return HttpResponseForbidden(
+                'Who did you say you where?')
         return f(request, *args, **kwargs)
     return wrap
 
@@ -693,3 +711,15 @@ def get_m2m_changes(current_qs, new_qs):
     )
 
     return list(add_items), list(remove_items)
+
+
+class DjangoJSONMultiEncoder(DjangoJSONEncoder):
+    encoders = ()
+
+    def default(self, obj):
+        for encoder in self.encoders:
+            try:
+                return encoder().default(obj)
+            except TypeError:
+                pass
+        return super(DjangoJSONMultiEncoder, self).default(obj)

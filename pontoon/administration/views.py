@@ -18,6 +18,7 @@ from pontoon.administration.forms import (
     ProjectForm,
     RepositoryInlineFormSet,
     SubpageInlineFormSet,
+    TagInlineFormSet,
 )
 from pontoon.base import utils
 from pontoon.base.utils import require_AJAX
@@ -91,6 +92,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     subpage_formset = SubpageInlineFormSet()
     repo_formset = RepositoryInlineFormSet()
     external_resource_formset = ExternalResourceInlineFormSet()
+    tag_formset = TagInlineFormSet()
     locales_selected = []
     subtitle = 'Add project'
     pk = None
@@ -109,6 +111,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
+            tag_formset = (
+                TagInlineFormSet(request.POST, instance=project)
+                if project.tags_enabled
+                else None)
             external_resource_formset = ExternalResourceInlineFormSet(
                 request.POST, instance=project
             )
@@ -121,6 +127,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
             subpage_formset = SubpageInlineFormSet(request.POST)
             repo_formset = RepositoryInlineFormSet(request.POST)
             external_resource_formset = ExternalResourceInlineFormSet(request.POST)
+            tag_formset = None
 
         if form.is_valid():
             project = form.save(commit=False)
@@ -129,12 +136,14 @@ def manage_project(request, slug=None, template='admin_project.html'):
             external_resource_formset = ExternalResourceInlineFormSet(
                 request.POST, instance=project
             )
-
-            if (
-                subpage_formset.is_valid() and
-                repo_formset.is_valid() and
-                external_resource_formset.is_valid()
-            ):
+            if tag_formset:
+                tag_formset = TagInlineFormSet(request.POST, instance=project)
+            formsets_valid = (
+                subpage_formset.is_valid()
+                and repo_formset.is_valid()
+                and external_resource_formset.is_valid()
+                and (tag_formset.is_valid() if tag_formset else True))
+            if formsets_valid:
                 project.save()
 
                 # Manually save ProjectLocales due to intermediary
@@ -150,6 +159,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 subpage_formset.save()
                 repo_formset.save()
                 external_resource_formset.save()
+                if tag_formset:
+                    tag_formset.save()
 
                 # If the data source is database and there are new strings, save them.
                 if project.data_source == 'database':
@@ -159,6 +170,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
                 external_resource_formset = ExternalResourceInlineFormSet(instance=project)
+                if project.tags_enabled:
+                    tag_formset = TagInlineFormSet(instance=project)
                 subtitle += '. Saved.'
                 pk = project.pk
             else:
@@ -174,6 +187,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
             form = ProjectForm(instance=project)
             subpage_formset = SubpageInlineFormSet(instance=project)
             repo_formset = RepositoryInlineFormSet(instance=project)
+            tag_formset = (
+                TagInlineFormSet(instance=project)
+                if project.tags_enabled
+                else None)
             external_resource_formset = ExternalResourceInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
@@ -196,11 +213,13 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'form': form,
         'subpage_formset': subpage_formset,
         'repo_formset': repo_formset,
+        'tag_formset': tag_formset,
         'external_resource_formset': external_resource_formset,
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'subtitle': subtitle,
         'pk': pk,
+        'project': project,
         'projects': projects,
     }
 

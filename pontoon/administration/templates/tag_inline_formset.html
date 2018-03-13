@@ -1,0 +1,41 @@
+{% macro render(title, type, formset, project) %}
+<h4>
+    <span>{{ title }}</span>
+    <a href="#" class="add-inline" data-type="{{ type }}">Add more</a>
+</h4>
+
+{{ formset.management_form }}
+{% for form in formset %}
+{{ form.id }}
+<div class="{{ type }} inline clearfix">
+  {{ form.slug.label_tag(label_suffix='') }}
+  {{ form.name.label_tag(label_suffix='') }}
+  {{ form.priority.label_tag(label_suffix='') }}
+  {{ form.slug }}
+  {{ form.name }}
+  {{ form.priority }}
+
+  <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+  {{ form.DELETE }}
+  {{ form.name.errors }}
+</div>
+
+{% if form.slug.value() %}
+<div class="js-tag-resources tag-resources"
+     data-api="{{ url('pontoon.admin.project.ajax.tag', **dict(project=project.slug, tag=form.slug.value())) }}"
+     data-project="{{ project.slug }}"
+     data-tag="{{ form.slug.value() }}">
+</div>
+{% endif %}
+
+{% endfor %}
+
+<div class="{{ type }} inline clearfix" data-count="{{ formset.total_form_count() }}">
+    {{ formset.empty_form.slug.label_tag(label_suffix='') }}
+    {{ formset.empty_form.name.label_tag(label_suffix='') }}
+    {{ formset.empty_form.priority.label_tag(label_suffix='') }}
+    <button title="Delete" class="button delete-inline fa fa-trash-o" tabindex="-1"></button>
+    {{ formset.empty_form.DELETE }}
+    {{ formset.empty_form.name.errors }}
+</div>
+{% endmacro %}

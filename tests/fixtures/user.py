@@ -7,6 +7,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
 
+User = get_user_model()
+
+
+User = get_user_model()
+
+
 @pytest.fixture
 def member0(client, user0):
     """Provides a `LoggedInMember` with the attributes `user` and `client`
@@ -39,6 +45,20 @@ def user1():
 def userX():
     """User X - user with no history"""
     return get_user_model().objects.get(username="userX")
+
+
+@pytest.fixture
+def admin0():
+    """Admin 0 - a superuser"""
+    return get_user_model().objects.get(username="admin0")
+
+
+@pytest.fixture(params=[None, 'user0', 'admin0'])
+def clients(request, client):
+    if request.param:
+        user = User.objects.get(username=request.param)
+        client.force_login(user)
+    return client
 
 
 @pytest.fixture

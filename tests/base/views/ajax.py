@@ -108,4 +108,4 @@ def test_view_ajax_form_submit_success(rf):
             data=dict(foo=1, bar=2),
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'))
         assert response.status_code == 200
-        assert json.loads(response.content) == {"result": 23}
+        assert json.loads(response.content) == {"data": 23}

@@ -1,11 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 var BundleTracker = require('webpack-bundle-tracker');
 
 
 module.exports = {
   entry: {
-      'placeholder': 'placeholder/placeholder'
+      'project_tags_dashboard': 'tags/project/dashboard',
+      'project_tag_dashboard': 'tags/tag/dashboard',
+      'tag_admin': 'tags/admin'
   },
   output: {
     // This copies each source entry into the extension dist folder named
@@ -21,10 +24,16 @@ module.exports = {
       loaders: ['babel-loader'],
     },{
         test: /\.css$/,
-        loaders: [ 'style-loader', 'css-loader' ]
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
     },{
 	test: /\.json$/,
 	loader: 'json-loader',
+    },{
+        test: /\.(eot|svg|ttf|woff|woff2)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader?outputPath=fonts&publicPath=/static/webpack_bundles/fonts'
     }],
   },
   resolve: {
@@ -40,6 +49,7 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new BundleTracker({filename: './webpack-stats.json'}),
+    new ExtractTextPlugin("[name].css"),
   ],
   // This will expose source map files so that errors will point to your
   // original source files instead of the transpiled files.

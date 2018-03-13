@@ -1,0 +1,71 @@
+
+
+#heading:not(.simple) {
+    padding: 30px 0;
+}
+
+#heading:not(.simple) h1 {
+  padding-bottom: 30px;
+}
+
+#heading h1 a {
+  color: #EBEBEB;
+  font-weight: bold;
+  font-size: 32px;
+}
+
+#heading h1 .small {
+  color: #7BC876;
+  font-weight: 300;
+  padding-left: 5px;
+}
+
+/* move */
+
+#heading .details,
+#heading .legend {
+  font-weight: 300;
+  width: 360px;
+}
+
+#heading .details li,
+#heading .legend li {
+  line-height: 24px;
+}
+
+#heading .details {
+  float: left;
+}
+
+#heading .details .title {
+  color: #AAAAAA;
+  padding-right: 5px;
+  text-transform: uppercase;
+}
+
+#heading .details .value {
+  color: #AAA;
+  float: right;
+}
+
+#heading .details .value a {
+  color: #FFFFFF;
+}
+
+#heading .details .value a:hover {
+  color: #7BC876;
+}
+
+#heading .details .priority .value {
+  margin-top: 6px;
+}
+
+#heading .details .value.overflow {
+  max-width: 275px;
+  overflow: hidden;
+  padding-left: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
+  padding-right: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

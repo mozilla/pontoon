@@ -330,21 +330,17 @@ def tag_test_kwargs(request, tag_matrix):
 
 _tag_data_init_kwargs = OrderedDict(
     (('no_args',
-      dict(annotations=None,
-           groupby=None,
-           locales=None,
+      dict(locales=None,
            path=None,
            priority=None,
            projects=None,
            slug=None)),
      ('args',
-      dict(annotations=1,
-           groupby=2,
-           locales=3,
-           path=4,
-           priority=5,
-           projects=6,
-           slug=7))))
+      dict(locales=1,
+           path=2,
+           priority=3,
+           projects=4,
+           slug=5))))
 
 
 @pytest.fixture(params=_tag_data_init_kwargs)
