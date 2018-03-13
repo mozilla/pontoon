@@ -7,15 +7,8 @@ import {Columns, Container, Column} from 'widgets/columns';
 
 
 test('Columns render', () => {
-
-    class MockColumns extends Columns {
-
-        get columns () {
-            return [['a', 2], ['b', 3], ['c', 7]];
-        }
-    }
-
-    const columns = shallow(<MockColumns />);
+    const columndescriptors = [['a', 2], ['b', 3], ['c', 7]];
+    const columns = shallow(<Columns columns={columndescriptors} />);
     const container = columns.find(Container);
     expect(container.length).toBe(1);
     expect(container.props().columns).toBe(3);
@@ -59,9 +52,9 @@ test('Container render', () => {
     expect(container.text()).toBe('');
     div = container.find('div');
     expect(container.instance().columnStyles).toEqual(
-        [{"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "33.333333333333336%"},
-         {"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "33.333333333333336%"},
-         {"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "33.333333333333336%"}]);
+        [{"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"},
+         {"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"},
+         {"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"}]);
     expect(div.props().children).toEqual([]);
     expect(div.props().style).toEqual(
         {"content": "", "display": "table", "width": "100%"});
@@ -69,9 +62,9 @@ test('Container render', () => {
     container = shallow(<Container columns={3} ratios={[2, 3, 7]} />);
     expect(container.text()).toBe('');
     expect(container.instance().columnStyles).toEqual(
-        [{"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "16.666666666666664%"},
-         {"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "25%"},
-         {"boxSizing": "border-box", "float": "left", "overflow": "hidden", "width": "58.333333333333336%"}]);
+        [{"boxSizing": "border-box", "float": "left", "width": "16.666666666666664%"},
+         {"boxSizing": "border-box", "float": "left", "width": "25%"},
+         {"boxSizing": "border-box", "float": "left", "width": "58.333333333333336%"}]);
 });
 
 
