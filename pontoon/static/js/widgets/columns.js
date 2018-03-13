@@ -2,14 +2,14 @@
 import React from 'react';
 
 
-export class Columns extends React.Component {
+export class Columns extends React.PureComponent {
 
     render() {
         return (
             <Container
-               columns={this.columns.length}
-               ratios={this.columns.map(([, v]) => v)}>
-              {this.columns.map(([column,], key) => {
+               columns={this.props.columns.length}
+               ratios={this.props.columns.map(([, v]) => v)}>
+              {this.props.columns.map(([column,], key) => {
                   return (
                       <Column key={key}>
                         {column}
@@ -25,7 +25,6 @@ export class Container extends React.Component {
     createColumnStyle(width) {
         return {
             float: "left",
-            overflow: "hidden",
             boxSizing: "border-box",
             width: width.toString() + "%"};
     }

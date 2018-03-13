@@ -6,8 +6,13 @@ cache:
   bundler: true
   directories:
     - node_modules
+    - $HOME/virtualenv/python2.7.14/bin
+    - $HOME/virtualenv/python2.7.14/lib
+    - $HOME/virtualenv/python2.7/bin
 before_install:
   - git submodule update --init --recursive
+  # workaround for travis/aufs to prevent cache upload if no change
+  - cp -a $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/ $HOME/py-workaround/
 install:
   - pip install -U --force pip
   - pip install --require-hashes -r requirements.txt
@@ -35,6 +40,13 @@ addons:
   apt:
     packages:
       - language-pack-tr
+
+before_cache:
+  # workaround for travis/aufs to prevent cache upload if no change
+  - pip uninstall py pytest -y
+  - pip install py==1.4.34 pytest==3.2.3
+  - pyclean $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
+  - cp -a $HOME/py-workaround/* $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
 
 env:
   global:
