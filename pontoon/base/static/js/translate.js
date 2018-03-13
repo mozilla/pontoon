@@ -3896,11 +3896,13 @@ var Pontoon = (function (my) {
 
       item.unmark();
       if (searchQuery) {
-        searchQuery = ((searchQuery.split('"').length-1) % 2) ? searchQuery+'"':searchQuery;
+        searchQuery = ((searchQuery.split('"').length - 1) % 2) ? searchQuery + '"' : searchQuery;
         var queries = searchQuery.match(/[^\s"]+|"[^"]+"/g);
-        if (!queries) return;
+        if (!queries) {
+          return;
+        }
         var i = queries.length;
-        while(i--){
+        while(i--) {
           queries[i] = queries[i].replace(/^["']|["']$/g, '');
         }
         // sort array in decreasing order of string length
@@ -3909,10 +3911,10 @@ var Pontoon = (function (my) {
         });
         queries.forEach(function(query) {
           item.mark(query, {
-          acrossElements: true,
-          caseSensitive: false,
-          className: 'search',
-          separateWordSearch: false
+            acrossElements: true,
+            caseSensitive: false,
+            className: 'search',
+            separateWordSearch: false
           });
         });
       }

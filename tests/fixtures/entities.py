@@ -90,7 +90,7 @@ def entity_test_search(entity_factory, translation_factory,
                        resourceX, localeX):
     """This fixture provides:
 
-    - 4 translated entities
+    - 6 translated entities
     - A lambda for searching for entities using Entity.for_project_locale
     """
     TranslatedResource.objects.create(

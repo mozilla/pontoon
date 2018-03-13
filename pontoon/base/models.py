@@ -2213,34 +2213,45 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = entities.filter(Q(*post_filters))
 
         # Filter by search parameters
-        if search and search != '"':
-            # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+        if search:
             # Add a double quote at the end of search if closing quote not present
             search = (
                 '%s"' % search
                 if search.count('"') % 2
                 else search)
+
             # Split search string on spaces except if between quotes.
             search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
             search_list = [s.strip('"').strip("'").strip() for s in search_list]
+
+            # Search for `"` and `'` when entered as search terms
+            if search == '""' and not search_list:
+                search_list = ['"']
+
+            if search == "'" and not search_list:
+                search_list = ["'"]
+
             search_query_list = [(s, locale.db_collation) for s in search_list]
-            query = reduce(operator.and_, (
+
+            translation_filters = (
                 Q(translation__string__icontains_collate=search_query) &
-                Q(translation__locale=locale
-                  )
+                Q(translation__locale=locale)
                 for search_query in search_query_list)
-            )
-            translation_matches = entities.filter(query).values_list('id', flat=True)
-            
-            query = reduce(operator.and_, (
+            entity_filters = (
                 Q(string__icontains=search) |
                 Q(string_plural__icontains=search) |
                 Q(comment__icontains=search) |
-                Q(key__icontains=search
-                  )
+                Q(key__icontains=search)
                 for search in search_list)
-            )
-            entity_matches = entities.filter(query).values_list('id', flat=True)
+
+            # Combine all generated filters with an AND operator.
+            # `operator.and_` is the '&' Python operator, which turns into a logical AND
+            # when used between django ORM query objects.
+            translation_query = reduce(operator.and_, translation_filters)
+            entity_query = reduce(operator.and_, entity_filters)
+
+            translation_matches = entities.filter(translation_query).values_list('id', flat=True)
+            entity_matches = entities.filter(entity_query).values_list('id', flat=True)
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
