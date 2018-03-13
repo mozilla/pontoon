@@ -6,12 +6,11 @@ import {ajax} from 'utils/ajax';
 
 export class DataManager {
 
-    constructor (component, data) {
+    constructor (component) {
         this.component = component;
         this.handleResponse = this.handleResponse.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.refreshData = this.refreshData.bind(this);
-        this.initialData = data;
     }
 
     get data () {
@@ -37,11 +36,6 @@ export class DataManager {
     }
 
     async refreshData (params) {
-        if (this.initialData) {
-            this.component.setState({data: this.initialData, errors: []});
-            this.initialData = undefined;
-            return
-        }
         return this.handleResponse(
             await ajax[this.requestMethod](this.api, params));
     }
@@ -72,8 +66,8 @@ export function dataManager(WrappedComponent, Manager, data) {
         constructor(props) {
             super(props);
             Manager = Manager || DataManager;
-            this.manager = new Manager(this, data);
-            this.state = {errors: {}, data: []};
+            this.manager = new Manager(this);
+            this.state = {errors: {}, data: data || []};
         }
 
         render() {

@@ -59,21 +59,6 @@ test('DataManager refreshData', async () => {
 });
 
 
-test('DataManager refreshData initialData', async () => {
-    // refreshData calls ajax and gives the child components a shakedown
-    // with the results. Its called in componentDidMount as well as in
-    // response to user actions.
-
-    const setState = jest.fn()
-    const manager = new DataManager({props: {api: 43}, setState: setState}, 23);
-    await manager.refreshData({foo: 'BAR'});
-
-    // state is set to initialData
-    expect(setState.mock.calls).toEqual([[{data: 23, errors: []}]]);
-});
-
-
-
 test('DataManager handleSubmit', async () => {
     // Tests what happens when user clicks handleSubmit
 
