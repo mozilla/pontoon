@@ -104,6 +104,7 @@ urlpatterns = [
     # Include URL configurations from installed apps
     url(r'', include('pontoon.teams.urls')),
     url(r'', include('pontoon.sync.urls')),
+    url(r'', include('pontoon.tags.urls')),
     url(r'', include('pontoon.projects.urls')),
     url(r'', include('pontoon.machinery.urls')),
     url(r'', include('pontoon.contributors.urls')),

@@ -316,3 +316,9 @@ caighdean==0.0.3 \
 # Required by caighdean
 nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
+
+dj.debug==0.0.2 \
+    --hash=sha256:0b7629bde97f1cce6077ac430537089f5a2552973004951cb3590e30fec9054a
+
+django_csp_nonce==1.0.0 \
+    --hash=sha256:dcd5d53f9df86cbd4ef2d8f79effb3eb88ff5293bdb6554a9831a0999fab1d25

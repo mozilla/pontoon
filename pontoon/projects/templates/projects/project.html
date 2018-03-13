@@ -66,6 +66,14 @@
           count = project.locales.count()
         )
       }}
+      {% if project.tags_enabled %}
+         {{ Menu.item(
+           'Tags',
+           url('pontoon.project.tags', project.slug),
+           is_active = (current_page == 'tags'),
+           no_inline=True,
+           count=tags) }}
+      {% endif %}
       {{ Menu.item(
           'Contributors',
           url('pontoon.projects.contributors', project.slug),

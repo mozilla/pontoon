@@ -16,6 +16,9 @@ $(function() {
 
   // Menu
   $('body').on('click', '#middle .links a, #main .contributors .links a', function(e) {
+    if (e.target.classList.contains('no-inline')) {
+        return ;
+    }
     // Keep default middle-, control- and command-click behaviour (open in new tab)
     if (e.which === 2 || e.metaKey || e.ctrlKey) {
       return;
@@ -60,6 +63,10 @@ $(function() {
     tab.parents('li').addClass('active');
 
     container.empty();
+
+   if (tab[0].classList.contains('no-inline')) {
+        return ;
+    }
 
     if (url !== '/bugs/') {
       inProgress = $.ajax({

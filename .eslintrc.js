@@ -7,6 +7,7 @@ module.exports = {
         es6: true,
         browser: true,
     },
+    parser: "babel-eslint",
     parserOptions: {
         ecmaVersion: 2017,
         ecmaFeatures: {
@@ -39,6 +40,7 @@ module.exports = {
         diff_match_patch: false,
         Highcharts: false,
         editor: false,
+        DATA: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
         DIFF_DELETE: false,
