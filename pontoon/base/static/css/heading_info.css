@@ -71,6 +71,10 @@ ul {
   white-space: nowrap;
 }
 
+#heading .details .resources .value.overflow {
+  white-space: normal;
+}
+
 #heading .progress {
   float: left;
   margin: -10px 65px 0;
