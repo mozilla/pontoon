@@ -2222,7 +2222,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             # Split search string on spaces except if between quotes.
             search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
-            search_list = [s.strip('"').strip("'").strip() for s in search_list]
+            search_list = [s.strip().strip("'").strip('"') for s in search_list]
 
             # Search for `"` and `'` when entered as search terms
             if search == '""' and not search_list:
