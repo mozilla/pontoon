@@ -1,0 +1,53 @@
+
+
+.tag-resources {
+    text-align: left;
+}
+
+.tag-resources button {
+    margin: .2em auto 1em auto;
+    display: block;
+}
+
+.tag-resources .rt-table {
+    color: white;
+}
+
+.tag-resource-widget {
+    background: #999;
+    margin-bottom: 2em;
+    padding-bottom: .3em;
+}
+
+.tag-resources .rt-table input {
+    margin: auto;
+    display: block;
+}
+
+.tag-resources .ReactTable .pagination-bottom  .-pageInfo {
+    color: #333;
+}
+
+.tag-resources .rt-th {
+    text-align: left;
+}
+
+
+button.tag-resources-associate {
+    margin-top: .5em;
+}
+
+.tag-resources select.search-tag-resource-type {
+    width: 90%;
+    display: block;
+    margin: 1em auto;
+    float: none;
+}
+
+
+.tag-resources input.search-tag-resources {
+    width: 90%;
+    display: block;
+    margin: 1em auto;
+    float: none;
+}

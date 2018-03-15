@@ -4,7 +4,7 @@ import React from 'react';
 
 import {shallow} from 'enzyme';
 
-import {CheckboxTable} from 'widgets/tables';
+import CheckboxTable from 'widgets/tables/checkbox';
 
 
 test('CheckboxTable render', () => {

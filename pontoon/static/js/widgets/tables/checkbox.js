@@ -12,14 +12,6 @@ export default class CheckboxTable extends React.Component {
         super(props);
         this.visible = [];
         this.state = {checked: new Set()};
-        this.handleCheckboxClick = this.handleCheckboxClick.bind(this);
-        this.handleSelectAll = this.handleSelectAll.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleTableChange = this.handleTableChange.bind(this);
-        this.handleTableSortChange = this.handleTableSortChange.bind(this);
-        this.handleTableResize = this.handleTableResize.bind(this);
-        this.renderCheckbox = this.renderCheckbox.bind(this);
-        this.renderSelectAllCheckbox = this.renderSelectAllCheckbox.bind(this);
     }
 
     get columns () {
@@ -61,17 +53,18 @@ export default class CheckboxTable extends React.Component {
         }
     }
 
-    handleCheckboxClick (evt) {
+    handleCheckboxClick = (evt) => {
         // adds/removes paths for submission
+        const {name, checked: targetChecked} = evt.target;
         this.setState((prevState) => {
             let {checked} = prevState;
             checked = new Set(checked);
-            evt.target.checked ? checked.add(evt.target.name) : checked.delete(evt.target.name);
+            targetChecked ? checked.add(name) : checked.delete(name);
             return {checked};
         });
     }
 
-    handleSelectAll () {
+    handleSelectAll = () => {
         // user clicked the select all checkbox...
         // if there are some resources checked already, all are removed
         // otherwise all visible are checked.
@@ -82,7 +75,7 @@ export default class CheckboxTable extends React.Component {
         });
     }
 
-    async handleSubmit (evt) {
+    handleSubmit = async (evt) => {
         // after emitting handleSubmit to parent with list of currently
         // checked, clears the checkboxes
         evt.preventDefault();
@@ -91,16 +84,16 @@ export default class CheckboxTable extends React.Component {
         this.setState({checked: new Set()});
     }
 
-    handleTableChange () {
+    handleTableChange = () => {
         this.clearTable();
     }
 
-    handleTableResize (pageSize) {
+    handleTableResize = (pageSize) => {
         this.visible.length = pageSize;
         this.setState((prevState) => ({checked: this.prune(prevState)}));
     }
 
-    handleTableSortChange () {
+    handleTableSortChange = () => {
         this.setState((prevState) => ({checked: this.prune(prevState)}));
     }
 
@@ -119,7 +112,7 @@ export default class CheckboxTable extends React.Component {
             </div>);
     }
 
-    renderCheckbox (item) {
+    renderCheckbox = (item) => {
         const {checked} = this.state;
         this.visible.length = item.pageSize;
         this.visible[item.viewIndex] = item.original[0];
@@ -130,7 +123,7 @@ export default class CheckboxTable extends React.Component {
                onChange={this.handleCheckboxClick} />);
     }
 
-    renderSelectAllCheckbox () {
+    renderSelectAllCheckbox = () => {
         // renders a select all checkbox, sets the check to
         // indeterminate if only some of the visible resources
         // are checked
