@@ -902,21 +902,45 @@ $(function () {
     $('#ftl-area .attributes ul:first').append($('#ftl-area .attributes .template li').clone());
   });
 
-  // Generate access key list
-  $('#ftl-area .attributes').on('keyup', 'textarea:first', function () {
-    var active = $('.accesskeys').find('.active').html();
-    var unique = $(this).val()
-      .toUpperCase()
-      .split('')
+  // Generate access key candidates
+  $('#ftl-area').on('keyup', 'textarea', function () {
+    var accessKeyExists = $('#ftl-area .attributes [data-id="accesskey"]').length;
+    var isLabel = $(this).parents('.attributes [data-id="label"]').length;
+    var isValue = $(this).parents('.main-value').length;
+    var generateAccessKeys = accessKeyExists && (isLabel || isValue);
+
+    // Quit early if the element doesn't have impact on the access key
+    if (!generateAccessKeys) {
+      return;
+    }
+
+    // Select textarea elements to generate access key candidates from
+    var content = '';
+    var selector = '.main-value';
+    if (isLabel) {
+      selector = '.attributes [data-id="label"]';
+    }
+    $('#ftl-area ' + selector + ' textarea').each(function() {
+      // Remove whitespace
+      content += $(this).val().replace(/\s/g,'');
+    });
+
+    // Extract unique candidates in a list
+    var candidates = content.split('')
       .filter(function (item, i, ar) {
         return ar.indexOf(item) === i;
       });
 
+    // Store currently selected access key
+    var active = $('#ftl-id-accesskey').val();
+
+    // Reset a list of access key candidates
     $('.accesskeys').empty();
 
-    $.each(unique, function (i, v) {
+    // Render candidates
+    candidates.forEach(function (candidate) {
       $('.accesskeys').append(
-        '<div' + ((v === active) ? ' class="active"' : '') + '>' + v + '</div>'
+        '<div' + ((candidate === active) ? ' class="active"' : '') + '>' + candidate + '</div>'
       );
     });
   });
