@@ -83,22 +83,22 @@ def ajax_update_info(request, locale):
         team_description, strip=True,
         tags=settings.ALLOWED_TAGS, attributes=settings.ALLOWED_ATTRIBUTES
     )
-    l = get_object_or_404(Locale, code=locale)
-    l.team_description = team_description
-    l.save()
+    locale = get_object_or_404(Locale, code=locale)
+    locale.team_description = team_description
+    locale.save()
     return HttpResponse(team_description)
 
 
 @permission_required_or_403('base.can_manage_locale', (Locale, 'code', 'locale'))
 @transaction.atomic
 def ajax_permissions(request, locale):
-    l = get_object_or_404(Locale, code=locale)
-    project_locales = l.project_locale.available()
+    locale = get_object_or_404(Locale, code=locale)
+    project_locales = locale.project_locale.available()
 
     if request.method == 'POST':
         locale_form = forms.LocalePermsForm(
             request.POST,
-            instance=l,
+            instance=locale,
             prefix='general',
             user=request.user
         )
@@ -129,8 +129,8 @@ def ajax_permissions(request, locale):
             }
         )
 
-    managers = l.managers_group.user_set.order_by('email')
-    translators = l.translators_group.user_set.exclude(pk__in=managers).order_by('email')
+    managers = locale.managers_group.user_set.order_by('email')
+    translators = locale.translators_group.user_set.exclude(pk__in=managers).order_by('email')
     all_users = (
         User.objects
             .exclude(pk__in=managers | translators)
@@ -140,13 +140,13 @@ def ajax_permissions(request, locale):
 
     contributors_emails = set(
         contributor.email
-        for contributor in User.translators.with_translation_counts(None, Q(locale=l), None)
+        for contributor in User.translators.with_translation_counts(None, Q(locale=locale), None)
     )
 
-    locale_projects = l.projects_permissions
+    locale_projects = locale.projects_permissions
 
     return render(request, 'teams/includes/permissions.html', {
-        'locale': l,
+        'locale': locale,
         'all_users': all_users,
         'contributors_emails': contributors_emails,
         'translators': translators,
