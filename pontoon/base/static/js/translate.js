@@ -3090,7 +3090,9 @@ var Pontoon = (function (my) {
       var code = this.locale.code,
           slug = this.project.slug;
 
-      $('#profile .admin-current-project a').attr('href', '/admin/projects/' + slug + '/');
+      $('#profile .admin-current-project a')
+        .attr('href', '/admin/projects/' + slug + '/')
+        .toggle(this.project.slug !== 'all-projects');
       $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
       $('#profile .download, #profile .upload + .horizontal-separator').toggle(this.project.slug !== 'all-projects');
 
@@ -3123,12 +3125,13 @@ var Pontoon = (function (my) {
         .toggleClass('current', this.project.slug === 'all-projects');
 
       // Set current links
-      $('.static-links .current-team').parent()
-        .attr('href', '/' + this.locale.code);
-      $('.static-links .current-project').parent()
-        .attr('href', '/projects/' + this.project.slug);
-      $('.static-links .current-localization').parent()
-        .attr('href', '/' + this.locale.code + '/' + this.project.slug);
+      $('.static-links .current-team')
+        .parent().attr('href', '/' + this.locale.code);
+      $('.static-links .current-project')
+        .toggle(this.project.slug !== 'all-projects')
+        .parent().attr('href', '/projects/' + this.project.slug);
+      $('.static-links .current-localization')
+        .parent().attr('href', '/' + this.locale.code + '/' + this.project.slug);
 
       this.updateGoButton();
     },
