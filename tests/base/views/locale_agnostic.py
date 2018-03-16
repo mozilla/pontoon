@@ -176,3 +176,4 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(redirect_mock, proj
         [('pontoon.projects.project',),
          {'slug': u'FOO'}])
     assert response is mock_response
+    
