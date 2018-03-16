@@ -2410,9 +2410,6 @@ class Translation(DirtyFieldsMixin, models.Model):
             locale=locale
         )
 
-        if project.slug != 'all-projects':
-            translations = translations.filter(entity__resource__project=project)
-
         if paths:
             paths = project.parts_to_paths(paths)
             translations = translations.filter(entity__resource__path__in=paths)
