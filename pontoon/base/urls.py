@@ -28,6 +28,11 @@ urlpatterns = [
         views.locale_projects,
         name='pontoon.locale.projects'),
 
+    # AJAX: Get locale stats used in All Resources part
+    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/stats/$',
+        views.locale_stats,
+        name='pontoon.locale.stats'),
+
     # AJAX: Get locale-project pages/paths with stats
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/parts/$',
         views.locale_project_parts,
