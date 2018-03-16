@@ -1,0 +1,102 @@
+
+
+.progress-inline .chart-wrapper {
+  position: relative;
+}
+
+.progress-inline .chart-wrapper .chart {
+  display: table;
+  font-size: 0;
+  height: 3px;
+  margin-top: 2px;
+  table-layout: fixed;
+  width: 320px;
+}
+
+
+.progress-inline.full-width .chart-wrapper .chart {
+  width: 920px;
+}
+
+
+.progress-inline .chart-wrapper .chart span {
+  display: table-cell;
+  height: 100%;
+}
+
+.progress-inline .chart-wrapper .percent {
+  position: absolute;
+  right: 0;
+  top: -7px;
+}
+
+.progress-inline .chart-wrapper .translated {
+  background: #7BC876;
+}
+
+.progress-inline .chart-wrapper .suggested {
+  background: #4FC4F6;
+}
+
+.progress-inline .chart-wrapper .fuzzy {
+  background: #FED271;
+}
+
+.progress-inline .chart-wrapper .missing {
+  background: #637283;
+}
+
+.progress-inline .legend {
+  display: none;
+  margin-bottom: -9px;
+}
+
+.progress-inline .legend ul {
+  font-size: 0;
+  margin-top: -1px;
+}
+
+.progress-inline .legend li {
+  display: inline-block;
+  padding: 0;
+  text-align: center;
+  width: 72px;
+}
+
+.progress-inline .legend li a {
+  color: #AAAAAA;
+  display: block;
+  margin-top: -5px;
+}
+
+.progress-inline .legend li .title {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 10px;
+  text-transform: uppercase;
+}
+
+.progress-inline .legend li.translated .title {
+  color: #7BC876;
+}
+
+.progress-inline .legend li.suggested .title {
+  color: #4FC4F6;
+}
+
+.progress-inline .legend li.fuzzy .title {
+  color: #FED271;
+}
+
+.progress-inline .legend li.missing .title {
+  color: #7C8B9C;
+}
+
+.progress-inline .legend li.all .title {
+  color: #AAAAAA;
+}
+
+.progress-inline .legend li .value {
+  font-size: 18px;
+  line-height: 22px;
+}
