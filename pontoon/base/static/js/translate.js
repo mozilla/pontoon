@@ -581,18 +581,24 @@ var Pontoon = (function (my) {
             linkClass = null;
 
         // Resources can be mapped into multiple subpages.
-        if (!self.project.hasSubPages) {
+        if (!entity.project.url) {
           link = self.getResourceLink(
             self.locale.code,
-            self.project.slug,
+            entity.project.slug,
             entity.path
           );
 
-          linkClass = 'resource-path';
+          if (self.project.slug !== 'all-projects') {
+            linkClass = 'resource-path';
+          }
         }
 
-        self.appendMetaData('Resource path', entity.path, link, linkClass);
+        self.appendMetaData('Resource', entity.path, link, linkClass);
       }
+
+      // Metadata: project
+      var projectLink = '/' + self.locale.code + '/' +  entity.project.slug + '/';
+      self.appendMetaData('Project', entity.project.name, projectLink);
 
       // Original string and plurals
       $('#original').html(entity.marked);
@@ -1447,6 +1453,13 @@ var Pontoon = (function (my) {
       // Update authors and time range
       $('#filter:not(".opened") .selector').click(function() {
         if ($('#filter').is('.opened')) {
+          return;
+        }
+
+        // Disable for All Projects for performance reasons
+        if (self.project.slug === 'all-projects') {
+          self.updateRangePicker([]);
+          self.updateAuthors([]);
           return;
         }
 
@@ -2428,7 +2441,7 @@ var Pontoon = (function (my) {
       // Update parts menu
       if (entity && total) {
         var paths = [],
-            parts = $('.project .menu li .name[data-slug=' + self.project.slug + ']')
+            parts = $('.project .menu .name[data-slug=' + self.project.slug + ']')
                       .data('parts')[self.locale.code];
 
         $(parts).each(function() {
@@ -2762,6 +2775,14 @@ var Pontoon = (function (my) {
       // Make sure part menu is always updated
       $('.project .menu [data-slug="' + slug + '"]').parent().click();
 
+      // Update All Projects menu entry parts
+      var parts = {};
+      parts[this.getSelectedLocale()] = [{
+        title: 'all-resources',
+        resource__path: []
+      }];
+      $('.project .menu .all-projects .name').data('parts', parts);
+
       this.updateGoButton();
     },
 
@@ -2771,6 +2792,7 @@ var Pontoon = (function (my) {
      */
     updatePartMenu: function () {
       var locale = this.getSelectedLocale(),
+          project = this.getSelectedProject(),
           parts = this.getProjectData('parts')[locale],
           currentPart = this.getSelectedPart(),
           part = $.grep(parts, function (e) { return e.title === currentPart; });
@@ -2779,6 +2801,9 @@ var Pontoon = (function (my) {
       if (!part.length) {
         this.updatePartSelector(parts[0].title);
       }
+
+      // Hide part menu for All Projects
+      $('.part.select').toggleClass('hidden', project === 'all-projects');
 
       this.updateGoButton();
     },
@@ -2868,7 +2893,7 @@ var Pontoon = (function (my) {
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match")').click(function () {
+      $('.project .menu li:not(".no-match"), .static-links .all-projects').click(function () {
         var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug'),
@@ -2886,8 +2911,15 @@ var Pontoon = (function (my) {
             self.updatePartMenu();
 
           } else {
+            var url;
+            if (slug !== 'all-projects') {
+              url = '/' + locale + '/' + slug + '/parts/';
+            } else {
+              url = '/teams/' + locale + '/stats/';
+            }
+
             $.ajax({
-              url: '/' + locale + '/' + slug + '/parts/',
+              url: url,
               success: function(parts) {
                 if (projectParts) {
                   projectParts[locale] = parts;
@@ -3058,8 +3090,12 @@ var Pontoon = (function (my) {
       var code = this.locale.code,
           slug = this.project.slug;
 
-      $('#profile .admin-current-project a').attr('href', '/admin/projects/' + slug + '/');
+      $('#profile .admin-current-project a')
+        .attr('href', '/admin/projects/' + slug + '/')
+        .toggle(this.project.slug !== 'all-projects');
       $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
+      $('#profile .download, #profile .upload + .horizontal-separator').toggle(this.project.slug !== 'all-projects');
+
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
@@ -3077,19 +3113,25 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Mark current project & locale and set links
+     * Mark current values and set links
      */
     updateMainMenu: function () {
+      // Mark currect values
+      $('header .menu li').removeClass('current');
       $('.project .menu li .name[data-slug=' + this.project.slug + '], ' +
         '.locale .menu li .language[data-code=' + this.locale.code + ']')
-        .parent().addClass('current').siblings().removeClass('current');
+        .parent().addClass('current');
+      $('.static-links .all-projects')
+        .toggleClass('current', this.project.slug === 'all-projects');
 
-      $('.static-links .current-team').parent()
-        .attr('href', '/' + this.locale.code);
-      $('.static-links .current-project').parent()
-        .attr('href', '/projects/' + this.project.slug);
-      $('.static-links .current-localization').parent()
-        .attr('href', '/' + this.locale.code + '/' + this.project.slug);
+      // Set current links
+      $('.static-links .current-team')
+        .parent().attr('href', '/' + this.locale.code);
+      $('.static-links .current-project')
+        .toggle(this.project.slug !== 'all-projects')
+        .parent().attr('href', '/projects/' + this.project.slug);
+      $('.static-links .current-localization')
+        .parent().attr('href', '/' + this.locale.code + '/' + this.project.slug);
 
       this.updateGoButton();
     },
@@ -3527,13 +3569,10 @@ var Pontoon = (function (my) {
         url: "",
         title: "",
         slug: self.getProjectData('slug'),
-        info: self.getProjectData('info'),
+        info: self.getProjectData('info') || '',
         width: self.getProjectWidth(),
         links: self.getProjectData('links') === 'True' ? true : false,
-        langpack_url: self.getProjectData('langpack_url'),
-        hasSubPages: self.getProjectData('parts')[this.locale.code].some(function(item) {
-          return !!item['url'];
-        })
+        langpack_url: self.getProjectData('langpack_url') || ''
       };
 
       /* Copy of User.can_translate(), used on client to improve performance */
@@ -3962,7 +4001,7 @@ var Pontoon = (function (my) {
      */
     getProjectData: function(attribute) {
       var slug = this.getSelectedProject();
-      return $('.project .menu li .name[data-slug=' + slug + ']').data(attribute);
+      return $('.project .menu .name[data-slug=' + slug + ']').data(attribute);
     },
 
 
@@ -4134,7 +4173,7 @@ var Pontoon = (function (my) {
 window.onpopstate = function(e) {
   if (e.state) {
     // Update main menu
-    $('.project .menu li [data-slug="' + e.state.project + '"]').parent().click();
+    $('.project .menu .name[data-slug="' + e.state.project + '"]').parent().click();
     $('.locale .menu li .language[data-code="' + e.state.locale + '"]').parent().click();
 
     if (e.state.paths) {

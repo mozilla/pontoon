@@ -78,16 +78,20 @@ def home(request):
 def translate(request, locale, slug, part):
     """Translate view."""
     locale = get_object_or_404(Locale, code=locale)
-    project = get_object_or_404(Project.objects.available(), slug=slug)
-
-    if locale not in project.locales.all():
-        raise Http404
 
     projects = (
         Project.objects.available()
         .prefetch_related('subpage_set')
         .order_by('name')
     )
+
+    if slug.lower() == 'all-projects':
+        project = Project(name='All Projects', slug=slug.lower())
+
+    else:
+        project = get_object_or_404(Project.objects.available(), slug=slug)
+        if locale not in project.locales.all():
+            raise Http404
 
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
@@ -126,6 +130,13 @@ def locale_projects(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     return JsonResponse(locale.available_projects_list(), safe=False)
+
+
+@utils.require_AJAX
+def locale_stats(request, locale):
+    """Get locale stats used in All Resources part."""
+    locale = get_object_or_404(Locale, code=locale)
+    return JsonResponse(locale.stats(), safe=False)
 
 
 @utils.require_AJAX
@@ -245,8 +256,13 @@ def entities(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors.as_json())
 
-    project = get_object_or_404(Project, slug=form.cleaned_data['project'])
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
+
+    project_slug = form.cleaned_data['project']
+    if project_slug == 'all-projects':
+        project = Project(slug=project_slug)
+    else:
+        project = get_object_or_404(Project, slug=project_slug)
 
     # Only return entities with provided IDs (batch editing)
     if form.cleaned_data['entity_ids']:
