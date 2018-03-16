@@ -101,6 +101,25 @@ def translate(request, locale, slug, part):
     })
 
 
+def translate_locale_agnostic(request, slug, part):
+    """Locale Agnostic Translate view."""
+    user = request.user
+    project = get_object_or_404(Project.objects.available(), slug=slug)
+
+    if user.is_authenticated():
+        locale = user.profile.custom_homepage
+
+        if locale and project.locales.filter(code=locale).exists():
+            return redirect('pontoon.translate', slug=slug, locale=locale, part=part)
+
+    locale = utils.get_project_locale_from_request(request, project.locales)
+
+    if locale:
+        return redirect('pontoon.translate', slug=slug, locale=locale, part=part)
+    else:
+        return redirect('pontoon.projects.project', slug=slug)
+
+
 @utils.require_AJAX
 def locale_projects(request, locale):
     """Get active projects for locale."""
