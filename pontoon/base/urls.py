@@ -38,6 +38,11 @@ urlpatterns = [
         views.authors_and_time_range,
         name='pontoon.authors.and.time.range'),
 
+    # Locale-agnostic links
+    url(r'^projects/(?P<slug>[\w-]+)/(?P<part>.+)/$',
+        views.translate_locale_agnostic,
+        name='pontoon.translate.locale.agnostic'),
+
     # Translate project
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
         views.translate,
