@@ -500,7 +500,7 @@ def update_translation(request):
         return HttpResponse("error")
 
     try:
-        l = Locale.objects.get(code=locale)
+        locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as error:
         log.error(str(error))
         return HttpResponse("error")
@@ -522,11 +522,11 @@ def update_translation(request):
 
     now = timezone.now()
     can_translate = (
-        request.user.can_translate(project=project, locale=l) and
+        request.user.can_translate(project=project, locale=locale) and
         (not force_suggestions or approve)
     )
     translations = Translation.objects.filter(
-        entity=e, locale=l, plural_form=plural_form)
+        entity=e, locale=locale, plural_form=plural_form)
 
     # Newlines are not allowed in .lang files (bug 1190754)
     if e.resource.format == 'lang' and '\n' in string:
@@ -552,7 +552,7 @@ def update_translation(request):
                         'message': 'Same translation already exists.',
                     })
 
-                warnings = utils.quality_check(original, string, l, ignore)
+                warnings = utils.quality_check(original, string, locale, ignore)
                 if warnings:
                     return warnings
 
@@ -581,13 +581,13 @@ def update_translation(request):
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
-                    'stats': TranslatedResource.objects.stats(project, paths, l),
+                    'stats': TranslatedResource.objects.stats(project, paths, locale),
                 })
 
             # If added by non-privileged user, unfuzzy it
             else:
                 if t.fuzzy:
-                    warnings = utils.quality_check(original, string, l, ignore)
+                    warnings = utils.quality_check(original, string, locale, ignore)
                     if warnings:
                         return warnings
 
@@ -601,7 +601,7 @@ def update_translation(request):
                     return JsonResponse({
                         'type': 'updated',
                         'translation': t.serialize(),
-                        'stats': TranslatedResource.objects.stats(project, paths, l),
+                        'stats': TranslatedResource.objects.stats(project, paths, locale),
                     })
 
                 return JsonResponse({
@@ -611,7 +611,7 @@ def update_translation(request):
 
         # Different translation added
         else:
-            warnings = utils.quality_check(original, string, l, ignore)
+            warnings = utils.quality_check(original, string, locale, ignore)
             if warnings:
                 return warnings
 
@@ -621,7 +621,7 @@ def update_translation(request):
             translations.update(fuzzy=False)
 
             t = Translation(
-                entity=e, locale=l, user=user, string=string,
+                entity=e, locale=locale, user=user, string=string,
                 plural_form=plural_form, date=now,
                 approved=can_translate)
 
@@ -640,17 +640,17 @@ def update_translation(request):
             return JsonResponse({
                 'type': 'added',
                 'translation': active.serialize(),
-                'stats': TranslatedResource.objects.stats(project, paths, l),
+                'stats': TranslatedResource.objects.stats(project, paths, locale),
             })
 
     # No translations saved yet
     else:
-        warnings = utils.quality_check(original, string, l, ignore)
+        warnings = utils.quality_check(original, string, locale, ignore)
         if warnings:
             return warnings
 
         t = Translation(
-            entity=e, locale=l, user=user, string=string,
+            entity=e, locale=locale, user=user, string=string,
             plural_form=plural_form, date=now,
             approved=can_translate)
 
@@ -663,7 +663,7 @@ def update_translation(request):
         return JsonResponse({
             'type': 'saved',
             'translation': t.serialize(),
-            'stats': TranslatedResource.objects.stats(project, paths, l),
+            'stats': TranslatedResource.objects.stats(project, paths, locale),
         })
 
 
