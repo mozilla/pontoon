@@ -1,0 +1,90 @@
+import pytest
+
+from pontoon.base.models import Translation
+
+
+@pytest.yield_fixture
+def properties_resource(resource0):
+    """
+    A resource to trigger Translate Toolkit and compare-locales checks at once.
+    """
+    resource0.format = 'properties'
+    resource0.path = 'test1.properties'
+    resource0.save()
+
+    yield resource0
+
+
+@pytest.yield_fixture
+def properties_entity(entity0, properties_resource):
+    """
+    An entity from properties_resource.
+    """
+    entity0.translation_set.all().delete()
+    entity0.string = 'something %s'
+    entity0.save()
+
+    yield entity0
+
+
+@pytest.mark.django_db
+def test_run_checks_during_translation_update(
+    properties_entity,
+    member0,
+    locale0,
+    request_update_translation,
+):
+    """
+    The backend shouldn't allow to post translations with critical errors.
+    """
+    response = request_update_translation(
+        member0.client,
+        locale=locale0.code,
+        entity=properties_entity.pk,
+        translation='bad  suggestion',
+        original=properties_entity.string,
+        ignore_check='false'
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        u'failedChecks': {
+            u'clWarnings': [u'trailing argument 1 `s` missing'],
+            u'ttWarnings': [u'Double spaces']
+        },
+        u'same': False,
+    }
+
+    # User decides to ignore checks (but there are errors)
+    response = request_update_translation(
+        member0.client,
+        entity=properties_entity.pk,
+        original=properties_entity.string,
+        locale=locale0.code,
+        translation='bad suggestion \q %q',
+        ignore_check='true'
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        u'failedChecks': {
+            u'clErrors': [u'Found single %'],
+            u'clWarnings': [u'unknown escape sequence, \q']
+        },
+        u'same': False
+    }
+
+    # User decides to ignore checks (there are only warnings)
+    response = request_update_translation(
+        member0.client,
+        entity=properties_entity.pk,
+        original=properties_entity.string,
+        locale=locale0.code,
+        translation='bad  suggestion',
+        ignore_check='true'
+    )
+
+    assert response.status_code == 200
+
+    translation_pk = response.json()['translation']['pk']
+    assert Translation.objects.get(pk=translation_pk).approved is False

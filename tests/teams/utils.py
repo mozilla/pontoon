@@ -1,5 +1,5 @@
 """
-Tests related to the utils provided in pontoon.teams.utils
+Tests related to the utils provided in pontoon.teams.libraries
 """
 import pytest
 

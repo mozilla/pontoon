@@ -44,6 +44,8 @@ from pontoon.base.models import (
 )
 from pontoon.tags.utils.tags import TagsTool
 
+from pontoon.checks.libraries import run_checks
+
 
 log = logging.getLogger(__name__)
 
@@ -563,34 +565,29 @@ def update_translation(request):
     translations = Translation.objects.filter(
         entity=e, locale=locale, plural_form=plural_form)
 
-    # Newlines are not allowed in .lang files (bug 1190754)
-    if e.resource.format == 'lang' and '\n' in string:
-        return HttpResponse('Newline characters are not allowed.')
+    same_translations = translations.filter(string=string).order_by(
+        '-approved', 'rejected', '-date'
+    )
+
+    checks = run_checks(
+        e,
+        locale,
+        original,
+        string,
+        ignore,
+        utils.is_same(same_translations, can_translate)
+    )
+
+    if checks:
+        return checks
 
     # Translations exist
     if len(translations) > 0:
-
-        # Same translation exists
-        same_translations = translations.filter(string=string).order_by(
-            '-approved', 'rejected', '-date'
-        )
         if len(same_translations) > 0:
             t = same_translations[0]
 
             # If added by privileged user, approve and unfuzzy it
-            if can_translate:
-
-                # Unless there's nothing to be changed
-                if t.approved and not t.fuzzy:
-                    return JsonResponse({
-                        'same': True,
-                        'message': 'Same translation already exists.',
-                    })
-
-                warnings = utils.quality_check(original, string, locale, ignore)
-                if warnings:
-                    return warnings
-
+            if can_translate and (t.fuzzy or not t.approved):
                 translations.update(
                     approved=False,
                     approved_user=None,
@@ -611,45 +608,23 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-                t.save()
+            # If added by non-privileged user and fuzzy, unfuzzy it
+            elif t.fuzzy:
+                t.approved = False
+                t.approved_user = None
+                t.approved_date = None
+                t.fuzzy = False
 
-                return JsonResponse({
-                    'type': 'updated',
-                    'translation': t.serialize(),
-                    'stats': TranslatedResource.objects.stats(project, paths, locale),
-                })
+            t.save()
 
-            # If added by non-privileged user, unfuzzy it
-            else:
-                if t.fuzzy:
-                    warnings = utils.quality_check(original, string, locale, ignore)
-                    if warnings:
-                        return warnings
-
-                    t.approved = False
-                    t.approved_user = None
-                    t.approved_date = None
-                    t.fuzzy = False
-
-                    t.save()
-
-                    return JsonResponse({
-                        'type': 'updated',
-                        'translation': t.serialize(),
-                        'stats': TranslatedResource.objects.stats(project, paths, locale),
-                    })
-
-                return JsonResponse({
-                    'same': True,
-                    'message': 'Same translation already exists.',
-                })
+            return JsonResponse({
+                'type': 'updated',
+                'translation': t.serialize(),
+                'stats': TranslatedResource.objects.stats(project, paths, locale),
+            })
 
         # Different translation added
         else:
-            warnings = utils.quality_check(original, string, locale, ignore)
-            if warnings:
-                return warnings
-
             if can_translate:
                 translations.update(approved=False, approved_user=None, approved_date=None)
 
@@ -680,10 +655,6 @@ def update_translation(request):
 
     # No translations saved yet
     else:
-        warnings = utils.quality_check(original, string, locale, ignore)
-        if warnings:
-            return warnings
-
         t = Translation(
             entity=e, locale=locale, user=user, string=string,
             plural_form=plural_form, date=now,

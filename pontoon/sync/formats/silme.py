@@ -105,7 +105,7 @@ class SilmeResource(ParsedResource):
                 raise
 
         comments = []
-        current_order = 0
+        current_order = 0.
         for obj in self.structure:
             if isinstance(obj, silme.core.entity.Entity):
 
