@@ -2088,3 +2088,39 @@ p#sign-in-required > a#sidebar-signin {
   margin-bottom: 10px;
   padding: 15px 0 5px;
 }
+
+#quality div {
+  display: none;
+}
+
+#quality h3 {
+  color: #888;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+#quality ul {
+  float: none;
+}
+
+#quality .compare-locales div,
+#quality .compare-locales div ul{
+  padding-left: 10px;
+}
+
+#quality ul {
+  list-style: none;
+  margin: 0px;
+}
+
+#quality ul i {
+  margin: 0px 8px;
+}
+
+#quality i.fa-warning {
+  color: #ff0;
+}
+
+#quality i.fa-times-circle {
+  color: #f00;
+}

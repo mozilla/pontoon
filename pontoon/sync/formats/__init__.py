@@ -1,7 +1,7 @@
 """
 Parsing resource files.
 
-See base.py for the ParsedResource base class.
+See pontoon.py for the ParsedResource base class.
 """
 import os.path
 
