@@ -959,7 +959,7 @@ $(function () {
 
   // Select access key using text input
   $('#ftl-area .attributes').on('keyup', '#ftl-id-accesskey', function () {
-    var accesskey = $(this).val().toUpperCase();
+    var accesskey = $(this).val();
 
     if (accesskey) {
       $('.accesskeys div').removeClass('active');
