@@ -293,7 +293,7 @@ var Pontoon = (function (my) {
           $('#ftl-area .attributes ul:first').append(attributes);
 
           // Update access keys presentation
-          $('#ftl-area textarea:visible').keyup();
+          $('#ftl-area textarea.value').keyup();
         }
 
         // Ignore editing for anonymous users
