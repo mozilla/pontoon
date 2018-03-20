@@ -2217,7 +2217,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by search parameters
         if search:
-            # Split search string on spaces except if between quotes.
+            # Split search string on spaces except if between non-escaped quotes.
             search_list = [
                 x.strip('"').strip("'").replace(UNUSABLE_SEARCH_CHAR, '"')
                 for x in re.findall(

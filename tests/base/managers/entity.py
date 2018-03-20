@@ -569,6 +569,16 @@ def test_mgr_entity_search_entities(entity_test_search):
     """
     entities, search = entity_test_search
 
+    # list of of (index, entity) used in this test
+    #
+    # 0, First entity string
+    # 1, Second entity string
+    # 2, Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ
+    # 3, Entity with first string
+    # 4, First Entity
+    # 5, First Entity with string
+    # 6, Entity with quoted "string"
+
     assert search(u'e') == entities
     assert search(u'entity string') == [entities[i] for i in [0, 1, 2, 3, 5, 6]]
 
