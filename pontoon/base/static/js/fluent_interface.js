@@ -925,8 +925,15 @@ $(function () {
     // TextElements into account when generating access key candidates.
     // See bug 1447103 for more detals.
     $('#ftl-area ' + selector + ' textarea').each(function() {
+      var value = $(this).val();
       var message = 'key = ' + $(this).val();
       var ast = fluentParser.parseEntry(message);
+
+      if (ast.type === 'Junk') {
+        content += value
+          .replace(/\s/g, ''); // Remove whitespace
+        return true; // continue
+      }
 
       ast.value.elements.forEach(function (element) {
         if (element.type === 'TextElement') {
