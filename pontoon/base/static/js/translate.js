@@ -3896,14 +3896,18 @@ var Pontoon = (function (my) {
 
       item.unmark();
       if (searchQuery) {
-        searchQuery = ((searchQuery.split('"').length - 1) % 2) ? searchQuery + '"' : searchQuery;
+        var unusable = '☠'
+        var reg = new RegExp(unusable, "g");
+        searchQuery = searchQuery.replace(/\\"/g, unusable);
         var queries = searchQuery.match(/[^\s"]+|"[^"]+"/g);
+
         if (!queries) {
           return;
         }
         var i = queries.length;
         while(i--) {
           queries[i] = queries[i].replace(/^["']|["']$/g, '');
+          queries[i] = queries[i].replace(reg, '"');
         }
         // sort array in decreasing order of string length
         queries.sort(function(a,b) {

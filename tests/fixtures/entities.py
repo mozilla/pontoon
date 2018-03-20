@@ -90,7 +90,7 @@ def entity_test_search(entity_factory, translation_factory,
                        resourceX, localeX):
     """This fixture provides:
 
-    - 6 translated entities
+    - 7 translated entities
     - A lambda for searching for entities using Entity.for_project_locale
     """
     TranslatedResource.objects.create(
@@ -122,6 +122,10 @@ def entity_test_search(entity_factory, translation_factory,
             {'key': 'sixth.key',
              'string': 'First Entity with string',
              'string_plural': 'First plural entity',
+             'comment': 'random notes'},
+            {'key': 'seventh.key',
+             'string': 'Entity with quoted "string"',
+             'string_plural': 'plural entity',
              'comment': 'random notes'}])
     translation_factory(
         locale=localeX,
@@ -131,7 +135,8 @@ def entity_test_search(entity_factory, translation_factory,
             {'string': 'Third translation', 'entity': entities[2]},
             {'string': 'Fourth translation', 'entity': entities[3]},
             {'string': 'Fifth translation', 'entity': entities[4]},
-            {'string': 'Sixth translation', 'entity': entities[5]}])
+            {'string': 'Sixth translation', 'entity': entities[5]},
+            {'string': 'Seventh translation', 'entity': entities[6]}])
     return (
         entities,
         lambda q: list(

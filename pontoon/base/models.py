@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from __future__ import unicode_literals
 from __future__ import division
 
@@ -42,6 +43,8 @@ from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger(__name__)
+
+UNUSABLE_SEARCH_CHAR = u'☠'
 
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
@@ -2214,18 +2217,15 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by search parameters
         if search:
-            # Add a double quote at the end of search if closing quote not present
-            search = (
-                '%s"' % search
-                if search.count('"') % 2
-                else search)
-
             # Split search string on spaces except if between quotes.
-            search_list = re.findall('([^\"]\\S*|\".+?\")\\s*', search)
-            search_list = [s.strip().strip("'").strip('"') for s in search_list]
+            search_list = [
+                x.strip('"').strip("'").replace(UNUSABLE_SEARCH_CHAR, '"')
+                for x in re.findall(
+                    '([^\"]\\S*|\".+?\")\\s*',
+                    search.replace('\\"', UNUSABLE_SEARCH_CHAR))]
 
             # Search for `"` and `'` when entered as search terms
-            if search == '""' and not search_list:
+            if search == '"' and not search_list:
                 search_list = ['"']
 
             if search == "'" and not search_list:
