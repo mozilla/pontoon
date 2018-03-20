@@ -926,21 +926,20 @@ $(function () {
     // See bug 1447103 for more detals.
     $('#ftl-area ' + selector + ' textarea').each(function() {
       var value = $(this).val();
-      var message = 'key = ' + $(this).val();
+      var message = 'key = ' + value;
       var ast = fluentParser.parseEntry(message);
 
-      if (ast.type === 'Junk') {
-        content += value
-          .replace(/\s/g, ''); // Remove whitespace
-        return true; // continue
+      if (ast.type !== 'Junk') {
+        value = '';
+        ast.value.elements.forEach(function (element) {
+          if (element.type === 'TextElement') {
+            value += element.value;
+          }
+        });
       }
 
-      ast.value.elements.forEach(function (element) {
-        if (element.type === 'TextElement') {
-          content += element.value
-            .replace(/\s/g, ''); // Remove whitespace
-        }
-      });
+      content += value
+        .replace(/\s/g, ''); // Remove whitespace
     });
 
     // Extract unique candidates in a list
