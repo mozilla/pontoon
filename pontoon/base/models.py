@@ -2234,14 +2234,14 @@ class Entity(DirtyFieldsMixin, models.Model):
             search_query_list = [(s, locale.db_collation) for s in search_list]
 
             translation_filters = (
-                Q(translation__string__icontains_collate=search_query) &
-                Q(translation__locale=locale)
+                Q(translation__string__icontains_collate=search_query)
+                & Q(translation__locale=locale)
                 for search_query in search_query_list)
             entity_filters = (
-                Q(string__icontains=search) |
-                Q(string_plural__icontains=search) |
-                Q(comment__icontains=search) |
-                Q(key__icontains=search)
+                Q(string__icontains=search)
+                | Q(string_plural__icontains=search)
+                | Q(comment__icontains=search)
+                | Q(key__icontains=search)
                 for search in search_list)
 
             # Combine all generated filters with an AND operator.
