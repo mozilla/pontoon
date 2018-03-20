@@ -921,8 +921,9 @@ $(function () {
       selector = '.attributes [data-id="label"]';
     }
     $('#ftl-area ' + selector + ' textarea').each(function() {
-      // Remove whitespace
-      content += $(this).val().replace(/\s/g,'');
+      content += $(this).val()
+        .replace(/{.*?}/g, '') // Remove placeables: bug 1447103
+        .replace(/\s/g, '');   // Remove whitespace
     });
 
     // Extract unique candidates in a list
