@@ -1,13 +1,64 @@
 # coding: utf-8
 
+from collections import OrderedDict
+
 import pytest
 
 from datetime import timedelta
 from six import text_type
 
 from pontoon.base.templatetags.helpers import (
-    format_datetime, format_timedelta, nospam)
+    as_simple_translation, format_datetime, format_timedelta, nospam)
 from pontoon.base.utils import aware_datetime
+
+
+MULTILINE_SOURCE = '''key =
+ Simple String
+ In Multiple
+ Lines'''
+PLURAL_SOURCE = '''key =
+    { $number ->
+        [1] Simple String
+       *[other] Other Simple String
+    }'''
+WRAPPED_SELECT_SOURCE = '''key =
+    Anne liked your comment on { $photo_count ->
+        [male] his
+        [female] her
+       *[other] their
+    } post.'''
+ATTRIBUTE_SOURCE = '''key
+    .placeholder = Simple String'''
+ATTRIBUTES_SOURCE = '''key
+    .attribute = Simple String
+    .other = Other Simple String'''
+ATTRIBUTE_SELECT_SOURCE = '''key
+    .placeholder = { PLATFORM() ->
+    [win] Simple String
+    *[other] Other Simple String
+    }'''
+
+SIMPLE_TRANSLATION_TESTS = OrderedDict((
+    ('empty', ('', '')),
+    ('non-ftl', ('Simple string', 'Simple string')),
+    ('simple', ('key = Simple string', 'Simple string')),
+    ('multiline', (MULTILINE_SOURCE, 'Simple String\nIn Multiple\nLines')),
+    ('plural', (PLURAL_SOURCE, 'Other Simple String')),
+    ('wrapped-expression', (WRAPPED_SELECT_SOURCE, 'Anne liked your comment on their post.')),
+    ('attribute', (ATTRIBUTE_SOURCE, 'Simple String')),
+    ('attributes', (ATTRIBUTES_SOURCE, 'Simple String')),
+    ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
+    ('other-ftl',
+     ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
+      'Simple String'))))
+
+
+@pytest.mark.parametrize(
+    "k",
+    SIMPLE_TRANSLATION_TESTS)
+def test_helper_as_simple_translation(k):
+    string, expected = SIMPLE_TRANSLATION_TESTS[k]
+    assert as_simple_translation(string) == expected
 
 
 def test_helper_base_format_dt_none():
