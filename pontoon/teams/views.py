@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
@@ -53,6 +53,7 @@ def ajax_projects(request, locale):
         .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_project_locale(locale)
         .order_by('name')
+        .annotate(enabled_locales=Count('project_locale', distinct=True))
     )
 
     if not projects:
