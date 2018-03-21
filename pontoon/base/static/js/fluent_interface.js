@@ -318,7 +318,8 @@ var Pontoon = (function (my) {
        * Message is supported if all value elements
        * and all attribute elements are of type:
        * - TextElement
-       * - Placeable with expression type ExternalArgument, MessageReference or SelectExpression
+       * - Placeable with expression type CallExpression, ExternalArgument,
+       *   MessageReference or SelectExpression
        */
       isSupportedMessage: function (ast) {
         var self = this;
@@ -349,7 +350,8 @@ var Pontoon = (function (my) {
       /*
        * Is element of type that can be presented as a simple string:
        * - TextElement
-       * - Placeable with expression type ExternalArgument or MessageReference
+       * - Placeable with expression type CallExpression, ExternalArgument
+       *   or MessageReference
        */
       isSimpleElement: function (element) {
         if (element.type === 'TextElement') {
@@ -360,6 +362,7 @@ var Pontoon = (function (my) {
         if (
           element.expression &&
           [
+            'CallExpression',
             'ExternalArgument',
             'MessageReference'
           ].indexOf(element.expression.type) >= 0
@@ -464,6 +467,13 @@ var Pontoon = (function (my) {
                 endMarker = '</mark>';
               }
               translatedValue += startMarker + '{' + element.expression.id.name + '}' + endMarker;
+            }
+            else if (element.expression.type === 'CallExpression') {
+              if (markPlaceables) {
+                startMarker = '<mark class="placeable" title="Call Expression">';
+                endMarker = '</mark>';
+              }
+              translatedValue += startMarker + '{' + fluentSerializer.serializeExpression(element.expression) + '}' + endMarker;
             }
             else if (self.isSelectExpressionElement(element)) {
               var variantElements = element.expression.variants.filter(function (variant) {

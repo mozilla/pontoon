@@ -6,7 +6,7 @@ import jinja2
 from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from django_jinja import library
-from fluent.syntax import FluentParser, ast
+from fluent.syntax import FluentParser, FluentSerializer, ast
 from six import text_type
 from six.moves.urllib import parse as six_parse
 
@@ -22,6 +22,7 @@ from django.utils.functional import Promise
 
 register = template.Library()
 parser = FluentParser()
+serializer = FluentSerializer()
 
 
 class LazyObjectsJsonEncoder(json.JSONEncoder):
@@ -254,7 +255,7 @@ def dict_html_attrs(dict_obj):
 
 
 def _serialize_elements(elements):
-    """Serialize text elements and references into a simple string."""
+    """Serialize text elements and placeables into a simple string."""
     response = ''
 
     for element in elements:
@@ -267,6 +268,9 @@ def _serialize_elements(elements):
 
             elif isinstance(element.expression, ast.MessageReference):
                 response += '{ ' + element.expression.id.name + ' }'
+
+            elif isinstance(element.expression, ast.CallExpression):
+                response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
             elif hasattr(element.expression, 'variants'):
                 variant_elements = filter(

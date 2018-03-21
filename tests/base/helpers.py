@@ -50,7 +50,7 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
     ('other-ftl',
      ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
-      'Simple String'))))
+      '{ LINK("Link text", title: "Link title") }Simple String'))))
 
 
 @pytest.mark.parametrize(
