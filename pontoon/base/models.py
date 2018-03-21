@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from __future__ import division
 
@@ -2219,17 +2219,17 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             # Split search string on spaces except if between non-escaped quotes.
             search_list = [
-                x.strip('"').strip("'").replace(UNUSABLE_SEARCH_CHAR, '"')
+                x.strip('"').replace(UNUSABLE_SEARCH_CHAR, '"')
                 for x in re.findall(
                     '([^\"]\\S*|\".+?\")\\s*',
                     search.replace('\\"', UNUSABLE_SEARCH_CHAR))]
 
-            # Search for `"` and `'` when entered as search terms
+            # Search for `""` and `"` when entered as search terms
+            if search == '""' and not search_list:
+                search_list = ['""']
+
             if search == '"' and not search_list:
                 search_list = ['"']
-
-            if search == "'" and not search_list:
-                search_list = ["'"]
 
             search_query_list = [(s, locale.db_collation) for s in search_list]
 

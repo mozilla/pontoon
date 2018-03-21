@@ -3906,7 +3906,7 @@ var Pontoon = (function (my) {
         }
         var i = queries.length;
         while(i--) {
-          queries[i] = queries[i].replace(/^["']|["']$/g, '');
+          queries[i] = queries[i].replace(/^["]|["]$/g, '');
           queries[i] = queries[i].replace(reg, '"');
         }
         // sort array in decreasing order of string length
