@@ -920,10 +920,26 @@ $(function () {
     if (isLabel) {
       selector = '.attributes [data-id="label"]';
     }
+
+    // Build artificial FTL Message from textarea contents to only take
+    // TextElements into account when generating access key candidates.
+    // See bug 1447103 for more detals.
     $('#ftl-area ' + selector + ' textarea').each(function() {
-      content += $(this).val()
-        .replace(/{.*?}/g, '') // Remove placeables: bug 1447103
-        .replace(/\s/g, '');   // Remove whitespace
+      var value = $(this).val();
+      var message = 'key = ' + value;
+      var ast = fluentParser.parseEntry(message);
+
+      if (ast.type !== 'Junk') {
+        value = '';
+        ast.value.elements.forEach(function (element) {
+          if (element.type === 'TextElement') {
+            value += element.value;
+          }
+        });
+      }
+
+      content += value
+        .replace(/\s/g, ''); // Remove whitespace
     });
 
     // Extract unique candidates in a list
