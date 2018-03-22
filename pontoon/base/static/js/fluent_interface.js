@@ -473,7 +473,8 @@ var Pontoon = (function (my) {
                 startMarker = '<mark class="placeable" title="Call Expression">';
                 endMarker = '</mark>';
               }
-              translatedValue += startMarker + '{' + fluentSerializer.serializeExpression(element.expression) + '}' + endMarker;
+              var expression = fluentSerializer.serializeExpression(element.expression);
+              translatedValue += startMarker + '{' + expression + '}' + endMarker;
             }
             else if (self.isSelectExpressionElement(element)) {
               var variantElements = element.expression.variants.filter(function (variant) {
