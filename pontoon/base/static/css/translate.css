@@ -309,7 +309,7 @@ body > header .locale.select {
   color: #3F4752;
 }
 
-.suggested .status:before {
+.unreviewed .status:before {
   color: #4FC4F6;
 }
 
@@ -324,11 +324,6 @@ body > header .locale.select {
 .untranslated .status:before {
   color: #AAAAAA;
   content: "";
-}
-
-.has-suggestions .status:before {
-  color: #AAAAAA;
-  content: "";
 }
 
 .rejected .status:before {
@@ -1140,7 +1135,7 @@ body > header aside p {
 }
 
 #entitylist > .wrapper > ul > li.translated p span.source-string,
-#entitylist > .wrapper > ul > li.suggested p span.source-string,
+#entitylist > .wrapper > ul > li.unreviewed p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {

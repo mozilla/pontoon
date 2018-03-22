@@ -1942,7 +1942,7 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def has_suggestions(self, locale):
+    def unreviewed(self, locale):
         """Return a filter to be used to select entities with suggested translations.
 
         An entity is said to have suggestions if at least one of its plural forms
@@ -2160,7 +2160,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if status:
             # Apply a combination of filters based on the list of statuses the user sent.
-            status_filter_choices = ('missing', 'fuzzy', 'unreviewed', 'unreviewed')
+            status_filter_choices = ('missing', 'fuzzy', 'translated', 'unreviewed')
             post_filters.append(
                 combine_entity_filters(
                     entities,
@@ -2172,7 +2172,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ('has-suggestions', 'rejected', 'unchanged')
+            extra_filter_choices = ('rejected', 'unchanged')
             post_filters.append(
                 combine_entity_filters(
                     entities,

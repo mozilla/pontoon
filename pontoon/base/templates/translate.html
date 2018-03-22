@@ -66,14 +66,14 @@
           <div class="translated">
             <span>Translated</span>
             <p></p>
-          </div><div class="suggested">
-            <span>Suggested</span>
-            <p></p>
           </div><div class="fuzzy">
             <span>Fuzzy</span>
             <p></p>
           </div><div class="missing">
             <span>Missing</span>
+            <p></p>
+          </div><div class="unreviewed">
+            <span>Unreviewed</span>
             <p></p>
           </div>
         </div>
@@ -168,7 +168,7 @@
             {{ Filter.item('all', 'All', count=True) }}
             {{ Filter.item('missing', 'Missing', count=True) }}
             {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
-            {{ Filter.item('suggested', 'Suggested', count=True) }}
+            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
 
             {% if tags %}
@@ -182,7 +182,6 @@
 
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
-            {{ Filter.item('has-suggestions', 'Unreviewed Suggestions') }}
             {{ Filter.item('rejected', 'Rejected') }}
 
             <li class="horizontal-separator for-time-range">

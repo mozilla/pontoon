@@ -740,14 +740,16 @@ $(function() {
           '<aside class="tooltip">' +
             '<div class="total">Total<span></span></div>' +
             '<div class="translated">Translated<span></span></div>' +
-            '<div class="suggested">Suggested<span></span></div>' +
             '<div class="fuzzy">Fuzzy<span></span></div>' +
             '<div class="missing">Missing<span></span></div>' +
+            '<div class="unreviewed">Unreviewed<span></span></div>' +
           '</aside>');
       }
 
       var data = chart.data('chart'),
-          untranslated_strings = data.total_strings - data.approved_strings - data.translated_strings - data.fuzzy_strings,
+          untranslated_strings = (
+            data.total_strings - data.approved_strings - data.fuzzy_strings
+          ),
           rect = chart[0].getBoundingClientRect(),
           height = $('.tooltip').outerHeight() + 15,
           width = ($('.tooltip').outerWidth() - $(this).outerWidth()) / 2,
@@ -757,7 +759,7 @@ $(function() {
       $('.tooltip')
         .find('.total span').html(data.total_strings).end()
         .find('.translated span').html(data.approved_strings).end()
-        .find('.suggested span').html(data.translated_strings).end()
+        .find('.unreviewed span').html(data.unreviewed_strings).end()
         .find('.fuzzy span').html(data.fuzzy_strings).end()
         .find('.missing span').html(untranslated_strings).end()
         .css('left', left)
