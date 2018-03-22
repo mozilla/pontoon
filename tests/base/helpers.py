@@ -13,9 +13,9 @@ from pontoon.base.utils import aware_datetime
 
 
 MULTILINE_SOURCE = '''key =
- Simple String
- In Multiple
- Lines'''
+    Simple String
+    In Multiple
+    Lines'''
 PLURAL_SOURCE = '''key =
     { $number ->
         [1] Simple String
@@ -34,8 +34,8 @@ ATTRIBUTES_SOURCE = '''key
     .other = Other Simple String'''
 ATTRIBUTE_SELECT_SOURCE = '''key
     .placeholder = { PLATFORM() ->
-    [win] Simple String
-    *[other] Other Simple String
+        [win] Simple String
+        *[other] Other Simple String
     }'''
 
 SIMPLE_TRANSLATION_TESTS = OrderedDict((
@@ -50,12 +50,10 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
     ('other-ftl',
      ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
-      'Simple String'))))
+      '{ LINK("Link text", title: "Link title") }Simple String'))))
 
 
-@pytest.mark.parametrize(
-    "k",
-    SIMPLE_TRANSLATION_TESTS)
+@pytest.mark.parametrize("k", SIMPLE_TRANSLATION_TESTS)
 def test_helper_as_simple_translation(k):
     string, expected = SIMPLE_TRANSLATION_TESTS[k]
     assert as_simple_translation(string) == expected
