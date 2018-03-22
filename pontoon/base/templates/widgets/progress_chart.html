@@ -4,9 +4,8 @@
     <span class="percent">{{ chart.approved_percent }}%</span>
     <span class="chart">
       <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
-      <span class="suggested" style="width:{{ chart.translated_share }}%;"></span>
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
-      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.translated_share - chart.fuzzy_share }}%;"></span>
+      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share }}%;"></span>
     </span>
   </div>
   <div class="legend">
@@ -17,10 +16,10 @@
           <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|intcomma }}</div>
         </a>
       </li>
-      <li class="suggested">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=suggested{% endif %}">
+      <li class="unreviewed">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
           <div class="title">Suggested</div>
-          <div class="value" data-value="{{ chart.translated_strings }}">{{ chart.translated_strings|intcomma }}</div>
+          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|intcomma }}</div>
         </a>
       </li>
       <li class="fuzzy">
@@ -32,7 +31,7 @@
       <li class="missing">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
           <div class="title">Missing</div>
-          {% set missing_strings = chart.total_strings - chart.approved_strings - chart.translated_strings - chart.fuzzy_strings %}
+          {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|intcomma }}</div>
         </a>
       </li>

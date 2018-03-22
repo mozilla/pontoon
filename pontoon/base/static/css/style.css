@@ -243,7 +243,7 @@ button {  width: auto; overflow: visible; }
   color: #7BC876;
 }
 
-.suggested .status.fa:before {
+.unreviewed .status.fa:before {
   color: #4FC4F6;
 }
 
@@ -704,7 +704,7 @@ tfoot td a {
   background: #7BC876;
 }
 
-.select .menu ul li .chart span.suggested {
+.select .menu ul li .chart span.unreviewed {
   background: #4FC4F6;
 }
 
@@ -885,7 +885,7 @@ img.rounded {
   border-color: #7BC876;
 }
 
-.details div.suggested {
+.details div.unreviewed {
   border-color: #4FC4F6;
 }
 

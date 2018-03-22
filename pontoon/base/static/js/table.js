@@ -92,7 +92,7 @@ var Pontoon = (function (my) {
             var legend = $(el).find('.progress .legend'),
                 all = legend.find('.all .value').data('value') || 0,
                 translated = legend.find('.translated .value').data('value') / all || 0,
-                suggested = legend.find('.suggested .value').data('value') / all || 0;
+                unreviewed = legend.find('.unreviewed .value').data('value') / all || 0;
 
             if ($(el).find('.progress .not-ready').length) {
               return 'not-ready';
@@ -100,7 +100,7 @@ var Pontoon = (function (my) {
 
             return {
               'translated': translated,
-              'suggested': suggested
+              'unreviewed': unreviewed
             };
           }
 
@@ -142,7 +142,7 @@ var Pontoon = (function (my) {
           node.addClass(cls);
 
           items.sort(function(a, b) {
-            // Sort by translated, then by suggested percentage
+            // Sort by translated, then by fuzzy percentage
             if (node.is('.progress')) {
               var chartA = getProgress(a),
                   chartB = getProgress(b);
@@ -159,7 +159,7 @@ var Pontoon = (function (my) {
               }
 
               return (chartA.translated - chartB.translated) * dir ||
-                (chartA.suggested - chartB.suggested) * dir;
+                (chartA.fuzzy - chartB.fuzzy) * dir;
 
             // Sort by deadline
             } else if (node.is('.deadline')) {

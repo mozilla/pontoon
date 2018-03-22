@@ -224,7 +224,7 @@ table.table {
   background: #7BC876;
 }
 
-.table .progress .chart-wrapper .suggested {
+.table .progress .chart-wrapper .unreviewed {
   background: #4FC4F6;
 }
 
@@ -278,7 +278,7 @@ table.table {
   color: #7BC876;
 }
 
-.table .progress .legend li.suggested .title {
+.table .progress .legend li.unreviewed .title {
   color: #4FC4F6;
 }
 

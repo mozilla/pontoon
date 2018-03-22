@@ -13,7 +13,6 @@ $(function() {
 
     var fraction = {
           translated: stats.all ? stats.translated / stats.all : 0,
-          suggested: stats.all ? stats.suggested / stats.all : 0,
           fuzzy: stats.all ? stats.fuzzy / stats.all : 0,
           missing: stats.all ? stats.missing / stats.all : 1 /* Draw "empty" progress if no projects enabled */
         },
