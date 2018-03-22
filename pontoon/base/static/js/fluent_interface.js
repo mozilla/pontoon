@@ -301,7 +301,9 @@ var Pontoon = (function (my) {
           $('#ftl-area textarea').prop('readonly', true);
         }
 
-        Pontoon.fluent.focusFirstField();
+        // Focus first field of the FTL editor
+        $('#ftl-area textarea:not(".id"):visible').first().focus();
+
         Pontoon.fluent.toggleEditorToolbar();
 
         Pontoon.moveCursorToBeginning();
@@ -822,14 +824,6 @@ var Pontoon = (function (my) {
 
         var ast = fluentParser.parseEntry(entity.original);
         return this.serializePlaceables(ast.value.elements);
-      },
-
-
-      /*
-       * Focus first field of the FTL editor
-       */
-      focusFirstField: function () {
-        $('#ftl-area textarea:not(".id"):visible').first().focus();
       },
 
     },
