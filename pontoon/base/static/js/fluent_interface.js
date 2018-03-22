@@ -191,6 +191,36 @@ var Pontoon = (function (my) {
     return value;
   }
 
+  /*
+   * Perform error checks for provided translationAST and entityAST.
+   */
+  function runChecks(translationAST, entityAST) {
+    // Parse error
+    if (translationAST.type === 'Junk') {
+      return translationAST.annotations[0].message;
+    }
+
+    // TODO: Should be removed by bug 1237667
+    // Detect missing values
+    else if (entityAST.value && !translationAST.value) {
+      return 'Please make sure to fill in the value';
+    }
+
+    // Detect missing attributes
+    else if (
+      entityAST.attributes &&
+      translationAST.attributes &&
+      entityAST.attributes.length !== translationAST.attributes.length
+    ) {
+      return 'Please make sure to fill in all the attributes';
+    }
+
+    // Detect Message ID mismatch
+    else if (entityAST.id.name !== translationAST.id.name) {
+      return 'Please make sure the translation key matches the source string key';
+    }
+  }
+
   return $.extend(true, my, {
     fluent: {
 
@@ -730,7 +760,7 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(content);
-        var error = this.runChecks(ast, entityAST);
+        var error = runChecks(ast, entityAST);
 
         if (error) {
           return {
@@ -739,37 +769,6 @@ var Pontoon = (function (my) {
         }
 
         return fluentSerializer.serializeEntry(ast);
-      },
-
-
-      /*
-       * Perform error checks for provided translationAST and entityAST.
-       */
-      runChecks: function (translationAST, entityAST) {
-        // Parse error
-        if (translationAST.type === 'Junk') {
-          return translationAST.annotations[0].message;
-        }
-
-        // TODO: Should be removed by bug 1237667
-        // Detect missing values
-        else if (entityAST.value && !translationAST.value) {
-          return 'Please make sure to fill in the value';
-        }
-
-        // Detect missing attributes
-        else if (
-          entityAST.attributes &&
-          translationAST.attributes &&
-          entityAST.attributes.length !== translationAST.attributes.length
-        ) {
-          return 'Please make sure to fill in all the attributes';
-        }
-
-        // Detect Message ID mismatch
-        else if (entityAST.id.name !== translationAST.id.name) {
-          return 'Please make sure the translation key matches the source string key';
-        }
       },
 
 
@@ -857,7 +856,7 @@ $(function () {
       if (translated) {
         var translationAST = fluentParser.parseEntry(translation);
         var entityAST = fluentParser.parseEntry(entity.original);
-        var error = Pontoon.fluent.runChecks(translationAST, entityAST);
+        var error = runChecks(translationAST, entityAST);
         if (error) {
           return Pontoon.endLoader(error, 'error', 5000);
         }
