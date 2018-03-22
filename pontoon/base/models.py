@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from __future__ import division
 
@@ -42,6 +43,8 @@ from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger(__name__)
+
+UNUSABLE_SEARCH_CHAR = u'☠'
 
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
@@ -2218,24 +2221,41 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by search parameters
         if search:
-            # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-            search_query = (search, locale.db_collation)
-            translation_matches = (
-                entities.filter(
-                    translation__string__icontains_collate=search_query,
-                    translation__locale=locale,
-                )
-                .values_list('id', flat=True)
-            )
-            entity_matches = (
-                entities.filter(
-                    Q(string__icontains=search) |
-                    Q(string_plural__icontains=search) |
-                    Q(comment__icontains=search) |
-                    Q(key__icontains=search)
-                )
-                .values_list('id', flat=True)
-            )
+            # Split search string on spaces except if between non-escaped quotes.
+            search_list = [
+                x.strip('"').replace(UNUSABLE_SEARCH_CHAR, '"')
+                for x in re.findall(
+                    '([^\"]\\S*|\".+?\")\\s*',
+                    search.replace('\\"', UNUSABLE_SEARCH_CHAR))]
+
+            # Search for `""` and `"` when entered as search terms
+            if search == '""' and not search_list:
+                search_list = ['""']
+
+            if search == '"' and not search_list:
+                search_list = ['"']
+
+            search_query_list = [(s, locale.db_collation) for s in search_list]
+
+            translation_filters = (
+                Q(translation__string__icontains_collate=search_query)
+                & Q(translation__locale=locale)
+                for search_query in search_query_list)
+            entity_filters = (
+                Q(string__icontains=search)
+                | Q(string_plural__icontains=search)
+                | Q(comment__icontains=search)
+                | Q(key__icontains=search)
+                for search in search_list)
+
+            # Combine all generated filters with an AND operator.
+            # `operator.and_` is the '&' Python operator, which turns into a logical AND
+            # when used between django ORM query objects.
+            translation_query = reduce(operator.and_, translation_filters)
+            entity_query = reduce(operator.and_, entity_filters)
+
+            translation_matches = entities.filter(translation_query).values_list('id', flat=True)
+            entity_matches = entities.filter(entity_query).values_list('id', flat=True)
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )

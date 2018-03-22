@@ -3896,11 +3896,30 @@ var Pontoon = (function (my) {
 
       item.unmark();
       if (searchQuery) {
-        item.mark(searchQuery, {
-          acrossElements: true,
-          caseSensitive: false,
-          className: 'search',
-          separateWordSearch: false
+        var unusable = '☠'
+        var reg = new RegExp(unusable, "g");
+        searchQuery = searchQuery.replace(/\\"/g, unusable);
+        var queries = searchQuery.match(/[^\s"]+|"[^"]+"/g);
+
+        if (!queries) {
+          return;
+        }
+        var i = queries.length;
+        while(i--) {
+          queries[i] = queries[i].replace(/^["]|["]$/g, '');
+          queries[i] = queries[i].replace(reg, '"');
+        }
+        // sort array in decreasing order of string length
+        queries.sort(function(a,b) {
+          return b.length - a.length;
+        });
+        queries.forEach(function(query) {
+          item.mark(query, {
+            acrossElements: true,
+            caseSensitive: false,
+            className: 'search',
+            separateWordSearch: false
+          });
         });
       }
     },
