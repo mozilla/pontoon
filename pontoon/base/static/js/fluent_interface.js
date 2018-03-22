@@ -82,7 +82,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (Pontoon.fluent.isSelectExpressionElement(element)) {
+      if (element.expression && element.expression.type === 'SelectExpression') {
         element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
@@ -118,7 +118,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (Pontoon.fluent.isSelectExpressionElement(element)) {
+      if (element.expression && element.expression.type === 'SelectExpression') {
         var expression = fluentSerializer.serializeExpression(element.expression.expression);
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -328,7 +328,7 @@ var Pontoon = (function (my) {
           return elements.every(function(element) {
             return (
               self.isSimpleElement(element) ||
-              self.isSelectExpressionElement(element)
+              (element.expression && element.expression.type === 'SelectExpression')
             );
           });
         }
@@ -375,25 +375,13 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Is element a SelectExpression?
-       *
-       * We evaluate that by checking if element expression has variants defined.
-       * If yes, the element must be a SelectExpression according to Fluent ASDL:
-       * https://github.com/projectfluent/fluent/blob/master/spec/fluent.asdl
-       */
-      isSelectExpressionElement: function (element) {
-        return element.expression && element.expression.variants;
-      },
-
-
-      /*
        * Is element representing a pluralized string?
        *
        * Keys of all variants of such elements are either
        * CLDR plurals or numbers.
        */
       isPluralElement: function (element) {
-        if (!this.isSelectExpressionElement(element)) {
+        if (!(element.expression && element.expression.type === 'SelectExpression')) {
           return false;
         }
 
@@ -476,7 +464,7 @@ var Pontoon = (function (my) {
               var expression = fluentSerializer.serializeExpression(element.expression);
               translatedValue += startMarker + '{' + expression + '}' + endMarker;
             }
-            else if (self.isSelectExpressionElement(element)) {
+            else if (element.expression.type === 'SelectExpression') {
               var variantElements = element.expression.variants.filter(function (variant) {
                 return variant.default;
               })[0].value.elements;
