@@ -1287,6 +1287,10 @@ class Project(AggregatedStats):
         except Subpage.DoesNotExist:
             return paths
 
+    @property
+    def avg_string_count(self):
+        return int(self.total_strings / self.enabled_locales)
+
 
 @python_2_unicode_compatible
 class ExternalResource(models.Model):
