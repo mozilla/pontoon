@@ -221,6 +221,21 @@ var Pontoon = (function (my) {
     }
   }
 
+  /*
+   * Toggle translation length and Copy button in editor toolbar
+   */
+  function toggleEditorToolbar() {
+    var entity = Pontoon.getEditorEntity();
+    var show = entity.format !== 'ftl' || !Pontoon.fluent.isComplexFTL();
+
+    $('#translation-length, #copy').toggle(show);
+
+    if ($('#translation-length').is(':visible')) {
+      var original = Pontoon.fluent.getSimplePreview(entity, entity.original, entity);
+      $('#translation-length').find('.original-length').html(original.length);
+    }
+  }
+
   return $.extend(true, my, {
     fluent: {
 
@@ -334,7 +349,7 @@ var Pontoon = (function (my) {
         // Focus first field of the FTL editor
         $('#ftl-area textarea:not(".id"):visible').first().focus();
 
-        Pontoon.fluent.toggleEditorToolbar();
+        toggleEditorToolbar();
 
         Pontoon.moveCursorToBeginning();
         Pontoon.updateCurrentTranslationLength();
@@ -561,24 +576,8 @@ var Pontoon = (function (my) {
           // $('#add-attribute').hide();
         }
 
-        Pontoon.fluent.toggleEditorToolbar();
+        toggleEditorToolbar();
         Pontoon.moveCursorToBeginning();
-      },
-
-
-      /*
-       * Toggle translation length and Copy button in editor toolbar
-       */
-      toggleEditorToolbar: function () {
-        var entity = Pontoon.getEditorEntity();
-        var show = entity.format !== 'ftl' || !Pontoon.fluent.isComplexFTL();
-
-        $('#translation-length, #copy').toggle(show);
-
-        if ($('#translation-length').is(':visible')) {
-          var original = this.getSimplePreview(entity, entity.original, entity);
-          $('#translation-length').find('.original-length').html(original.length);
-        }
       },
 
 
