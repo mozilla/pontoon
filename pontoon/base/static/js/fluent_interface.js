@@ -115,7 +115,7 @@ var Pontoon = (function (my) {
         value +
       '</span>' +
       '<span class="value">' +
-        Pontoon.fluent.serializePlaceables(elements, true) +
+        stringifyElements(elements, true) +
       '</span>' +
     '</li>';
   }
@@ -144,7 +144,7 @@ var Pontoon = (function (my) {
       }
     }
 
-    var value = isTranslated ? Pontoon.fluent.serializePlaceables(elements) : '';
+    var value = isTranslated ? stringifyElements(elements) : '';
     var textarea = Pontoon.fluent.getTextareaElement(title, value, maxlength);
 
     return '<li>' +
@@ -290,6 +290,61 @@ var Pontoon = (function (my) {
   }
 
   /*
+   * Convert AST elements of type TextElement or Placeable to string
+   *
+   * elements AST elements
+   * markPlaceables Should placeables be marked up?
+   */
+  function stringifyElements(elements, markPlaceables) {
+    var string = '';
+    var startMarker = '';
+    var endMarker = '';
+
+    elements.forEach(function (element) {
+      if (element.type === 'TextElement') {
+        if (markPlaceables) {
+          string += Pontoon.markXMLTags(element.value);
+        }
+        else {
+          string += element.value;
+        }
+      }
+      else if (element.type === 'Placeable') {
+        if (element.expression.type === 'ExternalArgument') {
+          if (markPlaceables) {
+            startMarker = '<mark class="placeable" title="External Argument">';
+            endMarker = '</mark>';
+          }
+          string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
+        }
+        else if (element.expression.type === 'MessageReference') {
+          if (markPlaceables) {
+            startMarker = '<mark class="placeable" title="Message Reference">';
+            endMarker = '</mark>';
+          }
+          string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
+        }
+        else if (element.expression.type === 'CallExpression') {
+          if (markPlaceables) {
+            startMarker = '<mark class="placeable" title="Call Expression">';
+            endMarker = '</mark>';
+          }
+          var expression = fluentSerializer.serializeExpression(element.expression);
+          string += startMarker + '{' + expression + '}' + endMarker;
+        }
+        else if (element.expression.type === 'SelectExpression') {
+          var variantElements = element.expression.variants.filter(function (variant) {
+            return variant.default;
+          })[0].value.elements;
+          string += stringifyElements(variantElements);
+        }
+      }
+    });
+
+    return string;
+  }
+
+  /*
    * Perform error checks for provided translationAST and entityAST.
    */
   function runChecks(translationAST, entityAST) {
@@ -394,7 +449,7 @@ var Pontoon = (function (my) {
           value = '';
 
           if (translationAST) {
-            value = self.serializePlaceables(translationAST.value.elements);
+            value = stringifyElements(translationAST.value.elements);
           }
 
           $('#only-value')
@@ -454,62 +509,6 @@ var Pontoon = (function (my) {
         Pontoon.updateInPlaceTranslation();
 
         return true;
-      },
-
-
-      /*
-       * Serialize value with placeables into a simple string
-       *
-       * markPlaceables Should placeables be marked up?
-       */
-      serializePlaceables: function (elements, markPlaceables) {
-        var self = this;
-        var translatedValue = '';
-        var startMarker = '';
-        var endMarker = '';
-
-        elements.forEach(function (element) {
-          if (element.type === 'TextElement') {
-            if (markPlaceables) {
-              translatedValue += Pontoon.markXMLTags(element.value);
-            }
-            else {
-              translatedValue += element.value;
-            }
-          }
-          else if (element.type === 'Placeable') {
-            if (element.expression.type === 'ExternalArgument') {
-              if (markPlaceables) {
-                startMarker = '<mark class="placeable" title="External Argument">';
-                endMarker = '</mark>';
-              }
-              translatedValue += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
-            }
-            else if (element.expression.type === 'MessageReference') {
-              if (markPlaceables) {
-                startMarker = '<mark class="placeable" title="Message Reference">';
-                endMarker = '</mark>';
-              }
-              translatedValue += startMarker + '{' + element.expression.id.name + '}' + endMarker;
-            }
-            else if (element.expression.type === 'CallExpression') {
-              if (markPlaceables) {
-                startMarker = '<mark class="placeable" title="Call Expression">';
-                endMarker = '</mark>';
-              }
-              var expression = fluentSerializer.serializeExpression(element.expression);
-              translatedValue += startMarker + '{' + expression + '}' + endMarker;
-            }
-            else if (element.expression.type === 'SelectExpression') {
-              var variantElements = element.expression.variants.filter(function (variant) {
-                return variant.default;
-              })[0].value.elements;
-              translatedValue += self.serializePlaceables(variantElements);
-            }
-          }
-        });
-
-        return translatedValue;
       },
 
 
@@ -625,7 +624,7 @@ var Pontoon = (function (my) {
         // Simple string: only value
         else if (isSimpleMessage(ast)) {
           value = '<li><p>' +
-            self.serializePlaceables(ast.value.elements, true) +
+            stringifyElements(ast.value.elements, true) +
           '</p></li>';
         }
 
@@ -783,7 +782,7 @@ var Pontoon = (function (my) {
             tree = ast.attributes[0];
           }
 
-          response = this.serializePlaceables(tree.value.elements);
+          response = stringifyElements(tree.value.elements);
 
           // Update source string markup
           if (object.hasOwnProperty('original')) {
@@ -804,7 +803,7 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(entity.original);
-        return this.serializePlaceables(ast.value.elements);
+        return stringifyElements(ast.value.elements);
       },
 
 
