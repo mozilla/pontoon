@@ -1,0 +1,47 @@
+
+.notifications-widget h3 {
+    color: #ebebeb;
+    font-size: 22px;
+    letter-spacing: 0;
+}
+
+.notifications-widget h3 .stress {
+    color: #7bc876;
+}
+
+.notifications-widget {
+    background: #333941;
+    padding: 20px;
+}
+
+.notifications-widget .locale-selector {
+    margin: 20px 0 40px;
+}
+
+.manual-notifications .notifications-menu  {
+    padding-right: 40px;
+}
+
+.manual-notifications .notifications-menu li {
+    padding: 0;
+}
+
+.manual-notifications .notifications-menu li.horizontal-separator {
+    border-top: 1px solid #525a65;
+    height: 0;
+    margin: 5px 0;
+}
+
+.manual-notifications .notifications-menu li a {
+    padding: 5px;
+    font-size: 15px;
+    display: block;
+}
+
+.manual-notifications .notifications-menu li a.active {
+    background: #3f4752;
+}
+
+.manual-notifications .notifications-menu li a .count {
+    float: right;
+}

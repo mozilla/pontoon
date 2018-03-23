@@ -1,0 +1,35 @@
+
+.notification-item {
+    background: #333941;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 300;
+}
+
+.notification-item .actor:after,
+.notification-item .verb:after {
+    content:"\00a0";
+}
+
+.notification-item .timeago {
+    color: #888;
+    font-size: 11px;
+    font-weight: normal;
+    margin-top: 8px;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.notification-item a {
+    color: #F36;
+    display: inline;
+}
+
+.notification-item .message {
+    padding: 10px;
+}
+
+
+.notifications-menu {
+    margin-left: 0;
+}
