@@ -19,7 +19,7 @@ class MockComponent extends React.PureComponent {
 test('DataManager constructor', () => {
     const Manager = dataManager(MockComponent)
     const manager = shallow(<Manager />);
-    expect(manager.state()).toEqual({data: undefined, errors: {}});
+    expect(manager.state()).toEqual({data: undefined, errors: {}, params: {}});
     expect(manager.instance().requestMethod).toBe('get');
     expect(manager.instance().submitMethod).toBe('get');
 });
@@ -123,26 +123,27 @@ test('DataManager handleResponse', async () => {
     // This can either be the result of a search operation or as a
     // consequence of dis/associating resources to a tag.
 
-    const Manager = dataManager(MockComponent)
+    const Manager = dataManager(MockComponent);
     const manager = shallow(<Manager requestMethod={23} />);
 
-    manager.instance().setState = jest.fn(() => 23);
+    // manager.instance().setState = jest.fn(() => 23);
 
     // lets trigger an event with good status
     const response = {status: 200, json: jest.fn(async () => ({}))};
     await manager.instance().handleResponse(response);
 
     // we didnt specify any data, but thats OK, and we dont expect any errors
-    expect(manager.instance().setState.mock.calls).toEqual(
-        [[{"data": undefined, "errors": {}}]]);
+    expect(manager.state()).toEqual({"data": {}, "errors": {}, "params": {}});
 
     // lets handle a response with some actual data
     response.json = jest.fn(async () => ({data: {foo: 'good', bar: 'stuff'}}));
     await manager.instance().handleResponse(response);
 
     // and setState was called with some lovely data.
-    expect(manager.instance().setState.mock.calls[1]).toEqual(
-        [{"data": {"bar": "stuff", "foo": "good"}, "errors": {}}]);
+    expect(manager.state()).toEqual(
+        {data: {bar: "stuff", foo: "good"},
+         errors: {},
+         params: {}});
 });
 
 

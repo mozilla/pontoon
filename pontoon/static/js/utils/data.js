@@ -1,6 +1,9 @@
 
 import React from 'react';
 
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+
 import {ajax} from 'utils/ajax';
 
 
@@ -8,6 +11,10 @@ export class DataManager {
 
     constructor (state) {
         this.state = state;
+    }
+
+    get content () {
+        return {};
     }
 
     get data () {
@@ -23,11 +30,7 @@ export class DataManager {
 export function dataManager(WrappedComponent, Manager, data) {
 
     return class Wrapper extends React.Component {
-
-        constructor(props) {
-            super(props);
-            this.state = {errors: {}, data: data};
-        }
+        state = {errors: {}, data: data, params: {}};
 
         get api () {
             return this.props.api;
@@ -42,6 +45,12 @@ export function dataManager(WrappedComponent, Manager, data) {
         }
 
         refreshData = async (params) => {
+            if (this.props.updateParams) {
+                this.props.updateParams(params);
+            }
+            if (this.props.onRefresh) {
+                this.props.onRefresh();
+            }
             return this.handleResponse(
                 await ajax.fetch(
                     this.api,
@@ -52,9 +61,17 @@ export function dataManager(WrappedComponent, Manager, data) {
         handleResponse = async (response) => {
             const {status} = response;
             const json = await response.json();
+            if (this.props.onResponse) {
+                this.props.onResponse();
+            }
             if (status === 200) {
                 const {data} = json;
-                this.setState({data, errors: {}});
+                this.setState(prevState => {
+                    if (Array.isArray(data)) {
+                        return {data: data, errors: {}}
+                    }
+                    return {data: Object.assign(prevState.data || {}, {...data}),
+                            errors: {}}});
                 return;
             }
             const {errors} = json;
@@ -75,6 +92,7 @@ export function dataManager(WrappedComponent, Manager, data) {
             return (
                 <WrappedComponent
                    manager={manager}
+                   content={manager.content}
                    errors={manager.errors}
                    data={manager.data}
                    handleSubmit={this.handleSubmit}
@@ -82,4 +100,39 @@ export function dataManager(WrappedComponent, Manager, data) {
                    {...this.props} />);
         }
     };
+}
+
+
+export const progressiveDataManager = (WrappedComponent, Manager, data) => {
+
+    return class Wrapper extends React.Component {
+
+        handleRefresh = () => {
+            NProgress.start();
+        }
+
+        handleResponse = () => {
+            NProgress.done();
+        }
+
+        render () {
+            const Component = dataManager(WrappedComponent, Manager, data);
+            return (
+                <Component
+                   onRefresh={this.handleRefresh}
+                   onResponse={this.handleResponse}
+                   {...this.props} />);
+        }
+    };
+};
+
+
+export function Loading(props) {
+    if (props.error) {
+        return <div>Error!</div>;
+    } else if (props.pastDelay) {
+        return <div>Loading...</div>;
+    } else {
+        return null;
+    }
 }
