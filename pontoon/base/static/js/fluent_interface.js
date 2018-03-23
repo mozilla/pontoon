@@ -409,6 +409,174 @@ var Pontoon = (function (my) {
     fluent: {
 
       /*
+       * Is FTL editor enabled?
+       */
+      isFTLEditorEnabled: function () {
+        return $('#ftl-area').is(':visible');
+      },
+
+
+      /*
+       * Is Source FTL editor enabled?
+       */
+      isSourceFTLEditorEnabled: function () {
+        return $('#ftl:visible').is('.active');
+      },
+
+
+      /*
+       * Is string in FTL editor complex?
+       * As opposed to simple which only contains a string value.
+       */
+      isComplexFTL: function () {
+        return !$('#only-value').is(':visible');
+      },
+
+
+      /*
+       * Toggle FTL button visibility
+       */
+      toggleButton: function () {
+        var entity = Pontoon.getEditorEntity();
+        $('#ftl').toggle(entity.format === 'ftl');
+      },
+
+
+      /*
+       * Toggle between source and FTL translation editor
+       */
+      toggleEditor: function (showFTL) {
+        var entity = Pontoon.getEditorEntity();
+        if (typeof showFTL === 'undefined' || showFTL === null) {
+          showFTL = entity.format === 'ftl';
+        }
+
+        if (showFTL) {
+          $('#ftl-area').show();
+          $('#translation').hide();
+          $('#ftl').removeClass('active');
+        }
+        else {
+          $('#ftl-area').hide();
+          $('#translation').show().focus();
+          $('#ftl').addClass('active');
+        }
+
+        toggleEditorToolbar();
+        Pontoon.moveCursorToBeginning();
+      },
+
+
+      /*
+       * Get source string value of a simple FTL message to be used in
+       * tje Copy (original to translation) function
+       */
+      getSourceStringValue: function (entity, fallback) {
+        if (entity.format !== 'ftl' || this.isComplexFTL()) {
+          return fallback;
+        }
+
+        var ast = fluentParser.parseEntry(entity.original);
+        return stringifyElements(ast.value.elements);
+      },
+
+
+      /*
+       * Return translation in the editor as FTL source to be used
+       * in unsaved changes check. If translation contains errors,
+       * return error message.
+       */
+      getFTLEditorContentsAsSource: function () {
+        var entity = Pontoon.getEditorEntity();
+        var fallback = $('#translation').val();
+
+        // For non-FTL entities, return unchanged translations
+        if (entity.format !== 'ftl') {
+          return fallback;
+        }
+
+        var translation = this.serializeTranslation(entity, fallback);
+
+        // If translation broken, incomplete or empty
+        if (translation.error) {
+          return translation.error;
+        }
+
+        // Special case: empty translations in rich FTL editor don't serialize properly
+        if (this.isFTLEditorEnabled()) {
+          var richTranslation = $.map(
+            $('#ftl-area textarea:not(".id"):visible'), function(i) {
+              return $(i).val();
+            }
+          ).join('');
+
+          if (!richTranslation.length) {
+            translation = entity.key + ' = ';
+          }
+        }
+
+        return translation;
+      },
+
+
+      /*
+       * Render original string of FTL and non-FTL messages.
+       */
+      renderOriginal: function () {
+        var self = this;
+        var entity = Pontoon.getEditorEntity();
+
+        $('#original').show();
+        $('#ftl-original').hide();
+
+        if (entity.format !== 'ftl') {
+          return;
+        }
+
+        $('#original').hide();
+        $('#ftl-original').show();
+        $('#ftl-original section ul').empty();
+
+        var ast = fluentParser.parseEntry(entity.original);
+        var unsupported = false;
+        var value = '';
+        var attributes = '';
+
+        // Unsupported string: render as source
+        if (!isSupportedMessage(ast)) {
+          ast.comment = null; // Remove comment
+          value = '<li class="source">' +
+            fluentSerializer.serializeEntry(ast) +
+          '</li>';
+
+          unsupported = true;
+        }
+
+        // Simple string: only value
+        else if (isSimpleMessage(ast)) {
+          value = '<li><p>' +
+            stringifyElements(ast.value.elements, true) +
+          '</p></li>';
+        }
+
+        // Value
+        else if (ast.value) {
+          value = renderOriginalElements(ast.value.elements, 'Value');
+        }
+
+        // Attributes
+        if (ast.attributes.length && !unsupported) {
+          ast.attributes.forEach(function (attr) {
+            attributes += renderOriginalElements(attr.value.elements, attr.id.name);
+          });
+        }
+
+        $('#ftl-original .attributes ul').append(attributes);
+        $('#ftl-original .main-value ul').append(value);
+      },
+
+
+      /*
        * Render form-based FTL editor. Different widgets are displayed depending on the source
        * string and the translation.
        */
@@ -455,7 +623,6 @@ var Pontoon = (function (my) {
 
           return;
         }
-
 
         // Simple string: only value
         else if (
@@ -525,160 +692,6 @@ var Pontoon = (function (my) {
         Pontoon.updateInPlaceTranslation();
 
         return true;
-      },
-
-
-      /*
-       * Toggle FTL button visibility
-       */
-      toggleButton: function () {
-        var entity = Pontoon.getEditorEntity();
-        $('#ftl').toggle(entity.format === 'ftl');
-      },
-
-
-      /*
-       * Toggle between source and FTL translation editor
-       */
-      toggleEditor: function (showFTL) {
-        var entity = Pontoon.getEditorEntity();
-        if (typeof showFTL === 'undefined' || showFTL === null) {
-          showFTL = entity.format === 'ftl';
-        }
-
-        if (showFTL) {
-          $('#ftl-area').show();
-          $('#translation').hide();
-          $('#ftl').removeClass('active');
-        }
-        else {
-          $('#ftl-area').hide();
-          $('#translation').show().focus();
-          $('#ftl').addClass('active');
-        }
-
-        toggleEditorToolbar();
-        Pontoon.moveCursorToBeginning();
-      },
-
-
-      /*
-       * Is FTL editor enabled?
-       */
-      isFTLEditorEnabled: function () {
-        return $('#ftl-area').is(':visible');
-      },
-
-
-      /*
-       * Is Source FTL editor enabled?
-       */
-      isSourceFTLEditorEnabled: function () {
-        return $('#ftl:visible').is('.active');
-      },
-
-
-      /*
-       * Is string in FTL editor complex?
-       * As opposed to simple which only contains a string value.
-       */
-      isComplexFTL: function () {
-        return !$('#only-value').is(':visible');
-      },
-
-
-      /*
-       * Toggle between source and FTL display of the original string
-       */
-      toggleOriginal: function () {
-        var self = this;
-        var entity = Pontoon.getEditorEntity();
-
-        $('#original').show();
-        $('#ftl-original').hide();
-
-        if (entity.format !== 'ftl') {
-          return;
-        }
-
-        $('#original').hide();
-        $('#ftl-original').show();
-        $('#ftl-original section ul').empty();
-
-        var ast = fluentParser.parseEntry(entity.original);
-        var unsupported = false;
-        var value = '';
-        var attributes = '';
-
-        // Unsupported string: render as source
-        if (!isSupportedMessage(ast)) {
-          ast.comment = null; // Remove comment
-          value = '<li class="source">' +
-            fluentSerializer.serializeEntry(ast) +
-          '</li>';
-
-          unsupported = true;
-        }
-
-        // Simple string: only value
-        else if (isSimpleMessage(ast)) {
-          value = '<li><p>' +
-            stringifyElements(ast.value.elements, true) +
-          '</p></li>';
-        }
-
-        // Value
-        else if (ast.value) {
-          value = renderOriginalElements(ast.value.elements, 'Value');
-        }
-
-        // Attributes
-        if (ast.attributes.length && !unsupported) {
-          ast.attributes.forEach(function (attr) {
-            attributes += renderOriginalElements(attr.value.elements, attr.id.name);
-          });
-        }
-
-        $('#ftl-original .attributes ul').append(attributes);
-        $('#ftl-original .main-value ul').append(value);
-      },
-
-
-      /*
-       * Return translation in the editor as FTL source to be used
-       * in unsaved changes check. If translation contains errors,
-       * return error message.
-       */
-      getTranslationSource: function () {
-        var entity = Pontoon.getEditorEntity();
-        var fallback = $('#translation').val();
-
-        // For non-FTL entities, return unchanged translations
-        if (entity.format !== 'ftl') {
-          return fallback;
-        }
-
-        var translation = this.serializeTranslation(entity, fallback);
-
-        // If translation broken, incomplete or empty
-        if (translation.error) {
-          return translation.error;
-        }
-
-        // Special case: empty translations in rich FTL editor don't serialize properly
-        if (this.isFTLEditorEnabled()) {
-          var richTranslation = $.map(
-            $('#ftl-area textarea:not(".id"):visible'), function(i) {
-              return $(i).val();
-            }
-          ).join('');
-
-          if (!richTranslation.length) {
-            translation = entity.key + ' = ';
-          }
-        }
-
-        return translation;
       },
 
 
@@ -790,19 +803,6 @@ var Pontoon = (function (my) {
         }
 
         return response;
-      },
-
-
-      /*
-       * Get source string value of a simple FTL message
-       */
-      getSourceStringValue: function (entity, fallback) {
-        if (entity.format !== 'ftl' || this.isComplexFTL()) {
-          return fallback;
-        }
-
-        var ast = fluentParser.parseEntry(entity.original);
-        return stringifyElements(ast.value.elements);
       },
 
 

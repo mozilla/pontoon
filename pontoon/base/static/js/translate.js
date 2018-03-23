@@ -444,7 +444,7 @@ var Pontoon = (function (my) {
      * Update cached translation, needed for unsaved changes check
      */
     updateCachedTranslation: function () {
-      this.cachedTranslation = this.fluent.getTranslationSource();
+      this.cachedTranslation = this.fluent.getFTLEditorContentsAsSource();
     },
 
 
@@ -650,7 +650,7 @@ var Pontoon = (function (my) {
       }
 
       // FTL: Complex original string and translation
-      self.fluent.toggleOriginal();
+      self.fluent.renderOriginal();
       self.fluent.toggleEditor();
 
       if (self.fluent.isFTLEditorEnabled()) {
@@ -716,7 +716,7 @@ var Pontoon = (function (my) {
       }
 
       var before = this.cachedTranslation,
-          after = this.fluent.getTranslationSource();
+          after = this.fluent.getFTLEditorContentsAsSource();
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
@@ -2605,7 +2605,7 @@ var Pontoon = (function (my) {
           }
 
           var pf = self.getPluralForm(true);
-          self.cachedTranslation = self.fluent.getTranslationSource();
+          self.cachedTranslation = self.fluent.getFTLEditorContentsAsSource();
           self.updateTranslation(entity, pf, data.translation);
           self.updateInPlaceTranslation(data.translation.string);
           self.updateFilterUI();
