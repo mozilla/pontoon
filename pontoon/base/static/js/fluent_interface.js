@@ -107,6 +107,22 @@ var Pontoon = (function (my) {
   }
 
   /*
+   * Render textarea element with the given properties
+   */
+  function renderTextareaElement(id, value, maxlength) {
+    var element = '<textarea class="value" id="ftl-id-' + id + '"';
+
+    if (typeof maxlength !== 'undefined' && maxlength !== null) {
+      element += ' maxlength="' + maxlength + '"';
+    }
+
+    element += ' dir="' + Pontoon.locale.direction +
+      '" data-script="' + Pontoon.locale.script +
+      '" lang="' + Pontoon.locale.code + '">' + value + '</textarea>';
+    return element;
+  }
+
+  /*
    * Render original string element: simple string value or a variant.
    */
   function renderOriginalElement(value, elements) {
@@ -145,7 +161,7 @@ var Pontoon = (function (my) {
     }
 
     var value = isTranslated ? stringifyElements(elements) : '';
-    var textarea = Pontoon.fluent.getTextareaElement(title, value, maxlength);
+    var textarea = renderTextareaElement(title, value, maxlength);
 
     return '<li>' +
       '<label class="id" for="ftl-id-' + title + '">' +
@@ -509,23 +525,6 @@ var Pontoon = (function (my) {
         Pontoon.updateInPlaceTranslation();
 
         return true;
-      },
-
-
-      /*
-       * Generate textarea element with the given properties
-       */
-      getTextareaElement: function (id, value, maxlength) {
-        var base = '<textarea class="value" id="ftl-id-' + id + '"';
-
-        if (typeof maxlength !== 'undefined' && maxlength !== null) {
-          base += ' maxlength="' + maxlength + '"';
-        }
-
-        base += ' dir="' + Pontoon.locale.direction +
-          '" data-script="' + Pontoon.locale.script +
-          '" lang="' + Pontoon.locale.code + '">' + value + '</textarea>';
-        return base;
       },
 
 
