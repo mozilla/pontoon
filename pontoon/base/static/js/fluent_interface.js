@@ -6,7 +6,7 @@ var fluentSerializer = new FluentSyntax.FluentSerializer();
 var Pontoon = (function (my) {
 
   /*
-   * Is element of type that can be presented as a simple string:
+   * Is ast element of type that can be presented as a simple string:
    * - TextElement
    * - Placeable with expression type CallExpression, ExternalArgument
    *   or MessageReference
@@ -32,7 +32,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is element representing a pluralized string?
+   * Is ast element representing a pluralized string?
    *
    * Keys of all variants of such elements are either
    * CLDR plurals or numbers.
@@ -55,11 +55,10 @@ var Pontoon = (function (my) {
   /*
    * Is ast of a message, supported in rich FTL editor?
    *
-   * Message is supported if all value elements
-   * and all attribute elements are of type:
-   * - TextElement
-   * - Placeable with expression type CallExpression, ExternalArgument,
-   *   MessageReference or SelectExpression
+   * Message is supported if it's valid and all value elements
+   * and all attribute elements are:
+   * - simple elements or
+   * - select expressions
    */
   function isSupportedMessage(ast) {
     function elementsSupported(elements) {
@@ -87,9 +86,8 @@ var Pontoon = (function (my) {
   /*
    * Is ast of a simple message?
    *
-   * A simple message has no attributes or tags,
-   * and the value can only contain text and
-   * references to external arguments or other messages.
+   * A simple message has no attributes and all value
+   * elements are simple.
    */
   function isSimpleMessage(ast) {
     if (
@@ -123,12 +121,12 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Render original string element: simple string value or a variant.
+   * Render original string element with given title and ast elements
    */
-  function renderOriginalElement(value, elements) {
+  function renderOriginalElement(title, elements) {
     return '<li>' +
       '<span class="id">' +
-        value +
+        title +
       '</span>' +
       '<span class="value">' +
         stringifyElements(elements, true) +
@@ -137,7 +135,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Render editor element: simple string value or a variant.
+   * Render editor element with given title and ast elements
    */
   function renderEditorElement(title, elements, isPlural, isTranslated) {
     // Special case: Access keys
@@ -174,7 +172,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Render original string elements.
+   * Render original string elements
    *
    * - Adjoining simple elements are concatenated and presented as a simple string
    * - SelectExpression elements are presented as a list of variants
@@ -209,7 +207,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Render editor elements.
+   * Render editor elements
    *
    * - Adjoining simple elements are concatenated and presented as a simple string
    * - SelectExpression elements are presented as a list of variants
@@ -261,7 +259,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Serialize values in FTL editor forms into an FTL string.
+   * Serialize values in FTL editor forms into an FTL string
    */
   function serializeElements(elements) {
     var value = '';
@@ -361,7 +359,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Perform error checks for provided translationAST and entityAST.
+   * Perform error checks for provided translationAST and entityAST
    */
   function runChecks(translationAST, entityAST) {
     // Parse error
