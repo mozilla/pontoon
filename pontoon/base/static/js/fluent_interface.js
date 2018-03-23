@@ -563,17 +563,11 @@ var Pontoon = (function (my) {
           $('#ftl-area').show();
           $('#translation').hide();
           $('#ftl').removeClass('active');
-
-          // TODO: Uncomment once attributes are fully supported (defaults, removing, validation)
-          // $('#add-attribute').show();
         }
         else {
           $('#ftl-area').hide();
           $('#translation').show().focus();
           $('#ftl').addClass('active');
-
-          // TODO: Uncomment once attributes are fully supported (defaults, removing, validation)
-          // $('#add-attribute').hide();
         }
 
         toggleEditorToolbar();
@@ -885,12 +879,6 @@ $(function () {
     }
 
     Pontoon.fluent.toggleEditor($(this).is('.active'));
-  });
-
-  // Add attribute
-  $('#add-attribute').click(function (e) {
-    e.preventDefault();
-    $('#ftl-area .attributes ul:first').append($('#ftl-area .attributes .template li').clone());
   });
 
   // Generate access key candidates
