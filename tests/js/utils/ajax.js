@@ -158,14 +158,21 @@ test('PontoonDjangoAjax fetch bad method', () => {
 
 test('PontoonDjangoAjax get', () => {
     const _ajax = new PontoonDjangoAjax();
-    _ajax.asGetParams = jest.fn(() => 17)
+    _ajax.asGetParams = jest.fn(() => '')
     _ajax.getRequest = jest.fn(() => 43)
     window.fetch = jest.fn(() => 73)
+
     expect(_ajax.get('foo', 'bar', {baz: 13})).toBe(73)
     expect(_ajax.asGetParams.mock.calls).toEqual([["bar"]])
     expect(_ajax.getRequest.mock.calls).toEqual(
-        [["foo", {"baz": 13, "method": "GET", "params": 17}]])
+        [["foo", {"baz": 13, "method": "GET"}]])
     expect(window.fetch.mock.calls).toEqual([["foo", 43]])
+
+    _ajax.asGetParams = jest.fn(() => 17)
+    expect(_ajax.get('foo', 'bar', {baz: 13})).toBe(73)
+    expect(_ajax.asGetParams.mock.calls).toEqual([["bar"]])
+    expect(_ajax.getRequest.mock.calls[1]).toEqual(
+        ["foo?17", {"baz": 13, "method": "GET"}])
 })
 
 

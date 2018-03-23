@@ -92,7 +92,10 @@ export class DjangoAjax {
          */
         options = options || {}
         options.method = 'GET'
-        options.params = this.asGetParams(data);
+        const params = this.asGetParams(data).toString();
+        if (params) {
+            url = url + '?' + params
+        }
         return window.fetch(url, this.getRequest(url, options));
     }
 
