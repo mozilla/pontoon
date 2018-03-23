@@ -523,7 +523,6 @@ var Pontoon = (function (my) {
        * Render original string of FTL and non-FTL messages.
        */
       renderOriginal: function () {
-        var self = this;
         var entity = Pontoon.getEditorEntity();
 
         $('#original').show();
@@ -809,7 +808,7 @@ var Pontoon = (function (my) {
       /*
        * Attach event handlers to FTL editor elements
        */
-      attachFTLEditorHandlers: function (entity, fallback) {
+      attachFTLEditorHandlers: function () {
         var self = this;
 
         // Ignore editing for anonymous users
