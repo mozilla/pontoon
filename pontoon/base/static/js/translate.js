@@ -4222,6 +4222,7 @@ Pontoon.user = {
 Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
+Pontoon.fluent.attachFTLEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
 
 Pontoon.updateInitialState();

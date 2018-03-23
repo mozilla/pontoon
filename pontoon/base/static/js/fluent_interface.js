@@ -818,149 +818,153 @@ var Pontoon = (function (my) {
         return this.serializePlaceables(ast.value.elements);
       },
 
-    },
-  });
-}(Pontoon || {}));
 
-$(function () {
+      /*
+       * Attach event handlers to FTL editor elements
+       */
+      attachFTLEditorHandlers: function (entity, fallback) {
+        var self = this;
 
-  // Ignore editing for anonymous users
-  if (!Pontoon.user.id) {
-    return;
-  }
-
-  // Toggle FTL and source editors
-  $('#ftl').click(function (e) {
-    e.preventDefault();
-
-    var entity = Pontoon.getEditorEntity();
-    var translation = null;
-
-    // Update FTL editor
-    if ($(this).is('.active')) {
-      translation = $('#translation').val();
-
-      // Strip trailing newlines for easier translated status detection
-      translation = translation.replace(/\n$/, '');
-
-      var translated = (translation && translation !== entity.key + ' = ');
-
-      // Perform error checks
-      if (translated) {
-        var translationAST = fluentParser.parseEntry(translation);
-        var entityAST = fluentParser.parseEntry(entity.original);
-        var error = runChecks(translationAST, entityAST);
-        if (error) {
-          return Pontoon.endLoader(error, 'error', 5000);
+        // Ignore editing for anonymous users
+        if (!Pontoon.user.id) {
+          return;
         }
-      }
 
-      var isRichEditorSupported = Pontoon.fluent.renderEditor({
-        pk: translated, // An indicator that the string is translated
-        string: translation,
-      });
+        // Toggle FTL and source editors
+        $('#ftl').click(function (e) {
+          e.preventDefault();
 
-      // Rich FTL editor does not support the translation
-      if (!isRichEditorSupported) {
-        return;
-      }
-    }
-    // Update source editor
-    else {
-      translation = Pontoon.fluent.serializeTranslation(entity, translation);
+          var entity = Pontoon.getEditorEntity();
+          var translation = null;
 
-      // If translation broken, incomplete or empty
-      if (translation.error) {
-        translation = entity.key + ' = ';
-      }
+          // Update FTL editor
+          if ($(this).is('.active')) {
+            translation = $('#translation').val();
 
-      $('#translation').val(translation);
-      Pontoon.updateCachedTranslation();
-    }
+            // Strip trailing newlines for easier translated status detection
+            translation = translation.replace(/\n$/, '');
 
-    Pontoon.fluent.toggleEditor($(this).is('.active'));
-  });
+            var translated = (translation && translation !== entity.key + ' = ');
 
-  // Generate access key candidates
-  $('#ftl-area').on('keyup', 'textarea', function () {
-    var accessKeyExists = $('#ftl-area .attributes [data-id="accesskey"]').length;
-    var isLabel = $(this).parents('.attributes [data-id="label"]').length;
-    var isValue = $(this).parents('.main-value').length;
-    var generateAccessKeys = accessKeyExists && (isLabel || isValue);
+            // Perform error checks
+            if (translated) {
+              var translationAST = fluentParser.parseEntry(translation);
+              var entityAST = fluentParser.parseEntry(entity.original);
+              var error = runChecks(translationAST, entityAST);
+              if (error) {
+                return Pontoon.endLoader(error, 'error', 5000);
+              }
+            }
 
-    // Quit early if the element doesn't have impact on the access key
-    if (!generateAccessKeys) {
-      return;
-    }
+            var isRichEditorSupported = self.renderEditor({
+              pk: translated, // An indicator that the string is translated
+              string: translation,
+            });
 
-    // Select textarea elements to generate access key candidates from
-    var content = '';
-    var selector = '.main-value';
-    if (isLabel) {
-      selector = '.attributes [data-id="label"]';
-    }
+            // Rich FTL editor does not support the translation
+            if (!isRichEditorSupported) {
+              return;
+            }
+          }
+          // Update source editor
+          else {
+            translation = self.serializeTranslation(entity, translation);
 
-    // Build artificial FTL Message from textarea contents to only take
-    // TextElements into account when generating access key candidates.
-    // See bug 1447103 for more detals.
-    $('#ftl-area ' + selector + ' textarea').each(function() {
-      var value = $(this).val();
-      var message = 'key = ' + value;
-      var ast = fluentParser.parseEntry(message);
+            // If translation broken, incomplete or empty
+            if (translation.error) {
+              translation = entity.key + ' = ';
+            }
 
-      if (ast.type !== 'Junk') {
-        value = '';
-        ast.value.elements.forEach(function (element) {
-          if (element.type === 'TextElement') {
-            value += element.value;
+            $('#translation').val(translation);
+            Pontoon.updateCachedTranslation();
+          }
+
+          self.toggleEditor($(this).is('.active'));
+        });
+
+        // Generate access key candidates
+        $('#ftl-area').on('keyup', 'textarea', function () {
+          var accessKeyExists = $('#ftl-area .attributes [data-id="accesskey"]').length;
+          var isLabel = $(this).parents('.attributes [data-id="label"]').length;
+          var isValue = $(this).parents('.main-value').length;
+          var generateAccessKeys = accessKeyExists && (isLabel || isValue);
+
+          // Quit early if the element doesn't have impact on the access key
+          if (!generateAccessKeys) {
+            return;
+          }
+
+          // Select textarea elements to generate access key candidates from
+          var content = '';
+          var selector = '.main-value';
+          if (isLabel) {
+            selector = '.attributes [data-id="label"]';
+          }
+
+          // Build artificial FTL Message from textarea contents to only take
+          // TextElements into account when generating access key candidates.
+          // See bug 1447103 for more detals.
+          $('#ftl-area ' + selector + ' textarea').each(function() {
+            var value = $(this).val();
+            var message = 'key = ' + value;
+            var ast = fluentParser.parseEntry(message);
+
+            if (ast.type !== 'Junk') {
+              value = '';
+              ast.value.elements.forEach(function (element) {
+                if (element.type === 'TextElement') {
+                  value += element.value;
+                }
+              });
+            }
+
+            content += value
+              .replace(/\s/g, ''); // Remove whitespace
+          });
+
+          // Extract unique candidates in a list
+          var candidates = content.split('')
+            .filter(function (item, i, ar) {
+              return ar.indexOf(item) === i;
+            });
+
+          // Store currently selected access key
+          var active = $('#ftl-id-accesskey').val();
+
+          // Reset a list of access key candidates
+          $('.accesskeys').empty();
+
+          // Render candidates
+          candidates.forEach(function (candidate) {
+            $('.accesskeys').append(
+              '<div' + ((candidate === active) ? ' class="active"' : '') + '>' + candidate + '</div>'
+            );
+          });
+        });
+
+        // Select access key via click
+        $('#ftl-area .attributes').on('click', '.accesskeys div', function () {
+          var selected = $(this).is('.active');
+          $('.accesskeys div').removeClass('active');
+
+          if (!selected) {
+            $(this).addClass('active');
+          }
+
+          $('#ftl-id-accesskey').val($('.accesskeys div.active').html());
+        });
+
+        // Select access key using text input
+        $('#ftl-area .attributes').on('keyup', '#ftl-id-accesskey', function () {
+          var accesskey = $(this).val();
+
+          if (accesskey) {
+            $('.accesskeys div').removeClass('active');
+            $('.accesskeys div:contains("' + accesskey + '")').addClass('active');
           }
         });
       }
 
-      content += value
-        .replace(/\s/g, ''); // Remove whitespace
-    });
-
-    // Extract unique candidates in a list
-    var candidates = content.split('')
-      .filter(function (item, i, ar) {
-        return ar.indexOf(item) === i;
-      });
-
-    // Store currently selected access key
-    var active = $('#ftl-id-accesskey').val();
-
-    // Reset a list of access key candidates
-    $('.accesskeys').empty();
-
-    // Render candidates
-    candidates.forEach(function (candidate) {
-      $('.accesskeys').append(
-        '<div' + ((candidate === active) ? ' class="active"' : '') + '>' + candidate + '</div>'
-      );
-    });
+    },
   });
-
-  // Select access key via click
-  $('#ftl-area .attributes').on('click', '.accesskeys div', function () {
-    var selected = $(this).is('.active');
-    $('.accesskeys div').removeClass('active');
-
-    if (!selected) {
-      $(this).addClass('active');
-    }
-
-    $('#ftl-id-accesskey').val($('.accesskeys div.active').html());
-  });
-
-  // Select access key using text input
-  $('#ftl-area .attributes').on('keyup', '#ftl-id-accesskey', function () {
-    var accesskey = $(this).val();
-
-    if (accesskey) {
-      $('.accesskeys div').removeClass('active');
-      $('.accesskeys div:contains("' + accesskey + '")').addClass('active');
-    }
-  });
-
-});
+}(Pontoon || {}));
