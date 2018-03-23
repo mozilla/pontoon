@@ -6,6 +6,107 @@ var fluentSerializer = new FluentSyntax.FluentSerializer();
 var Pontoon = (function (my) {
 
   /*
+   * Is element of type that can be presented as a simple string:
+   * - TextElement
+   * - Placeable with expression type CallExpression, ExternalArgument
+   *   or MessageReference
+   */
+  function isSimpleElement(element) {
+    if (element.type === 'TextElement') {
+      return true;
+    }
+
+    // Placeable
+    if (
+      element.expression &&
+      [
+        'CallExpression',
+        'ExternalArgument',
+        'MessageReference'
+      ].indexOf(element.expression.type) >= 0
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
+   * Is element representing a pluralized string?
+   *
+   * Keys of all variants of such elements are either
+   * CLDR plurals or numbers.
+   */
+  function isPluralElement(element) {
+    if (!(element.expression && element.expression.type === 'SelectExpression')) {
+      return false;
+    }
+
+    var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
+
+    return element.expression.variants.every(function (item) {
+      return (
+        CLDRplurals.indexOf(item.key.name) !== -1 ||
+        item.key.type === 'NumberExpression'
+      );
+    });
+  }
+
+  /*
+   * Is ast of a message, supported in rich FTL editor?
+   *
+   * Message is supported if all value elements
+   * and all attribute elements are of type:
+   * - TextElement
+   * - Placeable with expression type CallExpression, ExternalArgument,
+   *   MessageReference or SelectExpression
+   */
+  function isSupportedMessage(ast) {
+    function elementsSupported(elements) {
+      return elements.every(function(element) {
+        return (
+          isSimpleElement(element) ||
+          (element.expression && element.expression.type === 'SelectExpression')
+        );
+      });
+    }
+
+    // Parse error
+    if (ast.type === 'Junk') {
+      return false;
+    }
+
+    var valueSupported = !ast.value || elementsSupported(ast.value.elements);
+    var attributesSupported = ast.attributes.every(function (attribute) {
+      return attribute.value && elementsSupported(attribute.value.elements);
+    });
+
+    return valueSupported && attributesSupported;
+  }
+
+  /*
+   * Is ast of a simple message?
+   *
+   * A simple message has no attributes or tags,
+   * and the value can only contain text and
+   * references to external arguments or other messages.
+   */
+  function isSimpleMessage(ast) {
+    if (
+      ast &&
+      !ast.attributes.length &&
+      ast.value &&
+      ast.value.elements.every(function(item) {
+        return isSimpleElement(item);
+      })
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
    * Render original string element: simple string value or a variant.
    */
   function renderOriginalElement(value, elements) {
@@ -67,16 +168,15 @@ var Pontoon = (function (my) {
     var simpleElements = [];
 
     elements.forEach(function (element, i) {
-      var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
       var isLastElement = i === elements.length - 1;
 
       // Collect simple elements
-      if (isSimpleElement) {
+      if (isSimpleElement(element)) {
         simpleElements.push(element);
       }
 
       // Render collected simple elements when non-simple or last element is met
-      if ((!isSimpleElement || isLastElement) && simpleElements.length) {
+      if ((!isSimpleElement(element) || isLastElement) && simpleElements.length) {
         content += renderOriginalElement(title, simpleElements);
         simpleElements = [];
       }
@@ -103,16 +203,15 @@ var Pontoon = (function (my) {
     var simpleElements = [];
 
     elements.forEach(function (element, i) {
-      var isSimpleElement = Pontoon.fluent.isSimpleElement(element);
       var isLastElement = i === elements.length - 1;
 
       // Collect simple elements
-      if (isSimpleElement) {
+      if (isSimpleElement(element)) {
         simpleElements.push(element);
       }
 
       // Render collected simple elements when non-simple or last element is met
-      if ((!isSimpleElement || isLastElement) && simpleElements.length) {
+      if ((!isSimpleElement(element) || isLastElement) && simpleElements.length) {
         content += renderEditorElement(title, simpleElements, false, isTranslated);
         simpleElements = [];
       }
@@ -122,8 +221,7 @@ var Pontoon = (function (my) {
         var expression = fluentSerializer.serializeExpression(element.expression.expression);
         content += '<li data-expression="' + expression + '"><ul>';
 
-        var isPlural = Pontoon.fluent.isPluralElement(element);
-        if (isPlural && !isTranslated) {
+        if (isPluralElement(element) && !isTranslated) {
           Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
             content += renderEditorElement(pluralName, [], true, isTranslated);
           });
@@ -133,7 +231,7 @@ var Pontoon = (function (my) {
             content += renderEditorElement(
               item.key.value || item.key.name,
               item.value.elements,
-              isPlural,
+              isPluralElement(element),
               isTranslated
             );
           });
@@ -270,8 +368,8 @@ var Pontoon = (function (my) {
 
         // Unsupported translation or unsuppported original: show source view
         if (
-          (translationAST && !self.isSupportedMessage(translationAST)) ||
-          (!translationAST && !self.isSupportedMessage(entityAST))
+          (translationAST && !isSupportedMessage(translationAST)) ||
+          (!translationAST && !isSupportedMessage(entityAST))
         ) {
           value = entity.key + ' = ';
 
@@ -290,8 +388,8 @@ var Pontoon = (function (my) {
 
         // Simple string: only value
         else if (
-          (translationAST && self.isSimpleString(translationAST)) ||
-          (!translationAST && self.isSimpleString(entityAST))
+          (translationAST && isSimpleMessage(translationAST)) ||
+          (!translationAST && isSimpleMessage(entityAST))
         ) {
           value = '';
 
@@ -356,115 +454,6 @@ var Pontoon = (function (my) {
         Pontoon.updateInPlaceTranslation();
 
         return true;
-      },
-
-
-      /*
-       * Is ast of a message, supported in rich FTL editor?
-       *
-       * Message is supported if all value elements
-       * and all attribute elements are of type:
-       * - TextElement
-       * - Placeable with expression type CallExpression, ExternalArgument,
-       *   MessageReference or SelectExpression
-       */
-      isSupportedMessage: function (ast) {
-        var self = this;
-
-        function elementsSupported(elements) {
-          return elements.every(function(element) {
-            return (
-              self.isSimpleElement(element) ||
-              (element.expression && element.expression.type === 'SelectExpression')
-            );
-          });
-        }
-
-        // Parse error
-        if (ast.type === 'Junk') {
-          return false;
-        }
-
-        var valueSupported = !ast.value || elementsSupported(ast.value.elements);
-        var attributesSupported = ast.attributes.every(function (attribute) {
-          return attribute.value && elementsSupported(attribute.value.elements);
-        });
-
-        return valueSupported && attributesSupported;
-      },
-
-
-      /*
-       * Is element of type that can be presented as a simple string:
-       * - TextElement
-       * - Placeable with expression type CallExpression, ExternalArgument
-       *   or MessageReference
-       */
-      isSimpleElement: function (element) {
-        if (element.type === 'TextElement') {
-          return true;
-        }
-
-        // Placeable
-        if (
-          element.expression &&
-          [
-            'CallExpression',
-            'ExternalArgument',
-            'MessageReference'
-          ].indexOf(element.expression.type) >= 0
-        ) {
-          return true;
-        }
-
-        return false;
-      },
-
-
-      /*
-       * Is element representing a pluralized string?
-       *
-       * Keys of all variants of such elements are either
-       * CLDR plurals or numbers.
-       */
-      isPluralElement: function (element) {
-        if (!(element.expression && element.expression.type === 'SelectExpression')) {
-          return false;
-        }
-
-        var CLDRplurals = ['zero', 'one', 'two', 'few', 'many', 'other'];
-
-        return element.expression.variants.every(function (item) {
-          return (
-            CLDRplurals.indexOf(item.key.name) !== -1 ||
-            item.key.type === 'NumberExpression'
-          );
-        });
-      },
-
-
-      /*
-       * Is ast of a simple string?
-       *
-       * A simple string has no attributes or tags,
-       * and the value can only contain text and
-       * references to external arguments or other messages.
-       */
-      isSimpleString: function (ast) {
-        var self = this;
-
-        if (
-          ast &&
-          !ast.attributes.length &&
-          ast.value &&
-          ast.value.elements.every(function(item) {
-            return self.isSimpleElement(item);
-          })
-        ) {
-          return true;
-        }
-
-        return false;
       },
 
 
@@ -624,7 +613,7 @@ var Pontoon = (function (my) {
         var attributes = '';
 
         // Unsupported string: render as source
-        if (!self.isSupportedMessage(ast)) {
+        if (!isSupportedMessage(ast)) {
           ast.comment = null; // Remove comment
           value = '<li class="source">' +
             fluentSerializer.serializeEntry(ast) +
@@ -634,7 +623,7 @@ var Pontoon = (function (my) {
         }
 
         // Simple string: only value
-        else if (self.isSimpleString(ast)) {
+        else if (isSimpleMessage(ast)) {
           value = '<li><p>' +
             self.serializePlaceables(ast.value.elements, true) +
           '</p></li>';
