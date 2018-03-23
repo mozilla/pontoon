@@ -281,7 +281,7 @@ var Pontoon = (function (my) {
 
           $('#translation').val(value);
 
-          Pontoon.fluent.toggleEditor(false);
+          self.toggleEditor(false);
           Pontoon.updateCachedTranslation();
 
           return;
