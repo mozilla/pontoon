@@ -260,12 +260,14 @@ var Pontoon = (function (my) {
 
   /*
    * Serialize values in FTL editor forms into an FTL string
+   *
+   * elementNodes A set of jQuery nodes
    */
-  function serializeElements(elements) {
+  function serializeFTLEditorElements(elementNodes) {
     var value = '';
 
-    elements.each(function (i, element) {
-      var expression = $(element).data('expression');
+    elementNodes.each(function (i, node) {
+      var expression = $(node).data('expression');
 
       // Simple element
       if (!expression) {
@@ -274,8 +276,8 @@ var Pontoon = (function (my) {
 
       // SelectExpression
       else {
-        var elementValue = expression + ' ->';
-        var variants = $(element).find('ul li');
+        var nodeValue = expression + ' ->';
+        var variants = $(node).find('ul li');
         var hasTranslatedVariants = false;
         var defaultMarker = '';
 
@@ -289,13 +291,13 @@ var Pontoon = (function (my) {
           }
 
           if (id && val) {
-            elementValue += '\n  ' + defaultMarker + '[' + id + '] ' + val;
+            nodeValue += '\n  ' + defaultMarker + '[' + id + '] ' + val;
             hasTranslatedVariants = true;
           }
         });
 
         if (hasTranslatedVariants) {
-          value += '{ ' + elementValue + '\n  }';
+          value += '{ ' + nodeValue + '\n  }';
         }
       }
     });
@@ -714,7 +716,7 @@ var Pontoon = (function (my) {
 
         // Value
         else if (valueElements.length) {
-          value = serializeElements(valueElements);
+          value = serializeFTLEditorElements(valueElements);
 
           if (value) {
             content += value;
@@ -725,7 +727,7 @@ var Pontoon = (function (my) {
         if (attributeElements.length) {
           attributeElements.each(function () {
             var id = $(this).data('id');
-            var val = serializeElements($(this).find('ul:first > li'));
+            var val = serializeFTLEditorElements($(this).find('ul:first > li'));
 
             if (id && val) {
               attributes += '\n  .' + id + ' = ' + val;
