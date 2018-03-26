@@ -13,9 +13,9 @@
 </li>
 {% endmacro %}
 
-{% macro details_item_priority(priority) %}
+{% macro details_item_priority(priority, title='Priority') %}
 <li class="priority">
-  <span class="title">Priority</span>
+  <span class="title">{{ title }}</span>
   <span class="value">
     {% for n in range(5) %}
       <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>

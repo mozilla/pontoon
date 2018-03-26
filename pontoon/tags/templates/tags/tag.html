@@ -2,7 +2,7 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import "widgets/menu.html" as Menu %}
 
-{% block title %}{{ project.name }}{% endblock %}
+{% block title %}{{ project.name }} &middot; {{ tag.name }}{% endblock %}
 
 {% block class %}project{% endblock %}
 
@@ -23,10 +23,16 @@
         title=project.name,
         link=url('pontoon.projects.project', project.slug))
       }}
+      {{ HeadingInfo.heading_item(
+        title=tag.name,
+        link=url('pontoon.tags.project.tag', project.slug, tag.slug),
+        class='small')
+      }}
     </h1>
 
     <ul class="details">
-      {{ HeadingInfo.details_item_priority(project.priority) }}
+      {{ HeadingInfo.details_item_priority(project.priority, title='Project priority') }}
+      {{ HeadingInfo.details_item_priority(tag.priority, title='Tag priority') }}
 
       {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
 
@@ -49,7 +55,7 @@
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(project) }}
+    {{ HeadingInfo.progress_chart_legend(tag) }}
   </div>
 </section>
 {% endblock %}
@@ -61,41 +67,11 @@
     {% call Menu.submenu() %}
       {{ Menu.item(
           'Teams',
-          url('pontoon.projects.project', project.slug),
+          url('pontoon.tags.project.tag', project.slug, tag.slug),
           is_active = (current_page == ''),
           count = project.locales.count()
         )
       }}
-      {% if project.tags_enabled and tags %}
-         {{ Menu.item(
-           'Tags',
-           url('pontoon.projects.tags', project.slug),
-           is_active = (current_page == 'tags'),
-           count = tags) }}
-      {% endif %}
-      {{ Menu.item(
-          'Contributors',
-          url('pontoon.projects.contributors', project.slug),
-          is_active = (current_page == 'contributors'),
-          count = False
-        )
-      }}
-      {{ Menu.item(
-          'Info',
-          url('pontoon.projects.info', project.slug),
-          is_active = (current_page == 'info'),
-          count = 1 if project.info else False
-        )
-      }}
-      {% if request.user.has_perm('base.can_manage_project') %}
-        {{ Menu.item(
-            'Notifications',
-            url('pontoon.projects.notifications', project.slug),
-            is_active = (current_page == 'notifications'),
-            count = False
-          )
-        }}
-      {% endif %}
     {% endcall %}
   </div>
 </section>

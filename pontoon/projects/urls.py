@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from django.views.generic import RedirectView
 
+from pontoon.tags import views as tags_views
+
 import views
 
 urlpatterns = [
@@ -22,6 +24,11 @@ urlpatterns = [
         views.project,
         name='pontoon.projects.project'),
 
+    # Project tags
+    url(r'^projects/(?P<slug>[\w-]+)/tags/$',
+        views.project,
+        name='pontoon.projects.tags'),
+
     # Project contributors
     url(r'^projects/(?P<slug>[\w-]+)/contributors/$',
         views.project,
@@ -41,6 +48,11 @@ urlpatterns = [
     url(r'^projects/(?P<slug>[\w-]+)/ajax/$',
         views.ajax_teams,
         name='pontoon.projects.ajax.teams'),
+
+    # AJAX view: Project tags
+    url(r'^projects/(?P<slug>[\w-]+)/ajax/tags/$',
+        tags_views.ajax_tags,
+        name='pontoon.projects.ajax.tags'),
 
     # AJAX view: Project contributors
     url(r'^projects/(?P<slug>[\w-]+)/ajax/contributors/$',

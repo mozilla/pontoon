@@ -1,0 +1,41 @@
+{% import 'widgets/latest_activity.html' as LatestActivity %}
+{% import 'widgets/progress_chart.html' as ProgressChart %}
+
+{% macro header() %}
+  <table class="table table-sort project-list">
+    <thead>
+      <tr>
+        <th class="tag asc">Tag<i class="fa"></i></th>
+        <th class="priority">Priority<i class="fa"></i></th>
+        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
+        <th class="progress">Progress<i class="fa"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+{% endmacro %}
+
+{% macro item(tag, main_link, chart_link, latest_activity, chart, class='limited', link_parameter=True) %}
+  <tr class="{{ class }}">
+    <td class="tag">
+      <h4>
+        <a href="{{ main_link }}">{{ tag.name }}</a>
+      </h4>
+    </td>
+    <td class="priority">
+      {% for n in range(5) %}
+      <span class="fa fa-star{% if loop.index <= tag.priority %}{{ ' active' }}{% endif %}"></span>
+      {% endfor %}
+    </td>
+    <td class="latest-activity">
+      {{ LatestActivity.span(latest_activity) }}
+    </td>
+    <td class="progress">
+      {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+    </td>
+  </tr>
+{% endmacro %}
+
+{% macro footer() %}
+    </tbody>
+  </table>
+{% endmacro %}

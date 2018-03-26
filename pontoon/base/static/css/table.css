@@ -28,6 +28,10 @@ table.table {
   width: 420px;
 }
 
+.table th.tag {
+  width: 330px;
+}
+
 .table th.population,
 .table th.deadline {
   width: 90px;
