@@ -1,8 +1,11 @@
 
+import pytest
+
 from mock import patch
 
 from pontoon.tags.utils import (
     LatestActivity, LatestActivityUser, TaggedLocale)
+from pontoon.tags.utils.chart import TagChart
 from pontoon.tags.utils.tagged import Tagged
 
 
@@ -24,7 +27,8 @@ def test_util_tag_tagged():
     # called with total_strings - chart added
     tagged = Tagged(total_strings=23)
     assert tagged.latest_activity is None
-    assert tagged.chart == dict(total_strings=23)
+    assert isinstance(tagged.chart, TagChart)
+    assert tagged.chart.total_strings == 23
 
     # called with latest_translation - latest activity added
     tagged = Tagged(latest_translation=23)
@@ -78,7 +82,8 @@ def test_util_tag_tagged_locale():
     with patch('pontoon.tags.utils.tagged.LatestActivity') as m:
         m.return_value = "y"
         assert tagged.latest_activity == "y"
-        assert tagged.chart == dict(total_strings=23)
+        assert isinstance(tagged.chart, TagChart)
+        assert tagged.chart.total_strings == 23
 
 
 def test_util_latest_activity():
@@ -108,6 +113,10 @@ def test_util_latest_activity():
     activity = LatestActivity(dict(user__email=43))
     assert isinstance(activity.user, LatestActivityUser)
     assert activity.user.user == {'user__email': 43}
+
+    # check translation is created if present
+    activity = LatestActivity(dict(string='foo'))
+    assert activity.translation == {'string': 'foo'}
 
 
 @patch('pontoon.tags.utils.latest_activity.user_gravatar_url')
@@ -143,3 +152,30 @@ def test_util_latest_activity_user(avatar_mock):
     assert user.name_or_email == 'bar@ba.z'
     assert user.gravatar_url(23) == 113
     assert list(avatar_mock.call_args) == [(user, 23), {}]
+
+
+def test_util_tag_chart():
+
+    chart = TagChart()
+    assert chart.approved_strings is None
+    assert chart.fuzzy_strings is None
+    assert chart.total_strings is None
+    assert chart.translated_strings is None
+
+    # `total_strings` should be set - otherwise TagChart throws
+    # errors
+    with pytest.raises(TypeError):
+        chart.approved_share
+
+    with pytest.raises(TypeError):
+        chart._share(23)
+
+    chart = TagChart(
+        total_strings=73,
+        fuzzy_strings=7,
+        approved_strings=13,
+        translated_strings=23)
+    assert chart.approved_share == 18.0
+    assert chart.approved_percent == 17
+    assert chart.fuzzy_share == 10.0
+    assert chart.translated_share == 32.0

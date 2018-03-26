@@ -5,6 +5,8 @@ from mock import patch
 
 from django.urls import reverse
 
+from pontoon.tags.utils import TaggedLocale, TagTool
+
 
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.views.ProjectTagAdminAjaxView.get_form_class')
@@ -116,3 +118,84 @@ def test_view_project_tag_admin_ajax(form_mock, clients, project0, tag0):
     assert form_mock.return_value.is_valid.called
     assert response.status_code == 200
     assert response.json() == {u'data': 23}
+
+
+@pytest.mark.django_db
+def test_view_project_tag_locales(client, project0, tag0):
+    url = reverse(
+        'pontoon.tags.project.tag',
+        kwargs=dict(project=project0.slug, tag=tag0.slug))
+
+    # tag is not associated with project
+    response = client.get(url)
+    assert response.status_code == 404
+
+    # tag has no priority so still wont show up...
+    project0.tag_set.add(tag0)
+    response = client.get(url)
+    assert response.status_code == 404
+
+    tag0.priority = 3
+    tag0.save()
+    response = client.get(url)
+    assert response.status_code == 200
+
+    # the response is not json
+    with pytest.raises(ValueError):
+        response.json()
+
+    assert response.template_name == ['tags/tag.html']
+    assert response.context_data['project'] == project0
+
+    tag = response.context_data['tag']
+    assert isinstance(tag, TagTool)
+    assert tag.object == tag0
+
+
+@pytest.mark.django_db
+def test_view_project_tag_locales_ajax(client, project0, tag0):
+    url = reverse(
+        'pontoon.tags.ajax.teams',
+        kwargs=dict(project=project0.slug, tag=tag0.slug))
+    project0.tag_set.add(tag0)
+    tag0.priority = 3
+    tag0.save()
+    response = client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    # the response is not json even with xhr headers
+    with pytest.raises(ValueError):
+        response.json()
+
+    assert response.template_name == ['projects/includes/teams.html']
+    assert response.context_data['project'] == project0
+
+    locales = project0.project_locale.all()
+    assert len(response.context_data['locales']) == locales.count()
+
+    for i, locale in enumerate(locales):
+        locale = response.context_data['locales'][i]
+        assert isinstance(locale, TaggedLocale)
+        assert locale.code == locales[i].locale.code
+        assert locale.name == locales[i].locale.name
+
+
+@pytest.mark.django_db
+def test_view_project_tag_ajax(client, project0, tag0):
+    url = reverse(
+        'pontoon.projects.ajax.tags',
+        kwargs=dict(slug=project0.slug))
+    project0.tag_set.add(tag0)
+    tag0.priority = 3
+    tag0.save()
+
+    response = client.get(url)
+    assert response.status_code == 400
+
+    response = client.get(
+        url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    # response returns html
+    with pytest.raises(ValueError):
+        response.json()
+    assert tag0.name in response.content
+    assert tag0.slug in response.content

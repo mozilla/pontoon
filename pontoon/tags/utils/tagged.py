@@ -1,5 +1,6 @@
 
 from .latest_activity import LatestActivity
+from .chart import TagChart
 
 
 class Tagged(object):
@@ -21,14 +22,8 @@ class Tagged(object):
         """Generate a dict of chart information
         """
         return (
-            {k: v
-             for k, v
-             in self.kwargs.items()
-             if k in ['approved_strings',
-                      'fuzzy_strings',
-                      'total_strings',
-                      'translated_strings']}
-            if self.kwargs.get('total_strings')
+            TagChart(**self.kwargs)
+            if self.total_strings
             else None)
 
     @property
@@ -47,6 +42,12 @@ class Tagged(object):
     @property
     def tag(self):
         return self.kwargs.get('slug')
+
+    def get_latest_activity(self, x):
+        return self.latest_activity
+
+    def get_chart(self, x):
+        return self.chart
 
 
 class TaggedLocale(Tagged):
