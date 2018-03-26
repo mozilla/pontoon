@@ -15,6 +15,13 @@
     <link rel="icon" href="{{ static('img/favicon.ico') }}">
 
     {% block site_css %}
+    <!-- Inlining CSS mitigates/prevents fouc. -->
+    <style>
+      body {
+         background: #333941;
+      }
+    </style>
+
       {% stylesheet 'base' %}
 
       {% block extend_css %}
