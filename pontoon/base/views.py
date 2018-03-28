@@ -1,7 +1,7 @@
 import json
 import logging
-
 from datetime import datetime
+from urlparse import urlparse
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -18,6 +18,7 @@ from django.http import (
     StreamingHttpResponse
 )
 from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
@@ -109,19 +110,28 @@ def translate_locale_agnostic(request, slug, part):
     """Locale Agnostic Translate view."""
     user = request.user
     project = get_object_or_404(Project.objects.available(), slug=slug)
+    query = urlparse(request.get_full_path()).query
+    query = '?%s' % query if query else ''
 
     if user.is_authenticated():
         locale = user.profile.custom_homepage
 
         if locale and project.locales.filter(code=locale).exists():
-            return redirect('pontoon.translate', slug=slug, locale=locale, part=part)
+            path = reverse(
+                'pontoon.translate',
+                kwargs=dict(slug=slug, locale=locale, part=part))
+            return redirect("%s%s" % (path, query))
 
     locale = utils.get_project_locale_from_request(request, project.locales)
-
-    if locale:
-        return redirect('pontoon.translate', slug=slug, locale=locale, part=part)
-    else:
-        return redirect('pontoon.projects.project', slug=slug)
+    path = (
+        reverse(
+            'pontoon.translate',
+            kwargs=dict(slug=slug, locale=locale, part=part))
+        if locale
+        else reverse(
+            'pontoon.projects.project',
+            kwargs=dict(slug=slug)))
+    return redirect("%s%s" % (path, query))
 
 
 @utils.require_AJAX
