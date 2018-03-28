@@ -10,9 +10,10 @@ from django.contrib.auth.models import User
 @patch('pontoon.base.views.get_object_or_404')
 @patch('pontoon.base.views.utils.get_project_locale_from_request')
 @patch('pontoon.base.views.Project.objects.available')
+@patch('pontoon.base.views.reverse')
 @patch('pontoon.base.views.redirect')
 @pytest.mark.django_db
-def test_view_lang_agnostic_authed(redirect_mock, projects_mock,
+def test_view_lang_agnostic_authed(redirect_mock, reverse_mock, projects_mock,
                                    util_mock, get_mock, client):
     ''' User is authenticated and Userprofile.custom_homepage defined,
     redirect to Userprofile.custom_homepage '''
@@ -21,6 +22,9 @@ def test_view_lang_agnostic_authed(redirect_mock, projects_mock,
     view = reverse(
         'pontoon.translate.locale.agnostic',
         kwargs=dict(slug='FOO', part='BAR'))
+
+    # mock return value for url reverse
+    reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
     projects_mock.return_value = 'AVAILABLEPROJECTS'
@@ -58,27 +62,40 @@ def test_view_lang_agnostic_authed(redirect_mock, projects_mock,
         list(get_mock.call_args)
         == [('AVAILABLEPROJECTS',), {'slug': u'FOO'}])
 
-    # redirect was called with args...
+    # reverse was called with args...
     assert (
-        list(redirect_mock.call_args) ==
-        [('pontoon.translate',),
-         {'locale': 23,
-          'part': u'BAR',
-          'slug': u'FOO'}])
+        list(reverse_mock.call_args)
+        == [('pontoon.translate',),
+            {'kwargs': {
+                'locale': 23,
+                'part': u'BAR',
+                'slug': u'FOO'}}])
+
+    # redirect was called with reverse result
+    assert(
+        list(redirect_mock.call_args)
+        == [('73',), {}])
     assert response is mock_response
 
 
 @patch('pontoon.base.views.get_object_or_404')
 @patch('pontoon.base.views.utils.get_project_locale_from_request')
 @patch('pontoon.base.views.Project.objects.available')
+@patch('pontoon.base.views.reverse')
 @patch('pontoon.base.views.redirect')
-def test_view_lang_agnostic_anon_available_accept_language(redirect_mock, projects_mock,
-                                                           util_mock, get_mock, client):
+def test_view_lang_agnostic_anon_available_accept_language(redirect_mock,
+                                                           reverse_mock,
+                                                           projects_mock,
+                                                           util_mock,
+                                                           get_mock, client):
     '''User is not authenticated, redirect to first
         available accept-language locale'''
     view = reverse(
         'pontoon.translate.locale.agnostic',
         kwargs=dict(slug='FOO', part='BAR'))
+
+    # mock return value for url reverse
+    reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
     projects_mock.return_value = 'AVAILABLEPROJECTS'
@@ -97,7 +114,7 @@ def test_view_lang_agnostic_anon_available_accept_language(redirect_mock, projec
     # mock return_value for get_project_locale_from_request
     util_mock.return_value = 23
 
-    response = client.get(view)
+    response = client.get("%s?baz=17" % view)
 
     # Project.objects.available was called with no args
     assert list(projects_mock.call_args) == [(), {}]
@@ -113,28 +130,41 @@ def test_view_lang_agnostic_anon_available_accept_language(redirect_mock, projec
         list(util_mock.call_args)
         == [(response.wsgi_request, 'LOCALES'), {}])
 
-    # redirect was called with args...
+    # reverse was called with args...
     assert (
-        list(redirect_mock.call_args) ==
-        [('pontoon.translate',),
-         {'locale': 23,
-          'part': u'BAR',
-          'slug': u'FOO'}])
+        list(reverse_mock.call_args)
+        == [('pontoon.translate',),
+            {'kwargs': {
+                'locale': 23,
+                'part': u'BAR',
+                'slug': u'FOO'}}])
+
+    # redirect was called with reverse result
+    assert (
+        list(redirect_mock.call_args)
+        == [('73?baz=17',), {}])
     assert response is mock_response
 
 
 @patch('pontoon.base.views.get_object_or_404')
 @patch('pontoon.base.views.utils.get_project_locale_from_request')
 @patch('pontoon.base.views.Project.objects.available')
+@patch('pontoon.base.views.reverse')
 @patch('pontoon.base.views.redirect')
-def test_view_lang_agnostic_anon_unavailable_accept_language(redirect_mock, projects_mock,
-                                                             util_mock, get_mock, client):
+def test_view_lang_agnostic_anon_unavailable_accept_language(redirect_mock,
+                                                             reverse_mock,
+                                                             projects_mock,
+                                                             util_mock,
+                                                             get_mock, client):
     ''' User is not authenticated and Userprofile.custom_homepage not defined,
     redirect to project dashboard '''
 
     view = reverse(
         'pontoon.translate.locale.agnostic',
         kwargs=dict(slug='FOO', part='BAR'))
+
+    # mock return value for url reverse
+    reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
     projects_mock.return_value = 'AVAILABLEPROJECTS'
@@ -153,7 +183,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(redirect_mock, proj
     # mock return_value for get_project_locale_from_request
     util_mock.return_value = None
 
-    response = client.get(view)
+    response = client.get("%s?foo=bar" % view)
 
     # Project.objects.available was called with no args
     assert list(projects_mock.call_args) == [(), {}]
@@ -169,9 +199,15 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(redirect_mock, proj
         list(util_mock.call_args)
         == [(response.wsgi_request, 'LOCALES'), {}])
 
-    # redirect was called with args...
+    # reverse was called with args...
     assert (
-        list(redirect_mock.call_args) ==
-        [('pontoon.projects.project',),
-         {'slug': u'FOO'}])
+        list(reverse_mock.call_args)
+        == [('pontoon.projects.project',),
+            {'kwargs': {'slug': u'FOO'}}])
+
+    # redirect was called with reverse result
+    assert (
+        list(redirect_mock.call_args)
+        == [('73?foo=bar',), {}])
+
     assert response is mock_response
