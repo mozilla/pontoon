@@ -1,6 +1,3 @@
-from django.http import (
-    JsonResponse,
-)
 from django.utils import timezone
 
 from pontoon.base.models import (
@@ -138,9 +135,9 @@ def replace_translations(form, user, translations, locale):
         if changed_translation_pks:
             latest_translation_pk = max(changed_translation_pks)
     except Translation.NotAllowed:
-        return JsonResponse({
+        return {
             'error': 'Empty translations not allowed',
-        })
+        }
 
     # Unapprove old translations
     old_translations.update(
