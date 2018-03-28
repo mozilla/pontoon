@@ -157,6 +157,9 @@ def batch_edit_translations(request):
         locale,
     )
 
+    if action_status.get('error'):
+        return JsonResponse(action_status)
+
     if action_status['count'] == 0:
         return JsonResponse({'count': 0})
 
