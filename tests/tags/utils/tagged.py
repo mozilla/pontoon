@@ -93,7 +93,7 @@ def test_util_latest_activity():
     activity = LatestActivity(dict(foo='bar'))
     assert activity.activity == dict(foo='bar')
     assert activity.type == 'submitted'
-    assert activity.translation is None
+    assert activity.translation == dict(string='')
     assert activity.user is None
 
     # check approved_date
