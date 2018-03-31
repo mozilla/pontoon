@@ -43,8 +43,7 @@ class LatestActivity(object):
 
     @property
     def translation(self):
-        if self.activity.get('string'):
-            return dict(string=self.activity.get('string'))
+        return dict(string=self.activity.get('string', ''))
 
     @property
     def user(self):
