@@ -8,23 +8,21 @@ services:
   # shared from your local folder into the docker container.
   base:
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile.base
-    image: local/pontoon_base
+      context: ./docker/base
+    image: local/pontoon:base
 
   # Webapp app
   webapp:
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-    image: local/pontoon
+      context: ./docker/dev
+    image: local/pontoon:dev
     env_file:
-      - docker/config/webapp.env
+      - ./docker/dev/config/webapp.env
     environment:
       - LOCAL_USER_ID=1000
     depends_on:
       - postgresql
-    command: ["/app/docker/run_webapp.sh"]
+    command: ["/app/docker/dev/run_webapp.sh"]
     ports:
       - "8000:8000"
     volumes:
