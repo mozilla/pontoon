@@ -12,7 +12,7 @@ DC="$(which docker-compose)"
 
 # Use the same image we use for building docker images because it'll be cached
 # already.
-BASEIMAGENAME="local/pontoon_base"
+BASEIMAGENAME="local/pontoon:base"
 
 # Start services in background (this is idempotent).
 echo "Starting services in the background..."
@@ -29,11 +29,11 @@ if [ "$1" == "--shell" ]; then
            --workdir /app \
            --network pontoon_default \
            --link "${DC} ps -q postgresql" \
-           --env-file ./docker/config/webapp.env \
+           --env-file ./docker/dev/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
            --tty \
            --interactive \
-           local/pontoon /bin/bash "${@:2}"
+           local/pontoon:dev /bin/bash "${@:2}"
 
 else
     docker run \
@@ -42,9 +42,9 @@ else
            --workdir /app \
            --network pontoon_default \
            --link "${DC} ps -q postgresql" \
-           --env-file ./docker/config/webapp.env \
+           --env-file ./docker/dev/config/webapp.env \
            -e LOCAL_USER_ID=$UID \
-           local/pontoon \
+           local/pontoon:dev \
            /app/docker/run_tests.sh
 
     echo "Done!"
