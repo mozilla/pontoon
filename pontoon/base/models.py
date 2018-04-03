@@ -2437,6 +2437,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         translations = Translation.objects.filter(
             entity__obsolete=False,
+            entity__resource__project=project,
             locale=locale
         )
 
