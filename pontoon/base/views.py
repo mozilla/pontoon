@@ -179,7 +179,7 @@ def authors_and_time_range(request, locale, slug, part):
     translations = Translation.for_locale_project_paths(locale, project, paths)
 
     return JsonResponse({
-        'authors': translations.authors().serialize(),
+        'authors': translations.authors(),
         'counts_per_minute': translations.counts_per_minute(),
     }, safe=False)
 

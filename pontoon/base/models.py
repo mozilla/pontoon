@@ -2350,14 +2350,19 @@ class TranslationQuerySet(models.QuerySet):
 
     def authors(self):
         """
-        Return a QuerySet of translation authors.
+        Return a list of translation authors.
         """
-        return (
-            User.objects
-                .filter(translation__in=self)
-                .annotate(translation_count=Count('id'))
-                .order_by('translation_count')
-        )
+        return [
+            {'email': user.email,
+             'display_name': user.name_or_email,
+             'id': user.id,
+             'gravatar_url': user.gravatar_url(44),
+             'translation_count': user.translations_count,
+             'role': user.user_role}
+            for user
+            in reversed(
+                User.translators.with_translation_counts(
+                    None, Q(id__in=self), limit=100))]
 
     def counts_per_minute(self):
         """
