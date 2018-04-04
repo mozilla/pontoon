@@ -53,31 +53,36 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a message, supported in rich FTL editor?
+   * Are all elements supported in rich FTL editor?
    *
-   * Message is supported if it's valid and all value elements
-   * and all attribute elements are:
+   * Elements are supported if they are:
    * - simple elements or
    * - select expressions
    */
-  function isSupportedMessage(ast) {
-    function elementsSupported(elements) {
-      return elements.every(function(element) {
-        return (
-          isSimpleElement(element) ||
-          (element.expression && element.expression.type === 'SelectExpression')
-        );
-      });
-    }
+  function areSupportedElements(elements) {
+    return elements.every(function(element) {
+      return (
+        isSimpleElement(element) ||
+        (element.expression && element.expression.type === 'SelectExpression')
+      );
+    });
+  }
 
+  /*
+   * Is ast of a message, supported in rich FTL editor?
+   *
+   * Message is supported if it's valid and all value elements
+   * and all attribute elements are supported.
+   */
+  function isSupportedMessage(ast) {
     // Parse error
     if (ast.type === 'Junk') {
       return false;
     }
 
-    var valueSupported = !ast.value || elementsSupported(ast.value.elements);
+    var valueSupported = !ast.value || areSupportedElements(ast.value.elements);
     var attributesSupported = ast.attributes.every(function (attribute) {
-      return attribute.value && elementsSupported(attribute.value.elements);
+      return attribute.value && areSupportedElements(attribute.value.elements);
     });
 
     return valueSupported && attributesSupported;
