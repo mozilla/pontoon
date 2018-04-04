@@ -444,7 +444,7 @@ var Pontoon = (function (my) {
      * Update cached translation, needed for unsaved changes check
      */
     updateCachedTranslation: function () {
-      this.cachedTranslation = this.fluent.getTranslationSource();
+      this.cachedTranslation = this.fluent.getFTLEditorContentsAsSource();
     },
 
 
@@ -650,7 +650,7 @@ var Pontoon = (function (my) {
       }
 
       // FTL: Complex original string and translation
-      self.fluent.toggleOriginal();
+      self.fluent.renderOriginal();
       self.fluent.toggleEditor();
 
       if (self.fluent.isFTLEditorEnabled()) {
@@ -716,7 +716,7 @@ var Pontoon = (function (my) {
       }
 
       var before = this.cachedTranslation,
-          after = this.fluent.getTranslationSource();
+          after = this.fluent.getFTLEditorContentsAsSource();
 
       if ((before !== null) && (before !== after)) {
         $('#unsaved').show();
@@ -1789,13 +1789,17 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus, #editor textarea:visible:first'),
-            selectionStart = textarea.prop('selectionStart'),
-            selectionEnd = textarea.prop('selectionEnd'),
-            placeable = $(this).text(),
-            cursorPos = selectionStart + placeable.length,
-            before = textarea.val(),
-            after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
+        var textarea = $('#editor textarea:visible:focus');
+        if (!textarea.length) {
+          textarea = $('#editor textarea:visible:first');
+        }
+
+        var selectionStart = textarea.prop('selectionStart');
+        var selectionEnd = textarea.prop('selectionEnd');
+        var placeable = $(this).text();
+        var cursorPos = selectionStart + placeable.length;
+        var before = textarea.val();
+        var after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
 
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
@@ -2630,7 +2634,7 @@ var Pontoon = (function (my) {
           }
 
           var pf = self.getPluralForm(true);
-          self.cachedTranslation = self.fluent.getTranslationSource();
+          self.cachedTranslation = self.fluent.getFTLEditorContentsAsSource();
           self.updateTranslation(entity, pf, data.translation);
           self.updateInPlaceTranslation(data.translation.string);
           self.updateFilterUI();
@@ -4256,6 +4260,7 @@ Pontoon.user = {
 Pontoon.attachMainHandlers();
 Pontoon.attachEntityListHandlers();
 Pontoon.attachEditorHandlers();
+Pontoon.fluent.attachFTLEditorHandlers();
 Pontoon.attachBatchEditorHandlers();
 
 Pontoon.updateInitialState();
