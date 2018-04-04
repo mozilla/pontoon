@@ -99,9 +99,7 @@ var Pontoon = (function (my) {
       ast &&
       !ast.attributes.length &&
       ast.value &&
-      ast.value.elements.every(function(item) {
-        return isSimpleElement(item);
-      })
+      ast.value.elements.every(isSimpleElement)
     ) {
       return true;
     }
