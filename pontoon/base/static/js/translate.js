@@ -1764,13 +1764,17 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus, #editor textarea:visible:first'),
-            selectionStart = textarea.prop('selectionStart'),
-            selectionEnd = textarea.prop('selectionEnd'),
-            placeable = $(this).text(),
-            cursorPos = selectionStart + placeable.length,
-            before = textarea.val(),
-            after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
+        var textarea = $('#editor textarea:visible:focus');
+        if (!textarea.length) {
+          textarea = $('#editor textarea:visible:first');
+        }
+
+        var selectionStart = textarea.prop('selectionStart');
+        var selectionEnd = textarea.prop('selectionEnd');
+        var placeable = $(this).text();
+        var cursorPos = selectionStart + placeable.length;
+        var before = textarea.val();
+        var after = before.substring(0, selectionStart) + placeable + before.substring(selectionEnd);
 
         textarea.val(after).focus();
         textarea[0].setSelectionRange(cursorPos, cursorPos);
