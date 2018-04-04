@@ -472,7 +472,7 @@ var Pontoon = (function (my) {
 
       /*
        * Get source string value of a simple FTL message to be used in
-       * tje Copy (original to translation) function
+       * the Copy (original to translation) function
        */
       getSourceStringValue: function (entity, fallback) {
         if (entity.format !== 'ftl' || this.isComplexFTL()) {
