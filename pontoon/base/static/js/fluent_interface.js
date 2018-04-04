@@ -111,11 +111,7 @@ var Pontoon = (function (my) {
    * Render textarea element with the given properties
    */
   function renderTextareaElement(id, value, maxlength) {
-    var element = '<textarea class="value" id="ftl-id-' + id + '"';
-
-    if (typeof maxlength !== 'undefined' && maxlength !== null) {
-      element += ' maxlength="' + maxlength + '"';
-    }
+    var element = '<textarea class="value" id="ftl-id-' + id + '"' + ' maxlength="' + maxlength + '"';
 
     element += ' dir="' + Pontoon.locale.direction +
       '" data-script="' + Pontoon.locale.script +
