@@ -1,142 +1,144 @@
-#!/usr/bin/env python
-"""
-This script creates or updates en-US repositories from Mozilla source
-code to use for Mozilla product localization.
-
-The author of the original script is Ognyan Kulev (ogi):
-https://twitter.com/OgnyanKulev
-
-This is his code:
-https://bitbucket.org/ogi/mozilla-l10n-po/
-"""
-
 from __future__ import print_function
-from six import text_type
 
 import datetime
 import os
 import shutil
 import subprocess
 
-TARGET_REPOS = {
-    'firefox': [
-        'browser',
-        'devtools',
-        'dom',
-        'netwerk',
-        'security',
-        'services',
-        'toolkit',
-    ],
-    'firefox-for-android': [
-        'mobile',
-    ],
-    'thunderbird': [
-        'chat',
-        'editor',
-        'mail',
-        'other-licenses',
-    ],
-    'lightning': [
-        'calendar',
-    ],
-    'seamonkey': [
-        'suite',
-    ],
-}
+from django.core.management.base import BaseCommand
+
+from six import text_type
 
 
-def write(text):
-    timestamp = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
-    print(timestamp + text)
+class Command(BaseCommand):
+    help = """
+    Create or update custom per-project en-US repositories
+    from the cross-channel repository
+    """
 
+    def handle(self, *args, **options):
+        """
+        The author of the original script is Ognyan Kulev (ogi):
+        https://twitter.com/OgnyanKulev
 
-def execute(command, cwd=None):
-    try:
-        st = subprocess.PIPE
-        proc = subprocess.Popen(
-            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd)
+        This is his code:
+        https://bitbucket.org/ogi/mozilla-l10n-po/
+        """
+        TARGET_REPOS = {
+            'firefox': [
+                'browser',
+                'devtools',
+                'dom',
+                'netwerk',
+                'security',
+                'services',
+                'toolkit',
+            ],
+            'firefox-for-android': [
+                'mobile',
+            ],
+            'thunderbird': [
+                'chat',
+                'editor',
+                'mail',
+                'other-licenses',
+            ],
+            'lightning': [
+                'calendar',
+            ],
+            'seamonkey': [
+                'suite',
+            ],
+        }
 
-        (output, error) = proc.communicate()
-        code = proc.returncode
-        return code, output, error
+        def write(text):
+            timestamp = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
+            print(timestamp + text)
 
-    except OSError as error:
-        return -1, '', error
+        def execute(command, cwd=None):
+            try:
+                st = subprocess.PIPE
+                proc = subprocess.Popen(
+                    args=command, stdout=st, stderr=st, stdin=st, cwd=cwd)
 
+                (output, error) = proc.communicate()
+                code = proc.returncode
+                return code, output, error
 
-def pull(url, target):
-    # Undo local changes
-    execute(['hg', 'revert', '--all', '--no-backup'], target)
+            except OSError as error:
+                return -1, '', error
 
-    # Pull
-    code, output, error = execute(['hg', 'pull'], target)
-    code, output, error = execute(['hg', 'update', '-c'], target)
-    if code == 0:
-        write('Repository at ' + url + ' updated.')
+        def pull(url, target):
+            # Undo local changes
+            execute(['hg', 'revert', '--all', '--no-backup'], target)
 
-    # Clone
-    else:
-        write(text_type(error))
-        write('Clone instead.')
+            # Pull
+            code, output, error = execute(['hg', 'pull'], target)
+            code, output, error = execute(['hg', 'update', '-c'], target)
+            if code == 0:
+                write('Repository at ' + url + ' updated.')
 
-        # Clean up target directory on a failed pull, so that it's empty for a clone
-        command = ["rm", "-rf", target]
-        code, output, error = execute(command)
+            # Clone
+            else:
+                write(text_type(error))
+                write('Clone instead.')
 
-        code, output, error = execute(['hg', 'clone', url, target])
-        if code == 0:
-            write('Repository at ' + url + ' cloned.')
-        else:
-            write(text_type(error))
+                # Clean up target directory on a failed pull, so that it's empty for a clone
+                command = ["rm", "-rf", target]
+                code, output, error = execute(command)
 
+                code, output, error = execute(['hg', 'clone', url, target])
+                if code == 0:
+                    write('Repository at ' + url + ' cloned.')
+                else:
+                    write(text_type(error))
 
-def push(path):
-    # Add new and remove missing
-    execute(['hg', 'addremove'], path)
+        def push(path):
+            # Add new and remove missing
+            execute(['hg', 'addremove'], path)
 
-    # Commit
-    code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
-    if code != 0 and len(error):
-        write(text_type(error))
+            # Commit
+            code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
+            if code != 0 and len(error):
+                write(text_type(error))
 
-    # Push
-    code, output, error = execute(['hg', 'push'], path)
-    if code == 0:
-        write('Repository at ' + path + ' pushed.')
-    elif len(error):
-        write(text_type(error))
+            # Push
+            code, output, error = execute(['hg', 'push'], path)
+            if code == 0:
+                write('Repository at ' + path + ' pushed.')
+            elif len(error):
+                write(text_type(error))
 
-# Change working directory to where script is located
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
+        # Change working directory to where script is located
+        abspath = os.path.abspath(__file__)
+        dname = os.path.dirname(abspath)
+        os.chdir(dname)
 
-# Clone or update source repository
-url = 'https://hg.mozilla.org/l10n/gecko-strings/'
-target = 'source'
-pull(url, target)
+        # Clone or update source repository
+        url = 'https://hg.mozilla.org/l10n/gecko-strings/'
+        target = 'source'
+        pull(url, target)
 
-for repo in TARGET_REPOS.keys():
-    ending = repo + '-central'
-    url = 'ssh://hg.mozilla.org/users/m_owca.info/' + ending
-    target = os.path.join('target', ending)
+        for repo in TARGET_REPOS.keys():
+            ending = repo + '-central'
+            url = 'ssh://hg.mozilla.org/users/m_owca.info/' + ending
+            target = os.path.join('target', ending)
 
-    # Clone or update target repository
-    pull(url, target)
+            # Clone or update target repository
+            pull(url, target)
 
-    # Prune all subdirectories in target repository in case they get removed from source
-    for subdir in os.listdir(target):
-        if not subdir.startswith('.'):
-            shutil.rmtree(os.path.join(target, subdir))
+            # Prune all subdirectories in target repository in case they get removed from source
+            for subdir in os.listdir(target):
+                if not subdir.startswith('.'):
+                    shutil.rmtree(os.path.join(target, subdir))
 
-    # Copy folders from source to target
-    for folder in TARGET_REPOS[repo]:
-        origin = os.path.join('source', folder)
-        destination = os.path.join('target', ending, folder)
+            # Copy folders from source to target
+            for folder in TARGET_REPOS[repo]:
+                origin = os.path.join('source', folder)
+                destination = os.path.join('target', ending, folder)
 
-        if os.path.exists(origin):
-            shutil.copytree(origin, destination)
+                if os.path.exists(origin):
+                    shutil.copytree(origin, destination)
 
-    # Commit and push target repositories
-    push(target)
+            # Commit and push target repositories
+            push(target)
