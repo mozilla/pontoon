@@ -1,6 +1,3 @@
-from __future__ import print_function
-
-import datetime
 import os
 import shutil
 import subprocess
@@ -13,7 +10,7 @@ from six import text_type
 class Command(BaseCommand):
     help = """
     Create or update custom per-project en-US repositories
-    from the cross-channel repository
+    from the cross-channel repository.
     """
 
     def handle(self, *args, **options):
@@ -51,10 +48,6 @@ class Command(BaseCommand):
             ],
         }
 
-        def write(text):
-            timestamp = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
-            print(timestamp + text)
-
         def execute(command, cwd=None):
             try:
                 st = subprocess.PIPE
@@ -76,12 +69,12 @@ class Command(BaseCommand):
             code, output, error = execute(['hg', 'pull'], target)
             code, output, error = execute(['hg', 'update', '-c'], target)
             if code == 0:
-                write('Repository at ' + url + ' updated.')
+                self.stdout.write('Repository at ' + url + ' updated.')
 
             # Clone
             else:
-                write(text_type(error))
-                write('Clone instead.')
+                self.stdout.write(text_type(error))
+                self.stdout.write('Clone instead.')
 
                 # Clean up target directory on a failed pull, so that it's empty for a clone
                 command = ["rm", "-rf", target]
@@ -89,9 +82,9 @@ class Command(BaseCommand):
 
                 code, output, error = execute(['hg', 'clone', url, target])
                 if code == 0:
-                    write('Repository at ' + url + ' cloned.')
+                    self.stdout.write('Repository at ' + url + ' cloned.')
                 else:
-                    write(text_type(error))
+                    self.stdout.write(text_type(error))
 
         def push(path):
             # Add new and remove missing
@@ -100,14 +93,14 @@ class Command(BaseCommand):
             # Commit
             code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
             if code != 0 and len(error):
-                write(text_type(error))
+                self.stdout.write(text_type(error))
 
             # Push
             code, output, error = execute(['hg', 'push'], path)
             if code == 0:
-                write('Repository at ' + path + ' pushed.')
+                self.stdout.write('Repository at ' + path + ' pushed.')
             elif len(error):
-                write(text_type(error))
+                self.stdout.write(text_type(error))
 
         # Change working directory to where script is located
         abspath = os.path.abspath(__file__)
