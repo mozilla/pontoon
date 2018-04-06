@@ -1,6 +1,7 @@
+from __future__ import absolute_import
+
 import re
 
-from __future__ import absolute_import
 from collections import defaultdict
 
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH: (\d+)$', re.MULTILINE)
