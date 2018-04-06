@@ -1,0 +1,46 @@
+
+#profile {
+  padding-left: 0;
+  position: relative;
+  top: 0;
+}
+
+#profile > .button {
+  height: 100%;
+  padding: 0;
+}
+
+#profile .button img,
+#profile .button .menu-icon {
+  margin: 6px 0 6px 5px;
+}
+
+#profile .button img {
+  height: 44px;
+  width: 44px;
+}
+
+#profile .button .menu-icon {
+  border: 2px solid #4D5967;
+  border-radius: 100%;
+  float: right;
+  font-size: 20px;
+  height: 20px;
+  padding: 12px;
+  text-align: center;
+  width: 20px;
+}
+
+#profile .menu li a {
+  display: block;
+  line-height: 22px;
+}
+
+#profile .menu li i.fa {
+  margin: 0 8px 0 -2px;
+}
+
+#profile .menu li.details {
+  padding: 10px 4px;
+  text-align: center;
+}

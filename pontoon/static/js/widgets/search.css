@@ -1,0 +1,82 @@
+.controls {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.controls .search-wrapper {
+    border-bottom: 1px solid #5E6475;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.controls .search-wrapper .icon {
+    color: #AAAAAA;
+    font-size: 1.2em;
+    position: absolute;
+    left: 3px;
+    top: 5px;
+}
+
+.controls .search-wrapper input[type="search"] {
+    color: #FFFFFF;
+}
+
+.controls .search-wrapper input[type="search"]::-webkit-search-decoration,
+.controls .search-wrapper input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+}
+
+.controls .search-wrapper .menu input[type=search] {
+    background: transparent;
+    color: #FFFFFF;
+    float: none;
+    font-weight: 300;
+    padding-left: 25px;
+    padding-right: 0;
+    width: 200px;
+}
+
+.controls .search-wrapper .menu input[type=search]:focus {
+    background-color: transparent;
+}
+
+.controls .search-wrapper.small {
+    width: 240px;
+}
+
+.controls > .search-wrapper {
+  border: none;
+  display: inline-block;
+  height: 28px;
+  margin: 0;
+  vertical-align: top;
+  width: 100%;
+}
+
+.controls > .search-wrapper.small {
+  width: 240px;
+}
+
+.controls > .search-wrapper.big {
+  width: 714px;
+}
+
+.controls > .search-wrapper .icon {
+  left: 6px;
+  top: 6px;
+  z-index: 20;
+  width: auto;
+}
+
+.controls > .search-wrapper input {
+  background: #333941;
+  border: 1px solid #4D5967;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 300;
+  height: 28px;
+  padding-left: 25px;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}

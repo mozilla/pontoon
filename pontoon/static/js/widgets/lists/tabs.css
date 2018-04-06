@@ -1,0 +1,54 @@
+
+.tabs {
+    margin: 0;
+    padding: 0;
+    margin-bottom: -1px;
+}
+
+.tabs .tab {
+    margin: 0;
+    padding: 0;
+    border-style: solid solid none;
+    border-width: 1px 1px 0;
+    border-color: transparent;
+}
+
+
+.tabs .tab .count {
+    background: #3F4752;
+    border-radius: 3px;
+    color: #CCCCCC;
+    margin-left: 5px;
+    padding: 0 5px;
+}
+
+.tabs .tab a {
+    padding: 12px 30px;
+    outline: 0;
+    box-sizing: border-box;
+}
+
+.tabs .tab a:link,
+.tabs .tab a:visited {
+  color: #AAAAAA;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.tabs li.active a,
+.tabs a:hover,
+.tabs a:active {
+  color: #7BC876;
+}
+
+
+.tabs .tab.active ,
+.tabs .tab.active a,
+.tags .tab.active a:link,
+.tags .tab.active a:visited,
+.tags .tab.active a:hover,
+.tags .tab.active a:active {
+    border-color: #5E6475;
+    background: #272A2F;
+    color: #fff;
+}

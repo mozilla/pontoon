@@ -1,0 +1,23 @@
+
+.locale-selector {
+    font-size: 14px;
+}
+
+.locale-selector label {
+    font-weight: 300;
+}
+
+.locale-selector .chosen {
+    padding-left: 16px;
+}
+
+.locale-selector .available {
+    padding-right: 16px;
+}
+
+.locale-selector a.all,
+.locale-selector a.remove {
+    color: #7bc876;
+    float: right;
+    text-transform: uppercase;
+}

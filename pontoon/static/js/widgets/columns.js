@@ -7,6 +7,7 @@ export class Columns extends React.PureComponent {
     render() {
         return (
             <Container
+               className={this.props.className || ''}
                columns={this.props.columns.length}
                ratios={this.props.columns.map(([, v]) => v)}>
               {this.props.columns.map(([column,], key) => {
@@ -27,6 +28,14 @@ export class Container extends React.Component {
             float: "left",
             boxSizing: "border-box",
             width: width.toString() + "%"};
+    }
+
+    get className () {
+        const className = "container";
+        if (!this.props.className) {
+            return className;
+        }
+        return className + ' ' + this.props.className;
     }
 
     get containerStyle () {
@@ -62,7 +71,7 @@ export class Container extends React.Component {
         let {children} = this.props;
         return (
             <div
-               className="container"
+               className={this.className}
                style={this.containerStyle}>
               {React.Children.map(children || [], (child, key) => {
                   let columnStyle = {};

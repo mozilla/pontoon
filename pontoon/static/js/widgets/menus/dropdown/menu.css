@@ -1,0 +1,46 @@
+
+.menu .menu-item {
+    padding: 2px 4px;
+    font-weight: 300;
+}
+
+.menu.dropdown .menu-item .avatar {
+    text-align: center;
+    padding: 10px 4px;
+}
+
+.menu.dropdown .menu-item:hover {
+    background: #3f4752;
+}
+
+.menu.dropdown .menu-item:hover a {
+    color: white;
+}
+
+.menu.dropdown .menu-item.horizontal-separator {
+    border-top: 1px solid #525A65;
+    height: 0;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.menu.dropdown {
+    border: 1px solid #333941;
+    border-top: none;
+    line-height: 18px;
+    padding-top: 0;
+    width: 250px;
+    position: absolute;
+    bottom: auto;
+    right: 0;
+    top: 60px;
+    background: #272A2F;
+    z-index: 1000;
+    padding: 12px;
+    display: block;
+}
+
+.menu.dropdown .menu-item {
+    padding-bottom: 0;
+    padding-top: 0;
+}
