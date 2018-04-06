@@ -747,7 +747,7 @@ LOCALES = [
     },
     {
         u'code': u'mi',
-        u'name': u'Maori',
+        u'name': u'Māori',
         u'nplurals': u'2',
         u'plural_rule': u'(n > 1)'
     },
