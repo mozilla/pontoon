@@ -35,7 +35,7 @@ def mock_entity_unsupported_extension():
 @pytest.fixture
 def mock_entity_lang():
     """
-    Entity with lang extension.
+    Entity from a .lang file.
     """
     entity = MagicMock()
     entity.comment = ''

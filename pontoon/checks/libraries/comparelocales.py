@@ -1,22 +1,15 @@
-from collections import (
-    namedtuple,
-)
+from collections import namedtuple
 
+from HTMLParser import HTMLParser
 from compare_locales.checks import getChecker
-from compare_locales.parser import (
-    FluentParser,
-)
+from compare_locales.parser import FluentParser
+from compare_locales.paths import File
+
+html_unescape = HTMLParser().unescape
 
 CommentEntity = namedtuple(
     'Comment', (
         'all',
-    )
-)
-
-File = namedtuple(
-    'File', (
-        'file',
-        'locale',
     )
 )
 
@@ -82,14 +75,14 @@ def cast_to_compare_locales(resource_ext, entity, string):
         return (
             CompareDTDEntity(
                 entity.key,
-                entity.string,
+                html_unescape(entity.string),
                 entity.string,
                 CommentEntity(entity.comment),
                 DTD_ENTITY_TMPL % (entity.key, entity.string)
             ),
             CompareDTDEntity(
                 entity.key,
-                string,
+                html_unescape(string),
                 string,
                 CommentEntity(entity.comment),
                 DTD_ENTITY_TMPL % (entity.key, entity.string)
@@ -99,10 +92,10 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == '.ftl':
         parser = FluentParser()
 
-        parser.readContents(entity.string)
+        parser.readContents(entity.string.encode('utf-8'))
         refEntity, = list(parser)
 
-        parser.readContents(string)
+        parser.readContents(string.encode('utf-8'))
         trEntity, = list(parser)
         return (
             refEntity,
@@ -139,7 +132,7 @@ def run_checks(entity, locale, string):
     )
 
     checker = getChecker(
-        File(entity.resource.path, locale),
+        File(entity.resource.path, entity.resource.path),
         {'android-dtd'}
     )
 
