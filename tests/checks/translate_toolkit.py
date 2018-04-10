@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import pytest
 from mock import MagicMock
 
-from pontoon.checks.libraries.translatetoolkit import run_checks
+from pontoon.checks.libraries.translate_toolkit import run_checks
 
 
 @pytest.yield_fixture()

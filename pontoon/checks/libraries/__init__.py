@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 
-import comparelocales
-import translatetoolkit
+import compare_locales
+import translate_toolkit
 from . import pontoon
 
 
@@ -28,8 +28,8 @@ def run_checks(
         * None - If there's no errors and non-omitted warnings.
     """
     try:
-        cl_checks = comparelocales.run_checks(entity, locale.code, string)
-    except comparelocales.UnsupportedResourceTypeError:
+        cl_checks = compare_locales.run_checks(entity, locale.code, string)
+    except compare_locales.UnsupportedResourceTypeError:
         cl_checks = None
 
     resource_ext = entity.resource.format
@@ -49,7 +49,7 @@ def run_checks(
             'newlines',
         }
 
-    tt_checks = translatetoolkit.run_checks(original, string, locale, tt_disabled_checks)
+    tt_checks = translate_toolkit.run_checks(original, string, locale, tt_disabled_checks)
     pontoon_checks = pontoon.run_checks(entity, string)
 
     checks = dict(

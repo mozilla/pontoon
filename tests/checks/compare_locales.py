@@ -4,12 +4,13 @@ from textwrap import dedent
 import pytest
 from mock import MagicMock
 
-from pontoon.checks.libraries.comparelocales import (
+from pontoon.checks.libraries.compare_locales import (
     cast_to_compare_locales,
     ComparePropertiesEntity,
     CommentEntity,
     UnsupportedResourceTypeError,
-    run_checks
+    run_checks,
+    unescape_properties_entity
 )
 
 
@@ -329,3 +330,36 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 )
 def test_invalid_ftl_translations(quality_check_args, failed_checks):
     assert run_checks(**quality_check_args) == failed_checks
+
+
+@pytest.mark.parametrize(
+    "raw_val,expected_val",
+    (
+        (
+            'aaa bbb ccc',
+            'aaa bbb ccc',
+        ),
+
+        # \u(nicode) characters
+        (
+            'aaa \u0025 bbb \u0026 ccc',
+            'aaa % bbb & ccc'
+        ),
+
+        # nl
+        (
+            'aaa \\\n bbb \\\n ccc',
+            'aaa bbb ccc'
+        ),
+        # single
+        (
+            'aaa \\n bbb \\n ccc',
+            'aaa \n bbb \n ccc'
+        ),
+    )
+)
+def test_properties_unescape_entity(raw_val, expected_val):
+    """
+    .properties entities should be escaped
+    """
+    assert unescape_properties_entity(raw_val) == expected_val
