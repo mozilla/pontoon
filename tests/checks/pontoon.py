@@ -22,17 +22,6 @@ def mock_entity_max_length():
 
 
 @pytest.fixture
-def mock_entity_unsupported_extension():
-    """
-    Entity with an extension which is not supported by run_checks.
-    """
-    entity = MagicMock()
-    entity.comment = ''
-    entity.resource.format = 'unsupported'
-    yield entity
-
-
-@pytest.fixture
 def mock_entity_lang():
     """
     Entity from a .lang file.
@@ -40,6 +29,28 @@ def mock_entity_lang():
     entity = MagicMock()
     entity.comment = ''
     entity.resource.format = 'lang'
+    yield entity
+
+
+@pytest.fixture
+def mock_entity_po():
+    """
+    Entity from a .po file.
+    """
+    entity = MagicMock()
+    entity.comment = ''
+    entity.resource.format = 'po'
+    yield entity
+
+
+@pytest.fixture
+def mock_entity_properties():
+    """
+    Entity from a .properties file.
+    """
+    entity = MagicMock()
+    entity.comment = ''
+    entity.resource.format = 'properties'
     yield entity
 
 
@@ -63,30 +74,25 @@ def test_too_long_translation(mock_entity_max_length):
     ) == {'pErrors': ['Translation too long.']}
 
 
-def test_empty_translations(mock_entity_max_length, mock_entity_unsupported_extension):
+def test_empty_translations(mock_entity_properties, mock_entity_po):
     """
     Empty translations shouldn't be allowed for some of extensions.
     """
     assert run_checks(
-        mock_entity_max_length,
+        mock_entity_po,
         ''
     ) == {
         'pErrors': [u'Empty translations cannot be submitted.']
     }
 
     assert run_checks(
-        mock_entity_unsupported_extension,
+        mock_entity_properties,
         ''
     ) == {}
 
 
-def test_lang_newlines(mock_entity_lang, mock_entity_max_length):
+def test_lang_newlines(mock_entity_lang, mock_entity_po):
     """Newlines aren't allowes in lang files"""
-    assert run_checks(
-        mock_entity_lang,
-        ''
-    ) == {}
-
     assert run_checks(
         mock_entity_lang,
         'aaa\nbbb'
@@ -95,6 +101,6 @@ def test_lang_newlines(mock_entity_lang, mock_entity_max_length):
     }
 
     assert run_checks(
-        mock_entity_max_length,
+        mock_entity_po,
         'aaa\nbbb'
     ) == {}

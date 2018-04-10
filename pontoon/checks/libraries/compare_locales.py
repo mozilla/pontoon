@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+
+import re
 from collections import namedtuple
 
 from HTMLParser import HTMLParser
@@ -44,6 +47,28 @@ class UnsupportedResourceTypeError(Exception):
     pass
 
 
+PROPERTIES_ENTITY_ESCAPE_RE = re.compile(
+    r'\\((?P<uni>u[0-9a-fA-F]{1,4})|'
+    r'(?P<nl>\n\s*)|(?P<single>.))',
+    re.M
+)
+PROPERTIES_KNOWN_ESCAPES = {'n': '\n', 'r': '\r', 't': '\t', '\\': '\\'}
+
+
+def unescape_properties_entity(raw_value):
+    """
+    Unescape a raw string.
+    """
+    def unescape(match):
+        found = match.groupdict()
+        if found['uni']:
+            return unichr(int(found['uni'][1:], 16))
+        if found['nl']:
+            return ''
+        return PROPERTIES_KNOWN_ESCAPES.get(found['single'], found['single'])
+    return PROPERTIES_ENTITY_ESCAPE_RE.sub(unescape, raw_value)
+
+
 def cast_to_compare_locales(resource_ext, entity, string):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
@@ -59,13 +84,13 @@ def cast_to_compare_locales(resource_ext, entity, string):
         return (
             ComparePropertiesEntity(
                 entity.key,
-                entity.string,
+                unescape_properties_entity(entity.string),
                 entity.string,
                 CommentEntity(entity.comment)
             ),
             ComparePropertiesEntity(
                 entity.key,
-                string,
+                unescape_properties_entity(string),
                 string,
                 CommentEntity(entity.comment),
             )

@@ -24,7 +24,7 @@ def run_checks(entity, string):
         )
 
     # Prevent empty translation submissions if not supported
-    if resource_ext in {'properties', 'ini', 'dtd', 'ftl'} and string == '':
+    if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
         checks['pErrors'].append(
             'Empty translations cannot be submitted.'
         )

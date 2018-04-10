@@ -11,7 +11,7 @@ from pontoon.checks.libraries import run_checks
 
 @pytest.yield_fixture
 def run_tt_checks_mock():
-    with patch('pontoon.checks.libraries.translatetoolkit.run_checks') as mock:
+    with patch('pontoon.checks.libraries.translate_toolkit.run_checks') as mock:
         yield mock
 
 
