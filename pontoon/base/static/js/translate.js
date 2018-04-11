@@ -3620,7 +3620,13 @@ var Pontoon = (function (my) {
         var managedLocales = $('#server').data('user-managed-locales') || [],
             translatedLocales = $('#server').data('user-translated-locales') || [],
             translatedProjects = $('#server').data('user-translated-projects') || {},
-            localeProject = self.locale.code + '-' + self.project.slug;
+            project = self.project;
+
+        if (self.getEditorEntity()) {
+          project = self.getEditorEntity().project;
+        }
+
+        var localeProject = self.locale.code + '-' + project.slug;
 
         if ($.inArray(self.locale.code, managedLocales) !== -1) {
           return true;
