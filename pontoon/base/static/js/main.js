@@ -845,7 +845,7 @@ $(function() {
               attribute: 'forceSuggestions',
               value: is_enabled
             });
-            $('[id^="save"]').toggleClass('suggest', is_enabled);
+            Pontoon.updateSaveButtons();
           }
         }
       },

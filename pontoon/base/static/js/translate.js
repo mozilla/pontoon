@@ -625,6 +625,7 @@ var Pontoon = (function (my) {
       $('#translation').val(translation.string);
       $('.warning-overlay:visible .cancel').click();
 
+      self.updateSaveButtons();
       self.updateMakeSuggestionToggle();
 
       // Length
@@ -3231,7 +3232,6 @@ var Pontoon = (function (my) {
       self.updateProjectInfo();
       self.updateProfileMenu();
       self.updateTextareaAttributes();
-      self.updateSaveButtons();
       self.resetTimeRange();
       self.updateFilterUI();
       self.renderEntityList();
