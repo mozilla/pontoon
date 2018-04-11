@@ -625,6 +625,8 @@ var Pontoon = (function (my) {
       $('#translation').val(translation.string);
       $('.warning-overlay:visible .cancel').click();
 
+      self.updateMakeSuggestionToggle();
+
       // Length
       var original = entity['original' + this.isPluralized()];
 
@@ -3098,6 +3100,15 @@ var Pontoon = (function (my) {
      */
     updateSaveButtons: function () {
       $('[id^="save"]').toggleClass('suggest', !this.user.canTranslate() || this.user.forceSuggestions);
+    },
+
+
+    /*
+     * Update visibility of Make Suggestion toggle.
+     * It should only be visible to Translators.
+     */
+    updateMakeSuggestionToggle: function () {
+      $('#settings .menu .force-suggestions').toggle(this.user.canTranslate());
     },
 
 
