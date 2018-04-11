@@ -1900,18 +1900,12 @@ class EntityQuerySet(models.QuerySet):
         :returns: a django ORM Q object to use as a filter
 
         """
-        translated_ids = self.get_filtered_entities(
-            locale,
-            Q(approved=True),
-            lambda x: x.approved
-        )
-        fuzzy_ids = self.get_filtered_entities(
-            locale,
-            Q(fuzzy=True),
-            lambda x: x.fuzzy
-        )
         return ~Q(
-            pk__in=translated_ids.union(fuzzy_ids)
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=True) | Q(fuzzy=True),
+                lambda x: x.approved or x.fuzzy
+            )
         )
 
     def fuzzy(self, locale):
