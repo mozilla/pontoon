@@ -625,6 +625,9 @@ var Pontoon = (function (my) {
       $('#translation').val(translation.string);
       $('.warning-overlay:visible .cancel').click();
 
+      self.updateSaveButtons();
+      self.updateMakeSuggestionToggle();
+
       // Length
       var original = entity['original' + this.isPluralized()];
 
@@ -3102,6 +3105,15 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update visibility of Make Suggestion toggle.
+     * It should only be visible to Translators.
+     */
+    updateMakeSuggestionToggle: function () {
+      $('#settings .menu .force-suggestions').toggle(this.user.canTranslate());
+    },
+
+
+    /*
      * Update textarea lang, dir and data-script attributes
      */
     updateTextareaAttributes: function () {
@@ -3220,7 +3232,6 @@ var Pontoon = (function (my) {
       self.updateProjectInfo();
       self.updateProfileMenu();
       self.updateTextareaAttributes();
-      self.updateSaveButtons();
       self.resetTimeRange();
       self.updateFilterUI();
       self.renderEntityList();
@@ -3609,7 +3620,13 @@ var Pontoon = (function (my) {
         var managedLocales = $('#server').data('user-managed-locales') || [],
             translatedLocales = $('#server').data('user-translated-locales') || [],
             translatedProjects = $('#server').data('user-translated-projects') || {},
-            localeProject = self.locale.code + '-' + self.project.slug;
+            project = self.project;
+
+        if (self.getEditorEntity()) {
+          project = self.getEditorEntity().project;
+        }
+
+        var localeProject = self.locale.code + '-' + project.slug;
 
         if ($.inArray(self.locale.code, managedLocales) !== -1) {
           return true;
