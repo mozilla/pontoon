@@ -2077,19 +2077,17 @@ var Pontoon = (function (my) {
       });
 
       $('#helpers .history').on('click', 'menu .unapprove', function () {
-        var button = $(this),
-            translationId = parseInt($(this).parents('li').data('id'));
+        var button = $(this);
+        var translationId = parseInt($(this).parents('li').data('id'));
+        var entity = self.getEditorEntity();
+        var pf = self.getPluralForm(true);
 
         $.post('/unapprove-translation/', {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           translation: translationId,
           paths: self.getPartPaths(self.currentPart)
         }).then(function(data) {
-          var entity = self.getEditorEntity(),
-              pf = self.getPluralForm(true);
-
           self.stats = data.stats;
-
           self.updateTranslation(entity, pf, data.translation);
 
           // FTL Editor
@@ -2126,6 +2124,10 @@ var Pontoon = (function (my) {
 
       $('#helpers .history').on('click', 'menu .reject', function () {
         var button = $(this);
+        var item = button.parents('li');
+        var entity = self.getEditorEntity();
+        var pf = self.getPluralForm(true);
+
         // Reject a translation.
         $.ajax({
           url: '/reject-translation/',
@@ -2136,14 +2138,9 @@ var Pontoon = (function (my) {
             paths: self.getPartPaths(self.currentPart)
           },
           success: function(data) {
-            var entity = self.getEditorEntity();
-            var pf = self.getPluralForm(true);
-
             self.stats = data.stats;
-
             self.updateTranslation(entity, pf, data.translation);
 
-            var item = button.parents('li');
             item.addClass('rejected').removeClass('translated suggested fuzzy');
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
@@ -2157,19 +2154,17 @@ var Pontoon = (function (my) {
       });
 
       $('#helpers .history').on('click', 'menu .unreject', function () {
-        var button = $(this),
-            translationId = parseInt($(this).parents('li').data('id'));
+        var button = $(this);
+        var translationId = parseInt($(this).parents('li').data('id'));
+        var entity = self.getEditorEntity();
+        var pf = self.getPluralForm(true);
 
         $.post('/unreject-translation/', {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           translation: translationId,
           paths: self.getPartPaths(self.currentPart)
         }).then(function(data) {
-          var entity = self.getEditorEntity();
-          var pf = self.getPluralForm(true);
-
           self.stats = data.stats;
-
           self.updateTranslation(entity, pf, data.translation);
 
           // FTL Editor
