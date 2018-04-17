@@ -5,11 +5,6 @@
 # Failures should cause setup to fail.
 set -e
 
-# Enable node and npm.
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-nvm use node
-
 # Make sure we use correct binaries.
 PYTHON="$(which python)"
 PYLAMA="$(which pylama)"
@@ -20,16 +15,15 @@ CODECOV="$(which codecov)"
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"
-echo "Collecting static files and bundles"
-./node_modules/.bin/webpack
-$PYTHON manage.py collectstatic -v0 --noinput
-
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
 echo "Linting Python code"
 $PYLAMA pontoon
 $PYLAMA tests
+
+echo ""
+echo "--------------------------------------------------------------------------------------------"
+echo "Collecting static files and bundles"
+$WEBPACK_BINARY
+$PYTHON manage.py collectstatic -v0 --noinput
 
 # echo "Linting JavaScript code"
 # This is not passing yet, so it's temporarily disabled.
