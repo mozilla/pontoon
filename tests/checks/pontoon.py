@@ -2,7 +2,6 @@ from __future__ import absolute_import
 import pytest
 
 from mock import MagicMock
-from textwrap import dedent
 
 from pontoon.checks.libraries.pontoon import (
     get_max_length,
@@ -22,6 +21,7 @@ def get_entity_mock():
         entity.resource.path = 'test.' + format
         return entity
     yield _f
+
 
 @pytest.mark.parametrize(
     'comment, expected',

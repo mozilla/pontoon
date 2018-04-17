@@ -49,8 +49,12 @@ def run_checks(
             'newlines',
         }
 
-    tt_checks = translate_toolkit.run_checks(original, string, locale, tt_disabled_checks)
+    if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
+        tt_disabled_checks.add('untranslated')
+
     pontoon_checks = pontoon.run_checks(entity, string)
+
+    tt_checks = translate_toolkit.run_checks(original, string, locale, tt_disabled_checks)
 
     checks = dict(
         # User decided to ignore checks from Translation Toolkit
