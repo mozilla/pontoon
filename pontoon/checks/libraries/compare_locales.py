@@ -117,10 +117,10 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == '.ftl':
         parser = FluentParser()
 
-        parser.readContents(entity.string.encode('utf-8'))
+        parser.readContents(entity.string)
         refEntity, = list(parser)
 
-        parser.readContents(string.encode('utf-8'))
+        parser.readContents(string)
         trEntity, = list(parser)
         return (
             refEntity,
@@ -148,7 +148,7 @@ def run_checks(entity, locale, string):
         }
         Both keys are optional.
     """
-    resource_ext = ".{}".format(entity.resource.format)
+    resource_ext = '.{}'.format(entity.resource.format)
 
     source_ent, translation_ent = cast_to_compare_locales(
         resource_ext,
@@ -178,7 +178,7 @@ def run_checks(entity, locale, string):
     errors = {}
 
     for (severity, _, message, _) in checker.check(source_ent, translation_ent):
-        errors.setdefault("cl%ss" % severity.capitalize(), []).append(message)
+        errors.setdefault('cl%ss' % severity.capitalize(), []).append(message)
 
     return errors
 

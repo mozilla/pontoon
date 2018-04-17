@@ -528,6 +528,8 @@ var Pontoon = (function (my) {
       $('#metadata').empty();
       $('#source-pane').removeClass().find('#screenshots').empty();
 
+      self.translationLengthLimit = false;
+
       if (entity.comment) {
         // Translation length limit
         var split = entity.comment.split('\n'),
