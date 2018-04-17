@@ -2563,11 +2563,13 @@ var Pontoon = (function (my) {
      *
      * failedChecks Array of warnings or errors
      */
-    showFailedChecks: function(checkType, failedChecks) {
+    showFailedChecks: function(type, failedChecks) {
       $(failedChecks).each(function() {
         $('#quality ul').append(
-          '<li class="' + checkType + '">' +
-          '<i class="fa fa-' + checkType + '"></i>' + this + '</li>'
+          '<li>' +
+            '<i class="fa fa-times-circle ' + type + '"></i>' +
+            this +
+          '</li>'
         );
       });
     },
@@ -2648,20 +2650,20 @@ var Pontoon = (function (my) {
 
             if (failedChecks.clErrors) {
               $('#save-anyway').hide();
-              self.showFailedChecks('times-circle', failedChecks.clErrors);
+              self.showFailedChecks('error', failedChecks.clErrors);
             }
 
             if (failedChecks.pErrors) {
               $('#save-anyway').hide();
-              self.showFailedChecks('times-circle', failedChecks.pErrors);
-            }
-
-            if (failedChecks.ttWarnings) {
-              self.showFailedChecks('warning', failedChecks.ttWarnings);
+              self.showFailedChecks('error', failedChecks.pErrors);
             }
 
             if (failedChecks.clWarnings) {
               self.showFailedChecks('warning', failedChecks.clWarnings);
+            }
+
+            if (failedChecks.ttWarnings) {
+              self.showFailedChecks('warning', failedChecks.ttWarnings);
             }
 
             $('#quality').show();
