@@ -4,7 +4,19 @@ import re
 
 from collections import defaultdict
 
-MAX_LENGTH_RE = re.compile(r'MAX_LENGTH: (\d+)$', re.MULTILINE)
+MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
+
+
+def get_max_length(comment):
+    """
+    Return max length value for an entity with MAX_LENTH.
+    """
+    max_length = re.findall(MAX_LENGTH_RE, comment or '')
+
+    if max_length:
+        return int(max_length[0][1])
+
+    return None
 
 
 def run_checks(entity, string):
@@ -16,9 +28,9 @@ def run_checks(entity, string):
     """
     checks = defaultdict(list)
     resource_ext = entity.resource.format
+    max_length = get_max_length(entity.comment)
 
-    max_length = re.findall(MAX_LENGTH_RE, entity.comment or '')
-    if max_length and len(string) > int(max_length[0]):
+    if max_length and len(string) > max_length:
         checks['pErrors'].append(
             'Translation too long.'
         )

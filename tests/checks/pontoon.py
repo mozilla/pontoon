@@ -4,103 +4,97 @@ import pytest
 from mock import MagicMock
 from textwrap import dedent
 
-from pontoon.checks.libraries.pontoon import run_checks
+from pontoon.checks.libraries.pontoon import (
+    get_max_length,
+    run_checks
+)
 
 
-@pytest.fixture
-def mock_entity_max_length():
+@pytest.fixture()
+def get_entity_mock():
     """
-    Entity with defined max length of a translation.
+    Create an entity mock with comment and resource.path and format set.
     """
-    entity = MagicMock()
-    entity.comment = dedent("""
-    Some Comment
-    MAX_LENGTH: 10
-    """)
-    entity.resource.format = 'ftl'
-    yield entity
+    def _f(format, comment=''):
+        entity = MagicMock()
+        entity.comment = comment
+        entity.resource.format = format
+        entity.resource.path = 'test.' + format
+        return entity
+    yield _f
 
-
-@pytest.fixture
-def mock_entity_lang():
+@pytest.mark.parametrize(
+    'comment, expected',
+    (
+        ('MAX_LENGTH: 24', 24),
+        ('MAX_LENGTH: 4', 4),
+        ('MAX_LENGTH:  4', 4),
+        ('MAX_LENGTH:4 ', 4),
+        ('MAX_LENGTH:  42  ', 42),
+        ('MAX_LENGTH:  42\n MAX_LENGTH: 10 ', 42),
+        ('MAX_LENGTH: 123 characters', 123),
+        ('MAX_LENGTH: 4\naaaa', 4),
+        ('bbbb \n MAX_LENGTH: 4\naaaa', 4),
+        ('MAX_LENGTH: 4 characters\naaaa', 4),
+        ('bbbb\nMAX_xLENGTH: 4 characters\naaaa', None),
+        ('bbbb\nMAX_LENGTH: z characters\naaaa', None),
+        ('bbbb\nMAX_LENGTH:\n 4 characters\naaaa', None),
+    )
+)
+def test_too_long_translation_max_length(comment, expected):
     """
-    Entity from a .lang file.
+    Checks should return an error if a translation is too long.
     """
-    entity = MagicMock()
-    entity.comment = ''
-    entity.resource.format = 'lang'
-    yield entity
+    assert get_max_length(comment) == expected
 
 
-@pytest.fixture
-def mock_entity_po():
-    """
-    Entity from a .po file.
-    """
-    entity = MagicMock()
-    entity.comment = ''
-    entity.resource.format = 'po'
-    yield entity
-
-
-@pytest.fixture
-def mock_entity_properties():
-    """
-    Entity from a .properties file.
-    """
-    entity = MagicMock()
-    entity.comment = ''
-    entity.resource.format = 'properties'
-    yield entity
-
-
-def test_too_long_translation(mock_entity_max_length):
+def test_too_long_translation_valid_length(get_entity_mock):
     """
     Checks should return an error if a translation is too long.
     """
     assert run_checks(
-        mock_entity_max_length,
-        '0123',
+        get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '0123'
     ) == {}
 
-    assert run_checks(
-        mock_entity_max_length,
-        '0123456789'
-    ) == {}
 
+def test_too_long_translation_invalid_length(get_entity_mock):
+    """
+    Checks should return an error if a translation is too long.
+    """
     assert run_checks(
-        mock_entity_max_length,
-        '0123456789Too long'
+        get_entity_mock('lang', 'MAX_LENGTH: 2'),
+        '0123'
     ) == {'pErrors': ['Translation too long.']}
 
 
-def test_empty_translations(mock_entity_properties, mock_entity_po):
+def test_empty_translations(get_entity_mock):
     """
     Empty translations shouldn't be allowed for some of extensions.
     """
     assert run_checks(
-        mock_entity_po,
+        get_entity_mock('po'),
         ''
     ) == {
         'pErrors': [u'Empty translations cannot be submitted.']
     }
 
     assert run_checks(
-        mock_entity_properties,
+        get_entity_mock('properties'),
         ''
     ) == {}
 
 
-def test_lang_newlines(mock_entity_lang, mock_entity_po):
+def test_lang_newlines(get_entity_mock):
     """Newlines aren't allowes in lang files"""
     assert run_checks(
-        mock_entity_lang,
+        get_entity_mock('lang'),
         'aaa\nbbb'
     ) == {
         'pErrors': [u'Newline characters are not allowed.']
     }
 
     assert run_checks(
-        mock_entity_po,
+        get_entity_mock('po'),
         'aaa\nbbb'
     ) == {}
