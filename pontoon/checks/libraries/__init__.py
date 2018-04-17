@@ -62,7 +62,7 @@ def run_checks(
 
     has_errors = any(p.endswith('Errors') for p in checks)
 
-    if (not ignore_warnings and checks) or has_errors:
+    if (not ignore_warnings and checks) or has_errors or same:
         return JsonResponse({
             'failedChecks': checks,
             'same': same,
