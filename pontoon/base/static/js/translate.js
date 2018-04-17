@@ -521,13 +521,14 @@ var Pontoon = (function (my) {
      */
     openEditor: function (entity) {
       var self = this;
-      self.translationLengthLimit = null;
 
       $('#editor')[0].entity = entity;
 
       // Metadata: comment
       $('#metadata').empty();
       $('#source-pane').removeClass().find('#screenshots').empty();
+
+      self.translationLengthLimit = false;
 
       if (entity.comment) {
         // Translation length limit
@@ -1655,14 +1656,6 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Check if translation length limit exceeded
-     */
-    translationLengthLimitExceeded: function (translation) {
-      return this.translationLengthLimit && this.stripHTML(translation).length > this.translationLengthLimit;
-    },
-
-
-    /*
      * Remove event first to avoid double handling
      */
     reattachSaveButtonHandler: function () {
@@ -1680,18 +1673,6 @@ var Pontoon = (function (my) {
       var self = Pontoon,
           entity = self.getEditorEntity(),
           translation = $('#translation').val();
-
-      // Prevent empty translation submissions if not supported
-      if (translation === '' &&
-        ['properties', 'ini', 'dtd', 'ftl'].indexOf(entity.format) === -1) {
-          self.endLoader('Empty translations cannot be submitted.', 'error');
-          return;
-      }
-
-      if (self.translationLengthLimitExceeded(translation)) {
-        self.endLoader('Translation too long.', 'error');
-        return;
-      }
 
       // Prevent double translation submissions
       $(this).off('click.save');
@@ -2578,16 +2559,17 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Show quality check warnings
+     * Show failing checks
      *
-     * warnings Array of warnings
+     * failedChecks Array of warnings or errors
      */
-    showQualityCheckWarnings: function(warnings) {
-      $('#quality ul').empty();
-      $(warnings).each(function() {
-        $('#quality ul').append('<li>' + this + '</li>');
+    showFailedChecks: function(checkType, failedChecks) {
+      $(failedChecks).each(function() {
+        $('#quality ul').append(
+          '<li class="' + checkType + '">' +
+          '<i class="fa fa-' + checkType + '"></i>' + this + '</li>'
+        );
       });
-      $('#quality').show();
     },
 
 
@@ -2625,16 +2607,16 @@ var Pontoon = (function (my) {
       }
 
       function renderTranslation(data) {
-        self.stats = data.stats;
+          self.stats = data.stats;
 
-        if (data.type) {
-          self.endLoader('Translation ' + data.type);
+          if (data.type) {
+              self.endLoader('Translation ' + data.type);
 
-          if (self.approvedNotSubmitted) {
-            $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
-              .parents('li').addClass('approved')
-                .siblings().removeClass('approved');
-          }
+              if (self.approvedNotSubmitted) {
+                  $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
+                      .parents('li').addClass('approved')
+                      .siblings().removeClass('approved');
+              }
 
           var pf = self.getPluralForm(true);
           self.cachedTranslation = self.fluent.getFTLEditorContentsAsSource();
@@ -2642,24 +2624,47 @@ var Pontoon = (function (my) {
           self.updateInPlaceTranslation(data.translation.string);
           self.updateFilterUI();
 
-          // Update translation, including in place if possible
-          if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
-            self.postMessage("SAVE", {
-              translation: translation,
-              id: entity.id
-            });
-          }
+              // Update translation, including in place if possible
+              if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
+                  self.postMessage("SAVE", {
+                      translation: translation,
+                      id: entity.id
+                  });
+              }
 
-          goToNextTranslation();
+              goToNextTranslation();
 
-        } else if (data.warnings) {
-          self.endLoader();
-          self.showQualityCheckWarnings(data.warnings);
+          } else if (data.same) {
+            self.endLoader('Same translation already exists.', 'error');
+            goToNextTranslation();
 
-        } else if (data.same) {
-          self.endLoader(data.message, 'error');
-          goToNextTranslation();
+          } else if (data.failedChecks) {
+            var failedChecks = data.failedChecks;
 
+            self.endLoader();
+            $('#save-anyway').show();
+
+            $('#quality ul').empty();
+
+            if (failedChecks.clErrors) {
+              $('#save-anyway').hide();
+              self.showFailedChecks('times-circle', failedChecks.clErrors);
+            }
+
+            if (failedChecks.pErrors) {
+              $('#save-anyway').hide();
+              self.showFailedChecks('times-circle', failedChecks.pErrors);
+            }
+
+            if (failedChecks.ttWarnings) {
+              self.showFailedChecks('warning', failedChecks.ttWarnings);
+            }
+
+            if (failedChecks.clWarnings) {
+              self.showFailedChecks('warning', failedChecks.clWarnings);
+            }
+
+            $('#quality').show();
         } else {
           self.endLoader(data, 'error');
         }
