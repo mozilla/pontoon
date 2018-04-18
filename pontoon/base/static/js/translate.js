@@ -2604,16 +2604,16 @@ var Pontoon = (function (my) {
       }
 
       function renderTranslation(data) {
-          self.stats = data.stats;
+        self.stats = data.stats;
 
-          if (data.type) {
-              self.endLoader('Translation ' + data.type);
+        if (data.type) {
+          self.endLoader('Translation ' + data.type);
 
-              if (self.approvedNotSubmitted) {
-                  $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
-                      .parents('li').addClass('approved')
-                      .siblings().removeClass('approved');
-              }
+          if (self.approvedNotSubmitted) {
+              $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
+                  .parents('li').addClass('approved')
+                  .siblings().removeClass('approved');
+          }
 
           var pf = self.getPluralForm(true);
           self.cachedTranslation = self.fluent.getFTLEditorContentsAsSource();
@@ -2621,47 +2621,46 @@ var Pontoon = (function (my) {
           self.updateInPlaceTranslation(data.translation.string);
           self.updateFilterUI();
 
-              // Update translation, including in place if possible
-              if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
-                  self.postMessage("SAVE", {
-                      translation: translation,
-                      id: entity.id
-                  });
-              }
+          // Update translation, including in place if possible
+          if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
+            self.postMessage("SAVE", {
+                translation: translation,
+                id: entity.id
+            });
+          }
 
-              goToNextTranslation();
+          goToNextTranslation();
 
-          } else if (data.same) {
-            self.endLoader('Same translation already exists.', 'error');
-            goToNextTranslation();
+        } else if (data.same) {
+          self.endLoader('Same translation already exists.', 'error');
+          goToNextTranslation();
 
-          } else if (data.failedChecks) {
-            var failedChecks = data.failedChecks;
+        } else if (data.failedChecks) {
+          self.endLoader();
+          var failedChecks = data.failedChecks;
 
-            self.endLoader();
-            $('#save-anyway').show();
+          $('#save-anyway').show();
+          $('#quality ul').empty();
 
-            $('#quality ul').empty();
+          if (failedChecks.clErrors) {
+            $('#save-anyway').hide();
+            self.showFailedChecks('error', failedChecks.clErrors);
+          }
 
-            if (failedChecks.clErrors) {
-              $('#save-anyway').hide();
-              self.showFailedChecks('error', failedChecks.clErrors);
-            }
+          if (failedChecks.pErrors) {
+            $('#save-anyway').hide();
+            self.showFailedChecks('error', failedChecks.pErrors);
+          }
 
-            if (failedChecks.pErrors) {
-              $('#save-anyway').hide();
-              self.showFailedChecks('error', failedChecks.pErrors);
-            }
+          if (failedChecks.clWarnings) {
+            self.showFailedChecks('warning', failedChecks.clWarnings);
+          }
 
-            if (failedChecks.clWarnings) {
-              self.showFailedChecks('warning', failedChecks.clWarnings);
-            }
+          if (failedChecks.ttWarnings) {
+            self.showFailedChecks('warning', failedChecks.ttWarnings);
+          }
 
-            if (failedChecks.ttWarnings) {
-              self.showFailedChecks('warning', failedChecks.ttWarnings);
-            }
-
-            $('#quality').show();
+          $('#quality').show();
         } else {
           self.endLoader(data, 'error');
         }
