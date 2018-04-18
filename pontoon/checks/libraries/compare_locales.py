@@ -77,8 +77,8 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :arg pontoon.base.models.Entity entity: Source entity
     :arg basestring string: a translation
     :arg pontoon.base.models.Locale locale: Locale of a translation
-    :return: source entity and translation entity that will be compatible a compare-locales checker.
-        Type of those entities depends on the resource_ext.
+    :return: source entity and translation entity that will be compatible with
+        a compare-locales checker. Type of those entities depends on the resource_ext.
     """
     if resource_ext == '.properties':
         return (
@@ -181,4 +181,3 @@ def run_checks(entity, locale, string):
         errors.setdefault('cl%ss' % severity.capitalize(), []).append(message)
 
     return errors
-
