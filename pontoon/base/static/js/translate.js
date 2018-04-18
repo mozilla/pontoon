@@ -2615,9 +2615,9 @@ var Pontoon = (function (my) {
           self.endLoader('Translation ' + data.type);
 
           if (self.approvedNotSubmitted) {
-              $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
-                  .parents('li').addClass('approved')
-                  .siblings().removeClass('approved');
+            $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
+              .parents('li').addClass('approved')
+                .siblings().removeClass('approved');
           }
 
           var pf = self.getPluralForm(true);
