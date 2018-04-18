@@ -2624,8 +2624,8 @@ var Pontoon = (function (my) {
           // Update translation, including in place if possible
           if (entity.body && (self.user.canTranslate() || !entity.translation[pf].approved)) {
             self.postMessage("SAVE", {
-                translation: translation,
-                id: entity.id
+              translation: translation,
+              id: entity.id
             });
           }
 
