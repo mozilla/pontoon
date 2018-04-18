@@ -1668,11 +1668,15 @@ body > header aside p {
   vertical-align: text-bottom;
 }
 
-#quality i.warning {
+#quality .warning {
+  color: #AAAAAA;
+}
+
+#quality .warning i {
   color: #4D5967;
 }
 
-#quality i.error {
+#quality .error i {
   color: #F36;
 }
 

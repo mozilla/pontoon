@@ -2561,8 +2561,8 @@ var Pontoon = (function (my) {
     showFailedChecks: function(type, failedChecks) {
       $(failedChecks).each(function() {
         $('#quality ul').append(
-          '<li>' +
-            '<i class="fa fa-times-circle ' + type + '"></i>' +
+          '<li class="' + type + '">' +
+            '<i class="fa fa-times-circle"></i>' +
             this +
           '</li>'
         );
