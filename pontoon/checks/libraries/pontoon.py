@@ -19,6 +19,29 @@ def get_max_length(comment):
     return None
 
 
+def is_same(same_translations, can_translate):
+    """
+    Check if translation is the same
+    :arg QuerySet `same_translations`: translations that have the same string
+        as a suggestion/translation.
+    :arg boolean `can_translate`: user is able to submit translations
+    :returns: True if translation already exists and won't be submitted to the database.
+    """
+    if not same_translations:
+        return False
+
+    st = same_translations[0]
+
+    if can_translate:
+        if st.approved and not st.fuzzy:
+            return True
+
+    else:
+        if not st.fuzzy:
+            return True
+    return False
+
+
 def run_checks(entity, string):
     """
     Group all checks related to the base UI
@@ -44,6 +67,6 @@ def run_checks(entity, string):
     # Newlines are not allowed in .lang files (bug 1190754)
     if resource_ext == 'lang' and '\n' in string:
         checks['pErrors'].append(
-            u'Newline characters are not allowed.'
+            'Newline characters are not allowed.'
         )
     return checks

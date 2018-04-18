@@ -45,6 +45,7 @@ from pontoon.base.models import (
 from pontoon.tags.utils.tags import TagsTool
 
 from pontoon.checks.libraries import run_checks
+from pontoon.checks.libraries.pontoon import is_same
 
 
 log = logging.getLogger(__name__)
@@ -575,7 +576,7 @@ def update_translation(request):
         original,
         string,
         ignore,
-        utils.is_same(same_translations, can_translate)
+        is_same(same_translations, can_translate)
     )
 
     if checks:
