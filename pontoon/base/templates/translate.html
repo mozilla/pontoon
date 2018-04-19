@@ -333,7 +333,7 @@
             <div class="selector fa fa-cog" title="Settings"></div>
             <div class="menu">
               <ul>
-                {{ Checkbox.checkbox('Quality Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run quality checks before submitting translations') }}
+                {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
                 {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
                 <li class="horizontal-separator"></li>
                 <li><a href="{{ url('pontoon.contributors.settings') }}">Change All Settings</a></li>
