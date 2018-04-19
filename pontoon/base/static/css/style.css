@@ -525,7 +525,7 @@ tfoot td a {
   margin-left: 0;
   padding: 10px 12px;
   position: absolute;
-  width: 150px;
+  width: 185px;
   z-index: 20; /* Must be higher than iframe-cover */
 }
 
