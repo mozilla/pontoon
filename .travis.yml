@@ -39,7 +39,7 @@ script:
   - python manage.py collectstatic -v0 --noinput
   - npm test
   - python manage.py test --with-coverage
-  - py.test --cov-append --cov-report=term --cov=. -v
+  - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - ./node_modules/.bin/eslint .
   - codecov
 
