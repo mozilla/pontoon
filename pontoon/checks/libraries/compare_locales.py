@@ -117,10 +117,9 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == '.ftl':
         parser = FluentParser()
 
-        parser.readContents(entity.string)
         refEntity, = list(parser)
 
-        parser.readContents(string)
+        parser.readUnicode(string)
         trEntity, = list(parser)
         return (
             refEntity,
