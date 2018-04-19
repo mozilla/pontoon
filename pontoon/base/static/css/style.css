@@ -525,7 +525,7 @@ tfoot td a {
   margin-left: 0;
   padding: 10px 12px;
   position: absolute;
-  width: 185px;
+  width: 150px;
   z-index: 20; /* Must be higher than iframe-cover */
 }
 
@@ -539,6 +539,10 @@ tfoot td a {
   padding: 10px 20px 10px 40px;
   text-overflow: ellipsis;
   width: 200px;
+}
+
+#settings .menu {
+  width: 185px;
 }
 
 #go {
