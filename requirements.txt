@@ -66,7 +66,7 @@ django-webpack-loader==0.5.0 \
 factory-boy==2.5.2 \
     --hash=sha256:102c8141511443df01d354610d3b268924100654316709b43ac04648b50bf703 \
     --hash=sha256:cd8306e64c3a115deca136685e945db88ffe171382012ec938ed241a20dd7eba
-fluent==0.6.4 \
+fluent==0.7.0 \
     --hash=sha256:7f00d1726e8c0843de1fc41415fa2db14e549b57164cb04fda2a3c8a93d9ea3d
 gunicorn==19.3.0 \
     --hash=sha256:a5179cde922d2b4e045ee5b11e87323ee77d363ae40294fc8252f25d6a0eaf06 \
