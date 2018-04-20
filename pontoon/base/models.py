@@ -634,7 +634,7 @@ class Locale(AggregatedStats):
 
     name = models.CharField(max_length=128)
     plural_rule = models.CharField(
-        max_length=128,
+        max_length=512,
         blank=True,
         help_text="""
         Plural rule is part of the plurals header in
@@ -2391,7 +2391,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     locale = models.ForeignKey(Locale)
     user = models.ForeignKey(User, null=True, blank=True)
     string = models.TextField()
-    # 0=zero, 1=one, 2=two, 3=few, 4=many, 5=other, null=no plural forms
+    # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
     fuzzy = models.BooleanField(default=False)
