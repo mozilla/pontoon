@@ -634,7 +634,7 @@ class Locale(AggregatedStats):
 
     name = models.CharField(max_length=128)
     plural_rule = models.CharField(
-        max_length=128,
+        max_length=512,
         blank=True,
         help_text="""
         Plural rule is part of the plurals header in
