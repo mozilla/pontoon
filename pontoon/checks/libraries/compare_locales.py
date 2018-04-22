@@ -117,6 +117,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == '.ftl':
         parser = FluentParser()
 
+        parser.readUnicode(entity.string)
         refEntity, = list(parser)
 
         parser.readUnicode(string)
@@ -156,7 +157,7 @@ def run_checks(entity, locale, string):
     )
 
     checker = getChecker(
-        File(entity.resource.path, entity.resource.path),
+        File(entity.resource.path, entity.resource.path, locale=locale),
         {'android-dtd'}
     )
 
