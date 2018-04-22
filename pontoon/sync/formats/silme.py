@@ -204,7 +204,7 @@ class SilmeResource(ParsedResource):
         ):
             new_entity = silme.core.entity.Entity(
                 'browser.startup.homepage',
-                'http://start.firefoxchina.cn'
+                'https://start.firefoxchina.cn'
             )
             new_structure.add_entity(new_entity)
             new_structure.add_string('\n')
