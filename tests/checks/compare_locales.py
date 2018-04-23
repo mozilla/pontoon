@@ -6,9 +6,10 @@ from mock import MagicMock
 
 from pontoon.checks.libraries.compare_locales import (
     CompareDTDEntity,
-    ComparePropertiesEntity,
-    UnsupportedResourceTypeError,
     cast_to_compare_locales,
+    ComparePropertiesEntity,
+    CommentEntity,
+    UnsupportedResourceTypeError,
     run_checks,
 )
 
@@ -22,9 +23,6 @@ def mock_quality_check_args(
     """
     Generate a dictionary of arguments ready to use by get_quality_check function.
     """
-    locale = MagicMock()
-    locale.code = 'en-US'
-
     entity = MagicMock()
     entity.resource.path = 'resource1.{}'.format(resource_ext)
     entity.resource.format = resource_ext
@@ -47,7 +45,7 @@ def mock_quality_check_args(
 
     return {
         'entity': entity,
-        'locale': locale,
+        'locale': 'en-US',
         'string': translation,
     }
 
@@ -178,10 +176,21 @@ def test_valid_translations(quality_check_args):
                 resource_ext='properties',
                 string='Invalid #1 entity',
                 comment='Localization_and_Plurals',
-                translation='Invalid #1 translation #2',
+                translation='Invalid #1;translation #2',
             ),
             {
                 'clErrors': ['unreplaced variables in l10n']
+            }
+        ),
+        (
+            mock_quality_check_args(
+                resource_ext='properties',
+                string='Multi plural entity',
+                comment='Localization_and_Plurals',
+                translation='translation1;translation2;translation3',
+            ),
+            {
+                'clWarnings': ['expecting 2 plurals, found 3'],
             }
         )
     )
