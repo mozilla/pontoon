@@ -1,4 +1,3 @@
-
 import fnmatch
 import functools
 from collections import OrderedDict
@@ -11,28 +10,7 @@ from django.utils import timezone
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
-
-
-@pytest.fixture
-def tag0(resource0):
-    """Tag 0"""
-    tag = Tag.objects.create(slug="tag0", name="Tag 0")
-    tag.resources.add(resource0)
-    return tag
-
-
-@pytest.fixture
-def tag1(resource1):
-    """Tag 1"""
-    tag = Tag.objects.create(slug="tag1", name="Tag 1")
-    tag.resources.add(resource1)
-    return tag
-
-
-@pytest.fixture
-def tagX():
-    """Tag X - empty tag"""
-    return Tag.objects.create(slug="tagX", name="Tag X")
+from pontoon.base.tests import fixtures  # noqa
 
 
 @pytest.fixture
