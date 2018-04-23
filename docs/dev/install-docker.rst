@@ -36,7 +36,7 @@ initialize submodules with ``git submodule update --init --recursive``.
 
 1. From the root of the repository, run::
 
-     $ make dockerbuild
+     $ make build
 
    That will build the containers required for development: base and
    webapp.
@@ -44,12 +44,12 @@ initialize submodules with ``git submodule update --init --recursive``.
    If you want to share your development instance in your local network, you set SITE_URL to bind
    the webapp to any address you like.
 
-     $ make dockerbuild SITE_URL="https://192.168.1.14:8000"
+     $ make build SITE_URL="https://192.168.1.14:8000"
 
 
 2. Then run the webapp::
 
-      $ make dockerrun
+      $ make run
 
    .. Note::
 
@@ -66,7 +66,7 @@ initialize submodules with ``git submodule update --init --recursive``.
 
 3. Finally you need to run some setup steps, while the webapp is running::
 
-      $ make dockersetup
+      $ make setup
 
    This will ask you to create a superuser, and then will update your Firefox
    account settings.
@@ -80,7 +80,7 @@ Database
 By default, you will have default data loaded for only the Pontoon Intro project.
 If you have a database dump, you can load it into your PostgreSQL database by running::
 
-    $ make dockerloaddb DB_DUMP_FILE=path/to/my/dump
+    $ make loaddb DB_DUMP_FILE=path/to/my/dump
 
 Note that your database container needs to be running while you do that. You
 can start just the postgresql container by runnin::
@@ -92,11 +92,24 @@ Running tests
 
 To run the entire test suite, simply run::
 
-    $ make dockertest
+    $ make test
 
 If you want to run only some unit tests, or want to avoid rebuilding the
 docker container every time you run tests, you can start a shell that will
 allow to run your own commands. To do that, run::
 
-    $ make dockershell
+    $ make shell
     app@675af05d66ae:/app$ python manage.py test
+
+Building front-end resources
+----------------------------
+
+We use webpack to build our JavaScript files for some pages. While `make build` will build
+those files for you, you might want to rebuild them while programming on the front. To build
+the files just once, run::
+
+   $ make build-frontend
+
+If you want to have those files be built automatically when you make changes, you can run::
+
+   $ make build-frontend-w

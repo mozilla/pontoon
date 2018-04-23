@@ -120,7 +120,7 @@ That format is documented more extensively inside the ``requirements.txt`` file.
 
 Once you are done adding or updating requirements, rebuild your docker environment::
 
-  $ make dockerbuild
+  $ make build
 
 If there are problems, it'll tell you.
 
@@ -163,13 +163,13 @@ Running tests
 
 To run the tests, do::
 
-  $ make dockertest
+  $ make test
 
 
 To run specific tests or specify arguments, you'll want to start a shell in the
 test container::
 
-  $ make dockershell
+  $ make shell
 
 
 Then you can run tests as you like.
@@ -187,6 +187,13 @@ Running a directory of tests::
 Running a file of tests::
 
   app@...:/app$ ./manage.py test pontoon/base/tests/test_views.py
+
+
+Note that currently, we run some tests with `django` and some with `pytest`.
+`make test` runs all of them, but if you want to run just some specific tests,
+and they are using `pytest`, you should run::
+
+  app@...:/app$ pytest path/to/my/test.py
 
 
 Writing tests

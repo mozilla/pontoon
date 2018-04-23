@@ -14,7 +14,9 @@
   "author": "Mozilla",
   "license": "BSD",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack",
+    "build-w": "webpack -w"
   },
   "jest": {
     "testMatch": [
