@@ -8,7 +8,6 @@ from pontoon.checks.libraries.compare_locales import (
     CompareDTDEntity,
     cast_to_compare_locales,
     ComparePropertiesEntity,
-    CommentEntity,
     UnsupportedResourceTypeError,
     run_checks,
 )

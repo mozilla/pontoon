@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from collections import namedtuple
 
-from HTMLParser import HTMLParser
 from compare_locales.checks import getChecker
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
@@ -50,7 +49,6 @@ class CompareDTDEntity(DTDEntityMixin):
             self.raw_val,
             self.pre_comment.all,
         )
-
 
 
 class UnsupportedResourceTypeError(Exception):
