@@ -7,6 +7,9 @@ cache:
   # cache the python dirs - this provides a very big speedup
   directories:
     - node_modules
+    - $HOME/virtualenv/python2.7.14/bin
+    - $HOME/virtualenv/python2.7.14/lib
+    - $HOME/virtualenv/python2.7/bin
 before_install:
   - git submodule update --init --recursive
 
@@ -20,7 +23,7 @@ before_install:
 
   # caches may need to be cleared from time to time https://docs.travis-ci.com/user/caching#Clearing-Caches
 
-#  - cp -a $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/ $HOME/py-workaround/
+  - cp -a $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/ $HOME/py-workaround/
 install:
   - pip install -U --force pip
   - pip install --require-hashes -r requirements.txt
@@ -49,14 +52,14 @@ addons:
     packages:
       - language-pack-tr
 
-#before_cache:
-#  # workaround for travis/aufs to prevent cache upload if no change
-#  # if real change happens, the cache will still be updated
-#
-#  - pip uninstall py pytest -y
-#  - pip install py==1.4.34 pytest==3.2.3
-##  - pyclean $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
-##  - cp -a $HOME/py-workaround/* $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
+before_cache:
+  # workaround for travis/aufs to prevent cache upload if no change
+  # if real change happens, the cache will still be updated
+
+  - pip uninstall py pytest -y
+  - pip install py==1.4.34 pytest==3.2.3
+  - pyclean $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
+  - cp -a $HOME/py-workaround/* $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/
 
 env:
   global:
