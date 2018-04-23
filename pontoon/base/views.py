@@ -45,7 +45,6 @@ from pontoon.base.models import (
 from pontoon.tags.utils.tags import TagsTool
 
 from pontoon.checks.libraries import run_checks
-from pontoon.checks.libraries.pontoon import is_same
 
 
 log = logging.getLogger(__name__)
@@ -566,6 +565,12 @@ def update_translation(request):
         '-approved', 'rejected', '-date'
     )
 
+    # If same translation exists in the DB, don't save it again.
+    if utils.is_same(same_translations, can_translate):
+        return JsonResponse({
+            'same': True,
+        })
+
     checks = run_checks(
         e,
         locale,
@@ -573,7 +578,6 @@ def update_translation(request):
         string,
         use_ttk_checks,
         ignore_warnings,
-        is_same(same_translations, can_translate)
     )
 
     if checks:
