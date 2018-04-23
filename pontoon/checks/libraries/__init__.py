@@ -12,6 +12,7 @@ def run_checks(
     locale,
     original,
     string,
+    use_tt_checks,
     ignore_warnings,
     same
 ):
@@ -22,6 +23,7 @@ def run_checks(
     :arg pontoon.base.models.Locale locale: Locale of a translation
     :arg basestring original: an original string
     :arg basestring string: a translation
+    :arg bool use_tt_checks: use Translate Toolkit checks
     :arg bool ignore_warnings: removes warnings from failed checks
     :arg bool same: if a translation exists in the database and can't be submitted
 
@@ -34,32 +36,35 @@ def run_checks(
     except compare_locales.UnsupportedResourceTypeError:
         cl_checks = None
 
-    resource_ext = entity.resource.format
-
-    # Some of checks from compare-locales overlap checks from Translate Toolkit
-    tt_disabled_checks = set()
-
-    if cl_checks is not None:
-        if resource_ext == 'properties':
-            tt_disabled_checks = {
-                'escapes',
-                'nplurals',
-                'printf'
-            }
-    elif resource_ext == 'lang':
-        tt_disabled_checks = {
-            'newlines',
-        }
-
-    if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
-        tt_disabled_checks.add('untranslated')
-
     pontoon_checks = pontoon.run_checks(entity, string)
 
-    tt_checks = translate_toolkit.run_checks(original, string, locale, tt_disabled_checks)
+    tt_checks = {}
+    resource_ext = entity.resource.format
+
+    if use_tt_checks and resource_ext != 'ftl':
+        tt_disabled_checks = set()
+
+        # Some compare-locales checks overlap with Translate Toolkit checks
+        if cl_checks is not None:
+            if resource_ext == 'properties':
+                tt_disabled_checks = {
+                    'escapes',
+                    'nplurals',
+                    'printf'
+                }
+        elif resource_ext == 'lang':
+            tt_disabled_checks = {
+                'newlines',
+            }
+
+        if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
+            tt_disabled_checks.add('untranslated')
+
+        tt_checks = translate_toolkit.run_checks(
+            original, string, locale, tt_disabled_checks
+        )
 
     checks = dict(
-        # User decided to ignore checks from Translation Toolkit
         tt_checks,
         **(cl_checks or {})
     )

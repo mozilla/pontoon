@@ -2700,7 +2700,7 @@ var Pontoon = (function (my) {
           translation: serializedTranslation,
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
-          ignore_check: $('#quality').is(':visible') || !syncLocalStorage || entity.format === 'ftl',
+          ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,
           approve: self.approvedNotSubmitted || false,
           paths: self.getPartPaths(self.currentPart),
           force_suggestions: self.user.forceSuggestions

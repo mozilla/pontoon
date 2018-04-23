@@ -524,7 +524,7 @@ def update_translation(request):
         locale = request.POST['locale']
         plural_form = request.POST['plural_form']
         original = request.POST['original']
-        ignore_check = request.POST['ignore_check']
+        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
         approve = request.POST.get('approve', 'false') == 'true'
         force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
@@ -550,13 +550,9 @@ def update_translation(request):
     project = e.resource.project
 
     try:
-        quality_checks = UserProfile.objects.get(user=user).quality_checks
+        use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
     except UserProfile.DoesNotExist as error:
-        quality_checks = True
-
-    ignore = False
-    if ignore_check == 'true' or not quality_checks:
-        ignore = True
+        use_ttk_checks = True
 
     now = timezone.now()
     can_translate = (
@@ -575,7 +571,8 @@ def update_translation(request):
         locale,
         original,
         string,
-        ignore,
+        use_ttk_checks,
+        ignore_warnings,
         is_same(same_translations, can_translate)
     )
 
