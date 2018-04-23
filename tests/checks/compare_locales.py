@@ -5,12 +5,11 @@ import pytest
 from mock import MagicMock
 
 from pontoon.checks.libraries.compare_locales import (
-    cast_to_compare_locales,
+    CompareDTDEntity,
     ComparePropertiesEntity,
-    CommentEntity,
     UnsupportedResourceTypeError,
+    cast_to_compare_locales,
     run_checks,
-    unescape_properties_entity
 )
 
 
@@ -32,11 +31,11 @@ def mock_quality_check_args(
     entity.comment = ''
     res_entities = []
 
-    for rentity in (resource_entities or []):
+    for res_entity in (resource_entities or []):
         res_mock_entity = MagicMock()
-        for k, v in rentity.items():
-            res_mock_entity.comment = ''
+        res_mock_entity.comment = ''
 
+        for k, v in res_entity.items():
             setattr(res_mock_entity, k, v)
 
         res_entities.append(res_mock_entity)
@@ -90,21 +89,51 @@ def test_unsupported_resource_file():
 
 
 @pytest.mark.django_db
-def test_cast_to_properties_singular(entity_with_comment, translation0):
-    assert cast_to_compare_locales('.properties', entity_with_comment, translation0.string) == (
-        ComparePropertiesEntity(
-            'KeyEntity0',
-            'entity0',
-            'entity0',
-            CommentEntity('example comment'),
-        ),
-        ComparePropertiesEntity(
-            'KeyEntity0',
-            'Translation for entity0',
-            'Translation for entity0',
-            CommentEntity('example comment'),
-        )
+def test_cast_to_properties(entity_with_comment, translation0):
+    """
+    Cast entities from .properties resources to PropertiesEntity
+    """
+    refEnt, transEnt = cast_to_compare_locales(
+        '.properties',
+        entity_with_comment,
+        translation0.string
     )
+
+    assert isinstance(refEnt, ComparePropertiesEntity)
+    assert isinstance(transEnt, ComparePropertiesEntity)
+
+    assert refEnt.key == 'KeyEntity0'
+    assert refEnt.val == 'entity0'
+    assert refEnt.pre_comment.all == 'example comment'
+
+    assert transEnt.key == 'KeyEntity0'
+    assert transEnt.val == 'Translation for entity0'
+    assert transEnt.pre_comment.all == 'example comment'
+
+
+@pytest.mark.django_db
+def test_cast_to_dtd(entity_with_comment, translation0):
+    """
+    Cast entities from .dtd resources to DTDEntity
+    """
+    refEnt, transEnt = cast_to_compare_locales(
+        '.dtd',
+        entity_with_comment,
+        translation0.string
+    )
+
+    assert isinstance(refEnt, CompareDTDEntity)
+    assert isinstance(transEnt, CompareDTDEntity)
+
+    assert refEnt.key == 'KeyEntity0'
+    assert refEnt.val == 'entity0'
+    assert refEnt.pre_comment.all == 'example comment'
+    assert refEnt.all == '<!ENTITY KeyEntity0 "entity0">'
+
+    assert transEnt.key == 'KeyEntity0'
+    assert transEnt.val == 'Translation for entity0'
+    assert transEnt.pre_comment.all == 'example comment'
+    assert transEnt.all == '<!ENTITY KeyEntity0 "Translation for entity0">'
 
 
 @pytest.mark.parametrize(
@@ -330,36 +359,3 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 )
 def test_invalid_ftl_translations(quality_check_args, failed_checks):
     assert run_checks(**quality_check_args) == failed_checks
-
-
-@pytest.mark.parametrize(
-    "raw_val,expected_val",
-    (
-        (
-            'aaa bbb ccc',
-            'aaa bbb ccc',
-        ),
-
-        # \u(nicode) characters
-        (
-            'aaa \u0025 bbb \u0026 ccc',
-            'aaa % bbb & ccc'
-        ),
-
-        # nl
-        (
-            'aaa \\\n bbb \\\n ccc',
-            'aaa bbb ccc'
-        ),
-        # single
-        (
-            'aaa \\n bbb \\n ccc',
-            'aaa \n bbb \n ccc'
-        ),
-    )
-)
-def test_properties_unescape_entity(raw_val, expected_val):
-    """
-    .properties entities should be escaped
-    """
-    assert unescape_properties_entity(raw_val) == expected_val

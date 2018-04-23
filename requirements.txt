@@ -317,9 +317,9 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-compare-locales==3.2.1 \
-    --hash=sha256:2dc487a977bea38763f2c40c785f98b0fd2e9d075783ac3d2f1f8fca6e81e216 \
-    --hash=sha256:787e10bb6601d30a434855a8bf2f35f48b7d64293872793e515cfe937df1d465
+compare-locales==3.2.2 \
+    --hash=sha256:0a2c12626300b61c6da8c7a39b86d50c09698ed4bedd4fcd43ccdb2e7171a8f7 \
+    --hash=sha256:1f3438b242d860690325b4dbaab3fc08070ee7a1b05edd023ab20a7d5933c6a1
 
 # Required by compare-locales
 pytoml==0.1.14 \

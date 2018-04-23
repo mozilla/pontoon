@@ -1,11 +1,13 @@
 from __future__ import absolute_import
 
-import re
 from collections import namedtuple
 
 from HTMLParser import HTMLParser
 from compare_locales.checks import getChecker
-from compare_locales.parser import FluentParser
+from compare_locales.parser.fluent import FluentParser
+from compare_locales.parser.properties import PropertiesEntityMixin
+from compare_locales.parser.dtd import DTDEntityMixin
+
 from compare_locales.paths import File
 
 html_unescape = HTMLParser().unescape
@@ -16,57 +18,46 @@ CommentEntity = namedtuple(
     )
 )
 
+
 # Because we can't pass the context to all entities passed to compare locales,
 # we have to create our equivalents of compare-locale's internal classes.
-ComparePropertiesEntity = namedtuple(
-    'ComparePropertiesEntity',
-    (
-        'key',
-        'val',
-        'raw_val',
-        'pre_comment',
-    )
-)
-CompareDTDEntity = namedtuple(
-    'CompareDTDEntity',
-    (
-        'key',
-        'val',
-        'raw_val',
-        'pre_comment',
-        'all',
-    )
-)
+
+class ComparePropertiesEntity(PropertiesEntityMixin):
+    def __init__(self, key, raw_val, pre_comment):
+        self.key = key
+        self.raw_val = raw_val
+        self.pre_comment = pre_comment
+
+    def __repr__(self):
+        return 'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+            self.key,
+            self.raw_val,
+            self.pre_comment.all,
+        )
 
 
-DTD_ENTITY_TMPL = '<!ENTITY %s \"%s\">'
+class CompareDTDEntity(DTDEntityMixin):
+    def __init__(self, key, raw_val, pre_comment):
+        self.key = key
+        self.raw_val = raw_val
+        self.pre_comment = pre_comment
+
+    @property
+    def all(self):
+        return '<!ENTITY {} \"{}\">'.format(self.key, self.raw_val)
+
+    def __repr__(self):
+        return 'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+            self.key,
+            self.raw_val,
+            self.pre_comment.all,
+        )
+
 
 
 class UnsupportedResourceTypeError(Exception):
     """Raise if compare-locales doesn't support given resource-type."""
     pass
-
-
-PROPERTIES_ENTITY_ESCAPE_RE = re.compile(
-    r'\\((?P<uni>u[0-9a-fA-F]{1,4})|'
-    r'(?P<nl>\n\s*)|(?P<single>.))',
-    re.M
-)
-PROPERTIES_KNOWN_ESCAPES = {'n': '\n', 'r': '\r', 't': '\t', '\\': '\\'}
-
-
-def unescape_properties_entity(raw_value):
-    """
-    Unescape a raw string.
-    """
-    def unescape(match):
-        found = match.groupdict()
-        if found['uni']:
-            return unichr(int(found['uni'][1:], 16))
-        if found['nl']:
-            return ''
-        return PROPERTIES_KNOWN_ESCAPES.get(found['single'], found['single'])
-    return PROPERTIES_ENTITY_ESCAPE_RE.sub(unescape, raw_value)
 
 
 def cast_to_compare_locales(resource_ext, entity, string):
@@ -84,13 +75,11 @@ def cast_to_compare_locales(resource_ext, entity, string):
         return (
             ComparePropertiesEntity(
                 entity.key,
-                unescape_properties_entity(entity.string),
                 entity.string,
                 CommentEntity(entity.comment)
             ),
             ComparePropertiesEntity(
                 entity.key,
-                unescape_properties_entity(string),
                 string,
                 CommentEntity(entity.comment),
             )
@@ -100,17 +89,13 @@ def cast_to_compare_locales(resource_ext, entity, string):
         return (
             CompareDTDEntity(
                 entity.key,
-                html_unescape(entity.string),
                 entity.string,
                 CommentEntity(entity.comment),
-                DTD_ENTITY_TMPL % (entity.key, entity.string)
             ),
             CompareDTDEntity(
                 entity.key,
-                html_unescape(string),
                 string,
                 CommentEntity(entity.comment),
-                DTD_ENTITY_TMPL % (entity.key, entity.string)
             )
         )
 
@@ -157,7 +142,7 @@ def run_checks(entity, locale, string):
 
     checker = getChecker(
         File(entity.resource.path, entity.resource.path),
-        {'android-dtd'}
+        {'android-dtd'},
     )
 
     # Currently, references are required only by DTD files but that may change in the future.
@@ -166,9 +151,7 @@ def run_checks(entity, locale, string):
             CompareDTDEntity(
                 e.key,
                 e.string,
-                e.string,
                 e.comment,
-                DTD_ENTITY_TMPL % (e.key, e.string)
             )
             for e in entity.resource.entities.all()
         ]

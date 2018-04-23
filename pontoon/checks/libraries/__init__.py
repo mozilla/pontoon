@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 from django.http import JsonResponse
 
-import compare_locales
-import translate_toolkit
+from . import compare_locales
+from . import translate_toolkit
 from . import pontoon
 
 
