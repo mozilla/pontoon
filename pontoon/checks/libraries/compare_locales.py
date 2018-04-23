@@ -10,8 +10,6 @@ from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
 
-html_unescape = HTMLParser().unescape
-
 CommentEntity = namedtuple(
     'Comment', (
         'all',
