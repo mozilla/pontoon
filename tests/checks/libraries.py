@@ -31,6 +31,36 @@ def entity_properties_mock():
 
 
 @pytest.yield_fixture()
+def entity_dtd_mock():
+    """
+    Mock of entity from a .dtd file.
+    """
+    mock = MagicMock()
+    mock.resource.path = 'file.dtd'
+    mock.resource.format = 'dtd'
+    mock.resource.all.return_value = []
+    mock.string = 'Example string'
+    mock.comment = ''
+
+    yield mock
+
+
+@pytest.yield_fixture()
+def entity_properties_plurals_mock():
+    """
+    Mock of entity from a .properties file.
+    """
+    mock = MagicMock()
+    mock.resource.path = 'file.properties'
+    mock.resource.format = 'properties'
+    mock.resource.all.return_value = []
+    mock.string = 'Example string'
+    mock.comment = 'Localization_and_Plurals'
+
+    yield mock
+
+
+@pytest.yield_fixture()
 def entity_invalid_resource_mock():
     """
     Mock of entity from a resource with unsupported filetype.
@@ -70,63 +100,38 @@ def locale_mock():
 
 
 def test_ignore_warnings(
-    entity_ftl_mock,
+    entity_properties_plurals_mock,
     locale_mock
 ):
     """
     Check if logic of ignore_warnings works when there are errors.
     """
     assert run_checks(
-        entity_ftl_mock,
+        entity_properties_plurals_mock,
         locale_mock,
-        entity_ftl_mock.string,
-        dedent("""
-        windowTitle = Translated string
-            .pontoon = is cool
-            .pontoon = is cool2
-        """),
-        False,
+        entity_properties_plurals_mock.string,
+        'plural1;plural2;plural3;plural4;plural5',
+        True,
         False,
     ).content == json.dumps({
         'failedChecks': {
-            'clWarnings': ['Attribute "pontoon" occurs 2 times'],
-            'ttWarnings': ['Double spaces', 'Newlines']
-        },
-        'same': False,
+            'clWarnings': ['expecting 2 plurals, found 5'],
+            'ttWarnings': ['Simple capitalization', 'Starting capitalization']
+        }
     })
 
     # Warnings can be ignored for Translate Toolkit if user decides to do so
     assert run_checks(
-        entity_ftl_mock,
+        entity_properties_plurals_mock,
         locale_mock,
-        entity_ftl_mock.string,
-        dedent("""
-        windowTitle = Translated string
-            .pontoon = is  cool
-        """),
-        True,
+        entity_properties_plurals_mock.string,
+        'plural1;plural2;plural3;plural4;plural5',
         False,
-    ) is None
-
-    # Quality check should always return critical errors
-    assert run_checks(
-        entity_ftl_mock,
-        locale_mock,
-        entity_ftl_mock.string,
-        dedent("""
-        windowTitle
-            .pontoon = is cool
-            .pontoon = is cool2
-        """),
-        True,
         False,
     ).content == json.dumps({
         'failedChecks': {
-            'clErrors': ['Missing value'],
-            'clWarnings': ['Attribute "pontoon" occurs 2 times'],
-            'ttWarnings': ['Double spaces', 'Newlines'],
-        },
-        'same': False
+            'clWarnings': ['expecting 2 plurals, found 5'],
+        }
     })
 
 
@@ -148,8 +153,8 @@ def test_invalid_resource_compare_locales(
 
 
 def test_tt_disabled_checks(
-    entity_ftl_mock,
     entity_properties_mock,
+    entity_dtd_mock,
     locale_mock,
     run_tt_checks_mock
 ):
@@ -161,7 +166,7 @@ def test_tt_disabled_checks(
         locale_mock,
         entity_properties_mock.string,
         'invalid translation \q',
-        False,
+        True,
         False,
     ).content == json.dumps({
         'failedChecks': {
@@ -169,9 +174,7 @@ def test_tt_disabled_checks(
                 'unknown escape sequence, \q'
             ]
         },
-        'same': False,
     })
-
     run_tt_checks_mock.assert_called_with(
         ANY,
         ANY,
@@ -179,8 +182,9 @@ def test_tt_disabled_checks(
         {'escapes', 'nplurals', 'printf'}
     )
 
+    run_tt_checks_mock.reset_mock()
     assert run_checks(
-        entity_ftl_mock,
+        entity_dtd_mock,
         locale_mock,
         entity_ftl_mock.string,
         dedent("""
@@ -190,7 +194,7 @@ def test_tt_disabled_checks(
         False,
         False
     ) is None
-    run_tt_checks_mock.assert_called_with(
+    assert not run_tt_checks_mock.assert_called_with(
         ANY,
         ANY,
         ANY,

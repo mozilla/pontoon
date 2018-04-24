@@ -116,9 +116,10 @@ def test_view_translate_force_suggestions(
         entity=translation0.entity.pk,
         original=translation0.entity.string,
         locale=locale0.code,
-        translation='approved translation'
+        translation='approved 0'
     )
     assert response.status_code == 200
+
     assert Translation.objects.last().approved is True
 
     response = request_update_translation(
@@ -126,7 +127,7 @@ def test_view_translate_force_suggestions(
         entity=translation0.entity.pk,
         original=translation0.entity.string,
         locale=locale0.code,
-        translation='approved translation2',
+        translation='approved translation 0',
         force_suggestions='false'
     )
     assert response.status_code == 200
@@ -137,7 +138,7 @@ def test_view_translate_force_suggestions(
         entity=translation0.entity.pk,
         original=translation0.entity.string,
         locale=locale0.code,
-        translation='unapproved translation',
+        translation='unapproved translation 0',
         force_suggestions='true',
     )
     assert response.status_code == 200

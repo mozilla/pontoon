@@ -43,7 +43,7 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         translation='bad  suggestion',
         original=properties_entity.string,
-        ignore_check='false'
+        ignore_warnings='false'
     )
 
     assert response.status_code == 200
@@ -52,7 +52,6 @@ def test_run_checks_during_translation_update(
             u'clWarnings': [u'trailing argument 1 `s` missing'],
             u'ttWarnings': [u'Double spaces']
         },
-        u'same': False,
     }
 
     # User decides to ignore checks (but there are errors)
@@ -62,7 +61,7 @@ def test_run_checks_during_translation_update(
         original=properties_entity.string,
         locale=locale0.code,
         translation='bad suggestion \q %q',
-        ignore_check='true'
+        ignore_warnings='true'
     )
 
     assert response.status_code == 200
@@ -71,7 +70,6 @@ def test_run_checks_during_translation_update(
             u'clErrors': [u'Found single %'],
             u'clWarnings': [u'unknown escape sequence, \q']
         },
-        u'same': False
     }
 
     # User decides to ignore checks (there are only warnings)
@@ -80,11 +78,10 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         original=properties_entity.string,
         locale=locale0.code,
-        translation='bad  suggestion',
-        ignore_check='true'
+        translation='bad suggestion',
+        ignore_warnings='true'
     )
 
     assert response.status_code == 200
-
     translation_pk = response.json()['translation']['pk']
     assert Translation.objects.get(pk=translation_pk).approved is False
