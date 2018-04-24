@@ -26,7 +26,7 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
         self.pre_comment = pre_comment
 
     def __repr__(self):
-        return 'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+        return u'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
             self.key,
             self.raw_val,
             self.pre_comment.all,
@@ -41,10 +41,10 @@ class CompareDTDEntity(DTDEntityMixin):
 
     @property
     def all(self):
-        return '<!ENTITY {} \"{}\">'.format(self.key, self.raw_val)
+        return u'<!ENTITY {} \"{}\">'.format(self.key, self.raw_val)
 
     def __repr__(self):
-        return 'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+        return u'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
             self.key,
             self.raw_val,
             self.pre_comment.all,

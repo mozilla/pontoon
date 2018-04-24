@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import absolute_import
 from textwrap import dedent
 
@@ -145,7 +146,21 @@ def test_cast_to_dtd(entity_with_comment, translation0):
             string='Mozilla',
             string_plural='Mozillas',
             translation='Allizom',
-            plural_form=1
+        ),
+        mock_quality_check_args(
+            resource_ext='properties',
+            string=u'モジラ',
+            translation=u'モジラ translation',
+        ),
+        mock_quality_check_args(
+            resource_ext='dtd',
+            string=u'モジラ',
+            translation=u'モジラ translation',
+        ),
+        mock_quality_check_args(
+            resource_ext='ftl',
+            string=u'entity = モジラ',
+            translation=u'entity = モジラ translation',
         ),
     )
 )
