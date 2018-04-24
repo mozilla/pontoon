@@ -10,21 +10,10 @@ from django.utils import timezone
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
-from pontoon.base.tests import fixtures  # noqa
+from pontoon.test.fixtures.site import _factory
 
 
-@pytest.fixture
-def tag_factory(factory):
-    """Tag factory
-    create tags in a hurry!
-
-    Provides a tag factory function that accepts the following args:
-
-    :arg int `batch`: number of tags to instantiate, defaults to len of
-        `batch_kwargs` or 1
-    :arg list `batch_kwargs`: a list of kwargs to instantiate the tags
-    """
-
+def tag_factory():
     def instance_attrs(instance, i):
         if not instance.slug:
             instance.slug = "factorytag%s" % i
@@ -32,7 +21,8 @@ def tag_factory(factory):
             instance.name = "Factory Tag %s" % i
 
     return functools.partial(
-        factory, Model=Tag, instance_attrs=instance_attrs)
+        _factory, Model=Tag, instance_attrs=instance_attrs
+    )
 
 
 def _assert_tags(expected, data):
@@ -45,7 +35,8 @@ def _assert_tags(expected, data):
         "total_strings",
         "approved_strings",
         "translated_strings",
-        "fuzzy_strings"]
+        "fuzzy_strings",
+    ]
     for slug, stats in results.items():
         _exp = expected[slug]
         for attr in attrs:
@@ -69,7 +60,8 @@ def _calculate_resource_tags(**kwargs):
         "resource",
         "tag",
         "tag__slug",
-        "tag__name")
+        "tag__name",
+    )
     if priority is not None:
         if priority is True:
             tags_through = tags_through.exclude(tag__priority__isnull=True)
@@ -77,10 +69,11 @@ def _calculate_resource_tags(**kwargs):
             tags_through = tags_through.exclude(tag__priority__isnull=False)
         else:
             tags_through = tags_through.filter(tag__priority=priority)
+
     for resource, tag, _slug, name in tags_through.iterator():
         resource_tags[resource] = (
-            resource_tags.get(resource, [])
-            + [(tag, _slug, name)])
+            resource_tags.get(resource, []) + [(tag, _slug, name)]
+        )
     return resource_tags
 
 
@@ -95,6 +88,7 @@ def _tag_iterator(things, **kwargs):
     slug = kwargs.get("slug", None)
     path = kwargs.get("path", None)
     resource_tags = _calculate_resource_tags(**kwargs)
+
     for thing in things.iterator():
         if locales and thing["locale"] not in locales:
             continue
@@ -116,16 +110,19 @@ def _calculate_tags(**kwargs):
     attrs = [
         "approved_strings",
         "translated_strings",
-        "fuzzy_strings"]
+        "fuzzy_strings",
+    ]
     totals = {}
     resource_attrs = [
         "resource",
         "locale",
-        "latest_translation__date"]
+        "latest_translation__date",
+    ]
     annotations = dict(
         total_strings=F('resource__total_strings'),
         project=F('resource__project'),
-        path=F('resource__path'))
+        path=F('resource__path'),
+    )
     # this is a `values` of translated resources, with the project, path
     # and total_strings denormalized to project/path/total_strings.
     qs = trs.values(*resource_attrs + attrs).annotate(**annotations)
@@ -165,11 +162,13 @@ def _calculate_tags_latest(**kwargs):
     translation_attrs = [
         "pk",
         "date",
-        "locale"]
+        "locale",
+    ]
     annotations = dict(
         resource=F('entity__resource'),
         path=F('entity__resource__path'),
-        project=F('entity__resource__project'))
+        project=F('entity__resource__project'),
+    )
     # this is a `values` of translations, with the resource, path and project
     # denormalized to resource/path/project.
     qs = translations.values(*translation_attrs).annotate(**annotations)
@@ -182,7 +181,8 @@ def _calculate_tags_latest(**kwargs):
             key = tag
         # get the current latest for this tag
         _pk, _date = latest_dates.get(
-            key, (None, timezone.make_aware(datetime.min)))
+            key, (None, timezone.make_aware(datetime.min))
+        )
         if translation['date'] > _date:
             # set this translation if its newer than the current latest
             # for this tag
@@ -206,21 +206,26 @@ def tag_matrix(site_matrix):
     This fixture can be used in conjunction with the `calculate_tags`
     fixture to test for tags using kwargs from the parametrized
     `tag_test_kwargs` fixture
-    """
 
+    """
     factories = site_matrix['factories']
+    factories['tag'] = tag_factory()
 
     # this creates 113 tags
     # every 20th tag gets no priority
     # the others get between 0-5
     tags = factories['tag'](
-        batch_kwargs=list(
-            dict(
-                priority=(
+        args=[
+            {
+                'priority': (
                     None
                     if not i or not (i % 20)
-                    else int(i / 20)))
-            for i in range(0, 113)))
+                    else int(i / 20)
+                )
+            }
+            for i in range(0, 113)
+        ]
+    )
 
     # associate tags with resources
     for i, resource in enumerate(site_matrix['resources']):
