@@ -58,7 +58,7 @@ def update_plurals(apps, schema_editor):
         for index, plural_form in enumerate(cldr_ids_old):
             index_new = cldr_ids.index(plural_form)
             translation_indexes[index_new] = (
-                gettext_translations.filter(plural_form=index).values('pk')
+                list(gettext_translations.filter(plural_form=index).values_list('pk', flat=True))
             )
 
         for index_new, translation_pks in translation_indexes.items():
