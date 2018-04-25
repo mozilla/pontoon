@@ -194,20 +194,25 @@ def update_plurals(apps, schema_editor):
                         key=lambda x: (['0'] + ['1'] + CLDR_PLURALS).index(x.key.name if hasattr(x.key, 'name') else x.key.value)
                     )
 
-                    t.approved = False
-                    t.string = serializer.serialize_entry(translation_ast)
-                    t.save()  # Does not run the custom Translation.save() method
+                    new_string = serializer.serialize_entry(translation_ast)
 
-                    # Update stats
-                    translatedresource, _ = TranslatedResource.objects.get_or_create(
-                        resource_id=t.entity.resource.id, locale__code=code
-                    )
-                    translatedresource.calculate_stats()
+                    if t.string != new_string:
+                        t.string = new_string
+                        t.approved = False
 
-                    # Mark entity as changed
-                    ChangedEntityLocale.objects.get_or_create(entity_id=t.entity.id, locale_id=locale.id)
+                        # Does not run the custom Translation.save() method
+                        t.save()
 
-                    changed_fluent_entities.append(t.entity.pk)
+                        # Update stats
+                        translatedresource, _ = TranslatedResource.objects.get_or_create(
+                            resource_id=t.entity.resource.id, locale__code=code
+                        )
+                        translatedresource.calculate_stats()
+
+                        # Mark entity as changed
+                        ChangedEntityLocale.objects.get_or_create(entity_id=t.entity.id, locale_id=locale.id)
+
+                        changed_fluent_entities.append(t.entity.pk)
 
         print "Changed Fluent entities: " + str(changed_fluent_entities)
 
