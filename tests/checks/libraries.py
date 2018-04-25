@@ -40,6 +40,7 @@ def entity_dtd_mock():
     mock.resource.format = 'dtd'
     mock.resource.all.return_value = []
     mock.string = 'Example string'
+    mock.key = 'entity_dtd'
     mock.comment = ''
 
     yield mock
@@ -182,16 +183,12 @@ def test_tt_disabled_checks(
         {'escapes', 'nplurals', 'printf'}
     )
 
-    run_tt_checks_mock.reset_mock()
     assert run_checks(
         entity_dtd_mock,
         locale_mock,
-        entity_ftl_mock.string,
-        dedent("""
-        windowTitle = Translated string
-            .pontoon = is cool
-        """),
-        False,
+        entity_properties_mock.string,
+        'Translated string',
+        True,
         False
     ) is None
     assert not run_tt_checks_mock.assert_called_with(

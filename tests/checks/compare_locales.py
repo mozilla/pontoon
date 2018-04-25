@@ -24,6 +24,7 @@ def mock_quality_check_args(
     Generate a dictionary of arguments ready to use by get_quality_check function.
     """
     entity = MagicMock()
+    entity.key = 'entity0'
     entity.resource.path = 'resource1.{}'.format(resource_ext)
     entity.resource.format = resource_ext
     entity.comment = ''
