@@ -312,7 +312,7 @@ def site_matrix():
     )
     translated_resources = _create_translated_resources(
         factories, translations, translated_resource_kwargs
-        )
+    )
     return {
         'factories': factories,
         'entities': entities,

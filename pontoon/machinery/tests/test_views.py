@@ -194,7 +194,7 @@ def test_view_tm_best_quality_entry(
             "source": "aaa",
             "quality": 100.0,
             "target": "ddd",
-         }]
+        }]
     )
 
 
