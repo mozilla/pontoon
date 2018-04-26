@@ -170,7 +170,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 # If the data source is database and there are new strings, save them.
                 if project.data_source == 'database':
                     _save_new_strings(project, request.POST.get('new_strings', ''))
-                    _create_or_update_translated_resources(project, [l.id for l in locales])
+                    _create_or_update_translated_resources(project, locales)
 
                 # Properly displays formsets, but removes errors (if valid only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
@@ -330,22 +330,23 @@ def _save_new_strings(project, source):
 def _create_or_update_translated_resources(
     project,
     locales=None,
+    resource=None,
 ):
     if locales is None:
         locales = (
-            ProjectLocale.objects
-            .filter(project=project)
-            .values_list('locale_id', flat=True)
+            Locale.objects
+            .filter(project_locale__project=project)
         )
 
-    resource, _ = Resource.objects.get_or_create(
-        path='database',
-        project=project,
-    )
+    if resource is None:
+        resource, _ = Resource.objects.get_or_create(
+            path='database',
+            project=project,
+        )
 
-    for locale_id in locales:
+    for locale in locales:
         tr, created = TranslatedResource.objects.get_or_create(
-            locale_id=locale_id,
+            locale_id=locale.pk,
             resource=resource,
         )
         tr.calculate_stats()
@@ -395,14 +396,23 @@ def manage_project_strings(request, slug=None):
             # Get all strings, find the ones that changed, update them in the database.
             formset = EntityFormSet(request.POST, queryset=entities)
             if formset.is_valid():
+                resource = Resource.objects.filter(project=project).first()
                 try:
-                    formset.save()
+                    # This line can purposefully cause an exception, and that
+                    # causes trouble in tests, because all tests are
+                    # encapsulated in a single transation. Django thus refuses
+                    # to run any other requests after one has failed, until the
+                    # end of the transation.
+                    # Using transation.atomic here is the way to tell django
+                    # that this is fine.
+                    # See https://stackoverflow.com/questions/21458387/
+                    with transaction.atomic():
+                        formset.save()
                 except IntegrityError:
                     # This happens when the user creates a new string. By default,
                     # it has no resource, and that's a violation of the database
                     # constraints. So, we want to make sure all entries have a resource.
                     new_entities = formset.save(commit=False)
-                    resource = Resource.objects.filter(project=project).first()
                     for entity in new_entities:
                         if not entity.resource_id:
                             entity.resource = resource
@@ -412,6 +422,15 @@ def manage_project_strings(request, slug=None):
                         # Also, django is smart and ``formset.save()`` only returns Entity
                         # objects that have changed.
                         entity.save()
+
+                # Update stats with the new number of strings.
+                resource.total_strings = (
+                    Entity.objects
+                    .filter(resource=resource, obsolete=False)
+                    .count()
+                )
+                resource.save()
+                _create_or_update_translated_resources(project, resource=resource)
 
             # Reinitialize the formset.
             formset = EntityFormSet(queryset=entities)
