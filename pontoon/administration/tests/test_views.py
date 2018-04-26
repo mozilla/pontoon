@@ -8,19 +8,24 @@ from django_nose.tools import (
     assert_not_contains,
 )
 
+from pontoon.administration.forms import (
+    ProjectForm,
+)
+from pontoon.administration.views import _create_or_update_translated_resources
 from pontoon.base.models import (
     Entity,
     Locale,
     Project,
+    ProjectLocale,
     Resource,
     TranslatedResource,
-    Translation,
 )
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
+    TranslationFactory,
     TestCase,
     UserFactory,
 )
@@ -115,14 +120,17 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         """Test that adding new strings to a project enables translation of that
         project on all enabled locales.
         """
-        locale_kl = LocaleFactory.create(code='kl', name='Klingon')
-        locale_gs = LocaleFactory.create(code='gs', name='Geonosian')
+        locales = [
+            LocaleFactory.create(code='kl', name='Klingon'),
+            LocaleFactory.create(code='gs', name='Geonosian'),
+        ]
         project = ProjectFactory.create(
             data_source='database',
-            locales=[locale_kl, locale_gs],
+            locales=locales,
             repositories=[]
         )
-        locales_count = 2
+        locales_count = len(locales)
+        _create_or_update_translated_resources(project, [l.id for l in locales])
 
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
@@ -157,11 +165,9 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         project = Project.objects.get(id=project.id)
         assert_equal(project.total_strings, strings_count * locales_count)
 
-        locale_kl = Locale.objects.get(id=locale_kl.id)
-        assert_equal(locale_kl.total_strings, strings_count)
-
-        locale_gs = Locale.objects.get(id=locale_gs.id)
-        assert_equal(locale_gs.total_strings, strings_count)
+        for l in locales:
+            locale = Locale.objects.get(id=l.id)
+            assert_equal(locale.total_strings, strings_count)
 
     def test_manage_project_strings_new_all_empty(self):
         """Test that sending empty data doesn't create empty strings in the database.
@@ -169,7 +175,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         project = ProjectFactory.create(data_source='database', repositories=[])
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
-        # Test sending a well-formatted batch of strings.
+        # Test sending an empty batch of strings.
         new_strings = "  \n   \n\n"
         response = self.client.post(url, {'new_strings': new_strings})
         assert_code(response, 200)
@@ -224,7 +230,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
         new_strings = """
-             And on the pedestal these words appear:
+            And on the pedestal these words appear:
             'My name is Ozymandias, king of kings:
             Look on my works, ye Mighty, and despair!'
         """
@@ -247,46 +253,46 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
 
         # Now add some translations.
         entity = Entity.objects.filter(string='And on the pedestal these words appear:')[0]
-        Translation(
+        TranslationFactory.create(
             string='Et sur le piédestal il y a ces mots :',
             entity=entity,
             locale=locale_kl,
             approved=True,
-        ).save()
-        Translation(
+        )
+        TranslationFactory.create(
             string='Und auf dem Sockel steht die Schrift: ‚Mein Name',
             entity=entity,
             locale=locale_gs,
             approved=True,
-        ).save()
+        )
 
         entity = Entity.objects.filter(string='\'My name is Ozymandias, king of kings:')[0]
-        Translation(
+        TranslationFactory.create(
             string='"Mon nom est Ozymandias, Roi des Rois.',
             entity=entity,
             locale=locale_kl,
             approved=True,
-        ).save()
-        Translation(
+        )
+        TranslationFactory.create(
             string='Ist Osymandias, aller Kön’ge König: –',
             entity=entity,
             locale=locale_gs,
             approved=True,
-        ).save()
+        )
 
         entity = Entity.objects.filter(string='Look on my works, ye Mighty, and despair!\'')[0]
-        Translation(
+        TranslationFactory.create(
             string='Voyez mon œuvre, vous puissants, et désespérez !"',
             entity=entity,
             locale=locale_kl,
             approved=True,
-        ).save()
-        Translation(
+        )
+        TranslationFactory.create(
             string='Seht meine Werke, Mächt’ge, und erbebt!‘',
             entity=entity,
             locale=locale_gs,
             approved=True,
-        ).save()
+        )
 
         response = self.client.get(url, {'format': 'csv'})
 
@@ -298,3 +304,57 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_contains(response, 'Mighty')
         assert_contains(response, 'puissants')
         assert_contains(response, 'Mächt’ge')
+
+    def test_project_add_locale(self):
+        locale_kl = LocaleFactory.create(code='kl', name='Klingon')
+        locale_gs = LocaleFactory.create(code='gs', name='Geonosian')
+        project = ProjectFactory.create(
+            data_source='database',
+            locales=[locale_kl],
+            repositories=[],
+        )
+        _create_or_update_translated_resources(project, [locale_kl.id])
+
+        url = reverse('pontoon.admin.project', args=(project.slug,))
+
+        # Boring data creation for FormSets. Django is painful with that,
+        # or I don't know how to handle that more gracefully.
+        form = ProjectForm(instance=project)
+        form_data = dict(form.initial)
+        del form_data['width']
+        del form_data['deadline']
+        del form_data['contact']
+        form_data.update({
+            'subpage_set-INITIAL_FORMS': '0',
+            'subpage_set-TOTAL_FORMS': '1',
+            'subpage_set-MIN_NUM_FORMS': '0',
+            'subpage_set-MAX_NUM_FORMS': '1000',
+            'externalresource_set-TOTAL_FORMS': '1',
+            'externalresource_set-MAX_NUM_FORMS': '1000',
+            'externalresource_set-MIN_NUM_FORMS': '0',
+            'externalresource_set-INITIAL_FORMS': '0',
+            'tag_set-TOTAL_FORMS': '1',
+            'tag_set-INITIAL_FORMS': '0',
+            'tag_set-MAX_NUM_FORMS': '1000',
+            'tag_set-MIN_NUM_FORMS': '0',
+            'repositories-INITIAL_FORMS': '0',
+            'repositories-MIN_NUM_FORMS': '0',
+            'repositories-MAX_NUM_FORMS': '1000',
+            'repositories-TOTAL_FORMS': '0',
+            # These are the values that actually matter.
+            'pk': project.pk,
+            'locales': [locale_kl.id, locale_gs.id],
+        })
+
+        response = self.client.post(url, form_data)
+        assert_code(response, 200)
+        assert_not_contains(response, '. Error.')
+
+        # Verify we have the right ProjectLocale objects.
+        pl = ProjectLocale.objects.filter(project=project)
+        assert_equal(len(pl), 2)
+
+        # Verify that TranslatedResource objects have been created.
+        resource = Resource.objects.get(project=project, path='database')
+        tr = TranslatedResource.objects.filter(resource=resource)
+        assert_equal(len(tr), 2)

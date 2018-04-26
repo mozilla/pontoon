@@ -101,7 +101,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
     # Save project
     if request.method == 'POST':
         locales_selected = Locale.objects.filter(
-            pk__in=request.POST.getlist('locales'))
+            pk__in=request.POST.getlist('locales')
+        )
 
         # Update existing project
         try:
@@ -114,7 +115,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
             tag_formset = (
                 TagInlineFormSet(request.POST, instance=project)
                 if project.tags_enabled
-                else None)
+                else None
+            )
             external_resource_formset = ExternalResourceInlineFormSet(
                 request.POST, instance=project
             )
@@ -142,17 +144,20 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 subpage_formset.is_valid()
                 and repo_formset.is_valid()
                 and external_resource_formset.is_valid()
-                and (tag_formset.is_valid() if tag_formset else True))
+                and (tag_formset.is_valid() if tag_formset else True)
+            )
             if formsets_valid:
                 project.save()
 
                 # Manually save ProjectLocales due to intermediary
                 # model.
                 locales = form.cleaned_data.get('locales', [])
-                (ProjectLocale.objects
+                (
+                    ProjectLocale.objects
                     .filter(project=project)
                     .exclude(locale__pk__in=[l.pk for l in locales])
-                    .delete())
+                    .delete()
+                )
                 for locale in locales:
                     ProjectLocale.objects.get_or_create(project=project, locale=locale)
 
@@ -165,6 +170,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 # If the data source is database and there are new strings, save them.
                 if project.data_source == 'database':
                     _save_new_strings(project, request.POST.get('new_strings', ''))
+                    _create_or_update_translated_resources(project, [l.id for l in locales])
 
                 # Properly displays formsets, but removes errors (if valid only)
                 subpage_formset = SubpageInlineFormSet(instance=project)
@@ -190,7 +196,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
             tag_formset = (
                 TagInlineFormSet(instance=project)
                 if project.tags_enabled
-                else None)
+                else None
+            )
             external_resource_formset = ExternalResourceInlineFormSet(instance=project)
             locales_selected = project.locales.all()
             subtitle = 'Edit project'
@@ -300,7 +307,11 @@ def _save_new_strings(project, source):
 
     if new_strings:
         # Create a new fake resource for that project.
-        resource = Resource(path='database', project=project, total_strings=len(new_strings))
+        resource, created = Resource.objects.get_or_create(
+            path='database',
+            project=project,
+        )
+        resource.total_strings = len(new_strings)
         resource.save()
 
         # Insert all new strings into Entity objects, associated to the fake resource.
@@ -311,23 +322,33 @@ def _save_new_strings(project, source):
 
         Entity.objects.bulk_create(new_entities)
 
-        # Enable the new Resource for all active locales for that project.
+        return True
+
+    return False
+
+
+def _create_or_update_translated_resources(
+    project,
+    locales=None,
+):
+    if locales is None:
         locales = (
             ProjectLocale.objects
             .filter(project=project)
             .values_list('locale_id', flat=True)
         )
-        for locale_id in locales:
-            tr = TranslatedResource(
-                locale_id=locale_id,
-                resource=resource,
-            )
-            tr.save()
-            tr.calculate_stats()
 
-        return True
+    resource, _ = Resource.objects.get_or_create(
+        path='database',
+        project=project,
+    )
 
-    return False
+    for locale_id in locales:
+        tr, created = TranslatedResource.objects.get_or_create(
+            locale_id=locale_id,
+            resource=resource,
+        )
+        tr.calculate_stats()
 
 
 def manage_project_strings(request, slug=None):
@@ -369,6 +390,7 @@ def manage_project_strings(request, slug=None):
             new_strings_source = request.POST.get('new_strings', '')
             if _save_new_strings(project, new_strings_source):
                 project_has_strings = True  # we have strings now!
+                _create_or_update_translated_resources(project)
         else:
             # Get all strings, find the ones that changed, update them in the database.
             formset = EntityFormSet(request.POST, queryset=entities)
