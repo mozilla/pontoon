@@ -36,10 +36,5 @@ $NPM test
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"
-echo "Running Python tests with django"
-$PYTHON manage.py test
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
-echo "Running Python tests with pytest"
-$PYTEST
+echo "Running Python tests"
+$PYTEST --cov-append --cov-report=term --cov=.
