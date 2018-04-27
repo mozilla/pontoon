@@ -123,7 +123,7 @@ var Pontoon = (function (my) {
    * Render original string element with given title and ast elements
    */
   function renderOriginalElement(title, elements) {
-    return '<li>' +
+    return '<li class="clearfix">' +
       '<span class="id">' +
         title +
       '</span>' +
@@ -160,7 +160,7 @@ var Pontoon = (function (my) {
     var value = isTranslated ? stringifyElements(elements) : '';
     var textarea = renderTextareaElement(title, value, maxlength);
 
-    return '<li>' +
+    return '<li class="clearfix">' +
       '<label class="id" for="ftl-id-' + title + '">' +
         '<span>' + title + '</span>' +
         exampleSpan +
