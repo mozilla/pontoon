@@ -23,7 +23,7 @@
         {% if event.translation %}
         {% set direction = event.translation.locale.direction %}
         <div class="fa fa-2x quote {% if direction == 'ltr' %}fa-quote-left{% else %}fa-quote-right{% endif %}"></div>
-        <p dir="{{ direction }}" lang="{{ event.translation.locale.code }}" data-script="{{ event.translation.locale.script }}">{{ event.translation.string }}</p>
+        <p dir="{{ direction }}" lang="{{ event.translation.locale.code }}" data-script="{{ event.translation.locale.script }}">{{ event.translation.string|as_simple_translation() }}</p>
         {% endif %}
         <div class="label clearfix {{ event.type }}">
             <figure>
