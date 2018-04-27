@@ -1,3 +1,5 @@
+import urllib
+
 from django import forms
 
 from pontoon.base import utils
@@ -16,3 +18,18 @@ class BatchActionsForm(forms.Form):
 
     def clean_entities(self):
         return utils.split_ints(self.cleaned_data['entities'])
+
+    def decode_field(self, param_name):
+        """
+        The frontend sends quoted form fields to avoid issues with e.g. non breakable spaces.
+
+        Related bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1438575
+        """
+        field_val = str(self.cleaned_data.get(param_name, ''))
+        return urllib.unquote(field_val).decode('utf-8')
+
+    def clean_find(self):
+        return self.decode_field('find')
+
+    def clean_replace(self):
+        return self.decode_field('replace')
