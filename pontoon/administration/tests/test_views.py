@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
-
 from django_nose.tools import (
     assert_code,
     assert_contains,
@@ -130,7 +129,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
             repositories=[]
         )
         locales_count = len(locales)
-        _create_or_update_translated_resources(project, [l.id for l in locales])
+        _create_or_update_translated_resources(project, locales)
 
         url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
@@ -217,6 +216,36 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
         assert_contains(response, 'Wubba lubba dub dub')
         assert_not_contains(response, 'string 0')
         assert_not_contains(response, 'string 1')  # It's been removed.
+
+        total = Entity.objects.filter(
+            resource=resource, obsolete=False,
+        ).count()
+        assert_equal(total, nb_entities - 1)
+
+        # Test adding a new string.
+        form_data = {
+            'form-TOTAL_FORMS': nb_entities,
+            'form-INITIAL_FORMS': nb_entities - 1,
+            'form-MIN_NUM_FORMS': 0,
+            'form-MAX_NUM_FORMS': 1000,
+            'form-0-id': entities[0].id,
+            'form-0-string': 'changed 0',
+            'form-0-comment': 'Wubba lubba dub dub',
+            'form-1-id': '',
+            'form-1-string': 'new string',
+            'form-1-comment': 'adding this entity now',
+        }
+
+        response = self.client.post(url, form_data)
+        assert_code(response, 200)
+        assert_contains(response, 'changed 0')
+        assert_contains(response, 'new string')
+        assert_contains(response, 'adding this entity now')
+
+        total = Entity.objects.filter(
+            resource=resource, obsolete=False,
+        ).count()
+        assert_equal(total, nb_entities)
 
     def test_manage_project_strings_download_csv(self):
         locale_kl = LocaleFactory.create(code='kl', name='Klingon')
@@ -313,7 +342,7 @@ class AdministrationViewsWithSuperuserTests(SuperuserTestCase):
             locales=[locale_kl],
             repositories=[],
         )
-        _create_or_update_translated_resources(project, [locale_kl.id])
+        _create_or_update_translated_resources(project, [locale_kl])
 
         url = reverse('pontoon.admin.project', args=(project.slug,))
 
