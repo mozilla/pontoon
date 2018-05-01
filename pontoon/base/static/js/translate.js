@@ -2264,8 +2264,8 @@ var Pontoon = (function (my) {
 
         var button = this,
             action = $(this).attr('id').split('-')[0],
-            find = $('#batch .find').val(),
-            replace = $('#batch .replace').val(),
+            find = encodeURIComponent($('#batch .find').val()),
+            replace = encodeURIComponent($('#batch .replace').val()),
             message = '';
 
         // Disable before request complete
