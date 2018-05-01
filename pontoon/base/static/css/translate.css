@@ -1660,6 +1660,7 @@ body > header aside p {
   font-style: italic;
   list-style: none;
   margin: 0px;
+  width: calc(100% - 140px);
 }
 
 #quality ul i {
