@@ -1,7 +1,6 @@
 import codecs
 import fnmatch
 import functools
-import json
 import os
 import pytz
 import re
@@ -24,16 +23,13 @@ from xml.sax.saxutils import (
 )
 
 from django.db.models import Prefetch
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import trans_real
 
-from translate.filters import checks
-from translate.storage import base as storage_base
 from translate.storage.placeables import base, general, parse
 from translate.storage.placeables.interfaces import BasePlaceable
-from translate.lang import data as lang_data
 
 
 def split_ints(s):
@@ -212,77 +208,6 @@ def mark_placeables(text):
             output += text_type(item).replace('<', '&lt;').replace('>', '&gt;')
 
     return output
-
-
-def quality_check(original, string, locale, ignore):
-    """Check for obvious errors like blanks and missing interpunction."""
-
-    if not ignore:
-        original = lang_data.normalized_unicode(original)
-        string = lang_data.normalized_unicode(string)
-
-        unit = storage_base.TranslationUnit(original)
-        unit.target = string
-        checker = checks.StandardChecker(
-            checkerconfig=checks.CheckerConfig(targetlanguage=locale.code))
-
-        warnings = checker.run_filters(unit)
-        if warnings:
-
-            # https://github.com/translate/pootle/
-            check_names = {
-                'accelerators': 'Accelerators',
-                'acronyms': 'Acronyms',
-                'blank': 'Blank',
-                'brackets': 'Brackets',
-                'compendiumconflicts': 'Compendium conflict',
-                'credits': 'Translator credits',
-                'doublequoting': 'Double quotes',
-                'doublespacing': 'Double spaces',
-                'doublewords': 'Repeated word',
-                'emails': 'E-mail',
-                'endpunc': 'Ending punctuation',
-                'endwhitespace': 'Ending whitespace',
-                'escapes': 'Escapes',
-                'filepaths': 'File paths',
-                'functions': 'Functions',
-                'gconf': 'GConf values',
-                'kdecomments': 'Old KDE comment',
-                'long': 'Long',
-                'musttranslatewords': 'Must translate words',
-                'newlines': 'Newlines',
-                'nplurals': 'Number of plurals',
-                'notranslatewords': 'Don\'t translate words',
-                'numbers': 'Numbers',
-                'options': 'Options',
-                'printf': 'printf()',
-                'puncspacing': 'Punctuation spacing',
-                'purepunc': 'Pure punctuation',
-                'sentencecount': 'Number of sentences',
-                'short': 'Short',
-                'simplecaps': 'Simple capitalization',
-                'simpleplurals': 'Simple plural(s)',
-                'singlequoting': 'Single quotes',
-                'startcaps': 'Starting capitalization',
-                'startpunc': 'Starting punctuation',
-                'startwhitespace': 'Starting whitespace',
-                'tabs': 'Tabs',
-                'unchanged': 'Unchanged',
-                'untranslated': 'Untranslated',
-                'urls': 'URLs',
-                'validchars': 'Valid characters',
-                'variables': 'Placeholders',
-                'xmltags': 'XML tags',
-            }
-
-            warnings_array = []
-            for key in warnings.keys():
-                warning = check_names.get(key, key)
-                warnings_array.append(warning)
-
-            return HttpResponse(json.dumps({
-                'warnings': warnings_array,
-            }), content_type='application/json')
 
 
 def first(collection, test, default=None):
@@ -718,3 +643,26 @@ def get_m2m_changes(current_qs, new_qs):
     )
 
     return list(add_items), list(remove_items)
+
+
+def is_same(same_translations, can_translate):
+    """
+    Check if translation is the same
+    :arg QuerySet `same_translations`: translations that have the same string
+        as a suggestion/translation.
+    :arg boolean `can_translate`: user is able to submit translations.
+    :returns: True if same translation already exists.
+    """
+    if not same_translations:
+        return False
+
+    st = same_translations[0]
+
+    if can_translate:
+        if st.approved and not st.fuzzy:
+            return True
+    else:
+        if not st.fuzzy:
+            return True
+
+    return False

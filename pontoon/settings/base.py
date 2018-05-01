@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'pontoon.administration',
     'pontoon.base',
     'pontoon.contributors',
+    'pontoon.checks',
     'pontoon.intro',
     'pontoon.localizations',
     'pontoon.machinery',

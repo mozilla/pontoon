@@ -44,6 +44,8 @@ from pontoon.base.models import (
 )
 from pontoon.tags.utils.tags import TagsTool
 
+from pontoon.checks.libraries import run_checks
+
 
 log = logging.getLogger(__name__)
 
@@ -521,7 +523,7 @@ def update_translation(request):
         locale = request.POST['locale']
         plural_form = request.POST['plural_form']
         original = request.POST['original']
-        ignore_check = request.POST['ignore_check']
+        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
         approve = request.POST.get('approve', 'false') == 'true'
         force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
@@ -547,13 +549,9 @@ def update_translation(request):
     project = e.resource.project
 
     try:
-        quality_checks = UserProfile.objects.get(user=user).quality_checks
+        use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
     except UserProfile.DoesNotExist as error:
-        quality_checks = True
-
-    ignore = False
-    if ignore_check == 'true' or not quality_checks:
-        ignore = True
+        use_ttk_checks = True
 
     now = timezone.now()
     can_translate = (
@@ -563,34 +561,35 @@ def update_translation(request):
     translations = Translation.objects.filter(
         entity=e, locale=locale, plural_form=plural_form)
 
-    # Newlines are not allowed in .lang files (bug 1190754)
-    if e.resource.format == 'lang' and '\n' in string:
-        return HttpResponse('Newline characters are not allowed.')
+    same_translations = translations.filter(string=string).order_by(
+        '-approved', 'rejected', '-date'
+    )
+
+    # If same translation exists in the DB, don't save it again.
+    if utils.is_same(same_translations, can_translate):
+        return JsonResponse({
+            'same': True,
+        })
+
+    checks = run_checks(
+        e,
+        locale,
+        original,
+        string,
+        use_ttk_checks,
+        ignore_warnings,
+    )
+
+    if checks:
+        return checks
 
     # Translations exist
     if len(translations) > 0:
-
-        # Same translation exists
-        same_translations = translations.filter(string=string).order_by(
-            '-approved', 'rejected', '-date'
-        )
         if len(same_translations) > 0:
             t = same_translations[0]
 
             # If added by privileged user, approve and unfuzzy it
-            if can_translate:
-
-                # Unless there's nothing to be changed
-                if t.approved and not t.fuzzy:
-                    return JsonResponse({
-                        'same': True,
-                        'message': 'Same translation already exists.',
-                    })
-
-                warnings = utils.quality_check(original, string, locale, ignore)
-                if warnings:
-                    return warnings
-
+            if can_translate and (t.fuzzy or not t.approved):
                 translations.update(
                     approved=False,
                     approved_user=None,
@@ -611,45 +610,23 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-                t.save()
+            # If added by non-privileged user and fuzzy, unfuzzy it
+            elif t.fuzzy:
+                t.approved = False
+                t.approved_user = None
+                t.approved_date = None
+                t.fuzzy = False
 
-                return JsonResponse({
-                    'type': 'updated',
-                    'translation': t.serialize(),
-                    'stats': TranslatedResource.objects.stats(project, paths, locale),
-                })
+            t.save()
 
-            # If added by non-privileged user, unfuzzy it
-            else:
-                if t.fuzzy:
-                    warnings = utils.quality_check(original, string, locale, ignore)
-                    if warnings:
-                        return warnings
-
-                    t.approved = False
-                    t.approved_user = None
-                    t.approved_date = None
-                    t.fuzzy = False
-
-                    t.save()
-
-                    return JsonResponse({
-                        'type': 'updated',
-                        'translation': t.serialize(),
-                        'stats': TranslatedResource.objects.stats(project, paths, locale),
-                    })
-
-                return JsonResponse({
-                    'same': True,
-                    'message': 'Same translation already exists.',
-                })
+            return JsonResponse({
+                'type': 'updated',
+                'translation': t.serialize(),
+                'stats': TranslatedResource.objects.stats(project, paths, locale),
+            })
 
         # Different translation added
         else:
-            warnings = utils.quality_check(original, string, locale, ignore)
-            if warnings:
-                return warnings
-
             if can_translate:
                 translations.update(approved=False, approved_user=None, approved_date=None)
 
@@ -680,10 +657,6 @@ def update_translation(request):
 
     # No translations saved yet
     else:
-        warnings = utils.quality_check(original, string, locale, ignore)
-        if warnings:
-            return warnings
-
         t = Translation(
             entity=e, locale=locale, user=user, string=string,
             plural_form=plural_form, date=now,

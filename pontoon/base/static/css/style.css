@@ -541,6 +541,10 @@ tfoot td a {
   width: 200px;
 }
 
+#settings .menu {
+  width: 185px;
+}
+
 #go {
   width: auto;
 }

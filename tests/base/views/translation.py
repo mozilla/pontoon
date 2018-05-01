@@ -96,8 +96,13 @@ def test_view_translate_not_authed_public_project(client, locale0,
 
 
 @pytest.mark.django_db
-def test_view_translate_force_suggestions(project_locale0,
-                                          translation0, member0):
+def test_view_translate_force_suggestions(
+    project_locale0,
+    translation0,
+    locale0,
+    member0,
+    request_update_translation
+):
     """
     Save/suggest button should always do what the current label says and
     be independent from the user settings in different browser tabs.
@@ -105,34 +110,37 @@ def test_view_translate_force_suggestions(project_locale0,
     translation0.locale.translators_group.user_set.add(member0.user)
     project_locale0.translated_strings = 1
     project_locale0.save()
-    update_params = {
-        'locale': translation0.locale.code,
-        'entity': translation0.entity.pk,
-        'translation': 'approved translation',
-        'plural_form': '-1',
-        'ignore_check': 'true',
-        'original': translation0.entity.string}
-    response = member0.client.post(
-        '/update/',
-        update_params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    response = request_update_translation(
+        member0.client,
+        entity=translation0.entity.pk,
+        original=translation0.entity.string,
+        locale=locale0.code,
+        translation='approved 0'
+    )
+    assert response.status_code == 200
+
+    assert Translation.objects.last().approved is True
+
+    response = request_update_translation(
+        member0.client,
+        entity=translation0.entity.pk,
+        original=translation0.entity.string,
+        locale=locale0.code,
+        translation='approved translation 0',
+        force_suggestions='false'
+    )
     assert response.status_code == 200
     assert Translation.objects.last().approved is True
 
-    update_params["translation"] = "approved translation2"
-    update_params["force_suggestions"] = "false"
-    response = member0.client.post(
-        '/update/',
-        update_params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-    assert response.status_code == 200
-    assert Translation.objects.last().approved is True
-
-    update_params["translation"] = "unapproved translation"
-    update_params["force_suggestions"] = "true"
-    response = member0.client.post(
-        '/update/',
-        update_params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+    response = request_update_translation(
+        member0.client,
+        entity=translation0.entity.pk,
+        original=translation0.entity.string,
+        locale=locale0.code,
+        translation='unapproved translation 0',
+        force_suggestions='true',
+    )
     assert response.status_code == 200
     assert Translation.objects.last().approved is False
+

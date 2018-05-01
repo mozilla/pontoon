@@ -1,4 +1,4 @@
-/* fluent-syntax@0.6.4 */
+/* fluent-syntax@0.7.0 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
@@ -370,13 +370,13 @@ var AttributeExpression = function (_Expression6) {
 var VariantExpression = function (_Expression7) {
   inherits(VariantExpression, _Expression7);
 
-  function VariantExpression(id, key) {
+  function VariantExpression(ref, key) {
     classCallCheck(this, VariantExpression);
 
     var _this16 = possibleConstructorReturn(this, (VariantExpression.__proto__ || Object.getPrototypeOf(VariantExpression)).call(this));
 
     _this16.type = "VariantExpression";
-    _this16.id = id;
+    _this16.ref = ref;
     _this16.key = key;
     return _this16;
   }
@@ -1912,7 +1912,7 @@ var FluentParser = function () {
 
         ps.expectChar("]");
 
-        return new VariantExpression(literal.id, key);
+        return new VariantExpression(literal, key);
       }
 
       if (ch === "(") {
@@ -1926,7 +1926,12 @@ var FluentParser = function () {
           throw new ParseError("E0008");
         }
 
-        return new CallExpression(new Function$1(literal.id.name), args);
+        var func = new Function$1(literal.id.name);
+        if (this.withSpans) {
+          func.addSpan(literal.span.start, literal.span.end);
+        }
+
+        return new CallExpression(func, args);
       }
 
       return literal;
@@ -2370,9 +2375,9 @@ function serializeAttributeExpression(expr) {
 }
 
 function serializeVariantExpression(expr) {
-  var id = serializeIdentifier(expr.id);
+  var ref = _serializeExpression(expr.ref);
   var key = serializeVariantKey(expr.key);
-  return id + "[" + key + "]";
+  return ref + "[" + key + "]";
 }
 
 function serializeCallExpression(expr) {
