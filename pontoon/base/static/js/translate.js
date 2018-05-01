@@ -2047,7 +2047,7 @@ var Pontoon = (function (my) {
         var entity = self.getEditorEntity(),
             translation = $('#translation').val();
 
-        if (self.translationLengthLimitExceeded(translation)) {
+        if (Number.isInteger(self.translationLengthLimit) && (self.translationLengthLimit < translation.length)) {
           self.endLoader('Translation too long.', 'error');
           return;
         }
