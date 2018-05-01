@@ -2047,11 +2047,6 @@ var Pontoon = (function (my) {
         var entity = self.getEditorEntity(),
             translation = $('#translation').val();
 
-        if (Number.isInteger(self.translationLengthLimit) && (self.translationLengthLimit < translation.length)) {
-          self.endLoader('Translation too long.', 'error');
-          return;
-        }
-
         // Mark that user approved translation instead of submitting it
         self.approvedNotSubmitted = true;
         self.updateOnServer(entity, translation, true);
