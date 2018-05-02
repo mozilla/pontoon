@@ -35,19 +35,19 @@ def run_checks(entity, string):
 
     if max_length and len(string) > max_length:
         checks['pErrors'].append(
-            'Translation too long.'
+            'Translation too long'
         )
 
     # Prevent empty translation submissions if not supported
     if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
         checks['pErrors'].append(
-            'Empty translations cannot be submitted.'
+            'Empty translations cannot be submitted'
         )
 
     # Newlines are not allowed in .lang files (bug 1190754)
     if resource_ext == 'lang' and '\n' in string:
         checks['pErrors'].append(
-            'Newline characters are not allowed.'
+            'Newline characters are not allowed'
         )
 
     # FTL checks
