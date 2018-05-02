@@ -25,7 +25,6 @@ def run_checks(original, string, locale, disabled_checks=None):
 
     check_names = {
         'accelerators': 'Accelerators',
-        'acronyms': 'Acronyms',
         'blank': 'Blank',
         'brackets': 'Brackets',
         'compendiumconflicts': 'Compendium conflict',
@@ -39,8 +38,6 @@ def run_checks(original, string, locale, disabled_checks=None):
         'escapes': 'Escapes',
         'filepaths': 'File paths',
         'functions': 'Functions',
-        'gconf': 'GConf values',
-        'kdecomments': 'Old KDE comment',
         'long': 'Long',
         'musttranslatewords': 'Must translate words',
         'newlines': 'Newlines',
