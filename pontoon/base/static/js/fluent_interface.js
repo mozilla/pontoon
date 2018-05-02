@@ -368,21 +368,6 @@ var Pontoon = (function (my) {
       return translationAST.annotations[0].message;
     }
 
-    // TODO: Should be removed by bug 1237667
-    // Detect missing values
-    else if (entityAST.value && !translationAST.value) {
-      return 'Please make sure to fill in the value';
-    }
-
-    // Detect missing attributes
-    else if (
-      entityAST.attributes &&
-      translationAST.attributes &&
-      entityAST.attributes.length !== translationAST.attributes.length
-    ) {
-      return 'Please make sure to fill in all the attributes';
-    }
-
     // Detect Message ID mismatch
     else if (entityAST.id.name !== translationAST.id.name) {
       return 'Please make sure the translation key matches the source string key';
