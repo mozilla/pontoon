@@ -31,6 +31,8 @@ def run_checks(
     """
     try:
         cl_checks = compare_locales.run_checks(entity, locale.code, string)
+    except compare_locales.UnsupportedStringError:
+        cl_checks = None
     except compare_locales.UnsupportedResourceTypeError:
         cl_checks = None
 

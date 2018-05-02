@@ -3,8 +3,11 @@ from __future__ import absolute_import
 import re
 
 from collections import defaultdict
+from fluent.syntax import FluentParser, ast
+
 
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
+parser = FluentParser()
 
 
 def get_max_length(comment):
@@ -46,5 +49,22 @@ def run_checks(entity, string):
         checks['pErrors'].append(
             'Newline characters are not allowed.'
         )
+
+    # FTL checks
+    if resource_ext == 'ftl':
+        translation_ast = parser.parse_entry(string)
+        entity_ast = parser.parse_entry(entity.string)
+
+        # Parse error
+        if isinstance(translation_ast, ast.Junk):
+            checks['pErrors'].append(
+                translation_ast.annotations[0].message
+            )
+
+        # Message ID mismatch
+        elif entity_ast.id.name != translation_ast.id.name:
+            checks['pErrors'].append(
+                'Translation key needs to match source string key'
+            )
 
     return checks

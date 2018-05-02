@@ -2678,13 +2678,6 @@ var Pontoon = (function (my) {
         self.XHRupdateOnServer.abort();
       }
 
-      // If Fluent translation contains error, display it and abort
-      var serializedTranslation = self.fluent.serializeTranslation(entity, translation);
-      if (serializedTranslation.error) {
-        self.endLoader(serializedTranslation.error, 'error', 5000);
-        return self.reattachSaveButtonHandler();
-      }
-
       self.XHRupdateOnServer = $.ajax({
         url: '/update/',
         type: 'POST',
@@ -2692,7 +2685,7 @@ var Pontoon = (function (my) {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           locale: self.locale.code,
           entity: entity.pk,
-          translation: serializedTranslation,
+          translation: self.fluent.serializeTranslation(entity, translation),
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
           ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,

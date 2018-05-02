@@ -3,11 +3,13 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 from compare_locales.checks import getChecker
+from compare_locales.parser.base import Junk
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
+
 
 CommentEntity = namedtuple(
     'Comment', (
@@ -53,6 +55,11 @@ class CompareDTDEntity(DTDEntityMixin):
 
 class UnsupportedResourceTypeError(Exception):
     """Raise if compare-locales doesn't support given resource-type."""
+    pass
+
+
+class UnsupportedStringError(Exception):
+    """Raise if compare-locales doesn't support given string."""
     pass
 
 
@@ -103,6 +110,10 @@ def cast_to_compare_locales(resource_ext, entity, string):
 
         parser.readUnicode(string)
         trEntity, = list(parser)
+
+        if isinstance(trEntity, Junk):
+            raise UnsupportedStringError(resource_ext)
+
         return (
             refEntity,
             trEntity,

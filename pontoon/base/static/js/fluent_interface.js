@@ -362,17 +362,7 @@ var Pontoon = (function (my) {
   /*
    * Perform error checks for provided translationAST and entityAST
    */
-  function runChecks(translationAST, entityAST) {
-    // Parse error
-    if (translationAST.type === 'Junk') {
-      return translationAST.annotations[0].message;
-    }
-
-    // Detect Message ID mismatch
-    else if (entityAST.id.name !== translationAST.id.name) {
-      return 'Please make sure the translation key matches the source string key';
-    }
-  }
+  function runChecks(translationAST, entityAST) {}
 
   /*
    * Toggle translation length and Copy button in editor toolbar
