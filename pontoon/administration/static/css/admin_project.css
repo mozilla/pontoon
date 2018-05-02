@@ -150,7 +150,7 @@ form a:link, form a:visited {
 
 .controls .checkbox {
   float: left;
-  margin-top: -1px;
+  margin: -1px 20px 0 0;
   text-transform: uppercase;
 }
 

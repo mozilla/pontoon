@@ -586,9 +586,9 @@ class Locale(AggregatedStats):
         blank=True,
         help_text="""
         Microsoft Translator maintains its own list of
-        <a href="https://msdn.microsoft.com/en-us/library/hh456380.aspx">supported locales</a>.
-        Choose a locale from that list that's is the closest match or leave it blank to disable
-        support for Microsoft Translator.
+        <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languages">
+        supported locales</a>. Choose a locale from that list that's is the closest match or leave
+        it blank to disable support for Microsoft Translator.
         """
     )
     ms_terminology_code = models.CharField(
@@ -1011,6 +1011,17 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
+    def syncable(self):
+        """
+        Syncable projects are not disabled, don't have sync disabled and use
+        repository as their data source type.
+        """
+        return self.filter(
+            disabled=False,
+            sync_disabled=False,
+            data_source='repository',
+        )
+
     def prefetch_project_locale(self, locale):
         """
         Prefetch ProjectLocale and latest translation data for given locale.
@@ -1069,7 +1080,11 @@ class Project(AggregatedStats):
     disabled = models.BooleanField(default=False, help_text="""
         Hide project from the UI and only keep it accessible from the admin.
         Disable the project instead of deleting it to keep translation memory
-        and attributions.
+        and attributions. Also prevents project from syncing with VCS.
+    """)
+
+    sync_disabled = models.BooleanField(default=False, help_text="""
+        Prevent project from syncing with VCS.
     """)
 
     # Website for in place localization
