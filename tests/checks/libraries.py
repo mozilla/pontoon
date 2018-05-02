@@ -195,5 +195,5 @@ def test_tt_disabled_checks(
         ANY,
         ANY,
         ANY,
-        set()
+        {'acronyms', 'gconf', 'kdecomments'}
     )
