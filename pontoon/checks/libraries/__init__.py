@@ -40,7 +40,13 @@ def run_checks(
     resource_ext = entity.resource.format
 
     if use_tt_checks and resource_ext != 'ftl':
-        tt_disabled_checks = set()
+        # Always disable checks we don't use. For details, see:
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1410619
+        tt_disabled_checks = {
+            'acronyms',
+            'gconf',
+            'kdecomments',
+        }
 
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
