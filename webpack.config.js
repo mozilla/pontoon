@@ -36,7 +36,10 @@ module.exports = {
   resolve: {
     // This allows you to import modules just like you would in a NodeJS app.
     extensions: ['.js', '.jsx'],
-    modules: [path.resolve(__dirname, 'pontoon/static/js/'), "node_modules"]
+    modules: [
+      path.resolve(__dirname, 'pontoon/static/js/'),
+      'node_modules',
+    ]
   },
 
   plugins: [
@@ -45,7 +48,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new BundleTracker({filename: './webpack-stats.json'}),
+    new BundleTracker({filename: path.resolve(__dirname, 'webpack-stats.json')}),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
