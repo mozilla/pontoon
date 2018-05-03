@@ -666,7 +666,6 @@ var Pontoon = (function (my) {
           return translation;
         }
 
-        var entityAST = fluentParser.parseEntry(entity.original);
         var content = entity.key + ' = ';
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
@@ -823,8 +822,7 @@ var Pontoon = (function (my) {
               }
 
               self.toggleEditor(showFTLEditor);
-            },
-            error: function(error) {}
+            }
           });
         });
 

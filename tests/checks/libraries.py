@@ -93,23 +93,15 @@ def entity_ftl_mock():
     yield mock
 
 
-@pytest.yield_fixture()
-def locale_mock():
-    mock = MagicMock()
-    mock.code = 'en-US'
-    yield mock
-
-
 def test_ignore_warnings(
     entity_properties_plurals_mock,
-    locale_mock
 ):
     """
     Check if logic of ignore_warnings works when there are errors.
     """
     assert run_checks(
         entity_properties_plurals_mock,
-        locale_mock,
+        'en-US',
         entity_properties_plurals_mock.string,
         'plural1;plural2;plural3;plural4;plural5',
         True,
@@ -124,7 +116,7 @@ def test_ignore_warnings(
     # Warnings can be ignored for Translate Toolkit if user decides to do so
     assert run_checks(
         entity_properties_plurals_mock,
-        locale_mock,
+        'en-US',
         entity_properties_plurals_mock.string,
         'plural1;plural2;plural3;plural4;plural5',
         False,
@@ -138,14 +130,13 @@ def test_ignore_warnings(
 
 def test_invalid_resource_compare_locales(
     entity_invalid_resource_mock,
-    locale_mock,
 ):
     """
     Unsupported resource shouldn't raise an error.
     """
     assert run_checks(
         entity_invalid_resource_mock,
-        locale_mock,
+        'en-US',
         entity_invalid_resource_mock.string,
         'Translation',
         False,
@@ -156,15 +147,14 @@ def test_invalid_resource_compare_locales(
 def test_tt_disabled_checks(
     entity_properties_mock,
     entity_dtd_mock,
-    locale_mock,
-    run_tt_checks_mock
+    run_tt_checks_mock,
 ):
     """
     Check if overlapping checks are disabled in Translate Toolkit.
     """
     assert run_checks(
         entity_properties_mock,
-        locale_mock,
+        'en-US',
         entity_properties_mock.string,
         'invalid translation \q',
         True,
@@ -185,7 +175,7 @@ def test_tt_disabled_checks(
 
     assert run_checks(
         entity_dtd_mock,
-        locale_mock,
+        'en-US',
         entity_properties_mock.string,
         'Translated string',
         True,

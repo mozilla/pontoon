@@ -65,7 +65,7 @@ def test_too_long_translation_invalid_length(get_entity_mock):
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 2'),
         '0123'
-    ) == {'pErrors': ['Translation too long.']}
+    ) == {'pErrors': ['Translation too long']}
 
 
 def test_empty_translations(get_entity_mock):
@@ -76,7 +76,7 @@ def test_empty_translations(get_entity_mock):
         get_entity_mock('po'),
         ''
     ) == {
-        'pErrors': [u'Empty translations cannot be submitted.']
+        'pErrors': [u'Empty translations cannot be submitted']
     }
 
     assert run_checks(
@@ -91,7 +91,7 @@ def test_lang_newlines(get_entity_mock):
         get_entity_mock('lang'),
         'aaa\nbbb'
     ) == {
-        'pErrors': [u'Newline characters are not allowed.']
+        'pErrors': [u'Newline characters are not allowed']
     }
 
     assert run_checks(
