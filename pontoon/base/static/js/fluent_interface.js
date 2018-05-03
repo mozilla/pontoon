@@ -466,11 +466,6 @@ var Pontoon = (function (my) {
 
         var translation = this.serializeTranslation(entity, fallback);
 
-        // If translation broken, incomplete or empty
-        if (translation.error) {
-          return translation.error;
-        }
-
         // Special case: empty translations in rich FTL editor don't serialize properly
         if (this.isFTLEditorEnabled()) {
           var richTranslation = $.map(
