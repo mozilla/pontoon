@@ -136,7 +136,8 @@ class SubpageInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
-    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person', 'pk', 'enabled')
+    list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person',
+                    'pk', 'enabled', 'sync_disabled',)
     ordering = ('disabled',)
 
     def contact_person(self, obj):
@@ -152,7 +153,8 @@ class ProjectAdmin(admin.ModelAdmin):
         (None, {
             'fields': (
                 'name', 'slug', 'info', 'deadline', 'priority',
-                'contact', 'langpack_url', 'can_be_requested', 'disabled'),
+                'contact', 'langpack_url', 'can_be_requested', 'disabled',
+                'sync_disabled'),
         }),
         ('WEBSITE', {
             'fields': ('url', 'width', 'links'),

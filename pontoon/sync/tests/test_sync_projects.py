@@ -35,10 +35,17 @@ class CommandTests(TestCase):
 
         self.command.handle(*args, **kwargs)
 
-    def test_disabled_projects(self):
-        """Only sync projects that aren't disabled."""
+    def test_syncable_projects_only(self):
+        """
+        Only sync projects that aren't disabled
+        and for which sync isn't disabled.
+        """
         ProjectFactory.create(disabled=True)
-        active_project = ProjectFactory.create(disabled=False)
+        ProjectFactory.create(sync_disabled=True)
+        active_project = ProjectFactory.create(
+            disabled=False,
+            sync_disabled=False,
+        )
 
         self.execute_command()
         self.mock_sync_project.delay.assert_called_with(

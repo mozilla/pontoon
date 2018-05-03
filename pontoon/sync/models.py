@@ -88,7 +88,10 @@ class SyncLog(BaseLog):
         # translated + suggested + fuzzy > total in TranslatedResource
         for t in (
             TranslatedResource.objects
-            .filter(resource__project__disabled=False)
+            .filter(
+                resource__project__disabled=False,
+                resource__project__sync_disabled=False,
+            )
             .annotate(
                 total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings'))
             )
