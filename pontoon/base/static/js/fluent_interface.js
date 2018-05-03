@@ -360,11 +360,6 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Perform error checks for provided translationAST and entityAST
-   */
-  function runChecks(translationAST, entityAST) {}
-
-  /*
    * Toggle translation length and Copy button in editor toolbar
    */
   function toggleEditorToolbar() {
@@ -726,13 +721,6 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(content);
-        var error = runChecks(ast, entityAST);
-
-        if (error) {
-          return {
-            error: error,
-          };
-        }
 
         return fluentSerializer.serializeEntry(ast);
       },
@@ -795,51 +783,54 @@ var Pontoon = (function (my) {
           e.preventDefault();
 
           var entity = Pontoon.getEditorEntity();
-          var translation = null;
+          var translation = $('#translation').val();
 
-          // Update FTL editor
-          if ($(this).is('.active')) {
-            translation = $('#translation').val();
-
-            // Strip trailing newlines for easier translated status detection
-            translation = translation.replace(/\n$/, '');
-
-            var translated = (translation && translation !== entity.key + ' = ');
-
-            // Perform error checks
-            if (translated) {
-              var translationAST = fluentParser.parseEntry(translation);
-              var entityAST = fluentParser.parseEntry(entity.original);
-              var error = runChecks(translationAST, entityAST);
-              if (error) {
-                return Pontoon.endLoader(error, 'error', 5000);
+          $.ajax({
+            url: '/perform-checks/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf'),
+              entity: entity.pk,
+              locale_code: Pontoon.locale.code,
+              original: entity.original,
+              string: self.serializeTranslation(entity, translation),
+              ignore_warnings: false,
+            },
+            success: function(data) {
+              var showFTLEditor = $('#ftl').is('.active');
+              if (!showFTLEditor) {
+                translation = self.serializeTranslation(entity, translation);
               }
-            }
 
-            var isRichEditorSupported = self.renderEditor({
-              pk: translated, // An indicator that the string is translated
-              string: translation,
-            });
+              // If non-empty translation broken or incomplete: prevent switching
+              var translated = translation !== entity.key + ' = ';
+              if (translated && data.failedChecks) {
+                return Pontoon.renderFailedChecks(data.failedChecks, true);
+              }
 
-            // Rich FTL editor does not support the translation
-            if (!isRichEditorSupported) {
-              return;
-            }
-          }
-          // Update source editor
-          else {
-            translation = self.serializeTranslation(entity, translation);
+              // Update editor contents
+              if (showFTLEditor) {
+                var isRichEditorSupported = self.renderEditor({
+                  pk: translated, // An indicator that the string is translated
+                  string: translation,
+                });
 
-            // If translation broken, incomplete or empty
-            if (translation.error) {
-              translation = entity.key + ' = ';
-            }
+                // Rich FTL editor does not support the translation
+                if (!isRichEditorSupported) {
+                  return Pontoon.renderFailedChecks({
+                    pErrors: ['Translation not supported in rich editor']
+                  }, true);
+                }
+              }
+              else {
+                $('#translation').val(translation);
+                Pontoon.updateCachedTranslation();
+              }
 
-            $('#translation').val(translation);
-            Pontoon.updateCachedTranslation();
-          }
-
-          self.toggleEditor($(this).is('.active'));
+              self.toggleEditor(showFTLEditor);
+            },
+            error: function(error) {}
+          });
         });
 
         // Generate access key candidates

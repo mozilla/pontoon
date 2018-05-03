@@ -510,6 +510,43 @@ def unreject_translation(request):
     })
 
 
+@utils.require_AJAX
+def perform_checks(request):
+    """Perform quality checks and return a list of any failed ones."""
+    try:
+        entity = request.POST['entity']
+        locale_code = request.POST['locale_code']
+        original = request.POST['original']
+        string = request.POST['string']
+        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    try:
+        entity = Entity.objects.get(pk=entity)
+    except Entity.DoesNotExist as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    try:
+        use_ttk_checks = UserProfile.objects.get(user=request.user).quality_checks
+    except UserProfile.DoesNotExist:
+        use_ttk_checks = True
+
+    checks = run_checks(
+        entity,
+        locale_code,
+        original,
+        string,
+        use_ttk_checks,
+        ignore_warnings,
+    )
+
+    if checks:
+        return checks
+    else:
+        return HttpResponse('ok')
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
@@ -573,7 +610,7 @@ def update_translation(request):
 
     checks = run_checks(
         e,
-        locale,
+        locale.code,
         original,
         string,
         use_ttk_checks,

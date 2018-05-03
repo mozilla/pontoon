@@ -5,7 +5,7 @@ from translate.lang import data as lang_data
 from translate.storage import base as storage_base
 
 
-def run_checks(original, string, locale, disabled_checks=None):
+def run_checks(original, string, locale_code, disabled_checks=None):
     """Check for obvious errors like blanks and missing interpunction."""
     original = lang_data.normalized_unicode(original)
     string = lang_data.normalized_unicode(string)
@@ -14,7 +14,7 @@ def run_checks(original, string, locale, disabled_checks=None):
     unit = storage_base.TranslationUnit(original)
     unit.target = string
     checker = checks.StandardChecker(
-        checkerconfig=checks.CheckerConfig(targetlanguage=locale.code),
+        checkerconfig=checks.CheckerConfig(targetlanguage=locale_code),
         excludefilters=disabled_checks
     )
 

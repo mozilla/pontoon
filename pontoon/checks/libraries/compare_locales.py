@@ -18,7 +18,7 @@ CommentEntity = namedtuple(
 )
 
 
-# Because we can't pass the context to all entities passed to compare locales,
+# Because we can't pass the context to all entities passed to compare-locales,
 # we have to create our equivalents of compare-locale's internal classes.
 
 class ComparePropertiesEntity(PropertiesEntityMixin):
@@ -70,7 +70,6 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :arg basestring resource_ext: extension of a resource.
     :arg pontoon.base.models.Entity entity: Source entity
     :arg basestring string: a translation
-    :arg pontoon.base.models.Locale locale: Locale of a translation
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
@@ -122,12 +121,12 @@ def cast_to_compare_locales(resource_ext, entity, string):
     raise UnsupportedResourceTypeError(resource_ext)
 
 
-def run_checks(entity, locale, string):
+def run_checks(entity, locale_code, string):
     """
     Run all compare-locales checks on provided translation and entity.
     :arg pontoon.base.models.Entity entity: Source entity instance
+    :arg basestring locale_code: Locale of a translation
     :arg basestring string: translation string
-    :arg pontoon.base.models.Locale locale: Locale of a translation
 
     :return: Dictionary with the following structure:
         {
@@ -149,7 +148,7 @@ def run_checks(entity, locale, string):
     )
 
     checker = getChecker(
-        File(entity.resource.path, entity.resource.path, locale=locale),
+        File(entity.resource.path, entity.resource.path, locale=locale_code),
         {'android-dtd'}
     )
 

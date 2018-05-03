@@ -9,7 +9,7 @@ from . import pontoon
 
 def run_checks(
     entity,
-    locale,
+    locale_code,
     original,
     string,
     use_tt_checks,
@@ -19,7 +19,7 @@ def run_checks(
     Main function that performs all quality checks from frameworks handled in Pontoon.
 
     :arg pontoon.base.models.Entity entity: Source entity
-    :arg pontoon.base.models.Locale locale: Locale of a translation
+    :arg basestring locale_code: Locale code of a translation
     :arg basestring original: an original string
     :arg basestring string: a translation
     :arg bool use_tt_checks: use Translate Toolkit checks
@@ -30,7 +30,7 @@ def run_checks(
         * None - If there's no errors and non-omitted warnings.
     """
     try:
-        cl_checks = compare_locales.run_checks(entity, locale.code, string)
+        cl_checks = compare_locales.run_checks(entity, locale_code, string)
     except compare_locales.UnsupportedStringError:
         cl_checks = None
     except compare_locales.UnsupportedResourceTypeError:
@@ -61,7 +61,7 @@ def run_checks(
             tt_disabled_checks.add('untranslated')
 
         tt_checks = translate_toolkit.run_checks(
-            original, string, locale, tt_disabled_checks
+            original, string, locale_code, tt_disabled_checks
         )
 
     checks = dict(
