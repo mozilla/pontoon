@@ -457,6 +457,20 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get focused translation textarea element or first, if none has focus
+     */
+    getFocusedOrFirstTextarea: function () {
+      var textarea = $('#editor textarea:visible:focus');
+
+      if (!textarea.length) {
+        textarea = $('#editor textarea:visible:first');
+      }
+
+      return textarea;
+    },
+
+
+    /*
      * Open batch editor
      */
     openBatchEditor: function (loading) {
@@ -1773,11 +1787,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus');
-        if (!textarea.length) {
-          textarea = $('#editor textarea:visible:first');
-        }
-
+        var textarea = self.getFocusedOrFirstTextarea();
         var selectionStart = textarea.prop('selectionStart');
         var selectionEnd = textarea.prop('selectionEnd');
         var placeable = $(this).text();
@@ -2029,10 +2039,7 @@ var Pontoon = (function (my) {
         if (self.fluent.isFTLEditorEnabled()) {
           // Machinery: Update focused or first element only
           if ($('#helpers .machinery').is(':visible')) {
-            var textarea = $('#editor textarea:visible:focus');
-            if (!textarea.length) {
-              textarea = $('#editor textarea:visible:first');
-            }
+            var textarea = self.getFocusedOrFirstTextarea();
             textarea.val(source).focus();
           }
           // History & Locales: Update entire editor
