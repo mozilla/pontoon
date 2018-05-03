@@ -2872,6 +2872,14 @@ var Pontoon = (function (my) {
           self.navigateToEntity('previous');
           return false;
         }
+
+        // Esc: Close warning overlay
+        if (key === 27) {
+          if ($('.warning-overlay').is(':visible')) {
+            $('.warning-overlay .cancel').click();
+          }
+          return false;
+        }
       });
 
       // iFrame fix on hiding menus
