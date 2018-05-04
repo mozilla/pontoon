@@ -1887,7 +1887,7 @@ var Pontoon = (function (my) {
           if (
             self.fluent.isFTLEditorEnabled() &&
             self.fluent.isComplexFTL() &&
-            !$('#editor textarea:visible:last').is(":focus")
+            !$('#editor textarea:visible:last').is(':focus')
           ) {
             return;
           }
