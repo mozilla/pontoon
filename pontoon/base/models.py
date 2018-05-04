@@ -2167,8 +2167,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             if re.match('^[0-9]{12}-[0-9]{12}$', time):
                 start, end = utils.parse_time_interval(time)
                 pre_filters.append(Entity.objects.between_time_interval(locale, start, end))
-            else:
-                raise ValueError(time)
 
         if author:
             pre_filters.append(Entity.objects.authored_by(locale, author.split(',')))
