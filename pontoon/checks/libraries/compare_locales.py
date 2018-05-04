@@ -3,11 +3,13 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 from compare_locales.checks import getChecker
+from compare_locales.parser.base import Junk
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
+
 
 CommentEntity = namedtuple(
     'Comment', (
@@ -16,7 +18,7 @@ CommentEntity = namedtuple(
 )
 
 
-# Because we can't pass the context to all entities passed to compare locales,
+# Because we can't pass the context to all entities passed to compare-locales,
 # we have to create our equivalents of compare-locale's internal classes.
 
 class ComparePropertiesEntity(PropertiesEntityMixin):
@@ -56,6 +58,11 @@ class UnsupportedResourceTypeError(Exception):
     pass
 
 
+class UnsupportedStringError(Exception):
+    """Raise if compare-locales doesn't support given string."""
+    pass
+
+
 def cast_to_compare_locales(resource_ext, entity, string):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
@@ -63,7 +70,6 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :arg basestring resource_ext: extension of a resource.
     :arg pontoon.base.models.Entity entity: Source entity
     :arg basestring string: a translation
-    :arg pontoon.base.models.Locale locale: Locale of a translation
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
@@ -103,6 +109,10 @@ def cast_to_compare_locales(resource_ext, entity, string):
 
         parser.readUnicode(string)
         trEntity, = list(parser)
+
+        if isinstance(trEntity, Junk):
+            raise UnsupportedStringError(resource_ext)
+
         return (
             refEntity,
             trEntity,
@@ -111,12 +121,12 @@ def cast_to_compare_locales(resource_ext, entity, string):
     raise UnsupportedResourceTypeError(resource_ext)
 
 
-def run_checks(entity, locale, string):
+def run_checks(entity, locale_code, string):
     """
     Run all compare-locales checks on provided translation and entity.
     :arg pontoon.base.models.Entity entity: Source entity instance
+    :arg basestring locale_code: Locale of a translation
     :arg basestring string: translation string
-    :arg pontoon.base.models.Locale locale: Locale of a translation
 
     :return: Dictionary with the following structure:
         {
@@ -138,7 +148,7 @@ def run_checks(entity, locale, string):
     )
 
     checker = getChecker(
-        File(entity.resource.path, entity.resource.path, locale=locale),
+        File(entity.resource.path, entity.resource.path, locale=locale_code),
         {'android-dtd'}
     )
 

@@ -360,36 +360,6 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Perform error checks for provided translationAST and entityAST
-   */
-  function runChecks(translationAST, entityAST) {
-    // Parse error
-    if (translationAST.type === 'Junk') {
-      return translationAST.annotations[0].message;
-    }
-
-    // TODO: Should be removed by bug 1237667
-    // Detect missing values
-    else if (entityAST.value && !translationAST.value) {
-      return 'Please make sure to fill in the value';
-    }
-
-    // Detect missing attributes
-    else if (
-      entityAST.attributes &&
-      translationAST.attributes &&
-      entityAST.attributes.length !== translationAST.attributes.length
-    ) {
-      return 'Please make sure to fill in all the attributes';
-    }
-
-    // Detect Message ID mismatch
-    else if (entityAST.id.name !== translationAST.id.name) {
-      return 'Please make sure the translation key matches the source string key';
-    }
-  }
-
-  /*
    * Toggle translation length and Copy button in editor toolbar
    */
   function toggleEditorToolbar() {
@@ -495,11 +465,6 @@ var Pontoon = (function (my) {
         }
 
         var translation = this.serializeTranslation(entity, fallback);
-
-        // If translation broken, incomplete or empty
-        if (translation.error) {
-          return translation.error;
-        }
 
         // Special case: empty translations in rich FTL editor don't serialize properly
         if (this.isFTLEditorEnabled()) {
@@ -701,7 +666,6 @@ var Pontoon = (function (my) {
           return translation;
         }
 
-        var entityAST = fluentParser.parseEntry(entity.original);
         var content = entity.key + ' = ';
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
@@ -751,13 +715,6 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(content);
-        var error = runChecks(ast, entityAST);
-
-        if (error) {
-          return {
-            error: error,
-          };
-        }
 
         return fluentSerializer.serializeEntry(ast);
       },
@@ -820,51 +777,53 @@ var Pontoon = (function (my) {
           e.preventDefault();
 
           var entity = Pontoon.getEditorEntity();
-          var translation = null;
+          var translation = $('#translation').val();
 
-          // Update FTL editor
-          if ($(this).is('.active')) {
-            translation = $('#translation').val();
-
-            // Strip trailing newlines for easier translated status detection
-            translation = translation.replace(/\n$/, '');
-
-            var translated = (translation && translation !== entity.key + ' = ');
-
-            // Perform error checks
-            if (translated) {
-              var translationAST = fluentParser.parseEntry(translation);
-              var entityAST = fluentParser.parseEntry(entity.original);
-              var error = runChecks(translationAST, entityAST);
-              if (error) {
-                return Pontoon.endLoader(error, 'error', 5000);
+          $.ajax({
+            url: '/perform-checks/',
+            type: 'POST',
+            data: {
+              csrfmiddlewaretoken: $('#server').data('csrf'),
+              entity: entity.pk,
+              locale_code: Pontoon.locale.code,
+              original: entity.original,
+              string: self.serializeTranslation(entity, translation),
+              ignore_warnings: false,
+            },
+            success: function(data) {
+              var showFTLEditor = $('#ftl').is('.active');
+              if (!showFTLEditor) {
+                translation = self.serializeTranslation(entity, translation);
               }
+
+              // If non-empty translation broken or incomplete: prevent switching
+              var translated = translation !== entity.key + ' = ';
+              if (translated && data.failedChecks) {
+                return Pontoon.renderFailedChecks(data.failedChecks, true);
+              }
+
+              // Update editor contents
+              if (showFTLEditor) {
+                var isRichEditorSupported = self.renderEditor({
+                  pk: translated, // An indicator that the string is translated
+                  string: translation,
+                });
+
+                // Rich FTL editor does not support the translation
+                if (!isRichEditorSupported) {
+                  return Pontoon.renderFailedChecks({
+                    pErrors: ['Translation not supported in rich editor']
+                  }, true);
+                }
+              }
+              else {
+                $('#translation').val(translation);
+                Pontoon.updateCachedTranslation();
+              }
+
+              self.toggleEditor(showFTLEditor);
             }
-
-            var isRichEditorSupported = self.renderEditor({
-              pk: translated, // An indicator that the string is translated
-              string: translation,
-            });
-
-            // Rich FTL editor does not support the translation
-            if (!isRichEditorSupported) {
-              return;
-            }
-          }
-          // Update source editor
-          else {
-            translation = self.serializeTranslation(entity, translation);
-
-            // If translation broken, incomplete or empty
-            if (translation.error) {
-              translation = entity.key + ' = ';
-            }
-
-            $('#translation').val(translation);
-            Pontoon.updateCachedTranslation();
-          }
-
-          self.toggleEditor($(this).is('.active'));
+          });
         });
 
         // Generate access key candidates
