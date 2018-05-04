@@ -33,6 +33,7 @@ def run_checks(entity, string):
     resource_ext = entity.resource.format
     max_length = get_max_length(entity.comment)
 
+    # Prevent translations exceeding the given length limit
     if max_length and len(string) > max_length:
         checks['pErrors'].append(
             'Translation too long'

@@ -12,13 +12,14 @@ from pontoon.checks.libraries.pontoon import (
 @pytest.fixture()
 def get_entity_mock():
     """
-    Create an entity mock with comment and resource.path and format set.
+    Create an entity mock with comment, resource.path and extension.
     """
-    def _f(format, comment=''):
+    def _f(extension, comment='', string=''):
         entity = MagicMock()
         entity.comment = comment
-        entity.resource.format = format
-        entity.resource.path = 'test.' + format
+        entity.string = string
+        entity.resource.format = extension
+        entity.resource.path = 'test.' + extension
         return entity
     yield _f
 
@@ -50,7 +51,7 @@ def test_too_long_translation_max_length(comment, expected):
 
 def test_too_long_translation_valid_length(get_entity_mock):
     """
-    Checks should return an error if a translation is too long.
+    Checks shouldn't return an error if a translation isn't too long.
     """
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
@@ -70,7 +71,7 @@ def test_too_long_translation_invalid_length(get_entity_mock):
 
 def test_empty_translations(get_entity_mock):
     """
-    Empty translations shouldn't be allowed for some of extensions.
+    Empty translations shouldn't be allowed for some extensions.
     """
     assert run_checks(
         get_entity_mock('po'),
@@ -86,7 +87,7 @@ def test_empty_translations(get_entity_mock):
 
 
 def test_lang_newlines(get_entity_mock):
-    """Newlines aren't allowes in lang files"""
+    """Newlines aren't allowed in lang files"""
     assert run_checks(
         get_entity_mock('lang'),
         'aaa\nbbb'
@@ -98,3 +99,28 @@ def test_lang_newlines(get_entity_mock):
         get_entity_mock('po'),
         'aaa\nbbb'
     ) == {}
+
+
+def test_ftl_parse_error(get_entity_mock):
+    """Invalid FTL strings are not allowed"""
+    assert run_checks(
+        get_entity_mock('ftl', string='key = value'),
+        'key'
+    ) == {
+        'pErrors': [u'Expected message "key" to have a value or attributes']
+    }
+
+    assert run_checks(
+        get_entity_mock('ftl', string='key = value'),
+        'key = translation'
+    ) == {}
+
+
+def test_ftl_id_missmatch(get_entity_mock):
+    """ID of the source string and translation must be the same"""
+    assert run_checks(
+        get_entity_mock('ftl', string='key = value'),
+        'key1 = translation'
+    ) == {
+        'pErrors': [u'Translation key needs to match source string key']
+    }
