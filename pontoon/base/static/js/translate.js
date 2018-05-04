@@ -1883,8 +1883,12 @@ var Pontoon = (function (my) {
         // Tab: Select suggestions
         if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
 
-          // Rich FTL editor with complex message: ignore tab key
-          if (self.fluent.isFTLEditorEnabled() && self.fluent.isComplexFTL()) {
+          // Rich FTL editor with complex message and last element not focused: ignore tab key
+          if (
+            self.fluent.isFTLEditorEnabled() &&
+            self.fluent.isComplexFTL() &&
+            !$('#editor textarea:visible:last').is(":focus")
+          ) {
             return;
           }
 
@@ -1914,6 +1918,11 @@ var Pontoon = (function (my) {
           section
             .find('li.suggestion').removeClass('hover').end()
             .find('li.suggestion:eq(' + index + ')').addClass('hover').click();
+
+          // Needed to keep the experience smooth in rich FTL editor with complex messages.
+          // Without this, the first field gets focus and the subsequent Tab takes you to
+          // the next field.
+          $('#editor textarea:visible:last').focus();
 
           self.updateScroll(section);
           return false;
