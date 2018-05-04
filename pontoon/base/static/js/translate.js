@@ -1951,6 +1951,10 @@ var Pontoon = (function (my) {
       $('#copy').click(function (e) {
         e.preventDefault();
 
+        if (!$(this).is(':visible')) {
+          return;
+        }
+
         var entity = self.getEditorEntity(),
             original = entity['original' + self.isPluralized()],
             source = self.fluent.getSourceStringValue(entity, original);
