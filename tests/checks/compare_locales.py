@@ -46,7 +46,7 @@ def mock_quality_check_args(
 
     return {
         'entity': entity,
-        'locale': 'en-US',
+        'locale_code': 'en-US',
         'string': translation,
     }
 

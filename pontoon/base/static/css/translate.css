@@ -1616,6 +1616,7 @@ body > header aside p {
 
 .warning-overlay {
   background: #272A2F;
+  border-top: 1px solid #5E6475;
   bottom: 0;
   display: none;
   left: 0;

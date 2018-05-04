@@ -2549,11 +2549,12 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Show failing checks
+     * Show failed check type
      *
-     * failedChecks Array of warnings or errors
+     * type 'error' or 'warning'
+     * failedChecks Array of errors or warnings
      */
-    showFailedChecks: function(type, failedChecks) {
+    showFailedCheckType: function(type, failedChecks) {
       $(failedChecks).each(function() {
         $('#quality ul').append(
           '<li class="' + type + '">' +
@@ -2562,6 +2563,40 @@ var Pontoon = (function (my) {
           '</li>'
         );
       });
+    },
+
+
+    /*
+     * Render failed checks panel
+     *
+     * failedChecks Array of errors or warnings
+     */
+    renderFailedChecks: function(failedChecks, messageOnly) {
+      if (!messageOnly) {
+        $('#save-anyway').show();
+      }
+
+      $('#quality ul').empty();
+
+      if (failedChecks.clErrors) {
+        $('#save-anyway').hide();
+        this.showFailedCheckType('error', failedChecks.clErrors);
+      }
+
+      if (failedChecks.pErrors) {
+        $('#save-anyway').hide();
+        this.showFailedCheckType('error', failedChecks.pErrors);
+      }
+
+      if (failedChecks.clWarnings) {
+        this.showFailedCheckType('warning', failedChecks.clWarnings);
+      }
+
+      if (failedChecks.ttWarnings) {
+        this.showFailedCheckType('warning', failedChecks.ttWarnings);
+      }
+
+      $('#quality').show();
     },
 
 
@@ -2632,30 +2667,8 @@ var Pontoon = (function (my) {
 
         } else if (data.failedChecks) {
           self.endLoader();
-          var failedChecks = data.failedChecks;
+          self.renderFailedChecks(data.failedChecks);
 
-          $('#save-anyway').show();
-          $('#quality ul').empty();
-
-          if (failedChecks.clErrors) {
-            $('#save-anyway').hide();
-            self.showFailedChecks('error', failedChecks.clErrors);
-          }
-
-          if (failedChecks.pErrors) {
-            $('#save-anyway').hide();
-            self.showFailedChecks('error', failedChecks.pErrors);
-          }
-
-          if (failedChecks.clWarnings) {
-            self.showFailedChecks('warning', failedChecks.clWarnings);
-          }
-
-          if (failedChecks.ttWarnings) {
-            self.showFailedChecks('warning', failedChecks.ttWarnings);
-          }
-
-          $('#quality').show();
         } else {
           self.endLoader(data, 'error');
         }
@@ -2678,13 +2691,6 @@ var Pontoon = (function (my) {
         self.XHRupdateOnServer.abort();
       }
 
-      // If Fluent translation contains error, display it and abort
-      var serializedTranslation = self.fluent.serializeTranslation(entity, translation);
-      if (serializedTranslation.error) {
-        self.endLoader(serializedTranslation.error, 'error', 5000);
-        return self.reattachSaveButtonHandler();
-      }
-
       self.XHRupdateOnServer = $.ajax({
         url: '/update/',
         type: 'POST',
@@ -2692,7 +2698,7 @@ var Pontoon = (function (my) {
           csrfmiddlewaretoken: $('#server').data('csrf'),
           locale: self.locale.code,
           entity: entity.pk,
-          translation: serializedTranslation,
+          translation: self.fluent.serializeTranslation(entity, translation),
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
           ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,
@@ -2864,6 +2870,14 @@ var Pontoon = (function (my) {
         // Alt + Up: Go to previous string
         if (e.altKey && key === 38) {
           self.navigateToEntity('previous');
+          return false;
+        }
+
+        // Esc: Close warning overlay
+        if (key === 27) {
+          if ($('.warning-overlay').is(':visible')) {
+            $('.warning-overlay .cancel').click();
+          }
           return false;
         }
       });
