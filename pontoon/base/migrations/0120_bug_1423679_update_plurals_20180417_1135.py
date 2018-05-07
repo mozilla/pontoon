@@ -23,9 +23,9 @@ def update_plurals(apps, schema_editor):
     for code, data in LOCALES.items():
         locale = Locale.objects.get(code=code)
 
-        print ""
-        print locale.code
-        print "---------"
+        # print ""
+        # print locale.code
+        # print "---------"
 
         # Cache for later use
         cldr_plurals_old = locale.cldr_plurals
@@ -112,7 +112,7 @@ def update_plurals(apps, schema_editor):
             ) for changed_entity_id in changed_entity_ids
         ]
 
-        print "Changed Gettext entities: " + str(list(changed_entity_ids))
+        # print "Changed Gettext entities: " + str(list(changed_entity_ids))
 
         ChangedEntityLocale.objects.bulk_create(changed_entities)
 
@@ -214,7 +214,7 @@ def update_plurals(apps, schema_editor):
 
                         changed_fluent_entities.append(t.entity.pk)
 
-        print "Changed Fluent entities: " + str(changed_fluent_entities)
+        # print "Changed Fluent entities: " + str(changed_fluent_entities)
 
 
 class Migration(migrations.Migration):
