@@ -2686,7 +2686,7 @@ var Pontoon = (function (my) {
           self.endLoader(data, 'error');
         }
 
-        if (!data.warnings) {
+        if (!data.failedChecks) {
           self.approvedNotSubmitted = null;
         }
       }
