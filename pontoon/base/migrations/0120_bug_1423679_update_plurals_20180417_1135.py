@@ -5,27 +5,117 @@ from __future__ import unicode_literals
 import copy
 
 from django.db import migrations
+from django.db.models import F
 from fluent.syntax import FluentParser, FluentSerializer, ast
-
-# Needed for calculate_stats()
-from pontoon.base.models import TranslatedResource
+from pontoon.base import utils
 
 
 parser = FluentParser()
 serializer = FluentSerializer()
 
 
+def adjust_stats(self, total_strings_diff, approved_strings_diff,
+                 fuzzy_strings_diff, translated_strings_diff):
+    self.total_strings = F('total_strings') + total_strings_diff
+    self.approved_strings = F('approved_strings') + approved_strings_diff
+    self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
+    self.translated_strings = F('translated_strings') + translated_strings_diff
+
+    self.save(update_fields=[
+        'total_strings', 'approved_strings',
+        'fuzzy_strings', 'translated_strings'
+    ])
+
+
+def calculate_stats(self, Translation, Entity, ProjectLocale):
+    """Update stats, including denormalized ones."""
+    resource = self.resource
+    locale = self.locale
+    project = resource.project
+
+    entity_ids = Translation.objects.filter(locale=locale).values('entity')
+    translated_entities = Entity.objects.filter(
+        pk__in=entity_ids, resource=resource, obsolete=False)
+
+    # Singular
+    translations = Translation.objects.filter(
+        entity__in=translated_entities.filter(string_plural=''), locale=locale)
+    approved = translations.filter(approved=True).count()
+    fuzzy = translations.filter(fuzzy=True).count()
+
+    # Plural
+    nplurals = len(map(int, locale.cldr_plurals.split(','))) or 1
+    missing = 0
+    for e in translated_entities.exclude(string_plural=''):
+        translations = Translation.objects.filter(entity=e, locale=locale)
+        plural_approved_count = translations.filter(approved=True).count()
+        plural_fuzzy_count = translations.filter(fuzzy=True).count()
+        plural_translated_count = translations.values('plural_form').distinct().count()
+
+        if plural_approved_count == nplurals:
+            approved += 1
+        elif plural_fuzzy_count == nplurals:
+            fuzzy += 1
+        elif plural_translated_count < nplurals:
+            missing += 1
+
+    translated = max(translated_entities.count() - approved - fuzzy - missing, 0)
+
+    # Calculate diffs to reduce DB queries
+    total_strings_diff = resource.total_strings - self.total_strings
+    approved_strings_diff = approved - self.approved_strings
+    fuzzy_strings_diff = fuzzy - self.fuzzy_strings
+    translated_strings_diff = translated - self.translated_strings
+
+    # Translated Resource
+    adjust_stats(
+        self,
+        total_strings_diff, approved_strings_diff,
+        fuzzy_strings_diff, translated_strings_diff
+    )
+
+    # Project
+    adjust_stats(
+        project,
+        total_strings_diff, approved_strings_diff,
+        fuzzy_strings_diff, translated_strings_diff
+    )
+
+    # Locale
+    adjust_stats(
+        locale,
+        total_strings_diff, approved_strings_diff,
+        fuzzy_strings_diff, translated_strings_diff
+    )
+
+    # ProjectLocale
+    project_locale = utils.get_object_or_none(
+        ProjectLocale,
+        project=project,
+        locale=locale
+    )
+    if project_locale:
+        adjust_stats(
+            project_locale,
+            total_strings_diff, approved_strings_diff,
+            fuzzy_strings_diff, translated_strings_diff
+        )
+
+
 def update_plurals(apps, schema_editor):
     Locale = apps.get_model('base', 'Locale')
     Translation = apps.get_model('base', 'Translation')
+    TranslatedResource = apps.get_model('base', 'TranslatedResource')
     ChangedEntityLocale = apps.get_model('base', 'ChangedEntityLocale')
+    Entity = apps.get_model('base', 'Entity')
+    ProjectLocale = apps.get_model('base', 'ProjectLocale')
 
     for code, data in LOCALES.items():
         locale = Locale.objects.get(code=code)
 
-        print ""
-        print locale.code
-        print "---------"
+        # print ""
+        # print locale.code
+        # print "---------"
 
         # Cache for later use
         cldr_plurals_old = locale.cldr_plurals
@@ -102,7 +192,7 @@ def update_plurals(apps, schema_editor):
             resource__in=gettext_templates.values('entity__resource'),
         )
         for tr in translated_resources:
-            tr.calculate_stats()
+            calculate_stats(tr, Translation, Entity, ProjectLocale)
 
         # Mark entities as changed, for later sync
         changed_entities = [
@@ -112,7 +202,7 @@ def update_plurals(apps, schema_editor):
             ) for changed_entity_id in changed_entity_ids
         ]
 
-        print "Changed Gettext entities: " + str(list(changed_entity_ids))
+        # print "Changed Gettext entities: " + str(list(changed_entity_ids))
 
         ChangedEntityLocale.objects.bulk_create(changed_entities)
 
@@ -204,17 +294,17 @@ def update_plurals(apps, schema_editor):
                         t.save()
 
                         # Update stats
-                        translatedresource, _ = TranslatedResource.objects.get_or_create(
+                        tr, _ = TranslatedResource.objects.get_or_create(
                             resource_id=t.entity.resource.id, locale__code=code
                         )
-                        translatedresource.calculate_stats()
+                        calculate_stats(tr, Translation, Entity, ProjectLocale)
 
                         # Mark entity as changed
                         ChangedEntityLocale.objects.get_or_create(entity_id=t.entity.id, locale_id=locale.id)
 
                         changed_fluent_entities.append(t.entity.pk)
 
-        print "Changed Fluent entities: " + str(changed_fluent_entities)
+        # print "Changed Fluent entities: " + str(changed_fluent_entities)
 
 
 class Migration(migrations.Migration):
