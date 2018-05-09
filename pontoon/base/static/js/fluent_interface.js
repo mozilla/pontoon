@@ -811,9 +811,7 @@ var Pontoon = (function (my) {
 
                 // Rich FTL editor does not support the translation
                 if (!isRichEditorSupported) {
-                  return Pontoon.renderFailedChecks({
-                    pErrors: ['Translation not supported in rich editor']
-                  }, true);
+                  return Pontoon.endLoader('Translation not supported in rich editor', 'error');
                 }
               }
               else {
