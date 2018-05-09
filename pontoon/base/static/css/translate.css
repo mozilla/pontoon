@@ -1819,6 +1819,14 @@ body > header aside p {
   content: "Suggest anyway";
 }
 
+#editor #single > menu button#save-anyway.suggest.approve {
+  background: #7BC876;
+}
+
+#save-anyway.approve:before {
+  content: "Approve anyway";
+}
+
 p#sign-in-required {
   font-style: italic;
 }
