@@ -77,7 +77,7 @@ def test_empty_translations(get_entity_mock):
         get_entity_mock('po'),
         ''
     ) == {
-        'pErrors': [u'Empty translations cannot be submitted']
+        'pErrors': [u'Empty translations are not allowed']
     }
 
     assert run_checks(

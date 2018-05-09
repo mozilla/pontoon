@@ -42,7 +42,7 @@ def run_checks(entity, string):
     # Prevent empty translation submissions if not supported
     if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
         checks['pErrors'].append(
-            'Empty translations cannot be submitted'
+            'Empty translations are not allowed'
         )
 
     # Newlines are not allowed in .lang files (bug 1190754)
@@ -52,7 +52,7 @@ def run_checks(entity, string):
         )
 
     # FTL checks
-    if resource_ext == 'ftl':
+    if resource_ext == 'ftl' and string != '':
         translation_ast = parser.parse_entry(string)
         entity_ast = parser.parse_entry(entity.string)
 
