@@ -48,7 +48,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new BundleTracker({filename: path.resolve(__dirname, 'webpack-stats.json')}),
+    new BundleTracker({filename: './webpack-stats.json'}),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
