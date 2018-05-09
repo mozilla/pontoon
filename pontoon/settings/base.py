@@ -228,7 +228,9 @@ AUTHENTICATION_BACKENDS = [
 # App supports giving permissions for anonymous users.
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RAISE_403 = True
-PIPELINE_YUGLIFY_BINARY = path('node_modules/.bin/yuglify')
+PIPELINE_YUGLIFY_BINARY = path(
+    os.environ.get('YUGLIFY_BINARY', 'node_modules/.bin/yuglify')
+)
 PIPELINE_BABEL_BINARY = path('node_modules/.bin/babel')
 PIPELINE_BABEL_ARGUMENTS = '--modules ignore'
 

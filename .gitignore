@@ -28,6 +28,8 @@ tmp/*
 docs/_build
 venv
 /media/
+.cache/
+coverage/
 
 # For docker
 .docker-build

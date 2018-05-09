@@ -36,7 +36,10 @@ module.exports = {
   resolve: {
     // This allows you to import modules just like you would in a NodeJS app.
     extensions: ['.js', '.jsx'],
-    modules: [path.resolve(__dirname, 'pontoon/static/js/'), "node_modules"]
+    modules: [
+      path.resolve(__dirname, 'pontoon/static/js/'),
+      'node_modules',
+    ]
   },
 
   plugins: [
