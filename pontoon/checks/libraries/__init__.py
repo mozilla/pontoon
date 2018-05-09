@@ -29,14 +29,14 @@ def run_checks(
         * JsonResponse - If there are errors
         * None - If there's no errors and non-omitted warnings.
     """
+    pontoon_checks = pontoon.run_checks(entity, string)
+
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)
     except compare_locales.UnsupportedStringError:
         cl_checks = None
     except compare_locales.UnsupportedResourceTypeError:
         cl_checks = None
-
-    pontoon_checks = pontoon.run_checks(entity, string)
 
     tt_checks = {}
     resource_ext = entity.resource.format

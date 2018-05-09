@@ -108,9 +108,9 @@ def cast_to_compare_locales(resource_ext, entity, string):
         refEntity, = list(parser)
 
         parser.readUnicode(string)
-        trEntity, = list(parser)
+        trEntity = list(parser)[0] if list(parser) else None
 
-        if isinstance(trEntity, Junk):
+        if not trEntity or isinstance(trEntity, Junk):
             raise UnsupportedStringError(resource_ext)
 
         return (
