@@ -166,7 +166,10 @@ def run_checks(entity, locale_code, string):
 
     errors = {}
 
-    for (severity, _, message, _) in checker.check(source_ent, translation_ent):
-        errors.setdefault('cl%ss' % severity.capitalize(), []).append(message)
+    for severity, _, message, _ in checker.check(source_ent, translation_ent):
+        messages = errors.setdefault('cl%ss' % severity.capitalize(), [])
+        # Old-school duplicate prevention - set() is not JSON serializable
+        if message not in messages:
+            messages.append(message)
 
     return errors
