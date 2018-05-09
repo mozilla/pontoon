@@ -771,15 +771,21 @@ def upload(request):
 @condition(etag_func=None)
 def download_translation_memory(request, locale, slug, filename):
     locale = get_object_or_404(Locale, code=locale)
-    project = get_object_or_404(Project, slug=slug)
+
+    if slug.lower() == 'all-projects':
+        project_filter = Q()
+    else:
+        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project_filter = Q(project=project)
 
     tm_entries = (
         TranslationMemoryEntry.objects
-        .filter(locale=locale, project=project, translation__isnull=False)
+        .filter(project_filter)
+        .filter(locale=locale, translation__isnull=False)
         .exclude(Q(source='') | Q(target=''))
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
-    filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=project.slug)
+    filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=slug)
 
     response = StreamingHttpResponse(
         utils.build_translation_memory_file(
