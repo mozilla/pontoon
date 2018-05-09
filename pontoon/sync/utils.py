@@ -125,3 +125,26 @@ def source_to_locale_path(path):
     if path.endswith('pot'):
         path = path[:-1]
     return path
+
+
+def escape_quotes(value):
+    """
+    DTD files can use single or double quotes for identifying strings,
+    so &quot; and &apos; are the safe bet that will work in both cases.
+    """
+    value = value.replace('"', '\\&quot;')
+    value = value.replace("'", '\\&apos;')
+
+    return value
+
+
+def unescape_quotes(value):
+    value = value.replace('\\&quot;', '"')
+    value = value.replace('\\u0022', '"')  # Bug 1390111
+    value = value.replace('\\"', '"')
+
+    value = value.replace('\\&apos;', "'")
+    value = value.replace('\\u0027', "'")  # Bug 1390111
+    value = value.replace("\\'", "'")
+
+    return value

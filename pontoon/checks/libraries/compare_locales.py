@@ -10,6 +10,8 @@ from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
 
+from pontoon.sync.utils import escape_quotes
+
 
 CommentEntity = namedtuple(
     'Comment', (
@@ -88,6 +90,9 @@ def cast_to_compare_locales(resource_ext, entity, string):
         )
 
     elif resource_ext == '.dtd':
+        if 'mobile/android/base' in entity.resource.path:
+            string = escape_quotes(string)
+
         return (
             CompareDTDEntity(
                 entity.key,
