@@ -90,9 +90,6 @@ def cast_to_compare_locales(resource_ext, entity, string):
         )
 
     elif resource_ext == '.dtd':
-        if 'mobile/android/base' in entity.resource.path:
-            string = escape_quotes(string)
-
         return (
             CompareDTDEntity(
                 entity.key,
@@ -145,6 +142,11 @@ def run_checks(entity, locale_code, string):
         Both keys are optional.
     """
     resource_ext = '.{}'.format(entity.resource.format)
+    extra_tests = None
+
+    if 'mobile/android/base' in entity.resource.path:
+        extra_tests = {'android-dtd'}
+        string = escape_quotes(string)
 
     source_ent, translation_ent = cast_to_compare_locales(
         resource_ext,
@@ -154,7 +156,7 @@ def run_checks(entity, locale_code, string):
 
     checker = getChecker(
         File(entity.resource.path, entity.resource.path, locale=locale_code),
-        {'android-dtd'}
+        extra_tests
     )
 
     # Currently, references are required only by DTD files but that may change in the future.
