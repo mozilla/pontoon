@@ -457,6 +457,20 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Get focused translation textarea element or first, if none has focus
+     */
+    getFocusedOrFirstTextarea: function () {
+      var textarea = $('#editor textarea:visible:focus');
+
+      if (!textarea.length) {
+        textarea = $('#editor textarea:visible:first');
+      }
+
+      return textarea;
+    },
+
+
+    /*
      * Open batch editor
      */
     openBatchEditor: function (loading) {
@@ -1773,11 +1787,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        var textarea = $('#editor textarea:visible:focus');
-        if (!textarea.length) {
-          textarea = $('#editor textarea:visible:first');
-        }
-
+        var textarea = self.getFocusedOrFirstTextarea();
         var selectionStart = textarea.prop('selectionStart');
         var selectionEnd = textarea.prop('selectionEnd');
         var placeable = $(this).text();
@@ -2017,7 +2027,10 @@ var Pontoon = (function (my) {
       });
 
       // Copy helpers result to translation
-      $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
+      // Use mousedown instead of click to be able to detect the last focused textarea
+      $('#helpers section').on('mousedown', 'li:not(".disabled")', function (e) {
+        e.preventDefault();
+
         var source = $(this).find('.translation-clipboard').text();
 
         // Ignore clicks on links and buttons
@@ -2036,11 +2049,19 @@ var Pontoon = (function (my) {
         }
 
         // FTL Editor
-        if (self.fluent.isFTLEditorEnabled() && !$('#helpers .machinery').is(':visible')) {
-          self.fluent.renderEditor({
-            pk: true,
-            string: source
-          });
+        if (self.fluent.isFTLEditorEnabled()) {
+          // Machinery: Update focused or first element only
+          if ($('#helpers .machinery').is(':visible')) {
+            var textarea = self.getFocusedOrFirstTextarea();
+            textarea.val(source).focus();
+          }
+          // History & Locales: Update entire editor
+          else {
+            self.fluent.renderEditor({
+              pk: true,
+              string: source
+            });
+          }
 
         // Standard Editor
         } else {
