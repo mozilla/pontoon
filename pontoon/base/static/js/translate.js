@@ -2587,7 +2587,7 @@ var Pontoon = (function (my) {
     renderFailedChecks: function(failedChecks, messageOnly) {
       if (!messageOnly) {
         $('#save-anyway')
-          .toggleClass('approve', this.approvedNotSubmitted || false)
+          .toggleClass('approve', this.approvedNotSubmitted)
           .show();
       }
 
