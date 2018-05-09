@@ -16,6 +16,7 @@ from silme.format.inc import FormatParser as IncParser
 from silme.format.properties import FormatParser as PropertiesParser
 
 from pontoon.sync import SyncError
+from pontoon.sync.utils import escape_quotes, unescape_quotes
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -110,7 +111,7 @@ class SilmeResource(ParsedResource):
             if isinstance(obj, silme.core.entity.Entity):
 
                 if self.escape_quotes_on:
-                    obj.value = self.unescape_quotes(obj.value)
+                    obj.value = unescape_quotes(obj.value)
 
                 entity = SilmeEntity(obj, comments, current_order)
                 self.entities[entity.key] = entity
@@ -126,27 +127,6 @@ class SilmeResource(ParsedResource):
     @property
     def translations(self):
         return self.entities.values()
-
-    def escape_quotes(self, value):
-        """
-        DTD files can use single or double quotes for identifying strings,
-        so &quot; and &apos; are the safe bet that will work in both cases.
-        """
-        value = value.replace('"', '\\&quot;')
-        value = value.replace("'", '\\&apos;')
-
-        return value
-
-    def unescape_quotes(self, value):
-        value = value.replace('\\&quot;', '"')
-        value = value.replace('\\u0022', '"')  # Bug 1390111
-        value = value.replace('\\"', '"')
-
-        value = value.replace('\\&apos;', "'")
-        value = value.replace('\\u0027', "'")  # Bug 1390111
-        value = value.replace("\\'", "'")
-
-        return value
 
     def save(self, locale):
         """
@@ -177,7 +157,7 @@ class SilmeResource(ParsedResource):
                 translation = translated_entity.strings[None]
 
                 if self.escape_quotes_on:
-                    translation = self.escape_quotes(translation)
+                    translation = escape_quotes(translation)
 
                 new_structure.modify_entity(key, translation)
             else:
