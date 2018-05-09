@@ -148,8 +148,7 @@ def run_checks(entity, locale_code, string):
     )
 
     checker = getChecker(
-        File(entity.resource.path, entity.resource.path, locale=locale_code),
-        {'android-dtd'}
+        File(entity.resource.path, entity.resource.path, locale=locale_code)
     )
 
     # Currently, references are required only by DTD files but that may change in the future.
