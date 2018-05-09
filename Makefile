@@ -22,7 +22,10 @@ help:
 	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
 
 .docker-build:
-	make dockerbuild
+	make build
+
+assets:
+	mkdir -p assets
 
 build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
@@ -54,10 +57,10 @@ loaddb:
 	${DOCKER} exec -i `${DC} ps -q postgresql` createdb -U pontoon pontoon
 	${DOCKER} exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
-build-frontend:
+build-frontend: assets
 	${DC} run webapp npm run build
 
-build-frontend-w:
+build-frontend-w: assets
 	${DOCKER} run --rm \
 		-v `pwd`:/app \
 		--workdir /app \
