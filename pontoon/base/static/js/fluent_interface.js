@@ -8,7 +8,7 @@ var Pontoon = (function (my) {
   /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, StringExpression,
+   * - Placeable with expression type CallExpression, StringExpression, NumberExpression,
    *   ExternalArgument or MessageReference
    */
   function isSimpleElement(element) {
@@ -22,6 +22,7 @@ var Pontoon = (function (my) {
       [
         'CallExpression',
         'StringExpression',
+        'NumberExpression',
         'ExternalArgument',
         'MessageReference'
       ].indexOf(element.expression.type) >= 0
@@ -344,6 +345,7 @@ var Pontoon = (function (my) {
           [
             'CallExpression',
             'StringExpression',
+            'NumberExpression',
           ].indexOf(element.expression.type) >= 0
         ) {
           var title = element.expression.type.split('Expression')[0] + ' Expression';

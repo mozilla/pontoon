@@ -54,6 +54,7 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
          '{ LINK("Link text", title: "Link title") }Simple String')
     ),
     ('string-expression', ('key = { "" }', '{ "" }')),
+    ('number-expression', ('key = { 1 }', '{ 1 }')),
 ))
 
 

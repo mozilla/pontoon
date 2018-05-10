@@ -272,6 +272,7 @@ def _serialize_elements(elements):
             elif isinstance(element.expression, (
                 ast.CallExpression,
                 ast.StringExpression,
+                ast.NumberExpression,
             )):
                 response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
