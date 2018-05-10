@@ -269,7 +269,10 @@ def _serialize_elements(elements):
             elif isinstance(element.expression, ast.MessageReference):
                 response += '{ ' + element.expression.id.name + ' }'
 
-            elif isinstance(element.expression, ast.CallExpression):
+            elif isinstance(element.expression, (
+                ast.CallExpression,
+                ast.StringExpression,
+            )):
                 response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
             elif hasattr(element.expression, 'variants'):
