@@ -56,6 +56,7 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('string-expression', ('key = { "" }', '{ "" }')),
     ('number-expression', ('key = { 1 }', '{ 1 }')),
     ('variant-expression', ('key = { -foo[bar] }', '{ -foo[bar] }')),
+    ('attribute-expression', ('key = { foo.bar }', '{ foo.bar }')),
 ))
 
 

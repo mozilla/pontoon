@@ -274,6 +274,7 @@ def _serialize_elements(elements):
                 ast.StringExpression,
                 ast.NumberExpression,
                 ast.VariantExpression,
+                ast.AttributeExpression,
             )):
                 response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
