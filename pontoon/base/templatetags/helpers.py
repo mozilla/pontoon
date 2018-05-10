@@ -273,6 +273,7 @@ def _serialize_elements(elements):
                 ast.CallExpression,
                 ast.StringExpression,
                 ast.NumberExpression,
+                ast.VariantExpression,
             )):
                 response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
