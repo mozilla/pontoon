@@ -2076,7 +2076,7 @@ var Pontoon = (function (my) {
 
       // Approve and delete translations
       $('#helpers .history').on('click', 'menu .approve', function () {
-        $(this).parents('li').click();
+        $(this).parents('li').trigger('mousedown');
 
         var entity = self.getEditorEntity(),
             translation = $('#translation').val();
