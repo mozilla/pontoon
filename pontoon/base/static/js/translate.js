@@ -2082,7 +2082,7 @@ var Pontoon = (function (my) {
             translation = $('#translation').val();
 
         // Mark that user approved translation instead of submitting it
-        self.approvedNotSubmitted = true;
+        self.isApprovedNotSubmitted = true;
         self.updateOnServer(entity, translation, true);
       });
 
@@ -2608,7 +2608,7 @@ var Pontoon = (function (my) {
     renderFailedChecks: function(failedChecks, messageOnly) {
       if (!messageOnly) {
         $('#save-anyway')
-          .toggleClass('approve', this.approvedNotSubmitted || false)
+          .toggleClass('approve', this.isApprovedNotSubmitted || false)
           .show();
       }
 
@@ -2675,7 +2675,7 @@ var Pontoon = (function (my) {
         if (data.type) {
           self.endLoader('Translation ' + data.type);
 
-          if (self.approvedNotSubmitted) {
+          if (self.isApprovedNotSubmitted) {
             $('#helpers .history [data-id="' + data.translation.pk + '"] button.approve')
               .parents('li').addClass('approved')
                 .siblings().removeClass('approved');
@@ -2710,7 +2710,7 @@ var Pontoon = (function (my) {
         }
 
         if (!data.failedChecks) {
-          self.approvedNotSubmitted = null;
+          self.isApprovedNotSubmitted = null;
         }
       }
 
@@ -2738,7 +2738,7 @@ var Pontoon = (function (my) {
           plural_form: submittedPluralForm,
           original: entity['original' + self.isPluralized()],
           ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,
-          approve: self.approvedNotSubmitted || false,
+          approve: self.isApprovedNotSubmitted || false,
           paths: self.getPartPaths(self.currentPart),
           force_suggestions: self.user.forceSuggestions
         },
@@ -2770,7 +2770,7 @@ var Pontoon = (function (my) {
             renderTranslation(data);
           } else {
             self.endLoader('Oops, something went wrong.', 'error');
-            self.approvedNotSubmitted = null;
+            self.isApprovedNotSubmitted = null;
           }
         },
         complete: function() {
