@@ -741,7 +741,6 @@ var Pontoon = (function (my) {
         var response = fallback;
 
         if (entity.format === 'ftl') {
-          // Transfrom complex FTL-based strings into single-value strings
           var source = object.original || object.string;
 
           if (!source) {
@@ -763,11 +762,6 @@ var Pontoon = (function (my) {
           }
 
           response = stringifyElements(tree.value.elements);
-
-          // Update source string markup
-          if (object.hasOwnProperty('original')) {
-            response = Pontoon.doNotRender(response);
-          }
         }
 
         return response;

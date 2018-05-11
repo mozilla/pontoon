@@ -30,7 +30,11 @@ var Pontoon = (function (my) {
           translation = entity.translation[0],
           translationString = translation.string || '';
 
-      sourceString = self.fluent.getSimplePreview(entity, sourceString, entity);
+      var simplePreview = self.fluent.getSimplePreview(entity, sourceString, entity);
+      if (simplePreview !== sourceString) {
+        sourceString = self.doNotRender(simplePreview);
+      }
+
       translationString = self.fluent.getSimplePreview(translation, translationString, entity);
 
       var li = $('<li class="entity' +
