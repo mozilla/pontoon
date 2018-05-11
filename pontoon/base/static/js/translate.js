@@ -30,12 +30,12 @@ var Pontoon = (function (my) {
           translation = entity.translation[0],
           translationString = translation.string || '';
 
-      var simplePreview = self.fluent.getSimplePreview(entity, sourceString, entity);
+      var simplePreview = self.fluent.getSimplePreview(entity.original, sourceString, entity);
       if (simplePreview !== sourceString) {
         sourceString = self.doNotRender(simplePreview);
       }
 
-      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
+      translationString = self.fluent.getSimplePreview(translation.string, translationString, entity);
 
       var li = $('<li class="entity' +
         (' ' + status) +
@@ -143,7 +143,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              var translationString = self.fluent.getSimplePreview(this, this.string, entity),
+              var translationString = self.fluent.getSimplePreview(this.string, this.string, entity),
               link = self.getResourceLink(
                     this.locale__code,
                     self.project.slug,
@@ -275,8 +275,8 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function(i) {
-              var baseString = self.fluent.getSimplePreview(data[0], data[0].string, entity),
-                  translationString = self.fluent.getSimplePreview(this, this.string, entity);
+              var baseString = self.fluent.getSimplePreview(data[0].string, data[0].string, entity),
+                  translationString = self.fluent.getSimplePreview(this.string, this.string, entity);
 
               list.append(
                 '<li data-id="' + this.pk + '" class="suggestion ' +
@@ -339,7 +339,7 @@ var Pontoon = (function (my) {
      */
     updateHelpers: function () {
       var entity = this.getEditorEntity(),
-          source = this.fluent.getSimplePreview(entity, entity['original' + this.isPluralized()], entity);
+          source = this.fluent.getSimplePreview(entity.original, entity['original' + this.isPluralized()], entity);
 
       this.getHistory(entity);
 
@@ -2511,7 +2511,7 @@ var Pontoon = (function (my) {
           translation = entity.translation[0],
           translationString = translation.string || '';
 
-      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
+      translationString = self.fluent.getSimplePreview(translation.string, translationString, entity);
 
       entity.ui
         .removeClass('translated suggested fuzzy missing partial')

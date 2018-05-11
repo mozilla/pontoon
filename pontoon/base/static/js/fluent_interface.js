@@ -382,7 +382,7 @@ var Pontoon = (function (my) {
     $('#translation-length, #copy').toggle(show);
 
     if ($('#translation-length').is(':visible')) {
-      var original = Pontoon.fluent.getSimplePreview(entity, entity.original, entity);
+      var original = Pontoon.fluent.getSimplePreview(entity.original, entity.original, entity);
       $('#translation-length').find('.original-length').html(original.length);
     }
   }
@@ -737,12 +737,10 @@ var Pontoon = (function (my) {
        * Get simplified preview of the FTL message, used when full presentation not possible
        * due to lack of real estate (e.g. string list).
        */
-      getSimplePreview: function (object, fallback, entity) {
+      getSimplePreview: function (source, fallback, entity) {
         var response = fallback;
 
         if (entity.format === 'ftl') {
-          var source = object.original || object.string;
-
           if (!source) {
             return fallback;
           }
