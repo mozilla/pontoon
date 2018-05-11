@@ -329,17 +329,25 @@ var Pontoon = (function (my) {
      * Get suggestions from machine translation and translation memory
      *
      * original Original string
-     * target Target element id
+     * customSearch Instead of source string, use custom search keyword as input
      * loader Loader element id
      */
-    getMachinery: function (original, target, loader) {
+    getMachinery: function (original, customSearch, loader) {
       loader = loader || 'helpers li a[href="#machinery"]';
       var self = this,
           ul = $('#helpers > .machinery').children('ul').empty(),
           tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
           count = 0,
-          sourcesMap = {};
+          sourcesMap = {},
+          originalForTM = original;
+
+      // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
+      // so we should query them as such as well (instead of simplified strings).
+      if (!customSearch) {
+        var entity = self.getEditorEntity();
+        originalForTM = entity['original' + self.isPluralized()];
+      }
 
       self.NProgressUnbind();
 
@@ -475,9 +483,9 @@ var Pontoon = (function (my) {
       self.XHRtranslationMemory = $.ajax({
         url: '/translation-memory/',
         data: {
-          text: original,
+          text: originalForTM,
           locale: self.locale.code,
-          pk: !target ? $('#editor')[0].entity.pk : ''
+          pk: !customSearch ? $('#editor')[0].entity.pk : ''
         }
 
       }).success(function(data) {
@@ -596,7 +604,7 @@ var Pontoon = (function (my) {
         self.XHRCaighdeanMT = $.ajax({
           url: '/machine-translation-caighdean/',
           data: {
-            id: self.getEditorEntity().pk,
+            id: entity.pk,
             locale: self.locale.code
           }
         }).success(function(data) {

@@ -2010,16 +2010,18 @@ var Pontoon = (function (my) {
       // Custom search: trigger with Enter
       $('#helpers .machinery input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         if (e.which === 13) {
-          var source = $(this).val(),
-              entity = self.getEditorEntity();
+          var source = $(this).val();
+          var entity = self.getEditorEntity();
+          var customSearch = true;
 
           // Reset to original string on empty search
           if (!source) {
             source = entity['original' + self.isPluralized()];
+            customSearch = false;
           }
 
           if (self.machinerySource !== source) {
-            self.getMachinery(source);
+            self.getMachinery(source, customSearch);
             self.machinerySource = source;
           }
           return false;
