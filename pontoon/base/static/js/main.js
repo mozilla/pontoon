@@ -355,7 +355,8 @@ var Pontoon = (function (my) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
             sources = sourcesMap[data.original + data.translation],
             occurrencesTitle = 'Number of translation occurrences',
-            originalText = data.original;
+            originalText = data.original,
+            translationText = data.translation;
 
         if (sources) {
           sources.append(
@@ -367,9 +368,19 @@ var Pontoon = (function (my) {
 
         } else {
           if (data.source !== 'Caighdean') {
-            originalText = (originalText ? self.diff(original, originalText) : '');
+            var originalTextForDiff = originalText;
+
+            // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
+            // so in we need to convert returned original and translation to simple string.
+            // See bug 1455191.
+            if (!customSearch && data.source === 'Translation memory') {
+              originalTextForDiff = self.fluent.getSimplePreview({ string: originalText }, originalText, entity);
+              translationText = self.fluent.getSimplePreview({ string: translationText }, originalText, entity);
+            }
+
+            originalText = (originalText ? self.diff(original, originalTextForDiff) : '');
           }
-          var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
+          var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(translationText) + '">' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
               '<ul class="sources">' +
@@ -383,10 +394,10 @@ var Pontoon = (function (my) {
             '</header>' +
             '<p class="original">' + originalText + '</p>' +
             '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-              self.markPlaceables(data.translation) +
+              self.markPlaceables(translationText) +
             '</p>' +
             '<p class="translation-clipboard">' +
-              self.doNotRender(data.translation) +
+              self.doNotRender(translationText) +
             '</p>' +
           '</li>');
           ul.append(li);
