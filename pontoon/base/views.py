@@ -44,7 +44,14 @@ from pontoon.base.models import (
 )
 from pontoon.tags.utils.tags import TagsTool
 
-from pontoon.checks.libraries import run_checks
+from pontoon.checks.libraries import (
+    failed_checks_response,
+    run_checks,
+)
+
+from pontoon.checks.utils import (
+    save_failed_checks
+)
 
 
 log = logging.getLogger(__name__)
@@ -538,11 +545,11 @@ def perform_checks(request):
         original,
         string,
         use_ttk_checks,
-        ignore_warnings,
     )
+    checks_response = failed_checks_response(checks, ignore_warnings)
 
-    if checks:
-        return checks
+    if checks_response:
+        return checks_response
     else:
         return HttpResponse('ok')
 
@@ -614,11 +621,10 @@ def update_translation(request):
         original,
         string,
         use_ttk_checks,
-        ignore_warnings,
     )
-
-    if checks:
-        return checks
+    checks_response = failed_checks_response(checks, ignore_warnings)
+    if checks_response:
+        return checks_response
 
     # Translations exist
     if len(translations) > 0:
@@ -679,6 +685,7 @@ def update_translation(request):
                 t.approved_date = now
 
             t.save()
+            save_failed_checks(t, checks)
 
             # Return active (approved or latest) translation
             try:
@@ -704,6 +711,7 @@ def update_translation(request):
             t.approved_date = now
 
         t.save()
+        save_failed_checks(t, checks)
 
         return JsonResponse({
             'type': 'saved',

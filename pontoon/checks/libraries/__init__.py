@@ -13,7 +13,6 @@ def run_checks(
     original,
     string,
     use_tt_checks,
-    ignore_warnings,
 ):
     """
     Main function that performs all quality checks from frameworks handled in Pontoon.
@@ -23,7 +22,6 @@ def run_checks(
     :arg basestring original: an original string
     :arg basestring string: a translation
     :arg bool use_tt_checks: use Translate Toolkit checks
-    :arg bool ignore_warnings: removes warnings from failed checks
 
     :return: Return types:
         * JsonResponse - If there are errors
@@ -76,7 +74,14 @@ def run_checks(
     )
 
     checks.update(pontoon_checks)
+    return checks
 
+
+def failed_checks_response(checks, ignore_warnings):
+    """
+
+    :arg bool ignore_warnings: removes warnings from failed checks
+    """
     has_errors = any(p.endswith('Errors') for p in checks)
 
     if (not ignore_warnings and checks) or has_errors:
