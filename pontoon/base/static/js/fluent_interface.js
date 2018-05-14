@@ -352,7 +352,7 @@ var Pontoon = (function (my) {
             'AttributeExpression',
           ].indexOf(element.expression.type) >= 0
         ) {
-          var title = element.expression.type.split('Expression')[0] + ' Expression';
+          var title = element.expression.type.replace('Expression', ' Expression');
           if (markPlaceables) {
             startMarker = '<mark class="placeable" title="' + title + '">';
             endMarker = '</mark>';
