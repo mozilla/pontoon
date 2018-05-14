@@ -374,8 +374,8 @@ var Pontoon = (function (my) {
             // so in we need to convert returned original and translation to simple string.
             // See bug 1455191.
             if (!customSearch && data.source === 'Translation memory') {
-              originalTextForDiff = self.fluent.getSimplePreview(originalText, originalText, entity);
-              translationText = self.fluent.getSimplePreview(translationText, originalText, entity);
+              originalTextForDiff = self.fluent.getSimplePreview(originalText);
+              translationText = self.fluent.getSimplePreview(translationText);
             }
 
             originalText = (originalText ? self.diff(original, originalTextForDiff) : '');

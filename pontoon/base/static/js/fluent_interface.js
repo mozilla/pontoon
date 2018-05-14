@@ -382,7 +382,7 @@ var Pontoon = (function (my) {
     $('#translation-length, #copy').toggle(show);
 
     if ($('#translation-length').is(':visible')) {
-      var original = Pontoon.fluent.getSimplePreview(entity.original, entity.original, entity);
+      var original = Pontoon.fluent.getSimplePreview(entity.original);
       $('#translation-length').find('.original-length').html(original.length);
     }
   }
@@ -737,32 +737,30 @@ var Pontoon = (function (my) {
        * Get simplified preview of the FTL message, used when full presentation not possible
        * due to lack of real estate (e.g. string list).
        */
-      getSimplePreview: function (source, fallback, entity) {
-        var response = fallback;
+      getSimplePreview: function (source, fallback) {
+        source = source || '';
+        fallback = fallback || source;
+        var ast = fluentParser.parseEntry(source);
 
-        if (entity.format === 'ftl') {
-          if (!source) {
-            return fallback;
-          }
-
-          var ast = fluentParser.parseEntry(source);
-          var tree;
-
-          // Value: use entire AST
-          if (ast.value) {
-            tree = ast;
-          }
-
-          // Attributes (must be present in valid AST if value isn't):
-          // use AST of the first attribute
-          else {
-            tree = ast.attributes[0];
-          }
-
-          response = stringifyElements(tree.value.elements);
+        // String with an error
+        if (ast.type === 'Junk') {
+          return fallback;
         }
 
-        return response;
+        var tree;
+
+        // Value: use entire AST
+        if (ast.value) {
+          tree = ast;
+        }
+
+        // Attributes (must be present in valid AST if value isn't):
+        // use AST of the first attribute
+        else {
+          tree = ast.attributes[0];
+        }
+
+        return stringifyElements(tree.value.elements);
       },
 
 
