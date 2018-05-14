@@ -18,3 +18,24 @@ Heroku-hosted instance of RabbitMQ:
 
 .. _Flower: https://github.com/mher/flower
 .. _Celery: http://www.celeryproject.org/
+
+Releasing the queue
+-------------------
+If queue gets stuck, tasks don't make it to the worker until manual
+intervention.
+
+First, you need to purge the queue:
+
+.. code-block:: bash
+
+   # Replace my-app-name with your Heroku app's name.
+   celery amqp --broker=`heroku config:get RABBITMQ_URL --app=my-app-name`
+   # Replace my-queue-name with your queue's name (e.g. celery).
+   1> queue.purge my-queue-name
+
+Finally, you need to simply access the worker:
+
+.. code-block:: bash
+
+   # Replace my-app-name with your Heroku app's name.
+   celery worker --broker=`heroku config:get RABBITMQ_URL --app=my-app-name`
