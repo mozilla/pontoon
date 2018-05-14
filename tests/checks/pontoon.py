@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import pytest
 
@@ -57,6 +58,36 @@ def test_too_long_translation_valid_length(get_entity_mock):
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
         '0123'
     ) == {}
+
+
+def test_too_long_translation_html_tags(get_entity_mock):
+    """
+    HTML tags can't be included in the MAX_LENGTH check.
+    """
+    assert run_checks(
+        get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '<a href="pontoon.mozilla.org">01</a><i>23</i>'
+    ) == {}
+
+    assert run_checks(
+        get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '<a href="pontoon.mozilla.org">012</a><i>23</i>'
+    ) == {
+        'pErrors': ['Translation too long']
+    }
+
+    # Check if entities are causing false errors
+    assert run_checks(
+        get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '<a href="pontoon.mozilla.org">ł&nbsp;</a><i>ń&nbsp;</i>'
+    ) == {}
+
+    assert run_checks(
+        get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>'
+    ) == {
+        'pErrors': ['Translation too long']
+    }
 
 
 def test_too_long_translation_invalid_length(get_entity_mock):

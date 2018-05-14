@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 
+import HTMLParser
 import re
+
+import bleach
 
 from collections import defaultdict
 from fluent.syntax import FluentParser, ast
@@ -31,10 +34,21 @@ def run_checks(entity, string):
     """
     checks = defaultdict(list)
     resource_ext = entity.resource.format
-    max_length = get_max_length(entity.comment)
 
     # Prevent translations exceeding the given length limit
-    if max_length and len(string) > max_length:
+    max_length = get_max_length(entity.comment)
+    html_parser = HTMLParser.HTMLParser()
+    string_length = len(
+        html_parser.unescape(
+            bleach.clean(
+                string,
+                strip=True,
+                tags=()
+            )
+        )
+    )
+
+    if max_length and string_length > max_length:
         checks['pErrors'].append(
             'Translation too long'
         )
