@@ -1653,7 +1653,9 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Is original string pluralized
+     * If original string is pluralized, return '_plural', else ''. A common use case is
+     * entity['original' + Pontoon.isPluralized()], which returns entity.original or
+     * entity.original_plural.
      */
     isPluralized: function () {
       var original = '',
