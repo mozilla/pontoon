@@ -48,9 +48,16 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('attribute', (ATTRIBUTE_SOURCE, 'Simple String')),
     ('attributes', (ATTRIBUTES_SOURCE, 'Simple String')),
     ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
-    ('other-ftl',
-     ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
-      '{ LINK("Link text", title: "Link title") }Simple String'))))
+    (
+        'call-expression',
+        ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
+         '{ LINK("Link text", title: "Link title") }Simple String')
+    ),
+    ('string-expression', ('key = { "" }', '{ "" }')),
+    ('number-expression', ('key = { 1 }', '{ 1 }')),
+    ('variant-expression', ('key = { -foo[bar] }', '{ -foo[bar] }')),
+    ('attribute-expression', ('key = { foo.bar }', '{ foo.bar }')),
+))
 
 
 @pytest.mark.parametrize("k", SIMPLE_TRANSLATION_TESTS)

@@ -8,8 +8,8 @@ var Pontoon = (function (my) {
   /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, ExternalArgument
-   *   or MessageReference
+   * - Placeable with expression type CallExpression, StringExpression, NumberExpression,
+   *   VariantExpression, AttributeExpression, ExternalArgument or MessageReference
    */
   function isSimpleElement(element) {
     if (element.type === 'TextElement') {
@@ -21,6 +21,10 @@ var Pontoon = (function (my) {
       element.expression &&
       [
         'CallExpression',
+        'StringExpression',
+        'NumberExpression',
+        'VariantExpression',
+        'AttributeExpression',
         'ExternalArgument',
         'MessageReference'
       ].indexOf(element.expression.type) >= 0
@@ -339,9 +343,18 @@ var Pontoon = (function (my) {
           }
           string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
         }
-        else if (element.expression.type === 'CallExpression') {
+        else if (
+          [
+            'CallExpression',
+            'StringExpression',
+            'NumberExpression',
+            'VariantExpression',
+            'AttributeExpression',
+          ].indexOf(element.expression.type) >= 0
+        ) {
+          var title = element.expression.type.replace('Expression', ' Expression');
           if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="Call Expression">';
+            startMarker = '<mark class="placeable" title="' + title + '">';
             endMarker = '</mark>';
           }
           var expression = fluentSerializer.serializeExpression(element.expression);
