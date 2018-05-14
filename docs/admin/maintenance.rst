@@ -22,7 +22,8 @@ Heroku-hosted instance of RabbitMQ:
 Releasing the queue
 -------------------
 If queue gets stuck, tasks don't make it to the worker until manual
-intervention.
+intervention. You can fix this by running the following commands from your
+local development environment.
 
 First, you need to purge the queue:
 
