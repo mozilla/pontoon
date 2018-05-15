@@ -364,7 +364,7 @@ var Pontoon = (function (my) {
           var variantElements = element.expression.variants.filter(function (variant) {
             return variant.default;
           })[0].value.elements;
-          string += stringifyElements(variantElements);
+          string += stringifyElements(variantElements, markPlaceables);
         }
       }
     });
@@ -737,7 +737,7 @@ var Pontoon = (function (my) {
        * Get simplified preview of the FTL message, used when full presentation not possible
        * due to lack of real estate (e.g. string list).
        */
-      getSimplePreview: function (source, fallback) {
+      getSimplePreview: function (source, fallback, markPlaceables) {
         source = source || '';
         fallback = fallback || source;
         var ast = fluentParser.parseEntry(source);
@@ -760,7 +760,7 @@ var Pontoon = (function (my) {
           tree = ast.attributes[0];
         }
 
-        return stringifyElements(tree.value.elements);
+        return stringifyElements(tree.value.elements, markPlaceables);
       },
 
 

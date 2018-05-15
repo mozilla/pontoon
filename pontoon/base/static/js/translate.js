@@ -23,19 +23,23 @@ var Pontoon = (function (my) {
 
 
     renderEntity: function (index, entity) {
-      var self = this,
-          status = self.getEntityStatus(entity),
-          openSans = (['Latin', 'Greek', 'Cyrillic', 'Vietnamese'].indexOf(self.locale.script) > -1) ? ' open-sans' : '',
-          sourceString = (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
-          translation = entity.translation[0],
-          translationString = translation.string || '';
+      var self = this;
+      var status = self.getEntityStatus(entity);
+      var translation = entity.translation[0];
+      var markPlaceables = true;
+      var openSans = (['Latin', 'Greek', 'Cyrillic', 'Vietnamese'].indexOf(self.locale.script) > -1) ? ' open-sans' : '';
 
-      var simplePreview = self.fluent.getSimplePreview(entity.original, sourceString);
-      if (simplePreview !== sourceString) {
-        sourceString = self.doNotRender(simplePreview);
-      }
+      var sourceString = self.fluent.getSimplePreview(
+        entity.original,
+        (entity.original_plural && self.locale.nplurals < 2) ? entity.marked_plural : entity.marked,
+        markPlaceables
+      );
 
-      translationString = self.fluent.getSimplePreview(translation.string, translationString);
+      var translationString = self.fluent.getSimplePreview(
+        translation.string,
+        self.markPlaceables(translation.string || ''),
+        markPlaceables
+      );
 
       var li = $('<li class="entity' +
         (' ' + status) +
@@ -47,7 +51,7 @@ var Pontoon = (function (my) {
         '<p class="string-wrapper">' +
           '<span class="source-string">' + sourceString + '</span>' +
           '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-            self.markPlaceables(translationString) +
+            translationString +
           '</span>' +
         '</p>' +
         '<span class="arrow fa fa-chevron-right fa-lg"></span>' +
@@ -2508,18 +2512,22 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     updateEntityUI: function (entity) {
-      var self = this,
-          status = self.getEntityStatus(entity),
-          translation = entity.translation[0],
-          translationString = translation.string;
+      var self = this;
+      var status = self.getEntityStatus(entity);
+      var translation = entity.translation[0];
+      var markPlaceables = true;
 
-      translationString = self.fluent.getSimplePreview(translationString);
+      var translationString = self.fluent.getSimplePreview(
+        translation.string,
+        self.markPlaceables(translation.string || ''),
+        markPlaceables
+      );
 
       entity.ui
         .removeClass('translated suggested fuzzy missing partial')
         .addClass(status)
         .find('.translation-string')
-          .html(self.markPlaceables(translationString));
+          .html(translationString);
 
       self.updateProgress(entity);
     },
