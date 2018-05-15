@@ -339,7 +339,7 @@ var Pontoon = (function (my) {
      */
     updateHelpers: function () {
       var entity = this.getEditorEntity(),
-          source = this.fluent.getSimplePreview(entity['original' + this.isPluralized()]);
+          source = this.fluent.getSimplePreview(entity['original' + this.getPluralSuffix()]);
 
       this.getHistory(entity);
 
@@ -648,7 +648,7 @@ var Pontoon = (function (my) {
       self.updateMakeSuggestionToggle();
 
       // Length
-      var original = entity['original' + this.isPluralized()];
+      var original = entity['original' + this.getPluralSuffix()];
 
       // Toggle translation length display
       $('#translation-length')
@@ -1654,10 +1654,10 @@ var Pontoon = (function (my) {
 
     /*
      * If original string is pluralized, return '_plural', else ''. A common use case is
-     * entity['original' + Pontoon.isPluralized()], which returns entity.original or
+     * entity['original' + Pontoon.getPluralSuffix()], which returns entity.original or
      * entity.original_plural.
      */
-    isPluralized: function () {
+    getPluralSuffix: function () {
       var original = '',
           nplurals = this.locale.nplurals,
           plural_rule = this.locale.plural_rule,
@@ -1813,9 +1813,9 @@ var Pontoon = (function (my) {
 
         var entity = self.getEditorEntity(),
             i = tab.index(),
-            original = entity['original' + self.isPluralized()],
-            marked = entity['marked' + self.isPluralized()],
-            title = !self.isPluralized() ? 'Singular' : 'Plural',
+            original = entity['original' + self.getPluralSuffix()],
+            marked = entity['marked' + self.getPluralSuffix()],
+            title = !self.getPluralSuffix() ? 'Singular' : 'Plural',
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
@@ -1981,7 +1981,7 @@ var Pontoon = (function (my) {
         }
 
         var entity = self.getEditorEntity(),
-            original = entity['original' + self.isPluralized()],
+            original = entity['original' + self.getPluralSuffix()],
             source = self.fluent.getSourceStringValue(entity, original);
 
         self.updateAndFocusTranslationEditor(source);
@@ -2022,7 +2022,7 @@ var Pontoon = (function (my) {
 
           // Reset to original string on empty search
           if (!source) {
-            source = entity['original' + self.isPluralized()];
+            source = entity['original' + self.getPluralSuffix()];
             customSearch = false;
           }
 
@@ -2744,7 +2744,7 @@ var Pontoon = (function (my) {
           entity: entity.pk,
           translation: self.fluent.serializeTranslation(entity, translation),
           plural_form: submittedPluralForm,
-          original: entity['original' + self.isPluralized()],
+          original: entity['original' + self.getPluralSuffix()],
           ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,
           approve: self.isApprovedNotSubmitted || false,
           paths: self.getPartPaths(self.currentPart),

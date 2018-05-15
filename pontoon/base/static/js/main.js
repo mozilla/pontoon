@@ -346,7 +346,7 @@ var Pontoon = (function (my) {
       // so we should query them as such as well (instead of simplified strings).
       if (!customSearch) {
         var entity = self.getEditorEntity();
-        originalForTM = entity['original' + self.isPluralized()];
+        originalForTM = entity['original' + self.getPluralSuffix()];
       }
 
       self.NProgressUnbind();
