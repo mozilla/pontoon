@@ -6,7 +6,7 @@ $(function() {
 
     if (e.which === 13 && value.length > 0) {
       self.locale = $('.locale .selector .language').data();
-      self.getMachinery(value, "helpers", "search");
+      self.getMachinery(value, true, "search");
       return false;
     }
   });

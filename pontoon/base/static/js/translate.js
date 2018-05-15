@@ -30,8 +30,12 @@ var Pontoon = (function (my) {
           translation = entity.translation[0],
           translationString = translation.string || '';
 
-      sourceString = self.fluent.getSimplePreview(entity, sourceString, entity);
-      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
+      var simplePreview = self.fluent.getSimplePreview(entity.original, sourceString);
+      if (simplePreview !== sourceString) {
+        sourceString = self.doNotRender(simplePreview);
+      }
+
+      translationString = self.fluent.getSimplePreview(translation.string, translationString);
 
       var li = $('<li class="entity' +
         (' ' + status) +
@@ -139,7 +143,7 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function() {
-              var translationString = self.fluent.getSimplePreview(this, this.string, entity),
+              var translationString = self.fluent.getSimplePreview(this.string),
               link = self.getResourceLink(
                     this.locale__code,
                     self.project.slug,
@@ -271,8 +275,8 @@ var Pontoon = (function (my) {
         success: function(data) {
           if (data.length) {
             $.each(data, function(i) {
-              var baseString = self.fluent.getSimplePreview(data[0], data[0].string, entity),
-                  translationString = self.fluent.getSimplePreview(this, this.string, entity);
+              var baseString = self.fluent.getSimplePreview(data[0].string),
+                  translationString = self.fluent.getSimplePreview(this.string);
 
               list.append(
                 '<li data-id="' + this.pk + '" class="suggestion ' +
@@ -335,7 +339,7 @@ var Pontoon = (function (my) {
      */
     updateHelpers: function () {
       var entity = this.getEditorEntity(),
-          source = this.fluent.getSimplePreview(entity, entity['original' + this.isPluralized()], entity);
+          source = this.fluent.getSimplePreview(entity['original' + this.getPluralSuffix()]);
 
       this.getHistory(entity);
 
@@ -644,7 +648,7 @@ var Pontoon = (function (my) {
       self.updateMakeSuggestionToggle();
 
       // Length
-      var original = entity['original' + this.isPluralized()];
+      var original = entity['original' + this.getPluralSuffix()];
 
       // Toggle translation length display
       $('#translation-length')
@@ -1649,9 +1653,11 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Is original string pluralized
+     * If original string is pluralized, return '_plural', else ''. A common use case is
+     * entity['original' + Pontoon.getPluralSuffix()], which returns entity.original or
+     * entity.original_plural.
      */
-    isPluralized: function () {
+    getPluralSuffix: function () {
       var original = '',
           nplurals = this.locale.nplurals,
           plural_rule = this.locale.plural_rule,
@@ -1807,9 +1813,9 @@ var Pontoon = (function (my) {
 
         var entity = self.getEditorEntity(),
             i = tab.index(),
-            original = entity['original' + self.isPluralized()],
-            marked = entity['marked' + self.isPluralized()],
-            title = !self.isPluralized() ? 'Singular' : 'Plural',
+            original = entity['original' + self.getPluralSuffix()],
+            marked = entity['marked' + self.getPluralSuffix()],
+            title = !self.getPluralSuffix() ? 'Singular' : 'Plural',
             source = entity.translation[i].string;
 
         $('#source-pane h2').html(title).show();
@@ -1975,7 +1981,7 @@ var Pontoon = (function (my) {
         }
 
         var entity = self.getEditorEntity(),
-            original = entity['original' + self.isPluralized()],
+            original = entity['original' + self.getPluralSuffix()],
             source = self.fluent.getSourceStringValue(entity, original);
 
         self.updateAndFocusTranslationEditor(source);
@@ -2010,16 +2016,18 @@ var Pontoon = (function (my) {
       // Custom search: trigger with Enter
       $('#helpers .machinery input').unbind('keydown.pontoon').bind('keydown.pontoon', function (e) {
         if (e.which === 13) {
-          var source = $(this).val(),
-              entity = self.getEditorEntity();
+          var source = $(this).val();
+          var entity = self.getEditorEntity();
+          var customSearch = true;
 
           // Reset to original string on empty search
           if (!source) {
-            source = entity['original' + self.isPluralized()];
+            source = entity['original' + self.getPluralSuffix()];
+            customSearch = false;
           }
 
           if (self.machinerySource !== source) {
-            self.getMachinery(source);
+            self.getMachinery(source, customSearch);
             self.machinerySource = source;
           }
           return false;
@@ -2503,9 +2511,9 @@ var Pontoon = (function (my) {
       var self = this,
           status = self.getEntityStatus(entity),
           translation = entity.translation[0],
-          translationString = translation.string || '';
+          translationString = translation.string;
 
-      translationString = self.fluent.getSimplePreview(translation, translationString, entity);
+      translationString = self.fluent.getSimplePreview(translationString);
 
       entity.ui
         .removeClass('translated suggested fuzzy missing partial')
@@ -2736,7 +2744,7 @@ var Pontoon = (function (my) {
           entity: entity.pk,
           translation: self.fluent.serializeTranslation(entity, translation),
           plural_form: submittedPluralForm,
-          original: entity['original' + self.isPluralized()],
+          original: entity['original' + self.getPluralSuffix()],
           ignore_warnings: $('#quality').is(':visible') || !syncLocalStorage,
           approve: self.isApprovedNotSubmitted || false,
           paths: self.getPartPaths(self.currentPart),

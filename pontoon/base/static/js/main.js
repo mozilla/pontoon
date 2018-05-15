@@ -329,17 +329,25 @@ var Pontoon = (function (my) {
      * Get suggestions from machine translation and translation memory
      *
      * original Original string
-     * target Target element id
+     * customSearch Instead of source string, use custom search keyword as input
      * loader Loader element id
      */
-    getMachinery: function (original, target, loader) {
+    getMachinery: function (original, customSearch, loader) {
       loader = loader || 'helpers li a[href="#machinery"]';
       var self = this,
           ul = $('#helpers > .machinery').children('ul').empty(),
           tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
           count = 0,
-          sourcesMap = {};
+          sourcesMap = {},
+          originalForTM = original;
+
+      // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
+      // so we should query them as such as well (instead of simplified strings).
+      if (!customSearch) {
+        var entity = self.getEditorEntity();
+        originalForTM = entity['original' + self.getPluralSuffix()];
+      }
 
       self.NProgressUnbind();
 
@@ -347,7 +355,8 @@ var Pontoon = (function (my) {
         var title = loader !== 'search' ? ' title="Copy Into Translation (Tab)"' : ' title="Copy to clipboard"',
             sources = sourcesMap[data.original + data.translation],
             occurrencesTitle = 'Number of translation occurrences',
-            originalText = data.original;
+            originalText = data.original,
+            translationText = data.translation;
 
         if (sources) {
           sources.append(
@@ -359,9 +368,19 @@ var Pontoon = (function (my) {
 
         } else {
           if (data.source !== 'Caighdean') {
-            originalText = (originalText ? self.diff(original, originalText) : '');
+            var originalTextForDiff = originalText;
+
+            // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
+            // so in we need to convert returned original and translation to simple string.
+            // See bug 1455191.
+            if (!customSearch && data.source === 'Translation memory') {
+              originalTextForDiff = self.fluent.getSimplePreview(originalText);
+              translationText = self.fluent.getSimplePreview(translationText);
+            }
+
+            originalText = (originalText ? self.diff(original, originalTextForDiff) : '');
           }
-          var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(data.translation) + '">' +
+          var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(translationText) + '">' +
             '<header>' +
               (data.quality ? '<span class="stress">' + data.quality + '</span>' : '') +
               '<ul class="sources">' +
@@ -375,10 +394,10 @@ var Pontoon = (function (my) {
             '</header>' +
             '<p class="original">' + originalText + '</p>' +
             '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
-              self.markPlaceables(data.translation) +
+              self.markPlaceables(translationText) +
             '</p>' +
             '<p class="translation-clipboard">' +
-              self.doNotRender(data.translation) +
+              self.doNotRender(translationText) +
             '</p>' +
           '</li>');
           ul.append(li);
@@ -475,9 +494,9 @@ var Pontoon = (function (my) {
       self.XHRtranslationMemory = $.ajax({
         url: '/translation-memory/',
         data: {
-          text: original,
+          text: originalForTM,
           locale: self.locale.code,
-          pk: !target ? $('#editor')[0].entity.pk : ''
+          pk: !customSearch ? $('#editor')[0].entity.pk : ''
         }
 
       }).success(function(data) {
@@ -596,7 +615,7 @@ var Pontoon = (function (my) {
         self.XHRCaighdeanMT = $.ajax({
           url: '/machine-translation-caighdean/',
           data: {
-            id: self.getEditorEntity().pk,
+            id: entity.pk,
             locale: self.locale.code
           }
         }).success(function(data) {
