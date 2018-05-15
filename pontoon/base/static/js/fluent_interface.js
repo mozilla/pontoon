@@ -562,6 +562,7 @@ var Pontoon = (function (my) {
         var value = '';
         var attributes = '';
         var attributesTree = [];
+        var translatedAttributes = [];
 
         var entityAST = fluentParser.parseEntry(entity.original);
         if (entityAST.attributes.length) {
@@ -573,6 +574,17 @@ var Pontoon = (function (my) {
         if (translation.pk) {
           translationAST = fluentParser.parseEntry(translation.string);
           attributesTree = translationAST.attributes;
+
+          // If translation doesn't include all entity attributes,
+          // we need to manually add them
+          translatedAttributes = attributesTree.map(function (attr) {
+            return attr.id.name;
+          });
+          entityAST.attributes.forEach(function (attr) {
+            if (translatedAttributes.indexOf(attr.id.name) === -1) {
+              attributesTree.push(attr);
+            }
+          });
         }
 
         // Reset default editor values
@@ -638,10 +650,13 @@ var Pontoon = (function (my) {
           attributesTree.forEach(function (attr) {
             var id = attr.id.name;
 
+            // Mark translated attributes
+            var isTranslated = translatedAttributes.indexOf(id) !== -1;
+
             attributes += (
               '<li data-id="' + id + '">' +
                 '<ul>' +
-                  renderEditorElements(attr.value.elements, id, translationAST) +
+                  renderEditorElements(attr.value.elements, id, isTranslated) +
                 '</ul>' +
               '</li>'
             );
