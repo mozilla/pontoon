@@ -26,6 +26,7 @@ from pontoon.base.models import (
     ProjectLocale,
     Repository,
     Resource,
+    Subpage,
     TranslatedResource,
     Translation,
     TranslationMemoryEntry
@@ -128,6 +129,14 @@ class ResourceFactory(DjangoModelFactory):
 
     class Meta:
         model = Resource
+
+
+class SubpageFactory(DjangoModelFactory):
+    project = SubFactory(ProjectFactory)
+    name = Sequence(lambda n: 'subpage%s' % n)
+
+    class Meta:
+        model = Subpage
 
 
 class LocaleFactory(DjangoModelFactory):

@@ -1,11 +1,64 @@
+import factory
 import pytest
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
 
 from pontoon.base.admin import UserAdmin
-from pontoon.base.models import PermissionChangelog
+from pontoon.base.models import Group, Locale, PermissionChangelog
+
+
+class UserFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = get_user_model()
+
+
+@pytest.fixture
+def fake_user():
+    return UserFactory(
+        username="fake_user",
+        email="fake_user@example.org"
+    )
+
+
+@pytest.fixture
+def other_user():
+    return UserFactory(
+        username="other_user",
+        email="other_user@example.org"
+    )
+
+
+@pytest.fixture
+def locale():
+    translators_group = Group.objects.create(
+        name='locale translators',
+    )
+    managers_group = Group.objects.create(
+        name='locale managers',
+    )
+    return Locale.objects.create(
+        code="kg",
+        name="Klingon",
+        translators_group=translators_group,
+        managers_group=managers_group,
+    )
+
+
+@pytest.fixture
+def assert_permissionchangelog():
+    """
+    Shortcut assert function for freshly created permission changeset objects.
+    """
+    def _assert(changelog_item, action_type, performed_by, performed_on, group):
+        assert changelog_item.action_type == action_type
+        assert changelog_item.performed_by == performed_by
+        assert changelog_item.performed_on == performed_on
+        assert changelog_item.group == group
+
+    return _assert
 
 
 @pytest.fixture
@@ -30,7 +83,7 @@ def user_form_request():
 
         request = rf.post(
             '/dummy/',
-            form_request
+            form_request,
         )
         request.user = request_user
         return request
@@ -55,7 +108,7 @@ def get_useradmin_form():
         return useradmin, form(
             request.POST,
             instance=user,
-            initial={'password': 'password'}
+            initial={'password': 'password'},
         )
 
     return _get_user_admin_form
@@ -63,14 +116,14 @@ def get_useradmin_form():
 
 @pytest.mark.django_db
 def test_user_admin_form_log_no_changes(
-    user0,
-    user1,
+    fake_user,
+    other_user,
     user_form_request,
     get_useradmin_form,
 ):
     _, form = get_useradmin_form(
-        user_form_request(user0, user1),
-        user1
+        user_form_request(fake_user, other_user),
+        other_user,
     )
 
     assert form.is_valid()
@@ -81,69 +134,68 @@ def test_user_admin_form_log_no_changes(
 
 @pytest.mark.django_db
 def test_user_admin_form_log_add_groups(
-        locale0,
-        user0,
-        user1,
-        user_form_request,
-        get_useradmin_form,
-        assert_permissionchangelog
+    locale,
+    fake_user,
+    other_user,
+    user_form_request,
+    get_useradmin_form,
+    assert_permissionchangelog,
 ):
     request = user_form_request(
-        user0,
-        user1,
+        fake_user,
+        other_user,
         groups=[
-            locale0.managers_group.pk,
-        ]
+            locale.managers_group.pk,
+        ],
     )
     useradmin, form = get_useradmin_form(
         request,
-        user1
+        other_user,
     )
     assert form.is_valid()
 
-    useradmin.save_model(request, user1, form, True)
+    useradmin.save_model(request, other_user, form, True)
 
     changelog_entry0, = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
         changelog_entry0,
         'added',
-        user0,
-        user1,
-        locale0.managers_group
+        fake_user,
+        other_user,
+        locale.managers_group,
     )
 
 
 @pytest.mark.django_db
 def test_user_admin_form_log_removed_groups(
-        locale0,
-        user0,
-        user1,
-        user_form_request,
-        get_useradmin_form,
-        assert_permissionchangelog
+    locale,
+    fake_user,
+    other_user,
+    user_form_request,
+    get_useradmin_form,
+    assert_permissionchangelog,
 ):
-
-    user1.groups.add(locale0.managers_group)
+    other_user.groups.add(locale.managers_group)
     request = user_form_request(
-        user0,
-        user1,
-        groups=[]
+        fake_user,
+        other_user,
+        groups=[],
     )
     useradmin, form = get_useradmin_form(
         request,
-        user1
+        other_user,
     )
     assert form.is_valid()
 
-    useradmin.save_model(request, user1, form, True)
+    useradmin.save_model(request, other_user, form, True)
 
     changelog_entry0, = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
         changelog_entry0,
         'removed',
-        user0,
-        user1,
-        locale0.managers_group
+        fake_user,
+        other_user,
+        locale.managers_group,
     )

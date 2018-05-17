@@ -4,12 +4,84 @@ import os
 from datetime import datetime
 
 import pytest
-
 from lxml import etree
 
 from pontoon.base.utils import build_translation_memory_file
+from pontoon.base.tests import (
+    EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ProjectLocaleFactory,
+    ResourceFactory,
+    UserFactory,
+)
 
-import tests
+
+@pytest.fixture
+def user_a():
+    return UserFactory(
+        username="user_a",
+        email="user_a@example.org"
+    )
+
+
+@pytest.fixture
+def member(client, user_a):
+    """Provides a `LoggedInMember` with the attributes `user` and `client`
+    the `client` is authenticated
+    """
+
+    class LoggedInMember(object):
+
+        def __init__(self, user, client):
+            client.force_login(user)
+            self.client = client
+            self.user = user
+
+    return LoggedInMember(user_a, client)
+
+
+@pytest.fixture
+def locale_a():
+    return LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+
+
+@pytest.fixture
+def project_a():
+    return ProjectFactory(
+        slug="project_a", name="Project A", repositories=[],
+    )
+
+
+@pytest.fixture
+def project_locale_a(project_a, locale_a):
+    return ProjectLocaleFactory(
+        project=project_a,
+        locale=locale_a,
+    )
+
+
+@pytest.fixture
+def resource_a(locale_a, project_a):
+    return ResourceFactory(
+        project=project_a, path="resource_a.po", format="po"
+    )
+
+
+@pytest.fixture
+def entity_a(resource_a, project_locale_a):
+    return EntityFactory(
+        resource=resource_a, string="entity"
+    )
+
+
+@pytest.fixture
+def settings_debug(settings):
+    """Make the settings.DEBUG for this test"""
+    settings.DEBUG = True
 
 
 def _check_xml(xml_content, expected_xml=None, dtd_path=None):
@@ -26,35 +98,43 @@ def _check_xml(xml_content, expected_xml=None, dtd_path=None):
     if expected_xml is not None:
         assert (
             validated_xml
-            == etree.tostring(etree.fromstring(expected_xml)))
+            == etree.tostring(etree.fromstring(expected_xml))
+        )
 
 
 @pytest.mark.xfail(reason="Original tests were broken")
 @pytest.mark.django_db
-def test_view_tmx_locale_file_dl(client, entity0, locale0):
+def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
     """By download the data."""
     response = client.get(
         '/{locale}/{project}/{locale}.{project}.tmx'.format(
-            locale=locale0.code,
-            project=entity0.resource.project.slug))
+            locale=locale_a.code,
+            project=entity_a.resource.project.slug,
+        )
+    )
     assert response.status_code == 200
     _check_xml(
-        ''.join(response.streaming_content).encode('utf-8'))
+        ''.join(response.streaming_content).encode('utf-8')
+    )
 
 
 @pytest.mark.django_db
-def test_view_tmx_bad_params(client, entity0, locale0, settings_debug):
+def test_view_tmx_bad_params(client, entity_a, locale_a, settings_debug):
     """Validate locale code and don't return data."""
     response = client.get(
         '/{locale}/{project}/{locale}.{project}.tmx'.format(
             locale='invalidlocale',
-            project='invalidproject'))
+            project='invalidproject',
+        )
+    )
     assert response.status_code == 404
 
     response = client.get(
         '/{locale}/{project}/{locale}.{project}.tmx'.format(
-            locale=locale0,
-            project='invalidproject'))
+            locale=locale_a,
+            project='invalidproject',
+        )
+    )
     assert response.status_code == 404
 
 
@@ -62,58 +142,79 @@ def test_view_tmx_bad_params(client, entity0, locale0, settings_debug):
 @pytest.mark.django_db
 def test_view_tmx_empty_file():
     data_root = os.path.join(
-        os.path.dirname(os.path.abspath(tests.__file__)),
-        'data')
+        os.path.dirname(os.path.abspath(__file__)),
+        'data',
+    )
     filepath = 'tmx/no_entries.tmx'
+
     with open(os.path.join(data_root, filepath), 'rU') as f:
         xml = f.read().decode('utf-8')
+
     tmx_contents = build_translation_memory_file(
-        datetime(2010, 01, 01), 'sl', ())
+        datetime(2010, 01, 01), 'sl', ()
+    )
     _check_xml(
         ''.join(tmx_contents).encode('utf-8'),
         xml,
-        os.path.join(data_root, 'tmx/tmx14.dtd'))
+        os.path.join(data_root, 'tmx/tmx14.dtd'),
+    )
 
 
 @pytest.mark.xfail(reason="Original tests were broken")
 @pytest.mark.django_db
 def test_view_tmx_valid_entries():
     data_root = os.path.join(
-        os.path.dirname(os.path.abspath(tests.__file__)),
-        'data')
+        os.path.dirname(os.path.abspath(__file__)),
+        'data',
+    )
     filepath = 'tmx/valid_entries.tmx'
+
     with open(os.path.join(data_root, filepath), 'rU') as f:
         xml = f.read().decode('utf-8')
+
     tmx_contents = build_translation_memory_file(
         datetime(2010, 01, 01),
         'sl',
-        (('aa/bb/ccc',
-          'xxx',
-          'source string',
-          'translation',
-          'Pontoon App',
-          'pontoon'),
-         # Test escape of characters
-         ('aa/bb/ccc',
-          'x&x&x#"',
-          'source string',
-          'translation',
-          'Pontoon & App',
-          'pontoon'),
-         # Handle unicode characters
-         ('aa/bb/ccc',
-          'xxx',
-          u'source string łążśźć',
-          u'translation łążśźć',
-          'pontoon',
-          'pontoon'),
-         # Handle html content
-         ('aa/bb/ccc',
-          'xxx',
-          u'<p>source <strong>string</p>',
-          u'<p>translation łążśźć</p>',
-          'pontoon', 'pontoon')))
+        (
+            (
+                'aa/bb/ccc',
+                'xxx',
+                'source string',
+                'translation',
+                'Pontoon App',
+                'pontoon',
+            ),
+            # Test escape of characters
+            (
+                'aa/bb/ccc',
+                'x&x&x#"',
+                'source string',
+                'translation',
+                'Pontoon & App',
+                'pontoon',
+            ),
+            # Handle unicode characters
+            (
+                'aa/bb/ccc',
+                'xxx',
+                u'source string łążśźć',
+                u'translation łążśźć',
+                'pontoon',
+                'pontoon',
+            ),
+            # Handle html content
+            (
+                'aa/bb/ccc',
+                'xxx',
+                u'<p>source <strong>string</p>',
+                u'<p>translation łążśźć</p>',
+                'pontoon',
+                'pontoon',
+            ),
+        )
+    )
     _check_xml(
         ''.join(tmx_contents).encode('utf-8'),
         xml,
-        os.path.join(data_root, 'tmx/tmx14.dtd'))
+        os.path.join(data_root, 'tmx/tmx14.dtd'),
+    )

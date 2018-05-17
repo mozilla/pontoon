@@ -1,6 +1,10 @@
+import factory
 import pytest
 
+from django.contrib.auth import get_user_model
+
 from pontoon.base.models import (
+    Locale,
     PermissionChangelog
 )
 from pontoon.base.forms import (
@@ -9,15 +13,66 @@ from pontoon.base.forms import (
 )
 
 
+class UserFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = get_user_model()
+
+
+@pytest.fixture
+def user_a():
+    return UserFactory(
+        username="user_a",
+        email="user_a@example.org"
+    )
+
+
+@pytest.fixture
+def user_b():
+    return UserFactory(
+        username="user_b",
+        email="user_b@example.org"
+    )
+
+
+@pytest.fixture
+def user_c():
+    return UserFactory(
+        username="user_c",
+        email="user_c@example.org"
+    )
+
+
+@pytest.fixture
+def locale():
+    return Locale.objects.create(
+        code="kg",
+        name="Klingon",
+    )
+
+
+@pytest.fixture
+def assert_permissionchangelog():
+    """
+    Shortcut assert function for freshly created permission changeset objects.
+    """
+    def _assert(changelog_item, action_type, performed_by, performed_on, group):
+        assert changelog_item.action_type == action_type
+        assert changelog_item.performed_by == performed_by
+        assert changelog_item.performed_on == performed_on
+        assert changelog_item.group == group
+
+    return _assert
+
+
 @pytest.mark.django_db
-def test_locale_perms_form_log_no_changes(user0, locale0):
+def test_locale_perms_form_log_no_changes(user_a, locale):
     form = LocalePermsForm(
         {
             'translators': [],
             'managers': []
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a
     )
     assert form.is_valid()
 
@@ -27,13 +82,13 @@ def test_locale_perms_form_log_no_changes(user0, locale0):
 
 
 @pytest.mark.django_db
-def test_project_locale_perms_form_log_no_changes(user0, locale0):
+def test_project_locale_perms_form_log_no_changes(user_a, locale):
     form = ProjectLocalePermsForm(
         {
             'translators': [],
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a,
     )
     assert form.is_valid()
 
@@ -43,15 +98,17 @@ def test_project_locale_perms_form_log_no_changes(user0, locale0):
 
 
 @pytest.mark.django_db
-def test_locale_perms_form_log(locale0, user0, user1, userX, assert_permissionchangelog):
+def test_locale_perms_form_log(
+    locale, user_a, user_b, user_c, assert_permissionchangelog
+):
     # Add new users to groups
     form = LocalePermsForm(
         {
-            'translators': [userX.pk],
-            'managers': [user1.pk]
+            'translators': [user_c.pk],
+            'managers': [user_b.pk],
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a,
     )
 
     assert form.is_valid()
@@ -62,60 +119,64 @@ def test_locale_perms_form_log(locale0, user0, user1, userX, assert_permissionch
     assert_permissionchangelog(
         changelog_entry0,
         'added',
-        user0,
-        userX,
-        locale0.translators_group
+        user_a,
+        user_c,
+        locale.translators_group,
     )
 
     assert_permissionchangelog(
         changelog_entry1,
         'added',
-        user0,
-        user1,
-        locale0.managers_group
+        user_a,
+        user_b,
+        locale.managers_group,
     )
 
     # Remove items from groups
     form = LocalePermsForm(
         {
             'translators': [],
-            'managers': []
+            'managers': [],
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a,
     )
 
     assert form.is_valid()
     form.save()
 
-    changelog_entry3, changelog_entry2 = PermissionChangelog.objects.order_by('-pk')[:2]
+    changelog_entry3, changelog_entry2 = (
+        PermissionChangelog.objects.order_by('-pk')[:2]
+    )
 
     assert_permissionchangelog(
         changelog_entry2,
         'removed',
-        user0,
-        userX,
-        locale0.translators_group
+        user_a,
+        user_c,
+        locale.translators_group,
     )
 
     assert_permissionchangelog(
         changelog_entry3,
         'removed',
-        user0,
-        user1,
-        locale0.managers_group
+        user_a,
+        user_b,
+        locale.managers_group,
     )
 
 
 @pytest.mark.django_db
-def test_project_locale_perms_form_log(locale0, user0, user1, userX, assert_permissionchangelog):
+def test_project_locale_perms_form_log(
+    locale, user_a, user_b, user_c, assert_permissionchangelog
+):
     # Add new users to groups
     form = ProjectLocalePermsForm(
         {
-            'translators': [userX.pk],
+            'translators': [user_c.pk],
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a,
     )
 
     assert form.is_valid()
@@ -126,19 +187,19 @@ def test_project_locale_perms_form_log(locale0, user0, user1, userX, assert_perm
     assert_permissionchangelog(
         changelog_entry0,
         'added',
-        user0,
-        userX,
-        locale0.translators_group
+        user_a,
+        user_c,
+        locale.translators_group,
     )
 
     # Remove items from groups
     form = ProjectLocalePermsForm(
         {
             'translators': [],
-            'managers': []
+            'managers': [],
         },
-        instance=locale0,
-        user=user0
+        instance=locale,
+        user=user_a,
     )
 
     assert form.is_valid()
@@ -149,7 +210,7 @@ def test_project_locale_perms_form_log(locale0, user0, user1, userX, assert_perm
     assert_permissionchangelog(
         changelog_entry1,
         'removed',
-        user0,
-        userX,
-        locale0.translators_group
+        user_a,
+        user_c,
+        locale.translators_group,
     )

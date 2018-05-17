@@ -1,44 +1,189 @@
-
 import pytest
 
 from pontoon.base.models import Entity
+from pontoon.base.tests import (
+    EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ResourceFactory,
+    SubpageFactory,
+    TranslatedResourceFactory,
+    TranslationFactory,
+    UserFactory,
+)
+from pontoon.sync import KEY_SEPARATOR
+from pontoon.tags.models import Tag
+
+
+@pytest.fixture
+def user_a():
+    return UserFactory(
+        username="user_a",
+        email="user_a@example.org"
+    )
+
+
+@pytest.fixture
+def user_b():
+    return UserFactory(
+        username="user_b",
+        email="user_b@example.org"
+    )
+
+
+@pytest.fixture
+def locale_a():
+    return LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+
+
+@pytest.fixture
+def locale_b():
+    return LocaleFactory(
+        code="gs",
+        name="Geonosian",
+    )
+
+
+@pytest.fixture
+def project_a():
+    return ProjectFactory(
+        slug="project_a", name="Project A"
+    )
+
+
+@pytest.fixture
+def project_b():
+    return ProjectFactory(
+        slug="project_b", name="Project B"
+    )
+
+
+@pytest.fixture
+def resource_a(locale_a, project_a):
+    return ResourceFactory(
+        project=project_a, path="resource_a.po", format="po"
+    )
+
+
+@pytest.fixture
+def resource_b(locale_b, project_b):
+    return ResourceFactory(
+        project=project_b, path="resource_b.po", format="po"
+    )
+
+
+@pytest.fixture
+def entity_a(resource_a):
+    return EntityFactory(
+        resource=resource_a, string="entity"
+    )
+
+
+@pytest.fixture
+def translation_a(locale_a, entity_a, user_a):
+    return TranslationFactory(
+        entity=entity_a, locale=locale_a, user=user_a
+    )
+
+
+@pytest.fixture
+def tag_a(resource_a, project_a, locale_a):
+    # Tags require a TranslatedResource to work.
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a
+    )
+    tag = Tag.objects.create(slug="tag", name="Tag")
+    tag.resources.add(resource_a)
+    return tag
+
+
+@pytest.fixture
+def entity_test_models(translation_a, locale_b):
+    """This fixture provides:
+
+    - 2 translations of a plural entity
+    - 1 translation of a non-plural entity
+    - A subpage that contains the plural entity
+    """
+
+    entity_a = translation_a.entity
+    locale_a = translation_a.locale
+    project_a = entity_a.resource.project
+
+    locale_a.cldr_plurals = "0,1"
+    locale_a.save()
+    translation_a.plural_form = 0
+    translation_a.save()
+    resourceX = ResourceFactory(
+        project=project_a, path="resourceX.po",
+    )
+    entity_a.string = "Entity zero"
+    entity_a.key = entity_a.string
+    entity_a.string_plural = "Plural %s" % entity_a.string
+    entity_a.save()
+    entity_b = EntityFactory(
+        resource=resourceX,
+        string="entity_b",
+        key='Key%sentity_b' % KEY_SEPARATOR,
+    )
+    translation_a_pl = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        plural_form=1,
+        string="Plural %s" % translation_a.string,
+    )
+    translationX = TranslationFactory(
+        entity=entity_b,
+        locale=locale_a,
+        string="Translation %s" % entity_b.string,
+    )
+    subpageX = SubpageFactory(
+        project=project_a, name="Subpage",
+    )
+    subpageX.resources.add(entity_a.resource)
+    return translation_a, translation_a_pl, translationX, subpageX
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_filter(entity_test_models, localeX, project1):
+def test_entity_project_locale_filter(entity_test_models, locale_b, project_b):
     """
     Evaluate entities filtering by locale, project, obsolete.
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
-    locale0 = tr0.locale
+    locale_a = tr0.locale
     resource0 = tr0.entity.resource
-    project0 = tr0.entity.resource.project
+    project_a = tr0.entity.resource.project
     Entity.objects.create(
         obsolete=True,
         resource=resource0,
-        string='Obsolete String')
-    assert len(Entity.for_project_locale(project0, localeX)) == 0
-    assert len(Entity.for_project_locale(project1, locale0)) == 0
-    assert len(Entity.for_project_locale(project0, locale0)) == 2
+        string='Obsolete String',
+    )
+    assert len(Entity.for_project_locale(project_a, locale_b)) == 0
+    assert len(Entity.for_project_locale(project_b, locale_a)) == 0
+    assert len(Entity.for_project_locale(project_a, locale_a)) == 2
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_no_paths(entity_test_models, localeX, project1):
+def test_entity_project_locale_no_paths(entity_test_models, locale_b, project_b):
     """
     If paths not specified, return all project entities along with their
     translations for locale.
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
-    locale0 = tr0.locale
-    entity0 = tr0.entity
+    locale_a = tr0.locale
+    entity_a = tr0.entity
     resource0 = tr0.entity.resource
-    project0 = tr0.entity.resource.project
+    project_a = tr0.entity.resource.project
     entities = Entity.map_entities(
-        locale0,
-        Entity.for_project_locale(project0, locale0))
+        locale_a,
+        Entity.for_project_locale(project_a, locale_a),
+    )
     assert len(entities) == 2
     assert entities[0]['path'] == resource0.path
-    assert entities[0]['original'] == entity0.string
+    assert entities[0]['original'] == entity_a.string
     assert entities[0]['translation'][0]['string'] == tr0.string
     assert entities[1]['path'] == trX.entity.resource.path
     assert entities[1]['original'] == trX.entity.string
@@ -49,28 +194,34 @@ def test_entity_project_locale_no_paths(entity_test_models, localeX, project1):
         'comment': '',
         'format': 'po',
         'obsolete': False,
-        'marked': unicode(entity0.string),
+        'marked': unicode(entity_a.string),
         'key': '',
         'path': unicode(resource0.path),
-        'project': project0.serialize(),
+        'project': project_a.serialize(),
         'translation': [
-            {'pk': tr0.pk,
-             'fuzzy': False,
-             'string': unicode(tr0.string),
-             'approved': False,
-             'rejected': False},
-            {'pk': tr0pl.pk,
-             'fuzzy': False,
-             'string': unicode(tr0pl.string),
-             'approved': False,
-             'rejected': False}],
+            {
+                'pk': tr0.pk,
+                'fuzzy': False,
+                'string': unicode(tr0.string),
+                'approved': False,
+                'rejected': False,
+            },
+            {
+                'pk': tr0pl.pk,
+                'fuzzy': False,
+                'string': unicode(tr0pl.string),
+                'approved': False,
+                'rejected': False,
+            },
+        ],
         'order': 0,
         'source': [],
-        'original_plural': unicode(entity0.string_plural),
-        'marked_plural': unicode(entity0.string_plural),
-        'pk': entity0.pk,
-        'original': unicode(entity0.string),
-        'visible': False}
+        'original_plural': unicode(entity_a.string_plural),
+        'marked_plural': unicode(entity_a.string_plural),
+        'pk': entity_a.pk,
+        'original': unicode(entity_a.string),
+        'visible': False,
+    }
     assert entities[0] == expected
 
 
@@ -81,15 +232,17 @@ def test_entity_project_locale_paths(entity_test_models):
     with their translations for locale.
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
-    locale0 = tr0.locale
-    project0 = tr0.entity.resource.project
+    locale_a = tr0.locale
+    project_a = tr0.entity.resource.project
     paths = ['resourceX.po']
     entities = Entity.map_entities(
-        locale0,
+        locale_a,
         Entity.for_project_locale(
-            project0,
-            locale0,
-            paths))
+            project_a,
+            locale_a,
+            paths,
+        ),
+    )
     assert len(entities) == 1
     assert entities[0]['path'] == trX.entity.resource.path
     assert entities[0]['original'] == trX.entity.string
@@ -105,39 +258,43 @@ def test_entity_project_locale_subpages(entity_test_models):
     """
     tr0 = entity_test_models[0]
     subpageX = entity_test_models[3]
-    locale0 = tr0.locale
-    entity0 = tr0.entity
+    locale_a = tr0.locale
+    entity_a = tr0.entity
     resource0 = tr0.entity.resource
-    project0 = tr0.entity.resource.project
+    project_a = tr0.entity.resource.project
     subpages = [subpageX.name]
     entities = Entity.map_entities(
-        locale0,
+        locale_a,
         Entity.for_project_locale(
-            project0,
-            locale0,
-            subpages))
+            project_a,
+            locale_a,
+            subpages,
+        ),
+    )
     assert len(entities) == 1
     assert entities[0]['path'] == resource0.path
-    assert entities[0]['original'] == entity0.string
+    assert entities[0]['original'] == entity_a.string
     assert entities[0]['translation'][0]['string'] == tr0.string
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_plurals(entity_test_models, localeX, project1):
+def test_entity_project_locale_plurals(entity_test_models, locale_b, project_b):
     """
     For pluralized strings, return all available plural forms.
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
-    locale0 = tr0.locale
-    entity0 = tr0.entity
-    project0 = tr0.entity.resource.project
+    locale_a = tr0.locale
+    entity_a = tr0.entity
+    project_a = tr0.entity.resource.project
     entities = Entity.map_entities(
-        locale0,
+        locale_a,
         Entity.for_project_locale(
-            project0,
-            locale0))
-    assert entities[0]['original'] == entity0.string
-    assert entities[0]['original_plural'] == entity0.string_plural
+            project_a,
+            locale_a,
+        ),
+    )
+    assert entities[0]['original'] == entity_a.string
+    assert entities[0]['original_plural'] == entity_a.string_plural
     assert entities[0]['translation'][0]['string'] == tr0.string
     assert entities[0]['translation'][1]['string'] == tr0pl.string
 
@@ -148,21 +305,25 @@ def test_entity_project_locale_order(entity_test_models):
     Return entities in correct order.
     """
     resource0 = entity_test_models[0].entity.resource
-    locale0 = entity_test_models[0].locale
-    project0 = resource0.project
+    locale_a = entity_test_models[0].locale
+    project_a = resource0.project
     Entity.objects.create(
         order=1,
         resource=resource0,
-        string='Second String')
+        string='Second String',
+    )
     Entity.objects.create(
         order=0,
         resource=resource0,
-        string='First String')
+        string='First String',
+    )
     entities = Entity.map_entities(
-        locale0,
+        locale_a,
         Entity.for_project_locale(
-            project0,
-            locale0))
+            project_a,
+            locale_a,
+        ),
+    )
     assert entities[1]['original'] == 'First String'
     assert entities[2]['original'] == 'Second String'
 
@@ -174,30 +335,34 @@ def test_entity_project_locale_cleaned_key(entity_test_models):
     remove them.
     """
     resource0 = entity_test_models[0].entity.resource
-    locale0 = entity_test_models[0].locale
-    project0 = resource0.project
+    locale_a = entity_test_models[0].locale
+    project_a = resource0.project
     entities = Entity.map_entities(
-        locale0,
+        locale_a,
         Entity.for_project_locale(
-            project0,
-            locale0))
+            project_a,
+            locale_a,
+        ),
+    )
     assert entities[0]['key'] == ''
     assert entities[1]['key'] == 'Key'
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_tags(entity0, locale0, tag0):
+def test_entity_project_locale_tags(entity_a, locale_a, tag_a):
     """ Test filtering of tags in for_project_locale
     """
-    resource0 = entity0.resource
-    project0 = resource0.project
+    resource = entity_a.resource
+    project = resource.project
     entities = Entity.for_project_locale(
-        project0, locale0, tag=tag0.slug)
-    assert entity0 in entities
+        project, locale_a, tag=tag_a.slug,
+    )
+    assert entity_a in entities
 
     # remove the resource <> tag association
-    resource0.tag_set.remove(tag0)
+    resource.tag_set.remove(tag_a)
 
     entities = Entity.for_project_locale(
-        project0, locale0, tag=tag0.slug)
-    assert entity0 not in entities
+        project, locale_a, tag=tag_a.slug,
+    )
+    assert entity_a not in entities
