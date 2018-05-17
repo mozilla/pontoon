@@ -324,3 +324,5 @@ compare-locales==3.2.2 \
 # Required by compare-locales
 pytoml==0.1.14 \
     --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf
+django-cookies-samesite==0.1.1 \
+    --hash=sha256:5426ca30e64205451cabd7ecff08dac03070424d658caf54f64025e04ed431e7
