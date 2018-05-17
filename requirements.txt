@@ -109,6 +109,9 @@ whitenoise==1.0.6 \
     --hash=sha256:3e4d80199960959b828951aa24cbfaa36cebed149dcd728c11e855798b15f870 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
 
+django-cookies-samesite==0.1.2 \
+    --hash=sha256:8ffb0d4703e2cac6a4bff7c0bfb80d4153995497676556442f01804fc9918ec5
+
 # Dependencies loaded from outside pypi.
 https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
     --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
@@ -324,5 +327,3 @@ compare-locales==3.2.2 \
 # Required by compare-locales
 pytoml==0.1.14 \
     --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf
-django-cookies-samesite==0.1.1 \
-    --hash=sha256:5426ca30e64205451cabd7ecff08dac03070424d658caf54f64025e04ed431e7
