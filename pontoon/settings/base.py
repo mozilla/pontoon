@@ -152,6 +152,7 @@ INSTALLED_APPS = (
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
 
 MIDDLEWARE_CLASSES = (
+    'django_cookies_samesite.middleware.CookiesSameSite',
     'django.middleware.gzip.GZipMiddleware',
     'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
@@ -217,6 +218,8 @@ TEMPLATES = [
         }
     },
 ]
+
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
