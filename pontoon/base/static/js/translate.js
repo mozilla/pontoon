@@ -2038,9 +2038,13 @@ var Pontoon = (function (my) {
         }
       });
 
-      // Copy helpers result to translation
       // Use mousedown instead of click to be able to detect the last focused textarea
-      $('#helpers section').on('mousedown', 'li:not(".disabled")', function (e) {
+      $('#helpers section').on('mousedown', 'li:not(".disabled")', function () {
+        self.focusedOrFirstTextarea = self.getFocusedOrFirstTextarea();
+      });
+
+      // Copy helpers result to translation
+      $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
         e.preventDefault();
 
         var source = $(this).find('.translation-clipboard').text();
@@ -2064,8 +2068,7 @@ var Pontoon = (function (my) {
         if (self.fluent.isFTLEditorEnabled()) {
           // Machinery: Update focused or first element only
           if ($('#helpers .machinery').is(':visible')) {
-            var textarea = self.getFocusedOrFirstTextarea();
-            textarea.val(source).focus();
+            self.focusedOrFirstTextarea.val(source).focus();
           }
           // History & Locales: Update entire editor
           else {
@@ -2088,7 +2091,7 @@ var Pontoon = (function (my) {
 
       // Approve and delete translations
       $('#helpers .history').on('click', 'menu .approve', function () {
-        $(this).parents('li').trigger('mousedown');
+        $(this).parents('li').click();
 
         var entity = self.getEditorEntity(),
             translation = $('#translation').val();
