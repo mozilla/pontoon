@@ -1,11 +1,7 @@
-
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
-
-from pontoon.base.models import Project
-from pontoon.base.utils import require_AJAX
 
 from .utils import TagsTool
+from pontoon.base.models import Project
 
 from django.views.generic import DetailView
 
@@ -31,28 +27,16 @@ class ProjectTagView(DetailView):
         try:
             tag = TagsTool(
                 projects=[self.object],
-                priority=True)[self.kwargs['tag']].get()
+                priority=True,
+            )[self.kwargs['tag']].get()
         except IndexError:
             raise Http404
+
         if self.request.is_ajax():
-            return dict(project=self.object, locales=list(tag.iter_locales()), tag=tag)
+            return dict(
+                project=self.object,
+                locales=list(tag.iter_locales()),
+                tag=tag,
+            )
+
         return dict(project=self.object, tag=tag)
-
-
-@require_AJAX
-def ajax_tags(request, slug=None):
-    """This view provides JSON view for retrieving results in the
-    /projects/$project/tags view
-    """
-    project = get_object_or_404(Project, slug=slug)
-    if project.tags_enabled:
-        project = [project]
-    else:
-        raise Http404
-    tags_tool = TagsTool(
-        projects=project,
-        priority=True)
-    return render(
-        request, 'projects/includes/tags.html', {
-            'project': project,
-            'tags': list(tags_tool)})

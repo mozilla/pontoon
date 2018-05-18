@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
@@ -59,6 +59,25 @@ def ajax_teams(request, slug):
     return render(request, 'projects/includes/teams.html', {
         'project': project,
         'locales': locales,
+    })
+
+
+@require_AJAX
+def ajax_tags(request, slug):
+    """Tags tab."""
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.tags_enabled:
+        raise Http404
+
+    tags_tool = TagsTool(
+        projects=[project],
+        priority=True,
+    )
+
+    return render(request, 'projects/includes/tags.html', {
+        'project': project,
+        'tags': list(tags_tool),
     })
 
 
