@@ -7,16 +7,26 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
-from pontoon.base.models import Locale, Project, ProjectLocale, TranslatedResource
+from pontoon.base.models import (
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslatedResource,
+)
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
+from pontoon.tags.utils import TagsTool
 
 
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.available(), slug=slug)
-    project_locale = get_object_or_404(ProjectLocale, locale=locale, project=project)
+    project_locale = get_object_or_404(
+        ProjectLocale,
+        locale=locale,
+        project=project,
+    )
 
     resource_count = len(locale.parts_stats(project)) - 1
 
@@ -25,6 +35,13 @@ def localization(request, code, slug):
         'project': project,
         'project_locale': project_locale,
         'resource_count': resource_count,
+        'tags': (
+            len(
+                TagsTool(projects=[project], locales=[locale], priority=True)
+            ) or False
+            if project.tags_enabled
+            else None
+        )
     })
 
 
@@ -105,6 +122,28 @@ def ajax_resources(request, code, slug):
         'locale': locale,
         'project': project,
         'resources': parts,
+    })
+
+
+@require_AJAX
+def ajax_tags(request, code, slug):
+    """Tags tab."""
+    locale = get_object_or_404(Locale, code=code)
+    project = get_object_or_404(Project, slug=slug)
+
+    if not project.tags_enabled:
+        raise Http404
+
+    tags_tool = TagsTool(
+        locales=[locale],
+        projects=[project],
+        priority=True,
+    )
+
+    return render(request, 'localizations/includes/tags.html', {
+        'locale': locale,
+        'project': project,
+        'tags': list(tags_tool),
     })
 
 
