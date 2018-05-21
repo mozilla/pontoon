@@ -36,9 +36,7 @@ def localization(request, code, slug):
         'project_locale': project_locale,
         'resource_count': resource_count,
         'tags': (
-            len(
-                TagsTool(projects=[project], locales=[locale], priority=True)
-            ) or False
+            len(TagsTool(projects=[project], locales=[locale], priority=True))
             if project.tags_enabled
             else None
         )

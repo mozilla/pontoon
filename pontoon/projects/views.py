@@ -39,7 +39,7 @@ def project(request, slug):
     return render(request, 'projects/project.html', {
         'project': project,
         'tags': (
-            len(TagsTool(projects=[project], priority=True)) or False
+            len(TagsTool(projects=[project], priority=True))
             if project.tags_enabled
             else None)
     })
