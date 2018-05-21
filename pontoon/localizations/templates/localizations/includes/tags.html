@@ -1,0 +1,15 @@
+{% import 'tags/widgets/tag_list.html' as TagList %}
+
+<div class="tags">
+  {{ TagList.header() }}
+
+  {% for tag in tags %}
+  {% set main_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') + '?tag=' + tag.slug %}
+  {% set chart_link = main_link %}
+  {% set latest_activity = tag.latest_activity %}
+  {% set chart = tag.chart %}
+  {{ TagList.item(tag, main_link, chart_link, latest_activity, chart, link_parameter=True, has_params=True) }}
+  {% endfor %}
+
+  {{ TagList.footer() }}
+</div>

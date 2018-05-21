@@ -71,6 +71,13 @@
           count = resource_count
         )
       }}
+      {% if project.tags_enabled and tags %}
+         {{ Menu.item(
+           'Tags',
+           url('pontoon.localizations.tags', locale.code, project.slug),
+           is_active = (current_page == 'tags'),
+           count = tags) }}
+      {% endif %}
       {{ Menu.item(
           'Contributors',
           url('pontoon.localizations.contributors', locale.code, project.slug),
