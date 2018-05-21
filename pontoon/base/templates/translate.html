@@ -173,9 +173,8 @@
 
             {% if tags %}
             <li class="horizontal-separator tags-header">Tags</li>
-
             {% for tag in tags %}
-            {{ Filter.item('tag-' + tag.slug, tag.name) }}
+            {{ Filter.item('tag-' + tag.slug, tag.name, priority=tag.priority) }}
             {% endfor %}
             {% endif %}
 

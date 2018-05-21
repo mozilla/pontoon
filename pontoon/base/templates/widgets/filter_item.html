@@ -1,9 +1,16 @@
-{% macro item(type, title, count=False) %}
+{% macro item(type, title, count=False, priority=None) %}
 <li class="{{ type }}" data-type="{{ type }}">
   <span class="status fa"></span>
   <span class="title">{{ title }}</span>
   {% if count %}
-    <span class="count"></span>
+  <span class="count"></span>
+  {% endif %}
+  {% if priority %}
+  <span class="priority">
+    {% for n in range(5) %}
+    <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>
+    {% endfor %}
+  </span>
   {% endif %}
 </li>
 {% endmacro %}
