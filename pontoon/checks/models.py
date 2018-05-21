@@ -1,15 +1,15 @@
-from django.db import models as m
+from django.db import models
 
 from pontoon.base.models import Translation
 
 
-class Check(m.Model):
+class FailedCheck(models.Model):
     """
     Store checks performed on translations if they failed.
 
     Severity of failed checks are expressed by subclasses of this model.
     """
-    library = m.CharField(
+    library = models.CharField(
         max_length=20,
         choices=(
             ('p', 'pontoon'),
@@ -18,22 +18,21 @@ class Check(m.Model):
         ),
         db_index=True
     )
-    message = m.TextField()
+    message = models.TextField()
 
     class Meta:
         abstract = True
-        ordering = ('library', 'message')
 
 
-class Warning(Check):
-    translation = m.ForeignKey(Translation, related_name='warnings')
+class Warning(FailedCheck):
+    translation = models.ForeignKey(Translation, related_name='warnings')
 
-    class Meta(Check.Meta):
+    class Meta(FailedCheck.Meta):
         unique_together = (('translation', 'library', 'message'),)
 
 
-class Error(Check):
-    translation = m.ForeignKey(Translation, related_name='errors')
+class Error(FailedCheck):
+    translation = models.ForeignKey(Translation, related_name='errors')
 
-    class Meta(Check.Meta):
+    class Meta(FailedCheck.Meta):
         unique_together = (('translation', 'library', 'message'),)

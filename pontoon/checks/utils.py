@@ -4,27 +4,36 @@ from pontoon.checks.models import (
     Error
 )
 
-def save_failed_checks(translation, checks):
+def save_failed_checks(translation, messages):
     """
 
     """
     warnings = []
     errors = []
-    for check_group, failed_checks in checks.items():
+    for check_group, messages in messages.items():
         library = (
             check_group
             .replace('Warnings', '')
             .replace('Errors', '')
         )
-        severity_cls, messages_list = (Error, errors) if check_group.endswith('Errors') else (Warning, warnings)
+
+        if check_group.endswith('Errors'):
+            severity_cls, messages_list = Error, errors
+        else:
+            severity_cls, messages_list = Warning, warnings
 
         messages_list.extend([
             severity_cls(
                 library=library,
-                message=failed_check,
+                message=message,
                 translation=translation,
-            ) for failed_check in failed_checks
+            ) for message in messages
         ])
 
-    Warning.objects.bulk_create(warnings)
-    Error.objects.bulk_create(errors)
+    if warnings:
+        translation.warnings.clear()
+        Warning.objects.bulk_create(warnings)
+
+    if errors:
+        translation.errors.clear()
+        Error.objects.bulk_create(errors)

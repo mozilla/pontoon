@@ -661,6 +661,10 @@ def update_translation(request):
                 t.fuzzy = False
 
             t.save()
+            t.warnings.clear()
+            t.errors.clear()
+
+            save_failed_checks(t, checks)
 
             return JsonResponse({
                 'type': 'updated',
