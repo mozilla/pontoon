@@ -1,16 +1,19 @@
-from pontoon.base.models import Translation
+from django.http import JsonResponse
+
 from pontoon.checks.models import (
     Warning,
     Error
 )
 
-def save_failed_checks(translation, messages):
+def save_failed_checks(translation, failed_checks):
     """
-
+    Save all failed checks to Database
+    :arg Translation translation: instance of translation
+    ;arg dict failed_checks: dictionary with failed checks
     """
     warnings = []
     errors = []
-    for check_group, messages in messages.items():
+    for check_group, messages in failed_checks.items():
         library = (
             check_group
             .replace('Warnings', '')
@@ -37,3 +40,16 @@ def save_failed_checks(translation, messages):
     if errors:
         translation.errors.clear()
         Error.objects.bulk_create(errors)
+
+
+def checks_failed(checks, ignore_warnings):
+    """
+    Determine if the backend should block update of a translation because
+    some of failed checks are critical e.g. compare-locales errors.
+
+    :arg dict checks: dictionary with list of errors/warnings per library
+    :arg bool ignore_warnings: removes warnings from failed checks
+    """
+    has_errors = any(p.endswith('Errors') for p in checks)
+
+    return (not ignore_warnings and checks) or has_errors

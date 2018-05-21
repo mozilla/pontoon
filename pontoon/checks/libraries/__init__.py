@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-from django.http import JsonResponse
-
 from . import compare_locales
 from . import translate_toolkit
 from . import pontoon
@@ -75,16 +73,3 @@ def run_checks(
 
     checks.update(pontoon_checks)
     return checks
-
-
-def failed_checks_response(checks, ignore_warnings):
-    """
-
-    :arg bool ignore_warnings: removes warnings from failed checks
-    """
-    has_errors = any(p.endswith('Errors') for p in checks)
-
-    if (not ignore_warnings and checks) or has_errors:
-        return JsonResponse({
-            'failedChecks': checks,
-        })
