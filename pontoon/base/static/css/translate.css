@@ -1026,10 +1026,22 @@ body > header aside p {
   content: "";
 }
 
-#filter .menu li .count {
+#filter .menu li .count,
+#filter .menu li .priority {
   position: absolute;
   right: 4px;
+}
+
+#filter .menu li .count {
   top: 4px;
+}
+
+#filter .menu li .priority {
+  top: 6px;
+}
+
+#filter .menu li .priority .fa-star {
+  float: left;
 }
 
 #filter .menu li.author .count {
