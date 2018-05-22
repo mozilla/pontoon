@@ -84,7 +84,7 @@ $(function() {
     });
   });
 
-  $("[id^=id_tag_set-][id$=-name]").blur(function() {
+  $("body").on("blur", "[id^=id_tag_set-][id$=-name]", function() {
     var target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
     var $this = this;
     if (target.val() || !$(this).val()) {
