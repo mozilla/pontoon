@@ -34,11 +34,11 @@ def save_failed_checks(translation, failed_checks):
         ])
 
     if warnings:
-        translation.warnings.clear()
+        translation.warnings.all().delete()
         Warning.objects.bulk_create(warnings)
 
     if errors:
-        translation.errors.clear()
+        translation.errors.all().delete()
         Error.objects.bulk_create(errors)
 
 

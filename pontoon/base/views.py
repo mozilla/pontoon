@@ -50,7 +50,8 @@ from pontoon.checks.libraries import (
 
 from pontoon.checks.utils import (
     save_failed_checks,
-    checks_failed, FailedChecksResponse)
+    checks_failed,
+)
 
 
 log = logging.getLogger(__name__)
