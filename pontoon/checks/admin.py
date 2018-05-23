@@ -2,7 +2,7 @@ from django.contrib import admin
 from pontoon.checks import models
 
 
-class ChecksModelAdmin(admin.ModelAdmin):
+class FailedCheckModelAdmin(admin.ModelAdmin):
     search_fields = ['message']
     list_display = (
         'project',
@@ -11,6 +11,7 @@ class ChecksModelAdmin(admin.ModelAdmin):
         'translation',
         'message',
     )
+
     def project(self, obj):
         return obj.translation.entity.resource.project.name
 
@@ -24,13 +25,13 @@ class ChecksModelAdmin(admin.ModelAdmin):
         return obj.translation.string
 
 
-class WarningsAdmin(ChecksModelAdmin):
+class WarningAdmin(FailedCheckModelAdmin):
     pass
 
 
-class ErrorsAdmin(ChecksModelAdmin):
+class ErrorAdmin(FailedCheckModelAdmin):
     pass
 
 
-admin.site.register(models.Warning, WarningsAdmin)
-admin.site.register(models.Error, ErrorsAdmin)
+admin.site.register(models.Warning, WarningAdmin)
+admin.site.register(models.Error, ErrorAdmin)

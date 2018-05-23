@@ -1,9 +1,5 @@
-from django.http import JsonResponse
+from pontoon.checks.models import Warning, Error
 
-from pontoon.checks.models import (
-    Warning,
-    Error
-)
 
 def save_failed_checks(translation, failed_checks):
     """
