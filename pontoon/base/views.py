@@ -43,12 +43,10 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.tags.utils.tags import TagsTool
-
 from pontoon.checks.libraries import run_checks
-
 from pontoon.checks.utils import (
     save_failed_checks,
-    checks_failed,
+    are_blocking_checks,
 )
 
 
@@ -545,7 +543,7 @@ def perform_checks(request):
         use_ttk_checks,
     )
 
-    if checks_failed(failed_checks, ignore_warnings):
+    if are_blocking_checks(failed_checks, ignore_warnings):
         return JsonResponse({
             'failedChecks': failed_checks,
         })
@@ -622,7 +620,7 @@ def update_translation(request):
         use_ttk_checks,
     )
 
-    if checks_failed(failed_checks, ignore_warnings):
+    if are_blocking_checks(failed_checks, ignore_warnings):
         return JsonResponse({
             'failedChecks': failed_checks,
         })
