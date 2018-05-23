@@ -544,12 +544,8 @@ def perform_checks(request):
         string,
         use_ttk_checks,
     )
-    checks_response = checks_failed(checks, ignore_warnings)
 
-    if checks_response:
-        return checks_response
-    else:
-        return HttpResponse('ok')
+    return checks_failed(checks, ignore_warnings) or HttpResponse('ok')
 
 
 @require_POST
