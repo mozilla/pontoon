@@ -3,13 +3,14 @@ from pontoon.checks import models
 
 
 class FailedCheckModelAdmin(admin.ModelAdmin):
-    search_fields = ['message']
+    search_fields = ['message', 'library']
     list_display = (
-        'project',
-        'locale',
-        'resource',
         'translation',
         'message',
+        'library',
+        'locale',
+        'project',
+        'resource',
     )
 
     def project(self, obj):
