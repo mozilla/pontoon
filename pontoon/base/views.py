@@ -44,9 +44,7 @@ from pontoon.base.models import (
 )
 from pontoon.tags.utils.tags import TagsTool
 
-from pontoon.checks.libraries import (
-    run_checks,
-)
+from pontoon.checks.libraries import run_checks
 
 from pontoon.checks.utils import (
     save_failed_checks,
