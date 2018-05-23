@@ -5,6 +5,7 @@ from pontoon.checks import models
 class FailedCheckModelAdmin(admin.ModelAdmin):
     search_fields = ['message', 'library']
     raw_id_fields = ('translation',)
+
     list_display = (
         'translation',
         'message',
