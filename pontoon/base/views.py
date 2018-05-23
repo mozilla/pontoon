@@ -537,7 +537,7 @@ def perform_checks(request):
     except UserProfile.DoesNotExist:
         use_ttk_checks = True
 
-    checks = run_checks(
+    failed_checks = run_checks(
         entity,
         locale_code,
         original,
@@ -545,7 +545,7 @@ def perform_checks(request):
         use_ttk_checks,
     )
 
-    return checks_failed(checks, ignore_warnings) or HttpResponse('ok')
+    return checks_failed(failed_checks, ignore_warnings) or HttpResponse('ok')
 
 
 @require_POST
@@ -609,7 +609,7 @@ def update_translation(request):
             'same': True,
         })
 
-    checks = run_checks(
+    failed_checks = run_checks(
         e,
         locale.code,
         original,
@@ -617,9 +617,9 @@ def update_translation(request):
         use_ttk_checks,
     )
 
-    if checks_failed(checks, ignore_warnings):
+    if checks_failed(failed_checks, ignore_warnings):
         return JsonResponse({
-            'failedChecks': checks,
+            'failedChecks': failed_checks,
         })
 
     # Translations exist
@@ -660,7 +660,7 @@ def update_translation(request):
             t.warnings.clear()
             t.errors.clear()
 
-            save_failed_checks(t, checks)
+            save_failed_checks(t, failed_checks)
 
             return JsonResponse({
                 'type': 'updated',
@@ -685,7 +685,7 @@ def update_translation(request):
                 t.approved_date = now
 
             t.save()
-            save_failed_checks(t, checks)
+            save_failed_checks(t, failed_checks)
 
             # Return active (approved or latest) translation
             try:
@@ -711,7 +711,7 @@ def update_translation(request):
             t.approved_date = now
 
         t.save()
-        save_failed_checks(t, checks)
+        save_failed_checks(t, failed_checks)
 
         return JsonResponse({
             'type': 'saved',
