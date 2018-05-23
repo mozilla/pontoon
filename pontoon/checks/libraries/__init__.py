@@ -72,4 +72,5 @@ def run_checks(
     )
 
     checks.update(pontoon_checks)
+
     return checks

@@ -545,7 +545,12 @@ def perform_checks(request):
         use_ttk_checks,
     )
 
-    return checks_failed(failed_checks, ignore_warnings) or HttpResponse('ok')
+    if checks_failed(failed_checks, ignore_warnings):
+        return JsonResponse({
+            'failedChecks': failed_checks,
+        })
+    else:
+        return HttpResponse('ok')
 
 
 @require_POST
