@@ -1,6 +1,7 @@
 import pytest
 
 from pontoon.base.models import Translation
+from pontoon.checks.models import Warning
 
 
 @pytest.yield_fixture
@@ -83,5 +84,12 @@ def test_run_checks_during_translation_update(
     )
 
     assert response.status_code == 200
+
     translation_pk = response.json()['translation']['pk']
     assert Translation.objects.get(pk=translation_pk).approved is False
+
+    warning, = Warning.objects.all()
+
+    assert warning.translation_id == translation_pk
+    assert warning.library == 'cl'
+    assert warning.message == 'trailing argument 1 `s` missing'

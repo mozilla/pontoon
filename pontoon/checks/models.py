@@ -23,6 +23,13 @@ class FailedCheck(models.Model):
     class Meta:
         abstract = True
 
+    def __repr__(self):
+        return u'[{}] {}: {}'.format(
+            self.__class__.__name__,
+            self.get_library_display(),
+            self.message
+        )
+
 
 class Warning(FailedCheck):
     translation = models.ForeignKey(Translation, related_name='warnings')
