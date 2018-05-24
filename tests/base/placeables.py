@@ -76,3 +76,33 @@ def test_placeable_base_format_named():
         mark_placeables(u'Rolling %(number)D dices')
         == (u'Rolling <mark class="placeable" '
             'title="Python format string">%(number)D</mark> dices'))
+
+
+def test_placeable_json_placeholder():
+    """Test detection of JSON placeholders."""
+    assert (
+        mark_placeables(u'Hello $USER$')
+        == (u'Hello <mark class="placeable" '
+            'title="JSON placeholder">$USER$</mark>'))
+
+    assert (
+        mark_placeables(u'Hello $USER1$')
+        == (u'Hello <mark class="placeable" '
+            'title="JSON placeholder">$USER1$</mark>'))
+
+    assert (
+        mark_placeables(u'Hello $FIRST_NAME$')
+        == (u'Hello <mark class="placeable" '
+            'title="JSON placeholder">$FIRST_NAME$</mark>'))
+
+    assert (
+        mark_placeables(u'Hello $user$')
+        == (u'Hello $user$'))
+
+    assert (
+        mark_placeables(u'Hello $USER')
+        == (u'Hello $USER'))
+
+    assert (
+        mark_placeables(u'Hello USER$')
+        == (u'Hello USER$'))
