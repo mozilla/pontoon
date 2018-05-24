@@ -139,7 +139,7 @@ class JSONResource(ParsedResource):
         resource.
         """
         if not self.source_resource:
-            raise SyncError('Cannot save FTL resource {0}: No source resource given.'
+            raise SyncError('Cannot save JSON resource {0}: No source resource given.'
                             .format(self.path))
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
@@ -166,7 +166,7 @@ class JSONResource(ParsedResource):
             pass  # Already exists, phew!
 
         with codecs.open(self.path, 'w+', 'utf-8') as f:
-            log.debug('Saved file: %s', self.path)
+            log.debug('Saving file: %s', self.path)
             f.write(json.dumps(json_file, indent=4))
 
 
