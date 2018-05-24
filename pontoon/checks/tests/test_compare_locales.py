@@ -12,6 +12,70 @@ from pontoon.checks.libraries.compare_locales import (
     UnsupportedResourceTypeError,
     run_checks,
 )
+from pontoon.base.tests import (
+    EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ProjectLocaleFactory,
+    TranslationFactory,
+    ResourceFactory,
+    UserFactory,
+)
+
+
+@pytest.fixture
+def user_a():
+    return UserFactory(
+        username="user_a",
+        email="user_a@example.org"
+    )
+
+
+@pytest.fixture
+def locale_a():
+    return LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+
+
+@pytest.fixture
+def project_a():
+    return ProjectFactory(
+        slug="project_a", name="Project A", repositories=[],
+    )
+
+
+@pytest.fixture
+def project_locale_a(project_a, locale_a):
+    return ProjectLocaleFactory(
+        project=project_a,
+        locale=locale_a,
+    )
+
+
+@pytest.fixture
+def resource_a(locale_a, project_a):
+    return ResourceFactory(
+        project=project_a, path="resource_a.po", format="po"
+    )
+
+
+@pytest.fixture
+def entity_a(resource_a, ):
+    return EntityFactory(
+        resource=resource_a, string="entity_a"
+    )
+
+
+@pytest.fixture
+def translation_a(locale_a, project_locale_a, entity_a, user_a):
+    return TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_a,
+        string='Translation for entity_a',
+    )
 
 
 def mock_quality_check_args(
@@ -24,7 +88,7 @@ def mock_quality_check_args(
     Generate a dictionary of arguments ready to use by get_quality_check function.
     """
     entity = MagicMock()
-    entity.key = 'entity0'
+    entity.key = 'entity_a'
     entity.resource.path = 'resource1.{}'.format(resource_ext)
     entity.resource.format = resource_ext
     entity.comment = ''
@@ -52,13 +116,13 @@ def mock_quality_check_args(
 
 
 @pytest.yield_fixture
-def entity_with_comment(entity0):
+def entity_with_comment(entity_a):
     """
     A simple entity that contains pre-defined key and comment.
     """
-    entity0.key = 'KeyEntity0'
-    entity0.comment = 'example comment'
-    return entity0
+    entity_a.key = 'key_entity_a'
+    entity_a.comment = 'example comment'
+    return entity_a
 
 
 @pytest.yield_fixture
@@ -66,17 +130,17 @@ def plural_entity(entity_with_comment):
     """
     Entity with plural string.
     """
-    entity_with_comment.key = 'KeyEntity0'
-    entity_with_comment.string_plural = 'plural entity0'
+    entity_with_comment.key = 'key_entity_a'
+    entity_with_comment.string_plural = 'plural entity_a'
     entity_with_comment.comment = 'example comment'
     return entity_with_comment
 
 
 @pytest.yield_fixture
-def plural_translation(translation0):
-    translation0.plural_form = 1
-    translation0.string = 'Plural translation for entity0'
-    return translation0
+def plural_translation(translation_a):
+    translation_a.plural_form = 1
+    translation_a.string = 'Plural translation for entity_a'
+    return translation_a
 
 
 def test_unsupported_resource_file():
@@ -88,51 +152,51 @@ def test_unsupported_resource_file():
 
 
 @pytest.mark.django_db
-def test_cast_to_properties(entity_with_comment, translation0):
+def test_cast_to_properties(entity_with_comment, translation_a):
     """
     Cast entities from .properties resources to PropertiesEntity
     """
     refEnt, transEnt = cast_to_compare_locales(
         '.properties',
         entity_with_comment,
-        translation0.string
+        translation_a.string
     )
 
     assert isinstance(refEnt, ComparePropertiesEntity)
     assert isinstance(transEnt, ComparePropertiesEntity)
 
-    assert refEnt.key == 'KeyEntity0'
-    assert refEnt.val == 'entity0'
+    assert refEnt.key == 'key_entity_a'
+    assert refEnt.val == 'entity_a'
     assert refEnt.pre_comment.all == 'example comment'
 
-    assert transEnt.key == 'KeyEntity0'
-    assert transEnt.val == 'Translation for entity0'
+    assert transEnt.key == 'key_entity_a'
+    assert transEnt.val == 'Translation for entity_a'
     assert transEnt.pre_comment.all == 'example comment'
 
 
 @pytest.mark.django_db
-def test_cast_to_dtd(entity_with_comment, translation0):
+def test_cast_to_dtd(entity_with_comment, translation_a):
     """
     Cast entities from .dtd resources to DTDEntity
     """
     refEnt, transEnt = cast_to_compare_locales(
         '.dtd',
         entity_with_comment,
-        translation0.string
+        translation_a.string
     )
 
     assert isinstance(refEnt, CompareDTDEntity)
     assert isinstance(transEnt, CompareDTDEntity)
 
-    assert refEnt.key == 'KeyEntity0'
-    assert refEnt.val == 'entity0'
+    assert refEnt.key == 'key_entity_a'
+    assert refEnt.val == 'entity_a'
     assert refEnt.pre_comment.all == 'example comment'
-    assert refEnt.all == '<!ENTITY KeyEntity0 "entity0">'
+    assert refEnt.all == '<!ENTITY key_entity_a "entity_a">'
 
-    assert transEnt.key == 'KeyEntity0'
-    assert transEnt.val == 'Translation for entity0'
+    assert transEnt.key == 'key_entity_a'
+    assert transEnt.val == 'Translation for entity_a'
     assert transEnt.pre_comment.all == 'example comment'
-    assert transEnt.all == '<!ENTITY KeyEntity0 "Translation for entity0">'
+    assert transEnt.all == '<!ENTITY key_entity_a "Translation for entity_a">'
 
 
 @pytest.mark.parametrize(
