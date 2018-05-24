@@ -589,12 +589,23 @@ var Pontoon = (function (my) {
 
       // Metadata: source
       if (entity.source) {
-        if (typeof(entity.source) === 'object') {
+        // PO
+        if (Array.isArray(entity.source)) {
           $.each(entity.source, function() {
             if (Array.isArray(this)) {
               self.appendMetaData('#:', this.join(':'));
             }
           });
+        // JSON
+        } else if (typeof(entity.source) === 'object') {
+          var examples = [];
+          $.each(Object.keys(entity.source), function() {
+            var example = entity.source[this].example;
+            if (example) {
+              examples.push('$' + this.toUpperCase() + '$: ' + example);
+            }
+          });
+          self.appendMetaData('Placeholder Examples', examples.join(', '));
         } else {
           self.appendMetaData('Source', entity.source);
         }
