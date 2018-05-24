@@ -111,8 +111,10 @@ class FTLResource(ParsedResource):
         resource.
         """
         if not self.source_resource:
-            raise SyncError('Cannot save FTL resource {0}: No source resource given.'
-                            .format(self.path))
+            raise SyncError(
+                'Cannot save FTL resource {0}: No source resource given.'
+                .format(self.path)
+            )
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
             structure = parser.parse(resource.read())

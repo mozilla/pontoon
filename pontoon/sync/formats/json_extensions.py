@@ -109,7 +109,10 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, 'r', 'utf-8') as resource:
-                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
+                self.json_file = json.load(
+                    resource,
+                    object_pairs_hook=OrderedDict
+                )
                 validate(self.json_file, SCHEMA)
 
         except (IOError, ValueError, ValidationError) as err:
@@ -139,8 +142,10 @@ class JSONResource(ParsedResource):
         resource.
         """
         if not self.source_resource:
-            raise SyncError('Cannot save JSON resource {0}: No source resource given.'
-                            .format(self.path))
+            raise SyncError(
+                'Cannot save JSON resource {0}: No source resource given.'
+                .format(self.path)
+            )
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
