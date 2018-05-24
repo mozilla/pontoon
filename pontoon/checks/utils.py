@@ -29,13 +29,8 @@ def save_failed_checks(translation, failed_checks):
             ) for message in messages
         ])
 
-    if warnings:
-        translation.warnings.clear()
-        Warning.objects.bulk_create(warnings)
-
-    if errors:
-        translation.errors.clear()
-        Error.objects.bulk_create(errors)
+    Warning.objects.bulk_create(warnings)
+    Error.objects.bulk_create(errors)
 
 
 def are_blocking_checks(checks, ignore_warnings):

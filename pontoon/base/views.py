@@ -661,6 +661,8 @@ def update_translation(request):
 
             t.save()
 
+            t.warnings.all().delete()
+            t.errors.all().delete()
             save_failed_checks(t, failed_checks)
 
             return JsonResponse({
