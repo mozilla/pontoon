@@ -1,10 +1,8 @@
-import factory
 import pytest
 
 from django.contrib.auth import get_user_model
 
 from pontoon.base.models import (
-    Locale,
     Project,
     Resource,
 )
@@ -16,64 +14,6 @@ from pontoon.base.utils import (
     glob_to_regex,
     latest_datetime,
 )
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def user_b():
-    return UserFactory(
-        username="user_b",
-        email="user_b@example.org"
-    )
-
-
-@pytest.fixture
-def user_c():
-    return UserFactory(
-        username="user_c",
-        email="user_c@example.org"
-    )
-
-
-@pytest.fixture
-def locale():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def resource_a(locale, project):
-    return Resource.objects.create(
-        project=project, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def resource_b(locale, project):
-    return Resource.objects.create(
-        project=project, path="resource_b.po", format="po"
-    )
 
 
 def test_util_glob_to_regex():
@@ -179,9 +119,9 @@ def test_util_base_extension_in():
 
 
 @pytest.mark.django_db
-def test_util_base_get_object_or_none(project):
+def test_util_base_get_object_or_none(project_a):
     assert get_object_or_none(Project, slug='does-not-exist') is None
-    assert get_object_or_none(Project, slug='project') == project
+    assert get_object_or_none(Project, slug=project_a.slug) == project_a
 
 
 def test_util_base_latest_datetime():

@@ -5,68 +5,9 @@ import pytest
 from mock import call, patch, Mock
 from six.moves.urllib.parse import urlparse
 
-from pontoon.base.models import ProjectLocale
 from pontoon.base.tests import (
-    LocaleFactory,
-    ProjectFactory,
     ProjectLocaleFactory,
-    Repository,
 )
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return LocaleFactory(
-        code="gs",
-        name="Geonosian",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A", repositories=[],
-    )
-
-
-@pytest.fixture
-def project_locale_a(project_a, locale_a):
-    return ProjectLocaleFactory(
-        project=project_a,
-        locale=locale_a,
-    )
-
-
-@pytest.fixture
-def repo_file(project_a):
-    """Repo (file) 0"""
-    return Repository.objects.create(
-        type="file", project=project_a, url="repo_file",
-    )
-
-
-@pytest.fixture
-def repo_git(project_a):
-    """Repo (git) 0"""
-    return Repository.objects.create(
-        type="git", project=project_a, url="repo_git",
-    )
-
-
-@pytest.fixture
-def repo_hg(project_a):
-    """Repo (hg) 0"""
-    return Repository.objects.create(
-        type="hg", project=project_a, url="repo_hg",
-    )
 
 
 @pytest.mark.django_db
@@ -180,7 +121,7 @@ def test_repo_url_for_path(project_locale_a, repo_git, locale_b):
     Return the first locale_checkout_path for locales active for the
     repo's project that matches the given path.
     """
-    ProjectLocale.objects.create(
+    ProjectLocaleFactory.create(
         project=repo_git.project, locale=locale_b,
     )
     repo_git.url = 'https://example.com/path/to/{locale_code}/'

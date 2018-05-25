@@ -2,106 +2,14 @@ import pytest
 
 from django.urls import reverse
 
-from pontoon.base.models import (
-    Project,
-    ProjectLocale,
-    Resource,
-    TranslatedResource,
-    Translation,
-)
+from pontoon.base.models import Translation
 from pontoon.base.tests import (
-    EntityFactory,
-    LocaleFactory,
     ProjectFactory,
     ProjectLocaleFactory,
-    Repository,
     ResourceFactory,
     TranslationFactory,
-    UserFactory,
+    TranslatedResourceFactory,
 )
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def member(client, user_a):
-    """Provides a `LoggedInMember` with the attributes `user` and `client`
-    the `client` is authenticated
-    """
-
-    class LoggedInMember(object):
-
-        def __init__(self, user, client):
-            client.force_login(user)
-            self.client = client
-            self.user = user
-
-    return LoggedInMember(user_a, client)
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return LocaleFactory(
-        code="gs",
-        name="Geonosian",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A", repositories=[],
-    )
-
-
-@pytest.fixture
-def project_b():
-    return ProjectFactory(
-        slug="project_b", name="Project B"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a):
-    return EntityFactory(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def project_locale_a(project_a, locale_a):
-    return ProjectLocaleFactory(
-        project=project_a,
-        locale=locale_a,
-    )
-
-
-@pytest.fixture
-def translation_a(locale_a, project_locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a
-    )
 
 
 @pytest.fixture
@@ -109,33 +17,6 @@ def approved_translation(locale_a, project_locale_a, entity_a, user_a):
     return TranslationFactory(
         entity=entity_a, locale=locale_a, user=user_a, approved=True
     )
-
-
-@pytest.fixture
-def settings_debug(settings):
-    """Make the settings.DEBUG for this test"""
-    settings.DEBUG = True
-
-
-@pytest.yield_fixture
-def request_update_translation():
-    """
-    Call /update/ view to push a translation/suggestion etc.
-    """
-    def func(client, **args):
-        update_params = {
-            'translation': 'approved translation',
-            'plural_form': '-1',
-            'ignore_check': 'true',
-        }
-        update_params.update(args)
-
-        return client.post(
-            '/update/',
-            update_params,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-    return func
 
 
 @pytest.mark.django_db
@@ -224,18 +105,16 @@ def test_view_translate_not_authed_public_project(
     If the user is not authenticated and we're translating project
     ID 1, return a 200.
     """
-    # Clear out existing project with ID=1 if necessary.
-    Project.objects.filter(id=1).delete()
-    project = Project.objects.create(id=1, slug='valid-project')
-    ProjectLocale.objects.create(
+    project = ProjectFactory.create(slug='valid-project')
+    ProjectLocaleFactory.create(
         project=project, locale=locale_a,
     )
-    resource = Resource.objects.create(
+    resource = ResourceFactory.create(
         project=project,
         path='foo.lang',
         total_strings=1,
     )
-    TranslatedResource.objects.create(
+    TranslatedResourceFactory.create(
         resource=resource, locale=locale_a,
     )
     response = client.get(
@@ -269,7 +148,6 @@ def test_view_translate_force_suggestions(
         translation='approved 0',
     )
     assert response.status_code == 200
-
     assert Translation.objects.last().approved is True
 
     response = request_update_translation(

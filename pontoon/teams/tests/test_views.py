@@ -1,132 +1,45 @@
-import factory
 import pytest
 from mock import patch
 
-from django.contrib.auth import get_user_model
 from django.shortcuts import render
 
-from pontoon.base.models import (
-    Group,
-    Locale,
-    Project,
-    ProjectLocale,
-    Resource,
-)
+from pontoon.test.factories import UserFactory
 
 
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def fakeuser():
-    return UserFactory(
-        username="fakeuser",
-        email="fakeuser@example.org"
+def _get_sorted_users():
+    return sorted(
+        UserFactory.create_batch(size=3),
+        key=lambda u: u.email
     )
-
-
-@pytest.fixture
-def member(client, fakeuser):
-    """Provides a `LoggedInMember` with the attributes `user` and `client`
-    the `client` is authenticated
-    """
-
-    class LoggedInMember(object):
-
-        def __init__(self, user, client):
-            client.force_login(user)
-            self.client = client
-            self.user = user
-
-    return LoggedInMember(fakeuser, client)
-
-
-@pytest.fixture
-def locale():
-    translators_group = Group.objects.create(
-        name='Klingon translators',
-    )
-    managers_group = Group.objects.create(
-        name='Klingon managers',
-    )
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-        translators_group=translators_group,
-        managers_group=managers_group,
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def project_locale(project, locale):
-    pl = ProjectLocale.objects.create(project=project, locale=locale)
-    # ProjectLocale doesn't work without at least one resource.
-    Resource.objects.create(
-        project=project,
-        path='foo.lang',
-        total_strings=1
-    )
-    return pl
 
 
 @pytest.fixture
 def translators():
-    translators = [
-        UserFactory(
-            username='Translator %s' % x,
-            email='translator%s@example.org' % x,
-        )
-        for x in range(3)
-    ]
-    sorted_translators = sorted(
-        translators,
-        key=lambda u: u.email
-    )
-    return sorted_translators
+    return _get_sorted_users()
 
 
 @pytest.fixture
 def managers():
-    managers = [
-        UserFactory(
-            username='Manager %s' % x,
-            email='manager%s@example.org' % x,
-        )
-        for x in range(3)
-    ]
-    sorted_managers = sorted(
-        managers,
-        key=lambda u: u.email
-    )
-    return sorted_managers
+    return _get_sorted_users()
 
 
 @pytest.mark.django_db
 @patch('pontoon.teams.views.render', wraps=render)
 def test_ajax_permissions_locale_translators_managers_order(
-        render_mock,
-        admin_client,
-        locale,
-        translators,
-        managers,
+    render_mock,
+    admin_client,
+    locale_a,
+    translators,
+    managers,
 ):
     """
     Translators and managers of a locale should be sorted by email in
     "Permissions" tab.
     """
-    locale.translators_group.user_set.add(*translators)
-    locale.managers_group.user_set.add(*managers)
+    locale_a.translators_group.user_set.add(*translators)
+    locale_a.managers_group.user_set.add(*managers)
 
-    admin_client.get('/%s/ajax/permissions/' % locale.code)
+    admin_client.get('/%s/ajax/permissions/' % locale_a.code)
     response_context = render_mock.call_args[0][2]
 
     assert list(response_context['translators']) == translators
@@ -138,22 +51,23 @@ def test_ajax_permissions_locale_translators_managers_order(
 def test_ajax_permissions_project_locale_translators_order(
     render_mock,
     admin_client,
-    locale,
-    project_locale,
+    locale_a,
+    project_locale_a,
+    resource_a,  # required for project_locale_a to work
     translators,
 ):
     """
     Translators and managers of a locale should be sorted by email in
     "Permissions" tab.
     """
-    project_locale.translators_group.user_set.add(*translators)
+    project_locale_a.translators_group.user_set.add(*translators)
 
-    admin_client.get('/%s/ajax/permissions/' % locale.code)
+    admin_client.get('/%s/ajax/permissions/' % locale_a.code)
     response_context = render_mock.call_args[0][2]
     locale_projects = response_context['locale_projects']
 
     # Check project_locale id in the permissions form
-    assert locale_projects[0][0] == project_locale.pk
+    assert locale_projects[0][0] == project_locale_a.pk
 
     # Check project_locale translators
     translators_list = [
@@ -170,7 +84,7 @@ def test_ajax_permissions_project_locale_translators_order(
 @pytest.mark.django_db
 def test_users_permissions_for_ajax_permissions_view(
     client,
-    locale,
+    locale_a,
     member,
 ):
     """
@@ -179,32 +93,32 @@ def test_users_permissions_for_ajax_permissions_view(
     """
 
     response = client.get('/{locale}/ajax/permissions/'.format(
-        locale=locale.code
+        locale=locale_a.code
     ))
     assert response.status_code == 403
     assert '<title>Forbidden page</title>' in response.content
 
     # Check if users without permissions for the locale can get this tab.
     response = member.client.get('/{locale}/ajax/permissions/'.format(
-        locale=locale.code
+        locale=locale_a.code
     ))
     assert response.status_code == 403
     assert '<title>Forbidden page</title>' in response.content
 
-    locale.managers_group.user_set.add(member.user)
+    locale_a.managers_group.user_set.add(member.user)
 
     # Bump up permissions for user0 and check if the view is accessible.
     response = member.client.get('/{locale}/ajax/permissions/'.format(
-        locale=locale.code
+        locale=locale_a.code
     ))
     assert response.status_code == 200
     assert '<title>Forbidden page</title>' not in response.content
 
     # Remove permissions for user0 and check if the view is not accessible.
-    locale.managers_group.user_set.clear()
+    locale_a.managers_group.user_set.clear()
 
     response = member.client.get('/{locale}/ajax/permissions/'.format(
-        locale=locale.code
+        locale=locale_a.code
     ))
     assert response.status_code == 403
     assert '<title>Forbidden page</title>' in response.content
@@ -212,7 +126,7 @@ def test_users_permissions_for_ajax_permissions_view(
     # All unauthorized attempts to POST data should be blocked
     response = member.client.post(
         '/{locale}/ajax/permissions/'.format(
-            locale=locale.code
+            locale=locale_a.code
         ),
         data={'smth': 'smth'}
     )
@@ -221,7 +135,7 @@ def test_users_permissions_for_ajax_permissions_view(
 
     response = client.post(
         '/{locale}/ajax/permissions/'.format(
-            locale=locale.code
+            locale=locale_a.code
         ),
         data={'smth': 'smth'}
     )

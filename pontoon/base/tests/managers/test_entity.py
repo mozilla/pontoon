@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import factory
 import pytest
-
-from django.contrib.auth import get_user_model
 
 from pontoon.base.models import (
     Entity,
-    Locale,
-    Project,
-    Resource,
     Translation,
 )
 from pontoon.base.tests import (
@@ -17,56 +11,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return Locale.objects.create(
-        code="gs",
-        name="Geonosian",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project):
-    return Resource.objects.create(
-        project=project, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def resource_b(locale_b, project):
-    return Resource.objects.create(
-        project=project, path="resource_b.po", format="po"
-    )
 
 
 @pytest.fixture
@@ -153,22 +97,22 @@ def entity_test_search(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_translated(resource_a, locale_a):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=False,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=True,
@@ -185,37 +129,37 @@ def test_mgr_entity_filter_translated_plurals(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=0,
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         plural_form=0,
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=0,
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=1,
@@ -231,22 +175,22 @@ def test_mgr_entity_filter_translated_plurals(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_fuzzy(resource_a, locale_a):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         fuzzy=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
@@ -263,38 +207,38 @@ def test_mgr_entity_filter_fuzzy_plurals(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=0,
         fuzzy=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
         fuzzy=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         plural_form=0,
         fuzzy=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=0,
         fuzzy=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=1,
@@ -310,22 +254,22 @@ def test_mgr_entity_filter_fuzzy_plurals(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_missing(resource_a, locale_a):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
     )
@@ -341,24 +285,24 @@ def test_mgr_entity_filter_partially_translated_plurals(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string='Unchanged string',
             string_plural='Unchanged plural string',
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         plural_form=0,
@@ -373,19 +317,19 @@ def test_mgr_entity_filter_partially_translated_plurals(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_suggested(resource_b, locale_b):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_b,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[1],
         approved=False,
         fuzzy=False,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[2],
         approved=False,
@@ -401,18 +345,18 @@ def test_mgr_entity_filter_suggested(resource_b, locale_b):
 @pytest.mark.django_db
 def test_mgr_entity_filter_unchanged(resource_a, locale_a):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string='Unchanged string',
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
         string='Unchanged string',
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
@@ -430,32 +374,32 @@ def test_mgr_entity_filter_missing_plural(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         fuzzy=True,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         fuzzy=True,
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=True,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=True,
@@ -473,35 +417,35 @@ def test_mgr_entity_filter_suggested_plural(resource_b, locale_b):
     locale_b.cldr_plurals = '1,5'
     locale_b.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_b,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[0],
         approved=False,
         fuzzy=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[0],
         approved=False,
         fuzzy=False,
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[2],
         approved=False,
         fuzzy=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[2],
         approved=False,
@@ -520,35 +464,35 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string='Unchanged string',
             string_plural='Unchanged plural string',
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
         plural_form=0,
         string='Unchanged string',
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
         plural_form=1,
         string='Unchanged plural string',
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
         plural_form=0,
         string='Unchanged string',
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
@@ -567,35 +511,35 @@ def test_mgr_entity_filter_has_suggestion_plural(resource_b, locale_b):
     locale_b.cldr_plurals = '1,5'
     locale_b.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_b,
             string='Unchanged string',
             string_plural='Unchanged plural string',
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[0],
         approved=True,
         fuzzy=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[0],
         approved=False,
         fuzzy=False,
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[2],
         approved=False,
         fuzzy=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[2],
         approved=True,
@@ -612,41 +556,41 @@ def test_mgr_entity_filter_has_suggestion_plural(resource_b, locale_b):
 @pytest.mark.django_db
 def test_mgr_entity_filter_rejected(resource_a, locale_a):
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
         ) for i in range(0, 3)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=False,
         fuzzy=False,
         rejected=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
         fuzzy=False,
         rejected=False,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=True,
         fuzzy=False,
         rejected=False,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=False,
         fuzzy=False,
         rejected=True,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=False,
@@ -665,13 +609,13 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
     locale_a.cldr_plurals = '1,5'
     locale_a.save()
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_a,
             string="testentity%s" % i,
             string_plural="testpluralentity%s" % i,
         ) for i in range(0, 3)
     ]
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
@@ -679,7 +623,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
         rejected=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=True,
@@ -687,7 +631,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
         rejected=False,
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=True,
@@ -695,7 +639,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
         rejected=False,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[1],
         approved=False,
@@ -703,7 +647,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
         rejected=True,
         plural_form=1,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=False,
@@ -711,7 +655,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
         rejected=True,
         plural_form=0,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=False,
@@ -733,27 +677,27 @@ def test_mgr_entity_filter_combined(resource_b, locale_b, user_a):
     Tests filters against bug introduced by bug 1243115.
     """
     entities = [
-        Entity.objects.create(
+        EntityFactory.create(
             resource=resource_b,
             string="testentity%s" % i,
         ) for i in range(0, 2)
     ]
 
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[0],
         approved=True,
         fuzzy=False,
         user=user_a,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[1],
         approved=True,
         fuzzy=False,
         user=user_a,
     )
-    Translation.objects.create(
+    TranslationFactory.create(
         locale=locale_b,
         entity=entities[1],
         approved=False,
@@ -849,7 +793,7 @@ def test_lookup_collation(resource_a, locale_a):
     """
     Filter translations according to collation.
     """
-    entity = Entity.objects.create(
+    entity = EntityFactory.create(
         resource=resource_a,
         string="string",
     )

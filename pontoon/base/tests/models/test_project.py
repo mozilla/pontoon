@@ -4,92 +4,14 @@ import pytest
 
 from mock import patch
 
-from pontoon.base.models import (
-    ChangedEntityLocale, Entity, ProjectLocale, Resource, Repository
-)
+from pontoon.base.models import ProjectLocale
 from pontoon.base.tests import (
+    ChangedEntityLocaleFactory,
     EntityFactory,
-    LocaleFactory,
-    ProjectFactory,
+    ProjectLocaleFactory,
+    RepositoryFactory,
     ResourceFactory,
-    TranslationFactory,
-    UserFactory,
 )
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A", repositories=[],
-    )
-
-
-@pytest.fixture
-def project_b():
-    return ProjectFactory(
-        slug="project_b", name="Project B"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a):
-    return EntityFactory(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def translation_a(locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a
-    )
-
-
-@pytest.fixture
-def repo_file(project_a):
-    """Repo (file) 0"""
-    return Repository.objects.create(
-        type="file", project=project_a, url="repo_file0",
-    )
-
-
-@pytest.fixture
-def repo_git(project_a):
-    """Repo (git) 0"""
-    return Repository.objects.create(
-        type="git", project=project_a, url="repo_git0",
-    )
-
-
-@pytest.fixture
-def repo_hg(project_a):
-    """Repo (hg) 0"""
-    return Repository.objects.create(
-        type="hg", project=project_a, url="repo_hg0",
-    )
 
 
 @pytest.mark.django_db
@@ -152,7 +74,7 @@ def test_project_repo_for_path(project_a):
     the given path.
     """
     repos = [
-        Repository.objects.create(
+        RepositoryFactory.create(
             type="file",
             project=project_a,
             url="testrepo%s" % i,
@@ -169,17 +91,17 @@ def test_project_needs_sync(project_a, project_b, locale_a):
     Project.needs_sync should be True if ChangedEntityLocale objects
     exist for its entities or if Project has unsynced locales.
     """
-    resource = Resource.objects.create(project=project_a, path="resourceX.po")
-    entity = Entity.objects.create(resource=resource, string="entityX")
+    resource = ResourceFactory.create(project=project_a, path="resourceX.po")
+    entity = EntityFactory.create(resource=resource, string="entityX")
 
     assert not project_a.needs_sync
-    ChangedEntityLocale.objects.create(entity=entity, locale=locale_a)
+    ChangedEntityLocaleFactory.create(entity=entity, locale=locale_a)
     assert project_a.needs_sync
 
     assert not project_b.needs_sync
     assert project_b.unsynced_locales == []
     del project_b.unsynced_locales
-    ProjectLocale.objects.create(
+    ProjectLocaleFactory.create(
         project=project_b, locale=locale_a,
     )
     assert project_b.needs_sync == [locale_a]

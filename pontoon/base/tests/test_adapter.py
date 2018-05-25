@@ -1,25 +1,10 @@
-import factory
 import pytest
 
 from mock import patch, MagicMock
 
-from django.contrib.auth import get_user_model
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from pontoon.base.adapter import PontoonSocialAdapter
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def fake_user():
-    return UserFactory(
-        username="fake_user",
-        email="fake_user@example.org"
-    )
 
 
 # We have to support customized adapter during the transition of accounts
@@ -41,14 +26,14 @@ def _get_sociallogin(user, provider):
 
 
 @pytest.fixture
-def social_adapter0(request, fake_user):
+def social_adapter0(request, user_a):
     log_mock = MagicMock()
     adapter = PontoonSocialAdapter()
-    sociallogin = _get_sociallogin(fake_user, 'fxa')
+    sociallogin = _get_sociallogin(user_a, 'fxa')
     mock_messages = patch('pontoon.base.adapter.messages')
     mock_messages = mock_messages.start()
     request.addfinalizer(mock_messages.stop)
-    return fake_user, adapter, sociallogin, log_mock, mock_messages
+    return user_a, adapter, sociallogin, log_mock, mock_messages
 
 
 @pytest.mark.django_db

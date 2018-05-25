@@ -1,103 +1,13 @@
 import pytest
 
 from pontoon.base.models import Entity
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
-    LocaleFactory,
-    ProjectFactory,
     ResourceFactory,
     SubpageFactory,
-    TranslatedResourceFactory,
     TranslationFactory,
-    UserFactory,
 )
 from pontoon.sync import KEY_SEPARATOR
-from pontoon.tags.models import Tag
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def user_b():
-    return UserFactory(
-        username="user_b",
-        email="user_b@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return LocaleFactory(
-        code="gs",
-        name="Geonosian",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A"
-    )
-
-
-@pytest.fixture
-def project_b():
-    return ProjectFactory(
-        slug="project_b", name="Project B"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def resource_b(locale_b, project_b):
-    return ResourceFactory(
-        project=project_b, path="resource_b.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a):
-    return EntityFactory(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def translation_a(locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a
-    )
-
-
-@pytest.fixture
-def tag_a(resource_a, project_a, locale_a):
-    # Tags require a TranslatedResource to work.
-    TranslatedResourceFactory.create(
-        resource=resource_a, locale=locale_a
-    )
-    tag = Tag.objects.create(slug="tag", name="Tag")
-    tag.resources.add(resource_a)
-    return tag
 
 
 @pytest.fixture
@@ -156,7 +66,7 @@ def test_entity_project_locale_filter(entity_test_models, locale_b, project_b):
     locale_a = tr0.locale
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
-    Entity.objects.create(
+    EntityFactory.create(
         obsolete=True,
         resource=resource0,
         string='Obsolete String',
@@ -167,7 +77,11 @@ def test_entity_project_locale_filter(entity_test_models, locale_b, project_b):
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_no_paths(entity_test_models, locale_b, project_b):
+def test_entity_project_locale_no_paths(
+    entity_test_models,
+    locale_b,
+    project_b,
+):
     """
     If paths not specified, return all project entities along with their
     translations for locale.
@@ -278,7 +192,11 @@ def test_entity_project_locale_subpages(entity_test_models):
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_plurals(entity_test_models, locale_b, project_b):
+def test_entity_project_locale_plurals(
+    entity_test_models,
+    locale_b,
+    project_b,
+):
     """
     For pluralized strings, return all available plural forms.
     """
@@ -307,12 +225,12 @@ def test_entity_project_locale_order(entity_test_models):
     resource0 = entity_test_models[0].entity.resource
     locale_a = entity_test_models[0].locale
     project_a = resource0.project
-    Entity.objects.create(
+    EntityFactory.create(
         order=1,
         resource=resource0,
         string='Second String',
     )
-    Entity.objects.create(
+    EntityFactory.create(
         order=0,
         resource=resource0,
         string='First String',

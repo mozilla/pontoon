@@ -1,16 +1,8 @@
-import factory
 import pytest
 
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from pontoon.base.models import (
-    Entity,
-    Locale,
-    Project,
-    Resource,
-    Translation,
-)
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import (
     EntityFactory,
@@ -19,80 +11,12 @@ from pontoon.base.tests import (
 )
 
 
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def user_b():
-    return UserFactory(
-        username="user_b",
-        email="user_b@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return Locale.objects.create(
-        code="gs",
-        name="Geonosian",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project):
-    return Resource.objects.create(
-        project=project, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def resource_b(locale_b, project):
-    return Resource.objects.create(
-        project=project, path="resource_b.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity(resource_a):
-    return Entity.objects.create(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def translation(locale_a, entity, user_a):
-    """Translation 0"""
-    return Translation.objects.create(
-        entity=entity, locale=locale_a, user=user_a
-    )
-
-
 @pytest.mark.django_db
-def test_mgr_user_without_translations(translation, user_a, user_b):
+def test_mgr_user_without_translations(translation_a, user_a, user_b):
     """
     Checks if user contributors without translations aren't returned.
     """
-    assert translation.user == user_a
+    assert translation_a.user == user_a
     top_contributors = get_user_model().translators.with_translation_counts()
     assert user_a in top_contributors
     assert user_b not in top_contributors

@@ -1,9 +1,7 @@
-
 import json
 import urlparse
 
 import caighdean
-import factory
 import pytest
 import requests_mock
 
@@ -11,71 +9,33 @@ from django.core.urlresolvers import reverse
 
 from pontoon.base.models import (
     Entity,
-    Group,
     Locale,
-    Project,
-    Resource,
-    Translation,
-    TranslationMemoryEntry,
+)
+from pontoon.test.factories import (
+    EntityFactory,
+    TranslationFactory,
+    TranslationMemoryFactory,
 )
 
 
-class EntityFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Entity
-
-
-@pytest.fixture
-def locale():
-    translators_group = Group.objects.create(
-        name='locale translators',
-    )
-    managers_group = Group.objects.create(
-        name='locale managers',
-    )
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-        translators_group=translators_group,
-        managers_group=managers_group,
-    )
-
-
-@pytest.fixture
-def resource(locale):
-    project = Project.objects.create(
-        slug="project", name="Project"
-    )
-    return Resource.objects.create(
-        project=project, path="resource.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity(resource):
-    return Entity.objects.create(
-        resource=resource, string="entity"
-    )
-
-
 @pytest.mark.django_db
-def test_view_mt_caighdean(client, entity):
+def test_view_mt_caighdean(client, entity_a):
     gd = Locale.objects.get(code='gd')
     url = reverse('pontoon.machine_translation_caighdean')
 
-    response = client.get(url, dict(id=entity.id))
+    response = client.get(url, dict(id=entity_a.id))
     assert json.loads(response.content) == {}
 
-    translation = Translation.objects.create(
-        entity=entity, locale=gd, string='GD translation'
+    translation = TranslationFactory.create(
+        entity=entity_a, locale=gd, string='GD translation'
     )
-    entity.translation_set.add(translation)
+    entity_a.translation_set.add(translation)
 
     translator = caighdean.Translator()
 
     with requests_mock.mock() as m:
         m.post(translator.service_url, text='[["source", "target"]]')
-        response = client.get(url, dict(id=entity.id))
+        response = client.get(url, dict(id=entity_a.id))
 
     assert (
         json.loads(response.content)
@@ -94,7 +54,7 @@ def test_view_mt_caighdean(client, entity):
 
 
 @pytest.mark.django_db
-def test_view_mt_caighdean_bad(client, entity):
+def test_view_mt_caighdean_bad(client, entity_a):
     gd = Locale.objects.get(code='gd')
     url = reverse('pontoon.machine_translation_caighdean')
 
@@ -130,14 +90,14 @@ def test_view_mt_caighdean_bad(client, entity):
     )
 
     translator = caighdean.Translator()
-    translation = Translation.objects.create(
-        entity=entity, locale=gd, string='foo'
+    translation = TranslationFactory.create(
+        entity=entity_a, locale=gd, string='foo'
     )
-    entity.translation_set.add(translation)
+    entity_a.translation_set.add(translation)
 
     with requests_mock.mock() as m:
         m.post(translator.service_url, status_code=403)
-        response = client.get(url, dict(id=entity.id))
+        response = client.get(url, dict(id=entity_a.id))
 
     assert response.status_code == 500
     assert response.get("Content-Type") == 'application/json'
@@ -150,41 +110,41 @@ def test_view_mt_caighdean_bad(client, entity):
 @pytest.mark.django_db
 def test_view_tm_best_quality_entry(
     client,
-    locale,
-    resource,
+    locale_a,
+    resource_a,
 ):
     """
     Translation memory should return results entries aggregated by
     translation string.
     """
     entities = [
-        EntityFactory(resource=resource, string='Entity %s' % i, order=i)
+        EntityFactory(resource=resource_a, string='Entity %s' % i, order=i)
         for i in range(3)
     ]
-    tm = TranslationMemoryEntry.objects.create(
+    tm = TranslationMemoryFactory.create(
         entity=entities[0],
         source="aaa",
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
-    TranslationMemoryEntry.objects.create(
+    TranslationMemoryFactory.create(
         entity=entities[1],
         source="aaa",
         target="ddd",
-        locale=locale,
+        locale=locale_a,
     )
-    TranslationMemoryEntry.objects.create(
+    TranslationMemoryFactory.create(
         entity=entities[2],
         source="bbb",
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
     response = client.get(
         '/translation-memory/',
         {
             'text': 'aaa',
             'pk': tm.entity.pk,
-            'locale': locale.code,
+            'locale': locale_a.code,
         }
     )
     assert (
@@ -201,47 +161,47 @@ def test_view_tm_best_quality_entry(
 @pytest.mark.django_db
 def test_view_tm_translation_counts(
     client,
-    locale,
-    resource,
+    locale_a,
+    resource_a,
 ):
     """
     Translation memory should aggregate identical translations strings
     from the different entities and count up their occurrences.
     """
     entities = [
-        EntityFactory(resource=resource, string=x, order=i)
+        EntityFactory(resource=resource_a, string=x, order=i)
         for i, x in enumerate(["abaa", "abaa", "aaab", "aaab"])
     ]
-    tm = TranslationMemoryEntry.objects.create(
+    tm = TranslationMemoryFactory.create(
         entity=entities[0],
         source=entities[0].string,
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
-    TranslationMemoryEntry.objects.create(
+    TranslationMemoryFactory.create(
         entity=entities[1],
         source=entities[1].string,
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
-    TranslationMemoryEntry.objects.create(
+    TranslationMemoryFactory.create(
         entity=entities[2],
         source=entities[2].string,
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
-    TranslationMemoryEntry.objects.create(
+    TranslationMemoryFactory.create(
         entity=entities[3],
         source=entities[3].string,
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
     response = client.get(
         '/translation-memory/',
         {
             'text': 'aaaa',
             'pk': tm.entity.pk,
-            'locale': locale.code,
+            'locale': locale_a.code,
         }
     )
     result = json.loads(response.content)
@@ -257,21 +217,21 @@ def test_view_tm_translation_counts(
 
 
 @pytest.mark.django_db
-def test_view_tm_exclude_entity(client, entity, locale, resource):
+def test_view_tm_exclude_entity(client, entity_a, locale_a, resource_a):
     """
     Exclude entity from results to avoid false positive results.
     """
-    tm = TranslationMemoryEntry.objects.create(
-        entity=entity,
-        source=entity.string,
+    tm = TranslationMemoryFactory.create(
+        entity=entity_a,
+        source=entity_a.string,
         target="ccc",
-        locale=locale,
+        locale=locale_a,
     )
     response = client.get(
         '/translation-memory/',
         {
-            'text': entity.string,
-            'pk': entity.pk,
+            'text': entity_a.string,
+            'pk': entity_a.pk,
             'locale': tm.locale.code,
         }
     )
@@ -280,27 +240,27 @@ def test_view_tm_exclude_entity(client, entity, locale, resource):
 
 
 @pytest.mark.django_db
-def test_view_tm_minimal_quality(client, locale, resource):
+def test_view_tm_minimal_quality(client, locale_a, resource_a):
     """
     View shouldn't return any entries if 70% of quality at minimum.
     """
     entities = [
-        EntityFactory(resource=resource, string='Entity %s' % i, order=i)
+        EntityFactory(resource=resource_a, string='Entity %s' % i, order=i)
         for i in range(5)
     ]
     for i, entity in enumerate(entities):
-        TranslationMemoryEntry.objects.create(
+        TranslationMemoryFactory.create(
             entity=entity,
             source="source %s" % entity.string,
             target="target %s" % entity.string,
-            locale=locale,
+            locale=locale_a,
         )
     response = client.get(
         '/translation-memory/',
         {
             'text': 'no match',
             'pk': entities[0].pk,
-            'locale': locale.code,
+            'locale': locale_a.code,
         }
     )
     assert response.status_code == 200

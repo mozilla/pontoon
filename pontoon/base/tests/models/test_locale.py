@@ -2,49 +2,14 @@ import pytest
 
 from mock import patch
 
-from pontoon.base.models import (
-    Entity, ProjectLocale, Resource, Subpage, TranslatedResource
-)
+from pontoon.base.models import ProjectLocale
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
-    ProjectFactory,
     ResourceFactory,
-    TranslationFactory,
-    UserFactory,
+    SubpageFactory,
+    TranslatedResourceFactory,
 )
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def user_b():
-    return UserFactory(
-        username="user_b",
-        email="user_b@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def locale_b():
-    return LocaleFactory(
-        code="gs",
-        name="Geonosian",
-    )
 
 
 @pytest.fixture
@@ -53,62 +18,6 @@ def locale_c():
         code="nv",
         name="Na'vi",
     )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A"
-    )
-
-
-@pytest.fixture
-def project_b():
-    return ProjectFactory(
-        slug="project_b", name="Project B"
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def resource_b(locale_b, project_b):
-    return ResourceFactory(
-        project=project_b, path="resource_b.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a):
-    return EntityFactory(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def translation_a(locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a
-    )
-
-
-@pytest.fixture
-def locale_parts(project_b, locale_c, locale_b):
-    ProjectLocale.objects.create(project=project_b, locale=locale_c)
-    ProjectLocale.objects.create(project=project_b, locale=locale_b)
-    resourceX = Resource.objects.create(
-        project=project_b, path="resourceX.po", format="po",
-    )
-    entityX = Entity.objects.create(resource=resourceX, string="entityX")
-    resourceX.total_strings = 1
-    resourceX.save()
-    TranslatedResource.objects.create(locale=locale_c, resource=resourceX)
-    return locale_c, locale_b, entityX
 
 
 @pytest.mark.django_db
@@ -215,16 +124,16 @@ def test_locale_parts_stats_no_page_multiple_resources(locale_parts):
     """
     locale_c, locale_b, entityX = locale_parts
     project = entityX.resource.project
-    resourceY = Resource.objects.create(
+    resourceY = ResourceFactory.create(
         total_strings=1,
         project=project,
         path='/other/path.po',
     )
-    Entity.objects.create(resource=resourceY, string="Entity Y")
-    TranslatedResource.objects.create(
+    EntityFactory.create(resource=resourceY, string="Entity Y")
+    TranslatedResourceFactory.create(
         resource=resourceY, locale=locale_c,
     )
-    TranslatedResource.objects.create(
+    TranslatedResourceFactory.create(
         resource=resourceY, locale=locale_b,
     )
 
@@ -251,7 +160,7 @@ def test_locale_parts_stats_pages_not_tied_to_resources(locale_parts):
     """
     locale_a, locale_b, entity_a = locale_parts
     project = entity_a.resource.project
-    Subpage.objects.create(project=project, name='Subpage')
+    SubpageFactory.create(project=project, name='Subpage')
     details = locale_a.parts_stats(project)
     assert details[0]['title'] == 'Subpage'
     assert details[0]['translated_strings'] == 0
@@ -264,22 +173,22 @@ def test_locale_parts_stats_pages_tied_to_resources(locale_parts):
     """
     locale_a, locale_b, entity_a = locale_parts
     project = entity_a.resource.project
-    resourceX = Resource.objects.create(
+    resourceX = ResourceFactory.create(
         project=project,
         path='/other/path.po',
     )
-    Entity.objects.create(resource=resourceX, string="Entity X")
-    TranslatedResource.objects.create(
+    EntityFactory.create(resource=resourceX, string="Entity X")
+    TranslatedResourceFactory.create(
         resource=resourceX, locale=locale_a,
     )
-    TranslatedResource.objects.create(
+    TranslatedResourceFactory.create(
         resource=resourceX, locale=locale_b,
     )
-    sub1 = Subpage.objects.create(
+    sub1 = SubpageFactory.create(
         project=project, name='Subpage',
     )
     sub1.resources.add(resourceX)
-    sub2 = Subpage.objects.create(
+    sub2 = SubpageFactory.create(
         project=project, name='Other Subpage',
     )
     sub2.resources.add(resourceX)

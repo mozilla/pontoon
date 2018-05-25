@@ -1,17 +1,13 @@
-import factory
 import fnmatch
 import pytest
 from mock import MagicMock, PropertyMock, patch
 
-from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 
-from pontoon.base.models import (
-    Locale,
-    Project,
-    ProjectLocale,
-    Resource,
-    TranslatedResource,
+from pontoon.base.models import Resource
+from pontoon.test.factories import (
+    ResourceFactory,
+    TagFactory,
 )
 from pontoon.base.utils import glob_to_regex
 from pontoon.tags.exceptions import InvalidProjectError
@@ -19,111 +15,23 @@ from pontoon.tags.models import Tag
 from pontoon.tags.utils import TagsResourcesTool
 
 
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
 @pytest.fixture
-def fake_user():
-    return UserFactory(
-        username="fake_user",
-        email="fake_user@example.org"
+def resource_c(project_a):
+    return ResourceFactory.create(
+        project=project_a, path="resource_c.po", format="po"
     )
 
 
 @pytest.fixture
-def member(client, fake_user):
-    client.force_login(fake_user)
-    return client
-
-
-@pytest.fixture
-def admin():
-    """Admin - a superuser"""
-    return get_user_model().objects.create(
-        username="admin",
-        email="admin@example.org",
-        is_superuser=True,
-    )
-
-
-@pytest.fixture
-def locale():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def other_project():
-    return Project.objects.create(
-        slug="other_project", name="Other Project"
-    )
-
-
-@pytest.fixture
-def resource(project, locale, fake_user):
-    # Tags require a ProjectLocale to work.
-    ProjectLocale.objects.create(project=project, locale=locale)
-    resource = Resource.objects.create(
-        project=project, path="resource.po", format="po"
-    )
-    # Tags require a TranslatedResource to work.
-    TranslatedResource.objects.create(
-        resource=resource, locale=locale
-    )
-    resource.total_strings = 1
-    resource.save()
-    return resource
-
-
-@pytest.fixture
-def other_resource(project, locale):
-    resource = Resource.objects.create(
-        project=project, path="other_resource.po", format="po"
-    )
-    # Tags require a TranslatedResource to work.
-    TranslatedResource.objects.create(
-        resource=resource, locale=locale
-    )
-    resource.total_strings = 1
-    resource.save()
-    return resource
-
-
-@pytest.fixture
-def third_resource(project, locale):
-    return Resource.objects.create(
-        project=project, path="third_resource.po", format="po"
-    )
-
-
-@pytest.fixture
-def tag(resource):
-    tag = Tag.objects.create(slug="tag", name="Tag")
-    tag.resources.add(resource)
+def tag_b(resource_b):
+    tag = TagFactory.create(slug="tag_b", name="Other Tag")
+    tag.resources.add(resource_b)
     return tag
 
 
 @pytest.fixture
-def other_tag(other_resource):
-    tag = Tag.objects.create(slug="other_tag", name="Other Tag")
-    tag.resources.add(other_resource)
-    return tag
-
-
-@pytest.fixture
-def third_tag():
-    tag = Tag.objects.create(slug="other_tag", name="Other Tag")
+def tag_c():
+    tag = TagFactory.create(slug="tag_b", name="Other Tag")
     return tag
 
 
@@ -205,25 +113,25 @@ def test_util_tags_resources_tool_params(kwargs):
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_find(tag, other_tag):
+def test_util_tags_resources_tool_find(tag_a, tag_b):
     resource_tool = TagsResourcesTool()
 
     data = resource_tool.find('*')
     assert isinstance(data, QuerySet)
     assert data.count() == Resource.objects.count()
 
-    resource = tag.resources.first()
+    resource = tag_a.resources.first()
     data = resource_tool.find(resource.path)
     assert isinstance(data, QuerySet)
     assert data.count() == 1
     assert data[0] == resource
 
-    data = resource_tool.find('*', exclude=tag.slug)
+    data = resource_tool.find('*', exclude=tag_a.slug)
     assert isinstance(data, QuerySet)
     assert data.count()
     assert resource not in data
 
-    data = resource_tool.find('*', include=tag.slug)
+    data = resource_tool.find('*', include=tag_a.slug)
     assert isinstance(data, QuerySet)
     assert data.count() == 1
     assert resource in data
@@ -238,51 +146,51 @@ def test_util_tags_resources_tool_find(tag, other_tag):
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_link(resource, third_tag):
+def test_util_tags_resources_tool_link(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
-    assert third_tag.resources.count() == 0
-    resource_tool.link(third_tag.slug, '*')
-    assert third_tag.resources.count() == Resource.objects.count()
+    assert tag_c.resources.count() == 0
+    resource_tool.link(tag_c.slug, '*')
+    assert tag_c.resources.count() == Resource.objects.count()
 
-    third_tag.resources.remove(*list(third_tag.resources.all()))
-    resource_tool.link(third_tag.slug, resource.path)
-    assert third_tag.resources.count() == 1
-    assert resource in third_tag.resources.all()
+    tag_c.resources.remove(*list(tag_c.resources.all()))
+    resource_tool.link(tag_c.slug, resource_a.path)
+    assert tag_c.resources.count() == 1
+    assert resource_a in tag_c.resources.all()
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_link_project(resource, third_tag):
-    resource_tool = TagsResourcesTool(projects=[resource.project])
-    assert third_tag.resources.count() == 0
-    resource_tool.link(third_tag.slug, '*')
+def test_util_tags_resources_tool_link_project(resource_a, tag_c):
+    resource_tool = TagsResourcesTool(projects=[resource_a.project])
+    assert tag_c.resources.count() == 0
+    resource_tool.link(tag_c.slug, '*')
     assert (
-        third_tag.resources.count()
-        == Resource.objects.filter(project=resource.project).count()
+        tag_c.resources.count()
+        == Resource.objects.filter(project=resource_a.project).count()
     )
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_link_bad(resource, third_tag, other_project):
+def test_util_tags_resources_tool_link_bad(resource_a, tag_c, project_b):
     resource_tool = TagsResourcesTool()
-    third_tag.project = other_project
-    third_tag.save()
+    tag_c.project = project_b
+    tag_c.save()
     with pytest.raises(InvalidProjectError):
-        resource_tool.link(third_tag.slug, resource.path)
+        resource_tool.link(tag_c.slug, resource_a.path)
     with pytest.raises(InvalidProjectError):
-        resource_tool.link(third_tag.slug, "*")
+        resource_tool.link(tag_c.slug, "*")
     with pytest.raises(InvalidProjectError):
         resource_tool.link(
-            third_tag.slug,
+            tag_c.slug,
             resources=[{
-                'project': resource.project.id,
-                'path': resource.path,
+                'project': resource_a.project.id,
+                'path': resource_a.path,
             }]
         )
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_linked_resources(resource, third_tag):
+def test_util_tags_resources_tool_linked_resources(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
     _patch_ctx = patch(
@@ -302,7 +210,7 @@ def test_util_tags_resources_tool_linked_resources(resource, third_tag):
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_linkable_resources(resource, third_tag):
+def test_util_tags_resources_tool_linkable_resources(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
     _patch_ctx = patch(
@@ -322,63 +230,63 @@ def test_util_tags_resources_tool_linkable_resources(resource, third_tag):
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_link_paths(resource, third_tag):
+def test_util_tags_resources_tool_link_paths(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
-    assert third_tag.resources.count() == 0
+    assert tag_c.resources.count() == 0
     resource_tool.link(
-        third_tag.slug,
+        tag_c.slug,
         resources=Resource.objects.values("project", "path")
     )
-    assert third_tag.resources.count() == Resource.objects.count()
+    assert tag_c.resources.count() == Resource.objects.count()
 
-    third_tag.resources.remove(*list(third_tag.resources.all()))
+    tag_c.resources.remove(*list(tag_c.resources.all()))
     resource_tool.link(
-        third_tag.slug,
-        resources=[dict(project=resource.project.pk, path=resource.path)]
+        tag_c.slug,
+        resources=[dict(project=resource_a.project.pk, path=resource_a.path)]
     )
-    assert third_tag.resources.count() == 1
-    assert resource in third_tag.resources.all()
+    assert tag_c.resources.count() == 1
+    assert resource_a in tag_c.resources.all()
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_unlink(tag, third_resource):
-    resource = tag.resources.first()
+def test_util_tags_resources_tool_unlink(tag_a, resource_c):
+    resource = tag_a.resources.first()
     resource_tool = TagsResourcesTool()
 
-    tag.resources.add(third_resource)
-    assert tag.resources.count() == 2
-    resource_tool.unlink(tag.slug, '*')
-    assert tag.resources.count() == 0
+    tag_a.resources.add(resource_c)
+    assert tag_a.resources.count() == 2
+    resource_tool.unlink(tag_a.slug, '*')
+    assert tag_a.resources.count() == 0
 
-    tag.resources.add(resource, third_resource)
-    resource_tool.unlink(tag.slug, resource.path)
-    assert tag.resources.count() == 1
-    assert third_resource in tag.resources.all()
+    tag_a.resources.add(resource, resource_c)
+    resource_tool.unlink(tag_a.slug, resource.path)
+    assert tag_a.resources.count() == 1
+    assert resource_c in tag_a.resources.all()
 
 
 @pytest.mark.django_db
-def test_util_tags_resources_tool_unlink_paths(tag, resource, third_resource):
-    resource = tag.resources.first()
+def test_util_tags_resources_tool_unlink_paths(tag_a, resource_a, resource_c):
+    resource_a = tag_a.resources.first()
     resource_tool = TagsResourcesTool()
 
-    tag.resources.add(third_resource)
-    assert tag.resources.count() == 2
+    tag_a.resources.add(resource_c)
+    assert tag_a.resources.count() == 2
     resource_tool.unlink(
-        tag.slug,
-        resources=tag.resources.values('project', 'path')
+        tag_a.slug,
+        resources=tag_a.resources.values('project', 'path')
     )
-    assert tag.resources.count() == 0
+    assert tag_a.resources.count() == 0
 
-    tag.resources.add(resource, third_resource)
+    tag_a.resources.add(resource_a, resource_c)
     resource_tool.unlink(
-        tag.slug,
+        tag_a.slug,
         resources=[
-            dict(project=resource.project.pk, path=resource.path)
+            dict(project=resource_a.project.pk, path=resource_a.path)
         ]
     )
-    assert tag.resources.count() == 1
-    assert third_resource in tag.resources.all()
+    assert tag_a.resources.count() == 1
+    assert resource_c in tag_a.resources.all()
 
 
 def test_util_tag_resources_tool_get():

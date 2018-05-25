@@ -1,86 +1,9 @@
-import factory
 import pytest
 from mock import patch
 
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from pontoon.tags.models import Tag
 from pontoon.tags.utils import TaggedLocale, TagTool
-from pontoon.base.models import (
-    Locale,
-    Project,
-    ProjectLocale,
-    Resource,
-    TranslatedResource,
-)
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def fake_user():
-    return UserFactory(
-        username="fake_user",
-        email="fake_user@example.org"
-    )
-
-
-@pytest.fixture
-def member(client, fake_user):
-    client.force_login(fake_user)
-    return client
-
-
-@pytest.fixture
-def admin():
-    """Admin - a superuser"""
-    return get_user_model().objects.create(
-        username="admin",
-        email="admin@example.org",
-        is_superuser=True,
-    )
-
-
-@pytest.fixture
-def locale():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def resource(project, locale, fake_user):
-    # Tags require a ProjectLocale to work.
-    ProjectLocale.objects.create(project=project, locale=locale)
-    resource = Resource.objects.create(
-        project=project, path="resource.po", format="po"
-    )
-    # Tags require a TranslatedResource to work.
-    TranslatedResource.objects.create(
-        resource=resource, locale=locale
-    )
-    resource.total_strings = 1
-    resource.save()
-    return resource
-
-
-@pytest.fixture
-def tag(resource):
-    tag = Tag.objects.create(slug="tag", name="Tag")
-    tag.resources.add(resource)
-    return tag
 
 
 @pytest.mark.django_db
@@ -89,8 +12,8 @@ def test_view_project_tag_admin_ajax_form(
     form_mock,
     client,
     admin,
-    project,
-    tag,
+    project_a,
+    tag_a,
 ):
     form_mock.configure_mock(**{
         'return_value.return_value.is_valid.return_value': True,
@@ -101,8 +24,8 @@ def test_view_project_tag_admin_ajax_form(
     url = reverse(
         'pontoon.admin.project.ajax.tag',
         kwargs=dict(
-            project=project.slug,
-            tag=tag.slug,
+            project=project_a.slug,
+            tag=tag_a.slug,
         ),
     )
 
@@ -124,8 +47,8 @@ def test_view_project_tag_admin_ajax_form_bad(
     form_mock,
     client,
     admin,
-    project,
-    tag,
+    project_a,
+    tag_a,
 ):
     form_mock.configure_mock(**{
         'return_value.return_value.is_valid.return_value': False,
@@ -135,8 +58,8 @@ def test_view_project_tag_admin_ajax_form_bad(
     url = reverse(
         'pontoon.admin.project.ajax.tag',
         kwargs=dict(
-            project=project.slug,
-            tag=tag.slug,
+            project=project_a.slug,
+            tag=tag_a.slug,
         ),
     )
 
@@ -145,7 +68,7 @@ def test_view_project_tag_admin_ajax_form_bad(
         HTTP_X_REQUESTED_WITH='XMLHttpRequest',
     )
     assert response.status_code == 400
-    assert form_mock.return_value.call_args[1]['project'] == project
+    assert form_mock.return_value.call_args[1]['project'] == project_a
     assert (
         dict(form_mock.return_value.call_args[1]['data'])
         == dict(tag=[u'tag'])
@@ -164,7 +87,7 @@ def test_view_project_tag_admin_ajax_form_bad(
         HTTP_X_REQUESTED_WITH='XMLHttpRequest',
     )
     assert response.status_code == 400
-    assert form_mock.return_value.call_args[1]['project'] == project
+    assert form_mock.return_value.call_args[1]['project'] == project_a
     assert (
         dict(form_mock.return_value.call_args[1]['data'])
         == dict(
@@ -183,28 +106,28 @@ def test_view_project_tag_admin_ajax_form_bad(
 
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.views.ProjectTagAdminAjaxView.get_form')
-def test_view_project_tag_admin_ajax(form_mock, member, project, tag):
+def test_view_project_tag_admin_ajax(form_mock, member, project_a, tag_a):
     form_mock.configure_mock(**{
         'return_value.save.return_value': 23,
     })
     url = reverse(
         'pontoon.admin.project.ajax.tag',
         kwargs=dict(
-            project=project.slug,
-            tag=tag.slug,
+            project=project_a.slug,
+            tag=tag_a.slug,
         ),
     )
 
     # no `get` here
-    response = member.get(url)
+    response = member.client.get(url)
     assert response.status_code == 404
 
     # need xhr headers
-    response = member.post(url)
+    response = member.client.post(url)
     assert response.status_code == 400
 
     # must be superuser!
-    response = member.post(
+    response = member.client.post(
         url,
         HTTP_X_REQUESTED_WITH='XMLHttpRequest',
     )
@@ -225,10 +148,10 @@ def test_view_project_tag_admin_ajax(form_mock, member, project, tag):
 
 
 @pytest.mark.django_db
-def test_view_project_tag_locales(client, project, tag):
+def test_view_project_tag_locales(client, project_a, tag_a):
     url = reverse(
         'pontoon.tags.project.tag',
-        kwargs=dict(project=project.slug, tag=tag.slug),
+        kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
 
     # tag is not associated with project
@@ -236,12 +159,12 @@ def test_view_project_tag_locales(client, project, tag):
     assert response.status_code == 404
 
     # tag has no priority so still wont show up...
-    project.tag_set.add(tag)
+    project_a.tag_set.add(tag_a)
     response = client.get(url)
     assert response.status_code == 404
 
-    tag.priority = 3
-    tag.save()
+    tag_a.priority = 3
+    tag_a.save()
     response = client.get(url)
     assert response.status_code == 200
 
@@ -250,22 +173,24 @@ def test_view_project_tag_locales(client, project, tag):
         response.json()
 
     assert response.template_name == ['tags/tag.html']
-    assert response.context_data['project'] == project
+    assert response.context_data['project'] == project_a
 
     res_tag = response.context_data['tag']
     assert isinstance(res_tag, TagTool)
-    assert res_tag.object == tag
+    assert res_tag.object == tag_a
 
 
 @pytest.mark.django_db
-def test_view_project_tag_locales_ajax(client, project, tag):
+def test_view_project_tag_locales_ajax(
+    client, project_a, project_locale_a, tag_a
+):
     url = reverse(
         'pontoon.tags.ajax.teams',
-        kwargs=dict(project=project.slug, tag=tag.slug),
+        kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
-    project.tag_set.add(tag)
-    tag.priority = 3
-    tag.save()
+    project_a.tag_set.add(tag_a)
+    tag_a.priority = 3
+    tag_a.save()
     response = client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
     # the response is not json even with xhr headers
@@ -273,9 +198,9 @@ def test_view_project_tag_locales_ajax(client, project, tag):
         response.json()
 
     assert response.template_name == ['projects/includes/teams.html']
-    assert response.context_data['project'] == project
+    assert response.context_data['project'] == project_a
 
-    locales = project.project_locale.all()
+    locales = project_a.project_locale.all()
     assert len(response.context_data['locales']) == locales.count()
 
     for i, locale in enumerate(locales):
@@ -286,14 +211,14 @@ def test_view_project_tag_locales_ajax(client, project, tag):
 
 
 @pytest.mark.django_db
-def test_view_project_tag_ajax(client, project, tag):
+def test_view_project_tag_ajax(client, project_a, tag_a):
     url = reverse(
         'pontoon.projects.ajax.tags',
-        kwargs=dict(slug=project.slug),
+        kwargs=dict(slug=project_a.slug),
     )
-    project.tag_set.add(tag)
-    tag.priority = 3
-    tag.save()
+    project_a.tag_set.add(tag_a)
+    tag_a.priority = 3
+    tag_a.save()
 
     response = client.get(url)
     assert response.status_code == 400
@@ -305,5 +230,5 @@ def test_view_project_tag_ajax(client, project, tag):
     # response returns html
     with pytest.raises(ValueError):
         response.json()
-    assert tag.name in response.content
-    assert tag.slug in response.content
+    assert tag_a.name in response.content
+    assert tag_a.slug in response.content

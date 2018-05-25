@@ -1,114 +1,38 @@
-import factory
 import pytest
 from mock import MagicMock, PropertyMock, patch
 
 from django import forms
-from django.contrib.auth import get_user_model
 
 from pontoon.tags.admin.forms import LinkTagResourcesAdminForm
-from pontoon.tags.models import Tag
-from pontoon.base.models import (
-    Locale,
-    Project,
-    ProjectLocale,
-    Resource,
-    TranslatedResource,
-)
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-
-@pytest.fixture
-def fake_user():
-    return UserFactory(
-        username="fake_user",
-        email="fake_user@example.org"
-    )
-
-
-@pytest.fixture
-def member(client, fake_user):
-    client.force_login(fake_user)
-    return client
-
-
-@pytest.fixture
-def admin():
-    """Admin - a superuser"""
-    return get_user_model().objects.create(
-        username="admin",
-        email="admin@example.org",
-        is_superuser=True,
-    )
-
-
-@pytest.fixture
-def locale():
-    return Locale.objects.create(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project():
-    return Project.objects.create(
-        slug="project", name="Project"
-    )
-
-
-@pytest.fixture
-def resource(project, locale, fake_user):
-    # Tags require a ProjectLocale to work.
-    ProjectLocale.objects.create(project=project, locale=locale)
-    resource = Resource.objects.create(
-        project=project, path="resource.po", format="po"
-    )
-    # Tags require a TranslatedResource to work.
-    TranslatedResource.objects.create(
-        resource=resource, locale=locale
-    )
-    resource.total_strings = 1
-    resource.save()
-    return resource
-
-
-@pytest.fixture
-def tag(resource):
-    tag = Tag.objects.create(slug="tag", name="Tag")
-    tag.resources.add(resource)
-    return tag
+from pontoon.base.models import Resource
 
 
 @pytest.mark.django_db
-def test_form_project_tag_resources(client, project, tag):
+def test_form_project_tag_resources(client, project_a, tag_a):
     # tests instantiation of TagResourcesForm
 
     with pytest.raises(KeyError):
         # needs a project
         LinkTagResourcesAdminForm()
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
     assert not form.is_valid()
-    assert form.project == project
+    assert form.project == project_a
     assert form.fields.keys() == ['tag', 'type', 'data', 'search']
     assert (
         list(form.fields['data'].choices)
         == list(
-            Resource.objects.filter(project=project)
+            Resource.objects.filter(project=project_a)
             .values_list('path', 'pk')
         )
     )
 
 
 @pytest.mark.django_db
-def test_form_project_tag_resources_submit_bad(project):
+def test_form_project_tag_resources_submit_bad(project_a):
     # tests the various reasons a form is not valid
 
-    form = LinkTagResourcesAdminForm(project=project, data={})
+    form = LinkTagResourcesAdminForm(project=project_a, data={})
     assert not form.is_valid()
     assert (
         form.errors
@@ -119,7 +43,7 @@ def test_form_project_tag_resources_submit_bad(project):
     )
 
     form = LinkTagResourcesAdminForm(
-        project=project,
+        project=project_a,
         data=dict(type='foo'),
     )
     assert not form.is_valid()
@@ -135,7 +59,7 @@ def test_form_project_tag_resources_submit_bad(project):
     )
 
     form = LinkTagResourcesAdminForm(
-        project=project,
+        project=project_a,
         data=dict(type='assoc', tag='DOESNOTEXIST'),
     )
     assert not form.is_valid()
@@ -148,15 +72,15 @@ def test_form_project_tag_resources_submit_bad(project):
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.'
        '_clean_paths_for_select')
-def test_form_project_tag_resources_submit(paths_mock, project, tag):
+def test_form_project_tag_resources_submit(paths_mock, project_a, tag_a):
     # tests submitting with no data - which should return a list of paths
     # _clean_paths_for_select
     paths_mock.return_value = 23
 
     # test assoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project,
-        data=dict(type='assoc', tag=tag.slug),
+        project=project_a,
+        data=dict(type='assoc', tag=tag_a.slug),
     )
     assert form.is_valid()
     assert (
@@ -172,8 +96,8 @@ def test_form_project_tag_resources_submit(paths_mock, project, tag):
 
     # test nonassoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project,
-        data=dict(type='nonassoc', tag=tag.slug),
+        project=project_a,
+        data=dict(type='nonassoc', tag=tag_a.slug),
     )
     assert form.is_valid()
     assert (
@@ -191,18 +115,18 @@ def test_form_project_tag_resources_submit(paths_mock, project, tag):
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.'
        '_clean_paths_for_submit')
-def test_form_project_tag_resources_submit_paths(paths_mock, project, tag):
+def test_form_project_tag_resources_submit_paths(paths_mock, project_a, tag_a):
     # tests submitting with data, which should validate using
     # _clean_paths_for_submit
     paths_mock.return_value = 113
 
     # test assoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project,
+        project=project_a,
         data=dict(
             type='assoc',
-            tag=tag.slug,
-            data=list(tag.resources.values_list('path', flat=True)),
+            tag=tag_a.slug,
+            data=list(tag_a.resources.values_list('path', flat=True)),
         ),
     )
     assert form.is_valid()
@@ -219,11 +143,11 @@ def test_form_project_tag_resources_submit_paths(paths_mock, project, tag):
 
     # test nonassoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project,
+        project=project_a,
         data=dict(
             type='nonassoc',
-            tag=tag.slug,
-            data=list(tag.resources.values_list('path', flat=True)),
+            tag=tag_a.slug,
+            data=list(tag_a.resources.values_list('path', flat=True)),
         ),
     )
     assert form.is_valid()
@@ -243,18 +167,18 @@ def test_form_project_tag_resources_submit_paths(paths_mock, project, tag):
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.'
        '_clean_paths_for_submit')
 def test_form_project_tag_resources_submit_paths_bad(
-    paths_mock, project, tag
+    paths_mock, project_a, tag_a
 ):
     # tests that the form should not be valid if _clean_paths_for_submit
     # raises a ValidationError
     paths_mock.side_effect = forms.ValidationError('Ooops!')
 
     form = LinkTagResourcesAdminForm(
-        project=project,
+        project=project_a,
         data=dict(
             type='assoc',
-            tag=tag.slug,
-            data=list(tag.resources.values_list('path', flat=True)),
+            tag=tag_a.slug,
+            data=list(tag_a.resources.values_list('path', flat=True)),
         ),
     )
     assert not form.is_valid()
@@ -262,11 +186,11 @@ def test_form_project_tag_resources_submit_paths_bad(
 
 
 @pytest.mark.django_db
-def test_form_project_tag_resources_action_type(project):
+def test_form_project_tag_resources_action_type(project_a):
     # tests that the form displays the correct action_type
     # name for error messages
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
     form.cleaned_data = dict()
     assert not form.action_type
     form.cleaned_data = dict(type='assoc')
@@ -277,18 +201,18 @@ def test_form_project_tag_resources_action_type(project):
 
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.TagsTool')
-def test_form_project_tag_resources_tag_tool(paths_mock, project):
+def test_form_project_tag_resources_tag_tool(paths_mock, project_a):
     # tests form.tag_tool is created correctly
     paths_mock.configure_mock(**{
         'return_value.get.return_value': 23,
     })
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
     form.cleaned_data = dict(tag='FOO')
     assert form.tag_tool == 23
     assert (
         list(paths_mock.call_args)
-        == [(), {'projects': [project]}]
+        == [(), {'projects': [project_a]}]
     )
     assert (
         list(paths_mock.return_value.get.call_args)
@@ -299,14 +223,14 @@ def test_form_project_tag_resources_tag_tool(paths_mock, project):
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.tag_tool',
        new_callable=PropertyMock())
-def test_form_project_tag_resources_resources(tag_mock, project):
+def test_form_project_tag_resources_resources(tag_mock, project_a):
     # tests that linked/linkable resources are correctly found
     tag_mock.configure_mock(**{
         'linkable_resources': 7,
         'linked_resources': 23,
     })
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
     form.cleaned_data = dict(type='nonassoc')
     assert form.resources == 7
     form.cleaned_data = dict(type='assoc')
@@ -318,7 +242,7 @@ def test_form_project_tag_resources_resources(tag_mock, project):
        new_callable=PropertyMock())
 @patch('pontoon.tags.admin.forms.glob_to_regex')
 def test_form_project_tag_resources_paths_for_select(
-    glob_mock, resources_mock, project
+    glob_mock, resources_mock, project_a
 ):
     # tests that selected paths are correct filtered
     resources_mock.configure_mock(**{
@@ -327,7 +251,7 @@ def test_form_project_tag_resources_paths_for_select(
     })
     glob_mock.return_value = 7
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
 
     # no search filter set, all resources returned
     form.cleaned_data = dict(search='')
@@ -351,11 +275,11 @@ def test_form_project_tag_resources_paths_for_select(
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.resources',
        new_callable=PropertyMock())
-def test_form_project_tag_resources_paths_for_submit(resources_mock, project):
+def test_form_project_tag_resources_paths_for_submit(resources_mock, project_a):
     # tests that submitted paths are correctly validated
     resources_mock.filter.return_value = [1, 2, 3]
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
     form.cleaned_data = dict(action=True, type='assoc', data=[4, 5, 6])
 
     # _clean_paths_for_submit returns filtered resources
@@ -377,7 +301,7 @@ def test_form_project_tag_resources_paths_for_submit(resources_mock, project):
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.'
        '_clean_paths_for_select')
-def test_form_project_tag_resources_save(paths_mock, project):
+def test_form_project_tag_resources_save(paths_mock, project_a):
     # tests the form.save method
     #
     # if cleaned_data['action'] was set this will
@@ -389,7 +313,7 @@ def test_form_project_tag_resources_save(paths_mock, project):
     # return a generator to ensure conversion to a list
     paths_mock.return_value = (x for x in [23])
 
-    form = LinkTagResourcesAdminForm(project=project)
+    form = LinkTagResourcesAdminForm(project=project_a)
 
     # call with generator to ensure conversion to list
     form.cleaned_data = dict(action=None, data=(x for x in [7]))

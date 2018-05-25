@@ -12,70 +12,6 @@ from pontoon.checks.libraries.compare_locales import (
     UnsupportedResourceTypeError,
     run_checks,
 )
-from pontoon.base.tests import (
-    EntityFactory,
-    LocaleFactory,
-    ProjectFactory,
-    ProjectLocaleFactory,
-    TranslationFactory,
-    ResourceFactory,
-    UserFactory,
-)
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A", repositories=[],
-    )
-
-
-@pytest.fixture
-def project_locale_a(project_a, locale_a):
-    return ProjectLocaleFactory(
-        project=project_a,
-        locale=locale_a,
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a, ):
-    return EntityFactory(
-        resource=resource_a, string="entity_a"
-    )
-
-
-@pytest.fixture
-def translation_a(locale_a, project_locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a,
-        locale=locale_a,
-        user=user_a,
-        string='Translation for entity_a',
-    )
 
 
 def mock_quality_check_args(
@@ -85,7 +21,8 @@ def mock_quality_check_args(
     **entity_data
 ):
     """
-    Generate a dictionary of arguments ready to use by get_quality_check function.
+    Generate a dictionary of arguments ready to use by get_quality_check
+    function.
     """
     entity = MagicMock()
     entity.key = 'entity_a'
@@ -145,14 +82,15 @@ def plural_translation(translation_a):
 
 def test_unsupported_resource_file():
     """
-    Fail if passed resource is not supported by the integration with compare-locales.
+    Fail if passed resource is not supported by the integration with
+    compare-locales.
     """
     with pytest.raises(UnsupportedResourceTypeError):
         cast_to_compare_locales('.random_ext', None, None)
 
 
 @pytest.mark.django_db
-def test_cast_to_properties(entity_with_comment, translation_a):
+def test_cast_to_properties(entity_with_comment, translation_a, entity_a):
     """
     Cast entities from .properties resources to PropertiesEntity
     """
@@ -166,7 +104,7 @@ def test_cast_to_properties(entity_with_comment, translation_a):
     assert isinstance(transEnt, ComparePropertiesEntity)
 
     assert refEnt.key == 'key_entity_a'
-    assert refEnt.val == 'entity_a'
+    assert refEnt.val == entity_a.string
     assert refEnt.pre_comment.all == 'example comment'
 
     assert transEnt.key == 'key_entity_a'
@@ -175,7 +113,7 @@ def test_cast_to_properties(entity_with_comment, translation_a):
 
 
 @pytest.mark.django_db
-def test_cast_to_dtd(entity_with_comment, translation_a):
+def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
     """
     Cast entities from .dtd resources to DTDEntity
     """
@@ -189,9 +127,9 @@ def test_cast_to_dtd(entity_with_comment, translation_a):
     assert isinstance(transEnt, CompareDTDEntity)
 
     assert refEnt.key == 'key_entity_a'
-    assert refEnt.val == 'entity_a'
+    assert refEnt.val == entity_a.string
     assert refEnt.pre_comment.all == 'example comment'
-    assert refEnt.all == '<!ENTITY key_entity_a "entity_a">'
+    assert refEnt.all == '<!ENTITY key_entity_a "%s">' % entity_a.string
 
     assert transEnt.key == 'key_entity_a'
     assert transEnt.val == 'Translation for entity_a'
@@ -315,8 +253,10 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
                 ]
             ),
             {
-                'clWarnings': [u'Referencing unknown entity `NonExistingKey`'
-                               u' (aa used in context, validProductName known)'],
+                'clWarnings': [
+                    u'Referencing unknown entity `NonExistingKey`'
+                    u' (aa used in context, validProductName known)',
+                ],
             },
         ),
         (

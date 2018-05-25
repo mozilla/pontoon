@@ -1,34 +1,8 @@
-
-import factory
 import pytest
 from mock import MagicMock, patch
 
-from django.contrib.auth import get_user_model
-
 from pontoon.base.models import Translation
 from pontoon.tags.utils import TagsLatestTranslationsTool
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-    username = 'user'
-    email = factory.LazyAttribute(lambda o: '%s@example.org' % o.username)
-
-
-@pytest.fixture
-def fake_user():
-    return UserFactory(
-        username='fake_user',
-    )
-
-
-@pytest.fixture
-def other_user():
-    return UserFactory(
-        username='other_user',
-    )
 
 
 def test_util_tags_stats_tool(tag_data_init_kwargs):
@@ -125,13 +99,13 @@ def test_util_tags_translation_tool_groupby(
     tag_matrix,
     tag_test_kwargs,
     calculate_tags_latest,
-    fake_user,
-    other_user,
+    user_a,
+    user_b,
 ):
     name, kwargs = tag_test_kwargs
 
     # hmm, translations have no users
-    #  - set first 3rd to fake_user, and second 3rd to other_user
+    #  - set first 3rd to user_a, and second 3rd to user_b
     total = Translation.objects.count()
     first_third_users = Translation.objects.all()[:total / 3].values_list('pk')
     second_third_users = (
@@ -141,12 +115,12 @@ def test_util_tags_translation_tool_groupby(
     (
         Translation.objects
         .filter(pk__in=first_third_users)
-        .update(user=fake_user)
+        .update(user=user_a)
     )
     (
         Translation.objects
         .filter(pk__in=second_third_users)
-        .update(user=other_user)
+        .update(user=user_b)
     )
 
     # calculate expectations grouped by locale

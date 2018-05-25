@@ -7,81 +7,6 @@ import pytest
 from lxml import etree
 
 from pontoon.base.utils import build_translation_memory_file
-from pontoon.base.tests import (
-    EntityFactory,
-    LocaleFactory,
-    ProjectFactory,
-    ProjectLocaleFactory,
-    ResourceFactory,
-    UserFactory,
-)
-
-
-@pytest.fixture
-def user_a():
-    return UserFactory(
-        username="user_a",
-        email="user_a@example.org"
-    )
-
-
-@pytest.fixture
-def member(client, user_a):
-    """Provides a `LoggedInMember` with the attributes `user` and `client`
-    the `client` is authenticated
-    """
-
-    class LoggedInMember(object):
-
-        def __init__(self, user, client):
-            client.force_login(user)
-            self.client = client
-            self.user = user
-
-    return LoggedInMember(user_a, client)
-
-
-@pytest.fixture
-def locale_a():
-    return LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
-
-
-@pytest.fixture
-def project_a():
-    return ProjectFactory(
-        slug="project_a", name="Project A", repositories=[],
-    )
-
-
-@pytest.fixture
-def project_locale_a(project_a, locale_a):
-    return ProjectLocaleFactory(
-        project=project_a,
-        locale=locale_a,
-    )
-
-
-@pytest.fixture
-def resource_a(locale_a, project_a):
-    return ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
-    )
-
-
-@pytest.fixture
-def entity_a(resource_a, project_locale_a):
-    return EntityFactory(
-        resource=resource_a, string="entity"
-    )
-
-
-@pytest.fixture
-def settings_debug(settings):
-    """Make the settings.DEBUG for this test"""
-    settings.DEBUG = True
 
 
 def _check_xml(xml_content, expected_xml=None, dtd_path=None):
@@ -102,7 +27,6 @@ def _check_xml(xml_content, expected_xml=None, dtd_path=None):
         )
 
 
-@pytest.mark.xfail(reason="Original tests were broken")
 @pytest.mark.django_db
 def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
     """By download the data."""

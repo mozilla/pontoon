@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
-from pontoon.test.fixtures.site import _factory
+from .site import _factory
 
 
 def tag_factory():
