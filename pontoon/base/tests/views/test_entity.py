@@ -5,7 +5,7 @@ import pytest
 from mock import patch
 
 from pontoon.base.models import Entity, TranslatedResource
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     TranslatedResourceFactory,
 )

@@ -3,7 +3,7 @@ import pytest
 from mock import patch
 
 from pontoon.base.models import ProjectLocale
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ResourceFactory,

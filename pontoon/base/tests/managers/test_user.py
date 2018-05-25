@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 
 from pontoon.base.utils import aware_datetime
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     TranslationFactory,
     UserFactory,

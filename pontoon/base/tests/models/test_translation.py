@@ -3,7 +3,7 @@ import pytest
 from pontoon.base.models import (
     TranslationMemoryEntry,
 )
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
     ResourceFactory,

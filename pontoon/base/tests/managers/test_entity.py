@@ -6,7 +6,7 @@ from pontoon.base.models import (
     Entity,
     Translation,
 )
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     TranslatedResourceFactory,
     TranslationFactory,

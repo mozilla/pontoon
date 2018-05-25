@@ -5,9 +5,7 @@ import pytest
 from mock import call, patch, Mock
 from six.moves.urllib.parse import urlparse
 
-from pontoon.base.tests import (
-    ProjectLocaleFactory,
-)
+from pontoon.test.factories import ProjectLocaleFactory
 
 
 @pytest.mark.django_db

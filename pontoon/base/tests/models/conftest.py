@@ -1,6 +1,6 @@
 import pytest
 
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
     RepositoryFactory,

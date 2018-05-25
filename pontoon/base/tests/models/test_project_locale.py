@@ -1,7 +1,7 @@
 import pytest
 
 from pontoon.base.models import ProjectLocale
-from pontoon.base.tests import ProjectLocaleFactory
+from pontoon.test.factories import ProjectLocaleFactory
 
 
 @pytest.mark.django_db

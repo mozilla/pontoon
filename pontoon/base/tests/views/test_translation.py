@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Translation
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     ProjectFactory,
     ProjectLocaleFactory,
     ResourceFactory,
