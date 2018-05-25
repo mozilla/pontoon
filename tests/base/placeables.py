@@ -101,8 +101,10 @@ def test_placeable_json_placeholder():
 
     assert (
         mark_placeables(u'Hello $USER')
-        == (u'Hello $USER'))
+        == (u'Hello $<mark class="placeable" '
+            'title="Long all-caps string">USER</mark>'))
 
     assert (
         mark_placeables(u'Hello USER$')
-        == (u'Hello USER$'))
+        == (u'Hello <mark class="placeable" '
+            'title="Long all-caps string">USER</mark>$'))
