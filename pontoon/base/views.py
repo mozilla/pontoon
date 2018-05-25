@@ -43,8 +43,11 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.tags.utils.tags import TagsTool
-
 from pontoon.checks.libraries import run_checks
+from pontoon.checks.utils import (
+    save_failed_checks,
+    are_blocking_checks,
+)
 
 
 log = logging.getLogger(__name__)
@@ -532,17 +535,18 @@ def perform_checks(request):
     except UserProfile.DoesNotExist:
         use_ttk_checks = True
 
-    checks = run_checks(
+    failed_checks = run_checks(
         entity,
         locale_code,
         original,
         string,
         use_ttk_checks,
-        ignore_warnings,
     )
 
-    if checks:
-        return checks
+    if are_blocking_checks(failed_checks, ignore_warnings):
+        return JsonResponse({
+            'failedChecks': failed_checks,
+        })
     else:
         return HttpResponse('ok')
 
@@ -608,17 +612,18 @@ def update_translation(request):
             'same': True,
         })
 
-    checks = run_checks(
+    failed_checks = run_checks(
         e,
         locale.code,
         original,
         string,
         use_ttk_checks,
-        ignore_warnings,
     )
 
-    if checks:
-        return checks
+    if are_blocking_checks(failed_checks, ignore_warnings):
+        return JsonResponse({
+            'failedChecks': failed_checks,
+        })
 
     # Translations exist
     if len(translations) > 0:
@@ -656,6 +661,10 @@ def update_translation(request):
 
             t.save()
 
+            t.warnings.all().delete()
+            t.errors.all().delete()
+            save_failed_checks(t, failed_checks)
+
             return JsonResponse({
                 'type': 'updated',
                 'translation': t.serialize(),
@@ -679,6 +688,7 @@ def update_translation(request):
                 t.approved_date = now
 
             t.save()
+            save_failed_checks(t, failed_checks)
 
             # Return active (approved or latest) translation
             try:
@@ -704,6 +714,7 @@ def update_translation(request):
             t.approved_date = now
 
         t.save()
+        save_failed_checks(t, failed_checks)
 
         return JsonResponse({
             'type': 'saved',

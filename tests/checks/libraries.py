@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-import json
 
 import pytest
 
@@ -105,13 +104,10 @@ def test_ignore_warnings(
         entity_properties_plurals_mock.string,
         'plural1;plural2;plural3;plural4;plural5',
         True,
-        False,
-    ).content == json.dumps({
-        'failedChecks': {
-            'clWarnings': ['expecting 2 plurals, found 5'],
-            'ttWarnings': ['Simple capitalization', 'Starting capitalization']
-        }
-    })
+    ) == {
+        'clWarnings': ['expecting 2 plurals, found 5'],
+        'ttWarnings': ['Simple capitalization', 'Starting capitalization']
+    }
 
     # Warnings can be ignored for Translate Toolkit if user decides to do so
     assert run_checks(
@@ -120,12 +116,9 @@ def test_ignore_warnings(
         entity_properties_plurals_mock.string,
         'plural1;plural2;plural3;plural4;plural5',
         False,
-        False,
-    ).content == json.dumps({
-        'failedChecks': {
-            'clWarnings': ['expecting 2 plurals, found 5'],
-        }
-    })
+    ) == {
+        'clWarnings': ['expecting 2 plurals, found 5'],
+    }
 
 
 def test_invalid_resource_compare_locales(
@@ -139,9 +132,8 @@ def test_invalid_resource_compare_locales(
         'en-US',
         entity_invalid_resource_mock.string,
         'Translation',
-        False,
         False
-    ) is None
+    ) == {}
 
 
 def test_tt_disabled_checks(
@@ -158,14 +150,11 @@ def test_tt_disabled_checks(
         entity_properties_mock.string,
         'invalid translation \q',
         True,
-        False,
-    ).content == json.dumps({
-        'failedChecks': {
-            'clWarnings': [
-                'unknown escape sequence, \q'
-            ]
-        },
-    })
+    ) == {
+        'clWarnings': [
+            'unknown escape sequence, \q'
+        ]
+    }
     run_tt_checks_mock.assert_called_with(
         ANY,
         ANY,
@@ -179,8 +168,7 @@ def test_tt_disabled_checks(
         entity_properties_mock.string,
         'Translated string',
         True,
-        False
-    ) is None
+    ) == {}
     assert not run_tt_checks_mock.assert_called_with(
         ANY,
         ANY,
