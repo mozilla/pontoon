@@ -300,6 +300,8 @@ var Pontoon = (function (my) {
      *
      * Matches the URL Regex and parses the required matches.
      * Can find more than one URL in the given string.
+     *
+     * Escapes HTML tags.
      */
     linkify: function (string) {
       // http://, https://, ftp://
