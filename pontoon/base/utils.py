@@ -96,6 +96,16 @@ class PythonFormatPlaceable(base.Ph):
     parse = classmethod(general.regex_parse)
 
 
+class JsonPlaceholderPlaceable(base.Ph):
+    """
+    Placeable handling placeholders in JSON format
+    as used by the WebExtensions API
+    """
+    istranslatable = False
+    regex = re.compile(r'\$[A-Z0-9_]+\$', )
+    parse = classmethod(general.regex_parse)
+
+
 def mark_placeables(text):
     """Wrap placeables to easily distinguish and manipulate them"""
 
@@ -120,6 +130,8 @@ def mark_placeables(text):
         general.PythonFormattingPlaceable.parse,
         general.JavaMessageFormatPlaceable.parse,
         general.FormattingPlaceable.parse,
+
+        JsonPlaceholderPlaceable.parse,
 
         # The Qt variables can consume the %1 in %1$s which will mask a printf
         # placeable, so it has to come later.
@@ -157,7 +169,8 @@ def mark_placeables(text):
         'XMLTagPlaceable': "XML tag",
         'OptionPlaceable': "Command line option",
         'PythonFormatNamedPlaceable': "Python format string",
-        'PythonFormatPlaceable': "Python format string"
+        'PythonFormatPlaceable': "Python format string",
+        'JsonPlaceholderPlaceable': "JSON placeholder",
     }
 
     output = u""

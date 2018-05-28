@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import codecs
 import copy
 import logging
-import os
 
 from fluent.syntax import (
     ast,
@@ -13,6 +12,7 @@ from fluent.syntax import (
 
 from pontoon.sync import SyncError
 from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.utils import create_parent_directory
 from pontoon.sync.vcs.models import VCSTranslation
 
 log = logging.getLogger(__name__)
@@ -111,8 +111,10 @@ class FTLResource(ParsedResource):
         resource.
         """
         if not self.source_resource:
-            raise SyncError('Cannot save FTL resource {0}: No source resource given.'
-                            .format(self.path))
+            raise SyncError(
+                'Cannot save FTL resource {0}: No source resource given.'
+                .format(self.path)
+            )
 
         with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
             structure = parser.parse(resource.read())
@@ -132,15 +134,11 @@ class FTLResource(ParsedResource):
                 else:
                     del entities[index]
 
-        # Create parent directory if it doesn't exist.
-        try:
-            os.makedirs(os.path.dirname(self.path))
-        except OSError:
-            pass  # Already exists, phew!
+        create_parent_directory(self.path)
 
         with codecs.open(self.path, 'w+', 'utf-8') as f:
+            log.debug('Saving file: %s', self.path)
             f.write(serializer.serialize(structure))
-            log.debug('Saved file: %s', self.path)
 
 
 def parse(path, source_path=None, locale=None):

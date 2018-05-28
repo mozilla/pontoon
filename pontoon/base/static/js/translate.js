@@ -566,9 +566,6 @@ var Pontoon = (function (my) {
         }
 
         var comment = this.linkify(splitComment);
-        if (comment === splitComment) {
-          comment = this.doNotRender(splitComment);
-        }
         self.appendMetaData('Comment', comment);
 
         // Screenshot
@@ -589,10 +586,23 @@ var Pontoon = (function (my) {
 
       // Metadata: source
       if (entity.source) {
-        if (typeof(entity.source) === 'object') {
+        // PO
+        if (Array.isArray(entity.source)) {
           $.each(entity.source, function() {
-            self.appendMetaData('#:', this.join(':'));
+            if (Array.isArray(this)) {
+              self.appendMetaData('#:', this.join(':'));
+            }
           });
+        // JSON
+        } else if (typeof(entity.source) === 'object') {
+          var examples = [];
+          $.each(Object.keys(entity.source), function() {
+            var example = entity.source[this].example;
+            if (example) {
+              examples.push('$' + this.toUpperCase() + '$: ' + example);
+            }
+          });
+          self.appendMetaData('Placeholder Examples', self.linkify(examples.join(', ')));
         } else {
           self.appendMetaData('Source', entity.source);
         }

@@ -3,7 +3,6 @@ from __future__ import absolute_import  # Same name as silme library.
 Parser for silme-compatible translation formats.
 """
 import codecs
-import os
 import silme
 from six import text_type
 
@@ -16,7 +15,12 @@ from silme.format.inc import FormatParser as IncParser
 from silme.format.properties import FormatParser as PropertiesParser
 
 from pontoon.sync import SyncError
-from pontoon.sync.utils import escape_quotes, unescape_quotes
+from pontoon.sync.utils import (
+    create_parent_directory,
+    escape_quotes,
+    unescape_quotes,
+)
+
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -189,11 +193,7 @@ class SilmeResource(ParsedResource):
             new_structure.add_entity(new_entity)
             new_structure.add_string('\n')
 
-        # Create parent directory if it doesn't exist.
-        try:
-            os.makedirs(os.path.dirname(self.path))
-        except OSError:
-            pass  # Already exists, phew!
+        create_parent_directory(self.path)
 
         with codecs.open(self.path, 'w', 'utf-8') as f:
             f.write(self.parser.dump_structure(new_structure))
