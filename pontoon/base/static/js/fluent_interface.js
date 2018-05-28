@@ -235,7 +235,10 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
-        var expression = fluentSerializer.serializeExpression(element.expression.expression);
+        var expression = '';
+        if (element.expression.expression) {
+          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        }
         content += '<li data-expression="' + expression + '"><ul>';
 
         if (isPluralElement(element) && !isTranslated) {
@@ -270,16 +273,15 @@ var Pontoon = (function (my) {
     var value = '';
 
     elementNodes.each(function (i, node) {
-      var expression = $(node).data('expression');
-
       // Simple element
-      if (!expression) {
+      if (!node.hasAttribute('data-expression')) {
         value += $(this).find('textarea').val();
       }
 
       // SelectExpression
       else {
-        var nodeValue = expression + ' ->';
+        var expression = $(node).data('expression');
+        var nodeValue = expression ? ' ' + expression + ' ->' : '';
         var variants = $(node).find('ul li');
         var hasTranslatedVariants = false;
         var defaultMarker = '';
@@ -300,7 +302,7 @@ var Pontoon = (function (my) {
         });
 
         if (hasTranslatedVariants) {
-          value += '{ ' + nodeValue + '\n  }';
+          value += '{' + nodeValue + '\n  }';
         }
       }
     });
