@@ -566,9 +566,6 @@ var Pontoon = (function (my) {
         }
 
         var comment = this.linkify(splitComment);
-        if (comment === splitComment) {
-          comment = this.doNotRender(splitComment);
-        }
         self.appendMetaData('Comment', comment);
 
         // Screenshot
@@ -605,7 +602,7 @@ var Pontoon = (function (my) {
               examples.push('$' + this.toUpperCase() + '$: ' + example);
             }
           });
-          self.appendMetaData('Placeholder Examples', examples.join(', '));
+          self.appendMetaData('Placeholder Examples', self.linkify(examples.join(', ')));
         } else {
           self.appendMetaData('Source', entity.source);
         }
