@@ -169,6 +169,7 @@ class JSONResource(ParsedResource):
         with codecs.open(self.path, 'w+', 'utf-8') as f:
             log.debug('Saving file: %s', self.path)
             f.write(json.dumps(json_file, indent=4))
+            f.write('\n')  # Add newline
 
 
 def parse(path, source_path=None, locale=None):
