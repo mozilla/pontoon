@@ -9,7 +9,6 @@ import codecs
 import copy
 import json
 import logging
-import os
 
 from collections import OrderedDict
 from jsonschema import validate
@@ -18,6 +17,7 @@ from jsonschema.exceptions import ValidationError
 from pontoon.sync import SyncError
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.utils import create_parent_directory
 from pontoon.sync.vcs.models import VCSTranslation
 
 
@@ -164,11 +164,7 @@ class JSONResource(ParsedResource):
             else:
                 del json_file[key]
 
-        # Create parent directory if it doesn't exist.
-        try:
-            os.makedirs(os.path.dirname(self.path))
-        except OSError:
-            pass  # Already exists, phew!
+        create_parent_directory(self.path)
 
         with codecs.open(self.path, 'w+', 'utf-8') as f:
             log.debug('Saving file: %s', self.path)

@@ -1,3 +1,4 @@
+import errno
 import os
 import scandir
 
@@ -148,3 +149,17 @@ def unescape_quotes(value):
     value = value.replace("\\'", "'")
 
     return value
+
+
+def create_parent_directory(path):
+    """
+    Create parent directory of the given path if it doesn't exist yet.
+    """
+    try:
+        os.makedirs(os.path.dirname(path))
+    except OSError as e:
+        # Directory already exists
+        if e.errno == errno.EEXIST:
+            pass
+        else:
+            raise
