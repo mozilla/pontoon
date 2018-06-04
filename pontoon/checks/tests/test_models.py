@@ -10,8 +10,8 @@ from pontoon.checks.models import (
 
 
 @pytest.mark.django_db
-def test_save_failed_checks(translation0):
-    save_failed_checks(translation0, {
+def test_save_failed_checks(translation_a):
+    save_failed_checks(translation_a, {
         'clErrors': [
             'compare-locales error 1',
             'compare-locales error 2',
@@ -32,7 +32,9 @@ def test_save_failed_checks(translation0):
     assert error2.library == 'cl'
     assert error2.message == 'compare-locales error 2'
 
-    cl_warning, tt_warning1, tt_warning2 = Warning.objects.order_by('library', 'message')
+    cl_warning, tt_warning1, tt_warning2 = (
+        Warning.objects.order_by('library', 'message')
+    )
 
     assert cl_warning.library == 'cl'
     assert cl_warning.message == 'compare-locales warning 1'
@@ -43,10 +45,7 @@ def test_save_failed_checks(translation0):
 
 
 @pytest.mark.django_db
-def test_save_no_checks(translation0):
-    save_failed_checks(
-        translation0,
-        {}
-    )
+def test_save_no_checks(translation_a):
+    save_failed_checks(translation_a, {})
     assert not Warning.objects.all().exists()
     assert not Error.objects.all().exists()
