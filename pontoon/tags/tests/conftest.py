@@ -1,7 +1,7 @@
 import pytest
 
 from pontoon.test.factories import UserFactory
-from fixtures import *  # noqa
+from .fixtures import *  # noqa
 
 
 @pytest.fixture
