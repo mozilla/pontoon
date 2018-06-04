@@ -1,0 +1,143 @@
+import pytest
+from mock import patch
+
+from django.shortcuts import render
+
+from pontoon.test.factories import UserFactory
+
+
+def _get_sorted_users():
+    return sorted(
+        UserFactory.create_batch(size=3),
+        key=lambda u: u.email
+    )
+
+
+@pytest.fixture
+def translators():
+    return _get_sorted_users()
+
+
+@pytest.fixture
+def managers():
+    return _get_sorted_users()
+
+
+@pytest.mark.django_db
+@patch('pontoon.teams.views.render', wraps=render)
+def test_ajax_permissions_locale_translators_managers_order(
+    render_mock,
+    admin_client,
+    locale_a,
+    translators,
+    managers,
+):
+    """
+    Translators and managers of a locale should be sorted by email in
+    "Permissions" tab.
+    """
+    locale_a.translators_group.user_set.add(*translators)
+    locale_a.managers_group.user_set.add(*managers)
+
+    admin_client.get('/%s/ajax/permissions/' % locale_a.code)
+    response_context = render_mock.call_args[0][2]
+
+    assert list(response_context['translators']) == translators
+    assert list(response_context['managers']) == managers
+
+
+@pytest.mark.django_db
+@patch('pontoon.teams.views.render', wraps=render)
+def test_ajax_permissions_project_locale_translators_order(
+    render_mock,
+    admin_client,
+    locale_a,
+    project_locale_a,
+    resource_a,  # required for project_locale_a to work
+    translators,
+):
+    """
+    Translators and managers of a locale should be sorted by email in
+    "Permissions" tab.
+    """
+    project_locale_a.translators_group.user_set.add(*translators)
+
+    admin_client.get('/%s/ajax/permissions/' % locale_a.code)
+    response_context = render_mock.call_args[0][2]
+    locale_projects = response_context['locale_projects']
+
+    # Check project_locale id in the permissions form
+    assert locale_projects[0][0] == project_locale_a.pk
+
+    # Check project_locale translators
+    translators_list = [
+        {
+            'id': u.id,
+            'email': u.email,
+            'first_name': u.first_name,
+        }
+        for u in translators
+    ]
+    assert locale_projects[0][4] == translators_list
+
+
+@pytest.mark.django_db
+def test_users_permissions_for_ajax_permissions_view(
+    client,
+    locale_a,
+    member,
+):
+    """
+    Check if anonymous users and users without permissions can't access
+    Permissions Tab.
+    """
+
+    response = client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale_a.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    # Check if users without permissions for the locale can get this tab.
+    response = member.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale_a.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    locale_a.managers_group.user_set.add(member.user)
+
+    # Bump up permissions for user0 and check if the view is accessible.
+    response = member.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale_a.code
+    ))
+    assert response.status_code == 200
+    assert '<title>Forbidden page</title>' not in response.content
+
+    # Remove permissions for user0 and check if the view is not accessible.
+    locale_a.managers_group.user_set.clear()
+
+    response = member.client.get('/{locale}/ajax/permissions/'.format(
+        locale=locale_a.code
+    ))
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    # All unauthorized attempts to POST data should be blocked
+    response = member.client.post(
+        '/{locale}/ajax/permissions/'.format(
+            locale=locale_a.code
+        ),
+        data={'smth': 'smth'}
+    )
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
+
+    response = client.post(
+        '/{locale}/ajax/permissions/'.format(
+            locale=locale_a.code
+        ),
+        data={'smth': 'smth'}
+    )
+    assert response.status_code == 403
+    assert '<title>Forbidden page</title>' in response.content
