@@ -16,7 +16,7 @@ def calculate_all_stats(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0119_rename_translated_to_unreviewed'),
+        ('base', '0123_rename_translated_to_unreviewed'),
     ]
 
     operations = [
