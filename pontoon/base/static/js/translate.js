@@ -709,8 +709,7 @@ var Pontoon = (function (my) {
     getEntityStatus: function (entity) {
       var translation = entity.translation,
           translated = 0,
-          fuzzy = 0,
-          unreviewed = 0;
+          fuzzy = 0;
 
       for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
@@ -719,19 +718,13 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        // Include empty and anonymous translations
-        if (entity.translation[i].pk || entity.translation[i].string) {
-          unreviewed++;
-        }
       }
 
       if (i === translated) {
         return 'translated';
       } else if (i === fuzzy) {
         return 'fuzzy';
-      } else if (i === unreviewed) {
-        return 'unreviewed';
-      } else if (translated > 0 || fuzzy > 0 || unreviewed > 0) {
+      } else if (translated > 0 || fuzzy > 0) {
         return 'partial';
       }
       return 'missing';
@@ -2483,10 +2476,11 @@ var Pontoon = (function (my) {
       $('#progress .number').html(number);
 
       // Update graph legend
-      $('#progress .menu').find('header span').html(self.numberWithCommas(total)).end()
+      $('#progress .menu')
+        .find('header span.all').html(self.numberWithCommas(total)).end()
+        .find('header span.unreviewed').html(self.numberWithCommas(unreviewed)).end()
         .find('.details')
           .find('.translated p').html(self.numberWithCommas(translated)).end()
-          .find('.unreviewed p').html(self.numberWithCommas(unreviewed)).end()
           .find('.fuzzy p').html(self.numberWithCommas(fuzzy)).end()
           .find('.missing p').html(self.numberWithCommas(missing));
 

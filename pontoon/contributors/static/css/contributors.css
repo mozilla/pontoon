@@ -75,10 +75,6 @@ th:last-child sup {
   color: #7BC876;
 }
 
-.stats .details div.translated {
-  color: #4FC4F6;
-}
-
 .stats .details div.fuzzy {
   color: #FED271;
 }

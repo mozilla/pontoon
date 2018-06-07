@@ -16,12 +16,6 @@
           <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|intcomma }}</div>
         </a>
       </li>
-      <li class="unreviewed">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
-          <div class="title">Suggested</div>
-          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|intcomma }}</div>
-        </a>
-      </li>
       <li class="fuzzy">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=fuzzy{% endif %}">
           <div class="title">Fuzzy</div>
@@ -33,6 +27,12 @@
           <div class="title">Missing</div>
           {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|intcomma }}</div>
+        </a>
+      </li>
+      <li class="unreviewed">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
+          <div class="title">Suggested</div>
+          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|intcomma }}</div>
         </a>
       </li>
       <li class="all">

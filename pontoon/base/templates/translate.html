@@ -57,7 +57,10 @@
       <aside class="menu">
         <div>
           <header>
-            <h2>All strings <span></span></h2>
+            <h2>
+              Total <span class="all"></span>
+              Unreviewed <span class="unreviewed"></span>
+            </h2>
           </header>
           <canvas class="big graph" width="220" height="220"></canvas>
           <span class="number"></span>
@@ -71,9 +74,6 @@
             <p></p>
           </div><div class="missing">
             <span>Missing</span>
-            <p></p>
-          </div><div class="unreviewed">
-            <span>Unreviewed</span>
             <p></p>
           </div>
         </div>
@@ -168,7 +168,6 @@
             {{ Filter.item('all', 'All', count=True) }}
             {{ Filter.item('missing', 'Missing', count=True) }}
             {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
-            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
 
             {% if tags %}
@@ -180,6 +179,7 @@
 
             <li class="horizontal-separator">Extra Filters</li>
 
+            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
             {{ Filter.item('rejected', 'Rejected') }}

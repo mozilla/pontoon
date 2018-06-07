@@ -31,7 +31,7 @@ $(function() {
         radius = (canvas.width - context.lineWidth)/2,
         end = null;
 
-    progress.siblings('.legend').find('li:not(.all)').each(function() {
+    progress.siblings('.legend').find('li:not(.all):not(.unreviewed)').each(function() {
       var length = fraction[$(this).attr('class')] * 2,
           start = (end !== null) ? end : -0.5,
           color = window.getComputedStyle(

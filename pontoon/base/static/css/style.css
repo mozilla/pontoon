@@ -243,10 +243,6 @@ button {  width: auto; overflow: visible; }
   color: #7BC876;
 }
 
-.unreviewed .status.fa:before {
-  color: #4FC4F6;
-}
-
 .fuzzy .status.fa:before {
   color: #FED271;
 }
@@ -704,10 +700,6 @@ tfoot td a {
   background: #7BC876;
 }
 
-.select .menu ul li .chart span.unreviewed {
-  background: #4FC4F6;
-}
-
 .select .menu ul li .chart span.fuzzy {
   background: #FED271;
 }
@@ -883,10 +875,6 @@ img.rounded {
 
 .details div.translated {
   border-color: #7BC876;
-}
-
-.details div.unreviewed {
-  border-color: #4FC4F6;
 }
 
 .details div.fuzzy {

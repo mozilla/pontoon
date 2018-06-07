@@ -309,10 +309,6 @@ body > header .locale.select {
   color: #3F4752;
 }
 
-.unreviewed .status:before {
-  color: #4FC4F6;
-}
-
 .fuzzy .status:before {
   color: #FED271;
 }
@@ -324,6 +320,11 @@ body > header .locale.select {
 .untranslated .status:before {
   color: #AAAAAA;
   content: "";
+}
+
+.unreviewed .status:before {
+  color: #AAAAAA;
+  content: "";
 }
 
 .rejected .status:before {
@@ -430,6 +431,10 @@ body > header .locale.select {
   color: #FFFFFF;
   font-size: 28px;
   padding: 0 2px;
+}
+
+#progress .menu header h2 span.all {
+    margin-right: 20px;
 }
 
 #progress .menu .big.graph {
@@ -1138,6 +1143,7 @@ body > header aside p {
 #entitylist > .wrapper > ul > li.unreviewed p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
+#entitylist > .wrapper > ul > li.missing p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
   width: 49%;
