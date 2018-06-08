@@ -76,4 +76,4 @@ dockerclean: clean
 dockertest: test
 dockershell: shell
 dockerloaddb: loaddb
-dockerwebpack: webpack
+dockerwebpack: build-frontend-w
