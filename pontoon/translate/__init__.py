@@ -1,0 +1,1 @@
+URL_BASE = 'translate/'
