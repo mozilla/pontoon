@@ -422,8 +422,13 @@ body > header .locale.select {
   padding: 10px 12px;
 }
 
+#progress .menu header {
+  margin-bottom: 10px;
+}
+
 #progress .menu header h2 {
   font-size: 20px;
+  margin-bottom: 5px;
   padding: 4px;
 }
 
@@ -433,8 +438,12 @@ body > header .locale.select {
   padding: 0 2px;
 }
 
-#progress .menu header h2 span.all {
-    margin-right: 20px;
+#progress .menu header h2.small {
+  font-size: 14px;
+}
+
+#progress .menu header h2.small span {
+  font-size: 20px;
 }
 
 #progress .menu .big.graph {
@@ -444,6 +453,14 @@ body > header .locale.select {
 #progress .menu .details {
   padding: 0;
   width: 100%;
+}
+
+#progress .menu .details div {
+  width: 119px;
+}
+
+#progress .menu .details div:last-child {
+  width: 120px;
 }
 
 body > header .notification.hide {
