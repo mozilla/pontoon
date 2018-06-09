@@ -475,8 +475,15 @@ class VCSResource(object):
 
             try:
                 resource_file = formats.parse(resource_path, source_resource_path, locale)
-            except (IOError, ParseError):
-                continue  # File doesn't exist or is invalid, let's move on
+
+            # File doesn't exist or is invalid: log it and move on
+            except (IOError, ParseError) as err:
+                log.error('Skipping resource {path} due to {type}: {err}'.format(
+                    path=path,
+                    type=type(err).__name__,
+                    err=err
+                ))
+                continue
 
             self.files[locale] = resource_file
 
