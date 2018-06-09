@@ -151,8 +151,10 @@ class LangVisitor(NodeVisitor):
             translation = translation[:tag_matches[0].start()].strip()
 
         if translation == '':
-            raise Exception('Blank translation for key {key} is not allowed in '
-                            'langfiles.'.format(key=string))
+            raise ParsimoniousParseError(
+                'Blank translation for key {key} is not allowed in langfiles.'
+                .format(key=string)
+            )
 
         return LangEntity(string, translation, tags)
 
