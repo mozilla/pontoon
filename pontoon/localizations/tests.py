@@ -67,7 +67,7 @@ class LocaleProjectTests(ViewTestCase):
                         'approved_strings': 0,
                         'unreviewed_strings': 1,
                         'approved_share': 0.0,
-                        'translated_share': 100.0,
+                        'unreviewed_share': 100.0,
                         'fuzzy_share': 0.0,
                         'approved_percent': 0
                     }
@@ -86,7 +86,7 @@ class LocaleProjectTests(ViewTestCase):
                         'approved_strings': 0,
                         'unreviewed_strings': 0,
                         'approved_share': 0.0,
-                        'translated_share': 0.0,
+                        'unreviewed_share': 0.0,
                         'fuzzy_share': 0.0,
                         'approved_percent': 0
                     }

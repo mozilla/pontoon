@@ -1,4 +1,3 @@
-
 import math
 
 
@@ -9,14 +8,13 @@ class TagChart(object):
         self.approved_strings = kwargs.get('approved_strings')
         self.fuzzy_strings = kwargs.get('fuzzy_strings')
         self.total_strings = kwargs.get('total_strings')
-        self.translated_strings = kwargs.get('translated_strings')
+        self.unreviewed_strings = kwargs.get('unreviewed_strings')
 
     @property
     def approved_percent(self):
         return int(
-            math.floor(
-                self.approved_strings
-                / float(self.total_strings) * 100))
+            math.floor(self.approved_strings / float(self.total_strings) * 100)
+        )
 
     @property
     def approved_share(self):
@@ -27,8 +25,8 @@ class TagChart(object):
         return self._share(self.fuzzy_strings)
 
     @property
-    def translated_share(self):
-        return self._share(self.translated_strings)
+    def unreviewed_share(self):
+        return self._share(self.unreviewed_strings)
 
     def _share(self, item):
         return round(item / float(self.total_strings) * 100) or 0

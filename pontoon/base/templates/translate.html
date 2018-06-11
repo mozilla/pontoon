@@ -171,6 +171,7 @@
             {{ Filter.item('missing', 'Missing', count=True) }}
             {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
+            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
 
             {% if tags %}
             <li class="horizontal-separator tags-header">Tags</li>
@@ -181,7 +182,6 @@
 
             <li class="horizontal-separator">Extra Filters</li>
 
-            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
             {{ Filter.item('rejected', 'Rejected') }}

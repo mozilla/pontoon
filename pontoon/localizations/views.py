@@ -107,7 +107,7 @@ def ajax_resources(request, code, slug):
             'approved_share': round(
                 part['approved_strings'] / part['resource__total_strings'] * 100
             ),
-            'translated_share': round(
+            'unreviewed_share': round(
                 part['unreviewed_strings'] / part['resource__total_strings'] * 100
             ),
             'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
