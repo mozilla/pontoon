@@ -27,6 +27,7 @@ services:
     command: ["/app/docker/run_webapp.sh"]
     ports:
       - "8000:8000"
+      - "3000:3000"
     volumes:
       - .:/app
     entrypoint:

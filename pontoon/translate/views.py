@@ -43,6 +43,11 @@ def catchall_dev(request):
     The implementation is very basic e.g. it doesn't handle HTTP headers.
 
     """
+    # Redirect websocket requests directly to the webpack server.
+    if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
+        print UPSTREAM + request.path
+        return http.HttpResponseRedirect(UPSTREAM + request.path)
+
     # Until we change it, this app doesn't live at the root of our website.
     # Since the frontend server is at the root, and won't recognize our URL,
     # we need to remove the base part of the path before proxying.
@@ -52,12 +57,9 @@ def catchall_dev(request):
     response = getattr(requests, method)(upstream_url, stream=True)
     content_type = response.headers.get('Content-Type')
 
-    if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
-        return http.HttpResponseRedirect(upstream_url + request.path)
-
-    elif content_type == 'text/html; charset=UTF-8':
+    if content_type == 'text/html; charset=UTF-8':
         return http.HttpResponse(
-            content=engines['django'].from_string(response.text).render(),
+            content=engines['jinja2'].from_string(response.text).render(),
             status=response.status_code,
             reason=response.reason,
         )
