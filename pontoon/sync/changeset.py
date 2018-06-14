@@ -336,7 +336,7 @@ class ChangeSet(object):
     def execute_obsolete_db(self):
         (Entity.objects
             .filter(pk__in=self.changes['obsolete_db'])
-            .update(obsolete=True))
+            .update(obsolete=True, date_obsoleted=self.now))
 
     def bulk_update_entities(self):
         if len(self.entities_to_update) > 0:

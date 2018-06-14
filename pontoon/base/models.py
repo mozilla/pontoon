@@ -2045,10 +2045,12 @@ class Entity(DirtyFieldsMixin, models.Model):
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
-    date_created = models.DateTimeField(default=timezone.now)
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
+
+    date_created = models.DateTimeField(default=timezone.now)
+    date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     changed_locales = models.ManyToManyField(
         Locale,
