@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { connect } from 'react-redux';
+
 import './App.css';
 
+import { fetchEntitiesList } from './actions';
+
+import EntitiesList from './EntitiesList';
+
+
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          Well that works, heh!
-        </p>
-      </div>
-    );
-  }
+    componentWillMount() {
+        const { locale, project } = this.props.parameters;
+        this.props.dispatch(fetchEntitiesList(locale, project));
+    }
+
+    selectEntity() {
+        console.log('click');
+    }
+
+    render() {
+        return (
+            <EntitiesList entities={ this.props.entities } selectEntity={ this.selectEntity } />
+        );
+    }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        parameters: state.parameters,
+        entities: state.entities,
+    };
+};
+
+export default connect(mapStateToProps)(App);

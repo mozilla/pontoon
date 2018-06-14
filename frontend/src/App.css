@@ -1,28 +1,47 @@
-.App {
-  text-align: center;
+.entities .entity {
+    color: white;
+    display: flex;
+    flex-direction: row;
+    line-height: 2rem;
+}
+.entities .entity .source-string,
+.entities .entity .translation-string {
+    width: 48%;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.entities > li > .status {
+  margin: -13px -13px -13px -16px;
+  padding: 13px 13px 13px 16px;
+  font-size: 16px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.status.fa {
+    left: 16px;
+    top: 13px;
 }
-
-.App-title {
-  font-size: 1.5em;
+.status:before {
+    color: #4D5967;
+    content: "";
 }
-
-.App-intro {
-  font-size: large;
+.fuzzy .status:before {
+    color: #FED271;
 }
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.approved .status:before {
+    color: #7BC876;
+}
+.untranslated .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+.unreviewed .status:before {
+    color: #4FC4F6;
+    content: "";
+}
+.rejected .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+.time-range .status:before {
+    color: #AAAAAA;
+    content: "";
 }
