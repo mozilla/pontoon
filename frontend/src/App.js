@@ -3,32 +3,19 @@ import { connect } from 'react-redux';
 
 import './App.css';
 
-import { fetchEntitiesList } from './actions';
-
-import EntitiesList from './EntitiesList';
+import { EntitiesList } from 'modules/entitieslist'
 
 
 class App extends Component {
-    componentWillMount() {
-        const { locale, project } = this.props.parameters;
-        this.props.dispatch(fetchEntitiesList(locale, project));
-    }
-
-    selectEntity() {
-        console.log('click');
-    }
-
     render() {
         return (
-            <EntitiesList entities={ this.props.entities } selectEntity={ this.selectEntity } />
+            <EntitiesList />
         );
     }
 }
 
 const mapStateToProps = state => {
     return {
-        parameters: state.parameters,
-        entities: state.entities,
     };
 };
 

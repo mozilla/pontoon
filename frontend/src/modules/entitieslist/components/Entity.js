@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class Entity extends React.Component {
+export default class Entity extends React.Component {
     get status() {
         const { entity } = this.props;
         const translation = entity.translation[0];
@@ -24,25 +24,6 @@ class Entity extends React.Component {
                 <span className='source-string'>{ entity.original }</span>
                 <span className='translation-string'>{ entity.translation[0].string }</span>
             </li>
-        );
-    }
-}
-
-
-export default class EntitiesList extends React.Component {
-    render() {
-        const { entities, selectEntity } = this.props;
-
-        return (
-            <ul className='entities'>
-                { entities.map((entity, i) => {
-                    return <Entity
-                        entity={ entity }
-                        selectEntity={ selectEntity }
-                        key={ i }
-                    />;
-                }) }
-            </ul>
         );
     }
 }

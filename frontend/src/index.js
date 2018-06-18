@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 
-import rootReducer from './reducers';
+import rootReducer from 'rootReducer';
 
 import './index.css';
 import App from './App';
