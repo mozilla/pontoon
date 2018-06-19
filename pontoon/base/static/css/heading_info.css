@@ -131,6 +131,10 @@ ul {
   top: 4px;
 }
 
+#heading .legend li.unreviewed .status.fa {
+  left: -2px;
+}
+
 #heading .legend li span.value {
   color: #AAA;
   float: right;

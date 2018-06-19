@@ -79,6 +79,10 @@ th:last-child sup {
   color: #FED271;
 }
 
+.stats .details div.unreviewed {
+  color: #4FC4F6;
+}
+
 .stats .details div p {
   font-size: 20px;
   padding: 3px 0 0;

@@ -8,6 +8,7 @@
         <th class="resource asc">Resource<i class="fa"></i></th>
         <th class="latest-activity">Latest Activity<i class="fa"></i></th>
         <th class="progress">Progress<i class="fa"></i></th>
+        <th class="unreviewed-status" title="Has unreviewed strings?"><span class="fa fa-flag"></span><i class="fa"></i></th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +24,7 @@
     <td class="latest-activity">
       {{ LatestActivity.span(latest_activity) }}
     </td>
-    <td class="progress">
+    <td class="progress" colspan="2">
       {{ ProgressChart.span(chart, chart_link, link_parameter) }}
     </td>
   </tr>

@@ -323,8 +323,8 @@ body > header .locale.select {
 }
 
 .unreviewed .status:before {
-  color: #AAAAAA;
-  content: "";
+  color: #4FC4F6;
+  content: "";
 }
 
 .rejected .status:before {
@@ -347,14 +347,12 @@ body > header .locale.select {
   content: "";
 }
 
-.all .status,
-#filter .button.unreviewed .status {
+.all .status {
   top: 11px;
   left: 14px;
 }
 
-.all .status:before,
-#filter .button.unreviewed .status:before {
+.all .status:before {
   color: #AAAAAA;
   content: "";
   font-size: 21px;
@@ -1022,10 +1020,16 @@ body > header aside p {
   top: 2px;
 }
 
+#filter .menu li.unreviewed:not(.selected) .status {
+  left: 2px;
+  top: 5px;
+}
+
 #filter .menu li.unchanged:not(.selected) .status {
   left: 3px;
 }
 
+#filter .menu li.unreviewed:not(.selected) .status:hover,
 #filter .menu li.unchanged:not(.selected) .status:hover {
   left: 4px;
 }

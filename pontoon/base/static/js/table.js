@@ -104,6 +104,10 @@ var Pontoon = (function (my) {
             };
           }
 
+          function getUnreviewed(el) {
+            return $(el).find('.unreviewed-status.pending').length;
+          }
+
           function getTime(el) {
             var date = $(el).find('td:eq(' + index + ')').find('time').attr('datetime') || 0;
             return new Date(date).getTime();
@@ -160,6 +164,10 @@ var Pontoon = (function (my) {
 
               return (chartA.translated - chartB.translated) * dir ||
                 (chartA.fuzzy - chartB.fuzzy) * dir;
+
+            // Sort by unreviewed state
+            } else if (node.is('.unreviewed-status')) {
+              return (getUnreviewed(a) - getUnreviewed(b)) * dir;
 
             // Sort by deadline
             } else if (node.is('.deadline')) {

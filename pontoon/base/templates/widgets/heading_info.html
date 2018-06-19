@@ -69,7 +69,7 @@
 {% macro legend_item(title, class, value, link=None) %}
 <li class="{{ class }}">
   {% if link %}<a href="{{ link }}">{% endif %}
-    {% if class not in ('all', 'unreviewed') %}
+    {% if class != 'all' %}
       <span class="fa status"></span>
     {% endif %}
     {{ title }}

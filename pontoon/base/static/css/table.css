@@ -47,9 +47,27 @@ table.table {
   width: 140px;
 }
 
+.table th.unreviewed-status {
+  position: relative;
+  width: 16px;
+}
+
+.table-sort th.unreviewed-status i {
+  margin: -13px 0 0 13px;
+}
+
+.table .unreviewed-status .fa-flag {
+  position: absolute;
+  font-size: 16px;
+  margin: -12px 0 0 -8px;
+}
+
+.table .unreviewed-status.fa {
+  font-size: 16px;
+}
+
 .table .progress {
-  text-align: right;
-  width: auto;
+  text-align: left;
 }
 
 .table h4 {
@@ -206,7 +224,7 @@ table.table {
   height: 3px;
   margin-top: 2px;
   table-layout: fixed;
-  width: 320px;
+  width: 295px;
 }
 
 .table .progress .chart-wrapper .chart span {
@@ -216,8 +234,19 @@ table.table {
 
 .table .progress .chart-wrapper .percent {
   position: absolute;
+  right: 25px;
+  top: -7px;
+}
+
+.table .progress .chart-wrapper .unreviewed-status {
+  position: absolute;
   right: 0;
   top: -7px;
+  color: #3F4752;
+}
+
+.table .progress .chart-wrapper .unreviewed-status.pending {
+  color: #4FC4F6;
 }
 
 .table .progress .chart-wrapper .translated {
@@ -280,6 +309,10 @@ table.table {
 
 .table .progress .legend li.missing .title {
   color: #7C8B9C;
+}
+
+.table .progress .legend li.unreviewed .title {
+  color: #4FC4F6;
 }
 
 .table .progress .legend li.all .title {

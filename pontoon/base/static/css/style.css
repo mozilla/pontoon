@@ -247,6 +247,11 @@ button {  width: auto; overflow: visible; }
   color: #FED271;
 }
 
+.unreviewed .status.fa:before {
+  color: #4FC4F6;
+  content: "";
+}
+
 /* Reset HTML5 Search Input in Webkit */
 input[type=search] {
   -webkit-appearance:none;
@@ -883,6 +888,10 @@ img.rounded {
 
 .details div.missing {
   border-color: #4D5967;
+}
+
+.details div.unreviewed {
+  border-color: #4FC4F6;
 }
 
 .details div span {
