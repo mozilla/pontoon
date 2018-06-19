@@ -2679,7 +2679,7 @@ class TranslatedResource(AggregatedStats):
         )
         approved = translations.filter(approved=True).count()
         fuzzy = translations.filter(fuzzy=True).count()
-        missing = max(translated_entities.count() - approved - fuzzy, 0)
+        missing = resource.total_strings - approved - fuzzy
         unreviewed = translations.filter(
             approved=False,
             fuzzy=False,
