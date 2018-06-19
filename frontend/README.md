@@ -1,5 +1,14 @@
 This project is based on create-react-app. See the documentation.
 
+# Code architecture
+
+`src/core/` contains features that are shared in the application, in the form of modules. There should be as little code as possible in this folder.
+
+`src/modules/` contains the self-contained features of the application, separated in modules.
+
+`src/rootReducer.js` creates the main reducer to be used with Redux. When adding a new module with a reducer, make sure to include that reducer to `rootReducer`.
+
+
 # Integration with django
 
 The setup we use is based on this blog post:
