@@ -324,7 +324,7 @@ body > header .locale.select {
 
 .unreviewed .status:before {
   color: #AAAAAA;
-  content: "";
+  content: "";
 }
 
 .rejected .status:before {
@@ -347,12 +347,14 @@ body > header .locale.select {
   content: "";
 }
 
-.all .status {
+.all .status,
+#filter .button.unreviewed .status {
   top: 11px;
   left: 14px;
 }
 
-.all .status:before {
+.all .status:before,
+#filter .button.unreviewed .status:before {
   color: #AAAAAA;
   content: "";
   font-size: 21px;
