@@ -1,8 +1,24 @@
+/* @flow */
+
 import React from 'react';
 
 
-export default class Entity extends React.Component {
-    get status() {
+type Translation = {
+    string: string,
+    approved: boolean,
+    fuzzy: boolean,
+};
+
+type Props = {
+    entity: {
+        original: string,
+        translation: Array<Translation>,
+    },
+    selectEntity: Function,
+};
+
+export default class Entity extends React.Component<Props> {
+    get status(): string {
         const { entity } = this.props;
         const translation = entity.translation[0];
 

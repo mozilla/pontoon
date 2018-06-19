@@ -1,22 +1,41 @@
-export const REQUEST = 'entitieslist/REQUEST';
-export const RECEIVE = 'entitieslist/RECEIVE';
+/* @flow */
+
+export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
+export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
 
 
-export function request(locale, project) {
+export type RequestAction = {
+    type: typeof REQUEST,
+};
+export function request(
+    locale: string,
+    project: string,
+    resource: string,
+): RequestAction {
     return {
         type: REQUEST,
     };
 }
 
-export function receive(entities) {
+
+export type ReceiveAction = {
+    type: typeof RECEIVE,
+    entities: Array<Object>,
+};
+export function receive(entities: Array<Object>): ReceiveAction {
     return {
         type: RECEIVE,
         entities,
     };
 }
 
-export function get(locale, project, resource) {
-    return dispatch => {
+
+export function get(
+    locale: string,
+    project: string,
+    resource: string,
+): Function {
+    return (dispatch: Function): void => {
         dispatch(request(locale, project, resource));
 
         // Fetch entities from backend.
@@ -35,7 +54,7 @@ export function get(locale, project, resource) {
         };
 
         fetch(url, requestParams)
-        .then(response => response.json())
-        .then(content => dispatch(receive(content.entities)));
+        .then((response: Object) => response.json())
+        .then((content: Object) => dispatch(receive(content.entities)));
     };
 }

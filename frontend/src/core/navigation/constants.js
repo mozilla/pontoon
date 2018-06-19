@@ -1,1 +1,3 @@
-export const NAME = 'navigation';
+/* @flow */
+
+export const NAME: string = 'navigation';

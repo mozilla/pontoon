@@ -1,16 +1,37 @@
-import { RECEIVE } from './actions';
+/* @flow */
+
+import { RECEIVE, REQUEST } from './actions';
+import type { ReceiveAction, RequestAction } from './actions';
 
 
-const initial = {
+export type Action =
+    | ReceiveAction
+    | RequestAction
+;
+
+export type Entities = Array<Object>;
+export type State = {
+    +entities: Entities,
+    +fetching: boolean,
+    +errors: Array<string>,
+};
+
+
+const initial: State = {
     entities: [],
     fetching: false,
     errors: [],
 };
 
-export default function reducer(state = initial, action) {
+export default function reducer(state: State = initial, action: Action): State {
     switch (action.type) {
         case RECEIVE:
-            return Object.assign({}, state, {entities: action.entities});
+            return { ...state, ...{
+                entities: action.entities,
+                fetching: false,
+            } };
+        case REQUEST:
+            return { ...state, ...{ fetching: true } };
         default:
             return state;
     }
