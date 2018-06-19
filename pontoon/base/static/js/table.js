@@ -92,7 +92,7 @@ var Pontoon = (function (my) {
             var legend = $(el).find('.progress .legend'),
                 all = legend.find('.all .value').data('value') || 0,
                 translated = legend.find('.translated .value').data('value') / all || 0,
-                unreviewed = legend.find('.unreviewed .value').data('value') / all || 0;
+                fuzzy = legend.find('.fuzzy .value').data('value') / all || 0;
 
             if ($(el).find('.progress .not-ready').length) {
               return 'not-ready';
@@ -100,7 +100,7 @@ var Pontoon = (function (my) {
 
             return {
               'translated': translated,
-              'unreviewed': unreviewed
+              'fuzzy': fuzzy
             };
           }
 
