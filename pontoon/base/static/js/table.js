@@ -105,7 +105,7 @@ var Pontoon = (function (my) {
           }
 
           function getUnreviewed(el) {
-            return $(el).find('.unreviewed-status.pending').length;
+            return parseInt($(el).find('.progress .legend .unreviewed .value').data('value') || 0);
           }
 
           function getTime(el) {
