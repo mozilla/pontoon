@@ -241,7 +241,7 @@ PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     'base': {
         'source_filenames': (
-            'css/font-awesome.css',
+            'css/fontawesome-all.css',
             'css/nprogress.css',
             'css/style.css',
         ),
