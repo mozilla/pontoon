@@ -358,6 +358,15 @@ body > header .locale.select {
   font-size: 19px;
 }
 
+.unreviewed .status:before {
+  font-size: 18px;
+}
+
+#filter .menu .unreviewed.selected .status:before,
+#filter .menu .unreviewed .status:hover:before {
+  font-size: 16px;
+}
+
 #progress {
   cursor: pointer;
   display: none;
@@ -1013,10 +1022,6 @@ body > header aside p {
 #filter .menu li.all .status {
   left: 2px;
   top: 2px;
-}
-
-#filter .menu li.unreviewed:not(.selected) .status {
-  font-size: 18px;
 }
 
 #filter .menu li.unchanged:not(.selected) .status {
