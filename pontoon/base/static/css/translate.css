@@ -355,7 +355,7 @@ body > header .locale.select {
 .all .status:before {
   color: #AAAAAA;
   content: "";
-  font-size: 21px;
+  font-size: 19px;
 }
 
 #progress {
@@ -472,8 +472,9 @@ body > header .notification.hide {
 }
 
 #info .button {
-  font-size: 1.6em;
-  padding: 22px 5px;
+  font-size: 1.4em;
+  padding: 21px 7px;
+  font-weight: 900;
 }
 
 #info .menu a {
@@ -839,9 +840,7 @@ body > header aside p {
   top: 15px;
 
   /* Font Awesome */
-  font: normal normal normal 14px/1 FontAwesome;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+  font: normal normal normal 14px/1 'Font Awesome 5 Free';
 }
 
 .ui-datepicker .ui-datepicker-header .ui-corner-all:hover span {
@@ -991,10 +990,6 @@ body > header aside p {
 #filter .apply-selected {
   float: right;
   text-align: right;
-}
-
-#filter .toolbar .fa {
-  vertical-align: baseline;
 }
 
 #filter .apply-selected:hover, #filter .apply-selected .applied-count {
@@ -1996,33 +1991,35 @@ p#sign-in-required > a#sidebar-signin {
   color: #FED271;
 }
 
-#helpers > section ul li > header button.approve:hover:before,
-#helpers > section ul li.translated > header button.approve:before,
-#helpers > section ul li.translated > header button.unapprove:before {
-  color: #7BC876;
+#helpers > section ul li > header button.approve:before,
+#helpers > section ul li > header button.unapprove:before {
   content: "";
 }
 
-#helpers > section ul li > header button.approve:before,
-#helpers > section ul li > header button.unapprove:hover:before {
-   content: "";
+#helpers > section ul li > header button.approve:hover:before,
+#helpers > section ul li > header button.unapprove:before {
+  color: #7BC876;
 }
 
-#helpers > section ul li > header button.unreject:before,
-#helpers > section ul li > header button.reject:hover:before,
-#helpers > section ul li.rejected > header button.reject:before,
-#helpers > section ul li.rejected > header button.unreject:before {
-  color: #F36;
+#helpers > section ul li > header button.approve:not(:hover):before,
+#helpers > section ul li > header button.unapprove:hover:before {
+  font-weight: 400; /* Replacement for the 'far' class */
+}
+
+#helpers > section ul li > header button.reject:before,
+#helpers > section ul li > header button.unreject:before {
   content: "";
   margin-left: 5px;
 }
 
-#helpers > section ul li > header button.reject:before,
-#helpers > section ul li > header button.unreject:hover:before,
-#helpers > section ul li.rejected > header button.reject:hover:before,
-#helpers > section ul li.rejected > header button.unreject:hover:before {
-  content: "";
-  margin-left: 5px;
+#helpers > section ul li > header button.reject:hover:before,
+#helpers > section ul li > header button.unreject:before {
+  color: #F36;
+}
+
+#helpers > section ul li > header button.reject:not(:hover):before,
+#helpers > section ul li > header button.unreject:hover:before {
+  font-weight: 400; /* Replacement for the 'far' class */
 }
 
 
@@ -2051,12 +2048,12 @@ p#sign-in-required > a#sidebar-signin {
   display: block;
 }
 
-#sidebar .batch-bar .fa-remove,
+#sidebar .batch-bar .fa-times,
 #sidebar.advanced .batch-bar .fa-chevron-left {
   display: none;
 }
 
-#sidebar.advanced .batch-bar .fa-remove {
+#sidebar.advanced .batch-bar .fa-times {
   display: inline;
 }
 

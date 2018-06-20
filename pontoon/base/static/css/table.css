@@ -117,11 +117,12 @@ table.table {
 }
 
 .table td.priority {
-  padding-left: 16px;
+  padding-left: 15px;
 }
 
 .table td.priority .fa {
-  margin-top: 2px;
+  margin-left: -1px;
+  font-size: 12px;
 }
 
 .table .latest-activity .latest {

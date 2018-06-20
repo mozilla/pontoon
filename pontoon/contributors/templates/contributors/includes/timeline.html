@@ -27,7 +27,7 @@
         {% endif %}
         <div class="label clearfix {{ event.type }}">
             <figure>
-                <div class="fa fa-3x {% if event.count %}fa-comment{% if event.count > 1 %}s{% endif %}-o{% elif event.type == 'join' %}fa-child{% endif %}"></div>
+                <div class="icon fa-3x {% if event.count %}far fa-comment{% if event.count > 1 %}s{% endif %}{% elif event.type == 'join' %}fas fa-child{% endif %}"></div>
                 <figcaption>{{ event.date.strftime('%H:%M') }}</figcaption>
             </figure>
             {% if event.project %}

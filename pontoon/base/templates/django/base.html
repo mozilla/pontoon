@@ -67,7 +67,7 @@
                   <li class="horizontal-separator"></li>
                   {% endif %}
 
-                  <li><a href="{% url 'pontoon.terms' %}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
+                  <li><a href="{% url 'pontoon.terms' %}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
                   <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
                   <li class="horizontal-separator"></li>
@@ -78,15 +78,15 @@
 
                   {% if settings.DJANGO_LOGIN %}
                     {% if user.is_authenticated %}
-                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}
-                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                     {% endif %}
                   {% else %}
                     {% if user.is_authenticated %}
-                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out fa-fw"></i>Sign out</a></li>
+                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}
-                      <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                      <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                     {% endif %}
                   {% endif %}
                 </ul>
