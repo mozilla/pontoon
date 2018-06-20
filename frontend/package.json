@@ -15,12 +15,15 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --modulePaths=src",
     "eject": "react-scripts eject",
     "flow": "flow",
     "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
   },
   "devDependencies": {
-    "chokidar-cli": "^1.2.0"
+    "chokidar-cli": "^1.2.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "sinon": "^6.0.0"
   }
 }

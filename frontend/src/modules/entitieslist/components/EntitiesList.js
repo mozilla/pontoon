@@ -3,19 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import navigation from 'core/navigation';
-import type { State as NavState } from 'core/navigation';
-
-import { get } from '../actions';
 import { NAME } from '../constants';
 import Entity from './Entity';
 
-import type { Entities } from '../reducer';
+import type { State, Entities } from '../reducer';
 
 
 type Props = {
-    dispatch: Function,
-    parameters: NavState,
     entities: Entities,
 };
 
@@ -26,12 +20,7 @@ type Props = {
  * entities. It interacts with `core/navigation` when an entity is selected.
  *
  */
-class EntitiesList extends React.Component<Props> {
-    componentWillMount() {
-        const { locale, project, resource } = this.props.parameters;
-        this.props.dispatch(get(locale, project, resource));
-    }
-
+export class EntitiesListBase extends React.Component<Props> {
     selectEntity = (e: SyntheticEvent<>) => {
         console.log('click');
     }
@@ -54,11 +43,10 @@ class EntitiesList extends React.Component<Props> {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State): Props => {
     return {
-        parameters: state[navigation.constants.NAME],
         entities: state[NAME].entities,
     };
 };
 
-export default connect(mapStateToProps)(EntitiesList);
+export default connect(mapStateToProps)(EntitiesListBase);

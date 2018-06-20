@@ -35,6 +35,40 @@ a bug filed to get rid of that option entirely:
 https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
 
 
+# Testing
+
+Tests are run using [`jest`](https://facebook.github.io/jest/).
+We use [`enzyme`](http://airbnb.io/enzyme/docs/api/) for mounting React
+components and [`sinon`](http://sinonjs.org/) for mocking.
+
+To run the test suite, use:
+
+    $ yarn test
+
+It will start an auto-reloading test runner, that will refresh every time
+you make a change to the code or tests.
+
+Tests are put in files called `fileToTest.test.js` in the same directory as
+the file to test. Inside test files, test suites are created. There should be
+one test suite per component, using this notation:
+
+```javascript
+describe('<Component>', () => {
+    // test suite here
+});
+```
+
+Individual tests follow `mocha`'s syntax:
+
+```javascript
+it('does something', () => {
+    // unit test here
+});
+```
+
+We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) assertion tool.
+
+
 # Development resources
 
 On the integration between Django and React:

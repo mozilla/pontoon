@@ -3,10 +3,16 @@ import { connect } from 'react-redux';
 
 import './App.css';
 
-import { EntitiesList } from 'modules/entitieslist'
+import navigation from 'core/navigation';
+import entitieslist, { EntitiesList } from 'modules/entitieslist';
 
 
 class App extends Component {
+    componentWillMount() {
+        const { locale, project, resource } = this.props.parameters;
+        this.props.dispatch(entitieslist.actions.get(locale, project, resource));
+    }
+
     render() {
         return (
             <EntitiesList />
@@ -16,6 +22,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
+        parameters: state[navigation.constants.NAME],
     };
 };
 
