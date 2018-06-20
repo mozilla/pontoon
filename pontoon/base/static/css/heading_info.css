@@ -132,7 +132,8 @@ ul {
 }
 
 #heading .legend li.unreviewed .status.fa {
-  left: -2px;
+  font-size: 18px;
+  top: 2px;
 }
 
 #heading .legend li span.value {

@@ -7,7 +7,7 @@
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
       <span class="missing" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share }}%;"></span>
     </span>
-    <span class="unreviewed-status fa fa-flag{% if chart.unreviewed_strings > 0 %} pending{% endif %}"></span>
+    <span class="unreviewed-status fa fa-lightbulb{% if chart.unreviewed_strings > 0 %} pending{% endif %}"></span>
   </div>
   <div class="legend">
     <ul>

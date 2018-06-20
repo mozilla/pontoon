@@ -56,14 +56,10 @@ table.table {
   margin: -13px 0 0 13px;
 }
 
-.table .unreviewed-status .fa-flag {
+.table .unreviewed-status span {
   position: absolute;
-  font-size: 16px;
-  margin: -12px 0 0 -8px;
-}
-
-.table .unreviewed-status.fa {
-  font-size: 16px;
+  font-size: 18px;
+  margin: -15px 0 0 -5px;
 }
 
 .table .progress {
@@ -240,10 +236,11 @@ table.table {
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
+  color: #3F4752;
+  font-size: 18px;
   position: absolute;
   right: 0;
-  top: -7px;
-  color: #3F4752;
+  top: -9px;
 }
 
 .table .progress .chart-wrapper .unreviewed-status.pending {

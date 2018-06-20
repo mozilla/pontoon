@@ -1016,8 +1016,7 @@ body > header aside p {
 }
 
 #filter .menu li.unreviewed:not(.selected) .status {
-  left: 2px;
-  top: 5px;
+  font-size: 18px;
 }
 
 #filter .menu li.unchanged:not(.selected) .status {

@@ -249,7 +249,7 @@ button {  width: auto; overflow: visible; }
 
 .unreviewed .status.fa:before {
   color: #4FC4F6;
-  content: "";
+  content: "";
 }
 
 /* Reset HTML5 Search Input in Webkit */
