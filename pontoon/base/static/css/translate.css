@@ -846,10 +846,14 @@ body > header aside p {
   padding-top: 2px;
   text-indent: 0;
   left: 12px;
-  top: 15px;
+  top: 13px;
 
   /* Font Awesome */
-  font: normal normal normal 14px/1 'Font Awesome 5 Free';
+  font: normal normal 900 14px/1 'Font Awesome 5 Free';
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-next span {
+  left: 22px;
 }
 
 .ui-datepicker .ui-datepicker-header .ui-corner-all:hover span {
