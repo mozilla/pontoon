@@ -32,7 +32,7 @@ class Command(BaseCommand):
             log.info(
                 u'Calculating stats for project "{project}" ({index}/{total})'
                 .format(
-                    index=index+1,
+                    index=index + 1,
                     total=len(projects),
                     project=project.name,
                 )
