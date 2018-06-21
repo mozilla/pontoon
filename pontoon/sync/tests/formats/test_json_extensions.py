@@ -91,18 +91,18 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
     def test_save_basic(self):
         input_string = dedent("""
             {
-                "SourceString": {
-                    "message": "Source String", 
-                    "description": "Comment"
-                }
+              "SourceString": {
+                "message": "Source String", 
+                "description": "Comment"
+              }
             }
         """)
         expected_string = dedent("""
             {
-                "SourceString": {
-                    "message": "New Translated String", 
-                    "description": "Comment"
-                }
+              "SourceString": {
+                "message": "New Translated String", 
+                "description": "Comment"
+              }
             }
         """)
 
