@@ -101,13 +101,13 @@ class JSONResource(ParsedResource):
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                data = entity.data
+                data = copy.copy(entity.data)
                 data['message'] = None
 
                 self.entities[key] = JSONEntity(
                     entity.order,
                     entity.key,
-                    copy.copy(data),
+                    data,
                 )
 
         try:
