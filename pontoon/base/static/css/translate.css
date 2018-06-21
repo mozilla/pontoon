@@ -309,10 +309,6 @@ body > header .locale.select {
   color: #3F4752;
 }
 
-.suggested .status:before {
-  color: #4FC4F6;
-}
-
 .fuzzy .status:before {
   color: #FED271;
 }
@@ -326,9 +322,9 @@ body > header .locale.select {
   content: "";
 }
 
-.has-suggestions .status:before {
-  color: #AAAAAA;
-  content: "";
+.unreviewed .status:before {
+  color: #4FC4F6;
+  content: "";
 }
 
 .rejected .status:before {
@@ -359,7 +355,16 @@ body > header .locale.select {
 .all .status:before {
   color: #AAAAAA;
   content: "";
-  font-size: 21px;
+  font-size: 19px;
+}
+
+.unreviewed .status:before {
+  font-size: 18px;
+}
+
+#filter .menu .unreviewed.selected .status:before,
+#filter .menu .unreviewed .status:hover:before {
+  font-size: 16px;
 }
 
 #progress {
@@ -404,7 +409,7 @@ body > header .locale.select {
   color: #FFFFFF;
   font-size: 90px;
   line-height: 100px;
-  top: 110px;
+  top: 140px;
 }
 
 #progress .menu .number:after {
@@ -426,8 +431,13 @@ body > header .locale.select {
   padding: 10px 12px;
 }
 
+#progress .menu header {
+  margin-bottom: 10px;
+}
+
 #progress .menu header h2 {
   font-size: 20px;
+  margin-bottom: 5px;
   padding: 4px;
 }
 
@@ -435,6 +445,14 @@ body > header .locale.select {
   color: #FFFFFF;
   font-size: 28px;
   padding: 0 2px;
+}
+
+#progress .menu header h2.small {
+  font-size: 14px;
+}
+
+#progress .menu header h2.small span {
+  font-size: 20px;
 }
 
 #progress .menu .big.graph {
@@ -446,6 +464,14 @@ body > header .locale.select {
   width: 100%;
 }
 
+#progress .menu .details div {
+  width: 119px;
+}
+
+#progress .menu .details div:last-child {
+  width: 120px;
+}
+
 body > header .notification.hide {
   display: none;
 }
@@ -455,8 +481,9 @@ body > header .notification.hide {
 }
 
 #info .button {
-  font-size: 1.6em;
-  padding: 22px 5px;
+  font-size: 1.4em;
+  padding: 21px 7px;
+  font-weight: 900;
 }
 
 #info .menu a {
@@ -819,12 +846,14 @@ body > header aside p {
   padding-top: 2px;
   text-indent: 0;
   left: 12px;
-  top: 15px;
+  top: 13px;
 
   /* Font Awesome */
-  font: normal normal normal 14px/1 FontAwesome;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+  font: normal normal 900 14px/1 'Font Awesome 5 Free';
+}
+
+.ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-next span {
+  left: 22px;
 }
 
 .ui-datepicker .ui-datepicker-header .ui-corner-all:hover span {
@@ -976,10 +1005,6 @@ body > header aside p {
   text-align: right;
 }
 
-#filter .toolbar .fa {
-  vertical-align: baseline;
-}
-
 #filter .apply-selected:hover, #filter .apply-selected .applied-count {
   color: #7BC876;
 }
@@ -1007,6 +1032,7 @@ body > header aside p {
   left: 3px;
 }
 
+#filter .menu li.unreviewed:not(.selected) .status:hover,
 #filter .menu li.unchanged:not(.selected) .status:hover {
   left: 4px;
 }
@@ -1140,9 +1166,10 @@ body > header aside p {
 }
 
 #entitylist > .wrapper > ul > li.translated p span.source-string,
-#entitylist > .wrapper > ul > li.suggested p span.source-string,
+#entitylist > .wrapper > ul > li.unreviewed p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
+#entitylist > .wrapper > ul > li.missing p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
   width: 49%;
@@ -1972,33 +1999,35 @@ p#sign-in-required > a#sidebar-signin {
   color: #FED271;
 }
 
-#helpers > section ul li > header button.approve:hover:before,
-#helpers > section ul li.translated > header button.approve:before,
-#helpers > section ul li.translated > header button.unapprove:before {
-  color: #7BC876;
+#helpers > section ul li > header button.approve:before,
+#helpers > section ul li > header button.unapprove:before {
   content: "";
 }
 
-#helpers > section ul li > header button.approve:before,
-#helpers > section ul li > header button.unapprove:hover:before {
-   content: "";
+#helpers > section ul li > header button.approve:hover:before,
+#helpers > section ul li > header button.unapprove:before {
+  color: #7BC876;
 }
 
-#helpers > section ul li > header button.unreject:before,
-#helpers > section ul li > header button.reject:hover:before,
-#helpers > section ul li.rejected > header button.reject:before,
-#helpers > section ul li.rejected > header button.unreject:before {
-  color: #F36;
+#helpers > section ul li > header button.approve:not(:hover):before,
+#helpers > section ul li > header button.unapprove:hover:before {
+  font-weight: 400; /* Replacement for the 'far' class */
+}
+
+#helpers > section ul li > header button.reject:before,
+#helpers > section ul li > header button.unreject:before {
   content: "";
   margin-left: 5px;
 }
 
-#helpers > section ul li > header button.reject:before,
-#helpers > section ul li > header button.unreject:hover:before,
-#helpers > section ul li.rejected > header button.reject:hover:before,
-#helpers > section ul li.rejected > header button.unreject:hover:before {
-  content: "";
-  margin-left: 5px;
+#helpers > section ul li > header button.reject:hover:before,
+#helpers > section ul li > header button.unreject:before {
+  color: #F36;
+}
+
+#helpers > section ul li > header button.reject:not(:hover):before,
+#helpers > section ul li > header button.unreject:hover:before {
+  font-weight: 400; /* Replacement for the 'far' class */
 }
 
 
@@ -2027,12 +2056,12 @@ p#sign-in-required > a#sidebar-signin {
   display: block;
 }
 
-#sidebar .batch-bar .fa-remove,
+#sidebar .batch-bar .fa-times,
 #sidebar.advanced .batch-bar .fa-chevron-left {
   display: none;
 }
 
-#sidebar.advanced .batch-bar .fa-remove {
+#sidebar.advanced .batch-bar .fa-times {
   display: inline;
 }
 

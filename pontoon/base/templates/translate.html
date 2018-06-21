@@ -57,7 +57,12 @@
       <aside class="menu">
         <div>
           <header>
-            <h2>All strings <span></span></h2>
+            <h2>
+              Total <span class="all"></span>
+            </h2>
+            <h2 class="small">
+              Unreviewed <span class="unreviewed"></span>
+            </h2>
           </header>
           <canvas class="big graph" width="220" height="220"></canvas>
           <span class="number"></span>
@@ -65,9 +70,6 @@
         <div class="details">
           <div class="translated">
             <span>Translated</span>
-            <p></p>
-          </div><div class="suggested">
-            <span>Suggested</span>
             <p></p>
           </div><div class="fuzzy">
             <span>Fuzzy</span>
@@ -107,16 +109,16 @@
           <ul>
             {{ Profile.top_menu() }}
 
-            <li class="langpack"><a href=""><i class="fa fa-cloud-download fa-fw"></i>Download Language Pack</a></li>
-            <li class="download-tmx"><a href=""><i class="fa fa-cloud-download fa-fw"></i>Download Translation Memory</i></a></li>
-            <li class="download"><i class="fa fa-cloud-download fa-fw"></i>Download Translations</i></li>
-            <li class="upload"><i class="fa fa-cloud-upload fa-fw"></i>Upload Translations</li>
+            <li class="langpack"><a href=""><i class="fa fa-cloud-download-alt fa-fw"></i>Download Language Pack</a></li>
+            <li class="download-tmx"><a href=""><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translation Memory</i></a></li>
+            <li class="download"><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translations</i></li>
+            <li class="upload"><i class="fa fa-cloud-upload-alt fa-fw"></i>Upload Translations</li>
 
             <li class="horizontal-separator"></li>
 
             <li><a href="{{ url('pontoon.contributors') }}"><i class="fa fa-trophy fa-fw"></i>Top Contributors</a></li>
             <li><a href="{{ url('pontoon.machinery') }}"><i class="fa fa-search fa-fw"></i>Machinery</a></li>
-            <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-legal fa-fw"></i>Terms of Use</a></li>
+            <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
             <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
             <li class="horizontal-separator"></li>
@@ -132,15 +134,15 @@
 
             {% if settings.DJANGO_LOGIN %}
               {% if user.is_authenticated() %}
-                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
+                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign Out</a></li>
               {% else %}
-                <li class="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                <li class="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
               {% endif %}
             {% else %}
               {% if user.is_authenticated() %}
-                <li class="sign-out"><a href="{{ url('account_logout') }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out fa-fw"></i>Sign Out</a></li>
+                <li class="sign-out"><a href="{{ url('account_logout') }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign Out</a></li>
               {% else %}
-                <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in fa-fw"></i>Sign in</a></li>
+                <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
               {% endif %}
             {% endif %}
           </ul>
@@ -168,8 +170,8 @@
             {{ Filter.item('all', 'All', count=True) }}
             {{ Filter.item('missing', 'Missing', count=True) }}
             {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
-            {{ Filter.item('suggested', 'Suggested', count=True) }}
             {{ Filter.item('translated', 'Translated', count=True) }}
+            {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
 
             {% if tags %}
             <li class="horizontal-separator tags-header">Tags</li>
@@ -182,12 +184,11 @@
 
             {{ Filter.item('untranslated', 'Untranslated') }}
             {{ Filter.item('unchanged', 'Unchanged') }}
-            {{ Filter.item('has-suggestions', 'Unreviewed Suggestions') }}
             {{ Filter.item('rejected', 'Rejected') }}
 
             <li class="horizontal-separator for-time-range">
               Translation Time
-              <button class="edit" data-alternative="Save Range"><span class="fa fa-area-chart"></span>Edit Range</button>
+              <button class="edit" data-alternative="Save Range"><span class="fa fa-chart-area"></span>Edit Range</button>
             </li>
 
             <li class="time-range clearfix" data-type="time-range">
@@ -204,7 +205,7 @@
           </ul>
           <div class="toolbar clearfix">
             <a class="clear-selected" href="#clear-filters" title="Uncheck selected filters">
-              <span class="fa fa-remove fa-lg"></span>
+              <span class="fa fa-times fa-lg"></span>
               Clear
             </a>
             <a class="apply-selected" href="#apply-filters" title="Apply Selected Filters">
@@ -302,7 +303,7 @@
             <li class="custom-attribute clearfix">
               <div class="wrapper">
                 <textarea class="id" placeholder="enter-attribute-id"></textarea>
-                <sub class="fa fa-remove remove" title="Remove"></sub>
+                <sub class="fa fa-times remove" title="Remove"></sub>
               </div>
               <textarea class="value" placeholder="Enter attribute value"></textarea>
             </li>
@@ -342,7 +343,7 @@
 
           <!-- Keyboard shortcuts -->
           <div id="hotkeys" class="select">
-            <div class="selector fa fa-keyboard-o" title="Keyboard Shortcuts"></div>
+            <div class="selector far fa-keyboard" title="Keyboard Shortcuts"></div>
             <aside class="menu">
               <h2>Keyboard shortcuts</h2>
               <table>
@@ -435,7 +436,7 @@
       <div class="batch-bar topbar clearfix">
         <div class="selecting fa fa-refresh fa-spin"></div>
         <a class="quit-batch-editing" href="#quit-batch-editing" title="Quit Batch Editing (Esc)">
-          <span class="fa fa-remove fa-lg"></span>
+          <span class="fa fa-times fa-lg"></span>
           <span class="fa fa-chevron-left fa-lg"></span>
           <span class="selected-count"></span>
           <span class="variant">

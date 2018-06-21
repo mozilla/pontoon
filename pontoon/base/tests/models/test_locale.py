@@ -114,7 +114,7 @@ def test_locale_parts_stats_no_page_one_resource(locale_parts):
     details = locale_c.parts_stats(project)
     assert len(details) == 2
     assert details[0]['title'] == entityX.resource.path
-    assert details[0]['translated_strings'] == 0
+    assert details[0]['unreviewed_strings'] == 0
 
 
 @pytest.mark.django_db
@@ -144,13 +144,13 @@ def test_locale_parts_stats_no_page_multiple_resources(locale_parts):
         [detail["title"] for detail in detailsX][:2]
         == sorted([entityX.resource.path, '/other/path.po'])
     )
-    assert detailsX[0]['translated_strings'] == 0
-    assert detailsX[1]['translated_strings'] == 0
+    assert detailsX[0]['unreviewed_strings'] == 0
+    assert detailsX[1]['unreviewed_strings'] == 0
 
     detailsY = locale_b.parts_stats(project)
     assert len(detailsY) == 2
     assert detailsY[0]['title'] == '/other/path.po'
-    assert detailsY[0]['translated_strings'] == 0
+    assert detailsY[0]['unreviewed_strings'] == 0
 
 
 @pytest.mark.django_db
@@ -163,7 +163,7 @@ def test_locale_parts_stats_pages_not_tied_to_resources(locale_parts):
     SubpageFactory.create(project=project, name='Subpage')
     details = locale_a.parts_stats(project)
     assert details[0]['title'] == 'Subpage'
-    assert details[0]['translated_strings'] == 0
+    assert details[0]['unreviewed_strings'] == 0
 
 
 @pytest.mark.django_db
@@ -195,8 +195,8 @@ def test_locale_parts_stats_pages_tied_to_resources(locale_parts):
     details0 = locale_a.parts_stats(project)
     detailsX = locale_b.parts_stats(project)
     assert details0[0]['title'] == 'Other Subpage'
-    assert details0[0]['translated_strings'] == 0
+    assert details0[0]['unreviewed_strings'] == 0
     assert details0[1]['title'] == 'Subpage'
-    assert details0[1]['translated_strings'] == 0
+    assert details0[1]['unreviewed_strings'] == 0
     assert detailsX[0]['title'] == 'Other Subpage'
-    assert detailsX[0]['translated_strings'] == 0
+    assert detailsX[0]['unreviewed_strings'] == 0

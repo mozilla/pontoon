@@ -284,7 +284,7 @@ var Pontoon = (function (my) {
 
               list.append(
                 '<li data-id="' + this.pk + '" class="suggestion ' +
-                (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'suggested') +
+                (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'unreviewed') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((self.user.canTranslate()) ? ' translator' :
@@ -702,15 +702,14 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'suggested', 'partial', 'missing'
+     * Get entity status: 'translated', 'fuzzy', 'unreviewed', 'partial', 'missing'
      *
      * entity Entity
      */
     getEntityStatus: function (entity) {
       var translation = entity.translation,
           translated = 0,
-          fuzzy = 0,
-          suggested = 0;
+          fuzzy = 0;
 
       for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
@@ -719,19 +718,13 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        // Include empty and anonymous translations
-        if (entity.translation[i].pk || entity.translation[i].string) {
-          suggested++;
-        }
       }
 
       if (i === translated) {
         return 'translated';
       } else if (i === fuzzy) {
         return 'fuzzy';
-      } else if (i === suggested) {
-        return 'suggested';
-      } else if (translated > 0 || fuzzy > 0 || suggested > 0) {
+      } else if (translated > 0 || fuzzy > 0) {
         return 'partial';
       }
       return 'missing';
@@ -1256,7 +1249,7 @@ var Pontoon = (function (my) {
         }
       }
 
-      // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
+      // Special case: Untranslated filter is a union of missing and fuzzy.
       if (self.untranslatedFilterApplied(filter.status)) {
         $('#filter .menu [data-type="untranslated"]').addClass('selected');
       }
@@ -1362,7 +1355,7 @@ var Pontoon = (function (my) {
      * Return an array of untranslated filter statuses
      */
     getUntranslatedFilters: function() {
-      return ['missing', 'fuzzy', 'suggested'];
+      return ['missing', 'fuzzy'];
     },
 
 
@@ -1399,7 +1392,6 @@ var Pontoon = (function (my) {
       function isExtraFilter(el) {
         return el.hasClass('untranslated') ||
                el.hasClass('unchanged') ||
-               el.hasClass('has-suggestions') ||
                el.hasClass('rejected');
       }
 
@@ -1438,7 +1430,7 @@ var Pontoon = (function (my) {
           updateFilterValue('tag');
 
         } else if (isExtraFilter(el)) {
-          // Special case: Untranslated filter is a union of missing, fuzzy, and suggested
+          // Special case: Untranslated filter is a union of missing and fuzzy
           if (value === 'untranslated') {
             if (self.untranslatedFilterApplied(filter.status)) {
               filter.status = filter.status.indexOf('translated') !== -1 ? ['translated'] : [];
@@ -2145,7 +2137,7 @@ var Pontoon = (function (my) {
 
           button.removeClass('unapprove').addClass('approve');
           button.prop('title', 'Approve');
-          button.parents('li.translated').removeClass('translated').addClass('suggested');
+          button.parents('li.translated').removeClass('translated').addClass('unreviewed');
           button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
             approved: false,
             unapproved_user: self.user.display_name
@@ -2176,7 +2168,7 @@ var Pontoon = (function (my) {
             self.stats = data.stats;
             self.updateTranslation(entity, pf, data.translation);
 
-            item.addClass('rejected').removeClass('translated suggested fuzzy');
+            item.addClass('rejected').removeClass('translated unreviewed fuzzy');
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
 
@@ -2222,7 +2214,7 @@ var Pontoon = (function (my) {
 
           button.removeClass('unreject').addClass('reject');
           button.prop('title', 'Reject');
-          button.parents('li.rejected').removeClass('rejected').addClass('suggested');
+          button.parents('li.rejected').removeClass('rejected').addClass('unreviewed');
           button.parents('li').find('.info a').prop('title', self.getApproveButtonTitle({
             rejected: false,
             unrejected_user: self.user.display_name
@@ -2443,13 +2435,12 @@ var Pontoon = (function (my) {
       var self = this,
           stats = self.stats,
           total = stats.total,
-          suggested = stats.translated,
+          unreviewed = stats.unreviewed,
           translated = stats.approved,
           fuzzy = stats.fuzzy,
-          missing = total - suggested - translated - fuzzy,
+          missing = total - translated - fuzzy,
           fraction = {
             translated: total ? translated / total : 0,
-            suggested: total ? suggested / total : 0,
             fuzzy: total ? fuzzy / total : 0,
             missing: total ? missing / total : 0
           },
@@ -2485,10 +2476,11 @@ var Pontoon = (function (my) {
       $('#progress .number').html(number);
 
       // Update graph legend
-      $('#progress .menu').find('header span').html(self.numberWithCommas(total)).end()
+      $('#progress .menu')
+        .find('header span.all').html(self.numberWithCommas(total)).end()
+        .find('header span.unreviewed').html(self.numberWithCommas(unreviewed)).end()
         .find('.details')
           .find('.translated p').html(self.numberWithCommas(translated)).end()
-          .find('.suggested p').html(self.numberWithCommas(suggested)).end()
           .find('.fuzzy p').html(self.numberWithCommas(fuzzy)).end()
           .find('.missing p').html(self.numberWithCommas(missing));
 
@@ -2496,7 +2488,7 @@ var Pontoon = (function (my) {
       $('#filter .menu')
           .find('.all .count').html(self.numberWithCommas(total)).end()
           .find('.translated .count').html(self.numberWithCommas(translated)).end()
-          .find('.suggested .count').html(self.numberWithCommas(suggested)).end()
+          .find('.unreviewed .count').html(self.numberWithCommas(unreviewed)).end()
           .find('.fuzzy .count').html(self.numberWithCommas(fuzzy)).end()
           .find('.missing .count').html(self.numberWithCommas(missing));
 
@@ -2537,7 +2529,7 @@ var Pontoon = (function (my) {
       );
 
       entity.ui
-        .removeClass('translated suggested fuzzy missing partial')
+        .removeClass('translated unreviewed fuzzy missing partial')
         .addClass(status)
         .find('.translation-string')
           .html(translationString);

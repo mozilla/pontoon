@@ -14,7 +14,7 @@ class Tagged(object):
         self.approved_strings = kwargs.get('approved_strings')
         self.fuzzy_strings = kwargs.get('fuzzy_strings')
         self.total_strings = kwargs.get('total_strings')
-        self.translated_strings = kwargs.get('translated_strings')
+        self.unreviewed_strings = kwargs.get('unreviewed_strings')
         self.kwargs = kwargs
 
     @property

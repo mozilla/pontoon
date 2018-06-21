@@ -160,7 +160,7 @@ def test_util_tag_chart():
     assert chart.approved_strings is None
     assert chart.fuzzy_strings is None
     assert chart.total_strings is None
-    assert chart.translated_strings is None
+    assert chart.unreviewed_strings is None
 
     # `total_strings` should be set - otherwise TagChart throws
     # errors
@@ -174,8 +174,8 @@ def test_util_tag_chart():
         total_strings=73,
         fuzzy_strings=7,
         approved_strings=13,
-        translated_strings=23)
+        unreviewed_strings=23)
     assert chart.approved_share == 18.0
     assert chart.approved_percent == 17
     assert chart.fuzzy_share == 10.0
-    assert chart.translated_share == 32.0
+    assert chart.unreviewed_share == 32.0

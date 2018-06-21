@@ -13,7 +13,6 @@ build
 .DS_Store
 node_modules/
 *-min.css
-*-all.css
 *-min.js
 *-all.js
 .noseids

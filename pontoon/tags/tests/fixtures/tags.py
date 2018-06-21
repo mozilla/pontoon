@@ -34,7 +34,7 @@ def _assert_tags(expected, data):
         # "last_change",
         "total_strings",
         "approved_strings",
-        "translated_strings",
+        "unreviewed_strings",
         "fuzzy_strings",
     ]
     for slug, stats in results.items():
@@ -109,7 +109,7 @@ def _calculate_tags(**kwargs):
     trs = TranslatedResource.objects.all()
     attrs = [
         "approved_strings",
-        "translated_strings",
+        "unreviewed_strings",
         "fuzzy_strings",
     ]
     totals = {}

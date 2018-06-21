@@ -45,12 +45,12 @@
     </div><div class="translated">
       <span>Translated</span>
       <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
-    </div><div class="suggested">
-      <span>Suggested</span>
-      <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).count()|intcomma }}</p>
     </div><div class="fuzzy">
       <span>Fuzzy</span>
       <p>{{ translations.filter(fuzzy=True).count()|intcomma }}</p>
+    </div><div class="unreviewed">
+      <span>Unreviewed</span>
+      <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).exclude(rejected=True).count()|intcomma }}</p>
     </div>
   </div>
 </section>

@@ -40,12 +40,12 @@
             </div><div class="approved">
               <span>Translated</span>
               <p>{{ contributor.translations_approved_count|intcomma }}</p>
-            </div><div class="translated">
-              <span>Suggested</span>
-              <p>{{ contributor.translations_unapproved_count|intcomma }}</p>
             </div><div class="fuzzy">
               <span>Fuzzy</span>
               <p>{{ contributor.translations_needs_work_count|intcomma }}</p>
+            </div><div class="unreviewed">
+              <span>Unreviewed</span>
+              <p>{{ contributor.translations_unapproved_count|intcomma }}</p>
             </div>
           </div>
         </td>

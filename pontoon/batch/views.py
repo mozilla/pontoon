@@ -43,7 +43,7 @@ def update_stats(translated_resources, entity, locale):
         'total_strings',
         'approved_strings',
         'fuzzy_strings',
-        'translated_strings',
+        'unreviewed_strings',
     ])
 
     project = entity.resource.project

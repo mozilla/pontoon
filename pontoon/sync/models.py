@@ -85,7 +85,7 @@ class SyncLog(BaseLog):
                 for pl in ProjectLocale.objects.filter(project=p):
                     pl.aggregate_stats()
 
-        # translated + suggested + fuzzy > total in TranslatedResource
+        # translated + fuzzy > total in TranslatedResource
         for t in (
             TranslatedResource.objects
             .filter(
@@ -93,7 +93,7 @@ class SyncLog(BaseLog):
                 resource__project__sync_disabled=False,
             )
             .annotate(
-                total=Sum(F('approved_strings') + F('translated_strings') + F('fuzzy_strings'))
+                total=Sum(F('approved_strings') + F('fuzzy_strings'))
             )
             .filter(total__gt=F('total_strings'))
         ):

@@ -87,12 +87,6 @@
     link=(link + '?status=translated') if link else None)
   }}
   {{ legend_item(
-    title='Suggested strings',
-    class='suggested',
-    value=obj.translated_strings,
-    link=(link + '?status=suggested') if link else None)
-  }}
-  {{ legend_item(
     title='Fuzzy strings',
     class='fuzzy',
     value=obj.fuzzy_strings,
@@ -101,8 +95,14 @@
   {{ legend_item(
     title='Missing strings',
     class='missing',
-    value=(obj.total_strings - obj.approved_strings - obj.translated_strings - obj.fuzzy_strings),
+    value=(obj.total_strings - obj.approved_strings - obj.fuzzy_strings),
     link=(link + '?status=missing') if link else None)
+  }}
+  {{ legend_item(
+    title='Unreviewed strings',
+    class='unreviewed',
+    value=obj.unreviewed_strings,
+    link=(link + '?status=unreviewed') if link else None)
   }}
   {{ legend_item(
     title='All strings',

@@ -10,6 +10,7 @@
         <th class="population">Speakers<i class="fa"></i></th>
         <th class="latest-activity">Latest Activity<i class="fa"></i></th>
         <th class="progress">Progress<i class="fa"></i></th>
+        <th class="unreviewed-status" title="Unreviewed strings"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
         {% if request %}
           <th class="check">Request<i class="fa"></i></th>
         {% endif %}
@@ -34,7 +35,7 @@
     <td class="latest-activity">
       {{ LatestActivity.span(latest_activity) }}
     </td>
-    <td class="progress">
+    <td class="progress" colspan="2">
       {% if locale.total_strings %}
         {{ ProgressChart.span(chart, chart_link, link_parameter, has_param) }}
       {% else %}

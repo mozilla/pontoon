@@ -13,7 +13,6 @@ $(function() {
 
     var fraction = {
           translated: stats.all ? stats.translated / stats.all : 0,
-          suggested: stats.all ? stats.suggested / stats.all : 0,
           fuzzy: stats.all ? stats.fuzzy / stats.all : 0,
           missing: stats.all ? stats.missing / stats.all : 1 /* Draw "empty" progress if no projects enabled */
         },
@@ -32,7 +31,7 @@ $(function() {
         radius = (canvas.width - context.lineWidth)/2,
         end = null;
 
-    progress.siblings('.legend').find('li:not(.all)').each(function() {
+    progress.siblings('.legend').find('li:not(.all):not(.unreviewed)').each(function() {
       var length = fraction[$(this).attr('class')] * 2,
           start = (end !== null) ? end : -0.5,
           color = window.getComputedStyle(
