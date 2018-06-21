@@ -20,8 +20,12 @@ class ProjectLocale(DjangoObjectType, Stats):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
-            'project', 'locale', 'total_strings', 'approved_strings',
+            'project',
+            'locale',
+            'total_strings',
+            'approved_strings',
             'fuzzy_strings',
+            'unreviewed_strings',
         )
 
 
@@ -29,9 +33,18 @@ class Project(DjangoObjectType, Stats):
     class Meta:
         model = ProjectModel
         only_fields = (
-            'name', 'slug', 'disabled', 'sync_disabled', 'info', 'deadline',
-            'priority', 'contact', 'total_strings', 'approved_strings',
+            'name',
+            'slug',
+            'disabled',
+            'sync_disabled',
+            'info',
+            'deadline',
+            'priority',
+            'contact',
+            'total_strings',
+            'approved_strings',
             'fuzzy_strings',
+            'unreviewed_strings',
         )
 
     localizations = graphene.List(ProjectLocale)
@@ -44,8 +57,15 @@ class Locale(DjangoObjectType, Stats):
     class Meta:
         model = LocaleModel
         only_fields = (
-            'name', 'code', 'direction', 'script', 'population',
-            'total_strings', 'approved_strings', 'fuzzy_strings'
+            'name',
+            'code',
+            'direction',
+            'script',
+            'population',
+            'total_strings',
+            'approved_strings',
+            'fuzzy_strings',
+            'unreviewed_strings',
         )
 
     localizations = graphene.List(

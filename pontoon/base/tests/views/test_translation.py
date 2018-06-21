@@ -137,7 +137,7 @@ def test_view_translate_force_suggestions(
     be independent from the user settings in different browser tabs.
     """
     translation_a.locale.translators_group.user_set.add(member.user)
-    project_locale_a.translated_strings = 1
+    project_locale_a.unreviewed_strings = 1
     project_locale_a.save()
 
     response = request_update_translation(

@@ -100,15 +100,15 @@ def ajax_resources(request, code, slug):
             part['latest_activity'] = None
 
         part['chart'] = {
-            'translated_strings': part['translated_strings'],
+            'unreviewed_strings': part['unreviewed_strings'],
             'fuzzy_strings': part['fuzzy_strings'],
             'total_strings': part['resource__total_strings'],
             'approved_strings': part['approved_strings'],
             'approved_share': round(
                 part['approved_strings'] / part['resource__total_strings'] * 100
             ),
-            'translated_share': round(
-                part['translated_strings'] / part['resource__total_strings'] * 100
+            'unreviewed_share': round(
+                part['unreviewed_strings'] / part['resource__total_strings'] * 100
             ),
             'fuzzy_share': round(part['fuzzy_strings'] / part['resource__total_strings'] * 100),
             'approved_percent': int(

@@ -30,8 +30,8 @@ class TagsStatsTool(TagsTRTool):
         ('approved_strings', Coalesce(
             Sum('approved_strings'),
             Value(0))),
-        ('translated_strings', Coalesce(
-            Sum('translated_strings'),
+        ('unreviewed_strings', Coalesce(
+            Sum('unreviewed_strings'),
             Value(0))))
 
     def get_data(self):

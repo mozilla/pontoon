@@ -51,10 +51,9 @@ def test_view_entity_filters(member, resource_a, locale_a):
     filters = (
         'missing',
         'fuzzy',
-        'suggested',
+        'unreviewed',
         'translated',
         'unchanged',
-        'has-suggestions',
         'rejected',
     )
     for filter_ in filters:

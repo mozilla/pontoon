@@ -34,7 +34,7 @@ class LocaleProjectTests(ViewTestCase):
                     'resource__path': 'has/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
-                    'translated_strings': 1,
+                    'unreviewed_strings': 1,
                     'fuzzy_strings': 0,
                 },
                 {
@@ -42,7 +42,7 @@ class LocaleProjectTests(ViewTestCase):
                     'resource__path': 'no/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
-                    'translated_strings': 0,
+                    'unreviewed_strings': 0,
                     'fuzzy_strings': 0,
                 }
             ]
@@ -59,15 +59,15 @@ class LocaleProjectTests(ViewTestCase):
                     'resource__path': 'has/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
-                    'translated_strings': 1,
+                    'unreviewed_strings': 1,
                     'fuzzy_strings': 0,
                     'chart': {
                         'fuzzy_strings': 0,
                         'total_strings': 1,
                         'approved_strings': 0,
-                        'translated_strings': 1,
+                        'unreviewed_strings': 1,
                         'approved_share': 0.0,
-                        'translated_share': 100.0,
+                        'unreviewed_share': 100.0,
                         'fuzzy_share': 0.0,
                         'approved_percent': 0
                     }
@@ -78,15 +78,15 @@ class LocaleProjectTests(ViewTestCase):
                     'resource__path': 'no/stats.po',
                     'resource__total_strings': 1,
                     'approved_strings': 0,
-                    'translated_strings': 0,
+                    'unreviewed_strings': 0,
                     'fuzzy_strings': 0,
                     'chart': {
                         'fuzzy_strings': 0,
                         'total_strings': 1,
                         'approved_strings': 0,
-                        'translated_strings': 0,
+                        'unreviewed_strings': 0,
                         'approved_share': 0.0,
-                        'translated_share': 0.0,
+                        'unreviewed_share': 0.0,
                         'fuzzy_share': 0.0,
                         'approved_percent': 0
                     }

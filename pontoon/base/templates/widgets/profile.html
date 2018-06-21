@@ -3,7 +3,7 @@
   {% if user.is_authenticated() %}
     <img class="rounded" src="{{ user.gravatar_url(44) }}">
   {% else %}
-    <div class="menu-icon fa fa-navicon"></div>
+    <div class="menu-icon fa fa-bars"></div>
   {% endif %}
 </div>
 {% endmacro %}
