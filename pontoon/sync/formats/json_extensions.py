@@ -50,7 +50,7 @@ SCHEMA = {
                 }
             }
         },
-        "required": ["message", "description"]
+        "required": ["message"]
     }
 }
 
