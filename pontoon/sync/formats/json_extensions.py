@@ -50,7 +50,7 @@ SCHEMA = {
                 }
             }
         },
-        "required": ["message", "description"]
+        "required": ["message"]
     }
 }
 
@@ -101,10 +101,13 @@ class JSONResource(ParsedResource):
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
+                data = copy.copy(entity.data)
+                data['message'] = None
+
                 self.entities[key] = JSONEntity(
                     entity.order,
                     entity.key,
-                    copy.copy(entity.data),
+                    data,
                 )
 
         try:
@@ -168,7 +171,7 @@ class JSONResource(ParsedResource):
 
         with codecs.open(self.path, 'w+', 'utf-8') as f:
             log.debug('Saving file: %s', self.path)
-            f.write(json.dumps(json_file, ensure_ascii=False, indent=4))
+            f.write(json.dumps(json_file, ensure_ascii=False, indent=2))
             f.write('\n')  # Add newline
 
 

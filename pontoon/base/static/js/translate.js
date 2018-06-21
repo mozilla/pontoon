@@ -602,7 +602,9 @@ var Pontoon = (function (my) {
               examples.push('$' + this.toUpperCase() + '$: ' + example);
             }
           });
-          self.appendMetaData('Placeholder Examples', self.linkify(examples.join(', ')));
+          if (examples.length) {
+            self.appendMetaData('Placeholder Examples', self.linkify(examples.join(', ')));
+          }
         } else {
           self.appendMetaData('Source', entity.source);
         }

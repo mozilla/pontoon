@@ -1,8 +1,6 @@
-from django_nose.tools import assert_raises
 from textwrap import dedent
 
 from pontoon.base.tests import assert_attributes_equal, TestCase
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import json_extensions
 from pontoon.sync.tests.formats import FormatTestsMixin
 
@@ -18,6 +16,10 @@ BASE_JSON_FILE = """
     "message": "Translated Multiple Comments",
     "description": "First comment",
     "description": "Second comment"
+  },
+
+  "NoCommentsorSources": {
+    "message": "Translated No Comments or Sources"
   },
 
   "placeholder": {
@@ -65,18 +67,11 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         )
 
     def test_parse_no_comments_no_sources(self):
-        with assert_raises(ParseError):
-            self.parse_string(dedent("""
-                {
-                  "NoComments": {
-                    "message": "Translated No Comments"
-                  }
-                }
-            """))
+        self.run_parse_no_comments_no_sources(BASE_JSON_FILE, 2)
 
     def test_parse_placeholder(self):
         input_string = BASE_JSON_FILE
-        translation_index = 2
+        translation_index = 3
         path, resource = self.parse_string(input_string)
         assert_attributes_equal(
             resource.translations[translation_index],
@@ -96,18 +91,18 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
     def test_save_basic(self):
         input_string = dedent("""
             {
-                "SourceString": {
-                    "message": "Source String", 
-                    "description": "Comment"
-                }
+              "SourceString": {
+                "message": "Source String", 
+                "description": "Comment"
+              }
             }
         """)
         expected_string = dedent("""
             {
-                "SourceString": {
-                    "message": "New Translated String", 
-                    "description": "Comment"
-                }
+              "SourceString": {
+                "message": "New Translated String", 
+                "description": "Comment"
+              }
             }
         """)
 
