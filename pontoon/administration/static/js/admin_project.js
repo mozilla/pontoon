@@ -112,7 +112,7 @@ $(function() {
     var projectLocales = [];
 
     try {
-      projectLocales = JSON.parse($(this).val()).reverse();
+      projectLocales = JSON.parse($(this).val());
     } catch(error) {
       // No project selected
       return;
