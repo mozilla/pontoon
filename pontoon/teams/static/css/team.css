@@ -68,8 +68,9 @@
   content: "";
 }
 
+.projects.request .project-list .latest-activity,
 .projects.request .project-list .progress,
-.projects.request .project-list .latest-activity {
+.projects.request .project-list .unreviewed-status {
   display: none;
 }
 
