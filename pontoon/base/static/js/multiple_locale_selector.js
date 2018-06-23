@@ -15,10 +15,12 @@ $(function() {
 
   // Choose locales
   $('body').on('click', '.multiple-locale-selector .locale.select li', function () {
-    var target = $(this).parents('.locale.select').siblings('.locale.select').find('ul'),
-        clone = $(this).remove();
+    var ls = $(this).parents('.locale.select'),
+        target = ls.siblings('.locale.select').find('ul'),
+        item = $(this).remove();
 
-    target.prepend(clone);
+    target.append(item);
+    target.scrollTop(target[0].scrollHeight);
     updateSelectedLocales();
   });
 
@@ -29,7 +31,8 @@ $(function() {
         target = ls.siblings('.locale.select').find('ul'),
         items = ls.find('li:visible:not(".no-match")').remove();
 
-    target.prepend(items);
+    target.append(items);
+    target.scrollTop(target[0].scrollHeight);
     updateSelectedLocales();
   });
 
