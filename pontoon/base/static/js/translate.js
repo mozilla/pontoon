@@ -2049,8 +2049,6 @@ var Pontoon = (function (my) {
 
       // Copy helpers result to translation
       $('#helpers section').on('click', 'li:not(".disabled")', function (e) {
-        e.preventDefault();
-
         var source = $(this).find('.translation-clipboard').text();
 
         // Ignore clicks on links and buttons
