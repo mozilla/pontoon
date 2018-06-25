@@ -200,9 +200,17 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
+        var expression = '';
+        if (element.expression.expression) {
+          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        }
+        content += '<li data-expression="' + expression + '"><ul>';
+
         element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
+
+        content += '</ul></li>';
       }
     });
 
