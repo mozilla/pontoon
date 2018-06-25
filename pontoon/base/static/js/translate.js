@@ -579,6 +579,12 @@ var Pontoon = (function (my) {
         });
       }
 
+      // Metadata: attribute
+      var attribute = self.fluent.getSimpleSingleAttribute(entity);
+      if (attribute) {
+        self.appendMetaData('Attribute', attribute.id.name);
+      }
+
       // Metadata: key
       if (entity.key) {
         self.appendMetaData('Context', entity.key);

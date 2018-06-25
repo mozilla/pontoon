@@ -516,6 +516,25 @@ var Pontoon = (function (my) {
 
 
       /*
+       * Get attribute, if ast of the entity is a simple single attribute message.
+       * Else: return false.
+       */
+      getSimpleSingleAttribute: function (entity) {
+        if (entity.format !== 'ftl') {
+          return false;
+        }
+
+        var ast = fluentParser.parseEntry(entity.original);
+
+        if (!isSimpleSingleAttributeMessage(ast)) {
+          return false;
+        }
+
+        return ast.attributes[0];
+      },
+
+
+      /*
        * Render original string of FTL and non-FTL messages.
        */
       renderOriginal: function () {
