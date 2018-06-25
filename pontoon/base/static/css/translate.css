@@ -1508,6 +1508,10 @@ body > header aside p {
   text-align: left;
 }
 
+.ftl-area ul li.indented {
+  margin-left: 10px;
+}
+
 .ftl-area section .id {
   border: 1px solid #5E6475;
   background: transparent;

@@ -670,6 +670,13 @@ var Pontoon = (function (my) {
           $('#ftl-area textarea.value').keyup();
         }
 
+        // Indent selector variants if preceeded by other elements
+        $('.ftl-area section > ul:not(.template) > li[data-expression]').each(function(i, node) {
+          if ($(node).prevAll(':visible:not([data-expression])').length) {
+            $(node).addClass('indented');
+          }
+        });
+
         // Ignore editing for anonymous users
         if (!Pontoon.user.id) {
           $('#ftl-area textarea').prop('readonly', true);
