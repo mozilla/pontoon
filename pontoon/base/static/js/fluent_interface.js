@@ -112,6 +112,23 @@ var Pontoon = (function (my) {
   }
 
   /*
+   * Is ast of a message without value and with 1 attribute,
+   * which only contains simple elements?
+   */
+  function isSimpleSingleAttributeMessage(ast) {
+    if (
+      ast &&
+      !ast.value &&
+      ast.attributes.length === 1 &&
+      ast.attributes[0].value.elements.every(isSimpleElement)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
    * Render textarea element with the given properties
    */
   function renderTextareaElement(id, value, maxlength) {
@@ -544,9 +561,17 @@ var Pontoon = (function (my) {
 
         // Attributes
         if (ast.attributes.length && !unsupported) {
-          ast.attributes.forEach(function (attr) {
-            attributes += renderOriginalElements(attr.value.elements, attr.id.name);
-          });
+          // Simple single-attribute string
+          if (isSimpleSingleAttributeMessage(ast)) {
+            attributes = '<li><p>' +
+              stringifyElements(ast.attributes[0].value.elements, true) +
+            '</p></li>';
+          }
+          else {
+            ast.attributes.forEach(function (attr) {
+              attributes += renderOriginalElements(attr.value.elements, attr.id.name);
+            });
+          }
         }
 
         $('#ftl-original .attributes ul').append(attributes);
