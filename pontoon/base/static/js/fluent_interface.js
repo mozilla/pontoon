@@ -469,8 +469,9 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Get source string value of a simple FTL message to be used in
-       * the Copy (original to translation) function
+       * Get source string value of a simple FTL message or a simple
+       * single attribute FTL message to be used in the Copy (original
+       * to translation) function.
        */
       getSourceStringValue: function (entity, fallback) {
         if (entity.format !== 'ftl' || this.isComplexFTL()) {
@@ -478,7 +479,18 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(entity.original);
-        return stringifyElements(ast.value.elements);
+        var tree;
+
+        // Simple string
+        if (ast.value) {
+          tree = ast;
+        }
+        // Simple single-attribute string
+        else {
+          tree = ast.attributes[0];
+        }
+
+        return stringifyElements(tree.value.elements);
       },
 
 
