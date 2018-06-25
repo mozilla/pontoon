@@ -693,25 +693,45 @@ var Pontoon = (function (my) {
 
         // Attributes
         if (attributesTree.length) {
-          attributesTree.forEach(function (attr) {
-            var id = attr.id.name;
+          // Simple single-attribute string: only attribute
+          if (
+            (translationAST && isSimpleSingleAttributeMessage(translationAST)) ||
+            (!translationAST && isSimpleSingleAttributeMessage(entityAST))
+          ) {
+            value = '';
 
-            // Mark translated attributes
-            var isTranslated = translatedAttributes.indexOf(id) !== -1;
+            if (translationAST) {
+              value = stringifyElements(translationAST.attributes[0].value.elements);
+            }
 
-            attributes += (
-              '<li data-id="' + id + '">' +
-                '<ul>' +
-                  renderEditorElements(attr.value.elements, id, isTranslated) +
-                '</ul>' +
-              '</li>'
-            );
-          });
+            $('#only-value')
+              .val(value)
+              .parents('li')
+              .show();
 
-          $('#ftl-area .attributes ul:first').append(attributes);
+            $('#ftl-area > .main-value').show();
+          }
+          else {
+            attributesTree.forEach(function (attr) {
+              var id = attr.id.name;
 
-          // Update access keys presentation
-          $('#ftl-area textarea.value').keyup();
+              // Mark translated attributes
+              var isTranslated = translatedAttributes.indexOf(id) !== -1;
+
+              attributes += (
+                '<li data-id="' + id + '">' +
+                  '<ul>' +
+                    renderEditorElements(attr.value.elements, id, isTranslated) +
+                  '</ul>' +
+                '</li>'
+              );
+            });
+
+            $('#ftl-area .attributes ul:first').append(attributes);
+
+            // Update access keys presentation
+            $('#ftl-area textarea.value').keyup();
+          }
         }
 
         // Ignore editing for anonymous users
