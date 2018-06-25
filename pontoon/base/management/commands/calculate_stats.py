@@ -43,22 +43,6 @@ class Command(BaseCommand):
             )
 
             for translated_resource in translated_resources:
-                translated_resource.calculate_stats(save=False)
-
-            bulk_update(translated_resources, update_fields=[
-                'total_strings',
-                'approved_strings',
-                'fuzzy_strings',
-                'unreviewed_strings',
-            ])
-
-            project.aggregate_stats()
-
-            project_locales = ProjectLocale.objects.filter(project=project)
-            for project_locale in project_locales:
-                project_locale.aggregate_stats()
-
-        for locale in Locale.objects.all():
-            locale.aggregate_stats()
+                translated_resource.calculate_stats()
 
         log.info('Calculating stats complete for all projects.')
