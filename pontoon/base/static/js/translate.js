@@ -2881,6 +2881,7 @@ var Pontoon = (function (my) {
 
       // Hide part menu for All Projects
       $('.part.select').toggleClass('hidden', project === 'all-projects');
+      $('.project.select').toggleClass('all-projects', project === 'all-projects');
     },
 
 
@@ -2963,9 +2964,13 @@ var Pontoon = (function (my) {
 
       // Show only projects available for the selected locale
       $('.project .selector').click(function (e) {
-        e.stopPropagation();
+        if ($(this).parents('.all-projects').length) {
+          e.preventDefault();
+        } else {
+          e.stopPropagation();
+          return;
+        }
 
-        /*
         var projects = Pontoon.getLocaleData('projects'),
             $menu = $(this).parents('.select').find('.menu');
 
@@ -2982,11 +2987,12 @@ var Pontoon = (function (my) {
               .toggleClass('limited', true)
               .toggle(true);
         });
-        */
       });
 
-      /* Project menu handler
-      $('.project .menu li:not(".no-match"), .static-links .all-projects').click(function () {
+      // Project menu handler
+      $('.project .menu li:not(".no-match"), .static-links .all-projects').click(function (e) {
+        e.preventDefault();
+
         var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug'),
@@ -3025,8 +3031,10 @@ var Pontoon = (function (my) {
               }
             });
           }
+
+          $('#project-url').attr('href', '/' + locale + '/' + slug + '/');
         }
-      });*/
+      });
 
       // Show only parts available for the selected project
       $('.part .selector').click(function () {
@@ -3065,7 +3073,7 @@ var Pontoon = (function (my) {
       });
 
       // Parts menu handler
-      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources', function () {
+      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources, .static-links .all-projects', function () {
         var title = $(this).find('span:first').html();
         self.updatePartSelector(title);
 
