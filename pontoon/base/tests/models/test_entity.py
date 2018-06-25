@@ -226,12 +226,12 @@ def test_entity_project_locale_order(entity_test_models):
     locale_a = entity_test_models[0].locale
     project_a = resource0.project
     EntityFactory.create(
-        order=1,
+        order=2,
         resource=resource0,
         string='Second String',
     )
     EntityFactory.create(
-        order=0,
+        order=1,
         resource=resource0,
         string='First String',
     )

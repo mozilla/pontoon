@@ -92,13 +92,14 @@ def test_view_entity_exclude_entities(
     """
     TranslatedResource.objects.create(resource=resource_a, locale=locale_a)
     entities = EntityFactory.create_batch(size=3, resource=resource_a)
+    excluded_pk = entities[1].pk
     response = member.client.post(
         '/get-entities/',
         {
             'project': resource_a.project.slug,
             'locale': locale_a.code,
             'paths[]': [resource_a.path],
-            'exclude_entities': [entities[1].pk],
+            'exclude_entities': [excluded_pk],
             'limit': 1,
         },
         HTTP_X_REQUESTED_WITH='XMLHttpRequest',
@@ -107,7 +108,7 @@ def test_view_entity_exclude_entities(
     assert json.loads(response.content)["has_next"] is True
     assert (
         [e['pk'] for e in json.loads(response.content)['entities']]
-        == [entities[2].pk]
+        != [excluded_pk]
     )
 
     exclude_entities = ','.join(map(
