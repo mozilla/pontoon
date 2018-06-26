@@ -103,7 +103,7 @@ class UserTranslationsManager(UserManager):
 
         translations = (
             translations
-            .values('user', 'approved', 'fuzzy')
+            .values('user', 'approved', 'fuzzy', 'rejected')
             .annotate(count=Count('user'))
         )
 
@@ -115,6 +115,9 @@ class UserTranslationsManager(UserManager):
                 status = 'approved'
             elif translation['fuzzy']:
                 status = 'fuzzy'
+            elif translation['rejected']:
+                # Note that this is not exposed at the moment.
+                status = 'rejected'
             else:
                 status = 'unreviewed'
 
@@ -124,6 +127,7 @@ class UserTranslationsManager(UserManager):
                     'approved': 0,
                     'unreviewed': 0,
                     'fuzzy': 0,
+                    'rejected': 0,
                 }
 
             user_stats[user]['total'] += count
