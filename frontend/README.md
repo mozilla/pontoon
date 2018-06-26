@@ -1,7 +1,7 @@
-Translate.Next — a better Translate app for Pontoon
+# Translate.Next — a better Translate app for Pontoon
 
 
-# Tools
+## Tools
 
 <table>
     <tr>
@@ -39,9 +39,9 @@ Translate.Next — a better Translate app for Pontoon
 </table>
 
 
-# Code architecture
+## Code architecture
 
-## Where code goes
+### Where code goes
 
 `src/core/` contains features that are shared in the application, in the form of modules. There should be as little code as possible in this folder.
 
@@ -49,7 +49,7 @@ Translate.Next — a better Translate app for Pontoon
 
 `src/rootReducer.js` creates the main reducer to be used with Redux. When adding a new module with a reducer, make sure to include that reducer to `rootReducer`.
 
-## Modules
+### Modules
 
 Each module should be in a folder and have an `index.js` file that serves as the module's public interface. Outside of the module, always import from the module's index, and never from specific files. This allows us to easily evolve modules and keep things decoupled, which reduces code complexity.
 
@@ -64,23 +64,23 @@ Here are the files commonly found in a module:
 Of course, more can be added if needed. For example, modules with a high number of action types might want to have an `actionTypes.js` file to separate them from actions.
 
 
-# Running and deploying
+## Running and deploying
 
-## Switch
+### Switch
 
 While this is under development, the feature is hidden behing a feature switch, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_switch translate_next on --create`, then restart your web server. To turn it off, run `./manage.py waffle_switch translate_next off`.
 
-## Production
+### Production
 
 The only required step for the front-end is to build static files with `yarn build`. django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
 
-## Development
+### Development
 
 If you're using docker, `make run` automatically starts both a webpack server
 (on port 3000) and a django server (on port 8000). django is the server you want
 to hit, and it will then proxy appropriate requests to the webpack server.
 
-### Enable websocket and warm-reloading
+#### Enable websocket and warm-reloading
 
 Currently websocket requests are redirect by django to the webpack server.
 Sadly, by default major browsers do not support websocket redirection. To
@@ -90,14 +90,14 @@ a bug filed to get rid of that option entirely:
 https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
 
 
-# Type checking
+## Type checking
 
 Our code uses Flow to enforce type checking. This is a good way to significantly improve resilience to bugs, and it removes some burden from unit tests (because Flow ensures that we use functions and components correctly).
 
 To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/).
 
 
-# Testing
+## Testing
 
 Tests are run using [`jest`](https://facebook.github.io/jest/).
 We use [`enzyme`](http://airbnb.io/enzyme/docs/api/) for mounting React
@@ -131,20 +131,20 @@ it('does something', () => {
 We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) assertion tool.
 
 
-# Development resources
+## Development resources
 
-## Integration between Django and React
+### Integration between Django and React
 
 - [Making React and Django play well together — Fractal Ideas](https://fractalideas.com/blog/making-react-and-django-play-well-together/)
 - [Making React and Django play well together - the “hybrid app” model — Fractal Ideas](https://fractalideas.com/blog/making-react-and-django-play-well-together-hybrid-app-model/)
 
-## Code architecture
+### Code architecture
 
 - [Three Rules For Structuring (Redux) Applications — Jack Hsu](https://jaysoo.ca/2016/02/28/organizing-redux-application/)
 - [The Anatomy Of A React & Redux Module (Applying The Three Rules) — Jack Hsu](https://jaysoo.ca/2016/02/28/applying-code-organization-rules-to-concrete-redux-code/)
 - [Additional Guidelines For (Redux) Project Structure — Jack Hsu](https://jaysoo.ca/2016/12/12/additional-guidelines-for-project-structure/)
 
-## Tools documentation
+### Tools documentation
 
 - [React](https://reactjs.org/docs/getting-started.html)
 - [Redux](https://redux.js.org/)
