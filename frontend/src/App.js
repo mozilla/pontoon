@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import './App.css';
-
 import navigation from 'core/navigation';
 import entitieslist, { EntitiesList } from 'modules/entitieslist';
 

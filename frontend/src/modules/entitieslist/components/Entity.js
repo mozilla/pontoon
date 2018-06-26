@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import './Entity.css';
+
 
 type Translation = {
     string: string,

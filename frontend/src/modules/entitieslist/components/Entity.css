@@ -1,47 +1,47 @@
-.entities .entity {
+.entity {
     color: white;
     display: flex;
     flex-direction: row;
     line-height: 2rem;
 }
-.entities .entity .source-string,
-.entities .entity .translation-string {
+.entity .source-string,
+.entity .translation-string {
     width: 48%;
 }
 
-.entities > li > .status {
+.entity > .status {
   margin: -13px -13px -13px -16px;
   padding: 13px 13px 13px 16px;
   font-size: 16px;
 }
 
-.status.fa {
+.entity .status.fa {
     left: 16px;
     top: 13px;
 }
-.status:before {
+.entity .status:before {
     color: #4D5967;
     content: "";
 }
-.fuzzy .status:before {
+.entity.fuzzy .status:before {
     color: #FED271;
 }
-.approved .status:before {
+.entity.approved .status:before {
     color: #7BC876;
 }
-.untranslated .status:before {
+.entity.untranslated .status:before {
     color: #AAAAAA;
     content: "";
 }
-.unreviewed .status:before {
+.entity.unreviewed .status:before {
     color: #4FC4F6;
     content: "";
 }
-.rejected .status:before {
+.entity.rejected .status:before {
     color: #AAAAAA;
     content: "";
 }
-.time-range .status:before {
+.entity.time-range .status:before {
     color: #AAAAAA;
     content: "";
 }
