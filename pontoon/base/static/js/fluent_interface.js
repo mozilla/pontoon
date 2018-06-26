@@ -792,6 +792,12 @@ var Pontoon = (function (my) {
             value = '\n  ' + value.replace(/\n/g, '\n  ');
           }
 
+          // Simple single-attribute string
+          var attribute = $('#metadata .attribute .content').text();
+          if (attribute) {
+            value = '\n  .' + attribute + ' = ' + value;
+          }
+
           content += value;
         }
 
