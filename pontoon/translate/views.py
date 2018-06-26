@@ -1,5 +1,8 @@
 import requests
 
+import waffle
+from waffle.decorators import waffle_switch
+
 from django import http
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
@@ -14,6 +17,7 @@ from . import URL_BASE
 UPSTREAM = 'http://localhost:3000'
 
 
+@waffle_switch('translate_next')
 def static_serve_dev(request, path, insecure=False, **kwargs):
     """Proxy missing static files to the webpack server.
 
@@ -76,4 +80,12 @@ def catchall_dev(request):
 # static folders. We can thus simply return a template view of index.html.
 catchall_prod = TemplateView.as_view(template_name='index.html')
 
-translate = catchall_dev if settings.DEBUG else catchall_prod
+
+def translate(request):
+    if not waffle.switch_is_active('translate_next'):
+        raise Http404
+
+    if settings.DEBUG:
+        return catchall_dev(request)
+
+    return catchall_prod(request)

@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'notifications',
     'graphene_django',
     'webpack_loader',
+    'waffle',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -169,6 +170,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 CONTEXT_PROCESSORS = (

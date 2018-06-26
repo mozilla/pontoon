@@ -66,6 +66,10 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 # Running and deploying
 
+## Switch
+
+While this is under development, the feature is hidden behing a feature switch, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_switch translate_next on --create`, then restart your web server. To turn it off, run `./manage.py waffle_switch translate_next off`.
+
 ## Production
 
 The only required step for the front-end is to build static files with `yarn build`. django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
