@@ -1,6 +1,47 @@
-This project is based on create-react-app. See the documentation.
+Translate.Next — a better Translate app for Pontoon
+
+
+# Tools
+
+<table>
+    <tr>
+        <td>Bootstrapper</td>
+        <td>create-react-app</td>
+    </tr>
+    <tr>
+        <td>Package manager</td>
+        <td>Yarn</td>
+    </tr>
+    <tr>
+        <td>Views</td>
+        <td>React</td>
+    </tr>
+    <tr>
+        <td>Data</td>
+        <td>Redux</td>
+    </tr>
+    <tr>
+        <td>Tests</td>
+        <td>Jest</td>
+    </tr>
+    <tr>
+        <td>Type checking</td>
+        <td>Flow</td>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Fluent</td>
+    </tr>
+    <tr>
+        <td>Style</td>
+        <td>CSS</td>
+    </tr>
+</table>
+
 
 # Code architecture
+
+## Where code goes
 
 `src/core/` contains features that are shared in the application, in the form of modules. There should be as little code as possible in this folder.
 
@@ -8,16 +49,26 @@ This project is based on create-react-app. See the documentation.
 
 `src/rootReducer.js` creates the main reducer to be used with Redux. When adding a new module with a reducer, make sure to include that reducer to `rootReducer`.
 
+## Modules
 
-# Integration with django
+Each module should be in a folder and have an `index.js` file that serves as the module's public interface. Outside of the module, always import from the module's index, and never from specific files. This allows us to easily evolve modules and keep things decoupled, which reduces code complexity.
 
-The setup we use is based on this blog post:
-https://fractalideas.com/blog/making-react-and-django-play-well-together-hybrid-app-model/
+Here are the files commonly found in a module:
+
+- `index.js` — public interface of the module
+- `actions.js` — actions that can be used to fetch data from an API, trigger changes, etc.
+- `reducer.js` — a single Redux reducer (if you need to have more than one reducer, you probably actually need to make several modules)
+- `constants.js` — a list of constants required by the module or other modules. It is recommended to expose a `NAME` constant here, that will contain the key to use to expose the reducer in the global store.
+- `components/` — a folder containing components, with file names in CamelCase
+
+Of course, more can be added if needed. For example, modules with a high number of action types might want to have an `actionTypes.js` file to separate them from actions.
+
+
+# Running and deploying
 
 ## Production
 
-Build static files with `yarn build`. django is configured to collect the
-`index.html` and static files from the `build` folder.
+The only required step for the front-end is to build static files with `yarn build`. django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
 
 ## Development
 
@@ -33,6 +84,13 @@ enable it in Firefox, go to `about:config` and turn
 `network.websocket.auto-follow-http-redirect` to `true`. Note that there is
 a bug filed to get rid of that option entirely:
 https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
+
+
+# Type checking
+
+Our code uses Flow to enforce type checking. This is a good way to significantly improve resilience to bugs, and it removes some burden from unit tests (because Flow ensures that we use functions and components correctly).
+
+To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/).
 
 
 # Testing
@@ -71,18 +129,21 @@ We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) 
 
 # Development resources
 
-On the integration between Django and React:
+## Integration between Django and React
 
 - [Making React and Django play well together — Fractal Ideas](https://fractalideas.com/blog/making-react-and-django-play-well-together/)
 - [Making React and Django play well together - the “hybrid app” model — Fractal Ideas](https://fractalideas.com/blog/making-react-and-django-play-well-together-hybrid-app-model/)
 
-On front-end code architecture:
+## Code architecture
 
 - [Three Rules For Structuring (Redux) Applications — Jack Hsu](https://jaysoo.ca/2016/02/28/organizing-redux-application/)
 - [The Anatomy Of A React & Redux Module (Applying The Three Rules) — Jack Hsu](https://jaysoo.ca/2016/02/28/applying-code-organization-rules-to-concrete-redux-code/)
 - [Additional Guidelines For (Redux) Project Structure — Jack Hsu](https://jaysoo.ca/2016/12/12/additional-guidelines-for-project-structure/)
 
-Tools documentation:
+## Tools documentation
 
+- [React](https://reactjs.org/docs/getting-started.html)
 - [Redux](https://redux.js.org/)
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
+- [Flow](https://flow.org/en/docs/)
+- [Jest](http://jestjs.io/docs/en/getting-started)
