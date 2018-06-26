@@ -456,6 +456,7 @@ var Pontoon = (function (my) {
        */
       toggleEditor: function (showFTL) {
         var entity = Pontoon.getEditorEntity();
+
         if (typeof showFTL === 'undefined' || showFTL === null) {
           showFTL = entity.format === 'ftl';
         }
@@ -464,11 +465,15 @@ var Pontoon = (function (my) {
           $('#ftl-area').show();
           $('#translation').hide();
           $('#ftl').removeClass('active');
+
+          var entityAST = fluentParser.parseEntry(entity.original);
+          $('#add-attribute').toggle(entityAST.type === 'Term');
         }
         else {
           $('#ftl-area').hide();
           $('#translation').show().focus();
           $('#ftl').addClass('active');
+          $('#add-attribute').hide();
         }
 
         toggleEditorToolbar();
@@ -923,7 +928,7 @@ var Pontoon = (function (my) {
               if (showFTLEditor) {
                 var isRichEditorSupported = self.renderEditor({
                   pk: translated, // An indicator that the string is translated
-                  string: translation,
+                  string: translation
                 });
 
                 // Rich FTL editor does not support the translation
