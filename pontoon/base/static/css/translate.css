@@ -1617,7 +1617,7 @@ body > header aside p {
   width: 100%;
 }
 
-.ftl-area section sub.remove {
+.ftl-area section .remove {
   color: #AAAAAA;
   cursor: pointer;
   font-size: 14px;
@@ -1627,7 +1627,7 @@ body > header aside p {
   top: 3px;
 }
 
-.ftl-area section sub.remove:hover {
+.ftl-area section .remove:hover {
   color: #7BC876;
 }
 

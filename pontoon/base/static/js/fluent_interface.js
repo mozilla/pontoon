@@ -1045,6 +1045,27 @@ var Pontoon = (function (my) {
             $('#only-value').parents('li').hide();
           }
         });
+
+        // Remove an attribute
+        $('#ftl-area .attributes').on('click', '.custom-attribute .remove', function (e) {
+          e.preventDefault();
+
+          $(this).parents('.custom-attribute').remove();
+
+          // Simple value only: convert to simple string
+          var valueElements = $('#ftl-area .main-value ul:first > li:visible');
+          var variants = valueElements.is('[data-expression]');
+          var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
+
+          if (valueElements.length === 1 && !variants && !attributeElements.length) {
+            var value = $('#ftl-id-Value').val();
+
+            $('#ftl-id-Value').parents('li').remove();
+            $('#only-value')
+              .val(value)
+              .parents('li').show();
+          }
+        });
       }
 
     },
