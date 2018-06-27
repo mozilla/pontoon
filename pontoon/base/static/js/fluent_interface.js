@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast element representing a pluralized string?
+   * Return true when AST element represents a pluralized string.
    *
    * Keys of all variants of such elements are either
    * CLDR plurals or numbers.
@@ -57,7 +57,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Are all elements supported in rich FTL editor?
+   * Return true when all elements are supported in rich FTL editor.
    *
    * Elements are supported if they are:
    * - simple elements or
@@ -73,7 +73,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a message, supported in rich FTL editor?
+   * Return true when AST represents a message, supported in rich FTL editor.
    *
    * Message is supported if it's valid and all value elements
    * and all attribute elements are supported.
@@ -93,7 +93,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a simple message?
+   * Return true when AST represents a simple message.
    *
    * A simple message has no attributes and all value
    * elements are simple.
@@ -104,6 +104,23 @@ var Pontoon = (function (my) {
       !ast.attributes.length &&
       ast.value &&
       ast.value.elements.every(isSimpleElement)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
+   * Return true when AST has no value
+   * and a single attribute with only simple elements.
+   */
+  function isSimpleSingleAttributeMessage(ast) {
+    if (
+      ast &&
+      !ast.value &&
+      ast.attributes.length === 1 &&
+      ast.attributes[0].value.elements.every(isSimpleElement)
     ) {
       return true;
     }
@@ -452,8 +469,9 @@ var Pontoon = (function (my) {
 
 
       /*
-       * Get source string value of a simple FTL message to be used in
-       * the Copy (original to translation) function
+       * Get source string value of a simple FTL message or a simple
+       * single attribute FTL message to be used in the Copy (original
+       * to translation) function.
        */
       getSourceStringValue: function (entity, fallback) {
         if (entity.format !== 'ftl' || this.isComplexFTL()) {
@@ -461,7 +479,18 @@ var Pontoon = (function (my) {
         }
 
         var ast = fluentParser.parseEntry(entity.original);
-        return stringifyElements(ast.value.elements);
+        var tree;
+
+        // Simple string
+        if (ast.value) {
+          tree = ast;
+        }
+        // Simple single-attribute string
+        else {
+          tree = ast.attributes[0];
+        }
+
+        return stringifyElements(tree.value.elements);
       },
 
 
@@ -495,6 +524,25 @@ var Pontoon = (function (my) {
         }
 
         return translation;
+      },
+
+
+      /*
+       * Get attribute, if ast of the entity is a simple single attribute message.
+       * Else: return false.
+       */
+      getSimpleSingleAttribute: function (entity) {
+        if (entity.format !== 'ftl') {
+          return false;
+        }
+
+        var ast = fluentParser.parseEntry(entity.original);
+
+        if (!isSimpleSingleAttributeMessage(ast)) {
+          return false;
+        }
+
+        return ast.attributes[0];
       },
 
 
@@ -544,9 +592,17 @@ var Pontoon = (function (my) {
 
         // Attributes
         if (ast.attributes.length && !unsupported) {
-          ast.attributes.forEach(function (attr) {
-            attributes += renderOriginalElements(attr.value.elements, attr.id.name);
-          });
+          // Simple single-attribute string
+          if (isSimpleSingleAttributeMessage(ast)) {
+            attributes = '<li><p>' +
+              stringifyElements(ast.attributes[0].value.elements, true) +
+            '</p></li>';
+          }
+          else {
+            ast.attributes.forEach(function (attr) {
+              attributes += renderOriginalElements(attr.value.elements, attr.id.name);
+            });
+          }
         }
 
         $('#ftl-original .attributes ul').append(attributes);
@@ -649,25 +705,45 @@ var Pontoon = (function (my) {
 
         // Attributes
         if (attributesTree.length) {
-          attributesTree.forEach(function (attr) {
-            var id = attr.id.name;
+          // Simple single-attribute string: only attribute
+          if (
+            (translationAST && isSimpleSingleAttributeMessage(translationAST)) ||
+            (!translationAST && isSimpleSingleAttributeMessage(entityAST))
+          ) {
+            value = '';
 
-            // Mark translated attributes
-            var isTranslated = translatedAttributes.indexOf(id) !== -1;
+            if (translationAST) {
+              value = stringifyElements(translationAST.attributes[0].value.elements);
+            }
 
-            attributes += (
-              '<li data-id="' + id + '">' +
-                '<ul>' +
-                  renderEditorElements(attr.value.elements, id, isTranslated) +
-                '</ul>' +
-              '</li>'
-            );
-          });
+            $('#only-value')
+              .val(value)
+              .parents('li')
+              .show();
 
-          $('#ftl-area .attributes ul:first').append(attributes);
+            $('#ftl-area > .main-value').show();
+          }
+          else {
+            attributesTree.forEach(function (attr) {
+              var id = attr.id.name;
 
-          // Update access keys presentation
-          $('#ftl-area textarea.value').keyup();
+              // Mark translated attributes
+              var isTranslated = translatedAttributes.indexOf(id) !== -1;
+
+              attributes += (
+                '<li data-id="' + id + '">' +
+                  '<ul>' +
+                    renderEditorElements(attr.value.elements, id, isTranslated) +
+                  '</ul>' +
+                '</li>'
+              );
+            });
+
+            $('#ftl-area .attributes ul:first').append(attributes);
+
+            // Update access keys presentation
+            $('#ftl-area textarea.value').keyup();
+          }
         }
 
         // Ignore editing for anonymous users
@@ -714,6 +790,12 @@ var Pontoon = (function (my) {
           // Multiline strings: mark with indent
           if (value.indexOf('\n') !== -1) {
             value = '\n  ' + value.replace(/\n/g, '\n  ');
+          }
+
+          // Simple single-attribute string
+          var attribute = $('#metadata .attribute .content').text();
+          if (attribute) {
+            value = '\n  .' + attribute + ' = ' + value;
           }
 
           content += value;

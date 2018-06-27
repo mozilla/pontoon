@@ -370,11 +370,17 @@ var Pontoon = (function (my) {
      * link Metadata link (optional)
      */
     appendMetaData: function (title, text, link, linkClass) {
+      var className = title.trim().toLowerCase();
+
       if (link) {
         text = '<a href="' + link + '" class="' + linkClass + '">' + this.doNotRender(text) + '</a>';
       }
 
-      $('#metadata').append('<p><span class="title">' + title + '</span> <span class="content">' + text + '</span></p>');
+      $('#metadata').append(
+        '<p class="' + className + '">' +
+          '<span class="title">' + title + '</span> ' +
+          '<span class="content">' + text + '</span>' +
+        '</p>');
     },
 
 
@@ -577,6 +583,12 @@ var Pontoon = (function (my) {
             $('#source-pane').addClass('screenshots');
           }
         });
+      }
+
+      // Metadata: attribute
+      var attribute = self.fluent.getSimpleSingleAttribute(entity);
+      if (attribute) {
+        self.appendMetaData('Attribute', attribute.id.name);
       }
 
       // Metadata: key
