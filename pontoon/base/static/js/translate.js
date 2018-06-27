@@ -43,6 +43,7 @@ var Pontoon = (function (my) {
 
       var li = $('<li class="entity' +
         (' ' + status) +
+        (translation.pk ? ' has-translations' : '') +
         (!entity.body ? ' uneditable' : '') +
         (this.allEntitiesSelected ? ' selected' : '') +
         (entity.visible ? ' visible': '') +
