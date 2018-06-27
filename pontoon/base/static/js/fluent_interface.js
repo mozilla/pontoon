@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast element representing a pluralized string?
+   * Return true when AST element represents a pluralized string.
    *
    * Keys of all variants of such elements are either
    * CLDR plurals or numbers.
@@ -57,7 +57,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Are all elements supported in rich FTL editor?
+   * Return true when all elements are supported in rich FTL editor.
    *
    * Elements are supported if they are:
    * - simple elements or
@@ -73,7 +73,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a message, supported in rich FTL editor?
+   * Return true when AST represents a message, supported in rich FTL editor.
    *
    * Message is supported if it's valid and all value elements
    * and all attribute elements are supported.
@@ -93,7 +93,7 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a simple message?
+   * Return true when AST represents a simple message.
    *
    * A simple message has no attributes and all value
    * elements are simple.
@@ -112,8 +112,8 @@ var Pontoon = (function (my) {
   }
 
   /*
-   * Is ast of a message without value and with 1 attribute,
-   * which only contains simple elements?
+   * Return true when AST has no value
+   * and a single attribute with only simple elements.
    */
   function isSimpleSingleAttributeMessage(ast) {
     if (
