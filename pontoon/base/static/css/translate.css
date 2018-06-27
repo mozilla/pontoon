@@ -1508,10 +1508,6 @@ body > header aside p {
   text-align: left;
 }
 
-.ftl-area ul li.indented {
-  margin-left: 10px;
-}
-
 .ftl-area section .id {
   border: 1px solid #5E6475;
   background: transparent;
@@ -1526,6 +1522,11 @@ body > header aside p {
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.ftl-area section .indented .id {
+  margin-left: 10px;
+  width: calc(25% - 15px);
 }
 
 .ftl-area section .id .stress {
