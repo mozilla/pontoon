@@ -217,9 +217,17 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
+        var expression = '';
+        if (element.expression.expression) {
+          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        }
+        content += '<li data-expression="' + expression + '"><ul>';
+
         element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
         });
+
+        content += '</ul></li>';
       }
     });
 
@@ -745,6 +753,13 @@ var Pontoon = (function (my) {
             $('#ftl-area textarea.value').keyup();
           }
         }
+
+        // Indent selector variants if preceeded by other elements
+        $('.ftl-area section > ul:not(.template) > li[data-expression]').each(function(i, node) {
+          if ($(node).prevAll(':visible:not([data-expression])').length) {
+            $(node).addClass('indented');
+          }
+        });
 
         // Ignore editing for anonymous users
         if (!Pontoon.user.id) {

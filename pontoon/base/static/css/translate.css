@@ -1523,6 +1523,11 @@ body > header aside p {
   box-sizing: border-box;
 }
 
+.ftl-area section .indented .id {
+  margin-left: 10px;
+  width: calc(25% - 15px);
+}
+
 .ftl-area section .id .stress {
   color: #7BC876;
 }
