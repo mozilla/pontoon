@@ -299,13 +299,27 @@
         </section>
         <section class="attributes">
           <ul></ul>
-          <ul class="template">
-            <li class="custom-attribute clearfix">
-              <div class="wrapper">
-                <textarea class="id" placeholder="enter-attribute-id"></textarea>
-                <sub class="fa fa-times remove" title="Remove"></sub>
-              </div>
-              <textarea class="value" placeholder="Enter attribute value"></textarea>
+        </section>
+        <section class="templates">
+          <ul class="value">
+            <li class="clearfix">
+              <label class="id" for="ftl-id-Value">
+                <span>Value</span>
+              </label>
+              <textarea class="value" id="ftl-id-Value"></textarea>
+            </li>
+          </ul>
+          <ul class="attribute">
+            <li class="custom-attribute">
+              <ul>
+                <li class="clearfix">
+                  <div class="wrapper">
+                    <input type="text" class="id" placeholder="enter-attribute-id">
+                    <span class="fa fa-times remove" title="Remove attribute"></span>
+                  </div>
+                  <textarea class="value" id="ftl-id-enter-id" placeholder="Enter attribute value"></textarea>
+                </li>
+              </ul>
             </li>
           </ul>
         </section>
@@ -372,7 +386,7 @@
             </div>
           </div>
 
-          <button id="add-attribute" title="Add attribute">+Attribute</button>
+          <button id="add-attribute" title="Add attribute">Add Attribute</button>
           <button id="copy" title="Copy From Source (Ctrl + Shift + C)">Copy</button>
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
