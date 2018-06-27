@@ -1,14 +1,10 @@
 import logging
 
-from bulk_update.helper import bulk_update
-
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from pontoon.base.models import (
-    Locale,
     Project,
-    ProjectLocale,
     TranslatedResource,
 )
 
