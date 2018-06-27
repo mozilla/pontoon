@@ -157,7 +157,7 @@ var Pontoon = (function (my) {
   /*
    * Render editor element with given title and ast elements
    */
-  function renderEditorElement(title, elements, isPlural, isTranslated) {
+  function renderEditorElement(title, elements, isPlural, isTranslated, isCustomAttribute) {
     // Special case: Access keys
     var maxlength = '';
     var accesskeysDiv = '';
@@ -178,14 +178,24 @@ var Pontoon = (function (my) {
       }
     }
 
+    var id = '<label class="id" for="ftl-id-' + title + '">' +
+      '<span>' + title + '</span>' +
+      exampleSpan +
+    '</label>';
+
+    // Special case: Custom attribute
+    if (isCustomAttribute) {
+      id = '<div class="wrapper">' +
+        '<input type="text" class="id" value="' + title + '">' +
+        '<span class="fa fa-times remove" title="Remove attribute"></span>' +
+      '</div>';
+    }
+
     var value = isTranslated ? stringifyElements(elements) : '';
     var textarea = renderTextareaElement(title, value, maxlength);
 
     return '<li class="clearfix">' +
-      '<label class="id" for="ftl-id-' + title + '">' +
-        '<span>' + title + '</span>' +
-        exampleSpan +
-      '</label>' +
+      id +
       accesskeysDiv +
       textarea +
     '</li>';
@@ -240,7 +250,7 @@ var Pontoon = (function (my) {
    * - Adjoining simple elements are concatenated and presented as a simple string
    * - SelectExpression elements are presented as a list of variants
    */
-  function renderEditorElements(elements, title, isTranslated) {
+  function renderEditorElements(elements, title, isTranslated, isCustomAttribute) {
     var content = '';
     var simpleElements = [];
 
@@ -254,7 +264,7 @@ var Pontoon = (function (my) {
 
       // Render collected simple elements when non-simple or last element is met
       if ((!isSimpleElement(element) || isLastElement) && simpleElements.length) {
-        content += renderEditorElement(title, simpleElements, false, isTranslated);
+        content += renderEditorElement(title, simpleElements, false, isTranslated, isCustomAttribute);
         simpleElements = [];
       }
 
@@ -268,7 +278,7 @@ var Pontoon = (function (my) {
 
         if (isPluralElement(element) && !isTranslated) {
           Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
-            content += renderEditorElement(pluralName, [], true, isTranslated);
+            content += renderEditorElement(pluralName, [], true, isTranslated, isCustomAttribute);
           });
         }
         else {
@@ -277,7 +287,8 @@ var Pontoon = (function (my) {
               item.key.value || item.key.name,
               item.value.elements,
               isPluralElement(element),
-              isTranslated
+              isTranslated,
+              isCustomAttribute
             );
           });
         }
@@ -633,11 +644,15 @@ var Pontoon = (function (my) {
         var value = '';
         var attributes = '';
         var attributesTree = [];
+        var entityAttributes = [];
         var translatedAttributes = [];
 
         var entityAST = fluentParser.parseEntry(entity.original);
         if (entityAST.attributes.length) {
           attributesTree = entityAST.attributes;
+          entityAttributes = entityAST.attributes.map(function (attr) {
+            return attr.id.name;
+          });
         }
 
         translation = translation || entity.translation[0];
@@ -706,7 +721,7 @@ var Pontoon = (function (my) {
           entityAST.value
         ) {
           var ast = translationAST || entityAST;
-          value = renderEditorElements(ast.value.elements, 'Value', translationAST);
+          value = renderEditorElements(ast.value.elements, 'Value', translationAST, false);
 
           $('#ftl-area .main-value ul').append(value);
         }
@@ -743,10 +758,18 @@ var Pontoon = (function (my) {
               // Mark translated attributes
               var isTranslated = translatedAttributes.indexOf(id) !== -1;
 
+              // Custom attributes
+              var identifier = 'data-id="' + id + '"';
+              var isCustomAttribute = false;
+              if (entityAttributes.indexOf(attr.id.name) === -1) {
+                identifier = 'class="custom-attribute"';
+                isCustomAttribute = true;
+              }
+
               attributes += (
-                '<li data-id="' + id + '">' +
+                '<li ' + identifier + '>' +
                   '<ul>' +
-                    renderEditorElements(attr.value.elements, id, isTranslated) +
+                    renderEditorElements(attr.value.elements, id, isTranslated, isCustomAttribute) +
                   '</ul>' +
                 '</li>'
               );
