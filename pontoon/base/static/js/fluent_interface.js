@@ -288,7 +288,7 @@ var Pontoon = (function (my) {
               item.value.elements,
               isPluralElement(element),
               isTranslated,
-              isCustomAttribute
+              isCustomAttribute,
             );
           });
         }
@@ -952,7 +952,7 @@ var Pontoon = (function (my) {
               if (showFTLEditor) {
                 var isRichEditorSupported = self.renderEditor({
                   pk: translated, // An indicator that the string is translated
-                  string: translation
+                  string: translation,
                 });
 
                 // Rich FTL editor does not support the translation
