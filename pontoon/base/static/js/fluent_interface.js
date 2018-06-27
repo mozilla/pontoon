@@ -288,7 +288,7 @@ var Pontoon = (function (my) {
               item.value.elements,
               isPluralElement(element),
               isTranslated,
-              isCustomAttribute,
+              isCustomAttribute
             );
           });
         }
