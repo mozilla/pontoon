@@ -716,7 +716,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'unreviewed', 'partial', 'missing'
+     * Get entity status: 'translated', 'fuzzy', 'partial', 'missing'
      *
      * entity Entity
      */
@@ -2541,7 +2541,7 @@ var Pontoon = (function (my) {
       );
 
       entity.ui
-        .removeClass('translated unreviewed fuzzy missing partial')
+        .removeClass('translated fuzzy partial missing')
         .addClass(status)
         .find('.translation-string')
           .html(translationString);
