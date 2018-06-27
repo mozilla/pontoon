@@ -833,7 +833,8 @@ var Pontoon = (function (my) {
         // Attributes
         if (attributeElements.length) {
           attributeElements.each(function () {
-            var id = $(this).data('id');
+            // Entity or custom attribute
+            var id = $(this).data('id') || $(this).find('.id').val();
             var val = serializeFTLEditorElements($(this).find('ul:first > li'));
 
             if (id && val) {
