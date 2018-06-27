@@ -1169,7 +1169,6 @@ body > header aside p {
 #entitylist > .wrapper > ul > li.unreviewed p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
-#entitylist > .wrapper > ul > li.missing p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
   width: 49%;
