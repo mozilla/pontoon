@@ -11,7 +11,7 @@ class RaygunExceptionMiddleware(Provider):
         # of these.
         if not isinstance(exception, (Http404, PermissionDenied)):
             return (super(RaygunExceptionMiddleware, self)
-                    .process_exception(request, exception))
+                    .process_exception(request, unicode(exception).encode('utf-8')))
 
 
 class BlockedIpMiddleware(object):
