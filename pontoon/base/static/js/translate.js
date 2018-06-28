@@ -2544,6 +2544,7 @@ var Pontoon = (function (my) {
       entity.ui
         .removeClass('translated fuzzy partial missing')
         .addClass(status)
+        .toggleClass('has-translations', translation.pk)
         .find('.translation-string')
           .html(translationString);
 
