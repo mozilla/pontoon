@@ -43,6 +43,7 @@ var Pontoon = (function (my) {
 
       var li = $('<li class="entity' +
         (' ' + status) +
+        (translation.pk ? ' has-translations' : '') +
         (!entity.body ? ' uneditable' : '') +
         (this.allEntitiesSelected ? ' selected' : '') +
         (entity.visible ? ' visible': '') +
@@ -716,7 +717,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'unreviewed', 'partial', 'missing'
+     * Get entity status: 'translated', 'fuzzy', 'partial', 'missing'
      *
      * entity Entity
      */
@@ -2541,8 +2542,9 @@ var Pontoon = (function (my) {
       );
 
       entity.ui
-        .removeClass('translated unreviewed fuzzy missing partial')
+        .removeClass('translated fuzzy partial missing')
         .addClass(status)
+        .toggleClass('has-translations', translation.pk)
         .find('.translation-string')
           .html(translationString);
 

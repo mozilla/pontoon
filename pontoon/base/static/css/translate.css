@@ -1166,7 +1166,7 @@ body > header aside p {
 }
 
 #entitylist > .wrapper > ul > li.translated p span.source-string,
-#entitylist > .wrapper > ul > li.unreviewed p span.source-string,
+#entitylist > .wrapper > ul > li.missing.has-translations p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
