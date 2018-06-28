@@ -36,8 +36,10 @@ script:
   - pylama pontoon
   - pylama tests
   - ./node_modules/.bin/webpack
+  - cd frontend && npm run build
   - python manage.py collectstatic -v0 --noinput
   - npm test
+  - cd frontend && npm test
   - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - ./node_modules/.bin/eslint .
   - codecov
