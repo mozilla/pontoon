@@ -147,6 +147,16 @@ def test_ftl_parse_error(get_entity_mock):
     ) == {}
 
 
+def test_ftl_non_localizable_entries(get_entity_mock):
+    """Non-localizable entries are not allowed"""
+    assert run_checks(
+        get_entity_mock('ftl', string='key = value'),
+        '## Group Comment'
+    ) == {
+        'pErrors': [u'Translation needs to be a valid localizable entry']
+    }
+
+
 def test_ftl_id_missmatch(get_entity_mock):
     """ID of the source string and translation must be the same"""
     assert run_checks(
