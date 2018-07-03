@@ -173,12 +173,7 @@
             {{ Filter.item('translated', 'Translated', count=True) }}
             {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
 
-            {% if tags %}
-            <li class="horizontal-separator tags-header">Tags</li>
-            {% for tag in tags %}
-            {{ Filter.item('tag-' + tag.slug, tag.name, priority=tag.priority) }}
-            {% endfor %}
-            {% endif %}
+            <li class="horizontal-separator for-tags">Tags</li>
 
             <li class="horizontal-separator">Extra Filters</li>
 
