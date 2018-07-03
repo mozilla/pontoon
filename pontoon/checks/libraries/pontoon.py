@@ -8,6 +8,8 @@ import bleach
 from collections import defaultdict
 from fluent.syntax import FluentParser, ast
 
+from pontoon.sync.formats.ftl import localizable_entries
+
 
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
 parser = FluentParser()
@@ -74,6 +76,12 @@ def run_checks(entity, string):
         if isinstance(translation_ast, ast.Junk):
             checks['pErrors'].append(
                 translation_ast.annotations[0].message
+            )
+
+        # Not a localizable entry
+        elif not isinstance(translation_ast, localizable_entries):
+            checks['pErrors'].append(
+                'Translation needs to be a valid localizable entry'
             )
 
         # Message ID mismatch
