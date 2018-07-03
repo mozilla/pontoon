@@ -16,7 +16,7 @@ type Props = {
 /**
  * Displays a list of entities and their current translation.
  *
- * This component will fetch entities when loaded, then displays those
+ * This component will fetch entities when loaded, then display those
  * entities. It interacts with `core/navigation` when an entity is selected.
  *
  */

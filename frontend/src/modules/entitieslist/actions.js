@@ -4,6 +4,9 @@ export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
 export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
 
 
+/**
+ * Indicate that entities are currently being fetched.
+ */
 export type RequestAction = {
     type: typeof REQUEST,
 };
@@ -14,6 +17,9 @@ export function request(): RequestAction {
 }
 
 
+/**
+ * Update entities to a new set.
+ */
 export type ReceiveAction = {
     type: typeof RECEIVE,
     entities: Array<Object>,
@@ -26,6 +32,9 @@ export function receive(entities: Array<Object>): ReceiveAction {
 }
 
 
+/**
+ * Fetch entities and their translation.
+ */
 export function get(
     locale: string,
     project: string,

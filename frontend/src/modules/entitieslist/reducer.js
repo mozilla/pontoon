@@ -23,7 +23,10 @@ const initial: State = {
     errors: [],
 };
 
-export default function reducer(state: State = initial, action: Action): State {
+export default function reducer(
+    state: State = initial,
+    action: Action,
+): State {
     switch (action.type) {
         case RECEIVE:
             return { ...state, ...{

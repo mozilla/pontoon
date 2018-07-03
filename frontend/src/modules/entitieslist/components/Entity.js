@@ -19,6 +19,21 @@ type Props = {
     selectEntity: Function,
 };
 
+/**
+ * Displays a single Entity as a list element.
+ *
+ * The format of this element is: "[Status] Source (Translation)"
+ *
+ * "Status" is the current status of the translation. Can be:
+ *   - "approved": there is an approved translation
+ *   - "fuzzy": there is a fuzzy translation
+ *   - "missing": there is no approved or fuzzy translations
+ *
+ * "Source" is the original string from the project. Usually it's the en-US string.
+ *
+ * "Translation" is the current "best" translation. It shows either the approved
+ * translation, or the fuzzy translation, or the last suggested translation.
+ */
 export default class Entity extends React.Component<Props> {
     get status(): string {
         const { entity } = this.props;

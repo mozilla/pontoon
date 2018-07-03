@@ -19,7 +19,10 @@ const initialParams: State = {
     entity: null,
 };
 
-export default function reducer(state: State = initialParams, action:Action): State {
+export default function reducer(
+    state: State = initialParams,
+    action:Action,
+): State {
     switch (action.type) {
         default:
             return state;
