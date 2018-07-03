@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
 
-import { shallow } from 'enzyme';
-import sinon from 'sinon';
+// import { shallow } from 'enzyme';
+// import sinon from 'sinon';
 
-import App from './App';
-import store from 'store';
+// import App from './App';
+// import store from 'store';
 
 
 describe('<App>', () => {

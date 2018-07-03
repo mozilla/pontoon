@@ -7,11 +7,7 @@ export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
 export type RequestAction = {
     type: typeof REQUEST,
 };
-export function request(
-    locale: string,
-    project: string,
-    resource: string,
-): RequestAction {
+export function request(): RequestAction {
     return {
         type: REQUEST,
     };
@@ -36,7 +32,7 @@ export function get(
     resource: string,
 ): Function {
     return (dispatch: Function): void => {
-        dispatch(request(locale, project, resource));
+        dispatch(request());
 
         // Fetch entities from backend.
         const url = new URL('http://localhost:8000/get-entities/');

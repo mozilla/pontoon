@@ -49,7 +49,7 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
         root = root.dive();
     }
 
-    throw new Error(oneLine`Could not find ${TargetComponent} in rendered
+    throw new Error(`Could not find ${TargetComponent} in rendered
         instance: ${componentInstance}; gave up after ${maxTries} tries`
     );
 }

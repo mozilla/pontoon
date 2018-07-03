@@ -21,8 +21,8 @@ type Props = {
  *
  */
 export class EntitiesListBase extends React.Component<Props> {
-    selectEntity = (e: SyntheticEvent<>) => {
-        console.log('click');
+    selectEntity = () => {
+        // console.log('click');
     }
 
     render() {

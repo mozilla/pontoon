@@ -1,6 +1,7 @@
 **/*.bundle.js
 **/*.js.map
 **/dist/**
+**/build/**
 vendor/**
 webpack.config.js
 coverage/**
@@ -10,4 +11,11 @@ static/*
 **/app/error_pages/**/*.js
 **/*blockrain*js
 assets/*
+**/node_modules/**
+docs/
+
 pontoon/base/templates/js/pontoon.js
+
+# This file is the default one that we got from create-react-app.
+# We are not using it yet, no need to check it.
+frontend/src/registerServiceWorker.js

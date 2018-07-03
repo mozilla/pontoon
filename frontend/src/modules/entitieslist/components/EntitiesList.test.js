@@ -1,12 +1,9 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import sinon from 'sinon';
 
 import store from 'store';
 import { shallowUntilTarget } from 'testUtils';
 
 import * as actions from '../actions';
-import Entity from './Entity';
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
 
