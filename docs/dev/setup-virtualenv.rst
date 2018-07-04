@@ -4,6 +4,12 @@ Developer Setup with virtualenv
 The following describes how to set up an instance of the site on your
 computer for development.
 
+   .. Note::
+
+    Installation with virtualenv is not recommended. If possible, please use
+    Developer Setup with Docker, which is simpler and makes it easier for us
+    to reproduce potential issues.
+
 Prerequisites
 -------------
 This guide assumes you have already installed and set up the following:

@@ -9,13 +9,6 @@ computer for development with Docker and docker-compose.
     These installation steps are made for development only. It is not
     recommended to run Pontoon via Docker in production.
 
-   .. Note::
-
-    Installation via Docker is still a fresh feature. Problems might happen,
-    bugs might be met. If you have any troubles with it, please
-    `file a bug <https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon>`_
-    or `propose a patch <https://github.com/mozilla/pontoon>`_!
-
 Prerequisites
 -------------
 
