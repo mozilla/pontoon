@@ -84,20 +84,6 @@ can start just the postgresql container by runnin::
 
     $ docker-compose run postgresql
 
-Running tests
--------------
-
-To run the entire test suite, simply run::
-
-    $ make test
-
-If you want to run only some unit tests, or want to avoid rebuilding the
-docker container every time you run tests, you can start a shell that will
-allow to run your own commands. To do that, run::
-
-    $ make shell
-    app@675af05d66ae:/app$ python manage.py test
-
 Building front-end resources
 ----------------------------
 
