@@ -17,6 +17,9 @@
             {% for key, value in p.serialize().iteritems() %}
               data-{{ key }}="{{ value }}"
             {% endfor %}
+
+            data-tags="{{ p.tag_set.all().serialize()|to_json }}"
+
             {% if project == p %}
               data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
             {% endif %}

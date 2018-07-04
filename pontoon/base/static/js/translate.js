@@ -1258,6 +1258,7 @@ var Pontoon = (function (my) {
             var node = $('#filter .menu [data-type="time-range"]');
             node.addClass('selected');
             placeholder.push(node.find('.title').text());
+
           } else {
             markTagFilters(type);
           }
@@ -3166,6 +3167,34 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Update tag list in filter menu
+     */
+    updateTagFilters: function() {
+      var tags = this.project.tags;
+      $('#filter .menu li[class^="tag-"]').remove();
+
+      tags.forEach(function(tag) {
+        var priority = '';
+
+        for (var i=0; i<5; i++) {
+          priority += '<span class="fa fa-star' + (i < tag.priority ? ' active' : '') + '"></span>';
+        }
+
+        $('#filter .menu li.for-tags, #filter .menu li[class^="tag-"]').last().after(
+          '<li class="tag-' + tag.slug +'" data-type="' + tag.slug + '">' +
+            '<span class="status fa"></span>' +
+            '<span class="title">' + tag.name + '</span>' +
+            '<span class="priority">' + priority + '</span>' +
+          '</li>'
+        );
+      });
+
+      $('#filter .menu li[class^="tag-"], #filter .menu li.for-tags')
+        .toggle(!!tags.length && this.currentPart.title === 'all-resources');
+    },
+
+
+    /*
      * Reset Time range filter to default
      */
     resetTimeRange: function() {
@@ -3315,6 +3344,7 @@ var Pontoon = (function (my) {
       self.updateTextareaAttributes();
       self.resetTimeRange();
       self.updateFilterUI();
+      self.updateTagFilters();
       self.renderEntityList();
       self.updateProgress();
 
@@ -3693,7 +3723,8 @@ var Pontoon = (function (my) {
         info: self.getProjectData('info') || '',
         width: self.getProjectWidth(),
         links: self.getProjectData('links') === 'True' ? true : false,
-        langpack_url: self.getProjectData('langpack_url') || ''
+        langpack_url: self.getProjectData('langpack_url') || '',
+        tags: self.getProjectData('tags')
       };
 
       /* Copy of User.can_translate(), used on client to improve performance */
@@ -3881,6 +3912,7 @@ var Pontoon = (function (my) {
           self.updateProgress();
           self.updateFilterUI();
           self.createObject(true);
+          self.updateTagFilters(true);
           return;
         }
       } else {
@@ -4170,9 +4202,6 @@ var Pontoon = (function (my) {
       } else {
         this.currentPart = matchingParts[0];
       }
-
-      $('#filter .menu li[class^="tag-"], #filter .menu li.tags-header')
-        .toggle(this.currentPart.title === 'all-resources');
 
       this.updatePartSelector(this.currentPart.title);
     },
