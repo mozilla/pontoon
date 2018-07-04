@@ -6,31 +6,31 @@
 <table>
     <tr>
         <td>Bootstrapper</td>
-        <td>create-react-app</td>
+        <td>[create-react-app](https://github.com/facebook/create-react-app)</td>
     </tr>
     <tr>
         <td>Package manager</td>
-        <td>Yarn</td>
+        <td>[Yarn](https://yarnpkg.com/en/)</td>
     </tr>
     <tr>
         <td>Views</td>
-        <td>React</td>
+        <td>[React](https://reactjs.org/)</td>
     </tr>
     <tr>
         <td>Data</td>
-        <td>Redux</td>
+        <td>[Redux](https://redux.js.org/)</td>
     </tr>
     <tr>
         <td>Tests</td>
-        <td>Jest</td>
+        <td>[Jest](http://jestjs.io/en/)</td>
     </tr>
     <tr>
         <td>Type checking</td>
-        <td>Flow</td>
+        <td>[Flow](https://flow.org/en/)</td>
     </tr>
     <tr>
         <td>Localization</td>
-        <td>Fluent</td>
+        <td>[Fluent](https://projectfluent.org/)</td>
     </tr>
     <tr>
         <td>Style</td>
@@ -66,7 +66,7 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 ## Running and deploying
 
-### Switch
+### This feature is behind a Switch
 
 While this is under development, the feature is hidden behing a feature switch, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_switch translate_next on --create`, then restart your web server. To turn it off, run `./manage.py waffle_switch translate_next off`.
 
@@ -76,43 +76,41 @@ The only required step for the front-end is to build static files with `yarn bui
 
 ### Development
 
-If you're using docker, `make run` automatically starts both a webpack server
-(on port 3000) and a django server (on port 8000). django is the server you want
-to hit, and it will then proxy appropriate requests to the webpack server.
+If you're using docker, `make run` automatically starts both a webpack server (on port 3000) and a django server (on port 8000). django is the server you want to hit, and it will then proxy appropriate requests to the webpack server.
 
-#### Enable websocket and warm-reloading
+#### Enabling websocket and warm-reloading for dev
 
-Currently websocket requests are redirect by django to the webpack server.
-Sadly, by default major browsers do not support websocket redirection. To
-enable it in Firefox, go to `about:config` and turn
-`network.websocket.auto-follow-http-redirect` to `true`. Note that there is
-a bug filed to get rid of that option entirely:
-https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
+Currently websocket requests are redirected by django to the webpack server. Sadly, by default major browsers do not support websocket redirection. To enable it in Firefox, go to `about:config` and turn `network.websocket.auto-follow-http-redirect` to `true`. Note that there is a bug filed to get rid of that option entirely: https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
+
+As far as we know, it is not possible to make that work in Chrome or Edge. This only impacts development, as there's no hot reloading in production.
+
+If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your django server regularly, because polling requests don't close, and after so many web page reloads, the django process won't be able to accept new requests.
 
 
 ## Type checking
 
 Our code uses Flow to enforce type checking. This is a good way to significantly improve resilience to bugs, and it removes some burden from unit tests (because Flow ensures that we use functions and components correctly).
 
-To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/).
+To check for Flow issues during development while you edit files, run:
+
+    yarn flow:dev
+
+To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/). Additionally, you can read through the [web-ext guide](https://github.com/mozilla/web-ext/blob/master/CONTRIBUTING.md#check-for-flow-errors) for hints on how to solve common Flow errors.
+
+Until we define our set of rules, please refer to the [addons team's Flow manifesto](https://github.com/mozilla/addons-frontend/#flow) regarding specific usage and edge cases.
 
 
 ## Testing
 
-Tests are run using [`jest`](https://facebook.github.io/jest/).
-We use [`enzyme`](http://airbnb.io/enzyme/docs/api/) for mounting React
-components and [`sinon`](http://sinonjs.org/) for mocking.
+Tests are run using [`jest`](https://facebook.github.io/jest/). We use [`enzyme`](http://airbnb.io/enzyme/docs/api/) for mounting React components and [`sinon`](http://sinonjs.org/) for mocking.
 
 To run the test suite, use:
 
     $ yarn test
 
-It will start an auto-reloading test runner, that will refresh every time
-you make a change to the code or tests.
+It will start an auto-reloading test runner, that will refresh every time you make a change to the code or tests.
 
-Tests are put in files called `fileToTest.test.js` in the same directory as
-the file to test. Inside test files, test suites are created. There should be
-one test suite per component, using this notation:
+Tests are put in files called `fileToTest.test.js` in the same directory as the file to test. Inside test files, test suites are created. There should be one test suite per component, using this notation:
 
 ```javascript
 describe('<Component>', () => {
