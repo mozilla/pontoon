@@ -24,6 +24,20 @@ If you're not familiar with `Docker <https://docs.docker.com/>`_ and
 reading up on.
 
 
+Database
+========
+
+By default, you will have default data loaded for only the Pontoon Intro project.
+If you have a database dump, you can load it into your PostgreSQL database by running::
+
+  $ make loaddb DB_DUMP_FILE=path/to/my/dump
+
+Note that your database container needs to be running while you do that. You
+can start just the postgresql container by runnin::
+
+  $ docker-compose run postgresql
+
+
 Python code conventions
 =======================
 
@@ -217,6 +231,7 @@ tests. Use context managers instead of monkey patching imported modules.
 
 Updating Your Local Instance
 ============================
+
 When changes are merged into the main Pontoon repository, you'll want to update
 your local development instance to reflect the latest version of the site. You
 can use Git as normal to pull the latest changes, but if the changes add any new
@@ -236,6 +251,20 @@ steps, as they don't affect your setup if nothing has changed:
 
    # Run database migrations.
    python manage.py migrate
+
+
+Building front-end resources
+============================
+
+We use webpack to build our JavaScript files for some pages. While `make build` will build
+those files for you, you might want to rebuild them while programming on the front. To build
+the files just once, run::
+
+  $ make build-frontend
+
+If you want to have those files be built automatically when you make changes, you can run::
+
+  $ make build-frontend-w
 
 
 Integration with fluent

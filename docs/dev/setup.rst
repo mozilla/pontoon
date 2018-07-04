@@ -68,31 +68,5 @@ Quickstart
    This will ask you to create a superuser, and then will update your Firefox
    account settings.
 
-At that point, you're good to go. Access the webapp via this URL: http://localhost:8000/ or the custom SITE_URL.
-
-
-Database
---------
-
-By default, you will have default data loaded for only the Pontoon Intro project.
-If you have a database dump, you can load it into your PostgreSQL database by running::
-
-    $ make loaddb DB_DUMP_FILE=path/to/my/dump
-
-Note that your database container needs to be running while you do that. You
-can start just the postgresql container by runnin::
-
-    $ docker-compose run postgresql
-
-Building front-end resources
-----------------------------
-
-We use webpack to build our JavaScript files for some pages. While `make build` will build
-those files for you, you might want to rebuild them while programming on the front. To build
-the files just once, run::
-
-   $ make build-frontend
-
-If you want to have those files be built automatically when you make changes, you can run::
-
-   $ make build-frontend-w
+At that point, you're ready to start :doc:`contributing`! Access the webapp via this URL:
+http://localhost:8000/ or the custom SITE_URL.
