@@ -42,7 +42,6 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
-from pontoon.tags.utils.tags import TagsTool
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import (
     save_failed_checks,
@@ -88,7 +87,7 @@ def translate(request, locale, slug, part):
 
     projects = (
         Project.objects.available()
-        .prefetch_related('subpage_set')
+        .prefetch_related('subpage_set', 'tag_set')
         .order_by('name')
     )
 
@@ -108,10 +107,6 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
-        'tags': (
-            TagsTool(projects=[project], priority=True)
-            if project.tags_enabled
-            else None)
     })
 
 
@@ -246,8 +241,6 @@ def _get_paginated_entities(locale, project, form, entities):
         return JsonResponse({
             'has_next': False,
             'stats': {},
-            'authors': [],
-            'counts_per_minute': [],
         })
 
     has_next = entities_page.has_next()
