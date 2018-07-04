@@ -24,10 +24,13 @@ Prerequisites
 Quickstart
 ----------
 
-Make sure to clone the repository using the ``--recursive`` option, or
-initialize submodules with ``git submodule update --init --recursive``.
+1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository
+   recursively::
 
-1. From the root of the repository, run::
+     $ git clone --recursive https://github.com/YOUR-USERNAME/pontoon.git
+
+
+2. From the root of the repository, run::
 
      $ make build
 
@@ -40,7 +43,7 @@ initialize submodules with ``git submodule update --init --recursive``.
      $ make build SITE_URL="https://192.168.1.14:8000"
 
 
-2. Then run the webapp::
+3. Run the webapp::
 
       $ make run
 
@@ -57,7 +60,8 @@ initialize submodules with ``git submodule update --init --recursive``.
         until it reports that the database is ready, then stop that and run
         ``make dockerrun``.
 
-3. Finally you need to run some setup steps, while the webapp is running::
+
+4. Finally, you need to run some setup steps, while the webapp is running::
 
       $ make setup
 
