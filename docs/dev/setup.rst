@@ -18,8 +18,8 @@ Prerequisites
    1.10 or higher.
 
 3. Install `make <https://www.gnu.org/software/make/>`_ using either your
-   system's package manager (Linux) or homebrew (OSX). On Windows, you can use
-   `MozillaBuild <https://wiki.mozilla.org/MozillaBuild>`_.
+   system's package manager (Linux) or Xcode command line developer tools (OSX).
+   On Windows, you can use `MozillaBuild <https://wiki.mozilla.org/MozillaBuild>`_.
 
 Quickstart
 ----------
