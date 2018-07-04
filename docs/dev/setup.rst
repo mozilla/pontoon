@@ -1,5 +1,5 @@
-Developer Setup with Docker
-===========================
+Developer Setup
+===============
 
 The following describes how to set up an instance of the site on your
 computer for development with Docker and docker-compose.

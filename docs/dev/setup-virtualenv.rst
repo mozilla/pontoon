@@ -1,5 +1,6 @@
-Developer Setup
-===============
+Developer Setup with virtualenv
+===============================
+
 The following describes how to set up an instance of the site on your
 computer for development.
 
