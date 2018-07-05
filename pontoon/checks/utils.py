@@ -1,9 +1,9 @@
 from pontoon.checks.models import Warning, Error
 
 
-def save_failed_checks(translation, failed_checks):
+def get_failed_checks_db_objects(translation, failed_checks):
     """
-    Save all failed checks to Database
+    Return model instances of Warnings and Errors
     :arg Translation translation: instance of translation
     ;arg dict failed_checks: dictionary with failed checks
     """
@@ -28,6 +28,16 @@ def save_failed_checks(translation, failed_checks):
                 translation=translation,
             ) for message in messages
         ])
+    return warnings, errors
+
+
+def save_failed_checks(translation, failed_checks):
+    """
+    Save all failed checks to Database
+    :arg Translation translation: instance of translation
+    :arg dict failed_checks: dictionary with failed checks
+    """
+    warnings, errors = get_failed_checks_db_objects(translation, failed_checks)
 
     Warning.objects.bulk_create(warnings)
     Error.objects.bulk_create(errors)
