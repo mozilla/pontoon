@@ -78,7 +78,7 @@ def catchall_dev(request):
 catchall_prod = TemplateView.as_view(template_name='index.html')
 
 
-def translate(request):
+def translate(request, locale=None, project=None, resource=None):
     if not waffle.switch_is_active('translate_next'):
         raise Http404
 

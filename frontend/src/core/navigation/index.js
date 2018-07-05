@@ -1,6 +1,6 @@
 /* @flow */
 
-export { default as reducer } from './reducer';
+export { default as selectors } from './selectors';
 
 
 // Name of this module.

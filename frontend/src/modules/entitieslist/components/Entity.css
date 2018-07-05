@@ -4,6 +4,10 @@
     flex-direction: row;
     line-height: 2rem;
 }
+.entity.selected {
+    background-color: blue;
+}
+
 .entity .source-string,
 .entity .translation-string {
     width: 48%;

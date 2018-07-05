@@ -9,7 +9,21 @@ export type Action =
     | RequestAction
 ;
 
-export type Entities = Array<Object>;
+type Translation = {
+    +string: string,
+    +approved: boolean,
+    +fuzzy: boolean,
+};
+
+export type DbEntity = {
+    +pk: number,
+    +original: string,
+    +translation: Array<Translation>,
+};
+
+export type Entities = Array<DbEntity>;
+
+// Read-only state (marked by '+').
 export type State = {
     +entities: Entities,
     +fetching: boolean,

@@ -5,11 +5,26 @@ import views
 from . import URL_BASE
 
 
+LOCALE_PART = r'(?P<locale>[A-Za-z0-9\-\@\.]+)'
+PROJECT_PART = r'(?P<project>[\w-]+)'
+RESOURCE_PART = r'(?P<resource>.+)'
+
+
 urlpatterns = [
     url(
-        r'^%s' % URL_BASE,
+        r'^%s$' % URL_BASE,
         views.translate,
-        name='pontoon.translate',
+        name='pontoon.translate.next',
+    ),
+    url(
+        r'^{base}{locale}/{project}/{resource}/$'.format(
+            base=URL_BASE,
+            locale=LOCALE_PART,
+            project=PROJECT_PART,
+            resource=RESOURCE_PART,
+        ),
+        views.translate,
+        name='pontoon.translate.next',
     ),
 ]
 

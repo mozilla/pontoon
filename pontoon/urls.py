@@ -109,10 +109,10 @@ urlpatterns = [
     url(r'', include('pontoon.machinery.urls')),
     url(r'', include('pontoon.contributors.urls')),
     url(r'', include('pontoon.localizations.urls')),
+    url(r'', include('pontoon.translate.urls')),
     url(r'', include('pontoon.base.urls')),
     url(r'', include('pontoon.batch.urls')),
     url(r'', include('pontoon.api.urls')),
-    url(r'', include('pontoon.translate.urls')),
 
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$', team, name='pontoon.teams.team'),
