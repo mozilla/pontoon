@@ -3724,7 +3724,7 @@ var Pontoon = (function (my) {
         width: self.getProjectWidth(),
         links: self.getProjectData('links') === 'True' ? true : false,
         langpack_url: self.getProjectData('langpack_url') || '',
-        tags: self.getProjectData('tags')
+        tags: self.getProjectData('tags') || []
       };
 
       /* Copy of User.can_translate(), used on client to improve performance */
