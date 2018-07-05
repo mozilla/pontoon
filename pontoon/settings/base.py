@@ -464,7 +464,6 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/lib/jquery-ui.js',
             'js/multiple_locale_selector.js',
-            'js/contributor.js',
             'js/team_selector.js',
             'js/settings.js'
         ),
