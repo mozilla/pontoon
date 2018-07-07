@@ -58,6 +58,10 @@ def home(request):
     user = request.user
     project = Project.objects.get(id=1)
 
+    # If user is not logged in, direct user towards the homepage
+    if user.is_authenticated() == False:
+        return render(request,'home.html')
+
     # Redirect user to the selected home page or '/'.
     if user.is_authenticated() and user.profile.custom_homepage != '':
         # If custom homepage not set yet, set it to the most contributed locale team page
