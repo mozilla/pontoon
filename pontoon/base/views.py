@@ -58,9 +58,9 @@ def home(request):
     user = request.user
     project = Project.objects.get(id=1)
 
-    # If user is not logged in, direct user towards the homepage
-    if user.is_authenticated() == False:
-        return render(request,'home.html')
+    # If user is not logged in, the default homepage is set to static webpage
+    if user.is_authenticated() == False :
+        return render(request, 'home.html')
 
     # Redirect user to the selected home page or '/'.
     if user.is_authenticated() and user.profile.custom_homepage != '':
@@ -102,17 +102,16 @@ def translate(request, locale, slug, part):
         project = get_object_or_404(Project.objects.available(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
-    return render(request, 'homeintro.html')
-    #  {
-    #     'download_form': forms.DownloadFileForm(),
-    #     'upload_form': forms.UploadFileForm(),
-    #     'locale': locale,
-    #     'locale_projects': locale.available_projects_list(),
-    #     'locales': Locale.objects.available(),
-    #     'part': part,
-    #     'project': project,
-    #     'projects': projects,
-    # })
+    return render(request, 'translate.html', {
+        'download_form': forms.DownloadFileForm(),
+        'upload_form': forms.UploadFileForm(),
+        'locale': locale,
+        'locale_projects': locale.available_projects_list(),
+        'locales': Locale.objects.available(),
+        'part': part,
+        'project': project,
+        'projects': projects,
+    })
 
 
 def translate_locale_agnostic(request, slug, part):
