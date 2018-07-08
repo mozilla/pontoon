@@ -39,6 +39,7 @@ class ProjectForm(forms.ModelForm):
             'priority',
             'contact',
             'disabled',
+            'is_dummy',
             'sync_disabled',
             'tags_enabled')
 

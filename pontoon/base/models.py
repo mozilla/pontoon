@@ -94,7 +94,11 @@ class UserTranslationsManager(UserManager):
 
         # Collect data for faster user stats calculation.
         user_stats = {}
-        translations = Translation.objects.exclude(user=None)
+        # TODO: Remove translations from dummy project.
+        translations = Translation.objects.exclude(
+            user=None,
+            entity__resource__project__is_dummy=True
+        )
 
         if start_date:
             translations = translations.filter(date__gte=start_date)
@@ -192,14 +196,14 @@ class UserCustomManager(UserManager):
             daily = translations.filter(date__startswith=day['day'])
             daily.prefetch_related('entity__resource__project')
             example = daily.order_by('-pk').first()
-
-            timeline.append({
-                'date': example.date,
-                'type': 'translation',
-                'count': day['count'],
-                'project': example.entity.resource.project,
-                'translation': example,
-            })
+            if not example.entity.resource.project.is_dummy:
+                timeline.append({
+                    'date': example.date,
+                    'type': 'translation',
+                    'count': day['count'],
+                    'project': example.entity.resource.project,
+                    'translation': example,
+                })
 
         return timeline
 
@@ -338,7 +342,9 @@ def user_locale_role(self, locale):
 @property
 def contributed_translations(self):
     """Filtered contributions provided by user."""
-    return Translation.objects.filter(user=self)
+    return Translation.objects.filter(
+        user=self,
+        entity__resource__project__is_dummy=False)
 
 
 @property
@@ -508,12 +514,16 @@ class AggregatedStats(models.Model):
         total_strings_diff,
         approved_strings_diff,
         fuzzy_strings_diff,
-        unreviewed_strings_diff
+        unreviewed_strings_diff,
+        for_dummy_project
     ):
         self.total_strings = F('total_strings') + total_strings_diff
-        self.approved_strings = F('approved_strings') + approved_strings_diff
-        self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
-        self.unreviewed_strings = F('unreviewed_strings') + unreviewed_strings_diff
+        self.approved_strings = (F('approved_strings') +
+                                 approved_strings_diff, 0)[for_dummy_project]
+        self.fuzzy_strings = (F('fuzzy_strings') +
+                              fuzzy_strings_diff, 0)[for_dummy_project]
+        self.unreviewed_strings = (F('unreviewed_strings') +
+                                   unreviewed_strings_diff, 0)[for_dummy_project]
 
         self.save(update_fields=[
             'total_strings',
@@ -1031,8 +1041,10 @@ class ProjectQuerySet(models.QuerySet):
         Syncable projects are not disabled, don't have sync disabled and use
         repository as their data source type.
         """
+        # TODO: Add dummy porject.
         return self.filter(
             disabled=False,
+            is_dummy=False,
             sync_disabled=False,
             data_source='repository',
         )
@@ -1168,17 +1180,20 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
+        is_dummy_changed = False
         if self.pk is not None:
             try:
                 original = Project.objects.get(pk=self.pk)
                 if self.disabled != original.disabled:
                     disabled_changed = True
+                if self.is_dummy != original.is_dummy:
+                    is_dummy_changed = True
             except Project.DoesNotExist:
                 pass
 
         super(Project, self).save(*args, **kwargs)
 
-        if disabled_changed:
+        if disabled_changed or is_dummy_changed:
             for locale in self.locales.all():
                 locale.aggregate_stats()
 
@@ -2179,7 +2194,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = Entity.objects.filter(pk__in=Entity.objects.filter(Q(*pre_filters)))
         else:
             entities = Entity.objects.all()
-
         entities = entities.filter(
             resource__translatedresources__locale=locale,
             resource__project__disabled=False,
@@ -2655,6 +2669,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Returns statistics for the given project, paths and locale.
         """
+        # TODO: Add dummy project.
         translated_resources = self.filter(
             locale=locale,
             resource__project__disabled=False,
@@ -2757,20 +2772,16 @@ class TranslatedResource(AggregatedStats):
         # Translated Resource
         self.adjust_stats(
             total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
+            fuzzy_strings_diff, unreviewed_strings_diff,
+            for_dummy_project=resource.project.is_dummy
         )
 
         # Project
         project = resource.project
         project.adjust_stats(
             total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
-        )
-
-        # Locale
-        locale.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
+            fuzzy_strings_diff, unreviewed_strings_diff,
+            for_dummy_project=resource.project.is_dummy
         )
 
         # ProjectLocale
@@ -2782,5 +2793,17 @@ class TranslatedResource(AggregatedStats):
         if project_locale:
             project_locale.adjust_stats(
                 total_strings_diff, approved_strings_diff,
-                fuzzy_strings_diff, unreviewed_strings_diff
+                fuzzy_strings_diff, unreviewed_strings_diff,
+                for_dummy_project=resource.project.is_dummy
             )
+
+        # Locale
+        total_strings_diff = (total_strings_diff, 0)[resource.project.is_dummy]
+        approved_strings_diff = (approved_strings_diff, 0)[resource.project.is_dummy]
+        fuzzy_strings_diff = (fuzzy_strings_diff, 0)[resource.project.is_dummy]
+        unreviewed_strings_diff = (unreviewed_strings_diff, 0)[resource.project.is_dummy]
+        locale.adjust_stats(
+            total_strings_diff, approved_strings_diff,
+            fuzzy_strings_diff, unreviewed_strings_diff,
+            for_dummy_project=False
+        )
