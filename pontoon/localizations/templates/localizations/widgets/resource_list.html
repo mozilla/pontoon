@@ -1,11 +1,16 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
 
-{% macro header() %}
+{% macro header(priority) %}
   <table class="table table-sort project-list">
     <thead>
       <tr>
-        <th class="resource asc">Resource<i class="fa"></i></th>
+        <th class="resource{% if priority %} with-priority{% endif %} asc">Resource<i class="fa"></i></th>
+
+        {% if priority %}
+        <th class="priority">Priority<i class="fa"></i></th>
+        {% endif %}
+
         <th class="latest-activity">Latest Activity<i class="fa"></i></th>
         <th class="progress">Progress<i class="fa"></i></th>
         <th class="unreviewed-status" title="Unreviewed strings"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
@@ -14,13 +19,22 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(resource, main_link, chart_link, latest_activity, chart, class='limited', link_parameter=True) %}
+{% macro item(resource, main_link, chart_link, latest_activity, chart, priority) %}
   <tr class="{{ class }}">
-    <td class="resource">
+    <td class="resource{% if priority %} with-priority{% endif %}">
       <h4>
         <a href="{{ main_link }}">{{ resource.title }}</a>
       </h4>
     </td>
+
+    {% if priority %}
+    <td class="priority">
+      {% for n in range(5) %}
+        <span class="fa fa-star{% if loop.index <= resource.resource__priority %}{{ ' active' }}{% endif %}"></span>
+      {% endfor %}
+    </td>
+    {% endif %}
+
     <td class="latest-activity">
       {{ LatestActivity.span(latest_activity) }}
     </td>

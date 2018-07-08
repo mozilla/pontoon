@@ -1320,6 +1320,26 @@ class Project(AggregatedStats):
     def avg_string_count(self):
         return int(self.total_strings / self.enabled_locales)
 
+    def resource_priority_map(self):
+        """
+        Returns a map of resource paths and highest priorities of resource tags.
+        """
+        resource_priority = {}
+
+        resource_priority_qs = (
+            self.tag_set
+            .prefetch_related('resources')
+            .values('resources__path', 'priority')
+        )
+
+        for item in resource_priority_qs:
+            path = item['resources__path']
+            if path in resource_priority and resource_priority[path] >= item['priority']:
+                continue
+            resource_priority[path] = item['priority']
+
+        return resource_priority
+
 
 @python_2_unicode_compatible
 class ExternalResource(models.Model):

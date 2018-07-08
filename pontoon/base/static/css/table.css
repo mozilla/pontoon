@@ -28,6 +28,10 @@ table.table {
   width: 420px;
 }
 
+.table th.resource.with-priority {
+  width: 330px;
+}
+
 .table th.tag {
   width: 330px;
 }
@@ -80,6 +84,10 @@ table.table {
 
 .table .resource h4 {
   width: 419px;
+}
+
+.table .resource.with-priority h4 {
+  width: 329px;
 }
 
 .table h4 a {
