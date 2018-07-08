@@ -124,6 +124,7 @@ def ajax_resources(request, code, slug):
         'locale': locale,
         'project': project,
         'resources': parts,
+        'deadline': any(part['resource__deadline'] for part in parts),
         'priority': any(part['resource__priority'] for part in parts),
     })
 

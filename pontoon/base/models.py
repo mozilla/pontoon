@@ -928,6 +928,7 @@ class Locale(AggregatedStats):
                 'url',
                 'title',
                 'resource__path',
+                'resource__deadline',
                 'resource__total_strings',
                 'fuzzy_strings',
                 'unreviewed_strings',
@@ -963,6 +964,7 @@ class Locale(AggregatedStats):
                     locale_pages.annotate(
                         title=F('name'),
                         resource__path=F('resources__path'),
+                        resource__deadline=F('resources__deadline'),
                         resource__total_strings=F('resources__total_strings'),
                         fuzzy_strings=F('resources__translatedresources__fuzzy_strings'),
                         unreviewed_strings=F('resources__translatedresources__unreviewed_strings'),
@@ -980,6 +982,7 @@ class Locale(AggregatedStats):
                     locale_pages.annotate(
                         title=F('name'),
                         resource__path=F('project__resources__path'),
+                        resource__deadline=F('project__resources__deadline'),
                         resource__total_strings=F('project__resources__total_strings'),
                         fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
                         unreviewed_strings=F(
@@ -1005,6 +1008,7 @@ class Locale(AggregatedStats):
         details_list.append({
             'title': 'all-resources',
             'resource__path': [],
+            'resource__deadline': [],
             'resource__total_strings': all_resources.total_strings,
             'fuzzy_strings': all_resources.fuzzy_strings,
             'unreviewed_strings': all_resources.unreviewed_strings,

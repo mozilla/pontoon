@@ -28,8 +28,16 @@ table.table {
   width: 420px;
 }
 
-.table th.resource.with-priority {
+.table th.resource.with-deadline:not(.with-priority) {
+  width: 310px;
+}
+
+.table th.resource.with-priority:not(.with-deadline) {
   width: 330px;
+}
+
+.table th.resource.with-deadline.with-priority {
+  width: 220px;
 }
 
 .table th.tag {
@@ -86,8 +94,16 @@ table.table {
   width: 419px;
 }
 
-.table .resource.with-priority h4 {
+.table .resource.with-deadline:not(.with-priority) h4 {
+  width: 309px;
+}
+
+.table .resource.with-priority:not(.with-deadline) h4 {
   width: 329px;
+}
+
+.table .resource.with-deadline.with-priority h4 {
+  width: 219px;
 }
 
 .table h4 a {
