@@ -1,11 +1,22 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/deadline.html' as Deadline %}
+{% import 'widgets/priority.html' as Priority %}
 
-{% macro header() %}
+{% macro header(deadline, priority) %}
   <table class="table table-sort project-list">
     <thead>
       <tr>
-        <th class="resource asc">Resource<i class="fa"></i></th>
+        <th class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %} asc">Resource<i class="fa"></i></th>
+
+        {% if deadline %}
+        <th class="deadline">Deadline<i class="fa"></i></th>
+        {% endif %}
+
+        {% if priority %}
+        <th class="priority">Priority<i class="fa"></i></th>
+        {% endif %}
+
         <th class="latest-activity">Latest Activity<i class="fa"></i></th>
         <th class="progress">Progress<i class="fa"></i></th>
         <th class="unreviewed-status" title="Unreviewed strings"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
@@ -14,18 +25,31 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(resource, main_link, chart_link, latest_activity, chart, class='limited', link_parameter=True) %}
-  <tr class="{{ class }}">
-    <td class="resource">
+{% macro item(resource, main_link, chart_link, latest_activity, chart, deadline, priority) %}
+  <tr class="limited">
+    <td class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %}">
       <h4>
         <a href="{{ main_link }}">{{ resource.title }}</a>
       </h4>
     </td>
+
+    {% if deadline %}
+    <td class="deadline">
+      {{ Deadline.deadline(resource.resource__deadline, chart.approved_percent == 100) }}
+    </td>
+    {% endif %}
+
+    {% if priority %}
+    <td class="priority">
+      {{ Priority.priority(resource.resource__priority) }}
+    </td>
+    {% endif %}
+
     <td class="latest-activity">
       {{ LatestActivity.span(latest_activity) }}
     </td>
     <td class="progress" colspan="2">
-      {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+      {{ ProgressChart.span(chart, chart_link, True) }}
     </td>
   </tr>
 {% endmacro %}
