@@ -1,5 +1,6 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/deadline.html' as Deadline %}
 
 {% macro header(request=False) %}
   <table class="table table-sort project-list">
@@ -28,7 +29,7 @@
       </h4>
     </td>
     <td class="deadline">
-      <time datetime="{% if project.deadline %}{{ project.deadline.isoformat() }}{% endif %}" class="{{ project.deadline|date_status(chart.approved_percent == 100) }}">{{ project.deadline|format_datetime('short_date', default='―') }}</time>
+      {{ Deadline.deadline(project.deadline, chart.approved_percent == 100) }}
     </td>
     <td class="priority">
       {% for n in range(5) %}

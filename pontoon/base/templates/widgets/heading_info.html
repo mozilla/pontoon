@@ -1,3 +1,5 @@
+{% import 'widgets/deadline.html' as Deadline %}
+
 {% macro heading_item(title, link, class=None) %}
 <a class="{{ class }}" href="{{ link }}">{{ title }}</a>
 {% endmacro %}
@@ -28,7 +30,7 @@
 <li class="deadline">
   <span class="title">Deadline</span>
   <span class="value">
-    <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">{{ deadline|format_datetime('short_date', default='―') }}</time>
+    {{ Deadline.deadline(deadline, complete) }}
   </span>
 </li>
 {% endmacro %}
