@@ -1,5 +1,6 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/priority.html' as Priority %}
 
 {% macro header() %}
   <table class="table table-sort project-list">
@@ -23,9 +24,7 @@
       </h4>
     </td>
     <td class="priority">
-      {% for n in range(5) %}
-      <span class="fa fa-star{% if loop.index <= tag.priority %}{{ ' active' }}{% endif %}"></span>
-      {% endfor %}
+      {{ Priority.priority(tag.priority) }}
     </td>
     <td class="latest-activity">
       {{ LatestActivity.span(latest_activity) }}

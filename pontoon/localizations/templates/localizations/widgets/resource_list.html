@@ -1,6 +1,7 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
 {% import 'widgets/deadline.html' as Deadline %}
+{% import 'widgets/priority.html' as Priority %}
 
 {% macro header(deadline, priority) %}
   <table class="table table-sort project-list">
@@ -40,9 +41,7 @@
 
     {% if priority %}
     <td class="priority">
-      {% for n in range(5) %}
-        <span class="fa fa-star{% if loop.index <= resource.resource__priority %}{{ ' active' }}{% endif %}"></span>
-      {% endfor %}
+      {{ Priority.priority(resource.resource__priority) }}
     </td>
     {% endif %}
 

@@ -1,4 +1,5 @@
 {% import 'widgets/deadline.html' as Deadline %}
+{% import 'widgets/priority.html' as Priority %}
 
 {% macro heading_item(title, link, class=None) %}
 <a class="{{ class }}" href="{{ link }}">{{ title }}</a>
@@ -19,9 +20,7 @@
 <li class="priority">
   <span class="title">{{ title }}</span>
   <span class="value">
-    {% for n in range(5) %}
-      <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>
-    {% endfor %}
+    {{ Priority.priority(priority) }}
   </span>
 </li>
 {% endmacro %}
