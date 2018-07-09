@@ -55,14 +55,6 @@ def home(request):
     """Home view."""
 
     user = request.user
-<<<<<<< HEAD
-=======
-    project = Project.objects.get(id=1)
-
-    # If user is not logged in, the default homepage is set to static webpage
-    if not user.is_authenticated():
-        return render(request, 'home.html')
->>>>>>> 571aea191c54c2cd3dc8f815e9e4dd9ea04da6a7
 
     # Redirect user to the selected home page or '/'.
     if user.is_authenticated() and user.profile.custom_homepage != '':
