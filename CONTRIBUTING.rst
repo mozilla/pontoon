@@ -35,7 +35,7 @@ If you have a database dump, you can load it into your PostgreSQL database by ru
 Note that your database container needs to be running while you do that. You
 can start just the postgresql container by runnin::
 
-  $ docker-compose -d run postgresql
+  $ docker-compose run postgresql -d
 
 
 Python code conventions
