@@ -22,11 +22,11 @@ localization and include all the necessary tags.
 
 Our [installation documentation](https://mozilla-pontoon.readthedocs.io/) is available on readthedocs.
 
-For local development, `docker` is the recommended way to go, as it is simpler and makes it easier for us to reproduce potential issues.
+For local development, see [developer setup](http://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html) using `docker`.
 
-Do *not* use our `docker` environment for production deployment, instead use the regular setup instructions.
+For production installation, use [deployment documentation](http://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
 
-For quick and easy deployment using the Heroku platform, click this button:
+For quick and easy deployment on the Heroku platform, click this button:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
