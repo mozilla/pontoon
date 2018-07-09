@@ -27,7 +27,8 @@ coverage/
 
 # Docker
 .docker-build
-docker/config/webapp.env*
+docker/config/webapp.env
+docker/config/webapp.env-e
 
 # Webpack
 /assets/
