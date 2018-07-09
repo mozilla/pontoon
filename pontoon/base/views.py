@@ -36,7 +36,6 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
-    Resource,
     TranslationMemoryEntry,
     TranslatedResource,
     Translation,
@@ -56,11 +55,6 @@ def home(request):
     """Home view."""
 
     user = request.user
-    project = Project.objects.get(id=1)
-
-    # If user is not logged in, the default homepage is set to static webpage
-    if user.is_authenticated() == False :
-        return render(request, 'home.html')
 
     # Redirect user to the selected home page or '/'.
     if user.is_authenticated() and user.profile.custom_homepage != '':
@@ -73,13 +67,7 @@ def home(request):
         if user.profile.custom_homepage:
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
-    locale = utils.get_project_locale_from_request(request, project.locales) or 'en-GB'
-    path = Resource.objects.filter(
-        project=project,
-        translatedresources__locale__code=locale
-    ).values_list('path', flat=True)[0]
-
-    return translate(request, locale, project.slug, path)
+    return render(request, 'home.html')
 
 
 # TRANSLATE VIEWs
