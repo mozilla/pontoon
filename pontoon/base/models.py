@@ -2115,6 +2115,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         return utils.mark_placeables(self.string)
 
     @property
+    def for_dummy_project(self):
+        return self.resource.project.is_dummy
+
+    @property
     def marked_plural(self):
         return utils.mark_placeables(self.string_plural)
 
@@ -2167,6 +2171,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             'string': None,
             'approved': False,
             'pk': None,
+            'user': -1,
         }
 
     @classmethod
@@ -2330,6 +2335,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     False if entity.pk not in visible_entities or not visible_entities
                     else True
                 ),
+                'for_dummy': entity.for_dummy_project,
             })
 
         return entities_array
@@ -2489,6 +2495,13 @@ class Translation(DirtyFieldsMixin, models.Model):
                 'type': 'submitted',
             }
 
+    @property
+    def for_dummy_project(self):
+        """
+        Return true if the translations are for dummy project
+        """
+        return self.entity.resource.project.is_dummy
+
     def __str__(self):
         return self.string
 
@@ -2600,6 +2613,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'rejected': self.rejected,
             'fuzzy': self.fuzzy,
+            'user': self.user.pk if self.user else -1,
         }
 
 
