@@ -1,3 +1,6 @@
+{% import 'widgets/deadline.html' as Deadline %}
+{% import 'widgets/priority.html' as Priority %}
+
 {% macro heading_item(title, link, class=None) %}
 <a class="{{ class }}" href="{{ link }}">{{ title }}</a>
 {% endmacro %}
@@ -17,9 +20,7 @@
 <li class="priority">
   <span class="title">{{ title }}</span>
   <span class="value">
-    {% for n in range(5) %}
-      <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>
-    {% endfor %}
+    {{ Priority.priority(priority) }}
   </span>
 </li>
 {% endmacro %}
@@ -28,7 +29,7 @@
 <li class="deadline">
   <span class="title">Deadline</span>
   <span class="value">
-    <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">{{ deadline|format_datetime('short_date', default='―') }}</time>
+    {{ Deadline.deadline(deadline, complete) }}
   </span>
 </li>
 {% endmacro %}

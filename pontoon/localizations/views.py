@@ -92,7 +92,11 @@ def ajax_resources(request, code, slug):
     translatedresources = dict(translatedresources.items() + pages.items())
     parts = locale.parts_stats(project)
 
+    resource_priority_map = project.resource_priority_map()
+
     for part in parts:
+        part['resource__priority'] = resource_priority_map.get(part['title'], None)
+
         translatedresource = translatedresources.get(part['title'], None)
         if translatedresource and translatedresource.latest_translation:
             part['latest_activity'] = translatedresource.latest_translation.latest_activity
@@ -120,6 +124,8 @@ def ajax_resources(request, code, slug):
         'locale': locale,
         'project': project,
         'resources': parts,
+        'deadline': any(part['resource__deadline'] for part in parts),
+        'priority': any(part['resource__priority'] for part in parts),
     })
 
 

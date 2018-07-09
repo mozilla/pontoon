@@ -8,7 +8,7 @@
     </div>
   </menu>
 
-  {{ ResourceList.header() }}
+  {{ ResourceList.header(deadline, priority) }}
 
   {% for resource in resources %}
     {% if not loop.last %}
@@ -16,7 +16,7 @@
       {% set chart_link = main_link %}
       {% set latest_activity = resource.latest_activity %}
       {% set chart = resource.chart %}
-      {{ ResourceList.item(resource, main_link, chart_link, latest_activity, chart) }}
+      {{ ResourceList.item(resource, main_link, chart_link, latest_activity, chart, deadline, priority) }}
     {% endif %}
   {% endfor %}
 
