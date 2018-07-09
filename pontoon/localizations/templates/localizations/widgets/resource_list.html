@@ -26,7 +26,7 @@
 {% endmacro %}
 
 {% macro item(resource, main_link, chart_link, latest_activity, chart, deadline, priority) %}
-  <tr class="{{ class }}">
+  <tr class="limited">
     <td class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %}">
       <h4>
         <a href="{{ main_link }}">{{ resource.title }}</a>
@@ -49,7 +49,7 @@
       {{ LatestActivity.span(latest_activity) }}
     </td>
     <td class="progress" colspan="2">
-      {{ ProgressChart.span(chart, chart_link, link_parameter) }}
+      {{ ProgressChart.span(chart, chart_link, True) }}
     </td>
   </tr>
 {% endmacro %}
