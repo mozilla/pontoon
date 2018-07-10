@@ -1,7 +1,6 @@
 import requests
 
 import waffle
-from waffle.decorators import waffle_switch
 
 from django import http
 from django.conf import settings
@@ -17,7 +16,6 @@ from . import URL_BASE
 UPSTREAM = 'http://localhost:3000'
 
 
-@waffle_switch('translate_next')
 def static_serve_dev(request, path, insecure=False, **kwargs):
     """Proxy missing static files to the webpack server.
 
