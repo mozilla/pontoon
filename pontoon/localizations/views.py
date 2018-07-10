@@ -2,6 +2,8 @@ from __future__ import division
 
 import math
 
+from datetime import datetime
+
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
@@ -96,6 +98,10 @@ def ajax_resources(request, code, slug):
 
     for part in parts:
         part['resource__priority'] = resource_priority_map.get(part['title'], None)
+
+        deadline = part['resource__deadline']
+        if deadline:
+            part['resource__deadline'] = datetime.strptime(deadline, '%Y-%m-%d')
 
         translatedresource = translatedresources.get(part['title'], None)
         if translatedresource and translatedresource.latest_translation:
