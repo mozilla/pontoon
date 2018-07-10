@@ -1,5 +1,8 @@
 # coding: utf-8
 from __future__ import absolute_import
+
+import os
+
 from textwrap import dedent
 
 import pytest
@@ -18,6 +21,7 @@ def mock_quality_check_args(
     resource_ext='',
     translation='',
     resource_entities=None,
+    resource_path=None,
     **entity_data
 ):
     """
@@ -26,8 +30,12 @@ def mock_quality_check_args(
     """
     entity = MagicMock()
     entity.key = 'entity_a'
-    entity.resource.path = 'resource1.{}'.format(resource_ext)
-    entity.resource.format = resource_ext
+    if resource_path:
+        entity.resource.path = resource_path
+        entity.resource.format = os.path.splitext(resource_path)[1][1:]
+    else:
+        entity.resource.path = 'resource1.{}'.format(resource_ext)
+        entity.resource.format = resource_ext
     entity.comment = ''
     res_entities = []
 
@@ -310,10 +318,25 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
                 'clErrors': ['not well-formed (invalid token)']
             },
         ),
+
     )
 )
 def test_invalid_dtd_translations(quality_check_args, failed_checks):
     assert run_checks(**quality_check_args) == failed_checks
+
+
+def test_dtd_source_string_with_quotes():
+    """
+    Correct sourcec string with quotes shouldn't raise a warning.
+    """
+    quality_check_args = mock_quality_check_args(
+        resource_path='mobile/android/base/android_strings.dtd',
+        key='test',
+        string='Mozilla "2017"',
+        comment='Some comment',
+        translation='Mozilla "2018"',
+    )
+    assert run_checks(**quality_check_args) == {}
 
 
 @pytest.mark.django_db
