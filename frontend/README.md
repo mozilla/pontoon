@@ -6,31 +6,31 @@
 <table>
     <tr>
         <td>Bootstrapper</td>
-        <td>[create-react-app](https://github.com/facebook/create-react-app)</td>
+        <td>create-react-app — https://github.com/facebook/create-react-app</td>
     </tr>
     <tr>
         <td>Package manager</td>
-        <td>[Yarn](https://yarnpkg.com/en/)</td>
+        <td>Yarn — https://yarnpkg.com/</td>
     </tr>
     <tr>
         <td>Views</td>
-        <td>[React](https://reactjs.org/)</td>
+        <td>React — https://reactjs.org/</td>
     </tr>
     <tr>
         <td>Data</td>
-        <td>[Redux](https://redux.js.org/)</td>
+        <td>Redux — https://redux.js.org/</td>
     </tr>
     <tr>
         <td>Tests</td>
-        <td>[Jest](http://jestjs.io/en/)</td>
+        <td>Jest — http://jestjs.io/</td>
     </tr>
     <tr>
         <td>Type checking</td>
-        <td>[Flow](https://flow.org/en/)</td>
+        <td>Flow — https://flow.org/</td>
     </tr>
     <tr>
         <td>Localization</td>
-        <td>[Fluent](https://projectfluent.org/)</td>
+        <td>Fluent — https://projectfluent.org/</td>
     </tr>
     <tr>
         <td>Style</td>
@@ -72,19 +72,19 @@ While this is under development, the feature is hidden behing a feature switch, 
 
 ### Production
 
-The only required step for the front-end is to build static files with `yarn build`. django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
+The only required step for the front-end is to build static files with `yarn build`. Django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
 
 ### Development
 
-If you're using docker, `make run` automatically starts both a webpack server (on port 3000) and a django server (on port 8000). django is the server you want to hit, and it will then proxy appropriate requests to the webpack server.
+If you're using docker, `make run` automatically starts both a webpack server (on port 3000) and a Django server (on port 8000). Django is the server you want to hit, and it will then proxy appropriate requests to the webpack server.
 
 #### Enabling websocket and warm-reloading for dev
 
-Currently websocket requests are redirected by django to the webpack server. Sadly, by default major browsers do not support websocket redirection. To enable it in Firefox, go to `about:config` and turn `network.websocket.auto-follow-http-redirect` to `true`. Note that there is a bug filed to get rid of that option entirely: https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
+Currently websocket requests are redirected by Django to the webpack server. Sadly, by default major browsers do not support websocket redirection. To enable it in Firefox, go to `about:config` and turn `network.websocket.auto-follow-http-redirect` to `true`. Note that there is a bug filed to get rid of that option entirely: https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
 
 As far as we know, it is not possible to make that work in Chrome or Edge. This only impacts development, as there's no hot reloading in production.
 
-If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your django server regularly, because polling requests don't close, and after so many web page reloads, the django process won't be able to accept new requests.
+If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your Django server regularly, because polling requests don't close, and after so many web page reloads, the Django process won't be able to accept new requests.
 
 
 ## Type checking
