@@ -2,6 +2,7 @@
 
 # Make sure a link to the node modules is created.
 ln -s /webapp-frontend-deps/node_modules /app/node_modules
+ln -s /webapp-frontend-deps/assets /app/assets
 
 # Add local user
 # Either use the LOCAL_USER_ID if passed in at runtime or
