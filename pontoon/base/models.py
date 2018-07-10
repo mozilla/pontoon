@@ -1820,14 +1820,6 @@ class Resource(models.Model):
     def __str__(self):
         return '%s: %s' % (self.project.name, self.path)
 
-    def save(self, *args, **kwargs):
-        super(Resource, self).save(*args, **kwargs)
-
-        if self.deadline and self.project.deadline:
-            if self.deadline < self.project.deadline:
-                self.project.deadline = self.deadline
-                self.project.save()
-
     @classmethod
     def get_path_format(self, path):
         filename, extension = os.path.splitext(path)
