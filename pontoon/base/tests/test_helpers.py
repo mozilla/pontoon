@@ -8,11 +8,11 @@ from datetime import timedelta
 from six import text_type
 
 from pontoon.base.templatetags.helpers import (
-    to_json,
+    as_simple_translation,
     format_datetime,
     format_timedelta,
     nospam,
-    as_simple_translation,
+    to_json,
 )
 from pontoon.base.utils import aware_datetime
 

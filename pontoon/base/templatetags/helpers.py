@@ -25,7 +25,15 @@ parser = FluentParser()
 serializer = FluentSerializer()
 
 
-class LazyObjectsJsonEncoder(json.JSONEncoder):
+class DatetimeAwareJSONEncoder(json.JSONEncoder):
+    """Default encoder isn't able to handle datetime objects."""
+    def default(self, obj):
+        if isinstance(obj, datetime.date):
+            return obj.isoformat()
+
+        return json.JSONEncoder.default(self, obj)
+
+class LazyObjectsJSONEncoder(DatetimeAwareJSONEncoder):
     """Default encoder isn't able to handle Django lazy-objects."""
     def default(self, obj):
         if isinstance(obj, Promise):
@@ -34,10 +42,7 @@ class LazyObjectsJsonEncoder(json.JSONEncoder):
         if isinstance(obj, QuerySet):
             return list(map(str, obj))
 
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-
-        return json.JSONEncoder.default(self, obj)
+        return super(LazyObjectsJSONEncoder, self).default(obj)
 
 
 @library.global_function
@@ -104,7 +109,7 @@ def static(path):
 
 @library.filter
 def to_json(value):
-    return json.dumps(value, cls=LazyObjectsJsonEncoder)
+    return json.dumps(value, cls=LazyObjectsJSONEncoder)
 
 
 @library.filter
