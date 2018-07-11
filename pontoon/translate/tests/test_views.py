@@ -24,5 +24,4 @@ def test_translate_template(client):
     with override_switch('translate_next', active=True):
         response = client.get(url)
         assert response.status_code == 200
-        print response.content
         assert 'Translate.Next' in response.content

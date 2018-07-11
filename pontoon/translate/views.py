@@ -47,7 +47,6 @@ def catchall_dev(request):
     """
     # Redirect websocket requests directly to the webpack server.
     if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
-        print UPSTREAM + request.path
         return http.HttpResponseRedirect(UPSTREAM + request.path)
 
     # Until we change it, this app doesn't live at the root of our website.

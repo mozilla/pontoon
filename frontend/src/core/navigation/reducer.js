@@ -21,7 +21,7 @@ const initialParams: State = {
 
 export default function reducer(
     state: State = initialParams,
-    action:Action,
+    action: Action,
 ): State {
     switch (action.type) {
         default:
