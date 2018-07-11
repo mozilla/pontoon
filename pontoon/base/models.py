@@ -924,7 +924,7 @@ class Locale(AggregatedStats):
     def parts_stats(self, project):
         """Get locale-project pages/paths with stats."""
         def get_details(parts):
-            values = parts.order_by('title').values(
+            return parts.order_by('title').values(
                 'url',
                 'title',
                 'resource__path',
@@ -934,14 +934,6 @@ class Locale(AggregatedStats):
                 'unreviewed_strings',
                 'approved_strings',
             )
-
-            # Make output JSON serializable
-            for value in values:
-                deadline = value['resource__deadline']
-                if deadline:
-                    value['resource__deadline'] = str(deadline)
-
-            return values
 
         pages = project.subpage_set.all()
         translatedresources = TranslatedResource.objects.filter(
