@@ -33,6 +33,7 @@ class DatetimeAwareJSONEncoder(json.JSONEncoder):
 
         return json.JSONEncoder.default(self, obj)
 
+
 class LazyObjectsJSONEncoder(DatetimeAwareJSONEncoder):
     """Default encoder isn't able to handle Django lazy-objects."""
     def default(self, obj):
