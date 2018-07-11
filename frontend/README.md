@@ -78,6 +78,17 @@ The only required step for the front-end is to build static files with `yarn bui
 
 If you're using docker, `make run` automatically starts both a webpack server (on port 3000) and a Django server (on port 8000). Django is the server you want to hit, and it will then proxy appropriate requests to the webpack server.
 
+A common case during development is to have 3 terminals open: one for the dev servers, one for the tests and one for Flow:
+
+    # terminal 1
+    $ make run
+
+    # terminal 2
+    $ make test-frontend
+
+    # terminal 3
+    $ make flow
+
 #### Enabling websocket and warm-reloading for dev
 
 Currently websocket requests are redirected by Django to the webpack server. Sadly, by default major browsers do not support websocket redirection. To enable it in Firefox, go to `about:config` and turn `network.websocket.auto-follow-http-redirect` to `true`. Note that there is a bug filed to get rid of that option entirely: https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
