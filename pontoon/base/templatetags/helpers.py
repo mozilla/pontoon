@@ -34,6 +34,9 @@ class LazyObjectsJsonEncoder(json.JSONEncoder):
         if isinstance(obj, QuerySet):
             return list(map(str, obj))
 
+        if isinstance(obj, datetime.date):
+            return obj.isoformat()
+
         return json.JSONEncoder.default(self, obj)
 
 
