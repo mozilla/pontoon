@@ -86,7 +86,7 @@ def translate(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
-        Project.objects.available()
+        Project.objects.translable()
         .prefetch_related('subpage_set', 'tag_set')
         .order_by('name')
     )
@@ -95,7 +95,7 @@ def translate(request, locale, slug, part):
         project = Project(name='All Projects', slug=slug.lower())
 
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(Project.objects.translable(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
     return render(request, 'translate.html', {
@@ -205,7 +205,7 @@ def _get_entities_list(locale, project, form):
     }, safe=False)
 
 
-def _get_all_entities(request, locale, project, form, entities):
+def _get_all_entities(locale, project, form, entities):
     """Return entities without pagination.
 
     This is used by the in-context mode of the Translate page.
@@ -256,12 +256,16 @@ def _get_paginated_entities(request, locale, project, form, entities):
                 entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
 
     entities = Entity.map_entities(locale, entities_to_map, [])
+
     entities_updated = []
 
+    # Update entity if it belongs to a dummy project by removing translations of other users
     for entity in entities:
         if entity['for_dummy']:
             t = entity['translation']
-            print(t[0]['user'])
+
+            # If translation for dummy project entity does not belong to the user
+            # replace it with a null translation
             if t[0]['user'] not in [request.user.pk, -1]:
                 entity['translation'] = [{
                     'fuzzy': False,
@@ -319,7 +323,7 @@ def entities(request):
 
     # In-place view: load all entities
     if form.cleaned_data['inplace_editor']:
-        return _get_all_entities(request, locale, project, form, entities)
+        return _get_all_entities(locale, project, form, entities)
 
     # Out-of-context view: paginate entities
     return _get_paginated_entities(request, locale, project, form, entities)
@@ -338,14 +342,16 @@ def get_translations_from_other_locales(request):
     locales = entity.resource.project.locales.exclude(code=locale)
     plural_form = None if entity.string_plural == "" else 0
     for_dummy = entity.resource.project.is_dummy
+    user = request.user if request.user.is_authenticated else None
 
+    # Show only user's translation from other locales if project is dummy
     if for_dummy:
         translations = Translation.objects.filter(
             entity=entity,
             locale__in=locales,
             plural_form=plural_form,
             approved=True,
-            user=request.user,
+            user=user,
         ).order_by('locale__name')
 
     else:
