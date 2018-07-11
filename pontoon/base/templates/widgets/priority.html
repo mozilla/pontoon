@@ -1,0 +1,5 @@
+{% macro priority(priority) %}
+  {% for n in range(5) %}
+  <span class="fa fa-star{% if loop.index <= priority %}{{ ' active' }}{% endif %}"></span>
+  {% endfor %}
+{% endmacro %}

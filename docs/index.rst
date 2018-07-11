@@ -1,5 +1,5 @@
-Pontoon - Translate the Web. In Place.
-======================================
+Pontoon - Mozilla's Localization Platform
+=========================================
 
 Pontoon is a web interface for translating text into other languages. Pontoon
 specializes in translating websites in-place, but can handle any project that
@@ -14,7 +14,7 @@ uses one of the file formats it supports:
 - INC
 - .lang
 
-Pontoon pulls strings it needs to translate from an external source, and writes
+Pontoon can pull strings it needs to translate from an external source, and write
 them back periodically. Typically these external sources are version control
 repositories that store the strings for an application. Supported external
 sources include:
@@ -28,11 +28,11 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   dev/install
-   dev/install-docker
+   dev/setup
    dev/contributing
    dev/sync
    dev/api
    dev/browser-support
    admin/deployment
    admin/maintenance
+   dev/setup-virtualenv

@@ -1,8 +1,3 @@
-# Local settings
-hooks/php/local-settings.php
-settings_local.py
-settings/local.py
-*/settings/local.py
 *.py[co]
 *.sw[po]
 .coverage
@@ -11,7 +6,7 @@ docs/_gh-pages
 build.py
 build
 .DS_Store
-node_modules/
+node_modules
 *-min.css
 *-min.js
 *-all.js
@@ -30,9 +25,10 @@ venv
 .cache/
 coverage/
 
-# For docker
+# Docker
 .docker-build
 docker/config/webapp.env
+docker/config/webapp.env-e
 
 # Webpack
 /assets/
