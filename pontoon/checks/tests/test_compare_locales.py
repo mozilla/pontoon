@@ -318,7 +318,6 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
                 'clErrors': ['not well-formed (invalid token)']
             },
         ),
-
     )
 )
 def test_invalid_dtd_translations(quality_check_args, failed_checks):
@@ -327,7 +326,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 
 def test_dtd_source_string_with_quotes():
     """
-    Correct sourcec string with quotes shouldn't raise a warning.
+    Correct source string with quotes shouldn't raise a warning.
     """
     quality_check_args = mock_quality_check_args(
         resource_path='mobile/android/base/android_strings.dtd',
