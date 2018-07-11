@@ -369,6 +369,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
+    'home' : {
+        'source_filenames': (
+            'css/home.css',
+        ),
+        'output_filename': 'css/home.min.css'
+    }
 }
 
 PIPELINE_JS = {

@@ -23,6 +23,12 @@
       <div class="right">
         {{ Notifications.menu() }}
 
+        <div class="sign-in-header">
+          {% if not user.is_authenticated() %}
+          <a id="fxa-sign-in" href="{{ provider_login_url(request) }}" class="button" >Sign Up</a>
+          {% endif %}
+        </div>
+        
         <div id="profile" class="select">
           {{ Profile.button() }}
           <div class="menu">
@@ -54,8 +60,6 @@
               {% else %}
                 {% if user.is_authenticated() %}
                   <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
-                {% else %}
-                  <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                 {% endif %}
               {% endif %}
             </ul>
