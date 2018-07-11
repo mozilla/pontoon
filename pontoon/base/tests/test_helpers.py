@@ -8,7 +8,12 @@ from datetime import timedelta
 from six import text_type
 
 from pontoon.base.templatetags.helpers import (
-    as_simple_translation, format_datetime, format_timedelta, nospam)
+    as_simple_translation,
+    format_datetime,
+    format_timedelta,
+    nospam,
+    to_json,
+)
 from pontoon.base.utils import aware_datetime
 
 
@@ -64,6 +69,15 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
 def test_helper_as_simple_translation(k):
     string, expected = SIMPLE_TRANSLATION_TESTS[k]
     assert as_simple_translation(string) == expected
+
+
+def test_helper_to_json():
+    obj = {
+        'a': 'foo',
+        'b': aware_datetime(2015, 1, 1),
+    }
+    string = '{"a": "foo", "b": "2015-01-01T00:00:00+00:00"}'
+    assert to_json(obj) == string
 
 
 def test_helper_base_format_dt_none():
