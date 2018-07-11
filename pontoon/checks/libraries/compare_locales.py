@@ -146,6 +146,7 @@ def run_checks(entity, locale_code, string):
 
     if 'mobile/android/base' in entity.resource.path:
         extra_tests = {'android-dtd'}
+        entity.string = escape_quotes(entity.string)
         string = escape_quotes(string)
 
     source_ent, translation_ent = cast_to_compare_locales(
