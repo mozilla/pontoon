@@ -23,7 +23,7 @@ urlpatterns = [
 # Note that because we override the static files serving, you will need to
 # run your local django server with the `--nostatic` option. That's
 # automatically done when running with `make run`.
-if settings.DEBUG:
+if settings.DEV:
     urlpatterns += [
         url(
             r'^static/(?P<path>.*)$',
