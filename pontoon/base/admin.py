@@ -169,7 +169,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ['path', 'format', 'project__name', 'project__slug']
-    list_display = ('pk', 'project', 'path', 'format')
+    list_display = ('pk', 'project', 'path', 'format', 'deadline')
 
 
 class TranslatedResourceAdmin(admin.ModelAdmin):
