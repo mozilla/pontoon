@@ -30,8 +30,6 @@ Contents
 
    dev/setup
    dev/contributing
-   dev/sync
-   dev/api
    dev/browser-support
    admin/deployment
    admin/maintenance
