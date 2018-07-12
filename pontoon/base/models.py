@@ -1375,6 +1375,7 @@ class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
     project = models.ForeignKey(Project, related_name='project_locale')
     locale = models.ForeignKey(Locale, related_name='project_locale')
+    readonly = models.BooleanField(default=False)
 
     #: Most recent translation approved or created for this project in
     #: this locale.
