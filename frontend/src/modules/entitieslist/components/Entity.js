@@ -56,8 +56,10 @@ export default class Entity extends React.Component<Props> {
                 onClick={ this.selectEntity }
             >
                 <span className='status fa' />
-                <span className='source-string'>{ entity.original }</span>
-                <span className='translation-string'>{ entity.translation[0].string }</span>
+                <div>
+                    <p className='source-string'>{ entity.original }</p>
+                    <p className='translation-string'>{ entity.translation[0].string }</p>
+                </div>
             </li>
         );
     }

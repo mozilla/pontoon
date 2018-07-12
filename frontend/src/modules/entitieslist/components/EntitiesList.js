@@ -4,6 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 
+import './EntitiesList.css';
+
 import { selectors as navSelectors } from 'core/navigation';
 
 import { NAME } from '..';

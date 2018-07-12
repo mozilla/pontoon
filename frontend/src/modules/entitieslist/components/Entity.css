@@ -1,27 +1,50 @@
 .entity {
     color: white;
-    display: flex;
-    flex-direction: row;
+    cursor: pointer;
     line-height: 2rem;
+    padding: 10px 25px 10px 43px;
+    position: relative;
+    vertical-align: baseline;
+    margin: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
 }
-.entity.selected {
-    background-color: blue;
+.entity.selected,
+.entity:hover {
+    background-color: #4d5967;
+}
+
+.entity > div {
+    height: 22px;
+    line-height: 22px;
 }
 
 .entity .source-string,
 .entity .translation-string {
-    width: 48%;
+    display: inline-block;
+    height: 22px;
+    line-height: 22px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 49%;
+}
+.entity .translation-string {
+    padding-left: 2%;
 }
 
 .entity > .status {
-  margin: -13px -13px -13px -16px;
-  padding: 13px 13px 13px 16px;
-  font-size: 16px;
+    margin: -13px -13px -13px -16px;
+    padding: 13px 13px 13px 16px;
+    font-size: 16px;
 }
 
 .entity .status.fa {
     left: 16px;
     top: 13px;
+    position: absolute;
 }
 .entity .status:before {
     color: #4D5967;
