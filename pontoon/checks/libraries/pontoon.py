@@ -38,22 +38,25 @@ def run_checks(entity, string):
     resource_ext = entity.resource.format
 
     # Prevent translations exceeding the given length limit
-    max_length = get_max_length(entity.comment)
-    html_parser = HTMLParser.HTMLParser()
-    string_length = len(
-        html_parser.unescape(
-            bleach.clean(
-                string,
-                strip=True,
-                tags=()
-            )
-        )
-    )
+    if resource_ext == 'lang':
+        max_length = get_max_length(entity.comment)
 
-    if max_length and string_length > max_length:
-        checks['pErrors'].append(
-            'Translation too long'
-        )
+        if max_length:
+            html_parser = HTMLParser.HTMLParser()
+            string_length = len(
+                html_parser.unescape(
+                    bleach.clean(
+                        string,
+                        strip=True,
+                        tags=()
+                    )
+                )
+            )
+
+            if string_length > max_length:
+                checks['pErrors'].append(
+                    'Translation too long'
+                )
 
     # Prevent empty translation submissions if not supported
     if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':

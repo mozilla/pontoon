@@ -3,9 +3,7 @@ import time
 
 from celery import shared_task
 
-from django.db import (
-    transaction
-)
+from django.db import transaction
 
 from pontoon.checks import libraries
 from pontoon.checks.utils import get_failed_checks_db_objects
@@ -14,9 +12,7 @@ from pontoon.checks.models import (
     Error,
 )
 
-from pontoon.base.models import (
-    Translation,
-)
+from pontoon.base.models import Translation
 
 log = logging.getLogger(__name__)
 
@@ -25,8 +21,7 @@ log = logging.getLogger(__name__)
 def bulk_run_checks(self, translations_pks):
     """
     Run checks on translations
-    :arg list[int] translations: list of primary keys for translations that should be processed
-    :arg int batch_size: Size of batch that should be checked at once by a worker
+    :arg list[int] translations_pks: list of primary keys for translations that should be processed
     """
     start_time = time.time()
     with transaction.atomic():
