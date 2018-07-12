@@ -43,11 +43,19 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '--force',
+            '-f', '--force',
             action='store_true',
             dest='force',
             default=False,
             help='Always sync even if there are no changes'
+        )
+
+        parser.add_argument(
+            '-s', '--synchronous',
+            action='store_true',
+            dest='force',
+            default=False,
+            help='Run the task synchronously'
         )
 
     def handle(self, *args, **options):
@@ -91,11 +99,22 @@ class Command(BaseCommand):
                                   .format(project.name))
             else:
                 self.stdout.write(u'Scheduling sync for project {0}.'.format(project.name))
-                sync_project.delay(
-                    project.pk,
-                    sync_log.pk,
-                    locale=locale,
-                    no_pull=options['no_pull'],
-                    no_commit=options['no_commit'],
-                    force=options['force'],
-                )
+                if options['synchronous']:
+                    sync_project.apply(
+                        args=(project.pk, sync_log.pk),
+                        kwargs=dict(
+                            locale=locale,
+                            no_pull=options['no_pull'],
+                            no_commit=options['no_commit'],
+                            force=options['force'],
+                        )
+                    )
+                else:
+                    sync_project.delay(
+                        project.pk,
+                        sync_log.pk,
+                        locale=locale,
+                        no_pull=options['no_pull'],
+                        no_commit=options['no_commit'],
+                        force=options['force'],
+                    )
