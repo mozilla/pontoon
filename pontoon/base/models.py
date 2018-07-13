@@ -2263,13 +2263,20 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = entities.exclude(pk__in=exclude_entities)
 
         order_fields = ('resource__path', 'order')
-        prefetch_lookup = 'resource'
-
         if project.slug == 'all-projects':
             order_fields = ('resource__project__name',) + order_fields
-            prefetch_lookup = 'resource__project'
 
-        entities = entities.prefetch_related(prefetch_lookup).prefetch_translations(locale)
+        entities = (
+            entities
+            .prefetch_related(
+                Prefetch(
+                    'resource__project__project_locale',
+                    queryset=ProjectLocale.objects.filter(locale=locale),
+                    to_attr='projectlocale',
+                )
+            )
+            .prefetch_translations(locale)
+        )
 
         return entities.order_by(*order_fields)
 
@@ -2303,6 +2310,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'source': entity.source,
                 'obsolete': entity.obsolete,
                 'translation': translation_array,
+                'readonly': entity.resource.project.projectlocale[0].readonly,
                 'visible': (
                     False if entity.pk not in visible_entities or not visible_entities
                     else True

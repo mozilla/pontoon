@@ -7,6 +7,7 @@ from mock import patch
 from pontoon.base.models import Entity, TranslatedResource
 from pontoon.test.factories import (
     EntityFactory,
+    ProjectLocaleFactory,
     TranslatedResourceFactory,
 )
 
@@ -21,6 +22,7 @@ def test_view_entity_inplace_mode(
     Inplace mode of get_entites, should return all entities in a single batch.
     """
     TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
+    ProjectLocaleFactory.create(project=resource_a.project, locale=locale_a)
     entities = EntityFactory.create_batch(size=3, resource=resource_a)
     entities_pks = [e.pk for e in entities]
     response = member.client.post(
@@ -91,6 +93,7 @@ def test_view_entity_exclude_entities(
     Excluded entities shouldn't be returned by get_entities.
     """
     TranslatedResource.objects.create(resource=resource_a, locale=locale_a)
+    ProjectLocaleFactory.create(project=resource_a.project, locale=locale_a)
     entities = EntityFactory.create_batch(size=3, resource=resource_a)
     excluded_pk = entities[1].pk
     response = member.client.post(
