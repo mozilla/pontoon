@@ -754,8 +754,13 @@ def upload(request):
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project, slug=slug)
+    readonly = ProjectLocale.objects.filter(
+        project=project,
+        locale=locale,
+        readonly=True,
+    )
 
-    if not request.user.can_translate(project=project, locale=locale):
+    if not request.user.can_translate(project=project, locale=locale) or readonly:
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
 
     form = forms.UploadFileForm(request.POST, request.FILES)

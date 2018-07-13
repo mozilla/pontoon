@@ -3266,12 +3266,21 @@ var Pontoon = (function (my) {
       $('#profile .admin-current-project a')
         .attr('href', '/admin/projects/' + slug + '/')
         .toggle(this.project.slug !== 'all-projects');
-      $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
+
+      var enableFileUpload = (
+        this.state.paths &&
+        this.user.canTranslate() &&
+        this.part !== 'all-resources' &&
+        !this.entities[0].readonly
+      );
+      $('#profile .upload').toggle(enableFileUpload);
+
       $('#profile .download, #profile .upload + .horizontal-separator').toggle(this.project.slug !== 'all-projects');
 
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
+
       $('#profile .download-tmx a').attr('href', '/' + code + '/' + slug + '/' + code + '.' + slug + '.tmx');
     },
 
