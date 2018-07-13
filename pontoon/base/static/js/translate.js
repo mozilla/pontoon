@@ -61,7 +61,7 @@ var Pontoon = (function (my) {
       var li = $('<li class="' +
         classNames.join(' ') +
         '" data-entry-pk="' + entity.pk + '">' +
-        '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
+        '<span class="status fa' + ((!entity.readonly && self.user.canTranslate()) ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + sourceString + '</span>' +
           '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
@@ -2281,7 +2281,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.allEntitiesSelected = true;
-      $('#entitylist .entity:visible').addClass('selected');
+      $('#entitylist .entity:visible > .status:not(.unselectable)').parents('.entity').addClass('selected');
 
       self.selectedEntities = [];
       self.openBatchEditor(true);
