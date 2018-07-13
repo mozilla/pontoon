@@ -37,8 +37,14 @@ def run_checks(entity, string):
     checks = defaultdict(list)
     resource_ext = entity.resource.format
 
-    # Prevent translations exceeding the given length limit
     if resource_ext == 'lang':
+        # Newlines are not allowed in .lang files (bug 1190754)
+        if '\n' in string:
+            checks['pErrors'].append(
+                'Newline characters are not allowed'
+            )
+
+        # Prevent translations exceeding the given length limit
         max_length = get_max_length(entity.comment)
 
         if max_length:
@@ -62,12 +68,6 @@ def run_checks(entity, string):
     if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
         checks['pErrors'].append(
             'Empty translations are not allowed'
-        )
-
-    # Newlines are not allowed in .lang files (bug 1190754)
-    if resource_ext == 'lang' and '\n' in string:
-        checks['pErrors'].append(
-            'Newline characters are not allowed'
         )
 
     # FTL checks
