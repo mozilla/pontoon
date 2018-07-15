@@ -45,15 +45,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         filter_qs = {}
 
+        # Don't include disabled projects by default
         if not options['disabled_projects']:
             filter_qs['entity__resource__project__disabled'] = False
-        else:
-            log.debug('Include disabled projects')
 
+        # Don't include obsolete by default
         if not options['obsolete_entities']:
             filter_qs['entity__obsolete'] = False
-        else:
-            log.debug('Include obsolete entities')
 
         translations_pks = (
             Translation.objects
