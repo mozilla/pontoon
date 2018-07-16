@@ -59,6 +59,10 @@ table.table {
   width: 140px;
 }
 
+.table th.progress {
+  padding-right: 39px;
+}
+
 .table th.unreviewed-status {
   position: relative;
   width: 16px;
@@ -72,10 +76,6 @@ table.table {
   position: absolute;
   font-size: 18px;
   margin: -15px 0 0 -5px;
-}
-
-.table .progress {
-  text-align: left;
 }
 
 .table h4 {
