@@ -111,9 +111,10 @@ Sideshow.registerWizard({
     }
   ]
 });
-
+/*
 $(document).ready(function() {
   setTimeout(function() {
     Sideshow.start({ listAll: true });
   }, 1000);
 });
+*/
