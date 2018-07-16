@@ -63,3 +63,9 @@ export function get(
         dispatch(receive(content.entities));
     };
 }
+
+export default {
+    get,
+    receive,
+    request,
+};

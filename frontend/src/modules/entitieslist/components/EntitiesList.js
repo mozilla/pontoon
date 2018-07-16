@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import entitieslist from '..';
+import { NAME } from '..';
 import Entity from './Entity';
 
 import type { State, Entities } from '../reducer';
@@ -45,7 +45,7 @@ export class EntitiesListBase extends React.Component<Props> {
 
 const mapStateToProps = (state: State): Props => {
     return {
-        entities: state[entitieslist.constants.NAME].entities,
+        entities: state[NAME].entities,
     };
 };
 
