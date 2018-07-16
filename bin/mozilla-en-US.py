@@ -129,7 +129,11 @@ for repo in TARGET_REPOS.keys():
     target = os.path.join('target', ending)
 
     # Clone or update target repository
-    pull(url, target)
+    code = pull(url, target)
+
+    # In case of a failure, continue to next repo
+    if code != 0:
+        continue
 
     # Prune all subdirectories in target repository in case they get removed from source
     for subdir in os.listdir(target):
