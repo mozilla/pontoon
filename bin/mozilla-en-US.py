@@ -109,6 +109,13 @@ def push(path):
     elif len(error):
         write(text_type(error))
 
+
+def quit_or_pass(code):
+    # In case of a non-zero error code, quit early (bug 1475603)
+    if code != 0:
+        quit(code)
+
+
 # Change working directory to where script is located
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
@@ -119,9 +126,7 @@ url = 'https://hg.mozilla.org/l10n/gecko-strings/'
 target = 'source'
 code = pull(url, target)
 
-# In case of a failure, quit early (bug 1475603)
-if code != 0:
-    quit()
+quit_or_pass(code)
 
 for repo in TARGET_REPOS.keys():
     ending = repo + '-central'
@@ -131,9 +136,7 @@ for repo in TARGET_REPOS.keys():
     # Clone or update target repository
     code = pull(url, target)
 
-    # In case of a failure, continue to next repo
-    if code != 0:
-        continue
+    quit_or_pass(code)
 
     # Prune all subdirectories in target repository in case they get removed from source
     for subdir in os.listdir(target):
