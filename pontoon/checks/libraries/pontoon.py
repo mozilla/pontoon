@@ -13,6 +13,7 @@ from pontoon.sync.formats.ftl import localizable_entries
 
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
 parser = FluentParser()
+html_parser = HTMLParser.HTMLParser()
 
 
 def get_max_length(comment):
@@ -48,7 +49,6 @@ def run_checks(entity, string):
         max_length = get_max_length(entity.comment)
 
         if max_length:
-            html_parser = HTMLParser.HTMLParser()
             string_length = len(
                 html_parser.unescape(
                     bleach.clean(
