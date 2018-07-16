@@ -90,6 +90,8 @@ def pull(url, target):
         else:
             write(text_type(error))
 
+    return code
+
 
 def push(path):
     # Add new and remove missing
@@ -115,7 +117,11 @@ os.chdir(dname)
 # Clone or update source repository
 url = 'https://hg.mozilla.org/l10n/gecko-strings/'
 target = 'source'
-pull(url, target)
+code = pull(url, target)
+
+# In case of a failure, quit early (bug 1475603)
+if code != 0:
+    quit()
 
 for repo in TARGET_REPOS.keys():
     ending = repo + '-central'
