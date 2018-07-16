@@ -582,6 +582,17 @@ def update_translation(request):
     user = request.user
     project = e.resource.project
 
+    if (
+        ProjectLocale.objects.filter(
+            locale=locale,
+            project=project,
+            readonly=True,
+        ).exists()
+    ):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
+
     try:
         use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
     except UserProfile.DoesNotExist as error:

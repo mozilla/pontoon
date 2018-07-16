@@ -22,6 +22,20 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Return true if read-only editor is used, which happens when:
+     *  - users are not logged in or
+     *  - the entity is read-only.
+     */
+    isReadonlyEditor: function() {
+      var entity = this.getEditorEntity();
+      if (!this.user.id || entity.readonly) {
+        return true;
+      }
+      return false;
+    },
+
+
     renderEntity: function (index, entity) {
       var self = this;
       var status = self.getEntityStatus(entity);
@@ -727,6 +741,12 @@ var Pontoon = (function (my) {
       }
 
       self.fluent.toggleButton();
+
+      // Toggle read-only mode
+      $('#editor #single').toggleClass('readonly', entity.readonly);
+      $('#editor textarea').attr('readonly', function() {
+        return self.isReadonlyEditor();
+      });
 
       self.updateCachedTranslation();
       self.updateHelpers();
@@ -1828,8 +1848,7 @@ var Pontoon = (function (my) {
       $('#source-pane').on('mousedown', '.placeable', function (e) {
         e.preventDefault();
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
@@ -2088,8 +2107,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
