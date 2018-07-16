@@ -1971,6 +1971,10 @@ p#sign-in-required > a#sidebar-signin {
   padding-right: 0;
 }
 
+#helpers > section.history ul li > header .info a {
+  text-transform: none;
+}
+
 #helpers > section ul li > header button {
   background: no-repeat transparent;
   border: none;
