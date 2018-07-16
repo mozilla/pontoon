@@ -13,6 +13,7 @@ from pontoon.sync.formats.ftl import localizable_entries
 
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
 parser = FluentParser()
+html_parser = HTMLParser.HTMLParser()
 
 
 def get_max_length(comment):
@@ -37,34 +38,36 @@ def run_checks(entity, string):
     checks = defaultdict(list)
     resource_ext = entity.resource.format
 
-    # Prevent translations exceeding the given length limit
-    max_length = get_max_length(entity.comment)
-    html_parser = HTMLParser.HTMLParser()
-    string_length = len(
-        html_parser.unescape(
-            bleach.clean(
-                string,
-                strip=True,
-                tags=()
+    if resource_ext == 'lang':
+        # Newlines are not allowed in .lang files (bug 1190754)
+        if '\n' in string:
+            checks['pErrors'].append(
+                'Newline characters are not allowed'
             )
-        )
-    )
 
-    if max_length and string_length > max_length:
-        checks['pErrors'].append(
-            'Translation too long'
-        )
+        # Prevent translations exceeding the given length limit
+        max_length = get_max_length(entity.comment)
+
+        if max_length:
+            string_length = len(
+                html_parser.unescape(
+                    bleach.clean(
+                        string,
+                        strip=True,
+                        tags=()
+                    )
+                )
+            )
+
+            if string_length > max_length:
+                checks['pErrors'].append(
+                    'Translation too long'
+                )
 
     # Prevent empty translation submissions if not supported
     if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
         checks['pErrors'].append(
             'Empty translations are not allowed'
-        )
-
-    # Newlines are not allowed in .lang files (bug 1190754)
-    if resource_ext == 'lang' and '\n' in string:
-        checks['pErrors'].append(
-            'Newline characters are not allowed'
         )
 
     # FTL checks
