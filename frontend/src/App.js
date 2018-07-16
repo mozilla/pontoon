@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import navigation from 'core/navigation';
-import entitieslist, { EntitiesList } from 'modules/entitieslist';
+import { NAME as NAVIGATION_NAME } from 'core/navigation';
+import { actions, EntitiesList } from 'modules/entitieslist';
 
 
 /**
@@ -11,7 +11,7 @@ import entitieslist, { EntitiesList } from 'modules/entitieslist';
 class App extends Component {
     componentDidMount() {
         const { locale, project, resource } = this.props.parameters;
-        this.props.dispatch(entitieslist.actions.get(locale, project, resource));
+        this.props.dispatch(actions.get(locale, project, resource));
     }
 
     render() {
@@ -23,7 +23,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
-        parameters: state[navigation.constants.NAME],
+        parameters: state[NAVIGATION_NAME],
     };
 };
 
