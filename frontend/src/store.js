@@ -12,6 +12,4 @@ const createStoreWithMiddleware = applyMiddleware(
     loggerMiddleware
 )(createStore);
 
-const store = createStoreWithMiddleware(rootReducer);
-
-export default store;
+export default createStoreWithMiddleware(rootReducer);

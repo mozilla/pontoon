@@ -9,7 +9,7 @@ import entitieslist, { EntitiesList } from 'modules/entitieslist';
  * Main entry point to the application. Will render the structure of the page.
  */
 class App extends Component {
-    componentWillMount() {
+    componentDidMount() {
         const { locale, project, resource } = this.props.parameters;
         this.props.dispatch(entitieslist.actions.get(locale, project, resource));
     }

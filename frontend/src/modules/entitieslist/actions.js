@@ -40,7 +40,7 @@ export function get(
     project: string,
     resource: string,
 ): Function {
-    return (dispatch: Function): void => {
+    return async (dispatch: Function): Promise<void> => {
         dispatch(request());
 
         // Fetch entities from backend.
@@ -58,8 +58,8 @@ export function get(
             body: payload,
         };
 
-        fetch(url, requestParams)
-        .then((response: Object) => response.json())
-        .then((content: Object) => dispatch(receive(content.entities)));
+        const response = await fetch(url, requestParams);
+        const content = await response.json();
+        dispatch(receive(content.entities));
     };
 }

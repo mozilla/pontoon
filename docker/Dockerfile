@@ -13,9 +13,9 @@ RUN useradd --shell /bin/bash -c "" -m app
 COPY requirements.txt /app/requirements.txt
 COPY requirements-dev.txt /app/requirements-dev.txt
 COPY requirements-test.txt /app/requirements-test.txt
-RUN pip install -U 'pip>=8'
-RUN pip install --no-cache-dir --require-hashes -r requirements-dev.txt
-RUN pip install --no-cache-dir --require-hashes -r requirements-test.txt
+RUN pip install -U 'pip>=8' && \
+    pip install --no-cache-dir --require-hashes -r requirements-dev.txt && \
+    pip install --no-cache-dir --require-hashes -r requirements-test.txt
 
 # Install nodejs and npm from Nodesource's 8.x branch, as well as yarn
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
@@ -23,19 +23,22 @@ RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
     echo 'deb-src https://deb.nodesource.com/node_9.x jessie main' >> /etc/apt/sources.list.d/nodesource.list
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs yarn
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs yarn
 
 # Create some folders and give them to the app user
-RUN mkdir -p /webapp-frontend-deps && chown app:app /webapp-frontend-deps
+RUN mkdir -p /webapp-frontend-deps && \
+    chown app:app /webapp-frontend-deps
+
 RUN chown app:app /app
 
 # Create the folder for front-end assets
-RUN mkdir -p /webapp-frontend-deps/assets && chown app:app /webapp-frontend-deps/assets
+RUN mkdir -p /webapp-frontend-deps/assets && \
+    chown app:app /webapp-frontend-deps/assets
 
 # Create the folders for Translate.Next
-RUN mkdir -p /app/frontend
-RUN mkdir -p /webapp-frontend-deps/frontend/build
+RUN mkdir -p /app/frontend && \
+    mkdir -p /webapp-frontend-deps/frontend/build
 
 RUN chown -R app:app /webapp-frontend-deps
 
@@ -52,10 +55,10 @@ RUN cd /webapp-frontend-deps/frontend && yarn install
 # different folders because when using this container in development,
 # we replace the /app folder with a volume. By putting those dependencies
 # outside of /app, we can reuse them more easily.
-RUN ln -s /webapp-frontend-deps/node_modules /app/node_modules
-RUN ln -s /webapp-frontend-deps/assets /app/assets
-RUN ln -s /webapp-frontend-deps/frontend/node_modules /app/frontend/node_modules
-RUN ln -s /webapp-frontend-deps/frontend/build /app/frontend/build
+RUN ln -s /webapp-frontend-deps/node_modules /app/node_modules && \
+    ln -s /webapp-frontend-deps/assets /app/assets && \
+    ln -s /webapp-frontend-deps/frontend/node_modules /app/frontend/node_modules && \
+    ln -s /webapp-frontend-deps/frontend/build /app/frontend/build
 
 COPY . /app/
 COPY ./docker/config/webapp.env /app/.env

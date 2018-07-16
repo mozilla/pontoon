@@ -1,14 +1,18 @@
 /* @flow */
 
-// import * as actions from './actions';
-import * as constants from './constants';
 import reducer from './reducer';
 
-export type { Action, State } from './reducer';
+
+// Name of this module.
+// Used as the key to store this module's reducer.
+const NAME: string = 'navigation';
+
+const constants = {
+    NAME,
+};
 
 
 export default {
-    // actions,
     constants,
     reducer,
 };

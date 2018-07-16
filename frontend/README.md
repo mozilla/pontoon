@@ -58,7 +58,7 @@ Here are the files commonly found in a module:
 - `index.js` — public interface of the module
 - `actions.js` — actions that can be used to fetch data from an API, trigger changes, etc.
 - `reducer.js` — a single Redux reducer (if you need to have more than one reducer, you probably actually need to make several modules)
-- `constants.js` — a list of constants required by the module or other modules. It is recommended to expose a `NAME` constant here, that will contain the key to use to expose the reducer in the global store.
+- `constants.js` — a list of constants required by the module or other modules. It is recommended to define a NAME constant here which should be a unique identifier of the module. This name will be used in `combineReducers` and in all `mapStateToProps` to identify the subtree of the global state relevant to this module.
 - `components/` — a folder containing components, with file names in CamelCase
 
 Of course, more can be added if needed. For example, modules with a high number of action types might want to have an `actionTypes.js` file to separate them from actions.

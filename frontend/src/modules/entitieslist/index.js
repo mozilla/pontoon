@@ -1,12 +1,18 @@
 /* @flow */
 
 import * as actions from './actions';
-import * as constants from './constants';
 import reducer from './reducer';
 
 export { default as EntitiesList } from './components/EntitiesList';
 
-export type { Action, State } from './reducer';
+
+// Name of this module.
+// Used as the key to store this module's reducer.
+const NAME: string = 'entities';
+
+const constants = {
+    NAME,
+};
 
 
 export default {

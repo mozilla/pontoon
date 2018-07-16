@@ -15,7 +15,3 @@ assets/*
 docs/
 
 pontoon/base/templates/js/pontoon.js
-
-# This file is the default one that we got from create-react-app.
-# We are not using it yet, no need to check it.
-frontend/src/registerServiceWorker.js
