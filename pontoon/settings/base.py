@@ -491,6 +491,13 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
+    'home' : {
+        'source_filenames' : (
+            'js/lib/jquery.scrollify.js',
+            'js/home.js'
+        ),
+        'output_filename' : 'js/home.min.js',
+    },
 }
 
 # Cache config
