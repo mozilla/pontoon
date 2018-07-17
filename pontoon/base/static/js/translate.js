@@ -35,18 +35,31 @@ var Pontoon = (function (my) {
         markPlaceables
       );
 
-      var translationString = self.fluent.getSimplePreview(
-        translation.string,
-        self.markPlaceables(translation.string || ''),
-        markPlaceables
-      );
+      var translationString = '';
+      if (!translation.rejected) {
+        translationString = self.fluent.getSimplePreview(
+          translation.string,
+          self.markPlaceables(translation.string || ''),
+          markPlaceables
+        );
+      }
 
-      var li = $('<li class="entity' +
-        (' ' + status) +
-        (translation.pk ? ' has-translations' : '') +
-        (!entity.body ? ' uneditable' : '') +
-        (this.allEntitiesSelected ? ' selected' : '') +
-        (entity.visible ? ' visible': '') +
+      var classNames = ['entity', status];
+      if (translation.pk && !translation.rejected) {
+          classNames.push('has-translations');
+      }
+      if (!entity.body) {
+          classNames.push('uneditable');
+      }
+      if (this.allEntitiesSelected) {
+          classNames.push('selected');
+      }
+      if (entity.visible) {
+          classNames.push('visible');
+      }
+
+      var li = $('<li class="' +
+        classNames.join(' ') +
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
@@ -670,7 +683,12 @@ var Pontoon = (function (my) {
 
       // Translation area (must be set before unsaved changes check)
       var translation = entity.translation[0];
-      $('#translation').val(translation.string);
+      if (translation.pk !== null && !translation.rejected) {
+        $('#translation').val(translation.string);
+      }
+      else {
+        $('#translation').val('');
+      }
       $('.warning-overlay:visible .cancel').click();
 
       self.updateSaveButtons();
@@ -2186,6 +2204,10 @@ var Pontoon = (function (my) {
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
 
+            // Reload the editor so that, if the rejected string was the active one,
+            // it disappears from the textarea.
+            self.switchToEntity(entity);
+
             self.endLoader('Translation rejected');
           },
           error: function() {
@@ -2545,7 +2567,7 @@ var Pontoon = (function (my) {
       entity.ui
         .removeClass('translated fuzzy partial missing')
         .addClass(status)
-        .toggleClass('has-translations', translation.pk !== null)
+        .toggleClass('has-translations', translation.pk !== null && !translation.rejected)
         .find('.translation-string')
           .html(translationString);
 
