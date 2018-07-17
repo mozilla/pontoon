@@ -2206,7 +2206,7 @@ var Pontoon = (function (my) {
 
             // Reload the editor so that, if the rejected string was the active one,
             // it disappears from the textarea.
-            Pontoon.switchToEntity(entity);
+            self.switchToEntity(entity);
 
             self.endLoader('Translation rejected');
           },
