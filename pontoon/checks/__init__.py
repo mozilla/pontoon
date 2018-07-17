@@ -1,12 +1,14 @@
-SUPPORTED_FILES = {
+# Warnings and Errors from these file formats will be saved in the DB
+DB_FORMATS = (
     'dtd',
     'ftl',
     'ini',
     'lang'
     'properties',
-}
+)
 
-# Warnings and Errors from these libraries will not be saved in the DB
-DB_EXCLUDE_LIBRARIES = {
-    'tt',
-}
+# Warnings and Errors from these libraries will be saved in the DB
+DB_LIBRARIES = (
+    'p',
+    'cl'
+)

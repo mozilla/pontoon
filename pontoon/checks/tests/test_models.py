@@ -20,7 +20,7 @@ def test_save_failed_checks(translation_a):
             'compare-locales warning 1',
         ],
 
-        # Translate Toolkit can't be stored in the Database
+        # Warnings from Translate Toolkit can't be stored in the Database
         'ttWarnings': [
             'translate-toolkit warning 1',
             'translate-toolkit warning 2',

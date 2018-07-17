@@ -1,13 +1,12 @@
-from pontoon.checks import DB_EXCLUDE_LIBRARIES
+from pontoon.checks import DB_LIBRARIES
 from pontoon.checks.models import Warning, Error
 
 
-def get_failed_checks_db_objects(translation, failed_checks, excluded=None):
+def get_failed_checks_db_objects(translation, failed_checks):
     """
     Return model instances of Warnings and Errors
     :arg Translation translation: instance of translation
     :arg dict failed_checks: dictionary with failed checks
-    :arg tuple exclude_libraries:
     """
     warnings = []
     errors = []
@@ -18,7 +17,7 @@ def get_failed_checks_db_objects(translation, failed_checks, excluded=None):
             .replace('Warnings', '')
             .replace('Errors', '')
         )
-        if library in DB_EXCLUDE_LIBRARIES:
+        if library not in DB_LIBRARIES:
             continue
 
         if check_group.endswith('Errors'):
