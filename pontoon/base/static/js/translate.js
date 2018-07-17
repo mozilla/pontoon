@@ -2204,6 +2204,10 @@ var Pontoon = (function (my) {
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
 
+            // Reload the editor so that, if the rejected string was the active one,
+            // it disappears from the textarea.
+            Pontoon.switchToEntity(entity);
+
             self.endLoader('Translation rejected');
           },
           error: function() {
