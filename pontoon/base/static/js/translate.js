@@ -35,14 +35,17 @@ var Pontoon = (function (my) {
         markPlaceables
       );
 
-      var translationString = self.fluent.getSimplePreview(
-        translation.string,
-        self.markPlaceables(translation.string || ''),
-        markPlaceables
-      );
+      var translationString = '';
+      if (!translation.rejected) {
+        translationString = self.fluent.getSimplePreview(
+          translation.string,
+          self.markPlaceables(translation.string || ''),
+          markPlaceables
+        );
+      }
 
       var classNames = ['entity', status];
-      if (translation.pk) {
+      if (translation.pk && !translation.rejected) {
           classNames.push('has-translations');
       }
       if (!entity.body) {
@@ -680,7 +683,12 @@ var Pontoon = (function (my) {
 
       // Translation area (must be set before unsaved changes check)
       var translation = entity.translation[0];
-      $('#translation').val(translation.string);
+      if (translation.pk !== null && !translation.rejected) {
+        $('#translation').val(translation.string);
+      }
+      else {
+        $('#translation').val('');
+      }
       $('.warning-overlay:visible .cancel').click();
 
       self.updateSaveButtons();
@@ -2555,7 +2563,7 @@ var Pontoon = (function (my) {
       entity.ui
         .removeClass('translated fuzzy partial missing')
         .addClass(status)
-        .toggleClass('has-translations', translation.pk !== null)
+        .toggleClass('has-translations', translation.pk !== null && !translation.rejected)
         .find('.translation-string')
           .html(translationString);
 
