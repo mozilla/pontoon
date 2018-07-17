@@ -41,12 +41,22 @@ var Pontoon = (function (my) {
         markPlaceables
       );
 
-      var li = $('<li class="entity' +
-        (' ' + status) +
-        (translation.pk ? ' has-translations' : '') +
-        (!entity.body ? ' uneditable' : '') +
-        (this.allEntitiesSelected ? ' selected' : '') +
-        (entity.visible ? ' visible': '') +
+      var classNames = ['entity', status];
+      if (translation.pk) {
+          classNames.push('has-translations');
+      }
+      if (!entity.body) {
+          classNames.push('uneditable');
+      }
+      if (this.allEntitiesSelected) {
+          classNames.push('selected');
+      }
+      if (entity.visible) {
+          classNames.push('visible');
+      }
+
+      var li = $('<li class="' +
+        classNames.join(' ') +
         '" data-entry-pk="' + entity.pk + '">' +
         '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
