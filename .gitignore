@@ -18,7 +18,7 @@ tmp/*
 .vagrant
 /env/
 /static/
-.env
+/.env
 docs/_build
 venv
 /media/

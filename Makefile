@@ -48,6 +48,22 @@ clean:
 test:
 	./docker/run_tests_in_docker.sh ${ARGS}
 
+test-frontend:
+	${DOCKER} run --rm \
+		-v `pwd`:/app \
+		--workdir /app/frontend \
+		--tty \
+		--interactive \
+		local/pontoon yarn test
+
+flow:
+	${DOCKER} run --rm \
+		-v `pwd`:/app \
+		-e SHELL=bash \
+		--workdir /app/frontend \
+		--tty --interactive \
+		local/pontoon yarn flow:dev
+
 shell:
 	./docker/run_tests_in_docker.sh --shell
 
@@ -65,7 +81,7 @@ build-frontend-w: assets
 		-v `pwd`:/app \
 		--workdir /app \
 		-e LOCAL_USER_ID=$UID \
-		--tty \
+		--tty --interactive \
 		local/pontoon npm run build-w
 
 # Old targets for backwards compatibility.

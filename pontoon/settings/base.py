@@ -55,6 +55,7 @@ if not DEV and not DEBUG:
         DATABASES['default']['OPTIONS'] = {}
     DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 
+FRONTEND_DIR = os.path.join(ROOT, 'frontend')
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -122,6 +123,7 @@ INSTALLED_APPS = (
     'pontoon.sync',
     'pontoon.teams',
     'pontoon.tags',
+    'pontoon.translate',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -147,6 +149,7 @@ INSTALLED_APPS = (
     'notifications',
     'graphene_django',
     'webpack_loader',
+    'waffle',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -167,6 +170,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
@@ -207,7 +211,10 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [path('pontoon/base/templates/django')],
+        'DIRS': [
+            path('pontoon/base/templates/django'),
+            os.path.join(FRONTEND_DIR, 'build'),
+        ],
         'OPTIONS': {
             'debug': DEBUG,
             'context_processors': CONTEXT_PROCESSORS,
@@ -532,7 +539,10 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-STATICFILES_DIRS = [path('assets')]
+STATICFILES_DIRS = [
+    path('assets'),
+    os.path.join(FRONTEND_DIR, 'build', 'static'),
+]
 
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
