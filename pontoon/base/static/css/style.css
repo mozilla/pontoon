@@ -305,6 +305,20 @@ input[type=search] {
   src: url('../fonts/Ubuntu-RI.ttf')
 }
 
+@font-face {
+  font-family: 'Lato Regular';
+  font-style: normal;
+  font-weight: 300;
+  src:url('../fonts/Lato-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'Mosk';
+  font-style: normal;
+  font-weight: 700;
+  src:url('../fonts/Mosk Bold 700.ttf')
+}
+
 body, select, input, textarea, button {
   font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
 }
@@ -957,7 +971,6 @@ header nav .right .sign-in-header {
   vertical-align: bottom;
   font-size: 14px;
   margin-bottom: 14px;
-  padding-right: 16px;
 }
 
 header nav .right .sign-in-header .button {
@@ -967,6 +980,7 @@ header nav .right .sign-in-header .button {
   padding: 10px 25px;
   text-align: center;
   transition-duration: 0.4s;
+  margin-right: 16px;
 }
 
 header nav .right .sign-in-header .button:hover {

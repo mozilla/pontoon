@@ -23,12 +23,12 @@
       <div class="right">
         {{ Notifications.menu() }}
 
+        {% if not user.is_authenticated() %}
         <div class="sign-in-header">
-          {% if not user.is_authenticated() %}
-          <a id="fxa-sign-in" href="{{ provider_login_url(request) }}" class="button" >Sign Up</a>
-          {% endif %}
+          <a id="fxa-sign-in" href="{{ provider_login_url(request) }}" class="button">Sign In</a>
         </div>
-        
+        {% endif %}
+
         <div id="profile" class="select">
           {{ Profile.button() }}
           <div class="menu">

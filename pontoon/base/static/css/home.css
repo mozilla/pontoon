@@ -14,8 +14,10 @@ header{
 }
 
 .title-style{
-  font-style: Regular;
+  font-style: 'Mosk', sans-serif;
+  font-weight: 700;
   font-size: 44px;
+  color: white;
   line-height: 56px;
   padding-bottom: 20px;
   margin: 0px auto;
@@ -24,10 +26,11 @@ header{
 }
 
 .content-style{
+  font-style: 'Lato',sans-serif;
+  font-weight: 300;
   font-size: 16px;
   line-height: 24px;
   width:560px;
   margin: 0px auto;
   text-align: center;
-
 }
