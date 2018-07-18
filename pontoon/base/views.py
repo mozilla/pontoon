@@ -86,7 +86,7 @@ def translate(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
-        Project.objects.available()
+        Project.objects.translable()
         .prefetch_related('subpage_set', 'tag_set')
         .order_by('name')
     )
@@ -95,7 +95,7 @@ def translate(request, locale, slug, part):
         project = Project(name='All Projects', slug=slug.lower())
 
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(Project.objects.translable(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
     return render(request, 'translate.html', {
@@ -228,7 +228,7 @@ def _get_all_entities(locale, project, form, entities):
     }, safe=False)
 
 
-def _get_paginated_entities(locale, project, form, entities):
+def _get_paginated_entities(request, locale, project, form, entities):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
@@ -255,8 +255,29 @@ def _get_paginated_entities(locale, project, form, entities):
             if entity_pk in entities.values_list('pk', flat=True):
                 entities_to_map = list(entities_to_map) + list(entities.filter(pk=entity_pk))
 
+    entities = Entity.map_entities(locale, entities_to_map, [])
+
+    entities_updated = []
+
+    # Update entity if it belongs to a dummy project by removing translations of other users
+    for entity in entities:
+        if entity['for_dummy']:
+            t = entity['translation']
+
+            # If translation for dummy project entity does not belong to the user
+            # replace it with a null translation
+            if t[0]['user'] not in [request.user.pk, -1]:
+                entity['translation'] = [{
+                    'fuzzy': False,
+                    'string': None,
+                    'approved': False,
+                    'pk': None,
+                    'user': -1,
+                }]
+        entities_updated.append(entity)
+
     return JsonResponse({
-        'entities': Entity.map_entities(locale, entities_to_map, []),
+        'entities': entities,
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(
             project, form.cleaned_data['paths'], locale
@@ -305,7 +326,7 @@ def entities(request):
         return _get_all_entities(locale, project, form, entities)
 
     # Out-of-context view: paginate entities
-    return _get_paginated_entities(locale, project, form, entities)
+    return _get_paginated_entities(request, locale, project, form, entities)
 
 
 @utils.require_AJAX
@@ -320,13 +341,26 @@ def get_translations_from_other_locales(request):
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
     plural_form = None if entity.string_plural == "" else 0
+    for_dummy = entity.resource.project.is_dummy
+    user = request.user if request.user.is_authenticated else None
 
-    translations = Translation.objects.filter(
-        entity=entity,
-        locale__in=locales,
-        plural_form=plural_form,
-        approved=True
-    ).order_by('locale__name')
+    # Show only user's translation from other locales if project is dummy
+    if for_dummy:
+        translations = Translation.objects.filter(
+            entity=entity,
+            locale__in=locales,
+            plural_form=plural_form,
+            approved=True,
+            user=user,
+        ).order_by('locale__name')
+
+    else:
+        translations = Translation.objects.filter(
+            entity=entity,
+            locale__in=locales,
+            plural_form=plural_form,
+            approved=True
+        ).order_by('locale__name')
 
     payload = list(translations.values(
         'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
@@ -357,6 +391,8 @@ def get_translation_history(request):
 
     for t in translations:
         u = t.user
+        if t.for_dummy_project and u != request.user:
+            continue
         translation_dict = t.serialize()
         translation_dict.update({
             "user": "Imported" if u is None else u.name_or_email,

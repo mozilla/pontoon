@@ -119,6 +119,7 @@ def test_entity_project_locale_no_paths(
                 'string': unicode(tr0.string),
                 'approved': False,
                 'rejected': False,
+                'user': tr0.user.pk if tr0.user else -1,
             },
             {
                 'pk': tr0pl.pk,
@@ -126,6 +127,7 @@ def test_entity_project_locale_no_paths(
                 'string': unicode(tr0pl.string),
                 'approved': False,
                 'rejected': False,
+                'user': tr0pl.user.pk if tr0pl.user else -1,
             },
         ],
         'order': 0,
@@ -135,6 +137,7 @@ def test_entity_project_locale_no_paths(
         'pk': entity_a.pk,
         'original': unicode(entity_a.string),
         'visible': False,
+        'for_dummy': False,
     }
     assert entities[0] == expected
 
