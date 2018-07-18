@@ -44,7 +44,7 @@ export function get(
         dispatch(request());
 
         // Fetch entities from backend.
-        const url = new URL('http://localhost:8000/get-entities/');
+        const url = new URL('/get-entities/', window.location.origin);
         const payload = new FormData();
         payload.append('locale', locale);
         payload.append('project', project);
