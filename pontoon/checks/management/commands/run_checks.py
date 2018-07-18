@@ -7,7 +7,7 @@ from celery import (
 from django.core.management.base import BaseCommand
 
 from pontoon.base.models import Translation
-from pontoon.checks import SUPPORTED_FILES
+from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.tasks import bulk_run_checks
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         translations_pks = (
             Translation.objects
             .filter(
-                entity__resource__format__in=SUPPORTED_FILES,
+                entity__resource__format__in=DB_FORMATS,
                 **filter_qs
             )
             .values_list('pk', flat=True)
