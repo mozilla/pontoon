@@ -7,6 +7,7 @@ import { push } from 'connected-react-router';
 import './EntitiesList.css';
 
 import { selectors as navSelectors } from 'core/navigation';
+import type { Navigation } from 'core/navigation';
 
 import { NAME } from '..';
 import Entity from './Entity';
@@ -16,7 +17,7 @@ import type { State, Entities, DbEntity } from '../reducer';
 
 type Props = {|
     entities: Entities,
-    parameters: Object,
+    parameters: Navigation,
 |};
 
 type InternalProps = {|
