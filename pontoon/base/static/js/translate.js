@@ -315,8 +315,8 @@ var Pontoon = (function (my) {
                 (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'unreviewed') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
-                    ((self.user.canTranslate()) ? ' translator' :
-                      ((self.user.id === this.uid && !this.approved) ?
+                    ((!entity.readonly && self.user.canTranslate()) ? ' translator' :
+                      ((!entity.readonly && self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
@@ -328,7 +328,7 @@ var Pontoon = (function (my) {
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="' +
+                      ((!entity.readonly && (self.user.id && (self.user.id === this.uid) || self.user.canTranslate())) ? '<button class="' +
                        (this.rejected ? 'unreject' : 'reject') + ' fa" title="' +
                        (this.rejected ? 'Unreject' : 'Reject') + '"></button>' : '') +
                     '</menu>' +
