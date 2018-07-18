@@ -1,3 +1,4 @@
+from pontoon.checks import DB_LIBRARIES
 from pontoon.checks.models import Warning, Error
 
 
@@ -5,16 +6,19 @@ def get_failed_checks_db_objects(translation, failed_checks):
     """
     Return model instances of Warnings and Errors
     :arg Translation translation: instance of translation
-    ;arg dict failed_checks: dictionary with failed checks
+    :arg dict failed_checks: dictionary with failed checks
     """
     warnings = []
     errors = []
+
     for check_group, messages in failed_checks.items():
         library = (
             check_group
             .replace('Warnings', '')
             .replace('Errors', '')
         )
+        if library not in DB_LIBRARIES:
+            continue
 
         if check_group.endswith('Errors'):
             severity_cls, messages_list = Error, errors

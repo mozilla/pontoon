@@ -19,6 +19,8 @@ def test_save_failed_checks(translation_a):
         'clWarnings': [
             'compare-locales warning 1',
         ],
+
+        # Warnings from Translate Toolkit can't be stored in the Database
         'ttWarnings': [
             'translate-toolkit warning 1',
             'translate-toolkit warning 2',
@@ -32,16 +34,12 @@ def test_save_failed_checks(translation_a):
     assert error2.library == 'cl'
     assert error2.message == 'compare-locales error 2'
 
-    cl_warning, tt_warning1, tt_warning2 = (
+    cl_warning, = (
         Warning.objects.order_by('library', 'message')
     )
 
     assert cl_warning.library == 'cl'
     assert cl_warning.message == 'compare-locales warning 1'
-    assert tt_warning1.library == 'tt'
-    assert tt_warning1.message == 'translate-toolkit warning 1'
-    assert tt_warning2.library == 'tt'
-    assert tt_warning2.message == 'translate-toolkit warning 2'
 
 
 @pytest.mark.django_db
