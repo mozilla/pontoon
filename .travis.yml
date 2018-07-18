@@ -32,12 +32,15 @@ install:
   - nvm install node
   - nvm use node
   - npm install .
+  - pushd frontend && npm install && popd
 script:
   - pylama pontoon
   - pylama tests
   - ./node_modules/.bin/webpack
+  - pushd frontend && npm run build && popd
   - python manage.py collectstatic -v0 --noinput
   - npm test
+  - pushd frontend && npm test && popd
   - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - ./node_modules/.bin/eslint .
   - codecov

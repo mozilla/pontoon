@@ -1,0 +1,47 @@
+.entity {
+    color: white;
+    display: flex;
+    flex-direction: row;
+    line-height: 2rem;
+}
+.entity .source-string,
+.entity .translation-string {
+    width: 48%;
+}
+
+.entity > .status {
+  margin: -13px -13px -13px -16px;
+  padding: 13px 13px 13px 16px;
+  font-size: 16px;
+}
+
+.entity .status.fa {
+    left: 16px;
+    top: 13px;
+}
+.entity .status:before {
+    color: #4D5967;
+    content: "";
+}
+.entity.fuzzy .status:before {
+    color: #FED271;
+}
+.entity.approved .status:before {
+    color: #7BC876;
+}
+.entity.untranslated .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+.entity.unreviewed .status:before {
+    color: #4FC4F6;
+    content: "";
+}
+.entity.rejected .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+.entity.time-range .status:before {
+    color: #AAAAAA;
+    content: "";
+}
