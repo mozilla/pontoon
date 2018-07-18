@@ -3,12 +3,12 @@ DB_FORMATS = (
     'dtd',
     'ftl',
     'ini',
-    'lang'
+    'lang',
     'properties',
 )
 
 # Warnings and Errors from these libraries will be saved in the DB
 DB_LIBRARIES = (
     'p',
-    'cl'
+    'cl',
 )
