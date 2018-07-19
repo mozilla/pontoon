@@ -2,7 +2,7 @@
 {% import "widgets/profile.html" as Profile with context %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 
-<header>
+<header class='home-header'>
   <ul class="notification">
     {% for message in messages %}
       <li>{{ message }}</li>

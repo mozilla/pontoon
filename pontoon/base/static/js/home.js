@@ -7,9 +7,13 @@ $(function() {
     before: function(i,snaps) {
       var ref = snaps[i].attr("data-section-name");
 
-      $(".pagination a.active").removeClass("active");
+      $(".pagination.active").removeClass("active");
 
-      $(".pagination a[href=#" + ref + "]").addClass("active");
+      $(".pagination[href=#" + ref + "]").addClass("active");
+      if (ref === "section-1" || ref === "section-6")
+        $('.home-header').css('background-color','transparent')
+      else
+        $('.home-header').css('background-color','#272A2F')
 
     },
     after:function(i,snaps) {
@@ -19,7 +23,7 @@ $(function() {
     afterRender:initialPosition
 	});
 
-  $(".pagination a").on("click",function() {
+  $(".pagination").on("click",function() {
     $.scrollify.move($(this).attr("href"));
   });
 
