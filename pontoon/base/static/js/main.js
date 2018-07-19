@@ -559,7 +559,7 @@ var Pontoon = (function (my) {
           }
 
         }).success(function(data) {
-          if (data.translation) {
+          if (data.translations) {
             $.each(data.translations, function() {
               append({
                 original: this.source,
