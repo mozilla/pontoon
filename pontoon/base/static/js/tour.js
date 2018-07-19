@@ -107,7 +107,7 @@ Sideshow.registerWizard({
     {
       title: "That's (NOT) all, folks!",
       text:
-        "There's a wide variety of interesting features in this version of Sideshow, some of which we didn't mention in this introductory tutorial. Take this sample, the documentation, open your favorite editor for Javascript and play at will!"
+        "There's a wide variety of tools to help you with translations, some of which we didn't mention in this introductory tutorial. Please have a look at project itself for knowing about them or go on to translate some live projects."
     }
   ]
 });
