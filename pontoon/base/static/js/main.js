@@ -559,17 +559,19 @@ var Pontoon = (function (my) {
           }
 
         }).success(function(data) {
-          $.each(data.translations, function() {
-            append({
-              original: this.source,
-              quality: Math.round(this.quality) + '%',
-              url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' + this.source + '&langID=' + self.locale.ms_terminology_code,
-              title: 'Visit Microsoft Terminology Service API.\n' +
-                     '© 2018 Microsoft Corporation. All rights reserved.',
-              source: 'Microsoft',
-              translation: this.target
+          if (data.translation) {
+            $.each(data.translations, function() {
+              append({
+                original: this.source,
+                quality: Math.round(this.quality) + '%',
+                url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' + this.source + '&langID=' + self.locale.ms_terminology_code,
+                title: 'Visit Microsoft Terminology Service API.\n' +
+                       '© 2018 Microsoft Corporation. All rights reserved.',
+                source: 'Microsoft',
+                translation: this.target
+              });
             });
-          });
+          }
         }).error(error).complete(complete);
       }
 
