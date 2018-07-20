@@ -1,4 +1,5 @@
 /* Jquery plugin scrollify */
+
 $(function() {
   $.scrollify({
 		section:".snaps",
@@ -16,20 +17,9 @@ $(function() {
         $('.home-header').css('background-color','#272A2F')
 
     },
-    after:function(i,snaps) {
-      var ref = snaps[i].attr("data-section-name");
-    },
-    afterResize:initialPosition,
-    afterRender:initialPosition
 	});
 
   $(".pagination").on("click",function() {
     $.scrollify.move($(this).attr("href"));
   });
-
-  function initialPosition() {
-
-    var current = $.scrollify.current();
-
-  }
 });
