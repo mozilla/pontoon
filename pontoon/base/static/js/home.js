@@ -15,8 +15,8 @@ $(function() {
         $('.home-header').css('background-color','transparent')
       else
         $('.home-header').css('background-color','#272A2F')
-
     },
+    updateHash: false,
 	});
 
   $(".pagination").on("click",function() {

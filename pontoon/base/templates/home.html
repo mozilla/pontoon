@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Home Page{% endblock %}
+{% block title %}Localize Mozilla{% endblock %}
 
 {% block class %}home{% endblock %}
 
@@ -116,8 +116,7 @@
       <div class="container vertical-align-center container--full-height">
         <div class="in-context flex-col-6 flex-direction-col neg-margin--large">
           <div class="title-style colored-title-style align-left">One more thing.</div>
-          <div class="content-style colored-content-style">One of the coolest features of Pontoon is localizing web content in-place, with context and spatial limitations right in front of you. The moment you submit translation, it replaces the original text in the web page, making you the first proofreader and tester. <br/><br/>
-          We made a special demo page for you to understand it better.<br/></div>
+          <div class="content-style colored-content-style">One of the coolest features of Pontoon is localizing web content in-place, with context and spatial limitations right in front of you. The moment you submit translation, it replaces the original text in the web page, making you the first proofreader and tester. <br/></div>
           <a class="homepage-button primary-button-cta" href="/in-context/">
             <div>Give it a try!</div>
           </a>
@@ -139,15 +138,18 @@
           <div>Take a tour</div>
         </a>
       </div>
-      <div class="homepage-footer flex">
-        <div class="flex-col-4"><img class="moz-logo"src="/static/img/Homepage/moz-logo.svgz"></img></div>
+      <div class="homepage-footer container flex">
+        <div class="flex-col-4"><a href="https://mozilla.org/"><img class="moz-logo" src="/static/img/Homepage/moz-logo.svgz"></img></a></div>
         <div class="flex-col-4 flex">
-          <p class="content-style">Hack it on Github</p>
+          <p class="content-style"><a href="https://github.com/mozilla/pontoon/">Hack it on Github</a></p>
           <img class="github" src="static/img/Homepage/section-6-github.svg"></img>
         </div>
-        <a class="flex-col-4" href="localhost:8000/teams"><p class="content-style">Get in touch</p></a>
+        <div class="flex-col-4">
+          <p class="content-style"><a href="mailto:pontoon-team@mozilla.com">Get in touch</a></p>
+        </div>
       </div>
     </section>
+
   </div>
 </section>
 {% endblock %}

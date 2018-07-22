@@ -150,7 +150,11 @@ html {
 /* Section-1 */
 .section-1{
   background-image: url(../img/Homepage/background.png);
-  background-size: 1366px 768px;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   display:flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +203,7 @@ html {
 }
 
 .section-side-image-1 {
-  width: 36rem;
+  width: 360px;
 }
 
 /* Section-3 */
@@ -208,7 +212,7 @@ html {
 }
 
 .section-side-image-2 {
-  width: 54rem;
+  width: 540px;
 }
 
 /* Section-4 */
@@ -249,15 +253,15 @@ html {
 
 .card-text{
   font-size: 1.6rem;
-  line-height: 2.8rem;
-  margin-right: 10rem;
-  padding-top: 0.8rem;
+  line-height: 2.4rem;
+  margin-right: 1rem;
+  padding-top: 0.4rem;
 }
 
 /* Section-5 */
 .section-side-image-3 {
-  width: 42rem;
-  box-shadow: 3px 3px 6px 0 #BFBFBF;
+  width: 420px;
+  box-shadow: 0.3rem 0.3rem 0.6rem 0 #BFBFBF;
 }
 
 .in-context .content-style {
@@ -271,7 +275,11 @@ html {
 /* Section-6 */
 .section-6{
   background-image: url(../img/Homepage/background.png);
-  background-size: 1366px 768px;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   display:flex;
   align-items: center;
   justify-content: center;
@@ -283,14 +291,14 @@ html {
 
 .homepage-button {
   display:flex;
-  border-radius: 2px;
+  border-radius: 0.2rem;
   width:24rem;
   height: 4rem;
   justify-content: center;
   align-items: center;
   text-align: center;
   font-family: 'Lato regular',sans-serif;
-  font-size: 16px;
+  font-size: 1.6rem;
 }
 
 .primary-button-cta {
@@ -343,4 +351,12 @@ html {
 .homepage-footer .flex-col-4{
   justify-content: center;
   align-items: flex-end;
+}
+
+.homepage-footer .content-style a{
+  color: white;
+}
+
+.homepage-footer .content-style a:hover{
+  color: #7BC176;
 }
