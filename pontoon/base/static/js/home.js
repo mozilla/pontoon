@@ -22,4 +22,8 @@ $(function() {
   $(".pagination").on("click",function() {
     $.scrollify.move($(this).attr("href"));
   });
+
+  $(".section1-footer").on("click",function(){
+    $.scrollify.move("#section-2");
+  });
 });

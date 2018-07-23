@@ -21,6 +21,10 @@ html {
   position: relative;
 }
 
+.absolute{
+  position: absolute;
+}
+
 .flex{
   display: flex;
 }
@@ -53,6 +57,10 @@ html {
 
 .flex-col-8 {
   flex-basis: 66.6666666%;
+}
+
+.align-center{
+  text-align: center;
 }
 
 .align-right {
@@ -195,6 +203,11 @@ html {
 
 .intro-footer p{
   font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.intro-footer p:hover{
+  text-decoration: underline;
 }
 
 /* Section-2 */
@@ -213,6 +226,39 @@ html {
 
 .section-side-image-2 {
   width: 540px;
+}
+
+.path-startend-text {
+  font-weight: 400;
+  color: black;
+  margin-right: 24px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.content-div {
+  width:540px;
+  padding-top: 80px;
+  font-size: 13px;
+}
+.text-1 {
+  color: #5F5F5F;
+  margin-bottom: 60px;
+  padding-left: 70px;
+  width: 180px;
+  line-height: 20px;
+}
+
+.text-2 {
+  color: #5F5F5F;
+  margin-bottom: 60px;
+  padding-right: 100px;
+}
+
+.text-4 {
+  color: #5F5F5F;
+  margin-top: -25px;
+  padding-right: 100px;
 }
 
 /* Section-4 */
