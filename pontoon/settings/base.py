@@ -76,10 +76,6 @@ SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 
-# Disable forced SSL if debug mode is enabled or if CI is running the
-# tests.
-SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
-
 # URL to the RabbitMQ server
 BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
@@ -157,7 +153,6 @@ BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
 MIDDLEWARE_CLASSES = (
     'django_cookies_samesite.middleware.CookiesSameSite',
     'django.middleware.gzip.GZipMiddleware',
-    'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -643,6 +638,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # x-xss-protection: 1; mode=block
 # Activates the browser's XSS filtering and helps prevent XSS attacks
 SECURE_BROWSER_XSS_FILTER = True
+
+# Redirect non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get('CI', False))
 
 # Content-Security-Policy headers
 CSP_DEFAULT_SRC = ("'none'",)
