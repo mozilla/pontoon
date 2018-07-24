@@ -17,15 +17,14 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell"
 	@echo "  test             Runs the Python test suite"
+	@echo "  test-frontend    Runs the new frontend's test suite"
+	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
 
 .docker-build:
 	make build
-
-assets:
-	mkdir -p assets
 
 build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
@@ -50,7 +49,8 @@ test:
 
 test-frontend:
 	${DOCKER} run --rm \
-		-v `pwd`:/app \
+		-v `pwd`/frontend/src:/app/frontend/src \
+		-v `pwd`/frontend/public:/app/frontend/public \
 		--workdir /app/frontend \
 		--tty \
 		--interactive \
@@ -58,7 +58,8 @@ test-frontend:
 
 flow:
 	${DOCKER} run --rm \
-		-v `pwd`:/app \
+		-v `pwd`/frontend/src:/app/frontend/src \
+		-v `pwd`/frontend/public:/app/frontend/public \
 		-e SHELL=bash \
 		--workdir /app/frontend \
 		--tty --interactive \
@@ -73,12 +74,12 @@ loaddb:
 	${DOCKER} exec -i `${DC} ps -q postgresql` createdb -U pontoon pontoon
 	${DOCKER} exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
-build-frontend: assets
+build-frontend:
 	${DC} run webapp npm run build
 
-build-frontend-w: assets
+build-frontend-w:
 	${DOCKER} run --rm \
-		-v `pwd`:/app \
+		-v `pwd`/pontoon:/app/pontoon \
 		--workdir /app \
 		-e LOCAL_USER_ID=$UID \
 		--tty --interactive \

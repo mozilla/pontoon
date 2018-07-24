@@ -25,7 +25,10 @@ if [ "$1" == "--shell" ]; then
 
     docker run \
            --rm \
-           --volume "$(pwd)":/app \
+           --volume "$(pwd)"/pontoon:/app/pontoon \
+           --volume "$(pwd)"/tests:/app/tests \
+           --volume "$(pwd)"/frontend/src:/app/frontend/src \
+           --volume "$(pwd)"/frontend/public:/app/frontend/public \
            --workdir /app \
            --network pontoon_default \
            --link "${DC} ps -q postgresql" \
@@ -38,7 +41,10 @@ if [ "$1" == "--shell" ]; then
 else
     docker run \
            --rm \
-           --volume "$(pwd)":/app \
+           --volume "$(pwd)"/pontoon:/app/pontoon \
+           --volume "$(pwd)"/tests:/app/tests \
+           --volume "$(pwd)"/frontend/src:/app/frontend/src \
+           --volume "$(pwd)"/frontend/public:/app/frontend/public \
            --workdir /app \
            --network pontoon_default \
            --link "${DC} ps -q postgresql" \

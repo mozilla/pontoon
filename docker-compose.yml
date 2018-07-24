@@ -29,9 +29,10 @@ services:
       - "8000:8000"
       - "3000:3000"
     volumes:
-      - .:/app
-    entrypoint:
-      - ./docker/entrypoint_webapp.sh
+      - ./pontoon:/app/pontoon
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/public:/app/frontend/public
+      - ./tests:/app/tests
 
   postgresql:
     build:
