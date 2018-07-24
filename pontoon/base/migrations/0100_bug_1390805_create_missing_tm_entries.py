@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-def create_missing_translaton_memory_entries(apps, schema_editor):
+def create_missing_translation_memory_entries(apps, schema_editor):
     Translation = apps.get_model('base', 'Translation')
     TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
 
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            create_missing_translaton_memory_entries,
+            create_missing_translation_memory_entries,
             migrations.RunPython.noop
         ),
     ]

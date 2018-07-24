@@ -54,7 +54,7 @@ def bulk_run_checks(translations):
         warnings.extend(warnings_)
         errors.extend(errors_)
 
-    # Remove old results
+    # Remove old warnings and errors
     Warning.objects.filter(
         translation__pk__in=[t.pk for t in translations]
     ).delete()

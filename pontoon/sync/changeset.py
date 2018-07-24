@@ -430,4 +430,5 @@ class ChangeSet(object):
             .values_list('pk', flat=True)
             .order_by('pk')
         )
+
         return valid_translations

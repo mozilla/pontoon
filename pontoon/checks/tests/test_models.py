@@ -3,7 +3,11 @@ from __future__ import absolute_import
 import pytest
 
 from pontoon.base.models import Translation
-from pontoon.checks.utils import save_failed_checks, get_failed_checks_db_objects, bulk_run_checks
+from pontoon.checks.utils import (
+    save_failed_checks,
+    get_failed_checks_db_objects,
+    bulk_run_checks,
+)
 from pontoon.checks.models import (
     Error,
     Warning,
