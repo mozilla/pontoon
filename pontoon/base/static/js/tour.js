@@ -1,10 +1,10 @@
 //A Sideshow Tutorial Example
 //This tutorial introduces the Sideshow basics to the newcomer
+
+var canTranslate = false;
 var is_entity_clicked = false;
 var is_submit_clicked = false;
 
-//TypeError: Pontoon.user.canTranslate is not a function
-var can_translate = Pontoon.user.canTranslate();
 
 Sideshow.registerWizard({
   name: "introducing_pontoon",
@@ -80,10 +80,15 @@ Sideshow.registerWizard({
       text: "The translation workspace is where strings are translated.",
       subject: "#editor #single",
       format: "markdown",
-      lockSubject: true
+      lockSubject: true,
+      listeners: {
+        beforeStep: function() {
+          canTranslate = Pontoon.user.canTranslate();
+        }
+      }
     },
     {
-      title: "Submit a suggestion",
+      title: "Submit a Translation",
       text: "When a translator is in Suggest Mode, or doesn’t have permissions" +
             " to submit translations directly, a blue SUGGEST button will " +
             "be visible in the lower-right side of the editing space. To " +
@@ -93,6 +98,32 @@ Sideshow.registerWizard({
       format: "markdown",
       autoContinue: false,
       targets: "#editor #single button#save",
+      skipIf: function(){
+          return canTranslate;
+      },
+      completingConditions: [
+        function() {
+          $("#editor #single button#save").click(function() {
+            is_submit_clicked = true;
+          });
+          $(".sideshow-next-step-button").attr("disabled", null);
+          return is_submit_clicked;
+        }
+      ]
+    },
+     {
+      title: "Submit a Translation",
+      text: "If a translator has permissions to add translations directly, " +
+            "the green SAVE button should appear to the lower-right side of " +
+            "the editing space.To add translations directly, simply input " +
+            "the translation to the editing space and click SAVE,",
+      subject: "#editor #single",
+      format: "markdown",
+      autoContinue: false,
+      targets: "#editor #single button#save",
+      skipIf: function(){
+          return !canTranslate;
+      },
       completingConditions: [
         function() {
           $("#editor #single button#save").click(function() {
@@ -104,7 +135,7 @@ Sideshow.registerWizard({
       ]
     },
     {
-      title: "Entity",
+      title: "History Tab",
       text: "Once the translator has suggested the translation, the " +
             "suggestion will appear in the sidebar. In case of multiple " +
             "suggestions, sidebar will show the most recent one.",
@@ -128,6 +159,7 @@ Sideshow.registerWizard({
   ]
 });
 
-if (Pontoon.state.project == 'demo') {
+if (Pontoon.state.project === 'demo') {
   Sideshow.start({ listAll: true });
 }
+
