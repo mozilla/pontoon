@@ -2,6 +2,10 @@
 //This tutorial introduces the Sideshow basics to the newcomer
 var is_entity_clicked = false;
 var is_submit_clicked = false;
+
+//TypeError: Pontoon.user.canTranslate is not a function
+var can_translate = Pontoon.user.canTranslate();
+
 Sideshow.registerWizard({
   name: "introducing_pontoon",
   title: "Introducing Pontoon",
@@ -124,6 +128,6 @@ Sideshow.registerWizard({
   ]
 });
 
-if(Pontoon.state.project=='demo'){
+if (Pontoon.state.project == 'demo') {
   Sideshow.start({ listAll: true });
 }

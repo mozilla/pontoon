@@ -4443,3 +4443,4 @@ Pontoon.attachBatchEditorHandlers();
 Pontoon.updateInitialState();
 Pontoon.updateFilterUI();
 Pontoon.initializePart();
+console.log(Pontoon.user.canTranslate());
