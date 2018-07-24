@@ -4,18 +4,12 @@ import React from 'react';
 
 import './Entity.css';
 
+import type { DbEntity } from '../reducer';
 
-type Translation = {
-    string: string,
-    approved: boolean,
-    fuzzy: boolean,
-};
 
 type Props = {
-    entity: {
-        original: string,
-        translation: Array<Translation>,
-    },
+    entity: DbEntity,
+    selected: boolean,
     selectEntity: Function,
 };
 
@@ -36,8 +30,7 @@ type Props = {
  */
 export default class Entity extends React.Component<Props> {
     get status(): string {
-        const { entity } = this.props;
-        const translation = entity.translation[0];
+        const translation = this.props.entity.translation[0];
 
         if (translation.approved) {
             return 'approved';
@@ -48,14 +41,25 @@ export default class Entity extends React.Component<Props> {
         return 'missing';
     }
 
+    selectEntity = () => {
+        this.props.selectEntity(this.props.entity);
+    }
+
     render() {
-        const { entity, selectEntity } = this.props;
+        const { entity, selected } = this.props;
+
+        const classSelected = selected ? 'selected' : '';
 
         return (
-            <li className={ `entity ${this.status}` } onClick={ selectEntity }>
+            <li
+                className={ `entity ${this.status} ${classSelected}` }
+                onClick={ this.selectEntity }
+            >
                 <span className='status fa' />
-                <span className='source-string'>{ entity.original }</span>
-                <span className='translation-string'>{ entity.translation[0].string }</span>
+                <div>
+                    <p className='source-string'>{ entity.original }</p>
+                    <p className='translation-string'>{ entity.translation[0].string }</p>
+                </div>
             </li>
         );
     }

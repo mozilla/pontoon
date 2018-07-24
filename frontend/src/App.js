@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { NAME as NAVIGATION_NAME } from 'core/navigation';
+import { selectors as navSelectors } from 'core/navigation';
 import { actions, EntitiesList } from 'modules/entitieslist';
 
 
@@ -23,7 +23,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
-        parameters: state[NAVIGATION_NAME],
+        parameters: navSelectors.getNavigation(state),
     };
 };
 
