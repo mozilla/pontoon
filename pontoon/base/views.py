@@ -388,13 +388,7 @@ def unapprove_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-approved
-    if (
-        ProjectLocale.objects.filter(
-            locale=locale,
-            project=project,
-            readonly=True,
-        ).exists()
-    ):
+    if utils.readonly_exists([project], locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -435,13 +429,7 @@ def reject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be rejected
-    if (
-        ProjectLocale.objects.filter(
-            locale=locale,
-            project=project,
-            readonly=True,
-        ).exists()
-    ):
+    if utils.readonly_exists([project], locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -504,13 +492,7 @@ def unreject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-rejected
-    if (
-        ProjectLocale.objects.filter(
-            locale=locale,
-            project=project,
-            readonly=True,
-        ).exists()
-    ):
+    if utils.readonly_exists([project], locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -615,13 +597,7 @@ def update_translation(request):
     project = e.resource.project
 
     # Read-only translations cannot saved
-    if (
-        ProjectLocale.objects.filter(
-            locale=locale,
-            project=project,
-            readonly=True,
-        ).exists()
-    ):
+    if utils.readonly_exists([project], locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -798,13 +774,11 @@ def upload(request):
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project, slug=slug)
-    readonly = ProjectLocale.objects.filter(
-        project=project,
-        locale=locale,
-        readonly=True,
-    )
 
-    if not request.user.can_translate(project=project, locale=locale) or readonly:
+    if (
+        not request.user.can_translate(project=project, locale=locale)
+        or utils.readonly_exists([project], locale)
+    ):
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
 
     form = forms.UploadFileForm(request.POST, request.FILES)

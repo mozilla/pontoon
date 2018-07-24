@@ -25,6 +25,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import (
     require_AJAX,
+    readonly_exists,
 )
 from pontoon.batch import forms
 from pontoon.batch.actions import ACTIONS_FN_MAP
@@ -125,14 +126,11 @@ def batch_edit_translations(request):
     projects_pk = entities.values_list('resource__project__pk', flat=True)
     projects = Project.objects.filter(pk__in=projects_pk.distinct())
 
-    readonly = ProjectLocale.objects.filter(
-        locale=locale,
-        project__in=projects,
-        readonly=True,
-    ).exists()
-
     for project in projects:
-        if not request.user.can_translate(project=project, locale=locale) or readonly:
+        if (
+            not request.user.can_translate(project=project, locale=locale)
+            or readonly_exists(projects, locale)
+        ):
             return HttpResponseForbidden(
                 "Forbidden: You don't have permission for batch editing"
             )

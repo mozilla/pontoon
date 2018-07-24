@@ -679,3 +679,25 @@ def is_same(same_translations, can_translate):
             return True
 
     return False
+
+
+def readonly_exists(projects, locale):
+    """
+    :arg list projects: a list of Project instances.
+    :arg Locale locale: Locale instance.
+    :returns: True if a read-only ProjectLocale instance for given Projects and
+        Locale exists.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import ProjectLocale
+
+    if (
+        ProjectLocale.objects.filter(
+            project__in=projects,
+            locale=locale,
+            readonly=True,
+        ).exists()
+    ):
+        return True
+
+    return False
