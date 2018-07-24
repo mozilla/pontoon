@@ -4399,11 +4399,6 @@ var Pontoon = (function (my) {
         this.state = state;
       }
 
-      if (state.project == 'demo') {
-        setTimeout(function() {
-          Sideshow.start({ listAll: true });
-        }, 1000);
-      }
     }
   });
 }(Pontoon || {}));
