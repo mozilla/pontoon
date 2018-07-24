@@ -691,13 +691,11 @@ def readonly_exists(projects, locale):
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.base.models import ProjectLocale
 
-    if (
-        ProjectLocale.objects.filter(
-            project__in=projects,
-            locale=locale,
-            readonly=True,
-        ).exists()
-    ):
-        return True
+    if not isinstance(projects, (tuple, list)):
+        projects = [projects]
 
-    return False
+    return ProjectLocale.objects.filter(
+        project__in=projects,
+        locale=locale,
+        readonly=True,
+    ).exists()

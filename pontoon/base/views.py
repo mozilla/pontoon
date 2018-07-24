@@ -388,7 +388,7 @@ def unapprove_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-approved
-    if utils.readonly_exists([project], locale):
+    if utils.readonly_exists(project, locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -429,7 +429,7 @@ def reject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be rejected
-    if utils.readonly_exists([project], locale):
+    if utils.readonly_exists(project, locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -492,7 +492,7 @@ def unreject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-rejected
-    if utils.readonly_exists([project], locale):
+    if utils.readonly_exists(project, locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -597,7 +597,7 @@ def update_translation(request):
     project = e.resource.project
 
     # Read-only translations cannot saved
-    if utils.readonly_exists([project], locale):
+    if utils.readonly_exists(project, locale):
         return HttpResponseForbidden(
             "Forbidden: This string is in read-only mode"
         )
@@ -777,7 +777,7 @@ def upload(request):
 
     if (
         not request.user.can_translate(project=project, locale=locale)
-        or utils.readonly_exists([project], locale)
+        or utils.readonly_exists(project, locale)
     ):
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
 
