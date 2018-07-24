@@ -59,6 +59,38 @@ Sideshow.registerWizard({
       lockSubject: true
     },
     {
+      title: "Search Bar",
+      text: "It’s possible to search within a project using the search field." +
+            " Searches include strings, string IDs and comments. Like in " +
+            "search engines, by default Pontoon will display matches that " +
+            "contain all the search terms.<br> > If you want to search for a " +
+            "perfect match, wrap the search terms in double quotes, e.g. 'new tab'." +
+            "<br> > If, on the other hand, you want to search for strings that " +
+            "contain double quotes, you can escape them with a backslash.",
+      subject: "#entitylist",
+      targets: "#entitylist #search",
+      format: "markdown",
+      lockSubject: true
+    },
+    {
+      title: "Filter",
+      text: "Strings in Pontoon can be filtered by their status. A string can be <br>" +
+            "> Missing: Not available in the localized file and doesn’t have any approved translations in Pontoon.<br>" +
+            "> Fuzzy: Marked as fuzzy in the localized file.<br>" +
+            "> Translated: Has an approved translation.<br>" +
+            "> Unreviewed: Has been submitted but not reviewed yet by translators.<br>" +
+            "> Rejected: Has been reviewed and rejected by a translator.",
+      subject: "#entitylist",
+      targets: "#filter .menu",
+      format: "markdown",
+      lockSubject: true,
+      listeners: {
+        beforeStep: function() {
+          $("#filter div.button").click();
+        }
+      }
+    },
+    {
       title: "Entity",
       text: "Selecting an entity by clicking it opens up the editor.",
       subject: "#entitylist .uneditables li:nth-child(3)",
@@ -147,6 +179,21 @@ Sideshow.registerWizard({
           $("#entitylist .uneditables li:nth-child(3)").click();
         }
       }
+    },
+    {
+      title: "Machinery Tab",
+      text: "There is a machinery search bar. A translator can enter text " +
+            "into the search bar to search for any strings in the machinery " +
+            "resources that may be similar. The search does not need to be " +
+            "related to the current project string.",
+      subject: "#helpers",
+      format: "markdown",
+      targets: "#helpers section.machinery",
+      listeners: {
+        beforeStep: function() {
+          $("#helpers.tabs nav li")[1].firstElementChild.click();
+        }
+      },
     },
     {
       title: "That's (NOT) all, folks!",
