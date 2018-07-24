@@ -1755,22 +1755,38 @@ body > header aside p {
   color: #F36;
 }
 
-#editor #single > menu > .select {
+#editor #single > menu > .read {
+  display: none;
+}
+
+#editor #single > menu > .write {
+  display: block;
+}
+
+#editor #single.readonly > menu > .read {
+  display: block;
+}
+
+#editor #single.readonly > menu > .write {
+  display: none;
+}
+
+#editor #single > menu > .write > .select {
   cursor: pointer;
   position: static; /* Avoid overlapping warning box */
 }
 
-#editor #single > menu > .select .selector {
+#editor #single > menu > .write > .select .selector {
   color: #AAAAAA;
   font-size: 22px;
   padding: 9px 5px;
 }
 
-#editor #single > menu > #settings.select .selector {
+#editor #single > menu > .write > #settings.select .selector {
   padding-left: 0;
 }
 
-#editor #single > menu > .select .selector:hover {
+#editor #single > menu > .write > .select .selector:hover {
   color: #7BC876;
 }
 
@@ -1870,11 +1886,11 @@ body > header aside p {
   content: "Approve anyway";
 }
 
-p#sign-in-required {
+#editor #single > menu p.banner {
   font-style: italic;
 }
 
-p#sign-in-required > a#sidebar-signin {
+#editor #single > menu p.banner > a {
   color: #7BC876;
 }
 

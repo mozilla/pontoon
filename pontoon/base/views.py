@@ -384,25 +384,30 @@ def unapprove_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     translation = Translation.objects.get(pk=t)
+    project = translation.entity.resource.project
+    locale = translation.locale
+
+    # Read-only translations cannot be un-approved
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
 
     # Only privileged users or authors can un-approve translations
     if not (
-        request.user.can_translate(
-            project=translation.entity.resource.project,
-            locale=translation.locale
-        ) or
+        request.user.can_translate(locale, project) or
         request.user == translation.user or
         translation.approved
     ):
         return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
 
     translation.unapprove(request.user)
+
     latest_translation = translation.entity.translation_set.filter(
-        locale=translation.locale,
+        locale=locale,
         plural_form=translation.plural_form,
     ).order_by('-approved', 'rejected', '-date')[0].serialize()
-    project = translation.entity.resource.project
-    locale = translation.locale
+
     return JsonResponse({
         'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
@@ -420,12 +425,17 @@ def reject_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     translation = get_object_or_404(Translation, pk=t)
+    project = translation.entity.resource.project
     locale = translation.locale
 
+    # Read-only translations cannot be rejected
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
+
     # Non-privileged users can only reject own unapproved translations
-    if not request.user.can_translate(
-        translation.locale, translation.entity.resource.project
-    ):
+    if not request.user.can_translate(locale, project):
         if translation.user == request.user:
             if translation.approved is True:
                 return HttpResponseForbidden(
@@ -454,10 +464,9 @@ def reject_translation(request):
     translation.save()
 
     latest_translation = translation.entity.translation_set.filter(
-        locale=translation.locale,
+        locale=locale,
         plural_form=translation.plural_form,
     ).order_by('-approved', 'rejected', '-date')[0].serialize()
-    project = translation.entity.resource.project
 
     TranslationMemoryEntry.objects.filter(translation=translation).delete()
 
@@ -479,13 +488,18 @@ def unreject_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     translation = Translation.objects.get(pk=t)
+    project = translation.entity.resource.project
+    locale = translation.locale
+
+    # Read-only translations cannot be un-rejected
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
 
     # Only privileged users or authors can un-reject translations
     if not (
-        request.user.can_translate(
-            project=translation.entity.resource.project,
-            locale=translation.locale
-        ) or
+        request.user.can_translate(locale, project) or
         request.user == translation.user or
         translation.approved
     ):
@@ -494,12 +508,12 @@ def unreject_translation(request):
         )
 
     translation.unreject(request.user)
+
     latest_translation = translation.entity.translation_set.filter(
-        locale=translation.locale,
+        locale=locale,
         plural_form=translation.plural_form,
     ).order_by('-approved', 'rejected', '-date')[0].serialize()
-    project = translation.entity.resource.project
-    locale = translation.locale
+
     return JsonResponse({
         'translation': latest_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
@@ -581,6 +595,12 @@ def update_translation(request):
 
     user = request.user
     project = e.resource.project
+
+    # Read-only translations cannot saved
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
@@ -755,7 +775,10 @@ def upload(request):
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project, slug=slug)
 
-    if not request.user.can_translate(project=project, locale=locale):
+    if (
+        not request.user.can_translate(project=project, locale=locale)
+        or utils.readonly_exists(project, locale)
+    ):
         return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
 
     form = forms.UploadFileForm(request.POST, request.FILES)

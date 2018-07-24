@@ -322,6 +322,10 @@
 
       <menu>
         {% if user.is_authenticated() %}
+        <section class="read">
+          <p class="banner">This is a read-only localization.</p>
+        </section>
+        <section class="write">
           <div id="unsaved" class="warning-overlay">
             <a href="#" class="cancel">&times;</a>
             <h2>You have unsaved changes</h2>
@@ -385,8 +389,9 @@
           <button id="copy" title="Copy From Source (Ctrl + Shift + C)">Copy</button>
           <button id="clear" title="Clear Translation (Ctrl + Shift + Backspace)">Clear</button>
           <button id="save" title="Save Translation (Enter)"></button>
+        </section>
         {% else %}
-          <p id="sign-in-required">
+          <p class="banner">
             {% if settings.DJANGO_LOGIN %}
               {% set login_url = url('standalone_login') %}
             {% else %}

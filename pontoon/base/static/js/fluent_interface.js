@@ -789,11 +789,6 @@ var Pontoon = (function (my) {
           }
         });
 
-        // Ignore editing for anonymous users
-        if (!Pontoon.user.id) {
-          $('#ftl-area textarea').prop('readonly', true);
-        }
-
         // Focus first field of the FTL editor
         $('#ftl-area textarea:not(".id"):visible').first().focus();
 
@@ -913,11 +908,6 @@ var Pontoon = (function (my) {
       attachFTLEditorHandlers: function () {
         var self = this;
 
-        // Ignore editing for anonymous users
-        if (!Pontoon.user.id) {
-          return;
-        }
-
         // Toggle FTL and source editors
         $('#ftl').click(function (e) {
           e.preventDefault();
@@ -1032,6 +1022,10 @@ var Pontoon = (function (my) {
 
         // Select access key via click
         $('#ftl-area .attributes').on('click', '.accesskeys div', function () {
+          if (Pontoon.isReadonlyEditor()) {
+            return;
+          }
+
           var selected = $(this).is('.active');
           $('.accesskeys div').removeClass('active');
 
@@ -1073,6 +1067,10 @@ var Pontoon = (function (my) {
         // Remove an attribute
         $('#ftl-area .attributes').on('click', '.custom-attribute .remove', function (e) {
           e.preventDefault();
+
+          if (Pontoon.isReadonlyEditor()) {
+            return;
+          }
 
           $(this).parents('.custom-attribute').remove();
 
