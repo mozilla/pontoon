@@ -2266,6 +2266,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if project.slug == 'all-projects':
             order_fields = ('resource__project__name',) + order_fields
 
+        # Prefetch data needed for Entity.map_entities()
         entities = (
             entities
             .prefetch_related(

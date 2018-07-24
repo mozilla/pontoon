@@ -121,7 +121,7 @@ def batch_edit_translations(request):
 
     # Batch editing is only available to translators. Check if user has
     # translate permissions for all of the projects in passed entities.
-    # Also make sure projects are note enabled in read-only mode for a locale.
+    # Also make sure projects are not enabled in read-only mode for a locale.
     projects_pk = entities.values_list('resource__project__pk', flat=True)
     projects = Project.objects.filter(pk__in=projects_pk.distinct())
 
