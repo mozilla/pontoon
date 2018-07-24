@@ -134,6 +134,7 @@ def test_entity_project_locale_no_paths(
         'marked_plural': unicode(entity_a.string_plural),
         'pk': entity_a.pk,
         'original': unicode(entity_a.string),
+        'readonly': False,
         'visible': False,
     }
     assert entities[0] == expected

@@ -22,6 +22,20 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Return true if read-only editor is used, which happens when:
+     *  - users are not logged in or
+     *  - the entity is read-only.
+     */
+    isReadonlyEditor: function() {
+      var entity = this.getEditorEntity();
+      if (!this.user.id || entity.readonly) {
+        return true;
+      }
+      return false;
+    },
+
+
     renderEntity: function (index, entity) {
       var self = this;
       var status = self.getEntityStatus(entity);
@@ -61,7 +75,7 @@ var Pontoon = (function (my) {
       var li = $('<li class="' +
         classNames.join(' ') +
         '" data-entry-pk="' + entity.pk + '">' +
-        '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
+        '<span class="status fa' + ((!entity.readonly && self.user.canTranslate()) ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + sourceString + '</span>' +
           '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
@@ -301,8 +315,8 @@ var Pontoon = (function (my) {
                 (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'unreviewed') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
-                    ((self.user.canTranslate()) ? ' translator' :
-                      ((self.user.id === this.uid && !this.approved) ?
+                    ((!entity.readonly && self.user.canTranslate()) ? ' translator' :
+                      ((!entity.readonly && self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
@@ -314,7 +328,7 @@ var Pontoon = (function (my) {
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="' +
+                      ((!entity.readonly && (self.user.id && (self.user.id === this.uid) || self.user.canTranslate())) ? '<button class="' +
                        (this.rejected ? 'unreject' : 'reject') + ' fa" title="' +
                        (this.rejected ? 'Unreject' : 'Reject') + '"></button>' : '') +
                     '</menu>' +
@@ -727,6 +741,12 @@ var Pontoon = (function (my) {
       }
 
       self.fluent.toggleButton();
+
+      // Toggle read-only mode
+      $('#editor #single').toggleClass('readonly', entity.readonly);
+      $('#editor textarea').attr('readonly', function() {
+        return self.isReadonlyEditor();
+      });
 
       self.updateCachedTranslation();
       self.updateHelpers();
@@ -1828,8 +1848,7 @@ var Pontoon = (function (my) {
       $('#source-pane').on('mousedown', '.placeable', function (e) {
         e.preventDefault();
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
@@ -2088,8 +2107,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
@@ -2281,7 +2299,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.allEntitiesSelected = true;
-      $('#entitylist .entity:visible').addClass('selected');
+      $('#entitylist .entity:visible > .status:not(.unselectable)').parents('.entity').addClass('selected');
 
       self.selectedEntities = [];
       self.openBatchEditor(true);
@@ -3266,12 +3284,21 @@ var Pontoon = (function (my) {
       $('#profile .admin-current-project a')
         .attr('href', '/admin/projects/' + slug + '/')
         .toggle(this.project.slug !== 'all-projects');
-      $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
+
+      var enableFileUpload = (
+        this.state.paths &&
+        this.user.canTranslate() &&
+        this.part !== 'all-resources' &&
+        !this.entities[0].readonly
+      );
+      $('#profile .upload').toggle(enableFileUpload);
+
       $('#profile .download, #profile .upload + .horizontal-separator').toggle(this.project.slug !== 'all-projects');
 
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
+
       $('#profile .download-tmx a').attr('href', '/' + code + '/' + slug + '/' + code + '.' + slug + '.tmx');
     },
 
