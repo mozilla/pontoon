@@ -118,7 +118,6 @@ html {
   width: 100%;
   position: fixed;
   background: transparent;
-  transition-duration: 0.7s;
   border-bottom: none;
   z-index: 10;
 }
@@ -387,9 +386,9 @@ html {
 
 .homepage-footer {
   position: absolute;
-  width: 100vw;
-  height: 6vh;
-  top: 94vh;
+  width: 980px;
+  height: 8vh;
+  top: 92vh;
   justify-content: space-around;
   align-items: center;
 }
@@ -397,6 +396,10 @@ html {
 .homepage-footer .flex-col-4{
   justify-content: center;
   align-items: flex-end;
+}
+
+.github--link .content-style{
+  margin-bottom: 0.3rem;
 }
 
 .homepage-footer .content-style a{

@@ -1010,6 +1010,7 @@ header .right .select .menu {
   color: #4D5967;
   font-size: 26px;
   margin-top: 17px;
+  margin-right: 12px;
 }
 
 #notifications.unread .button .icon {
