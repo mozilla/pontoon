@@ -48,7 +48,10 @@ export function get(
         const payload = new FormData();
         payload.append('locale', locale);
         payload.append('project', project);
-        payload.append('paths[]', resource);
+
+        if (resource !== 'all') {
+            payload.append('paths[]', resource);
+        }
 
         const requestParams = {
             method: 'POST',

@@ -2,16 +2,28 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+
+import './EntitiesList.css';
+
+import { selectors as navSelectors } from 'core/navigation';
+import type { Navigation } from 'core/navigation';
 
 import { NAME } from '..';
 import Entity from './Entity';
 
-import type { State, Entities } from '../reducer';
+import type { State, Entities, DbEntity } from '../reducer';
 
 
-type Props = {
+type Props = {|
     entities: Entities,
-};
+    parameters: Navigation,
+|};
+
+type InternalProps = {|
+    ...Props,
+    dispatch: Function,
+|};
 
 /**
  * Displays a list of entities and their current translation.
@@ -20,13 +32,14 @@ type Props = {
  * entities. It interacts with `core/navigation` when an entity is selected.
  *
  */
-export class EntitiesListBase extends React.Component<Props> {
-    selectEntity = () => {
-        // console.log('click');
+export class EntitiesListBase extends React.Component<InternalProps> {
+    selectEntity = (entity: DbEntity) => {
+        this.props.dispatch(push(`?string=${entity.pk}`));
     }
 
     render() {
         const { entities } = this.props;
+        const selectedEntity = this.props.parameters.entity;
 
         return (
             <ul className='entities'>
@@ -35,6 +48,7 @@ export class EntitiesListBase extends React.Component<Props> {
                         entity={ entity }
                         selectEntity={ this.selectEntity }
                         key={ i }
+                        selected={ entity.pk === selectedEntity }
                     />;
                 }) }
             </ul>
@@ -46,6 +60,7 @@ export class EntitiesListBase extends React.Component<Props> {
 const mapStateToProps = (state: State): Props => {
     return {
         entities: state[NAME].entities,
+        parameters: navSelectors.getNavigation(state),
     };
 };
 
