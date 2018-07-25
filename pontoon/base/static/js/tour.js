@@ -45,18 +45,9 @@ Sideshow.registerWizard({
       format: "markdown",
       listeners: {
         beforeStep: function() {
-          $("#progress .menu").css("display", "block");
+          $("#progress .selector").click();
         }
       }
-    },
-    {
-      title: "Sidebar",
-      text: "The sidebar displays the list of strings in the current project " +
-            "resource. Each string is displayed with the string status "+
-            "(i.e. Missing, Translated, etc.) identified by a colored square.",
-      subject: "#entitylist",
-      format: "markdown",
-      lockSubject: true
     },
     {
       title: "Search Bar",
@@ -67,7 +58,7 @@ Sideshow.registerWizard({
             "perfect match, wrap the search terms in double quotes, e.g. 'new tab'." +
             "<br> > If, on the other hand, you want to search for strings that " +
             "contain double quotes, you can escape them with a backslash.",
-      subject: "#entitylist",
+      subject: "#entitylist #search",
       targets: "#entitylist #search",
       format: "markdown",
       lockSubject: true
@@ -91,8 +82,17 @@ Sideshow.registerWizard({
       }
     },
     {
-      title: "Entity",
-      text: "Selecting an entity by clicking it opens up the editor.",
+      title: "String List",
+      text: "The sidebar displays the list of strings in the current project " +
+            "resource. Each string is displayed with the string status "+
+            "(i.e. Missing, Translated, etc.) identified by a colored square.",
+      subject: "#entitylist",
+      format: "markdown",
+      lockSubject: true
+    },
+    {
+      title: "A String",
+      text: "Selecting an string by clicking it opens up the editor.",
       subject: "#entitylist .uneditables li:nth-child(3)",
       format: "markdown",
       autoContinue: true,
@@ -173,7 +173,7 @@ Sideshow.registerWizard({
             "suggestions, sidebar will show the most recent one.",
       subject: "#helpers",
       format: "markdown",
-      targets: "#helpers section.history",
+      targets: "#helpers.tabs nav li:nth-child(1)",
       listeners: {
         beforeStep: function() {
           $("#entitylist .uneditables li:nth-child(3)").click();
@@ -188,7 +188,7 @@ Sideshow.registerWizard({
             "related to the current project string.",
       subject: "#helpers",
       format: "markdown",
-      targets: "#helpers section.machinery",
+      targets: "#helpers.tabs nav li:nth-child(2)",
       listeners: {
         beforeStep: function() {
           $("#helpers.tabs nav li")[1].firstElementChild.click();
