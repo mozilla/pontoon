@@ -4,7 +4,7 @@
   "description": "Mozilla in-place localization tool.",
   "private": true,
   "dependencies": {
-    "fluent-syntax": "^0.7.0"
+    "fluent-syntax": "^0.8.0"
   },
   "engines": {
     "node": "9.4.0"
