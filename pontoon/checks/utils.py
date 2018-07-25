@@ -1,5 +1,72 @@
-from pontoon.checks import DB_LIBRARIES
+from pontoon.base.models import Translation
+
+from pontoon.checks import (
+    DB_FORMATS,
+    DB_LIBRARIES,
+)
 from pontoon.checks.models import Warning, Error
+from pontoon.checks.libraries import run_checks
+
+
+def get_translations(**qs_filters):
+    """
+    Prefetch translations with fields required for bulk_run_checks
+    """
+    translations = (
+        Translation.objects
+        .filter(
+            entity__resource__format__in=DB_FORMATS,
+            **qs_filters
+
+        )
+        .prefetch_related(
+            'entity',
+            'entity__resource__entities',
+            'locale',
+        )
+    )
+    return translations
+
+
+def bulk_run_checks(translations):
+    """
+    Run checks on a list of translations
+
+    *Important*
+    To avoid performance problems, translations have to prefetch entities and locales objects.
+    """
+    warnings, errors = [], []
+    if not translations:
+        return
+
+    for translation in translations:
+        warnings_, errors_ = get_failed_checks_db_objects(
+            translation,
+            run_checks(
+                translation.entity,
+                translation.locale.code,
+                translation.entity.string,
+                translation.string,
+                use_tt_checks=False
+            )
+
+        )
+        warnings.extend(warnings_)
+        errors.extend(errors_)
+
+    # Remove old warnings and errors
+    Warning.objects.filter(
+        translation__pk__in=[t.pk for t in translations]
+    ).delete()
+    Error.objects.filter(
+        translation__pk__in=[t.pk for t in translations]
+    ).delete()
+
+    # Insert new warnings and errors
+    Warning.objects.bulk_create(warnings)
+    Error.objects.bulk_create(errors)
+
+    return warnings, errors
 
 
 def get_failed_checks_db_objects(translation, failed_checks):

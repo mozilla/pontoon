@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from pontoon.base.models import Translation
 from pontoon.checks import DB_FORMATS
 
-from pontoon.checks.tasks import bulk_run_checks
+from pontoon.checks.tasks import check_translations
 
 log = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class Command(BaseCommand):
         batch_size = int(options['batch_size'])
         tasks_result = group(
             signature(
-                bulk_run_checks,
+                check_translations,
                 args=(translations_pks[i:i + batch_size],)
             )
             for i in xrange(0, len(translations_pks), batch_size)
