@@ -152,7 +152,7 @@ def test_ftl_non_localizable_entries(get_entity_mock):
     """Non-localizable entries are not allowed"""
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
-        '## Group Comment'
+        '[[foo]]'
     ) == {
         'pErrors': [u'Translation needs to be a valid localizable entry']
     }
