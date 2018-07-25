@@ -228,8 +228,8 @@ var Pontoon = (function (my) {
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
         var expression = '';
-        if (element.expression.expression) {
-          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -271,8 +271,8 @@ var Pontoon = (function (my) {
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
         var expression = '';
-        if (element.expression.expression) {
-          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
