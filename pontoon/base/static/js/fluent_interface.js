@@ -8,7 +8,7 @@ var Pontoon = (function (my) {
   /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, StringExpression, NumberLiteral,
+   * - Placeable with expression type CallExpression, StringLiteral, NumberLiteral,
    *   VariantExpression, AttributeExpression, ExternalArgument or MessageReference
    */
   function isSimpleElement(element) {
@@ -21,7 +21,7 @@ var Pontoon = (function (my) {
       element.expression &&
       [
         'CallExpression',
-        'StringExpression',
+        'StringLiteral',
         'NumberLiteral',
         'VariantExpression',
         'AttributeExpression',
@@ -384,7 +384,7 @@ var Pontoon = (function (my) {
         else if (
           [
             'CallExpression',
-            'StringExpression',
+            'StringLiteral',
             'NumberLiteral',
             'VariantExpression',
             'AttributeExpression',
