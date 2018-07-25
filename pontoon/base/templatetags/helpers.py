@@ -272,7 +272,7 @@ def _serialize_elements(elements):
             response += element.value
 
         elif isinstance(element, ast.Placeable):
-            if isinstance(element.expression, ast.ExternalArgument):
+            if isinstance(element.expression, ast.VariableReference):
                 response += '{ $' + element.expression.id.name + ' }'
 
             elif isinstance(element.expression, ast.MessageReference):
