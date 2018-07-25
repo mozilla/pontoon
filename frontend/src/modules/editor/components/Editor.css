@@ -1,0 +1,5 @@
+.editor > textarea {
+    height: 20%;
+    min-height: 100px;
+    width: 100%;
+}

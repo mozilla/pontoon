@@ -12,7 +12,7 @@ import type { Navigation } from 'core/navigation';
 import { NAME } from '..';
 import Entity from './Entity';
 
-import type { State, Entities, DbEntity } from '../reducer';
+import type { Entities, DbEntity } from '../reducer';
 
 
 type Props = {|
@@ -57,7 +57,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 }
 
 
-const mapStateToProps = (state: State): Props => {
+const mapStateToProps = (state: Object): Props => {
     return {
         entities: state[NAME].entities,
         parameters: navSelectors.getNavigation(state),

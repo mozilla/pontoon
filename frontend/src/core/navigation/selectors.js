@@ -13,6 +13,10 @@ export type Navigation = {|
     entity: number,
 |};
 
+/**
+ * Return the locale, project, resource and entity that correspond to the
+ * current URL.
+ */
 export const getNavigation: Function = createSelector(
     pathSelector,
     querySelector,

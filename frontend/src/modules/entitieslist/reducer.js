@@ -1,18 +1,20 @@
 /* @flow */
 
-import { RECEIVE, REQUEST } from './actions';
-import type { ReceiveAction, RequestAction } from './actions';
+import { RECEIVE, REQUEST, UPDATE } from './actions';
+import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
 
 
 export type Action =
     | ReceiveAction
     | RequestAction
+    | UpdateAction
 ;
 
-type Translation = {
-    +string: string,
+export type Translation = {
+    +string: ?string,
     +approved: boolean,
     +fuzzy: boolean,
+    +rejected: boolean,
 };
 
 export type DbEntity = {
@@ -43,12 +45,35 @@ export default function reducer(
 ): State {
     switch (action.type) {
         case RECEIVE:
-            return { ...state, ...{
-                entities: action.entities,
-                fetching: false,
-            } };
+            return {
+                ...state,
+                ...{
+                    entities: action.entities,
+                    fetching: false,
+                }
+            };
         case REQUEST:
             return { ...state, ...{ fetching: true } };
+        case UPDATE:
+            const entity = action.entity;
+            const translation = action.translation;
+            return {
+                ...state,
+                ...{
+                    entities: state.entities.map(item => {
+                        if (item.pk !== entity) {
+                            return item;
+                        }
+
+                        return {
+                            ...item,
+                            ...{
+                                translation: [translation]
+                            },
+                        };
+                    }),
+                },
+            };
         default:
             return state;
     }
