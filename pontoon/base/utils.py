@@ -512,7 +512,11 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
-    changeset.bulk_create_translation_memory_entries()
+
+    if changeset.changed_translations:
+        valid_translations = changeset.bulk_check_translations()
+        changeset.bulk_create_translation_memory_entries(valid_translations)
+
     TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed
