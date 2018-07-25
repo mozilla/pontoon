@@ -2,9 +2,6 @@
 
 # Prepares then runs the webapp.
 
-echo ">>> Prepare revision file"
-git rev-parse HEAD > static/revision.txt
-
 echo ">>> Setting up the db for Django"
 python manage.py migrate
 

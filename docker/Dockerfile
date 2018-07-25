@@ -26,41 +26,15 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs yarn
 
-# Create some folders and give them to the app user
-RUN mkdir -p /webapp-frontend-deps && \
-    chown app:app /webapp-frontend-deps
-
-RUN chown app:app /app
+COPY . /app/
 
 # Create the folder for front-end assets
-RUN mkdir -p /webapp-frontend-deps/assets && \
-    chown app:app /webapp-frontend-deps/assets
-
-# Create the folders for Translate.Next
-RUN mkdir -p /app/frontend && \
-    mkdir -p /webapp-frontend-deps/frontend/build
-
-RUN chown -R app:app /webapp-frontend-deps
+RUN mkdir -p /app/assets
 
 # Install node requirements
-COPY ./package.json /webapp-frontend-deps/package.json
-COPY ./package-lock.json /webapp-frontend-deps/package-lock.json
-RUN cd /webapp-frontend-deps && npm install
+RUN cd /app && npm install
+RUN cd /app/frontend && yarn install
 
-COPY ./frontend/package.json /webapp-frontend-deps/frontend/package.json
-COPY ./frontend/yarn.lock /webapp-frontend-deps/frontend/yarn.lock
-RUN cd /webapp-frontend-deps/frontend && yarn install
-
-# Link to the node modules installed with npm and yarn. We install those in
-# different folders because when using this container in development,
-# we replace the /app folder with a volume. By putting those dependencies
-# outside of /app, we can reuse them more easily.
-RUN ln -s /webapp-frontend-deps/node_modules /app/node_modules && \
-    ln -s /webapp-frontend-deps/assets /app/assets && \
-    ln -s /webapp-frontend-deps/frontend/node_modules /app/frontend/node_modules && \
-    ln -s /webapp-frontend-deps/frontend/build /app/frontend/build
-
-COPY . /app/
 COPY ./docker/config/webapp.env /app/.env
 
 # Python environment variables
@@ -81,5 +55,7 @@ RUN cd /app/frontend/ && yarn build
 # Run collectstatic in container which puts files in the default place for
 # static files.
 RUN cd /app/ && python manage.py collectstatic --noinput
+
+RUN chown -R app:app /app
 
 CMD ["/app/docker/run_webapp.sh"]

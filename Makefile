@@ -17,15 +17,14 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell"
 	@echo "  test             Runs the Python test suite"
+	@echo "  test-frontend    Runs the new frontend's test suite"
+	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
 
 .docker-build:
 	make build
-
-assets:
-	mkdir -p assets
 
 build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
@@ -46,43 +45,34 @@ clean:
 	rm .docker-build
 
 test:
-	./docker/run_tests_in_docker.sh ${ARGS}
+	${DC} run --rm webapp /app/docker/run_tests.sh
 
 test-frontend:
-	${DOCKER} run --rm \
-		-v `pwd`:/app \
-		--workdir /app/frontend \
-		--tty \
-		--interactive \
-		local/pontoon yarn test
+	${DC} run --rm -w /app/frontend webapp yarn test
 
 flow:
-	${DOCKER} run --rm \
-		-v `pwd`:/app \
-		-e SHELL=bash \
-		--workdir /app/frontend \
-		--tty --interactive \
-		local/pontoon yarn flow:dev
+	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
 
 shell:
-	./docker/run_tests_in_docker.sh --shell
+	${DC} run --rm webapp /bin/bash
 
 loaddb:
+	# Stop connections to the database so we can drop it.
 	-${DC} stop webapp
-	-${DOCKER} exec -i `${DC} ps -q postgresql` dropdb -U pontoon pontoon
-	${DOCKER} exec -i `${DC} ps -q postgresql` createdb -U pontoon pontoon
+	# Make sure the postgresql container is running.
+	-${DC} start postgresql
+	-${DC} exec postgresql dropdb -U pontoon pontoon
+	${DC} exec postgresql createdb -U pontoon pontoon
+	# Note: docker-compose doesn't support the `-i` (--interactive) argument
+	# that we need to send the dump file through STDIN. We thus are forced to
+	# use docker here instead.
 	${DOCKER} exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
-build-frontend: assets
-	${DC} run webapp npm run build
+build-frontend:
+	${DC} run --rm webapp npm run build
 
-build-frontend-w: assets
-	${DOCKER} run --rm \
-		-v `pwd`:/app \
-		--workdir /app \
-		-e LOCAL_USER_ID=$UID \
-		--tty --interactive \
-		local/pontoon npm run build-w
+build-frontend-w:
+	${DC} run --rm webapp npm run build-w
 
 # Old targets for backwards compatibility.
 dockerbuild: build
