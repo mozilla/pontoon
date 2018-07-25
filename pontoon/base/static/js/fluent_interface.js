@@ -8,7 +8,7 @@ var Pontoon = (function (my) {
   /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, StringExpression, NumberExpression,
+   * - Placeable with expression type CallExpression, StringExpression, NumberLiteral,
    *   VariantExpression, AttributeExpression, ExternalArgument or MessageReference
    */
   function isSimpleElement(element) {
@@ -22,7 +22,7 @@ var Pontoon = (function (my) {
       [
         'CallExpression',
         'StringExpression',
-        'NumberExpression',
+        'NumberLiteral',
         'VariantExpression',
         'AttributeExpression',
         'ExternalArgument',
@@ -51,7 +51,7 @@ var Pontoon = (function (my) {
     return element.expression.variants.every(function (item) {
       return (
         CLDRplurals.indexOf(item.key.name) !== -1 ||
-        item.key.type === 'NumberExpression'
+        item.key.type === 'NumberLiteral'
       );
     });
   }
@@ -385,7 +385,7 @@ var Pontoon = (function (my) {
           [
             'CallExpression',
             'StringExpression',
-            'NumberExpression',
+            'NumberLiteral',
             'VariantExpression',
             'AttributeExpression',
           ].indexOf(element.expression.type) >= 0

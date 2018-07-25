@@ -281,7 +281,7 @@ def _serialize_elements(elements):
             elif isinstance(element.expression, (
                 ast.CallExpression,
                 ast.StringExpression,
-                ast.NumberExpression,
+                ast.NumberLiteral,
                 ast.VariantExpression,
                 ast.AttributeExpression,
             )):
