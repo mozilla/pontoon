@@ -868,7 +868,7 @@ var Pontoon = (function (my) {
           });
 
           if (attributes) {
-            content = (value ? content : entity.key) + attributes;
+            content = (value ? content : entity.key + ' = ') + attributes;
           }
         }
 
