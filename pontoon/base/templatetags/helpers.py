@@ -275,7 +275,7 @@ def _serialize_elements(elements):
             if isinstance(element.expression, ast.VariableReference):
                 response += '{ $' + element.expression.id.name + ' }'
 
-            elif isinstance(element.expression, ast.MessageReference):
+            elif isinstance(element.expression, (ast.MessageReference, ast.TermReference)):
                 response += '{ ' + element.expression.id.name + ' }'
 
             elif isinstance(element.expression, (

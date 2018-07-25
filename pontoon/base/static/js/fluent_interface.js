@@ -9,7 +9,8 @@ var Pontoon = (function (my) {
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
    * - Placeable with expression type CallExpression, StringLiteral, NumberLiteral,
-   *   VariantExpression, AttributeExpression, VariableReference or MessageReference
+   *   VariantExpression, AttributeExpression, VariableReference, MessageReference
+   *   or TermReference
    */
   function isSimpleElement(element) {
     if (element.type === 'TextElement') {
@@ -26,7 +27,8 @@ var Pontoon = (function (my) {
         'VariantExpression',
         'AttributeExpression',
         'VariableReference',
-        'MessageReference'
+        'MessageReference',
+        'TermReference',
       ].indexOf(element.expression.type) >= 0
     ) {
       return true;
@@ -374,7 +376,12 @@ var Pontoon = (function (my) {
           }
           string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
         }
-        else if (element.expression.type === 'MessageReference') {
+        else if (
+          [
+            'MessageReference',
+            'TermReference',
+          ].indexOf(element.expression.type) >= 0
+        ) {
           if (markPlaceables) {
             startMarker = '<mark class="placeable" title="Message Reference">';
             endMarker = '</mark>';
