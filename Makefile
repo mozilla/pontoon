@@ -45,45 +45,34 @@ clean:
 	rm .docker-build
 
 test:
-	./docker/run_tests_in_docker.sh ${ARGS}
+	${DC} run --rm webapp /app/docker/run_tests.sh
 
 test-frontend:
-	${DOCKER} run --rm \
-		-v `pwd`/frontend/src:/app/frontend/src \
-		-v `pwd`/frontend/public:/app/frontend/public \
-		--workdir /app/frontend \
-		--tty \
-		--interactive \
-		local/pontoon yarn test
+	${DC} run --rm -w /app/frontend webapp yarn test
 
 flow:
-	${DOCKER} run --rm \
-		-v `pwd`/frontend/src:/app/frontend/src \
-		-v `pwd`/frontend/public:/app/frontend/public \
-		-e SHELL=bash \
-		--workdir /app/frontend \
-		--tty --interactive \
-		local/pontoon yarn flow:dev
+	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
 
 shell:
-	./docker/run_tests_in_docker.sh --shell
+	${DC} run --rm webapp /bin/bash
 
 loaddb:
+	# Stop connections to the database so we can drop it.
 	-${DC} stop webapp
-	-${DOCKER} exec -i `${DC} ps -q postgresql` dropdb -U pontoon pontoon
-	${DOCKER} exec -i `${DC} ps -q postgresql` createdb -U pontoon pontoon
+	# Make sure the postgresql container is running.
+	-${DC} start postgresql
+	-${DC} exec postgresql dropdb -U pontoon pontoon
+	${DC} exec postgresql createdb -U pontoon pontoon
+	# Note: docker-compose doesn't support the `-i` (--interactive) argument
+	# that we need to send the dump file through STDIN. We thus are forced to
+	# use docker here instead.
 	${DOCKER} exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
 
 build-frontend:
-	${DC} run webapp npm run build
+	${DC} run --rm webapp npm run build
 
 build-frontend-w:
-	${DOCKER} run --rm \
-		-v `pwd`/pontoon:/app/pontoon \
-		--workdir /app \
-		-e LOCAL_USER_ID=$UID \
-		--tty --interactive \
-		local/pontoon npm run build-w
+	${DC} run --rm webapp npm run build-w
 
 # Old targets for backwards compatibility.
 dockerbuild: build
