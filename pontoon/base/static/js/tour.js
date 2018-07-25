@@ -95,14 +95,14 @@ Sideshow.registerWizard({
       text: "Selecting an entity by clicking it opens up the editor.",
       subject: "#entitylist .uneditables li:nth-child(3)",
       format: "markdown",
-      autoContinue: false,
+      autoContinue: true,
       targets: "#entitylist .uneditables li:nth-child(3)",
+      showNextButton: true,
       completingConditions: [
         function() {
           $("#entitylist .uneditables li:nth-child(3)").click(function() {
             is_entity_clicked = true;
           });
-          $(".sideshow-next-step-button").attr("disabled", null);
           return is_entity_clicked;
         }
       ]
@@ -128,7 +128,8 @@ Sideshow.registerWizard({
             "editing space and click SUGGEST",
       subject: "#editor #single",
       format: "markdown",
-      autoContinue: false,
+      autoContinue: true,
+      showNextButton: true,
       targets: "#editor #single button#save",
       skipIf: function(){
           return canTranslate;
@@ -138,7 +139,6 @@ Sideshow.registerWizard({
           $("#editor #single button#save").click(function() {
             is_submit_clicked = true;
           });
-          $(".sideshow-next-step-button").attr("disabled", null);
           return is_submit_clicked;
         }
       ]
@@ -151,7 +151,8 @@ Sideshow.registerWizard({
             "the translation to the editing space and click SAVE,",
       subject: "#editor #single",
       format: "markdown",
-      autoContinue: false,
+      autoContinue: true,
+      showNextButton: true,
       targets: "#editor #single button#save",
       skipIf: function(){
           return !canTranslate;
@@ -161,7 +162,6 @@ Sideshow.registerWizard({
           $("#editor #single button#save").click(function() {
             is_submit_clicked = true;
           });
-          $(".sideshow-next-step-button").attr("disabled", null);
           return is_submit_clicked;
         }
       ]

@@ -607,6 +607,10 @@ def update_translation(request):
     except UserProfile.DoesNotExist as error:
         use_ttk_checks = True
 
+    # Disable checks for demo project.
+    if project.slug == 'demo':
+        use_ttk_checks = False
+
     now = timezone.now()
     can_translate = (
         request.user.can_translate(project=project, locale=locale) and
