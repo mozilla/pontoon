@@ -343,6 +343,10 @@ var Pontoon = (function (my) {
           count = 0,
           sourcesMap = {};
 
+      if (!customSearch) {
+        var entity = self.getEditorEntity();
+      }
+
       self.NProgressUnbind();
 
       function append(data) {
@@ -490,7 +494,7 @@ var Pontoon = (function (my) {
         data: {
           text: original,
           locale: self.locale.code,
-          pk: !customSearch ? $('#editor')[0].entity.pk : ''
+          pk: !customSearch ? entity.pk : ''
         }
 
       }).success(function(data) {
@@ -601,7 +605,7 @@ var Pontoon = (function (my) {
       }
 
       // Machine translation (Caighdean)
-      if (self.locale.code === 'ga-IE') {
+      if (!customSearch && self.locale.code === 'ga-IE') {
         requests++;
 
         if (self.XHRCaighdeanMT) {
