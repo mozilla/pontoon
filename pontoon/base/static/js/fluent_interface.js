@@ -821,7 +821,6 @@ var Pontoon = (function (my) {
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
         var value = '';
-        var attributes = '';
 
         // Unsupported string
         if (!this.isFTLEditorEnabled()) {
@@ -863,13 +862,9 @@ var Pontoon = (function (my) {
             var val = serializeFTLEditorElements($(this).find('ul:first > li'));
 
             if (id && val) {
-              attributes += '\n  .' + id + ' = ' + val;
+              content += '\n  .' + id + ' = ' + val;
             }
           });
-
-          if (attributes) {
-            content = (value ? content : entity.key + ' = ') + attributes;
-          }
         }
 
         var ast = fluentParser.parseEntry(content);
