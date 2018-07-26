@@ -1,0 +1,35 @@
+.locale.select .menu ul li {
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+    width: 100%;
+
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.locale.select .menu ul li .arrow {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 2px;
+}
+
+.locale.select .menu ul li.hover .arrow {
+    display: inline-block;
+}
+
+.locale.select.available .menu ul li .arrow:after,
+.locale.select.selected .menu ul li .arrow:after {
+    content: "";
+}
+
+.locale.select.selected .menu ul li.left .arrow:after,
+.locale.select.readonly .menu ul li .arrow:after {
+    content: "";
+}
+
+.locale.select.selected .menu ul li.left .arrow,
+.locale.select.readonly .menu ul li .arrow {
+    left: 2px;
+}

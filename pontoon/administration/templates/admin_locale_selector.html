@@ -10,7 +10,11 @@
         </div>
         <ul>
           {% for locale in locales_available %}
-          <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+          <li class="clearfix" data-id="{{ locale.id }}">
+            <span class="arrow fa"></span>
+            <span class="language {{ locale.code }}">{{ locale.name }}</span>
+            <span class="code">{{ locale.code }}</span>
+          </li>
           {% endfor %}
           <li class="no-match">No results</li>
         </ul>
@@ -26,7 +30,11 @@
           </div>
           <ul>
             {% for locale in locales_selected %}
-              <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            <li class="clearfix" data-id="{{ locale.id }}">
+              <span class="arrow fa"></span>
+              <span class="language {{ locale.code }}">{{ locale.name }}</span>
+              <span class="code">{{ locale.code }}</span>
+            </li>
             {% endfor %}
             <li class="no-match">No results</li>
           </ul>
@@ -43,7 +51,11 @@
           </div>
           <ul>
             {% for locale in locales_readonly %}
-              <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            <li class="clearfix" data-id="{{ locale.id }}">
+              <span class="arrow fa"></span>
+              <span class="language {{ locale.code }}">{{ locale.name }}</span>
+              <span class="code">{{ locale.code }}</span>
+            </li>
             {% endfor %}
             <li class="no-match">No results</li>
           </ul>
