@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import 'admin_locale_selector.html' as admin_locale_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
 {% import 'tag_inline_formset.html' as tag_inline_formset %}
 
@@ -43,7 +43,7 @@
   <h3>Locales</h3>
 
   <div class="locales clearfix">
-      {{ multiple_locale_selector.render(locales_available, locales_selected) }}
+      {{ admin_locale_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}
   </div>

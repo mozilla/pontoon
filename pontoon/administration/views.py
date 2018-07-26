@@ -222,6 +222,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'repo_formset': repo_formset,
         'tag_formset': tag_formset,
         'external_resource_formset': external_resource_formset,
+        'locales_readonly': [],
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'subtitle': subtitle,

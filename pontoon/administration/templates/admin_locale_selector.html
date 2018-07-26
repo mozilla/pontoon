@@ -1,0 +1,55 @@
+{% macro render(locales_available, locales_selected, locales_readonly, form_field='selected_locales') %}
+  <div class="admin-locale-selector clearfix">
+
+    <div class="locale select available">
+      <label for="available">Available <a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
+      <div class="menu permanent">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input id="available" type="search" autocomplete="off">
+        </div>
+        <ul>
+          {% for locale in locales_available %}
+          <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+          {% endfor %}
+          <li class="no-match">No results</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="locale select selected">
+        <label for="selected">Localizable <a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
+        <div class="menu permanent">
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="selected" type="search" autocomplete="off">
+          </div>
+          <ul>
+            {% for locale in locales_selected %}
+              <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            {% endfor %}
+            <li class="no-match">No results</li>
+          </ul>
+        </div>
+        <input type="hidden" name="{{ form_field }}">
+      </div>
+
+      <div class="locale select readonly">
+        <label for="readonly">Read-only <a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
+        <div class="menu permanent">
+          <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="readonly" type="search" autocomplete="off">
+          </div>
+          <ul>
+            {% for locale in locales_readonly %}
+              <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
+            {% endfor %}
+            <li class="no-match">No results</li>
+          </ul>
+        </div>
+        <input type="hidden" name="{{ form_field }}">
+      </div>
+  
+  </div>
+{% endmacro %}
