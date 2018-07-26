@@ -1,6 +1,6 @@
 $(function () {
 
-
+  /*
   function userCanTranslate() {
     // Same as Pontoon.user.canTranslate()
     var managedLocales = $("#server").data("user-managed-locales") || [],
@@ -28,7 +28,9 @@ $(function () {
     return $.inArray(locale.code, translatedLocales) !== -1;
   }
 
-  var canTranslate = userCanTranslate();
+  */
+
+  var canTranslate = Pontoon.user.canTranslate();
   var isEntityClicked = false;
   var isSubmitClicked = false;
 
