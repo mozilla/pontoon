@@ -33,3 +33,19 @@
 .locale.select.readonly .menu ul li .arrow {
     left: 2px;
 }
+
+.locale.select.selected label {
+    text-align: center;
+}
+
+.locale.select.selected label .left {
+    float: left;
+}
+
+.locale.select.readonly label {
+    text-align: right;
+}
+
+.locale.select.readonly label a {
+    float: left;
+}

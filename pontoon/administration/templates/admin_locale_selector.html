@@ -2,7 +2,7 @@
   <div class="admin-locale-selector clearfix">
 
     <div class="locale select available">
-      <label for="available">Available <a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
+      <label for="available">Available <a class="move-all" href="#move-all">Move all &rarr;</a></label>
       <div class="menu permanent">
         <div class="search-wrapper clearfix">
           <div class="icon fa fa-search"></div>
@@ -22,7 +22,11 @@
     </div>
 
     <div class="locale select selected">
-        <label for="selected">Localizable <a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
+        <label for="selected">
+          <a class="move-all left" href="#move-all">&larr; Move all</a>
+          Localizable
+          <a class="move-all right" href="#move-all">Move all &rarr;</a>
+        </label>
         <div class="menu permanent">
           <div class="search-wrapper clearfix">
             <div class="icon fa fa-search"></div>
@@ -43,7 +47,7 @@
       </div>
 
       <div class="locale select readonly">
-        <label for="readonly">Read-only <a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
+        <label for="readonly">Read-only <a class="move-all" href="#move-all">&larr; Move all</a></label>
         <div class="menu permanent">
           <div class="search-wrapper clearfix">
             <div class="icon fa fa-search"></div>

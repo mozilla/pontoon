@@ -22,42 +22,48 @@ $(function() {
     }
   }
 
+  function getTarget(item) {
+    var list = $(item).parents('.select');
+    var target = list.siblings('.select.selected');
+
+    if (list.is('.selected')) {
+      if ($(item).is('.left')) {
+        target = list.siblings('.select.available');
+      }
+      else {
+        target = list.siblings('.select.readonly');
+      }
+    }
+
+    return target;
+  }
+
   // Set arrow direction in the middle list
   $('body')
     .on('mouseenter', '.locale.select.selected li', function (e) { setArrow($(this), e); })
     .on('mousemove', '.locale.select.selected li', function (e) { setArrow($(this), e); });
 
-  // Select locales
-  $('body').on('click.pontoon', '.admin-locale-selector .select li', function () {
-    var $wrapper = $(this).parents('.select').parent();
-    var target = $wrapper.find('.select.selected');
+  // Move items between lists
+  var mainSelector = '.admin-locale-selector';
+  var itemSelector = mainSelector + ' .select li';
+  var allSelector = mainSelector + ' .move-all';
+  $('body').on('click.pontoon', [itemSelector, allSelector].join(', '), function (e) {
+    e.preventDefault();
 
-    if ($(this).parents('.selected').length) {
-      if ($(this).is('.left')) {
-        target = $wrapper.find('.select.available');
-      }
-      else {
-        target = $wrapper.find('.select.readonly');
-      }
+    var target = getTarget(this);
+    var ul = target.find('ul');
+
+    // Move selected item
+    if ($(this).is('li')) {
+      var clone = $(this).remove();
+    }
+    // Move all items in the list
+    else {
+      var clone = $(this).parents('.select').find('li:visible:not(".no-match")').remove();
     }
 
-    var clone = $(this).remove();
-    var $ul = target.find('ul');
-    $ul.append(clone.removeClass('hover'));
-
-    $ul.scrollTop($ul[0].scrollHeight);
-    updateSelectedLocales();
-  });
-
-  // Choose/remove all locales
-  $('body').on('click', '.admin-locale-selector .choose-all, .admin-locale-selector .remove-all', function (e) {
-    e.preventDefault();
-    var ls = $(this).parents('.locale.select'),
-        target = ls.siblings('.locale.select').find('ul'),
-        items = ls.find('li:visible:not(".no-match")').remove();
-
-    target.append(items);
-    target.scrollTop(target[0].scrollHeight);
+    ul.append(clone.removeClass('hover'));
+    ul.scrollTop(ul[0].scrollHeight);
     updateSelectedLocales();
   });
 
