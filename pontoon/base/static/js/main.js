@@ -341,14 +341,10 @@ var Pontoon = (function (my) {
           tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
           count = 0,
-          sourcesMap = {},
-          originalForTM = original;
+          sourcesMap = {};
 
-      // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
-      // so we should query them as such as well (instead of simplified strings).
       if (!customSearch) {
         var entity = self.getEditorEntity();
-        originalForTM = entity['original' + self.getPluralSuffix()];
       }
 
       self.NProgressUnbind();
@@ -496,9 +492,9 @@ var Pontoon = (function (my) {
       self.XHRtranslationMemory = $.ajax({
         url: '/translation-memory/',
         data: {
-          text: originalForTM,
+          text: original,
           locale: self.locale.code,
-          pk: !customSearch ? $('#editor')[0].entity.pk : ''
+          pk: !customSearch ? entity.pk : ''
         }
 
       }).success(function(data) {
@@ -609,7 +605,7 @@ var Pontoon = (function (my) {
       }
 
       // Machine translation (Caighdean)
-      if (self.locale.code === 'ga-IE') {
+      if (!customSearch && self.locale.code === 'ga-IE') {
         requests++;
 
         if (self.XHRCaighdeanMT) {
