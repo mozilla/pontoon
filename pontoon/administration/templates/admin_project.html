@@ -29,15 +29,25 @@
   <input type="hidden" value="{{ pk }}" name="pk">
   {% endif %}
 
-  <div class="clearfix">
+  <div class="half clearfix">
+    <div class="first">
       {{ form.name.label_tag() }}
-      {{ form.name }}
-      {{ form.name.errors }}
-  </div>
-  <div class="clearfix">
+    </div>
+    <div class="second">
       {{ form.slug.label_tag() }}
+    </div>
+    <div class="first">
+      {{ form.name }}
+    </div>
+    <div class="second">
       {{ form.slug }}
+    </div>
+    <div class="first">
       {{ form.slug.errors }}
+    </div>
+    <div class="second">
+      {{ form.name.errors }}
+    </div>
   </div>
 
   <h3>Locales</h3>

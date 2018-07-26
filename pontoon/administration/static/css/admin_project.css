@@ -85,7 +85,30 @@ textarea {
   display: block;
   height: 24px;
   margin-left: -1px;
-  width: 615px; /* Must be same as form width - padding - margin-left */
+  width: 975px;
+}
+
+.half label {
+  float: left;
+  width: 490px;
+}
+
+.half input {
+  margin-right: 5px;
+  width: 482px;
+}
+
+.half .second input {
+  margin-right: 0;
+  width: 483px;
+}
+
+.half .first .errorlist {
+  float: left;
+}
+
+.half .first .errorlist li {
+  margin: 0;
 }
 
 form .button {
@@ -158,7 +181,12 @@ form a:link, form a:visited {
   width: auto;
 }
 
-.locale.select.selected {
+form .locale.select.selected {
+  float: none;
+  margin-right: 49px;
+}
+
+.locale.select.readonly {
   float: right;
 }
 
@@ -182,7 +210,8 @@ form a:link, form a:visited {
 }
 
 .copy-locales {
-  float: right;
+  float: left;
+  margin-left: 48px;
   width: 295px;
 }
 
@@ -194,7 +223,7 @@ form a:link, form a:visited {
 .priority {
   float: left;
   margin-left: 10px;
-  width: 150px;
+  width: 165px;
 }
 
 .contact {
@@ -262,15 +291,15 @@ form a:link, form a:visited {
 }
 
 .repository.git .details-wrapper {
-  width: 408px;
+  width: 768px;
 }
 
 .repository .details-wrapper input {
-  width: 548px;
+  width: 908px;
 }
 
 .repository.git .details-wrapper input {
-  width: 403px;
+  width: 763px;
 }
 
 .repository .branch-wrapper {
@@ -290,10 +319,6 @@ form a:link, form a:visited {
   margin-top: 20px;
 }
 
-.repository .prefix-wrapper .prefix input[type=text] {
-  width: 615px;
-}
-
 .repository .repository-toolbar > section {
   display: inline-block;
   float: left;
@@ -305,7 +330,7 @@ form a:link, form a:visited {
 
 .inline input[id*=url] {
   float: left;
-  width: 367px;
+  width: 607px;
 }
 
 .branch-wrapper input[type=text] {
@@ -337,12 +362,12 @@ form a:link, form a:visited {
 
 .inline label[for*=name] {
   float: left;
-  width: 205px;
+  width: 325px;
 }
 
 .inline input[id*=name] {
   float: left;
-  width: 201px;
+  width: 321px;
 }
 
 .inline input[id$=DELETE],
@@ -352,7 +377,7 @@ form a:link, form a:visited {
 
 .inline label[for*=url] {
   float: left;
-  width: 407px;
+  width: 649px;
 }
 
 .inline input[id*=name],
@@ -389,6 +414,11 @@ textarea.strings-source {
   margin-left: 5px;
 }
 
+.locales .errorlist {
+  text-align: center;
+  width: 100%;  
+}
+
 .notification {
   display: block;
   margin-left: auto;
@@ -412,34 +442,34 @@ textarea.strings-source {
 
 .tag.inline label[for*=name] {
   float: left;
-  width: 210px;
+  width: 330px;
 }
 
 .tag.inline input[id*=name] {
   float: left;
-  width: 204px;
+  width: 324px;
   margin-right: 6px;
 }
 
 .tag.inline label[for*=slug] {
   float: left;
-  width: 211px;
+  width: 331px;
 }
 
 .tag.inline input[id*=slug] {
   float: left;
-  width: 201px;
+  width: 321px;
   margin-right: 6px;
 }
 
 .tag.inline label[for*=priority] {
   float: left;
-  width: 191px;
+  width: 311px;
 }
 
 .tag.inline input[id*=priority] {
   float: left;
-  width: 150px;
+  width: 270px;
   margin-right: 6px;
 }
 
@@ -449,22 +479,22 @@ textarea.strings-source {
 
 .tag.inline .form-errors .name-errors {
   float: left;
-  width: 204px;
+  width: 324px;
   margin-right: 5px;
   min-height: 1px;
 }
 
 .tag.inline .form-errors .slug-errors {
   float: left;
-  width: 201px;
+  width: 321px;
 }
 
 .tag.inline .form-errors .priority-errors {
   float: left;
-  width: 191px;
+  width: 311px;
 }
 
 .tag.inline select[name^=tag_set-][name$=-priority] {
-  width: 156px;
+  width: 276px;
   margin-top: 0;
 }
