@@ -1,21 +1,6 @@
 $(function() {
-  function setArrow(element, event) {
-    var x = event.pageX - element.offset().left;
-
-    if (element.outerWidth()/2 > x) {
-      element.addClass('left');
-    } else {
-      element.removeClass('left');
-    }
-  }
-
-  // Set translators arrow direction
-  $('body')
-    .on('mouseenter', '.locale.select.selected li', function (e) { setArrow($(this), e); })
-    .on('mousemove', '.locale.select.selected li', function (e) { setArrow($(this), e); });
-
-  /**
-   * Function keeps track of inputs that contain informations abouyt the order of selected locales.
+  /*
+   * Function keeps track of inputs that contain information about the order of selected locales.
    */
   function updateSelectedLocales() {
     var $selectedList = $('.admin-locale-selector .locale.selected'),
@@ -27,14 +12,40 @@ $(function() {
     $selectedLocalesField.val(selectedLocales.join());
   }
 
-  // Choose locales
-  $('body').on('click', '.admin-locale-selector .locale.select li', function () {
-    var ls = $(this).parents('.locale.select'),
-        target = ls.siblings('.locale.select').find('ul'),
-        item = $(this).remove();
+  function setArrow(element, event) {
+    var x = event.pageX - element.offset().left;
 
-    target.append(item);
-    target.scrollTop(target[0].scrollHeight);
+    if (element.outerWidth()/2 > x) {
+      element.addClass('left');
+    } else {
+      element.removeClass('left');
+    }
+  }
+
+  // Set arrow direction in the middle list
+  $('body')
+    .on('mouseenter', '.locale.select.selected li', function (e) { setArrow($(this), e); })
+    .on('mousemove', '.locale.select.selected li', function (e) { setArrow($(this), e); });
+
+  // Select locales
+  $('body').on('click.pontoon', '.admin-locale-selector .select li', function () {
+    var $wrapper = $(this).parents('.select').parent();
+    var target = $wrapper.find('.select.selected');
+
+    if ($(this).parents('.selected').length) {
+      if ($(this).is('.left')) {
+        target = $wrapper.find('.select.available');
+      }
+      else {
+        target = $wrapper.find('.select.readonly');
+      }
+    }
+
+    var clone = $(this).remove();
+    var $ul = target.find('ul');
+    $ul.append(clone.removeClass('hover'));
+
+    $ul.scrollTop($ul[0].scrollHeight);
     updateSelectedLocales();
   });
 
@@ -49,15 +60,6 @@ $(function() {
     target.scrollTop(target[0].scrollHeight);
     updateSelectedLocales();
   });
-
-  if ($.ui && $.ui.sortable) {
-    $('.admin-locale-selector .locale.select .sortable').sortable({
-      axis: 'y',
-      containment: 'parent',
-      update: updateSelectedLocales,
-      tolerance: 'pointer'
-    });
-  }
 
   $('body').on('submit', '.form.user-locales-settings', function () {
     updateSelectedLocales();
