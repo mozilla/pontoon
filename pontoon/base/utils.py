@@ -23,6 +23,7 @@ from xml.sax.saxutils import (
 )
 
 from django.db.models import Prefetch
+from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -695,7 +696,7 @@ def readonly_exists(projects, locale):
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.base.models import ProjectLocale
 
-    if not isinstance(projects, (tuple, list)):
+    if not isinstance(projects, (QuerySet, tuple, list)):
         projects = [projects]
 
     return ProjectLocale.objects.filter(
