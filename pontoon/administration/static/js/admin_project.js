@@ -118,7 +118,9 @@ $(function() {
       return;
     }
 
-    $('.remove-all').click();
+    $('.readonly .move-all').click();
+    $('.selected .move-all.left').click();
+
     $(projectLocales).each(function(i, id) {
       $('.locale.select:first').find('[data-id=' + id + ']').click();
     });
