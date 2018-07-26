@@ -1,6 +1,34 @@
 $(function () {
 
-  var canTranslate = false;
+
+  function userCanTranslate() {
+    // Same as Pontoon.user.canTranslate()
+    var managedLocales = $("#server").data("user-managed-locales") || [],
+      translatedLocales = $("#server").data("user-translated-locales") || [],
+      translatedProjects = $("#server").data("user-translated-projects") || {},
+      locale = Pontoon.getLocaleData(),
+      project = {
+        slug: Pontoon.getProjectData("slug")
+      };
+
+    if (Pontoon.getEditorEntity()) {
+      project = Pontoon.getEditorEntity().project;
+    }
+
+    var localeProject = locale.code + "-" + project.slug;
+
+    if ($.inArray(locale.code, managedLocales) !== -1) {
+      return true;
+    }
+
+    if (translatedProjects.hasOwnProperty(localeProject)) {
+      return translatedProjects[localeProject];
+    }
+
+    return $.inArray(locale.code, translatedLocales) !== -1;
+  }
+
+  var canTranslate = userCanTranslate();
   var isEntityClicked = false;
   var isSubmitClicked = false;
 
@@ -119,52 +147,24 @@ $(function () {
         subject: "#editor #single",
         format: "markdown",
         lockSubject: true,
-        listeners: {
-          beforeStep: function() {
-            canTranslate = Pontoon.user.canTranslate();
-          }
-        }
       },
       {
         title: "Submit a Translation",
-        text:
-          "When a translator is in Suggest Mode, or doesn’t have permissions" +
-          " to submit translations directly, a blue SUGGEST button will " +
-          "be visible in the lower-right side of the editing space. To " +
-          "suggest a translation, simply input the translation to the " +
-          "editing space and click SUGGEST",
+        text: (!canTranslate) ?
+              "When a translator is in Suggest Mode, or doesn’t have permissions" +
+              " to submit translations directly, a blue SUGGEST button will " +
+              "be visible in the lower-right side of the editing space. To " +
+              "suggest a translation, simply input the translation to the " +
+              "editing space and click SUGGEST" :
+              "If a translator has permissions to add translations directly, " +
+              "the green SAVE button should appear to the lower-right side of " +
+              "the editing space.To add translations directly, simply input " +
+              "the translation to the editing space and click SAVE",
         subject: "#editor #single",
         format: "markdown",
         autoContinue: true,
         showNextButton: true,
         targets: "#editor #single button#save",
-        skipIf: function() {
-          return canTranslate;
-        },
-        completingConditions: [
-          function() {
-            $("#editor #single button#save").click(function() {
-              isSubmitClicked = true;
-            });
-            return isSubmitClicked;
-          }
-        ]
-      },
-      {
-        title: "Submit a Translation",
-        text:
-          "If a translator has permissions to add translations directly, " +
-          "the green SAVE button should appear to the lower-right side of " +
-          "the editing space.To add translations directly, simply input " +
-          "the translation to the editing space and click SAVE,",
-        subject: "#editor #single",
-        format: "markdown",
-        autoContinue: true,
-        showNextButton: true,
-        targets: "#editor #single button#save",
-        skipIf: function() {
-          return !canTranslate;
-        },
         completingConditions: [
           function() {
             $("#editor #single button#save").click(function() {
