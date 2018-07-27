@@ -56,6 +56,8 @@
       {{ admin_locale_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}
+      {{ form.locales_readonly }}
+      {{ form.locales_readonly.errors }}
   </div>
 
   <div class="locales-toolbar clearfix">

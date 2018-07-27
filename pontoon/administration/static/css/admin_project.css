@@ -200,7 +200,8 @@ form .locale.select.selected {
   width: auto;
 }
 
-#id_locales {
+#id_locales,
+#id_locales_readonly {
   display: none;
 }
 

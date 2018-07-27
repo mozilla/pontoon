@@ -3,11 +3,20 @@ $(function() {
   // Before submitting the form
   $('#admin-form').submit(function () {
     // Update locales
-    var arr = [];
-    $("#selected").parent().siblings('ul').find('li:not(".no-match")').each(function() {
-      arr.push($(this).data('id'));
+    var locales = [{
+      list: 'selected',
+      input: $('#id_locales'),
+    }, {
+      list: 'readonly',
+      input: $('#id_locales_readonly'),
+    }];
+
+    locales.forEach(function(type) {
+      var ids = $('.admin-locale-selector .locale.' + type.list).find('li[data-id]').map(function() {
+        return $(this).data('id');
+      }).get();
+      type.input.val(ids);
     });
-    $('#id_locales').val(arr);
 
     // Update form action
     var slug = $('#id_slug').val();

@@ -1,17 +1,4 @@
 $(function() {
-  /*
-   * Function keeps track of inputs that contain information about the order of selected locales.
-   */
-  function updateSelectedLocales() {
-    var $selectedList = $('.admin-locale-selector .locale.selected'),
-        $selectedLocalesField = $selectedList.find('input[type=hidden]'),
-        selectedLocales = $selectedList.find('li[data-id]').map(function() {
-           return $(this).data('id');
-        }).get();
-
-    $selectedLocalesField.val(selectedLocales.join());
-  }
-
   function setArrow(element, event) {
     var x = event.pageX - element.offset().left;
 
@@ -64,10 +51,5 @@ $(function() {
 
     ul.append(clone.removeClass('hover'));
     ul.scrollTop(ul[0].scrollHeight);
-    updateSelectedLocales();
-  });
-
-  $('body').on('submit', '.form.user-locales-settings', function () {
-    updateSelectedLocales();
   });
 });
