@@ -2266,7 +2266,16 @@ class Entity(DirtyFieldsMixin, models.Model):
         if project.slug == 'all-projects':
             order_fields = ('resource__project__name',) + order_fields
 
-        # Prefetch data needed for Entity.map_entities()
+        entities = entities.prefetch_translations(locale)
+
+        return entities.order_by(*order_fields)
+
+    @classmethod
+    def map_entities(cls, locale, entities, visible_entities=None):
+        entities_array = []
+        visible_entities = visible_entities or []
+
+        # Prefetch related Resource, Project and ProjectLocale data
         entities = (
             entities
             .prefetch_related(
@@ -2276,15 +2285,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     to_attr='projectlocale',
                 )
             )
-            .prefetch_translations(locale)
         )
-
-        return entities.order_by(*order_fields)
-
-    @classmethod
-    def map_entities(cls, locale, entities, visible_entities=None):
-        entities_array = []
-        visible_entities = visible_entities or []
 
         for entity in entities:
             translation_array = []
