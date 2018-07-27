@@ -1,37 +1,21 @@
 {# Multiple team selector allows user to select multiple locales at once and (optionally) sort them. #}
+{% import 'teams/widgets/team_selector_list.html' as team_selector_list %}
 
 {% macro render(locales_available, locales_selected, form_field='selected_locales', sortable=False) %}
-  <div class="multiple-team-selector clearfix">
-    <div class="locale select">
-      <label for="available">Available <a class="choose-all" href="#choose-all">Choose all &rarr;</a></label>
-      <div class="menu permanent">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input id="available" type="search" autocomplete="off">
-        </div>
-        <ul>
-          {% for locale in locales_available %}
-          <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
-          {% endfor %}
-          <li class="no-match">No results</li>
-        </ul>
-      </div>
-    </div>
-    <div class="locale select selected">
-      <label for="selected">Chosen <a class="remove-all" href="#remove-all">&larr; Remove all</a></label>
-      <div class="menu permanent">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input id="selected" type="search" autocomplete="off">
-        </div>
-        <ul class="{% if sortable %}sortable{% endif %}">
-          {% for locale in locales_selected %}
-            <li class="clearfix" data-id="{{ locale.id }}"><span class="language {{ locale.code }}">{{ locale.name }}</span><span class="code">{{ locale.code }}</span></li>
-          {% endfor %}
-          <li class="no-match">No results</li>
-        </ul>
-      </div>
-      <input type="hidden" name="{{ form_field }}">
-    </div>
-  </div>
+<div class="multiple-team-selector clearfix">
+    {{ team_selector_list.list(
+        id='available',
+        title='Available',
+        locales=locales_available,
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='selected',
+        title='Chosen',
+        locales=locales_selected,
+        right_shortcut='← Move all',
+        sortable=sortable,
+        form_field=form_field,
+    )}}
+</div>
 {% endmacro %}

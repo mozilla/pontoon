@@ -25,7 +25,7 @@ $(function() {
   });
 
   // Choose/remove all locales
-  $('body').on('click', '.multiple-team-selector .choose-all, .multiple-team-selector .remove-all', function (e) {
+  $('body').on('click', '.multiple-team-selector .move-all', function (e) {
     e.preventDefault();
     var ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),

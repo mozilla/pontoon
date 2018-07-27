@@ -1,71 +1,26 @@
+{# Admin team selector allows user to select localizable and read-only locales for the project. #}
+{% import 'teams/widgets/team_selector_list.html' as team_selector_list %}
+
 {% macro render(locales_available, locales_selected, locales_readonly, form_field='selected_locales') %}
-  <div class="admin-locale-selector clearfix">
-
-    <div class="locale select available">
-      <label for="available">Available <a class="move-all" href="#move-all">Move all &rarr;</a></label>
-      <div class="menu permanent">
-        <div class="search-wrapper clearfix">
-          <div class="icon fa fa-search"></div>
-          <input id="available" type="search" autocomplete="off">
-        </div>
-        <ul>
-          {% for locale in locales_available %}
-          <li class="clearfix" data-id="{{ locale.id }}">
-            <span class="arrow fa"></span>
-            <span class="language {{ locale.code }}">{{ locale.name }}</span>
-            <span class="code">{{ locale.code }}</span>
-          </li>
-          {% endfor %}
-          <li class="no-match">No results</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="locale select selected">
-        <label for="selected">
-          <a class="move-all left" href="#move-all">&larr; Move all</a>
-          Localizable
-          <a class="move-all right" href="#move-all">Move all &rarr;</a>
-        </label>
-        <div class="menu permanent">
-          <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
-            <input id="selected" type="search" autocomplete="off">
-          </div>
-          <ul>
-            {% for locale in locales_selected %}
-            <li class="clearfix" data-id="{{ locale.id }}">
-              <span class="arrow fa"></span>
-              <span class="language {{ locale.code }}">{{ locale.name }}</span>
-              <span class="code">{{ locale.code }}</span>
-            </li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-        <input type="hidden" name="{{ form_field }}">
-      </div>
-
-      <div class="locale select readonly">
-        <label for="readonly">Read-only <a class="move-all" href="#move-all">&larr; Move all</a></label>
-        <div class="menu permanent">
-          <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
-            <input id="readonly" type="search" autocomplete="off">
-          </div>
-          <ul>
-            {% for locale in locales_readonly %}
-            <li class="clearfix" data-id="{{ locale.id }}">
-              <span class="arrow fa"></span>
-              <span class="language {{ locale.code }}">{{ locale.name }}</span>
-              <span class="code">{{ locale.code }}</span>
-            </li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-          </ul>
-        </div>
-        <input type="hidden" name="{{ form_field }}">
-      </div>
-  
-  </div>
+<div class="admin-locale-selector clearfix">
+    {{ team_selector_list.list(
+        id='available',
+        title='Available',
+        locales=locales_available,
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='selected',
+        title='Localizable',
+        locales=locales_selected,
+        left_shortcut='← Move all',
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='readonly',
+        title='Read-only',
+        locales=locales_readonly,
+        right_shortcut='← Move all',
+    )}}
+</div>
 {% endmacro %}
