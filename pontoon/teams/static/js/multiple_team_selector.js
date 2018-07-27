@@ -1,10 +1,10 @@
 // Contains behaviours of widgets that are shared between admin and end-user interface.
 $(function() {
   /**
-   * Function keeps track of inputs that contain informations abouyt the order of selected locales.
+   * Function keeps track of inputs that contain information about the order of selected locales.
    */
   function updateSelectedLocales() {
-    var $selectedList = $('.multiple-locale-selector .locale.selected'),
+    var $selectedList = $('.multiple-team-selector .locale.selected'),
         $selectedLocalesField = $selectedList.find('input[type=hidden]'),
         selectedLocales = $selectedList.find('li[data-id]').map(function() {
            return $(this).data('id');
@@ -14,7 +14,7 @@ $(function() {
   }
 
   // Choose locales
-  $('body').on('click', '.multiple-locale-selector .locale.select li', function () {
+  $('body').on('click', '.multiple-team-selector .locale.select li', function () {
     var ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),
         item = $(this).remove();
@@ -25,7 +25,7 @@ $(function() {
   });
 
   // Choose/remove all locales
-  $('body').on('click', '.multiple-locale-selector .choose-all, .multiple-locale-selector .remove-all', function (e) {
+  $('body').on('click', '.multiple-team-selector .choose-all, .multiple-team-selector .remove-all', function (e) {
     e.preventDefault();
     var ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),
@@ -37,7 +37,7 @@ $(function() {
   });
 
   if ($.ui && $.ui.sortable) {
-    $('.multiple-locale-selector .locale.select .sortable').sortable({
+    $('.multiple-team-selector .locale.select .sortable').sortable({
       axis: 'y',
       containment: 'parent',
       update: updateSelectedLocales,

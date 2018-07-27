@@ -1,4 +1,4 @@
-{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 
 <section class="manual-notifications notifications clearfix">
@@ -25,7 +25,7 @@
         <h3><span class="stress">#1</span> Choose recipient teams</h3>
         <div class="locale-selector">
           <div class="clearfix">
-            {{ multiple_locale_selector.render(available_locales, [], form_field='selected_locales') }}
+            {{ multiple_team_selector.render(available_locales, [], form_field='selected_locales') }}
           </div>
           <div class="toolbar clearfix">
             <div class="shortcuts clearfix">
