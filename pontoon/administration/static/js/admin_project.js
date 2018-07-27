@@ -12,7 +12,7 @@ $(function() {
     }];
 
     locales.forEach(function(type) {
-      var ids = $('.admin-locale-selector .locale.' + type.list).find('li[data-id]').map(function() {
+      var ids = $('.admin-team-selector .locale.' + type.list).find('li[data-id]').map(function() {
         return $(this).data('id');
       }).get();
       type.input.val(ids);

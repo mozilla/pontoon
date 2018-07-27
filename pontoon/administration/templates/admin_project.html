@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% import 'admin_locale_selector.html' as admin_locale_selector %}
+{% import 'admin_team_selector.html' as admin_team_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
 {% import 'tag_inline_formset.html' as tag_inline_formset %}
 
@@ -53,7 +53,7 @@
   <h3>Locales</h3>
 
   <div class="locales clearfix">
-      {{ admin_locale_selector.render(locales_available, locales_selected, locales_readonly) }}
+      {{ admin_team_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}
       {{ form.locales_readonly }}

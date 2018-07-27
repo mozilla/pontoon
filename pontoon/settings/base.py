@@ -259,7 +259,7 @@ PIPELINE_CSS = {
     'admin_project': {
         'source_filenames': (
             'css/multiple_team_selector.css',
-            'css/admin_locale_selector.css',
+            'css/admin_team_selector.css',
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
@@ -394,7 +394,7 @@ PIPELINE_JS = {
     'admin_project': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/admin_locale_selector.js',
+            'js/admin_team_selector.js',
             'js/admin_project.js',
         ),
         'output_filename': 'js/admin_project.min.js',
