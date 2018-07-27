@@ -191,7 +191,6 @@ def _get_entities_list(locale, project, form):
     """
     entities = (
         Entity.objects.filter(pk__in=form.cleaned_data['entity_ids'])
-        .prefetch_related('resource')
         .prefetch_translations(locale)
         .distinct()
         .order_by('order')
