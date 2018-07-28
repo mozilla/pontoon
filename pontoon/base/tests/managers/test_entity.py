@@ -371,12 +371,13 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
+        approved=False,
         string='Unchanged string',
     )
     assert (
         set(Entity.objects.filter(
             Entity.objects.unchanged(locale_a)
-        )) == {entities[0], entities[2]}
+        )) == {entities[0]}
     )
 
 
@@ -500,6 +501,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
+        approved=False,
         plural_form=0,
         string='Unchanged string',
     )
@@ -507,13 +509,14 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
         fuzzy=True,
+        approved=False,
         plural_form=1,
         string='Unchanged plural string',
     )
     assert (
         set(Entity.objects.filter(
             Entity.objects.unchanged(locale_a)
-        )) == {entities[0], entities[2]}
+        )) == {entities[0]}
     )
 
 
