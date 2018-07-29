@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+from contextlib import contextmanager
 
 from django.contrib.auth.models import (
     Group,
@@ -288,3 +289,20 @@ def assert_json(response, expected_obj):
     Checks if response contains a expected json object.
     """
     assert_equal(json.loads(response.content), expected_obj)
+
+
+@contextmanager
+def po_file(**entries):
+    """
+    Create a temporary .po file
+    :arg dict entries: keys map to msgids and values map to msgstrs
+    :return: read-only file object
+    """
+    po_contents = '\n'.join(
+        'msgid "{}"\nmsgstr "{}"'.format(key, val) for key, val in entries.items()
+    )
+    with tempfile.NamedTemporaryFile('rw+', suffix='.po') as fp:
+        fp.write(po_contents)
+        fp.flush()
+
+        yield open(fp.name, 'r')
