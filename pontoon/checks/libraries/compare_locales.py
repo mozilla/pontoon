@@ -45,7 +45,18 @@ class CompareDTDEntity(DTDEntityMixin):
 
     @property
     def all(self):
-        return u'<!ENTITY {} \"{}\">'.format(self.key, self.raw_val)
+        # Wrap entities with apostrophes when they contain quotes
+        # Related bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1479208
+        if '"' in self.raw_val:
+            wrap = "'"
+        else:
+            wrap = '"'
+
+        return u'<!ENTITY {key} {wrap}{entity}{wrap}>'.format(
+            key=self.key,
+            entity=self.raw_val,
+            wrap=wrap,
+        )
 
     def __repr__(self):
         return u'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
