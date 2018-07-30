@@ -258,8 +258,7 @@ PIPELINE_CSS = {
     },
     'admin_project': {
         'source_filenames': (
-            'css/multiple_team_selector.css',
-            'css/admin_team_selector.css',
+            'css/double_list_selector.css',
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
@@ -294,6 +293,7 @@ PIPELINE_CSS = {
     'team': {
         'source_filenames': (
             'css/table.css',
+            'css/double_list_selector.css',
             'css/contributors.css',
             'css/heading_info.css',
             'css/team.css',

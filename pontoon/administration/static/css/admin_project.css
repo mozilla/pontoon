@@ -176,6 +176,39 @@ form a:link, form a:visited {
   text-transform: uppercase;
 }
 
+.double-list-selector .locale.select .menu {
+  border-bottom: 1px solid #5E6475;
+  margin: 2px 0 -4px -1px;
+  padding: 10px 0;
+  width: 295px;
+}
+
+.double-list-selector .locale.select .menu ul li {
+  padding-left: 20px;
+  padding-right: 20px;
+  position: relative;
+  width: 100%;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.double-list-selector .locale.select.selected label {
+  text-align: center;
+}
+
+.double-list-selector .locale.select.selected label .left {
+  float: left;
+}
+
+.double-list-selector .locale.select.readonly label {
+  text-align: right;
+}
+
+.double-list-selector .locale.select.readonly label a {
+  float: left;
+}
+
 .locale.select {
   float: left;
   width: auto;
@@ -416,6 +449,7 @@ textarea.strings-source {
 }
 
 .locales .errorlist {
+  margin-top: 10px;
   text-align: center;
   width: 100%;  
 }

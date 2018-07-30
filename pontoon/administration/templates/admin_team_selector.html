@@ -2,7 +2,7 @@
 {% import 'teams/widgets/team_selector_list.html' as team_selector_list %}
 
 {% macro render(locales_available, locales_selected, locales_readonly, form_field='selected_locales') %}
-<div class="admin-locale-selector clearfix">
+<div class="admin-locale-selector double-list-selector clearfix">
     {{ team_selector_list.list(
         id='available',
         title='Available',
