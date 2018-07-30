@@ -3775,31 +3775,6 @@ var Pontoon = (function (my) {
         langpack_url: self.getProjectData('langpack_url') || '',
         tags: self.getProjectData('tags') || []
       };
-
-      /* Copy of User.can_translate(), used on client to improve performance
-      this.user.canTranslate = function() {
-        var managedLocales = $('#server').data('user-managed-locales') || [],
-            translatedLocales = $('#server').data('user-translated-locales') || [],
-            translatedProjects = $('#server').data('user-translated-projects') || {},
-            project = self.project;
-
-        if (self.getEditorEntity()) {
-          project = self.getEditorEntity().project;
-        }
-
-        var localeProject = self.locale.code + '-' + project.slug;
-
-        if ($.inArray(self.locale.code, managedLocales) !== -1) {
-          return true;
-        }
-
-        if (translatedProjects.hasOwnProperty(localeProject)) {
-           return translatedProjects[localeProject];
-        }
-
-        return $.inArray(self.locale.code, translatedLocales) !== -1;
-      };
-      */
     },
 
 
@@ -4434,7 +4409,7 @@ Pontoon.user = {
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},
   canTranslate: function() {
-    // Same as Pontoon.user.canTranslate()
+    // Copy of User.can_translate(), used on client to improve performance
 
     var managedLocales = $("#server").data("user-managed-locales") || [],
       translatedLocales = $("#server").data("user-translated-locales") || [],

@@ -1,35 +1,5 @@
 $(function () {
 
-  /*
-  function userCanTranslate() {
-    // Same as Pontoon.user.canTranslate()
-    var managedLocales = $("#server").data("user-managed-locales") || [],
-      translatedLocales = $("#server").data("user-translated-locales") || [],
-      translatedProjects = $("#server").data("user-translated-projects") || {},
-      locale = Pontoon.getLocaleData(),
-      project = {
-        slug: Pontoon.getProjectData("slug")
-      };
-
-    if (Pontoon.getEditorEntity()) {
-      project = Pontoon.getEditorEntity().project;
-    }
-
-    var localeProject = locale.code + "-" + project.slug;
-
-    if ($.inArray(locale.code, managedLocales) !== -1) {
-      return true;
-    }
-
-    if (translatedProjects.hasOwnProperty(localeProject)) {
-      return translatedProjects[localeProject];
-    }
-
-    return $.inArray(locale.code, translatedLocales) !== -1;
-  }
-
-  */
-
   var canTranslate = Pontoon.user.canTranslate();
   var isEntityClicked = false;
   var isSubmitClicked = false;
