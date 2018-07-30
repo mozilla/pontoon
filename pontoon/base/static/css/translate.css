@@ -1995,7 +1995,9 @@ body > header aside p {
   background: no-repeat transparent;
   border: none;
   color: #AAAAAA;
-  display: none;
+  display: inline-block;
+  pointer-events: none;
+  opacity: 0.5;
   font-size: 1.8em;
   height: 22px;
   padding: 0;
@@ -2007,7 +2009,8 @@ body > header aside p {
 #helpers > section ul li > header.own button.reject,
 #helpers > section ul li > header.own button.unreject,
 #helpers > section ul li.translated > header button.approve {
-  display: inline-block;
+  pointer-events: auto;
+  opacity: 1;
 }
 
 #helpers > section ul li.rejected {
