@@ -328,9 +328,9 @@ var Pontoon = (function (my) {
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((!entity.readonly) ? '<button class="' +
+                      '<button class="' +
                        (this.rejected ? 'unreject' : 'reject') + ' fa" title="' +
-                       (this.rejected ? 'Unreject' : 'Reject') + '"></button>' : '') +
+                       (this.rejected ? 'Unreject' : 'Reject') + '"></button>' +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
