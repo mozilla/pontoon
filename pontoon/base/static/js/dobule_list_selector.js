@@ -40,14 +40,15 @@ $(function() {
 
     var target = getTarget(this);
     var ul = target.find('ul');
+    var clone = null;
 
     // Move selected item
     if ($(this).is('li')) {
-      var clone = $(this).remove();
+      clone = $(this).remove();
     }
     // Move all items in the list
     else {
-      var clone = $(this).parents('.select').find('li:visible:not(".no-match")').remove();
+      clone = $(this).parents('.select').find('li:visible:not(".no-match")').remove();
     }
 
     ul.append(clone.removeClass('hover'));
