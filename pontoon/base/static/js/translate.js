@@ -1280,7 +1280,7 @@ var Pontoon = (function (my) {
 
       function markTagFilters(type) {
         for (var i=0, l=filter[type].length; i < l; i++) {
-          var node = $('#filter .menu [data-type="tag-' + filter[type][i] + '"]'),
+          var node = $('#filter .menu [data-type="' + filter[type][i] + '"]'),
               titleNode = node.find('.title');
           node.addClass('selected');
           placeholder.push('tag: "' + titleNode.text() + '"');
@@ -1315,6 +1315,9 @@ var Pontoon = (function (my) {
         selectorType = $('#filter .selected').data('type');
         if (selectorType.indexOf('@') !== -1) {
           selectorType = 'author';
+        }
+        else if (filter['tag'].length) {
+          selectorType = 'tag-' + selectorType;
         }
       }
 
@@ -1463,9 +1466,6 @@ var Pontoon = (function (my) {
             num = -1;
 
         function updateFilterValue(type) {
-          if (type === 'tag') {
-            value = value.substring(4);
-          }
           num = filter[type].indexOf(value);
           if (num === -1) {
             filter[type].push(value);
@@ -1516,7 +1516,7 @@ var Pontoon = (function (my) {
           }
 
         } else if (isTagFilter(el)) {
-          filter.tag.push(value.substr(4));
+          filter.tag.push(value);
 
         } else if (el.hasClass('author')) {
           filter.author.push(value);
