@@ -1,7 +1,7 @@
-{% import 'widgets/multiple_choice.html' as MultipleChoice %}
+{% import 'contributors/widgets/contributor_selector_list.html' as ContributorSelectorList %}
 
 {% macro user_selector(all_users, index=None) %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'available',
         choices=all_users,
         label='<a class="contributors active" href="#">team contributors</a> &middot; <a class="all" href="#">all users</a>',
@@ -12,7 +12,7 @@
 {% endmacro %}
 
 {% macro translator_selector(description, translators, index=None) %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'translators',
         choices=translators,
         label='translators',
@@ -23,7 +23,7 @@
 {% endmacro %}
 
 {% macro manager_selector() %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'managers',
         choices=managers,
         label='managers',

@@ -1,4 +1,4 @@
-{% macro select(identifier, choices, label, description, index=None, extra=None) %}
+{% macro list(identifier, choices, label, description, index=None, extra=None) %}
 <div class="user select {{ identifier }}">
   <label for="{{ identifier }}-{{ index }}">{{ label|safe }}</label>
   <div class="menu permanent">
