@@ -69,40 +69,6 @@ $(function() {
     }
   });
 
-  function setArrow(element, event) {
-    var x = event.pageX - element.offset().left;
-
-    if (element.outerWidth()/2 > x) {
-      element.addClass('left');
-    } else {
-      element.removeClass('left');
-    }
-  }
-
-  // Set translators arrow direction
-  container
-    .on('mouseenter', '.general .user.select.translators li', function (e) { setArrow($(this), e); })
-    .on('mousemove', '.general .user.select.translators li', function (e) { setArrow($(this), e); });
-
-  // Select users
-  container.on('click.pontoon', '.user.select li', function () {
-    var $wrapper = $(this).parents('.user.select').parent(),
-        target = $wrapper.find('.select.translators');
-
-    if ($(this).parents('.translators').length) {
-      if ($(this).is('.left') || $(this).parents('.general').length === 0) {
-        target = $wrapper.find('.select.available');
-      } else {
-        target = $wrapper.find('.select.managers');
-      }
-    }
-
-    var clone = $(this).remove();
-
-    target.find('ul').prepend(clone.removeClass('hover'));
-    $wrapper.find('.available').trigger('input').focus();
-  });
-
   // Focus project selector search field
   container.on('click', '#project-selector .selector', function() {
     $('#project-selector .search-wrapper input').focus();
