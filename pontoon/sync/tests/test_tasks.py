@@ -182,6 +182,33 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
                           self.now, self.mock_changes, no_commit=True)
         assert_false(self.mock_commit_changes.called)
 
+    def test_readonly_locales(self):
+        """Don't call commit_changes for locales in read-only mode."""
+        project_locale = self.translated_locale.project_locale.get(
+            project=self.db_project,
+        )
+        project_locale.readonly = True
+        project_locale.save()
+
+        self.mock_pull_changes.return_value = [
+            True,
+            {
+                self.repository.pk: Locale.objects.filter(
+                    pk=self.translated_locale.pk,
+                ),
+            },
+        ]
+
+        sync_translations(
+            self.db_project.pk,
+            self.project_sync_log.pk,
+            self.now,
+            self.mock_changes,
+            no_commit=False,
+        )
+
+        assert_false(self.mock_commit_changes.called)
+
     def test_remove_duplicate_approvals(self):
         """
         Ensure that duplicate approvals are removed.
