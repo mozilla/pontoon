@@ -98,16 +98,20 @@ textarea {
   width: 482px;
 }
 
-.half .second input {
+.half input:last-child {
   margin-right: 0;
   width: 483px;
 }
 
-.half .first .errorlist {
+.half .for-name .errorlist {
   float: left;
 }
 
-.half .first .errorlist li {
+.half .for-slug .errorlist {
+  float: right;
+}
+
+.half .errorlist li {
   margin: 0;
 }
 

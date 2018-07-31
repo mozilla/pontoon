@@ -30,23 +30,21 @@
   {% endif %}
 
   <div class="half clearfix">
-    <div class="first">
+    <div class="labels">
       {{ form.name.label_tag() }}
-    </div>
-    <div class="second">
       {{ form.slug.label_tag() }}
     </div>
-    <div class="first">
+    <div class="fields">
       {{ form.name }}
-    </div>
-    <div class="second">
       {{ form.slug }}
     </div>
-    <div class="first">
-      {{ form.slug.errors }}
-    </div>
-    <div class="second">
-      {{ form.name.errors }}
+    <div class="errors">
+      <div class="for-name">
+        {{ form.name.errors }}
+      </div>
+      <div class="for-slug">
+        {{ form.slug.errors }}
+      </div>
     </div>
   </div>
 
