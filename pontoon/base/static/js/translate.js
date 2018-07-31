@@ -4409,13 +4409,11 @@ Pontoon.user = {
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},
   canTranslate: function() {
-    // Copy of User.can_translate(), used on client to improve performance
-
-    var managedLocales = $("#server").data("user-managed-locales") || [],
-      translatedLocales = $("#server").data("user-translated-locales") || [],
-      translatedProjects = $("#server").data("user-translated-projects") || {};
-    var  locale = Pontoon.getLocaleData();
-    var  project = {
+    var managedLocales = $("#server").data("user-managed-locales") || [];
+    var translatedLocales = $("#server").data("user-translated-locales") || [];
+    var translatedProjects = $("#server").data("user-translated-projects") || {};
+    var locale = Pontoon.getLocaleData();
+    var project = {
         slug: Pontoon.getProjectData("slug")
       };
 

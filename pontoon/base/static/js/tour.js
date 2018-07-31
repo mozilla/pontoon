@@ -1,8 +1,32 @@
 $(function () {
 
-  var canTranslate = Pontoon.user.canTranslate();
   var isEntityClicked = false;
   var isSubmitClicked = false;
+
+  var submitTarget = "#editor #single button#save";
+  var submitText = "A user needs to be logged in to be able to submit " +
+  "translations. Non-authenticated users will see a link to SIGN in " +
+  "instead of the translation toolbar with the green SAVE button.";
+
+  // Translators
+  if (Pontoon.user.canTranslate()) {
+    submitText = "If a translator has permissions to add translations directly, " +
+    "the green SAVE button should appear to the lower-right side of " +
+    "the editing space.To add translations directly, simply input " +
+    "the translation to the editing space and click SAVE";
+  }
+  // Contributors
+  else if (Pontoon.user.id) {
+    submitText = "When a translator is in Suggest Mode, or doesn’t have permissions " +
+    "to submit translations directly, a blue SUGGEST button will " +
+    "be visible in the lower-right side of the editing space. To " +
+    "suggest a translation, simply input the translation to the " +
+    "editing space and click SUGGEST";
+  }
+  // Non-authenticated users
+  else {
+    submitTarget = null;
+  }
 
   Sideshow.registerWizard({
     name: "introducing_pontoon",
@@ -76,13 +100,18 @@ $(function () {
           "<li> Translated: Has an approved translation.</li>" +
           "<li> Unreviewed: Has been submitted but not reviewed yet by translators.</li>" +
           "<li> Rejected: Has been reviewed and rejected by a translator.</li></ul>",
-        subject: "#entitylist",
+        subject: "#filter .menu",
         targets: "#filter .menu",
         format: "markdown",
         lockSubject: true,
         listeners: {
           beforeStep: function() {
             $("#filter div.button").click();
+            $("#filter .menu").addClass("permanent");
+          },
+          afterStep: function() {
+            $("#filter .menu").removeClass("permanent");
+            $("#filter .menu").css("display", "none");
           }
         }
       },
@@ -122,21 +151,12 @@ $(function () {
       },
       {
         title: "Submit a Translation",
-        text: (!canTranslate) ?
-              "When a translator is in Suggest Mode, or doesn’t have permissions" +
-              " to submit translations directly, a blue SUGGEST button will " +
-              "be visible in the lower-right side of the editing space. To " +
-              "suggest a translation, simply input the translation to the " +
-              "editing space and click SUGGEST" :
-              "If a translator has permissions to add translations directly, " +
-              "the green SAVE button should appear to the lower-right side of " +
-              "the editing space.To add translations directly, simply input " +
-              "the translation to the editing space and click SAVE",
+        text: submitText,
         subject: "#editor #single",
         format: "markdown",
         autoContinue: true,
         showNextButton: true,
-        targets: "#editor #single button#save",
+        targets: submitTarget,
         completingConditions: [
           function() {
             $("#editor #single button#save").click(function() {
