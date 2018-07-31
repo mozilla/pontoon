@@ -258,7 +258,7 @@ PIPELINE_CSS = {
     },
     'admin_project': {
         'source_filenames': (
-            'css/multiple_locale_selector.css',
+            'css/double_list_selector.css',
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
@@ -269,7 +269,7 @@ PIPELINE_CSS = {
             'css/contributors.css',
             'css/heading_info.css',
             'css/sidebar_menu.css',
-            'css/multiple_locale_selector.css',
+            'css/multiple_team_selector.css',
             'css/manual_notifications.css',
         ),
         'output_filename': 'css/project.min.css',
@@ -293,6 +293,7 @@ PIPELINE_CSS = {
     'team': {
         'source_filenames': (
             'css/table.css',
+            'css/double_list_selector.css',
             'css/contributors.css',
             'css/heading_info.css',
             'css/team.css',
@@ -330,7 +331,7 @@ PIPELINE_CSS = {
     },
     'settings': {
         'source_filenames': (
-            'css/multiple_locale_selector.css',
+            'css/multiple_team_selector.css',
             'css/contributor.css',
             'css/team_selector.css',
             'css/settings.css',
@@ -393,7 +394,7 @@ PIPELINE_JS = {
     'admin_project': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/multiple_locale_selector.js',
+            'js/double_list_selector.js',
             'js/admin_project.js',
         ),
         'output_filename': 'js/admin_project.min.js',
@@ -413,7 +414,7 @@ PIPELINE_JS = {
             'js/progress-chart.js',
             'js/tabs.js',
             'js/sidebar_menu.js',
-            'js/multiple_locale_selector.js',
+            'js/multiple_team_selector.js',
             'js/manual_notifications.js',
         ),
         'output_filename': 'js/project.min.js',
@@ -429,6 +430,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/table.js',
             'js/progress-chart.js',
+            'js/double_list_selector.js',
             'js/bugzilla.js',
             'js/tabs.js',
             'js/request_projects.js',
@@ -465,7 +467,7 @@ PIPELINE_JS = {
     'settings': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/multiple_locale_selector.js',
+            'js/multiple_team_selector.js',
             'js/team_selector.js',
             'js/settings.js'
         ),

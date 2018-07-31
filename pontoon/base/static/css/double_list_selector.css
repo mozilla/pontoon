@@ -1,0 +1,25 @@
+.double-list-selector .select .menu ul li .arrow {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 2px;
+}
+
+.double-list-selector .select .menu ul li.hover .arrow {
+    display: inline-block;
+}
+
+.double-list-selector .select:first-child .menu ul li .arrow:after,
+.double-list-selector .select:nth-child(2) .menu ul li .arrow:after {
+    content: "";
+}
+
+.double-list-selector .select:nth-child(2) .menu ul li.left .arrow:after,
+.double-list-selector .select:last-child .menu ul li .arrow:after {
+    content: "";
+}
+
+.double-list-selector .select:nth-child(2) .menu ul li.left .arrow,
+.double-list-selector .select:last-child .menu ul li .arrow {
+    left: 2px;
+}
