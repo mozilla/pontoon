@@ -234,34 +234,6 @@
   display: none;
 }
 
-#permissions-form .user.select .menu ul li .arrow {
-  display: none;
-  position: absolute;
-  top: 4px;
-  right: 2px;
-}
-
-#permissions-form .user.select .menu ul li.hover .arrow {
-  display: inline-block;
-}
-
-#permissions-form .user.select.available .menu ul li .arrow:after,
-#permissions-form .general .user.select.translators .menu ul li .arrow:after {
-  content: "";
-}
-
-#permissions-form .user.select.translators .menu ul li.left .arrow:after,
-#permissions-form .project-locale .user.select.translators .menu ul li.hover .arrow:after,
-#permissions-form .user.select.managers .menu ul li .arrow:after {
-  content: "";
-}
-
-#permissions-form .user.select.translators .menu ul li.left .arrow,
-#permissions-form .project-locale .user.select.translators .menu ul li.hover .arrow,
-#permissions-form .user.select.managers .menu ul li .arrow {
-  left: 2px;
-}
-
 #permissions-form .user.select .intro {
   color: #AAA;
   font-size: 13px;
