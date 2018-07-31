@@ -19,7 +19,7 @@ $(function() {
   function setArrow(element, event) {
     var x = event.pageX - element.offset().left;
 
-    if (element.outerWidth()/2 > x) {
+    if (element.outerWidth() / 2 > x) {
       element.addClass('left');
     } else {
       element.removeClass('left');
