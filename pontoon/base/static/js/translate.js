@@ -3775,30 +3775,6 @@ var Pontoon = (function (my) {
         langpack_url: self.getProjectData('langpack_url') || '',
         tags: self.getProjectData('tags') || []
       };
-
-      /* Copy of User.can_translate(), used on client to improve performance */
-      this.user.canTranslate = function() {
-        var managedLocales = $('#server').data('user-managed-locales') || [],
-            translatedLocales = $('#server').data('user-translated-locales') || [],
-            translatedProjects = $('#server').data('user-translated-projects') || {},
-            project = self.project;
-
-        if (self.getEditorEntity()) {
-          project = self.getEditorEntity().project;
-        }
-
-        var localeProject = self.locale.code + '-' + project.slug;
-
-        if ($.inArray(self.locale.code, managedLocales) !== -1) {
-          return true;
-        }
-
-        if (translatedProjects.hasOwnProperty(localeProject)) {
-           return translatedProjects[localeProject];
-        }
-
-        return $.inArray(self.locale.code, translatedLocales) !== -1;
-      };
     },
 
 
@@ -4398,6 +4374,7 @@ var Pontoon = (function (my) {
       } else {
         this.state = state;
       }
+
     }
   });
 }(Pontoon || {}));
@@ -4431,6 +4408,31 @@ Pontoon.user = {
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},
+  canTranslate: function() {
+    var managedLocales = $("#server").data("user-managed-locales") || [];
+    var translatedLocales = $("#server").data("user-translated-locales") || [];
+    var translatedProjects = $("#server").data("user-translated-projects") || {};
+    var locale = Pontoon.getLocaleData();
+    var project = {
+        slug: Pontoon.getProjectData("slug")
+      };
+
+    if (Pontoon.getEditorEntity()) {
+      project = Pontoon.getEditorEntity().project;
+    }
+
+    var localeProject = locale.code + "-" + project.slug;
+
+    if ($.inArray(locale.code, managedLocales) !== -1) {
+      return true;
+    }
+
+    if (translatedProjects.hasOwnProperty(localeProject)) {
+      return translatedProjects[localeProject];
+    }
+
+    return $.inArray(locale.code, translatedLocales) !== -1;
+  }
 };
 
 Pontoon.attachMainHandlers();

@@ -526,10 +526,13 @@
 
 {% block extend_css %}
   {% stylesheet 'translate' %}
+  {% stylesheet 'tour' %}
 {% endblock %}
 
 {% block extend_js %}
   <!-- TODO: integrate into django-pipeline -->
   <script type="text/javascript" src="{{ static('js/lib/fluent-syntax.js') }}"></script>
+  <!-- tour bundle goes after translate -->
   {% javascript 'translate' %}
+  {% javascript 'tour' %}
 {% endblock %}
