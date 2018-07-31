@@ -5,13 +5,14 @@ $(function() {
 		section:".snaps",
     scrollbars:false,
     interstitialSection: "",
+    scrollSpeed: 2800,
     before: function(i,snaps) {
       var ref = snaps[i].attr("data-section-name");
 
       $(".pagination.active").removeClass("active");
 
       $(".pagination[href=#" + ref + "]").addClass("active");
-
+      $('.home-header').css('background-color','#272A2F');
       if (ref === "section-1")
         $('.home-header').css({'background-color':'transparent','transition-duration':'0.3s'})
       else

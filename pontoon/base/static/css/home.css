@@ -4,13 +4,46 @@ html {
 
 @media only screen and (min-width: 768px) {
   html {
+    font-size: 0.8320644vw;
+  }
+  header > .container {
+    width: 80%;
+  }
+  section > .container {
+    width: 80%;
+  }
+  .section-6 .homepage-footer {
+    width: 80%;
+  }
+}
+
+@media only screen and (min-width: 1100px) {
+  html {
     font-size: 0.7320644vw;
+  }
+  header > .container {
+    width: 80%;
+  }
+  section > .container {
+    width: 80%;
+  }
+  .section-6 .homepage-footer {
+    width: 80%;
   }
 }
 
 @media only screen and (min-width: 1500px) {
   html {
     font-size: 12.44px;
+  }
+  header > .container {
+    width: 75%;
+  }
+  section > .container {
+    width: 65%;
+  }
+  .section-6 .homepage-footer {
+    width: 75%;
   }
 }
 
@@ -97,8 +130,8 @@ html {
 
 .content-style{
   font-family: 'Lato Regular',sans-serif;
-  font-size: 1.4rem;
-  line-height: 2.4rem;
+  font-size: 1.5rem;
+  line-height: 2.6rem;
   color: #f4f4f4;
 }
 
@@ -141,7 +174,7 @@ html {
   background-color: #DFDFDF;
   border-radius: 50%;
   margin-bottom: 2.5rem;
-  margin-left: 4rem;
+  margin-left: 3rem;
 }
 
 .pagination.active {
@@ -178,6 +211,7 @@ html {
 
 .introduction p{
   padding: 0 2.4rem;
+  font-size: 1.3rem;
 }
 .introduction .title-style{
   width: 76rem;
@@ -192,12 +226,12 @@ html {
 .intro-footer {
   background-color: white;
   width: 100%;
-  height: 14vh;
+  height: 12vh;
   display: flex;
   justify-content: center;
   position: absolute;
   padding-top: 0.8rem;
-  top: 94.8vh;
+  top: 94vh;
 
 }
 
@@ -212,53 +246,64 @@ html {
 
 /* Section-2 */
 .why-mozilla {
-  margin-left: 6.4rem;
+  margin-left: 10rem;
 }
 
 .section-side-image-1 {
-  width: 360px;
+  width: 36rem;
 }
 
 /* Section-3 */
 .path {
-  margin-left: 6.4rem;
+  margin-left: 8rem;
 }
 
 .section-side-image-2 {
-  width: 540px;
+  width: 58rem;
 }
 
 .path-startend-text {
   font-weight: 400;
   color: black;
-  margin-right: 24px;
-  margin-bottom: 8px;
-  font-size: 13px;
+  margin-right: 2.4rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.5rem;
 }
 
 .content-div {
-  width:540px;
-  padding-top: 80px;
-  font-size: 13px;
+  width:58rem;
+  padding-top: 8rem;
+  font-size: 1.5rem;
 }
 .text-1 {
   color: #5F5F5F;
-  margin-bottom: 60px;
-  padding-left: 70px;
-  width: 180px;
-  line-height: 20px;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+  padding-left: 7.5rem;
+  width: 18rem;
+  line-height: 2rem;
 }
 
 .text-2 {
   color: #5F5F5F;
-  margin-bottom: 60px;
-  padding-right: 100px;
+  margin-top: 0.25rem;
+  margin-bottom: 4.5rem;
+  padding-right: 11rem;
+}
+
+.text-3 {
+  color: #5F5F5F;
+  margin-top: 6rem;
+  padding-left: 7.5rem;
+  width: 16rem;
+  line-height: 2.25rem;
+  margin-bottom: 4rem;
 }
 
 .text-4 {
   color: #5F5F5F;
-  margin-top: -25px;
-  padding-right: 100px;
+  margin-top: -2.5rem;
+  padding-right: 11rem;
 }
 
 /* Section-4 */
@@ -300,13 +345,17 @@ html {
 .card-text{
   font-size: 1.6rem;
   line-height: 2.4rem;
+  margin: auto 0px;
   margin-right: 1rem;
-  padding-top: 0.4rem;
+}
+
+.card-text .colored-content-style{
+  padding: auto 0px;
 }
 
 /* Section-5 */
 .section-side-image-3 {
-  width: 420px;
+  width: 42rem;
   box-shadow: 0.3rem 0.3rem 0.6rem 0 #BFBFBF;
 }
 
@@ -387,7 +436,6 @@ html {
 
 .homepage-footer {
   position: absolute;
-  width: 980px;
   height: 8vh;
   top: 92vh;
   justify-content: space-around;
@@ -409,4 +457,88 @@ html {
 
 .homepage-footer .content-style a:hover{
   color: #7BC176;
+}
+
+@media only screen and (orientation: portrait) {
+  html {
+    font-size: 12.44px;
+  }
+  header > .container {
+    width: 80%;
+  }
+  section > .container {
+    width: 80%;
+  }
+
+  .section-6 .homepage-footer {
+    width: 80%;
+  }
+
+  .portrait-align-center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .portrait-align-left {
+    text-align: left;
+  }
+
+  .portrait-align-right {
+    text-align: right;
+  }
+
+  .flex--wrap {
+    height: auto;
+    flex-wrap: wrap;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin:15vh auto;
+  }
+
+  .flex-col-full {
+    flex-basis: 75%;
+    margin-left: 0;
+    margin-top: 8rem;
+    justify-content: center;
+  }
+
+  .section-1 .flex--wrap {
+    margin:0;
+  }
+  .section-1 .flex-col-full {
+    margin-top: 3rem;
+    flex-basis: 50%;
+  }
+
+  .introduction .title-style {
+    width: 60%;
+  }
+  .introduction .content-style{
+    width: 60%;
+  }
+
+  .section-1 .intro-footer {
+    padding-top: 1.5vh;
+    top: 96vh;
+  }
+  .section-4 .card-text {
+    text-align: left;
+  }
+
+  .section-4 .card-border {
+    margin-left: -39rem;
+  }
+
+  .section-4 .title-style {
+    padding-right: 0;
+  }
+
+  .section-4 .content-style {
+    padding-right: 0;
+  }
+
+  .section-5 a {
+    margin: 5.2rem auto;
+  }
 }
