@@ -394,7 +394,7 @@ PIPELINE_JS = {
     'admin_project': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/dobule_list_selector.js',
+            'js/double_list_selector.js',
             'js/admin_project.js',
         ),
         'output_filename': 'js/admin_project.min.js',
@@ -430,7 +430,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/table.js',
             'js/progress-chart.js',
-            'js/dobule_list_selector.js',
+            'js/double_list_selector.js',
             'js/bugzilla.js',
             'js/tabs.js',
             'js/request_projects.js',
