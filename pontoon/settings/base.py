@@ -372,6 +372,14 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
+    'tour': {
+        'source_filenames': (
+            'js/lib/sideshow/fonts/sideshow-fontface.min.css',
+            'js/lib/sideshow/stylesheets/sideshow.min.css',
+            'css/tour.css',
+        ),
+        'output_filename': 'css/tour.min.css',
+    },
 }
 
 PIPELINE_JS = {
@@ -488,6 +496,16 @@ PIPELINE_JS = {
             'js/machinery.js',
         ),
         'output_filename': 'js/machinery.min.js',
+    },
+    'tour': {
+        'source_filenames': (
+            'js/lib/sideshow/dependencies/jazz.min.js',
+            'js/lib/sideshow/dependencies/pagedown.min.js',
+            'js/lib/sideshow/sideshow.js',
+            'js/tour.config.js',
+            'js/tour.js',
+        ),
+        'output_filename': 'js/tour.min.js',
     },
 }
 
