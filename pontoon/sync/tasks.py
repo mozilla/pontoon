@@ -285,6 +285,7 @@ def sync_translations(
 
     synced_locales = set()
     failed_locales = set()
+    readonly_locales = db_project.locales.filter(project_locale__readonly=True)
 
     for locale in locales:
         try:
@@ -341,7 +342,11 @@ def sync_translations(
 
                 # Perform the commit last so that, if it succeeds, there is
                 # nothing after it to fail.
-                if not no_commit and locale in changeset.locales_to_commit:
+                if (
+                    not no_commit and
+                    locale in changeset.locales_to_commit and
+                    locale not in readonly_locales
+                ):
                     commit_changes(db_project, vcs_project, changeset, locale)
 
                 log.info(
