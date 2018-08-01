@@ -1818,6 +1818,11 @@ class Resource(models.Model):
         """Return True if this resource is in an asymmetric format."""
         return self.format in self.ASYMMETRIC_FORMATS
 
+    @property
+    def allows_empty_translations(self):
+        """Return True if this resource allows empty translations."""
+        return self.format in self.EMPTY_TRANSLATION_FORMATS
+
     def __str__(self):
         return '%s: %s' % (self.project.name, self.path)
 

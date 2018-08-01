@@ -8,7 +8,6 @@ import bleach
 from collections import defaultdict
 from fluent.syntax import FluentParser, ast
 
-from pontoon.base.models import Resource
 from pontoon.sync.formats.ftl import localizable_entries
 
 
@@ -66,7 +65,7 @@ def run_checks(entity, string):
                 )
 
     # Prevent empty translation submissions if not supported
-    if resource_ext not in Resource.EMPTY_TRANSLATION_FORMATS and string == '':
+    if string == '' and not entity.resource.allows_empty_translations:
         checks['pErrors'].append(
             'Empty translations are not allowed'
         )
