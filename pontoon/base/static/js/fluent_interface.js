@@ -1,6 +1,29 @@
 /* global FluentSyntax */
 var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
+var fluentParserOriginal = new FluentSyntax.FluentParser({ withSpans: false });
 var fluentSerializer = new FluentSyntax.FluentSerializer();
+
+/*
+ * VariantLists behave the same as "selector-less SelectExpressions" in Pontoon.
+ * Overriding the parseEntry() method appliess that logic to the AST, too. That
+ * allows us to use the same code for both, VariantLists and SelectExpressions.
+ */
+fluentParser.parseEntry = function(source, useDefaultParser) {
+  useDefaultParser = useDefaultParser || false;
+  var ast = fluentParserOriginal.parseEntry(source);
+
+  if (!useDefaultParser && ast.value && ast.value.variants) {
+    ast.value.elements = [{
+      expression: {
+        type: 'SelectExpression',
+        variants: ast.value.variants,
+      },
+      type: 'Placeable',
+    }];
+  }
+
+  return ast;
+}
 
 /* Public functions used across different files */
 var Pontoon = (function (my) {
@@ -867,7 +890,8 @@ var Pontoon = (function (my) {
           });
         }
 
-        var ast = fluentParser.parseEntry(content);
+        var useDefaultParser = true;
+        var ast = fluentParser.parseEntry(content, useDefaultParser);
 
         return fluentSerializer.serializeEntry(ast);
       },
