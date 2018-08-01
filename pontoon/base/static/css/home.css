@@ -179,6 +179,7 @@ html {
 
 .pagination.active {
   background-color: #7BC876;
+  transition-duration: 0.3s;
   width: 1.25rem;
   height: 1.25rem;
 }
