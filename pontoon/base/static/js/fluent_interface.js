@@ -229,7 +229,10 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
-        var expression = fluentSerializer.serializeExpression(element.expression.selector);
+        var expression = '';
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
+        }
         content += '<li data-expression="' + expression + '"><ul>';
 
         element.expression.variants.forEach(function (item) {
@@ -269,7 +272,10 @@ var Pontoon = (function (my) {
 
       // Render SelectExpression
       if (element.expression && element.expression.type === 'SelectExpression') {
-        var expression = fluentSerializer.serializeExpression(element.expression.selector);
+        var expression = '';
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
+        }
         content += '<li data-expression="' + expression + '"><ul>';
 
         if (isPluralElement(element) && !isTranslated) {
