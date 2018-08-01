@@ -372,14 +372,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
-
     'home' : {
         'source_filenames': (
             'css/home.css',
         ),
         'output_filename': 'css/home.min.css'
-    }
-
+    },
     'tour': {
         'source_filenames': (
             'js/lib/sideshow/fonts/sideshow-fontface.min.css',
@@ -505,14 +503,13 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
-
     'home' : {
         'source_filenames' : (
             'js/lib/jquery.scrollify.js',
             'js/home.js'
         ),
         'output_filename' : 'js/home.min.js',
-
+    },
     'tour': {
         'source_filenames': (
             'js/lib/sideshow/dependencies/jazz.min.js',
