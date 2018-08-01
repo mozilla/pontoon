@@ -741,6 +741,21 @@ def update_translation(request):
         })
 
 
+@utils.require_AJAX
+def update_tour_status(request):
+    """Perform quality checks and return a list of any failed ones."""
+    try:
+        tour_status = request.POST['tour_status']
+    except MultiValueDictKeyError:
+        raise Http404
+    user = request.user
+    user.profile.tour_status = tour_status
+    user.profile.save()
+    return JsonResponse({
+        'tourStatus': tour_status,
+    })
+
+
 @require_POST
 @transaction.atomic
 def download(request):

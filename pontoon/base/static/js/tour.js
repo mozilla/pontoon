@@ -3,6 +3,8 @@ $(function () {
   var isEntityClicked = false;
   var isSubmitClicked = false;
 
+  var  tourStatus = Pontoon.user.tourStatus;
+
   var submitTarget = "#editor #single button#save";
   var submitText = "A user needs to be logged in to be able to submit " +
   "translations. Non-authenticated users will see a link to SIGN in " +
@@ -28,6 +30,22 @@ $(function () {
     submitTarget = null;
   }
 
+var update_tour_status = function(step) {
+  if (Pontoon.user.id) {
+    $.ajax({
+      url: "/update-tour-status/",
+      type: "POST",
+      data: {
+        csrfmiddlewaretoken: $("#server").data("csrf"),
+        tour_status: step
+      },
+      success: function(data) {
+        Pontoon.user.tourStatus = data["tourStatus"];
+      }
+    });
+  }
+};
+
   Sideshow.registerWizard({
     name: "introducing_pontoon",
     title: "Introducing Pontoon",
@@ -45,7 +63,16 @@ $(function () {
         text:
           "Pontoon is a web-based, What-You-See-Is-What-You-Get (WYSIWYG), " +
           "localization (l10n) tool. At Mozilla, we currently use Pontoon " +
-          "to localize various Mozilla project."
+          "to localize various Mozilla project.",
+        listeners: {
+          beforeStep: function() {
+            if(tourStatus != 0)
+              Sideshow.gotoStep(tourStatus+1);
+          },
+          afterStep: function() {
+            update_tour_status(1);
+          }
+        },
       },
       {
         title: "Main toolbar",
@@ -54,7 +81,12 @@ $(function () {
           "leaving the translation workspace",
         subject: "div.container.clearfix",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            update_tour_status(2);
+          }
+        },
       },
       {
         title: "Project information",
@@ -73,6 +105,7 @@ $(function () {
           afterStep: function() {
             $("#progress .menu").removeClass("permanent");
             $("#progress .menu").css("display", "none");
+            update_tour_status(3);
           }
         }
       },
@@ -89,7 +122,12 @@ $(function () {
         subject: "#entitylist #search",
         targets: "#entitylist #search",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            update_tour_status(4);
+          }
+        },
       },
       {
         title: "Filter",
@@ -112,6 +150,7 @@ $(function () {
           afterStep: function() {
             $("#filter .menu").removeClass("permanent");
             $("#filter .menu").css("display", "none");
+            update_tour_status(5);
           }
         }
       },
@@ -123,7 +162,12 @@ $(function () {
           "(i.e. Missing, Translated, etc.) identified by a colored square.",
         subject: "#entitylist",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            update_tour_status(6);
+          }
+        },
       },
       {
         title: "A String",
@@ -140,7 +184,12 @@ $(function () {
             });
             return isEntityClicked;
           }
-        ]
+        ],
+        listeners: {
+          afterStep: function() {
+            update_tour_status(7);
+          }
+        },
       },
       {
         title: "Editor",
@@ -148,6 +197,11 @@ $(function () {
         subject: "#editor #single",
         format: "markdown",
         lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            update_tour_status(8);
+          }
+        },
       },
       {
         title: "Submit a Translation",
@@ -164,7 +218,12 @@ $(function () {
             });
             return isSubmitClicked;
           }
-        ]
+        ],
+        listeners: {
+          afterStep: function() {
+            update_tour_status(9);
+          }
+        },
       },
       {
         title: "History Tab",
@@ -178,8 +237,11 @@ $(function () {
         listeners: {
           beforeStep: function() {
             $("#entitylist .uneditables li:nth-child(3)").click();
+          },
+          afterStep: function() {
+            update_tour_status(10);
           }
-        }
+        },
       },
       {
         title: "Machinery Tab",
@@ -194,8 +256,11 @@ $(function () {
         listeners: {
           beforeStep: function() {
             $("#helpers.tabs nav li")[1].firstElementChild.click();
+          },
+          afterStep: function() {
+            update_tour_status(11);
           }
-        }
+        },
       },
       {
         title: "That's (NOT) all, folks!",
@@ -204,7 +269,12 @@ $(function () {
           "some of which we didn't mention in this introductory tutorial. " +
           "<br> Feel free to explore this demo project to know about these  " +
           "or move forward to translate some live projects.",
-        format: "markdown"
+        format: "markdown",
+        listeners: {
+          afterStep: function() {
+            update_tour_status(0);
+          }
+        },
       }
     ]
   });
