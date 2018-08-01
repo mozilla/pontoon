@@ -1800,6 +1800,14 @@ class Resource(models.Model):
         'properties',
     )
 
+    # Formats that allow empty translations
+    EMPTY_TRANSLATION_FORMATS = (
+        'dtd',
+        'inc',
+        'ini',
+        'properties',
+    )
+
     objects = ResourceQuerySet.as_manager()
 
     class Meta:
