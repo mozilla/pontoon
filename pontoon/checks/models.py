@@ -13,7 +13,6 @@ class FailedCheck(models.Model):
         max_length=20,
         choices=(
             ('p', 'pontoon'),
-            ('tt', 'translate-toolkit'),
             ('cl', 'compare-locales'),
         ),
         db_index=True

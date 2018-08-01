@@ -1,0 +1,21 @@
+{# Multiple team selector allows user to select multiple locales at once and (optionally) sort them. #}
+{% import 'teams/widgets/team_selector_list.html' as team_selector_list %}
+
+{% macro render(locales_available, locales_selected, form_field='selected_locales', sortable=False) %}
+<div class="multiple-team-selector clearfix">
+    {{ team_selector_list.list(
+        id='available',
+        title='Available',
+        locales=locales_available,
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='selected',
+        title='Chosen',
+        locales=locales_selected,
+        right_shortcut='← Move all',
+        sortable=sortable,
+        form_field=form_field,
+    )}}
+</div>
+{% endmacro %}

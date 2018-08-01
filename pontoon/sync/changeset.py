@@ -14,6 +14,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry
 )
 from pontoon.base.utils import match_attr
+from pontoon.checks import utils as checks_utils
 
 log = logging.getLogger(__name__)
 
@@ -106,7 +107,10 @@ class ChangeSet(object):
         self.bulk_update_entities()
         self.bulk_create_translations()
         self.bulk_update_translations()
-        self.bulk_create_translaton_memory_entries()
+
+        if self.changed_translations:
+            valid_translations = self.bulk_check_translations()
+            self.bulk_create_translation_memory_entries(valid_translations)
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
@@ -368,17 +372,25 @@ class ChangeSet(object):
                 'extra'
             ])
 
-    def bulk_create_translaton_memory_entries(self):
+    def bulk_create_translation_memory_entries(self, valid_translations_pks):
         """
         Create Translation Memory entries for:
             - new approved translations
             - updated translations that are approved and don't have a TM entry yet
+
+        :arg list[int] valid_translations_pks: list of translations (their pks) without errors
         """
-        translations_to_create_translaton_memory_entries_for = (
-            [t for t in self.translations_to_create if t.approved] +
+        def is_valid(t):
+            """
+            Verify if a translation should land in the Translation Memory
+            """
+            return t.approved and t.pk in valid_translations_pks
+
+        translations_to_create_translation_memory_entries_for = (
+            [t for t in self.translations_to_create if is_valid(t)] +
             list(
                 Translation.objects.filter(
-                    pk__in=[pk for pk, t in self.translations_to_update.items() if t.approved],
+                    pk__in=[pk for pk, t in self.translations_to_update.items() if is_valid(t)],
                     memory_entries__isnull=True
                 )
             )
@@ -391,6 +403,32 @@ class ChangeSet(object):
             entity_id=t.entity.pk,
             translation_id=t.pk,
             project=self.db_project,
-        ) for t in translations_to_create_translaton_memory_entries_for]
+        ) for t in translations_to_create_translation_memory_entries_for]
 
         TranslationMemoryEntry.objects.bulk_create(memory_entries)
+
+    def bulk_check_translations(self):
+        """
+        Run checks on all changed translations from supported resources
+
+        :return: primary keys of translations without warnings and errors.
+        """
+        changed_pks = {t.pk for t in self.changed_translations}
+
+        checks_utils.bulk_run_checks(
+            checks_utils.get_translations(
+                pk__in=changed_pks
+            )
+        )
+
+        valid_translations = set(
+            Translation.objects
+            .filter(
+                pk__in=changed_pks,
+                errors__isnull=True,
+            )
+            .values_list('pk', flat=True)
+            .order_by('pk')
+        )
+
+        return valid_translations

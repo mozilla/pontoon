@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% import "widgets/checkbox.html" as Checkbox %}
-{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 
 {% block title %}Settings{% endblock %}
 
@@ -61,7 +61,7 @@
 
     <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
-    {{ multiple_locale_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
+    {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>

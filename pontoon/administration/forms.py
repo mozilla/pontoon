@@ -5,6 +5,7 @@ from django.forms.models import inlineformset_factory
 from pontoon.base.models import (
     Entity,
     ExternalResource,
+    Locale,
     Project,
     Repository,
     Subpage,
@@ -21,6 +22,10 @@ class ContactChoiceField(forms.ModelChoiceField):
 class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
     info = HtmlField(required=False)
+    locales_readonly = forms.ModelMultipleChoiceField(
+        queryset=Locale.objects.all(),
+        required=False,
+    )
 
     class Meta:
         model = Project

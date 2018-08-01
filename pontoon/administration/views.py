@@ -93,6 +93,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     repo_formset = RepositoryInlineFormSet()
     external_resource_formset = ExternalResourceInlineFormSet()
     tag_formset = TagInlineFormSet()
+    locales_readonly = []
     locales_selected = []
     subtitle = 'Add project'
     pk = None
@@ -100,8 +101,13 @@ def manage_project(request, slug=None, template='admin_project.html'):
 
     # Save project
     if request.method == 'POST':
+        locales_readonly = Locale.objects.filter(
+            pk__in=request.POST.getlist('locales_readonly')
+        )
         locales_selected = Locale.objects.filter(
             pk__in=request.POST.getlist('locales')
+        ).exclude(
+            pk__in=locales_readonly
         )
 
         # Update existing project
@@ -149,9 +155,11 @@ def manage_project(request, slug=None, template='admin_project.html'):
             if formsets_valid:
                 project.save()
 
-                # Manually save ProjectLocales due to intermediary
-                # model.
-                locales = form.cleaned_data.get('locales', [])
+                # Manually save ProjectLocales due to intermediary model
+                locales_form = form.cleaned_data.get('locales', [])
+                locales_readonly_form = form.cleaned_data.get('locales_readonly', [])
+                locales = locales_form | locales_readonly_form
+
                 (
                     ProjectLocale.objects
                     .filter(project=project)
@@ -160,6 +168,16 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 )
                 for locale in locales:
                     ProjectLocale.objects.get_or_create(project=project, locale=locale)
+
+                # Update readonly flags
+                locales_readonly_pks = [l.pk for l in locales_readonly_form]
+                project_locales = ProjectLocale.objects.filter(project=project)
+                project_locales.exclude(
+                    locale__pk__in=locales_readonly_pks
+                ).update(readonly=False)
+                project_locales.filter(
+                    locale__pk__in=locales_readonly_pks,
+                ).update(readonly=True)
 
                 subpage_formset.save()
                 repo_formset.save()
@@ -199,7 +217,11 @@ def manage_project(request, slug=None, template='admin_project.html'):
                 else None
             )
             external_resource_formset = ExternalResourceInlineFormSet(instance=project)
-            locales_selected = project.locales.all()
+            locales_readonly = Locale.objects.filter(
+                project_locale__readonly=True,
+                project_locale__project=project,
+            )
+            locales_selected = project.locales.exclude(pk__in=locales_readonly)
             subtitle = 'Edit project'
         except Project.DoesNotExist:
             form = ProjectForm(initial={'slug': slug})
@@ -222,6 +244,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'repo_formset': repo_formset,
         'tag_formset': tag_formset,
         'external_resource_formset': external_resource_formset,
+        'locales_readonly': locales_readonly,
         'locales_selected': locales_selected,
         'locales_available': Locale.objects.exclude(pk__in=locales_selected),
         'subtitle': subtitle,

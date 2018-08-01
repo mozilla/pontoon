@@ -23,6 +23,7 @@ from xml.sax.saxutils import (
 )
 
 from django.db.models import Prefetch
+from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -512,7 +513,11 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
-    changeset.bulk_create_translaton_memory_entries()
+
+    if changeset.changed_translations:
+        valid_translations = changeset.bulk_check_translations()
+        changeset.bulk_create_translation_memory_entries(valid_translations)
+
     TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed
@@ -679,3 +684,23 @@ def is_same(same_translations, can_translate):
             return True
 
     return False
+
+
+def readonly_exists(projects, locale):
+    """
+    :arg list projects: a list of Project instances.
+    :arg Locale locale: Locale instance.
+    :returns: True if a read-only ProjectLocale instance for given Projects and
+        Locale exists.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import ProjectLocale
+
+    if not isinstance(projects, (QuerySet, tuple, list)):
+        projects = [projects]
+
+    return ProjectLocale.objects.filter(
+        project__in=projects,
+        locale=locale,
+        readonly=True,
+    ).exists()

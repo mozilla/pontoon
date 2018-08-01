@@ -6,6 +6,7 @@ module.exports = {
     env: {
         es6: true,
         browser: true,
+        jest: true,
     },
     parser: "babel-eslint",
     parserOptions: {
@@ -39,6 +40,7 @@ module.exports = {
         NProgress: false,
         diff_match_patch: false,
         Highcharts: false,
+        Sideshow: false,
         editor: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
