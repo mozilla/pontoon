@@ -1,0 +1,26 @@
+{# Admin team selector allows user to select localizable and read-only locales for the project. #}
+{% import 'teams/widgets/team_selector_list.html' as team_selector_list %}
+
+{% macro render(locales_available, locales_selected, locales_readonly, form_field='selected_locales') %}
+<div class="admin-team-selector double-list-selector clearfix">
+    {{ team_selector_list.list(
+        id='available',
+        title='Available',
+        locales=locales_available,
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='selected',
+        title='Localizable',
+        locales=locales_selected,
+        left_shortcut='← Move all',
+        right_shortcut='Move all →',
+    )}}
+    {{ team_selector_list.list(
+        id='readonly',
+        title='Read-only',
+        locales=locales_readonly,
+        right_shortcut='← Move all',
+    )}}
+</div>
+{% endmacro %}

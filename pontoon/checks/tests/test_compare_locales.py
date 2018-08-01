@@ -326,7 +326,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 
 def test_dtd_source_string_with_quotes():
     """
-    Correct source string with quotes shouldn't raise a warning.
+    A correct source string with quotes shouldn't raise a warning.
     """
     quality_check_args = mock_quality_check_args(
         resource_path='mobile/android/base/android_strings.dtd',
@@ -334,6 +334,17 @@ def test_dtd_source_string_with_quotes():
         string='Mozilla "2017"',
         comment='Some comment',
         translation='Mozilla "2018"',
+    )
+    assert run_checks(**quality_check_args) == {}
+
+
+def test_dtd_entity_with_quotes():
+    quality_check_args = mock_quality_check_args(
+        resource_path='strings.dtd',
+        key='test',
+        string='<a href="http://mozilla.org">Mozilla</a>',
+        comment='Some comment',
+        translation='<a href="http://mozilla.org">Mozilla "2018"</a>',
     )
     assert run_checks(**quality_check_args) == {}
 

@@ -9,9 +9,13 @@ fi
 # Compile static assets
 export PATH=/app/.heroku/node/bin:$PATH
 npm install .
+pushd frontend && npm install && popd
 
 echo "Running webpack..."
 ./node_modules/.bin/webpack -p
+
+echo "Building frontend resources..."
+pushd frontend && npm run build && popd
 
 echo "Collecting static files..."
 ./manage.py migrate --noinput

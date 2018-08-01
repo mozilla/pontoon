@@ -55,7 +55,7 @@ $(function() {
     var locales = $(this).data('ids').reverse(),
         $localeSelector = $(this).parents('.locale-selector');
 
-    $localeSelector.find('.remove-all').click();
+    $localeSelector.find('.selected .move-all').click();
 
     $(locales).each(function(i, id) {
       $localeSelector.find('.locale.select:first').find('[data-id=' + id + ']').click();

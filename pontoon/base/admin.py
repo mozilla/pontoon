@@ -115,7 +115,7 @@ class ProjectLocaleInline(admin.TabularInline):
     model = models.ProjectLocale
     extra = 0
     verbose_name_plural = 'Locales'
-    fields = ('locale',)
+    fields = ('locale', 'readonly',)
 
 
 class RepositoryInline(admin.TabularInline):

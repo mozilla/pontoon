@@ -22,6 +22,20 @@ var Pontoon = (function (my) {
     },
 
 
+    /*
+     * Return true if read-only editor is used, which happens when:
+     *  - users are not logged in or
+     *  - the entity is read-only.
+     */
+    isReadonlyEditor: function() {
+      var entity = this.getEditorEntity();
+      if (!this.user.id || entity.readonly) {
+        return true;
+      }
+      return false;
+    },
+
+
     renderEntity: function (index, entity) {
       var self = this;
       var status = self.getEntityStatus(entity);
@@ -35,20 +49,33 @@ var Pontoon = (function (my) {
         markPlaceables
       );
 
-      var translationString = self.fluent.getSimplePreview(
-        translation.string,
-        self.markPlaceables(translation.string || ''),
-        markPlaceables
-      );
+      var translationString = '';
+      if (!translation.rejected) {
+        translationString = self.fluent.getSimplePreview(
+          translation.string,
+          self.markPlaceables(translation.string || ''),
+          markPlaceables
+        );
+      }
 
-      var li = $('<li class="entity' +
-        (' ' + status) +
-        (translation.pk ? ' has-translations' : '') +
-        (!entity.body ? ' uneditable' : '') +
-        (this.allEntitiesSelected ? ' selected' : '') +
-        (entity.visible ? ' visible': '') +
+      var classNames = ['entity', status];
+      if (translation.pk && !translation.rejected) {
+          classNames.push('has-translations');
+      }
+      if (!entity.body) {
+          classNames.push('uneditable');
+      }
+      if (this.allEntitiesSelected) {
+          classNames.push('selected');
+      }
+      if (entity.visible) {
+          classNames.push('visible');
+      }
+
+      var li = $('<li class="' +
+        classNames.join(' ') +
         '" data-entry-pk="' + entity.pk + '">' +
-        '<span class="status fa' + (self.user.canTranslate() ? '' : ' unselectable') + '"></span>' +
+        '<span class="status fa' + ((!entity.readonly && self.user.canTranslate()) ? '' : ' unselectable') + '"></span>' +
         '<p class="string-wrapper">' +
           '<span class="source-string">' + sourceString + '</span>' +
           '<span class="translation-string' + openSans + '" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
@@ -288,8 +315,8 @@ var Pontoon = (function (my) {
                 (this.approved ? 'translated' : this.rejected ? 'rejected' : this.fuzzy ? 'fuzzy' : 'unreviewed') +
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
-                    ((self.user.canTranslate()) ? ' translator' :
-                      ((self.user.id === this.uid && !this.approved) ?
+                    ((!entity.readonly && self.user.canTranslate()) ? ' translator' :
+                      ((!entity.readonly && self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
@@ -301,9 +328,9 @@ var Pontoon = (function (my) {
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
-                      ((self.user.id && (self.user.id === this.uid) || self.user.canTranslate()) ? '<button class="' +
+                      '<button class="' +
                        (this.rejected ? 'unreject' : 'reject') + ' fa" title="' +
-                       (this.rejected ? 'Unreject' : 'Reject') + '"></button>' : '') +
+                       (this.rejected ? 'Unreject' : 'Reject') + '"></button>' +
                     '</menu>' +
                   '</header>' +
                   '<p class="translation" dir="' + self.locale.direction + '" lang="' + self.locale.code + '" data-script="' + self.locale.script + '">' +
@@ -670,7 +697,12 @@ var Pontoon = (function (my) {
 
       // Translation area (must be set before unsaved changes check)
       var translation = entity.translation[0];
-      $('#translation').val(translation.string);
+      if (translation.pk !== null && !translation.rejected) {
+        $('#translation').val(translation.string);
+      }
+      else {
+        $('#translation').val('');
+      }
       $('.warning-overlay:visible .cancel').click();
 
       self.updateSaveButtons();
@@ -709,6 +741,12 @@ var Pontoon = (function (my) {
       }
 
       self.fluent.toggleButton();
+
+      // Toggle read-only mode
+      $('#editor #single').toggleClass('readonly', entity.readonly);
+      $('#editor textarea').attr('readonly', function() {
+        return self.isReadonlyEditor();
+      });
 
       self.updateCachedTranslation();
       self.updateHelpers();
@@ -1242,7 +1280,7 @@ var Pontoon = (function (my) {
 
       function markTagFilters(type) {
         for (var i=0, l=filter[type].length; i < l; i++) {
-          var node = $('#filter .menu [data-type="tag-' + filter[type][i] + '"]'),
+          var node = $('#filter .menu [data-type="' + filter[type][i] + '"]'),
               titleNode = node.find('.title');
           node.addClass('selected');
           placeholder.push('tag: "' + titleNode.text() + '"');
@@ -1277,6 +1315,9 @@ var Pontoon = (function (my) {
         selectorType = $('#filter .selected').data('type');
         if (selectorType.indexOf('@') !== -1) {
           selectorType = 'author';
+        }
+        else if (filter['tag'].length) {
+          selectorType = 'tag-' + selectorType;
         }
       }
 
@@ -1425,9 +1466,6 @@ var Pontoon = (function (my) {
             num = -1;
 
         function updateFilterValue(type) {
-          if (type === 'tag') {
-            value = value.substring(4);
-          }
           num = filter[type].indexOf(value);
           if (num === -1) {
             filter[type].push(value);
@@ -1478,7 +1516,7 @@ var Pontoon = (function (my) {
           }
 
         } else if (isTagFilter(el)) {
-          filter.tag.push(value.substr(4));
+          filter.tag.push(value);
 
         } else if (el.hasClass('author')) {
           filter.author.push(value);
@@ -1810,8 +1848,7 @@ var Pontoon = (function (my) {
       $('#source-pane').on('mousedown', '.placeable', function (e) {
         e.preventDefault();
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
@@ -2070,8 +2107,7 @@ var Pontoon = (function (my) {
           return;
         }
 
-        // Ignore for anonymous users
-        if (!self.user.id) {
+        if (Pontoon.isReadonlyEditor()) {
           return;
         }
 
@@ -2186,6 +2222,10 @@ var Pontoon = (function (my) {
             item.find('.unapprove').removeClass('unapprove').addClass('approve').prop('title', 'Approve');
             button.addClass('unreject').removeClass('reject').prop('title', 'Unreject');
 
+            // Reload the editor so that, if the rejected string was the active one,
+            // it disappears from the textarea.
+            self.switchToEntity(entity);
+
             self.endLoader('Translation rejected');
           },
           error: function() {
@@ -2259,7 +2299,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       self.allEntitiesSelected = true;
-      $('#entitylist .entity:visible').addClass('selected');
+      $('#entitylist .entity:visible > .status:not(.unselectable)').parents('.entity').addClass('selected');
 
       self.selectedEntities = [];
       self.openBatchEditor(true);
@@ -2545,7 +2585,7 @@ var Pontoon = (function (my) {
       entity.ui
         .removeClass('translated fuzzy partial missing')
         .addClass(status)
-        .toggleClass('has-translations', translation.pk !== null)
+        .toggleClass('has-translations', translation.pk !== null && !translation.rejected)
         .find('.translation-string')
           .html(translationString);
 
@@ -3244,12 +3284,21 @@ var Pontoon = (function (my) {
       $('#profile .admin-current-project a')
         .attr('href', '/admin/projects/' + slug + '/')
         .toggle(this.project.slug !== 'all-projects');
-      $('#profile .upload').toggle(this.state.paths && this.user.canTranslate() && this.part !== 'all-resources');
+
+      var enableFileUpload = (
+        this.state.paths &&
+        this.user.canTranslate() &&
+        this.part !== 'all-resources' &&
+        !this.entities[0].readonly
+      );
+      $('#profile .upload').toggle(enableFileUpload);
+
       $('#profile .download, #profile .upload + .horizontal-separator').toggle(this.project.slug !== 'all-projects');
 
       $('#profile .langpack')
         .toggle(this.project.langpack_url !== '')
         .find('a').attr('href', this.project.langpack_url.replace('{locale_code}', this.locale.code));
+
       $('#profile .download-tmx a').attr('href', '/' + code + '/' + slug + '/' + code + '.' + slug + '.tmx');
     },
 
@@ -3725,30 +3774,6 @@ var Pontoon = (function (my) {
         links: self.getProjectData('links') === 'True' ? true : false,
         langpack_url: self.getProjectData('langpack_url') || '',
         tags: self.getProjectData('tags') || []
-      };
-
-      /* Copy of User.can_translate(), used on client to improve performance */
-      this.user.canTranslate = function() {
-        var managedLocales = $('#server').data('user-managed-locales') || [],
-            translatedLocales = $('#server').data('user-translated-locales') || [],
-            translatedProjects = $('#server').data('user-translated-projects') || {},
-            project = self.project;
-
-        if (self.getEditorEntity()) {
-          project = self.getEditorEntity().project;
-        }
-
-        var localeProject = self.locale.code + '-' + project.slug;
-
-        if ($.inArray(self.locale.code, managedLocales) !== -1) {
-          return true;
-        }
-
-        if (translatedProjects.hasOwnProperty(localeProject)) {
-           return translatedProjects[localeProject];
-        }
-
-        return $.inArray(self.locale.code, translatedLocales) !== -1;
       };
     },
 
@@ -4349,6 +4374,7 @@ var Pontoon = (function (my) {
       } else {
         this.state = state;
       }
+
     }
   });
 }(Pontoon || {}));
@@ -4382,6 +4408,31 @@ Pontoon.user = {
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},
+  canTranslate: function() {
+    var managedLocales = $("#server").data("user-managed-locales") || [];
+    var translatedLocales = $("#server").data("user-translated-locales") || [];
+    var translatedProjects = $("#server").data("user-translated-projects") || {};
+    var locale = Pontoon.getLocaleData();
+    var project = {
+        slug: Pontoon.getProjectData("slug")
+      };
+
+    if (Pontoon.getEditorEntity()) {
+      project = Pontoon.getEditorEntity().project;
+    }
+
+    var localeProject = locale.code + "-" + project.slug;
+
+    if ($.inArray(locale.code, managedLocales) !== -1) {
+      return true;
+    }
+
+    if (translatedProjects.hasOwnProperty(localeProject)) {
+      return translatedProjects[localeProject];
+    }
+
+    return $.inArray(locale.code, translatedLocales) !== -1;
+  }
 };
 
 Pontoon.attachMainHandlers();

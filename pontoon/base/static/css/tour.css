@@ -1,0 +1,17 @@
+.sideshow-step-description button.sideshow-next-step-button {
+  background-color: #F36;
+  border: #F36;
+}
+
+.sideshow-step-description button.sideshow-next-step-button:hover {
+  background-color: #F36;
+  border: #F36;
+}
+
+.sideshow-step-description .sideshow-step-position {
+  font-family: sans-serif;
+}
+
+.sideshow-subject-arrow {
+  color: #F36;
+}

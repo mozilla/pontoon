@@ -1,7 +1,7 @@
-{% import 'widgets/multiple_choice.html' as MultipleChoice %}
+{% import 'contributors/widgets/contributor_selector_list.html' as ContributorSelectorList %}
 
 {% macro user_selector(all_users, index=None) %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'available',
         choices=all_users,
         label='<a class="contributors active" href="#">team contributors</a> &middot; <a class="all" href="#">all users</a>',
@@ -12,7 +12,7 @@
 {% endmacro %}
 
 {% macro translator_selector(description, translators, index=None) %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'translators',
         choices=translators,
         label='translators',
@@ -23,7 +23,7 @@
 {% endmacro %}
 
 {% macro manager_selector() %}
-    {{ MultipleChoice.select(
+    {{ ContributorSelectorList.list(
         'managers',
         choices=managers,
         label='managers',
@@ -37,7 +37,7 @@
 
     <div class="permissions-groups general clearfix">
         <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
-        <div class="selector-wrapper clearfix">
+        <div class="selector-wrapper double-list-selector clearfix">
             {{ user_selector(all_users) }}
             {{ translator_selector('Translators can submit and approve translations in all projects, unless overridden below.', translators) }}
             {{ manager_selector() }}
@@ -59,7 +59,7 @@
                 {{ name }} <span class="small stress">(override team translators for this project)</span>
                 <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
             </h3>
-            <div class="selector-wrapper clearfix">
+            <div class="selector-wrapper double-list-selector clearfix">
                 {{ user_selector(all_users, pk) }}
                 {{ translator_selector('Add or remove Translators to override default team translators set in the General section.', translators, pk) }}
             </div>

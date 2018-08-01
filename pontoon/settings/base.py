@@ -55,6 +55,7 @@ if not DEV and not DEBUG:
         DATABASES['default']['OPTIONS'] = {}
     DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 
+FRONTEND_DIR = os.path.join(ROOT, 'frontend')
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -74,10 +75,6 @@ SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
 SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
-
-# Disable forced SSL if debug mode is enabled or if CI is running the
-# tests.
-SSLIFY_DISABLE = DEBUG or os.environ.get('CI', False)
 
 # URL to the RabbitMQ server
 BROKER_URL = os.environ.get('RABBITMQ_URL', None)
@@ -122,6 +119,7 @@ INSTALLED_APPS = (
     'pontoon.sync',
     'pontoon.teams',
     'pontoon.tags',
+    'pontoon.translate',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -147,6 +145,7 @@ INSTALLED_APPS = (
     'notifications',
     'graphene_django',
     'webpack_loader',
+    'waffle',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
@@ -154,7 +153,6 @@ BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
 MIDDLEWARE_CLASSES = (
     'django_cookies_samesite.middleware.CookiesSameSite',
     'django.middleware.gzip.GZipMiddleware',
-    'sslify.middleware.SSLifyMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
     'pontoon.base.middleware.BlockedIpMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -167,6 +165,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
@@ -207,7 +206,10 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [path('pontoon/base/templates/django')],
+        'DIRS': [
+            path('pontoon/base/templates/django'),
+            os.path.join(FRONTEND_DIR, 'build'),
+        ],
         'OPTIONS': {
             'debug': DEBUG,
             'context_processors': CONTEXT_PROCESSORS,
@@ -256,7 +258,7 @@ PIPELINE_CSS = {
     },
     'admin_project': {
         'source_filenames': (
-            'css/multiple_locale_selector.css',
+            'css/double_list_selector.css',
             'css/admin_project.css',
         ),
         'output_filename': 'css/admin_project.min.css',
@@ -267,7 +269,7 @@ PIPELINE_CSS = {
             'css/contributors.css',
             'css/heading_info.css',
             'css/sidebar_menu.css',
-            'css/multiple_locale_selector.css',
+            'css/multiple_team_selector.css',
             'css/manual_notifications.css',
         ),
         'output_filename': 'css/project.min.css',
@@ -291,6 +293,7 @@ PIPELINE_CSS = {
     'team': {
         'source_filenames': (
             'css/table.css',
+            'css/double_list_selector.css',
             'css/contributors.css',
             'css/heading_info.css',
             'css/team.css',
@@ -328,7 +331,7 @@ PIPELINE_CSS = {
     },
     'settings': {
         'source_filenames': (
-            'css/multiple_locale_selector.css',
+            'css/multiple_team_selector.css',
             'css/contributor.css',
             'css/team_selector.css',
             'css/settings.css',
@@ -369,12 +372,22 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
+
     'home' : {
         'source_filenames': (
             'css/home.css',
         ),
         'output_filename': 'css/home.min.css'
     }
+
+    'tour': {
+        'source_filenames': (
+            'js/lib/sideshow/fonts/sideshow-fontface.min.css',
+            'js/lib/sideshow/stylesheets/sideshow.min.css',
+            'css/tour.css',
+        ),
+        'output_filename': 'css/tour.min.css',
+    },
 }
 
 PIPELINE_JS = {
@@ -397,7 +410,7 @@ PIPELINE_JS = {
     'admin_project': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/multiple_locale_selector.js',
+            'js/double_list_selector.js',
             'js/admin_project.js',
         ),
         'output_filename': 'js/admin_project.min.js',
@@ -417,7 +430,7 @@ PIPELINE_JS = {
             'js/progress-chart.js',
             'js/tabs.js',
             'js/sidebar_menu.js',
-            'js/multiple_locale_selector.js',
+            'js/multiple_team_selector.js',
             'js/manual_notifications.js',
         ),
         'output_filename': 'js/project.min.js',
@@ -433,6 +446,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/table.js',
             'js/progress-chart.js',
+            'js/double_list_selector.js',
             'js/bugzilla.js',
             'js/tabs.js',
             'js/request_projects.js',
@@ -469,7 +483,7 @@ PIPELINE_JS = {
     'settings': {
         'source_filenames': (
             'js/lib/jquery-ui.js',
-            'js/multiple_locale_selector.js',
+            'js/multiple_team_selector.js',
             'js/team_selector.js',
             'js/settings.js'
         ),
@@ -491,12 +505,23 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
+
     'home' : {
         'source_filenames' : (
             'js/lib/jquery.scrollify.js',
             'js/home.js'
         ),
         'output_filename' : 'js/home.min.js',
+
+    'tour': {
+        'source_filenames': (
+            'js/lib/sideshow/dependencies/jazz.min.js',
+            'js/lib/sideshow/dependencies/pagedown.min.js',
+            'js/lib/sideshow/sideshow.js',
+            'js/tour.config.js',
+            'js/tour.js',
+        ),
+        'output_filename': 'js/tour.min.js',
     },
 }
 
@@ -545,7 +570,10 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-STATICFILES_DIRS = [path('assets')]
+STATICFILES_DIRS = [
+    path('assets'),
+    os.path.join(FRONTEND_DIR, 'build', 'static'),
+]
 
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
@@ -646,6 +674,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # x-xss-protection: 1; mode=block
 # Activates the browser's XSS filtering and helps prevent XSS attacks
 SECURE_BROWSER_XSS_FILTER = True
+
+# Redirect non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get('CI', False))
 
 # Content-Security-Policy headers
 CSP_DEFAULT_SRC = ("'none'",)

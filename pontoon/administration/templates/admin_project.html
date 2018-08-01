@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% import 'widgets/multiple_locale_selector.html' as multiple_locale_selector %}
+{% import 'admin_team_selector.html' as admin_team_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
 {% import 'tag_inline_formset.html' as tag_inline_formset %}
 
@@ -29,23 +29,33 @@
   <input type="hidden" value="{{ pk }}" name="pk">
   {% endif %}
 
-  <div class="clearfix">
+  <div class="half clearfix">
+    <div class="labels">
       {{ form.name.label_tag() }}
-      {{ form.name }}
-      {{ form.name.errors }}
-  </div>
-  <div class="clearfix">
       {{ form.slug.label_tag() }}
+    </div>
+    <div class="fields">
+      {{ form.name }}
       {{ form.slug }}
-      {{ form.slug.errors }}
+    </div>
+    <div class="errors">
+      <div class="for-name">
+        {{ form.name.errors }}
+      </div>
+      <div class="for-slug">
+        {{ form.slug.errors }}
+      </div>
+    </div>
   </div>
 
   <h3>Locales</h3>
 
   <div class="locales clearfix">
-      {{ multiple_locale_selector.render(locales_available, locales_selected) }}
+      {{ admin_team_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}
+      {{ form.locales_readonly }}
+      {{ form.locales_readonly.errors }}
   </div>
 
   <div class="locales-toolbar clearfix">
