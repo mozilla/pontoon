@@ -397,22 +397,35 @@ html {
   font-size: 1.6rem;
 }
 
-.primary-button-cta {
-  background-color: #7BC176;
+.homepage-button:hover{
+  box-shadow: 3rem 3rem 3rem rgba(black, 0.5) inset;
 }
 
-.primary-button-cta div {
-  color: white;
+.primary-button-cta {
+  background-color: #7BB976;
+}
+
+.primary-button-cta div{
+  color: #FFFFFF;
+}
+
+.primary-button-cta:hover {
+  background-color: #7BC176;
+  transition-duration: 0.4s;
 }
 
 .secondary-button-cta {
   background-color: #FFFFFF;
 }
 
-.secondary-button-cta div {
+.secondary-button-cta div{
   color: #000000;
 }
 
+.secondary-button-cta:hover {
+  background-color: #F9F9F9;
+  transition-duration: 0.4s;
+}
 
 .footer {
   margin-top: -15rem;
