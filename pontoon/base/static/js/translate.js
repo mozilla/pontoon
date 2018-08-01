@@ -4408,6 +4408,7 @@ Pontoon.user = {
   forceSuggestions: $('#server').data('force-suggestions') === 'True' ? true : false,
   manager: $('#server').data('manager'),
   localesOrder: $('#server').data('locales-order') || {},
+  tourStatus: $('#server').data('tour-status') || 0,
   canTranslate: function() {
     var managedLocales = $("#server").data("user-managed-locales") || [];
     var translatedLocales = $("#server").data("user-translated-locales") || [];

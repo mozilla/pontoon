@@ -414,6 +414,9 @@ class UserProfile(models.Model):
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
+    # Used to keep track of start/step no. of user tour.
+    tour_status = models.IntegerField(default=0)
+
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
         models.PositiveIntegerField(),
