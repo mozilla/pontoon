@@ -67,7 +67,7 @@ $(function () {
         listeners: {
           beforeStep: function() {
             // Take the user directly to next step of where he left.
-            if(tourStatus != 0)
+            if (tourStatus !== 0)
               Sideshow.gotoStep(tourStatus+1);
           },
           afterStep: function() {
@@ -283,7 +283,7 @@ $(function () {
   });
 
   // Run the tour only on project with slug 'demo' and if not completed by user
-  if (Pontoon.state.project === "demo"&& tourStatus != -1) {
+  if (Pontoon.state.project === "demo" && tourStatus !== -1) {
     Sideshow.start({ listAll: true });
   }
 });
