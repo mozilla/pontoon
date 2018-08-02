@@ -297,3 +297,12 @@ class GetEntitiesForm(forms.Form):
 
     def clean_entity_ids(self):
         return utils.split_ints(self.cleaned_data['entity_ids'])
+
+
+class UserTourStatusForm(forms.ModelForm):
+    """
+    Form is responsible for saving tour status of the user.
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('tour_status',)

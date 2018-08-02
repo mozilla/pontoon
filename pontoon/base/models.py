@@ -415,6 +415,7 @@ class UserProfile(models.Model):
     custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
     # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)
 
     # Defines the order of locales displayed in locale tab.

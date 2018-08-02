@@ -40,7 +40,7 @@ $(function () {
           tour_status: step
         },
         success: function(data) {
-          tourStatus = Number(data["tourStatus"]);
+          return data;
         }
       });
     }
@@ -72,7 +72,7 @@ $(function () {
           },
           afterStep: function() {
             if (tourStatus === 0) {
-              updateTourStatus(tourStatus+1);
+              updateTourStatus(++tourStatus);
             }
           }
         },
@@ -87,7 +87,7 @@ $(function () {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -108,7 +108,7 @@ $(function () {
           afterStep: function() {
             $("#progress .menu").removeClass("permanent");
             $("#progress .menu").css("display", "none");
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         }
       },
@@ -128,7 +128,7 @@ $(function () {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -153,7 +153,7 @@ $(function () {
           afterStep: function() {
             $("#filter .menu").removeClass("permanent");
             $("#filter .menu").css("display", "none");
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         }
       },
@@ -168,7 +168,7 @@ $(function () {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -190,7 +190,7 @@ $(function () {
         ],
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -202,7 +202,7 @@ $(function () {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -224,7 +224,7 @@ $(function () {
         ],
         listeners: {
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -242,7 +242,7 @@ $(function () {
             $("#entitylist .uneditables li:nth-child(3)").click();
           },
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -261,7 +261,7 @@ $(function () {
             $("#helpers.tabs nav li")[1].firstElementChild.click();
           },
           afterStep: function() {
-            updateTourStatus(tourStatus+1);
+            updateTourStatus(++tourStatus);
           }
         },
       },
@@ -275,14 +275,15 @@ $(function () {
         format: "markdown",
         listeners: {
           afterStep: function() {
-            updateTourStatus(0);
+            updateTourStatus(-1);
           }
         },
       }
     ]
   });
 
-  if (Pontoon.state.project === "demo") {
+  // Run the tour only on project with slug 'demo' and if not completed by user
+  if (Pontoon.state.project === "demo"&& tourStatus != -1) {
     Sideshow.start({ listAll: true });
   }
 });

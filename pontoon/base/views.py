@@ -742,18 +742,17 @@ def update_translation(request):
 
 
 @utils.require_AJAX
+@require_POST
 def update_tour_status(request):
-    """Perform quality checks and return a list of any failed ones."""
-    try:
-        tour_status = request.POST['tour_status']
-    except MultiValueDictKeyError:
-        raise Http404
-    user = request.user
-    user.profile.tour_status = tour_status
-    user.profile.save()
-    return JsonResponse({
-        'tourStatus': tour_status,
-    })
+    """Update User tour Status."""
+    form = forms.UserTourStatusForm(
+        request.POST,
+        instance=request.user.profile,
+    )
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors.as_json())
+    form.save()
+    return HttpResponse('ok')
 
 
 @require_POST
