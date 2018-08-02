@@ -121,7 +121,8 @@ html {
 }
 
 .title-style {
-  font-family: 'Mosk', sans-serif;
+  font-family: 'OpenSans-Bold', sans-serif;
+  font-weight: 700;
   font-size: 4rem;
   color: white;
   line-height: 5.6rem;
@@ -129,7 +130,7 @@ html {
 }
 
 .content-style{
-  font-family: 'Lato Regular',sans-serif;
+  font-family: 'OpenSans-Regular',sans-serif;
   font-size: 1.5rem;
   line-height: 2.6rem;
   color: #f4f4f4;
@@ -393,7 +394,7 @@ html {
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-family: 'Lato regular',sans-serif;
+  font-family: 'OpenSans-Regular',sans-serif;
   font-size: 1.6rem;
 }
 

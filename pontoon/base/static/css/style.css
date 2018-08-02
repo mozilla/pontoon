@@ -305,7 +305,7 @@ input[type=search] {
   src: url('../fonts/Ubuntu-RI.ttf')
 }
 
-@font-face {
+/* @font-face {
   font-family: 'Lato Regular';
   font-style: normal;
   font-weight: 300;
@@ -317,7 +317,7 @@ input[type=search] {
   font-style: normal;
   font-weight: 700;
   src:url('../fonts/Mosk Bold 700.ttf')
-}
+} */
 
 body, select, input, textarea, button {
   font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
