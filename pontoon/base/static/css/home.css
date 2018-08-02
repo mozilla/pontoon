@@ -172,17 +172,21 @@ html {
   width: 1rem;
   height: 1rem;
   display: block;
+  /* border: solid 0.125rem #AFAFAF; */
   background-color: #DFDFDF;
+  opacity: 0.5;
   border-radius: 50%;
   margin-bottom: 2.5rem;
   margin-left: 3rem;
 }
 
 .pagination.active {
-  background-color: #7BC876;
-  transition-duration: 0.3s;
-  width: 1.25rem;
-  height: 1.25rem;
+  opacity: 1;
+  border: none;
+  background-color: #CFCFCF;
+  transition-duration: 0.5s;
+  width: 1rem;
+  height: 1rem;
 }
 
 .snaps {
