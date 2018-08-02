@@ -741,6 +741,20 @@ def update_translation(request):
         })
 
 
+@utils.require_AJAX
+@require_POST
+def update_tour_status(request):
+    """Update User tour Status."""
+    form = forms.UserTourStatusForm(
+        request.POST,
+        instance=request.user.profile,
+    )
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors.as_json())
+    form.save()
+    return HttpResponse('ok')
+
+
 @require_POST
 @transaction.atomic
 def download(request):

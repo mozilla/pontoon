@@ -25,6 +25,7 @@
      {% if user.translated_locales %}data-user-translated-locales="{{ user.translated_locales|to_json() }}"{% endif %}
      {% if user.translated_projects %}data-user-translated-projects="{{ user.translated_projects|to_json() }}"{% endif %}
      {% if perms.base.can_manage_project %}data-manager="true"{% endif %}
+     {% if user.profile and user.profile.tour_status %}data-tour-status="{{ user.profile.tour_status }}"{% endif %}
      {% if user.is_authenticated() %}
       data-display-name="{{ user.name_or_email }}"
       {% if user.profile.locales_order %}
