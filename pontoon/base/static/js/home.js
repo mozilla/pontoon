@@ -2,8 +2,8 @@
 
 $(function() {
   $.scrollify({
-		section:".snaps",
-    scrollbars:false,
+		section: ".snaps",
+    scrollbars: false,
     interstitialSection: "",
     easing: "easeInOutSine",
     scrollSpeed: 975,
@@ -19,12 +19,15 @@ $(function() {
     after: function(i,snaps) {
       var ref = snaps[i].attr("data-section-name");
 
-      if (ref === "section-6")
+      if (ref === "section-6") {
         $('.home-header').css({'background-color':'transparent','transition-duration':'0.3s'})
-      else if (ref === "section-1")
+      }
+      else if (ref === "section-1") {
         $('.home-header').css({'background-color':'transparent','transition-duration':'0.3s'})
-      else
+      }
+      else {
         $('.home-header').css('background-color','#272A2F')
+      }
     },
     updateHash: false,
 	});
