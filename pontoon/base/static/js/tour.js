@@ -3,7 +3,7 @@ $(function () {
   var isEntityClicked = false;
   var isSubmitClicked = false;
 
-  var  tourStatus = Pontoon.user.tourStatus;
+  var tourStatus = Number($('#server').data('tour-status') || 0);
 
   var submitTarget = "#editor #single button#save";
   var submitText = "A user needs to be logged in to be able to submit " +
@@ -30,21 +30,21 @@ $(function () {
     submitTarget = null;
   }
 
-var update_tour_status = function(step) {
-  if (Pontoon.user.id) {
-    $.ajax({
-      url: "/update-tour-status/",
-      type: "POST",
-      data: {
-        csrfmiddlewaretoken: $("#server").data("csrf"),
-        tour_status: step
-      },
-      success: function(data) {
-        Pontoon.user.tourStatus = data["tourStatus"];
-      }
-    });
-  }
-};
+  var updateTourStatus = function (step) {
+    if (Pontoon.user.id) {
+      $.ajax({
+        url: "/update-tour-status/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("#server").data("csrf"),
+          tour_status: step
+        },
+        success: function(data) {
+          tourStatus = Number(data["tourStatus"]);
+        }
+      });
+    }
+  };
 
   Sideshow.registerWizard({
     name: "introducing_pontoon",
@@ -66,11 +66,14 @@ var update_tour_status = function(step) {
           "to localize various Mozilla project.",
         listeners: {
           beforeStep: function() {
+            // Take the user directly to next step of where he left.
             if(tourStatus != 0)
               Sideshow.gotoStep(tourStatus+1);
           },
           afterStep: function() {
-            update_tour_status(1);
+            if (tourStatus === 0) {
+              updateTourStatus(tourStatus+1);
+            }
           }
         },
       },
@@ -84,7 +87,7 @@ var update_tour_status = function(step) {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            update_tour_status(2);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -105,7 +108,7 @@ var update_tour_status = function(step) {
           afterStep: function() {
             $("#progress .menu").removeClass("permanent");
             $("#progress .menu").css("display", "none");
-            update_tour_status(3);
+            updateTourStatus(tourStatus+1);
           }
         }
       },
@@ -125,7 +128,7 @@ var update_tour_status = function(step) {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            update_tour_status(4);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -150,7 +153,7 @@ var update_tour_status = function(step) {
           afterStep: function() {
             $("#filter .menu").removeClass("permanent");
             $("#filter .menu").css("display", "none");
-            update_tour_status(5);
+            updateTourStatus(tourStatus+1);
           }
         }
       },
@@ -165,7 +168,7 @@ var update_tour_status = function(step) {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            update_tour_status(6);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -187,7 +190,7 @@ var update_tour_status = function(step) {
         ],
         listeners: {
           afterStep: function() {
-            update_tour_status(7);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -199,7 +202,7 @@ var update_tour_status = function(step) {
         lockSubject: true,
         listeners: {
           afterStep: function() {
-            update_tour_status(8);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -221,7 +224,7 @@ var update_tour_status = function(step) {
         ],
         listeners: {
           afterStep: function() {
-            update_tour_status(9);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -239,7 +242,7 @@ var update_tour_status = function(step) {
             $("#entitylist .uneditables li:nth-child(3)").click();
           },
           afterStep: function() {
-            update_tour_status(10);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -258,7 +261,7 @@ var update_tour_status = function(step) {
             $("#helpers.tabs nav li")[1].firstElementChild.click();
           },
           afterStep: function() {
-            update_tour_status(11);
+            updateTourStatus(tourStatus+1);
           }
         },
       },
@@ -272,7 +275,7 @@ var update_tour_status = function(step) {
         format: "markdown",
         listeners: {
           afterStep: function() {
-            update_tour_status(0);
+            updateTourStatus(0);
           }
         },
       }
