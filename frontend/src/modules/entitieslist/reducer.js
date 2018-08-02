@@ -33,6 +33,22 @@ export type State = {
 };
 
 
+function updateEntities(state: Object, entity: number, translation: Translation): Entities {
+    return state.entities.map(item => {
+        if (item.pk !== entity) {
+            return item;
+        }
+
+        return {
+            ...item,
+            ...{
+                translation: [translation]
+            },
+        };
+    })
+}
+
+
 const initial: State = {
     entities: [],
     fetching: false,
@@ -55,23 +71,10 @@ export default function reducer(
         case REQUEST:
             return { ...state, ...{ fetching: true } };
         case UPDATE:
-            const entity = action.entity;
-            const translation = action.translation;
             return {
                 ...state,
                 ...{
-                    entities: state.entities.map(item => {
-                        if (item.pk !== entity) {
-                            return item;
-                        }
-
-                        return {
-                            ...item,
-                            ...{
-                                translation: [translation]
-                            },
-                        };
-                    }),
+                    entities: updateEntities(state, action.entity, action.translation),
                 },
             };
         default:

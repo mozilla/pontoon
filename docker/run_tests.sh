@@ -18,15 +18,14 @@ echo "--------------------------------------------------------------------------
 echo "Linting Python code"
 $PYLAMA pontoon
 
+echo "Linting JavaScript code"
+./node_modules/.bin/eslint .
+
 echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Collecting static files and bundles"
 $WEBPACK_BINARY
 $PYTHON manage.py collectstatic -v0 --noinput
-
-# echo "Linting JavaScript code"
-# This is not passing yet, so it's temporarily disabled.
-# ./node_modules/.bin/eslint .
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"

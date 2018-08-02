@@ -96,7 +96,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
             </div>
         </div>);
     }
-};
+}
 
 
 const mapStateToProps = (state: Object): Props => {
