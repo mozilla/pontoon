@@ -263,36 +263,43 @@ def dict_html_attrs(dict_obj):
     ))
 
 
-def _serialize_elements(elements):
-    """Serialize text elements and placeables into a simple string."""
+def _get_default_variant(variants):
+    """Return default variant from the list of variants."""
+    return filter(lambda x: x.default, variants)[0]
+
+
+def _serialize_value(value):
+    """Serialize AST values into a simple string."""
     response = ''
 
-    for element in elements:
-        if isinstance(element, ast.TextElement):
-            response += element.value
+    if hasattr(value, 'variants'):
+        default_variant = _get_default_variant(value.variants)
+        response += _serialize_value(default_variant.value)
 
-        elif isinstance(element, ast.Placeable):
-            if isinstance(element.expression, ast.VariableReference):
-                response += '{ $' + element.expression.id.name + ' }'
+    elif hasattr(value, 'elements'):
+        for element in value.elements:
+            if isinstance(element, ast.TextElement):
+                response += element.value
 
-            elif isinstance(element.expression, (ast.MessageReference, ast.TermReference)):
-                response += '{ ' + element.expression.id.name + ' }'
+            elif isinstance(element, ast.Placeable):
+                if isinstance(element.expression, ast.VariableReference):
+                    response += '{ $' + element.expression.id.name + ' }'
 
-            elif isinstance(element.expression, (
-                ast.CallExpression,
-                ast.StringLiteral,
-                ast.NumberLiteral,
-                ast.VariantExpression,
-                ast.AttributeExpression,
-            )):
-                response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
+                elif isinstance(element.expression, (ast.MessageReference, ast.TermReference)):
+                    response += '{ ' + element.expression.id.name + ' }'
 
-            elif hasattr(element.expression, 'variants'):
-                variant_elements = filter(
-                    lambda x: x.default, element.expression.variants
-                )[0].value.elements
+                elif isinstance(element.expression, (
+                    ast.CallExpression,
+                    ast.StringLiteral,
+                    ast.NumberLiteral,
+                    ast.VariantExpression,
+                    ast.AttributeExpression,
+                )):
+                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
-                response += _serialize_elements(variant_elements)
+                elif hasattr(element.expression, 'variants'):
+                    default_variant = _get_default_variant(element.expression.variants)
+                    response += _serialize_value(default_variant.value)
 
     return response
 
@@ -315,4 +322,4 @@ def as_simple_translation(source):
     else:
         tree = translation_ast.attributes[0]
 
-    return _serialize_elements(tree.value.elements)
+    return _serialize_value(tree.value)
