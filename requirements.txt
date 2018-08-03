@@ -111,8 +111,8 @@ django-cookies-samesite==0.1.2 \
     --hash=sha256:8ffb0d4703e2cac6a4bff7c0bfb80d4153995497676556442f01804fc9918ec5
 
 # Dependencies loaded from outside pypi.
-https://github.com/mathjazz/silme/archive/v0.9.3.zip#egg=silme==0.9.3 \
-    --hash=sha256:9aa618f068ed71ecc8820dd7538aa39e499ed4ce61a0074edbcfcf1008da1d1c
+https://github.com/mathjazz/silme/archive/v0.9.4.zip#egg=silme==0.9.4 \
+    --hash=sha256:473c20e2d955359e69e84db8904db1a49fc10ecd2f8864c005404d070bd67b0c
 
 
 # ==================================================================================

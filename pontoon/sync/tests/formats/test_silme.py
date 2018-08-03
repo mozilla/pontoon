@@ -509,7 +509,7 @@ BASE_INC_FILE = """
 
 #define NoCommentsorSources Translated No Comments or Sources
 
-#define EmptyTranslation\x20
+#define EmptyTranslation
 """
 
 
