@@ -6,44 +6,17 @@ html {
   html {
     font-size: 0.8320644vw;
   }
-  header .container {
-    width: 80%;
-  }
-  section .container {
-    width: 80%;
-  }
-  .section-6 .homepage-footer {
-    width: 80%;
-  }
 }
 
 @media only screen and (min-width: 1100px) {
   html {
     font-size: 0.7320644vw;
   }
-  header .container {
-    width: 80%;
-  }
-  section .container {
-    width: 80%;
-  }
-  .section-6 .homepage-footer {
-    width: 80%;
-  }
 }
 
 @media only screen and (min-width: 1500px) {
   html {
     font-size: 12.44px;
-  }
-  header .container {
-    width: 75%;
-  }
-  section .container {
-    width: 65%;
-  }
-  .section-6 .homepage-footer {
-    width: 75%;
   }
 }
 
@@ -152,7 +125,6 @@ html {
   width: 100%;
   position: fixed;
   background: transparent;
-  border-bottom: none;
   z-index: 10;
 }
 
@@ -429,6 +401,10 @@ html {
   margin-bottom: 4.0rem;
 }
 
+.section-6 .homepage-footer {
+  width: 980px;
+}
+
 .moz-logo {
   width: 10rem;
 }
@@ -466,16 +442,6 @@ html {
 @media only screen and (orientation: portrait) {
   html {
     font-size: 12.44px;
-  }
-  header .container {
-    width: 80%;
-  }
-  section .container {
-    width: 80%;
-  }
-
-  .section-6 .homepage-footer {
-    width: 80%;
   }
 
   .portrait-align-center {

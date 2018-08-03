@@ -38,7 +38,9 @@
               <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
               <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
+              {% if user.is_authenticated() %}
               <li class="horizontal-separator"></li>
+              {% endif %}
 
               {% if perms.base.can_manage_project %}
               <li><a href="{{ url('pontoon.admin') }}"><i class="fa fa-wrench fa-fw"></i>Admin</a></li>
