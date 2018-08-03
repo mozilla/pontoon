@@ -4,19 +4,13 @@ html {
 
 @media only screen and (min-width: 768px) {
   html {
-    font-size: 0.8320644vw;
-  }
-}
-
-@media only screen and (min-width: 1100px) {
-  html {
-    font-size: 0.7320644vw;
+    font-size: 0.6320644vw;
   }
 }
 
 @media only screen and (min-width: 1500px) {
   html {
-    font-size: 12.44px;
+    font-size: 10.44px;
   }
 }
 
@@ -191,6 +185,7 @@ html {
   padding: 0 2.4rem;
   font-size: 1.3rem;
 }
+
 .introduction .title-style {
   width: 76rem;
   margin: 0 auto;
@@ -208,7 +203,7 @@ html {
   display: flex;
   justify-content: center;
   position: absolute;
-  padding-top: 0.8rem;
+  padding-top: 1.6vh;
   top: 94vh;
 }
 
@@ -252,6 +247,7 @@ html {
   padding-top: 8rem;
   font-size: 1.5rem;
 }
+
 .text-1 {
   color: #5F5F5F;
   margin-top: 1rem;
@@ -441,7 +437,11 @@ html {
 
 @media only screen and (orientation: portrait) {
   html {
-    font-size: 12.44px;
+    font-size: 10.44px;
+  }
+
+  section .container {
+    width: 80%;
   }
 
   .portrait-align-center {
@@ -501,12 +501,16 @@ html {
     top: 96vh;
   }
 
+  .section-3 .content-div {
+    margin-left: 2rem;
+  }
+
   .section-4 .card-text {
     text-align: left;
   }
 
   .section-4 .card-border {
-    margin-left: -39rem;
+    margin-left: -49rem;
   }
 
   .section-4 .title-style {
@@ -519,5 +523,9 @@ html {
 
   .section-5 a {
     margin: 5.2rem auto;
+  }
+
+  .section-5 .content-style {
+    padding-right: 0;
   }
 }
