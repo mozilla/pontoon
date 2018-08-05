@@ -41,8 +41,9 @@ backports.csv==1.0.5 \
 dj-database-url==0.3.0 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353
-django==1.11.11 \
-    --hash=sha256:fd186d544c7c2f835668cf11f77be071307c9eb22615a5b3a16bdb14c8357f41
+django==2.1 \
+    --hash=sha256:ea50d85709708621d956187c6b61d9f9ce155007b496dd914fdb35db8d790aec \
+    --hash=sha256:7f246078d5a546f63c28fc03ce71f4d7a23677ce42109219c24c9ffb28416137
 django-bulk-update==1.1.10 \
     --hash=sha256:ee0b940bfaaafbdc7050887dca0eb923ac217cbb4a03bf2a426e3c8dea165ffe
 django-cors-headers==1.1.0 \
