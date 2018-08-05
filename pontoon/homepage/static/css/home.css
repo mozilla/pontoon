@@ -161,7 +161,7 @@ html {
 
 /* Section-1 */
 .section-1 {
-  background-image: url(../img/Homepage/background.png);
+  background-image: url(../img/background.png);
   background-repeat: no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -295,7 +295,7 @@ html {
 .card-border {
   position: absolute;
   height: 90%;
-  width: 0.2rem;
+  width: 0.3rem;
   background-color: #DFDFDF;
   margin-left: 6.2rem;
   z-index: 0;
@@ -342,7 +342,7 @@ html {
 
 /* Section-6 */
 .section-6 {
-  background-image: url(../img/Homepage/background.png);
+  background-image: url(../img/background.png);
   background-repeat: no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -361,7 +361,7 @@ html {
   display: flex;
   border-radius: 0.2rem;
   width: 24rem;
-  height: 4rem;
+  height: 5rem;
   justify-content: center;
   align-items: center;
   text-align: center;
