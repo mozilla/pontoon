@@ -414,6 +414,10 @@ class UserProfile(models.Model):
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
+    # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
+    tour_status = models.IntegerField(default=0)
+
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
         models.PositiveIntegerField(),
@@ -1800,6 +1804,14 @@ class Resource(models.Model):
         'properties',
     )
 
+    # Formats that allow empty translations
+    EMPTY_TRANSLATION_FORMATS = (
+        'dtd',
+        'inc',
+        'ini',
+        'properties',
+    )
+
     objects = ResourceQuerySet.as_manager()
 
     class Meta:
@@ -1809,6 +1821,11 @@ class Resource(models.Model):
     def is_asymmetric(self):
         """Return True if this resource is in an asymmetric format."""
         return self.format in self.ASYMMETRIC_FORMATS
+
+    @property
+    def allows_empty_translations(self):
+        """Return True if this resource allows empty translations."""
+        return self.format in self.EMPTY_TRANSLATION_FORMATS
 
     def __str__(self):
         return '%s: %s' % (self.project.name, self.path)

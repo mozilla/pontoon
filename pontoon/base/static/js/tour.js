@@ -3,6 +3,8 @@ $(function () {
   var isEntityClicked = false;
   var isSubmitClicked = false;
 
+  var tourStatus = Number($('#server').data('tour-status') || 0);
+
   var submitTarget = "#editor #single button#save";
   var submitText = "A user needs to be logged in to be able to submit " +
   "translations. Non-authenticated users will see a link to SIGN in " +
@@ -28,6 +30,22 @@ $(function () {
     submitTarget = null;
   }
 
+  var updateTourStatus = function (step) {
+    if (Pontoon.user.id) {
+      $.ajax({
+        url: "/update-tour-status/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("#server").data("csrf"),
+          tour_status: step
+        },
+        success: function(data) {
+          return data;
+        }
+      });
+    }
+  };
+
   Sideshow.registerWizard({
     name: "introducing_pontoon",
     title: "Introducing Pontoon",
@@ -45,7 +63,19 @@ $(function () {
         text:
           "Pontoon is a web-based, What-You-See-Is-What-You-Get (WYSIWYG), " +
           "localization (l10n) tool. At Mozilla, we currently use Pontoon " +
-          "to localize various Mozilla project."
+          "to localize various Mozilla project.",
+        listeners: {
+          beforeStep: function() {
+            // Take the user directly to next step of where he left.
+            if (tourStatus !== 0)
+              Sideshow.gotoStep(tourStatus+1);
+          },
+          afterStep: function() {
+            if (tourStatus === 0) {
+              updateTourStatus(++tourStatus);
+            }
+          }
+        },
       },
       {
         title: "Main toolbar",
@@ -54,7 +84,12 @@ $(function () {
           "leaving the translation workspace",
         subject: "div.container.clearfix",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "Project information",
@@ -73,6 +108,7 @@ $(function () {
           afterStep: function() {
             $("#progress .menu").removeClass("permanent");
             $("#progress .menu").css("display", "none");
+            updateTourStatus(++tourStatus);
           }
         }
       },
@@ -89,7 +125,12 @@ $(function () {
         subject: "#entitylist #search",
         targets: "#entitylist #search",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "Filter",
@@ -112,6 +153,7 @@ $(function () {
           afterStep: function() {
             $("#filter .menu").removeClass("permanent");
             $("#filter .menu").css("display", "none");
+            updateTourStatus(++tourStatus);
           }
         }
       },
@@ -123,7 +165,12 @@ $(function () {
           "(i.e. Missing, Translated, etc.) identified by a colored square.",
         subject: "#entitylist",
         format: "markdown",
-        lockSubject: true
+        lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "A String",
@@ -140,7 +187,12 @@ $(function () {
             });
             return isEntityClicked;
           }
-        ]
+        ],
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "Editor",
@@ -148,6 +200,11 @@ $(function () {
         subject: "#editor #single",
         format: "markdown",
         lockSubject: true,
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "Submit a Translation",
@@ -164,7 +221,12 @@ $(function () {
             });
             return isSubmitClicked;
           }
-        ]
+        ],
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
       },
       {
         title: "History Tab",
@@ -178,8 +240,11 @@ $(function () {
         listeners: {
           beforeStep: function() {
             $("#entitylist .uneditables li:nth-child(3)").click();
+          },
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
           }
-        }
+        },
       },
       {
         title: "Machinery Tab",
@@ -194,8 +259,11 @@ $(function () {
         listeners: {
           beforeStep: function() {
             $("#helpers.tabs nav li")[1].firstElementChild.click();
+          },
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
           }
-        }
+        },
       },
       {
         title: "That's (NOT) all, folks!",
@@ -204,12 +272,18 @@ $(function () {
           "some of which we didn't mention in this introductory tutorial. " +
           "<br> Feel free to explore this demo project to know about these  " +
           "or move forward to translate some live projects.",
-        format: "markdown"
+        format: "markdown",
+        listeners: {
+          afterStep: function() {
+            updateTourStatus(-1);
+          }
+        },
       }
     ]
   });
 
-  if (Pontoon.state.project === "demo") {
+  // Run the tour only on project with slug 'demo' and if not completed by user
+  if (Pontoon.state.project === "demo" && tourStatus !== -1) {
     Sideshow.start({ listAll: true });
   }
 });
