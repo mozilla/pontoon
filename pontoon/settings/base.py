@@ -373,11 +373,11 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
-    'home': {
+    'homepage': {
         'source_filenames': (
-            'css/home.css',
+            'css/homepage.css',
         ),
-        'output_filename': 'css/home.min.css'
+        'output_filename': 'css/homepage.min.css'
     },
     'tour': {
         'source_filenames': (
@@ -504,12 +504,12 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
-    'home': {
+    'homepage': {
         'source_filenames' : (
             'js/lib/jquery.scrollify.js',
-            'js/home.js'
+            'js/homepage.js'
         ),
-        'output_filename' : 'js/home.min.js',
+        'output_filename' : 'js/homepage.min.js',
     },
     'tour': {
         'source_filenames': (

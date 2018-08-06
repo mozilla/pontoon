@@ -115,7 +115,7 @@ html {
 /* All the styles for individual sections */
 
 /*  Header, side-navigation style*/
-.home-header {
+body > header {
   width: 100%;
   position: fixed;
   background: transparent;
@@ -149,7 +149,7 @@ html {
 .pagination.active {
   opacity: 1;
   border: none;
-  background-color: #CFCFCF;
+  background-color: #7BB976;
   transition-duration: 0.5s;
   width: 1rem;
   height: 1rem;

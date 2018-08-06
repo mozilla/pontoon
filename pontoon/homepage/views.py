@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 
 # Create your views here.
-def home(request):
+def homepage(request):
     """Home view."""
 
     user = request.user
@@ -18,4 +18,4 @@ def home(request):
         if user.profile.custom_homepage:
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
-    return render(request, 'home.html')
+    return render(request, 'homepage.html')

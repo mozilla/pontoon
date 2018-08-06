@@ -14,19 +14,19 @@ $(function() {
 
       $(".pagination[href=#" + ref + "]").addClass("active");
 
-      $('.home-header').css('background-color','#272A2F')
+      $('body > header').css('background-color','#272A2F')
     },
     after: function(i,snaps) {
       var ref = snaps[i].attr("data-section-name");
 
       if (ref === "section-6") {
-        $('.home-header').css({'background-color':'transparent','transition-duration':'0.3s'})
+        $('body > header').css({'background-color':'transparent','transition-duration':'0.3s'})
       }
       else if (ref === "section-1") {
-        $('.home-header').css({'background-color':'transparent','transition-duration':'0.3s'})
+        $('body > header').css({'background-color':'transparent','transition-duration':'0.3s'})
       }
       else {
-        $('.home-header').css('background-color','#272A2F')
+        $('body > header').css('background-color','#272A2F')
       }
     },
     updateHash: false,
