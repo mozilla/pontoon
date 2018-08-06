@@ -4,6 +4,22 @@ from pontoon.test import factories
 
 
 @pytest.fixture
+def admin():
+    """Admin - a superuser"""
+    return factories.UserFactory.create(
+        username="admin",
+        is_superuser=True,
+    )
+
+
+@pytest.fixture
+def client_superuser(client, admin):
+    """Provides a client with a logged in superuser. """
+    client.force_login(admin)
+    return client
+
+
+@pytest.fixture
 def user_a():
     return factories.UserFactory(username="user_a")
 
