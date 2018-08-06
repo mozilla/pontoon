@@ -76,4 +76,6 @@ urlpatterns = [
         name='pontoon.download'),
     url(r'^upload/', views.upload,
         name='pontoon.upload'),
+    url(r'^update-tour-status/', views.update_tour_status,
+        name='pontoon.update_tour_status'),
 ]

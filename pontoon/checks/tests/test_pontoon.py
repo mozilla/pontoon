@@ -15,12 +15,13 @@ def get_entity_mock():
     """
     Create an entity mock with comment, resource.path and extension.
     """
-    def _f(extension, comment='', string=''):
+    def _f(extension, comment='', string='', allows_empty_translations=False):
         entity = MagicMock()
         entity.comment = comment
         entity.string = string
         entity.resource.format = extension
         entity.resource.path = 'test.' + extension
+        entity.resource.allows_empty_translations = allows_empty_translations
         return entity
     yield _f
 
@@ -112,7 +113,7 @@ def test_empty_translations(get_entity_mock):
     }
 
     assert run_checks(
-        get_entity_mock('properties'),
+        get_entity_mock('properties', allows_empty_translations=True),
         ''
     ) == {}
 
