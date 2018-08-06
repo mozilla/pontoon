@@ -6,6 +6,8 @@ from pontoon.base.models import (
     Translation,
 )
 
+from pontoon.checks.libraries import run_checks
+
 from fluent.syntax import (
     ast,
     FluentParser,
@@ -80,7 +82,7 @@ def find_and_replace(translations, find, replace, user):
 
     # No matches found
     if translations.count() == 0:
-        return translations, []
+        return translations, [], []
 
     # Empty translations produced by replace are not allowed for all formats
     forbidden = (
@@ -93,9 +95,12 @@ def find_and_replace(translations, find, replace, user):
     # Create translations' clones and replace strings
     now = timezone.now()
     translations_to_create = []
+    translations_with_errors = []
+
     for translation in translations:
         # Cache the old value to identify changed translations
         string = translation.string
+        old_translation_pk = translation.pk
 
         if translation.entity.resource.format == 'ftl':
             translation.string = ftl_find_and_replace(string, find, replace)
@@ -114,11 +119,32 @@ def find_and_replace(translations, find, replace, user):
         translation.rejected_date = None
         translation.rejected_user = None
         translation.fuzzy = False
-        translations_to_create.append(translation)
+
+        errors = run_checks(
+            translation.entity,
+            translation.locale.code,
+            translation.entity.string,
+            translation.string,
+            use_tt_checks=False,
+        )
+
+        if errors:
+            translations_with_errors.append(old_translation_pk)
+        else:
+            translations_to_create.append(translation)
+
+    if translations_with_errors:
+        translations = translations.exclude(
+            pk__in=translations_with_errors
+        )
 
     # Create new translations
     changed_translations = Translation.objects.bulk_create(
-        translations_to_create
+        translations_to_create,
     )
 
-    return translations, changed_translations
+    return (
+        translations,
+        changed_translations,
+        translations_with_errors,
+    )

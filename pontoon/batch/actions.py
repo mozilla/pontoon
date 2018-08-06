@@ -26,6 +26,8 @@ def batch_action_template(form, user, translations, locale):
               * latest_translation_pk: the id of the latest affected
                 translation
               * changed_translation_pks: a list of ids of affected translations
+              * invalid_translation_pks: a list of ids of translations that have
+                errors or changes on them could introduce new errors e.g. after find & replace
 
     """
     return {
@@ -34,6 +36,7 @@ def batch_action_template(form, user, translations, locale):
         'changed_entities': [],
         'latest_translation_pk': None,
         'changed_translation_pks': [],
+        'invalid_translation_pks': [],
     }
 
 
@@ -43,7 +46,17 @@ def approve_translations(form, user, translations, locale):
     For documentation, refer to the `batch_action_template` function.
 
     """
-    translations = translations.filter(approved=False)
+    invalid_translation_pks = list(
+        translations.filter(
+            approved=False,
+            errors__isnull=False,
+        ).values_list('pk', flat=True)
+    )
+
+    translations = translations.filter(
+        approved=False,
+        errors__isnull=True,
+    )
     changed_translation_pks = list(translations.values_list('pk', flat=True))
 
     latest_translation_pk = None
@@ -69,6 +82,7 @@ def approve_translations(form, user, translations, locale):
         'changed_entities': changed_entities,
         'latest_translation_pk': latest_translation_pk,
         'changed_translation_pks': changed_translation_pks,
+        'invalid_translation_pks': invalid_translation_pks,
     }
 
 
@@ -108,6 +122,7 @@ def reject_translations(form, user, translations, locale):
         'changed_entities': changed_entities,
         'latest_translation_pk': None,
         'changed_translation_pks': [],
+        'invalid_translation_pks': [],
     }
 
 
@@ -125,13 +140,14 @@ def replace_translations(form, user, translations, locale):
     latest_translation_pk = None
 
     try:
-        old_translations, changed_translations = utils.find_and_replace(
+        old_translations, changed_translations, invalid_translation_pks = utils.find_and_replace(
             translations,
             find,
             replace,
             user
         )
         changed_translation_pks = [c.pk for c in changed_translations]
+
         if changed_translation_pks:
             latest_translation_pk = max(changed_translation_pks)
     except Translation.NotAllowed:
@@ -161,6 +177,7 @@ def replace_translations(form, user, translations, locale):
         'changed_entities': changed_entities,
         'latest_translation_pk': latest_translation_pk,
         'changed_translation_pks': changed_translation_pks,
+        'invalid_translation_pks': invalid_translation_pks,
     }
 
 
