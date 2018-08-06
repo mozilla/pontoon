@@ -15,8 +15,6 @@ django-sslserver==0.19 \
     --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
 dj.debug==0.0.2 \
     --hash=sha256:0b7629bde97f1cce6077ac430537089f5a2552973004951cb3590e30fec9054a
-hashin==0.11.2 \
-    --hash=sha256:aaf11abf155830b7c2b868bb6dbc5dfde49cd0b17a4c0dc1b8b67ca9f31ec490
 sqlparse==0.1.19 \
     --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
 
@@ -24,6 +22,20 @@ sqlparse==0.1.19 \
 # Requirements with dependencies.
 # ==================================================================================
 
+hashin==0.13.2 \
+    --hash=sha256:4aaa2890d63e0eff9e1038e8a602eccbfe2eb90aa8177ff2b2db018815e2be95
+
+# Required by hashin
+pip-api==0.0.1 \
+    --hash=sha256:3cb7b51c541d4c13df43bf254aca371d9feb4669dc6c1cf3cecb9e9360eb3cb6
+packaging==17.1 \
+    --hash=sha256:e9215d2d2535d3ae866c3d6efc77d5b24a0192cce0ff20e42896cc0664f889c0
+
+# Required by packaging
+pyparsing==2.2.0 \
+    --hash=sha256:fee43f17a9c4087e7ed1605bd6df994c6173c1e977d7ade7b651292fab2bd010
+
+# ----------------------------------------------------------------------------------
 nose-progressive==1.5.1 \
     --hash=sha256:44bd41344c1cc1de434a72764ed47fdbbbdbcf03c7801114c0433cd6c696cb55 \
     --hash=sha256:aac01f33c8446407b3c5e6f2185d5b09f5f3e6cb773f1db2df99efce5a70b81b
