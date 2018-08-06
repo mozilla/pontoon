@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
+from django.db.models import Max
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
@@ -339,9 +340,11 @@ def _save_new_strings(project, source):
 
         # Insert all new strings into Entity objects, associated to the fake resource.
         new_entities = []
-        for new_string in new_strings:
+        for index, new_string in enumerate(new_strings):
             string = new_string.strip()
-            new_entities.append(Entity(string=string, resource=resource))
+            new_entities.append(
+                Entity(string=string, resource=resource, order=index)
+            )
 
         Entity.objects.bulk_create(new_entities)
 
@@ -420,6 +423,9 @@ def manage_project_strings(request, slug=None):
             formset = EntityFormSet(request.POST, queryset=entities)
             if formset.is_valid():
                 resource = Resource.objects.filter(project=project).first()
+                entity_max_order = entities.aggregate(
+                    Max('order')
+                )['order__max']
                 try:
                     # This line can purposefully cause an exception, and that
                     # causes trouble in tests, because all tests are
@@ -439,6 +445,11 @@ def manage_project_strings(request, slug=None):
                     for entity in new_entities:
                         if not entity.resource_id:
                             entity.resource = resource
+
+                        # We also use this opportunity to give the new entity
+                        # an order.
+                        entity_max_order += 1
+                        entity.order = entity_max_order
 
                         # Note that we save all entities one by one. That shouldn't be a problem
                         # because we don't expect users to change thousands of strings at once.
