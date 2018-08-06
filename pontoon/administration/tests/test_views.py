@@ -66,8 +66,12 @@ def test_manage_project_strings_bad_request(client_superuser):
 
 
 @pytest.mark.django_db
-def test_manage_project_strings_new(client_superuser):
-    project = ProjectFactory.create(data_source='database', repositories=[])
+def test_manage_project_strings_new(client_superuser, locale_a):
+    project = ProjectFactory.create(
+        data_source='database',
+        repositories=[],
+        locales=[locale_a],
+    )
     url = reverse('pontoon.admin.project.strings', args=(project.slug,))
 
     # Test sending a well-formatted batch of strings.
@@ -86,7 +90,7 @@ def test_manage_project_strings_new(client_superuser):
     assert resources[0].path == 'database'
 
     # Verify all strings have been created as entities.
-    entities = list(Entity.objects.filter(resource__project=project))
+    entities = Entity.for_project_locale(project, locale_a)
     assert len(entities) == 4
 
     expected_strings = [
@@ -96,7 +100,11 @@ def test_manage_project_strings_new(client_superuser):
         'So call me maybe?',
     ]
 
-    assert sorted(expected_strings) == sorted(x.string for x in entities)
+    assert expected_strings == [x.string for x in entities]
+
+    # Verify strings have the correct order.
+    for index, entity in enumerate(entities):
+        assert entity.order == index
 
     # Verify new strings appear on the page.
     assert 'Hey, I just met you' in response.content
@@ -238,6 +246,14 @@ def test_manage_project_strings_list(client_superuser):
         resource=resource, obsolete=False,
     ).count()
     assert total == nb_entities
+
+    # Verify the new string has the correct order.
+    new_string = Entity.objects.filter(
+        resource=resource, obsolete=False, string='new string',
+    ).first()
+    # The highest order before adding new string was 0,
+    # so the order of that new one should be 1.
+    assert new_string.order == 1
 
 
 @pytest.mark.django_db
