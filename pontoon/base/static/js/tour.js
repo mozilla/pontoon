@@ -7,8 +7,8 @@ $(function () {
 
   var submitTarget = "#editor #single button#save";
   var submitText = "A user needs to be logged in to be able to submit " +
-  "translations. Non-authenticated users will see a link to SIGN in " +
-  "instead of the translation toolbar with the green SAVE button.";
+  "translations. Non-authenticated users will see a link to Sign in " +
+  "instead of the translation toolbar with a button to save their translation.";
 
   // Translators
   if (Pontoon.user.canTranslate()) {
@@ -61,7 +61,7 @@ $(function () {
       {
         title: "Hey there!",
         text:
-          "Pontoon is a web-based, What-You-See-Is-What-You-Get (WYSIWYG), " +
+          "Pontoon is a web-based, What-You-See-Is-What-You-Get (WYSIWYG) " +
           "localization (l10n) tool. At Mozilla, we currently use Pontoon " +
           "to localize various Mozilla project.",
         listeners: {
@@ -80,7 +80,7 @@ $(function () {
       {
         title: "Main toolbar",
         text:
-          "The main toolbar allows you to navigate between projects without " +
+          "The main toolbar allows you to navigate amongst projects without " +
           "leaving the translation workspace",
         subject: "div.container.clearfix",
         format: "markdown",
@@ -98,7 +98,7 @@ $(function () {
           "the right of the main toolbar. Translators can view information " +
           "regarding the project, its priority level, and testing by clicking the icon.",
         subject: "#progress .menu",
-        targets: "#progress",
+        targets: "#progress .menu",
         format: "markdown",
         listeners: {
           beforeStep: function() {
@@ -119,9 +119,10 @@ $(function () {
           " Searches include strings, string IDs and comments. Like in " +
           "search engines, by default Pontoon will display matches that " +
           "contain all the search terms.<ul><li> If you want to search for a " +
-          "perfect match, wrap the search terms in double quotes, e.g. 'new tab'." +
+          "perfect match, wrap the search terms in double quotes, e.g. \"new tab\"." +
           "</li><li> If, on the other hand, you want to search for strings that " +
-          "contain double quotes, you can escape them with a backslash.</li></ul>",
+          "contain double quotes, you can escape them with a backslash " +
+          "e.g. `<a href=\\\"foo\\\">`.</li></ul>",
         subject: "#entitylist #search",
         targets: "#entitylist #search",
         format: "markdown",
@@ -161,8 +162,8 @@ $(function () {
         title: "String List",
         text:
           "The sidebar displays the list of strings in the current project " +
-          "resource. Each string is displayed with the string status " +
-          "(i.e. Missing, Translated, etc.) identified by a colored square.",
+          "resource. The status of each string (Missing, Translated, etc.) " +
+          "is indicated by a differently colored square.",
         subject: "#entitylist",
         format: "markdown",
         lockSubject: true,
@@ -174,7 +175,7 @@ $(function () {
       },
       {
         title: "A String",
-        text: "Selecting an string by clicking it opens up the editor.",
+        text: "Clicking on a string opens up the editor.",
         subject: "#entitylist .uneditables li:nth-child(3)",
         format: "markdown",
         autoContinue: true,
@@ -196,7 +197,9 @@ $(function () {
       },
       {
         title: "Editor",
-        text: "The translation workspace is where strings are translated.",
+        text: "The translation workspace is where strings are translated." +
+        "When working on FTL (Fluent) files or string with plurals, the " +
+        "editing space will look a bit different",
         subject: "#editor #single",
         format: "markdown",
         lockSubject: true,
@@ -231,9 +234,11 @@ $(function () {
       {
         title: "History Tab",
         text:
-          "Once the translator has suggested the translation, the " +
-          "suggestion will appear in the sidebar. In case of multiple " +
-          "suggestions, sidebar will show the most recent one.",
+          "The history tab shows all of the suggestions and translations that " +
+          "have been submitted for the current source string. To the right of " +
+          "the entry, icons indicate the state of each element i.e. " +
+          "Approved (Green check mark), Rejected (Red cross), " +
+          "Unreviewed (Grey check mark & cross)",
         subject: "#helpers",
         format: "markdown",
         targets: "#helpers.tabs nav li:nth-child(1)",
@@ -249,10 +254,10 @@ $(function () {
       {
         title: "Machinery Tab",
         text:
-          "There is a machinery search bar. A translator can enter text " +
-          "into the search bar to search for any strings in the machinery " +
-          "resources that may be similar. The search does not need to be " +
-          "related to the current project string.",
+          "There is a machinery search bar. A translator can look for existing " +
+          "matches for any strings in the machinery resources that may be " +
+          "similar. The search does not need to be related to the current " +
+          "project string.",
         subject: "#helpers",
         format: "markdown",
         targets: "#helpers.tabs nav li:nth-child(2)",
@@ -266,10 +271,33 @@ $(function () {
         },
       },
       {
+        title: "Locales Tab",
+        text:
+          "The locales tab shows approved translations from Pontoon projects in " +
+          "other locales. It is useful for seeing what general style choices " +
+          "are made by other localization communities. When encountering a " +
+          "difficult string, a translator can reference the methods that have "+
+          "been used by other languages in making a stylistic decision.",
+        subject: "#helpers",
+        format: "markdown",
+        targets: "#helpers.tabs nav li:nth-child(3)",
+        listeners: {
+          beforeStep: function() {
+            $("#helpers.tabs nav li")[2].firstElementChild.click();
+          },
+          afterStep: function() {
+            updateTourStatus(++tourStatus);
+          }
+        },
+      },
+      {
         title: "That's (NOT) all, folks!",
         text:
           "There's a wide variety of tools to help you with translations, " +
           "some of which we didn't mention in this introductory tutorial. " +
+          "<br>For more topics of interest for localizers at Mozilla " +
+          "please have a look at the [Localizer Documentation]" +
+          "(https://mozilla-l10n.github.io/localizer-documentation/). " +
           "<br> Feel free to explore this demo project to know about these  " +
           "or move forward to translate some live projects.",
         format: "markdown",
