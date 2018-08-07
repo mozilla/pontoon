@@ -1,10 +1,7 @@
 from django.shortcuts import render, redirect
 
 
-# Create your views here.
 def homepage(request):
-    """Home view."""
-
     user = request.user
 
     # Redirect user to the selected home page or '/'.
