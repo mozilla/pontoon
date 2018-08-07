@@ -1,0 +1,7 @@
+#app {
+    display: flex;
+}
+
+#app > section {
+    width: 50%;
+}

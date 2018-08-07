@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
 from django.template import engines
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import TemplateView
 
 from . import URL_BASE
@@ -60,7 +60,11 @@ def catchall_dev(request):
 
     if content_type == 'text/html; charset=UTF-8':
         return http.HttpResponse(
-            content=engines['jinja2'].from_string(response.text).render(),
+            content=(
+                engines['jinja2']
+                .from_string(response.text)
+                .render(request=request)
+            ),
             status=response.status_code,
             reason=response.reason,
         )
@@ -75,7 +79,9 @@ def catchall_dev(request):
 
 # For production, we've added the front-end static files to our list of
 # static folders. We can thus simply return a template view of index.html.
-catchall_prod = TemplateView.as_view(template_name='index.html')
+catchall_prod = ensure_csrf_cookie(
+    TemplateView.as_view(template_name='index.html')
+)
 
 
 def translate(request, locale=None, project=None, resource=None):
