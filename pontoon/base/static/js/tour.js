@@ -313,5 +313,19 @@ $(function () {
   // Run the tour only on project with slug 'demo' and if not completed by user
   if (Pontoon.state.project === "demo" && tourStatus !== -1) {
     Sideshow.start({ listAll: true });
+
+    // If a user closes the tour at step 3 or step 5
+    // run the corresponding afterStep function.
+    $('.sideshow-close-button').click(function() {
+      setTimeout(function() {
+        $("#filter .menu").fadeOut(function() {
+          $("#filter .menu").removeClass("permanent");
+        });
+
+        $("#progress .menu").fadeOut(function() {
+          $("#progress .menu").removeClass("permanent");
+        });
+      },600);
+    });
   }
 });
