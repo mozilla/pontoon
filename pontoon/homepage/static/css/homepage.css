@@ -44,7 +44,7 @@ html {
 }
 
 .flex-col-5 {
-  .flex-basis: 41.6666666%;
+  flex-basis: 41.6666666%;
 }
 
 .flex-col-6 {
