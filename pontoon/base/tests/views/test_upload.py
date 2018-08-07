@@ -42,7 +42,7 @@ def upload(client, **args):
     """
     response = client.post(
         '/upload/',
-        args
+        args,
     )
 
     return response
@@ -61,7 +61,7 @@ def test_upload_login_required(
         client,
         slug=project_a.slug,
         code=locale_a.code,
-        part='resource_a.po'
+        part='resource_a.po',
     )
 
     assert response.status_code == 302
@@ -74,8 +74,8 @@ def test_upload_login_required(
     (
         'slug',
         'code',
-        'resource_a.po'
-    )
+        'resource_a.po',
+    ),
 )
 def test_upload_invalid_parameters(
     member,
@@ -89,7 +89,7 @@ def test_upload_invalid_parameters(
     params = {
         'slug': project_a.slug,
         'code': locale_a.code,
-        'resource_a.po': 'resource_a.po'
+        'resource_a.po': 'resource_a.po',
     }
     params.pop(missing_parameter, None)
 
