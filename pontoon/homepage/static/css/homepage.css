@@ -2,19 +2,6 @@ html {
   font-size: 8.22px;
 }
 
-@media only screen and (min-width: 768px) {
-  html {
-    font-size: 0.6320644vw;
-  }
-}
-
-@media only screen and (min-width: 1500px) {
-  html {
-    font-size: 10.44px;
-  }
-}
-
-
 /* Base styles defined */
 
 .relative {
@@ -127,6 +114,7 @@ body > header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
   transform: translateY(-50%);
   z-index: 15;
 }
@@ -169,7 +157,6 @@ body > header {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 100vw;
   text-align: center;
 }
 
@@ -350,7 +337,6 @@ body > header {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 100vw;
   text-align: center;
   position: relative;
 }
@@ -430,99 +416,4 @@ body > header {
 
 .homepage-footer .content-style a:hover {
   color: #7BC176;
-}
-
-@media only screen and (orientation: portrait) {
-  html {
-    font-size: 10.44px;
-  }
-
-  section .container {
-    width: 80%;
-  }
-
-  .portrait-align-center {
-    align-items: center;
-    text-align: center;
-  }
-
-  .portrait-align-left {
-    text-align: left;
-  }
-
-  .portrait-align-right {
-    text-align: right;
-  }
-
-  .flex--wrap {
-    height: auto;
-    flex-wrap: wrap;
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    margin: 15vh auto;
-  }
-
-  .flex-col-full {
-    flex-basis: 75%;
-    margin-left: 0;
-    margin-top: 8rem;
-    justify-content: center;
-  }
-
-  .section-1 .vertical-align-portrait {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .introduction .title-style {
-    width: 60%;
-  }
-
-  .introduction .content-style {
-    width: 60%;
-  }
-
-  .section-1 .homepage-button {
-    margin-bottom: 2rem;
-  }
-
-  .section-1 .flex p {
-    margin-bottom: 2rem;
-    font-size: 1.3rem;
-  }
-
-  .section-1 .intro-footer {
-    padding-top: 1.5vh;
-    top: 96vh;
-  }
-
-  .section-3 .content-div {
-    margin-left: 2rem;
-  }
-
-  .section-4 .card-text {
-    text-align: left;
-  }
-
-  .section-4 .card-border {
-    margin-left: -49rem;
-  }
-
-  .section-4 .title-style {
-    padding-right: 0;
-  }
-
-  .section-4 .content-style {
-    padding-right: 0;
-  }
-
-  .section-5 a {
-    margin: 5.2rem auto;
-  }
-
-  .section-5 .content-style {
-    padding-right: 0;
-  }
 }
