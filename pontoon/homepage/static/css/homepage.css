@@ -88,7 +88,6 @@ html {
 }
 
 .title-style {
-  font-family: 'OpenSans-Bold', sans-serif;
   font-weight: 700;
   font-size: 4rem;
   color: #FFFFFF;
@@ -97,7 +96,6 @@ html {
 }
 
 .content-style {
-  font-family: 'OpenSans-Regular',sans-serif;
   font-size: 1.5rem;
   line-height: 2.6rem;
   color: #f4f4f4;
@@ -365,7 +363,6 @@ body > header {
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-family: 'OpenSans-Regular',sans-serif;
   font-size: 1.6rem;
 }
 
