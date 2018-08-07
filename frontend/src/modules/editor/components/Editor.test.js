@@ -20,24 +20,26 @@ const NAVIGATION = {
     locale: 'kg',
 };
 
+
+function createShallowEditor() {
+    return shallow(<EditorBase
+        activeTranslation={ TRANSLATION }
+        navigation={ NAVIGATION }
+        selectedEntity={ SELECTED_ENTITY }
+    />);
+}
+
+
 describe('<EditorBase>', () => {
     it('renders correctly', () => {
-        const wrapper = shallow(<EditorBase
-            activeTranslation={ TRANSLATION }
-            navigation={ NAVIGATION }
-            selectedEntity={ SELECTED_ENTITY }
-        />);
+        const wrapper = createShallowEditor();
 
         expect(wrapper.find('button')).toHaveLength(3);
         expect(wrapper.find('textarea').html()).toContain(TRANSLATION);
     });
 
     it('updates the textarea when the state changes', () => {
-        const wrapper = shallow(<EditorBase
-            activeTranslation={ TRANSLATION }
-            navigation={ NAVIGATION }
-            selectedEntity={ SELECTED_ENTITY }
-        />);
+        const wrapper = createShallowEditor();
 
         expect(wrapper.find('textarea').html()).not.toContain('something else');
         wrapper.setState({translation: 'something else'});
@@ -45,11 +47,7 @@ describe('<EditorBase>', () => {
     });
 
     it('clears the text when the Clear button is clicked', () => {
-        const wrapper = shallow(<EditorBase
-            activeTranslation={ TRANSLATION }
-            navigation={ NAVIGATION }
-            selectedEntity={ SELECTED_ENTITY }
-        />);
+        const wrapper = createShallowEditor();
 
         expect(wrapper.state('translation')).toEqual(TRANSLATION);
         wrapper.find('.action-clear').simulate('click');
@@ -57,11 +55,7 @@ describe('<EditorBase>', () => {
     });
 
     it('copies the original string in the textarea when the Copy button is clicked', () => {
-        const wrapper = shallow(<EditorBase
-            activeTranslation={ TRANSLATION }
-            navigation={ NAVIGATION }
-            selectedEntity={ SELECTED_ENTITY }
-        />);
+        const wrapper = createShallowEditor();
 
         expect(wrapper.state('translation')).toEqual(TRANSLATION);
         wrapper.find('.action-copy').simulate('click');
