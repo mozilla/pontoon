@@ -39,20 +39,18 @@ var Pontoon = (function (my) {
     }
 
     // Placeable
-    if (
-      element.type === 'Placeable' &&
-      [
-        'CallExpression',
-        'StringLiteral',
-        'NumberLiteral',
-        'VariantExpression',
-        'AttributeExpression',
-        'VariableReference',
-        'MessageReference',
-        'TermReference',
-      ].indexOf(element.expression.type) >= 0
-    ) {
-      return true;
+    if (element.type === 'Placeable') {
+      switch (element.expression.type) {
+        case 'AttributeExpression':
+        case 'CallExpression':
+        case 'VariantExpression':
+        case 'MessageReference':
+        case 'TermReference':
+        case 'VariableReference':
+        case 'NumberLiteral':
+        case 'StringLiteral':
+          return true;
+      }
     }
 
     return false;
@@ -390,43 +388,44 @@ var Pontoon = (function (my) {
         }
       }
       else if (element.type === 'Placeable') {
-        if (element.expression.type === 'VariableReference') {
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="External Argument">';
-            endMarker = '</mark>';
-          }
-          string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
-        }
-        else if (
-          element.expression.type === 'MessageReference' ||
-          element.expression.type === 'TermReference'
-        ) {
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="Message Reference">';
-            endMarker = '</mark>';
-          }
-          string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
-        }
-        else if (
-          element.expression.type === 'AttributeExpression' ||
-          element.expression.type === 'CallExpression' ||
-          element.expression.type === 'VariantExpression' ||
-          element.expression.type === 'NumberLiteral' ||
-          element.expression.type === 'StringLiteral'
-        ) {
-          var title = element.expression.type.replace('Expression', ' Expression');
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="' + title + '">';
-            endMarker = '</mark>';
-          }
-          var expression = fluentSerializer.serializeExpression(element.expression);
-          string += startMarker + '{' + expression + '}' + endMarker;
-        }
-        else if (element.expression.type === 'SelectExpression') {
-          var variantElements = element.expression.variants.filter(function (variant) {
-            return variant.default;
-          })[0].value.elements;
-          string += stringifyElements(variantElements, markPlaceables);
+        switch (element.expression.type) {
+          case 'VariableReference':
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="External Argument">';
+              endMarker = '</mark>';
+            }
+            string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
+            break;
+
+          case 'MessageReference':
+          case 'TermReference':
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="Message Reference">';
+              endMarker = '</mark>';
+            }
+            string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
+            break;
+
+          case 'AttributeExpression':
+          case 'CallExpression':
+          case 'VariantExpression':
+          case 'NumberLiteral':
+          case 'StringLiteral':
+            var title = element.expression.type.replace('Expression', ' Expression');
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="' + title + '">';
+              endMarker = '</mark>';
+            }
+            var expression = fluentSerializer.serializeExpression(element.expression);
+            string += startMarker + '{' + expression + '}' + endMarker;
+            break;
+
+          case 'SelectExpression':
+            var variantElements = element.expression.variants.filter(function (variant) {
+              return variant.default;
+            })[0].value.elements;
+            string += stringifyElements(variantElements, markPlaceables);
+            break;
         }
       }
     });
