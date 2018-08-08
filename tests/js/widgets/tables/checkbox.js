@@ -320,7 +320,7 @@ test('CheckboxTable componentWillReceiveProps', () => {
 
     // lets setState with some "checked" data
     table.setState({checked: new Set(['a', 'b', 'c'])});
-    table.instance().componentWillReceiveProps({data});
+    table.instance().UNSAFE_componentWillReceiveProps({data});
 
     // checked has been updated, an visible has remained the same
     expect(table.state().checked).toEqual(new Set(['a', 'b', 'c']));
@@ -328,7 +328,7 @@ test('CheckboxTable componentWillReceiveProps', () => {
 
     // this time lets update the *data* (like when new data comes back
     // from ajax).
-    table.instance().componentWillReceiveProps({data: [7]});
+    table.instance().UNSAFE_componentWillReceiveProps({data: [7]});
 
     // nothing checked or visible round here no more
     expect(table.state().checked).toEqual(new Set([]));

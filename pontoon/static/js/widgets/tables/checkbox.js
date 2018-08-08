@@ -47,7 +47,7 @@ export default class CheckboxTable extends React.Component {
         this.setState({checked: new Set()});
     }
 
-    componentWillReceiveProps (nextProps) {
+    UNSAFE_componentWillReceiveProps (nextProps) {
         if (nextProps.data !== this.props.data) {
             this.clearTable();
         }
