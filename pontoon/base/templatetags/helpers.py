@@ -272,11 +272,11 @@ def _serialize_value(value):
     """Serialize AST values into a simple string."""
     response = ''
 
-    if hasattr(value, 'variants'):
+    if isinstance(value, ast.VariantList):
         default_variant = _get_default_variant(value.variants)
         response += _serialize_value(default_variant.value)
 
-    elif hasattr(value, 'elements'):
+    elif isinstance(value, ast.Pattern):
         for element in value.elements:
             if isinstance(element, ast.TextElement):
                 response += element.value
