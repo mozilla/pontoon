@@ -66,8 +66,8 @@ django-webpack-loader==0.5.0 \
 factory-boy==2.5.2 \
     --hash=sha256:102c8141511443df01d354610d3b268924100654316709b43ac04648b50bf703 \
     --hash=sha256:cd8306e64c3a115deca136685e945db88ffe171382012ec938ed241a20dd7eba
-fluent==0.7.0 \
-    --hash=sha256:45460e6e5e77b40b4e8ab6dcb80d80e9470caeb403918497cb6314a473f8ff51
+fluent==0.8.0 \
+    --hash=sha256:d961aba944e57a3c17ba685b3a93a8895e024efa8690253223f3e0968ce37287
 gunicorn==19.9.0 \
     --hash=sha256:aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471 \
     --hash=sha256:fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3
@@ -327,9 +327,8 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-compare-locales==3.2.2 \
-    --hash=sha256:0a2c12626300b61c6da8c7a39b86d50c09698ed4bedd4fcd43ccdb2e7171a8f7 \
-    --hash=sha256:1f3438b242d860690325b4dbaab3fc08070ee7a1b05edd023ab20a7d5933c6a1
+compare-locales==3.3.0 \
+    --hash=sha256:0a7f6b687a02a71fe6129a765fa651320b29e30d3fda0a1e59da0ae295a2820a
 
 # Required by compare-locales
 pytoml==0.1.14 \
