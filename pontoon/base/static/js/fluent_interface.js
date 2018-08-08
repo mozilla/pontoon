@@ -400,10 +400,8 @@ var Pontoon = (function (my) {
           string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
         }
         else if (
-          [
-            'MessageReference',
-            'TermReference',
-          ].indexOf(element.expression.type) >= 0
+          element.expression.type === 'MessageReference' ||
+          element.expression.type === 'TermReference'
         ) {
           if (markPlaceables) {
             startMarker = '<mark class="placeable" title="Message Reference">';
@@ -412,13 +410,11 @@ var Pontoon = (function (my) {
           string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
         }
         else if (
-          [
-            'CallExpression',
-            'StringLiteral',
-            'NumberLiteral',
-            'VariantExpression',
-            'AttributeExpression',
-          ].indexOf(element.expression.type) >= 0
+          element.expression.type === 'AttributeExpression' ||
+          element.expression.type === 'CallExpression' ||
+          element.expression.type === 'VariantExpression' ||
+          element.expression.type === 'NumberLiteral' ||
+          element.expression.type === 'StringLiteral'
         ) {
           var title = element.expression.type.replace('Expression', ' Expression');
           if (markPlaceables) {
