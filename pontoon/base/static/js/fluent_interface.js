@@ -1,32 +1,30 @@
 /* global FluentSyntax */
 var fluentParser = new FluentSyntax.FluentParser({ withSpans: false });
-var fluentParserOriginal = new FluentSyntax.FluentParser({ withSpans: false });
 var fluentSerializer = new FluentSyntax.FluentSerializer();
-
-/*
- * VariantLists behave the same as "selector-less SelectExpressions" in Pontoon.
- * Overriding the parseEntry() method appliess that logic to the AST, too. That
- * allows us to use the same code for both, VariantLists and SelectExpressions.
- */
-fluentParser.parseEntry = function(source, useDefaultParser) {
-  useDefaultParser = useDefaultParser || false;
-  var ast = fluentParserOriginal.parseEntry(source);
-
-  if (!useDefaultParser && ast.value && ast.value.variants) {
-    ast.value.elements = [{
-      expression: {
-        type: 'SelectExpression',
-        variants: ast.value.variants,
-      },
-      type: 'Placeable',
-    }];
-  }
-
-  return ast;
-}
 
 /* Public functions used across different files */
 var Pontoon = (function (my) {
+
+  /*
+   * VariantLists behave the same as "selector-less SelectExpressions" in Pontoon.
+   * A custom parseEntry() method applies that logic to the AST, too. That
+   * allows us to use the same code for both, VariantLists and SelectExpressions.
+   */
+  function parseEntry(source) {
+    var ast = fluentParser.parseEntry(source);
+
+    if (ast.value && ast.value.variants) {
+      ast.value.elements = [{
+        expression: {
+          type: 'SelectExpression',
+          variants: ast.value.variants,
+        },
+        type: 'Placeable',
+      }];
+    }
+
+    return ast;
+  }
 
   /*
    * Is ast element of type that can be presented as a simple string:
@@ -503,7 +501,7 @@ var Pontoon = (function (my) {
           $('#translation').hide();
           $('#ftl').removeClass('active');
 
-          var entityAST = fluentParser.parseEntry(entity.original);
+          var entityAST = parseEntry(entity.original);
           $('#add-attribute').toggle(entityAST.type === 'Term');
         }
         else {
@@ -528,7 +526,7 @@ var Pontoon = (function (my) {
           return fallback;
         }
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
         var tree;
 
         // Simple string
@@ -586,7 +584,7 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
 
         if (!isSimpleSingleAttributeMessage(ast)) {
           return false;
@@ -613,7 +611,7 @@ var Pontoon = (function (my) {
         $('#ftl-original').show();
         $('#ftl-original section ul').empty();
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
         var unsupported = false;
         var value = '';
         var attributes = '';
@@ -673,7 +671,7 @@ var Pontoon = (function (my) {
         var entityAttributes = [];
         var translatedAttributes = [];
 
-        var entityAST = fluentParser.parseEntry(entity.original);
+        var entityAST = parseEntry(entity.original);
         if (entityAST.attributes.length) {
           attributesTree = entityAST.attributes;
           entityAttributes = entityAST.attributes.map(function (attr) {
@@ -684,7 +682,7 @@ var Pontoon = (function (my) {
         translation = translation || entity.translation[0];
         var translationAST = null;
         if (translation.pk) {
-          translationAST = fluentParser.parseEntry(translation.string);
+          translationAST = parseEntry(translation.string);
           attributesTree = translationAST.attributes;
 
           // If translation doesn't include all entity attributes,
@@ -886,8 +884,7 @@ var Pontoon = (function (my) {
           });
         }
 
-        var useDefaultParser = true;
-        var ast = fluentParser.parseEntry(content, useDefaultParser);
+        var ast = fluentParser.parseEntry(content);
 
         return fluentSerializer.serializeEntry(ast);
       },
@@ -900,7 +897,7 @@ var Pontoon = (function (my) {
       getSimplePreview: function (source, fallback, markPlaceables) {
         source = source || '';
         fallback = fallback || source;
-        var ast = fluentParser.parseEntry(source);
+        var ast = parseEntry(source);
 
         // String with an error
         if (ast.type === 'Junk') {
@@ -1007,7 +1004,7 @@ var Pontoon = (function (my) {
           $('#ftl-area ' + selector + ' textarea').each(function() {
             var value = $(this).val();
             var message = 'key = ' + value;
-            var ast = fluentParser.parseEntry(message);
+            var ast = parseEntry(message);
 
             if (ast.type !== 'Junk') {
               value = '';
