@@ -34,7 +34,7 @@ For quick and easy deployment on the Heroku platform, click this button:
 
 You want to help us make Pontoon better? We are very glad!
 
-Start by [installing Pontoon locally using `docker`](https://mozilla-pontoon.readthedocs.io/en/latest/dev/install-docker.html). Once you have a working local environment, take a look at our [mentored bugs](https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org). It is often better to start with those bugs, as they tend to be easier, and someone is committed to helping you get it done. To start working on a bug, verify that it isn't already assigned to someone else, and then ask on the bug for it to be assigned to you.
+Start by [installing Pontoon locally using `docker`](https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html). Once you have a working local environment, take a look at our [mentored bugs](https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org). It is often better to start with those bugs, as they tend to be easier, and someone is committed to helping you get it done. To start working on a bug, verify that it isn't already assigned to someone else, and then ask on the bug for it to be assigned to you.
 
 Before you start writing code, make sure to read our [contribution docs](https://mozilla-pontoon.readthedocs.io/en/latest/dev/contributing.html). It contains information on how to style code, how to run tests, how to name your commits, etc. All things you will need to know if you want your work to be merged into Pontoon!
 
