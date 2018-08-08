@@ -78,13 +78,13 @@ html {
   font-weight: 700;
   font-size: 4rem;
   color: #FFFFFF;
-  line-height: 5.6rem;
+  line-height: 6rem;
   padding-bottom: 2rem;
 }
 
 .content-style {
-  font-size: 1.5rem;
-  line-height: 2.6rem;
+  font-size: 1.7rem;
+  line-height: 3.2rem;
   color: #f4f4f4;
 }
 
@@ -121,15 +121,14 @@ body > header {
 
 .side-navigation li {
   cursor: pointer;
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   display: block;
-  /* border: solid 0.125rem #AFAFAF; */
   background-color: #DFDFDF;
   opacity: 0.5;
   border-radius: 50%;
   margin-bottom: 2.5rem;
-  margin-left: 3rem;
+  margin-left: 4rem;
 }
 
 .pagination.active {
@@ -137,8 +136,6 @@ body > header {
   border: none;
   background-color: #7BB976;
   transition-duration: 0.5s;
-  width: 1rem;
-  height: 1rem;
 }
 
 .snaps {
@@ -168,16 +165,16 @@ body > header {
 
 .introduction p {
   padding: 0 2.4rem;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
 }
 
 .introduction .title-style {
-  width: 76rem;
+  width: 100rem;
   margin: 0 auto;
 }
 
 .introduction .content-style {
-  width: 68rem;
+  width: 80rem;
   margin: 0 auto;
 }
 
@@ -188,12 +185,12 @@ body > header {
   display: flex;
   justify-content: center;
   position: absolute;
-  padding-top: 1.6vh;
+  padding-top: 1.2vh;
   top: 94vh;
 }
 
 .intro-footer p {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
@@ -207,7 +204,7 @@ body > header {
 }
 
 .section-side-image-1 {
-  width: 36rem;
+  width: 42rem;
 }
 
 /* Section-3 */
@@ -216,13 +213,13 @@ body > header {
 }
 
 .section-side-image-2 {
-  width: 58rem;
+  width: 60rem;
 }
 
 .path-startend-text {
   font-weight: 400;
   color: black;
-  margin-right: 2.4rem;
+  margin-right: 7rem;
   margin-bottom: 0.8rem;
   font-size: 1.5rem;
 }
@@ -235,33 +232,24 @@ body > header {
 
 .text-1 {
   color: #5F5F5F;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   margin-bottom: 4rem;
-  padding-left: 7.5rem;
+  padding-left: 8rem;
   width: 18rem;
-  line-height: 2rem;
+  line-height: 2.3rem;
 }
 
 .text-2 {
   color: #5F5F5F;
-  margin-top: 0.25rem;
-  margin-bottom: 4.5rem;
-  padding-right: 11rem;
-}
-
-.text-3 {
-  color: #5F5F5F;
-  margin-top: 6rem;
-  padding-left: 7.5rem;
-  width: 16rem;
-  line-height: 2.25rem;
-  margin-bottom: 4rem;
+  /* margin-top: 0.75rem; */
+  margin-bottom: 6.5rem;
+  padding-right: 9.5rem;
 }
 
 .text-4 {
   color: #5F5F5F;
   margin-top: -2.5rem;
-  padding-right: 11rem;
+  padding-right: 9.5rem;
 }
 
 /* Section-4 */
@@ -282,7 +270,7 @@ body > header {
   height: 90%;
   width: 0.3rem;
   background-color: #DFDFDF;
-  margin-left: 6.2rem;
+  margin-left: 7rem;
   z-index: 0;
 }
 
@@ -296,12 +284,12 @@ body > header {
 }
 
 .card-image img {
-  width: 6rem;
+  width: 7.5rem;
   margin: 0 3.2rem;
 }
 
 .card-text {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   line-height: 2.4rem;
   margin: auto 0px;
   margin-right: 1rem;
@@ -313,7 +301,7 @@ body > header {
 
 /* Section-5 */
 .section-side-image-3 {
-  width: 42rem;
+  width: 50rem;
   box-shadow: 0.3rem 0.3rem 0.6rem 0 #BFBFBF;
 }
 
@@ -344,12 +332,12 @@ body > header {
 .homepage-button {
   display: flex;
   border-radius: 0.2rem;
-  width: 24rem;
+  width: 28rem;
   height: 5rem;
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
 }
 
 .primary-button-cta {
@@ -404,10 +392,6 @@ body > header {
 .homepage-footer .flex-col-4 {
   justify-content: center;
   align-items: flex-end;
-}
-
-.github--link .content-style {
-  margin-bottom: 0.3rem;
 }
 
 .homepage-footer .content-style a {
