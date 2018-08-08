@@ -42,7 +42,7 @@ var Pontoon = (function (my) {
 
     // Placeable
     if (
-      element.expression &&
+      element.type === 'Placeable' &&
       [
         'CallExpression',
         'StringLiteral',
@@ -67,7 +67,7 @@ var Pontoon = (function (my) {
    * CLDR plurals or numbers.
    */
   function isPluralElement(element) {
-    if (!(element.expression && element.expression.type === 'SelectExpression')) {
+    if (!(element.type === 'Placeable' && element.expression.type === 'SelectExpression')) {
       return false;
     }
 
@@ -92,7 +92,7 @@ var Pontoon = (function (my) {
     return elements.every(function(element) {
       return (
         isSimpleElement(element) ||
-        (element.expression && element.expression.type === 'SelectExpression')
+        (element.type === 'Placeable' && element.expression.type === 'SelectExpression')
       );
     });
   }
@@ -251,7 +251,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.type === 'SelectExpression') {
+      if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
         if (element.expression.selector) {
           expression = fluentSerializer.serializeExpression(element.expression.selector);
@@ -294,7 +294,7 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.type === 'SelectExpression') {
+      if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
         if (element.expression.selector) {
           expression = fluentSerializer.serializeExpression(element.expression.selector);
