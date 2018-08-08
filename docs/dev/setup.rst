@@ -38,7 +38,7 @@ Quickstart
    webapp.
 
    If you want to share your development instance in your local network, you set SITE_URL to bind
-   the webapp to any address you like.
+   the webapp to any address you like.::
 
      $ make build SITE_URL="https://192.168.1.14:8000"
 
