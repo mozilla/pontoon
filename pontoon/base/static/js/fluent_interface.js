@@ -13,7 +13,7 @@ var Pontoon = (function (my) {
   function parseEntry(source) {
     var ast = fluentParser.parseEntry(source);
 
-    if (ast.value && ast.value.variants) {
+    if (ast.value && ast.value.type === 'VariantList') {
       ast.value.elements = [{
         expression: {
           type: 'SelectExpression',
