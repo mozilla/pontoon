@@ -6,10 +6,32 @@ var fluentSerializer = new FluentSyntax.FluentSerializer();
 var Pontoon = (function (my) {
 
   /*
+   * VariantLists behave the same as "selector-less SelectExpressions" in Pontoon.
+   * A custom parseEntry() method applies that logic to the AST, too. That
+   * allows us to use the same code for both, VariantLists and SelectExpressions.
+   */
+  function parseEntry(source) {
+    var ast = fluentParser.parseEntry(source);
+
+    if (ast.value && ast.value.type === 'VariantList') {
+      ast.value.elements = [{
+        expression: {
+          type: 'SelectExpression',
+          variants: ast.value.variants,
+        },
+        type: 'Placeable',
+      }];
+    }
+
+    return ast;
+  }
+
+  /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, StringExpression, NumberExpression,
-   *   VariantExpression, AttributeExpression, ExternalArgument or MessageReference
+   * - Placeable with expression type CallExpression, StringLiteral, NumberLiteral,
+   *   VariantExpression, AttributeExpression, VariableReference, MessageReference
+   *   or TermReference
    */
   function isSimpleElement(element) {
     if (element.type === 'TextElement') {
@@ -17,19 +39,18 @@ var Pontoon = (function (my) {
     }
 
     // Placeable
-    if (
-      element.expression &&
-      [
-        'CallExpression',
-        'StringExpression',
-        'NumberExpression',
-        'VariantExpression',
-        'AttributeExpression',
-        'ExternalArgument',
-        'MessageReference'
-      ].indexOf(element.expression.type) >= 0
-    ) {
-      return true;
+    if (element.type === 'Placeable') {
+      switch (element.expression.type) {
+        case 'AttributeExpression':
+        case 'CallExpression':
+        case 'VariantExpression':
+        case 'MessageReference':
+        case 'TermReference':
+        case 'VariableReference':
+        case 'NumberLiteral':
+        case 'StringLiteral':
+          return true;
+      }
     }
 
     return false;
@@ -42,7 +63,7 @@ var Pontoon = (function (my) {
    * CLDR plurals or numbers.
    */
   function isPluralElement(element) {
-    if (!(element.expression && element.expression.type === 'SelectExpression')) {
+    if (!(element.type === 'Placeable' && element.expression.type === 'SelectExpression')) {
       return false;
     }
 
@@ -51,7 +72,7 @@ var Pontoon = (function (my) {
     return element.expression.variants.every(function (item) {
       return (
         CLDRplurals.indexOf(item.key.name) !== -1 ||
-        item.key.type === 'NumberExpression'
+        item.key.type === 'NumberLiteral'
       );
     });
   }
@@ -67,7 +88,7 @@ var Pontoon = (function (my) {
     return elements.every(function(element) {
       return (
         isSimpleElement(element) ||
-        (element.expression && element.expression.type === 'SelectExpression')
+        (element.type === 'Placeable' && element.expression.type === 'SelectExpression')
       );
     });
   }
@@ -226,10 +247,10 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.type === 'SelectExpression') {
+      if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
-        if (element.expression.expression) {
-          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -269,10 +290,10 @@ var Pontoon = (function (my) {
       }
 
       // Render SelectExpression
-      if (element.expression && element.expression.type === 'SelectExpression') {
+      if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
-        if (element.expression.expression) {
-          expression = fluentSerializer.serializeExpression(element.expression.expression);
+        if (element.expression.selector) {
+          expression = fluentSerializer.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -367,42 +388,44 @@ var Pontoon = (function (my) {
         }
       }
       else if (element.type === 'Placeable') {
-        if (element.expression.type === 'ExternalArgument') {
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="External Argument">';
-            endMarker = '</mark>';
-          }
-          string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
-        }
-        else if (element.expression.type === 'MessageReference') {
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="Message Reference">';
-            endMarker = '</mark>';
-          }
-          string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
-        }
-        else if (
-          [
-            'CallExpression',
-            'StringExpression',
-            'NumberExpression',
-            'VariantExpression',
-            'AttributeExpression',
-          ].indexOf(element.expression.type) >= 0
-        ) {
-          var title = element.expression.type.replace('Expression', ' Expression');
-          if (markPlaceables) {
-            startMarker = '<mark class="placeable" title="' + title + '">';
-            endMarker = '</mark>';
-          }
-          var expression = fluentSerializer.serializeExpression(element.expression);
-          string += startMarker + '{' + expression + '}' + endMarker;
-        }
-        else if (element.expression.type === 'SelectExpression') {
-          var variantElements = element.expression.variants.filter(function (variant) {
-            return variant.default;
-          })[0].value.elements;
-          string += stringifyElements(variantElements, markPlaceables);
+        switch (element.expression.type) {
+          case 'VariableReference':
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="External Argument">';
+              endMarker = '</mark>';
+            }
+            string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
+            break;
+
+          case 'MessageReference':
+          case 'TermReference':
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="Message Reference">';
+              endMarker = '</mark>';
+            }
+            string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
+            break;
+
+          case 'AttributeExpression':
+          case 'CallExpression':
+          case 'VariantExpression':
+          case 'NumberLiteral':
+          case 'StringLiteral':
+            var title = element.expression.type.replace('Expression', ' Expression');
+            if (markPlaceables) {
+              startMarker = '<mark class="placeable" title="' + title + '">';
+              endMarker = '</mark>';
+            }
+            var expression = fluentSerializer.serializeExpression(element.expression);
+            string += startMarker + '{' + expression + '}' + endMarker;
+            break;
+
+          case 'SelectExpression':
+            var variantElements = element.expression.variants.filter(function (variant) {
+              return variant.default;
+            })[0].value.elements;
+            string += stringifyElements(variantElements, markPlaceables);
+            break;
         }
       }
     });
@@ -477,7 +500,7 @@ var Pontoon = (function (my) {
           $('#translation').hide();
           $('#ftl').removeClass('active');
 
-          var entityAST = fluentParser.parseEntry(entity.original);
+          var entityAST = parseEntry(entity.original);
           $('#add-attribute').toggle(entityAST.type === 'Term');
         }
         else {
@@ -502,7 +525,7 @@ var Pontoon = (function (my) {
           return fallback;
         }
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
         var tree;
 
         // Simple string
@@ -560,7 +583,7 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
 
         if (!isSimpleSingleAttributeMessage(ast)) {
           return false;
@@ -587,7 +610,7 @@ var Pontoon = (function (my) {
         $('#ftl-original').show();
         $('#ftl-original section ul').empty();
 
-        var ast = fluentParser.parseEntry(entity.original);
+        var ast = parseEntry(entity.original);
         var unsupported = false;
         var value = '';
         var attributes = '';
@@ -647,7 +670,7 @@ var Pontoon = (function (my) {
         var entityAttributes = [];
         var translatedAttributes = [];
 
-        var entityAST = fluentParser.parseEntry(entity.original);
+        var entityAST = parseEntry(entity.original);
         if (entityAST.attributes.length) {
           attributesTree = entityAST.attributes;
           entityAttributes = entityAST.attributes.map(function (attr) {
@@ -658,7 +681,7 @@ var Pontoon = (function (my) {
         translation = translation || entity.translation[0];
         var translationAST = null;
         if (translation.pk) {
-          translationAST = fluentParser.parseEntry(translation.string);
+          translationAST = parseEntry(translation.string);
           attributesTree = translationAST.attributes;
 
           // If translation doesn't include all entity attributes,
@@ -814,7 +837,6 @@ var Pontoon = (function (my) {
         var valueElements = $('#ftl-area .main-value ul:first > li:visible');
         var attributeElements = $('#ftl-area .attributes ul:first > li:visible');
         var value = '';
-        var attributes = '';
 
         // Unsupported string
         if (!this.isFTLEditorEnabled()) {
@@ -856,13 +878,9 @@ var Pontoon = (function (my) {
             var val = serializeFTLEditorElements($(this).find('ul:first > li'));
 
             if (id && val) {
-              attributes += '\n  .' + id + ' = ' + val;
+              content += '\n  .' + id + ' = ' + val;
             }
           });
-
-          if (attributes) {
-            content = (value ? content : entity.key) + attributes;
-          }
         }
 
         var ast = fluentParser.parseEntry(content);
@@ -878,7 +896,7 @@ var Pontoon = (function (my) {
       getSimplePreview: function (source, fallback, markPlaceables) {
         source = source || '';
         fallback = fallback || source;
-        var ast = fluentParser.parseEntry(source);
+        var ast = parseEntry(source);
 
         // String with an error
         if (ast.type === 'Junk') {
@@ -985,7 +1003,7 @@ var Pontoon = (function (my) {
           $('#ftl-area ' + selector + ' textarea').each(function() {
             var value = $(this).val();
             var message = 'key = ' + value;
-            var ast = fluentParser.parseEntry(message);
+            var ast = parseEntry(message);
 
             if (ast.type !== 'Junk') {
               value = '';

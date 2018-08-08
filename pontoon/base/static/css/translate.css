@@ -1452,6 +1452,7 @@ body > header aside p {
 }
 
 #ftl-area {
+  overflow: auto;
   position: relative;
 }
 
@@ -1468,7 +1469,6 @@ body > header aside p {
   height: 20%;
   line-height: 22px;
   min-height: 100px;
-  overflow: auto;
   padding: 10px;
   text-align: left;
   width: 100%;
