@@ -67,7 +67,7 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
     return wrapper
 
 
-def collect_entities(db_project, vcs_project, unsynced_locales=None):
+def collect_entities(db_project, vcs_project, changed_resources):
     """
     Find all the entities in the database and on the filesystem and
     match them together, yielding tuples of the form
@@ -75,7 +75,6 @@ def collect_entities(db_project, vcs_project, unsynced_locales=None):
 
     When a match isn't found, the missing entity will be None.
     """
-    changed_resources = None if unsynced_locales else vcs_project.changed_files
     db_entities = get_db_entities(db_project, changed_resources)
     vcs_entities = get_vcs_entities(vcs_project)
     entity_keys = set().union(db_entities.keys(), vcs_entities.keys())
@@ -85,7 +84,8 @@ def collect_entities(db_project, vcs_project, unsynced_locales=None):
 
 
 def update_entities(db_project, vcs_project, changeset):
-    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project):
+    changed_resources = vcs_project.changed_files
+    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project, changed_resources):
         if vcs_entity is None:
             if db_entity is None:
                 # This should never happen. What? Hard abort.
@@ -129,10 +129,27 @@ def update_resources(db_project, vcs_project):
     return added_paths, removed_paths, changed_paths
 
 
+def get_changed_resources(db_project, vcs_project):
+    changed_resources = vcs_project.changed_files
+
+    if db_project.unsynced_locales:
+        changed_resources = None
+
+    if changed_resources is not None:
+        changed_resources = (
+            changed_resources.keys() +
+            list(vcs_project.added_paths) +
+            list(vcs_project.changed_paths)
+        )
+
+    return changed_resources
+
+
 def update_translations(db_project, vcs_project, locale, changeset):
-    all_entities = collect_entities(db_project, vcs_project, db_project.unsynced_locales)
+    changed_resources = get_changed_resources(db_project, vcs_project)
+    all_entities = collect_entities(db_project, vcs_project, changed_resources)
     for key, db_entity, vcs_entity in all_entities:
-        # If we don't have both the db_entity and cs_entity we can't
+        # If we don't have both the db_entity and vcs_entity we can't
         # do anything with the translations.
         if db_entity is None or vcs_entity is None:
             continue
