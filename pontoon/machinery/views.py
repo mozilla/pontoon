@@ -7,13 +7,6 @@ from six.moves.urllib.parse import quote
 
 from collections import defaultdict
 
-try:
-    from caighdean import Translator
-    from caighdean.exceptions import TranslationError
-except LookupError:
-    Translator = TranslationError = None
-
-
 from django import http
 from django.conf import settings
 from django.db import DataError
@@ -24,6 +17,15 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
+
+try:
+    from caighdean import Translator
+    from caighdean.exceptions import TranslationError
+except LookupError:
+    if settings.DEV:
+        Translator = TranslationError = None
+    else:
+        raise
 
 
 log = logging.getLogger(__name__)
@@ -148,7 +150,10 @@ def machine_translation_caighdean(request):
 
     if Translator is None:
         return http.HttpResponseServerError(
-            json.dumps(dict(error=500, message='Caighdean unavaible offline')),
+            json.dumps({
+                'error': 500,
+                'message': 'Caighdean unavailable offline'
+            }),
             content_type='application/json'
         )
 
