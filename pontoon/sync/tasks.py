@@ -234,6 +234,20 @@ def sync_translations(
     if not full_scan:
         locales = get_changed_locales(db_project, locales, now)
 
+    readonly_locales = db_project.locales.filter(project_locale__readonly=True)
+    added_and_changed_resources = db_project.resources.filter(
+        path__in=list(added_paths or []) + list(changed_paths or [])
+    ).distinct()
+
+    # We should also sync files for which source file change - but only for read-only locales.
+    # See bug 1372151 for more details.
+    if added_and_changed_resources:
+        changed_locales_pks = [l.pk for l in locales]
+        readonly_locales_pks = [l.pk for l in readonly_locales]
+        locales = db_project.locales.filter(
+            pk__in=changed_locales_pks + readonly_locales_pks
+        )
+
     # Pull VCS changes in case we're on a different worker than the one
     # sync started on.
     if not no_pull:
@@ -241,10 +255,6 @@ def sync_translations(
         repos_changed, repo_locales = pull_changes(db_project, locales)
         repos = repos.filter(pk__in=repo_locales.keys())
         log.info('Pulling changes for project {0} complete.'.format(db_project.slug))
-
-    changed_resources = db_project.resources.filter(
-        path__in=list(added_paths or []) + list(changed_paths or [])
-    ).distinct()
 
     # If none of the repos has changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
@@ -276,7 +286,6 @@ def sync_translations(
 
     synced_locales = set()
     failed_locales = set()
-    readonly_locales = db_project.locales.filter(project_locale__readonly=True)
 
     for locale in locales:
         try:
@@ -375,7 +384,11 @@ def sync_translations(
 
             # We don't have files: we can still update asymmetric translated resources.
             else:
-                update_translated_resources_no_files(db_project, locale, changed_resources)
+                update_translated_resources_no_files(
+                    db_project,
+                    locale,
+                    added_and_changed_resources,
+                )
 
             update_locale_project_locale_stats(locale, db_project)
             synced_locales.add(locale.code)
