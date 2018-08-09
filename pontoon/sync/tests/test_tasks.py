@@ -39,7 +39,7 @@ class SyncProjectTests(TestCase):
 
         self.mock_update_originals = self.patch(
             'pontoon.sync.tasks.update_originals',
-            return_value=[[], [], []]
+            return_value=[[], [], [], []]
         )
 
         self.mock_source_directory_path = self.patch(

@@ -27,12 +27,12 @@ def update_originals(db_project, now, full_scan=False):
     vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
 
     with transaction.atomic():
-        removed_paths, added_paths = update_resources(db_project, vcs_project)
+        added_paths, removed_paths, changed_paths = update_resources(db_project, vcs_project)
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
-    return changeset.changes, removed_paths, added_paths
+    return changeset.changes, added_paths, removed_paths, changed_paths
 
 
 def serial_task(timeout, lock_key="", on_error=None, **celery_args):
@@ -103,10 +103,13 @@ def update_entities(db_project, vcs_project, changeset):
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
     log.debug('Scanning {}'.format(vcs_project.source_directory_path))
-    _, vcs_removed_files = vcs_project.changed_source_files
+    vcs_changed_files, vcs_removed_files = vcs_project.changed_source_files
 
     removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
     removed_paths = removed_resources.values_list('path', flat=True)
+
+    changed_resources = db_project.resources.filter(path__in=vcs_changed_files)
+    changed_paths = changed_resources.values_list('path', flat=True)
 
     added_paths = []
 
@@ -123,7 +126,7 @@ def update_resources(db_project, vcs_project):
             added_paths.append(relative_path)
 
     log.debug('Added files: {}'.format(', '.join(added_paths) or 'None'))
-    return removed_paths, added_paths
+    return added_paths, removed_paths, changed_paths
 
 
 def update_translations(db_project, vcs_project, locale, changeset):
