@@ -152,9 +152,9 @@ def machine_translation_caighdean(request):
         return http.HttpResponseServerError(
             json.dumps({
                 'error': 500,
-                'message': 'Caighdean unavailable offline'
+                'message': 'Caighdean unavailable offline',
             }),
-            content_type='application/json'
+            content_type='application/json',
         )
 
     try:
