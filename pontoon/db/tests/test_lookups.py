@@ -20,12 +20,12 @@ class TestIContainsCollationLookup(TestCase):
     """
     def setUp(self):
         # Create a list of instances in order to filter them.
-        EntityFactory.create_batch(10)
+        EntityFactory.create_batch(10, string='qwertyuiop')
 
     def test_empty_locale(self):
         """Lookup won't add an empty collation to a sql query."""
         entities = Entity.objects.filter(
-            string__icontains_collate=('string', '')
+            string__icontains_collate=('qwertyuiop', '')
         )
         query_sql = entities.query.sql_with_params()[0]
 
@@ -44,13 +44,13 @@ class TestIContainsCollationLookup(TestCase):
     def test_invalid_number_of_arguments(self):
         """Validate a number of arguments."""
         Entity.objects.filter(
-            string__icontains_collate=('string', 'a', 'b')
+            string__icontains_collate=('qwertyuiop', 'a', 'b')
         )
 
     def test_collation_query(self):
         """Check if collate is applied to a given lookup."""
         entities = Entity.objects.filter(
-            string__icontains_collate=('string', 'C')
+            string__icontains_collate=('qwertyuiop', 'C')
         )
         query_sql = entities.query.sql_with_params()[0]
 

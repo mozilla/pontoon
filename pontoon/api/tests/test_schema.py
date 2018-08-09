@@ -38,16 +38,19 @@ class TestCyclicQueries(TestCase):
                     'projects': [
                         {
                             'name': 'Pontoon Intro'
-                        }
+                        },
+                        {
+                            'name': 'Demo'
+                        },
                     ]
                 }
             }
         )
 
-    def test_projects_localizations(self):
+    def test_project_localizations(self):
         body = {
             'query': '''{
-                projects {
+                project(slug: "pontoon-intro") {
                     localizations {
                         locale {
                             name
@@ -64,17 +67,15 @@ class TestCyclicQueries(TestCase):
             response.content,
             {
                 'data': {
-                    'projects': [
-                        {
-                            'localizations': [
-                                {
-                                    'locale': {
-                                        'name': 'English'
-                                    }
+                    'project': {
+                        'localizations': [
+                            {
+                                'locale': {
+                                    'name': 'English'
                                 }
-                            ]
-                        }
-                    ]
+                            }
+                        ]
+                    }
                 }
             }
         )
