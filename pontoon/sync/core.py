@@ -32,7 +32,7 @@ def update_originals(db_project, now, full_scan=False):
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
-    return changeset.changes, added_paths, removed_paths, changed_paths
+    return added_paths, removed_paths, changed_paths
 
 
 def serial_task(timeout, lock_key="", on_error=None, **celery_args):

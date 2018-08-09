@@ -8,7 +8,6 @@ from pontoon.base.models import (
     ChangedEntityLocale,
     Project,
     Repository,
-    Resource,
 )
 
 from pontoon.base.tasks import PontoonTask
@@ -117,7 +116,6 @@ def sync_project(
         project_pk,
         project_sync_log.pk,
         now,
-        source_changes.get('project_changes'),
         source_changes.get('added_paths'),
         source_changes.get('removed_paths'),
         source_changes.get('changed_paths'),
@@ -148,7 +146,7 @@ def sync_sources(db_project, now, force, no_pull):
 
     if force or source_repo_changed:
         try:
-            project_changes, added_paths, removed_paths, changed_paths = update_originals(
+            added_paths, removed_paths, changed_paths = update_originals(
                 db_project, now, full_scan=force
             )
         except MissingSourceDirectoryError as e:
@@ -160,7 +158,7 @@ def sync_sources(db_project, now, force, no_pull):
         log.info('Synced sources for project {0}.'.format(db_project.slug))
 
     else:
-        project_changes, added_paths, removed_paths, changed_paths = None, None, None, None
+        added_paths, removed_paths, changed_paths = None, None, None
         log.info(
             'Skipping syncing sources for project {0}, no changes detected.'.format(
                 db_project.slug
@@ -168,7 +166,6 @@ def sync_sources(db_project, now, force, no_pull):
         )
 
     return {
-        'project_changes': project_changes,
         'added_paths': added_paths,
         'removed_paths': removed_paths,
         'changed_paths': changed_paths,
@@ -182,9 +179,8 @@ def sync_sources(db_project, now, force, no_pull):
     on_error=sync_translations_error
 )
 def sync_translations(
-    self, project_pk, project_sync_log_pk, now, project_changes=None, added_paths=None,
-    removed_paths=None, changed_paths=None, locale=None, no_pull=False, no_commit=False,
-    full_scan=False,
+    self, project_pk, project_sync_log_pk, now, added_paths=None, removed_paths=None,
+    changed_paths=None, locale=None, no_pull=False, no_commit=False, full_scan=False,
 ):
     db_project = get_or_fail(
         Project,
@@ -268,18 +264,11 @@ def sync_translations(
         repo_sync_log.end()
         return
 
-    obsolete_vcs_entities = project_changes['obsolete_db'] if project_changes else []
-    obsolete_entities_paths = (
-        Resource.objects.obsolete_entities_paths(obsolete_vcs_entities) if obsolete_vcs_entities
-        else None
-    )
-
     vcs_project = VCSProject(
         db_project,
         now,
         locales=locales,
         repo_locales=repo_locales,
-        obsolete_entities_paths=obsolete_entities_paths,
         added_paths=added_paths,
         changed_paths=changed_paths,
         full_scan=full_scan

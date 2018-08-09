@@ -62,7 +62,7 @@ class VCSProject(object):
     SOURCE_DIR_NAMES = SOURCE_DIR_SCORES.keys()
 
     def __init__(
-        self, db_project, now=None, locales=None, repo_locales=None, obsolete_entities_paths=None,
+        self, db_project, now=None, locales=None, repo_locales=None,
         added_paths=None, changed_paths=None, full_scan=False
     ):
         """
@@ -81,8 +81,6 @@ class VCSProject(object):
         :param dict repo_locales:
             A dict of repository PKs and their currently checked out locales
             (not neccessarily matching the ones stored in the DB).
-        :param list obsolete_entities_paths:
-            List of paths to remove translations of obsolete entities from
         :param list added_paths:
             List of added source file paths
         :param list changed_paths:
@@ -94,7 +92,6 @@ class VCSProject(object):
         self.now = now
         self.locales = locales if locales is not None else db_project.locales.all()
         self.repo_locales = repo_locales
-        self.obsolete_entities_paths = obsolete_entities_paths or []
         self.added_paths = added_paths or []
         self.changed_paths = changed_paths or []
         self.full_scan = full_scan
@@ -315,7 +312,6 @@ class VCSProject(object):
                     self.changed_files is not None and
                     (
                         (not self.changed_files or path not in self.changed_files) and
-                        path not in self.obsolete_entities_paths and
                         path not in self.added_paths and
                         path not in self.changed_paths
                     )
@@ -327,7 +323,6 @@ class VCSProject(object):
                 else:
                     if (
                         self.changed_files is None or
-                        path in self.obsolete_entities_paths or
                         path in self.added_paths or
                         path in self.changed_paths
                     ):
