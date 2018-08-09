@@ -280,7 +280,8 @@ def sync_translations(
         locales=locales,
         repo_locales=repo_locales,
         obsolete_entities_paths=obsolete_entities_paths,
-        new_paths=added_paths,
+        added_paths=added_paths,
+        changed_paths=changed_paths,
         full_scan=full_scan
     )
 
