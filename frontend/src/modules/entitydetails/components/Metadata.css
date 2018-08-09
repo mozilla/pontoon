@@ -1,0 +1,34 @@
+.metadata {
+    background-color: #3f4752;
+    color: #AAA;
+    font-size: 0.9em;
+    font-style: italic;
+    padding: 10px;
+}
+.metadata p,
+.metadata li {
+    margin: 8px 0;
+}
+.metadata span {
+    color: #888;
+    text-transform: uppercase;
+}
+.metadata span:after {
+    content: ' ';
+}
+
+.metadata p a {
+    color: #7BC876;
+    text-decoration: none;
+}
+
+.metadata .original {
+    color: white;
+    font-size: 1.1em;
+    font-style: normal;
+}
+.metadata ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}

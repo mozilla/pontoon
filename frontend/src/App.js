@@ -7,7 +7,7 @@ import './App.css';
 
 import { selectors as navSelectors } from 'core/navigation';
 import { actions, EntitiesList } from 'modules/entitieslist';
-import { Editor } from 'modules/editor';
+import { EntityDetails } from 'modules/entitydetails';
 
 import type { Navigation } from 'core/navigation';
 
@@ -20,6 +20,7 @@ type InternalProps = {|
     ...Props,
     dispatch: Function,
 |};
+
 
 /**
  * Main entry point to the application. Will render the structure of the page.
@@ -35,9 +36,7 @@ class App extends React.Component<InternalProps> {
             <section>
                 <EntitiesList />
             </section>
-            <section>
-                <Editor />
-            </section>
+            <EntityDetails />
         </div>);
     }
 }

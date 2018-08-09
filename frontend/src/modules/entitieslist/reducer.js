@@ -20,6 +20,10 @@ export type Translation = {
 export type DbEntity = {
     +pk: number,
     +original: string,
+    +comment: string,
+    +path: string,
+    +project: Object,
+    +source: Array<Array<string>>,
     +translation: Array<Translation>,
 };
 
