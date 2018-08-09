@@ -4056,6 +4056,7 @@ var Pontoon = (function (my) {
           (!this.requiresInplaceEditor() && $sidebar.is('.no'))) {
         return;
       }
+
       return $editor[0].entity;
     },
 

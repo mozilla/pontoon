@@ -1,4 +1,8 @@
 $(function () {
+  // Run the tour only on project with slug 'demo'
+  if (Pontoon.state.project !== "demo") {
+    return;
+  }
 
   var isEntityClicked = false;
   var isSubmitClicked = false;
@@ -282,8 +286,8 @@ $(function () {
     ]
   });
 
-  // Run the tour only on project with slug 'demo' and if not completed by user
-  if (Pontoon.state.project === "demo" && tourStatus !== -1) {
+  // Run the tour only if not completed by user
+  if (tourStatus !== -1) {
     Sideshow.start({ listAll: true });
   }
 });
