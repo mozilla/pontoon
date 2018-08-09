@@ -7,8 +7,12 @@ from six.moves.urllib.parse import quote
 
 from collections import defaultdict
 
-from caighdean import Translator
-from caighdean.exceptions import TranslationError
+try:
+    from caighdean import Translator
+    from caighdean.exceptions import TranslationError
+except LookupError:
+    Translator = TranslationError = None
+
 
 from django import http
 from django.conf import settings
@@ -141,6 +145,12 @@ def machine_translation_caighdean(request):
         text = entity.translation_set.get(locale__code='gd').string
     except Translation.DoesNotExist:
         return JsonResponse({})
+
+    if Translator is None:
+        return http.HttpResponseServerError(
+            json.dumps(dict(error=500, message='Caighdean unavaible offline')),
+            content_type='application/json'
+        )
 
     try:
         translation = Translator().translate(text)
