@@ -7,19 +7,19 @@ from django.db.models import F
 
 
 DEMO_PROJECT_CONTENT = """
-Welcome to Pontoon! Let's dive right in: translate this string and press Enter.
-Congratulations, you have translated your first string!
+Welcome to Pontoon! Translate this sentence and press Enter.
+Congratulations, you have translated your first "string"!
 Keep translating, we'll show you tips and tricks about Pontoon.
-In this sentence, click the special ellipsis at the end…
-Nice! That's been automatically pasted to your translation. We call these "placeables".
-Pontoon handles many <b>different</b> %(types)s of placeables.
+In this sentence, click the dot-dot-dot at the end…
+Nice! The "placeable" has been automatically pasted to your translation.
+There are <b>different</b> %(types)s of placeables and you usually don't need to translate them.
 If a string has a lot of placeables, we have another trick for you.
 <strong><a href="%(test)s">Click the Copy button</a> just <em>bellow</em> the translation input.</strong>
-The entire string is copied, and you translate in place. Convenient, right?
-On to machinery now. For the following sentence, click the Machinery tab.
+The entire string is copied, and you just translate in-between placeables. Convenient, right?
+In the next string, click the Machinery tab.
 The quick brown fox jumps over the lazy dog.
 Did you see the automatic translation there? If you click a translation in that tab, it gets added to the translation input.
-Machinery shows you Machine Translations (MT) and results from our Translation Memory (MT).
+Machinery shows you suggestions from Machine Translation and Translation Memory.
 That's all for now. There's a lot more to Pontoon that you'll discover as you use it.
 Now go on, grasshopper, and translate to your heart's content!
 """
