@@ -329,7 +329,7 @@ $(function () {
         $("#progress .menu").fadeOut(function() {
           $("#progress .menu").removeClass("permanent");
         });
-      },600);
+      }, 100);
     });
   }
 });

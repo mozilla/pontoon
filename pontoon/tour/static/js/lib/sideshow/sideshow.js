@@ -28,7 +28,7 @@
     if (markdown === undefined) throw new SSException("4", "Pagedown (the Markdown parser used by Sideshow) is required for Sideshow to work.");
     var globalObjectName = "Sideshow",
         $window, $body, $document, pollingDuration = 150,
-        longAnimationDuration = 600,
+        longAnimationDuration = 100,
         
         
         
