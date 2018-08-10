@@ -112,14 +112,14 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.contributors',
     'pontoon.checks',
-    'pontoon.demo',
     'pontoon.intro',
     'pontoon.localizations',
     'pontoon.machinery',
     'pontoon.projects',
     'pontoon.sync',
-    'pontoon.teams',
     'pontoon.tags',
+    'pontoon.teams',
+    'pontoon.tour',
     'pontoon.translate',
 
     # Django contrib apps
