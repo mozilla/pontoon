@@ -132,7 +132,7 @@ body > header {
 }
 
 /* Section-1 */
-.section-1 {
+#section-1 {
   background-image: url(../img/background.png);
   background-repeat: no-repeat;
   -webkit-background-size: cover;
@@ -144,30 +144,31 @@ body > header {
   justify-content: center;
   height: 100vh;
   text-align: center;
+  position: relative;
 }
 
-.introduction .flex {
+#section-1 .container .flex {
   justify-content: center;
   align-items: center;
   padding: 3.2rem 0;
 }
 
-.introduction p {
+#section-1 .container p {
   padding: 0 2.4rem;
   font-size: 1.6rem;
 }
 
-.introduction .title {
+#section-1 .container .title {
   width: 100rem;
   margin: 0 auto;
 }
 
-.introduction .content {
+#section-1 .container .content {
   width: 80rem;
   margin: 0 auto;
 }
 
-.intro-footer {
+#section-1 .footer {
   background-color: #FFFFFF;
   width: 100%;
   height: 14vh;
@@ -178,12 +179,12 @@ body > header {
   top: 94vh;
 }
 
-.intro-footer p {
-  font-size: 1.5rem;
+#section-1 .footer p {
   cursor: pointer;
+  font-size: 1.5rem;
 }
 
-.intro-footer p:hover {
+#section-1 .footer p:hover {
   text-decoration: underline;
 }
 
@@ -242,7 +243,7 @@ body > header {
 }
 
 /* Section-4 */
-.section-4 {
+#section-4 {
   position: relative;
 }
 
@@ -299,7 +300,7 @@ body > header {
 }
 
 /* Section-6 */
-.section-6 {
+#section-6 {
   background-image: url(../img/background.png);
   background-repeat: no-repeat;
   -webkit-background-size: cover;
@@ -314,7 +315,7 @@ body > header {
   position: relative;
 }
 
-.homepage-button {
+#main .button {
   display: flex;
   border-radius: 0.2rem;
   width: 28rem;
@@ -325,35 +326,29 @@ body > header {
   font-size: 1.8rem;
 }
 
-.primary-button-cta {
+#main .button.primary {
   background-color: #7BC176;
-}
-
-.primary-button-cta div {
   color: #FFFFFF;
 }
 
-.secondary-button-cta {
+#main .button.secondary {
   background-color: #FFFFFF;
-}
-
-.secondary-button-cta div {
   color: #000000;
 }
 
-.footer {
+#section-6 .footer {
   margin-top: -15rem;
 }
 
-.footer .content {
+#section-6 .footer .content {
   padding-bottom: 1.2rem;
 }
 
-.footer .primary-button-cta {
+#section-6 .footer .button.primary {
   margin-bottom: 4.0rem;
 }
 
-.section-6 .homepage-footer {
+#section-6 .homepage-footer {
   width: 980px;
 }
 
