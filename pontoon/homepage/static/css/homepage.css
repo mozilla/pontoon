@@ -1,9 +1,4 @@
-html {
-  font-size: 8.22px;
-}
-
 /* Base styles defined */
-
 .relative {
   position: relative;
 }
@@ -55,7 +50,7 @@ html {
 }
 
 .neg-margin-large {
-  margin-top: -6rem;
+  margin-top: -50px;
 }
 
 .container-full-height {
@@ -68,15 +63,15 @@ html {
 
 .title {
   font-weight: 700;
-  font-size: 4rem;
+  font-size: 32px;
   color: #FFFFFF;
-  line-height: 6rem;
-  padding-bottom: 2rem;
+  line-height: 50px;
+  padding-bottom: 16px;
 }
 
 .content {
-  font-size: 1.7rem;
-  line-height: 3.2rem;
+  font-size: 14px;
+  line-height: 22px;
   color: #f4f4f4;
 }
 
@@ -89,9 +84,8 @@ html {
 }
 
 
-/* All the styles for individual sections */
 
-/*  Header, side-navigation style*/
+/* General styles */
 body > header {
   width: 100%;
   position: fixed;
@@ -103,6 +97,11 @@ body > header {
   padding: 0;
 }
 
+.snaps {
+  padding-top: 50px;
+}
+
+/* Side Navigation */
 .side-navigation {
   position: fixed;
   top: 50vh;
@@ -113,22 +112,18 @@ body > header {
 
 .side-navigation li {
   cursor: pointer;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 10px;
+  height: 10px;
   display: block;
   background-color: #DFDFDF;
   border-radius: 50%;
-  margin-bottom: 2.5rem;
-  margin-left: 4rem;
+  margin-bottom: 24px;
+  margin-left: 32px;
 }
 
 .side-navigation li.active {
   background-color: #7BC176;
   transition-duration: 0.5s;
-}
-
-.snaps {
-  padding-top: 6rem;
 }
 
 /* Section-1 */
@@ -150,21 +145,21 @@ body > header {
 #section-1 .container .flex {
   justify-content: center;
   align-items: center;
-  padding: 3.2rem 0;
+  padding: 26px 0;
 }
 
 #section-1 .container p {
-  padding: 0 2.4rem;
-  font-size: 1.6rem;
+  padding: 0 20px;
+  font-size: 13px;
 }
 
 #section-1 .container .title {
-  width: 100rem;
+  width: 820px;
   margin: 0 auto;
 }
 
 #section-1 .container .content {
-  width: 80rem;
+  width: 660px;
   margin: 0 auto;
 }
 
@@ -181,7 +176,7 @@ body > header {
 
 #section-1 .footer p {
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 12px;
 }
 
 #section-1 .footer p:hover {
@@ -190,56 +185,55 @@ body > header {
 
 /* Section-2 */
 .why-mozilla {
-  margin-left: 10rem;
+  margin-left: 80px;
 }
 
 .section-side-image-1 {
-  width: 42rem;
+  width: 345px;
 }
 
 /* Section-3 */
 .path {
-  margin-left: 8rem;
+  margin-left: 66px;
 }
 
 .section-side-image-2 {
-  width: 60rem;
+  width: 493px;
 }
 
 .path-startend-text {
   font-weight: 400;
   color: black;
-  margin-right: 7rem;
-  margin-bottom: 0.8rem;
-  font-size: 1.5rem;
+  margin-right: 60px;
+  margin-bottom: 7px;
+  font-size: 12px;
 }
 
 .content-div {
-  width: 58rem;
-  padding-top: 8rem;
-  font-size: 1.5rem;
+  width: 476px;
+  padding-top: 66px;
+  font-size: 12px;
 }
 
 .text-1 {
   color: #5F5F5F;
-  margin-top: 1.2rem;
-  margin-bottom: 4rem;
-  padding-left: 8rem;
-  width: 18rem;
-  line-height: 2.3rem;
+  margin-top: 10px;
+  margin-bottom: 50px;
+  padding-left: 66px;
+  width: 150px;
+  line-height: 19px;
 }
 
 .text-2 {
   color: #5F5F5F;
-  /* margin-top: 0.75rem; */
-  margin-bottom: 6.5rem;
-  padding-right: 9.5rem;
+  margin-bottom: 55px;
+  padding-right: 80px;
 }
 
 .text-4 {
   color: #5F5F5F;
-  margin-top: -2.5rem;
-  padding-right: 9.5rem;
+  margin-top: -20px;
+  padding-right: 80px;
 }
 
 /* Section-4 */
@@ -248,19 +242,19 @@ body > header {
 }
 
 .features .title {
-  padding-right: 3.2rem;
+  padding-right: 26px;
 }
 
 .features .content {
-  padding-right: 4.8rem;
+  padding-right: 40px;
 }
 
 .card-border {
   position: absolute;
   height: 90%;
-  width: 0.3rem;
+  width: 2px;
   background-color: #DFDFDF;
-  margin-left: 7rem;
+  margin-left: 60px;
   z-index: 0;
 }
 
@@ -269,34 +263,34 @@ body > header {
 }
 
 .card-features {
-  padding-bottom: 2rem;
+  padding-bottom: 16px;
   align-items: flex-start;
 }
 
 .card-image img {
-  width: 7.5rem;
-  margin: 0 3.2rem;
+  width: 60px;
+  margin: 0 26px;
 }
 
 .card-text {
-  font-size: 1.8rem;
-  line-height: 2.4rem;
+  font-size: 15px;
+  line-height: 20px;
   margin: auto 0px;
-  margin-right: 1rem;
+  margin-right: 8px;
 }
 
 /* Section-5 */
 .section-side-image-3 {
-  width: 50rem;
-  box-shadow: 0.3rem 0.3rem 0.6rem 0 #BFBFBF;
+  width: 411px;
+  box-shadow: 2px 2px 4px 0 #BFBFBF;
 }
 
 .in-context .content {
-  padding-right: 1.6rem;
+  padding-right: 13px;
 }
 
 .in-context a {
-  margin: 3.2rem 0;
+  margin: 26px 0;
 }
 
 /* Section-6 */
@@ -317,13 +311,13 @@ body > header {
 
 #main .button {
   display: flex;
-  border-radius: 0.2rem;
-  width: 28rem;
-  height: 5rem;
+  border-radius: 2px;
+  width: 230px;
+  height: 40px;
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 15px;
 }
 
 #main .button.primary {
@@ -337,15 +331,15 @@ body > header {
 }
 
 #section-6 .footer {
-  margin-top: -15rem;
+  margin-top: -120px;
 }
 
 #section-6 .footer .content {
-  padding-bottom: 1.2rem;
+  padding-bottom: 10px;
 }
 
 #section-6 .footer .button.primary {
-  margin-bottom: 4.0rem;
+  margin-bottom: 32px;
 }
 
 #section-6 .homepage-footer {
@@ -353,12 +347,12 @@ body > header {
 }
 
 .moz-logo {
-  width: 10rem;
+  width: 80px;
 }
 
 .github {
-  margin-left: 2rem;
-  width: 3rem;
+  margin-left: 16px;
+  width: 24px;
 }
 
 .homepage-footer {
