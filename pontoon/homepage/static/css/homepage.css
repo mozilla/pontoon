@@ -134,7 +134,7 @@ body > header {
 .pagination.active {
   opacity: 1;
   border: none;
-  background-color: #7BB976;
+  background-color: #7BC176;
   transition-duration: 0.5s;
 }
 
@@ -341,7 +341,7 @@ body > header {
 }
 
 .primary-button-cta {
-  background-color: #7BB976;
+  background-color: #7BC176;
 }
 
 .primary-button-cta div {
