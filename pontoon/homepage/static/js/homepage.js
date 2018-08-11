@@ -10,9 +10,9 @@ $(function() {
     before: function(i,snaps) {
       var ref = snaps[i].attr("data-section-name");
 
-      $(".pagination.active").removeClass("active");
+      $(".side-navigation li.active").removeClass("active");
 
-      $(".pagination[href=#" + ref + "]").addClass("active");
+      $(".side-navigation li[href=#" + ref + "]").addClass("active");
 
       $('body > header').css('background-color','#272A2F')
     },
@@ -38,7 +38,7 @@ $(function() {
     });
   });
 
-  $(".pagination").on("click",function() {
+  $(".side-navigation li").on("click",function() {
     $.scrollify.move($(this).attr("href"));
   });
 
