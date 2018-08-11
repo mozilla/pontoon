@@ -42,10 +42,6 @@ html {
   flex-basis: 58.3333333%;
 }
 
-.flex-col-8 {
-  flex-basis: 66.6666666%;
-}
-
 .align-center {
   text-align: center;
 }
@@ -56,10 +52,6 @@ html {
 
 .align-left {
   text-align: left;
-}
-
-.neg-margin--small {
-  margin-top: -4rem;
 }
 
 .neg-margin--large {
@@ -293,10 +285,6 @@ body > header {
   line-height: 2.4rem;
   margin: auto 0px;
   margin-right: 1rem;
-}
-
-.card-text .colored-content {
-  padding: auto 0px;
 }
 
 /* Section-5 */
