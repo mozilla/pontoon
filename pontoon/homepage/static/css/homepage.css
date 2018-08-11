@@ -74,7 +74,7 @@ html {
   background: #FFFFFF;
 }
 
-.title-style {
+.title {
   font-weight: 700;
   font-size: 4rem;
   color: #FFFFFF;
@@ -82,17 +82,17 @@ html {
   padding-bottom: 2rem;
 }
 
-.content-style {
+.content {
   font-size: 1.7rem;
   line-height: 3.2rem;
   color: #f4f4f4;
 }
 
-.colored-title-style {
+.colored-title {
   color: #272a2f;
 }
 
-.colored-content-style {
+.colored-content {
   color: #333333;
 }
 
@@ -168,12 +168,12 @@ body > header {
   font-size: 1.6rem;
 }
 
-.introduction .title-style {
+.introduction .title {
   width: 100rem;
   margin: 0 auto;
 }
 
-.introduction .content-style {
+.introduction .content {
   width: 80rem;
   margin: 0 auto;
 }
@@ -257,11 +257,11 @@ body > header {
   position: relative;
 }
 
-.features .title-style {
+.features .title {
   padding-right: 3.2rem;
 }
 
-.features .content-style {
+.features .content {
   padding-right: 4.8rem;
 }
 
@@ -295,7 +295,7 @@ body > header {
   margin-right: 1rem;
 }
 
-.card-text .colored-content-style {
+.card-text .colored-content {
   padding: auto 0px;
 }
 
@@ -305,7 +305,7 @@ body > header {
   box-shadow: 0.3rem 0.3rem 0.6rem 0 #BFBFBF;
 }
 
-.in-context .content-style {
+.in-context .content {
   padding-right: 1.6rem;
 }
 
@@ -360,7 +360,7 @@ body > header {
   margin-top: -15rem;
 }
 
-.footer .content-style {
+.footer .content {
   padding-bottom: 1.2rem;
 }
 
@@ -394,10 +394,10 @@ body > header {
   align-items: flex-end;
 }
 
-.homepage-footer .content-style a {
+.homepage-footer .content a {
   color: #FFFFFF;
 }
 
-.homepage-footer .content-style a:hover {
+.homepage-footer .content a:hover {
   color: #7BC176;
 }
