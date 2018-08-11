@@ -99,6 +99,10 @@ body > header {
   z-index: 10;
 }
 
+#main {
+  padding: 0;
+}
+
 .side-navigation {
   position: fixed;
   list-style-type: none;
