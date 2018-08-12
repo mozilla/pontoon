@@ -36,11 +36,12 @@ $(function() {
     });
   });
 
-  $(".side-navigation li").on("click",function() {
+  $(".side-navigation li").on("click", function() {
     $.scrollify.move($(this).attr("href"));
   });
 
-  $("#section-1 .footer").on("click",function() {
+  $("#section-1 .footer a").on("click", function(e) {
+    e.preventDefault();
     $.scrollify.move("#section-2");
   });
 });
