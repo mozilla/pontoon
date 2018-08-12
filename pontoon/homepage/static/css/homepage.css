@@ -93,7 +93,7 @@ body > header {
 }
 
 .dark {
-  background-image: url(../img/background.png);
+  background-image: url(../img/background.svg);
   background-repeat: no-repeat;
   -webkit-background-size: cover;
   background-size: cover;
@@ -154,22 +154,23 @@ body > header {
 }
 
 /* Section-1 */
+#section-1 {
+  text-align: left;
+}
+
 #section-1 .title {
   font-size: 64px;
-  margin: 0 auto 40px;
+  margin-bottom: 10px;
 }
 
 #section-1 .content {
   font-size: 24px;
   line-height: 36px;
-  width: 640px;
-  margin: 0 auto 40px;
+  margin-bottom: 60px;
 }
 
 #section-1 .flex {
-  justify-content: center;
   align-items: center;
-  padding: 26px 0;
 }
 
 #section-1 .flex span {
