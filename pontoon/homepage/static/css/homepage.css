@@ -164,7 +164,8 @@ body > header {
 }
 
 #section-1 .content {
-  font-size: 24px;
+  color: #AAAAAA;
+  font-size: 22px;
   line-height: 36px;
   margin-bottom: 60px;
 }
