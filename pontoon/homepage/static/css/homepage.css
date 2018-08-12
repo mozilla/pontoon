@@ -1,19 +1,6 @@
 /* Base styles defined */
-.relative {
-  position: relative;
-}
-
-.absolute {
-  position: absolute;
-}
-
 .flex {
   display: flex;
-}
-
-.vertical-align-center {
-  display: flex;
-  align-items: center;
 }
 
 .flex-direction-col {
@@ -37,6 +24,15 @@
   flex-basis: 58.3333333%;
 }
 
+.container-full-height {
+  height: 100vh;
+}
+
+.vertical-align-center {
+  display: flex;
+  align-items: center;
+}
+
 .align-center {
   text-align: center;
 }
@@ -49,28 +45,16 @@
   text-align: left;
 }
 
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
 .neg-margin-large {
   margin-top: -50px;
-}
-
-.container-full-height {
-  height: 100vh;
-}
-
-.title {
-  font-weight: 700;
-  font-size: 32px;
-  color: #FFFFFF;
-  line-height: 50px;
-  padding-bottom: 16px;
-}
-
-.colored-title {
-  color: #272a2f;
-}
-
-.colored-content {
-  color: #333333;
 }
 
 /* General styles */
@@ -87,9 +71,10 @@ body > header {
   padding: 0;
 }
 
-.light {
+.snaps {
   background: #FFFFFF;
   color: #333333;
+  padding-top: 50px;
 }
 
 .dark {
@@ -104,6 +89,18 @@ body > header {
   text-align: center;
   position: relative;
   color: #F4F4F4;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 36px;
+  letter-spacing: -1px;
+  line-height: 50px;
+  padding-bottom: 16px;
+}
+
+.dark .title {
+  color: #FFFFFF;
 }
 
 #main .button {
@@ -122,10 +119,6 @@ body > header {
 #main .button.primary {
   background-color: #7BC876;
   color: #FFFFFF;
-}
-
-#main .snaps {
-  padding-top: 50px;
 }
 
 /* Side Navigation */
@@ -325,17 +318,21 @@ body > header {
 }
 
 /* Section-5 */
-.section-side-image-3 {
-  width: 411px;
+#section-5 .content-wrapper  {
+  padding-right: 40px;
+}
+
+#section-5 .content {
+  padding-bottom: 30px;
+}
+
+#section-5 .image-wrapper  {
+  text-align: right;
+}
+
+#section-5 img {
   box-shadow: 2px 2px 4px 0 #BFBFBF;
-}
-
-.in-context .content {
-  padding-right: 13px;
-}
-
-.in-context a {
-  margin: 26px 0;
+  width: 450px;
 }
 
 /* Section-6 */
