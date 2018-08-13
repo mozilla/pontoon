@@ -8,16 +8,16 @@
   flex-direction: column;
 }
 
-.flex-col-4 {
+.flex-col-2 {
+  flex-basis: 50%;
+}
+
+.flex-col-3 {
   flex-basis: 33.3333333%;
 }
 
 .flex-col-5 {
   flex-basis: 41.6666666%;
-}
-
-.flex-col-6 {
-  flex-basis: 50%;
 }
 
 .flex-col-7 {
@@ -66,14 +66,15 @@ body > header {
 }
 
 #main {
+  background: #FFFFFF;
+  color: #333333;
   font-size: 16px;
+  font-weight: 300;
   line-height: 1.5rem;
   padding: 0;
 }
 
 .snaps {
-  background: #FFFFFF;
-  color: #333333;
   padding-top: 50px;
 }
 
@@ -82,13 +83,11 @@ body > header {
   background-repeat: no-repeat;
   -webkit-background-size: cover;
   background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-  position: relative;
   color: #F4F4F4;
+  display: flex;
+  font-weight: 400;
+  align-items: center;
+  position: relative;
 }
 
 .title {
@@ -101,6 +100,10 @@ body > header {
 
 .dark .title {
   color: #FFFFFF;
+}
+
+.dark .content {
+  color: #AAAAAA;
 }
 
 #main .button {
@@ -138,7 +141,7 @@ body > header {
   background-color: #DFDFDF;
   border-radius: 50%;
   margin-bottom: 24px;
-  margin-left: 32px;
+  margin-left: 16px;
 }
 
 .side-navigation li.active {
@@ -157,10 +160,10 @@ body > header {
 }
 
 #section-1 .content {
-  color: #AAAAAA;
   font-size: 22px;
   line-height: 36px;
   margin-bottom: 60px;
+  width: 900px;
 }
 
 #section-1 .flex {
@@ -174,14 +177,17 @@ body > header {
 /* Scroll for more animation */
 #section-1 .footer {
   position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
   bottom: 40px;
 }
 
 #section-1 .scroll {
   color: #AAAAAA;
   display: inline-block;
-  height: 100px;
   font-size: 12px;
+  height: 100px;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -336,48 +342,46 @@ body > header {
 }
 
 /* Section-6 */
-#section-6 .footer {
+#section-6 .content-wrapper {
   margin-top: -120px;
 }
 
-#section-6 .footer .content {
+#section-6 .content-wrapper .title {
+  padding-bottom: 50px;
+}
+
+#section-6 .content-wrapper .content {
   padding-bottom: 10px;
 }
 
-#section-6 .footer .button.primary {
-  margin-bottom: 32px;
+#section-6 .content-wrapper .button.primary {
+  margin-bottom: 30px;
 }
 
-#section-6 .homepage-footer {
-  width: 980px;
-}
-
-.moz-logo {
-  width: 80px;
-}
-
-.github {
-  margin-left: 16px;
-  width: 24px;
-}
-
-.homepage-footer {
+#section-6 .footer {
   position: absolute;
   height: 8vh;
   top: 92vh;
-  justify-content: space-around;
   align-items: center;
+  width: 980px;
 }
 
-.homepage-footer .flex-col-4 {
-  justify-content: center;
-  align-items: flex-end;
+#section-6 .footer .mozilla .logo {
+  width: 80px;
 }
 
-.homepage-footer .content a {
+#section-6 .footer .github {
+  text-align: center;
+}
+
+#section-6 .footer .contact {
+  text-align: right;
+}
+
+#section-6 .footer a {
   color: #FFFFFF;
 }
 
-.homepage-footer .content a:hover {
+#section-6 .footer a:hover {
   color: #7BC876;
 }
