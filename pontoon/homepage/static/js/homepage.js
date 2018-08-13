@@ -44,6 +44,16 @@ $(function() {
     e.preventDefault();
     $.scrollify.move("#section-2");
   });
+
+  // Show/hide header border on menu open/close
+  $('body > header').on('click', '.selector', function (e) {
+    if (!$(this).siblings('.menu').is(':visible')) {
+      $('body > header').addClass('menu-opened');
+    }
+  });
+  $('body').bind('click.main', function () {
+    $('body > header').removeClass('menu-opened');
+  });
 });
 
 $.easing['easeInOutSine'] = function (x, t, b, c, d) {

@@ -1,9 +1,14 @@
 /* General styles */
 body > header {
-  width: 100%;
-  position: fixed;
   background: transparent;
+  border-color: transparent;
+  position: fixed;
+  width: 100%;
   z-index: 10;
+}
+
+body > header.menu-opened {
+  border-color: #333941;
 }
 
 #main {
