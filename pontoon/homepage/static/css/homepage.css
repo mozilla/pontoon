@@ -16,10 +16,6 @@
   flex-basis: 33.3333333%;
 }
 
-.container-full-height {
-  height: 100vh;
-}
-
 .vertical-align-center {
   display: flex;
   align-items: center;
@@ -61,6 +57,14 @@ body > header {
   padding-top: 50px;
 }
 
+.snaps > .container  {
+  height: 100vh;
+}
+
+.snaps .content-wrapper  {
+  padding-right: 40px;
+}
+
 .dark {
   background-image: url(../img/background.svg);
   background-repeat: no-repeat;
@@ -70,6 +74,10 @@ body > header {
   display: flex;
   align-items: center;
   position: relative;
+}
+
+.dark > .container  {
+  height: auto;
 }
 
 h2 {
@@ -210,14 +218,7 @@ h2 {
   }
 }
 
-/* Section-2 */
-
-
 /* Section-3 */
-.path {
-  padding-right: 40px;
-}
-
 .section-side-image-2 {
   width: 493px;
 }
@@ -265,14 +266,6 @@ h2 {
   position: relative;
 }
 
-.features h2 {
-  padding-right: 26px;
-}
-
-.features p {
-  padding-right: 40px;
-}
-
 .card-border {
   position: absolute;
   height: 90%;
@@ -304,10 +297,6 @@ h2 {
 }
 
 /* Section-5 */
-#section-5 .content-wrapper  {
-  padding-right: 40px;
-}
-
 #section-5 p {
   padding-bottom: 30px;
 }
@@ -324,26 +313,27 @@ h2 {
 /* Section-6 */
 #section-6 .content-wrapper {
   margin-top: -120px;
+  padding: 0;
 }
 
-#section-6 .content-wrapper h2 {
+#section-6 h2 {
   padding-bottom: 50px;
 }
 
-#section-6 .content-wrapper p {
+#section-6 p {
   padding-bottom: 10px;
 }
 
-#section-6 .content-wrapper .button.primary {
+#section-6 .button.primary {
   margin-bottom: 30px;
 }
 
 #section-6 .footer {
   position: absolute;
-  height: 8vh;
-  top: 92vh;
-  align-items: center;
+  bottom: 60px;
+  height: 60px;
   width: 980px;
+  align-items: center;
 }
 
 #section-6 .footer .mozilla .logo {
