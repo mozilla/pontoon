@@ -1,52 +1,32 @@
-/* Jquery plugin scrollify */
+/*
+ * fullPage plugin by Alvaro Trigo
+ * URL: https://github.com/alvarotrigo/fullPage.js/
+ */
+new fullpage('#main', {
+  licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
+  navigation: true,
+  navigationPosition: 'left',
+  onLeave: function(origin, destination, direction) {
+    $('body > header').css('background-color', '#272A2F');
+  },
+  afterLoad: function(origin, destination, direction) {
+    color = '#272A2F';
+    if (destination.item.id === 'section-1' || destination.item.id === 'section-6') {
+      color = 'transparent';
+    }
+    $('body > header').css('background-color', color);
+  },
+});
 
 $(function() {
-  $.scrollify({
-		section: ".snaps",
-    scrollbars: false,
-    interstitialSection: "",
-    easing: "easeInOutSine",
-    scrollSpeed: 975,
-    before: function(i, snaps) {
-      var ref = snaps[i].attr("id");
-
-      $(".side-navigation li.active").removeClass("active");
-      $(".side-navigation li[href=#" + ref + "]").addClass("active");
-      $('body > header').css('background-color', '#272A2F');
-    },
-    after: function(i, snaps) {
-      var ref = snaps[i].attr("id");
-
-      if (ref === "section-6" || ref === "section-1") {
-        $('body > header').css({
-          'background-color': 'transparent',
-          'transition-duration': '0.3s'
-        });
-      }
-      else {
-        $('body > header').css('background-color', '#272A2F');
-      }
-    },
-    updateHash: false,
-	});
-
-  $(window).on('load', function() {
-    setTimeout(function() {
-      $(window).scrollTop(0);
-    });
-  });
-
-  $(".side-navigation li").on("click", function() {
-    $.scrollify.move($(this).attr("href"));
-  });
-
-  $("#section-1 .footer a").on("click", function(e) {
+  // Scroll from Section 1 to Section 2
+  $('#section-1 .footer .scroll').on('click', function(e) {
     e.preventDefault();
-    $.scrollify.move("#section-2");
+    fullpage_api.moveSectionDown();
   });
 
   // Show/hide header border on menu open/close
-  $('body > header').on('click', '.selector', function (e) {
+  $('body > header').on('click', '.selector', function () {
     if (!$(this).siblings('.menu').is(':visible')) {
       $('body > header').addClass('menu-opened');
     }
@@ -55,7 +35,3 @@ $(function() {
     $('body > header').removeClass('menu-opened');
   });
 });
-
-$.easing['easeInOutSine'] = function (x, t, b, c, d) {
-  return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
-};

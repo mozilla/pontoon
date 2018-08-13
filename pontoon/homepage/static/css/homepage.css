@@ -3,6 +3,7 @@ body > header {
   background: transparent;
   border-color: transparent;
   position: fixed;
+  transition: background-color 0.3s;
   width: 100%;
   z-index: 10;
 }
@@ -12,7 +13,6 @@ body > header.menu-opened {
 }
 
 #main {
-  background: #FFFFFF;
   color: #333333;
   font-size: 16px;
   font-weight: 300;
@@ -23,18 +23,8 @@ body > header.menu-opened {
   line-height: 1.5rem;
 }
 
-.snaps {
-  padding-top: 50px;
-}
-
-.snaps > .container  {
-  display: flex;
-  align-items: center;
-  height: 100vh;
-}
-
-.snaps .content-wrapper  {
-  padding-right: 40px;
+.section {
+  background: #FFFFFF;
 }
 
 .dark {
@@ -48,9 +38,17 @@ body > header.menu-opened {
   position: relative;
 }
 
-.dark > .container  {
+.section .container  {
+  display: flex;
+  align-items: center;
+}
+
+.dark .container  {
   display: block;
-  height: auto;
+}
+
+.section .content-wrapper  {
+  padding-right: 40px;
 }
 
 h2 {
@@ -106,38 +104,17 @@ h2 {
   flex-basis: 33.3333333%;
 }
 
-.neg-margin-large {
-  margin-top: -50px;
-}
-
 /* Side Navigation */
-.side-navigation {
-  position: fixed;
-  top: 50vh;
-  margin: 0;
-  transform: translateY(-50%);
-  z-index: 15;
+#fp-nav ul li a span {
+  background: #888888;
 }
 
-.side-navigation li {
-  cursor: pointer;
-  width: 10px;
-  height: 10px;
-  display: block;
-  background-color: #DFDFDF;
-  border-radius: 50%;
-  margin-bottom: 24px;
-  margin-left: 16px;
-}
-
-.side-navigation li.active {
-  background-color: #7BC876;
-  transition-duration: 0.5s;
+#fp-nav ul li a.active span {
+  background: #7BC876;
 }
 
 /* Section-1 */
 #section-1 {
-  padding: 0 0 50px;
   text-align: left;
 }
 
@@ -164,16 +141,16 @@ h2 {
 /* Scroll for more animation */
 #section-1 .footer {
   position: absolute;
+  bottom: 0;
   left: 0;
   right: 0;
   text-align: center;
-  bottom: 40px;
 }
 
 #section-1 .scroll {
   display: inline-block;
   font-size: 12px;
-  height: 100px;
+  height: 90px;
   letter-spacing: 3px;
   text-transform: uppercase;
 }
@@ -314,7 +291,6 @@ h2 {
 /* Section-6 */
 #section-6 .content-wrapper {
   align-items: center;
-  margin-top: -120px;
   padding: 0;
 }
 
@@ -332,8 +308,8 @@ h2 {
 
 #section-6 .footer {
   position: absolute;
-  bottom: 55px;
-  height: 55px;
+  bottom: 0;
+  height: 60px;
   width: 980px;
   align-items: center;
 }

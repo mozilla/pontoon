@@ -7,19 +7,9 @@
 {% block middle %}
 <section id="main">
 
-  <!-- Side Navigation -->
-  <ul class="side-navigation">
-    <li href="#section-1" class="active"></li>
-    <li href="#section-2"></li>
-    <li href="#section-3"></li>
-    <li href="#section-4"></li>
-    <li href="#section-5"></li>
-    <li href="#section-6"></li>
-  </ul>
-
   <!-- Section-1: Introduction -->
-  <section id="section-1" class="snaps dark" data-section-name="section-1">
-    <div class="container neg-margin-large">
+  <section id="section-1" class="section dark">
+    <div class="container">
       <h1>Localize Mozilla</h1>
       <p>
         If you want to make Firefox available in your language,
@@ -39,9 +29,9 @@
   </section>
 
   <!-- Section-2: Why Mozilla? -->
-  <section id="section-2" class="snaps" data-section-name="section-2">
+  <section id="section-2" class="section">
     <div class="container">
-      <div class="content-wrapper flex-col-2 flex-direction-col neg-margin-large">
+      <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>Here's why localizing Mozilla matters.</h2>
         <p>
           We are committed to an internet that includes all the peoples of the earth —
@@ -57,9 +47,9 @@
   </section>
 
   <!-- Section-3: Path to contribution -->
-  <section id="section-3" class="snaps" data-section-name="section-3">
+  <section id="section-3" class="section">
     <div class="container">
-      <div class="content-wrapper flex-col-2 flex-direction-col neg-margin-large">
+      <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>This is how it works.</h2>
         <p>
           Pontoon is a simple and intuitive tool that requires little technical skills to use it.
@@ -67,7 +57,7 @@
           Join one, find a project you'd like to contribute to, and you're ready to start contributing!
         </p>
       </div>
-      <div class="flex-col-2 neg-margin-large">
+      <div class="flex-col-2">
         <div class="align-center path-startend-text"><p>Create an account</p></div>
         <div class="center">
           <div class="content-div">
@@ -84,9 +74,9 @@
   </section>
 
   <!-- Section-4: Features -->
-  <section id="section-4" class="snaps" data-section-name="section-4">
+  <section id="section-4" class="section">
     <div class="container">
-      <div class="content-wrapper flex-col-2 flex-direction-col neg-margin-large">
+      <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>Things which make it special.</h2>
         <p>
           From the ground up, Pontoon has been designed as the tool
@@ -95,7 +85,7 @@
           into a single platform.
         </p>
       </div>
-      <div class="cards-of-fetaures flex-col-2 neg-margin-large flex">
+      <div class="cards-of-fetaures flex-col-2 flex">
         <div class="card-border">
         </div>
         <div class="cards">
@@ -135,9 +125,9 @@
   </section>
 
   <!-- Section-5: In-context localization -->
-  <section id="section-5" class="snaps" data-section-name="section-5">
+  <section id="section-5" class="section">
     <div class="container">
-      <div class="content-wrapper flex-col-2 flex-direction-col neg-margin-large">
+      <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>One more thing.</h2>
         <p>
           One of the coolest features of Pontoon
@@ -151,13 +141,13 @@
         <a class="button primary" href="{{ url('pontoon.translate.locale.agnostic', 'pontoon-intro', 'messages.properties') }}">Give it a Try!</a>
       </div>
       <div class="image-wrapper flex-col-2">
-        <img class="section-side-image-3 neg-margin-large" src="{{ static('img/section-5.svg') }}" />
+        <img class="section-side-image-3" src="{{ static('img/section-5.svg') }}" />
       </div>
     </div>
   </section>
 
   <!-- Section-6: Final -->
-  <section id="section-6" class="snaps dark" data-section-name="section-6">
+  <section id="section-6" class="section dark">
     <div class="container">
       <div class="content-wrapper flex-direction-col">
         <h2>Join us.</h2>

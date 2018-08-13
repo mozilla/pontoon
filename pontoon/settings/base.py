@@ -375,6 +375,7 @@ PIPELINE_CSS = {
     },
     'homepage': {
         'source_filenames': (
+            'css/fullpage.css',
             'css/homepage.css',
         ),
         'output_filename': 'css/homepage.min.css'
@@ -506,7 +507,7 @@ PIPELINE_JS = {
     },
     'homepage': {
         'source_filenames' : (
-            'js/lib/jquery.scrollify.js',
+            'js/lib/fullpage.js',
             'js/homepage.js'
         ),
         'output_filename' : 'js/homepage.min.js',
