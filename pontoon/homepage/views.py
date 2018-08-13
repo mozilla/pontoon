@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
+from pontoon.base.models import Locale
+from pontoon.base.utils import get_project_locale_from_request
 
 
 def homepage(request):
@@ -15,4 +19,15 @@ def homepage(request):
         if user.profile.custom_homepage:
             return redirect('pontoon.teams.team', locale=user.profile.custom_homepage)
 
-    return render(request, 'homepage.html')
+    # Guess user's team page or redirect to /teams
+    locale = get_project_locale_from_request(request, Locale.objects)
+    if locale:
+        start_url = reverse('pontoon.teams.team', kwargs={
+            'locale': locale,
+        })
+    else:
+        start_url = reverse('pontoon.teams')
+
+    return render(request, 'homepage.html', {
+        'start_url': start_url,
+    })
