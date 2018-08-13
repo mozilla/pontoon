@@ -192,7 +192,7 @@ h2 {
 
 /* Section-3 */
 .section-side-image-2 {
-  width: 490px;
+  width: 470px;
 }
 
 .path-startend-text {
@@ -205,8 +205,8 @@ h2 {
 }
 
 .content-div {
-  width: 476px;
-  padding-top: 66px;
+  width: 450px;
+  padding-top: 60px;
   position: absolute;
   font-size: 12px;
 }
@@ -214,7 +214,7 @@ h2 {
 .text-1 {
   color: #5F5F5F;
   margin-top: 10px;
-  margin-bottom: 50px;
+  margin-bottom: 42px;
   padding-left: 66px;
   width: 150px;
   line-height: 19px;
@@ -229,7 +229,7 @@ h2 {
 
 .text-4 {
   color: #5F5F5F;
-  margin-top: -20px;
+  margin-top: -30px;
   padding-right: 80px;
   text-align: right;
 }
