@@ -21,7 +21,7 @@ def homepage(request):
 
     # Guess user's team page or redirect to /teams
     locale = get_project_locale_from_request(request, Locale.objects)
-    if locale:
+    if locale not in ('en-US', 'en', None):
         start_url = reverse('pontoon.teams.team', kwargs={
             'locale': locale,
         })
