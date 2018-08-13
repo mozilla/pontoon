@@ -1,6 +1,6 @@
 $(function () {
-  // Run the tour only on project with slug 'demo'
-  if (Pontoon.state.project !== "demo") {
+  // Run the tour only on project with slug 'tutorial'
+  if (Pontoon.state.project !== "tutorial") {
     return;
   }
 
@@ -246,7 +246,7 @@ $(function () {
           "at the [Localizer Documentation]" +
           "(https://mozilla-l10n.github.io/localizer-documentation/)." +
           "<br /><br />" +
-          "Next, feel free to explore this demo project or move straight to " +
+          "Next, feel free to explore this tutorial project or move straight to " +
           "translating live projects!",
         format: "markdown",
         listeners: {

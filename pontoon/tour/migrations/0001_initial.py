@@ -25,17 +25,17 @@ Now go on, grasshopper, and translate to your heart's content!
 """
 
 
-def create_demo_project(apps, schema_editor):
+def create_tutorial_project(apps, schema_editor):
     # Create an empty project
     Project = apps.get_model('base', 'Project')
     project, _ = Project.objects.get_or_create(
-        slug='demo',
-        name='Demo',
+        slug='tutorial',
+        name='Tutorial',
         data_source='database',
         can_be_requested=False,
         sync_disabled=True,
         info=(
-            'A demo project, used as a testing playground and for the '
+            'A tutorial project, used as a testing playground and for the '
             'guided tour.'
         ),
         admin_notes=(
@@ -94,11 +94,11 @@ def create_demo_project(apps, schema_editor):
         locale.save(update_fields=['total_strings'])
 
 
-def remove_demo_project(apps, schema_editor):
+def remove_tutorial_project(apps, schema_editor):
     Project = apps.get_model('base', 'Project')
 
     try:
-        project = Project.objects.get(slug='demo')
+        project = Project.objects.get(slug='tutorial')
     except Project.DoesNotExist:
         return
 
@@ -127,5 +127,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_demo_project, remove_demo_project),
+        migrations.RunPython(create_tutorial_project, remove_tutorial_project),
     ]

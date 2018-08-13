@@ -608,8 +608,8 @@ def update_translation(request):
     except UserProfile.DoesNotExist as error:
         use_ttk_checks = True
 
-    # Disable checks for demo project.
-    if project.slug == 'demo':
+    # Disable checks for tutorial project.
+    if project.slug == 'tutorial':
         use_ttk_checks = False
 
     now = timezone.now()
