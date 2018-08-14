@@ -22,7 +22,7 @@ from pontoon.tags.utils import TagsTool
 def projects(request):
     """List all active projects."""
     projects = (
-        Project.objects.available()
+        Project.objects.translable()
         .prefetch_related('latest_translation__user')
         .order_by('name')
     )

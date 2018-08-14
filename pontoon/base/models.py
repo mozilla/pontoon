@@ -1023,6 +1023,16 @@ class Locale(AggregatedStats):
 
 
 class ProjectQuerySet(models.QuerySet):
+    def translable(self):
+        """
+        Translable projects are not disabled and have at least one
+        resource defined and are not system projects.
+        """
+        return self.filter(
+            disabled=False, resources__isnull=False,
+            system_project=False,
+        ).distinct()
+
     def available(self):
         """
         Available projects are not disabled and have at least one
@@ -1372,9 +1382,13 @@ class ExternalResource(models.Model):
 class ProjectLocaleQuerySet(models.QuerySet):
     def available(self):
         """
-        Available project locales belong to available projects.
+        Available project locales belong to translable projects.
         """
-        return self.filter(project__disabled=False, project__resources__isnull=False).distinct()
+        return self.filter(
+            project__disabled=False,
+            project__system_project=False,
+            project__resources__isnull=False,
+        ).distinct()
 
 
 class ProjectLocale(AggregatedStats):
@@ -2779,10 +2793,11 @@ class TranslatedResource(AggregatedStats):
         )
 
         # Locale
-        locale.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
-        )
+        if not project.system_project:
+            locale.adjust_stats(
+                total_strings_diff, approved_strings_diff,
+                fuzzy_strings_diff, unreviewed_strings_diff
+            )
 
         # ProjectLocale
         project_locale = utils.get_object_or_none(
