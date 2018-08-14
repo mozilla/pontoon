@@ -215,27 +215,23 @@ h2 {
 }
 
 #section-4 .box {
-  border: 1px solid transparent;
+  border: 2px solid #333941;
   border-radius: 3px;
   margin-left: 20px;
   padding: 10px;
   text-align: center;
-  width: 188px;
-}
-
-#section-4 .box:hover {
-  border-color: #7BC876;
-  transition-duration: 0.2s;
-  color: #7BC876;
+  width: 186px;
 }
 
 #section-4 .box .box-image {
+  color: #7BC876;
   font-size: 35px;
   margin-bottom: 10px;
 }
 
 #section-4 .box p {
-  font-size: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 /* Section-5 */
@@ -248,7 +244,7 @@ h2 {
 }
 
 #section-5 img {
-  border: 2px solid #D3D3D3;
+  border: 2px solid #4D5967;
   border-radius: 3px;
   width: 436px;
 }
