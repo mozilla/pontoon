@@ -1757,15 +1757,6 @@ class ResourceQuerySet(models.QuerySet):
     def asymmetric(self):
         return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
 
-    """
-    List of paths to remove translations of obsolete entities from
-    """
-
-    def obsolete_entities_paths(self, obsolete_vcs_entities):
-        return self.filter(
-            entities__pk__in=obsolete_vcs_entities
-        ).asymmetric().values_list('path', flat=True).distinct()
-
 
 @python_2_unicode_compatible
 class Resource(models.Model):
