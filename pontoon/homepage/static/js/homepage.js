@@ -11,11 +11,9 @@
       $('body > header').css('background-color', '#272A2F');
     },
     afterLoad: function(origin, destination) {
-      var color = '#272A2F';
       if (destination.item.id === 'section-1' || destination.item.id === 'section-6') {
-        color = 'transparent';
+        $('body > header').css('background-color', 'transparent');
       }
-      $('body > header').css('background-color', color);
     },
   });
 })();
