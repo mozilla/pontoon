@@ -1142,6 +1142,8 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
+    system_project = models.BooleanField(default=False)
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
