@@ -211,46 +211,30 @@ h2 {
 
 /* Section-4 */
 #section-4 .flex {
-  justify-content: space-between;
-  margin-bottom: 40px;
+  margin: 20px 0;
 }
+
 #section-4 .box {
   border: 1px solid transparent;
   border-radius: 3px;
-  width: 125px;
-  text-align: center;
+  margin-left: 20px;
   padding: 10px;
+  text-align: center;
+  width: 188px;
 }
+
 #section-4 .box:hover {
   border-color: #7BC876;
   transition-duration: 0.2s;
   color: #7BC876;
 }
-#section-4 .box-image {
-  font-family: 'Font Awesome 5 Free';
+
+#section-4 .box .box-image {
   font-size: 35px;
   margin-bottom: 10px;
-  font-weight: 900;
 }
-#section-4 .box-image-1:before {
-  content: "\f085";
-}
-#section-4 .box-image-2:before {
-  content: "\f0f3";
-}
-#section-4 .box-image-3:before {
-  content: "\f0ae";
-}
-#section-4 .box-image-4:before {
-  content: "\f550";
-}
-#section-4 .box-image-5:before {
-  content: "\f337";
-}
-#section-4 .box-image-6:before {
-  content: "\f044";
-}
-#section-4 .box-content p{
+
+#section-4 .box p {
   font-size: 14px;
 }
 
@@ -266,7 +250,7 @@ h2 {
 #section-5 img {
   border: 2px solid #D3D3D3;
   border-radius: 3px;
-  width: 440px;
+  width: 436px;
 }
 
 /* Section-6 */
