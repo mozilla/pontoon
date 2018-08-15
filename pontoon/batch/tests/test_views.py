@@ -52,7 +52,7 @@ def translation_dtd_unapproved():
 
 @pytest.yield_fixture
 def translation_dtd_invalid_unapproved():
-    # Provide invalid characters in translation to cause checks
+    # Provide invalid characters in translation to cause checks to fail
     translation = TranslationFactory.create(
         string='!@#$""\'',
         approved=False,
@@ -194,10 +194,10 @@ def test_batch_find_and_replace_valid_translations(
         'invalid_translation_count': 0,
     }
 
-    new_translation = translation_dtd_unapproved.entity.translation_set.last()
+    translation = translation_dtd_unapproved.entity.translation_set.last()
 
-    assert new_translation.string == 'Test Replaced translation'
-    assert new_translation.approved
+    assert translation.string == 'Test Replaced translation'
+    assert translation.approved
 
 
 @pytest.mark.django_db
@@ -223,7 +223,7 @@ def test_batch_find_and_replace_invalid_translations(
         'invalid_translation_count': 1,
     }
 
-    translation_dtd_unapproved.refresh_from_db()
+    translation = translation_dtd_unapproved.entity.translation_set.last()
 
-    assert translation_dtd_unapproved.string == 'Test Translation'
-    assert not translation_dtd_unapproved.approved
+    assert translation.string == 'Test Translation'
+    assert not translation.approved

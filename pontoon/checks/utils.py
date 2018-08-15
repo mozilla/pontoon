@@ -8,21 +8,31 @@ from pontoon.checks.models import Warning, Error
 from pontoon.checks.libraries import run_checks
 
 
+def prefetch_translations():
+    """
+    Prefetch translations with fields required for run_checks
+    """
+
+    translations = (
+        Translation.objects
+        .prefetch_related(
+            'entity',
+            'entity__resource__entities',
+            'locale',
+        )
+    )
+    return translations
+
+
 def get_translations(**qs_filters):
     """
     Prefetch translations with fields required for bulk_run_checks
     """
     translations = (
-        Translation.objects
+        prefetch_translations()
         .filter(
             entity__resource__format__in=DB_FORMATS,
             **qs_filters
-
-        )
-        .prefetch_related(
-            'entity',
-            'entity__resource__entities',
-            'locale',
         )
     )
     return translations

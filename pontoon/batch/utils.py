@@ -2,11 +2,11 @@ from django.utils import timezone
 
 from pontoon.base.models import (
     Entity,
-    Resource,
     Translation,
 )
 
 from pontoon.checks.libraries import run_checks
+from pontoon.checks.utils import prefetch_translations
 
 from fluent.syntax import (
     ast,
@@ -84,20 +84,15 @@ def find_and_replace(translations, find, replace, user):
     if translations.count() == 0:
         return translations, [], []
 
-    # Empty translations produced by replace are not allowed for all formats
-    forbidden = (
-        translations.filter(string=find)
-        .exclude(entity__resource__format__in=Resource.ASYMMETRIC_FORMATS)
-    )
-    if not replace and forbidden.exists():
-        raise Translation.NotAllowed
-
     # Create translations' clones and replace strings
     now = timezone.now()
     translations_to_create = []
     translations_with_errors = []
 
-    for translation in translations:
+    # To speed-up error checks, translations will prefetch additional fields
+    prefetched_translations = prefetch_translations().filter(pk__in=translations)
+
+    for translation in prefetched_translations:
         # Cache the old value to identify changed translations
         string = translation.string
         old_translation_pk = translation.pk
@@ -109,7 +104,7 @@ def find_and_replace(translations, find, replace, user):
 
         # Quit early if no changes are made
         if translation.string == string:
-            return
+            continue
 
         translation.pk = None  # Create new translation
         translation.user = translation.approved_user = user

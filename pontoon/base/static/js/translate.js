@@ -2399,7 +2399,7 @@ var Pontoon = (function (my) {
                 var itemsText = data.count === 1 ? 'string' : 'strings';
                 var actionText = action + 'd';
                 var invalidTranslationsCount = data['invalid_translation_count'] || 0;
-                var skippedText = '';
+                var failedText = '';
 
                 if (action === 'reject') {
                   itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
@@ -2407,10 +2407,10 @@ var Pontoon = (function (my) {
                 }
 
                 if (invalidTranslationsCount > 0) {
-                  skippedText = ', ' + invalidTranslationsCount + ' skipped (due to errors)';
+                  failedText = ', ' + invalidTranslationsCount + ' failed';
                 }
 
-                message = data.count + ' ' + itemsText + ' ' + actionText + skippedText;
+                message = data.count + ' ' + itemsText + ' ' + actionText + failedText;
 
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {

@@ -166,11 +166,11 @@ def batch_edit_translations(request):
     if action_status.get('error'):
         return JsonResponse(action_status)
 
-    invalid_translations_count = len(action_status.get('invalid_translation_pks', []))
+    invalid_translation_count = len(action_status.get('invalid_translation_pks', []))
     if action_status['count'] == 0:
         return JsonResponse({
             'count': 0,
-            'invalid_translation_count': invalid_translations_count,
+            'invalid_translation_count': invalid_translation_count,
         })
 
     update_stats(action_status['translated_resources'], entity, locale)
@@ -190,5 +190,5 @@ def batch_edit_translations(request):
 
     return JsonResponse({
         'count': action_status['count'],
-        'invalid_translation_count': invalid_translations_count,
+        'invalid_translation_count': invalid_translation_count,
     })
