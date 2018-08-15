@@ -506,6 +506,15 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
+    'intro': {
+        'source_filenames': (
+            'js/jquery-1.11.1.min.js',
+            'js/bootstrap.min.js',
+            'js/cbpAnimatedHeader.min.js',
+            'js/agency.js',
+        ),
+        'output_filename': 'js/intro.min.js',
+    },
     'homepage': {
         'source_filenames' : (
             'js/lib/fullpage.js',

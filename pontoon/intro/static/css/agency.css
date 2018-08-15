@@ -500,11 +500,6 @@ section h3.section-subheading {
     background-color: #FD5F60;
 }
 
-.timeline>li .timeline-image.link:hover {
-    background-color: #4FC4F6;
-    text-decoration: none;
-}
-
 .timeline>li .timeline-image h4 {
     margin-top: 26px;
     font-size: 13px;
@@ -691,12 +686,14 @@ aside.clients img {
 }
 
 footer {
+    background-color: #3F4752;
     font-size: 14px;
     padding: 25px 0;
     text-align: center;
 }
 
 footer span.copyright {
+    color: #FFFFFF;
     text-transform: uppercase;
     text-transform: none;
     line-height: 40px;
