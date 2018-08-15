@@ -831,6 +831,7 @@ class Locale(AggregatedStats):
 
         project_locales = list(
             self.project_locale.available()
+                .filter(project__system_project=False)
                 .prefetch_related('project', 'translators_group')
                 .order_by('project__name')
                 .values(
@@ -1023,15 +1024,6 @@ class Locale(AggregatedStats):
 
 
 class ProjectQuerySet(models.QuerySet):
-    def translable(self):
-        """
-        Translable projects are not disabled and have at least one
-        resource defined and are not system projects.
-        """
-        return self.filter(
-            disabled=False, resources__isnull=False,
-            system_project=False,
-        ).distinct()
 
     def available(self):
         """
@@ -1039,6 +1031,13 @@ class ProjectQuerySet(models.QuerySet):
         resource defined.
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
+
+    def visible(self):
+        """
+        Visible projects are not disabled and have at least one
+        resource defined and are not system projects.
+        """
+        return self.available().filter(system_project=False)
 
     def syncable(self):
         """
@@ -1116,6 +1115,11 @@ class Project(AggregatedStats):
         Prevent project from syncing with VCS.
     """)
 
+    system_project = models.BooleanField(default=False, help_text="""
+        System projects are built into Pontoon. They are accessible from the
+        translate view, but hidden from dashboards.
+    """)
+
     # Website for in place localization
     url = models.URLField("URL", blank=True)
     width = models.PositiveIntegerField(null=True, blank=True, help_text="""
@@ -1151,8 +1155,6 @@ class Project(AggregatedStats):
     )
 
     tags_enabled = models.BooleanField(default=True)
-
-    system_project = models.BooleanField(default=False)
 
     objects = ProjectQuerySet.as_manager()
 
@@ -1382,11 +1384,10 @@ class ExternalResource(models.Model):
 class ProjectLocaleQuerySet(models.QuerySet):
     def available(self):
         """
-        Available project locales belong to translable projects.
+        Available project locales belong to available projects.
         """
         return self.filter(
             project__disabled=False,
-            project__system_project=False,
             project__resources__isnull=False,
         ).distinct()
 

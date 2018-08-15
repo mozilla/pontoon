@@ -49,7 +49,7 @@ def ajax_projects(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
-        Project.objects.translable()
+        Project.objects.visible()
         .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_project_locale(locale)
         .order_by('name')
@@ -167,7 +167,7 @@ def request_projects(request, locale):
 
     # Validate projects
     project_list = (
-        Project.objects.translable()
+        Project.objects.visible()
         .filter(slug__in=slug_list, can_be_requested=True)
     )
     if not project_list:
