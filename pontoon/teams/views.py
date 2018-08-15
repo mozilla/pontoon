@@ -16,7 +16,7 @@ import bleach
 from guardian.decorators import permission_required_or_403
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, ProjectLocale
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 
@@ -25,6 +25,7 @@ def teams(request):
     """List all active localization teams."""
     locales = (
         Locale.objects.available()
+        .filter(pk__in=ProjectLocale.objects.visible().values_list('locale', flat=True))
         .prefetch_related('latest_translation__user')
     )
 
