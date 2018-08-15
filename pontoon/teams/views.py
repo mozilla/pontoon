@@ -94,7 +94,7 @@ def ajax_update_info(request, locale):
 @transaction.atomic
 def ajax_permissions(request, locale):
     locale = get_object_or_404(Locale, code=locale)
-    project_locales = locale.project_locale.available()
+    project_locales = locale.project_locale.visible()
 
     if request.method == 'POST':
         locale_form = forms.LocalePermsForm(

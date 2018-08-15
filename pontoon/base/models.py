@@ -830,8 +830,7 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.available()
-                .filter(project__system_project=False)
+            self.project_locale.visible()
                 .prefetch_related('project', 'translators_group')
                 .order_by('project__name')
                 .values(
@@ -1024,7 +1023,6 @@ class Locale(AggregatedStats):
 
 
 class ProjectQuerySet(models.QuerySet):
-
     def available(self):
         """
         Available projects are not disabled and have at least one
@@ -1382,13 +1380,14 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
-    def available(self):
+    def visible(self):
         """
-        Available project locales belong to available projects.
+        Visible project locales belong to visible projects.
         """
         return self.filter(
             project__disabled=False,
             project__resources__isnull=False,
+            project__system_project=False,
         ).distinct()
 
 
