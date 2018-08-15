@@ -25,7 +25,11 @@
 
         {% if not user.is_authenticated() %}
         <div class="sign-in-header">
+          {% if settings.DJANGO_LOGIN %}
+          <a href="{{ url('standalone_login') }}" class="button">Sign in</a>
+          {% else %}
           <a id="fxa-sign-in" href="{{ provider_login_url(request) }}" class="button">Sign in</a>
+          {% endif %}
         </div>
         {% endif %}
 
@@ -51,18 +55,13 @@
 
               {% if user.is_authenticated() %}
                 <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Settings</a></li>
-              {% endif %}
 
-              {% if settings.DJANGO_LOGIN %}
-                {% if user.is_authenticated() %}
-                  <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                {% if settings.DJANGO_LOGIN %}
+                <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% else %}
-                  <li id="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
+                <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% endif %}
-              {% else %}
-                {% if user.is_authenticated() %}
-                  <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
-                {% endif %}
+
               {% endif %}
             </ul>
           </div>
