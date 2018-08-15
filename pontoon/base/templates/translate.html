@@ -135,13 +135,13 @@
 
             {% if settings.DJANGO_LOGIN %}
               {% if user.is_authenticated() %}
-                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign Out</a></li>
+                <li class="standalone-sign-out"><a href="{{ url('standalone_logout') }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
               {% else %}
                 <li class="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
               {% endif %}
             {% else %}
               {% if user.is_authenticated() %}
-                <li class="sign-out"><a href="{{ url('account_logout') }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign Out</a></li>
+                <li class="sign-out"><a href="{{ url('account_logout') }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
               {% else %}
                 <li class="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
               {% endif %}
