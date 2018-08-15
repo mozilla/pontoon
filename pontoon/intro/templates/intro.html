@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Pontoon Intro">
+    <meta name="author" content="Mozilla">
+
+    <title data-l10n-id="title">Pontoon Intro</title>
+    <base target="_parent" />
+
+    {% stylesheet 'intro' %}
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top" data-l10n-id="navigation-title">Pontoon Intro</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#services" data-l10n-id="navigation-what">What</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about" data-l10n-id="navigation-how">How</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#portfolio" data-l10n-id="navigation-more">More</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#team" data-l10n-id="navigation-developers">Developers</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="wrapper">
+            <img src="{{ static('img/map-image.png') }}" alt="Map of the World">
+        </div>
+        <div class="container">
+            <div class="intro-text">
+                <div class="intro-lead-in" data-l10n-id="upper-title">Pontoon by Mozilla</div>
+                <div class="intro-heading">
+                    <div data-l10n-id="headline-1">Localize the web.</div>
+                    <div data-l10n-id="headline-2">In place.</div>
+                </div>
+                <a href="#services" class="page-scroll btn btn-xl" data-l10n-id="call-to-action">Tell Me More</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- What Section -->
+    <section id="services" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="what-title">What is Pontoon?</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="what-desc">Pontoon allows you to localize web content in place, with context and spatial limitations right in front of you.</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="icon-wrap">
+                        <img src="{{ static('img/what/fa-comments-o.png') }}" alt="Context icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="context">Understand context</h4>
+                    <p class="text-muted" data-l10n-id="context-desc">By localizing web page on the page itself, you no longer need to worry if the word you are translating is a verb or noun.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-wrap expand">
+                        <img src="{{ static('img/what/fa-expand.png') }}" alt="Spatial limitations icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="space">See spatial limitations</h4>
+                    <p class="text-muted" data-l10n-id="space-desc">Avoid breaking user interface by seeing how much space is available for your translations, which is especially useful with apps.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-wrap">
+                        <img src="{{ static('img/what/fa-eye.png') }}" alt="Preview icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="preview">Get instant preview</h4>
+                    <p class="text-muted" data-l10n-id="preview-desc">The moment you submit translation, it replaces the original text in the web page, making you the first proofreader and tester.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Section -->
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="how-title">How does it work?</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="how-desc">Pontoon is a very simple and intuitive tool that requires little to no technical skill for localizers to use.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="timeline">
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/1.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="hover">Hover</h4>
+                                    <h4 class="subheading" data-l10n-id="hover-sub">over web content</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="hover-desc">Move your mouse over headings, links, paragraphs or other text blocks on this page. A dashed rectangle will appear around each of these blocks, marking strings that are available for localization on the page itself.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/2.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="select">Select</h4>
+                                    <h4 class="subheading" data-l10n-id="select-sub">a text block</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="select-desc">A toolbar appears above the dashed rectangle, allowing you to select the corresponding text block for editing. To do so, either click on the Edit button in the toolbar, or double-click anywhere inside the dashed border.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/3.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="translate">Translate</h4>
+                                    <h4 class="subheading" data-l10n-id="translate-sub">selected text</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="translate-desc">When you enter editing mode, the entire text block will be selected. You can start typing your translation immediately while seeing the exact context of your source string and how much space is available for your translation.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/4.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="save">Save</h4>
+                                    <h4 class="subheading" data-l10n-id="save-sub">your translation</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="save-desc">As soon as you are happy with your translation, you can save it by pressing Enter or clicking the save icon in the toolbar. To quit translation mode without saving changes, press Esc or click the cancel icon in the toolbar.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" class="timeline-image link">
+                                <h4 data-l10n-id="profit">Learn more</h4>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- More Section -->
+    <section id="portfolio" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="more-title">What else can it do?</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="more-desc">Pontoon's in place translation mode is what puts it above others, but it also has many other benefits.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 portfolio-item">
+                    <img src="{{ static('img/more/1.jpg') }}" class="img-responsive" alt="Quality checks" icon>
+                    <div class="portfolio-caption">
+                        <h4 data-l10n-id="qa">Quality checks</h4>
+                        <p class="text-muted" data-l10n-id="qa-desc">Translations are automatically reviewed for quality before saving</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 portfolio-item">
+                    <img src="{{ static('img/more/2.jpg') }}" class="img-responsive" alt="Translation helpers icon">
+                    <div class="portfolio-caption">
+                        <h4 data-l10n-id="helpers">Translation helpers</h4>
+                        <p class="text-muted" data-l10n-id="helpers-desc">Get help from translation memory, machine translation and the likes</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 portfolio-item">
+                    <img src="{{ static('img/more/3.jpg') }}" class="img-responsive" alt="Plurals support icon">
+                    <div class="portfolio-caption">
+                        <h4 data-l10n-id="plurals">Plurals support</h4>
+                        <p class="text-muted" data-l10n-id="plurals-desc">Strings with plurals can be translated to all plural forms available in your languge</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developers Section -->
+    <section id="team">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="developers-title">Get involved</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="developers-desc">Are you a developer, interested in Pontoon? There are plenty of ways to get your hands dirty.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="{{ static('img/developers/1.png') }}" class="img-responsive img-circle" alt="Code block">
+                        <h4 data-l10n-id="implement">Enable it on your site</h4>
+                        <p class="text-muted" data-l10n-id="implement-desc">Add a script and you are halfway through</p>
+                        <ul class="list-inline social-buttons">
+                            <li>
+                                <a href="https://developer.mozilla.org/en-US/docs/Implementing_Pontoon_Mozilla">
+                                    <img src="{{ static('img/mozilla-dino.png') }}" alt="Mozilla dino icon">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="{{ static('img/developers/2.png') }}" class="img-responsive img-circle" alt="GitHub graphic">
+                        <h4 data-l10n-id="github">Hack it on GitHub</h4>
+                        <p class="text-muted" data-l10n-id="github-desc">It's completely free and open source</p>
+                        <ul class="list-inline social-buttons">
+                            <li>
+                                <a href="https://github.com/mozilla/pontoon">
+                                    <img src="{{ static('img/github.png') }}" alt="GitHub icon">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="{{ static('img/developers/3.png') }}" class="img-responsive img-circle" alt="Foxy">
+                        <h4 data-l10n-id="by-mozilla">By someone you trust</h4>
+                        <p class="text-muted" data-l10n-id="by-mozilla-desc">Developed by the non-profit behind Firefox</p>
+                        <ul class="list-inline social-buttons">
+                            <li>
+                                <a href="https://www.mozilla.org/" class="mozilla">
+                                    <img src="{{ static('img/mozilla-dino.png') }}" alt="Mozilla dino icon">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <span class="copyright" data-l10n-id="author">Crafted by Mozilla</span>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-inline social-buttons">
+                        <li>
+                            <a href="https://twitter.com/firefox">
+                                <img src="{{ static('img/twitter.png') }}" alt="Twitter icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/Firefox">
+                                <img src="{{ static('img/facebook.png') }}" alt="Firefox icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/firefoxchannel">
+                                <img src="{{ static('img/youtube.png') }}" alt="Youtube icon">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-inline quicklinks">
+                        <li><a href="https://www.mozilla.org/contribute/" data-l10n-id="join-us">Join us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="{{ static('js/jquery-1.11.1.min.js') }}"></script>
+
+    <!-- Enable localization with Pontoon -->
+    <script src="{{ settings.SITE_URL + '/pontoon.js' }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ static('js/bootstrap.min.js') }}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{{ static('js/cbpAnimatedHeader.min.js') }}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{{ static('js/agency.js') }}"></script>
+</body>
+
+</html>
