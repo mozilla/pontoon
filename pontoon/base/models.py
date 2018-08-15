@@ -911,6 +911,7 @@ class Locale(AggregatedStats):
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
+            resource__project__system_project=False,
             locale=self
         ).aggregate_stats(self)
 
