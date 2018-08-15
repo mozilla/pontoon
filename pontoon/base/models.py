@@ -557,6 +557,15 @@ class LocaleQuerySet(models.QuerySet):
         """
         return self.filter(translatedresources__isnull=True).distinct()
 
+    def visible(self):
+        """
+        Visible locales have at least one TranslatedResource defined from a non
+        system project.
+        """
+        return self.available().filter(
+            pk__in=ProjectLocale.objects.visible().values_list('locale', flat=True)
+        )
+
     def available(self):
         """
         Available locales have at least one TranslatedResource defined.
