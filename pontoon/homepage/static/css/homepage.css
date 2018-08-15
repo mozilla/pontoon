@@ -182,6 +182,10 @@ h2 {
 /* Section-2 */
 
 /* Section-3 */
+#section-3 .content-wrapper {
+  opacity: 0;
+}
+
 #section-3 ol {
   counter-reset: item;
   list-style: none;
@@ -207,6 +211,30 @@ h2 {
   padding-top: 11px;
   text-align: center;
   width: 50px;
+}
+
+#section-3 .checkmark {
+  background-color: #7BC876;
+  border-radius: 100%;
+  width: 54px;
+  height: 39px;
+  font-size: 24px;
+  margin-right: 20px;
+  text-align: center;
+  padding-top: 15px;
+}
+
+#section-3 ol .flex {
+  align-items: center;
+  margin: 40px 0;
+}
+
+#section-3 .timeline {
+  margin-left: 40px;
+  width: 0px;
+  border-radius: 5px;
+  height: 100vh;
+  background-color: #FFFFFF;
 }
 
 /* Section-4 */
