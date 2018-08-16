@@ -189,8 +189,7 @@ h2 {
 #section-3 .timeline {
   margin-top: 40px;
   width: 2px;
-  height: 0px;
-  border-radius: 5px;
+  height: 290px;
   background-color: #7BC876;
 }
 
@@ -198,7 +197,6 @@ h2 {
   counter-reset: item;
   list-style: none;
   margin-left: -28px;
-  z-index: 3;
 }
 
 #section-3 ol .flex {
@@ -206,6 +204,7 @@ h2 {
 }
 
 #section-3 li {
+  color: #DDDDDD;
   counter-increment: item;
   margin: 40px 0;
 }
@@ -226,44 +225,7 @@ h2 {
   width: 50px;
 }
 
-#section-3 .second:before {
-  opacity: 0;
-  -webkit-animation: fadein 2s linear 2.3s 1 forwards;
-  animation: fadein 2s linear 2.3s 1 forwards;
-}
-
-@-webkit-keyframes fadein {
-  from {opacity: 0;}
-  to {opacity: 100;}
-}
-
-@keyframes fadein {
-  from {opacity: 0;}
-  to {opacity: 100;}
-}
-
-#section-3 .third:before {
-  opacity: 0;
-  -webkit-animation: fadein 2s linear 3s 1 forwards;
-  animation: fadein 2s linear 3s 1 forwards;
-}
-
-@-webkit-keyframes fadein {
-  from {opacity: 0;}
-  to {opacity: 100;}
-}
-
-@keyframes fadein {
-  from {opacity: 0;}
-  to {opacity: 100;}
-}
-
-#section-3 .flex::before {
-  opacity: 0;
-}
-
 #section-3 .checkmark {
-  opacity: 0;
   background-color: #7BC876;
   border-radius: 100%;
   width: 54px;
@@ -273,7 +235,6 @@ h2 {
   margin-right: 20px;
   text-align: center;
   padding-top: 15px;
-  z-index: 10;
 }
 
 /* Section-4 */

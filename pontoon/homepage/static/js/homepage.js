@@ -14,10 +14,6 @@
       if (destination.item.id === 'section-1' || destination.item.id === 'section-6') {
         $('body > header').css('background-color', 'transparent');
       }
-      else if (destination.item.id === 'section-3') {
-        $('#section-3 .timeline').animate({height:"290px"},3000);
-        $('#section-3 .checkmark').delay(1900).animate({opacity:100},1700);
-      }
     },
   });
 })();
