@@ -203,7 +203,6 @@ h2 {
 
 #section-3 ol .flex {
   align-items: center;
-  margin: 40px 0;
 }
 
 #section-3 li {
@@ -227,6 +226,42 @@ h2 {
   width: 50px;
 }
 
+#section-3 .second:before {
+  opacity: 0;
+  -webkit-animation: fadein 2s linear 2s 1 forwards;
+  animation: fadein 2s linear 2s 1 forwards;
+}
+
+@-webkit-keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 100;}
+}
+
+@keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 100;}
+}
+
+#section-3 .third:before {
+  opacity: 0;
+  -webkit-animation: fadein 2s linear 2.7s 1 forwards;
+  animation: fadein 2s linear 2.7s 1 forwards;
+}
+
+@-webkit-keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 100;}
+}
+
+@keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 100;}
+}
+
+#section-3 .flex::before {
+  content: '';
+}
+
 #section-3 .checkmark {
   opacity: 0;
   background-color: #7BC876;
@@ -234,9 +269,11 @@ h2 {
   width: 54px;
   height: 39px;
   font-size: 24px;
+  margin-left: -74px;
   margin-right: 20px;
   text-align: center;
   padding-top: 15px;
+  z-index: 10;
 }
 
 /* Section-4 */
