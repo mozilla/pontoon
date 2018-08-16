@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'pontoon.teams',
     'pontoon.tour',
     'pontoon.translate',
+    'pontoon.homepage',
 
     # Django contrib apps
     'django.contrib.admin',
@@ -373,6 +374,13 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/terms.min.css',
     },
+    'homepage': {
+        'source_filenames': (
+            'css/fullpage.css',
+            'css/homepage.css',
+        ),
+        'output_filename': 'css/homepage.min.css'
+    },
     'tour': {
         'source_filenames': (
             'js/lib/sideshow/fonts/sideshow-fontface.min.css',
@@ -497,6 +505,13 @@ PIPELINE_JS = {
             'js/machinery.js',
         ),
         'output_filename': 'js/machinery.min.js',
+    },
+    'homepage': {
+        'source_filenames' : (
+            'js/lib/fullpage.js',
+            'js/homepage.js'
+        ),
+        'output_filename' : 'js/homepage.min.js',
     },
     'tour': {
         'source_filenames': (
