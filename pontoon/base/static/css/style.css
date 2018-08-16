@@ -952,6 +952,27 @@ header nav .right {
   float: right;
 }
 
+header nav .right .sign-in-header {
+  display: inline-block;
+  vertical-align: bottom;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+header nav .right .sign-in-header .button {
+  border: 1.75px solid #7BC176;
+  color: white;
+  border-radius: 2px;
+  padding: 10px 25px;
+  text-align: center;
+  transition-duration: 0.4s;
+  margin-right: 16px;
+}
+
+header nav .right .sign-in-header .button:hover {
+    background-color: #7BC176;
+}
+
 header .select .menu {
   bottom: auto;
   top: 60px;
@@ -1164,7 +1185,6 @@ header .right .select .menu {
 
 #profile .menu {
   line-height: 18px;
-  padding-top: 0;
   width: 250px;
 }
 
@@ -1201,10 +1221,6 @@ nav .links li {
 
 .links li.hidden {
   display: none;
-}
-
-.links li#sign-in {
-  font-weight: 300;
 }
 
 .links li a:link,

@@ -11,7 +11,7 @@
 
   <div class="container">
     <nav>
-      <a href="{{ url('pontoon.home') }}" class="logo"><img src="{{ static('img/logo.svg') }}" width="32" height="32"></a>
+      <a href="{{ url('pontoon.homepage') }}" class="logo"><img src="{{ static('img/logo.svg') }}" width="32" height="32"></a>
 
       <ul class="links">
         <li><a href="{{ url('pontoon.teams') }}">Teams</a></li>
@@ -23,6 +23,16 @@
       <div class="right">
         {{ Notifications.menu() }}
 
+        {% if not user.is_authenticated() %}
+        <div class="sign-in-header">
+          {% if settings.DJANGO_LOGIN %}
+          <a href="{{ url('standalone_login') }}" class="button">Sign in</a>
+          {% else %}
+          <a id="fxa-sign-in" href="{{ provider_login_url(request) }}" class="button">Sign in</a>
+          {% endif %}
+        </div>
+        {% endif %}
+
         <div id="profile" class="select">
           {{ Profile.button() }}
           <div class="menu">
@@ -32,7 +42,9 @@
               <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
               <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
+              {% if user.is_authenticated() %}
               <li class="horizontal-separator"></li>
+              {% endif %}
 
               {% if perms.base.can_manage_project %}
               <li><a href="{{ url('pontoon.admin') }}"><i class="fa fa-wrench fa-fw"></i>Admin</a></li>
@@ -43,20 +55,13 @@
 
               {% if user.is_authenticated() %}
                 <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Settings</a></li>
-              {% endif %}
 
-              {% if settings.DJANGO_LOGIN %}
-                {% if user.is_authenticated() %}
-                  <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                {% if settings.DJANGO_LOGIN %}
+                <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% else %}
-                  <li id="standalone-signin"><a href="{{ url('standalone_login') }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
+                <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% endif %}
-              {% else %}
-                {% if user.is_authenticated() %}
-                  <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
-                {% else %}
-                  <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url(request) }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
-                {% endif %}
+
               {% endif %}
             </ul>
           </div>

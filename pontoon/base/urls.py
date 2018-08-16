@@ -4,9 +4,6 @@ from django.views.generic import RedirectView, TemplateView
 import views
 
 urlpatterns = [
-    # Home
-    url(r'^$', views.home, name='pontoon.home'),
-
     # Terms
     url(r'^terms/$',
         TemplateView.as_view(template_name='terms.html'),
