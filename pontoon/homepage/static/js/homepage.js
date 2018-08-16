@@ -16,7 +16,7 @@
       }
       else if (destination.item.id === 'section-3') {
         $('#section-3 .timeline').animate({height:"290px"},3000);
-        $('#section-3 .checkmark').delay(2000).animate({opacity:100},2000);
+        $('#section-3 .checkmark').delay(1900).animate({opacity:100},1700);
       }
     },
   });

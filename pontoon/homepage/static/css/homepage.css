@@ -228,8 +228,8 @@ h2 {
 
 #section-3 .second:before {
   opacity: 0;
-  -webkit-animation: fadein 2s linear 2s 1 forwards;
-  animation: fadein 2s linear 2s 1 forwards;
+  -webkit-animation: fadein 2s linear 2.3s 1 forwards;
+  animation: fadein 2s linear 2.3s 1 forwards;
 }
 
 @-webkit-keyframes fadein {
@@ -244,8 +244,8 @@ h2 {
 
 #section-3 .third:before {
   opacity: 0;
-  -webkit-animation: fadein 2s linear 2.7s 1 forwards;
-  animation: fadein 2s linear 2.7s 1 forwards;
+  -webkit-animation: fadein 2s linear 3s 1 forwards;
+  animation: fadein 2s linear 3s 1 forwards;
 }
 
 @-webkit-keyframes fadein {
@@ -259,7 +259,7 @@ h2 {
 }
 
 #section-3 .flex::before {
-  content: '';
+  opacity: 0;
 }
 
 #section-3 .checkmark {
