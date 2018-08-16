@@ -12,6 +12,11 @@
   font-family: sans-serif;
 }
 
+.sideshow-step-description .sideshow-step-text a {
+  color: #F36;
+  font-weight: 400;
+}
+
 .sideshow-subject-arrow {
   color: #F36;
 }

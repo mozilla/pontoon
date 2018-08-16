@@ -117,8 +117,9 @@ INSTALLED_APPS = (
     'pontoon.machinery',
     'pontoon.projects',
     'pontoon.sync',
-    'pontoon.teams',
     'pontoon.tags',
+    'pontoon.teams',
+    'pontoon.tour',
     'pontoon.translate',
 
     # Django contrib apps
@@ -375,7 +376,7 @@ PIPELINE_CSS = {
     'tour': {
         'source_filenames': (
             'js/lib/sideshow/fonts/sideshow-fontface.min.css',
-            'js/lib/sideshow/stylesheets/sideshow.min.css',
+            'js/lib/sideshow/stylesheets/sideshow.css',
             'css/tour.css',
         ),
         'output_filename': 'css/tour.min.css',
