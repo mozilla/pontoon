@@ -34,6 +34,7 @@ def create_tutorial_project(apps, schema_editor):
         data_source='database',
         can_be_requested=False,
         sync_disabled=True,
+        system_project=True,
         info=(
             'A tutorial project, used as a testing playground and for the '
             'guided tour.'
@@ -89,10 +90,6 @@ def create_tutorial_project(apps, schema_editor):
     project.total_strings = len(new_strings) * len(locales)
     project.save(update_fields=['total_strings'])
 
-    for locale in locales:
-        locale.total_strings = F('total_strings') + len(new_strings)
-        locale.save(update_fields=['total_strings'])
-
 
 def remove_tutorial_project(apps, schema_editor):
     Project = apps.get_model('base', 'Project')
@@ -102,22 +99,6 @@ def remove_tutorial_project(apps, schema_editor):
     except Project.DoesNotExist:
         return
 
-    # Update Locale stats
-    ProjectLocale = apps.get_model('base', 'ProjectLocale')
-    for locale in project.locales.all():
-        project_locale = ProjectLocale.objects.get(project=project, locale=locale)
-        locale.total_strings = F('total_strings') - project_locale.total_strings
-        locale.approved_strings = F('approved_strings') - project_locale.approved_strings
-        locale.fuzzy_strings = F('fuzzy_strings') - project_locale.fuzzy_strings
-        locale.unreviewed_strings = F('unreviewed_strings') - project_locale.unreviewed_strings
-        locale.save(update_fields=[
-            'total_strings',
-            'approved_strings',
-            'fuzzy_strings',
-            'unreviewed_strings',
-        ])
-
-    # Delete Project model and related models in cascade
     project.delete()
 
 class Migration(migrations.Migration):
