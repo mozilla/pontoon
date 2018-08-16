@@ -37,8 +37,13 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
+    count = locale.project_set.visible().count()
+
+    if not count:
+        raise Http404
 
     return render(request, 'teams/team.html', {
+        'count': count,
         'locale': locale,
     })
 

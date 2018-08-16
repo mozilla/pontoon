@@ -78,7 +78,7 @@
           'Projects',
           url('pontoon.teams.team', locale.code),
           is_active = (current_page == ''),
-          count = locale.project_set.visible().count()
+          count = count
         )
       }}
       {{ Menu.item(
