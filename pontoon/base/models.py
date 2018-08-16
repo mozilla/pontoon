@@ -557,6 +557,15 @@ class LocaleQuerySet(models.QuerySet):
         """
         return self.filter(translatedresources__isnull=True).distinct()
 
+    def visible(self):
+        """
+        Visible locales have at least one TranslatedResource defined from a non
+        system project.
+        """
+        return self.available().filter(
+            pk__in=ProjectLocale.objects.visible().values_list('locale', flat=True)
+        )
+
     def available(self):
         """
         Available locales have at least one TranslatedResource defined.
@@ -830,7 +839,7 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.available()
+            self.project_locale.visible()
                 .prefetch_related('project', 'translators_group')
                 .order_by('project__name')
                 .values(
@@ -911,6 +920,7 @@ class Locale(AggregatedStats):
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
+            resource__project__system_project=False,
             locale=self
         ).aggregate_stats(self)
 
@@ -1030,6 +1040,13 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
+    def visible(self):
+        """
+        Visible projects are not disabled and have at least one
+        resource defined and are not system projects.
+        """
+        return self.available().filter(system_project=False)
+
     def syncable(self):
         """
         Syncable projects are not disabled, don't have sync disabled and use
@@ -1104,6 +1121,11 @@ class Project(AggregatedStats):
 
     sync_disabled = models.BooleanField(default=False, help_text="""
         Prevent project from syncing with VCS.
+    """)
+
+    system_project = models.BooleanField(default=False, help_text="""
+        System projects are built into Pontoon. They are accessible from the
+        translate view, but hidden from dashboards.
     """)
 
     # Website for in place localization
@@ -1368,11 +1390,15 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
-    def available(self):
+    def visible(self):
         """
-        Available project locales belong to available projects.
+        Visible project locales belong to visible projects.
         """
-        return self.filter(project__disabled=False, project__resources__isnull=False).distinct()
+        return self.filter(
+            project__disabled=False,
+            project__resources__isnull=False,
+            project__system_project=False,
+        ).distinct()
 
 
 class ProjectLocale(AggregatedStats):
@@ -2777,10 +2803,11 @@ class TranslatedResource(AggregatedStats):
         )
 
         # Locale
-        locale.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
-        )
+        if not project.system_project:
+            locale.adjust_stats(
+                total_strings_diff, approved_strings_diff,
+                fuzzy_strings_diff, unreviewed_strings_diff
+            )
 
         # ProjectLocale
         project_locale = utils.get_object_or_none(
