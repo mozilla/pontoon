@@ -24,7 +24,6 @@ body > header.menu-opened {
 }
 
 .section {
-  background: #272A2F;
   color: #F4F4F4;
 }
 
@@ -33,6 +32,9 @@ body > header.menu-opened {
   background-repeat: no-repeat;
   background-size: cover;
   -webkit-background-size: cover;
+  position: fixed;
+  height: 100%;
+  width: 100%;
 }
 
 .section .container  {
@@ -243,7 +245,7 @@ h2 {
 }
 
 #section-4 .box {
-  border: 2px solid #333941;
+  border: 2px solid #4D5967;
   border-radius: 3px;
   margin-left: 20px;
   padding: 10px;

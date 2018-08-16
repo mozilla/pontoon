@@ -7,14 +7,6 @@
     licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
     navigation: true,
     navigationPosition: 'left',
-    onLeave: function() {
-      $('body > header').css('background-color', '#272A2F');
-    },
-    afterLoad: function(origin, destination) {
-      if (destination.item.id === 'section-1' || destination.item.id === 'section-6') {
-        $('body > header').css('background-color', 'transparent');
-      }
-    },
   });
 })();
 
