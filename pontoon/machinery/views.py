@@ -7,9 +7,6 @@ from six.moves.urllib.parse import quote
 
 from collections import defaultdict
 
-from caighdean import Translator
-from caighdean.exceptions import TranslationError
-
 from django import http
 from django.conf import settings
 from django.db import DataError
@@ -20,6 +17,19 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
+
+# caighdean depends on nltk which tries to download files when it is imported.
+# This is doomed to fail when you start Pontoon while offline. To let
+# developers work offline, we add a safety net here.
+try:
+    from caighdean import Translator
+    from caighdean.exceptions import TranslationError
+except LookupError:
+    if settings.DEV:
+        # Only use this trick if this is a development server.
+        Translator = TranslationError = None
+    else:
+        raise
 
 
 log = logging.getLogger(__name__)
@@ -141,6 +151,17 @@ def machine_translation_caighdean(request):
         text = entity.translation_set.get(locale__code='gd').string
     except Translation.DoesNotExist:
         return JsonResponse({})
+
+    if Translator is None:
+        # This can happen only if you start Pontoon while offline. See comments
+        # around the import of caighdean.
+        return http.HttpResponseServerError(
+            json.dumps({
+                'error': 500,
+                'message': 'Caighdean is unavailable offline',
+            }),
+            content_type='application/json',
+        )
 
     try:
         translation = Translator().translate(text)
