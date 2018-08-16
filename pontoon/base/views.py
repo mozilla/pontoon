@@ -608,8 +608,8 @@ def update_translation(request):
     except UserProfile.DoesNotExist as error:
         use_ttk_checks = True
 
-    # Disable checks for demo project.
-    if project.slug == 'demo':
+    # Disable checks for tutorial project.
+    if project.slug == 'tutorial':
         use_ttk_checks = False
 
     now = timezone.now()
@@ -739,20 +739,6 @@ def update_translation(request):
             'translation': t.serialize(),
             'stats': TranslatedResource.objects.stats(project, paths, locale),
         })
-
-
-@utils.require_AJAX
-@require_POST
-def update_tour_status(request):
-    """Update User tour Status."""
-    form = forms.UserTourStatusForm(
-        request.POST,
-        instance=request.user.profile,
-    )
-    if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json())
-    form.save()
-    return HttpResponse('ok')
 
 
 @require_POST

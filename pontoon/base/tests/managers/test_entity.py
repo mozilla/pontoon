@@ -275,7 +275,7 @@ def test_mgr_entity_filter_missing(resource_a, locale_a):
         entity=entities[2],
     )
     assert (
-        set(Entity.objects.filter(
+        set(resource_a.entities.filter(
             Entity.objects.missing(locale_a)
         )) == {entities[1]}
     )
@@ -312,7 +312,7 @@ def test_mgr_entity_filter_partially_translated_plurals(resource_a, locale_a):
         approved=True,
     )
     assert (
-        set(Entity.objects.filter(
+        set(resource_a.entities.filter(
             Entity.objects.missing(locale_a)
         )) == {entities[1], entities[2]}
     )
@@ -417,7 +417,7 @@ def test_mgr_entity_filter_missing_plural(resource_a, locale_a):
         plural_form=1,
     )
     assert (
-        set(Entity.objects.filter(
+        set(resource_a.entities.filter(
             Entity.objects.missing(locale_a)
         )) == {entities[1]}
     )
@@ -790,12 +790,12 @@ def test_lookup_collation(resource_a, locale_a):
     # Check if 'Iı' and 'İi' are appropriately distinguished and filtered
     # according to turkish(tr_tr) collation
     assert (
-        set(Entity.objects.filter(
+        set(resource_a.entities.filter(
             string__icontains_collate=(u'string', 'tr_tr')
         )) == set([entities[n] for n in [0, 1]] + [entity])
     )
     assert (
-        set(Entity.objects.filter(
+        set(resource_a.entities.filter(
             comment__icontains_collate=(u'strİng', 'tr_tr')
         )) == set([entities[n] for n in [1, 2]])
     )
