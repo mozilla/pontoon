@@ -28,6 +28,9 @@ def teams(request):
         .prefetch_related('latest_translation__user')
     )
 
+    if not locales:
+        raise Http404
+
     return render(request, 'teams/teams.html', {
         'locales': locales,
         'top_instances': locales.get_top_instances(),
