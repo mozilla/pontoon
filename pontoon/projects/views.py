@@ -27,6 +27,9 @@ def projects(request):
         .order_by('name')
     )
 
+    if not projects:
+        raise Http404
+
     return render(request, 'projects/projects.html', {
         'projects': projects,
         'top_instances': projects.get_top_instances(),
