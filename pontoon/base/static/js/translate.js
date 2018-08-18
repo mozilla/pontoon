@@ -1956,7 +1956,8 @@ var Pontoon = (function (my) {
         }
 
         // Tab: Select suggestions
-        if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey) {
+        if (!$('.menu').is(':visible') && key === 9 && !e.ctrlKey && !$("body").hasClass("tour")) {
+
 
           // Rich FTL editor with complex message and last element not focused: ignore tab key
           if (
