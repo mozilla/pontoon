@@ -4,9 +4,9 @@ from pontoon.base.models import (
     Entity,
     Translation,
 )
+from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import prefetch_translations
 
 from fluent.syntax import (
     ast,
@@ -90,9 +90,11 @@ def find_and_replace(translations, find, replace, user):
     translations_with_errors = []
 
     # To speed-up error checks, translations will prefetch additional fields
-    prefetched_translations = prefetch_translations().filter(pk__in=translations)
+    translations = (
+        translations.for_checks(only_db_formats=False)
+    )
 
-    for translation in prefetched_translations:
+    for translation in translations:
         # Cache the old value to identify changed translations
         string = translation.string
         old_translation_pk = translation.pk
@@ -115,13 +117,16 @@ def find_and_replace(translations, find, replace, user):
         translation.rejected_user = None
         translation.fuzzy = False
 
-        errors = run_checks(
-            translation.entity,
-            translation.locale.code,
-            translation.entity.string,
-            translation.string,
-            use_tt_checks=False,
-        )
+        if translation.entity.resource.format in DB_FORMATS:
+            errors = run_checks(
+                translation.entity,
+                translation.locale.code,
+                translation.entity.string,
+                translation.string,
+                use_tt_checks=False,
+            )
+        else:
+            errors = {}
 
         if errors:
             translations_with_errors.append(old_translation_pk)

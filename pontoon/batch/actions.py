@@ -139,21 +139,16 @@ def replace_translations(form, user, translations, locale):
     replace = form.cleaned_data['replace']
     latest_translation_pk = None
 
-    try:
-        old_translations, changed_translations, invalid_translation_pks = utils.find_and_replace(
-            translations,
-            find,
-            replace,
-            user
-        )
-        changed_translation_pks = [c.pk for c in changed_translations]
+    old_translations, changed_translations, invalid_translation_pks = utils.find_and_replace(
+        translations,
+        find,
+        replace,
+        user
+    )
+    changed_translation_pks = [c.pk for c in changed_translations]
 
-        if changed_translation_pks:
-            latest_translation_pk = max(changed_translation_pks)
-    except Translation.NotAllowed:
-        return {
-            'error': 'Empty translations not allowed',
-        }
+    if changed_translation_pks:
+        latest_translation_pk = max(changed_translation_pks)
 
     # Unapprove old translations
     old_translations.update(
