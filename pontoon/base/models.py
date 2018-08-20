@@ -31,6 +31,7 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.checks import DB_FORMATS
 from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
     get_revision,
@@ -2374,10 +2375,6 @@ def extra_default():
     return {}
 
 
-class TranslationNotAllowed(Exception):
-    """Raised when submitted Translation cannot be saved."""
-
-
 class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         return TranslatedResource.objects.filter(
@@ -2421,6 +2418,29 @@ class TranslationQuerySet(models.QuerySet):
             ])
         return data
 
+    def for_checks(self, only_db_formats=True):
+        """
+        Return an optimized queryset for `checks`-related functions.
+        :arg bool only_db_formats: filter translations by formats supported by checks.
+        """
+        translations = (
+            self
+            .prefetch_related(
+                'entity__resource__entities',
+                'locale',
+            )
+        )
+
+        if only_db_formats:
+            translations = (
+                translations
+                .filter(
+                    entity__resource__format__in=DB_FORMATS,
+                )
+            )
+
+        return translations
+
 
 @python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
@@ -2457,7 +2477,6 @@ class Translation(DirtyFieldsMixin, models.Model):
     entity_document = models.TextField(blank=True)
 
     objects = TranslationQuerySet.as_manager()
-    NotAllowed = TranslationNotAllowed
 
     # extra stores data that we want to save for the specific format
     # this translation is stored in, but that we otherwise don't care
