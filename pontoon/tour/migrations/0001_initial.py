@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from django.db.models import F
 
 
 DEMO_PROJECT_CONTENT = """
@@ -14,7 +13,7 @@ In this sentence, click the dot-dot-dot at the end…
 Nice! The "placeable" has been automatically pasted to your translation.
 There are <b>different</b> %(types)s of placeables and you usually don't need to translate them.
 If a string has a lot of placeables, we have another trick for you.
-<strong><a href="%(test)s">Click the Copy button</a> just <em>bellow</em> the translation input.</strong>
+<strong><a href="%(test)s">Click the Copy button</a> just <em>below</em> the translation input.</strong>
 The entire string is copied, and you just translate in-between placeables. Convenient, right?
 In the next string, click the Machinery tab.
 The quick brown fox jumps over the lazy dog.
@@ -100,6 +99,7 @@ def remove_tutorial_project(apps, schema_editor):
         return
 
     project.delete()
+
 
 class Migration(migrations.Migration):
 
