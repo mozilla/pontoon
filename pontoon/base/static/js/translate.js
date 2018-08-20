@@ -2398,13 +2398,19 @@ var Pontoon = (function (my) {
               if ('count' in data) {
                 var itemsText = data.count === 1 ? 'string' : 'strings';
                 var actionText = action + 'd';
+                var invalidTranslationsCount = data['invalid_translation_count'] || 0;
+                var failedText = '';
 
                 if (action === 'reject') {
                   itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
                   actionText = 'rejected';
                 }
 
-                message = data.count + ' ' + itemsText + ' ' + actionText;
+                if (invalidTranslationsCount > 0) {
+                  failedText = ', ' + invalidTranslationsCount + ' failed';
+                }
+
+                message = data.count + ' ' + itemsText + ' ' + actionText + failedText;
 
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {

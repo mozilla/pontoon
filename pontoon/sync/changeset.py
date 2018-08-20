@@ -14,7 +14,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry
 )
 from pontoon.base.utils import match_attr
-from pontoon.checks import utils as checks_utils
+from pontoon.checks.utils import bulk_run_checks
 
 log = logging.getLogger(__name__)
 
@@ -415,10 +415,10 @@ class ChangeSet(object):
         """
         changed_pks = {t.pk for t in self.changed_translations}
 
-        checks_utils.bulk_run_checks(
-            checks_utils.get_translations(
-                pk__in=changed_pks
-            )
+        bulk_run_checks(
+            Translation.objects
+            .for_checks()
+            .filter(pk__in=changed_pks)
         )
 
         valid_translations = set(

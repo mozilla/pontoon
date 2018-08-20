@@ -2,9 +2,11 @@ from django.utils import timezone
 
 from pontoon.base.models import (
     Entity,
-    Resource,
     Translation,
 )
+from pontoon.checks import DB_FORMATS
+
+from pontoon.checks.libraries import run_checks
 
 from fluent.syntax import (
     ast,
@@ -80,22 +82,22 @@ def find_and_replace(translations, find, replace, user):
 
     # No matches found
     if translations.count() == 0:
-        return translations, []
-
-    # Empty translations produced by replace are not allowed for all formats
-    forbidden = (
-        translations.filter(string=find)
-        .exclude(entity__resource__format__in=Resource.ASYMMETRIC_FORMATS)
-    )
-    if not replace and forbidden.exists():
-        raise Translation.NotAllowed
+        return translations, [], []
 
     # Create translations' clones and replace strings
     now = timezone.now()
     translations_to_create = []
+    translations_with_errors = []
+
+    # To speed-up error checks, translations will prefetch additional fields
+    translations = (
+        translations.for_checks(only_db_formats=False)
+    )
+
     for translation in translations:
         # Cache the old value to identify changed translations
         string = translation.string
+        old_translation_pk = translation.pk
 
         if translation.entity.resource.format == 'ftl':
             translation.string = ftl_find_and_replace(string, find, replace)
@@ -104,7 +106,7 @@ def find_and_replace(translations, find, replace, user):
 
         # Quit early if no changes are made
         if translation.string == string:
-            return
+            continue
 
         translation.pk = None  # Create new translation
         translation.user = translation.approved_user = user
@@ -114,11 +116,35 @@ def find_and_replace(translations, find, replace, user):
         translation.rejected_date = None
         translation.rejected_user = None
         translation.fuzzy = False
-        translations_to_create.append(translation)
+
+        if translation.entity.resource.format in DB_FORMATS:
+            errors = run_checks(
+                translation.entity,
+                translation.locale.code,
+                translation.entity.string,
+                translation.string,
+                use_tt_checks=False,
+            )
+        else:
+            errors = {}
+
+        if errors:
+            translations_with_errors.append(old_translation_pk)
+        else:
+            translations_to_create.append(translation)
+
+    if translations_with_errors:
+        translations = translations.exclude(
+            pk__in=translations_with_errors
+        )
 
     # Create new translations
     changed_translations = Translation.objects.bulk_create(
-        translations_to_create
+        translations_to_create,
     )
 
-    return translations, changed_translations
+    return (
+        translations,
+        changed_translations,
+        translations_with_errors,
+    )
