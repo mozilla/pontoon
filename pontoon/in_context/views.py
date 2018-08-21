@@ -3,5 +3,5 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 
 @xframe_options_sameorigin
-def intro(request):
-    return render(request, 'intro.html')
+def in_context(request):
+    return render(request, 'in_context.html')

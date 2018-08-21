@@ -112,7 +112,7 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.contributors',
     'pontoon.checks',
-    'pontoon.intro',
+    'pontoon.in_context',
     'pontoon.localizations',
     'pontoon.machinery',
     'pontoon.projects',
@@ -361,12 +361,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/contributors.min.css',
     },
-    'intro': {
+    'in_context': {
         'source_filenames': (
             'css/bootstrap.min.css',
             'css/agency.css',
         ),
-        'output_filename': 'css/intro.min.css',
+        'output_filename': 'css/in_context.min.css',
     },
     'terms': {
         'source_filenames': (
@@ -506,14 +506,14 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/machinery.min.js',
     },
-    'intro': {
+    'in_context': {
         'source_filenames': (
             'js/jquery-1.11.1.min.js',
             'js/bootstrap.min.js',
             'js/cbpAnimatedHeader.min.js',
             'js/agency.js',
         ),
-        'output_filename': 'js/intro.min.js',
+        'output_filename': 'js/in_context.min.js',
     },
     'homepage': {
         'source_filenames' : (
