@@ -21,7 +21,7 @@ def check_translations(self, translations_pks):
 
     with transaction.atomic():
         translations = (
-            Translation.object
+            Translation.objects
             .for_checks()
             .filter(pk__in=translations_pks)
         )
