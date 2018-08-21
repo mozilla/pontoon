@@ -1,5 +1,4 @@
 import logging
-import time
 
 from celery import shared_task
 
@@ -17,8 +16,6 @@ def check_translations(self, translations_pks):
     Run checks on translations
     :arg list[int] translations_pks: list of primary keys for translations that should be processed
     """
-    start_time = time.time()
-
     with transaction.atomic():
         translations = (
             Translation.objects
@@ -28,10 +25,9 @@ def check_translations(self, translations_pks):
 
         warnings, errors = bulk_run_checks(translations)
 
-        log.info("Task[{}]: Processed items: {}, Warnings({}) Errors({}) in {}".format(
+        log.info("Task: {}, Processed items: {}, Warnings: {}, Errors: {}".format(
             self.request.id,
             len(translations),
             len(warnings),
             len(errors),
-            time.time() - start_time
         ))
