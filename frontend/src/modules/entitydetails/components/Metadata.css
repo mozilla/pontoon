@@ -9,11 +9,11 @@
 .metadata li {
     margin: 8px 0;
 }
-.metadata span {
+.metadata .title {
     color: #888;
     text-transform: uppercase;
 }
-.metadata span:after {
+.metadata .title:after {
     content: ' ';
 }
 

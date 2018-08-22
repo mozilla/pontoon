@@ -1,0 +1,11 @@
+.screenshots {
+    float: right;
+    text-align: right;
+    width: 150px;
+}
+
+.screenshots img {
+    border: 1px solid #5E6475;
+    max-height: 100px;
+    max-width: 150px;
+}

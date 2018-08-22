@@ -23,7 +23,7 @@ export type DbEntity = {
     +comment: string,
     +path: string,
     +project: Object,
-    +source: Array<Array<string>>,
+    +source: Array<Array<string>> | Object,
     +translation: Array<Translation>,
 };
 
