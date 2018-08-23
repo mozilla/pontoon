@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Pontoon Intro">
+    <meta name="author" content="Mozilla">
+
+    <title data-l10n-id="title">Pontoon Intro</title>
+    <base target="_parent" />
+
+    {% stylesheet 'in_context' %}
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <a class="navbar-brand page-scroll" href="#page-top" data-l10n-id="navigation-title">Pontoon by Mozilla</a>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="wrapper">
+            <img src="{{ static('img/map-image.png') }}" alt="Map of the World">
+        </div>
+        <div class="container">
+            <div class="intro-text">
+                <div class="intro-lead-in" data-l10n-id="upper-title">In-context localization</div>
+                <div class="intro-heading">
+                    <div data-l10n-id="headline-1">Localize the web.</div>
+                    <div data-l10n-id="headline-2">In place.</div>
+                </div>
+                <a href="#services" class="page-scroll btn btn-xl" data-l10n-id="call-to-action">Tell Me More</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- What Section -->
+    <section id="services" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="what-title">What is in-context localization?</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="what-desc">It allows you to localize web content in place, with context and spatial limitations right in front of you.</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="icon-wrap">
+                        <img src="{{ static('img/what/fa-comments-o.png') }}" alt="Context icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="context">Understand context</h4>
+                    <p class="text-muted" data-l10n-id="context-desc">By localizing web page on the page itself, you no longer need to worry if the word you are translating is a verb or noun.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-wrap expand">
+                        <img src="{{ static('img/what/fa-expand.png') }}" alt="Spatial limitations icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="space">See spatial limitations</h4>
+                    <p class="text-muted" data-l10n-id="space-desc">Avoid breaking user interface by seeing how much space is available for your translations, which is especially useful with apps.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="icon-wrap">
+                        <img src="{{ static('img/what/fa-eye.png') }}" alt="Preview icon">
+                    </div>
+                    <h4 class="service-heading" data-l10n-id="preview">Get instant preview</h4>
+                    <p class="text-muted" data-l10n-id="preview-desc">The moment you submit translation, it replaces the original text in the web page, making you the first proofreader and tester.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Section -->
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" data-l10n-id="how-title">How does it work?</h2>
+                    <h3 class="section-subheading text-muted" data-l10n-id="how-desc">In-context localization is a very simple and intuitive tool that requires little to no technical skill for localizers to use.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="timeline">
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/1.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="hover">Hover</h4>
+                                    <h4 class="subheading" data-l10n-id="hover-sub">over web content</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="hover-desc">Move your mouse over headings, links, paragraphs or other text blocks on this page. A dashed rectangle will appear around each of these blocks, marking strings that are available for localization on the page itself.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/2.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="select">Select</h4>
+                                    <h4 class="subheading" data-l10n-id="select-sub">a text block</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="select-desc">A toolbar appears above the dashed rectangle, allowing you to select the corresponding text block for editing. To do so, either click on the Edit button in the toolbar, or double-click anywhere inside the dashed border.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/3.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="translate">Translate</h4>
+                                    <h4 class="subheading" data-l10n-id="translate-sub">selected text</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="translate-desc">When you enter editing mode, the entire text block will be selected. You can start typing your translation immediately while seeing the exact context of your source string and how much space is available for your translation.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="{{ static('img/how/4.png') }}" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 data-l10n-id="save">Save</h4>
+                                    <h4 class="subheading" data-l10n-id="save-sub">your translation</h4>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted" data-l10n-id="save-desc">As soon as you are happy with your translation, you can save it by pressing Enter or clicking the save icon in the toolbar. To quit translation mode without saving changes, press Esc or click the cancel icon in the toolbar.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <span class="timeline-image link">
+                                <h4 data-l10n-id="profit">That's it!</h4>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <span class="copyright" data-l10n-id="author">Crafted by Mozilla</span>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-inline social-buttons">
+                        <li>
+                            <a href="https://twitter.com/firefox">
+                                <img src="{{ static('img/twitter.png') }}" alt="Twitter icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/Firefox">
+                                <img src="{{ static('img/facebook.png') }}" alt="Firefox icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/firefoxchannel">
+                                <img src="{{ static('img/youtube.png') }}" alt="Youtube icon">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul class="list-inline quicklinks">
+                        <li><a href="https://www.mozilla.org/contribute/" data-l10n-id="join-us">Join us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="{{ static('js/lib/jquery-1.11.1.min.js') }}"></script>
+
+    <!-- Enable in-context localization with Pontoon -->
+    <script src="{{ settings.SITE_URL + '/pontoon.js' }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ static('js/bootstrap.min.js') }}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{{ static('js/cbpAnimatedHeader.min.js') }}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{{ static('js/agency.js') }}"></script>
+</body>
+
+</html>
