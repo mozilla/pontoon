@@ -24,10 +24,9 @@ Prerequisites
 Quickstart
 ----------
 
-1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository
-   recursively::
+1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository::
 
-     $ git clone --recursive https://github.com/YOUR-USERNAME/pontoon.git
+     $ git clone https://github.com/YOUR-USERNAME/pontoon.git
 
 
 2. From the root of the repository, run::

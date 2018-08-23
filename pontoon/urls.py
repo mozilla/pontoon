@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.generic import RedirectView, TemplateView
 
-from pontoon.intro.views import intro
 from pontoon.teams.views import team
 
 
@@ -71,9 +70,6 @@ urlpatterns = [
     # Django admin
     url(r'^a/', include(admin.site.urls)),
 
-    # Test project: Pontoon Intro
-    url(r'^intro/$', intro),
-
     # Logout
     url(r'^signout/$', logout, {'next_page': '/'}, name='signout'),
 
@@ -115,6 +111,7 @@ urlpatterns = [
     url(r'', include('pontoon.batch.urls')),
     url(r'', include('pontoon.api.urls')),
     url(r'', include('pontoon.homepage.urls')),
+    url(r'', include('pontoon.in_context.urls')),
 
     # Team page: Must be at the end
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/$', team, name='pontoon.teams.team'),
