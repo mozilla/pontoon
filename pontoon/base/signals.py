@@ -170,3 +170,29 @@ def assign_project_locale_group_permissions(sender, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Locale)
+def add_locale_to_system_projects(sender, instance, created, **kwargs):
+    """
+    Create ProjectLocale instances for system projects for newly added locales
+    """
+    if created:
+        projects = Project.objects.filter(system_project=True)
+        for project in projects:
+            ProjectLocale.objects.create(
+                project=project,
+                locale=instance,
+                total_strings=project.resources.all()[0].total_strings,
+            )
+            TranslatedResource.objects.create(
+                resource=project.resources.all()[0],
+                locale=instance,
+                total_strings=project.resources.all()[0].total_strings,
+            )
+
+            project.total_strings += project.resources.all()[0].total_strings
+            project.save(update_fields=['total_strings'])
+
+
+
