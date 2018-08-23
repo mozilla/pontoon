@@ -11,7 +11,7 @@ urlpatterns = [
         name='pontoon.in_context',
     ),
 
-    # Legacy: Redirect to /machinery
+    # Legacy: Redirect to /in-context
     url(
         r'^intro/$',
         RedirectView.as_view(pattern_name='pontoon.in_context', permanent=True),
