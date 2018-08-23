@@ -755,14 +755,16 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'partial', 'missing'
+     * Get entity status: 'translated', 'fuzzy', 'error', 'warning', 'partial', 'missing'
      *
      * entity Entity
      */
     getEntityStatus: function (entity) {
-      var translation = entity.translation,
-          translated = 0,
-          fuzzy = 0;
+      var translation = entity.translation;
+      var translated = 0;
+      var fuzzy = 0;
+      var errors = 0;
+      var warnings = 0;
 
       for (var i=0; i<translation.length; i++) {
         if (entity.translation[i].approved) {
@@ -771,13 +773,27 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
+        if (entity.translation[i].error_count) {
+          errors++;
+        }
+        if (entity.translation[i].warning_count) {
+          warnings++;
+        }
       }
 
-      if (i === translated) {
+      if (errors > 0) {
+        return 'error';
+      }
+      else if (warnings > 0) {
+        return 'warning';
+      }
+      else if (i === translated) {
         return 'translated';
-      } else if (i === fuzzy) {
+      }
+      else if (i === fuzzy) {
         return 'fuzzy';
-      } else if (translated > 0 || fuzzy > 0) {
+      }
+      else if (translated > 0 || fuzzy > 0) {
         return 'partial';
       }
       return 'missing';
@@ -2589,7 +2605,7 @@ var Pontoon = (function (my) {
       );
 
       entity.ui
-        .removeClass('translated fuzzy partial missing')
+        .removeClass('translated fuzzy error warning partial missing')
         .addClass(status)
         .toggleClass('has-translations', translation.pk !== null && !translation.rejected)
         .find('.translation-string')
