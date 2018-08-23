@@ -194,10 +194,20 @@
         </div>
     </footer>
 
-    {% javascript 'in_context' %}
+    <!-- jQuery -->
+    <script src="{{ static('js/lib/jquery-1.11.1.min.js') }}"></script>
 
     <!-- Enable in-context localization with Pontoon -->
     <script src="{{ settings.SITE_URL + '/pontoon.js' }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ static('js/bootstrap.min.js') }}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{{ static('js/cbpAnimatedHeader.min.js') }}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="{{ static('js/agency.js') }}"></script>
 </body>
 
 </html>
