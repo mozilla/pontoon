@@ -77,11 +77,11 @@ export default class Metadata extends React.Component<Props> {
     }
 
     renderSourceObject(source: Object): React.Node {
-        const examples = Object.keys(source).map((value, key) => {
-            if (source[value].example) {
-                return `$${value.toUpperCase()}$: ${source[value].example}`;
+        const examples = Object.keys(source).map(value => {
+            if (!source[value].example) {
+                return null;
             }
-            return null;
+            return `$${value.toUpperCase()}$: ${source[value].example}`;
         });
 
         if (!examples) {
