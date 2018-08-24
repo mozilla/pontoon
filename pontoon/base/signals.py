@@ -134,12 +134,23 @@ def create_project_locale_permissions_groups(sender, **kwargs):
 def assign_locale_group_permissions(sender, **kwargs):
     """
     After creation of locale, we have to assign translation and management
-    permissions to groups of translators and managers assigned to locale.
+    permissions to groups of translators and managers assigned to locale and
+    Create ProjectLocale instances for system projects for newly added locales
     """
     if kwargs['raw'] or not kwargs['created']:
         return
 
     instance = kwargs['instance']
+
+    projects = Project.objects.filter(system_project=True)
+    for project in projects:
+        ProjectLocale.objects.create(project=project, locale=instance)
+        for resource in project.resources.all():
+            translated_resource = TranslatedResource.objects.create(
+                resource=resource,
+                locale=instance,
+            )
+            translated_resource.calculate_stats()
 
     try:
         assign_group_permissions(instance, 'translators', ['can_translate_locale'])
@@ -170,29 +181,3 @@ def assign_project_locale_group_permissions(sender, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=Locale)
-def add_locale_to_system_projects(sender, instance, created, **kwargs):
-    """
-    Create ProjectLocale instances for system projects for newly added locales
-    """
-    if created:
-        projects = Project.objects.filter(system_project=True)
-        for project in projects:
-            ProjectLocale.objects.create(
-                project=project,
-                locale=instance,
-                total_strings=project.resources.all()[0].total_strings,
-            )
-            TranslatedResource.objects.create(
-                resource=project.resources.all()[0],
-                locale=instance,
-                total_strings=project.resources.all()[0].total_strings,
-            )
-
-            project.total_strings += project.resources.all()[0].total_strings
-            project.save(update_fields=['total_strings'])
-
-
-
