@@ -47,7 +47,8 @@ module.exports = {
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
         DIFF_DELETE: false,
-        ga: false
+        ga: false,
+        SyntheticInputEvent: false,
     },
     plugins: [
         'react',
@@ -60,6 +61,7 @@ module.exports = {
         "react/jsx-uses-react": 1,
         'react/jsx-uses-vars': 1,
         "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
+        "no-console": 1,
         "react/prefer-stateless-function": [1, {"ignorePureComponents": true}]
     },
 };

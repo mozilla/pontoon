@@ -112,13 +112,14 @@ INSTALLED_APPS = (
     'pontoon.base',
     'pontoon.contributors',
     'pontoon.checks',
-    'pontoon.intro',
+    'pontoon.in_context',
     'pontoon.localizations',
     'pontoon.machinery',
     'pontoon.projects',
     'pontoon.sync',
-    'pontoon.teams',
     'pontoon.tags',
+    'pontoon.teams',
+    'pontoon.tour',
     'pontoon.translate',
     'pontoon.homepage',
 
@@ -360,12 +361,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/contributors.min.css',
     },
-    'intro': {
+    'in_context': {
         'source_filenames': (
             'css/bootstrap.min.css',
             'css/agency.css',
         ),
-        'output_filename': 'css/intro.min.css',
+        'output_filename': 'css/in_context.min.css',
     },
     'terms': {
         'source_filenames': (
@@ -383,7 +384,7 @@ PIPELINE_CSS = {
     'tour': {
         'source_filenames': (
             'js/lib/sideshow/fonts/sideshow-fontface.min.css',
-            'js/lib/sideshow/stylesheets/sideshow.min.css',
+            'js/lib/sideshow/stylesheets/sideshow.css',
             'css/tour.css',
         ),
         'output_filename': 'css/tour.min.css',

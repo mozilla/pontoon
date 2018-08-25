@@ -64,13 +64,10 @@ class Command(BaseCommand):
 
         # Split translations into even batches and send them to Celery workers
         batch_size = int(options['batch_size'])
-        tasks_result = group(
+        group(
             signature(
                 check_translations,
                 args=(translations_pks[i:i + batch_size],)
             )
             for i in xrange(0, len(translations_pks), batch_size)
         ).apply_async()
-
-        tasks_result.get()
-

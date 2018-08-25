@@ -2398,13 +2398,19 @@ var Pontoon = (function (my) {
               if ('count' in data) {
                 var itemsText = data.count === 1 ? 'string' : 'strings';
                 var actionText = action + 'd';
+                var invalidTranslationsCount = data['invalid_translation_count'] || 0;
+                var failedText = '';
 
                 if (action === 'reject') {
                   itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
                   actionText = 'rejected';
                 }
 
-                message = data.count + ' ' + itemsText + ' ' + actionText;
+                if (invalidTranslationsCount > 0) {
+                  failedText = ', ' + invalidTranslationsCount + ' failed';
+                }
+
+                message = data.count + ' ' + itemsText + ' ' + actionText + failedText;
 
                 // Update UI (entity list, progress, in-place)
                 if (data.count > 0) {
@@ -3216,14 +3222,19 @@ var Pontoon = (function (my) {
       tags.forEach(function(tag) {
         var priority = '';
 
+        // In order to avoid possible XSS attacks these variables can't be rendered as HTML,
+        // because they contain input which comes from users.
+        var name = Pontoon.doNotRender(tag.name);
+        var slug = Pontoon.doNotRender(tag.slug);
+
         for (var i=0; i<5; i++) {
           priority += '<span class="fa fa-star' + (i < tag.priority ? ' active' : '') + '"></span>';
         }
 
         $('#filter .menu li.for-tags, #filter .menu li[class^="tag-"]').last().after(
-          '<li class="tag-' + tag.slug +'" data-type="' + tag.slug + '">' +
+          '<li class="tag-' + slug +'" data-type="' + slug + '">' +
             '<span class="status fa"></span>' +
-            '<span class="title">' + tag.name + '</span>' +
+            '<span class="title">' + name + '</span>' +
             '<span class="priority">' + priority + '</span>' +
           '</li>'
         );
@@ -4056,6 +4067,7 @@ var Pontoon = (function (my) {
           (!this.requiresInplaceEditor() && $sidebar.is('.no'))) {
         return;
       }
+
       return $editor[0].entity;
     },
 

@@ -32,15 +32,20 @@ WRAPPED_SELECT_SOURCE = '''key =
         [female] her
        *[other] their
     } post.'''
-ATTRIBUTE_SOURCE = '''key
+ATTRIBUTE_SOURCE = '''key =
     .placeholder = Simple String'''
-ATTRIBUTES_SOURCE = '''key
+ATTRIBUTES_SOURCE = '''key =
     .attribute = Simple String
     .other = Other Simple String'''
-ATTRIBUTE_SELECT_SOURCE = '''key
+ATTRIBUTE_SELECT_SOURCE = '''key =
     .placeholder = { PLATFORM() ->
         [win] Simple String
         *[other] Other Simple String
+    }'''
+VARIANT_LIST_SOURCE = '''-term =
+    {
+        [variant-a] Simple String
+       *[variant-b] Other Simple String
     }'''
 
 SIMPLE_TRANSLATION_TESTS = OrderedDict((
@@ -53,15 +58,19 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('attribute', (ATTRIBUTE_SOURCE, 'Simple String')),
     ('attributes', (ATTRIBUTES_SOURCE, 'Simple String')),
     ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
+    ('variable-reference', ('key = { $variable }', '{ $variable }')),
+    ('message-reference', ('key = { message }', '{ message }')),
+    ('term-reference', ('key = { -term }', '{ -term }')),
     (
         'call-expression',
         ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
          '{ LINK("Link text", title: "Link title") }Simple String')
     ),
-    ('string-expression', ('key = { "" }', '{ "" }')),
-    ('number-expression', ('key = { 1 }', '{ 1 }')),
+    ('string-literal', ('key = { "" }', '{ "" }')),
+    ('number-literal', ('key = { 1 }', '{ 1 }')),
     ('variant-expression', ('key = { -foo[bar] }', '{ -foo[bar] }')),
     ('attribute-expression', ('key = { foo.bar }', '{ foo.bar }')),
+    ('variant-list', (VARIANT_LIST_SOURCE, 'Other Simple String')),
 ))
 
 

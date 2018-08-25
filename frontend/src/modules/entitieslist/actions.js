@@ -1,7 +1,11 @@
 /* @flow */
 
+import type { Translation } from './reducer';
+
+
 export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
 export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
+export const UPDATE: 'entitieslist/UPDATE' = 'entitieslist/UPDATE';
 
 
 /**
@@ -28,6 +32,23 @@ export function receive(entities: Array<Object>): ReceiveAction {
     return {
         type: RECEIVE,
         entities,
+    };
+}
+
+
+/**
+ * Update the active translation of an entity.
+ */
+export type UpdateAction = {
+    type: typeof UPDATE,
+    entity: number,
+    translation: Translation,
+};
+export function updateEntityTranslation(entity: number, translation: Translation): UpdateAction {
+    return {
+        type: UPDATE,
+        entity,
+        translation,
     };
 }
 
@@ -71,4 +92,5 @@ export default {
     get,
     receive,
     request,
+    updateEntityTranslation,
 };

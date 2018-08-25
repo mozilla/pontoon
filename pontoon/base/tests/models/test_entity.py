@@ -33,11 +33,13 @@ def entity_test_models(translation_a, locale_b):
     entity_a.string = "Entity zero"
     entity_a.key = entity_a.string
     entity_a.string_plural = "Plural %s" % entity_a.string
+    entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
         resource=resourceX,
         string="entity_b",
         key='Key%sentity_b' % KEY_SEPARATOR,
+        order=0,
     )
     translation_a_pl = TranslationFactory(
         entity=entity_a,

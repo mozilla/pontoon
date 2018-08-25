@@ -31,6 +31,7 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.checks import DB_FORMATS
 from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
     get_revision,
@@ -557,6 +558,15 @@ class LocaleQuerySet(models.QuerySet):
         """
         return self.filter(translatedresources__isnull=True).distinct()
 
+    def visible(self):
+        """
+        Visible locales have at least one TranslatedResource defined from a non
+        system project.
+        """
+        return self.available().filter(
+            pk__in=ProjectLocale.objects.visible().values_list('locale', flat=True)
+        )
+
     def available(self):
         """
         Available locales have at least one TranslatedResource defined.
@@ -830,7 +840,7 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.available()
+            self.project_locale.visible()
                 .prefetch_related('project', 'translators_group')
                 .order_by('project__name')
                 .values(
@@ -911,6 +921,7 @@ class Locale(AggregatedStats):
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
+            resource__project__system_project=False,
             locale=self
         ).aggregate_stats(self)
 
@@ -1030,6 +1041,13 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.filter(disabled=False, resources__isnull=False).distinct()
 
+    def visible(self):
+        """
+        Visible projects are not disabled and have at least one
+        resource defined and are not system projects.
+        """
+        return self.available().filter(system_project=False)
+
     def syncable(self):
         """
         Syncable projects are not disabled, don't have sync disabled and use
@@ -1104,6 +1122,11 @@ class Project(AggregatedStats):
 
     sync_disabled = models.BooleanField(default=False, help_text="""
         Prevent project from syncing with VCS.
+    """)
+
+    system_project = models.BooleanField(default=False, help_text="""
+        System projects are built into Pontoon. They are accessible from the
+        translate view, but hidden from dashboards.
     """)
 
     # Website for in place localization
@@ -1368,11 +1391,15 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
-    def available(self):
+    def visible(self):
         """
-        Available project locales belong to available projects.
+        Visible project locales belong to visible projects.
         """
-        return self.filter(project__disabled=False, project__resources__isnull=False).distinct()
+        return self.filter(
+            project__disabled=False,
+            project__resources__isnull=False,
+            project__system_project=False,
+        ).distinct()
 
 
 class ProjectLocale(AggregatedStats):
@@ -1756,15 +1783,6 @@ class Repository(models.Model):
 class ResourceQuerySet(models.QuerySet):
     def asymmetric(self):
         return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
-
-    """
-    List of paths to remove translations of obsolete entities from
-    """
-
-    def obsolete_entities_paths(self, obsolete_vcs_entities):
-        return self.filter(
-            entities__pk__in=obsolete_vcs_entities
-        ).asymmetric().values_list('path', flat=True).distinct()
 
 
 @python_2_unicode_compatible
@@ -2357,10 +2375,6 @@ def extra_default():
     return {}
 
 
-class TranslationNotAllowed(Exception):
-    """Raised when submitted Translation cannot be saved."""
-
-
 class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         return TranslatedResource.objects.filter(
@@ -2404,6 +2418,29 @@ class TranslationQuerySet(models.QuerySet):
             ])
         return data
 
+    def for_checks(self, only_db_formats=True):
+        """
+        Return an optimized queryset for `checks`-related functions.
+        :arg bool only_db_formats: filter translations by formats supported by checks.
+        """
+        translations = (
+            self
+            .prefetch_related(
+                'entity__resource__entities',
+                'locale',
+            )
+        )
+
+        if only_db_formats:
+            translations = (
+                translations
+                .filter(
+                    entity__resource__format__in=DB_FORMATS,
+                )
+            )
+
+        return translations
+
 
 @python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
@@ -2440,7 +2477,6 @@ class Translation(DirtyFieldsMixin, models.Model):
     entity_document = models.TextField(blank=True)
 
     objects = TranslationQuerySet.as_manager()
-    NotAllowed = TranslationNotAllowed
 
     # extra stores data that we want to save for the specific format
     # this translation is stored in, but that we otherwise don't care
@@ -2786,10 +2822,11 @@ class TranslatedResource(AggregatedStats):
         )
 
         # Locale
-        locale.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
-        )
+        if not project.system_project:
+            locale.adjust_stats(
+                total_strings_diff, approved_strings_diff,
+                fuzzy_strings_diff, unreviewed_strings_diff
+            )
 
         # ProjectLocale
         project_locale = utils.get_object_or_none(

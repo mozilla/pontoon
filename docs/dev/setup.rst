@@ -24,10 +24,9 @@ Prerequisites
 Quickstart
 ----------
 
-1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository
-   recursively::
+1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository::
 
-     $ git clone --recursive https://github.com/YOUR-USERNAME/pontoon.git
+     $ git clone https://github.com/YOUR-USERNAME/pontoon.git
 
 
 2. From the root of the repository, run::
@@ -38,7 +37,7 @@ Quickstart
    webapp.
 
    If you want to share your development instance in your local network, you set SITE_URL to bind
-   the webapp to any address you like.
+   the webapp to any address you like.::
 
      $ make build SITE_URL="https://192.168.1.14:8000"
 

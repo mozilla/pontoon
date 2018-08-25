@@ -22,10 +22,13 @@ from pontoon.tags.utils import TagsTool
 def projects(request):
     """List all active projects."""
     projects = (
-        Project.objects.available()
+        Project.objects.visible()
         .prefetch_related('latest_translation__user')
         .order_by('name')
     )
+
+    if not projects:
+        raise Http404
 
     return render(request, 'projects/projects.html', {
         'projects': projects,

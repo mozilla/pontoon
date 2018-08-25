@@ -24,9 +24,12 @@ from pontoon.contributors.views import ContributorsMixin
 def teams(request):
     """List all active localization teams."""
     locales = (
-        Locale.objects.available()
+        Locale.objects.visible()
         .prefetch_related('latest_translation__user')
     )
+
+    if not locales:
+        raise Http404
 
     return render(request, 'teams/teams.html', {
         'locales': locales,
@@ -37,8 +40,13 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
+    count = locale.project_set.visible().count()
+
+    if not count:
+        raise Http404
 
     return render(request, 'teams/team.html', {
+        'count': count,
         'locale': locale,
     })
 
@@ -49,7 +57,7 @@ def ajax_projects(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
-        Project.objects.available()
+        Project.objects.visible()
         .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_project_locale(locale)
         .order_by('name')
@@ -94,7 +102,7 @@ def ajax_update_info(request, locale):
 @transaction.atomic
 def ajax_permissions(request, locale):
     locale = get_object_or_404(Locale, code=locale)
-    project_locales = locale.project_locale.available()
+    project_locales = locale.project_locale.visible()
 
     if request.method == 'POST':
         locale_form = forms.LocalePermsForm(
@@ -167,7 +175,7 @@ def request_projects(request, locale):
 
     # Validate projects
     project_list = (
-        Project.objects.available()
+        Project.objects.visible()
         .filter(slug__in=slug_list, can_be_requested=True)
     )
     if not project_list:

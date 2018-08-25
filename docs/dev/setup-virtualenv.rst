@@ -48,7 +48,7 @@ Installation
 
    .. code-block:: bash
 
-      git clone --recursive https://github.com/mozilla/pontoon.git
+      git clone https://github.com/mozilla/pontoon.git
       cd pontoon
 
 2. Create a virtualenv for Pontoon and activate it:
@@ -112,8 +112,8 @@ Installation
      local development site. Some people prefer to use
      ``http://127.0.0.1:8000`` instead of ``localhost``. However, should you
      decide to change the ``SITE_URL``, you also need to request_
-     the new ``FXA_CLIENT_ID`` and ``FXA_SECRET_KEY``, and our demo/intro site
-     ``http://localhost:8000/intro`` will require change of base url.
+     the new ``FXA_CLIENT_ID`` and ``FXA_SECRET_KEY``, and our in-context demo
+     site ``http://localhost:8000/in-context/`` will require change of base url.
 
 6. Initialize your database by running the migrations:
 
