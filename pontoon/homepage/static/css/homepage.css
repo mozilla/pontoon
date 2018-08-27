@@ -316,10 +316,12 @@ h2 {
 
 #section-6 .footer .github {
   text-align: center;
+  font-size: 14px;
 }
 
 #section-6 .footer .contact {
   text-align: right;
+  font-size: 14px;
 }
 
 #section-6 .footer a {
