@@ -1,0 +1,17 @@
+.lightbox {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    cursor: zoom-out;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.lightbox img {
+    max-height: 90%;
+    max-width: 90%;
+}

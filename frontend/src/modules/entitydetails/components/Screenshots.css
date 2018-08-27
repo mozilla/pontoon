@@ -6,6 +6,11 @@
 
 .screenshots img {
     border: 1px solid #5E6475;
+    cursor: zoom-in;
     max-height: 100px;
     max-width: 150px;
+}
+
+.screenshots img:hover {
+    opacity: 0.5;
 }

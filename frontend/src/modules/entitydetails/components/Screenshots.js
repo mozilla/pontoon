@@ -6,6 +6,8 @@ import tlds from 'tlds';
 
 import './Screenshots.css';
 
+import { Lightbox } from 'core/lightbox';
+
 
 // Create and configure a URLs matcher.
 const linkify = new LinkifyIt();
@@ -17,6 +19,11 @@ type Props = {|
     source: string,
 |};
 
+type State = {|
+    lightboxOpen: boolean,
+    lightboxImage: string,
+|};
+
 
 /**
  * Shows screenshot miniatures based on the content of a string.
@@ -24,7 +31,28 @@ type Props = {|
  * This component looks at all URLs to an image (either .png or .jpg) in a
  * source string and then shows a miniature of those images.
  */
-export default class Screenshots extends React.Component<Props> {
+export default class Screenshots extends React.Component<Props, State> {
+    constructor(props: Props): void {
+        super(props);
+        this.state = {
+            lightboxOpen: false,
+            lightboxImage: '',
+        };
+    }
+
+    openLightbox(image: string): Function {
+        return (): void => {
+            this.setState({
+                lightboxOpen: true,
+                lightboxImage: image,
+            });
+        }
+    }
+
+    closeLightbox = (): void => {
+        this.setState({ lightboxOpen: false });
+    }
+
     getImages(): ?Array<React.Node> {
         const { locale, source } = this.props;
 
@@ -41,7 +69,12 @@ export default class Screenshots extends React.Component<Props> {
         matches.forEach((match, i) => {
             if (/(https?:\/\/.*\.(?:png|jpg))/im.test(match.url)) {
                 const urlWithLocale = match.url.replace(/en-US\//gi, locale + '/');
-                images.push(<img src={ urlWithLocale } alt="" key={ i } />);
+                images.push(<img
+                    src={ urlWithLocale }
+                    alt=""
+                    key={ i }
+                    onClick={ this.openLightbox(urlWithLocale) }
+                />);
             }
         });
 
@@ -54,8 +87,14 @@ export default class Screenshots extends React.Component<Props> {
             return null;
         }
 
-        return <div className="screenshots">
-            { images }
-        </div>
+        return <React.Fragment>
+            <div className="screenshots">
+                { images }
+            </div>
+            { this.state.lightboxOpen && <Lightbox
+                image={ this.state.lightboxImage }
+                close={ this.closeLightbox }
+            /> }
+        </React.Fragment>
     }
 }
