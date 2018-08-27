@@ -150,6 +150,23 @@ def assign_locale_group_permissions(sender, **kwargs):
         errors.send_exception(e)
 
 
+@receiver(post_save, sender=Locale)
+def add_locale_to_system_projects(sender, instance, created, **kwargs):
+    """
+    Enable system projects for newly added locales.
+    """
+    if created:
+        projects = Project.objects.filter(system_project=True)
+        for project in projects:
+            ProjectLocale.objects.create(project=project, locale=instance)
+            for resource in project.resources.all():
+                translated_resource = TranslatedResource.objects.create(
+                    resource=resource,
+                    locale=instance,
+                )
+                translated_resource.calculate_stats()
+
+
 @receiver(post_save, sender=ProjectLocale)
 def assign_project_locale_group_permissions(sender, **kwargs):
     """
