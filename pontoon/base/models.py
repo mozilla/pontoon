@@ -2056,8 +2056,9 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(Q(string=F('entity__string')) | Q(string=F('entity__string_plural'))),
-                lambda x: x.string == x.entity.string,
+                Q(Q(approved=True) &
+                  Q(Q(string=F('entity__string')) | Q(string=F('entity__string_plural')))),
+                lambda x: x.approved and x.string == x.entity.string,
                 match_all=False,
             )
         )
@@ -2471,7 +2472,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         User, related_name='unrejected_translations', null=True, blank=True)
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
-    # Field contains a concatenated state of the  entity for faster search lookups.
+    # Field contains a concatenated state of the entity for faster search lookups.
     # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
     # than OR condition for The Entity and The Translation class joined together.
     entity_document = models.TextField(blank=True)
