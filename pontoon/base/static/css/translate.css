@@ -309,12 +309,20 @@ body > header .locale.select {
   color: #3F4752;
 }
 
+.translated .status:before {
+  color: #7BC876;
+}
+
 .fuzzy .status:before {
   color: #FED271;
 }
 
-.translated .status:before {
-  color: #7BC876;
+.error .status:before {
+  color: #F36;
+}
+
+.warning .status:before {
+  color: #FFA10F;
 }
 
 .untranslated .status:before {
@@ -1166,8 +1174,10 @@ body > header aside p {
 }
 
 #entitylist > .wrapper > ul > li.translated p span.source-string,
-#entitylist > .wrapper > ul > li.missing.has-translations p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
+#entitylist > .wrapper > ul > li.error p span.source-string,
+#entitylist > .wrapper > ul > li.warning p span.source-string,
+#entitylist > .wrapper > ul > li.missing.has-translations p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
   display: inline-block;
