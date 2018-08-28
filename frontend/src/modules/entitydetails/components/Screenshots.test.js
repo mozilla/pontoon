@@ -54,4 +54,28 @@ describe('<Screenshots>', () => {
 
         expect(wrapper.find('img')).toHaveLength(0);
     });
+
+    it('shows no Lightbox by default', () => {
+        const source = 'That is an image URL: http://link.to/image.png';
+        const wrapper = createShallowScreenshots(source);
+
+        expect(wrapper.find('Lightbox')).toHaveLength(0);
+    });
+
+    it('shows and hides the Lightbox correctly', () => {
+        const source = 'That is an image URL: http://link.to/image.png';
+        const wrapper = createShallowScreenshots(source);
+
+        wrapper.find('img').simulate('click');
+        expect(wrapper.state('lightboxOpen')).toEqual(true);
+        expect(wrapper.find('Lightbox')).toHaveLength(1);
+
+        wrapper.instance().closeLightbox();
+        expect(wrapper.state('lightboxOpen')).toEqual(false);
+
+        // Note that we update the component so that it takes its new state
+        // into account. We have to do that because changes to the `instance()`
+        // do not trigger re-renders.
+        expect(wrapper.update().find('Lightbox')).toHaveLength(0);
+    });
 });

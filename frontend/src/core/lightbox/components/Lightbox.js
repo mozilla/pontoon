@@ -20,10 +20,10 @@ type Props = {|
 export default class Lightbox extends React.Component<Props> {
     closeOnKeys = (event: SyntheticKeyboardEvent<>) => {
         // On keys:
+        //   - 13: Enter
         //   - 27: Escape
         //   - 32: Space
-        //   - 13: Enter
-        if (event.keyCode === 27 || event.keyCode === 32 || event.keyCode === 13) {
+        if (event.keyCode === 13 || event.keyCode === 27 || event.keyCode === 32) {
             this.props.close();
         }
     }

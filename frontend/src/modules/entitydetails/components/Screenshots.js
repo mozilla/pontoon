@@ -32,7 +32,7 @@ type State = {|
  * source string and then shows a miniature of those images.
  */
 export default class Screenshots extends React.Component<Props, State> {
-    constructor(props: Props): void {
+    constructor(props: Props) {
         super(props);
         this.state = {
             lightboxOpen: false,
@@ -41,7 +41,7 @@ export default class Screenshots extends React.Component<Props, State> {
     }
 
     openLightbox(image: string): Function {
-        return (): void => {
+        return () => {
             this.setState({
                 lightboxOpen: true,
                 lightboxImage: image,
@@ -49,7 +49,7 @@ export default class Screenshots extends React.Component<Props, State> {
         }
     }
 
-    closeLightbox = (): void => {
+    closeLightbox = () => {
         this.setState({ lightboxOpen: false });
     }
 
@@ -81,7 +81,7 @@ export default class Screenshots extends React.Component<Props, State> {
         return images;
     }
 
-    render(): React.Node {
+    render() {
         const images = this.getImages();
         if (!images) {
             return null;
