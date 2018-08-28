@@ -2088,7 +2088,13 @@ class EntityQuerySet(models.QuerySet):
         return self.prefetch_related(
             Prefetch(
                 'translation_set',
-                queryset=Translation.objects.filter(locale=locale),
+                queryset=(
+                    Translation.objects.filter(locale=locale)
+                    .prefetch_related(
+                        'errors',
+                        'warnings',
+                    )
+                ),
                 to_attr='fetched_translations'
             )
         )
@@ -2640,6 +2646,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'rejected': self.rejected,
             'fuzzy': self.fuzzy,
+            'error_count': self.errors.count(),
+            'warning_count': self.warnings.count(),
         }
 
 
