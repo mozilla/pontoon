@@ -388,6 +388,7 @@ def unapprove_translation(request):
 
 
 @utils.require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def reject_translation(request):
     """Reject given translation."""
