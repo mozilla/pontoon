@@ -121,6 +121,8 @@ def test_entity_project_locale_no_paths(
                 'string': unicode(tr0.string),
                 'approved': False,
                 'rejected': False,
+                'warning_count': 0,
+                'error_count': 0,
             },
             {
                 'pk': tr0pl.pk,
@@ -128,6 +130,8 @@ def test_entity_project_locale_no_paths(
                 'string': unicode(tr0pl.string),
                 'approved': False,
                 'rejected': False,
+                'warning_count': 0,
+                'error_count': 0,
             },
         ],
         'order': 0,
