@@ -20,6 +20,7 @@ from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
+    ProjectLocaleFactory,
     ResourceFactory,
     TranslationFactory,
     UserFactory,
@@ -163,6 +164,45 @@ def test_manage_project_strings_translated_resource(client_superuser):
     for l in locales:
         locale = Locale.objects.get(id=l.id)
         assert locale.total_strings == strings_count
+
+
+@pytest.mark.django_db
+def test_manage_project_strings_translated_resource_for_tutorial(client_superuser):
+    """Test that adding new strings to a project enables translation of that
+    project on all enabled locales for the Tutorial.
+
+    This test exists because the project Tutorial is a unique project that is
+    stored in database (data_source=database) but its main Resource's path
+    is not "database" but "playground".
+
+    Note: this test relies on the Tutorial project that is automatically
+    created with a data migration. Thus we don't need to create it, just
+    query it. That implies it already has some data, though, so make sure you
+    take that into account during testing.
+    """
+    locales = [
+        LocaleFactory.create(code='kl', name='Klingon'),
+        LocaleFactory.create(code='gs', name='Geonosian'),
+    ]
+    project = Project.objects.get(slug='tutorial')
+    for locale in locales:
+        ProjectLocaleFactory.create(project=project, locale=locale)
+
+    locales_count = len(locales)
+    _create_or_update_translated_resources(project, locales)
+
+    # Verify there's only one resource and its path is "playground",
+    # not "database".
+    resources = Resource.objects.filter(project=project)
+    assert len(resources) == 1
+    assert resources[0].path == 'playground'
+
+    # Verify the correct TranslatedResource objects have been created.
+    translated_resources = TranslatedResource.objects.filter(
+        resource__project=project,
+        locale__in=locales,
+    )
+    assert len(translated_resources) == locales_count
 
 
 @pytest.mark.django_db

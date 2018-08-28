@@ -331,8 +331,10 @@ def _save_new_strings(project, source):
 
     if new_strings:
         # Create a new fake resource for that project.
+        is_tutorial = project.slug == 'tutorial'
+        resource_path = 'playground' if is_tutorial else 'database'
         resource, created = Resource.objects.get_or_create(
-            path='database',
+            path=resource_path,
             project=project,
         )
         resource.total_strings = len(new_strings)
@@ -365,8 +367,10 @@ def _create_or_update_translated_resources(
         )
 
     if resource is None:
+        is_tutorial = project.slug == 'tutorial'
+        resource_path = 'playground' if is_tutorial else 'database'
         resource, _ = Resource.objects.get_or_create(
-            path='database',
+            path=resource_path,
             project=project,
         )
 
