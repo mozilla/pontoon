@@ -134,7 +134,7 @@ def create_project_locale_permissions_groups(sender, **kwargs):
 def assign_locale_group_permissions(sender, **kwargs):
     """
     After creation of locale, we have to assign translation and management
-    permissions to groups of translators and managers assigned to locale
+    permissions to groups of translators and managers assigned to locale.
     """
     if kwargs['raw'] or not kwargs['created']:
         return
@@ -153,7 +153,7 @@ def assign_locale_group_permissions(sender, **kwargs):
 @receiver(post_save, sender=Locale)
 def add_locale_to_system_projects(sender, instance, created, **kwargs):
     """
-    Create ProjectLocale instances for system projects for newly added locales.
+    Enable system projects for newly added locales.
     """
     if created:
         projects = Project.objects.filter(system_project=True)
