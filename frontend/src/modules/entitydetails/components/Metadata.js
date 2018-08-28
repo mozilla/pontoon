@@ -44,6 +44,7 @@ type Props = {|
  * Shows:
  *  - the original string
  *  - a comment (if any)
+ *  - a context (if any)
  *  - a list of source files (if any)
  *  - a link to the resource
  *  - a link to the project
@@ -70,9 +71,17 @@ export default class Metadata extends React.Component<Props> {
         </Property>;
     }
 
+    renderContext(entity: DbEntity): React.Node {
+        if (!entity.key) {
+            return null;
+        }
+
+        return <Property title='Context'>{ entity.key }</Property>;
+    }
+
     renderSourceArray(source: Array<Array<string>>): React.Node {
         return <ul>{ source.map((value, key) => {
-            return <li key={ key }><span>#:</span>{ value.join(':') }</li>;
+            return <li key={ key }><span className="title">#:</span>{ value.join(':') }</li>;
         }) }</ul>;
     }
 
@@ -114,6 +123,7 @@ export default class Metadata extends React.Component<Props> {
             <Screenshots source={ entity.comment } locale={ locale } />
             <p className="original">{ entity.original }</p>
             { this.renderComment(entity) }
+            { this.renderContext(entity) }
             { this.renderSources(entity) }
             <Property title='Resource'>
                 <Link to={ `/${locale}/${entity.project.slug}/${entity.path}/` }>

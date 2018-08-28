@@ -49,13 +49,14 @@ module.exports = {
         DIFF_DELETE: false,
         ga: false,
         SyntheticInputEvent: false,
+        SyntheticKeyboardEvent: false,
     },
     plugins: [
         'react',
     ],
     rules: {
         'react/prefer-es6-class': 0,
-        'react/prefer-stateless-function': 1,
+        'react/prefer-stateless-function': 0,
         "react/prop-types": 0,
         "react/jsx-key": 0,
         "react/jsx-uses-react": 1,
