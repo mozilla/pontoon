@@ -67,7 +67,7 @@ describe('<EntityDetails>', () => {
     });
 
     afterAll(() => {
-        entityActions.suggest.release();
+        entityActions.suggest.restore();
     });
 
     it('calls the suggest action when the sendSuggestion method is run', () => {

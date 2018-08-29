@@ -1,13 +1,23 @@
 /* @flow */
 
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import './Lightbox.css';
 
+import { NAME } from '..';
+import { close } from '../actions';
+
+import type { LightboxState } from '../reducer';
+
 
 type Props = {|
-    image: string,
-    close: Function,
+    lightbox: LightboxState,
+|};
+
+type InternalProps = {|
+    ...Props,
+    dispatch: Function,
 |};
 
 
@@ -17,14 +27,18 @@ type Props = {|
  * Hides the UI behind a grey background and show a centered image.
  * Click or press a key to close.
  */
-export default class Lightbox extends React.Component<Props> {
+export class LightboxBase extends React.Component<InternalProps> {
+    close = () => {
+        this.props.dispatch(close());
+    }
+
     closeOnKeys = (event: SyntheticKeyboardEvent<>) => {
         // On keys:
         //   - 13: Enter
         //   - 27: Escape
         //   - 32: Space
         if (event.keyCode === 13 || event.keyCode === 27 || event.keyCode === 32) {
-            this.props.close();
+            this.close();
         }
     }
 
@@ -39,10 +53,23 @@ export default class Lightbox extends React.Component<Props> {
     }
 
     render() {
-        const { image, close } = this.props;
+        const { lightbox } = this.props;
 
-        return <div className="lightbox" onClick={ close }>
-            <img src={ image } alt="" />
+        if (!lightbox.isOpen) {
+            return null;
+        }
+
+        return <div className="lightbox" onClick={ this.close }>
+            <img src={ lightbox.image } alt="" />
         </div>
     }
 }
+
+
+const mapStateToProps = (state: Object): Props => {
+    return {
+        lightbox: state[NAME],
+    };
+};
+
+export default connect(mapStateToProps)(LightboxBase);

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { suggest } from '../actions';
 
 import * as entitieslist from 'modules/entitieslist';
+import { actions as lightboxActions } from 'core/lightbox';
 import { selectors as navSelectors } from 'core/navigation';
 
 import Editor from './Editor';
@@ -37,7 +38,11 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
-    sendSuggestion = (translation: string): void => {
+    openLightbox = (image: string) => {
+        this.props.dispatch(lightboxActions.open(image));
+    }
+
+    sendSuggestion = (translation: string) => {
         const { navigation, selectedEntity } = this.props;
 
         if (!selectedEntity) {
@@ -52,7 +57,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    render(): React.Node {
+    render() {
         const { activeTranslation, navigation, selectedEntity } = this.props;
 
         if (!selectedEntity) {
@@ -60,7 +65,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         return <section className="entity-details">
-            <Metadata entity={ selectedEntity } locale={ navigation.locale } />
+            <Metadata entity={ selectedEntity } locale={ navigation.locale } openLightbox={ this.openLightbox } />
             <Editor
                 activeTranslation={ activeTranslation}
                 selectedEntity={ selectedEntity }

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import './App.css';
 
+import { Lightbox } from 'core/lightbox';
 import { selectors as navSelectors } from 'core/navigation';
 import { actions, EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
@@ -32,12 +33,13 @@ class App extends React.Component<InternalProps> {
     }
 
     render() {
-        return (<div id="app">
+        return <div id="app">
             <section>
                 <EntitiesList />
             </section>
             <EntityDetails />
-        </div>);
+            <Lightbox />
+        </div>;
     }
 }
 

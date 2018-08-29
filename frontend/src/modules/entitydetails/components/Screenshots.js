@@ -6,8 +6,6 @@ import tlds from 'tlds';
 
 import './Screenshots.css';
 
-import { Lightbox } from 'core/lightbox';
-
 
 // Create and configure a URLs matcher.
 const linkify = new LinkifyIt();
@@ -17,11 +15,7 @@ linkify.tlds(tlds);
 type Props = {|
     locale: string,
     source: string,
-|};
-
-type State = {|
-    lightboxOpen: boolean,
-    lightboxImage: string,
+    openLightbox: Function,
 |};
 
 
@@ -31,26 +25,9 @@ type State = {|
  * This component looks at all URLs to an image (either .png or .jpg) in a
  * source string and then shows a miniature of those images.
  */
-export default class Screenshots extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            lightboxOpen: false,
-            lightboxImage: '',
-        };
-    }
-
-    openLightbox(image: string): Function {
-        return () => {
-            this.setState({
-                lightboxOpen: true,
-                lightboxImage: image,
-            });
-        }
-    }
-
-    closeLightbox = () => {
-        this.setState({ lightboxOpen: false });
+export default class Screenshots extends React.Component<Props> {
+    openLightbox = (image: string) => {
+        return () => this.props.openLightbox(image);
     }
 
     getImages(): ?Array<React.Node> {
@@ -91,10 +68,6 @@ export default class Screenshots extends React.Component<Props, State> {
             <div className="screenshots">
                 { images }
             </div>
-            { this.state.lightboxOpen && <Lightbox
-                image={ this.state.lightboxImage }
-                close={ this.closeLightbox }
-            /> }
         </React.Fragment>
     }
 }

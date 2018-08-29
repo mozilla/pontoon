@@ -35,6 +35,7 @@ class Property extends React.Component<PropertyProps> {
 type Props = {|
     entity: DbEntity,
     locale: string,
+    openLightbox: Function,
 |};
 
 
@@ -117,10 +118,14 @@ export default class Metadata extends React.Component<Props> {
     }
 
     render(): React.Node {
-        const { entity, locale } = this.props;
+        const { entity, locale, openLightbox } = this.props;
 
         return <div className="metadata">
-            <Screenshots source={ entity.comment } locale={ locale } />
+            <Screenshots
+                source={ entity.comment }
+                locale={ locale }
+                openLightbox={ openLightbox }
+            />
             <p className="original">{ entity.original }</p>
             { this.renderComment(entity) }
             { this.renderContext(entity) }
