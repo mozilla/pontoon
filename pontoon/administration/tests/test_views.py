@@ -20,6 +20,7 @@ from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
+    ProjectLocaleFactory,
     ResourceFactory,
     TranslationFactory,
     UserFactory,
@@ -108,6 +109,37 @@ def test_manage_project_strings_new(client_superuser, locale_a):
 
     # Verify new strings appear on the page.
     assert 'Hey, I just met you' in response.content
+
+
+@pytest.mark.django_db
+def test_manage_project_strings_existing_resource(client_superuser, locale_a):
+    project = ProjectFactory.create(
+        data_source='database',
+        repositories=[],
+        locales=[locale_a],
+    )
+    ResourceFactory.create(
+        path='not_database',
+        project=project,
+    )
+    url = reverse('pontoon.admin.project.strings', args=(project.slug,))
+
+    # Test sending a well-formatted batch of strings.
+    new_strings = """Hey, I just met you
+        And this is crazy
+        But here's my number
+        So call me maybe?
+    """
+    response = client_superuser.post(url, {'new_strings': new_strings})
+    assert response.status_code == 200
+
+    # Verify no new resources have been created.
+    resources = list(Resource.objects.filter(project=project))
+    assert len(resources) == 1
+
+    # The preexisting resource has been sucessfully used.
+    assert resources[0].path == 'not_database'
+    assert resources[0].total_strings == 4
 
 
 @pytest.mark.django_db
