@@ -20,7 +20,6 @@ from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
-    ProjectLocaleFactory,
     ResourceFactory,
     TranslationFactory,
     UserFactory,
