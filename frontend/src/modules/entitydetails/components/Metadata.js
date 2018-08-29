@@ -81,7 +81,7 @@ export default class Metadata extends React.Component<Props> {
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
-        if (source.length === 1 && !source[0]) {
+        if (!source.length || (source.length === 1 && !source[0])) {
             return null;
         }
 
