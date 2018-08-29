@@ -312,6 +312,41 @@ def _get_project_strings_csv(project, entities, output):
     return output
 
 
+def _get_resource_for_database_project(project):
+    """Return the Resource object of an in database project.
+
+    If the project has no resource yet, create a new one and return it.
+    Otherwise, return the existing resource.
+
+    Note that a database project should always have only one resource.
+
+    :arg Project project: the in-database Project object
+
+    :returns: the unique Resource object associated with the project
+
+    """
+    try:
+        return Resource.objects.get(
+            project=project,
+        )
+    except Resource.DoesNotExist:
+        # There's no resource for that project yet, create one.
+        resource = Resource(
+            path='database',
+            project=project,
+        )
+        resource.save()
+        return resource
+    except Resource.MultipleObjectsReturned:
+        # There are several resources for this project, that should not
+        # be allowed. Log an error and raise.
+        log.error(
+            'There is more than 1 Resource for in_database project %s' %
+            project.name
+        )
+        raise
+
+
 def _save_new_strings(project, source):
     """Save a batch of strings into an existing project.
 
@@ -331,12 +366,7 @@ def _save_new_strings(project, source):
 
     if new_strings:
         # Create a new fake resource for that project.
-        is_tutorial = project.slug == 'tutorial'
-        resource_path = 'playground' if is_tutorial else 'database'
-        resource, created = Resource.objects.get_or_create(
-            path=resource_path,
-            project=project,
-        )
+        resource = _get_resource_for_database_project(project)
         resource.total_strings = len(new_strings)
         resource.save()
 
@@ -367,12 +397,7 @@ def _create_or_update_translated_resources(
         )
 
     if resource is None:
-        is_tutorial = project.slug == 'tutorial'
-        resource_path = 'playground' if is_tutorial else 'database'
-        resource, _ = Resource.objects.get_or_create(
-            path=resource_path,
-            project=project,
-        )
+        resource = _get_resource_for_database_project(project)
 
     for locale in locales:
         tr, created = TranslatedResource.objects.get_or_create(
