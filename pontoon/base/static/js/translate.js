@@ -316,7 +316,7 @@ var Pontoon = (function (my) {
                 '" title="Copy Into Translation (Tab)">' +
                   '<header class="clearfix' +
                     ((!entity.readonly && self.user.canTranslate()) ? ' translator' :
-                      ((!entity.readonly && self.user.id === this.uid && !this.approved) ?
+                      ((!entity.readonly && self.user.id && self.user.id === this.uid && !this.approved) ?
                         ' own' : '')) +
                     '">' +
                     '<div class="info">' +
