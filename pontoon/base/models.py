@@ -2457,6 +2457,12 @@ class Translation(DirtyFieldsMixin, models.Model):
     # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
+
+    # Active translations are displayed in the string list and as the first
+    # entry in the History tab. There can only be one active translation for
+    # each (entity, locale, plural_form) combination. See bug 1481175.
+    active = models.BooleanField(default=False)
+
     fuzzy = models.BooleanField(default=False)
 
     approved = models.BooleanField(default=False)
@@ -2476,11 +2482,6 @@ class Translation(DirtyFieldsMixin, models.Model):
     unrejected_user = models.ForeignKey(
         User, related_name='unrejected_translations', null=True, blank=True)
     unrejected_date = models.DateTimeField(null=True, blank=True)
-
-    # Field contains a concatenated state of the  entity for faster search lookups.
-    # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
-    # than OR condition for The Entity and The Translation class joined together.
-    entity_document = models.TextField(blank=True)
 
     objects = TranslationQuerySet.as_manager()
 
