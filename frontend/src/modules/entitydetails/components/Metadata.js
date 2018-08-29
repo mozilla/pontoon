@@ -81,6 +81,10 @@ export default class Metadata extends React.Component<Props> {
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
+        if (source.length === 1 && !source[0]) {
+            return null;
+        }
+
         return <ul>{ source.map((value, key) => {
             return <li key={ key }><span className="title">#:</span>{ value.join(':') }</li>;
         }) }</ul>;
