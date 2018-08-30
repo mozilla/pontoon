@@ -4,4 +4,7 @@
     margin: 0;
     padding: 0;
     text-align: left;
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
 }
