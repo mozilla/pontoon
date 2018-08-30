@@ -1,12 +1,8 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
-
-import * as editorActions from '../actions';
-
-import Editor, { EditorBase } from './Editor';
+import Editor from './Editor';
 
 
 const TRANSLATION = 'test';
@@ -15,22 +11,18 @@ const SELECTED_ENTITY = {
     original: 'le test',
     translation: [{string: TRANSLATION}],
 };
-const NAVIGATION = {
-    entity: 42,
-    locale: 'kg',
-};
 
 
-function createShallowEditor() {
-    return shallow(<EditorBase
+function createShallowEditor(suggestMock = null) {
+    return shallow(<Editor
         activeTranslation={ TRANSLATION }
-        navigation={ NAVIGATION }
         selectedEntity={ SELECTED_ENTITY }
+        sendSuggestion={ suggestMock }
     />);
 }
 
 
-describe('<EditorBase>', () => {
+describe('<Editor>', () => {
     it('renders correctly', () => {
         const wrapper = createShallowEditor();
 
@@ -61,48 +53,12 @@ describe('<EditorBase>', () => {
         wrapper.find('.action-copy').simulate('click');
         expect(wrapper.state('translation')).toEqual(SELECTED_ENTITY.original);
     });
-});
-
-describe('<Editor>', () => {
-    const ENTITIES = [
-        SELECTED_ENTITY,
-        {
-            pk: 1,
-            original: 'something',
-            translation: [{string: 'quelque chose'}],
-        },
-    ];
-
-    beforeAll(() => {
-        const suggestMock = sinon.stub(editorActions, 'suggest');
-        suggestMock.returns({
-            type: 'whatever',
-        });
-    });
-
-    afterAll(() => {
-        editorActions.suggest.release();
-    });
 
     it('calls the suggest action when the Suggest button is clicked', () => {
-        const initialState = {
-            entities: {
-                entities: ENTITIES
-            },
-            router: {
-                location: {
-                    pathname: '/kg/pro/all/',
-                    search: '?string=42',
-                },
-            },
-        };
-        const store = createReduxStore(initialState);
-
-        const wrapper = mount(<Editor
-            store={ store }
-        />);
+        const suggestMock = sinon.spy();
+        const wrapper = createShallowEditor(suggestMock);
 
         wrapper.find('.action-send').simulate('click');
-        expect(editorActions.suggest.called).toEqual(true);
+        expect(suggestMock.calledOnce).toBeTrue;
     });
 });
