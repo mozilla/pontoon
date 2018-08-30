@@ -2082,21 +2082,21 @@ class EntityQuerySet(models.QuerySet):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
-    def prefetch_translations(self, locale):
+    def prefetch_active_translations(self, locale):
         """
-        Prefetch translations for given locale.
+        Prefetch active translations for given locale.
         """
         return self.prefetch_related(
             Prefetch(
                 'translation_set',
                 queryset=(
-                    Translation.objects.filter(locale=locale)
+                    Translation.objects.filter(locale=locale, active=True)
                     .prefetch_related(
                         'errors',
                         'warnings',
                     )
                 ),
-                to_attr='fetched_translations'
+                to_attr='active_translations'
             )
         )
 
@@ -2165,27 +2165,17 @@ class Entity(DirtyFieldsMixin, models.Model):
         """
         ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
 
-    def get_translation(self, plural_form=None):
-        """Get fetched translation of a given entity."""
-        translations = self.fetched_translations
+    def get_active_translation(self, plural_form=None):
+        """
+        Get active translation for a given entity and plural form.
+        Active translations must be prefetched for the requested locale.
+        """
+        translations = self.active_translations
 
         if plural_form is not None:
             translations = [t for t in translations if t.plural_form == plural_form]
 
-        if translations:
-            translation = sorted(
-                translations,
-                key=lambda k: (k.approved, not k.rejected, k.date),
-                reverse=True
-            )[0]
-            return translation.serialize()
-
-        return {
-            'fuzzy': False,
-            'string': None,
-            'approved': False,
-            'pk': None,
-        }
+        return translations[0] if translations else Translation()
 
     @classmethod
     def for_project_locale(
@@ -2308,8 +2298,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         if project.slug == 'all-projects':
             order_fields = ('resource__project__name',) + order_fields
 
-        entities = entities.prefetch_translations(locale)
-
         return entities.order_by(*order_fields)
 
     @classmethod
@@ -2317,9 +2305,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         entities_array = []
         visible_entities = visible_entities or []
 
-        # Prefetch related Resource, Project and ProjectLocale data
+        # Prefetch related Translations, Resources, Projects and ProjectLocales
         entities = (
             entities
+            .prefetch_active_translations(locale)
             .prefetch_related(
                 Prefetch(
                     'resource__project__project_locale',
@@ -2333,11 +2322,13 @@ class Entity(DirtyFieldsMixin, models.Model):
             translation_array = []
 
             if entity.string_plural == "":
-                translation_array.append(entity.get_translation())
+                translation = entity.get_active_translation().serialize()
+                translation_array.append(translation)
 
             else:
                 for plural_form in range(0, locale.nplurals or 1):
-                    translation_array.append(entity.get_translation(plural_form))
+                    translation = entity.get_active_translation(plural_form).serialize()
+                    translation_array.append(translation)
 
             entities_array.append({
                 'pk': entity.pk,

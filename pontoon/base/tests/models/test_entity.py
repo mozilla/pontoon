@@ -26,6 +26,7 @@ def entity_test_models(translation_a, locale_b):
     locale_a.cldr_plurals = "0,1"
     locale_a.save()
     translation_a.plural_form = 0
+    translation_a.active = True
     translation_a.save()
     resourceX = ResourceFactory(
         project=project_a, path="resourceX.po",
@@ -45,11 +46,13 @@ def entity_test_models(translation_a, locale_b):
         entity=entity_a,
         locale=locale_a,
         plural_form=1,
+        active=True,
         string="Plural %s" % translation_a.string,
     )
     translationX = TranslationFactory(
         entity=entity_b,
         locale=locale_a,
+        active=True,
         string="Translation %s" % entity_b.string,
     )
     subpageX = SubpageFactory(
