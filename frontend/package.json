@@ -5,15 +5,18 @@
   "dependencies": {
     "connected-react-router": "^4.3.0",
     "flow-bin": "^0.74.0",
+    "linkify-it": "^2.0.3",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-linkify": "^0.2.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "tlds": "^1.203.1"
   },
   "scripts": {
     "start": "react-scripts start",

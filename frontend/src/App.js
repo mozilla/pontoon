@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 
 import './App.css';
 
+import { Lightbox } from 'core/lightbox';
 import { selectors as navSelectors } from 'core/navigation';
 import { actions, EntitiesList } from 'modules/entitieslist';
-import { Editor } from 'modules/editor';
+import { EntityDetails } from 'modules/entitydetails';
 
 import type { Navigation } from 'core/navigation';
 
@@ -21,6 +22,7 @@ type InternalProps = {|
     dispatch: Function,
 |};
 
+
 /**
  * Main entry point to the application. Will render the structure of the page.
  */
@@ -31,14 +33,13 @@ class App extends React.Component<InternalProps> {
     }
 
     render() {
-        return (<div id="app">
+        return <div id="app">
             <section>
                 <EntitiesList />
             </section>
-            <section>
-                <Editor />
-            </section>
-        </div>);
+            <EntityDetails />
+            <Lightbox />
+        </div>;
     }
 }
 
