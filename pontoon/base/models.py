@@ -12,6 +12,7 @@ import re
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
+from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
 
@@ -2496,7 +2497,21 @@ class Translation(DirtyFieldsMixin, models.Model):
             ('entity', 'locale', 'approved'),
             ('entity', 'locale', 'fuzzy'),
             ('locale', 'user', 'entity'),
-            ('date', 'locale'))
+            ('date', 'locale'),
+        )
+        indexes = [
+            PartialIndex(
+                fields=['entity', 'locale', 'plural_form', 'active'],
+                unique=True,
+                where=PQ(active=True),
+            ),
+            # The rule above doesn't catch the plural_form = None case
+            PartialIndex(
+                fields=['entity', 'locale', 'active'],
+                unique=True,
+                where=PQ(active=True, plural_form__isnull=True),
+            ),
+        ]
 
     @classmethod
     def for_locale_project_paths(self, locale, project, paths):
