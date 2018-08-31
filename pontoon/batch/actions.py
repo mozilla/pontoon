@@ -74,6 +74,7 @@ def approve_translations(form, user, translations, locale):
         rejected=False,
         rejected_user=None,
         rejected_date=None,
+        fuzzy=False,
     )
 
     return {
@@ -115,6 +116,7 @@ def reject_translations(form, user, translations, locale):
         approved=False,
         approved_user=None,
         approved_date=None,
+        fuzzy=False,
     )
 
     return {
