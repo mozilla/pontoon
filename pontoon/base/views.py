@@ -375,13 +375,14 @@ def unapprove_translation(request):
 
     translation.unapprove(request.user)
 
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.translation_set.get(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+        active=True,
+    ).serialize()
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -436,15 +437,16 @@ def reject_translation(request):
     translation.fuzzy = False
     translation.save()
 
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.translation_set.get(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+        active=True,
+    ).serialize()
 
     TranslationMemoryEntry.objects.filter(translation=translation).delete()
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -482,13 +484,14 @@ def unreject_translation(request):
 
     translation.unreject(request.user)
 
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.translation_set.get(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+        active=True,
+    ).serialize()
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation,
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -593,7 +596,7 @@ def update_translation(request):
         entity=e, locale=locale, plural_form=plural_form)
 
     same_translations = translations.filter(string=string).order_by(
-        '-approved', 'rejected', '-date'
+        '-active', 'rejected', '-date'
     )
 
     # If same translation exists in the DB, don't save it again.
@@ -617,6 +620,7 @@ def update_translation(request):
 
     # Translations exist
     if len(translations) > 0:
+        # Same translation exists
         if len(same_translations) > 0:
             t = same_translations[0]
 
@@ -680,15 +684,11 @@ def update_translation(request):
             t.save()
             save_failed_checks(t, failed_checks)
 
-            # Return active (approved or latest) translation
-            try:
-                active = translations.filter(approved=True).latest("date")
-            except Translation.DoesNotExist:
-                active = translations.latest("date")
+            active_translation = translations.get(active=True).serialize()
 
             return JsonResponse({
                 'type': 'added',
-                'translation': active.serialize(),
+                'translation': active_translation,
                 'stats': TranslatedResource.objects.stats(project, paths, locale),
             })
 

@@ -15,7 +15,7 @@ from pontoon.test.factories import (
 @pytest.fixture
 def approved_translation(locale_a, project_locale_a, entity_a, user_a):
     return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a, approved=True
+        entity=entity_a, locale=locale_a, user=user_a, approved=True, active=True
     )
 
 
@@ -136,6 +136,8 @@ def test_view_translate_force_suggestions(
     Save/suggest button should always do what the current label says and
     be independent from the user settings in different browser tabs.
     """
+    translation_a.active = True
+    translation_a.save()
     translation_a.locale.translators_group.user_set.add(member.user)
     project_locale_a.unreviewed_strings = 1
     project_locale_a.save()
