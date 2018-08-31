@@ -322,7 +322,7 @@ def get_translation_history(request):
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
-    translations = translations.order_by('-approved', 'rejected', '-date')
+    translations = translations.order_by('-active', 'rejected', '-date')
 
     payload = []
     offset = timezone.now().strftime('%z')
