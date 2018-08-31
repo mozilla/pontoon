@@ -108,6 +108,7 @@ def reject_translations(form, user, translations, locale):
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
     suggestions.update(
+        active=False,
         rejected=True,
         rejected_user=user,
         rejected_date=timezone.now(),
@@ -139,19 +140,21 @@ def replace_translations(form, user, translations, locale):
     replace = form.cleaned_data['replace']
     latest_translation_pk = None
 
-    old_translations, changed_translations, invalid_translation_pks = utils.find_and_replace(
+    old_translations, translations_to_create, invalid_translation_pks = utils.find_and_replace(
         translations,
         find,
         replace,
         user
     )
-    changed_translation_pks = [c.pk for c in changed_translations]
 
-    if changed_translation_pks:
-        latest_translation_pk = max(changed_translation_pks)
+    count, translated_resources, changed_entities = utils.get_translations_info(
+        old_translations,
+        locale,
+    )
 
-    # Unapprove old translations
+    # Deactivate and unapprove old translations
     old_translations.update(
+        active=False,
         approved=False,
         approved_user=None,
         approved_date=None,
@@ -161,10 +164,15 @@ def replace_translations(form, user, translations, locale):
         fuzzy=False,
     )
 
-    count, translated_resources, changed_entities = utils.get_translations_info(
-        old_translations,
-        locale,
+    # Create new translations
+    changed_translations = Translation.objects.bulk_create(
+        translations_to_create,
     )
+
+    changed_translation_pks = [c.pk for c in changed_translations]
+
+    if changed_translation_pks:
+        latest_translation_pk = max(changed_translation_pks)
 
     return {
         'count': count,

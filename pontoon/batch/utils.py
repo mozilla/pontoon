@@ -1,9 +1,6 @@
 from django.utils import timezone
 
-from pontoon.base.models import (
-    Entity,
-    Translation,
-)
+from pontoon.base.models import Entity
 from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.libraries import run_checks
@@ -74,8 +71,9 @@ def find_and_replace(translations, find, replace, user):
     :arg User user: the User making the change
 
     :returns: a tuple with:
-        - a queryset of old translations (changed by this function)
-        - a list of newly created translations
+        - a queryset of old translations to be changed
+        - a list of new translations to be created
+        - a list of PKs of translations with errors
 
     """
     translations = translations.filter(string__contains=find)
@@ -138,13 +136,8 @@ def find_and_replace(translations, find, replace, user):
             pk__in=translations_with_errors
         )
 
-    # Create new translations
-    changed_translations = Translation.objects.bulk_create(
-        translations_to_create,
-    )
-
     return (
         translations,
-        changed_translations,
+        translations_to_create,
         translations_with_errors,
     )
