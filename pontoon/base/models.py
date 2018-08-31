@@ -1891,31 +1891,25 @@ class EntityQuerySet(models.QuerySet):
         :returns: a QuerySet of values of entity PKs
 
         """
-        # First of find all translations that match the criteria.
-        translations = Translation.objects.filter(locale=locale).filter(query)
-
+        # First, separately filter entities with plurals (for performance reasons)
         plural_pks = []
 
         if locale.nplurals:
-            # Then we want to find the active translation of each plural form of each
-            # entity that has plurals.
-            # So we query all those entities, with for each a list of translations ordered
-            # so that the first one for each plural form will be the active one.
+            # For each entity with plurals, fetch translations matching the query.
             plural_candidates = (
                 self
                 .exclude(string_plural='')
                 .prefetch_related(Prefetch(
                     'translation_set',
-                    queryset=translations.order_by('approved', 'fuzzy', '-date'),
+                    queryset=Translation.objects.filter(locale=locale).filter(query),
                     to_attr='fetched_translations'
                 ))
             )
 
-            # Now that we have all those translations, we'll want to extract just the
-            # active one and then make sure it matches the `rule`. If it does, we store
-            # it to be retrieved in the final query.
+            # Walk through the plural forms one by one and check that:
+            #  - they have a translation
+            #  - the translation matches the rule
             for candidate in plural_candidates:
-                # Walk through the plural forms one by one.
                 count = 0
                 for i in range(locale.nplurals):
                     candidate_translations = filter(
@@ -1969,7 +1963,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities marked as "fuzzy".
 
         An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
-        translation. Note that a fuzzy translation is always the active one.
+        translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -1988,7 +1982,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities marked as "approved".
 
         An entity is marked as "approved" if all of its plural forms have an approved
-        translation. Note that an approved translation is always the active one.
+        translation.
 
         :arg Locale locale: a Locale object to get translations for
 
