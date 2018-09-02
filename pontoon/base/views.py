@@ -626,6 +626,10 @@ def update_translation(request):
 
             # If added by privileged user, approve and unfuzzy it
             if can_translate and (t.fuzzy or not t.approved):
+                if not t.active:
+                    translations.filter(active=True).update(active=False)
+                    t.active = True
+
                 t.approved = True
                 t.fuzzy = False
                 t.rejected = False
@@ -651,9 +655,14 @@ def update_translation(request):
         # Different translation added
         else:
             t = Translation(
-                entity=e, locale=locale, user=user, string=string,
-                plural_form=plural_form, date=now,
-                approved=can_translate)
+                entity=e,
+                locale=locale,
+                plural_form=plural_form,
+                string=string,
+                user=user,
+                date=now,
+                approved=can_translate,
+            )
 
             if can_translate:
                 t.approved_user = user
@@ -662,20 +671,29 @@ def update_translation(request):
             t.save()
             save_failed_checks(t, failed_checks)
 
-            active_translation = translations.get(active=True).serialize()
+            active_translation = e.reset_active_translation(
+                locale=locale,
+                plural_form=plural_form,
+            )
 
             return JsonResponse({
                 'type': 'added',
-                'translation': active_translation,
+                'translation': active_translation.serialize(),
                 'stats': TranslatedResource.objects.stats(project, paths, locale),
             })
 
     # No translations saved yet
     else:
         t = Translation(
-            entity=e, locale=locale, user=user, string=string,
-            plural_form=plural_form, date=now,
-            approved=can_translate)
+            entity=e,
+            locale=locale,
+            plural_form=plural_form,
+            string=string,
+            user=user,
+            date=now,
+            active=True,
+            approved=can_translate,
+        )
 
         if can_translate:
             t.approved_user = user

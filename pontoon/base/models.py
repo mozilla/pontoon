@@ -2171,6 +2171,35 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         return translations[0] if translations else Translation()
 
+    def reset_active_translation(self, locale, plural_form=None):
+        """
+        Reset active translation for given entity, locale and plural for.
+        Return active translation if exists or empty Translation instance.
+        """
+        translations = self.translation_set.filter(locale=locale)
+
+        if plural_form is not None:
+            translations = translations.filter(plural_form=plural_form)
+
+        translations.update(active=False)
+
+        candidates = (
+            translations
+            .filter(rejected=False)
+            .order_by('-approved', '-fuzzy', '-date')
+        )
+
+        if candidates:
+            active_translation = candidates[0]
+            active_translation.active = True
+
+            # Do not trigger the overridden Translation.save() method
+            super(Translation, active_translation).save(update_fields=['active'])
+
+            return active_translation
+        else:
+            return Translation()
+
     @classmethod
     def for_project_locale(
         self, project, locale, paths=None, status=None, tag=None,
