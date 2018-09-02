@@ -371,7 +371,9 @@ def unapprove_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
+        return HttpResponseForbidden(
+            "Forbidden: You can't unapprove this translation."
+        )
 
     translation.unapprove(request.user)
 
@@ -420,30 +422,13 @@ def reject_translation(request):
                 "Forbidden: Can't reject translations from other users"
             )
 
-    # Check if translation was approved. We must do this before unapproving it.
-    if translation.approved or translation.fuzzy:
-        translation.entity.mark_changed(locale)
-        TranslatedResource.objects.get(
-            resource=translation.entity.resource,
-            locale=locale
-        ).calculate_stats()
-
-    translation.rejected = True
-    translation.rejected_user = request.user
-    translation.rejected_date = timezone.now()
-    translation.approved = False
-    translation.approved_user = None
-    translation.approved_date = None
-    translation.fuzzy = False
-    translation.save()
+    translation.reject(request.user)
 
     active_translation = translation.entity.translation_set.get(
         locale=locale,
         plural_form=translation.plural_form,
         active=True,
     ).serialize()
-
-    TranslationMemoryEntry.objects.filter(translation=translation).delete()
 
     return JsonResponse({
         'translation': active_translation,

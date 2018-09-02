@@ -2660,6 +2660,31 @@ class Translation(DirtyFieldsMixin, models.Model):
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
+    def reject(self, user, stats=True):
+        """
+        Reject translation.
+        """
+        # Check if translation was approved or fuzzy.
+        # We must do this before unapproving/unfuzzying it.
+        if self.approved or self.fuzzy:
+            if stats:
+                TranslatedResource.objects.get(
+                    resource=self.entity.resource,
+                    locale=self.locale
+                ).calculate_stats()
+
+            TranslationMemoryEntry.objects.filter(translation=self).delete()
+            self.entity.mark_changed(self.locale)
+
+        self.rejected = True
+        self.rejected_user = user
+        self.rejected_date = timezone.now()
+        self.approved = False
+        self.approved_user = None
+        self.approved_date = None
+        self.fuzzy = False
+        self.save()
+
     def unreject(self, user):
         """
         Unreject translation.
