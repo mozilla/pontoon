@@ -680,8 +680,7 @@ def is_same(same_translations, can_translate):
         if st.approved and not st.fuzzy:
             return True
     else:
-        if not st.fuzzy:
-            return True
+        return True
 
     return False
 

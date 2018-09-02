@@ -626,16 +626,6 @@ def update_translation(request):
 
             # If added by privileged user, approve and unfuzzy it
             if can_translate and (t.fuzzy or not t.approved):
-                translations.update(
-                    approved=False,
-                    approved_user=None,
-                    approved_date=None,
-                    rejected=True,
-                    rejected_user=request.user,
-                    rejected_date=timezone.now(),
-                    fuzzy=False,
-                )
-
                 t.approved = True
                 t.fuzzy = False
                 t.rejected = False
@@ -646,32 +636,20 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-            # If added by non-privileged user and fuzzy, unfuzzy it
-            elif t.fuzzy:
-                t.approved = False
-                t.approved_user = None
-                t.approved_date = None
-                t.fuzzy = False
+                t.save()
 
-            t.save()
+                t.warnings.all().delete()
+                t.errors.all().delete()
+                save_failed_checks(t, failed_checks)
 
-            t.warnings.all().delete()
-            t.errors.all().delete()
-            save_failed_checks(t, failed_checks)
-
-            return JsonResponse({
-                'type': 'updated',
-                'translation': t.serialize(),
-                'stats': TranslatedResource.objects.stats(project, paths, locale),
-            })
+                return JsonResponse({
+                    'type': 'updated',
+                    'translation': t.serialize(),
+                    'stats': TranslatedResource.objects.stats(project, paths, locale),
+                })
 
         # Different translation added
         else:
-            if can_translate:
-                translations.update(approved=False, approved_user=None, approved_date=None)
-
-            translations.update(fuzzy=False)
-
             t = Translation(
                 entity=e, locale=locale, user=user, string=string,
                 plural_form=plural_form, date=now,
