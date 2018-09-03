@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.db import connection, transaction
+from django.db import transaction
 from django.utils import timezone
 
 from pontoon.base.models import (
@@ -305,30 +305,6 @@ def sync_translations(
                             locale=locale,
                             when__lte=now)
                     .delete())
-
-                # Clean up any duplicate approvals at the end of sync right
-                # before we commit the transaction to avoid race conditions.
-                with connection.cursor() as cursor:
-                    cursor.execute("""
-                        UPDATE base_translation AS b
-                        SET approved = FALSE, approved_date = NULL
-                        WHERE
-                          id IN
-                            (SELECT trans.id FROM base_translation AS trans
-                             LEFT JOIN base_entity AS ent ON ent.id = trans.entity_id
-                             LEFT JOIN base_resource AS res ON res.id = ent.resource_id
-                             WHERE locale_id = %(locale_id)s
-                               AND res.project_id = %(project_id)s)
-                          AND approved_date !=
-                            (SELECT max(approved_date)
-                             FROM base_translation
-                             WHERE entity_id = b.entity_id
-                               AND locale_id = b.locale_id
-                               AND (plural_form = b.plural_form OR plural_form IS NULL));
-                    """, {
-                        'locale_id': locale.id,
-                        'project_id': db_project.id
-                    })
 
                 # Perform the commit last so that, if it succeeds, there is
                 # nothing after it to fail.

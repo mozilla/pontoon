@@ -3,6 +3,7 @@ import logging
 from bulk_update.helper import bulk_update
 from collections import defaultdict
 from django.contrib.auth.models import User
+from django.db import connection
 from django.db.models import Prefetch
 from django.template.defaultfilters import pluralize
 from notifications.signals import notify
@@ -107,6 +108,29 @@ class ChangeSet(object):
         self.bulk_update_entities()
         self.bulk_create_translations()
         self.bulk_update_translations()
+
+        # Clean up any duplicate approvals
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE base_translation AS b
+                SET approved = FALSE, approved_date = NULL
+                WHERE
+                    id IN
+                    (SELECT trans.id FROM base_translation AS trans
+                        LEFT JOIN base_entity AS ent ON ent.id = trans.entity_id
+                        LEFT JOIN base_resource AS res ON res.id = ent.resource_id
+                        WHERE locale_id = %(locale_id)s
+                        AND res.project_id = %(project_id)s)
+                    AND approved_date !=
+                    (SELECT max(approved_date)
+                        FROM base_translation
+                        WHERE entity_id = b.entity_id
+                        AND locale_id = b.locale_id
+                        AND (plural_form = b.plural_form OR plural_form IS NULL));
+            """, {
+                'locale_id': self.locale.id,
+                'project_id': self.db_project.id
+            })
 
         if self.changed_translations:
             # Update 'active' status of all changed translations and their siblings,

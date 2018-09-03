@@ -266,6 +266,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """
         Any existing fuzzy translations get unfuzzied.
         """
+        self.main_db_translation.approved = False
         self.main_db_translation.fuzzy = True
         self.main_db_translation.save()
         self.main_vcs_translation.strings[None] = 'New Translated String'
