@@ -2094,6 +2094,49 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def reset_active_translations(self, locale):
+        """
+        Reset active translation for given set of entities and locale.
+        """
+        translations = Translation.objects.filter(
+            entity__in=self,
+            locale=locale,
+        )
+
+        # First, deactivate all translations
+        translations.update(active=False)
+
+        # Mark all approved translations as active.
+        translations.filter(approved=True).update(active=True)
+
+        # Mark all fuzzy translations as active.
+        translations.filter(fuzzy=True).update(active=True)
+
+        # Mark most recent unreviewed suggestions without active siblings
+        # for any given combination of (locale, entity, plural_form) as active.
+        unreviewed_pks = set()
+        unreviewed = translations.filter(
+            approved=False,
+            fuzzy=False,
+            rejected=False,
+        ).values_list('entity', 'plural_form')
+
+        for entity, plural_form in unreviewed:
+            siblings = (
+                Translation.objects
+                .filter(
+                    entity=entity,
+                    locale=locale,
+                    plural_form=plural_form,
+                )
+                .exclude(rejected=True)
+                .order_by('-active', '-date')
+            )
+            if siblings and not siblings[0].active:
+                unreviewed_pks.add(siblings[0].pk)
+
+        translations.filter(pk__in=unreviewed_pks).update(active=True)
+
 
 @python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):

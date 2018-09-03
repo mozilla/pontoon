@@ -109,6 +109,16 @@ class ChangeSet(object):
         self.bulk_update_translations()
 
         if self.changed_translations:
+            # Update 'active' status of all changed translations and their siblings,
+            # i.e. translations of the same entity to the same locale.
+            changed_pks = {t.pk for t in self.changed_translations}
+            (
+                Entity.objects
+                .filter(translation__pk__in=changed_pks)
+                .reset_active_translations(locale=self.locale)
+            )
+
+            # Run checks and create TM entries for translations that pass them
             valid_translations = self.bulk_check_translations()
             self.bulk_create_translation_memory_entries(valid_translations)
 
