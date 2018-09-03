@@ -12,7 +12,7 @@ import App from './App';
 
 ReactDOM.render((
     <Provider store={ store }>
-        <ConnectedRouter history={history}>
+        <ConnectedRouter history={ history }>
             <App />
         </ConnectedRouter>
     </Provider>
