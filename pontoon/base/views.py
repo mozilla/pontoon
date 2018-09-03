@@ -377,14 +377,13 @@ def unapprove_translation(request):
 
     translation.unapprove(request.user)
 
-    active_translation = translation.entity.translation_set.get(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-        active=True,
-    ).serialize()
+    )
 
     return JsonResponse({
-        'translation': active_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -424,14 +423,13 @@ def reject_translation(request):
 
     translation.reject(request.user)
 
-    active_translation = translation.entity.translation_set.get(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-        active=True,
-    ).serialize()
+    )
 
     return JsonResponse({
-        'translation': active_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -469,14 +467,13 @@ def unreject_translation(request):
 
     translation.unreject(request.user)
 
-    active_translation = translation.entity.translation_set.get(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-        active=True,
-    ).serialize()
+    )
 
     return JsonResponse({
-        'translation': active_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
