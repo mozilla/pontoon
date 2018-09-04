@@ -63,6 +63,92 @@ def entity_test_models(translation_a, locale_b):
 
 
 @pytest.mark.django_db
+def test_reset_active_translation(translation_a):
+    """
+    Test if active translations gets set properly.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    # Single unreviewed translation
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = False
+    translation_a.rejected = False
+    translation_a.save()
+    assert entity.reset_active_translation(locale) == translation_a
+
+    # Single approved translation
+    translation_a.active = False
+    translation_a.approved = True
+    translation_a.fuzzy = False
+    translation_a.rejected = False
+    translation_a.save()
+    assert entity.reset_active_translation(locale) == translation_a
+
+    # Single fuzzy translation
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = True
+    translation_a.rejected = False
+    translation_a.save()
+    assert entity.reset_active_translation(locale) == translation_a
+
+    # Single rejected translations
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = False
+    translation_a.rejected = True
+    translation_a.save()
+    assert entity.reset_active_translation(locale).pk is None
+
+    translation_b = TranslationFactory(
+        entity=entity,
+        locale=locale,
+        string="Translation B for entity_a",
+    )
+
+    # Two Unreviewed
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = False
+    translation_a.rejected = False
+    translation_a.save()
+    translation_b.active = False
+    translation_b.approved = False
+    translation_b.fuzzy = False
+    translation_b.rejected = False
+    translation_b.save()
+    assert entity.reset_active_translation(locale) == translation_b
+
+    # Unreviewed and Approved
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = False
+    translation_a.rejected = False
+    translation_a.save()
+    translation_b.active = False
+    translation_b.approved = True
+    translation_b.fuzzy = False
+    translation_b.rejected = False
+    translation_b.save()
+    assert entity.reset_active_translation(locale) == translation_b
+
+    # Fuzzy and Unreviewed
+    translation_a.active = False
+    translation_a.approved = False
+    translation_a.fuzzy = True
+    translation_a.rejected = False
+    translation_a.save()
+    translation_b.active = False
+    translation_b.approved = False
+    translation_b.fuzzy = False
+    translation_b.rejected = False
+    translation_b.save()
+    assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
 def test_entity_project_locale_filter(entity_test_models, locale_b, project_b):
     """
     Evaluate entities filtering by locale, project, obsolete.
