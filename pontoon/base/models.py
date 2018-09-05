@@ -2611,7 +2611,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, imported=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -2647,21 +2647,20 @@ class Translation(DirtyFieldsMixin, models.Model):
                     project=self.entity.resource.project,
                 )
 
-        if not imported:
-            # Update stats AFTER changing approval status.
-            translatedresource, _ = TranslatedResource.objects.get_or_create(
-                resource=self.entity.resource, locale=self.locale
-            )
-            translatedresource.calculate_stats()
+        # Update stats AFTER changing approval status.
+        translatedresource, _ = TranslatedResource.objects.get_or_create(
+            resource=self.entity.resource, locale=self.locale
+        )
+        translatedresource.calculate_stats()
 
-            # Whenever a translation changes, mark the entity as having
-            # changed in the appropriate locale. We could be smarter about
-            # this but for now this is fine.
-            if self.approved:
-                self.entity.mark_changed(self.locale)
+        # Whenever a translation changes, mark the entity as having
+        # changed in the appropriate locale. We could be smarter about
+        # this but for now this is fine.
+        if self.approved:
+            self.entity.mark_changed(self.locale)
 
-            # Update latest translation where necessary
-            self.update_latest_translation()
+        # Update latest translation where necessary
+        self.update_latest_translation()
 
     def update_latest_translation(self):
         """
@@ -2685,7 +2684,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                 instance.latest_translation = self
                 instance.save(update_fields=['latest_translation'])
 
-    def unapprove(self, user, stats=True):
+    def unapprove(self, user):
         """
         Unapprove translation.
         """
@@ -2694,28 +2693,16 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unapproved_date = timezone.now()
         self.save()
 
-        if stats:
-            TranslatedResource.objects.get(
-                resource=self.entity.resource,
-                locale=self.locale
-            ).calculate_stats()
-
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def reject(self, user, stats=True):
+    def reject(self, user):
         """
         Reject translation.
         """
         # Check if translation was approved or fuzzy.
         # We must do this before unapproving/unfuzzying it.
         if self.approved or self.fuzzy:
-            if stats:
-                TranslatedResource.objects.get(
-                    resource=self.entity.resource,
-                    locale=self.locale
-                ).calculate_stats()
-
             TranslationMemoryEntry.objects.filter(translation=self).delete()
             self.entity.mark_changed(self.locale)
 
