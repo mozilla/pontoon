@@ -12,6 +12,7 @@ import re
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
+from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
 
@@ -2495,7 +2496,36 @@ class Translation(DirtyFieldsMixin, models.Model):
             ('entity', 'locale', 'approved'),
             ('entity', 'locale', 'fuzzy'),
             ('locale', 'user', 'entity'),
-            ('date', 'locale'))
+            ('date', 'locale'),
+        )
+        indexes = [
+            # Translation.approved can be true for only one
+            # (locale + entity + plural_form) combination
+            # The 2nd rule catches the plural_form = None case
+            PartialIndex(
+                fields=['entity', 'locale', 'plural_form', 'approved'],
+                unique=True,
+                where=PQ(approved=True),
+            ),
+            PartialIndex(
+                fields=['entity', 'locale', 'approved'],
+                unique=True,
+                where=PQ(approved=True, plural_form__isnull=True),
+            ),
+            # Translation.fuzzy can be true for only one
+            # (locale + entity + plural_form) combination
+            # The 2nd rule catches the plural_form = None case
+            PartialIndex(
+                fields=['entity', 'locale', 'plural_form', 'fuzzy'],
+                unique=True,
+                where=PQ(fuzzy=True),
+            ),
+            PartialIndex(
+                fields=['entity', 'locale', 'fuzzy'],
+                unique=True,
+                where=PQ(fuzzy=True, plural_form__isnull=True),
+            ),
+        ]
 
     @classmethod
     def for_locale_project_paths(self, locale, project, paths):
