@@ -8,8 +8,10 @@ from pontoon.base.models import (
 )
 from pontoon.test.factories import (
     EntityFactory,
+    ErrorFactory,
     TranslatedResourceFactory,
     TranslationFactory,
+    WarningFactory,
 )
 
 
@@ -169,6 +171,171 @@ def test_mgr_entity_filter_translated_plurals(resource_a, locale_a):
         set(Entity.objects.filter(
             Entity.objects.translated(locale_a)
         )) == {entities[0], entities[2]}
+    )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_errors(resource_a, locale_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i
+        ) for i in range(0, 3)
+    ]
+
+    translations = [
+        TranslationFactory.create(
+            locale=locale_a,
+            entity=entities[i],
+            active=True,
+        ) for i in range(0, 3)
+    ]
+
+    ErrorFactory.create(
+        translation=translations[0]
+    )
+    ErrorFactory.create(
+        translation=translations[2]
+    )
+
+    assert (
+        set(Entity.objects.filter(
+            Entity.objects.errors(locale_a)
+        )) == {entities[0], entities[2]}
+    )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_errors_plural(resource_a, locale_a):
+    locale_a.cldr_plurals = '1,5'
+    locale_a.save()
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+            string_plural="testpluralentity%s" % i,
+        ) for i in range(0, 3)
+    ]
+
+    translation00 = TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=0,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=1,
+        active=True,
+    )
+    translation20 = TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=0,
+        active=True,
+    )
+    translation21 = TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=1,
+        active=True,
+    )
+
+    ErrorFactory.create(
+        translation=translation00
+    )
+    ErrorFactory.create(
+        translation=translation20
+    )
+    ErrorFactory.create(
+        translation=translation21
+    )
+
+    assert (
+        set(Entity.objects.filter(
+            Entity.objects.errors(locale_a)
+        )) == {entities[2]}
+    )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_warnings(resource_a, locale_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i
+        ) for i in range(0, 3)
+    ]
+
+    translations = [
+        TranslationFactory.create(
+            locale=locale_a,
+            entity=entities[i],
+            active=True,
+        ) for i in range(0, 3)
+    ]
+
+    WarningFactory.create(
+        translation=translations[1]
+    )
+    WarningFactory.create(
+        translation=translations[2]
+    )
+
+    translations[2].active = False
+    translations[2].save()
+
+    assert (
+        set(Entity.objects.filter(
+            Entity.objects.warnings(locale_a)
+        )) == {entities[1]}
+    )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_warnings_plural(resource_a, locale_a):
+    locale_a.cldr_plurals = '1,5'
+    locale_a.save()
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+            string_plural="testpluralentity%s" % i,
+        ) for i in range(0, 3)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=0,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=1,
+        active=True,
+    )
+    translation20 = TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=0,
+        active=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=1,
+        active=True,
+    )
+
+    WarningFactory.create(
+        translation=translation20
+    )
+
+    assert (
+        set(Entity.objects.filter(
+            Entity.objects.warnings(locale_a)
+        )) == {entities[2]}
     )
 
 
