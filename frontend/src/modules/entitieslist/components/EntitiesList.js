@@ -102,6 +102,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 hasMore={ entities.hasMore }
                 loader={ <div key="loader">Loading...</div> }
                 useWindow={ false }
+                threshold={ 600 }
             >
                 <ul>
                     { entities.entities.map((entity, i) => {
