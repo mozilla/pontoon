@@ -2106,11 +2106,8 @@ class EntityQuerySet(models.QuerySet):
         # First, deactivate all translations
         translations.update(active=False)
 
-        # Mark all approved translations as active.
-        translations.filter(approved=True).update(active=True)
-
-        # Mark all fuzzy translations as active.
-        translations.filter(fuzzy=True).update(active=True)
+        # Mark all approved and fuzzy translations as active.
+        translations.filter(Q(approved=True) | Q(fuzzy=True)).update(active=True)
 
         # Mark most recent unreviewed suggestions without active siblings
         # for any given combination of (locale, entity, plural_form) as active.

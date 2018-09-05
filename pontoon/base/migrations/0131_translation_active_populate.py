@@ -5,21 +5,18 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import migrations
+from django.db.models import Q
 
 
 def set_active_translations(apps, schema_editor):
     Translation = apps.get_model('base', 'Translation')
     print(datetime.datetime.now().time())
 
-    # All approved translations are active.
-    Translation.objects.filter(approved=True).update(active=True)
-    print(datetime.datetime.now().time())
-
-    # All fuzzy translations are active.
-    # Note that this wasn't the case until this patch - if a fuzzy translation
-    # had a newer sibling suggestion, that suggestion was active.
-    # However, this is a bug, and we're fixing it here.
-    Translation.objects.filter(fuzzy=True).update(active=True)
+    # All approved and fuzzy translations are active.
+    # Note that this wasn't the case for fuzzy translations until this patch:
+    # if a fuzzy translation had a newer sibling suggestion, that suggestion
+    # was active. However, this is a bug, and we're fixing it here.
+    Translation.objects.filter(Q(approved=True) | Q(fuzzy=True)).update(active=True)
     print(datetime.datetime.now().time())
 
     # The most recent unreviewed suggestion for any given combination of
