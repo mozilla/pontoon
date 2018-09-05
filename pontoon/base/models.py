@@ -12,6 +12,7 @@ import re
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
+from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
 
@@ -1890,31 +1891,25 @@ class EntityQuerySet(models.QuerySet):
         :returns: a QuerySet of values of entity PKs
 
         """
-        # First of find all translations that match the criteria.
-        translations = Translation.objects.filter(locale=locale).filter(query)
-
+        # First, separately filter entities with plurals (for performance reasons)
         plural_pks = []
 
         if locale.nplurals:
-            # Then we want to find the active translation of each plural form of each
-            # entity that has plurals.
-            # So we query all those entities, with for each a list of translations ordered
-            # so that the first one for each plural form will be the active one.
+            # For each entity with plurals, fetch translations matching the query.
             plural_candidates = (
                 self
                 .exclude(string_plural='')
                 .prefetch_related(Prefetch(
                     'translation_set',
-                    queryset=translations.order_by('approved', 'fuzzy', '-date'),
+                    queryset=Translation.objects.filter(locale=locale).filter(query),
                     to_attr='fetched_translations'
                 ))
             )
 
-            # Now that we have all those translations, we'll want to extract just the
-            # active one and then make sure it matches the `rule`. If it does, we store
-            # it to be retrieved in the final query.
+            # Walk through the plural forms one by one and check that:
+            #  - they have a translation
+            #  - the translation matches the rule
             for candidate in plural_candidates:
-                # Walk through the plural forms one by one.
                 count = 0
                 for i in range(locale.nplurals):
                     candidate_translations = filter(
@@ -1968,7 +1963,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities marked as "fuzzy".
 
         An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
-        translation. Note that a fuzzy translation is always the active one.
+        translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -1987,7 +1982,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities marked as "approved".
 
         An entity is marked as "approved" if all of its plural forms have an approved
-        translation. Note that an approved translation is always the active one.
+        translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2081,23 +2076,63 @@ class EntityQuerySet(models.QuerySet):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
-    def prefetch_translations(self, locale):
+    def prefetch_active_translations(self, locale):
         """
-        Prefetch translations for given locale.
+        Prefetch active translations for given locale.
         """
         return self.prefetch_related(
             Prefetch(
                 'translation_set',
                 queryset=(
-                    Translation.objects.filter(locale=locale)
+                    Translation.objects.filter(locale=locale, active=True)
                     .prefetch_related(
                         'errors',
                         'warnings',
                     )
                 ),
-                to_attr='fetched_translations'
+                to_attr='active_translations'
             )
         )
+
+    def reset_active_translations(self, locale):
+        """
+        Reset active translation for given set of entities and locale.
+        """
+        translations = Translation.objects.filter(
+            entity__in=self,
+            locale=locale,
+        )
+
+        # First, deactivate all translations
+        translations.update(active=False)
+
+        # Mark all approved and fuzzy translations as active.
+        translations.filter(Q(approved=True) | Q(fuzzy=True)).update(active=True)
+
+        # Mark most recent unreviewed suggestions without active siblings
+        # for any given combination of (locale, entity, plural_form) as active.
+        unreviewed_pks = set()
+        unreviewed = translations.filter(
+            approved=False,
+            fuzzy=False,
+            rejected=False,
+        ).values_list('entity', 'plural_form')
+
+        for entity, plural_form in unreviewed:
+            siblings = (
+                Translation.objects
+                .filter(
+                    entity=entity,
+                    locale=locale,
+                    plural_form=plural_form,
+                )
+                .exclude(rejected=True)
+                .order_by('-active', '-date')
+            )
+            if siblings and not siblings[0].active:
+                unreviewed_pks.add(siblings[0].pk)
+
+        translations.filter(pk__in=unreviewed_pks).update(active=True)
 
 
 @python_2_unicode_compatible
@@ -2164,27 +2199,46 @@ class Entity(DirtyFieldsMixin, models.Model):
         """
         ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
 
-    def get_translation(self, plural_form=None):
-        """Get fetched translation of a given entity."""
-        translations = self.fetched_translations
+    def get_active_translation(self, plural_form=None):
+        """
+        Get active translation for a given entity and plural form.
+        Active translations must be prefetched for the requested locale.
+        """
+        translations = self.active_translations
 
         if plural_form is not None:
             translations = [t for t in translations if t.plural_form == plural_form]
 
-        if translations:
-            translation = sorted(
-                translations,
-                key=lambda k: (k.approved, not k.rejected, k.date),
-                reverse=True
-            )[0]
-            return translation.serialize()
+        return translations[0] if translations else Translation()
 
-        return {
-            'fuzzy': False,
-            'string': None,
-            'approved': False,
-            'pk': None,
-        }
+    def reset_active_translation(self, locale, plural_form=None):
+        """
+        Reset active translation for given entity, locale and plural for.
+        Return active translation if exists or empty Translation instance.
+        """
+        translations = self.translation_set.filter(locale=locale)
+
+        if plural_form is not None:
+            translations = translations.filter(plural_form=plural_form)
+
+        translations.update(active=False)
+
+        candidates = (
+            translations
+            .filter(rejected=False)
+            .order_by('-approved', '-fuzzy', '-date')
+        )
+
+        if candidates:
+            active_translation = candidates[0]
+            active_translation.active = True
+
+            # Do not trigger the overridden Translation.save() method
+            super(Translation, active_translation).save(update_fields=['active'])
+
+            return active_translation
+        else:
+            return Translation()
 
     @classmethod
     def for_project_locale(
@@ -2307,8 +2361,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         if project.slug == 'all-projects':
             order_fields = ('resource__project__name',) + order_fields
 
-        entities = entities.prefetch_translations(locale)
-
         return entities.order_by(*order_fields)
 
     @classmethod
@@ -2316,9 +2368,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         entities_array = []
         visible_entities = visible_entities or []
 
-        # Prefetch related Resource, Project and ProjectLocale data
+        # Prefetch related Translations, Resources, Projects and ProjectLocales
         entities = (
             entities
+            .prefetch_active_translations(locale)
             .prefetch_related(
                 Prefetch(
                     'resource__project__project_locale',
@@ -2332,11 +2385,13 @@ class Entity(DirtyFieldsMixin, models.Model):
             translation_array = []
 
             if entity.string_plural == "":
-                translation_array.append(entity.get_translation())
+                translation = entity.get_active_translation().serialize()
+                translation_array.append(translation)
 
             else:
                 for plural_form in range(0, locale.nplurals or 1):
-                    translation_array.append(entity.get_translation(plural_form))
+                    translation = entity.get_active_translation(plural_form).serialize()
+                    translation_array.append(translation)
 
             entities_array.append({
                 'pk': entity.pk,
@@ -2457,6 +2512,12 @@ class Translation(DirtyFieldsMixin, models.Model):
     # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
+
+    # Active translations are displayed in the string list and as the first
+    # entry in the History tab. There can only be one active translation for
+    # each (entity, locale, plural_form) combination. See bug 1481175.
+    active = models.BooleanField(default=False)
+
     fuzzy = models.BooleanField(default=False)
 
     approved = models.BooleanField(default=False)
@@ -2477,11 +2538,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         User, related_name='unrejected_translations', null=True, blank=True)
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
-    # Field contains a concatenated state of the  entity for faster search lookups.
-    # Due to the nature of sql queries, it's faster to perform `icontains` filter on the same table
-    # than OR condition for The Entity and The Translation class joined together.
-    entity_document = models.TextField(blank=True)
-
     objects = TranslationQuerySet.as_manager()
 
     # extra stores data that we want to save for the specific format
@@ -2495,7 +2551,21 @@ class Translation(DirtyFieldsMixin, models.Model):
             ('entity', 'locale', 'approved'),
             ('entity', 'locale', 'fuzzy'),
             ('locale', 'user', 'entity'),
-            ('date', 'locale'))
+            ('date', 'locale'),
+        )
+        indexes = [
+            PartialIndex(
+                fields=['entity', 'locale', 'plural_form', 'active'],
+                unique=True,
+                where=PQ(active=True),
+            ),
+            # The rule above doesn't catch the plural_form = None case
+            PartialIndex(
+                fields=['entity', 'locale', 'active'],
+                unique=True,
+                where=PQ(active=True, plural_form__isnull=True),
+            ),
+        ]
 
     @classmethod
     def for_locale_project_paths(self, locale, project, paths):
@@ -2538,7 +2608,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, imported=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -2574,21 +2644,20 @@ class Translation(DirtyFieldsMixin, models.Model):
                     project=self.entity.resource.project,
                 )
 
-        if not imported:
-            # Update stats AFTER changing approval status.
-            translatedresource, _ = TranslatedResource.objects.get_or_create(
-                resource=self.entity.resource, locale=self.locale
-            )
-            translatedresource.calculate_stats()
+        # Update stats AFTER changing approval status.
+        translatedresource, _ = TranslatedResource.objects.get_or_create(
+            resource=self.entity.resource, locale=self.locale
+        )
+        translatedresource.calculate_stats()
 
-            # Whenever a translation changes, mark the entity as having
-            # changed in the appropriate locale. We could be smarter about
-            # this but for now this is fine.
-            if self.approved:
-                self.entity.mark_changed(self.locale)
+        # Whenever a translation changes, mark the entity as having
+        # changed in the appropriate locale. We could be smarter about
+        # this but for now this is fine.
+        if self.approved:
+            self.entity.mark_changed(self.locale)
 
-            # Update latest translation where necessary
-            self.update_latest_translation()
+        # Update latest translation where necessary
+        self.update_latest_translation()
 
     def update_latest_translation(self):
         """
@@ -2612,7 +2681,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                 instance.latest_translation = self
                 instance.save(update_fields=['latest_translation'])
 
-    def unapprove(self, user, stats=True):
+    def unapprove(self, user):
         """
         Unapprove translation.
         """
@@ -2621,14 +2690,27 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unapproved_date = timezone.now()
         self.save()
 
-        if stats:
-            TranslatedResource.objects.get(
-                resource=self.entity.resource,
-                locale=self.locale
-            ).calculate_stats()
-
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
+
+    def reject(self, user):
+        """
+        Reject translation.
+        """
+        # Check if translation was approved or fuzzy.
+        # We must do this before unapproving/unfuzzying it.
+        if self.approved or self.fuzzy:
+            TranslationMemoryEntry.objects.filter(translation=self).delete()
+            self.entity.mark_changed(self.locale)
+
+        self.rejected = True
+        self.rejected_user = user
+        self.rejected_date = timezone.now()
+        self.approved = False
+        self.approved_user = None
+        self.approved_date = None
+        self.fuzzy = False
+        self.save()
 
     def unreject(self, user):
         """

@@ -515,6 +515,16 @@ def handle_upload_content(slug, code, part, f, user):
     changeset.bulk_update_translations()
 
     if changeset.changed_translations:
+        # Update 'active' status of all changed translations and their siblings,
+        # i.e. translations of the same entity to the same locale.
+        changed_pks = {t.pk for t in changeset.changed_translations}
+        (
+            Entity.objects
+            .filter(translation__pk__in=changed_pks)
+            .reset_active_translations(locale=locale)
+        )
+
+        # Run checks and create TM entries for translations that pass them
         valid_translations = changeset.bulk_check_translations()
         changeset.bulk_create_translation_memory_entries(valid_translations)
 
@@ -680,8 +690,7 @@ def is_same(same_translations, can_translate):
         if st.approved and not st.fuzzy:
             return True
     else:
-        if not st.fuzzy:
-            return True
+        return True
 
     return False
 
