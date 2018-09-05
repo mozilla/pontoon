@@ -35,6 +35,7 @@ def batch_action(client, admin_client):
 def translation_dtd_unapproved():
     translation = TranslationFactory.create(
         string='Test Translation',
+        active=True,
         approved=False,
         entity__key='test',
         entity__resource__format='dtd',
@@ -55,6 +56,7 @@ def translation_dtd_invalid_unapproved():
     # Provide invalid characters in translation to cause checks to fail
     translation = TranslationFactory.create(
         string='!@#$""\'',
+        active=True,
         approved=False,
         entity__key='test',
         entity__resource__format='dtd',

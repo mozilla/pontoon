@@ -831,3 +831,125 @@ def test_lookup_collation(resource_a, locale_a):
             string__icontains=u'string'
         )) == [translations[n] for n in [0, 2, 3, 4]]
     )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_reset_active_translations(resource_a, locale_a):
+    locale_a.cldr_plurals = '1,5'
+    locale_a.save()
+
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+        ) for i in range(0, 4)
+    ] + [
+        EntityFactory(
+            resource=resource_a,
+            string='testentity4',
+            string_plural='testentity4plural',
+        )
+    ]
+    entities_qs = Entity.objects.filter(pk__in=[e.pk for e in entities])
+
+    # Translations for Entity 0:
+    # No translations
+    pass
+
+    # Translations for Entity 1:
+    # 2 unreviewed translations
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        string=entities[1].string + ' translation1',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        string=entities[1].string + ' translation2',
+    )
+
+    # Translations for Entity 2:
+    # Approved and unreviewed translation
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        string=entities[2].string + ' translation1',
+        approved=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        string=entities[2].string + ' translation2',
+    )
+
+    # Translations for Entity 3:
+    # Fuzzy and unreviewed translation
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[3],
+        string=entities[3].string + ' translation1',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[3],
+        string=entities[3].string + ' translation2',
+        fuzzy=True,
+    )
+
+    # Translations for Entity 4 - pluralized:
+    # Approved and unreviewed translation for first form,
+    # a single unreviewed translation for second form
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[4],
+        plural_form=0,
+        string=entities[4].string + ' translation1',
+        approved=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[4],
+        plural_form=0,
+        string=entities[4].string + ' translation2',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[4],
+        plural_form=1,
+        string=entities[4].string_plural + ' translation1plural',
+    )
+
+    entities_qs.reset_active_translations(locale=locale_a)
+
+    # Active translations for Entity 0:
+    # no active translations
+    assert entities[0].translation_set.filter(active=True).count() == 0
+
+    # Active translations for Entity 1:
+    # latest translation is active
+    assert (
+        entities[1].translation_set.get(active=True).string ==
+        entities[1].string + ' translation2'
+    )
+
+    # Active translations for Entity 2:
+    # approved translation is active
+    assert (
+        entities[2].translation_set.get(active=True).string ==
+        entities[2].string + ' translation1'
+    )
+
+    # Active translations for Entity 3:
+    # fuzzy translation is active
+    assert (
+        entities[3].translation_set.get(active=True).string ==
+        entities[3].string + ' translation2'
+    )
+
+    # Active translations for Entity 4 - pluralized:
+    # Approved translation for first form,
+    # a single unreviewed translation for second form
+    active = entities[4].translation_set.filter(active=True)
+    assert active[0].string == entities[4].string + ' translation1'
+    assert active[1].string == entities[4].string_plural + ' translation1plural'

@@ -34,10 +34,12 @@ from pontoon.batch.actions import ACTIONS_FN_MAP
 log = logging.getLogger(__name__)
 
 
-def update_stats(translated_resources, entity, locale):
+def update_stats(translated_resources, locale):
     """Update stats on a list of TranslatedResource.
     """
+    projects = set()
     for translated_resource in translated_resources:
+        projects.add(translated_resource.resource.project)
         translated_resource.calculate_stats(save=False)
 
     bulk_update(translated_resources, update_fields=[
@@ -47,10 +49,11 @@ def update_stats(translated_resources, entity, locale):
         'unreviewed_strings',
     ])
 
-    project = entity.resource.project
-    project.aggregate_stats()
     locale.aggregate_stats()
-    ProjectLocale.objects.get(locale=locale, project=project).aggregate_stats()
+
+    for project in projects:
+        project.aggregate_stats()
+        ProjectLocale.objects.get(locale=locale, project=project).aggregate_stats()
 
 
 def mark_changed_translation(changed_entities, locale):
@@ -110,12 +113,7 @@ def batch_edit_translations(request):
         return HttpResponseBadRequest(form.errors.as_json())
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
-
-    entities = (
-        Entity.objects
-        .filter(pk__in=form.cleaned_data['entities'])
-        .prefetch_translations(locale)
-    )
+    entities = Entity.objects.filter(pk__in=form.cleaned_data['entities'])
 
     if not entities.exists():
         return JsonResponse({'count': 0})
@@ -135,23 +133,11 @@ def batch_edit_translations(request):
                 "Forbidden: You don't have permission for batch editing"
             )
 
-    active_translation_pks = set()
-
     # Find all impacted active translations, including plural forms.
-    for entity in entities:
-        if entity.string_plural == "":
-            active_translation_pks.add(entity.get_translation()['pk'])
-        else:
-            for plural_form in range(0, locale.nplurals or 1):
-                active_translation_pks.add(
-                    entity.get_translation(plural_form)['pk']
-                )
-
-    active_translation_pks.discard(None)
-
-    active_translations = (
-        Translation.objects
-        .filter(pk__in=active_translation_pks)
+    active_translations = Translation.objects.filter(
+        active=True,
+        locale=locale,
+        entity__in=entities,
     )
 
     # Execute the actual action.
@@ -173,7 +159,7 @@ def batch_edit_translations(request):
             'invalid_translation_count': invalid_translation_count,
         })
 
-    update_stats(action_status['translated_resources'], entity, locale)
+    update_stats(action_status['translated_resources'], locale)
     mark_changed_translation(action_status['changed_entities'], locale)
 
     # Update latest translation.

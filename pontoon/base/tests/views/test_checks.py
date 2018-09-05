@@ -1,5 +1,7 @@
 import pytest
 
+from mock import patch
+
 from pontoon.base.models import Translation
 from pontoon.checks.models import Warning
 
@@ -28,14 +30,19 @@ def properties_entity(entity_a, properties_resource):
     yield entity_a
 
 
+@patch('pontoon.base.views.utils.is_same')
 @pytest.mark.django_db
 def test_run_checks_during_translation_update(
+    is_same_mock,
     properties_entity,
     member,
     locale_a,
     project_locale_a,
     request_update_translation,
 ):
+    # Mock return value for is_same
+    is_same_mock.return_value = False
+
     """
     The backend shouldn't allow to post translations with critical errors.
     """
@@ -101,6 +108,13 @@ def test_run_checks_during_translation_update(
         Translation.objects
         .filter(pk=translation_pk)
         .update(approved=False, fuzzy=True)
+    )
+
+    # Make sure user can_translate
+    (
+        Translation.objects
+        .get(pk=translation_pk)
+        .locale.translators_group.user_set.add(member.user)
     )
 
     response = request_update_translation(

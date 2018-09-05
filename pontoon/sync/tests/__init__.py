@@ -173,5 +173,6 @@ class FakeCheckoutTestCase(TestCase):
         self.changeset = ChangeSet(
             self.db_project,
             self.vcs_project,
-            aware_datetime(1970, 1, 1)
+            aware_datetime(1970, 1, 1),
+            self.translated_locale,
         )

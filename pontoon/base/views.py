@@ -163,7 +163,6 @@ def _get_entities_list(locale, project, form):
     """
     entities = (
         Entity.objects.filter(pk__in=form.cleaned_data['entity_ids'])
-        .prefetch_translations(locale)
         .distinct()
         .order_by('order')
     )
@@ -323,7 +322,7 @@ def get_translation_history(request):
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
-    translations = translations.order_by('-approved', 'rejected', '-date')
+    translations = translations.order_by('-active', 'rejected', '-date')
 
     payload = []
     offset = timezone.now().strftime('%z')
@@ -372,17 +371,19 @@ def unapprove_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden("Forbidden: You can't unapprove this translation.")
+        return HttpResponseForbidden(
+            "Forbidden: You can't unapprove this translation."
+        )
 
     translation.unapprove(request.user)
 
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+    )
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -420,32 +421,15 @@ def reject_translation(request):
                 "Forbidden: Can't reject translations from other users"
             )
 
-    # Check if translation was approved. We must do this before unapproving it.
-    if translation.approved or translation.fuzzy:
-        translation.entity.mark_changed(locale)
-        TranslatedResource.objects.get(
-            resource=translation.entity.resource,
-            locale=locale
-        ).calculate_stats()
+    translation.reject(request.user)
 
-    translation.rejected = True
-    translation.rejected_user = request.user
-    translation.rejected_date = timezone.now()
-    translation.approved = False
-    translation.approved_user = None
-    translation.approved_date = None
-    translation.fuzzy = False
-    translation.save()
-
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
-
-    TranslationMemoryEntry.objects.filter(translation=translation).delete()
+    )
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -483,13 +467,13 @@ def unreject_translation(request):
 
     translation.unreject(request.user)
 
-    latest_translation = translation.entity.translation_set.filter(
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
-    ).order_by('-approved', 'rejected', '-date')[0].serialize()
+    )
 
     return JsonResponse({
-        'translation': latest_translation,
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
@@ -594,7 +578,7 @@ def update_translation(request):
         entity=e, locale=locale, plural_form=plural_form)
 
     same_translations = translations.filter(string=string).order_by(
-        '-approved', 'rejected', '-date'
+        '-active', 'rejected', '-date'
     )
 
     # If same translation exists in the DB, don't save it again.
@@ -618,20 +602,15 @@ def update_translation(request):
 
     # Translations exist
     if len(translations) > 0:
+        # Same translation exists
         if len(same_translations) > 0:
             t = same_translations[0]
 
             # If added by privileged user, approve and unfuzzy it
             if can_translate and (t.fuzzy or not t.approved):
-                translations.update(
-                    approved=False,
-                    approved_user=None,
-                    approved_date=None,
-                    rejected=True,
-                    rejected_user=request.user,
-                    rejected_date=timezone.now(),
-                    fuzzy=False,
-                )
+                if not t.active:
+                    translations.filter(active=True).update(active=False)
+                    t.active = True
 
                 t.approved = True
                 t.fuzzy = False
@@ -643,36 +622,29 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-            # If added by non-privileged user and fuzzy, unfuzzy it
-            elif t.fuzzy:
-                t.approved = False
-                t.approved_user = None
-                t.approved_date = None
-                t.fuzzy = False
+                t.save()
 
-            t.save()
+                t.warnings.all().delete()
+                t.errors.all().delete()
+                save_failed_checks(t, failed_checks)
 
-            t.warnings.all().delete()
-            t.errors.all().delete()
-            save_failed_checks(t, failed_checks)
-
-            return JsonResponse({
-                'type': 'updated',
-                'translation': t.serialize(),
-                'stats': TranslatedResource.objects.stats(project, paths, locale),
-            })
+                return JsonResponse({
+                    'type': 'updated',
+                    'translation': t.serialize(),
+                    'stats': TranslatedResource.objects.stats(project, paths, locale),
+                })
 
         # Different translation added
         else:
-            if can_translate:
-                translations.update(approved=False, approved_user=None, approved_date=None)
-
-            translations.update(fuzzy=False)
-
             t = Translation(
-                entity=e, locale=locale, user=user, string=string,
-                plural_form=plural_form, date=now,
-                approved=can_translate)
+                entity=e,
+                locale=locale,
+                plural_form=plural_form,
+                string=string,
+                user=user,
+                date=now,
+                approved=can_translate,
+            )
 
             if can_translate:
                 t.approved_user = user
@@ -681,24 +653,29 @@ def update_translation(request):
             t.save()
             save_failed_checks(t, failed_checks)
 
-            # Return active (approved or latest) translation
-            try:
-                active = translations.filter(approved=True).latest("date")
-            except Translation.DoesNotExist:
-                active = translations.latest("date")
+            active_translation = e.reset_active_translation(
+                locale=locale,
+                plural_form=plural_form,
+            )
 
             return JsonResponse({
                 'type': 'added',
-                'translation': active.serialize(),
+                'translation': active_translation.serialize(),
                 'stats': TranslatedResource.objects.stats(project, paths, locale),
             })
 
     # No translations saved yet
     else:
         t = Translation(
-            entity=e, locale=locale, user=user, string=string,
-            plural_form=plural_form, date=now,
-            approved=can_translate)
+            entity=e,
+            locale=locale,
+            plural_form=plural_form,
+            string=string,
+            user=user,
+            date=now,
+            active=True,
+            approved=can_translate,
+        )
 
         if can_translate:
             t.approved_user = user

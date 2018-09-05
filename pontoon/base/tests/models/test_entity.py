@@ -26,6 +26,7 @@ def entity_test_models(translation_a, locale_b):
     locale_a.cldr_plurals = "0,1"
     locale_a.save()
     translation_a.plural_form = 0
+    translation_a.active = True
     translation_a.save()
     resourceX = ResourceFactory(
         project=project_a, path="resourceX.po",
@@ -45,11 +46,13 @@ def entity_test_models(translation_a, locale_b):
         entity=entity_a,
         locale=locale_a,
         plural_form=1,
+        active=True,
         string="Plural %s" % translation_a.string,
     )
     translationX = TranslationFactory(
         entity=entity_b,
         locale=locale_a,
+        active=True,
         string="Translation %s" % entity_b.string,
     )
     subpageX = SubpageFactory(
@@ -57,6 +60,128 @@ def entity_test_models(translation_a, locale_b):
     )
     subpageX.resources.add(entity_a.resource)
     return translation_a, translation_a_pl, translationX, subpageX
+
+
+@pytest.fixture
+def translation_b(translation_a):
+    """
+    This fixture provides a secondary translation
+    for translation_a's entity.
+    """
+
+    return TranslationFactory(
+        entity=translation_a.entity,
+        locale=translation_a.locale,
+        string="Translation B for entity_a",
+    )
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_single_unreviewed(translation_a):
+    """
+    Test if active translations gets set properly for an entity
+    with a single unreviewed translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_single_approved(translation_a):
+    """
+    Test if active translations gets set properly for an entity
+    with a single approved translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_a.approved = True
+    translation_a.save()
+
+    assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_single_fuzzy(translation_a):
+    """
+    Test if active translations gets set properly for an entity
+    with a single fuzzy translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_a.fuzzy = True
+    translation_a.save()
+
+    assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_single_rejected(translation_a):
+    """
+    Test if active translations gets set properly for an entity
+    with a single rejected translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_a.rejected = True
+    translation_a.save()
+
+    assert entity.reset_active_translation(locale).pk is None
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_two_unreviewed(
+    translation_a,
+    translation_b,
+):
+    """
+    Test if active translations gets set properly for an entity
+    with two unreviewed translations.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    assert entity.reset_active_translation(locale) == translation_b
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_unreviewed_and_approved(
+    translation_a,
+    translation_b,
+):
+    """
+    Test if active translations gets set properly for an entity
+    with an unreviewed and approved translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_b.approved = True
+    translation_b.save()
+
+    assert entity.reset_active_translation(locale) == translation_b
+
+
+@pytest.mark.django_db
+def test_reset_active_translation_fuzzy_and_unreviewed(
+    translation_a,
+    translation_b,
+):
+    """
+    Test if active translations gets set properly for an entity
+    with a fuzzy and unreviewed translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_a.fuzzy = True
+    translation_a.save()
+
+    assert entity.reset_active_translation(locale) == translation_a
 
 
 @pytest.mark.django_db
