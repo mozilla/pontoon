@@ -3,8 +3,9 @@
 import type { Translation } from './reducer';
 
 
-export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
 export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
+export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
+export const RESET: 'entitieslist/RESET' = 'entitieslist/RESET';
 export const UPDATE: 'entitieslist/UPDATE' = 'entitieslist/UPDATE';
 
 
@@ -27,11 +28,13 @@ export function request(): RequestAction {
 export type ReceiveAction = {
     type: typeof RECEIVE,
     entities: Array<Object>,
+    hasMore: boolean,
 };
-export function receive(entities: Array<Object>): ReceiveAction {
+export function receive(entities: Array<Object>, hasMore: boolean): ReceiveAction {
     return {
         type: RECEIVE,
         entities,
+        hasMore,
     };
 }
 
@@ -60,8 +63,9 @@ export function get(
     locale: string,
     project: string,
     resource: string,
+    exclude: ?Array<number>,
 ): Function {
-    return async (dispatch: Function): Promise<void> => {
+    return async (dispatch) => {
         dispatch(request());
 
         // Fetch entities from backend.
@@ -74,6 +78,10 @@ export function get(
             payload.append('paths[]', resource);
         }
 
+        if (exclude && exclude.length) {
+            payload.append('exclude_entities', exclude.join(','));
+        }
+
         const requestParams = {
             method: 'POST',
             headers: {
@@ -84,13 +92,25 @@ export function get(
 
         const response = await fetch(url, requestParams);
         const content = await response.json();
-        dispatch(receive(content.entities));
+        dispatch(receive(content.entities, content.has_next));
     };
 }
+
+
+export type ResetAction = {
+   type: typeof RESET,
+};
+export function reset(): ResetAction {
+    return {
+        type: RESET,
+    };
+}
+
 
 export default {
     get,
     receive,
     request,
+    reset,
     updateEntityTranslation,
 };

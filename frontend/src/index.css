@@ -4,3 +4,8 @@ body {
   font: 13px/1.231 sans-serif;
   font-family: "Open Sans","Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
 }
+
+body, html, #root {
+  height: 100%;
+  width: 100%;
+}

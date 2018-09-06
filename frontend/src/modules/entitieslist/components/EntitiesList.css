@@ -1,7 +1,18 @@
 .entities {
     background-color: #3f4752;
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.entities ul {
     list-style: none;
     margin: 0;
     padding: 0;
     text-align: left;
+}
+
+.entities,
+.entities > div {
+    height: 100%;
 }
