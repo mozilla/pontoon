@@ -1,5 +1,10 @@
 .editor > textarea {
+    box-sizing: border-box;
+    display: block;
     height: 20%;
     min-height: 100px;
+    overflow: auto;
+    padding: 10px;
+    resize: none;
     width: 100%;
 }

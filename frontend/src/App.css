@@ -1,5 +1,6 @@
 #app {
     display: flex;
+    height: 100%;
 }
 
 #app > section {

@@ -110,6 +110,8 @@ To learn more, you can read [Why use static types in JavaScript?](https://medium
 
 Until we define our set of rules, please refer to the [addons team's Flow manifesto](https://github.com/mozilla/addons-frontend/#flow) regarding specific usage and edge cases.
 
+Note that Flow is good at extrapolating types from the standard library and common tools like React. Only put explicit types where needed. For example, it is not necessary to express that the `render` method of a component return a `React.Node`, as Flow will extrapolate that and check it even if you don't.
+
 
 ## Testing
 
@@ -160,3 +162,8 @@ We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) 
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
 - [Flow](https://flow.org/en/docs/)
 - [Jest](http://jestjs.io/docs/en/getting-started)
+- [sinon](https://sinonjs.org/releases/v6.0.0/)
+- [connected-react-router](https://github.com/supasate/connected-react-router)
+- [Infinite Scroller](https://cassetterocks.github.io/react-infinite-scroller/)
+- [Linkify](https://tasti.github.io/react-linkify/)
+- [reselect](https://github.com/reduxjs/reselect)

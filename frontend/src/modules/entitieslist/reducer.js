@@ -1,12 +1,13 @@
 /* @flow */
 
-import { RECEIVE, REQUEST, UPDATE } from './actions';
-import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
+import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
+import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
 
 
 export type Action =
     | ReceiveAction
     | RequestAction
+    | ResetAction
     | UpdateAction
 ;
 
@@ -34,6 +35,7 @@ export type Entities = Array<DbEntity>;
 export type State = {
     +entities: Entities,
     +fetching: boolean,
+    +hasMore: boolean,
     +errors: Array<string>,
 };
 
@@ -57,6 +59,7 @@ function updateEntities(state: Object, entity: number, translation: Translation)
 const initial: State = {
     entities: [],
     fetching: false,
+    hasMore: true,
     errors: [],
 };
 
@@ -69,12 +72,15 @@ export default function reducer(
             return {
                 ...state,
                 ...{
-                    entities: action.entities,
+                    entities: state.entities.concat(action.entities),
                     fetching: false,
+                    hasMore: action.hasMore,
                 }
             };
         case REQUEST:
-            return { ...state, ...{ fetching: true } };
+            return { ...state, ...{ fetching: true, hasMore: false } };
+        case RESET:
+            return { ...state, ...{ entities: [], fetching: false, hasMore: true } };
         case UPDATE:
             return {
                 ...state,
