@@ -1,5 +1,7 @@
 /* @flow */
 
+import api from 'core/api';
+
 import type { Translation } from './reducer';
 
 
@@ -47,7 +49,10 @@ export type UpdateAction = {
     entity: number,
     translation: Translation,
 };
-export function updateEntityTranslation(entity: number, translation: Translation): UpdateAction {
+export function updateEntityTranslation(
+   entity: number,
+   translation: Translation
+): UpdateAction {
     return {
         type: UPDATE,
         entity,
@@ -65,33 +70,15 @@ export function get(
     resource: string,
     exclude: ?Array<number>,
 ): Function {
-    return async (dispatch) => {
+    return async dispatch => {
         dispatch(request());
 
-        // Fetch entities from backend.
-        const url = new URL('/get-entities/', window.location.origin);
-        const payload = new FormData();
-        payload.append('locale', locale);
-        payload.append('project', project);
-
-        if (resource !== 'all') {
-            payload.append('paths[]', resource);
-        }
-
-        if (exclude && exclude.length) {
-            payload.append('exclude_entities', exclude.join(','));
-        }
-
-        const requestParams = {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: payload,
-        };
-
-        const response = await fetch(url, requestParams);
-        const content = await response.json();
+        const content = await api.entity.getEntities(
+            locale,
+            project,
+            resource,
+            exclude,
+        );
         dispatch(receive(content.entities, content.has_next));
     };
 }
