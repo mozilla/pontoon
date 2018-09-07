@@ -304,6 +304,7 @@ h2 {
   height: 60px;
   width: 980px;
   align-items: center;
+  font-size: 14px;
 }
 
 #section-6 .footer .mozilla .logo {
@@ -312,12 +313,10 @@ h2 {
 
 #section-6 .footer .github {
   text-align: center;
-  font-size: 14px;
 }
 
 #section-6 .footer .contact {
   text-align: right;
-  font-size: 14px;
 }
 
 #section-6 .footer a {
