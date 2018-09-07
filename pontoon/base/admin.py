@@ -20,8 +20,10 @@ from pontoon.teams.utils import (
 AGGREGATED_STATS_FIELDS = (
     'total_strings',
     'approved_strings',
-    'unreviewed_strings',
     'fuzzy_strings',
+    'strings_with_errors',
+    'strings_with_warnings',
+    'unreviewed_strings',
 )
 
 
