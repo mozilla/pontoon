@@ -25,6 +25,8 @@ class ProjectLocale(DjangoObjectType, Stats):
             'total_strings',
             'approved_strings',
             'fuzzy_strings',
+            'strings_with_errors',
+            'strings_with_warnings',
             'unreviewed_strings',
         )
 
@@ -44,6 +46,8 @@ class Project(DjangoObjectType, Stats):
             'total_strings',
             'approved_strings',
             'fuzzy_strings',
+            'strings_with_errors',
+            'strings_with_warnings',
             'unreviewed_strings',
         )
 
@@ -65,6 +69,8 @@ class Locale(DjangoObjectType, Stats):
             'total_strings',
             'approved_strings',
             'fuzzy_strings',
+            'strings_with_errors',
+            'strings_with_warnings',
             'unreviewed_strings',
         )
 
