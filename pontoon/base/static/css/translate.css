@@ -317,11 +317,11 @@ body > header .locale.select {
   color: #FED271;
 }
 
-.error .status:before {
+.errors .status:before {
   color: #F36;
 }
 
-.warning .status:before {
+.warnings .status:before {
   color: #FFA10F;
 }
 
@@ -1175,8 +1175,8 @@ body > header aside p {
 
 #entitylist > .wrapper > ul > li.translated p span.source-string,
 #entitylist > .wrapper > ul > li.fuzzy p span.source-string,
-#entitylist > .wrapper > ul > li.error p span.source-string,
-#entitylist > .wrapper > ul > li.warning p span.source-string,
+#entitylist > .wrapper > ul > li.errors p span.source-string,
+#entitylist > .wrapper > ul > li.warnings p span.source-string,
 #entitylist > .wrapper > ul > li.missing.has-translations p span.source-string,
 #entitylist > .wrapper > ul > li.partial p span.source-string,
 #entitylist > .wrapper > ul > li p span.translation-string:not(:empty) {
