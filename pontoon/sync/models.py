@@ -70,6 +70,10 @@ class SyncLog(BaseLog):
         for t in tr_source:
             t.total_strings = t.resource.total_strings
             translated_resources.append(t)
+            log.info(
+                "Fix stats: total_strings mismatch for {resource}, {locale}."
+                .format(resource=t.resource, locale=t.locale.code)
+            )
 
         bulk_update(translated_resources, update_fields=['total_strings'])
 
@@ -83,9 +87,13 @@ class SyncLog(BaseLog):
             )
             if count > 1:
                 for pl in ProjectLocale.objects.filter(project=p):
+                    log.info(
+                        "Fix stats: total_strings mismatch for {project}, {locale}."
+                        .format(project=pl.project, locale=pl.locale.code)
+                    )
                     pl.aggregate_stats()
 
-        # translated + fuzzy > total in TranslatedResource
+        # approved + fuzzy + errors + warnings > total in TranslatedResource
         for t in (
             TranslatedResource.objects
             .filter(
@@ -93,10 +101,19 @@ class SyncLog(BaseLog):
                 resource__project__sync_disabled=False,
             )
             .annotate(
-                total=Sum(F('approved_strings') + F('fuzzy_strings'))
+                total=Sum(
+                    F('approved_strings') +
+                    F('fuzzy_strings') +
+                    F('strings_with_errors') +
+                    F('strings_with_warnings')
+                )
             )
             .filter(total__gt=F('total_strings'))
         ):
+            log.info(
+                "Fix stats: total_strings overflow for {resource}, {locale}."
+                .format(resource=t.resource, locale=t.locale.code)
+            )
             t.calculate_stats()
 
         log.info("Sync complete.")

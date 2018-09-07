@@ -476,8 +476,10 @@ class PermissionChangelog(models.Model):
 class AggregatedStats(models.Model):
     total_strings = models.PositiveIntegerField(default=0)
     approved_strings = models.PositiveIntegerField(default=0)
-    unreviewed_strings = models.PositiveIntegerField(default=0)
     fuzzy_strings = models.PositiveIntegerField(default=0)
+    strings_with_errors = models.PositiveIntegerField(default=0)
+    strings_with_warnings = models.PositiveIntegerField(default=0)
+    unreviewed_strings = models.PositiveIntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -490,8 +492,10 @@ class AggregatedStats(models.Model):
         return cls(
             total_strings=sum(x.total_strings for x in qs),
             approved_strings=sum(x.approved_strings for x in qs),
-            unreviewed_strings=sum(x.unreviewed_strings for x in qs),
             fuzzy_strings=sum(x.fuzzy_strings for x in qs),
+            strings_with_errors=sum(x.strings_with_errors for x in qs),
+            strings_with_warnings=sum(x.strings_with_warnings for x in qs),
+            unreviewed_strings=sum(x.unreviewed_strings for x in qs),
         )
 
     @classmethod
@@ -514,17 +518,23 @@ class AggregatedStats(models.Model):
         total_strings_diff,
         approved_strings_diff,
         fuzzy_strings_diff,
+        strings_with_errors_diff,
+        strings_with_warnings_diff,
         unreviewed_strings_diff
     ):
         self.total_strings = F('total_strings') + total_strings_diff
         self.approved_strings = F('approved_strings') + approved_strings_diff
         self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
+        self.strings_with_errors = F('strings_with_errors') + strings_with_errors_diff
+        self.strings_with_warnings = F('strings_with_warnings') + strings_with_warnings_diff
         self.unreviewed_strings = F('unreviewed_strings') + unreviewed_strings_diff
 
         self.save(update_fields=[
             'total_strings',
             'approved_strings',
             'fuzzy_strings',
+            'strings_with_errors',
+            'strings_with_warnings',
             'unreviewed_strings',
         ])
 
@@ -533,7 +543,9 @@ class AggregatedStats(models.Model):
         return (
             self.total_strings -
             self.approved_strings -
-            self.fuzzy_strings
+            self.fuzzy_strings -
+            self.strings_with_errors -
+            self.strings_with_warnings
         )
 
     @property
@@ -2849,8 +2861,10 @@ class TranslatedResourceQuerySet(models.QuerySet):
         return self.aggregate(
             total=Sum('resource__total_strings'),
             approved=Sum('approved_strings'),
+            fuzzy=Sum('fuzzy_strings'),
+            errors=Sum('strings_with_errors'),
+            warnings=Sum('strings_with_warnings'),
             unreviewed=Sum('unreviewed_strings'),
-            fuzzy=Sum('fuzzy_strings')
         )
 
     def aggregate_stats(self, instance):
@@ -2858,12 +2872,18 @@ class TranslatedResourceQuerySet(models.QuerySet):
 
         instance.total_strings = aggregated_stats['total'] or 0
         instance.approved_strings = aggregated_stats['approved'] or 0
-        instance.unreviewed_strings = aggregated_stats['unreviewed'] or 0
         instance.fuzzy_strings = aggregated_stats['fuzzy'] or 0
+        instance.strings_with_errors = aggregated_stats['errors'] or 0
+        instance.strings_with_warnings = aggregated_stats['warnings'] or 0
+        instance.unreviewed_strings = aggregated_stats['unreviewed'] or 0
 
         instance.save(update_fields=[
-            'total_strings', 'approved_strings',
-            'fuzzy_strings', 'unreviewed_strings'
+            'total_strings',
+            'approved_strings',
+            'fuzzy_strings',
+            'strings_with_errors',
+            'strings_with_warnings',
+            'unreviewed_strings',
         ])
 
     def stats(self, project, paths, locale):
@@ -2922,30 +2942,88 @@ class TranslatedResource(AggregatedStats):
         # Singular
         translations = Translation.objects.filter(
             entity__in=translated_entities.filter(string_plural=''),
-            locale=locale
+            locale=locale,
         )
-        approved = translations.filter(approved=True).count()
-        fuzzy = translations.filter(fuzzy=True).count()
-        missing = resource.total_strings - approved - fuzzy
+
+        approved = translations.filter(
+            approved=True,
+            errors__isnull=True,
+            warnings__isnull=True,
+        ).count()
+
+        fuzzy = translations.filter(
+            fuzzy=True,
+            errors__isnull=True,
+            warnings__isnull=True,
+        ).count()
+
+        errors = translations.filter(
+            Q(
+                Q(Q(approved=True) | Q(fuzzy=True)) &
+                Q(errors__isnull=False)
+            ),
+        ).count()
+
+        warnings = translations.filter(
+            Q(
+                Q(Q(approved=True) | Q(fuzzy=True)) &
+                Q(warnings__isnull=False)
+            ),
+        ).count()
+
         unreviewed = translations.filter(
             approved=False,
             fuzzy=False,
-            rejected=False
+            rejected=False,
         ).count()
+
+        missing = resource.total_strings - approved - fuzzy - errors - warnings
 
         # Plural
         nplurals = locale.nplurals or 1
-        for e in translated_entities.exclude(string_plural=''):
-            translations = Translation.objects.filter(entity=e, locale=locale)
-            plural_approved_count = translations.filter(approved=True).count()
-            plural_fuzzy_count = translations.filter(fuzzy=True).count()
+        for e in translated_entities.exclude(string_plural='').values_list('pk'):
+            translations = Translation.objects.filter(
+                entity_id=e,
+                locale=locale,
+            )
+
+            plural_approved_count = translations.filter(
+                approved=True,
+                errors__isnull=True,
+                warnings__isnull=True,
+            ).count()
+
+            plural_fuzzy_count = translations.filter(
+                fuzzy=True,
+                errors__isnull=True,
+                warnings__isnull=True,
+            ).count()
 
             if plural_approved_count == nplurals:
                 approved += 1
             elif plural_fuzzy_count == nplurals:
                 fuzzy += 1
             else:
-                missing += 1
+                plural_errors_count = translations.filter(
+                    Q(
+                        Q(Q(approved=True) | Q(fuzzy=True)) &
+                        Q(errors__isnull=False)
+                    ),
+                ).count()
+
+                plural_warnings_count = translations.filter(
+                    Q(
+                        Q(Q(approved=True) | Q(fuzzy=True)) &
+                        Q(warnings__isnull=False)
+                    ),
+                ).count()
+
+                if plural_errors_count:
+                    errors += 1
+                elif plural_warnings_count:
+                    warnings += 1
+                else:
+                    missing += 1
 
             plural_unreviewed_count = translations.filter(
                 approved=False,
@@ -2959,6 +3037,8 @@ class TranslatedResource(AggregatedStats):
             self.total_strings = resource.total_strings
             self.approved_strings = approved
             self.fuzzy_strings = fuzzy
+            self.strings_with_errors = errors
+            self.strings_with_warnings = warnings
             self.unreviewed_strings = unreviewed
 
             return False
@@ -2967,26 +3047,40 @@ class TranslatedResource(AggregatedStats):
         total_strings_diff = resource.total_strings - self.total_strings
         approved_strings_diff = approved - self.approved_strings
         fuzzy_strings_diff = fuzzy - self.fuzzy_strings
+        strings_with_errors_diff = errors - self.strings_with_errors
+        strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
 
         # Translated Resource
         self.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
+            total_strings_diff,
+            approved_strings_diff,
+            fuzzy_strings_diff,
+            strings_with_errors_diff,
+            strings_with_warnings_diff,
+            unreviewed_strings_diff,
         )
 
         # Project
         project = resource.project
         project.adjust_stats(
-            total_strings_diff, approved_strings_diff,
-            fuzzy_strings_diff, unreviewed_strings_diff
+            total_strings_diff,
+            approved_strings_diff,
+            fuzzy_strings_diff,
+            strings_with_errors_diff,
+            strings_with_warnings_diff,
+            unreviewed_strings_diff,
         )
 
         # Locale
         if not project.system_project:
             locale.adjust_stats(
-                total_strings_diff, approved_strings_diff,
-                fuzzy_strings_diff, unreviewed_strings_diff
+                total_strings_diff,
+                approved_strings_diff,
+                fuzzy_strings_diff,
+                strings_with_errors_diff,
+                strings_with_warnings_diff,
+                unreviewed_strings_diff,
             )
 
         # ProjectLocale
@@ -2997,6 +3091,10 @@ class TranslatedResource(AggregatedStats):
         )
         if project_locale:
             project_locale.adjust_stats(
-                total_strings_diff, approved_strings_diff,
-                fuzzy_strings_diff, unreviewed_strings_diff
+                total_strings_diff,
+                approved_strings_diff,
+                fuzzy_strings_diff,
+                strings_with_errors_diff,
+                strings_with_warnings_diff,
+                unreviewed_strings_diff,
             )
