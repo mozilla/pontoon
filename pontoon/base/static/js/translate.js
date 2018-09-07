@@ -755,7 +755,7 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Get entity status: 'translated', 'fuzzy', 'error', 'warning', 'partial', 'missing'
+     * Get entity status: 'translated', 'fuzzy', 'errors', 'warnings', 'partial', 'missing'
      *
      * entity Entity
      */
@@ -784,10 +784,10 @@ var Pontoon = (function (my) {
         */
       }
       if (errors > 0) {
-        return 'error';
+        return 'errors';
       }
       else if (warnings > 0) {
-        return 'warning';
+        return 'warnings';
       }
       else if (i === translated) {
         return 'translated';
@@ -2607,7 +2607,7 @@ var Pontoon = (function (my) {
       );
 
       entity.ui
-        .removeClass('translated fuzzy error warning partial missing')
+        .removeClass('translated fuzzy errors warnings partial missing')
         .addClass(status)
         .toggleClass('has-translations', translation.pk !== null && !translation.rejected)
         .find('.translation-string')

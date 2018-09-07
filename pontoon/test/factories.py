@@ -19,6 +19,7 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry
 )
+from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
 
 
@@ -162,6 +163,24 @@ class TranslatedResourceFactory(DjangoModelFactory):
 
     class Meta:
         model = TranslatedResource
+
+
+class ErrorFactory(DjangoModelFactory):
+    library = Sequence(lambda n: 'pontoon')
+    message = Sequence(lambda n: 'Error {0}'.format(n))
+    translation = SubFactory(TranslationFactory)
+
+    class Meta:
+        model = Error
+
+
+class WarningFactory(DjangoModelFactory):
+    library = Sequence(lambda n: 'pontoon')
+    message = Sequence(lambda n: 'Warning {0}'.format(n))
+    translation = SubFactory(TranslationFactory)
+
+    class Meta:
+        model = Warning
 
 
 class TagFactory(DjangoModelFactory):

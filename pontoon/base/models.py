@@ -1875,7 +1875,7 @@ class Subpage(models.Model):
 
 
 class EntityQuerySet(models.QuerySet):
-    def get_filtered_entities(self, locale, query, rule, match_all=True):
+    def get_filtered_entities(self, locale, query, rule, match_all=True, prefetch=None):
         """Return a QuerySet of values of entity PKs matching the locale, query and rule.
 
         Filter entities that match the given filter provided by the `locale` and `query`
@@ -1887,6 +1887,8 @@ class EntityQuerySet(models.QuerySet):
         :arg function rule: a lambda function implementing the `query` logic
         :arg boolean match_all: if true, all plural forms must match the rule.
             Otherwise, only one matching is enough
+        :arg prefetch django.db.models.Prefetch prefetch: if set, it's used to control the
+            operation of prefetch_related() on the query.
 
         :returns: a QuerySet of values of entity PKs
 
@@ -1899,11 +1901,16 @@ class EntityQuerySet(models.QuerySet):
             plural_candidates = (
                 self
                 .exclude(string_plural='')
-                .prefetch_related(Prefetch(
-                    'translation_set',
-                    queryset=Translation.objects.filter(locale=locale).filter(query),
-                    to_attr='fetched_translations'
-                ))
+                .prefetch_related(
+                    Prefetch(
+                        'translation_set',
+                        queryset=(
+                            Translation.objects.filter(locale=locale).filter(query)
+                            .prefetch_related(prefetch)
+                        ),
+                        to_attr='fetched_translations'
+                    )
+                )
             )
 
             # Walk through the plural forms one by one and check that:
@@ -1975,6 +1982,54 @@ class EntityQuerySet(models.QuerySet):
                 locale,
                 Q(fuzzy=True),
                 lambda x: x.fuzzy
+            )
+        )
+
+    def warnings(self, locale):
+        """Return a filter to be used to select entities with translations with warnings.
+
+        This filter will return an entity if at least one of its plural forms
+        has an approved or fuzzy translation with a warning.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(
+                    Q(Q(approved=True) | Q(fuzzy=True)) &
+                    Q(warnings__isnull=False)
+                ),
+                lambda x: (x.approved or x.fuzzy) and x.warnings.count(),
+                match_all=False,
+                prefetch=Prefetch('warnings'),
+            )
+        )
+
+    def errors(self, locale):
+        """Return a filter to be used to select entities with translations with errors.
+
+        This filter will return an entity if at least one of its plural forms
+        has an approved or fuzzy translation with an error.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(
+                    Q(Q(approved=True) | Q(fuzzy=True)) &
+                    Q(errors__isnull=False)
+                ),
+                lambda x: (x.approved or x.fuzzy) and x.errors.count(),
+                match_all=False,
+                prefetch=Prefetch('errors'),
             )
         )
 
@@ -2282,7 +2337,14 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if status:
             # Apply a combination of filters based on the list of statuses the user sent.
-            status_filter_choices = ('missing', 'fuzzy', 'translated', 'unreviewed')
+            status_filter_choices = (
+                'missing',
+                'fuzzy',
+                'warnings',
+                'errors',
+                'translated',
+                'unreviewed',
+            )
             post_filters.append(
                 combine_entity_filters(
                     entities,
