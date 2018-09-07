@@ -290,10 +290,6 @@ h2 {
   padding: 0;
 }
 
-#section-6 h2 {
-  padding-bottom: 50px;
-}
-
 #section-6 p {
   padding-bottom: 10px;
 }
@@ -308,6 +304,7 @@ h2 {
   height: 60px;
   width: 980px;
   align-items: center;
+  font-size: 14px;
 }
 
 #section-6 .footer .mozilla .logo {
