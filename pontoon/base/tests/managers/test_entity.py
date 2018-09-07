@@ -187,7 +187,7 @@ def test_mgr_entity_filter_errors(resource_a, locale_a):
         TranslationFactory.create(
             locale=locale_a,
             entity=entities[i],
-            active=True,
+            approved=True,
         ) for i in range(0, 3)
     ]
 
@@ -226,19 +226,19 @@ def test_mgr_entity_filter_errors_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
-        active=True,
+        approved=True,
     )
     translation20 = TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=0,
-        active=True,
+        approved=True,
     )
     translation21 = TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=1,
-        active=True,
+        approved=True,
     )
 
     ErrorFactory.create(
@@ -271,7 +271,7 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
         TranslationFactory.create(
             locale=locale_a,
             entity=entities[i],
-            active=True,
+            fuzzy=True,
         ) for i in range(0, 3)
     ]
 
@@ -282,7 +282,7 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
         translation=translations[2]
     )
 
-    translations[2].active = False
+    translations[2].fuzzy = False
     translations[2].save()
 
     assert (
@@ -313,19 +313,19 @@ def test_mgr_entity_filter_warnings_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
-        active=True,
+        fuzzy=True,
     )
     translation20 = TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=0,
-        active=True,
+        fuzzy=True,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=1,
-        active=True,
+        fuzzy=True,
     )
 
     WarningFactory.create(

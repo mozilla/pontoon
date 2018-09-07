@@ -1989,7 +1989,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities with translations with warnings.
 
         This filter will return an entity if at least one of its plural forms
-        has an *active* translation with a warning.
+        has an approved or fuzzy translation with a warning.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -1999,8 +1999,11 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(active=True, warnings__isnull=False),
-                lambda x: x.active and x.warnings.count(),
+                Q(
+                    Q(Q(approved=True) | Q(fuzzy=True)) &
+                    Q(warnings__isnull=False)
+                ),
+                lambda x: (x.approved or x.fuzzy) and x.warnings.count(),
                 match_all=False,
                 prefetch=Prefetch('warnings'),
             )
@@ -2010,7 +2013,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities with translations with errors.
 
         This filter will return an entity if at least one of its plural forms
-        has an *active* translation with an error.
+        has an approved or fuzzy translation with an error.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2020,8 +2023,11 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(active=True, errors__isnull=False),
-                lambda x: x.active and x.errors.count(),
+                Q(
+                    Q(Q(approved=True) | Q(fuzzy=True)) &
+                    Q(errors__isnull=False)
+                ),
+                lambda x: (x.approved or x.fuzzy) and x.errors.count(),
                 match_all=False,
                 prefetch=Prefetch('errors'),
             )
