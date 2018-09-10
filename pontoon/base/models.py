@@ -2106,8 +2106,17 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(Q(string=F('entity__string')) | Q(string=F('entity__string_plural'))),
-                lambda x: x.string == x.entity.string,
+                Q(
+                    Q(active=True) &
+                    Q(
+                        Q(string=F('entity__string')) |
+                        Q(string=F('entity__string_plural'))
+                    )
+                ),
+                lambda x: x.active and (
+                    x.string == x.entity.string or
+                    x.string == x.entity.string_plural
+                ),
                 match_all=False,
             )
         )

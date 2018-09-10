@@ -531,13 +531,22 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
+        active=True,
         approved=True,
         string='Unchanged string',
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
+        active=True,
         fuzzy=True,
+        string='Unchanged string',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        active=False,
+        approved=True,
         string='Unchanged string',
     )
     assert (
@@ -652,6 +661,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
+        active=True,
         approved=True,
         plural_form=0,
         string='Unchanged string',
@@ -659,13 +669,31 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
+        active=True,
         approved=True,
         plural_form=1,
         string='Unchanged plural string',
     )
     TranslationFactory.create(
         locale=locale_a,
+        entity=entities[1],
+        active=False,
+        fuzzy=True,
+        plural_form=0,
+        string='Unchanged string',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        active=False,
+        fuzzy=True,
+        plural_form=1,
+        string='Unchanged plural string',
+    )
+    TranslationFactory.create(
+        locale=locale_a,
         entity=entities[2],
+        active=True,
         fuzzy=True,
         plural_form=0,
         string='Unchanged string',
@@ -673,6 +701,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
+        active=True,
         fuzzy=True,
         plural_form=1,
         string='Unchanged plural string',
