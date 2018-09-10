@@ -56,7 +56,17 @@ $(function () {
       function() {
         return true;
       }
-    ]
+    ],
+    listeners: {
+        beforeWizardStarts: function(){
+            $("body").addClass("tour");
+            $("body *").attr("tabindex", "-1");
+        },
+        afterWizardEnds: function(){
+           $("body").removeClass("tour");
+           $("body *").removeAttr("tabindex");
+        }
+    }
   }).storyLine({
     showStepPosition: true,
     steps: [
@@ -265,6 +275,8 @@ $(function () {
     // If a user closes the tour at the "Filter" step,
     // run the corresponding afterStep function.
     $('.sideshow-close-button').click(function() {
+      $("body").removeClass("tour");
+      $("body *").removeAttr("tabindex");
       setTimeout(function() {
         $("#filter .menu").fadeOut(function() {
           $("#filter .menu").removeClass("permanent");
