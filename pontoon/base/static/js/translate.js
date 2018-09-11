@@ -2510,10 +2510,12 @@ var Pontoon = (function (my) {
       var self = this,
           stats = self.stats,
           total = stats.total,
-          unreviewed = stats.unreviewed,
-          translated = stats.approved,
           fuzzy = stats.fuzzy,
-          missing = total - translated - fuzzy,
+          warnings = stats.warnings,
+          errors = stats.errors,
+          translated = stats.approved,
+          unreviewed = stats.unreviewed,
+          missing = total - fuzzy - warnings - errors - translated,
           fraction = {
             translated: total ? translated / total : 0,
             fuzzy: total ? fuzzy / total : 0,
@@ -2564,10 +2566,12 @@ var Pontoon = (function (my) {
       // Update filter
       $('#filter .menu')
           .find('.all .count').html(self.numberWithCommas(total)).end()
-          .find('.translated .count').html(self.numberWithCommas(translated)).end()
-          .find('.unreviewed .count').html(self.numberWithCommas(unreviewed)).end()
+          .find('.missing .count').html(self.numberWithCommas(missing)).end()
           .find('.fuzzy .count').html(self.numberWithCommas(fuzzy)).end()
-          .find('.missing .count').html(self.numberWithCommas(missing));
+          .find('.warnings .count').html(self.numberWithCommas(warnings)).end()
+          .find('.errors .count').html(self.numberWithCommas(errors)).end()
+          .find('.translated .count').html(self.numberWithCommas(translated)).end()
+          .find('.unreviewed .count').html(self.numberWithCommas(unreviewed));
 
       // Update parts menu
       if (entity && total) {
