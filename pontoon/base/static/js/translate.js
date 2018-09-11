@@ -773,15 +773,12 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        // Error and warning status will be enabled when bug 1486606 will be fixed
-        /*
         if (entity.translation[i].error_count) {
           errors++;
         }
         if (entity.translation[i].warning_count) {
           warnings++;
         }
-        */
       }
       if (errors > 0) {
         return 'errors';
