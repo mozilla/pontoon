@@ -63,6 +63,7 @@ export default class Translation extends React.Component<Props> {
             href={ `/contributors/${translation.username}` }
             title={ this.getApprovalTitle() }
             target="_blank"
+            rel="noopener noreferrer"
         >
             { translation.user }
         </a>

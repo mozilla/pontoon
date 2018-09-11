@@ -55,7 +55,7 @@ describe('<History>', () => {
             }
         };
         const store = createReduxStore(initialState);
-        const wrapper = shallowUntilTarget(<History store={ store } />, HistoryBase);
+        shallowUntilTarget(<History store={ store } />, HistoryBase);
 
         expect(actions.get.callCount).toEqual(1);
 
