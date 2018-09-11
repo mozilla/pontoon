@@ -32,7 +32,10 @@
     width: 49%;
 }
 .entity .translation-string {
+    color: #AAAAAA;
+    font-style: italic;
     padding-left: 2%;
+    text-align: start;
 }
 
 .entity > .status {

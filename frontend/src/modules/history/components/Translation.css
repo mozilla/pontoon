@@ -1,0 +1,111 @@
+
+.translation {
+    border-bottom: 1px solid #5E6475;
+    cursor: pointer;
+    padding: 5px 10px 20px 10px;
+    transition: all 0.1s ease-out;
+}
+
+.translation:not(.disabled):hover,
+.translation:not(.disabled).hover {
+    background: #4D5967;
+    border-color: #5E6475;
+}
+
+.translation > header {
+    color: #AAAAAA;
+    display: block;
+    font-size: 11px;
+    font-weight: 300;
+    padding: 1px 0 5px;
+    text-transform: uppercase;
+}
+
+.translation > header .info {
+    float: left;
+}
+.history  ul li > header .toolbar {
+    display: block;
+    float: right;
+}
+.translation > header + p {
+    clear: both;
+}
+
+.translation > header .info time {
+    color: #7BC876;
+    padding-left: 3px;
+}
+.translation > header .info a {
+    text-transform: none;
+}
+
+.translation > header .toggle-diff {
+    margin-right: 6px;
+}
+
+.translation > header .toggle-diff.active {
+    color: #7BC876;
+}
+
+.translation > header button {
+    background: no-repeat transparent;
+    border: none;
+    color: #AAAAAA;
+    display: inline-block;
+    pointer-events: none;
+    opacity: 0.5;
+    font-size: 1.8em;
+    height: 22px;
+    padding: 0;
+    vertical-align: bottom;
+    width: 22px;
+}
+
+.translation > header.translator button,
+.translation > header.own button.reject,
+.translation > header.own button.unreject,
+.translation.approved > header button.approve {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.translation.rejected:hover,
+.translation.rejected.hover {
+    opacity: 1;
+}
+
+.translation.fuzzy > header button.approve:before {
+    color: #FED271;
+}
+
+.translation > header button.approve:before,
+.translation > header button.unapprove:before {
+    content: "";
+}
+
+.translation > header button.approve:hover:before,
+.translation > header button.unapprove:before {
+    color: #7BC876;
+}
+
+.translation > header button.approve:not(:hover):before,
+.translation > header button.unapprove:hover:before {
+    font-weight: 400;
+}
+
+.translation > header button.reject:before,
+.translation > header button.unreject:before {
+    content: "";
+    margin-left: 5px;
+}
+
+.translation > header button.reject:hover:before,
+.translation > header button.unreject:before {
+    color: #F36;
+}
+
+.translation > header button.reject:not(:hover):before,
+.translation > header button.unreject:hover:before {
+    font-weight: 400;
+}

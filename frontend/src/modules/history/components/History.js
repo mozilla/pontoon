@@ -7,6 +7,7 @@ import './History.css';
 
 import { selectors as navSelectors } from 'core/navigation';
 
+import Translation from './Translation';
 import { actions, NAME } from '..';
 import type { HistoryState } from '../reducer';
 
@@ -33,7 +34,8 @@ export class HistoryBase extends React.Component<InternalProps> {
         const { history, parameters, dispatch } = this.props;
 
         if (history.entity !== parameters.entity) {
-            // This is a newly selected entity, fetch its history.
+            // This is a newly selected entity, remove the previous history
+            // then fetch the history of the new entity.
             dispatch(actions.get(parameters.entity, parameters.locale));
         }
     }
@@ -49,11 +51,13 @@ export class HistoryBase extends React.Component<InternalProps> {
     render() {
         const { history } = this.props;
 
-        return <div>
-            { history.translations.map((translation, i) => <p>
-                { translation.string }
-            </p>) }
-        </div>;
+        return <section className="history">
+            <ul>
+                { history.translations.map((translation, key) => {
+                    return <Translation translation={ translation } key={ key } />;
+                }) }
+            </ul>
+        </section>;
     }
 }
 

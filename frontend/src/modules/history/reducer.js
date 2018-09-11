@@ -10,20 +10,25 @@ type Action =
 ;
 
 
-type Translation = {|
-    pk: number,
-    string: string,
-    user: string,
-    date_iso: string,
-    fuzzy: boolean,
-    approved: boolean,
-    rejected: boolean,
+export type DBTranslation = {|
+    +approved: boolean,
+    +approved_user: string,
+    +date: string,
+    +date_iso: string,
+    +fuzzy: boolean,
+    +pk: number,
+    +rejected: boolean,
+    +string: string,
+    +uid: ?number,
+    +unapproved_user: string,
+    +user: string,
+    +username: string,
 |};
 
 export type HistoryState = {|
     +entity: ?number,
     +fetching: boolean,
-    +translations: Array<Translation>
+    +translations: Array<DBTranslation>,
 |};
 
 
@@ -41,7 +46,11 @@ export default function reducer(
         case REQUEST:
             return {
                 ...state,
-                ...{ entity: action.entity, fetching: true },
+                ...{
+                    entity: action.entity,
+                    fetching: true,
+                    translations: [],
+                },
             };
         case RECEIVE:
             if (action.entity !== state.entity) {
