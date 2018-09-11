@@ -247,6 +247,8 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/fontawesome-all.css',
             'css/nprogress.css',
+            'css/boilerplate.css',
+            'css/fonts.css',
             'css/style.css',
         ),
         'output_filename': 'css/base.min.css',
