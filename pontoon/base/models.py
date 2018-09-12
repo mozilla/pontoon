@@ -951,6 +951,8 @@ class Locale(AggregatedStats):
             'resource__path': [],
             'resource__total_strings': self.total_strings,
             'fuzzy_strings': self.fuzzy_strings,
+            'strings_with_errors': self.strings_with_errors,
+            'strings_with_warnings': self.strings_with_warnings,
             'unreviewed_strings': self.unreviewed_strings,
             'approved_strings': self.approved_strings,
         }]
@@ -965,6 +967,8 @@ class Locale(AggregatedStats):
                 'resource__deadline',
                 'resource__total_strings',
                 'fuzzy_strings',
+                'strings_with_errors',
+                'strings_with_warnings',
                 'unreviewed_strings',
                 'approved_strings',
             )
@@ -1000,9 +1004,21 @@ class Locale(AggregatedStats):
                         resource__path=F('resources__path'),
                         resource__deadline=F('resources__deadline'),
                         resource__total_strings=F('resources__total_strings'),
-                        fuzzy_strings=F('resources__translatedresources__fuzzy_strings'),
-                        unreviewed_strings=F('resources__translatedresources__unreviewed_strings'),
-                        approved_strings=F('resources__translatedresources__approved_strings')
+                        fuzzy_strings=F(
+                            'resources__translatedresources__fuzzy_strings'
+                        ),
+                        strings_with_errors=F(
+                            'resources__translatedresources__strings_with_errors'
+                        ),
+                        strings_with_warnings=F(
+                            'resources__translatedresources__strings_with_warnings'
+                        ),
+                        unreviewed_strings=F(
+                            'resources__translatedresources__unreviewed_strings'
+                        ),
+                        approved_strings=F(
+                            'resources__translatedresources__approved_strings'
+                        )
                     )
                 )
 
@@ -1018,7 +1034,15 @@ class Locale(AggregatedStats):
                         resource__path=F('project__resources__path'),
                         resource__deadline=F('project__resources__deadline'),
                         resource__total_strings=F('project__resources__total_strings'),
-                        fuzzy_strings=F('project__resources__translatedresources__fuzzy_strings'),
+                        fuzzy_strings=F(
+                            'project__resources__translatedresources__fuzzy_strings'
+                        ),
+                        strings_with_errors=F(
+                            'project__resources__translatedresources__strings_with_errors'
+                        ),
+                        strings_with_warnings=F(
+                            'project__resources__translatedresources__strings_with_warnings'
+                        ),
                         unreviewed_strings=F(
                             'project__resources__translatedresources__unreviewed_strings'
                         ),
@@ -1045,6 +1069,8 @@ class Locale(AggregatedStats):
             'resource__deadline': [],
             'resource__total_strings': all_resources.total_strings,
             'fuzzy_strings': all_resources.fuzzy_strings,
+            'strings_with_errors': all_resources.strings_with_errors,
+            'strings_with_warnings': all_resources.strings_with_warnings,
             'unreviewed_strings': all_resources.unreviewed_strings,
             'approved_strings': all_resources.approved_strings,
         })
@@ -1529,11 +1555,15 @@ class ProjectLocale(AggregatedStats):
             return {
                 'total_strings': obj.total_strings,
                 'approved_strings': obj.approved_strings,
-                'unreviewed_strings': obj.unreviewed_strings,
                 'fuzzy_strings': obj.fuzzy_strings,
+                'strings_with_errors': obj.strings_with_errors,
+                'strings_with_warnings': obj.strings_with_warnings,
+                'unreviewed_strings': obj.unreviewed_strings,
                 'approved_share': round(obj.approved_strings / obj.total_strings * 100),
-                'unreviewed_share': round(obj.unreviewed_strings / obj.total_strings * 100),
                 'fuzzy_share': round(obj.fuzzy_strings / obj.total_strings * 100),
+                'errors_share': round(obj.strings_with_errors / obj.total_strings * 100),
+                'warnings_share': round(obj.strings_with_warnings / obj.total_strings * 100),
+                'unreviewed_share': round(obj.unreviewed_strings / obj.total_strings * 100),
                 'approved_percent': int(
                     math.floor(obj.approved_strings / obj.total_strings * 100)
                 ),
