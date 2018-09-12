@@ -1,3 +1,19 @@
+#heading .legend {
+  width: 380px;
+}
+
+#heading .legend li.unreviewed {
+  padding-left: 25px;
+}
+
+#heading .legend li.unreviewed .status.fa {
+  left: 0;
+}
+
+#heading .legend li.unreviewed .status.fa:before {
+  color: #4FC4F6;
+}
+
 .controls .submenu .links {
   text-align: right;
 }

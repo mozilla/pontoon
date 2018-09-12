@@ -247,6 +247,14 @@ button {  width: auto; overflow: visible; }
   color: #FED271;
 }
 
+.warnings .status.fa:before {
+  color: #FFA10F;
+}
+
+.errors .status.fa:before {
+  color: #F36;
+}
+
 .unreviewed .status.fa:before {
   color: #4FC4F6;
   content: "";

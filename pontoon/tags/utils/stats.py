@@ -27,6 +27,12 @@ class TagsStatsTool(TagsTRTool):
         ('fuzzy_strings', Coalesce(
             Sum('fuzzy_strings'),
             Value(0))),
+        ('strings_with_warnings', Coalesce(
+            Sum('strings_with_warnings'),
+            Value(0))),
+        ('strings_with_errors', Coalesce(
+            Sum('strings_with_errors'),
+            Value(0))),
         ('approved_strings', Coalesce(
             Sum('approved_strings'),
             Value(0))),

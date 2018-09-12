@@ -509,7 +509,13 @@ class AggregatedStats(models.Model):
             'most_suggestions': sorted(qs, key=lambda x: x.unreviewed_strings)[-1],
             'most_missing': sorted(
                 qs,
-                key=lambda x: x.total_strings - x.approved_strings - x.fuzzy_strings
+                key=lambda x: (
+                    x.total_strings -
+                    x.approved_strings -
+                    x.fuzzy_strings -
+                    x.strings_with_warnings -
+                    x.strings_with_errors
+                )
             )[-1],
         }
 

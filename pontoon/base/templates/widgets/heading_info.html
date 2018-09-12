@@ -1,7 +1,7 @@
 {% import 'widgets/deadline.html' as Deadline %}
 {% import 'widgets/priority.html' as Priority %}
 
-{% macro heading_item(title, link, class=None) %}
+{% macro heading_item(title, link, class='') %}
 <a class="{{ class }}" href="{{ link }}">{{ title }}</a>
 {% endmacro %}
 
@@ -82,26 +82,40 @@
 {% macro progress_chart_legend(obj, link=None) %}
 <ul class="legend">
   {{ legend_item(
-    title='Translated strings',
+    title='Translated',
     class='translated',
     value=obj.approved_strings,
     link=(link + '?status=translated') if link else None)
   }}
   {{ legend_item(
-    title='Fuzzy strings',
+    title='Fuzzy',
     class='fuzzy',
     value=obj.fuzzy_strings,
     link=(link + '?status=fuzzy') if link else None)
   }}
   {{ legend_item(
-    title='Missing strings',
-    class='missing',
-    value=(obj.total_strings - obj.approved_strings - obj.fuzzy_strings),
-    link=(link + '?status=missing') if link else None)
+    title='Warnings',
+    class='warnings',
+    value=obj.strings_with_warnings,
+    link=(link + '?status=warnings') if link else None)
   }}
   {{ legend_item(
-    title='Unreviewed strings',
-    class='unreviewed',
+    title='Errors',
+    class='errors',
+    value=obj.strings_with_errors,
+    link=(link + '?status=errors') if link else None)
+  }}
+  {{ legend_item(
+    title='Missing',
+    class='missing',
+    value=(obj.total_strings - obj.approved_strings - obj.fuzzy_strings - obj.strings_with_warnings - obj.strings_with_errors),
+    link=(link + '?status=missing') if link else None)
+  }}
+</ul>
+<ul class="legend non-plotable">
+  {{ legend_item(
+    title='Unreviewed',
+    class='unreviewed pending' if obj.unreviewed_strings else 'unreviewed',
     value=obj.unreviewed_strings,
     link=(link + '?status=unreviewed') if link else None)
   }}
