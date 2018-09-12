@@ -2528,9 +2528,13 @@ var Pontoon = (function (my) {
       // Update graph
       $('#progress .graph').each(function() {
         var context = this.getContext('2d');
+
+        this.style.width = this.width/2 + 'px';
+        this.style.height = this.height/2 + 'px';
+
         // Clear old canvas content to avoid aliasing
         context.clearRect(0, 0, this.width, this.height);
-        context.lineWidth = 3;
+        context.lineWidth = 6;
 
         var x = this.width/2,
             y = this.height/2,

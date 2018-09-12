@@ -22,9 +22,12 @@ $(function() {
     var canvas = this,
         context = canvas.getContext('2d');
 
+    canvas.style.width = canvas.width/2 + 'px';
+    canvas.style.height = canvas.height/2 + 'px';
+
     // Clear old canvas content to avoid aliasing
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.lineWidth = 3;
+    context.lineWidth = 6;
 
     var x = canvas.width/2,
         y = canvas.height/2,
