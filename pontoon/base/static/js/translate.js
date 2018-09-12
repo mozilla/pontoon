@@ -1318,7 +1318,7 @@ var Pontoon = (function (my) {
         }
       }
 
-      // Special case: Untranslated filter is a union of missing and fuzzy.
+      // Special case: Untranslated filter is a union of multiple filters.
       if (self.untranslatedFilterApplied(filter.status)) {
         $('#filter .menu [data-type="untranslated"]').addClass('selected');
       }
@@ -1427,7 +1427,7 @@ var Pontoon = (function (my) {
      * Return an array of untranslated filter statuses
      */
     getUntranslatedFilters: function() {
-      return ['missing', 'fuzzy'];
+      return ['missing', 'fuzzy', 'warnings', 'errors'];
     },
 
 
@@ -1499,7 +1499,7 @@ var Pontoon = (function (my) {
           updateFilterValue('tag');
 
         } else if (isExtraFilter(el)) {
-          // Special case: Untranslated filter is a union of missing and fuzzy
+          // Special case: Untranslated filter is a union of multiple filters
           if (value === 'untranslated') {
             if (self.untranslatedFilterApplied(filter.status)) {
               filter.status = filter.status.indexOf('translated') !== -1 ? ['translated'] : [];
