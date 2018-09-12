@@ -429,10 +429,11 @@ body > header .locale.select {
   cursor: auto;
   left: 50%;
   line-height: 18px;
-  margin-left: -180px; /* Must be half the width */
+  margin-left: -200px; /* Must be half the width */
   padding: 0;
   text-align: center;
   top: 48px;
+  width: 400px;
 }
 
 #progress .menu > div:first-child {
@@ -473,11 +474,16 @@ body > header .locale.select {
 }
 
 #progress .menu .details div {
-  width: 119px;
+  width: 79px;
 }
 
 #progress .menu .details div:last-child {
-  width: 120px;
+  width: 80px;
+}
+
+#progress .menu .details p {
+  font-size: 22px;
+  padding: 5px 0 10px;
 }
 
 body > header .notification.hide {

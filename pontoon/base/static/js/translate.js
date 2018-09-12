@@ -2519,6 +2519,8 @@ var Pontoon = (function (my) {
           fraction = {
             translated: total ? translated / total : 0,
             fuzzy: total ? fuzzy / total : 0,
+            warnings: total ? warnings / total : 0,
+            errors: total ? errors / total : 0,
             missing: total ? missing / total : 0
           },
           number = Math.floor(fraction.translated * 100),
@@ -2561,6 +2563,8 @@ var Pontoon = (function (my) {
         .find('.details')
           .find('.translated p').html(self.numberWithCommas(translated)).end()
           .find('.fuzzy p').html(self.numberWithCommas(fuzzy)).end()
+          .find('.warnings p').html(self.numberWithCommas(warnings)).end()
+          .find('.errors p').html(self.numberWithCommas(errors)).end()
           .find('.missing p').html(self.numberWithCommas(missing));
 
       // Update filter

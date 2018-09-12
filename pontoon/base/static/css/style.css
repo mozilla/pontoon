@@ -886,6 +886,14 @@ img.rounded {
   border-color: #FED271;
 }
 
+.details div.warnings {
+  border-color: #FFA10F;
+}
+
+.details div.errors {
+  border-color: #F36;
+}
+
 .details div.missing {
   border-color: #4D5967;
 }
