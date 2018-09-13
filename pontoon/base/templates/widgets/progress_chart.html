@@ -13,6 +13,12 @@
   </div>
   <div class="legend">
     <ul>
+      <li class="all">
+        <a href="{{ link }}">
+          <div class="title">All</div>
+          <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|comma_or_prefix }}</div>
+        </a>
+      </li>
       <li class="translated">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}">
           <div class="title">Trnsltd</div>
@@ -42,12 +48,6 @@
           <div class="title">Missing</div>
           {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings - chart.strings_with_warnings - chart.strings_with_errors %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="all">
-        <a href="{{ link }}">
-          <div class="title">All</div>
-          <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="unreviewed">
