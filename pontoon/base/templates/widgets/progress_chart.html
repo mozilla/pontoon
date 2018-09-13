@@ -44,16 +44,16 @@
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
         </a>
       </li>
-      <li class="unreviewed">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
-          <div class="title">Unrvwd</div>
-          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|comma_or_prefix }}</div>
-        </a>
-      </li>
       <li class="all">
         <a href="{{ link }}">
           <div class="title">All</div>
           <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|comma_or_prefix }}</div>
+        </a>
+      </li>
+      <li class="unreviewed">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
+          <div class="title">Unrvwd</div>
+          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|comma_or_prefix }}</div>
         </a>
       </li>
     </ul>

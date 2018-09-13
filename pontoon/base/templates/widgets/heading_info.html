@@ -114,16 +114,16 @@
 </ul>
 <ul class="legend non-plotable">
   {{ legend_item(
-    title='Unreviewed',
-    class='unreviewed pending' if obj.unreviewed_strings else 'unreviewed',
-    value=obj.unreviewed_strings,
-    link=(link + '?status=unreviewed') if link else None)
-  }}
-  {{ legend_item(
     title='All strings',
     class='all',
     value=obj.total_strings,
     link=link)
+  }}
+  {{ legend_item(
+    title='Unreviewed',
+    class='unreviewed pending' if obj.unreviewed_strings else 'unreviewed',
+    value=obj.unreviewed_strings,
+    link=(link + '?status=unreviewed') if link else None)
   }}
 </ul>
 {% endmacro %}
