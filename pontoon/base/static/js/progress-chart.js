@@ -24,10 +24,10 @@ $(function() {
 
     // Set up canvas to be HiDPI display ready
     var dpr = window.devicePixelRatio || 1;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
     canvas.width = canvas.width * dpr;
     canvas.height = canvas.height * dpr;
-    canvas.style.width = canvas.width / dpr + 'px';
-    canvas.style.height = canvas.height / dpr + 'px';
 
     // Clear old canvas content to avoid aliasing
     context.clearRect(0, 0, canvas.width, canvas.height);

@@ -2531,10 +2531,10 @@ var Pontoon = (function (my) {
 
         // Set up canvas to be HiDPI display ready
         var dpr = window.devicePixelRatio || 1;
+        this.style.width = this.width + 'px';
+        this.style.height = this.height + 'px';
         this.width = this.width * dpr;
         this.height = this.height * dpr;
-        this.style.width = this.width / dpr + 'px';
-        this.style.height = this.height / dpr + 'px';
 
         // Clear old canvas content to avoid aliasing
         context.clearRect(0, 0, this.width, this.height);
