@@ -728,46 +728,6 @@ $(function() {
     $('.menu li.hover, .static-links div').removeClass('hover');
   });
 
-  // Menu chart hover
-  $('.menu').on('mouseenter', 'li .chart-wrapper', function () {
-    var chart = $(this).find('.chart');
-
-    if (chart.length > 0) {
-      if ($('.tooltip').length === 0) {
-        $('body').prepend(
-          '<aside class="tooltip">' +
-            '<div class="total">Total<span></span></div>' +
-            '<div class="translated">Translated<span></span></div>' +
-            '<div class="fuzzy">Fuzzy<span></span></div>' +
-            '<div class="missing">Missing<span></span></div>' +
-            '<div class="unreviewed">Unreviewed<span></span></div>' +
-          '</aside>');
-      }
-
-      var data = chart.data('chart'),
-          untranslated_strings = (
-            data.total_strings - data.approved_strings - data.fuzzy_strings
-          ),
-          rect = chart[0].getBoundingClientRect(),
-          height = $('.tooltip').outerHeight() + 15,
-          width = ($('.tooltip').outerWidth() - $(this).outerWidth()) / 2,
-          left = rect.left + window.scrollX - width,
-          top = rect.top + window.scrollY - height;
-
-      $('.tooltip')
-        .find('.total span').html(data.total_strings).end()
-        .find('.translated span').html(data.approved_strings).end()
-        .find('.unreviewed span').html(data.unreviewed_strings).end()
-        .find('.fuzzy span').html(data.fuzzy_strings).end()
-        .find('.missing span').html(untranslated_strings).end()
-        .css('left', left)
-        .css('top', top)
-        .show();
-    }
-  }).on('mouseleave', 'li .chart-wrapper', function () {
-    $('.tooltip:visible').remove();
-  });
-
   // Mark notifications as read when notification menu opens
   $('#notifications.unread .button .icon').click(function() {
     Pontoon.markAllNotificationsAsRead();
