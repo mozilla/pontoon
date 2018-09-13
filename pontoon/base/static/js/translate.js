@@ -2529,12 +2529,16 @@ var Pontoon = (function (my) {
       $('#progress .graph').each(function() {
         var context = this.getContext('2d');
 
-        this.style.width = this.width/2 + 'px';
-        this.style.height = this.height/2 + 'px';
+        // Set up canvas to be HiDPI display ready
+        var dpr = window.devicePixelRatio || 1;
+        this.width = this.width * dpr;
+        this.height = this.height * dpr;
+        this.style.width = this.width / dpr + 'px';
+        this.style.height = this.height / dpr + 'px';
 
         // Clear old canvas content to avoid aliasing
         context.clearRect(0, 0, this.width, this.height);
-        context.lineWidth = 6;
+        context.lineWidth = 3 * dpr;
 
         var x = this.width/2,
             y = this.height/2,

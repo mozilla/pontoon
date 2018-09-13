@@ -22,12 +22,16 @@ $(function() {
     var canvas = this,
         context = canvas.getContext('2d');
 
-    canvas.style.width = canvas.width/2 + 'px';
-    canvas.style.height = canvas.height/2 + 'px';
+    // Set up canvas to be HiDPI display ready
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.width * dpr;
+    canvas.height = canvas.height * dpr;
+    canvas.style.width = canvas.width / dpr + 'px';
+    canvas.style.height = canvas.height / dpr + 'px';
 
     // Clear old canvas content to avoid aliasing
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.lineWidth = 6;
+    context.lineWidth = 3 * dpr;
 
     var x = canvas.width/2,
         y = canvas.height/2,
