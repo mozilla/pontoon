@@ -2417,7 +2417,7 @@ var Pontoon = (function (my) {
                 var failedText = '';
 
                 if (action === 'reject') {
-                  itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
+                  itemsText = 'unreviewed';
                   actionText = 'rejected';
                 }
 
