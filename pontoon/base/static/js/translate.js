@@ -2528,13 +2528,7 @@ var Pontoon = (function (my) {
       // Update graph
       $('#progress .graph').each(function() {
         var context = this.getContext('2d');
-
-        // Set up canvas to be HiDPI display ready
         var dpr = window.devicePixelRatio || 1;
-        this.style.width = this.width + 'px';
-        this.style.height = this.height + 'px';
-        this.width = this.width * dpr;
-        this.height = this.height * dpr;
 
         // Clear old canvas content to avoid aliasing
         context.clearRect(0, 0, this.width, this.height);
@@ -4412,7 +4406,20 @@ var Pontoon = (function (my) {
       } else {
         this.state = state;
       }
+    },
 
+
+    /*
+     * Set up canvas to be HiDPI display ready
+     */
+    setUpCanvas: function() {
+      $('#progress .graph').each(function() {
+        var dpr = window.devicePixelRatio || 1;
+        this.style.width = this.width + 'px';
+        this.style.height = this.height + 'px';
+        this.width = this.width * dpr;
+        this.height = this.height * dpr;
+      });
     }
   });
 }(Pontoon || {}));
@@ -4481,4 +4488,5 @@ Pontoon.attachBatchEditorHandlers();
 
 Pontoon.updateInitialState();
 Pontoon.updateFilterUI();
+Pontoon.setUpCanvas();
 Pontoon.initializePart();
