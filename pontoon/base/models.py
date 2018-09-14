@@ -2028,7 +2028,7 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(fuzzy=True),
+                Q(fuzzy=True, warnings__isnull=True, errors__isnull=True),
                 lambda x: x.fuzzy
             )
         )
@@ -2095,7 +2095,7 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(approved=True),
+                Q(approved=True, warnings__isnull=True, errors__isnull=True),
                 lambda x: x.approved
             )
         )
