@@ -749,6 +749,7 @@ var Pontoon = (function (my) {
       });
 
       self.updateCachedTranslation();
+      self.toggleFailedChecks(translation);
       self.updateHelpers();
       self.pushState();
     },
@@ -773,10 +774,10 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        if (entity.translation[i].error_count) {
+        if (entity.translation[i].errors.length) {
           errors++;
         }
-        if (entity.translation[i].warning_count) {
+        if (entity.translation[i].warnings.length) {
           warnings++;
         }
       }
@@ -1902,6 +1903,8 @@ var Pontoon = (function (my) {
         self.updateCachedTranslation();
 
         $('#quality:visible .cancel').click();
+
+        self.toggleFailedChecks(entity.translation[i]);
         self.updateHelpers();
       }
 
@@ -2740,6 +2743,28 @@ var Pontoon = (function (my) {
       }
 
       $('#quality').show();
+    },
+
+
+    /*
+     * Toggle failed checks for translation
+     *
+     * translation Translation to show failed checks for
+     */
+    toggleFailedChecks: function(translation) {
+      var failedChecks = {};
+
+      if (translation.errors.length) {
+        failedChecks.clErrors = translation.errors;
+      }
+
+      if (translation.warnings.length) {
+        failedChecks.clWarnings = translation.warnings;
+      }
+
+      if (!$.isEmptyObject(failedChecks)) {
+        this.renderFailedChecks(failedChecks, true);
+      }
     },
 
 

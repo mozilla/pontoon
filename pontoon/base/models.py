@@ -2847,8 +2847,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             'approved': self.approved,
             'rejected': self.rejected,
             'fuzzy': self.fuzzy,
-            'error_count': self.errors.count(),
-            'warning_count': self.warnings.count(),
+            'errors': [error.message for error in self.errors.all()],
+            'warnings': [warning.message for warning in self.warnings.all()],
         }
 
 
