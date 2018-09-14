@@ -112,18 +112,21 @@
     link=(link + '?status=missing') if link else None)
   }}
 </ul>
-<ul class="legend non-plotable">
-  {{ legend_item(
-    title='All strings',
-    class='all',
-    value=obj.total_strings,
-    link=link)
-  }}
-  {{ legend_item(
-    title='Unreviewed',
-    class='unreviewed pending' if obj.unreviewed_strings else 'unreviewed',
-    value=obj.unreviewed_strings,
-    link=(link + '?status=unreviewed') if link else None)
-  }}
-</ul>
+<div class="non-plottable">
+  <div class="all">
+    {% if link %}<a href="{{ link }}">{% endif %}
+      <p class="title">All strings</p>
+      <p class="value" data-value="{{ obj.total_strings }}">{{ obj.total_strings|intcomma }}</p>
+    {% if link %}</a>{% endif %}
+  </div>
+  <div class="unreviewed{% if obj.unreviewed_strings %} pending{% endif %}">
+    {% if link %}<a href="{{ link + '?status=unreviewed' }}">{% endif %}
+      <p class="title">Unreviewed</p>
+      <p class="value">
+        <span class="fa status"></span>
+        <span class="text">{{ obj.unreviewed_strings|intcomma }}</span>
+      </p>
+    {% if link %}</a>{% endif %}
+  </div>
+</div>
 {% endmacro %}
