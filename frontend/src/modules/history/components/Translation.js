@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import TimeAgo from 'react-timeago';
 
 import './Translation.css';
 
@@ -74,9 +75,7 @@ export default class Translation extends React.Component<Props> {
             <header>
                 <div className="info">
                     { this.renderUser() }
-                    <time dateTime={ translation.date_iso }>
-                        { `${translation.date} UTC` }
-                    </time>
+                    <TimeAgo date={ translation.date_iso } title={ `${translation.date} UTC` } />
                 </div>
                 <menu className="toolbar">
                     <button
