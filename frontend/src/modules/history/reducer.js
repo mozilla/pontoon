@@ -46,11 +46,9 @@ export default function reducer(
         case REQUEST:
             return {
                 ...state,
-                ...{
-                    entity: action.entity,
-                    fetching: true,
-                    translations: [],
-                },
+                entity: action.entity,
+                fetching: true,
+                translations: [],
             };
         case RECEIVE:
             if (action.entity !== state.entity) {
@@ -61,10 +59,8 @@ export default function reducer(
 
             return {
                 ...state,
-                ...{
-                    fetching: false,
-                    translations: action.translations,
-                },
+                fetching: false,
+                translations: action.translations,
             };
         default:
             return state;

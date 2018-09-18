@@ -42,14 +42,10 @@ export default class Translation extends React.Component<Props> {
         if (translation.approved && translation.approved_user) {
             return 'Approved by ' + translation.approved_user;
         }
-        else {
-            if (translation.unapproved_user) {
-                return 'Unapproved by ' + translation.unapproved_user;
-            }
-            else {
-                return 'Not reviewed yet';
-            }
+        if (translation.unapproved_user) {
+            return 'Unapproved by ' + translation.unapproved_user;
         }
+        return 'Not reviewed yet';
     }
 
     renderUser() {

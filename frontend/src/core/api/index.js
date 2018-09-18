@@ -1,7 +1,7 @@
 /* @flow */
 
-import { default as TranslationAPI } from './translation';
-import { default as EntityAPI } from './entity';
+import TranslationAPI from './translation';
+import EntityAPI from './entity';
 
 
 export default {

@@ -48,9 +48,7 @@ function updateEntities(state: Object, entity: number, translation: Translation)
 
         return {
             ...item,
-            ...{
-                translation: [translation]
-            },
+            translation: [translation]
         };
     })
 }
@@ -71,22 +69,27 @@ export default function reducer(
         case RECEIVE:
             return {
                 ...state,
-                ...{
-                    entities: state.entities.concat(action.entities),
-                    fetching: false,
-                    hasMore: action.hasMore,
-                }
+                entities: state.entities.concat(action.entities),
+                fetching: false,
+                hasMore: action.hasMore,
             };
         case REQUEST:
-            return { ...state, ...{ fetching: true, hasMore: false } };
+            return {
+                ...state,
+                fetching: true,
+                hasMore: false ,
+            };
         case RESET:
-            return { ...state, ...{ entities: [], fetching: false, hasMore: true } };
+            return {
+                ...state,
+                entities: [],
+                fetching: false,
+                hasMore: true,
+            };
         case UPDATE:
             return {
                 ...state,
-                ...{
-                    entities: updateEntities(state, action.entity, action.translation),
-                },
+                entities: updateEntities(state, action.entity, action.translation),
             };
         default:
             return state;

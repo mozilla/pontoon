@@ -11,7 +11,7 @@ export type ReceiveAction = {|
     +entity: number,
     +translations: Array<Object>,
 |};
-export function receive(entity: number, translations: Array<Object>) {
+export function receive(entity: number, translations: Array<Object>): ReceiveAction {
     return {
         type: RECEIVE,
         entity,
@@ -24,7 +24,7 @@ export type RequestAction = {|
     +type: typeof REQUEST,
     +entity: number,
 |};
-export function request(entity: number) {
+export function request(entity: number): RequestAction {
     return {
         type: REQUEST,
         entity,
