@@ -1428,7 +1428,7 @@ var Pontoon = (function (my) {
      * Return an array of untranslated filter statuses
      */
     getUntranslatedFilters: function() {
-      return ['missing', 'fuzzy', 'warnings', 'errors'];
+      return ['missing', 'fuzzy', 'errors'];
     },
 
 
