@@ -48,8 +48,18 @@ export class HistoryBase extends React.Component<InternalProps> {
         this.fetchHistory();
     }
 
+    renderNoResults() {
+        return <section className="history">
+            <p>No translations available.</p>
+        </section>
+    }
+
     render() {
         const { history } = this.props;
+
+        if (!history.translations.length) {
+            return this.renderNoResults();
+        }
 
         return <section className="history">
             <ul>
