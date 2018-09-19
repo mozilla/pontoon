@@ -749,6 +749,7 @@ var Pontoon = (function (my) {
       });
 
       self.updateCachedTranslation();
+      self.toggleFailedChecks(translation);
       self.updateHelpers();
       self.pushState();
     },
@@ -773,15 +774,12 @@ var Pontoon = (function (my) {
         if (entity.translation[i].fuzzy) {
           fuzzy++;
         }
-        // Error and warning status will be enabled when bug 1486606 will be fixed
-        /*
-        if (entity.translation[i].error_count) {
+        if (entity.translation[i].errors.length) {
           errors++;
         }
-        if (entity.translation[i].warning_count) {
+        if (entity.translation[i].warnings.length) {
           warnings++;
         }
-        */
       }
       if (errors > 0) {
         return 'errors';
@@ -1321,7 +1319,7 @@ var Pontoon = (function (my) {
         }
       }
 
-      // Special case: Untranslated filter is a union of missing and fuzzy.
+      // Special case: Untranslated filter is a union of multiple filters.
       if (self.untranslatedFilterApplied(filter.status)) {
         $('#filter .menu [data-type="untranslated"]').addClass('selected');
       }
@@ -1430,7 +1428,7 @@ var Pontoon = (function (my) {
      * Return an array of untranslated filter statuses
      */
     getUntranslatedFilters: function() {
-      return ['missing', 'fuzzy'];
+      return ['missing', 'fuzzy', 'errors'];
     },
 
 
@@ -1502,7 +1500,7 @@ var Pontoon = (function (my) {
           updateFilterValue('tag');
 
         } else if (isExtraFilter(el)) {
-          // Special case: Untranslated filter is a union of missing and fuzzy
+          // Special case: Untranslated filter is a union of multiple filters
           if (value === 'untranslated') {
             if (self.untranslatedFilterApplied(filter.status)) {
               filter.status = filter.status.indexOf('translated') !== -1 ? ['translated'] : [];
@@ -1905,6 +1903,8 @@ var Pontoon = (function (my) {
         self.updateCachedTranslation();
 
         $('#quality:visible .cancel').click();
+
+        self.toggleFailedChecks(entity.translation[i]);
         self.updateHelpers();
       }
 
@@ -2420,7 +2420,7 @@ var Pontoon = (function (my) {
                 var failedText = '';
 
                 if (action === 'reject') {
-                  itemsText = 'suggestion' + (data.count === 1 ? '' : 's');
+                  itemsText = 'unreviewed';
                   actionText = 'rejected';
                 }
 
@@ -2513,13 +2513,17 @@ var Pontoon = (function (my) {
       var self = this,
           stats = self.stats,
           total = stats.total,
-          unreviewed = stats.unreviewed,
-          translated = stats.approved,
           fuzzy = stats.fuzzy,
-          missing = total - translated - fuzzy,
+          warnings = stats.warnings,
+          errors = stats.errors,
+          translated = stats.approved,
+          unreviewed = stats.unreviewed,
+          missing = total - fuzzy - warnings - errors - translated,
           fraction = {
             translated: total ? translated / total : 0,
             fuzzy: total ? fuzzy / total : 0,
+            warnings: total ? warnings / total : 0,
+            errors: total ? errors / total : 0,
             missing: total ? missing / total : 0
           },
           number = Math.floor(fraction.translated * 100),
@@ -2562,15 +2566,19 @@ var Pontoon = (function (my) {
         .find('.details')
           .find('.translated p').html(self.numberWithCommas(translated)).end()
           .find('.fuzzy p').html(self.numberWithCommas(fuzzy)).end()
+          .find('.warnings p').html(self.numberWithCommas(warnings)).end()
+          .find('.errors p').html(self.numberWithCommas(errors)).end()
           .find('.missing p').html(self.numberWithCommas(missing));
 
       // Update filter
       $('#filter .menu')
           .find('.all .count').html(self.numberWithCommas(total)).end()
-          .find('.translated .count').html(self.numberWithCommas(translated)).end()
-          .find('.unreviewed .count').html(self.numberWithCommas(unreviewed)).end()
+          .find('.missing .count').html(self.numberWithCommas(missing)).end()
           .find('.fuzzy .count').html(self.numberWithCommas(fuzzy)).end()
-          .find('.missing .count').html(self.numberWithCommas(missing));
+          .find('.warnings .count').html(self.numberWithCommas(warnings)).end()
+          .find('.errors .count').html(self.numberWithCommas(errors)).end()
+          .find('.translated .count').html(self.numberWithCommas(translated)).end()
+          .find('.unreviewed .count').html(self.numberWithCommas(unreviewed));
 
       // Update parts menu
       if (entity && total) {
@@ -2735,6 +2743,28 @@ var Pontoon = (function (my) {
       }
 
       $('#quality').show();
+    },
+
+
+    /*
+     * Toggle failed checks for translation
+     *
+     * translation Translation to show failed checks for
+     */
+    toggleFailedChecks: function(translation) {
+      var failedChecks = {};
+
+      if (translation.errors.length) {
+        failedChecks.clErrors = translation.errors;
+      }
+
+      if (translation.warnings.length) {
+        failedChecks.clWarnings = translation.warnings;
+      }
+
+      if (!$.isEmptyObject(failedChecks)) {
+        this.renderFailedChecks(failedChecks, true);
+      }
     },
 
 

@@ -11,9 +11,13 @@ $(function() {
       stats[$(this).attr('class')] = $(this).find('.value').data('value');
     });
 
+    stats.all = progress.siblings('.non-plottable').find('.all .value').data('value');
+
     var fraction = {
           translated: stats.all ? stats.translated / stats.all : 0,
           fuzzy: stats.all ? stats.fuzzy / stats.all : 0,
+          warnings: stats.all ? stats.warnings / stats.all : 0,
+          errors: stats.all ? stats.errors / stats.all : 0,
           missing: stats.all ? stats.missing / stats.all : 1 /* Draw "empty" progress if no projects enabled */
         },
         number = Math.floor(fraction.translated * 100);
@@ -38,7 +42,7 @@ $(function() {
         radius = (canvas.width - context.lineWidth)/2,
         end = null;
 
-    progress.siblings('.legend').find('li:not(.all):not(.unreviewed)').each(function() {
+    progress.siblings('.legend').find('li').each(function() {
       var length = fraction[$(this).attr('class')] * 2,
           start = (end !== null) ? end : -0.5,
           color = window.getComputedStyle(

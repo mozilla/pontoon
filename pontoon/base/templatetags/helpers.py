@@ -129,6 +129,49 @@ def intcomma(source):
 
 
 @library.filter
+def metric_prefix(source):
+    """
+    Format numbers with metric prefixes.
+
+    Inspired by: https://stackoverflow.com/a/9462382
+    """
+    prefixes = [
+        {'value': 1E18, 'symbol': 'E'},
+        {'value': 1E15, 'symbol': 'P'},
+        {'value': 1E12, 'symbol': 'T'},
+        {'value': 1E9, 'symbol': 'G'},
+        {'value': 1E6, 'symbol': 'M'},
+        {'value': 1E3, 'symbol': 'k'},
+        {'value': 1, 'symbol': ''},
+    ]
+
+    for prefix in prefixes:
+        if source >= prefix['value']:
+            break
+
+    # Divide source number by the first lower prefix value
+    output = source / prefix['value']
+
+    # Round quotient to 1 decimal point
+    output = '{0:.1f}'.format(output)
+
+    # Remove decimal point if 0
+    output = output.rstrip('0').rstrip('.')
+
+    # Append prefix symbol
+    output += prefix['symbol']
+
+    return output
+
+
+@library.filter
+def comma_or_prefix(source):
+    if source >= 100000:
+        return metric_prefix(source)
+    return humanize.intcomma(source)
+
+
+@library.filter
 def display_permissions(self):
     output = 'Can make suggestions'
 

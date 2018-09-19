@@ -1,3 +1,24 @@
+#heading .banner .title {
+  color: #7BC876;
+}
+
+#heading .legend {
+  width: 360px;
+}
+
+#heading .legend li,
+#heading .legend li.unreviewed {
+  padding-left: 0;
+}
+
+#heading .legend li.banner {
+  padding: 0;
+}
+
+body.top-contributors #heading .legend li .status.fa {
+  display: none;
+}
+
 .controls .submenu .links {
   text-align: right;
 }

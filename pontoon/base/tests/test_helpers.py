@@ -13,6 +13,7 @@ from pontoon.base.templatetags.helpers import (
     format_timedelta,
     nospam,
     to_json,
+    metric_prefix,
 )
 from pontoon.base.utils import aware_datetime
 
@@ -87,6 +88,13 @@ def test_helper_to_json():
     }
     string = '{"a": "foo", "b": "2015-01-01T00:00:00+00:00"}'
     assert to_json(obj) == string
+
+
+def test_helper_base_metric_prefix():
+    assert metric_prefix(123) == '123'
+    assert metric_prefix(1234) == '1.2k'
+    assert metric_prefix(759878) == '759.9k'
+    assert metric_prefix(299792458) == '299.8M'
 
 
 def test_helper_base_format_dt_none():

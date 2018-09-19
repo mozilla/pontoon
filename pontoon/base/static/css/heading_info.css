@@ -26,7 +26,6 @@ ul {
 #heading .details,
 #heading .legend {
   font-weight: 300;
-  width: 360px;
 }
 
 #heading .details li,
@@ -36,6 +35,7 @@ ul {
 
 #heading .details {
   float: left;
+  width: 360px;
 }
 
 #heading .details .title {
@@ -72,6 +72,7 @@ ul {
 }
 
 #heading .details .resources .value.overflow {
+  max-width: 280px;
   white-space: normal;
 }
 
@@ -103,7 +104,8 @@ ul {
 }
 
 #heading .legend {
-  float: right;
+  float: left;
+  width: 190px;
 }
 
 #heading .legend li {
@@ -122,18 +124,9 @@ ul {
   color: #7BC876;
 }
 
-#heading .legend li.banner {
-  padding: 0;
-}
-
 #heading .legend li .status.fa {
   left: 0;
   top: 4px;
-}
-
-#heading .legend li.unreviewed .status.fa {
-  font-size: 18px;
-  top: 2px;
 }
 
 #heading .legend li span.value {
@@ -149,6 +142,45 @@ ul {
   color: #7BC876;
 }
 
-#heading .banner .title {
+#heading .non-plottable {
+  float: right;
+}
+
+#heading .non-plottable p {
+  color: #AAA;
+  font-weight: 300;
+  line-height: 24px;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+#heading .non-plottable a p {
+  color: #FFFFFF;
+}
+
+#heading .non-plottable a:hover p {
   color: #7BC876;
+}
+
+#heading .non-plottable p.value {
+  font-size: 20px;
+}
+
+#heading .non-plottable .all {
+  padding-bottom: 21px;
+}
+
+#heading .non-plottable .unreviewed .status.fa {
+  left: auto;
+  position: relative;
+  top: -1px;
+}
+
+#heading .non-plottable .unreviewed .status.fa:before {
+  color: #4D5967;
+  font-size: 18px;
+}
+
+#heading .non-plottable .unreviewed.pending .status.fa:before {
+  color: #4FC4F6;
 }

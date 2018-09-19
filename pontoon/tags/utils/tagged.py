@@ -13,6 +13,8 @@ class Tagged(object):
             "latest_translation", None)
         self.approved_strings = kwargs.get('approved_strings')
         self.fuzzy_strings = kwargs.get('fuzzy_strings')
+        self.strings_with_warnings = kwargs.get('strings_with_warnings')
+        self.strings_with_errors = kwargs.get('strings_with_errors')
         self.total_strings = kwargs.get('total_strings')
         self.unreviewed_strings = kwargs.get('unreviewed_strings')
         self.kwargs = kwargs

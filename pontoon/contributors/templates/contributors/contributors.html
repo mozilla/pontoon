@@ -5,7 +5,7 @@
 
 {% block title %}Top Contributors{% endblock %}
 
-{% block class %}users{% endblock %}
+{% block class %}top-contributors{% endblock %}
 
 {% block heading %}
   {% if contributors %}
@@ -61,6 +61,11 @@
             value='')
           }}
           {{ HeadingInfo.legend_item(
+            title='All strings',
+            class='all',
+            value=top_contributor.translations_count)
+          }}
+          {{ HeadingInfo.legend_item(
             title='Translated strings',
             class='translated',
             value=top_contributor.translations_approved_count)
@@ -71,14 +76,9 @@
             value=top_contributor.translations_needs_work_count)
           }}
           {{ HeadingInfo.legend_item(
-            title='Unreviewed strings',
+            title='Unreviewed suggestions',
             class='unreviewed',
             value=top_contributor.translations_unapproved_count)
-          }}
-          {{ HeadingInfo.legend_item(
-            title='All strings',
-            class='all',
-            value=top_contributor.translations_count)
           }}
         </ul>
       </div>
