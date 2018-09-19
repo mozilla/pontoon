@@ -2714,9 +2714,13 @@ var Pontoon = (function (my) {
      * Render failed checks panel
      *
      * failedChecks Array of errors or warnings
+     * messageOnly If true, only show message (without Save/Suggest buttons)
      */
     renderFailedChecks: function(failedChecks, messageOnly) {
-      if (!messageOnly) {
+      if (messageOnly) {
+        $('#save-anyway').hide();
+      }
+      else {
         $('#save-anyway')
           .toggleClass('approve', this.isApprovedNotSubmitted || false)
           .show();
