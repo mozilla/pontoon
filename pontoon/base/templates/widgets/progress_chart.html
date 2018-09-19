@@ -5,41 +5,55 @@
     <span class="chart">
       <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
-      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share }}%;"></span>
+      <span class="warnings" style="width:{{ chart.warnings_share }}%;"></span>
+      <span class="errors" style="width:{{ chart.errors_share }}%;"></span>
+      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share - chart.warnings_share - chart.errors_share }}%;"></span>
     </span>
     <span class="unreviewed-status fa fa-lightbulb{% if chart.unreviewed_strings > 0 %} pending{% endif %}"></span>
   </div>
   <div class="legend">
     <ul>
+      <li class="all">
+        <a href="{{ link }}">
+          <div class="title">All</div>
+          <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|comma_or_prefix }}</div>
+        </a>
+      </li>
       <li class="translated">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}">
-          <div class="title">Translated</div>
-          <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|intcomma }}</div>
+          <div class="title">Trnsltd</div>
+          <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="fuzzy">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=fuzzy{% endif %}">
           <div class="title">Fuzzy</div>
-          <div class="value" data-value="{{ chart.fuzzy_strings }}">{{ chart.fuzzy_strings|intcomma }}</div>
+          <div class="value" data-value="{{ chart.fuzzy_strings }}">{{ chart.fuzzy_strings|comma_or_prefix }}</div>
+        </a>
+      </li>
+      <li class="warnings">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=warnings{% endif %}">
+          <div class="title">Wrngs</div>
+          <div class="value" data-value="{{ chart.strings_with_warnings }}">{{ chart.strings_with_warnings|comma_or_prefix }}</div>
+        </a>
+      </li>
+      <li class="errors">
+        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=errors{% endif %}">
+          <div class="title">Errors</div>
+          <div class="value" data-value="{{ chart.strings_with_errors }}">{{ chart.strings_with_errors|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="missing">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
           <div class="title">Missing</div>
-          {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings %}
-          <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|intcomma }}</div>
+          {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings - chart.strings_with_warnings - chart.strings_with_errors %}
+          <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="unreviewed">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
-          <div class="title">Unreviewed</div>
-          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|intcomma }}</div>
-        </a>
-      </li>
-      <li class="all">
-        <a href="{{ link }}">
-          <div class="title">All Strings</div>
-          <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|intcomma }}</div>
+          <div class="title">Unrvwd</div>
+          <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|comma_or_prefix }}</div>
         </a>
       </li>
     </ul>

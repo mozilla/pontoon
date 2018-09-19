@@ -59,7 +59,7 @@
         <div>
           <header>
             <h2>
-              Total <span class="all"></span>
+              All strings <span class="all"></span>
             </h2>
             <h2 class="small">
               Unreviewed <span class="unreviewed"></span>
@@ -74,6 +74,12 @@
             <p></p>
           </div><div class="fuzzy">
             <span>Fuzzy</span>
+            <p></p>
+          </div><div class="warnings">
+            <span>Warnings</span>
+            <p></p>
+          </div><div class="errors">
+            <span>Errors</span>
             <p></p>
           </div><div class="missing">
             <span>Missing</span>
@@ -169,13 +175,11 @@
             <li class="horizontal-separator">Translation Status</li>
 
             {{ Filter.item('all', 'All', count=True) }}
-            {{ Filter.item('missing', 'Missing', count=True) }}
-            {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
-            <!--
-            {{ Filter.item('warnings', 'Warnings') }}
-            {{ Filter.item('errors', 'Errors') }}
-            -->
             {{ Filter.item('translated', 'Translated', count=True) }}
+            {{ Filter.item('fuzzy', 'Fuzzy', count=True) }}
+            {{ Filter.item('warnings', 'Warnings', count=True) }}
+            {{ Filter.item('errors', 'Errors', count=True) }}
+            {{ Filter.item('missing', 'Missing', count=True) }}
             {{ Filter.item('unreviewed', 'Unreviewed', count=True) }}
 
             <li class="horizontal-separator for-tags">Tags</li>
@@ -478,7 +482,7 @@
         <div class="review">
           <h2>Review translations</h2>
           {{ Button.button('approve-all', 'Approve all') }}
-          {{ Button.button('reject-all', 'Reject all suggestions') }}
+          {{ Button.button('reject-all', 'Reject all unreviewed') }}
         </div>
 
         <div class="find-replace">
