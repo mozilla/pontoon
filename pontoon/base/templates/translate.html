@@ -330,6 +330,13 @@
       </div>
 
       <menu>
+        <div id="quality" class="warning-overlay">
+          <a href="#" class="cancel">&times;</a>
+          <h2>The following checks have failed</h2>
+          <ul></ul>
+          <button id="save-anyway"></button>
+        </div>
+
         {% if user.is_authenticated() %}
         <section class="read">
           <p class="banner">This is a read-only localization.</p>
@@ -340,12 +347,6 @@
             <h2>You have unsaved changes</h2>
             <p>Sure you want to leave?</p>
             <button id="leave-anyway">Leave anyway</button>
-          </div>
-          <div id="quality" class="warning-overlay">
-            <a href="#" class="cancel">&times;</a>
-            <h2>The following checks have failed</h2>
-            <ul></ul>
-            <button id="save-anyway"></button>
           </div>
 
           <button id="ftl" title="Toggle between simple and advanced FTL mode">FTL</button>
