@@ -2,6 +2,7 @@
     box-sizing: border-box;
     display: block;
     height: 20%;
+    line-height: 22px;
     min-height: 100px;
     overflow: auto;
     padding: 10px;

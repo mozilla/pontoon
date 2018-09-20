@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 
 import { suggest } from '../actions';
 
-import * as entitieslist from 'modules/entitieslist';
 import { actions as lightboxActions } from 'core/lightbox';
 import { selectors as navSelectors } from 'core/navigation';
+import * as entitieslist from 'modules/entitieslist';
+import { History } from 'modules/history';
 
 import Editor from './Editor';
 import Metadata from './Metadata';
@@ -71,6 +72,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 selectedEntity={ selectedEntity }
                 sendSuggestion={ this.sendSuggestion }
             />
+            <History />
         </section>;
     }
 }
