@@ -30,7 +30,7 @@
       </h4>
     </td>
     <td class="deadline">
-      {{ Deadline.deadline(project.deadline, chart.approved_percent == 100) }}
+      {{ Deadline.deadline(project.deadline, chart.completion_percent == 100) }}
     </td>
     <td class="priority">
       {{ Priority.priority(project.priority) }}
