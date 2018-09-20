@@ -3,7 +3,6 @@
     color: #AAA;
     font-size: 0.9em;
     font-style: italic;
-    line-height: 22px;
     padding: 10px;
 }
 .metadata p,
@@ -23,6 +22,10 @@
     text-decoration: none;
 }
 
+.metadata .comment,
+.metadata .original {
+    line-height: 22px;
+}
 .metadata .original {
     color: white;
     font-size: 1.1em;
