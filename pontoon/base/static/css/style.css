@@ -538,8 +538,10 @@ tfoot td a {
   z-index: 20; /* Must be higher than iframe-cover */
 }
 
-.select > .button.breadcrumbs,
-#go {
+#settings .menu {
+  width: 185px;
+}
+.select > .button.breadcrumbs {
   background: #3f4752;
   font-size: 16px;
   height: 20px;
@@ -550,16 +552,7 @@ tfoot td a {
   width: 200px;
 }
 
-#settings .menu {
-  width: 185px;
-}
-
-#go {
-  width: auto;
-}
-
-.select > .button.breadcrumbs:before,
-#go:before {
+.select > .button.breadcrumbs:before {
   content: "";
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
@@ -588,12 +581,37 @@ tfoot td a {
   display: none;
 }
 
+.project.select.all-projects > .button.breadcrumbs:after,
+.part.select > .button.breadcrumbs:after {
+  display: none;
+}
+
 .select > .button.breadcrumbs:hover {
-  background: #4d5967;
+  background: #7BC876;
+  color: #272A2F;
 }
 
 .select > .button.breadcrumbs:hover:after {
+  border-left-color: #7BC876;
+}
+
+.locale.select > .button.breadcrumbs:hover .code {
+  color: #272A2F;
+}
+
+.project.select.all-projects:not(.opened) > .button.breadcrumbs:hover,
+.part.select:not(.opened) > .button.breadcrumbs:hover {
+  background: #4d5967;
+}
+
+.project.select.all-projects:not(.opened) > .button.breadcrumbs:hover:after,
+.part.select:not(.opened) > .button.breadcrumbs:hover:after {
   border-left-color: #4d5967;
+}
+
+.project.select.all-projects > .button.breadcrumbs:hover,
+.part.select > .button.breadcrumbs:hover {
+  color: #FFFFFF;
 }
 
 .select.opened > .button.breadcrumbs {
@@ -602,17 +620,6 @@ tfoot td a {
 
 .select.opened > .button.breadcrumbs:after {
   border-left-color: #4d5967;
-}
-
-#go {
-  color: #FFFFFF;
-  float: left;
-}
-
-#go.active,
-#go:hover {
-  background: #7BC876;
-  color: #272A2F;
 }
 
 .project.select,

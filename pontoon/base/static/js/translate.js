@@ -2951,18 +2951,6 @@ var Pontoon = (function (my) {
 
 
     /*
-     * Mark Go button as active if main menu doesn't fully resemble
-     * locale, project, part combination currently being translated
-     */
-    updateGoButton: function () {
-      var toggle = this.getSelectedLocale() !== this.locale.code ||
-                   this.getSelectedProject() !== this.project.slug ||
-                   this.getSelectedPart() !== this.currentPart.title;
-      $('#go').toggleClass('active', toggle);
-    },
-
-
-    /*
      * Update project and (if needed) part menu
      */
     updateProjectMenu: function () {
@@ -2984,8 +2972,6 @@ var Pontoon = (function (my) {
         resource__path: []
       }];
       $('.project .menu .all-projects .name').data('parts', parts);
-
-      this.updateGoButton();
     },
 
 
@@ -3006,8 +2992,7 @@ var Pontoon = (function (my) {
 
       // Hide part menu for All Projects
       $('.part.select').toggleClass('hidden', project === 'all-projects');
-
-      this.updateGoButton();
+      $('.project.select').toggleClass('all-projects', project === 'all-projects');
     },
 
 
@@ -3055,7 +3040,7 @@ var Pontoon = (function (my) {
         $('#iframe-cover').hide();
       });
 
-      // Locale menu handler
+      /* Locale menu handler
       $('.locale .menu li:not(".no-match")').click(function () {
         var menuItem = $(this),
             locale = menuItem.find('.language').data('code'),
@@ -3081,9 +3066,22 @@ var Pontoon = (function (my) {
           self.updateProjectMenu();
         }
       });
+      */
 
       // Show only projects available for the selected locale
-      $('.project .selector').click(function () {
+      $('.locale .selector').click(function (e) {
+        e.stopPropagation();
+      });
+
+      // Show only projects available for the selected locale
+      $('.project .selector').click(function (e) {
+        if ($(this).parents('.all-projects').length) {
+          e.preventDefault();
+        } else {
+          e.stopPropagation();
+          return;
+        }
+
         var projects = Pontoon.getLocaleData('projects'),
             $menu = $(this).parents('.select').find('.menu');
 
@@ -3103,7 +3101,9 @@ var Pontoon = (function (my) {
       });
 
       // Project menu handler
-      $('.project .menu li:not(".no-match"), .static-links .all-projects').click(function () {
+      $('.project .menu li:not(".no-match"), .static-links .all-projects').click(function (e) {
+        e.preventDefault();
+
         var project = $(this).find('.name'),
             name = project.html(),
             slug = project.data('slug'),
@@ -3142,6 +3142,8 @@ var Pontoon = (function (my) {
               }
             });
           }
+
+          $('#project-url').attr('href', '/' + locale + '/' + slug + '/');
         }
       });
 
@@ -3182,17 +3184,12 @@ var Pontoon = (function (my) {
       });
 
       // Parts menu handler
-      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources', function () {
+      $('.part .menu').on('click', 'li:not(".no-match"), .static-links .all-resources, .static-links .all-projects', function () {
         var title = $(this).find('span:first').html();
         self.updatePartSelector(title);
-        self.updateGoButton();
-      });
 
-      // Open selected project (part) and locale combination
-      $('#go').click(function (e) {
-        e.preventDefault();
+        // Open selected project (part) and locale combination
         self.jumpToPart(self.getSelectedPart());
-
         self.closeNotification();
       });
 
@@ -3393,8 +3390,6 @@ var Pontoon = (function (my) {
         .parent().attr('href', '/projects/' + this.project.slug);
       $('.static-links .current-localization')
         .parent().attr('href', '/' + this.locale.code + '/' + this.project.slug);
-
-      this.updateGoButton();
     },
 
 
@@ -4257,8 +4252,7 @@ var Pontoon = (function (my) {
      * Get data-* attribute value of the currently selected locale
      */
     getLocaleData: function(attribute) {
-      var code = this.getSelectedLocale();
-      return $('.locale .menu li .language[data-code=' + code + ']').data(attribute);
+      return $('.locale .selector .language').data(attribute);
     },
 
 
