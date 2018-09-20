@@ -70,14 +70,14 @@ def calculate_stats(self, apps):
             Q(Q(approved=True) | Q(fuzzy=True)) &
             Q(errors__isnull=False)
         ),
-    ).count()
+    ).distinct().count()
 
     warnings = translations.filter(
         Q(
             Q(Q(approved=True) | Q(fuzzy=True)) &
             Q(warnings__isnull=False)
         ),
-    ).count()
+    ).distinct().count()
 
     unreviewed = translations.filter(
         approved=False,
@@ -117,14 +117,14 @@ def calculate_stats(self, apps):
                     Q(Q(approved=True) | Q(fuzzy=True)) &
                     Q(errors__isnull=False)
                 ),
-            ).count()
+            ).distinct().count()
 
             plural_warnings_count = translations.filter(
                 Q(
                     Q(Q(approved=True) | Q(fuzzy=True)) &
                     Q(warnings__isnull=False)
                 ),
-            ).count()
+            ).distinct().count()
 
             if plural_errors_count:
                 errors += 1
