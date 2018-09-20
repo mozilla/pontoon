@@ -174,6 +174,7 @@ def test_util_tag_chart():
         total_strings=73,
         fuzzy_strings=7,
         approved_strings=13,
+        strings_with_warnings=0,
         unreviewed_strings=23)
     assert chart.approved_share == 18.0
     assert chart.fuzzy_share == 10.0

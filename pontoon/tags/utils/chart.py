@@ -15,7 +15,11 @@ class TagChart(object):
     @property
     def completion_percent(self):
         return int(
-            math.floor(self.approved_strings / float(self.total_strings) * 100)
+            math.floor(
+                (self.approved_strings + self.strings_with_warnings) /
+                float(self.total_strings) *
+                100
+            )
         )
 
     @property
