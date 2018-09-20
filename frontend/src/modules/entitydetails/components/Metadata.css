@@ -3,12 +3,10 @@
     color: #AAA;
     font-size: 0.9em;
     font-style: italic;
+    line-height: 22px;
     padding: 10px;
 }
-.metadata p,
-.metadata li {
-    margin: 8px 0;
-}
+
 .metadata .title {
     color: #888;
     text-transform: uppercase;
@@ -22,10 +20,6 @@
     text-decoration: none;
 }
 
-.metadata .comment,
-.metadata .original {
-    line-height: 22px;
-}
 .metadata .original {
     color: white;
     font-size: 1.1em;
