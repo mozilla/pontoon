@@ -154,8 +154,8 @@ def ajax_notifications(request, slug):
     incomplete = []
     complete = []
     for available_locale in available_locales:
-        approved_percent = available_locale.get_chart(project)['approved_percent']
-        if approved_percent == 100:
+        completion_percent = available_locale.get_chart(project)['completion_percent']
+        if completion_percent == 100:
             complete.append(available_locale.pk)
         else:
             incomplete.append(available_locale.pk)

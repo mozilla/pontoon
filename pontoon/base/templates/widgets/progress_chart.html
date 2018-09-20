@@ -1,7 +1,7 @@
 {% macro span(chart, link, link_parameter=False, has_params=False) %}
 {% if chart != None %}
   <div class="chart-wrapper">
-    <span class="percent">{{ chart.approved_percent }}%</span>
+    <span class="percent">{{ chart.completion_percent }}%</span>
     <span class="chart">
       <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
       <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>

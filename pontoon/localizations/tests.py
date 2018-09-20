@@ -69,7 +69,7 @@ class LocaleProjectTests(ViewTestCase):
                         'approved_share': 0.0,
                         'unreviewed_share': 100.0,
                         'fuzzy_share': 0.0,
-                        'approved_percent': 0
+                        'completion_percent': 0
                     }
                 },
                 {
@@ -88,7 +88,7 @@ class LocaleProjectTests(ViewTestCase):
                         'approved_share': 0.0,
                         'unreviewed_share': 0.0,
                         'fuzzy_share': 0.0,
-                        'approved_percent': 0
+                        'completion_percent': 0
                     }
                 }
             ])

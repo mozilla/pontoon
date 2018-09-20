@@ -35,7 +35,7 @@
 
     {% if deadline %}
     <td class="deadline">
-      {{ Deadline.deadline(resource.resource__deadline, chart.approved_percent == 100) }}
+      {{ Deadline.deadline(resource.resource__deadline, chart.completion_percent == 100) }}
     </td>
     {% endif %}
 

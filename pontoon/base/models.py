@@ -1555,8 +1555,12 @@ class ProjectLocale(AggregatedStats):
                 'errors_share': round(obj.strings_with_errors / obj.total_strings * 100),
                 'warnings_share': round(obj.strings_with_warnings / obj.total_strings * 100),
                 'unreviewed_share': round(obj.unreviewed_strings / obj.total_strings * 100),
-                'approved_percent': int(
-                    math.floor(obj.approved_strings / obj.total_strings * 100)
+                'completion_percent': int(
+                    math.floor(
+                        (obj.approved_strings + obj.strings_with_warnings) /
+                        obj.total_strings *
+                        100
+                    )
                 ),
             }
 
