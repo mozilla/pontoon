@@ -741,7 +741,7 @@ var Pontoon = (function (my) {
         // Value
         else if (
           (translationAST && translationAST.value) ||
-          entityAST.value
+          (!translationAST && entityAST.value)
         ) {
           var ast = translationAST || entityAST;
           value = renderEditorElements(ast.value.elements, 'Value', translationAST, false);
