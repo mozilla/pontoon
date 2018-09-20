@@ -176,6 +176,6 @@ def test_util_tag_chart():
         approved_strings=13,
         unreviewed_strings=23)
     assert chart.approved_share == 18.0
-    assert chart.approved_percent == 17
     assert chart.fuzzy_share == 10.0
     assert chart.unreviewed_share == 32.0
+    assert chart.completion_percent == 17

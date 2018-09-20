@@ -13,7 +13,7 @@ class TagChart(object):
         self.unreviewed_strings = kwargs.get('unreviewed_strings')
 
     @property
-    def approved_percent(self):
+    def completion_percent(self):
         return int(
             math.floor(self.approved_strings / float(self.total_strings) * 100)
         )

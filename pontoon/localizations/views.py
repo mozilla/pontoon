@@ -125,7 +125,7 @@ def ajax_resources(request, code, slug):
             'warnings_share': round(
                 part['strings_with_warnings'] / part['resource__total_strings'] * 100
             ),
-            'approved_percent': int(
+            'completion_percent': int(
                 math.floor(part['approved_strings'] / part['resource__total_strings'] * 100)
             ),
         }
