@@ -1,11 +1,32 @@
+/* Reset HTML5 Search Input in Webkit */
+input[type=search] {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+
+body, select, input, textarea, button {
+    font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  font: 13px/1.231 sans-serif;
-  font-family: "Open Sans","Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
+    background: #272A2F;
+    color: #EBEBEB;
 }
 
 body, html, #root {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+a:link,
+a:visited {
+    color: #AAAAAA;
+    font-weight: 300;
+    text-decoration: none;
+}
+
+a:hover,
+a:active {
+    color: #7BC876;
+    text-decoration: none;
 }
