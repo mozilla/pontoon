@@ -2911,7 +2911,7 @@ var Pontoon = (function (my) {
           }
         },
         complete: function() {
-          self.XHRupdateOnServer = undefined;
+          self.XHRupdateOnServer = null;
           self.reattachSaveButtonHandler();
         }
       });
