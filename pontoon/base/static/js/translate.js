@@ -2859,8 +2859,9 @@ var Pontoon = (function (my) {
         submittedPluralForm = 0;
       }
 
+      // Prevent duplicate translation submissions
       if (self.XHRupdateOnServer) {
-        self.XHRupdateOnServer.abort();
+        return;
       }
 
       self.XHRupdateOnServer = $.ajax({
@@ -2910,6 +2911,7 @@ var Pontoon = (function (my) {
           }
         },
         complete: function() {
+          self.XHRupdateOnServer = undefined;
           self.reattachSaveButtonHandler();
         }
       });
