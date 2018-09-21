@@ -788,6 +788,26 @@ def download_translation_memory(request, locale, slug, filename):
     return response
 
 
+@utils.require_AJAX
+def user_data(request):
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({
+            'is_authenticated': False,
+        })
+
+    return JsonResponse({
+        'is_authenticated': True,
+        'id': user.id,
+        'email': user.email,
+        'display_name': user.display_name,
+        'manager_for_locales': user.managed_locales,
+        'translator_for_locales': user.translated_locales,
+        'translator_for_projects': user.translated_projects,
+    })
+
+
 class AjaxFormView(FormView):
     """A form view that when the form is submitted, it will return a json
     response containing either an ``errors`` object with a bad response status
