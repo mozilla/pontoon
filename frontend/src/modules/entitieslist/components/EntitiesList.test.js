@@ -1,8 +1,6 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import InfiniteScroll from 'react-infinite-scroller';
-
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
@@ -10,22 +8,16 @@ import { actions } from '..';
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
 
-describe('<EntitiesList>', () => {
-    let store;
-    let entities;
+// Entities shared between tests
+const ENTITIES = [
+    { pk: 1 },
+    { pk: 2 },
+];
 
+describe('<EntitiesList>', () => {
     beforeAll(() => {
         const getMock = sinon.stub(actions, 'get');
         getMock.returns({type: 'whatever'});
-    });
-
-    beforeEach(() => {
-        store = createReduxStore();
-
-        entities = [
-            { pk: 1 },
-            { pk: 2 },
-        ];
     });
 
     afterEach(() => {
@@ -37,8 +29,10 @@ describe('<EntitiesList>', () => {
         actions.get.restore();
     });
 
-    it('shows loading animation when there are more entities to load', () => {
-        store.dispatch(actions.receive(entities, true));
+    it('shows a loading animation when there are more entities to load', () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, true));
 
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
         const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
@@ -46,8 +40,10 @@ describe('<EntitiesList>', () => {
         expect(scroll.find('EntitiesLoader')).toHaveLength(1);
     });
 
-    it("doesn't display loading animation when there aren't entities to load", () => {
-        store.dispatch(actions.receive(entities, false));
+    it("doesn't display a loading animation when there aren't entities to load", () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, false));
 
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
         const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
@@ -55,7 +51,9 @@ describe('<EntitiesList>', () => {
         expect(scroll.find('EntitiesLoader')).toHaveLength(0);
     });
 
-    it("show loading animation when entities are being fetched from the server", () => {
+    it("shows a loading animation when entities are being fetched from the server", () => {
+        const store = createReduxStore();
+
         store.dispatch(actions.request());
 
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
@@ -65,7 +63,9 @@ describe('<EntitiesList>', () => {
     });
 
     it('shows the correct number of entities', () => {
-        store.dispatch(actions.receive(entities, false));
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, false));
 
         const wrapper = shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
 
@@ -73,7 +73,9 @@ describe('<EntitiesList>', () => {
     });
 
     it('excludes current entities when requesting new entities', () => {
-        store.dispatch(actions.receive(entities, false));
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, false));
 
         const wrapper = shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
 
