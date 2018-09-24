@@ -137,6 +137,10 @@ def tag_a(resource_a, project_a, locale_a):
     factories.TranslatedResourceFactory.create(
         resource=resource_a, locale=locale_a
     )
-    tag = factories.TagFactory.create(slug="tag", name="Tag")
+    tag = factories.TagFactory.create(
+        slug="tag",
+        name="Tag",
+        project=project_a,
+    )
     tag.resources.add(resource_a)
     return tag
