@@ -200,7 +200,7 @@ def test_util_tags_tool_get_tags(glob_mock, tag_mock):
     filter_mock = MagicMock(
         **{'filter.return_value': 23})
     tag_mock.configure_mock(
-        **{'return_value.values.return_value': filter_mock})
+        **{'return_value.filter.return_value.values.return_value': filter_mock})
     tags_tool = TagsTool()
 
     # no slug provided, returns `values`
@@ -208,7 +208,7 @@ def test_util_tags_tool_get_tags(glob_mock, tag_mock):
     assert not filter_mock.called
     assert not glob_mock.called
     assert (
-        list(tag_mock.return_value.values.call_args)
+        list(tag_mock.return_value.filter.return_value.values.call_args)
         == [('pk', 'name', 'slug', 'priority', 'project'), {}])
 
     tag_mock.reset_mock()
@@ -220,5 +220,5 @@ def test_util_tags_tool_get_tags(glob_mock, tag_mock):
         == [(), {'slug__regex': 17}])
     assert list(glob_mock.call_args) == [('FOO',), {}]
     assert (
-        list(tag_mock.return_value.values.call_args)
+        list(tag_mock.return_value.filter.return_value.values.call_args)
         == [('pk', 'name', 'slug', 'priority', 'project'), {}])
