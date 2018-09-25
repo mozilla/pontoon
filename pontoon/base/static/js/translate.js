@@ -761,16 +761,17 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     getEntityStatus: function (entity) {
+      var self = this;
       var translated = 0;
       var fuzzy = 0;
       var errors = 0;
       var warnings = 0;
 
       entity.translation.forEach(function (translation) {
-        if (translation.errors.length) {
+        if (self.isFailedCheckStatus(translation, 'errors')) {
           errors++;
         }
-        else if (translation.warnings.length) {
+        else if (self.isFailedCheckStatus(translation, 'warnings')) {
           warnings++;
         }
         else if (translation.approved) {
@@ -2751,6 +2752,17 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Return true if Translation status matches given failed check type
+     *
+     * translation Translation to checks status for
+     * type "errors" or "warnings"
+     */
+    isFailedCheckStatus: function (translation, type) {
+      return translation[type].length && (translation.approved || translation.fuzzy);
+    },
+
+
+    /*
      * Toggle failed checks for translation
      *
      * translation Translation to show failed checks for
@@ -2758,11 +2770,11 @@ var Pontoon = (function (my) {
     toggleFailedChecks: function(translation) {
       var failedChecks = {};
 
-      if (translation.errors.length) {
+      if (this.isFailedCheckStatus(translation, 'errors')) {
         failedChecks.clErrors = translation.errors;
       }
 
-      if (translation.warnings.length) {
+      if (this.isFailedCheckStatus(translation, 'warnings')) {
         failedChecks.clWarnings = translation.warnings;
       }
 
