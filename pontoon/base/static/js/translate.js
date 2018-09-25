@@ -761,36 +761,36 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     getEntityStatus: function (entity) {
-      var translation = entity.translation;
       var translated = 0;
       var fuzzy = 0;
       var errors = 0;
       var warnings = 0;
 
-      for (var i=0; i<translation.length; i++) {
-        if (entity.translation[i].approved) {
-          translated++;
-        }
-        if (entity.translation[i].fuzzy) {
-          fuzzy++;
-        }
-        if (entity.translation[i].errors.length) {
+      entity.translation.forEach(function (translation) {
+        if (translation.errors.length) {
           errors++;
         }
-        if (entity.translation[i].warnings.length) {
+        else if (translation.warnings.length) {
           warnings++;
         }
-      }
+        else if (translation.approved) {
+          translated++;
+        }
+        else if (translation.fuzzy) {
+          fuzzy++;
+        }
+      });
+
       if (errors > 0) {
         return 'errors';
       }
       else if (warnings > 0) {
         return 'warnings';
       }
-      else if (i === translated) {
+      else if (translated === entity.translation.length) {
         return 'translated';
       }
-      else if (i === fuzzy) {
+      else if (fuzzy === entity.translation.length) {
         return 'fuzzy';
       }
       else if (translated > 0 || fuzzy > 0) {
