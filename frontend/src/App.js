@@ -7,6 +7,7 @@ import './App.css';
 
 import { Lightbox } from 'core/lightbox';
 import { selectors as navSelectors } from 'core/navigation';
+import { UserAutoUpdater } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 
@@ -29,6 +30,7 @@ type InternalProps = {|
 class App extends React.Component<InternalProps> {
     render() {
         return <div id="app">
+            <UserAutoUpdater />
             <section>
                 <EntitiesList />
             </section>

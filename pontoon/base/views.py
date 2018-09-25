@@ -802,8 +802,8 @@ def user_data(request):
         'id': user.id,
         'email': user.email,
         'display_name': user.display_name,
-        'manager_for_locales': user.managed_locales,
-        'translator_for_locales': user.translated_locales,
+        'manager_for_locales': list(user.managed_locales.values_list('code', flat=True)),
+        'translator_for_locales': list(user.translated_locales.values_list('code', flat=True)),
         'translator_for_projects': user.translated_projects,
     })
 

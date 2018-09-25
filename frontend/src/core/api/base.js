@@ -18,7 +18,7 @@ export default class APIBase {
     async fetch(
         url: string,
         method: string,
-        payload: URLSearchParams | FormData,
+        payload: URLSearchParams | FormData | null,
         headers: Headers,
     ): Promise<Object> {
         const fullUrl = this.getFullURL(url);
@@ -28,11 +28,13 @@ export default class APIBase {
         requestParams.credentials = 'same-origin';
         requestParams.headers = headers;
 
-        if (method === 'POST') {
-            requestParams.body = payload;
-        }
-        else if (method === 'GET') {
-            fullUrl.search = payload.toString();
+        if (payload !== null) {
+            if (method === 'POST') {
+                requestParams.body = payload;
+            }
+            else if (method === 'GET') {
+                fullUrl.search = payload.toString();
+            }
         }
 
         const response = await fetch(

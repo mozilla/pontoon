@@ -1,5 +1,6 @@
 /* @flow */
 
+import api from 'core/api';
 
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
 
@@ -27,9 +28,7 @@ export function update(data: Object): UpdateAction {
  */
 export function get(): Function {
     return async dispatch => {
-        const url = new URL('/user-data/', window.location.origin);
-        const response = await fetch(url);
-        const content = await response.json();
+        const content = await api.user.get();
         dispatch(update(content));
     }
 }
@@ -37,4 +36,5 @@ export function get(): Function {
 
 export default {
     update,
+    get,
 };

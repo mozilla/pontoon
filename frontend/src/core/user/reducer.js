@@ -11,7 +11,7 @@ type Action =
 export type UserState = {|
     +isAuthenticated: boolean,
     +id: string,
-    +username: string,
+    +displayName: string,
     +email: string,
     +managerForLocales: Array<string>,
     +translatorForLocales: Array<string>,
@@ -22,7 +22,7 @@ export type UserState = {|
 const initial: UserState = {
     isAuthenticated: false,
     id: '',
-    username: '',
+    displayName: '',
     email: '',
     managerForLocales: [],
     translatorForLocales: [],
