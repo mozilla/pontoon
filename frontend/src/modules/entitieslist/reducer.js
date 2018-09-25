@@ -77,7 +77,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: true,
-                hasMore: false ,
+                hasMore: false,
             };
         case RESET:
             return {

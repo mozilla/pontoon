@@ -12,6 +12,7 @@ import type { Navigation } from 'core/navigation';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
+import EntitiesLoader from './EntitiesLoader'
 
 import type { Entities, DbEntity } from '../reducer';
 
@@ -20,6 +21,7 @@ type Props = {|
     entities: {|
         entities: Entities,
         hasMore: boolean,
+        fetching: boolean,
     |},
     parameters: Navigation,
 |};
@@ -78,6 +80,14 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { entities, parameters } = this.props;
         const { locale, project, resource } = parameters;
 
+        // Temporary fix for the infinite number of requests from InfiniteScroller
+        // More info at:
+        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
+        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
+        if (entities.fetching) {
+            return;
+        }
+
         // Currently shown entities should be excluded from the next results.
         const currentEntityIds = entities.entities.map(entity => entity.pk);
 
@@ -95,12 +105,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { entities } = this.props;
         const selectedEntity = this.props.parameters.entity;
 
+        // InfiniteScroll will display information about loading during the request
+        const hasMore = entities.fetching || entities.hasMore;
+
         return <div className="entities">
             <InfiniteScroll
                 pageStart={ 1 }
                 loadMore={ this.getMoreEntities }
-                hasMore={ entities.hasMore }
-                loader={ <div key="loader">Loading...</div> }
+                hasMore={ hasMore }
+                loader={ <EntitiesLoader key={0} /> }
                 useWindow={ false }
                 threshold={ 600 }
             >
