@@ -9,8 +9,8 @@ export const OPEN: 'lightbox/OPEN' = 'lightbox/OPEN';
  * Open the lightbox to show the specified image.
  */
 export type OpenAction = {
-   type: typeof OPEN,
-   image: string,
+    type: typeof OPEN,
+    image: string,
 };
 export function open(image: string): OpenAction {
     return {
@@ -24,7 +24,7 @@ export function open(image: string): OpenAction {
  * Hide the lightbox.
  */
 export type CloseAction = {
-   type: typeof CLOSE,
+    type: typeof CLOSE,
 };
 export function close(): CloseAction {
     return {
