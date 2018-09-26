@@ -162,6 +162,8 @@ def test_util_tags_resources_tool_link(resource_a, tag_c):
 @pytest.mark.django_db
 def test_util_tags_resources_tool_link_project(resource_a, tag_c):
     resource_tool = TagsResourcesTool(projects=[resource_a.project])
+    tag_c.project = resource_a.project
+    tag_c.save()
     assert tag_c.resources.count() == 0
     resource_tool.link(tag_c.slug, '*')
     assert (
