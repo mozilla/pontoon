@@ -761,36 +761,37 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     getEntityStatus: function (entity) {
-      var translation = entity.translation;
+      var self = this;
       var translated = 0;
       var fuzzy = 0;
       var errors = 0;
       var warnings = 0;
 
-      for (var i=0; i<translation.length; i++) {
-        if (entity.translation[i].approved) {
-          translated++;
-        }
-        if (entity.translation[i].fuzzy) {
-          fuzzy++;
-        }
-        if (entity.translation[i].errors.length) {
+      entity.translation.forEach(function (translation) {
+        if (self.isFailedCheckStatus(translation, 'errors')) {
           errors++;
         }
-        if (entity.translation[i].warnings.length) {
+        else if (self.isFailedCheckStatus(translation, 'warnings')) {
           warnings++;
         }
-      }
+        else if (translation.approved) {
+          translated++;
+        }
+        else if (translation.fuzzy) {
+          fuzzy++;
+        }
+      });
+
       if (errors > 0) {
         return 'errors';
       }
       else if (warnings > 0) {
         return 'warnings';
       }
-      else if (i === translated) {
+      else if (translated === entity.translation.length) {
         return 'translated';
       }
-      else if (i === fuzzy) {
+      else if (fuzzy === entity.translation.length) {
         return 'fuzzy';
       }
       else if (translated > 0 || fuzzy > 0) {
@@ -2751,6 +2752,17 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Return true if Translation status matches given failed check type
+     *
+     * translation Translation to checks status for
+     * type "errors" or "warnings"
+     */
+    isFailedCheckStatus: function (translation, type) {
+      return translation[type].length && (translation.approved || translation.fuzzy);
+    },
+
+
+    /*
      * Toggle failed checks for translation
      *
      * translation Translation to show failed checks for
@@ -2758,11 +2770,11 @@ var Pontoon = (function (my) {
     toggleFailedChecks: function(translation) {
       var failedChecks = {};
 
-      if (translation.errors.length) {
+      if (this.isFailedCheckStatus(translation, 'errors')) {
         failedChecks.clErrors = translation.errors;
       }
 
-      if (translation.warnings.length) {
+      if (this.isFailedCheckStatus(translation, 'warnings')) {
         failedChecks.clWarnings = translation.warnings;
       }
 
