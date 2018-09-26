@@ -15,21 +15,12 @@ type InternalProps = {
     dispatch: Function,
 };
 
-type State = {|
-    timer: ?IntervalID,
-|};
-
 
 /**
  * Regularly fetch user data to keep it up-to-date with the server.
  */
-export class UserAutoUpdaterBase extends React.Component<InternalProps, State> {
-    constructor() {
-        super();
-        this.state = {
-            timer: null,
-        };
-    }
+export class UserAutoUpdaterBase extends React.Component<InternalProps> {
+    timer: ?IntervalID;
 
     fetchUserData = () => {
         this.props.dispatch(actions.get());
@@ -37,13 +28,12 @@ export class UserAutoUpdaterBase extends React.Component<InternalProps, State> {
 
     componentDidMount() {
         this.fetchUserData();
-        const timer = setInterval(this.fetchUserData, 2 * 60 * 1000);
-        this.setState({ timer });
+        this.timer = setInterval(this.fetchUserData, 2 * 60 * 1000);
     }
 
     componentWillUnmount() {
-        if (this.state.timer) {
-            clearInterval(this.state.timer);
+        if (this.timer) {
+            clearInterval(this.timer);
         }
     }
 
