@@ -2004,6 +2004,11 @@ var Pontoon = (function (my) {
           var section = $('#helpers section:visible'),
               index = section.find('li.suggestion.hover').index() + 1;
 
+          // If no suggestions present, quit early
+          if (!section.find('li.suggestion').length) {
+            return;
+          }
+
           // If possible, select next suggestion, or select first
           if (section.find('li.suggestion:last').is('.hover')) {
             index = 0;
