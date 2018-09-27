@@ -21,6 +21,7 @@ export type Translation = {
 export type DbEntity = {
     +pk: number,
     +original: string,
+    +original_plural: string,
     +comment: string,
     +key: string,
     +path: string,

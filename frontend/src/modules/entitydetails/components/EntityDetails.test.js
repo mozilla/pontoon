@@ -20,6 +20,9 @@ const NAVIGATION = {
     entity: 42,
     locale: 'kg',
 };
+const PARAMETERS = {
+    pluralForm: 0,
+};
 
 
 function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
@@ -27,6 +30,8 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
         activeTranslation={ TRANSLATION }
         navigation={ NAVIGATION }
         selectedEntity={ selectedEntity }
+        parameters={ PARAMETERS }
+        locale={ { code: 'kg' } }
     />);
 }
 
@@ -79,6 +84,13 @@ describe('<EntityDetails>', () => {
                 location: {
                     pathname: '/kg/pro/all/',
                     search: '?string=' + ENTITIES[0].pk,
+                },
+            },
+            locales: {
+                locales: {
+                    'kg': {
+                        code: 'kg',
+                    },
                 },
             },
         };
