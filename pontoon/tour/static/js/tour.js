@@ -48,6 +48,7 @@ $(function () {
     }
   };
 
+
   Sideshow.registerWizard({
     name: "introducing_pontoon",
     title: "Introducing Pontoon",
@@ -56,7 +57,20 @@ $(function () {
       function() {
         return true;
       }
-    ]
+    ],
+    listeners: {
+        beforeWizardStarts: function(){
+          // unbind all keydown handelers.
+          $('html').off('keydown');
+          $('#editor').off('keydown');
+        },
+        afterWizardEnds: function(){
+          // rebind all keydown handelers back.
+          $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
+          $('html').on('keydown', traversalKeys);
+          translateAreaKeys();
+        }
+    }
   }).storyLine({
     showStepPosition: true,
     steps: [
@@ -115,7 +129,13 @@ $(function () {
         format: "markdown",
         lockSubject: true,
         listeners: {
+          beforeStep: function() {
+            // rebind string list events back.
+            $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
+            $('html').on('keydown', traversalKeys);
+          },
           afterStep: function() {
+            $('html').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -154,7 +174,12 @@ $(function () {
         format: "markdown",
         lockSubject: true,
         listeners: {
+          beforeStep: function() {
+            // rebind editor keydowns back
+            translateAreaKeys();
+          },
           afterStep: function() {
+            $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -176,7 +201,12 @@ $(function () {
           }
         ],
         listeners: {
+          beforeStep: function() {
+            // Bind editor keydowns back
+            translateAreaKeys();
+          },
           afterStep: function() {
+            $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -265,6 +295,12 @@ $(function () {
     // If a user closes the tour at the "Filter" step,
     // run the corresponding afterStep function.
     $('.sideshow-close-button').click(function() {
+
+      // bind all keydown handelers back.
+      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
+      $('html').on('keydown', traversalKeys);
+      translateAreaKeys();
+
       setTimeout(function() {
         $("#filter .menu").fadeOut(function() {
           $("#filter .menu").removeClass("permanent");

@@ -1931,8 +1931,9 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#editor').on('keydown', 'textarea', function (e) {
-        var key = e.which;
+      translateAreaKeys = function () {
+        $('#editor').on('keydown', 'textarea', function (e) {
+          var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
         if (!$("#editor").is('.opened')) {
@@ -1982,9 +1983,9 @@ var Pontoon = (function (my) {
             self.fluent.isFTLEditorEnabled() &&
             self.fluent.isComplexFTL() &&
             !$('#editor textarea:visible:last').is(':focus')
-          ) {
+            ) {
             return;
-          }
+        }
 
           // Source FTL editor: insert tab character
           if (self.fluent.isSourceFTLEditorEnabled()) {
@@ -2002,7 +2003,7 @@ var Pontoon = (function (my) {
           }
 
           var section = $('#helpers section:visible'),
-              index = section.find('li.suggestion.hover').index() + 1;
+          index = section.find('li.suggestion.hover').index() + 1;
 
           // If no suggestions present, quit early
           if (!section.find('li.suggestion').length) {
@@ -2015,8 +2016,8 @@ var Pontoon = (function (my) {
           }
 
           section
-            .find('li.suggestion').removeClass('hover').end()
-            .find('li.suggestion:eq(' + index + ')').addClass('hover').click();
+          .find('li.suggestion').removeClass('hover').end()
+          .find('li.suggestion:eq(' + index + ')').addClass('hover').click();
 
           // Needed to keep the experience smooth in rich FTL editor with complex messages.
           // Without this, the first field gets focus and the subsequent Tab takes you to
@@ -2027,12 +2028,15 @@ var Pontoon = (function (my) {
           return false;
         }
 
-      // Update length (keydown is triggered too early)
-      }).unbind("input propertychange").bind("input propertychange", function () {
-        self.updateCurrentTranslationLength();
-        self.updateInPlaceTranslation();
-        $('.warning-overlay:visible .cancel').click();
-      });
+        // Update length (keydown is triggered too early)
+        }).unbind("input propertychange").bind("input propertychange", function () {
+          self.updateCurrentTranslationLength();
+          self.updateInPlaceTranslation();
+          $('.warning-overlay:visible .cancel').click();
+        });
+      };
+
+      translateAreaKeys();
 
       // Close warning box
       $('.warning-overlay .cancel').click(function (e) {
@@ -3048,8 +3052,7 @@ var Pontoon = (function (my) {
     attachMainHandlers: function () {
       var self = this;
 
-      // Main keyboard shortcuts
-      $('html').on('keydown', function (e) {
+      traversalKeys = function (e) {
         var key = e.which;
 
         // Alt + Down: Go to next string
@@ -3071,7 +3074,9 @@ var Pontoon = (function (my) {
           }
           return false;
         }
-      });
+      }
+      // Main keyboard shortcuts
+      $('html').on('keydown', traversalKeys);
 
       // iFrame fix on hiding menus
       $('body').bind("click.main", function () {

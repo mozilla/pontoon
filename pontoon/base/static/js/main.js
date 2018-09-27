@@ -836,8 +836,9 @@ $(function() {
     });
   });
 
+
   // General keyboard shortcuts
-  $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
+  generalKeys = function (e) {
     function moveMenu(type) {
       var options = (type === "up") ? ["first", "last", -1] :
         ["last", "first", 1],
@@ -925,5 +926,6 @@ $(function() {
         return false;
       }
     }
-  });
+  }
+  $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
 });
