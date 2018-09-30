@@ -50,9 +50,9 @@ module.exports = {
         ga: false,
         SyntheticInputEvent: false,
         SyntheticKeyboardEvent: false,
-        generalKeys: true,
-        traversalKeys: true,
-        translateAreaKeys: true,
+        generalShortcutsHandler: true,
+        traversalShortcutsHandler: true,
+        editorShortcutsHandler: true,
     },
     plugins: [
         'react',

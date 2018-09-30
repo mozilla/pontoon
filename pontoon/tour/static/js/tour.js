@@ -48,7 +48,6 @@ $(function () {
     }
   };
 
-
   Sideshow.registerWizard({
     name: "introducing_pontoon",
     title: "Introducing Pontoon",
@@ -66,9 +65,9 @@ $(function () {
         },
         afterWizardEnds: function(){
           // rebind all keydown handelers back.
-          $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
-          $('html').on('keydown', traversalKeys);
-          translateAreaKeys();
+          $('html').on('keydown', generalShortcutsHandler);
+          $('html').on('keydown', traversalShortcutsHandler);
+          $('#editor').on('keydown', editorShortcutsHandler)
         }
     }
   }).storyLine({
@@ -131,8 +130,8 @@ $(function () {
         listeners: {
           beforeStep: function() {
             // rebind string list events back.
-            $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
-            $('html').on('keydown', traversalKeys);
+            $('html').on('keydown', generalShortcutsHandler);
+            $('html').on('keydown', traversalShortcutsHandler);
           },
           afterStep: function() {
             $('html').off('keydown');
@@ -176,7 +175,7 @@ $(function () {
         listeners: {
           beforeStep: function() {
             // rebind editor keydowns back
-            translateAreaKeys();
+            $('#editor').on('keydown', editorShortcutsHandler)
           },
           afterStep: function() {
             $('#editor').off('keydown');
@@ -203,7 +202,7 @@ $(function () {
         listeners: {
           beforeStep: function() {
             // Bind editor keydowns back
-            translateAreaKeys();
+            $('#editor').on('keydown', editorShortcutsHandler)
           },
           afterStep: function() {
             $('#editor').off('keydown');
@@ -297,9 +296,9 @@ $(function () {
     $('.sideshow-close-button').click(function() {
 
       // bind all keydown handelers back.
-      $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
-      $('html').on('keydown', traversalKeys);
-      translateAreaKeys();
+      $('html').on('keydown', generalShortcutsHandler);
+      $('html').on('keydown', traversalShortcutsHandler);
+      $('#editor').on('keydown', editorShortcutsHandler)
 
       setTimeout(function() {
         $("#filter .menu").fadeOut(function() {

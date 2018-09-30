@@ -838,7 +838,7 @@ $(function() {
 
 
   // General keyboard shortcuts
-  generalKeys = function (e) {
+  generalShortcutsHandler = function (e) {
     function moveMenu(type) {
       var options = (type === "up") ? ["first", "last", -1] :
         ["last", "first", 1],
@@ -927,5 +927,5 @@ $(function() {
       }
     }
   }
-  $('html').unbind("keydown.pontoon").bind("keydown.pontoon", generalKeys);
+  $('html').on('keydown', generalShortcutsHandler);
 });
