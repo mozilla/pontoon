@@ -1931,7 +1931,6 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-
       editorShortcutsHandler = function (e) {
         var key = e.which;
 
@@ -2027,7 +2026,7 @@ var Pontoon = (function (my) {
           self.updateScroll(section);
           return false;
         }
-      }
+      };
 
       $('#editor').on('keydown', 'textarea', editorShortcutsHandler)
       // Update length (keydown is triggered too early)
@@ -3051,6 +3050,7 @@ var Pontoon = (function (my) {
     attachMainHandlers: function () {
       var self = this;
 
+      // Main keyboard shortcuts
       traversalShortcutsHandler = function (e) {
         var key = e.which;
 
@@ -3073,8 +3073,7 @@ var Pontoon = (function (my) {
           }
           return false;
         }
-      }
-      // Main keyboard shortcuts
+      };
       $('html').on('keydown', traversalShortcutsHandler);
 
       // iFrame fix on hiding menus

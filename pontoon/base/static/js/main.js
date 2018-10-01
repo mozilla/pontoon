@@ -836,7 +836,6 @@ $(function() {
     });
   });
 
-
   // General keyboard shortcuts
   generalShortcutsHandler = function (e) {
     function moveMenu(type) {
@@ -926,6 +925,6 @@ $(function() {
         return false;
       }
     }
-  }
+  };
   $('html').on('keydown', generalShortcutsHandler);
 });
