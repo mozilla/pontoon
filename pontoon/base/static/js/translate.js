@@ -2028,13 +2028,14 @@ var Pontoon = (function (my) {
         }
       };
 
-      $('#editor').on('keydown', 'textarea', editorShortcutsHandler)
-      // Update length (keydown is triggered too early)
-      .unbind("input propertychange").bind("input propertychange", function () {
-          self.updateCurrentTranslationLength();
-          self.updateInPlaceTranslation();
-          $('.warning-overlay:visible .cancel').click();
-      });
+      $('#editor')
+        .on('keydown', 'textarea', editorShortcutsHandler)
+        // Update length (keydown is triggered too early)
+        .unbind("input propertychange").bind("input propertychange", function () {
+            self.updateCurrentTranslationLength();
+            self.updateInPlaceTranslation();
+            $('.warning-overlay:visible .cancel').click();
+        });
 
       // Close warning box
       $('.warning-overlay .cancel').click(function (e) {
