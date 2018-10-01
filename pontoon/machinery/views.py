@@ -87,8 +87,8 @@ def translation_memory(request):
     )
 
 
-def machine_translation_v3(request):
-    """Get translation from machine translation service using API version V3."""
+def machine_translation(request):
+    """Get translation from machine translation service."""
     try:
         text = request.GET['text']
         locale_code = request.GET['locale']
@@ -126,53 +126,6 @@ def machine_translation_v3(request):
         r = requests.post(url, params=payload, headers=headers, json=body)
         root = json.loads(r.content)
         translation = root[0]['translations'][0]['text']
-        obj['translation'] = translation
-
-        return JsonResponse(obj)
-
-    except Exception as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-
-def machine_translation(request):
-    """Get translation from machine translation service."""
-    try:
-        text = request.GET['text']
-        locale_code = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
-
-    api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
-
-    if not api_key:
-        log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
-        return HttpResponseBadRequest("Missing api key.")
-
-    api_version = settings.MICROSOFT_TRANSLATOR_API_VERSION
-    if api_version == '3.0':
-        # Using API v3 instead of deprecated v2.
-        return machine_translation_v3(request)
-
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_list_or_404(Locale, ms_translator_code=locale_code)
-
-    obj = {
-        'locale': locale_code,
-    }
-    url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
-    payload = {
-        "appId": api_key,
-        "text": text,
-        "from": "en",
-        "to": locale_code,
-        "contentType": "text/html",
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-        # Parse XML response
-        root = ET.fromstring(r.content)
-        translation = root.text
         obj['translation'] = translation
 
         return JsonResponse(obj)

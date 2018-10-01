@@ -81,7 +81,6 @@ BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
-MICROSOFT_TRANSLATOR_API_VERSION = os.environ.get('MICROSOFT_TRANSLATOR_API_VERSION', '2.0')
 
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
