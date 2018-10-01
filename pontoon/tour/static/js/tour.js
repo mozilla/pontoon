@@ -59,12 +59,12 @@ $(function () {
     ],
     listeners: {
         beforeWizardStarts: function(){
-          // unbind all keydown handelers.
+          // Detach all keydown event handelers
           $('html').off('keydown');
           $('#editor').off('keydown');
         },
         afterWizardEnds: function(){
-          // rebind all keydown handelers back.
+          // Re-attach all keydown event handelers
           $('html').on('keydown', generalShortcutsHandler);
           $('html').on('keydown', traversalShortcutsHandler);
           $('#editor').on('keydown', editorShortcutsHandler)
@@ -129,11 +129,12 @@ $(function () {
         lockSubject: true,
         listeners: {
           beforeStep: function() {
-            // rebind string list events back.
+            // Re-attach string list keydown event handelers
             $('html').on('keydown', generalShortcutsHandler);
             $('html').on('keydown', traversalShortcutsHandler);
           },
           afterStep: function() {
+            // Detach string list keydown event handelers
             $('html').off('keydown');
             updateTourStatus(++tourStatus);
           }
@@ -174,10 +175,11 @@ $(function () {
         lockSubject: true,
         listeners: {
           beforeStep: function() {
-            // rebind editor keydowns back
+            // Re-attach editor keydowns event handelers
             $('#editor').on('keydown', editorShortcutsHandler)
           },
           afterStep: function() {
+            // Detach editor keydown event handelers
             $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
@@ -201,10 +203,11 @@ $(function () {
         ],
         listeners: {
           beforeStep: function() {
-            // Bind editor keydowns back
+            // Re-attach editor keydowns event handlers
             $('#editor').on('keydown', editorShortcutsHandler)
           },
           afterStep: function() {
+            // Detach editor keydowns event handlers
             $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
@@ -295,7 +298,7 @@ $(function () {
     // run the corresponding afterStep function.
     $('.sideshow-close-button').click(function() {
 
-      // bind all keydown handelers back.
+      // Re-attach all keydown event handelers
       $('html').on('keydown', generalShortcutsHandler);
       $('html').on('keydown', traversalShortcutsHandler);
       $('#editor').on('keydown', editorShortcutsHandler)
