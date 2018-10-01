@@ -1931,7 +1931,7 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#editor').on('keydown', 'textarea', function (e) {
+      editorShortcutsHandler = function (e) {
         var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
@@ -2026,13 +2026,16 @@ var Pontoon = (function (my) {
           self.updateScroll(section);
           return false;
         }
+      };
 
-      // Update length (keydown is triggered too early)
-      }).unbind("input propertychange").bind("input propertychange", function () {
-        self.updateCurrentTranslationLength();
-        self.updateInPlaceTranslation();
-        $('.warning-overlay:visible .cancel').click();
-      });
+      $('#editor')
+        .on('keydown', 'textarea', editorShortcutsHandler)
+        // Update length (keydown is triggered too early)
+        .unbind("input propertychange").bind("input propertychange", function () {
+            self.updateCurrentTranslationLength();
+            self.updateInPlaceTranslation();
+            $('.warning-overlay:visible .cancel').click();
+        });
 
       // Close warning box
       $('.warning-overlay .cancel').click(function (e) {
@@ -3049,7 +3052,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Main keyboard shortcuts
-      $('html').on('keydown', function (e) {
+      traversalShortcutsHandler = function (e) {
         var key = e.which;
 
         // Alt + Down: Go to next string
@@ -3071,7 +3074,8 @@ var Pontoon = (function (my) {
           }
           return false;
         }
-      });
+      };
+      $('html').on('keydown', traversalShortcutsHandler);
 
       // iFrame fix on hiding menus
       $('body').bind("click.main", function () {

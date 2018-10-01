@@ -50,6 +50,9 @@ module.exports = {
         ga: false,
         SyntheticInputEvent: false,
         SyntheticKeyboardEvent: false,
+        generalShortcutsHandler: true,
+        traversalShortcutsHandler: true,
+        editorShortcutsHandler: true,
     },
     plugins: [
         'react',
