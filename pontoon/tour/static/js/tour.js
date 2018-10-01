@@ -56,7 +56,20 @@ $(function () {
       function() {
         return true;
       }
-    ]
+    ],
+    listeners: {
+        beforeWizardStarts: function(){
+          // Detach all keydown event handelers
+          $('html').off('keydown');
+          $('#editor').off('keydown');
+        },
+        afterWizardEnds: function(){
+          // Re-attach all keydown event handelers
+          $('html').on('keydown', generalShortcutsHandler);
+          $('html').on('keydown', traversalShortcutsHandler);
+          $('#editor').on('keydown', editorShortcutsHandler)
+        }
+    }
   }).storyLine({
     showStepPosition: true,
     steps: [
@@ -115,7 +128,14 @@ $(function () {
         format: "markdown",
         lockSubject: true,
         listeners: {
+          beforeStep: function() {
+            // Re-attach string list keydown event handelers
+            $('html').on('keydown', generalShortcutsHandler);
+            $('html').on('keydown', traversalShortcutsHandler);
+          },
           afterStep: function() {
+            // Detach string list keydown event handelers
+            $('html').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -154,7 +174,13 @@ $(function () {
         format: "markdown",
         lockSubject: true,
         listeners: {
+          beforeStep: function() {
+            // Re-attach editor keydowns event handelers
+            $('#editor').on('keydown', editorShortcutsHandler)
+          },
           afterStep: function() {
+            // Detach editor keydown event handelers
+            $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -176,7 +202,13 @@ $(function () {
           }
         ],
         listeners: {
+          beforeStep: function() {
+            // Re-attach editor keydowns event handlers
+            $('#editor').on('keydown', editorShortcutsHandler)
+          },
           afterStep: function() {
+            // Detach editor keydowns event handlers
+            $('#editor').off('keydown');
             updateTourStatus(++tourStatus);
           }
         },
@@ -265,6 +297,12 @@ $(function () {
     // If a user closes the tour at the "Filter" step,
     // run the corresponding afterStep function.
     $('.sideshow-close-button').click(function() {
+
+      // Re-attach all keydown event handelers
+      $('html').on('keydown', generalShortcutsHandler);
+      $('html').on('keydown', traversalShortcutsHandler);
+      $('#editor').on('keydown', editorShortcutsHandler)
+
       setTimeout(function() {
         $("#filter .menu").fadeOut(function() {
           $("#filter .menu").removeClass("permanent");
