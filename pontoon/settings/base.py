@@ -529,15 +529,13 @@ PIPELINE_JS = {
 
 # Cache config
 # If the environment contains configuration data for Memcached, use
-# PyLibMC for the cache backend. Otherwise, default to an in-memory
+# BMemcached for the cache backend. Otherwise, default to an in-memory
 # cache.
 if os.environ.get('MEMCACHE_SERVERS') is not None:
     CACHES = {
         'default': {
-            'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-            'TIMEOUT': 500,
-            'BINARY': True,
-            'OPTIONS': {}
+            'BACKEND': 'django_bmemcached.memcached.BMemcached',
+            'OPTIONS': {},
         }
     }
 else:
