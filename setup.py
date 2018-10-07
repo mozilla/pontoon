@@ -1,6 +1,4 @@
 from setuptools import setup, find_packages
-
-
 setup(name='pontoon',
       version='1.0',
       description='Django application.',
