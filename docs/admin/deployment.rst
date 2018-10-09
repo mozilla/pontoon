@@ -172,7 +172,7 @@ recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
 
 Cache Add-ons
 ~~~~~~~~~~~~~
-Pontoon uses `django-bmemcached`_, which expects the following environment
+Pontoon uses `django-pylibmc`_, which expects the following environment
 variables from the cache add-on:
 
 ``MEMCACHE_SERVERS``
@@ -197,7 +197,7 @@ variables from the cache add-on:
    addon you wish to use, such as ``memcachedcloud:30``. Use the
    ``heroku addons`` command to see a list of resource names that are available.
 
-.. _django-bmemcached: https://github.com/jaysonsantos/django-bmemcached
+.. _django-pylibmc: https://github.com/django-pylibmc/django-pylibmc/
 
 RabbitMQ Add-ons
 ~~~~~~~~~~~~~~~~
