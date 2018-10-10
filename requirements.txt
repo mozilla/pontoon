@@ -215,14 +215,6 @@ futures==3.0.4 \
     --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
 
 # ----------------------------------------------------------------------------------
-django-pylibmc==0.6.1 \
-    --hash=sha256:9cffdee703aaf9ebc029d9dbdee8abdd0723564b95e4b2ac59e4a668b8e58f93
-
-# Required by django-pylibmc
-pylibmc==1.5.0 \
-    --hash=sha256:16255595616a6d78cd786a55cc6431da5b7accf46512df854712a0cdbb3acfaa
-
-# ----------------------------------------------------------------------------------
 graphene-django==2.0.0 \
     --hash=sha256:70d9358bc48c806b6a9458e8344f0a1211cd1f1ef923a092aa55e6bcacc2c3fc \
     --hash=sha256:5cabf46b59f242a533fe1df1912c87d5ad6606246937609be2e6c9086cfdf7a4
@@ -339,3 +331,13 @@ pytoml==0.1.14 \
 django-waffle==0.14.0 \
     --hash=sha256:f243a56db80bd28601222b1a8a0b1fa4e7e6ac1bbf809952c3725cb4cc0012d9 \
     --hash=sha256:f3db39cc17d6e388a485230b6029095e5d6fba4ceaff8d4fcc21f95c47fe2e97
+
+# ----------------------------------------------------------------------------------
+django-bmemcached==0.2.3 \
+    --hash=sha256:c9e4f5ca17417a26354e7d6a8899e44e34d541e8731ea0d987f2bf5a04df351a
+
+# Required by django-bmemcached
+python-binary-memcached==0.28.0 \
+    --hash=sha256:8cc4e71c20a2d9e75c30669c4bef35ee407bbfc72a631fc7ad130a2957bd1ed1
+uhashring==1.1 \
+    --hash=sha256:7bedeef34a0e1df21f7d4396c6657f9a2a0cfb0ce9f77bc18e06df7e28eecebe
