@@ -21,7 +21,7 @@
        "as": "RABBITMQ"
      },
      {
-       "plan": "memcachedcloud",
+       "plan": "memcachier",
        "as": "MEMCACHE"
      },
      {
