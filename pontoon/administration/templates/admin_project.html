@@ -205,6 +205,20 @@
   </div>
   </section>
 
+  <h3>
+    <span>{{ form.configuration_file.label }}</span>
+    <span class="small stress">(optional)</span>
+  </h3>
+
+  <div class="clearfix">
+    {{ form.configuration_file }}
+    <label for="id_configuration_file">
+      {{ form.configuration_file.help_text|trim }}
+      <a href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html" target="_blank">Learn more.</a>
+    </label>
+    {{ form.configuration_file.errors }}
+  </div>
+
   <h3>Project info <span class="small stress">(optional)</span></h3>
 
   <div>
@@ -270,6 +284,7 @@
   <section class="tags">
     <h3>
       <span>Tags</span>
+      <span class="small stress">(optional)</span>
     </h3>
       <label for="id_tags_enabled">
           {{ form.tags_enabled }}{{ form.tags_enabled.label }}
