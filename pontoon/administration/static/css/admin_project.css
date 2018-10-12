@@ -390,6 +390,15 @@ form .locale.select.selected {
   display: none; /* remove default arrow */
 }
 
+input#id_configuration_file {
+  margin-bottom: 5px;
+}
+
+label[for=id_configuration_file] a {
+  float: none;
+  text-transform: none;
+}
+
 .externalresource .arrow::after {
   content: "▾";
   color: #000;
