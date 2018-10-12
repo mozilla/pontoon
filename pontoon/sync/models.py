@@ -87,10 +87,6 @@ class SyncLog(BaseLog):
             )
             if count > 1:
                 for pl in ProjectLocale.objects.filter(project=p):
-                    log.info(
-                        "Fix stats: total_strings mismatch for {project}, {locale}."
-                        .format(project=pl.project, locale=pl.locale.code)
-                    )
                     pl.aggregate_stats()
 
         # approved + fuzzy + errors + warnings > total in TranslatedResource
