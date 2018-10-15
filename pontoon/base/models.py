@@ -1150,6 +1150,16 @@ class Project(AggregatedStats):
         Allow localizers to request the project for their team.
     """)
 
+    configuration_file = models.CharField(
+        null=True,
+        blank=True,
+        max_length=2000,
+        help_text="""
+        A path to the optional project configuration file, relative to the
+        source string repository.
+        """
+    )
+
     disabled = models.BooleanField(default=False, help_text="""
         Hide project from the UI and only keep it accessible from the admin.
         Disable the project instead of deleting it to keep translation memory
