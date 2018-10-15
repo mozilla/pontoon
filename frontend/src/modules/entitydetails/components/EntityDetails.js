@@ -61,6 +61,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             translation,
             state.locale.code,
             state.selectedEntity.original,
+            state.pluralForm,
         ));
     }
 

@@ -41,15 +41,27 @@ export type State = {
 };
 
 
-function updateEntities(state: Object, entity: number, translation: Translation): Entities {
+function updateEntityTranslation(
+    state: Object,
+    entity: number,
+    pluralForm: number,
+    translation: Translation
+): Entities {
     return state.entities.map(item => {
         if (item.pk !== entity) {
             return item;
         }
 
+        const translations = [ ...item.translation ];
+
+        // If the plural form is -1, then there's no plural and we should
+        // simply update the first translation.
+        const plural = pluralForm === -1 ? 0 : pluralForm;
+        translations[plural] = translation;
+
         return {
             ...item,
-            translation: [translation]
+            translation: translations,
         };
     })
 }
@@ -90,7 +102,12 @@ export default function reducer(
         case UPDATE:
             return {
                 ...state,
-                entities: updateEntities(state, action.entity, action.translation),
+                entities: updateEntityTranslation(
+                    state,
+                    action.entity,
+                    action.pluralForm,
+                    action.translation
+                ),
             };
         default:
             return state;
