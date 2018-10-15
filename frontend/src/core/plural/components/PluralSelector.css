@@ -17,6 +17,8 @@
 .plural-selector ul li.active,
 .plural-selector ul li:hover {
     background: #3F4752;
+}
+.plural-selector ul li.active {
     border-bottom: none;
 }
 
