@@ -47,15 +47,18 @@ export function receive(entities: Array<Object>, hasMore: boolean): ReceiveActio
 export type UpdateAction = {
     type: typeof UPDATE,
     entity: number,
+    pluralForm: number,
     translation: Translation,
 };
 export function updateEntityTranslation(
    entity: number,
+   pluralForm: number,
    translation: Translation
 ): UpdateAction {
     return {
         type: UPDATE,
         entity,
+        pluralForm,
         translation,
     };
 }

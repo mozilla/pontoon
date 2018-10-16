@@ -4,13 +4,16 @@ import * as React from 'react';
 
 import './Editor.css';
 
+import { PluralSelector } from 'core/plural';
+
 import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
-    activeTranslation: string,
-    selectedEntity: ?DbEntity,
+    translation: string,
+    entity: ?DbEntity,
     sendSuggestion: Function,
+    pluralForm: number,
 |};
 
 type State = {|
@@ -22,48 +25,52 @@ type State = {|
  * Editor for translation strings.
  */
 export default class Editor extends React.Component<Props, State> {
-    constructor(props: Props): void {
+    constructor(props: Props) {
         super(props);
         this.state = {
-            translation: props.activeTranslation,
+            translation: props.translation,
         };
     }
 
-    componentDidUpdate(prevProps: Props): void {
-        if (this.props.activeTranslation !== prevProps.activeTranslation) {
+    componentDidUpdate(prevProps: Props) {
+        if (this.props.translation !== prevProps.translation) {
             this.setState({
-                translation: this.props.activeTranslation,
+                translation: this.props.translation,
             });
         }
     }
 
-    handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>): void => {
+    handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
         this.setState({
             translation: event.currentTarget.value,
         });
     }
 
-    copyOriginalIntoEditor = (): void => {
-        const { selectedEntity } = this.props;
-        if (selectedEntity) {
-            this.setState({
-                translation: selectedEntity.original,
-            });
+    copyOriginalIntoEditor = () => {
+        const { entity, pluralForm } = this.props;
+        if (entity) {
+            if (pluralForm === -1 || pluralForm === 1) {
+                this.setState({ translation: entity.original });
+            }
+            else {
+                this.setState({ translation: entity.original_plural });
+            }
         }
     }
 
-    clearEditor = (): void => {
+    clearEditor = () => {
         this.setState({
             translation: '',
         });
     }
 
-    sendSuggestion = (): void => {
+    sendSuggestion = () => {
         this.props.sendSuggestion(this.state.translation);
     }
 
-    render(): React.Node {
+    render() {
         return <div className="editor">
+            <PluralSelector />
             <textarea
                 value={ this.state.translation }
                 onChange={ this.handleChange }

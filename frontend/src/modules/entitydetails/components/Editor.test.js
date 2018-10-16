@@ -6,18 +6,24 @@ import Editor from './Editor';
 
 
 const TRANSLATION = 'test';
+const TRANSLATION_PLURAL = 'test plural';
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
-    translation: [{string: TRANSLATION}],
+    original_plural: 'les tests',
+    translation: [
+        { string: TRANSLATION },
+        { string: TRANSLATION_PLURAL },
+    ],
 };
 
 
-function createShallowEditor(suggestMock = null) {
+function createShallowEditor(suggestMock = null, pluralForm = -1) {
     return shallow(<Editor
-        activeTranslation={ TRANSLATION }
-        selectedEntity={ SELECTED_ENTITY }
+        translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
+        entity={ SELECTED_ENTITY }
         sendSuggestion={ suggestMock }
+        pluralForm={ pluralForm }
     />);
 }
 
@@ -52,6 +58,14 @@ describe('<Editor>', () => {
         expect(wrapper.state('translation')).toEqual(TRANSLATION);
         wrapper.find('.action-copy').simulate('click');
         expect(wrapper.state('translation')).toEqual(SELECTED_ENTITY.original);
+    });
+
+    it('copies the plural original string in the textarea when the Copy button is clicked', () => {
+        const wrapper = createShallowEditor(null, 5);
+
+        expect(wrapper.state('translation')).toEqual(TRANSLATION_PLURAL);
+        wrapper.find('.action-copy').simulate('click');
+        expect(wrapper.state('translation')).toEqual(SELECTED_ENTITY.original_plural);
     });
 
     it('calls the suggest action when the Suggest button is clicked', () => {

@@ -7,6 +7,16 @@
     padding: 10px;
 }
 
+.metadata h2 {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 11px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    padding-bottom: 2px;
+}
+
 .metadata .title {
     color: #888;
     text-transform: uppercase;

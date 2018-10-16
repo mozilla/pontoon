@@ -26,14 +26,12 @@ export type DBTranslation = {|
 |};
 
 export type HistoryState = {|
-    +entity: ?number,
     +fetching: boolean,
     +translations: Array<DBTranslation>,
 |};
 
 
 const initialState = {
-    entity: null,
     fetching: true,
     translations: [],
 };
@@ -46,17 +44,10 @@ export default function reducer(
         case REQUEST:
             return {
                 ...state,
-                entity: action.entity,
                 fetching: true,
                 translations: [],
             };
         case RECEIVE:
-            if (action.entity !== state.entity) {
-                // The selected entity changed since the request was sent,
-                // those results are not pertinent anymore. Do nothing.
-                return state;
-            }
-
             return {
                 ...state,
                 fetching: false,
