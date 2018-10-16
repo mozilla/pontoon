@@ -67,7 +67,7 @@ export class HistoryBase extends React.Component<InternalProps> {
         const { history } = this.props;
 
         if (history.fetching) {
-            return <p>Loading...</p>;
+            return null;
         }
 
         if (!history.translations.length) {
