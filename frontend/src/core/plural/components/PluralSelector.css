@@ -1,0 +1,37 @@
+.plural-selector ul {
+    display: table;
+    line-height: 22px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.plural-selector ul li {
+    background: #4D5967;
+    border: 1px solid #5E6475;
+    border-left: none;
+    display: table-cell;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.plural-selector ul li.active,
+.plural-selector ul li:hover {
+    background: #3F4752;
+}
+.plural-selector ul li.active {
+    border-bottom: none;
+}
+
+.plural-selector ul li a {
+    color: #ccc;
+    cursor: pointer;
+    display: block;
+    padding: 10px;
+}
+
+.plural-selector ul li a sup {
+    color: #7BC876;
+    font-size: 11px;
+    font-weight: 400;
+    padding-left: 1px;
+}

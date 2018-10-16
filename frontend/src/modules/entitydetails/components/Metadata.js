@@ -7,13 +7,16 @@ import Linkify from 'react-linkify';
 import './Metadata.css';
 
 import Screenshots from './Screenshots';
+
+import type { Locale } from 'core/locales';
 import type { DbEntity } from 'modules/entitieslist';
 
 
 type PropertyProps = {|
-    title: string,
-    children: React.Node,
+    +title: string,
+    +children: React.Node,
 |};
+
 
 /**
  * Component to dislay a property of an entity.
@@ -33,9 +36,10 @@ class Property extends React.Component<PropertyProps> {
 
 
 type Props = {|
-    entity: DbEntity,
-    locale: string,
-    openLightbox: Function,
+    +entity: DbEntity,
+    +locale: Locale,
+    +pluralForm: number,
+    +openLightbox: Function,
 |};
 
 
@@ -51,6 +55,27 @@ type Props = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props> {
+    renderOriginal(entity: DbEntity): React.Node {
+        const { pluralForm, locale } = this.props;
+
+        if (pluralForm === -1) {
+            return <p className="original">{ entity.original }</p>;
+        }
+
+        let title = 'Plural';
+        let original = entity.original_plural;
+
+        if (locale.cldrPlurals[pluralForm] === 1) {
+            title = 'Singular';
+            original = entity.original;
+        }
+
+        return <React.Fragment>
+            <h2>{ title }</h2>
+            <p className="original">{ original }</p>
+        </React.Fragment>;
+    }
+
     renderComment(entity: DbEntity): React.Node {
         if (!entity.comment) {
             return null;
@@ -127,20 +152,20 @@ export default class Metadata extends React.Component<Props> {
         return <div className="metadata">
             <Screenshots
                 source={ entity.comment }
-                locale={ locale }
+                locale={ locale.code }
                 openLightbox={ openLightbox }
             />
-            <p className="original">{ entity.original }</p>
+            { this.renderOriginal(entity) }
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
             <Property title='Resource'>
-                <Link to={ `/${locale}/${entity.project.slug}/${entity.path}/` }>
+                <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
                     { entity.path }
                 </Link>
             </Property>
             <Property title='Project'>
-                <a href={ `/${locale}/${entity.project.slug}/` }>
+                <a href={ `/${locale.code}/${entity.project.slug}/` }>
                     { entity.project.name }
                 </a>
             </Property>

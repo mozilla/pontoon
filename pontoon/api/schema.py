@@ -64,6 +64,8 @@ class Locale(DjangoObjectType, Stats):
             'name',
             'code',
             'direction',
+            'cldr_plurals',
+            'plural_rule',
             'script',
             'population',
             'total_strings',

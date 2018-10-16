@@ -6,14 +6,18 @@ import { connect } from 'react-redux';
 import { suggest } from '../actions';
 
 import { actions as lightboxActions } from 'core/lightbox';
-import { selectors as navSelectors } from 'core/navigation';
+import * as locales from 'core/locales';
+import * as navigation from 'core/navigation';
+import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 import { History } from 'modules/history';
 
+import { selectors } from '..';
 import Editor from './Editor';
 import Metadata from './Metadata';
 
 import type { DbEntity } from 'modules/entitieslist';
+import type { Locale } from 'core/locales';
 import type { Navigation } from 'core/navigation';
 
 
@@ -21,6 +25,8 @@ type Props = {|
     activeTranslation: string,
     navigation: Navigation,
     selectedEntity: ?DbEntity,
+    pluralForm: number,
+    locale: ?Locale,
 |};
 
 type InternalProps = {|
@@ -44,32 +50,43 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     sendSuggestion = (translation: string) => {
-        const { navigation, selectedEntity } = this.props;
+        const state = this.props;
 
-        if (!selectedEntity) {
+        if (!state.selectedEntity || !state.locale) {
             return;
         }
 
         this.props.dispatch(suggest(
-            selectedEntity.pk,
+            state.selectedEntity.pk,
             translation,
-            navigation.locale,
-            selectedEntity.original,
+            state.locale.code,
+            state.selectedEntity.original,
+            state.pluralForm,
         ));
     }
 
     render() {
-        const { activeTranslation, navigation, selectedEntity } = this.props;
+        const state = this.props;
 
-        if (!selectedEntity) {
+        if (!state.locale) {
+            return null;
+        }
+
+        if (!state.selectedEntity) {
             return <section className="entity-details">Select an entity</section>;
         }
 
         return <section className="entity-details">
-            <Metadata entity={ selectedEntity } locale={ navigation.locale } openLightbox={ this.openLightbox } />
+            <Metadata
+                entity={ state.selectedEntity }
+                locale={ state.locale }
+                pluralForm={ state.pluralForm }
+                openLightbox={ this.openLightbox }
+            />
             <Editor
-                activeTranslation={ activeTranslation}
-                selectedEntity={ selectedEntity }
+                translation={ state.activeTranslation}
+                entity={ state.selectedEntity }
+                pluralForm= { state.pluralForm }
                 sendSuggestion={ this.sendSuggestion }
             />
             <History />
@@ -80,9 +97,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        activeTranslation: entitieslist.selectors.getTranslationForSelectedEntity(state),
+        activeTranslation: selectors.getTranslationForSelectedEntity(state),
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
-        navigation: navSelectors.getNavigation(state),
+        navigation: navigation.selectors.getNavigation(state),
+        pluralForm: plural.selectors.getPluralForm(state),
+        locale: locales.selectors.getCurrentLocaleData(state),
     };
 };
 

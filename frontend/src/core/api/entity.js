@@ -38,12 +38,12 @@ export default class EntityAPI extends APIBase {
     async getHistory(
         entity: number,
         locale: string,
-        plural_form: string = '-1',
+        pluralForm: number = -1,
     ) {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);
-        payload.append('plural_form', plural_form);
+        payload.append('plural_form', pluralForm.toString());
 
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');

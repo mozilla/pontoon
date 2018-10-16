@@ -1,5 +1,4 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { createReduxStore } from 'test/store';
@@ -7,26 +6,6 @@ import { shallowUntilTarget } from 'test/utils';
 
 import { actions } from '..';
 import History, { HistoryBase } from './History';
-
-
-describe('<HistoryBase>', () => {
-    it('shows the correct number of translations', () => {
-        const history = {
-            entity: 42,
-            translations: [
-                { pk: 1 },
-                { pk: 2 },
-                { pk: 3 },
-            ],
-        };
-        const parameters = {
-            entity: 42,
-        };
-        const wrapper = shallow(<HistoryBase history={ history } parameters={ parameters } />);
-
-        expect(wrapper.find('Translation')).toHaveLength(3);
-    });
-});
 
 
 describe('<History>', () => {
@@ -37,8 +16,38 @@ describe('<History>', () => {
         });
     });
 
+    afterEach(() => {
+        actions.get.resetHistory();
+    });
+
     afterAll(() => {
         actions.get.restore();
+    });
+
+    it('shows the correct number of translations', () => {
+        const initialState = {
+            router: {
+                location: {
+                    pathname: '/kg/pro/all/',
+                    search: '?string=42',
+                },
+            },
+            history: {
+                entity: 42,
+                translations: [
+                    { pk: 1 },
+                    { pk: 2 },
+                    { pk: 3 },
+                ],
+            },
+            plural: {
+                pluralForm: -1,
+            }
+        };
+        const store = createReduxStore(initialState);
+        const wrapper = shallowUntilTarget(<History store={ store } />, HistoryBase);
+
+        expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
     it('gets a new history when the entity is created', () => {
