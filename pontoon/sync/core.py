@@ -2,11 +2,10 @@ from functools import wraps
 import logging
 import requests
 
+from celery import shared_task
 from collections import Counter
 
-from celery import shared_task
 from django.contrib.auth.models import User
-
 from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
@@ -19,6 +18,7 @@ from pontoon.base.models import (
 )
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.vcs.models import VCSProject
+
 
 log = logging.getLogger(__name__)
 
@@ -171,9 +171,38 @@ def update_translations(db_project, vcs_project, locale, changeset):
 
 def update_translated_resources(db_project, vcs_project, locale):
     """Update the TranslatedResource entries in the database."""
+    if vcs_project.configuration:
+        update_translated_resources_project_configuration(
+            db_project,
+            vcs_project,
+            locale,
+        )
+    else:
+        update_translated_resources_no_project_configuration(
+            db_project,
+            vcs_project,
+            locale,
+        )
+
+
+def update_translated_resources_project_configuration(db_project, vcs_project, locale):
+    """
+    Create/update the TranslatedResource objects for each Resource instance
+    that is enabled for the given local through project configuration.
+    """
+    for resource in vcs_project.configuration.locale_resources(locale):
+        translatedresource, _ = (
+            TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+        )
+        translatedresource.calculate_stats()
+
+
+def update_translated_resources_no_project_configuration(db_project, vcs_project, locale):
+    """
+    We only want to create/update the TranslatedResource object if the
+    resource exists in the current locale, UNLESS the file is asymmetric.
+    """
     for resource in db_project.resources.all():
-        # We only want to create/update the TranslatedResource object if the
-        # resource exists in the current locale, UNLESS the file is asymmetric.
         vcs_resource = vcs_project.resources.get(resource.path, None)
 
         if vcs_resource is not None:

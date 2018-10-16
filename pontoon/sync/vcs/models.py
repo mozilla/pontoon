@@ -6,8 +6,9 @@ import os
 import scandir
 import shutil
 
-from itertools import chain
+from compare_locales.paths.configparser import TOMLParser
 from datetime import datetime
+from itertools import chain
 
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -87,6 +88,8 @@ class VCSProject(object):
             List of changed source file paths
         :param bool full_scan:
             Scans all resources in repository
+        :param VCSConfiguration configuration:
+            Project configuration, provided by the optional configuration file.
         """
         self.db_project = db_project
         self.now = now
@@ -96,6 +99,10 @@ class VCSProject(object):
         self.changed_paths = changed_paths or []
         self.full_scan = full_scan
         self.synced_locales = set()
+
+        self.configuration = None
+        if db_project.configuration_file:
+            self.configuration = VCSConfiguration(self)
 
     @cached_property
     def changed_files(self):
@@ -429,6 +436,69 @@ class VCSProject(object):
             for filename in filenames:
                 if is_resource(filename):
                     yield os.path.join(root, filename)
+
+
+class VCSConfiguration(object):
+    """
+    Container for the project configuration, provided by the optional
+    configuration file.
+
+    For more information, see:
+    https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html.
+    """
+
+    def __init__(self, vcs_project):
+        self.vcs_project = vcs_project
+        self.configuration_file = vcs_project.db_project.configuration_file
+
+    @cached_property
+    def configs(self):
+        """Return parsed project configuration file."""
+        path = os.path.join(
+            self.vcs_project.db_project.source_repository.checkout_path,
+            self.configuration_file
+        )
+        parser = TOMLParser()
+        return parser.parse(path).configs
+
+    @cached_property
+    def paths(self):
+        """Return paths specified in the configurations."""
+        return [
+            paths
+            for configuration in self.configs
+            for paths in configuration.paths
+        ]
+
+    def locale_paths(self, locale):
+        """
+        Return a list of reference paths that are either not limited to a
+        subset of locales or the subset includes the given locale.
+        """
+        return [
+            paths['reference']
+            for paths in self.paths
+            if 'locales' not in paths or locale.code in paths['locales']
+        ]
+
+    def locale_resources(self, locale):
+        """
+        Return a list of Resource instances, which need to be enabled for the
+        given locale.
+        """
+        resources = []
+
+        for resource in self.vcs_project.db_project.resources.all():
+            absolute_resource_path = os.path.join(
+                self.vcs_project.source_directory_path,
+                resource.path,
+            )
+
+            for path in self.locale_paths(locale):
+                if path.match(absolute_resource_path) is not None:
+                    resources.append(resource)
+
+        return resources
 
 
 class VCSResource(object):
