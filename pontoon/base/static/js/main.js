@@ -410,7 +410,8 @@ var Pontoon = (function (my) {
               'Mozilla': 2,
               'Open Source': 3,
               'Microsoft': 4,
-              'Machine Translation': 5
+              'Microsoft Translator': 5,
+              'Caighdean': 6,
             };
 
         function getTranslationSource(el) {
@@ -513,16 +514,16 @@ var Pontoon = (function (my) {
         }
       }).error(error).complete(complete);
 
-      // Machine translation
+      // Microsoft Translator
       if (self.locale.ms_translator_code.length) {
         requests++;
 
-        if (self.XHRmachineTranslation) {
-          self.XHRmachineTranslation.abort();
+        if (self.XHRmicrosoftTranslator) {
+          self.XHRmicrosoftTranslator.abort();
         }
 
-        self.XHRmachineTranslation = $.ajax({
-          url: '/machine-translation/',
+        self.XHRmicrosoftTranslator = $.ajax({
+          url: '/microsoft-translator/',
           data: {
             text: original,
             locale: self.locale.ms_translator_code
@@ -530,9 +531,10 @@ var Pontoon = (function (my) {
         }).success(function(data) {
           if (data.translation) {
             append({
-              url: 'http://www.bing.com/translator',
+              url: 'https://www.bing.com/translator',
               title: 'Visit Bing Translator',
-              source: 'Machine Translation',
+              source: 'Microsoft Translator',
+              original: original,
               translation: data.translation
             });
           }
@@ -604,16 +606,16 @@ var Pontoon = (function (my) {
         }).error(error).complete(complete);
       }
 
-      // Machine translation (Caighdean)
+      // Caighdean
       if (!customSearch && self.locale.code === 'ga-IE') {
         requests++;
 
-        if (self.XHRCaighdeanMT) {
-          self.XHRCaighdeanMT.abort();
+        if (self.XHRcaighdean) {
+          self.XHRcaighdean.abort();
         }
 
-        self.XHRCaighdeanMT = $.ajax({
-          url: '/machine-translation-caighdean/',
+        self.XHRcaighdean = $.ajax({
+          url: '/caighdean/',
           data: {
             id: entity.pk,
             locale: self.locale.code

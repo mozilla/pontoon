@@ -19,8 +19,8 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
-def test_view_machine_translation(client, ms_locale, ms_api_key):
-    url = reverse('pontoon.machine_translation')
+def test_view_microsoft_translator(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.microsoft_translator')
 
     with requests_mock.mock() as m:
         data = [
@@ -64,8 +64,8 @@ def test_view_machine_translation(client, ms_locale, ms_api_key):
 
 
 @pytest.mark.django_db
-def test_view_machine_translation_bad_locale(client, ms_locale, ms_api_key):
-    url = reverse('pontoon.machine_translation')
+def test_view_microsoft_translator_bad_locale(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.microsoft_translator')
     response = client.get(url, dict(text="text", locale='bad'))
 
     assert (
@@ -74,9 +74,9 @@ def test_view_machine_translation_bad_locale(client, ms_locale, ms_api_key):
 
 
 @pytest.mark.django_db
-def test_view_mt_caighdean(client, entity_a):
+def test_view_caighdean(client, entity_a):
     gd = Locale.objects.get(code='gd')
-    url = reverse('pontoon.machine_translation_caighdean')
+    url = reverse('pontoon.caighdean')
 
     response = client.get(url, dict(id=entity_a.id))
     assert json.loads(response.content) == {}
@@ -109,9 +109,9 @@ def test_view_mt_caighdean(client, entity_a):
 
 
 @pytest.mark.django_db
-def test_view_mt_caighdean_bad(client, entity_a):
+def test_view_caighdean_bad(client, entity_a):
     gd = Locale.objects.get(code='gd')
-    url = reverse('pontoon.machine_translation_caighdean')
+    url = reverse('pontoon.caighdean')
 
     response = client.get(url)
     assert response.status_code == 400

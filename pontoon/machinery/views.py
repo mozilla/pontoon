@@ -87,8 +87,8 @@ def translation_memory(request):
     )
 
 
-def machine_translation(request):
-    """Get translation from machine translation service."""
+def microsoft_translator(request):
+    """Get translation from Microsoft machine translation service."""
     try:
         text = request.GET['text']
         locale_code = request.GET['locale']
@@ -134,7 +134,7 @@ def machine_translation(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
-def machine_translation_caighdean(request):
+def caighdean(request):
     """Get translation from Caighdean machine translation service."""
     try:
         entityid = int(request.GET['id'])
