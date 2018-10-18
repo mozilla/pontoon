@@ -19,6 +19,61 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
+def test_view_machine_translation(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.machine_translation')
+
+    with requests_mock.mock() as m:
+        data = [
+            {
+                'translations': [
+                    {'text': 'target'}
+                ]
+            }
+        ]
+        m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
+        response = client.get(url, dict(text="text", locale=ms_locale.ms_translator_code))
+
+    assert (
+        response.status_code == 200
+    )
+    assert (
+        json.loads(response.content)
+        == {
+            "translation": "target",
+            "locale": "gb",
+        }
+    )
+    req = m.request_history[0]
+    assert (
+        req.headers['Ocp-Apim-Subscription-Key']
+        == ms_api_key
+    )
+    assert (
+        json.loads(req.text)
+        == [{"Text": "text"}]
+    )
+    assert (
+        urlparse.parse_qs(req.query)
+        == {
+            'api-version': ['3.0'],
+            'from': ['en'],
+            'to': ['gb'],
+            'texttype': ['html'],
+        }
+    )
+
+
+@pytest.mark.django_db
+def test_view_machine_translation_bad_locale(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.machine_translation')
+    response = client.get(url, dict(text="text", locale='bad'))
+
+    assert (
+        response.status_code == 404
+    )
+
+
+@pytest.mark.django_db
 def test_view_mt_caighdean(client, entity_a):
     gd = Locale.objects.get(code='gd')
     url = reverse('pontoon.machine_translation_caighdean')
