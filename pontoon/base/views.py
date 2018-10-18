@@ -81,12 +81,8 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
-        'is_google_translate_supported':
-            True if settings.GOOGLE_TRANSLATE_API_KEY
-            else False,
-        'is_microsoft_translator_supported':
-            True if settings.MICROSOFT_TRANSLATOR_API_KEY
-            else False,
+        'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
+        'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
     })
 
 
