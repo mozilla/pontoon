@@ -121,7 +121,11 @@ def test_view_google_translate(client, google_translate_locale, google_translate
 
 
 @pytest.mark.django_db
-def test_view_google_translate_bad_locale(client, google_translate_locale, google_translate_api_key):
+def test_view_google_translate_bad_locale(
+    client,
+    google_translate_locale,
+    google_translate_api_key,
+):
     url = reverse('pontoon.google_translate')
     response = client.get(url, dict(text="text", locale='bad'))
 
