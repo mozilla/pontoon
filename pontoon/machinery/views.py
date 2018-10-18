@@ -106,9 +106,6 @@ def microsoft_translator(request):
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     get_list_or_404(Locale, ms_translator_code=locale_code)
 
-    obj = {
-        'locale': locale_code,
-    }
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {
         'Ocp-Apim-Subscription-Key': api_key,
@@ -127,12 +124,16 @@ def microsoft_translator(request):
     try:
         r = requests.post(url, params=payload, headers=headers, json=body)
         root = json.loads(r.content)
-        translation = root[0]['translations'][0]['text']
-        obj['translation'] = translation
 
-        return JsonResponse(obj)
+        if 'error' in root:
+            log.error('Microsoft Translator error: {error}'.format(error=root))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
 
-    except Exception as e:
+        return JsonResponse({
+            'translation': root[0]['translations'][0]['text'],
+        })
+
+    except requests.exceptions.RequestException as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
@@ -165,20 +166,17 @@ def google_translate(request):
     try:
         r = requests.post(url, params=payload)
         root = json.loads(r.content)
-        translation = root['data']['translations'][0]['translatedText']
+
+        if 'data' not in root:
+            log.error('Google Translate error: {error}'.format(error=root))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
 
         return JsonResponse({
-            'translation': translation,
+            'translation': root['data']['translations'][0]['translatedText'],
         })
 
-    except Exception as e:
-        return HttpResponseBadRequest(
-            'Bad Request: {error}. Response: {response}.'
-            .format(
-                error=e,
-                response=root,
-            )
-        )
+    except requests.exceptions.RequestException as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
 def caighdean(request):
@@ -302,10 +300,10 @@ def transvision(request):
         r = requests.get(url, params=payload)
         if 'error' in r.json():
             error = r.json()['error']
-            log.error('Transvision error: {error}'.format(error))
+            log.error('Transvision error: {error}'.format(error=error))
             return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
 
         return JsonResponse(r.json(), safe=False)
 
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
