@@ -40,7 +40,7 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
         json.loads(response.content)
         == {
             "translation": "target",
-            "locale": "gb",
+             "locale": "gb",
         }
     )
     req = m.request_history[0]
@@ -66,6 +66,16 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
 @pytest.mark.django_db
 def test_view_microsoft_translator_bad_locale(client, ms_locale, ms_api_key):
     url = reverse('pontoon.microsoft_translator')
+    response = client.get(url, dict(text="text", locale='bad'))
+
+    assert (
+        response.status_code == 404
+    )
+
+
+@pytest.mark.django_db
+def test_view_google_translate_bad_locale(client, google_translate_locale, google_translate_api_key):
+    url = reverse('pontoon.google_translate')
     response = client.get(url, dict(text="text", locale='bad'))
 
     assert (
