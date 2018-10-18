@@ -19,8 +19,8 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
-def test_view_machine_translation(client, ms_locale, ms_api_key):
-    url = reverse('pontoon.machine_translation')
+def test_view_microsoft_translator(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.microsoft_translator')
 
     with requests_mock.mock() as m:
         data = [
@@ -30,31 +30,30 @@ def test_view_machine_translation(client, ms_locale, ms_api_key):
                 ]
             }
         ]
-        m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
-        response = client.get(url, dict(text="text", locale=ms_locale.ms_translator_code))
+        m.post('https://api.cognitive.microsofttranslator.com/translate', json=data)
+        response = client.get(
+            url,
+            {
+                'text': 'text',
+                'locale': ms_locale.ms_translator_code,
+            },
+        )
 
+    assert response.status_code == 200
     assert (
-        response.status_code == 200
-    )
-    assert (
-        json.loads(response.content)
-        == {
-            "translation": "target",
-            "locale": "gb",
+        json.loads(response.content) ==
+        {
+            'translation': 'target',
         }
     )
+
     req = m.request_history[0]
+
+    assert req.headers['Ocp-Apim-Subscription-Key'] == ms_api_key
+    assert json.loads(req.text) == [{'Text': 'text'}]
     assert (
-        req.headers['Ocp-Apim-Subscription-Key']
-        == ms_api_key
-    )
-    assert (
-        json.loads(req.text)
-        == [{"Text": "text"}]
-    )
-    assert (
-        urlparse.parse_qs(req.query)
-        == {
+        urlparse.parse_qs(req.query) ==
+        {
             'api-version': ['3.0'],
             'from': ['en'],
             'to': ['gb'],
@@ -64,19 +63,85 @@ def test_view_machine_translation(client, ms_locale, ms_api_key):
 
 
 @pytest.mark.django_db
-def test_view_machine_translation_bad_locale(client, ms_locale, ms_api_key):
-    url = reverse('pontoon.machine_translation')
-    response = client.get(url, dict(text="text", locale='bad'))
+def test_view_microsoft_translator_bad_locale(client, ms_locale, ms_api_key):
+    url = reverse('pontoon.microsoft_translator')
+    response = client.get(
+        url,
+        {
+            'text': 'text',
+            'locale': 'bad',
+        }
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_view_google_translate(client, google_translate_locale, google_translate_api_key):
+    url = reverse('pontoon.google_translate')
+
+    with requests_mock.mock() as m:
+        data = {
+            'data': {
+                'translations': [
+                    {
+                        'translatedText': 'target'
+                    }
+                ]
+            }
+        }
+        m.post('https://translation.googleapis.com/language/translate/v2', json=data)
+        response = client.get(
+            url,
+            {
+                'text': 'text',
+                'locale': google_translate_locale.google_translate_code,
+            }
+        )
+
+    assert response.status_code == 200
+    assert (
+        json.loads(response.content) ==
+        {
+            'translation': 'target',
+        }
+    )
+
+    req = m.request_history[0]
 
     assert (
-        response.status_code == 404
+        urlparse.parse_qs(req.query) ==
+        {
+            'q': ['text'],
+            'source': ['en'],
+            'target': ['bg'],
+            'key': ['2fffff'],
+        }
     )
 
 
 @pytest.mark.django_db
-def test_view_mt_caighdean(client, entity_a):
+def test_view_google_translate_bad_locale(
+    client,
+    google_translate_locale,
+    google_translate_api_key,
+):
+    url = reverse('pontoon.google_translate')
+    response = client.get(
+        url,
+        {
+            'text': 'text',
+            'locale': 'bad',
+        }
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_view_caighdean(client, entity_a):
     gd = Locale.objects.get(code='gd')
-    url = reverse('pontoon.machine_translation_caighdean')
+    url = reverse('pontoon.caighdean')
 
     response = client.get(url, dict(id=entity_a.id))
     assert json.loads(response.content) == {}
@@ -109,9 +174,9 @@ def test_view_mt_caighdean(client, entity_a):
 
 
 @pytest.mark.django_db
-def test_view_mt_caighdean_bad(client, entity_a):
+def test_view_caighdean_bad(client, entity_a):
     gd = Locale.objects.get(code='gd')
-    url = reverse('pontoon.machine_translation_caighdean')
+    url = reverse('pontoon.caighdean')
 
     response = client.get(url)
     assert response.status_code == 400

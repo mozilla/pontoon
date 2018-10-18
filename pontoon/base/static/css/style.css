@@ -1152,8 +1152,9 @@ body > form,
   padding-right: 3px;
 }
 
-#helpers > section.machinery ul li > header .sources li[data-source='Caighdean']:before,
-#helpers > section.machinery ul li > header .sources li[data-source='Machine Translation']:before {
+#helpers > section.machinery ul li > header .sources li[data-source='Google Translate']:before,
+#helpers > section.machinery ul li > header .sources li[data-source='Microsoft Translator']:before,
+#helpers > section.machinery ul li > header .sources li[data-source='Caighdean']:before {
   content: "";
   padding-right: 0;
 }

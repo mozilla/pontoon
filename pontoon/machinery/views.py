@@ -41,6 +41,8 @@ def machinery(request):
     return render(request, 'machinery/machinery.html', {
         'locale': Locale.objects.get(code=locale),
         'locales': Locale.objects.all(),
+        'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
+        'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
     })
 
 
@@ -87,8 +89,8 @@ def translation_memory(request):
     )
 
 
-def machine_translation(request):
-    """Get translation from machine translation service."""
+def microsoft_translator(request):
+    """Get translation from Microsoft machine translation service."""
     try:
         text = request.GET['text']
         locale_code = request.GET['locale']
@@ -104,9 +106,6 @@ def machine_translation(request):
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     get_list_or_404(Locale, ms_translator_code=locale_code)
 
-    obj = {
-        'locale': locale_code,
-    }
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {
         'Ocp-Apim-Subscription-Key': api_key,
@@ -125,16 +124,62 @@ def machine_translation(request):
     try:
         r = requests.post(url, params=payload, headers=headers, json=body)
         root = json.loads(r.content)
-        translation = root[0]['translations'][0]['text']
-        obj['translation'] = translation
 
-        return JsonResponse(obj)
+        if 'error' in root:
+            log.error('Microsoft Translator error: {error}'.format(error=root))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
 
-    except Exception as e:
+        return JsonResponse({
+            'translation': root[0]['translations'][0]['text'],
+        })
+
+    except requests.exceptions.RequestException as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
-def machine_translation_caighdean(request):
+def google_translate(request):
+    """Get translation from Google machine translation service."""
+    try:
+        text = request.GET['text']
+        locale_code = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    api_key = settings.GOOGLE_TRANSLATE_API_KEY
+
+    if not api_key:
+        log.error('GOOGLE_TRANSLATE_API_KEY not set')
+        return HttpResponseBadRequest('Missing api key.')
+
+    # Validate if locale exists in the database to avoid any potential XSS attacks.
+    get_list_or_404(Locale, google_translate_code=locale_code)
+
+    url = 'https://translation.googleapis.com/language/translate/v2'
+
+    payload = {
+        'q': text,
+        'source': 'en',
+        'target': locale_code,
+        'key': api_key,
+    }
+
+    try:
+        r = requests.post(url, params=payload)
+        root = json.loads(r.content)
+
+        if 'data' not in root:
+            log.error('Google Translate error: {error}'.format(error=root))
+            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
+
+        return JsonResponse({
+            'translation': root['data']['translations'][0]['translatedText'],
+        })
+
+    except requests.exceptions.RequestException as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+
+def caighdean(request):
     """Get translation from Caighdean machine translation service."""
     try:
         entityid = int(request.GET['id'])
@@ -255,10 +300,10 @@ def transvision(request):
         r = requests.get(url, params=payload)
         if 'error' in r.json():
             error = r.json()['error']
-            log.error('Transvision error: {error}'.format(error))
+            log.error('Transvision error: {error}'.format(error=error))
             return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
 
         return JsonResponse(r.json(), safe=False)
 
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))

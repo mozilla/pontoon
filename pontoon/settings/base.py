@@ -79,6 +79,9 @@ SVN_LD_LIBRARY_PATH = os.environ.get('SVN_LD_LIBRARY_PATH', '')
 # URL to the RabbitMQ server
 BROKER_URL = os.environ.get('RABBITMQ_URL', None)
 
+# Google Cloud Translation API key
+GOOGLE_TRANSLATE_API_KEY = os.environ.get('GOOGLE_TRANSLATE_API_KEY', '')
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', '')
 

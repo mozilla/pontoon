@@ -410,7 +410,9 @@ var Pontoon = (function (my) {
               'Mozilla': 2,
               'Open Source': 3,
               'Microsoft': 4,
-              'Machine Translation': 5
+              'Google Translate': 5,
+              'Microsoft Translator': 6,
+              'Caighdean': 7,
             };
 
         function getTranslationSource(el) {
@@ -513,16 +515,49 @@ var Pontoon = (function (my) {
         }
       }).error(error).complete(complete);
 
-      // Machine translation
-      if (self.locale.ms_translator_code.length) {
+      // Google Translate
+      if (
+        $('#server').data('is-google-translate-supported') &&
+        self.locale.google_translate_code
+      ) {
         requests++;
 
-        if (self.XHRmachineTranslation) {
-          self.XHRmachineTranslation.abort();
+        if (self.XHRgoogleTranslate) {
+          self.XHRgoogleTranslate.abort();
         }
 
-        self.XHRmachineTranslation = $.ajax({
-          url: '/machine-translation/',
+        self.XHRgoogleTranslate = $.ajax({
+          url: '/google-translate/',
+          data: {
+            text: original,
+            locale: self.locale.google_translate_code
+          }
+        }).success(function(data) {
+          if (data.translation) {
+            append({
+              url: 'https://translate.google.com/',
+              title: 'Visit Google Translate',
+              source: 'Google Translate',
+              original: original,
+              translation: data.translation
+            });
+          }
+        }).error(error).complete(complete);
+      }
+
+      // Microsoft Translator
+      if (
+        $('#server').data('is-microsoft-translator-supported') &&
+        self.locale.ms_translator_code
+      ) {
+        requests++;
+
+        if (self.XHRmicrosoftTranslator) {
+          self.XHRmicrosoftTranslator.abort();
+        }
+
+        self.XHRmicrosoftTranslator = $.ajax({
+          url: '/microsoft-translator/',
           data: {
             text: original,
             locale: self.locale.ms_translator_code
@@ -530,9 +565,10 @@ var Pontoon = (function (my) {
         }).success(function(data) {
           if (data.translation) {
             append({
-              url: 'http://www.bing.com/translator',
+              url: 'https://www.bing.com/translator',
               title: 'Visit Bing Translator',
-              source: 'Machine Translation',
+              source: 'Microsoft Translator',
+              original: original,
               translation: data.translation
             });
           }
@@ -604,16 +640,16 @@ var Pontoon = (function (my) {
         }).error(error).complete(complete);
       }
 
-      // Machine translation (Caighdean)
+      // Caighdean
       if (!customSearch && self.locale.code === 'ga-IE') {
         requests++;
 
-        if (self.XHRCaighdeanMT) {
-          self.XHRCaighdeanMT.abort();
+        if (self.XHRcaighdean) {
+          self.XHRcaighdean.abort();
         }
 
-        self.XHRCaighdeanMT = $.ajax({
-          url: '/machine-translation-caighdean/',
+        self.XHRcaighdean = $.ajax({
+          url: '/caighdean/',
           data: {
             id: entity.pk,
             locale: self.locale.code
