@@ -516,7 +516,10 @@ var Pontoon = (function (my) {
       }).error(error).complete(complete);
 
       // Google Translate
-      if (self.locale.google_translate_code.length) {
+      if (
+        $('#server').data('is-google-translate-supported') &&
+        self.locale.google_translate_code.length
+      ) {
         requests++;
 
         if (self.XHRgoogleTranslate) {
@@ -543,7 +546,10 @@ var Pontoon = (function (my) {
       }
 
       // Microsoft Translator
-      if (self.locale.ms_translator_code.length) {
+      if (
+        $('#server').data('is-microsoft-translator-supported') &&
+        self.locale.ms_translator_code.length
+      ) {
         requests++;
 
         if (self.XHRmicrosoftTranslator) {

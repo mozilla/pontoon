@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from urlparse import urlparse
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -70,6 +71,7 @@ def translate(request, locale, slug, part):
         project = get_object_or_404(Project.objects.available(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
+
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
@@ -79,6 +81,12 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
+        'is_google_translate_supported':
+            True if settings.GOOGLE_TRANSLATE_API_KEY
+            else False,
+        'is_microsoft_translator_supported':
+            True if settings.MICROSOFT_TRANSLATOR_API_KEY
+            else False,
     })
 
 
