@@ -107,20 +107,25 @@ def machine_translation(request):
     obj = {
         'locale': locale_code,
     }
-    url = "http://api.microsofttranslator.com/V2/Http.svc/Translate"
+    url = "https://api.cognitive.microsofttranslator.com/translate"
+    headers = {
+        'Ocp-Apim-Subscription-Key': api_key,
+        'Content-Type': 'application/json'
+    }
     payload = {
-        "appId": api_key,
-        "text": text,
+        "api-version": "3.0",
         "from": "en",
         "to": locale_code,
-        "contentType": "text/html",
+        "textType": "html",
     }
+    body = [
+        {"Text": text}
+    ]
 
     try:
-        r = requests.get(url, params=payload)
-        # Parse XML response
-        root = ET.fromstring(r.content)
-        translation = root.text
+        r = requests.post(url, params=payload, headers=headers, json=body)
+        root = json.loads(r.content)
+        translation = root[0]['translations'][0]['text']
         obj['translation'] = translation
 
         return JsonResponse(obj)
