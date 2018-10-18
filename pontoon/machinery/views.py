@@ -170,12 +170,10 @@ def google_translate(request):
         r = requests.post(url, params=payload)
         root = json.loads(r.content)
         translation = root['data']['translations'][0]['translatedText']
-        obj = {
-            'locale': locale_code,
-            'translation': translation,
-        }
 
-        return JsonResponse(obj)
+        return JsonResponse({
+            'translation': translation,
+        })
 
     except Exception as e:
         return HttpResponseBadRequest(
