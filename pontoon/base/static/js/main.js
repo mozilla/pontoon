@@ -410,8 +410,9 @@ var Pontoon = (function (my) {
               'Mozilla': 2,
               'Open Source': 3,
               'Microsoft': 4,
-              'Microsoft Translator': 5,
-              'Caighdean': 6,
+              'Google Translate': 5,
+              'Microsoft Translator': 6,
+              'Caighdean': 7,
             };
 
         function getTranslationSource(el) {
@@ -513,6 +514,33 @@ var Pontoon = (function (my) {
           });
         }
       }).error(error).complete(complete);
+
+      // Google Translate
+      if (self.locale.google_translate_code.length) {
+        requests++;
+
+        if (self.XHRgoogleTranslate) {
+          self.XHRgoogleTranslate.abort();
+        }
+
+        self.XHRgoogleTranslate = $.ajax({
+          url: '/google-translate/',
+          data: {
+            text: original,
+            locale: self.locale.google_translate_code
+          }
+        }).success(function(data) {
+          if (data.translation) {
+            append({
+              url: 'https://translate.google.com/',
+              title: 'Visit Google Translate',
+              source: 'Google Translate',
+              original: original,
+              translation: data.translation
+            });
+          }
+        }).error(error).complete(complete);
+      }
 
       // Microsoft Translator
       if (self.locale.ms_translator_code.length) {

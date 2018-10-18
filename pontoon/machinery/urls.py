@@ -18,6 +18,8 @@ urlpatterns = [
     # AJAX
     url(r'^translation-memory/$', views.translation_memory,
         name='pontoon.translation_memory'),
+    url(r'^google-translate/$', views.google_translate,
+        name='pontoon.google_translate'),
     url(r'^microsoft-translator/$', views.microsoft_translator,
         name='pontoon.microsoft_translator'),
     url(r'^caighdean/$',

@@ -134,6 +134,53 @@ def microsoft_translator(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
 
+def google_translate(request):
+    """Get translation from Google machine translation service."""
+    try:
+        text = request.GET['text']
+        locale_code = request.GET['locale']
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    api_key = settings.GOOGLE_TRANSLATE_API_KEY
+
+    if not api_key:
+        log.error('GOOGLE_TRANSLATE_API_KEY not set')
+        return HttpResponseBadRequest('Missing api key.')
+
+    # Validate if locale exists in the database to avoid any potential XSS attacks.
+    get_list_or_404(Locale, google_translate_code=locale_code)
+
+    url = 'https://translation.googleapis.com/language/translate/v2'
+
+    payload = {
+        'q': text,
+        'source': 'en',
+        'target': locale_code,
+        'key': api_key,
+    }
+
+    try:
+        r = requests.post(url, params=payload)
+        root = json.loads(r.content)
+        translation = root['data']['translations'][0]['translatedText']
+        obj = {
+            'locale': locale_code,
+            'translation': translation,
+        }
+
+        return JsonResponse(obj)
+
+    except Exception as e:
+        return HttpResponseBadRequest(
+            'Bad Request: {error}. Response: {response}.'
+            .format(
+                error=e,
+                response=root,
+            )
+        )
+
+
 def caighdean(request):
     """Get translation from Caighdean machine translation service."""
     try:
