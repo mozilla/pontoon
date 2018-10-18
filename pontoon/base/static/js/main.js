@@ -518,7 +518,7 @@ var Pontoon = (function (my) {
       // Google Translate
       if (
         $('#server').data('is-google-translate-supported') &&
-        self.locale.google_translate_code.length
+        self.locale.google_translate_code
       ) {
         requests++;
 
@@ -548,7 +548,7 @@ var Pontoon = (function (my) {
       // Microsoft Translator
       if (
         $('#server').data('is-microsoft-translator-supported') &&
-        self.locale.ms_translator_code.length
+        self.locale.ms_translator_code
       ) {
         requests++;
 
