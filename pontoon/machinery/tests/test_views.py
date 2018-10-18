@@ -40,7 +40,6 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
         json.loads(response.content)
         == {
             "translation": "target",
-             "locale": "gb",
         }
     )
     req = m.request_history[0]
