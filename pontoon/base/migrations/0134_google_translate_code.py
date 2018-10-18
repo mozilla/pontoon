@@ -158,12 +158,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locale',
             name='google_translate_code',
-            field=models.CharField(blank=True, help_text='\n        Google Translate maintains its own list of\n        <a href="https://translate.google.com/intl/en/about/languages/">\n        supported locales</a>. Chose a matching locale from the list or leave blank to disable\n        support for Google Cloud Translation machine translation service.\n        ', max_length=20),
+            field=models.CharField(blank=True, help_text='\n        Google Translate maintains its own list of\n        <a href="https://translate.google.com/intl/en/about/languages/">\n        supported locales</a>. Choose a matching locale from the list or leave blank to disable\n        support for Google Cloud Translation machine translation service.\n        ', max_length=20),
+        ),
+        migrations.AlterField(
+            model_name='locale',
+            name='ms_terminology_code',
+            field=models.CharField(blank=True, help_text='\n        Microsoft Terminology uses language codes that include both the language and\n        the country/region. Choose a matching locale from the list or leave blank to disable support\n        for Microsoft terminology:\n\n        af-za, am-et, ar-dz, ar-eg, ar-sa, as-in, az-latn-az, be-by, bg-bg, bn-bd, bn-in,\n        bs-cyrl-ba, bs-latn-ba, ca-es, ca-es-valencia, chr-cher-us, cs-cz, cy-gb, da-dk, de-at,\n        de-ch, de-de, el-gr, en-au, en-ca, en-gb, en-hk, en-ie, en-in, en-my, en-ng, en-nz, en-ph,\n        en-pk, en-sg, en-tt, en-us, en-za, es-ar, es-bo, es-cl, es-co, es-cr, es-do, es-ec, es-es,\n        es-gt, es-hn, es-mx, es-ni, es-pa, es-pe, es-pr, es-py, es-sv, es-us, es-uy, es-ve, et-ee,\n        eu-es, fa-ir, fi-fi, fil-ph, fo-fo, fr-be, fr-ca, fr-ch, fr-dz, fr-fr, fr-ma, fr-tn,\n        fuc-latn-sn, ga-ie, gd-gb, gl-es, gu-in, guc-ve, ha-latn-ng, he-il, hi-in, hr-hr, hu-hu,\n        hy-am, id-id, ig-ng, is-is, it-ch, it-it, iu-latn-ca, ja-jp, ka-ge, kk-kz, km-kh, kn-in,\n        ko-kr, kok-in, ku-arab-iq, ky-kg, lb-lu, lo-la, lt-lt, lv-lv, mi-nz, mk-mk, ml-in, mn-mn,\n        mr-in, ms-bn, ms-my, mt-mt, my-mm, nb-no, ne-np, nl-be, nl-nl, nn-no, nso-za, or-in,\n        pa-arab-pk, pa-in, pl-pl, prs-af, ps-af, pt-br, pt-pt, quc-latn-gt, quz-pe, ro-md, ro-ro,\n        ru-kz, ru-ru, rw-rw, sd-arab-pk, si-lk, sk-sk, sl-si, sp-xl, sq-al, sr-cyrl-ba, sr-cyrl-rs,\n        sr-latn-me, sr-latn-rs, sv-se, sw-ke, ta-in, te-in, tg-cyrl-tj, th-th, ti-et, tk-tm, tl-ph,\n        tn-za, tr-tr, tt-ru, ug-cn, uk-ua, ur-pk, uz-cyrl-uz, uz-latn-uz, vi-vn, wo-sn, xh-za,\n        yo-ng, zh-cn, zh-hk, zh-sg, zh-tw, zu-za\n        ', max_length=20),
         ),
         migrations.AlterField(
             model_name='locale',
             name='ms_translator_code',
-            field=models.CharField(blank=True, help_text='\n        Microsoft Translator maintains its own list of\n        <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languages">\n        supported locales</a>. Chose a matching locale from the list or leave blank to disable\n        support for Microsoft Translator machine translation service.\n        ', max_length=20),
+            field=models.CharField(blank=True, help_text='\n        Microsoft Translator maintains its own list of\n        <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languages">\n        supported locales</a>. Choose a matching locale from the list or leave blank to disable\n        support for Microsoft Translator machine translation service.\n        ', max_length=20),
         ),
         migrations.RunPython(
             populate_google_translate_code,

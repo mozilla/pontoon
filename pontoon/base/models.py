@@ -621,7 +621,7 @@ class Locale(AggregatedStats):
         help_text="""
         Google Translate maintains its own list of
         <a href="https://translate.google.com/intl/en/about/languages/">
-        supported locales</a>. Chose a matching locale from the list or leave blank to disable
+        supported locales</a>. Choose a matching locale from the list or leave blank to disable
         support for Google Cloud Translation machine translation service.
         """
     )
@@ -633,7 +633,7 @@ class Locale(AggregatedStats):
         help_text="""
         Microsoft Translator maintains its own list of
         <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languages">
-        supported locales</a>. Chose a matching locale from the list or leave blank to disable
+        supported locales</a>. Choose a matching locale from the list or leave blank to disable
         support for Microsoft Translator machine translation service.
         """
     )
@@ -642,7 +642,7 @@ class Locale(AggregatedStats):
         blank=True,
         help_text="""
         Microsoft Terminology uses language codes that include both the language and
-        the country/region. Chose a matching locale from the list or leave blank to disable support
+        the country/region. Choose a matching locale from the list or leave blank to disable support
         for Microsoft terminology:
 
         af-za, am-et, ar-dz, ar-eg, ar-sa, as-in, az-latn-az, be-by, bg-bg, bn-bd, bn-in,
