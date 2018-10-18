@@ -42,7 +42,9 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
             "translation": "target",
         }
     )
+
     req = m.request_history[0]
+
     assert (
         req.headers['Ocp-Apim-Subscription-Key']
         == ms_api_key
@@ -69,6 +71,52 @@ def test_view_microsoft_translator_bad_locale(client, ms_locale, ms_api_key):
 
     assert (
         response.status_code == 404
+    )
+
+
+@pytest.mark.django_db
+def test_view_google_translate(client, google_translate_locale, google_translate_api_key):
+    url = reverse('pontoon.google_translate')
+
+    with requests_mock.mock() as m:
+        data = {
+            'data': {
+                'translations': [
+                    {
+                        'translatedText': 'target'
+                    }
+                ]
+            }
+        }
+        m.post("https://translation.googleapis.com/language/translate/v2", json=data)
+        response = client.get(
+            url,
+            dict(
+                text="text",
+                locale=google_translate_locale.google_translate_code,
+            )
+        )
+
+    assert (
+        response.status_code == 200
+    )
+    assert (
+        json.loads(response.content)
+        == {
+            "translation": "target",
+        }
+    )
+
+    req = m.request_history[0]
+
+    assert (
+        urlparse.parse_qs(req.query)
+        == {
+            'q': ['text'],
+            'source': ['en'],
+            'target': ['bg'],
+            'key': ['2fffff'],
+        }
     )
 
 
