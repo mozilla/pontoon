@@ -6,7 +6,10 @@ import os
 import scandir
 import shutil
 
-from compare_locales.paths.configparser import TOMLParser
+from compare_locales.paths import (
+    ProjectFiles,
+    TOMLParser,
+)
 from datetime import datetime
 from itertools import chain
 
@@ -452,34 +455,14 @@ class VCSConfiguration(object):
         self.configuration_file = vcs_project.db_project.configuration_file
 
     @cached_property
-    def configs(self):
+    def project(self):
         """Return parsed project configuration file."""
         path = os.path.join(
             self.vcs_project.db_project.source_repository.checkout_path,
             self.configuration_file
         )
         parser = TOMLParser()
-        return parser.parse(path).configs
-
-    @cached_property
-    def paths(self):
-        """Return paths specified in the configurations."""
-        return [
-            paths
-            for configuration in self.configs
-            for paths in configuration.paths
-        ]
-
-    def locale_paths(self, locale):
-        """
-        Return a list of reference paths that are either not limited to a
-        subset of locales or the subset includes the given locale.
-        """
-        return [
-            paths['reference']
-            for paths in self.paths
-            if 'locales' not in paths or locale.code in paths['locales']
-        ]
+        return parser.parse(path)
 
     def locale_resources(self, locale):
         """
@@ -487,16 +470,16 @@ class VCSConfiguration(object):
         given locale.
         """
         resources = []
+        project_files = ProjectFiles(locale.code, [self.project])
 
         for resource in self.vcs_project.db_project.resources.all():
-            absolute_resource_path = os.path.join(
-                self.vcs_project.source_directory_path,
+            absolute_translated_resource_path = os.path.join(
+                self.vcs_project.locale_directory_paths[locale.code],
                 resource.path,
             )
 
-            for path in self.locale_paths(locale):
-                if path.match(absolute_resource_path) is not None:
-                    resources.append(resource)
+            if project_files.match(absolute_translated_resource_path):
+                resources.append(resource)
 
         return resources
 
