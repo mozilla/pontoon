@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0133_calculate_strings_with_errors_warnings'),
+        ('base', '0134_google_translate_code'),
     ]
 
     operations = [
