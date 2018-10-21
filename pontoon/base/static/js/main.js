@@ -539,7 +539,6 @@ var Pontoon = (function (my) {
               title: 'Visit Google Translate',
               source: 'Google Translate',
               original: original,
-              quality: '100%',
               translation: data.translation
             });
           }
@@ -570,7 +569,6 @@ var Pontoon = (function (my) {
               title: 'Visit Bing Translator',
               source: 'Microsoft Translator',
               original: original,
-              quality: '100%',
               translation: data.translation
             });
           }
@@ -663,7 +661,6 @@ var Pontoon = (function (my) {
               title: 'Visit Caighdean Machine Translation',
               source: 'Caighdean',
               original: data.original,
-              quality: '100%',
               translation: data.translation
             });
           }
