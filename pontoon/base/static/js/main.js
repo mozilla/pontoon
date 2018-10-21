@@ -364,6 +364,10 @@ var Pontoon = (function (my) {
             '</a></li>'
           );
 
+          if (data.quality && sources.find('.stress').length === 0) {
+            sources.prepend('<span class="stress">' + data.quality + '</span>');
+          }
+
         } else {
           if (data.source !== 'Caighdean') {
             var originalTextForDiff = originalText;
