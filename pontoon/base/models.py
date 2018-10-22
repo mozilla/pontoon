@@ -2391,7 +2391,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             obsolete=False
         )
 
-        if project.slug != 'all-projects':
+        if project.slug == 'all-projects':
+            entities = entities.filter(resource__project__system_project=False)
+        else:
             entities = entities.filter(resource__project=project)
 
         # Filter by path
@@ -2938,7 +2940,11 @@ class TranslatedResourceQuerySet(models.QuerySet):
             resource__project__disabled=False,
         )
 
-        if project.slug != 'all-projects':
+        if project.slug == 'all-projects':
+            translated_resources = translated_resources.filter(
+                resource__project__system_project=False,
+            )
+        else:
             translated_resources = translated_resources.filter(
                 resource__project=project,
             )
