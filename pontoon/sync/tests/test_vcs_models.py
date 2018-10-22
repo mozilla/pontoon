@@ -8,15 +8,24 @@ from django_nose.tools import (
 )
 from mock import Mock, patch, PropertyMock
 
-from pontoon.base.models import Project
+from pontoon.base.models import (
+    Locale,
+    Project,
+    Repository,
+)
 from pontoon.base.tests import (
     CONTAINS,
     ProjectFactory,
     RepositoryFactory,
+    ResourceFactory,
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
-from pontoon.sync.tests import VCSEntityFactory, VCSTranslationFactory
+from pontoon.sync.tests import (
+    PROJECT_CONFIG_CHECKOUT_PATH,
+    VCSEntityFactory,
+    VCSTranslationFactory,
+)
 from pontoon.sync.vcs.models import VCSProject
 
 
@@ -188,6 +197,49 @@ class VCSProjectTests(TestCase):
                 list(self.vcs_project.resources_for_path('/root')),
                 ['/root/templates/foo.pot']
             )
+
+
+class VCSConfigurationTests(TestCase):
+    def setUp(self):
+        self.locale, _ = Locale.objects.get_or_create(code='fr')
+
+        self.repository = RepositoryFactory()
+        self.db_project = ProjectFactory.create(
+            repositories=[self.repository],
+        )
+
+        self.resource_strings = ResourceFactory.create(
+            project=self.db_project,
+            path='strings.properties',
+        )
+        self.resource_strings_reality = ResourceFactory.create(
+            project=self.db_project,
+            path='strings_reality.properties',
+        )
+
+        # Make sure VCSConfiguration instance is initialized
+        self.db_project.configuration_file = 'config.toml'
+        self.vcs_project = VCSProject(self.db_project)
+
+    def test_locale_resources(self):
+        with patch.object(
+            VCSProject,
+            'locale_directory_paths',
+            new_callable=PropertyMock,
+            return_value={
+                self.locale.code: os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, self.locale.code),
+            },
+        ):
+            with patch.object(
+                Repository,
+                'checkout_path',
+                new_callable=PropertyMock,
+                return_value=PROJECT_CONFIG_CHECKOUT_PATH,
+            ):
+                assert_equal(
+                    self.vcs_project.configuration.locale_resources(self.locale),
+                    [self.resource_strings, self.resource_strings_reality],
+                )
 
 
 class VCSEntityTests(TestCase):

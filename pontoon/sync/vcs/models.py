@@ -455,7 +455,7 @@ class VCSConfiguration(object):
         self.configuration_file = vcs_project.db_project.configuration_file
 
     @cached_property
-    def project(self):
+    def parsed_configuration(self):
         """Return parsed project configuration file."""
         path = os.path.join(
             self.vcs_project.db_project.source_repository.checkout_path,
@@ -475,7 +475,7 @@ class VCSConfiguration(object):
         given locale.
         """
         resources = []
-        project_files = ProjectFiles(locale.code, [self.project])
+        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
 
         for resource in self.vcs_project.db_project.resources.all():
             absolute_translated_resource_path = os.path.join(
