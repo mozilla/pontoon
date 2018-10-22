@@ -459,10 +459,15 @@ class VCSConfiguration(object):
         """Return parsed project configuration file."""
         path = os.path.join(
             self.vcs_project.db_project.source_repository.checkout_path,
-            self.configuration_file
+            self.configuration_file,
         )
-        parser = TOMLParser()
-        return parser.parse(path)
+
+        # Use parent directory of the first locale directory as l10n_base
+        l10n_base = get_parent_directory(
+            self.vcs_project.locale_directory_paths.itervalues().next()
+        )
+
+        return TOMLParser().parse(path, env={'l10n_base': l10n_base})
 
     def locale_resources(self, locale):
         """
