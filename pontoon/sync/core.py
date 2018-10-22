@@ -188,7 +188,7 @@ def update_translated_resources(db_project, vcs_project, locale):
 def update_translated_resources_project_configuration(db_project, vcs_project, locale):
     """
     Create/update the TranslatedResource objects for each Resource instance
-    that is enabled for the given local through project configuration.
+    that is enabled for the given locale through project configuration.
     """
     for resource in vcs_project.configuration.locale_resources(locale):
         translatedresource, _ = (
