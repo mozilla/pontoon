@@ -160,6 +160,7 @@ def google_translate(request):
         'q': text,
         'source': 'en',
         'target': locale_code,
+        'format': 'text',
         'key': api_key,
     }
 
