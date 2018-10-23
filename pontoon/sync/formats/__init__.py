@@ -6,6 +6,7 @@ See base.py for the ParsedResource base class.
 import os.path
 
 from pontoon.sync.formats import (
+    compare_locales,
     ftl,
     json_extensions,
     lang,
@@ -18,17 +19,18 @@ from pontoon.sync.formats import (
 # where the key is the extension you're parsing and the value is a
 # callable returning an instance of a ParsedResource subclass.
 SUPPORTED_FORMAT_PARSERS = {
+    '.dtd': silme.parse_dtd,
+    '.ftl': ftl.parse,
+    '.inc': silme.parse_inc,
+    '.ini': silme.parse_ini,
+    '.json': json_extensions.parse,
     '.lang': lang.parse,
     '.po': po.parse,
     '.pot': po.parse,
+    '.properties': silme.parse_properties,
     '.xlf': xliff.parse,
     '.xliff': xliff.parse,
-    '.dtd': silme.parse_dtd,
-    '.properties': silme.parse_properties,
-    '.ini': silme.parse_ini,
-    '.inc': silme.parse_inc,
-    '.ftl': ftl.parse,
-    '.json': json_extensions.parse,
+    '.xml': compare_locales.parse,
 }
 
 
