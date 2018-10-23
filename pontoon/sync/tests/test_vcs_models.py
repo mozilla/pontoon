@@ -221,31 +221,31 @@ class VCSConfigurationTests(TestCase):
         self.db_project.configuration_file = 'l10n.toml'
         self.vcs_project = VCSProject(self.db_project)
 
-    def test_locale_resources(self):
-        with patch.object(
-            VCSProject,
-            'locale_directory_paths',
-            new_callable=PropertyMock,
-            return_value={
-                self.locale.code: os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, self.locale.code),
-            },
-        ):
-            with patch.object(
-                Repository,
-                'checkout_path',
-                new_callable=PropertyMock,
-                return_value=PROJECT_CONFIG_CHECKOUT_PATH,
-            ):
-                with patch.object(
-                    VCSProject,
-                    'source_directory_path',
-                    new_callable=PropertyMock,
-                    return_value=os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'en-US'),
-                ):
-                    assert_equal(
-                        self.vcs_project.configuration.locale_resources(self.locale),
-                        [self.resource_strings, self.resource_strings_reality],
-                    )
+    @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
+    @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
+    @patch.object(VCSProject, 'locale_directory_paths', new_callable=PropertyMock)
+    def test_locale_resources(
+        self,
+        locale_directory_paths_mock,
+        checkout_path_mock,
+        source_directory_path_mock,
+    ):
+        locale_directory_paths_mock.return_value = {
+            self.locale.code: os.path.join(
+                PROJECT_CONFIG_CHECKOUT_PATH,
+                self.locale.code,
+            ),
+        }
+        checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+        source_directory_path_mock.return_value = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            'en-US',
+        )
+
+        assert_equal(
+            self.vcs_project.configuration.locale_resources(self.locale),
+            [self.resource_strings, self.resource_strings_reality],
+        )
 
 
 class VCSEntityTests(TestCase):
