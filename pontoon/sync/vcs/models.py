@@ -462,10 +462,7 @@ class VCSConfiguration(object):
             self.configuration_file,
         )
 
-        # Use parent directory of the first locale directory as l10n_base
-        l10n_base = get_parent_directory(
-            self.vcs_project.locale_directory_paths.itervalues().next()
-        )
+        l10n_base = self.vcs_project.source_directory_path
 
         return TOMLParser().parse(path, env={'l10n_base': l10n_base})
 
