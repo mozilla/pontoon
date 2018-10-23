@@ -457,12 +457,14 @@ class VCSConfiguration(object):
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
+        db_project = self.vcs_project.db_project
+
         path = os.path.join(
-            self.vcs_project.db_project.source_repository.checkout_path,
+            db_project.source_repository.checkout_path,
             self.configuration_file,
         )
 
-        l10n_base = self.vcs_project.source_directory_path
+        l10n_base = db_project.translation_repositories()[0].checkout_path
 
         return TOMLParser().parse(path, env={'l10n_base': l10n_base})
 
