@@ -236,10 +236,16 @@ class VCSConfigurationTests(TestCase):
                 new_callable=PropertyMock,
                 return_value=PROJECT_CONFIG_CHECKOUT_PATH,
             ):
-                assert_equal(
-                    self.vcs_project.configuration.locale_resources(self.locale),
-                    [self.resource_strings, self.resource_strings_reality],
-                )
+                with patch.object(
+                    VCSProject,
+                    'source_directory_path',
+                    new_callable=PropertyMock,
+                    return_value=os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'en-US'),
+                ):
+                    assert_equal(
+                        self.vcs_project.configuration.locale_resources(self.locale),
+                        [self.resource_strings, self.resource_strings_reality],
+                    )
 
 
 class VCSEntityTests(TestCase):

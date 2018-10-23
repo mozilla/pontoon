@@ -478,12 +478,12 @@ class VCSConfiguration(object):
         project_files = ProjectFiles(locale.code, [self.parsed_configuration])
 
         for resource in self.vcs_project.db_project.resources.all():
-            absolute_translated_resource_path = os.path.join(
-                self.vcs_project.locale_directory_paths[locale.code],
+            absolute_resource_path = os.path.join(
+                self.vcs_project.source_directory_path,
                 resource.path,
             )
 
-            if project_files.match(absolute_translated_resource_path):
+            if project_files.match(absolute_resource_path):
                 resources.append(resource)
 
         return resources

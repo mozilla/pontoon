@@ -322,8 +322,8 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-compare-locales==4.0.0 \
-    --hash=sha256:e3b22cbecb6d50f7ced5ece51d77e03e1b8bd0d0cfda41b29a5792e97f6ce77e
+compare-locales==4.0.2 \
+    --hash=sha256:9308ec72084bf1ff067a720f78872ddd9e1f0e5e4657b008480e9d2673110a8f
 
 # Required by compare-locales
 pytoml==0.1.14 \
