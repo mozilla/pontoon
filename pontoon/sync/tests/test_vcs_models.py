@@ -218,7 +218,7 @@ class VCSConfigurationTests(TestCase):
         )
 
         # Make sure VCSConfiguration instance is initialized
-        self.db_project.configuration_file = 'config.toml'
+        self.db_project.configuration_file = 'l10n.toml'
         self.vcs_project = VCSProject(self.db_project)
 
     def test_locale_resources(self):
