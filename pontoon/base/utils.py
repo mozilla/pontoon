@@ -475,7 +475,11 @@ def handle_upload_content(slug, code, part, f, user):
         for chunk in f.chunks():
             temp.write(chunk)
         temp.flush()
-        resource_file = formats.parse(temp.name)
+        # Bilingual file format parsers could rely on source resources being
+        # passed when parsing translated resource (see bug 1501168). Since we
+        # don't have a source resource here, we can fake it by using translated
+        # resource also as a source resource.
+        resource_file = formats.parse(temp.name, temp.name)
 
     # Update database objects from file
     changeset = ChangeSet(
