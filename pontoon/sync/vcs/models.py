@@ -6,8 +6,12 @@ import os
 import scandir
 import shutil
 
-from itertools import chain
+from compare_locales.paths import (
+    ProjectFiles,
+    TOMLParser,
+)
 from datetime import datetime
+from itertools import chain
 
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -87,6 +91,8 @@ class VCSProject(object):
             List of changed source file paths
         :param bool full_scan:
             Scans all resources in repository
+        :param VCSConfiguration configuration:
+            Project configuration, provided by the optional configuration file.
         """
         self.db_project = db_project
         self.now = now
@@ -96,6 +102,10 @@ class VCSProject(object):
         self.changed_paths = changed_paths or []
         self.full_scan = full_scan
         self.synced_locales = set()
+
+        self.configuration = None
+        if db_project.configuration_file:
+            self.configuration = VCSConfiguration(self)
 
     @cached_property
     def changed_files(self):
@@ -429,6 +439,53 @@ class VCSProject(object):
             for filename in filenames:
                 if is_resource(filename):
                     yield os.path.join(root, filename)
+
+
+class VCSConfiguration(object):
+    """
+    Container for the project configuration, provided by the optional
+    configuration file.
+
+    For more information, see:
+    https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html.
+    """
+
+    def __init__(self, vcs_project):
+        self.vcs_project = vcs_project
+        self.configuration_file = vcs_project.db_project.configuration_file
+
+    @cached_property
+    def parsed_configuration(self):
+        """Return parsed project configuration file."""
+        db_project = self.vcs_project.db_project
+
+        path = os.path.join(
+            db_project.source_repository.checkout_path,
+            self.configuration_file,
+        )
+
+        l10n_base = db_project.translation_repositories()[0].checkout_path
+
+        return TOMLParser().parse(path, env={'l10n_base': l10n_base})
+
+    def locale_resources(self, locale):
+        """
+        Return a list of Resource instances, which need to be enabled for the
+        given locale.
+        """
+        resources = []
+        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
+
+        for resource in self.vcs_project.db_project.resources.all():
+            absolute_resource_path = os.path.join(
+                self.vcs_project.source_directory_path,
+                resource.path,
+            )
+
+            if project_files.match(absolute_resource_path):
+                resources.append(resource)
+
+        return resources
 
 
 class VCSResource(object):

@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 from compare_locales.checks import getChecker
+from compare_locales.keyedtuple import KeyedTuple
 from compare_locales.parser.base import Junk
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
@@ -173,14 +174,14 @@ def run_checks(entity, locale_code, string):
 
     # Currently, references are required only by DTD files but that may change in the future.
     if checker.needs_reference:
-        references = [
+        references = KeyedTuple(
             CompareDTDEntity(
                 e.key,
                 e.string,
                 e.comment,
             )
             for e in entity.resource.entities.all()
-        ]
+        )
         checker.set_reference(references)
 
     errors = {}
