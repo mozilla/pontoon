@@ -154,9 +154,19 @@ class ProjectAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'name', 'slug', 'info', 'deadline', 'priority',
-                'contact', 'langpack_url', 'can_be_requested', 'disabled',
-                'sync_disabled', 'system_project',),
+                'name',
+                'slug',
+                'info',
+                'deadline',
+                'priority',
+                'contact',
+                'langpack_url',
+                'configuration_file',
+                'can_be_requested',
+                'disabled',
+                'sync_disabled',
+                'system_project',
+            ),
         }),
         ('WEBSITE', {
             'fields': ('url', 'width', 'links'),
