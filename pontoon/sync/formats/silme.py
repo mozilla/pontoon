@@ -36,8 +36,6 @@ class SilmeEntity(VCSTranslation):
         self.silme_object = silme_object
         self.comments = comments or []
         self.order = order
-        self.last_translator = None
-        self.last_update = None
 
         if copy_string:
             self.strings = {None: self.silme_object.value}

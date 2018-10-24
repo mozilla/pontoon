@@ -165,7 +165,7 @@ class FormatTestsMixin(object):
                 source_string_plural=''
             )
 
-    def run_parse_missing_traslation(self, input_string, translation_index):
+    def run_parse_missing_translation(self, input_string, translation_index):
         path, resource = self.parse_string(input_string)
         assert_attributes_equal(
             resource.translations[translation_index],

@@ -105,8 +105,8 @@ class POTests(FormatTestsMixin, TestCase):
     def test_parse_no_comments_no_sources(self):
         self.run_parse_no_comments_no_sources(BASE_POFILE, 4)
 
-    def test_parse_missing_traslation(self):
-        self.run_parse_missing_traslation(BASE_POFILE, 5)
+    def test_parse_missing_translation(self):
+        self.run_parse_missing_translation(BASE_POFILE, 5)
 
     def test_parse_plural_translation(self):
         self.run_parse_plural_translation(BASE_POFILE, 6)
