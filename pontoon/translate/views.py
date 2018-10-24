@@ -10,6 +10,9 @@ from django.template import engines
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import TemplateView
 
+from pontoon.base.models import Locale
+from pontoon.base.utils import get_project_locale_from_request
+
 from . import URL_BASE
 
 
@@ -35,11 +38,12 @@ def static_serve_dev(request, path, insecure=False, **kwargs):
     except Http404:
         # If the file couldn't be found in django's static files, then we
         # try to proxy it to the webpack server.
+        # request.path = request.path.replace('static/', '')
         return catchall_dev(request)
 
 
 @csrf_exempt
-def catchall_dev(request):
+def catchall_dev(request, context=None):
     """Proxy HTTP requests to the frontend dev server in development.
 
     The implementation is very basic e.g. it doesn't handle HTTP headers.
@@ -63,7 +67,7 @@ def catchall_dev(request):
             content=(
                 engines['jinja2']
                 .from_string(response.text)
-                .render(request=request)
+                .render(request=request, context=context)
             ),
             status=response.status_code,
             reason=response.reason,
@@ -84,11 +88,37 @@ catchall_prod = ensure_csrf_cookie(
 )
 
 
+def get_preferred_locale(request):
+    """Return the locale the current user prefers.
+
+    Used to decide in which language to show the Translate page.
+
+    Note that this function returns a single locale, instead of a list of
+    locales to use as fallbacks. We will likely want to change that in the
+    future, in some specific ways (the fallback chain might be different
+    depending on the content, e.g. UI strings, errors and warnings, etc.).
+
+    """
+    user = request.user
+    if user.is_authenticated and user.profile.custom_homepage:
+        return user.profile.custom_homepage
+
+    locale = get_project_locale_from_request(request, Locale.objects)
+    if locale not in ('en', None):
+        return locale
+
+    return 'en-US'
+
+
 def translate(request, locale=None, project=None, resource=None):
     if not waffle.switch_is_active('translate_next'):
         raise Http404
 
-    if settings.DEBUG:
-        return catchall_dev(request)
+    context = {
+        'lang': get_preferred_locale(request),
+    }
 
-    return catchall_prod(request)
+    if settings.DEBUG:
+        return catchall_dev(request, context=context)
+
+    return catchall_prod(request, context=context)
