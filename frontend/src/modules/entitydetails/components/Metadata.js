@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
+import { Localized } from 'fluent-react/compat';
 
 import './Metadata.css';
 
@@ -14,6 +15,7 @@ import type { DbEntity } from 'modules/entitieslist';
 
 type PropertyProps = {|
     +title: string,
+    +l10nId: string,
     +children: React.Node,
 |};
 
@@ -25,10 +27,12 @@ type PropertyProps = {|
  */
 class Property extends React.Component<PropertyProps> {
     render(): React.Node {
-        const { children, title } = this.props;
+        const { children, l10nId, title } = this.props;
         const className = title.trim().toLowerCase().replace(/ /g, '-');
         return <p className={ className }>
-            <span className="title">{ title }</span>
+            <Localized id={ l10nId }>
+                <span className="title">{ title }</span>
+            </Localized>
             <span className="content">{ children }</span>
         </p>;
     }
@@ -62,16 +66,20 @@ export default class Metadata extends React.Component<Props> {
             return <p className="original">{ entity.original }</p>;
         }
 
-        let title = 'Plural';
+        let title = <Localized id='entitydetails-metadata-plural'>
+            <h2>Plural</h2>
+        </Localized>;
         let original = entity.original_plural;
 
         if (locale.cldrPlurals[pluralForm] === 1) {
-            title = 'Singular';
+            title = <Localized id='entitydetails-metadata-singular'>
+                <h2>Singular</h2>
+            </Localized>;
             original = entity.original;
         }
 
         return <React.Fragment>
-            <h2>{ title }</h2>
+            { title }
             <p className="original">{ original }</p>
         </React.Fragment>;
     }
@@ -90,7 +98,7 @@ export default class Metadata extends React.Component<Props> {
             comment = parts.join('\n');
         }
 
-        return <Property title='Comment'>
+        return <Property title='Comment' l10nId='entitydetails-metadata-comment'>
             <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                 { comment }
             </Linkify>
@@ -102,7 +110,9 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property title='Context'>{ entity.key }</Property>;
+        return <Property title='Context' l10nId='entitydetails-metadata-context'>
+            { entity.key }
+        </Property>;
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
@@ -127,7 +137,10 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property title='Placeholder Examples'>
+        return <Property
+            title='Placeholder Examples'
+            l10nId='entitydetails-metadata-placeholder'
+        >
             <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                 { examples.join(', ') }
             </Linkify>
@@ -159,12 +172,12 @@ export default class Metadata extends React.Component<Props> {
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
-            <Property title='Resource'>
+            <Property title='Resource' l10nId='entitydetails-metadata-resource'>
                 <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
                     { entity.path }
                 </Link>
             </Property>
-            <Property title='Project'>
+            <Property title='Project' l10nId='entitydetails-metadata-project'>
                 <a href={ `/${locale.code}/${entity.project.slug}/` }>
                     { entity.project.name }
                 </a>

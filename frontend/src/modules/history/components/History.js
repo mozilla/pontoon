@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Localized } from 'fluent-react/compat';
 
 import './History.css';
 
@@ -59,7 +60,9 @@ export class HistoryBase extends React.Component<InternalProps> {
 
     renderNoResults() {
         return <section className="history">
-            <p>No translations available.</p>
+            <Localized id="history-history-no-translations">
+                <p>No translations available.</p>
+            </Localized>
         </section>
     }
 
