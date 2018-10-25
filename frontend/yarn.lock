@@ -3877,11 +3877,6 @@ fluent-intl-polyfill@0.1.0:
   dependencies:
     intl-pluralrules projectfluent/IntlPluralRules#module
 
-fluent-langneg@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/fluent-langneg/-/fluent-langneg-0.1.0.tgz#aa12054fbfa4b728daec38331efc12f01faae93a"
-  integrity sha512-SzRtXNaIcCyRabIpcv+AQd0gn+tXv1wfDDvej3wtBo1/XV0iDnCw5XzbARRRmZMW+IEg+Q26jup6vYgnDam4dg==
-
 fluent-react@0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.1.tgz#37f698be27e7160fb64e2dc93428b676cf5fcb55"
