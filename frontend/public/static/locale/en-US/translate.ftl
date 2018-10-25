@@ -1,3 +1,3 @@
-editor-button-copy = Copy
-editor-button-clear = Clear
-editor-button-send = Suggest
+entitydetails-editor-button-copy = Copy
+entitydetails-editor-button-clear = Clear
+entitydetails-editor-button-send = Suggest

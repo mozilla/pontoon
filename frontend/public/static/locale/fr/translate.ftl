@@ -1,3 +1,3 @@
-editor-button-copy = Copier
-editor-button-clear = Effacer
-editor-button-send = Envoyer
+entitydetails-editor-button-copy = Copier
+entitydetails-editor-button-clear = Effacer
+entitydetails-editor-button-send = Envoyer

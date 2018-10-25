@@ -77,13 +77,13 @@ export default class Editor extends React.Component<Props, State> {
                 onChange={ this.handleChange }
             />
             <div className="options">
-                <Localized id="editor-button-copy">
+                <Localized id="entitydetails-editor-button-copy">
                     <button className="action-copy" onClick={ this.copyOriginalIntoEditor }>Copy</button>
                 </Localized>
-                <Localized id="editor-button-clear">
+                <Localized id="entitydetails-editor-button-clear">
                     <button className="action-clear" onClick={ this.clearEditor }>Clear</button>
                 </Localized>
-                <Localized id="editor-button-send">
+                <Localized id="entitydetails-editor-button-send">
                     <button className="action-send" onClick={ this.sendSuggestion }>Suggest</button>
                 </Localized>
             </div>
