@@ -168,7 +168,7 @@ The second thing you need to do is to add that new string into our main translat
 
 The source language for our application is `en-US` (that is what you should use by default when writing content in the code, and in the language files). You can find them in `frontend/public/static/locale/en-US/`. We currently have only one file, named `translate.ftl`, and that is where all content should be added.
 
-Those files use the FTL format. In its simplest form, a string in such a file (called a `message` in Fluent vocabulary) looks like this: `message-id = Content`. There are, however, lots of tools that you can use in that syntax, and you are encouraged to read [Fluent's Syntax Guide](https://projectfluent.org/fluent/guide/) to familiarize yourself with them.
+Those files use the FTL format. In its simplest form, a string in such a file (called a `message` in Fluent vocabulary) looks like this: `message-id = Content`. There are, however, lots of tools that you can use in that syntax, and you are encouraged to read [Fluent's Syntax Guide](https://projectfluent.org/fluent/guide/) to familiarize yourself with them. Make sure you also take a look at the [Good Practices for Developers](https://github.com/projectfluent/fluent/wiki/Good-Practices-for-Developers#prefer-separate-messages-over-variants-for-ui-logic) guide.
 
 ### Social contract
 
