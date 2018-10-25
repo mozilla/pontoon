@@ -19,9 +19,14 @@ type InternalProps = {|
 
 
 /**
+ * Localization provider for this application.
  *
+ * This Component is in charge of fetching translations for the application's
+ * context and providing them to the underlying Localized elements.
+ *
+ * Until the translations are received, a loader is displayed.
  */
-export class AppLocalizationProvider extends React.Component<InternalProps> {
+export class AppLocalizationProviderBase extends React.Component<InternalProps> {
     componentDidMount() {
         // $FLOW_IGNORE: we count on the 'lang' attribute being set.
         const locale = document.documentElement.lang;
@@ -49,4 +54,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(AppLocalizationProvider);
+export default connect(mapStateToProps)(AppLocalizationProviderBase);

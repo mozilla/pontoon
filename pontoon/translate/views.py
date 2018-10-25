@@ -38,7 +38,6 @@ def static_serve_dev(request, path, insecure=False, **kwargs):
     except Http404:
         # If the file couldn't be found in django's static files, then we
         # try to proxy it to the webpack server.
-        # request.path = request.path.replace('static/', '')
         return catchall_dev(request)
 
 

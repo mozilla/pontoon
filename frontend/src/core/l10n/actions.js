@@ -10,7 +10,7 @@ export const REQUEST: 'l10n/REQUEST' = 'l10n/REQUEST';
 
 
 /**
- * Request translations.
+ * Notify that translations for the UI are being fetched.
  */
 export type RequestAction = {
     +type: typeof REQUEST,
@@ -40,9 +40,10 @@ export function receive(locale: string, bundle: FluentBundle): ReceiveAction {
 
 
 /**
+ * Get the UI translations for a locale.
  *
- *
- *
+ * This fetches the translations for the UI in a given locale, bundles those
+ * and store them to be used in showing a localized interface.
  */
 export function get(locale: string): Function {
     return async dispatch => {
@@ -59,4 +60,6 @@ export function get(locale: string): Function {
 
 export default {
     get,
+    receive,
+    request,
 };
