@@ -4,11 +4,16 @@ https://hg.mozilla.org/l10n/compare-locales/
 """
 from __future__ import absolute_import
 
+import copy
 import logging
 
 from collections import OrderedDict
-from compare_locales import parser
+from compare_locales import (
+    parser,
+    serializer,
+)
 
+from pontoon.sync import SyncError
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
@@ -37,13 +42,25 @@ class CompareLocalesResource(ParsedResource):
         self.path = path
         self.entities = OrderedDict()  # Preserve entity order.
         self.source_resource = source_resource
-        self.parser = parser.getParser(self.path)
+        self.parser = copy.deepcopy(parser.getParser(self.path))
+
+        # A monolingual l10n file might not contain all entities, but the code
+        # expects ParsedResource to contain representations of all of them. So
+        # when parsing the l10n resource, we first create empty entity for each
+        # source resource entity.
+        if source_resource:
+            for key, entity in source_resource.entities.items():
+                self.entities[key] = CompareLocalesEntity(
+                    entity.key,
+                    None,
+                    None,
+                    None,
+                )
 
         try:
             self.parser.readFile(self.path)
         except IOError as err:
-            # If the file doesn't exist or cannot be decoded,
-            # but we have a source resource,
+            # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
                 return
@@ -63,6 +80,31 @@ class CompareLocalesResource(ParsedResource):
     @property
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
+
+    def save(self, locale):
+        if not self.source_resource:
+            raise SyncError(
+                'Cannot save resource {0}: No source resource given.'
+                .format(self.path)
+            )
+
+        # Parse source resource
+        reference = list(self.source_resource.parser.walk())
+
+        # Parse l10n resource
+        old_l10n = list(self.parser.walk())
+
+        # A dictionary of new translations
+        new_l10n = {
+            key: entity.strings[None] if entity.strings else None
+            for key, entity in self.entities.items()
+        }
+
+        with open(self.path, 'w') as output_file:
+            log.debug('Saving file: %s', self.path)
+            output_file.write(
+                serializer.serialize(self.path, reference, old_l10n, new_l10n)
+            )
 
 
 def parse(path, source_path=None, locale=None):
