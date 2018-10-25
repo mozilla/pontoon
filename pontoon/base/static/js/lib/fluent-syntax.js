@@ -1,4 +1,4 @@
-/* fluent-syntax@0.8.0 */
+/* fluent-syntax@0.9.0 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
@@ -227,13 +227,6 @@
     }
 
   }
-  class VariantName extends Identifier {
-    constructor(name) {
-      super(name);
-      this.type = "VariantName";
-    }
-
-  }
   class BaseComment extends Entry {
     constructor(content) {
       super();
@@ -301,135 +294,6 @@
       this.code = code;
       this.args = args;
       this.message = message;
-    }
-
-  }
-
-  class ParserStream {
-    constructor(string) {
-      this.string = string;
-      this.iter = string[Symbol.iterator]();
-      this.buf = [];
-      this.peekIndex = 0;
-      this.index = 0;
-      this.iterEnd = false;
-      this.peekEnd = false;
-      this.ch = this.iter.next().value;
-    }
-
-    next() {
-      if (this.iterEnd) {
-        return undefined;
-      }
-
-      if (this.buf.length === 0) {
-        this.ch = this.iter.next().value;
-      } else {
-        this.ch = this.buf.shift();
-      }
-
-      this.index++;
-
-      if (this.ch === undefined) {
-        this.iterEnd = true;
-        this.peekEnd = true;
-      }
-
-      this.peekIndex = this.index;
-      return this.ch;
-    }
-
-    current() {
-      return this.ch;
-    }
-
-    currentIs(ch) {
-      return this.ch === ch;
-    }
-
-    currentPeek() {
-      if (this.peekEnd) {
-        return undefined;
-      }
-
-      const diff = this.peekIndex - this.index;
-
-      if (diff === 0) {
-        return this.ch;
-      }
-
-      return this.buf[diff - 1];
-    }
-
-    currentPeekIs(ch) {
-      return this.currentPeek() === ch;
-    }
-
-    peek() {
-      if (this.peekEnd) {
-        return undefined;
-      }
-
-      this.peekIndex += 1;
-      const diff = this.peekIndex - this.index;
-
-      if (diff > this.buf.length) {
-        const ch = this.iter.next().value;
-
-        if (ch !== undefined) {
-          this.buf.push(ch);
-        } else {
-          this.peekEnd = true;
-          return undefined;
-        }
-      }
-
-      return this.buf[diff - 1];
-    }
-
-    getIndex() {
-      return this.index;
-    }
-
-    getPeekIndex() {
-      return this.peekIndex;
-    }
-
-    peekCharIs(ch) {
-      if (this.peekEnd) {
-        return false;
-      }
-
-      const ret = this.peek();
-      this.peekIndex -= 1;
-      return ret === ch;
-    }
-
-    resetPeek(pos) {
-      if (pos) {
-        if (pos < this.peekIndex) {
-          this.peekEnd = false;
-        }
-
-        this.peekIndex = pos;
-      } else {
-        this.peekIndex = this.index;
-        this.peekEnd = this.iterEnd;
-      }
-    }
-
-    skipToPeek() {
-      const diff = this.peekIndex - this.index;
-
-      for (let i = 0; i < diff; i++) {
-        this.ch = this.buf.shift();
-      }
-
-      this.index = this.peekIndex;
-    }
-
-    getSlice(start, end) {
-      return this.string.substring(start, end);
     }
 
   }
@@ -608,39 +472,88 @@
   }
 
   /* eslint no-magic-numbers: "off" */
-  const INLINE_WS = [" ", "\t"];
-  const SPECIAL_LINE_START_CHARS = ["}", ".", "[", "*"];
-  class FTLParserStream extends ParserStream {
-    skipInlineWS() {
-      while (this.ch) {
-        if (!includes(INLINE_WS, this.ch)) {
-          break;
-        }
+  class ParserStream {
+    constructor(string) {
+      this.string = string;
+      this.index = 0;
+      this.peekOffset = 0;
+    }
 
+    charAt(offset) {
+      // When the cursor is at CRLF, return LF but don't move the cursor.
+      // The cursor still points to the EOL position, which in this case is the
+      // beginning of the compound CRLF sequence. This ensures slices of
+      // [inclusive, exclusive) continue to work properly.
+      if (this.string[offset] === "\r" && this.string[offset + 1] === "\n") {
+        return "\n";
+      }
+
+      return this.string[offset];
+    }
+
+    get currentChar() {
+      return this.charAt(this.index);
+    }
+
+    get currentPeek() {
+      return this.charAt(this.index + this.peekOffset);
+    }
+
+    next() {
+      this.peekOffset = 0; // Skip over the CRLF as if it was a single character.
+
+      if (this.string[this.index] === "\r" && this.string[this.index + 1] === "\n") {
+        this.index++;
+      }
+
+      this.index++;
+      return this.string[this.index];
+    }
+
+    peek() {
+      // Skip over the CRLF as if it was a single character.
+      if (this.string[this.index + this.peekOffset] === "\r" && this.string[this.index + this.peekOffset + 1] === "\n") {
+        this.peekOffset++;
+      }
+
+      this.peekOffset++;
+      return this.string[this.index + this.peekOffset];
+    }
+
+    resetPeek() {
+      let offset = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      this.peekOffset = offset;
+    }
+
+    skipToPeek() {
+      this.index += this.peekOffset;
+      this.peekOffset = 0;
+    }
+
+  }
+  const EOL = "\n";
+  const EOF = undefined;
+  const SPECIAL_LINE_START_CHARS = ["}", ".", "[", "*"];
+  class FluentParserStream extends ParserStream {
+    skipBlankInline() {
+      while (this.currentChar === " ") {
         this.next();
       }
     }
 
-    peekInlineWS() {
-      let ch = this.currentPeek();
-
-      while (ch) {
-        if (!includes(INLINE_WS, ch)) {
-          break;
-        }
-
-        ch = this.peek();
+    peekBlankInline() {
+      while (this.currentPeek === " ") {
+        this.peek();
       }
     }
 
-    skipBlankLines() {
+    skipBlankBlock() {
       let lineCount = 0;
 
       while (true) {
-        this.peekInlineWS();
+        this.peekBlankInline();
 
-        if (this.currentPeekIs("\n")) {
-          this.skipToPeek();
+        if (this.currentPeek === EOL) {
           this.next();
           lineCount++;
         } else {
@@ -650,12 +563,12 @@
       }
     }
 
-    peekBlankLines() {
+    peekBlankBlock() {
       while (true) {
-        const lineStart = this.getPeekIndex();
-        this.peekInlineWS();
+        const lineStart = this.peekOffset;
+        this.peekBlankInline();
 
-        if (this.currentPeekIs("\n")) {
+        if (this.currentPeek === EOL) {
           this.peek();
         } else {
           this.resetPeek(lineStart);
@@ -664,54 +577,59 @@
       }
     }
 
-    skipIndent() {
-      this.skipBlankLines();
-      this.skipInlineWS();
+    skipBlank() {
+      while (this.currentChar === " " || this.currentChar === EOL) {
+        this.next();
+      }
+    }
+
+    peekBlank() {
+      while (this.currentPeek === " " || this.currentPeek === EOL) {
+        this.peek();
+      }
     }
 
     expectChar(ch) {
-      if (this.ch === ch) {
+      if (this.currentChar === ch) {
         this.next();
         return true;
-      }
-
-      if (ch === "\n") {
-        // Unicode Character 'SYMBOL FOR NEWLINE' (U+2424)
-        throw new ParseError("E0003", "\u2424");
       }
 
       throw new ParseError("E0003", ch);
     }
 
-    expectIndent() {
-      this.expectChar("\n");
-      this.skipBlankLines();
-      this.expectChar(" ");
-      this.skipInlineWS();
-    }
-
     expectLineEnd() {
-      if (this.ch === undefined) {
+      if (this.currentChar === EOF) {
         // EOF is a valid line end in Fluent.
         return true;
       }
 
-      return this.expectChar("\n");
+      if (this.currentChar === EOL) {
+        this.next();
+        return true;
+      } // Unicode Character 'SYMBOL FOR NEWLINE' (U+2424)
+
+
+      throw new ParseError("E0003", "\u2424");
     }
 
     takeChar(f) {
-      const ch = this.ch;
+      const ch = this.currentChar;
 
-      if (ch !== undefined && f(ch)) {
+      if (ch === EOF) {
+        return EOF;
+      }
+
+      if (f(ch)) {
         this.next();
         return ch;
       }
 
-      return undefined;
+      return null;
     }
 
     isCharIDStart(ch) {
-      if (ch === undefined) {
+      if (ch === EOF) {
         return false;
       }
 
@@ -721,18 +639,18 @@
     }
 
     isIdentifierStart() {
-      const ch = this.currentPeek();
-      const isID = this.isCharIDStart(ch);
-      this.resetPeek();
-      return isID;
+      return this.isCharIDStart(this.currentPeek);
     }
 
     isNumberStart() {
-      if (this.currentIs("-")) {
-        this.peek();
+      const ch = this.currentChar === "-" ? this.peek() : this.currentChar;
+
+      if (ch === EOF) {
+        this.resetPeek();
+        return false;
       }
 
-      const cc = this.currentPeek().charCodeAt(0);
+      const cc = ch.charCodeAt(0);
       const isDigit = cc >= 48 && cc <= 57; // 0-9
 
       this.resetPeek();
@@ -740,41 +658,51 @@
     }
 
     isCharPatternContinuation(ch) {
-      if (ch === undefined) {
+      if (ch === EOF) {
         return false;
       }
 
       return !includes(SPECIAL_LINE_START_CHARS, ch);
     }
 
-    isPeekValueStart() {
-      this.peekInlineWS();
-      const ch = this.currentPeek(); // Inline Patterns may start with any char.
+    isValueStart(_ref) {
+      let _ref$skip = _ref.skip,
+          skip = _ref$skip === void 0 ? true : _ref$skip;
+      if (skip === false) throw new Error("Unimplemented");
+      this.peekBlankInline();
+      const ch = this.currentPeek; // Inline Patterns may start with any char.
 
-      if (ch !== undefined && ch !== "\n") {
+      if (ch !== EOF && ch !== EOL) {
+        this.skipToPeek();
         return true;
       }
 
-      return this.isPeekNextLineValue();
+      return this.isNextLineValue({
+        skip
+      });
     } // -1 - any
     //  0 - comment
     //  1 - group comment
     //  2 - resource comment
 
 
-    isPeekNextLineComment() {
+    isNextLineComment() {
       let level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
-      if (!this.currentPeekIs("\n")) {
+      let _ref2 = arguments.length > 1 ? arguments[1] : undefined,
+          _ref2$skip = _ref2.skip,
+          skip = _ref2$skip === void 0 ? false : _ref2$skip;
+
+      if (skip === true) throw new Error("Unimplemented");
+
+      if (this.currentPeek !== EOL) {
         return false;
       }
 
       let i = 0;
 
       while (i <= level || level === -1 && i < 3) {
-        this.peek();
-
-        if (!this.currentPeekIs("#")) {
+        if (this.peek() !== "#") {
           if (i <= level && level !== -1) {
             this.resetPeek();
             return false;
@@ -784,11 +712,12 @@
         }
 
         i++;
-      }
+      } // The first char after #, ## or ###.
 
-      this.peek();
 
-      if ([" ", "\n"].includes(this.currentPeek())) {
+      const ch = this.peek();
+
+      if (ch === " " || ch === EOL) {
         this.resetPeek();
         return true;
       }
@@ -797,26 +726,22 @@
       return false;
     }
 
-    isPeekNextLineVariantStart() {
-      if (!this.currentPeekIs("\n")) {
+    isNextLineVariantStart(_ref3) {
+      let _ref3$skip = _ref3.skip,
+          skip = _ref3$skip === void 0 ? false : _ref3$skip;
+      if (skip === true) throw new Error("Unimplemented");
+
+      if (this.currentPeek !== EOL) {
         return false;
       }
 
-      this.peek();
-      this.peekBlankLines();
-      const ptr = this.getPeekIndex();
-      this.peekInlineWS();
+      this.peekBlank();
 
-      if (this.getPeekIndex() - ptr === 0) {
-        this.resetPeek();
-        return false;
-      }
-
-      if (this.currentPeekIs("*")) {
+      if (this.currentPeek === "*") {
         this.peek();
       }
 
-      if (this.currentPeekIs("[") && !this.peekCharIs("[")) {
+      if (this.currentPeek === "[") {
         this.resetPeek();
         return true;
       }
@@ -825,23 +750,14 @@
       return false;
     }
 
-    isPeekNextLineAttributeStart() {
-      if (!this.currentPeekIs("\n")) {
-        return false;
-      }
+    isNextLineAttributeStart(_ref4) {
+      let _ref4$skip = _ref4.skip,
+          skip = _ref4$skip === void 0 ? true : _ref4$skip;
+      if (skip === false) throw new Error("Unimplemented");
+      this.peekBlank();
 
-      this.peek();
-      this.peekBlankLines();
-      const ptr = this.getPeekIndex();
-      this.peekInlineWS();
-
-      if (this.getPeekIndex() - ptr === 0) {
-        this.resetPeek();
-        return false;
-      }
-
-      if (this.currentPeekIs(".")) {
-        this.resetPeek();
+      if (this.currentPeek === ".") {
+        this.skipToPeek();
         return true;
       }
 
@@ -849,47 +765,67 @@
       return false;
     }
 
-    isPeekNextLineValue() {
-      if (!this.currentPeekIs("\n")) {
+    isNextLineValue(_ref5) {
+      let _ref5$skip = _ref5.skip,
+          skip = _ref5$skip === void 0 ? true : _ref5$skip;
+
+      if (this.currentPeek !== EOL) {
         return false;
       }
 
-      this.peek();
-      this.peekBlankLines();
-      const ptr = this.getPeekIndex();
-      this.peekInlineWS();
+      this.peekBlankBlock();
+      const ptr = this.peekOffset;
+      this.peekBlankInline();
 
-      if (this.getPeekIndex() - ptr === 0) {
+      if (this.currentPeek !== "{") {
+        if (this.peekOffset - ptr === 0) {
+          this.resetPeek();
+          return false;
+        }
+
+        if (!this.isCharPatternContinuation(this.currentPeek)) {
+          this.resetPeek();
+          return false;
+        }
+      }
+
+      if (skip) {
+        this.skipToPeek();
+      } else {
         this.resetPeek();
-        return false;
       }
 
-      if (!this.isCharPatternContinuation(this.currentPeek())) {
-        this.resetPeek();
-        return false;
-      }
-
-      this.resetPeek();
       return true;
     }
 
-    skipToNextEntryStart() {
-      while (this.ch) {
-        if (this.currentIs("\n") && !this.peekCharIs("\n")) {
+    skipToNextEntryStart(junkStart) {
+      let lastNewline = this.string.lastIndexOf(EOL, this.index);
+
+      if (junkStart < lastNewline) {
+        // Last seen newline is _after_ the junk start. It's safe to rewind
+        // without the risk of resuming at the same broken entry.
+        this.index = lastNewline;
+      }
+
+      while (this.currentChar) {
+        // We're only interested in beginnings of line.
+        if (this.currentChar !== EOL) {
           this.next();
+          continue;
+        } // Break if the first char in this line looks like an entry start.
 
-          if (this.ch === undefined || this.isIdentifierStart() || this.currentIs("-") || this.currentIs("#")) {
-            break;
-          }
+
+        const first = this.next();
+
+        if (this.isCharIDStart(first) || first === "-" || first === "#") {
+          break;
         }
-
-        this.next();
       }
     }
 
     takeIDStart() {
-      if (this.isCharIDStart(this.ch)) {
-        const ret = this.ch;
+      if (this.isCharIDStart(this.currentChar)) {
+        const ret = this.currentChar;
         this.next();
         return ret;
       }
@@ -904,18 +840,6 @@
         cc >= 65 && cc <= 90 || // A-Z
         cc >= 48 && cc <= 57 || // 0-9
         cc === 95 || cc === 45; // _-
-      };
-
-      return this.takeChar(closure);
-    }
-
-    takeVariantNameChar() {
-      const closure = ch => {
-        const cc = ch.charCodeAt(0);
-        return cc >= 97 && cc <= 122 || // a-z
-        cc >= 65 && cc <= 90 || // A-Z
-        cc >= 48 && cc <= 57 || // 0-9
-        cc === 95 || cc === 45 || cc === 32; // _-<space>
       };
 
       return this.takeChar(closure);
@@ -956,7 +880,7 @@
         return fn.call(this, ps, ...args);
       }
 
-      const start = ps.getIndex();
+      const start = ps.index;
       const node = fn.call(this, ps, ...args); // Don't re-add the span if the node already has it.  This may happen when
       // one decorated function calls another decorated function.
 
@@ -964,7 +888,7 @@
         return node;
       }
 
-      const end = ps.getIndex();
+      const end = ps.index;
       node.addSpan(start, end);
       return node;
     };
@@ -978,24 +902,29 @@
 
       this.withSpans = withSpans; // Poor man's decorators.
 
-      ["getComment", "getMessage", "getTerm", "getAttribute", "getIdentifier", "getTermIdentifier", "getVariant", "getVariantName", "getNumber", "getValue", "getPattern", "getVariantList", "getTextElement", "getPlaceable", "getExpression", "getSelectorExpression", "getCallArg", "getString", "getLiteral", "getVariantList"].forEach(name => this[name] = withSpan(this[name]));
+      const methodNames = ["getComment", "getMessage", "getTerm", "getAttribute", "getIdentifier", "getTermIdentifier", "getVariant", "getNumber", "getValue", "getPattern", "getVariantList", "getTextElement", "getPlaceable", "getExpression", "getSelectorExpression", "getCallArg", "getString", "getLiteral"];
+
+      for (var _i = 0; _i < methodNames.length; _i++) {
+        const name = methodNames[_i];
+        this[name] = withSpan(this[name]);
+      }
     }
 
     parse(source) {
-      const ps = new FTLParserStream(source);
-      ps.skipBlankLines();
+      const ps = new FluentParserStream(source);
+      ps.skipBlankBlock();
       const entries = [];
       let lastComment = null;
 
-      while (ps.current()) {
+      while (ps.currentChar) {
         const entry = this.getEntryOrJunk(ps);
-        const blankLines = ps.skipBlankLines(); // Regular Comments require special logic. Comments may be attached to
+        const blankLines = ps.skipBlankBlock(); // Regular Comments require special logic. Comments may be attached to
         // Messages or Terms if they are followed immediately by them. However
         // they should parse as standalone when they're followed by Junk.
         // Consequently, we only attach Comments once we know that the Message
         // or the Term parsed successfully.
 
-        if (entry.type === "Comment" && blankLines === 0 && ps.current()) {
+        if (entry.type === "Comment" && blankLines === 0 && ps.currentChar) {
           // Stash the comment and decide what to do with it in the next pass.
           lastComment = entry;
           continue;
@@ -1023,7 +952,7 @@
       const res = new Resource(entries);
 
       if (this.withSpans) {
-        res.addSpan(0, ps.getIndex());
+        res.addSpan(0, ps.index);
       }
 
       return res;
@@ -1040,10 +969,10 @@
 
 
     parseEntry(source) {
-      const ps = new FTLParserStream(source);
-      ps.skipBlankLines();
+      const ps = new FluentParserStream(source);
+      ps.skipBlankBlock();
 
-      while (ps.currentIs("#")) {
+      while (ps.currentChar === "#") {
         const skipped = this.getEntryOrJunk(ps);
 
         if (skipped.type === "Junk") {
@@ -1051,14 +980,14 @@
           return skipped;
         }
 
-        ps.skipBlankLines();
+        ps.skipBlankBlock();
       }
 
       return this.getEntryOrJunk(ps);
     }
 
     getEntryOrJunk(ps) {
-      const entryStartPos = ps.getIndex();
+      const entryStartPos = ps.index;
 
       try {
         const entry = this.getEntry(ps);
@@ -1069,11 +998,17 @@
           throw err;
         }
 
-        const errorIndex = ps.getIndex();
-        ps.skipToNextEntryStart();
-        const nextEntryStart = ps.getIndex(); // Create a Junk instance
+        let errorIndex = ps.index;
+        ps.skipToNextEntryStart(entryStartPos);
+        const nextEntryStart = ps.index;
 
-        const slice = ps.getSlice(entryStartPos, nextEntryStart);
+        if (nextEntryStart < errorIndex) {
+          // The position of the error must be inside of the Junk's span.
+          errorIndex = nextEntryStart;
+        } // Create a Junk instance
+
+
+        const slice = ps.string.substring(entryStartPos, nextEntryStart);
         const junk = new Junk(slice);
 
         if (this.withSpans) {
@@ -1088,11 +1023,11 @@
     }
 
     getEntry(ps) {
-      if (ps.currentIs("#")) {
+      if (ps.currentChar === "#") {
         return this.getComment(ps);
       }
 
-      if (ps.currentIs("-")) {
+      if (ps.currentChar === "-") {
         return this.getTerm(ps);
       }
 
@@ -1113,7 +1048,7 @@
       while (true) {
         let i = -1;
 
-        while (ps.currentIs("#") && i < (level === -1 ? 2 : level)) {
+        while (ps.currentChar === "#" && i < (level === -1 ? 2 : level)) {
           ps.next();
           i++;
         }
@@ -1122,17 +1057,19 @@
           level = i;
         }
 
-        if (!ps.currentIs("\n")) {
+        if (ps.currentChar !== EOL) {
           ps.expectChar(" ");
           let ch;
 
-          while (ch = ps.takeChar(x => x !== "\n")) {
+          while (ch = ps.takeChar(x => x !== EOL)) {
             content += ch;
           }
         }
 
-        if (ps.isPeekNextLineComment(level)) {
-          content += ps.current();
+        if (ps.isNextLineComment(level, {
+          skip: false
+        })) {
+          content += ps.currentChar;
           ps.next();
         } else {
           break;
@@ -1160,17 +1097,18 @@
 
     getMessage(ps) {
       const id = this.getIdentifier(ps);
-      ps.skipInlineWS();
+      ps.skipBlankInline();
       ps.expectChar("=");
 
-      if (ps.isPeekValueStart()) {
-        ps.skipIndent();
+      if (ps.isValueStart({
+        skip: true
+      })) {
         var pattern = this.getPattern(ps);
-      } else {
-        ps.skipInlineWS();
       }
 
-      if (ps.isPeekNextLineAttributeStart()) {
+      if (ps.isNextLineAttributeStart({
+        skip: true
+      })) {
         var attrs = this.getAttributes(ps);
       }
 
@@ -1183,17 +1121,20 @@
 
     getTerm(ps) {
       const id = this.getTermIdentifier(ps);
-      ps.skipInlineWS();
+      ps.skipBlankInline();
       ps.expectChar("=");
 
-      if (ps.isPeekValueStart()) {
-        ps.skipIndent();
+      if (ps.isValueStart({
+        skip: true
+      })) {
         var value = this.getValue(ps);
       } else {
         throw new ParseError("E0006", id.name);
       }
 
-      if (ps.isPeekNextLineAttributeStart()) {
+      if (ps.isNextLineAttributeStart({
+        skip: true
+      })) {
         var attrs = this.getAttributes(ps);
       }
 
@@ -1203,11 +1144,12 @@
     getAttribute(ps) {
       ps.expectChar(".");
       const key = this.getIdentifier(ps);
-      ps.skipInlineWS();
+      ps.skipBlankInline();
       ps.expectChar("=");
 
-      if (ps.isPeekValueStart()) {
-        ps.skipIndent();
+      if (ps.isValueStart({
+        skip: true
+      })) {
         const value = this.getPattern(ps);
         return new Attribute(key, value);
       }
@@ -1219,11 +1161,12 @@
       const attrs = [];
 
       while (true) {
-        ps.expectIndent();
         const attr = this.getAttribute(ps);
         attrs.push(attr);
 
-        if (!ps.isPeekNextLineAttributeStart()) {
+        if (!ps.isNextLineAttributeStart({
+          skip: true
+        })) {
           break;
         }
       }
@@ -1249,9 +1192,9 @@
     }
 
     getVariantKey(ps) {
-      const ch = ps.current();
+      const ch = ps.currentChar;
 
-      if (!ch) {
+      if (ch === EOF) {
         throw new ParseError("E0013");
       }
 
@@ -1262,13 +1205,13 @@
         return this.getNumber(ps);
       }
 
-      return this.getVariantName(ps);
+      return this.getIdentifier(ps);
     }
 
     getVariant(ps, hasDefault) {
       let defaultIndex = false;
 
-      if (ps.currentIs("*")) {
+      if (ps.currentChar === "*") {
         if (hasDefault) {
           throw new ParseError("E0015");
         }
@@ -1279,11 +1222,14 @@
       }
 
       ps.expectChar("[");
+      ps.skipBlank();
       const key = this.getVariantKey(ps);
+      ps.skipBlank();
       ps.expectChar("]");
 
-      if (ps.isPeekValueStart()) {
-        ps.skipIndent();
+      if (ps.isValueStart({
+        skip: true
+      })) {
         const value = this.getValue(ps);
         return new Variant(key, value, defaultIndex);
       }
@@ -1296,7 +1242,6 @@
       let hasDefault = false;
 
       while (true) {
-        ps.expectIndent();
         const variant = this.getVariant(ps, hasDefault);
 
         if (variant.default) {
@@ -1305,9 +1250,13 @@
 
         variants.push(variant);
 
-        if (!ps.isPeekNextLineVariantStart()) {
+        if (!ps.isNextLineVariantStart({
+          skip: false
+        })) {
           break;
         }
+
+        ps.skipBlank();
       }
 
       if (!hasDefault) {
@@ -1315,22 +1264,6 @@
       }
 
       return variants;
-    }
-
-    getVariantName(ps) {
-      let name = ps.takeIDStart();
-
-      while (true) {
-        const ch = ps.takeVariantNameChar();
-
-        if (ch) {
-          name += ch;
-        } else {
-          break;
-        }
-      }
-
-      return new VariantName(name.replace(trailingWSRe, ""));
     }
 
     getDigits(ps) {
@@ -1351,14 +1284,14 @@
     getNumber(ps) {
       let num = "";
 
-      if (ps.currentIs("-")) {
+      if (ps.currentChar === "-") {
         num += "-";
         ps.next();
       }
 
       num = `${num}${this.getDigits(ps)}`;
 
-      if (ps.currentIs(".")) {
+      if (ps.currentChar === ".") {
         num += ".";
         ps.next();
         num = `${num}${this.getDigits(ps)}`;
@@ -1368,13 +1301,17 @@
     }
 
     getValue(ps) {
-      if (ps.currentIs("{")) {
+      if (ps.currentChar === "{") {
         ps.peek();
-        ps.peekInlineWS();
+        ps.peekBlankInline();
 
-        if (ps.isPeekNextLineVariantStart()) {
+        if (ps.isNextLineVariantStart({
+          skip: false
+        })) {
           return this.getVariantList(ps);
         }
+
+        ps.resetPeek();
       }
 
       return this.getPattern(ps);
@@ -1382,22 +1319,26 @@
 
     getVariantList(ps) {
       ps.expectChar("{");
-      ps.skipInlineWS();
+      ps.skipBlankInline();
+      ps.expectLineEnd();
+      ps.skipBlank();
       const variants = this.getVariants(ps);
-      ps.expectIndent();
+      ps.expectLineEnd();
+      ps.skipBlank();
       ps.expectChar("}");
       return new VariantList(variants);
     }
 
     getPattern(ps) {
       const elements = [];
-      ps.skipInlineWS();
       let ch;
 
-      while (ch = ps.current()) {
+      while (ch = ps.currentChar) {
         // The end condition for getPattern's while loop is a newline
         // which is not followed by a valid pattern continuation.
-        if (ch === "\n" && !ps.isPeekNextLineValue()) {
+        if (ch === EOL && !ps.isNextLineValue({
+          skip: false
+        })) {
           break;
         }
 
@@ -1415,6 +1356,10 @@
 
       if (lastElement.type === "TextElement") {
         lastElement.value = lastElement.value.replace(trailingWSRe, "");
+
+        if (lastElement.value === "") {
+          elements.pop();
+        }
       }
 
       return new Pattern(elements);
@@ -1424,30 +1369,32 @@
       let buffer = "";
       let ch;
 
-      while (ch = ps.current()) {
+      while (ch = ps.currentChar) {
         if (ch === "{") {
           return new TextElement(buffer);
         }
 
-        if (ch === "\n") {
-          if (!ps.isPeekNextLineValue()) {
+        if (ch === EOL) {
+          if (!ps.isNextLineValue({
+            skip: false
+          })) {
             return new TextElement(buffer);
           }
 
           ps.next();
-          ps.skipInlineWS(); // Add the new line to the buffer
-
-          buffer += ch;
+          ps.skipBlankInline();
+          buffer += EOL;
           continue;
         }
 
         if (ch === "\\") {
           ps.next();
           buffer += this.getEscapeSequence(ps);
-        } else {
-          buffer += ch;
-          ps.next();
+          continue;
         }
+
+        buffer += ch;
+        ps.next();
       }
 
       return new TextElement(buffer);
@@ -1455,7 +1402,7 @@
 
     getEscapeSequence(ps) {
       let specials = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ["{", "\\"];
-      const next = ps.current();
+      const next = ps.currentChar;
 
       if (specials.includes(next)) {
         ps.next();
@@ -1469,8 +1416,8 @@
         for (let i = 0; i < 4; i++) {
           const ch = ps.takeHexDigit();
 
-          if (ch === undefined) {
-            throw new ParseError("E0026", sequence + ps.current());
+          if (!ch) {
+            throw new ParseError("E0026", sequence + ps.currentChar);
           }
 
           sequence += ch;
@@ -1490,14 +1437,12 @@
     }
 
     getExpression(ps) {
-      ps.skipInlineWS();
+      ps.skipBlank();
       const selector = this.getSelectorExpression(ps);
-      ps.skipInlineWS();
+      ps.skipBlank();
 
-      if (ps.currentIs("-")) {
-        ps.peek();
-
-        if (!ps.currentPeekIs(">")) {
+      if (ps.currentChar === "-") {
+        if (ps.peek() !== ">") {
           ps.resetPeek();
           return selector;
         }
@@ -1516,8 +1461,11 @@
 
         ps.next();
         ps.next();
-        ps.skipInlineWS();
+        ps.skipBlankInline();
+        ps.expectLineEnd();
+        ps.skipBlank();
         const variants = this.getVariants(ps);
+        ps.skipBlank();
 
         if (variants.length === 0) {
           throw new ParseError("E0011");
@@ -1528,17 +1476,17 @@
           throw new ParseError("E0023");
         }
 
-        ps.expectIndent();
         return new SelectExpression(selector, variants);
       } else if (selector.type === "AttributeExpression" && selector.ref.type === "TermReference") {
         throw new ParseError("E0019");
       }
 
+      ps.skipBlank();
       return selector;
     }
 
     getSelectorExpression(ps) {
-      if (ps.currentIs("{")) {
+      if (ps.currentChar === "{") {
         return this.getPlaceable(ps);
       }
 
@@ -1548,7 +1496,7 @@
         return literal;
       }
 
-      const ch = ps.current();
+      const ch = ps.currentChar;
 
       if (ch === ".") {
         ps.next();
@@ -1591,9 +1539,9 @@
 
     getCallArg(ps) {
       const exp = this.getSelectorExpression(ps);
-      ps.skipInlineWS();
+      ps.skipBlank();
 
-      if (ps.current() !== ":") {
+      if (ps.currentChar !== ":") {
         return exp;
       }
 
@@ -1602,7 +1550,7 @@
       }
 
       ps.next();
-      ps.skipInlineWS();
+      ps.skipBlank();
       const val = this.getArgVal(ps);
       return new NamedArgument(exp.id, val);
     }
@@ -1611,11 +1559,10 @@
       const positional = [];
       const named = [];
       const argumentNames = new Set();
-      ps.skipInlineWS();
-      ps.skipIndent();
+      ps.skipBlank();
 
       while (true) {
-        if (ps.current() === ")") {
+        if (ps.currentChar === ")") {
           break;
         }
 
@@ -1634,13 +1581,11 @@
           positional.push(arg);
         }
 
-        ps.skipInlineWS();
-        ps.skipIndent();
+        ps.skipBlank();
 
-        if (ps.current() === ",") {
+        if (ps.currentChar === ",") {
           ps.next();
-          ps.skipInlineWS();
-          ps.skipIndent();
+          ps.skipBlank();
           continue;
         } else {
           break;
@@ -1656,7 +1601,7 @@
     getArgVal(ps) {
       if (ps.isNumberStart()) {
         return this.getNumber(ps);
-      } else if (ps.currentIs('"')) {
+      } else if (ps.currentChar === '"') {
         return this.getString(ps);
       }
 
@@ -1665,10 +1610,10 @@
 
     getString(ps) {
       let val = "";
-      ps.expectChar('"');
+      ps.expectChar("\"");
       let ch;
 
-      while (ch = ps.takeChar(x => x !== '"' && x !== "\n")) {
+      while (ch = ps.takeChar(x => x !== '"' && x !== EOL)) {
         if (ch === "\\") {
           val += this.getEscapeSequence(ps, ["{", "\\", "\""]);
         } else {
@@ -1676,18 +1621,18 @@
         }
       }
 
-      if (ps.currentIs("\n")) {
+      if (ps.currentChar === EOL) {
         throw new ParseError("E0020");
       }
 
-      ps.next();
+      ps.expectChar("\"");
       return new StringLiteral(val);
     }
 
     getLiteral(ps) {
-      const ch = ps.current();
+      const ch = ps.currentChar;
 
-      if (!ch) {
+      if (ch === EOF) {
         throw new ParseError("E0014");
       }
 
@@ -2090,14 +2035,10 @@
     return identifier.name;
   }
 
-  function serializeVariantName(VariantName) {
-    return VariantName.name;
-  }
-
   function serializeVariantKey(key) {
     switch (key.type) {
-      case "VariantName":
-        return serializeVariantName(key);
+      case "Identifier":
+        return serializeIdentifier(key);
 
       case "NumberLiteral":
         return serializeNumberLiteral(key);
@@ -2167,7 +2108,6 @@
   exports.Variant = Variant;
   exports.NamedArgument = NamedArgument;
   exports.Identifier = Identifier;
-  exports.VariantName = VariantName;
   exports.BaseComment = BaseComment;
   exports.Comment = Comment;
   exports.GroupComment = GroupComment;
