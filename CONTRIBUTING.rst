@@ -284,7 +284,12 @@ It's important to remember to update both packages:
 How to build the fresh version of fluent-syntax.js
 --------------------------------------------------
 
+You need to bump the version number in the package.json file and then run
+the following commands:
+
 .. code-block:: shell
 
-    npm install fluent-syntax
-    cp node_modules/fluent-syntax/compat.js pontoon/base/static/js/lib/fluent-syntax.js
+    $ make build
+    $ make shell
+    app@...:/app$ npm install fluent-syntax
+    app@...:/app$ cp node_modules/fluent-syntax/compat.js pontoon/base/static/js/lib/fluent-syntax.js
