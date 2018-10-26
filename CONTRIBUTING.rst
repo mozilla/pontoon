@@ -284,8 +284,8 @@ It's important to remember to update both packages:
 How to build the fresh version of fluent-syntax.js
 --------------------------------------------------
 
-You need to bump the versions in the package.json and package-lock.json files
-and then run the following commands:
+You need to bump the version number in the package.json file and then run
+the following commands:
 
 .. code-block:: shell
 
