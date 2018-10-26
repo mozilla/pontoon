@@ -115,6 +115,7 @@ def test_view_google_translate(client, google_translate_locale, google_translate
             'q': ['text'],
             'source': ['en'],
             'target': ['bg'],
+            'format': ['text'],
             'key': ['2fffff'],
         }
     )
