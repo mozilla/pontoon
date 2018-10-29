@@ -80,10 +80,10 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
             <ul>
                 { locale.cldrPlurals.map((item, i) => {
                     return <li key={ item } className={ i === pluralForm ? 'active' : '' }>
-                        <a onClick={ () => this.selectPluralForm(i) }>
+                        <button onClick={ () => this.selectPluralForm(i) }>
                             <span>{ CLDR_PLURALS[item] }</span>
                             <sup>{ examples[item] }</sup>
-                        </a>
+                        </button>
                     </li>;
                 }) }
             </ul>
