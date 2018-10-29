@@ -46,11 +46,18 @@ class FormatTestsMixin(object):
             cldr_plurals='1,5',
         )
 
-    def parse_string(self, string, source_string=None, locale=None):
-        path = create_tempfile(string)
+    def parse_string(
+        self,
+        string,
+        source_string=None,
+        locale=None,
+        path=None,
+        source_path=None,
+    ):
+        path = path or create_tempfile(string)
         locale = locale or self.locale
         if source_string is not None:
-            source_path = create_tempfile(source_string)
+            source_path = source_path or create_tempfile(source_string)
             return path, self.parse(path, source_path=source_path, locale=locale)
         else:
             return path, self.parse(path, locale=locale)
@@ -89,11 +96,22 @@ class FormatTestsMixin(object):
                 source_string_plural=''
             )
 
-    def run_parse_multiple_comments(self, input_string, translation_index):
+    def run_parse_multiple_comments(
+        self,
+        input_string,
+        translation_index,
+        only_take_last=False,
+    ):
         path, resource = self.parse_string(input_string)
+
+        comments = ['First comment', 'Second comment']
+        # Some formats only use the last comment preceeding the translation
+        if only_take_last:
+            comments.pop(0)
+
         assert_attributes_equal(
             resource.translations[translation_index],
-            comments=['First comment', 'Second comment'],
+            comments=comments,
             source=[],
             key=self.key('Multiple Comments'),
             strings={None: 'Translated Multiple Comments'},
@@ -344,7 +362,7 @@ class FormatTestsMixin(object):
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
 
-        missing_translation = match_attr(resource.translations, key='MissingString')
+        missing_translation = match_attr(resource.translations, key=self.key('Missing String'))
         missing_translation.strings = {None: 'Translated Missing String'}
         resource.save(self.locale)
 

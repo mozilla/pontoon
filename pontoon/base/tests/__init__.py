@@ -284,6 +284,22 @@ def create_tempfile(contents):
     return path
 
 
+def create_named_tempfile(contents, prefix=None, suffix=None):
+    """
+    Create a temporary file with the given contents, prefix and suffix,
+    and return the path to the created file.
+    """
+    with tempfile.NamedTemporaryFile(
+        prefix=prefix,
+        suffix=suffix,
+        delete=False,
+    ) as temp:
+        temp.write(contents)
+        temp.flush()
+
+    return temp.name
+
+
 def assert_json(response, expected_obj):
     """
     Checks if response contains a expected json object.
