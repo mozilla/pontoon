@@ -244,7 +244,7 @@ def update_plurals(apps, schema_editor):
                 # Keys of all variants of plural elements are either
                 # CLDR plurals or numbers
                 if all(
-                    isinstance(variant.key, ast.NumberExpression) or
+                    isinstance(variant.key, ast.NumberLiteral) or
                     (
                         isinstance(variant.key, ast.VariantName) and
                         variant.key.name in CLDR_PLURALS
@@ -259,7 +259,7 @@ def update_plurals(apps, schema_editor):
                     ]
 
                     for cldr_plural in locale_cldr_plurals:
-                        numeric_variants = [x.key.value for x in element.expression.variants if isinstance(x.key, ast.NumberExpression)]
+                        numeric_variants = [x.key.value for x in element.expression.variants if isinstance(x.key, ast.NumberLiteral)]
                         # Skip 'zero' if 0 exists
                         if cldr_plural == 'zero' and '0' in numeric_variants:
                             continue
