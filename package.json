@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "Mozilla in-place localization tool.",
   "private": true,
+  "browserslist": [
+    "Firefox >= 52",
+    "FirefoxAndroid >= 52",
+    "Chrome >= 55",
+    "ChromeAndroid >= 55",
+    "Edge >= 15",
+    "Safari >= 10.1",
+    "iOS >= 10.3"
+  ],
   "dependencies": {
     "fluent-syntax": "^0.9.0"
   },

@@ -92,7 +92,7 @@ describe('<PluralSelector>', () => {
             PluralSelectorBase
         );
 
-        wrapper.find('a').first().simulate('click');
+        wrapper.find('button').first().simulate('click');
 
         const expectedAction = actions.select(0);
         expect(dispatchSpy.calledWith(expectedAction)).toBeTruthy();
