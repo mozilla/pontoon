@@ -3870,10 +3870,10 @@ flow-bin@0.84.0:
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.84.0.tgz#4cb2364c750fb37a7840524fa62456b53f64cdcb"
   integrity sha512-ocji8eEYp+YfICsm+F6cIHUcD7v5sb0/ADEXm6gyUKdjQzmSckMrPUdZtyfP973t3YGHKliUMxMvIBHyR5LbXQ==
 
-fluent-react@0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.1.tgz#37f698be27e7160fb64e2dc93428b676cf5fcb55"
-  integrity sha512-u/Fgvo/wjcx4vx/rzfGz7jJAWytdf2KtEt4UOzbq3I+FCzZvdqMM9cw5QjqjbroxC4rVkiwxlXwnKbWDvf+e2Q==
+fluent-react@0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.2.tgz#481455116e04c6f1c7b1f5b99600515333853897"
+  integrity sha512-skrSplr8nQRk68ZKQ36YAQ1RkMLxCIfXdp5KCpj+KKbXpDY19U+vKKrgrz87kG/UEDXKC8ucorK/D3QslDbXOg==
   dependencies:
     cached-iterable "^0.2.1"
     fluent-sequence "^0.2.0"
