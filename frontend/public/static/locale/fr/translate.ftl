@@ -1,10 +1,16 @@
-# Editor
+### Localization for the Translate page of Pontoon
+
+
+## Editor
+## Allows contributors to modify or propose a translation
 
 entitydetails-editor-button-copy = Copier
 entitydetails-editor-button-clear = Effacer
 entitydetails-editor-button-send = Envoyer
 
-# Plural Selector
+
+## Plural Selector
+## Allows to switch from one plural form to another
 
 plural-selector-form-zero = zero
 plural-selector-form-one = un
@@ -13,7 +19,9 @@ plural-selector-form-few = un peu
 plural-selector-form-many = beaucoup
 plural-selector-form-other = autre
 
-# Metadata
+
+## Metadata
+## Shows metadata about an entity (original string)
 
 entitydetails-metadata-plural = Pluriel
 entitydetails-metadata-singular = Singulier
@@ -23,11 +31,15 @@ entitydetails-metadata-placeholder = Exemples bouche-trous
 entitydetails-metadata-resource = Ressource
 entitydetails-metadata-project = Projet
 
-# History
+
+## History
+## Shows a list of translations for a specific entity
 
 history-history-no-translations = Pas de traduction disponible.
 
-# History Translation
+
+## History Translation
+## Shows a specific translation for an entity, and actions around it
 
 history-translation-button-approve =
     .title = Approuver
