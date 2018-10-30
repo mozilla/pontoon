@@ -9,17 +9,6 @@ entitydetails-editor-button-clear = Clear
 entitydetails-editor-button-send = Suggest
 
 
-## Plural Selector
-## Allows to switch from one plural form to another
-
-plural-selector-form-zero = zero
-plural-selector-form-one = one
-plural-selector-form-two = two
-plural-selector-form-few = few
-plural-selector-form-many = many
-plural-selector-form-other = other
-
-
 ## Metadata
 ## Shows metadata about an entity (original string)
 

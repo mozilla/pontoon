@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Localized } from 'fluent-react';
 
 import './PluralSelector.css';
 
@@ -82,9 +81,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
                 { locale.cldrPlurals.map((item, i) => {
                     return <li key={ item } className={ i === pluralForm ? 'active' : '' }>
                         <button onClick={ () => this.selectPluralForm(i) }>
-                            <Localized id={ `plural-selector-form-${CLDR_PLURALS[item]}` }>
-                                <span>{ CLDR_PLURALS[item] }</span>
-                            </Localized>
+                            <span>{ CLDR_PLURALS[item] }</span>
                             <sup>{ examples[item] }</sup>
                         </button>
                     </li>;

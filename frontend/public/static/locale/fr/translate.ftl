@@ -9,17 +9,6 @@ entitydetails-editor-button-clear = Effacer
 entitydetails-editor-button-send = Envoyer
 
 
-## Plural Selector
-## Allows to switch from one plural form to another
-
-plural-selector-form-zero = zero
-plural-selector-form-one = un
-plural-selector-form-two = deux
-plural-selector-form-few = un peu
-plural-selector-form-many = beaucoup
-plural-selector-form-other = autre
-
-
 ## Metadata
 ## Shows metadata about an entity (original string)
 

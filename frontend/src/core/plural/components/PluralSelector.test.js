@@ -38,12 +38,8 @@ describe('<PluralSelectorBase>', () => {
     it('shows the correct list of plural choices for locale with 2 forms', () => {
         const wrapper = createShallowPluralSelector(0, { cldrPlurals: [1, 5] });
 
-        const liElts = wrapper.find('li');
-        expect(liElts).toHaveLength(2);
-        expect(liElts.at(0).find('#plural-selector-form-one')).toHaveLength(1);
-        expect(liElts.at(0).text()).toContain('1');
-        expect(liElts.at(1).find('#plural-selector-form-other')).toHaveLength(1);
-        expect(liElts.at(1).text()).toContain('2');
+        expect(wrapper.find('li')).toHaveLength(2);
+        expect(wrapper.find('ul').text()).toEqual('one1other2');
     });
 
     it('shows the correct list of plural choices for locale with all 6 forms', () => {
@@ -57,27 +53,13 @@ describe('<PluralSelectorBase>', () => {
         );
 
         expect(wrapper.find('li')).toHaveLength(6);
-
-        const pluralsAndExamples = [
-            ['zero', '0'],
-            ['one', '1'],
-            ['two', '2'],
-            ['few', '3'],
-            ['many', '11'],
-            ['other', '100'],
-        ];
-        wrapper.find('li').forEach((node, index) => {
-            const [ form, example ] = pluralsAndExamples[index];
-            expect(node.find(`#plural-selector-form-${form}`)).toHaveLength(1);
-            expect(node.text()).toContain(example);
-        });
+        expect(wrapper.find('ul').text()).toEqual('zero0one1two2few3many11other100');
     });
 
     it('marks the right choice as active', () => {
         const wrapper = createShallowPluralSelector(1, { cldrPlurals: [1, 5] });
 
-        expect(wrapper.find('li.active').find(`#plural-selector-form-other`)).toHaveLength(1);
-        expect(wrapper.find('li.active').text()).toContain('2');
+        expect(wrapper.find('li.active').text()).toEqual('other2');
     });
 });
 
