@@ -29,16 +29,21 @@ install:
   - npm install .
   - pushd frontend && npm install && popd
 script:
+  # Lint code
   - pylama pontoon
   - pylama tests
+  - ./node_modules/.bin/eslint .
+
+  # Run tests
+  - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
+  - npm test
+  - pushd frontend && npm test && popd
+  - codecov
+
+  # Build and collect static assets
   - ./node_modules/.bin/webpack
   - pushd frontend && npm run build && popd
   - python manage.py collectstatic -v0 --noinput
-  - npm test
-  - pushd frontend && npm test && popd
-  - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
-  - ./node_modules/.bin/eslint .
-  - codecov
 
   # Heroku deployment file is valid
   - cat app.json | python -m json.tool > /dev/null
