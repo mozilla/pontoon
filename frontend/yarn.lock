@@ -3870,13 +3870,6 @@ flow-bin@0.84.0:
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.84.0.tgz#4cb2364c750fb37a7840524fa62456b53f64cdcb"
   integrity sha512-ocji8eEYp+YfICsm+F6cIHUcD7v5sb0/ADEXm6gyUKdjQzmSckMrPUdZtyfP973t3YGHKliUMxMvIBHyR5LbXQ==
 
-fluent-intl-polyfill@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/fluent-intl-polyfill/-/fluent-intl-polyfill-0.1.0.tgz#1133944ab2477883473995596883e0d39cf885cf"
-  integrity sha1-ETOUSrJHeINHOZVZaIPg05z4hc8=
-  dependencies:
-    intl-pluralrules projectfluent/IntlPluralRules#module
-
 fluent-react@0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.1.tgz#37f698be27e7160fb64e2dc93428b676cf5fcb55"
@@ -4739,9 +4732,12 @@ internal-ip@^3.0.1:
     default-gateway "^2.6.0"
     ipaddr.js "^1.5.2"
 
-"intl-pluralrules@github:projectfluent/IntlPluralRules#module":
-  version "0.1.0"
-  resolved "https://codeload.github.com/projectfluent/IntlPluralRules/tar.gz/94cb0fa1c23ad943bc5aafef43cea132fa51d68b"
+intl-pluralrules@0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/intl-pluralrules/-/intl-pluralrules-0.2.1.tgz#ebb5395ae18e4e60912ece3e04b692ac1ea85708"
+  integrity sha512-sBJhZSblYSrzdhdmij0QHp6zyZWpAGbY9qIdytYeLjrhPluWdu7bDD68qXH2Agj0ZGytuCv4LuD1pPW4jlQQGQ==
+  dependencies:
+    make-plural "^4.1.1"
 
 invariant@^2.2.1, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
@@ -6025,6 +6021,13 @@ make-dir@^1.0.0:
   integrity sha512-2w31R7SJtieJJnQtGc7RVL2StM2vGYVfqUOvUDxH6bC6aJTxPxTF0GnIgCyu7tjockiUWAYQRbxa7vKn34s5sQ==
   dependencies:
     pify "^3.0.0"
+
+make-plural@^4.1.1:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/make-plural/-/make-plural-4.3.0.tgz#f23de08efdb0cac2e0c9ba9f315b0dff6b4c2735"
+  integrity sha512-xTYd4JVHpSCW+aqDof6w/MebaMVNTVYBZhbB/vi513xXdiPT92JMVCo0Jq8W2UZnzYRFeVbQiQ+I25l13JuKvA==
+  optionalDependencies:
+    minimist "^1.2.0"
 
 makeerror@1.0.x:
   version "1.0.11"
