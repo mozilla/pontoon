@@ -43,3 +43,5 @@ services:
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
+    ports:
+      - "5432:5432"

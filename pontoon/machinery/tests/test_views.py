@@ -229,7 +229,7 @@ def test_view_caighdean_bad(client, entity_a):
 
 
 @pytest.mark.django_db
-def test_view_tm_best_quality_entry(
+def test_view_translation_memory_best_quality_entry(
     client,
     locale_a,
     resource_a,
@@ -272,15 +272,15 @@ def test_view_tm_best_quality_entry(
         json.loads(response.content)
         == [{
             "count": 1,
-            "source": "aaa",
-            "quality": 100.0,
-            "target": "ddd",
+            "source": u"aaa",
+            "quality": u"100",
+            "target": u"ddd",
         }]
     )
 
 
 @pytest.mark.django_db
-def test_view_tm_translation_counts(
+def test_view_translation_memory_translation_counts(
     client,
     locale_a,
     resource_a,
@@ -331,7 +331,7 @@ def test_view_tm_translation_counts(
         result
         == [{
             u'count': 3,
-            u'quality': 75.0,
+            u'quality': u'75',
             u'target': u'ccc'
         }]
     )

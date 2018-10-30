@@ -61,6 +61,8 @@ django_guardian==1.4.9 \
 django-partial-index==0.5.2 \
     --hash=sha256:1eae3c5274b7729e92b33bf06abe95b55288c2718904384907e18f88c3d82155 \
     --hash=sha256:8a805b52971a58cb78c925dbb976fecf59c662a1c767846061444a2587247804
+django-cookies-samesite==0.1.2 \
+    --hash=sha256:8ffb0d4703e2cac6a4bff7c0bfb80d4153995497676556442f01804fc9918ec5
 django-session-csrf==0.7.1 \
     --hash=sha256:e17177e6e2e6518ec7ce6693ad10a5c747f8571d09f4cfa9082599334421605d \
     --hash=sha256:ff8c10e30d312c77fc6a6db7710e22b9383e28c03b7fe958876ca96f39aa6cf2
@@ -90,6 +92,8 @@ psycopg2==2.7.3.2 \
     --hash=sha256:7a9c6c62e6e05df5406e9b5235c31c376a22620ef26715a663cee57083b3c2ea
 py-dateutil==2.2 \
     --hash=sha256:7efa2ca17159c590408cb624de9aa10d360f14097cb70dd7559e632f2cf4b048
+python-levenshtein==0.12.0 \
+    --hash=sha256:033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1
 pytz==2017.2 \
     --hash=sha256:c883c2d6670042c7bc1688645cac73dd2b03193d1f7a6847b6154e96890be06d \
     --hash=sha256:03c9962afe00e503e2d96abab4e8998a0f84d4230fa57afe1e0528473698cdd9 \
@@ -108,9 +112,6 @@ six==1.11.0 \
 whitenoise==1.0.6 \
     --hash=sha256:3e4d80199960959b828951aa24cbfaa36cebed149dcd728c11e855798b15f870 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
-
-django-cookies-samesite==0.1.2 \
-    --hash=sha256:8ffb0d4703e2cac6a4bff7c0bfb80d4153995497676556442f01804fc9918ec5
 
 # Dependencies loaded from outside pypi.
 https://github.com/mathjazz/silme/archive/v0.9.4.zip#egg=silme==0.9.4 \

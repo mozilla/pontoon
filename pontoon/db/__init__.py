@@ -1,7 +1,16 @@
+from django.db.models import Func
 from django.db.models.lookups import (
     Field,
     IContains,
 )
+
+
+class LevenshteinDistance(Func):
+    """
+    Calculate the Levenshtein distance between an expression and a string.
+    """
+    function = "levenshtein"
+    arity = 5
 
 
 class IContainsCollate(IContains):
