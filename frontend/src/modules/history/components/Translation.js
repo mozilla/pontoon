@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import TimeAgo from 'react-timeago';
-import { Localized } from 'fluent-react/compat';
+import { Localized } from 'fluent-react';
 
 import './Translation.css';
 

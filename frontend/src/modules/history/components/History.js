@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Localized } from 'fluent-react/compat';
+import { Localized } from 'fluent-react';
 
 import './History.css';
 

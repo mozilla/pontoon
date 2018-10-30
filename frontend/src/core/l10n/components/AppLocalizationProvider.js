@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { LocalizationProvider } from 'fluent-react/compat';
+import { LocalizationProvider } from 'fluent-react';
 import 'fluent-intl-polyfill';
 
 import * as l10n from 'core/l10n';

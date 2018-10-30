@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
-import { Localized } from 'fluent-react/compat';
+import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 

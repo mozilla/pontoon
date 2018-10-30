@@ -1,6 +1,6 @@
 /* @flow */
 
-import { FluentBundle } from 'fluent/compat';
+import { FluentBundle } from 'fluent';
 
 import api from 'core/api';
 
