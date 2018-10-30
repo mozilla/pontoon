@@ -1,5 +1,7 @@
 /* @flow */
 
+import { LOCATION_CHANGE } from 'connected-react-router';
+
 import { RESET, SELECT } from './actions';
 import type { ResetAction, SelectAction } from './actions';
 
@@ -29,7 +31,7 @@ export default function reducer(
                 pluralForm: action.pluralForm,
             };
         case RESET:
-        case '@@router/LOCATION_CHANGE':
+        case LOCATION_CHANGE:
             return {
                 ...initial,
             };
