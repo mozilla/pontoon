@@ -4,7 +4,6 @@ https://hg.mozilla.org/l10n/compare-locales/
 """
 from __future__ import absolute_import
 
-import copy
 import logging
 
 from collections import OrderedDict
@@ -42,7 +41,8 @@ class CompareLocalesResource(ParsedResource):
         self.path = path
         self.entities = OrderedDict()  # Preserve entity order.
         self.source_resource = source_resource
-        self.parser = copy.deepcopy(parser.getParser(self.path))
+        self.parser = parser.getParser(self.path)
+        self.parsed_objects = []
 
         # A monolingual l10n file might not contain all entities, but the code
         # expects ParsedResource to contain representations of all of them. So
@@ -67,8 +67,10 @@ class CompareLocalesResource(ParsedResource):
             else:
                 raise ParseError(err)
 
-        entities = list(self.parser.parse())
-        for order, entity in enumerate(entities):
+        self.parsed_objects = list(self.parser.walk())
+        order = 0
+
+        for entity in self.parsed_objects:
             if isinstance(entity, parser.Entity):
                 self.entities[entity.key] = CompareLocalesEntity(
                     entity.key,
@@ -76,6 +78,7 @@ class CompareLocalesResource(ParsedResource):
                     entity.pre_comment,
                     order,
                 )
+                order += 1
 
     @property
     def translations(self):
@@ -88,12 +91,6 @@ class CompareLocalesResource(ParsedResource):
                 .format(self.path)
             )
 
-        # Parse source resource
-        reference = list(self.source_resource.parser.walk())
-
-        # Parse l10n resource
-        old_l10n = list(self.parser.walk())
-
         # A dictionary of new translations
         new_l10n = {
             key: entity.strings[None] if entity.strings else None
@@ -103,7 +100,12 @@ class CompareLocalesResource(ParsedResource):
         with open(self.path, 'w') as output_file:
             log.debug('Saving file: %s', self.path)
             output_file.write(
-                serializer.serialize(self.path, reference, old_l10n, new_l10n)
+                serializer.serialize(
+                    self.path,
+                    self.source_resource.parsed_objects,
+                    self.parsed_objects,
+                    new_l10n,
+                )
             )
 
 
