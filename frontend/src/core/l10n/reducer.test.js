@@ -22,13 +22,13 @@ describe('reducer', () => {
             fetching: true,
             bundles: [ { messages: ['hello'] } ],
         }
-        const bundle = { messages: ['world'] };
+        const bundles = [ { messages: ['world'] } ];
 
-        const res = reducer(initial, { type: RECEIVE, bundle });
+        const res = reducer(initial, { type: RECEIVE, bundles });
 
         const expected = {
             fetching: false,
-            bundles: [ { messages: ['hello'] }, bundle ],
+            bundles,
         };
         expect(res).toEqual(expected);
     });
