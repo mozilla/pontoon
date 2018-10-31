@@ -27,33 +27,45 @@ export function request(): RequestAction {
  */
 export type ReceiveAction = {
     +type: typeof RECEIVE,
-    +locale: string,
-    +bundle: FluentBundle,
+    +bundles: Array<FluentBundle>,
 };
-export function receive(locale: string, bundle: FluentBundle): ReceiveAction {
+export function receive(bundles: Array<FluentBundle>): ReceiveAction {
     return {
         type: RECEIVE,
-        locale,
-        bundle,
+        bundles,
     };
 }
 
 
 /**
- * Get the UI translations for a locale.
+ * Get the UI translations for a list of locales.
  *
- * This fetches the translations for the UI in a given locale, bundles those
- * and store them to be used in showing a localized interface.
+ * This fetches the translations for the UI for each given locale, bundles
+ * those and store them to be used in showing a localized interface.
  */
-export function get(locale: string): Function {
+export function get(locales: Array<string>): Function {
     return async dispatch => {
         dispatch(request());
 
-        const content = await api.l10n.get(locale);
-        const bundle = new FluentBundle(locale);
-        bundle.addMessages(content);
+        // If 'en-US' is not in the list of locales, add it as the last one.
+        // This is because it is recommended to always have a loaded bundle
+        // for fluent-react, otherwise some translations will not work as
+        // expected, even with their in-code defaults.
+        if (!locales.includes('en-US')) {
+            locales.push('en-US');
+        }
 
-        dispatch(receive(locale, bundle))
+        Promise.all(locales.map(locale => {
+            return api.l10n.get(locale)
+            .then(content => {
+                const bundle = new FluentBundle(locale);
+                bundle.addMessages(content);
+                return bundle;
+            });
+        }))
+        .then(bundles => {
+            dispatch(receive(bundles));
+        });
     }
 }
 

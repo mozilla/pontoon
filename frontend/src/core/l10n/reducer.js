@@ -36,7 +36,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: false,
-                bundles: [ ...state.bundles, action.bundle ],
+                bundles: action.bundles,
             };
         default:
             return state;

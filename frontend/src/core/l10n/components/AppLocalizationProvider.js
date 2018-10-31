@@ -31,14 +31,14 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
     componentDidMount() {
         // $FLOW_IGNORE: we count on the 'lang' attribute being set.
         const locale = document.documentElement.lang;
-        this.props.dispatch(l10n.actions.get(locale));
+        this.props.dispatch(l10n.actions.get([locale]));
     }
 
     render() {
         const { children, l10n } = this.props;
 
         if (!l10n.bundles.length) {
-            // Show a loader.
+            // TODO: Show a loader.
             return <div>LOADING</div>;
         }
 
