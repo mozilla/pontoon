@@ -14,11 +14,16 @@ entitydetails-editor-button-send = Suggest
 
 entitydetails-metadata-plural = Plural
 entitydetails-metadata-singular = Singular
-entitydetails-metadata-comment = Comment
-entitydetails-metadata-context = Context
-entitydetails-metadata-placeholder = Placeholder Examples
-entitydetails-metadata-resource = Resource
-entitydetails-metadata-project = Project
+entitydetails-metadata-comment =
+    .title = Comment
+entitydetails-metadata-context =
+    .title = Context
+entitydetails-metadata-placeholder =
+    .title = Placeholder Examples
+entitydetails-metadata-resource =
+    .title = Resource
+entitydetails-metadata-project =
+    .title = Project
 
 
 ## History

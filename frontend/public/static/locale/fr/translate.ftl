@@ -14,11 +14,16 @@ entitydetails-editor-button-send = Envoyer
 
 entitydetails-metadata-plural = Pluriel
 entitydetails-metadata-singular = Singulier
-entitydetails-metadata-comment = Commentaire
-entitydetails-metadata-context = Contexte
-entitydetails-metadata-placeholder = Exemples bouche-trous
-entitydetails-metadata-resource = Ressource
-entitydetails-metadata-project = Projet
+entitydetails-metadata-comment =
+    .title = Commentaire
+entitydetails-metadata-context =
+    .title = Contexte
+entitydetails-metadata-placeholder =
+    .title = Exemples bouche-trous
+entitydetails-metadata-resource =
+    .title = Ressource
+entitydetails-metadata-project =
+    .title = Projet
 
 
 ## History

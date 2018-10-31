@@ -55,17 +55,16 @@ export function get(locales: Array<string>): Function {
             locales.push('en-US');
         }
 
-        Promise.all(locales.map(locale => {
+        const bundles = await Promise.all(locales.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
                 const bundle = new FluentBundle(locale);
                 bundle.addMessages(content);
                 return bundle;
             });
-        }))
-        .then(bundles => {
-            dispatch(receive(bundles));
-        });
+        }));
+
+        dispatch(receive(bundles));
     }
 }
 

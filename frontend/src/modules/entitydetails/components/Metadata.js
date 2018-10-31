@@ -15,7 +15,7 @@ import type { DbEntity } from 'modules/entitieslist';
 
 type PropertyProps = {|
     +title: string,
-    +l10nId: string,
+    +className: string,
     +children: React.Node,
 |};
 
@@ -27,12 +27,9 @@ type PropertyProps = {|
  */
 class Property extends React.Component<PropertyProps> {
     render(): React.Node {
-        const { children, l10nId, title } = this.props;
-        const className = title.trim().toLowerCase().replace(/ /g, '-');
+        const { children, className, title } = this.props;
         return <p className={ className }>
-            <Localized id={ l10nId }>
-                <span className="title">{ title }</span>
-            </Localized>
+            <span className="title">{ title }</span>
             <span className="content">{ children }</span>
         </p>;
     }
@@ -98,11 +95,13 @@ export default class Metadata extends React.Component<Props> {
             comment = parts.join('\n');
         }
 
-        return <Property title='Comment' l10nId='entitydetails-metadata-comment'>
-            <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                { comment }
-            </Linkify>
-        </Property>;
+        return <Localized id='entitydetails-metadata-comment' attrs={ { title: true } }>
+            <Property title='Comment' className='comment'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment }
+                </Linkify>
+            </Property>
+        </Localized>;
     }
 
     renderContext(entity: DbEntity): React.Node {
@@ -110,9 +109,11 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property title='Context' l10nId='entitydetails-metadata-context'>
-            { entity.key }
-        </Property>;
+        return <Localized id='entitydetails-metadata-context' attrs={ { title: true } }>
+            <Property title='Context' className='context'>
+                { entity.key }
+            </Property>;
+        </Localized>
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
@@ -137,14 +138,13 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property
-            title='Placeholder Examples'
-            l10nId='entitydetails-metadata-placeholder'
-        >
-            <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                { examples.join(', ') }
-            </Linkify>
-        </Property>;
+        return <Localized id='entitydetails-metadata-placeholder' attrs={ { title: true } }>
+            <Property title='Placeholder Examples' className='placeholder'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { examples.join(', ') }
+                </Linkify>
+            </Property>
+        </Localized>;
     }
 
     renderSources(entity: DbEntity): React.Node {
@@ -172,16 +172,20 @@ export default class Metadata extends React.Component<Props> {
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
-            <Property title='Resource' l10nId='entitydetails-metadata-resource'>
-                <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
-                    { entity.path }
-                </Link>
-            </Property>
-            <Property title='Project' l10nId='entitydetails-metadata-project'>
-                <a href={ `/${locale.code}/${entity.project.slug}/` }>
-                    { entity.project.name }
-                </a>
-            </Property>
+            <Localized id='entitydetails-metadata-resource' attrs={ { title: true } }>
+                <Property title='Resource' className='resource'>
+                    <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
+                        { entity.path }
+                    </Link>
+                </Property>
+            </Localized>
+            <Localized id='entitydetails-metadata-project' attrs={ { title: true } }>
+                <Property title='Project' className='project'>
+                    <a href={ `/${locale.code}/${entity.project.slug}/` }>
+                        { entity.project.name }
+                    </a>
+                </Property>
+            </Localized>
         </div>;
     }
 }
