@@ -16,9 +16,10 @@ help:
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell"
-	@echo "  test             Runs the Python test suite"
-	@echo "  test-frontend    Runs the new frontend's test suite"
+	@echo "  test             Runs the entire test suite (back and front)"
+	@echo "  test-frontend    Runs the new frontend's test suite (Translate.Next)"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
+	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
@@ -52,6 +53,9 @@ test-frontend:
 
 flow:
 	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
+
+lint-frontend:
+	${DC} run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
 
 shell:
 	${DC} run --rm webapp /bin/bash
