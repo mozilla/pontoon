@@ -385,8 +385,14 @@ class VCSProject(object):
         directory names get higher scores, as do directories with
         formats that only used for source strings.
         """
-        # If source repository explicitly marked
         source_repository = self.db_project.source_repository
+
+        # If project configuration provided, files could be stored in multiple
+        # directories, so we just use the source repository checkout path
+        if self.configuration:
+            return source_repository.checkout_path
+
+        # If source repository explicitly marked
         if source_repository.source_repo:
             return source_repository.checkout_path
 
@@ -414,20 +420,38 @@ class VCSProject(object):
 
     def relative_resource_paths(self):
         """
-        List of paths relative to the locale directories returned by
-        self.source_directory_path for each resource in this project.
+        List of all source resource paths, relative to source_directory_path.
+        """
+        if self.configuration:
+            paths = self.resource_paths_with_pc()
+        else:
+            paths = self.resource_paths_without_pc()
+
+        for path in paths:
+            path = source_to_locale_path(path)
+            yield os.path.relpath(path, self.source_directory_path)
+
+    def resource_paths_with_pc(self):
+        """
+        List of absolute paths for all supported source resources
+        as specified through project configuration.
         """
         path = self.source_directory_path
-        for absolute_path in self.resources_for_path(path):
-            absolute_path = source_to_locale_path(absolute_path)
+        project_files = ProjectFiles(None, [self.configuration.parsed_configuration])
 
-            yield os.path.relpath(absolute_path, path)
+        for root, dirnames, filenames in scandir.walk(path):
+            for filename in filenames:
+                absolute_path = os.path.join(root, filename)
+                if project_files.match(absolute_path):
+                    yield absolute_path
 
-    def resources_for_path(self, path):
+    def resource_paths_without_pc(self):
         """
-        List of paths for all supported resources found within the given
-        path.
+        List of absolute paths for all supported source resources
+        found within the given path.
         """
+        path = self.source_directory_path
+
         for root, dirnames, filenames in scandir.walk(path):
             if is_hidden(root):
                 continue
