@@ -30,7 +30,7 @@ class CompareLocalesEntity(VCSTranslation):
         self.source_string = string
         self.source_string_plural = ''
         self.strings = {None: self.source_string} if self.source_string is not None else {}
-        self.comments = [c.strip() for c in comment.raw_val.split('\n')] if comment else []
+        self.comments = comment.raw_val.split('\n') if comment else []
         self.order = order
         self.fuzzy = False
         self.source = []
