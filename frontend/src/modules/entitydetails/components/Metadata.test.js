@@ -56,7 +56,7 @@ describe('<Metadata>', () => {
         const wrapper = createShallowMetadata(ENTITY, 2);
 
         const text = wrapper.text();
-        expect(text).toContain('Plural');
+        expect(wrapper.find('#entitydetails-metadata-plural')).toHaveLength(1);
         expect(text).toContain(ENTITY.original_plural);
     });
 
@@ -64,7 +64,7 @@ describe('<Metadata>', () => {
         const wrapper = createShallowMetadata(ENTITY, 0);
 
         const text = wrapper.text();
-        expect(text).toContain('Singular');
+        expect(wrapper.find('#entitydetails-metadata-singular')).toHaveLength(1);
         expect(text).toContain(ENTITY.original);
     });
 
