@@ -5,6 +5,9 @@
   "dependencies": {
     "connected-react-router": "4.5.0",
     "flow-bin": "0.84.0",
+    "fluent": "0.9.1",
+    "fluent-react": "0.8.2",
+    "intl-pluralrules": "0.2.1",
     "linkify-it": "2.0.3",
     "react": "16.6.0",
     "react-dom": "16.6.0",

@@ -17,10 +17,10 @@ RUN pip install -U 'pip>=8' && \
     pip install --no-cache-dir --require-hashes -r requirements-dev.txt && \
     pip install --no-cache-dir --require-hashes -r requirements-test.txt
 
-# Install nodejs and npm from Nodesource's 8.x branch, as well as yarn
+# Install nodejs and npm from Nodesource's 10.x branch, as well as yarn
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb https://deb.nodesource.com/node_9.x jessie main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src https://deb.nodesource.com/node_9.x jessie main' >> /etc/apt/sources.list.d/nodesource.list
+    echo 'deb https://deb.nodesource.com/node_10.x jessie main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb-src https://deb.nodesource.com/node_10.x jessie main' >> /etc/apt/sources.list.d/nodesource.list
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
