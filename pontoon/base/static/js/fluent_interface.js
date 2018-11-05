@@ -84,11 +84,16 @@ var Pontoon = (function (my) {
    *   - CLDR plurals of the locale
    */
   function getPluralForms(element) {
-    var customPluralForms = element.expression.variants.map(function (variant) {
-      return variant.key.value;  // can be undefined, so we filter it out below
+    var customPluralForms = element.expression.variants.filter(function(item) {
+      if (item.key.type === 'NumberLiteral') {
+        return true;
+      }
+      return false;
+    }).map(function (item) {
+      return item.key.value;
     });
 
-    return customPluralForms.filter(Boolean).concat(Pontoon.locale.cldr_plurals);
+    return customPluralForms.concat(Pontoon.locale.cldr_plurals);
   }
 
   /*
