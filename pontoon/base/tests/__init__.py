@@ -284,14 +284,15 @@ def create_tempfile(contents):
     return path
 
 
-def create_named_tempfile(contents, prefix=None, suffix=None):
+def create_named_tempfile(contents, prefix=None, suffix=None, directory=None):
     """
-    Create a temporary file with the given contents, prefix and suffix,
-    and return the path to the created file.
+    Create a temporary file with the given contents, prefix, suffix and
+    directory, and return the path to the created file.
     """
     with tempfile.NamedTemporaryFile(
         prefix=prefix,
         suffix=suffix,
+        dir=directory,
         delete=False,
     ) as temp:
         temp.write(contents)

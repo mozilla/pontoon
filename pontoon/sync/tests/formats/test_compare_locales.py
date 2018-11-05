@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 
 from textwrap import dedent
@@ -20,8 +21,16 @@ from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 class CompareLocalesResourceTests(TestCase):
+    def setUp(self):
+        super(CompareLocalesResourceTests, self).setUp()
+        self.tempdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        super(CompareLocalesResourceTests, self).tearDown()
+        shutil.rmtree(self.tempdir)
+
     def get_nonexistant_file_path(self):
-        return os.path.join(tempfile.mkdtemp(), 'strings.xml')
+        return os.path.join(self.tempdir, 'strings.xml')
 
     def get_nonexistant_file_resource(self, path):
         contents = dedent("""<?xml version="1.0" encoding="utf-8"?>
@@ -34,6 +43,7 @@ class CompareLocalesResourceTests(TestCase):
             contents,
             prefix='strings',
             suffix='.xml',
+            directory=self.tempdir,
         )
         source_resource = compare_locales.CompareLocalesResource(source_path)
 
@@ -99,6 +109,14 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
     supports_source = False
     supports_source_string = False
 
+    def setUp(self):
+        super(AndroidXMLTests, self).setUp()
+        self.tempdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        super(AndroidXMLTests, self).tearDown()
+        shutil.rmtree(self.tempdir)
+
     def parse_string(
         self,
         string,
@@ -112,12 +130,14 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
             string,
             prefix='strings',
             suffix='.xml',
+            directory=self.tempdir,
         )
         if source_string is not None:
             source_path = create_named_tempfile(
                 source_string,
                 prefix='strings',
                 suffix='.xml',
+                directory=self.tempdir,
             )
         return super(AndroidXMLTests, self).parse_string(
             string,
@@ -156,7 +176,7 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         self.run_save_basic(input_string, expected_string, source_string=input_string)
 
     def test_save_remove(self):
-        """Deleting strings removes them completely from the DTD file."""
+        """Deleting strings removes them completely from the XML file."""
         input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Comment -->
@@ -217,6 +237,7 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         source_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Source String</string>
+    <!-- Missing String Comment -->
     <string name="Missing String">Missing Source String</string>
 </resources>
         """)
@@ -228,6 +249,7 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Translated String</string>
+    <!-- Missing String Comment -->
     <string name="Missing String">Translated Missing String</string>
 </resources>
         """)

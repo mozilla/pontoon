@@ -56,7 +56,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         self.run_parse_multiple_comments(
             BASE_JSON_FILE,
             1,
-            only_take_last=True,
+            comments=['Second comment'],
         )
 
     def test_parse_no_comments_no_sources(self):

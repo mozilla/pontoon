@@ -100,14 +100,12 @@ class FormatTestsMixin(object):
         self,
         input_string,
         translation_index,
-        only_take_last=False,
+        comments=None,
     ):
         path, resource = self.parse_string(input_string)
 
-        comments = ['First comment', 'Second comment']
-        # Some formats only use the last comment preceeding the translation
-        if only_take_last:
-            comments.pop(0)
+        if comments is None:
+            comments = ['First comment', 'Second comment']
 
         assert_attributes_equal(
             resource.translations[translation_index],
