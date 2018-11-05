@@ -78,6 +78,22 @@ var Pontoon = (function (my) {
   }
 
   /*
+   * Return a default list of plural forms to be displayed for untranslated strings.
+   * The list if a union of:
+   *   - any custom (numeric) plural forms specified in the original string (bug 1443551)
+   *   - CLDR plurals of the locale
+   */
+  function getPluralForms(element) {
+    var customPluralForms = element.expression.variants.filter(function(item) {
+      return item.key.type === 'NumberLiteral';
+    }).map(function (item) {
+      return item.key.value;
+    });
+
+    return customPluralForms.concat(Pontoon.locale.cldr_plurals);
+  }
+
+  /*
    * Return true when all elements are supported in rich FTL editor.
    *
    * Elements are supported if they are:
@@ -298,7 +314,7 @@ var Pontoon = (function (my) {
         content += '<li data-expression="' + expression + '"><ul>';
 
         if (isPluralElement(element) && !isTranslated) {
-          Pontoon.locale.cldr_plurals.forEach(function (pluralName) {
+          getPluralForms(element).forEach(function (pluralName) {
             content += renderEditorElement(pluralName, [], true, isTranslated, isCustomAttribute);
           });
         }
