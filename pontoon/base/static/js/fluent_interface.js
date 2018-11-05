@@ -85,10 +85,7 @@ var Pontoon = (function (my) {
    */
   function getPluralForms(element) {
     var customPluralForms = element.expression.variants.filter(function(item) {
-      if (item.key.type === 'NumberLiteral') {
-        return true;
-      }
-      return false;
+      return item.key.type === 'NumberLiteral';
     }).map(function (item) {
       return item.key.value;
     });
