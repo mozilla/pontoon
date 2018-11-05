@@ -170,9 +170,11 @@ The source language for our application is `en-US` (that is what you should use 
 
 Those files use the FTL format. In its simplest form, a string in such a file (called a `message` in Fluent vocabulary) looks like this: `message-id = Content`. There are, however, lots of tools that you can use in that syntax, and you are encouraged to read [Fluent's Syntax Guide](https://projectfluent.org/fluent/guide/) to familiarize yourself with them. Make sure you also take a look at the [Good Practices for Developers](https://github.com/projectfluent/fluent/wiki/Good-Practices-for-Developers#prefer-separate-messages-over-variants-for-ui-logic) guide.
 
-### Social contract
+### Semantic identifiers
 
 Fluent uses the concept of a *social contract* between developer and localizers. This contract is established by the selection of a unique identifier, called `l10n-id`, which carries a promise of being used in a particular place to carry a particular meaning.
+
+You should consider the `l10n-id` as a variable name. If the meaning of the content changes, then you should also change the ID. This will notify localizers that the content is different from before and that a new translation is needed. However, if you make minor changes (fix a typo, make a change that keeps the same meaning) you should instead keep the same ID.
 
 An important part of the contract is that the developer commits to treat the localization output as opaque. That means that no concatenations, replacements or splitting should happen after the translation is completed to generate the desired output.
 
