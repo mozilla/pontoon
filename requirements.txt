@@ -320,8 +320,8 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-https://github.com/Pike/compare-locales/archive/420b581858265b7082775555df65f4b7cce8cfc0.zip#egg=compare-locales==4.0.3 \
-    --hash=sha256:523d6560eee52552ccc7168964119cb6bb29867b8e5c42c87c8fd30588feaec6
+https://github.com/Pike/compare-locales/archive/e1239b8e2a99203ba3a700eac73955bfbb65fc48.zip#egg=compare-locales==4.0.3 \
+    --hash=sha256:4b508eedd131c0380bc02e57e0c6459f52ab3bdbb3d0ba244884b1b2cbb0bd48
 
 # Required by compare-locales
 fluent==0.9.0 \
