@@ -440,6 +440,9 @@ class VCSProject(object):
         project_files = ProjectFiles(None, [self.configuration.parsed_configuration])
 
         for root, dirnames, filenames in scandir.walk(path):
+            if is_hidden(root):
+                continue
+
             for filename in filenames:
                 absolute_path = os.path.join(root, filename)
                 if project_files.match(absolute_path):
