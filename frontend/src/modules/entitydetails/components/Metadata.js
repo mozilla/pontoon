@@ -112,8 +112,8 @@ export default class Metadata extends React.Component<Props> {
         return <Localized id='entitydetails-metadata-context' attrs={ { title: true } }>
             <Property title='Context' className='context'>
                 { entity.key }
-            </Property>;
-        </Localized>
+            </Property>
+        </Localized>;
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
