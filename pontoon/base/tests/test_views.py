@@ -1,7 +1,6 @@
 from django.test import RequestFactory
 
 from pontoon.base.models import Project
-
 from pontoon.base.tests import TestCase
 from pontoon.test.factories import (
     ResourceFactory,

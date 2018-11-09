@@ -7,6 +7,7 @@ import api from 'core/api';
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
 export const REQUEST: 'l10n/REQUEST' = 'l10n/REQUEST';
+export const SELECT_LOCALES: 'l10n/SELECT_LOCALES' = 'l10n/SELECT_LOCALES';
 
 
 /**
@@ -69,8 +70,33 @@ export function get(locales: Array<string>): Function {
 }
 
 
+export type SelectLocaleAction = {|
+    +type: typeof SELECT_LOCALES,
+    +locales: Array<string>,
+|};
+
+
+export function selectLocales(locales: Array<string>): SelectLocaleAction {
+    return {
+        type: SELECT_LOCALES,
+        locales,
+    };
+}
+
+
+export function getPreferredLocales(): Function {
+    return async dispatch => {
+        dispatch(request());
+        const locales = await api.l10n.getPreferredLocales();
+        dispatch(selectLocales(locales));
+    };
+}
+
+
 export default {
     get,
+    getPreferredLocales,
     receive,
     request,
+    selectLocales,
 };

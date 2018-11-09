@@ -806,9 +806,42 @@ def user_data(request):
         'id': user.id,
         'email': user.email,
         'display_name': user.display_name,
-        'manager_for_locales': list(user.managed_locales.values_list('code', flat=True)),
-        'translator_for_locales': list(user.translated_locales.values_list('code', flat=True)),
+        'manager_for_locales': list(
+            user.managed_locales.values_list('code', flat=True)
+        ),
+        'translator_for_locales': list(
+            user.translated_locales.values_list('code', flat=True)
+        ),
         'translator_for_projects': user.translated_projects,
+    })
+
+
+def _get_user_preferred_locale(request):
+    user = request.user
+    if user.is_authenticated and user.profile.custom_homepage:
+        return user.profile.custom_homepage
+
+    locale = utils.get_project_locale_from_request(request, Locale.objects)
+    if locale not in ('en', None):
+        return locale
+
+    return 'en-US'
+
+
+@utils.require_AJAX
+def user_preferred_locale(request):
+    """Return the locale the current user prefers.
+
+    Used to decide in which language to show the Translate page.
+
+    Note that this function returns a single locale, instead of a list of
+    locales to use as fallbacks. We will likely want to change that in the
+    future, in some specific ways (the fallback chain might be different
+    depending on the content, e.g. UI strings, errors and warnings, etc.).
+
+    """
+    return JsonResponse({
+        'locale': _get_user_preferred_locale(request),
     })
 
 

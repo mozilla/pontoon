@@ -1,5 +1,5 @@
 import reducer from './reducer';
-import { RECEIVE, REQUEST } from './actions';
+import { RECEIVE, REQUEST, SELECT_LOCALES } from './actions';
 
 
 describe('reducer', () => {
@@ -7,6 +7,7 @@ describe('reducer', () => {
         const res = reducer(undefined, {});
         const expected = {
             fetching: false,
+            locales: [],
             bundles: [],
         }
         expect(res).toEqual(expected);
@@ -20,6 +21,7 @@ describe('reducer', () => {
     it('handles the RECEIVE action', () => {
         const initial = {
             fetching: true,
+            locales: [],
             bundles: [ { messages: ['hello'] } ],
         }
         const bundles = [ { messages: ['world'] } ];
@@ -28,7 +30,26 @@ describe('reducer', () => {
 
         const expected = {
             fetching: false,
+            locales: [],
             bundles,
+        };
+        expect(res).toEqual(expected);
+    });
+
+    it('handles the SELECT_LOCALES action', () => {
+        const initial = {
+            fetching: true,
+            locales: [],
+            bundles: [],
+        }
+        const locales = [ 'kg', 'gn' ];
+
+        const res = reducer(initial, { type: SELECT_LOCALES, locales });
+
+        const expected = {
+            fetching: true,
+            locales,
+            bundles: [],
         };
         expect(res).toEqual(expected);
     });

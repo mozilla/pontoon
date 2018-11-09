@@ -82,4 +82,9 @@ urlpatterns = [
         views.user_data,
         name='pontoon.user_data'
     ),
+    url(
+        r'^user-preferred-locale/',
+        views.user_preferred_locale,
+        name='pontoon.user_preferred_locale'
+    ),
 ]

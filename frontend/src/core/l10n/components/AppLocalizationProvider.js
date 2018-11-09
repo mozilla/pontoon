@@ -29,9 +29,13 @@ type InternalProps = {|
  */
 export class AppLocalizationProviderBase extends React.Component<InternalProps> {
     componentDidMount() {
-        // $FLOW_IGNORE: we count on the 'lang' attribute being set.
-        const locale = document.documentElement.lang;
-        this.props.dispatch(l10n.actions.get([locale]));
+        this.props.dispatch(l10n.actions.getPreferredLocales());
+    }
+
+    componentDidUpdate(prevProps: InternalProps) {
+        if (this.props.l10n.locales !== prevProps.l10n.locales) {
+            this.props.dispatch(l10n.actions.get(this.props.l10n.locales));
+        }
     }
 
     render() {
