@@ -10,8 +10,6 @@ from django.template import engines
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.generic import TemplateView
 
-from pontoon.base.models import Locale
-
 from . import URL_BASE
 
 

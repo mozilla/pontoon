@@ -1,6 +1,5 @@
 import React from 'react';
 import sinon from 'sinon';
-import { shallow } from 'enzyme';
 
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
