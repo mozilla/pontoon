@@ -1,18 +1,20 @@
 Pontoon - Mozilla's Localization Platform
 =========================================
 
-Pontoon is a web interface for translating text into other languages. Pontoon
-specializes in translating websites in-place, but can handle any project that
-uses one of the file formats it supports:
+Pontoon is a translation management system used and developed by the Mozilla
+localization community. It can handle any project that uses one of the
+supported file formats:
 
-- Gettext PO
-- XLIFF
-- FTL (L20n)
-- Properties
-- DTD
-- INI
-- INC
+- .dtd
+- .ftl (Fluent)
+- .inc
+- .ini
+- .json (WebExtensions)
 - .lang
+- .po (Gettext)
+- .properties
+- .xliff
+- .xml (Android)
 
 Pontoon can pull strings it needs to translate from an external source, and write
 them back periodically. Typically these external sources are version control
