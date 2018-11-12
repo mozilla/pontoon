@@ -16,8 +16,6 @@ class XLIFFEntity(VCSTranslation):
         self.order = order
         self.unit = unit
         self.strings = {None: self.target_string} if self.target_string else {}
-        self.last_translator = None
-        self.last_update = None
 
     @property
     def key(self):

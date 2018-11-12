@@ -5,6 +5,7 @@ DB_FORMATS = (
     'ini',
     'lang',
     'properties',
+    'xml',
 )
 
 # Warnings and Errors from these libraries will be saved in the DB

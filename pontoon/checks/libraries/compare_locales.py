@@ -4,10 +4,11 @@ from collections import namedtuple
 
 from compare_locales.checks import getChecker
 from compare_locales.keyedtuple import KeyedTuple
+from compare_locales.parser.android import AndroidParser
 from compare_locales.parser.base import Junk
+from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
-from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
 
@@ -125,6 +126,34 @@ def cast_to_compare_locales(resource_ext, entity, string):
         trEntity = list(parser)[0] if list(parser) else None
 
         if not trEntity or isinstance(trEntity, Junk):
+            raise UnsupportedStringError(resource_ext)
+
+        return (
+            refEntity,
+            trEntity,
+        )
+
+    elif resource_ext == '.xml':
+        parser = AndroidParser()
+
+        content = u"""<?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <string name="{key}"><![CDATA[{original}]]></string>
+                <string name="{key}"><![CDATA[{translation}]]></string>
+            </resources>
+        """.format(
+            key=entity.key,
+            original=entity.string,
+            translation=string,
+        )
+
+        parser.readUnicode(content)
+        parsed_objects = list(parser.parse())
+
+        refEntity = parsed_objects[0]
+        trEntity = parsed_objects[1]
+
+        if isinstance(trEntity, Junk):
             raise UnsupportedStringError(resource_ext)
 
         return (

@@ -64,8 +64,6 @@ class JSONEntity(VCSTranslation):
         self.data = data
         self.order = order
         self.strings = {None: self.source_string} if self.source_string else {}
-        self.last_translator = None
-        self.last_update = None
 
     @property
     def source_string(self):
