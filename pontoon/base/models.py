@@ -1869,6 +1869,7 @@ class Resource(models.Model):
         ('properties', 'properties'),
         ('xlf', 'xliff'),
         ('xliff', 'xliff'),
+        ('xml', 'xml'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
@@ -1886,6 +1887,7 @@ class Resource(models.Model):
         'ini',
         'json',
         'properties',
+        'xml',
     )
 
     # Formats that allow empty translations
@@ -1894,6 +1896,7 @@ class Resource(models.Model):
         'inc',
         'ini',
         'properties',
+        'xml',
     )
 
     objects = ResourceQuerySet.as_manager()

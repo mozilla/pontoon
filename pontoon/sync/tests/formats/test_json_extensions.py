@@ -53,17 +53,10 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         self.run_parse_basic(BASE_JSON_FILE, 0)
 
     def test_parse_multiple_comments(self):
-        input_string = BASE_JSON_FILE
-        translation_index = 1
-        path, resource = self.parse_string(input_string)
-        assert_attributes_equal(
-            resource.translations[translation_index],
+        self.run_parse_multiple_comments(
+            BASE_JSON_FILE,
+            1,
             comments=['Second comment'],
-            source=[],
-            key=self.key('Multiple Comments'),
-            strings={None: 'Translated Multiple Comments'},
-            fuzzy=False,
-            order=translation_index,
         )
 
     def test_parse_no_comments_no_sources(self):

@@ -159,7 +159,7 @@ def test_tt_disabled_checks(
         ANY,
         ANY,
         ANY,
-        {'escapes', 'nplurals', 'printf'}
+        {'escapes', 'acronyms', 'printf', 'gconf', 'kdecomments', 'nplurals'},
     )
 
     assert run_checks(

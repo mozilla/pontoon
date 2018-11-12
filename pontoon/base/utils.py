@@ -317,7 +317,11 @@ def _download_file(prefixes, dirnames, relative_path):
                 continue
 
             extension = os.path.splitext(relative_path)[1]
-            with tempfile.NamedTemporaryFile(suffix=extension, delete=False) as temp:
+            with tempfile.NamedTemporaryFile(
+                prefix='strings' if extension == '.xml' else '',
+                suffix=extension,
+                delete=False,
+            ) as temp:
                 for chunk in r.iter_content(chunk_size=1024):
                     if chunk:
                         temp.write(chunk)
@@ -392,7 +396,11 @@ def get_download_content(slug, code, part):
             # If locale file doesn't exist, create it
             if not locale_path:
                 extension = os.path.splitext(resource.path)[1]
-                with tempfile.NamedTemporaryFile(suffix=extension, delete=False) as temp:
+                with tempfile.NamedTemporaryFile(
+                    prefix='strings' if extension == '.xml' else '',
+                    suffix=extension,
+                    delete=False,
+                ) as temp:
                     temp.flush()
                 locale_path = temp.name
 
@@ -471,7 +479,10 @@ def handle_upload_content(slug, code, part, f, user):
 
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
-    with tempfile.NamedTemporaryFile(suffix=extension) as temp:
+    with tempfile.NamedTemporaryFile(
+        prefix='strings' if extension == '.xml' else '',
+        suffix=extension,
+    ) as temp:
         for chunk in f.chunks():
             temp.write(chunk)
         temp.flush()
