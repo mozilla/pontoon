@@ -252,9 +252,14 @@ class VCSProject(object):
 
         for locale in self.locales:
             try:
-                locale_directory_paths[locale.code] = locale_directory_path(
-                    self.checkout_path, locale.code, parent_directories
-                )
+                if self.configuration:
+                    locale_directory_paths[locale.code] = self.configuration.l10n_base
+                else:
+                    locale_directory_paths[locale.code] = locale_directory_path(
+                        self.checkout_path,
+                        locale.code,
+                        parent_directories,
+                    )
                 parent_directory = get_parent_directory(locale_directory_paths[locale.code])
 
             except IOError:
@@ -482,18 +487,30 @@ class VCSConfiguration(object):
         self.configuration_file = vcs_project.db_project.configuration_file
 
     @cached_property
+    def l10n_base(self):
+        """
+        If project configuration provided, files could be stored in multiple
+        directories, so we just use the translation repository checkout path
+        """
+        return self.vcs_project.db_project.translation_repositories()[0].checkout_path
+
+    @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        db_project = self.vcs_project.db_project
-
         path = os.path.join(
-            db_project.source_repository.checkout_path,
+            self.vcs_project.db_project.source_repository.checkout_path,
             self.configuration_file,
         )
 
-        l10n_base = db_project.translation_repositories()[0].checkout_path
+        return TOMLParser().parse(path, env={'l10n_base': self.l10n_base})
 
-        return TOMLParser().parse(path, env={'l10n_base': l10n_base})
+    def l10n_path(self, locale, reference_path):
+        """
+        Return l10n path for the given locale and reference path.
+        """
+        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
+
+        return project_files.match(reference_path)[0]
 
     def locale_resources(self, locale):
         """
@@ -556,7 +573,14 @@ class VCSResource(object):
         for locale in locales:
             locale_directory = self.vcs_project.locale_directory_paths[locale.code]
 
-            resource_path = os.path.join(locale_directory, self.path)
+            if self.vcs_project.configuration:
+                resource_path = self.vcs_project.configuration.l10n_path(
+                    locale,
+                    source_resource_path,
+                )
+            else:
+                resource_path = os.path.join(locale_directory, self.path)
+
             log.debug('Parsing resource file: %s', resource_path)
 
             try:
