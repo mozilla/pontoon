@@ -308,10 +308,21 @@ def permission_required(perm, *args, **kwargs):
     return wrapper
 
 
-def _download_file(prefixes, dirnames, relative_path):
+def _download_file(prefixes, dirnames, vcs_project, relative_path):
     for prefix in prefixes:
         for dirname in dirnames:
-            url = os.path.join(prefix.format(locale_code=dirname), relative_path)
+            if vcs_project.configuration:
+                locale = vcs_project.locales[0]
+                absolute_path = os.path.join(vcs_project.source_directory_path, relative_path)
+                absolute_l10n_path = vcs_project.configuration.l10n_path(locale, absolute_path)
+                relative_l10n_path = os.path.relpath(
+                    absolute_l10n_path,
+                    vcs_project.locale_directory_paths[locale.code],
+                )
+                url = prefix.format(locale_code=relative_l10n_path)
+            else:
+                url = os.path.join(prefix.format(locale_code=dirname), relative_path)
+
             r = requests.get(url, stream=True)
             if not r.ok:
                 continue
@@ -326,6 +337,7 @@ def _download_file(prefixes, dirnames, relative_path):
                     if chunk:
                         temp.write(chunk)
                 temp.flush()
+
             return temp.name
 
 
@@ -355,6 +367,7 @@ def get_download_content(slug, code, part):
 
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)
+    vcs_project = VCSProject(project, locales=[locale])
 
     # Download a ZIP of all files if project has > 1 and < 10 resources
     resources = Resource.objects.filter(project=project, translatedresources__locale=locale)
@@ -376,7 +389,7 @@ def get_download_content(slug, code, part):
             .distinct()
         )
         dirnames = set([locale.code, locale.code.replace('-', '_')])
-        locale_path = _download_file(locale_prefixes, dirnames, resource.path)
+        locale_path = _download_file(locale_prefixes, dirnames, vcs_project, resource.path)
         if not locale_path and not resource.is_asymmetric:
             return None, None
 
@@ -389,7 +402,7 @@ def get_download_content(slug, code, part):
                 .distinct()
             )
             dirnames = VCSProject.SOURCE_DIR_NAMES
-            source_path = _download_file(source_prefixes, dirnames, resource.path)
+            source_path = _download_file(source_prefixes, dirnames, vcs_project, resource.path)
             if not source_path:
                 return None, None
 
