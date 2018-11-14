@@ -442,7 +442,7 @@ class VCSProject(object):
         as specified through project configuration.
         """
         path = self.source_directory_path
-        project_files = ProjectFiles(None, [self.configuration.parsed_configuration])
+        project_files = self.configuration.get_or_set_project_files(None)
 
         for root, dirnames, filenames in scandir.walk(path):
             if is_hidden(root):
@@ -485,6 +485,7 @@ class VCSConfiguration(object):
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
+        self.project_files = {}
 
     @cached_property
     def l10n_base(self):
@@ -504,11 +505,21 @@ class VCSConfiguration(object):
 
         return TOMLParser().parse(path, env={'l10n_base': self.l10n_base})
 
+    def get_or_set_project_files(self, locale_code):
+        """
+        Get or set project files for the given locale code. This method allows
+        us to cache them.
+        """
+        return self.project_files.setdefault(
+            locale_code,
+            ProjectFiles(locale_code, [self.parsed_configuration]),
+        )
+
     def l10n_path(self, locale, reference_path):
         """
         Return l10n path for the given locale and reference path.
         """
-        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
+        project_files = self.get_or_set_project_files(locale.code)
 
         return project_files.match(reference_path)[0]
 
@@ -518,7 +529,7 @@ class VCSConfiguration(object):
         given locale.
         """
         resources = []
-        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
+        project_files = self.get_or_set_project_files(locale.code)
 
         for resource in self.vcs_project.db_project.resources.all():
             absolute_resource_path = os.path.join(
