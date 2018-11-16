@@ -1,8 +1,11 @@
 /* @flow */
 
 import { FluentBundle } from 'fluent';
+import { negotiateLanguages } from 'fluent-langneg';
 
 import api from 'core/api';
+
+import { AVAILABLE_LOCALES } from '.';
 
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
@@ -47,15 +50,15 @@ export function get(locales: Array<string>): Function {
     return async dispatch => {
         dispatch(request());
 
-        // If 'en-US' is not in the list of locales, add it as the last one.
-        // This is because it is recommended to always have a loaded bundle
-        // for fluent-react, otherwise some translations will not work as
-        // expected, even with their in-code defaults.
-        if (!locales.includes('en-US')) {
-            locales.push('en-US');
-        }
+        // Setting defaultLocale to `en-US` means that it will always be the
+        // last fallback locale, thus making sure the UI is always working.
+        const languages = negotiateLanguages(
+            locales,
+            AVAILABLE_LOCALES,
+            { defaultLocale: 'en-US' },
+        );
 
-        const bundles = await Promise.all(locales.map(locale => {
+        const bundles = await Promise.all(languages.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
                 const bundle = new FluentBundle(locale);
