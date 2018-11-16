@@ -260,6 +260,11 @@ class VCSConfigurationTests(TestCase):
         self.db_project.configuration_file = 'l10n.toml'
         self.vcs_project = VCSProject(self.db_project)
 
+        self.vcs_project.configuration.configuration_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            self.db_project.configuration_file,
+        )
+
     @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
     def test_locale_resources(self, checkout_path_mock):
         checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH

@@ -3,6 +3,7 @@ Models for working with remote translation data stored in a VCS.
 """
 import logging
 import os
+import pytoml
 import scandir
 import shutil
 
@@ -13,6 +14,7 @@ from compare_locales.paths import (
 from datetime import datetime
 from itertools import chain
 
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.functional import cached_property
 
@@ -485,6 +487,10 @@ class VCSConfiguration(object):
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
+        self.configuration_path = os.path.join(
+            self.vcs_project.db_project.source_repository.checkout_path,
+            self.configuration_file,
+        )
         self.project_files = {}
 
     @cached_property
@@ -498,18 +504,49 @@ class VCSConfiguration(object):
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        path = os.path.join(
-            self.vcs_project.db_project.source_repository.checkout_path,
-            self.configuration_file,
+        return TOMLParser().parse(
+            self.configuration_path,
+            env={'l10n_base': self.l10n_base},
         )
 
-        return TOMLParser().parse(path, env={'l10n_base': self.l10n_base})
+    def add_locale(self, locale_code):
+        """
+        Add new locale to project configuration.
+        """
+        # Update configuration file
+        with open(self.configuration_path, 'r+b') as f:
+            data = pytoml.load(f)
+            data['locales'].append(locale_code)
+            f.seek(0)
+            f.write(pytoml.dumps(data, sort_keys=True))
+            f.truncate()
+
+        # Invalidate cached parsed configuration
+        del self.__dict__['parsed_configuration']
+
+        # Commit configuration file to VCS
+        commit_message = 'Update configuration file'
+        commit_author = User(
+            first_name='Mozilla Pontoon',
+            email='pontoon@mozilla.com',
+        )
+        repo = self.vcs_project.db_project.source_repository
+        repo.commit(commit_message, commit_author, repo.checkout_path)
 
     def get_or_set_project_files(self, locale_code):
         """
-        Get or set project files for the given locale code. This method allows
-        us to cache them.
+        Get or set project files for the given locale code. This approach
+        allows us to cache the files for later use.
+
+        Also, make sure that the requested locale_code is available in the
+        configuration file.
         """
+        if (
+            locale_code is not None and
+            locale_code not in self.parsed_configuration.locales
+        ):
+            self.add_locale(locale_code)
+
         return self.project_files.setdefault(
             locale_code,
             ProjectFiles(locale_code, [self.parsed_configuration]),
