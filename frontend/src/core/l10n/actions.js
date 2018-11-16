@@ -1,8 +1,11 @@
 /* @flow */
 
 import { FluentBundle } from 'fluent';
+import { negotiateLanguages } from 'fluent-langneg';
 
 import api from 'core/api';
+
+import { AVAILABLE_LOCALES } from '.';
 
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
@@ -55,7 +58,13 @@ export function get(locales: Array<string>): Function {
             locales.push('en-US');
         }
 
-        const bundles = await Promise.all(locales.map(locale => {
+        const languages = negotiateLanguages(
+            locales,
+            AVAILABLE_LOCALES,
+            { defaultLocale: 'en-US' },
+        );
+
+        const bundles = await Promise.all(languages.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
                 const bundle = new FluentBundle(locale);

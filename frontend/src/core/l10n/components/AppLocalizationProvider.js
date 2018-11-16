@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { LocalizationProvider } from 'fluent-react';
-import { negotiateLanguages } from 'fluent-langneg';
 import 'intl-pluralrules';
 
 import * as l10n from 'core/l10n';
@@ -30,21 +29,19 @@ type InternalProps = {|
  */
 export class AppLocalizationProviderBase extends React.Component<InternalProps> {
     componentDidMount() {
+        // By default, we want to use the user's browser preferences to choose
+        // which locales to fetch and show.
+        let locales = navigator.languages;
+
+        // However, if the user has chosen a specific locale, we want to
+        // fetch and show that instead.
+        // We use the `<html lang="">` attribute in the index.html file
+        // to pass the user defined locale if there is one.
         if (document.documentElement && document.documentElement.lang) {
-            // The user has chosen a specific locale, show that.
-            this.props.dispatch(
-                l10n.actions.get([ document.documentElement.lang ])
-            );
+            locales = [ document.documentElement.lang ];
         }
-        else {
-            // No specified locale, let's figure out the user's preferences.
-            const languages = negotiateLanguages(
-                navigator.languages,
-                ['fr', 'es', 'en-US'],  // available locales
-                { defaultLocale: 'en-US' },
-            );
-            this.props.dispatch(l10n.actions.get(languages));
-        }
+
+        this.props.dispatch(l10n.actions.get(locales));
     }
 
     render() {
