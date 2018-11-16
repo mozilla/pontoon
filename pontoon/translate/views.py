@@ -6,12 +6,9 @@ from django import http
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
+from django.shortcuts import render
 from django.template import engines
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from django.views.generic import TemplateView
-
-from pontoon.base.models import Locale
-from pontoon.base.utils import get_project_locale_from_request
 
 from . import URL_BASE
 
@@ -82,31 +79,22 @@ def catchall_dev(request, context=None):
 
 # For production, we've added the front-end static files to our list of
 # static folders. We can thus simply return a template view of index.html.
-catchall_prod = ensure_csrf_cookie(
-    TemplateView.as_view(template_name='index.html')
-)
+@ensure_csrf_cookie
+def catchall_prod(request, context=None):
+    return render(request, 'index.html', context=context)
 
 
 def get_preferred_locale(request):
-    """Return the locale the current user prefers.
+    """Return the locale the current user prefers, if any.
 
     Used to decide in which language to show the Translate page.
-
-    Note that this function returns a single locale, instead of a list of
-    locales to use as fallbacks. We will likely want to change that in the
-    future, in some specific ways (the fallback chain might be different
-    depending on the content, e.g. UI strings, errors and warnings, etc.).
 
     """
     user = request.user
     if user.is_authenticated and user.profile.custom_homepage:
         return user.profile.custom_homepage
 
-    locale = get_project_locale_from_request(request, Locale.objects)
-    if locale not in ('en', None):
-        return locale
-
-    return 'en-US'
+    return None
 
 
 def translate(request, locale=None, project=None, resource=None):
@@ -114,7 +102,7 @@ def translate(request, locale=None, project=None, resource=None):
         raise Http404
 
     context = {
-        'lang': get_preferred_locale(request),
+        'locale': get_preferred_locale(request),
     }
 
     if settings.DEBUG:
