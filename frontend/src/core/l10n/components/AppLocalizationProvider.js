@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { LocalizationProvider } from 'fluent-react';
+import { negotiateLanguages } from 'fluent-langneg';
 import 'intl-pluralrules';
 
 import * as l10n from 'core/l10n';
@@ -29,9 +30,21 @@ type InternalProps = {|
  */
 export class AppLocalizationProviderBase extends React.Component<InternalProps> {
     componentDidMount() {
-        // $FLOW_IGNORE: we count on the 'lang' attribute being set.
-        const locale = document.documentElement.lang;
-        this.props.dispatch(l10n.actions.get([locale]));
+        if (document.documentElement && document.documentElement.lang) {
+            // The user has chosen a specific locale, show that.
+            this.props.dispatch(
+                l10n.actions.get([ document.documentElement.lang ])
+            );
+        }
+        else {
+            // No specified locale, let's figure out the user's preferences.
+            const languages = negotiateLanguages(
+                navigator.languages,
+                ['fr', 'es', 'en-US'],  // available locales
+                { defaultLocale: 'en-US' },
+            );
+            this.props.dispatch(l10n.actions.get(languages));
+        }
     }
 
     render() {
