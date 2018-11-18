@@ -342,9 +342,9 @@ def test_dtd_entity_with_quotes():
     quality_check_args = mock_quality_check_args(
         resource_path='strings.dtd',
         key='test',
-        string='<a href="http://mozilla.org">Mozilla</a>',
+        string='<a href="https://mozilla.org">Mozilla</a>',
         comment='Some comment',
-        translation='<a href="http://mozilla.org">Mozilla "2018"</a>',
+        translation='<a href="https://mozilla.org">Mozilla "2018"</a>',
     )
     assert run_checks(**quality_check_args) == {}
 
