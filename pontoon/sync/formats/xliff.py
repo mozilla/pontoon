@@ -102,7 +102,7 @@ class XLIFFResource(ParsedResource):
         locale_code = locale.code
 
         # TODO: should be made iOS specific
-        # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
+        # Map locale codes for iOS: https://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
         locale_mapping = {
             'bn-IN': 'bn',
             'ga-IE': 'ga',
