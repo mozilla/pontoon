@@ -22,9 +22,9 @@ localization and include all the necessary tags.
 
 Our [installation documentation](https://mozilla-pontoon.readthedocs.io/) is available on readthedocs.
 
-For local development, see [developer setup](http://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html) using `docker`.
+For local development, see [developer setup](https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html) using `docker`.
 
-For production installation, use [deployment documentation](http://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
+For production installation, use [deployment documentation](https://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
 
 For quick and easy deployment on the Heroku platform, click this button:
 
@@ -42,7 +42,7 @@ Pontoon developers hang around in the `#pontoon` channel on [Mozilla's IRC serve
 
 If you want to go further, you can…
 
-* Check out development roadmap on the [wiki](http://wiki.mozilla.org/Pontoon)
+* Check out development roadmap on the [wiki](https://wiki.mozilla.org/Pontoon)
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
 * Check [existing bugs](https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon&resolution=---&list_id=13740920)
 
@@ -54,5 +54,5 @@ If you want to go further, you can…
 ## License
 
 This software is licensed under the
-[New BSD License](http://creativecommons.org/licenses/BSD/). For more
+[New BSD License](https://creativecommons.org/licenses/BSD/). For more
 information, read [LICENSE](https://github.com/mozilla/pontoon/blob/master/LICENSE).
