@@ -4,7 +4,7 @@
  *
  * Copyright 2013 jQuery Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  *
  * Date: Wed Jan 16 08:47:09 2013 -0600
  */
