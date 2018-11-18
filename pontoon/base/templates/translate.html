@@ -17,6 +17,8 @@
 <div id="server"
      class="hidden"
      data-site-url="{{ settings.SITE_URL }}"
+     data-is-google-translate-supported="{{ is_google_translate_supported|to_json() }}"
+     data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported|to_json() }}"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if user.id %}data-id="{{ user.id }}"{% endif %}
      {% if user.username %}data-username="{{ user.username }}"{% endif %}

@@ -32,11 +32,11 @@ export function request(entity: number): RequestAction {
 }
 
 
-export function get(entity: number, locale: string): Function {
+export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
         dispatch(request(entity));
 
-        const content = await api.entity.getHistory(entity, locale);
+        const content = await api.entity.getHistory(entity, locale, pluralForm);
 
         dispatch(receive(entity, content));
     }

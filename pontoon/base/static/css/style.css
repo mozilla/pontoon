@@ -705,19 +705,17 @@ header nav .right {
 
 header nav .right .sign-in-header {
   display: inline-block;
-  vertical-align: bottom;
   font-size: 14px;
-  margin-bottom: 14px;
+  float: left;
 }
 
 header nav .right .sign-in-header .button {
-  border: 1.75px solid #7BC176;
+  border: 1.5px solid #7BC176;
   color: white;
   border-radius: 2px;
   padding: 10px 25px;
   text-align: center;
-  transition-duration: 0.4s;
-  margin-right: 16px;
+  margin: 10px 5px 0 0;
 }
 
 header nav .right .sign-in-header .button:hover {
@@ -1152,8 +1150,9 @@ body > form,
   padding-right: 3px;
 }
 
-#helpers > section.machinery ul li > header .sources li[data-source='Caighdean']:before,
-#helpers > section.machinery ul li > header .sources li[data-source='Machine Translation']:before {
+#helpers > section.machinery ul li > header .sources li[data-source='Google Translate']:only-child:before,
+#helpers > section.machinery ul li > header .sources li[data-source='Microsoft Translator']:only-child:before,
+#helpers > section.machinery ul li > header .sources li[data-source='Caighdean']:only-child:before {
   content: "";
   padding-right: 0;
 }

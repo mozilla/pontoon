@@ -164,7 +164,7 @@ Pontoon is designed to run with the following add-ons enabled:
 - Error Tracking: Raygun.io
 - Email: Sendgrid
 - Scheduled Jobs: Heroku Scheduler
-- Cache: Memcached Cloud
+- Cache: Memcachier
 - RabbitMQ: CloudAMQP
 
 It's possible to run with the free tiers of all of these add-ons, but it is
@@ -172,7 +172,7 @@ recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
 
 Cache Add-ons
 ~~~~~~~~~~~~~
-Pontoon uses `django-pylibmc`_, which expects the following environment
+Pontoon uses `django-bmemcached`_, which expects the following environment
 variables from the cache add-on:
 
 ``MEMCACHE_SERVERS``
@@ -184,8 +184,8 @@ variables from the cache add-on:
 
 .. note::
 
-   By default, the environment variables added by Memcached Cloud are prefixed
-   with ``MEMCACHEDCLOUD`` instead of ``MEMCACHE``. You can "attach" the
+   By default, the environment variables added by Memcachier are prefixed
+   with ``MEMCACHIER`` instead of ``MEMCACHE``. You can "attach" the
    configuration variables with the correct prefix using the ``addons:attach``
    command:
 
@@ -194,10 +194,10 @@ variables from the cache add-on:
       heroku addons:attach resource_name --as MEMCACHE
 
    Replace ``resource_name`` with the name of the resource provided by the cache
-   addon you wish to use, such as ``memcachedcloud:30``. Use the
+   addon you wish to use, such as ``memcachier:100``. Use the
    ``heroku addons`` command to see a list of resource names that are available.
 
-.. _django-pylibmc: https://github.com/django-pylibmc/django-pylibmc/
+.. _django-bmemcached:: https://github.com/jaysonsantos/python-binary-memcached
 
 RabbitMQ Add-ons
 ~~~~~~~~~~~~~~~~

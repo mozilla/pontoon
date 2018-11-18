@@ -10,13 +10,14 @@ export function suggest(
     translation: string,
     locale: string,
     original: string,
+    pluralForm: number,
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
             entity,
             translation,
             locale,
-            '0',  // plural_form
+            pluralForm,
             original,
         );
 
@@ -30,6 +31,7 @@ export function suggest(
             dispatch(
                 entitiesActions.updateEntityTranslation(
                     entity,
+                    pluralForm,
                     content.translation
                 )
             );

@@ -615,15 +615,26 @@ class LocaleQuerySet(models.QuerySet):
 class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
 
-    # Codes related to Microsoft products.
+    google_translate_code = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="""
+        Google Translate maintains its own list of
+        <a href="https://translate.google.com/intl/en/about/languages/">
+        supported locales</a>. Choose a matching locale from the list or leave blank to disable
+        support for Google Cloud Translation machine translation service.
+        """
+    )
+
+    # Codes used by optional Microsoft services
     ms_translator_code = models.CharField(
         max_length=20,
         blank=True,
         help_text="""
         Microsoft Translator maintains its own list of
         <a href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/languages">
-        supported locales</a>. Choose a locale from that list that's is the closest match or leave
-        it blank to disable support for Microsoft Translator.
+        supported locales</a>. Choose a matching locale from the list or leave blank to disable
+        support for Microsoft Translator machine translation service.
         """
     )
     ms_terminology_code = models.CharField(
@@ -631,7 +642,7 @@ class Locale(AggregatedStats):
         blank=True,
         help_text="""
         Microsoft Terminology uses language codes that include both the language and
-        the country/region. Chose a matching locale from the list or leave blank to disable support
+        the country/region. Choose a matching locale from the list or leave blank to disable support
         for Microsoft terminology:
 
         af-za, am-et, ar-dz, ar-eg, ar-sa, as-in, az-latn-az, be-by, bg-bg, bn-bd, bn-in,
@@ -789,6 +800,7 @@ class Locale(AggregatedStats):
             'cldr_plurals': self.cldr_plurals_list(),
             'direction': self.direction,
             'script': self.script,
+            'google_translate_code': self.google_translate_code,
             'ms_translator_code': self.ms_translator_code,
             'ms_terminology_code': self.ms_terminology_code,
             'transvision': json.dumps(self.transvision),
@@ -1149,6 +1161,16 @@ class Project(AggregatedStats):
     can_be_requested = models.BooleanField(default=True, help_text="""
         Allow localizers to request the project for their team.
     """)
+
+    configuration_file = models.CharField(
+        null=True,
+        blank=True,
+        max_length=2000,
+        help_text="""
+        A path to the optional project configuration file, relative to the
+        source string repository.
+        """
+    )
 
     disabled = models.BooleanField(default=False, help_text="""
         Hide project from the UI and only keep it accessible from the admin.
@@ -1847,6 +1869,7 @@ class Resource(models.Model):
         ('properties', 'properties'),
         ('xlf', 'xliff'),
         ('xliff', 'xliff'),
+        ('xml', 'xml'),
     )
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
@@ -1864,6 +1887,7 @@ class Resource(models.Model):
         'ini',
         'json',
         'properties',
+        'xml',
     )
 
     # Formats that allow empty translations
@@ -1872,6 +1896,7 @@ class Resource(models.Model):
         'inc',
         'ini',
         'properties',
+        'xml',
     )
 
     objects = ResourceQuerySet.as_manager()
@@ -2379,7 +2404,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             obsolete=False
         )
 
-        if project.slug != 'all-projects':
+        if project.slug == 'all-projects':
+            entities = entities.filter(resource__project__system_project=False)
+        else:
             entities = entities.filter(resource__project=project)
 
         # Filter by path
@@ -2926,7 +2953,11 @@ class TranslatedResourceQuerySet(models.QuerySet):
             resource__project__disabled=False,
         )
 
-        if project.slug != 'all-projects':
+        if project.slug == 'all-projects':
+            translated_resources = translated_resources.filter(
+                resource__project__system_project=False,
+            )
+        else:
             translated_resources = translated_resources.filter(
                 resource__project=project,
             )

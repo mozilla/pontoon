@@ -1277,6 +1277,7 @@ body > header aside p {
 #editor p#original,
 #editor p.original,
 #ftl-original .main-value li,
+#ftl-original .attributes li,
 #editor p.translation,
 #editor p.translation-diff {
   text-align: start;

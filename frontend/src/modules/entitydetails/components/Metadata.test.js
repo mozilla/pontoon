@@ -7,23 +7,32 @@ import Metadata from './Metadata';
 const ENTITY = {
     pk: 42,
     original: 'le test',
+    original_plural: 'les tests',
     comment: 'my comment',
     path: 'path/to/RESOURCE',
     source: [
         ['file_source.rs', '31'],
     ],
-    translation: [{string: 'the test'}],
+    translation: [
+        { string: 'the test' },
+        { string: 'plural' },
+    ],
     project: {
         slug: 'callme',
         name: 'CallMe',
     },
 };
+const LOCALE = {
+    code: 'kg',
+    cldrPlurals: [1, 3, 5],
+};
 
 
-function createShallowMetadata(entity = ENTITY) {
+function createShallowMetadata(entity = ENTITY, pluralForm = -1) {
     return shallow(<Metadata
         entity={ entity }
-        locale="kg"
+        locale={ LOCALE }
+        pluralForm={ pluralForm }
     />);
 }
 
@@ -41,6 +50,22 @@ describe('<Metadata>', () => {
         expect(content).toContain(ENTITY.comment);
 
         expect(wrapper.find('Link').props().to).toContain(ENTITY.path);
+    });
+
+    it('renders the selected plural form as original string', () => {
+        const wrapper = createShallowMetadata(ENTITY, 2);
+
+        const text = wrapper.text();
+        expect(wrapper.find('#entitydetails-metadata-plural')).toHaveLength(1);
+        expect(text).toContain(ENTITY.original_plural);
+    });
+
+    it('renders the selected singular form as original string', () => {
+        const wrapper = createShallowMetadata(ENTITY, 0);
+
+        const text = wrapper.text();
+        expect(wrapper.find('#entitydetails-metadata-singular')).toHaveLength(1);
+        expect(text).toContain(ENTITY.original);
     });
 
     it('does not require a comment', () => {

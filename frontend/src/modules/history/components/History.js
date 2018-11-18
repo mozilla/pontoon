@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Localized } from 'fluent-react';
 
 import './History.css';
 
 import { selectors as navSelectors } from 'core/navigation';
+import * as plural from 'core/plural';
 
 import Translation from './Translation';
 import { actions, NAME } from '..';
@@ -17,6 +19,7 @@ import type { Navigation } from 'core/navigation';
 type Props = {|
     history: HistoryState,
     parameters: Navigation,
+    pluralForm: number,
 |};
 
 type InternalProps = {|
@@ -31,31 +34,44 @@ type InternalProps = {|
  */
 export class HistoryBase extends React.Component<InternalProps> {
     fetchHistory() {
-        const { history, parameters, dispatch } = this.props;
+        const { parameters, pluralForm, dispatch } = this.props;
 
-        if (history.entity !== parameters.entity) {
-            // This is a newly selected entity, remove the previous history
-            // then fetch the history of the new entity.
-            dispatch(actions.get(parameters.entity, parameters.locale));
-        }
+        // This is a newly selected entity, remove the previous history
+        // then fetch the history of the new entity.
+        dispatch(actions.get(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+        ));
     }
 
     componentDidMount() {
         this.fetchHistory();
     }
 
-    componentDidUpdate() {
-        this.fetchHistory();
+    componentDidUpdate(prevProps: InternalProps) {
+        if (
+            this.props.parameters.entity !== prevProps.parameters.entity ||
+            this.props.pluralForm !== prevProps.pluralForm
+        ) {
+            this.fetchHistory();
+        }
     }
 
     renderNoResults() {
         return <section className="history">
-            <p>No translations available.</p>
+            <Localized id="history-history-no-translations">
+                <p>No translations available.</p>
+            </Localized>
         </section>
     }
 
     render() {
         const { history } = this.props;
+
+        if (history.fetching) {
+            return null;
+        }
 
         if (!history.translations.length) {
             return this.renderNoResults();
@@ -76,6 +92,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         history: state[NAME],
         parameters: navSelectors.getNavigation(state),
+        pluralForm: plural.selectors.getPluralForm(state),
     };
 };
 

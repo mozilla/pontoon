@@ -1,5 +1,3 @@
-from __future__ import absolute_import  # Same name as silme library.
-
 import os.path
 import tempfile
 from textwrap import dedent

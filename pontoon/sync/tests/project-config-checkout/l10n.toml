@@ -1,0 +1,20 @@
+basepath = "."
+
+locales = [
+    "fr",
+    "sl",
+]
+
+[env]
+    l = "{l10n_base}/{locale}/"
+
+[[paths]]
+    reference = "values/strings.properties"
+    l10n = "{l}strings.properties"
+
+[[paths]]
+    reference = "values/strings_reality.properties"
+    l10n = "{l}strings_reality.properties"
+    locales = [
+        "fr",
+    ]

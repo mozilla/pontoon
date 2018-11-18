@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import TimeAgo from 'react-timeago';
+import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
@@ -78,14 +79,40 @@ export default class Translation extends React.Component<Props> {
                     <TimeAgo date={ translation.date_iso } title={ `${translation.date} UTC` } />
                 </div>
                 <menu className="toolbar">
-                    <button
-                        className={ (translation.approved ? 'unapprove' : 'approve') + ' fa' }
-                        title={ translation.approved ? 'Unapprove' : 'Approve' }
-                    ></button>
-                    <button
-                        className={ (translation.rejected ? 'unreject' : 'reject') + ' fa' }
-                        title={ translation.rejected ? 'Unreject' : 'Reject' }
-                    ></button>
+                { translation.approved ?
+                    // Unapprove Button
+                    <Localized
+                        id="history-translation-button-unapprove"
+                        attrs={{ title: true }}
+                    >
+                        <button className='unapprove fa' title='Unapprove'></button>
+                    </Localized>
+                    :
+                    // Approve Button
+                    <Localized
+                        id="history-translation-button-approve"
+                        attrs={{ title: true }}
+                    >
+                        <button className='approve fa' title='Approve'></button>
+                    </Localized>
+                }
+                { translation.rejected ?
+                    // Unreject Button
+                    <Localized
+                        id="history-translation-button-unreject"
+                        attrs={{ title: true }}
+                    >
+                        <button className='unreject fa' title='Unreject'></button>
+                    </Localized>
+                    :
+                    // Reject Button
+                    <Localized
+                        id="history-translation-button-reject"
+                        attrs={{ title: true }}
+                    >
+                        <button className='reject fa' title='Reject'></button>
+                    </Localized>
+                }
                 </menu>
             </header>
             <p>{ translation.string }</p>

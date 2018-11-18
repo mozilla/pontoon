@@ -3,17 +3,22 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
+import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 
 import Screenshots from './Screenshots';
+
+import type { Locale } from 'core/locales';
 import type { DbEntity } from 'modules/entitieslist';
 
 
 type PropertyProps = {|
-    title: string,
-    children: React.Node,
+    +title: string,
+    +className: string,
+    +children: React.Node,
 |};
+
 
 /**
  * Component to dislay a property of an entity.
@@ -22,8 +27,7 @@ type PropertyProps = {|
  */
 class Property extends React.Component<PropertyProps> {
     render(): React.Node {
-        const { children, title } = this.props;
-        const className = title.trim().toLowerCase().replace(/ /g, '-');
+        const { children, className, title } = this.props;
         return <p className={ className }>
             <span className="title">{ title }</span>
             <span className="content">{ children }</span>
@@ -33,9 +37,10 @@ class Property extends React.Component<PropertyProps> {
 
 
 type Props = {|
-    entity: DbEntity,
-    locale: string,
-    openLightbox: Function,
+    +entity: DbEntity,
+    +locale: Locale,
+    +pluralForm: number,
+    +openLightbox: Function,
 |};
 
 
@@ -51,6 +56,31 @@ type Props = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props> {
+    renderOriginal(entity: DbEntity): React.Node {
+        const { pluralForm, locale } = this.props;
+
+        if (pluralForm === -1) {
+            return <p className="original">{ entity.original }</p>;
+        }
+
+        let title = <Localized id='entitydetails-metadata-plural'>
+            <h2>Plural</h2>
+        </Localized>;
+        let original = entity.original_plural;
+
+        if (locale.cldrPlurals[pluralForm] === 1) {
+            title = <Localized id='entitydetails-metadata-singular'>
+                <h2>Singular</h2>
+            </Localized>;
+            original = entity.original;
+        }
+
+        return <React.Fragment>
+            { title }
+            <p className="original">{ original }</p>
+        </React.Fragment>;
+    }
+
     renderComment(entity: DbEntity): React.Node {
         if (!entity.comment) {
             return null;
@@ -65,11 +95,13 @@ export default class Metadata extends React.Component<Props> {
             comment = parts.join('\n');
         }
 
-        return <Property title='Comment'>
-            <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                { comment }
-            </Linkify>
-        </Property>;
+        return <Localized id='entitydetails-metadata-comment' attrs={ { title: true } }>
+            <Property title='Comment' className='comment'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment }
+                </Linkify>
+            </Property>
+        </Localized>;
     }
 
     renderContext(entity: DbEntity): React.Node {
@@ -77,7 +109,11 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property title='Context'>{ entity.key }</Property>;
+        return <Localized id='entitydetails-metadata-context' attrs={ { title: true } }>
+            <Property title='Context' className='context'>
+                { entity.key }
+            </Property>
+        </Localized>;
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
@@ -102,11 +138,13 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Property title='Placeholder Examples'>
-            <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                { examples.join(', ') }
-            </Linkify>
-        </Property>;
+        return <Localized id='entitydetails-metadata-placeholder' attrs={ { title: true } }>
+            <Property title='Placeholder Examples' className='placeholder'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { examples.join(', ') }
+                </Linkify>
+            </Property>
+        </Localized>;
     }
 
     renderSources(entity: DbEntity): React.Node {
@@ -127,23 +165,27 @@ export default class Metadata extends React.Component<Props> {
         return <div className="metadata">
             <Screenshots
                 source={ entity.comment }
-                locale={ locale }
+                locale={ locale.code }
                 openLightbox={ openLightbox }
             />
-            <p className="original">{ entity.original }</p>
+            { this.renderOriginal(entity) }
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
-            <Property title='Resource'>
-                <Link to={ `/${locale}/${entity.project.slug}/${entity.path}/` }>
-                    { entity.path }
-                </Link>
-            </Property>
-            <Property title='Project'>
-                <a href={ `/${locale}/${entity.project.slug}/` }>
-                    { entity.project.name }
-                </a>
-            </Property>
+            <Localized id='entitydetails-metadata-resource' attrs={ { title: true } }>
+                <Property title='Resource' className='resource'>
+                    <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
+                        { entity.path }
+                    </Link>
+                </Property>
+            </Localized>
+            <Localized id='entitydetails-metadata-project' attrs={ { title: true } }>
+                <Property title='Project' className='project'>
+                    <a href={ `/${locale.code}/${entity.project.slug}/` }>
+                        { entity.project.name }
+                    </a>
+                </Property>
+            </Localized>
         </div>;
     }
 }

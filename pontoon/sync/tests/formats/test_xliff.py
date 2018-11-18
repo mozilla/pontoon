@@ -82,8 +82,8 @@ class XLIFFTests(FormatTestsMixin, TestCase):
     def test_parse_no_comments_no_sources(self):
         self.run_parse_no_comments_no_sources(BASE_XLIFF_FILE, 2)
 
-    def test_parse_missing_traslation(self):
-        self.run_parse_missing_traslation(BASE_XLIFF_FILE, 3)
+    def test_parse_missing_translation(self):
+        self.run_parse_missing_translation(BASE_XLIFF_FILE, 3)
 
     def generate_xliff(self, body, locale_code='en'):
         return XLIFF_TEMPLATE.format(body=body, locale_code=locale_code)

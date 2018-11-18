@@ -8,6 +8,12 @@ import { actions } from '..';
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
 
+// Entities shared between tests
+const ENTITIES = [
+    { pk: 1 },
+    { pk: 2 },
+];
+
 describe('<EntitiesList>', () => {
     beforeAll(() => {
         const getMock = sinon.stub(actions, 'get');
@@ -23,30 +29,58 @@ describe('<EntitiesList>', () => {
         actions.get.restore();
     });
 
+    it('shows a loading animation when there are more entities to load', () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, true));
+
+        const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
+        const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
+
+        expect(scroll.find('EntitiesLoader')).toHaveLength(1);
+    });
+
+    it("doesn't display a loading animation when there aren't entities to load", () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, false));
+
+        const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
+        const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
+
+        expect(scroll.find('EntitiesLoader')).toHaveLength(0);
+    });
+
+    it("shows a loading animation when entities are being fetched from the server", () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.request());
+
+        const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
+        const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
+
+        expect(scroll.find('EntitiesLoader')).toHaveLength(1);
+    });
+
     it('shows the correct number of entities', () => {
         const store = createReduxStore();
 
-        const entities = [
-            { pk: 1 },
-            { pk: 2 },
-        ];
-        store.dispatch(actions.receive(entities, false));
+        store.dispatch(actions.receive(ENTITIES, false));
+
         const wrapper = shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
+
         expect(wrapper.find('Entity')).toHaveLength(2);
     });
 
     it('excludes current entities when requesting new entities', () => {
         const store = createReduxStore();
 
-        const entities = [
-            { pk: 1 },
-            { pk: 2 },
-        ];
-        store.dispatch(actions.receive(entities, false));
+        store.dispatch(actions.receive(ENTITIES, false));
 
         const wrapper = shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
 
         wrapper.instance().getMoreEntities();
+
         // Verify the 4th argument of `actions.get` is the list of current entities.
         expect(actions.get.args[0][3]).toEqual([1, 2]);
     });

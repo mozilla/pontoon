@@ -6,9 +6,9 @@ from django import http
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
+from django.shortcuts import render
 from django.template import engines
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from django.views.generic import TemplateView
 
 from . import URL_BASE
 
@@ -39,7 +39,7 @@ def static_serve_dev(request, path, insecure=False, **kwargs):
 
 
 @csrf_exempt
-def catchall_dev(request):
+def catchall_dev(request, context=None):
     """Proxy HTTP requests to the frontend dev server in development.
 
     The implementation is very basic e.g. it doesn't handle HTTP headers.
@@ -63,7 +63,7 @@ def catchall_dev(request):
             content=(
                 engines['jinja2']
                 .from_string(response.text)
-                .render(request=request)
+                .render(request=request, context=context)
             ),
             status=response.status_code,
             reason=response.reason,
@@ -79,16 +79,33 @@ def catchall_dev(request):
 
 # For production, we've added the front-end static files to our list of
 # static folders. We can thus simply return a template view of index.html.
-catchall_prod = ensure_csrf_cookie(
-    TemplateView.as_view(template_name='index.html')
-)
+@ensure_csrf_cookie
+def catchall_prod(request, context=None):
+    return render(request, 'index.html', context=context)
+
+
+def get_preferred_locale(request):
+    """Return the locale the current user prefers, if any.
+
+    Used to decide in which language to show the Translate page.
+
+    """
+    user = request.user
+    if user.is_authenticated and user.profile.custom_homepage:
+        return user.profile.custom_homepage
+
+    return None
 
 
 def translate(request, locale=None, project=None, resource=None):
     if not waffle.switch_is_active('translate_next'):
         raise Http404
 
-    if settings.DEBUG:
-        return catchall_dev(request)
+    context = {
+        'locale': get_preferred_locale(request),
+    }
 
-    return catchall_prod(request)
+    if settings.DEBUG:
+        return catchall_dev(request, context=context)
+
+    return catchall_prod(request, context=context)

@@ -142,6 +142,47 @@ it('does something', () => {
 We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) assertion tool.
 
 
+## Localization
+
+The user interface is localized using [Fluent](https://projectfluent.org/) and the library `fluent-react`. Fluent allows to move the complexity of handling translated content from the developer to the translator. Thus, when using it, you should care only about the English version, and trust that the localizers will know what to do with your string in their language.
+
+### Adding localized content
+
+Every time you add a piece of UI that contains some content, there are 2 things you need to do. First, make sure you put it inside a `<Localized>` element, and give it an id. String identifiers should follow this form: `${module}-${component}-${contentDescription}`. For example, if you were to add a new button (`<button>Update</button>`) to the `Editor` component in the `entitydetails` module, the id for that button might be `entitydetails-editor-button-update`.
+
+That would give:
+
+```js
+class Editor extends React.Component {
+    render() {
+        return <div>
+            <Localized id="entitydetails-editor-button-update">
+                <button>Update</button>
+            </Localized>
+        </div>;
+    }
+}
+```
+
+The second thing you need to do is to add that new string into our main translation files. Translations available to localizers are based on those files, so if you forget to put the new content there, no one will be able to translate that content.
+
+The source language for our application is `en-US` (that is what you should use by default when writing content in the code, and in the language files). You can find them in `frontend/public/static/locale/en-US/`. We currently have only one file, named `translate.ftl`, and that is where all content should be added.
+
+Those files use the FTL format. In its simplest form, a string in such a file (called a `message` in Fluent vocabulary) looks like this: `message-id = Content`. There are, however, lots of tools that you can use in that syntax, and you are encouraged to read [Fluent's Syntax Guide](https://projectfluent.org/fluent/guide/) to familiarize yourself with them. Make sure you also take a look at the [Good Practices for Developers](https://github.com/projectfluent/fluent/wiki/Good-Practices-for-Developers#prefer-separate-messages-over-variants-for-ui-logic) guide.
+
+### Semantic identifiers
+
+Fluent uses the concept of a *social contract* between developer and localizers. This contract is established by the selection of a unique identifier, called `l10n-id`, which carries a promise of being used in a particular place to carry a particular meaning.
+
+You should consider the `l10n-id` as a variable name. If the meaning of the content changes, then you should also change the ID. This will notify localizers that the content is different from before and that a new translation is needed. However, if you make minor changes (fix a typo, make a change that keeps the same meaning) you should instead keep the same ID.
+
+An important part of the contract is that the developer commits to treat the localization output as opaque. That means that no concatenations, replacements or splitting should happen after the translation is completed to generate the desired output.
+
+In return, localizers enter the social contract by promising to provide an accurate and clean translation of the messages that match the request.
+
+In Fluent, the developer is not to be bothered with inner logic and complexity that the localization will use to construct the response. Whether declensions or other variant selection techniques are used is up to a localizer and their particular translation. From the developer perspective, Fluent returns a final string to be presented to the user, with no l10n logic required in the running code.
+
+
 ## Development resources
 
 ### Integration between Django and React
@@ -154,6 +195,12 @@ We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) 
 - [Three Rules For Structuring (Redux) Applications — Jack Hsu](https://jaysoo.ca/2016/02/28/organizing-redux-application/)
 - [The Anatomy Of A React & Redux Module (Applying The Three Rules) — Jack Hsu](https://jaysoo.ca/2016/02/28/applying-code-organization-rules-to-concrete-redux-code/)
 - [Additional Guidelines For (Redux) Project Structure — Jack Hsu](https://jaysoo.ca/2016/12/12/additional-guidelines-for-project-structure/)
+
+### Localization tools
+
+- [Fluent Syntax Guide](https://projectfluent.org/fluent/guide/)
+- [fluent-react's Localized](https://github.com/projectfluent/fluent.js/wiki/Localized)
+- [Fluent's playground](https://projectfluent.org/play/)
 
 ### Tools documentation
 

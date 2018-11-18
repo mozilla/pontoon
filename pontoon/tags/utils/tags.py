@@ -75,7 +75,7 @@ class TagsTool(Clonable):
     def get_tags(self, slug=None):
         """Get `values` of associated tags, filtering by slug if given
         """
-        tags = self.tag_manager.values(
+        tags = self.tag_manager.filter(project__in=self.projects).values(
             "pk", "name", "slug", "priority", "project")
         if slug:
             return tags.filter(slug__regex=glob_to_regex(slug))

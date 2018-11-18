@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from urlparse import urlparse
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -70,6 +71,7 @@ def translate(request, locale, slug, part):
         project = get_object_or_404(Project.objects.available(), slug=slug)
         if locale not in project.locales.all():
             raise Http404
+
     return render(request, 'translate.html', {
         'download_form': forms.DownloadFileForm(),
         'upload_form': forms.UploadFileForm(),
@@ -79,6 +81,8 @@ def translate(request, locale, slug, part):
         'part': part,
         'project': project,
         'projects': projects,
+        'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
+        'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
     })
 
 
@@ -786,6 +790,26 @@ def download_translation_memory(request, locale, slug, filename):
     )
     response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
     return response
+
+
+@utils.require_AJAX
+def user_data(request):
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({
+            'is_authenticated': False,
+        })
+
+    return JsonResponse({
+        'is_authenticated': True,
+        'id': user.id,
+        'email': user.email,
+        'display_name': user.display_name,
+        'manager_for_locales': list(user.managed_locales.values_list('code', flat=True)),
+        'translator_for_locales': list(user.translated_locales.values_list('code', flat=True)),
+        'translator_for_projects': user.translated_projects,
+    })
 
 
 class AjaxFormView(FormView):

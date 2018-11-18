@@ -35,6 +35,7 @@ class ProjectForm(forms.ModelForm):
             'locales',
             'data_source',
             'can_be_requested',
+            'configuration_file',
             'url',
             'width',
             'links',

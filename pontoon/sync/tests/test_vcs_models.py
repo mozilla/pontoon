@@ -8,16 +8,28 @@ from django_nose.tools import (
 )
 from mock import Mock, patch, PropertyMock
 
-from pontoon.base.models import Project
+from pontoon.base.models import (
+    Locale,
+    Project,
+    Repository,
+)
 from pontoon.base.tests import (
     CONTAINS,
     ProjectFactory,
     RepositoryFactory,
+    ResourceFactory,
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
-from pontoon.sync.tests import VCSEntityFactory, VCSTranslationFactory
-from pontoon.sync.vcs.models import VCSProject
+from pontoon.sync.tests import (
+    PROJECT_CONFIG_CHECKOUT_PATH,
+    VCSEntityFactory,
+    VCSTranslationFactory,
+)
+from pontoon.sync.vcs.models import (
+    VCSConfiguration,
+    VCSProject,
+)
 
 
 TEST_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), 'directory_detection_tests')
@@ -43,7 +55,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resources_for_path = Mock(return_value=[
+            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
                 '/root/foo.po',
                 '/root/meh/bar.po'
             ])
@@ -62,7 +74,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resources_for_path = Mock(return_value=[
+            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
                 '/root/foo.pot',
                 '/root/meh/bar.pot'
             ])
@@ -71,6 +83,18 @@ class VCSProjectTests(TestCase):
                 list(self.vcs_project.relative_resource_paths()),
                 ['foo.po', 'meh/bar.po']
             )
+
+    def test_source_directory_pc(self):
+        """
+        If project configuration provided, use source repository checkout path
+        as source directory path.
+        """
+        self.vcs_project.configuration = Mock(return_value=[True])
+
+        assert_equal(
+            self.vcs_project.source_directory_path,
+            self.vcs_project.db_project.source_repository.checkout_path
+        )
 
     def test_source_directory_path_no_resource(self):
         """
@@ -150,12 +174,34 @@ class VCSProjectTests(TestCase):
             assert_equal(self.vcs_project.resources, {'success': 'successful resource'})
             mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
 
-    def test_resource_for_path_region_properties(self):
+    @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
+    def test_resource_paths_with_pc(self, checkout_path_mock):
+        """
+        If project configuration provided, use it to collect absolute paths to all
+        source resources within the source repository checkout path.
+        """
+        checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+        self.vcs_project.db_project.configuration_file = 'l10n.toml'
+        self.vcs_project.configuration = VCSConfiguration(self.vcs_project)
+
+        assert_equal(
+            sorted(list(
+                self.vcs_project.resource_paths_with_pc()
+            )),
+            sorted([
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_reality.properties'),
+            ])
+        )
+
+    @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
+    def test_resource_paths_without_pc_region_properties(self, source_directory_path_mock):
         """
         If a project has a repository_url in pontoon.base.MOZILLA_REPOS,
-        resources_for_path should ignore files named
+        resource_paths_without_pc should ignore files named
         "region.properties".
         """
+        source_directory_path_mock.return_value = '/root'
         url = 'https://moz.example.com'
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
@@ -169,14 +215,16 @@ class VCSProjectTests(TestCase):
             ]
 
             assert_equal(
-                list(self.vcs_project.resources_for_path('/root')),
+                list(self.vcs_project.resource_paths_without_pc()),
                 [os.path.join('/root', 'foo.pot')]
             )
 
-    def test_filter_hidden_directories(self):
+    @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
+    def test_resource_paths_without_pc_exclude_hidden(self, source_directory_path_mock):
         """
         We should filter out resources that are contained in the hidden paths.
         """
+        source_directory_path_mock.return_value = '/root'
         hidden_paths = (
             ('/root/.hidden_folder/templates', [], ('bar.pot',)),
             ('/root/templates', [], ('foo.pot',)),
@@ -185,9 +233,41 @@ class VCSProjectTests(TestCase):
             'pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths
         ):
             assert_equal(
-                list(self.vcs_project.resources_for_path('/root')),
+                list(self.vcs_project.resource_paths_without_pc()),
                 ['/root/templates/foo.pot']
             )
+
+
+class VCSConfigurationTests(TestCase):
+    def setUp(self):
+        self.locale, _ = Locale.objects.get_or_create(code='fr')
+
+        self.repository = RepositoryFactory()
+        self.db_project = ProjectFactory.create(
+            repositories=[self.repository],
+        )
+
+        self.resource_strings = ResourceFactory.create(
+            project=self.db_project,
+            path='values/strings.properties',
+        )
+        self.resource_strings_reality = ResourceFactory.create(
+            project=self.db_project,
+            path='values/strings_reality.properties',
+        )
+
+        # Make sure VCSConfiguration instance is initialized
+        self.db_project.configuration_file = 'l10n.toml'
+        self.vcs_project = VCSProject(self.db_project)
+
+    @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
+    def test_locale_resources(self, checkout_path_mock):
+        checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+
+        assert_equal(
+            self.vcs_project.configuration.locale_resources(self.locale),
+            [self.resource_strings, self.resource_strings_reality],
+        )
 
 
 class VCSEntityTests(TestCase):

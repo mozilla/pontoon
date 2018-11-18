@@ -1,3 +1,4 @@
+from django.db.models import Q
 
 from pontoon.base.utils import glob_to_regex
 
@@ -79,7 +80,8 @@ class TagsResourcesTool(TagsDataTool):
         either by passing a glob expression to match, or by passing a list
         of Resource paths
         """
-        tag = self.tag_manager.get(slug=tag)
+        query = Q(project__in=self.projects) if self.projects else Q()
+        tag = self.tag_manager.filter(query).get(slug=tag)
         if glob is not None:
             resources = list(self.find(glob, exclude=tag))
             for resource in resources:
@@ -100,9 +102,10 @@ class TagsResourcesTool(TagsDataTool):
         either by passing a glob expression to match, or by passing a list
         of Resource paths
         """
+        query = Q(project__in=self.projects) if self.projects else Q()
         if glob is not None:
             resources = list(self.find(glob, include=tag))
-            self.tag_manager.get(slug=tag).resources.remove(*resources)
+            self.tag_manager.filter(query).get(slug=tag).resources.remove(*resources)
             return resources
         if resources is not None:
             _resources = self.resource_manager.none()
@@ -110,7 +113,7 @@ class TagsResourcesTool(TagsDataTool):
                 _resources |= self.resource_manager.filter(
                     project=resource["project"],
                     path=resource["path"])
-            self.tag_manager.get(slug=tag).resources.remove(*list(_resources))
+            self.tag_manager.filter(query).get(slug=tag).resources.remove(*list(_resources))
 
     def _validate_resource(self, tag, resource_project):
         if tag.project_id and resource_project != tag.project_id:

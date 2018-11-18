@@ -174,8 +174,10 @@ Extra settings
 --------------
 The following extra settings can be added to your ``.env`` file.
 
+``GOOGLE_TRANSLATE_API_KEY``
+   Set your `Google Cloud Translation API key`_ to use machine translation by Google.
 ``MICROSOFT_TRANSLATOR_API_KEY``
-   Set your `Microsoft Translator API key`_ to use machine translation.
+   Set your `Microsoft Translator API key`_ to use machine translation by Microsoft.
 ``GOOGLE_ANALYTICS_KEY``
    Set your `Google Analytics key`_ to use Google Analytics.
 ``MANUAL_SYNC``

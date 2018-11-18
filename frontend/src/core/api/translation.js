@@ -14,7 +14,7 @@ export default class TranslationAPI extends APIBase {
         entity: number,
         translation: string,
         locale: string,
-        plural_form: string,
+        pluralForm: number,
         original: string
     ) {
         const csrfToken = this.getCSRFToken();
@@ -23,7 +23,7 @@ export default class TranslationAPI extends APIBase {
         payload.append('entity', entity.toString());
         payload.append('translation', translation);
         payload.append('locale', locale);
-        payload.append('plural_form', '0');
+        payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
         payload.append('csrfmiddlewaretoken', csrfToken);
 

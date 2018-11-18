@@ -49,15 +49,26 @@ def run_checks(
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
             if resource_ext == 'properties':
-                tt_disabled_checks = {
+                tt_disabled_checks.update([
                     'escapes',
                     'nplurals',
-                    'printf'
-                }
+                    'printf',
+                ])
+            elif resource_ext == 'xml':
+                tt_disabled_checks.update([
+                    'doublespacing',
+                    'endwhitespace',
+                    'escapes',
+                    'newlines',
+                    'numbers',
+                    'printf',
+                    'singlequoting',
+                    'startwhitespace',
+                ])
         elif resource_ext == 'lang':
-            tt_disabled_checks = {
+            tt_disabled_checks.update([
                 'newlines',
-            }
+            ])
 
         if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
             tt_disabled_checks.add('untranslated')

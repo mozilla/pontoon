@@ -15,7 +15,7 @@ class ParsedResource(object):
 
     def save(self, locale):
         """
-        Save any changes made the the VCSTranslation objects from
+        Save any changes made to the VCSTranslation objects from
         self.translations back to the originally parsed resource file.
 
         :param Locale locale:

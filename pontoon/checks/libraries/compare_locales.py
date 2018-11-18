@@ -3,10 +3,12 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 from compare_locales.checks import getChecker
+from compare_locales.keyedtuple import KeyedTuple
+from compare_locales.parser.android import AndroidParser
 from compare_locales.parser.base import Junk
+from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
-from compare_locales.parser.dtd import DTDEntityMixin
 
 from compare_locales.paths import File
 
@@ -131,6 +133,34 @@ def cast_to_compare_locales(resource_ext, entity, string):
             trEntity,
         )
 
+    elif resource_ext == '.xml':
+        parser = AndroidParser()
+
+        content = u"""<?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <string name="{key}"><![CDATA[{original}]]></string>
+                <string name="{key}"><![CDATA[{translation}]]></string>
+            </resources>
+        """.format(
+            key=entity.key,
+            original=entity.string,
+            translation=string,
+        )
+
+        parser.readUnicode(content)
+        parsed_objects = list(parser.parse())
+
+        refEntity = parsed_objects[0]
+        trEntity = parsed_objects[1]
+
+        if isinstance(trEntity, Junk):
+            raise UnsupportedStringError(resource_ext)
+
+        return (
+            refEntity,
+            trEntity,
+        )
+
     raise UnsupportedResourceTypeError(resource_ext)
 
 
@@ -173,14 +203,14 @@ def run_checks(entity, locale_code, string):
 
     # Currently, references are required only by DTD files but that may change in the future.
     if checker.needs_reference:
-        references = [
+        references = KeyedTuple(
             CompareDTDEntity(
                 e.key,
                 e.string,
                 e.comment,
             )
             for e in entity.resource.entities.all()
-        ]
+        )
         checker.set_reference(references)
 
     errors = {}

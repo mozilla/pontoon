@@ -761,36 +761,37 @@ var Pontoon = (function (my) {
      * entity Entity
      */
     getEntityStatus: function (entity) {
-      var translation = entity.translation;
+      var self = this;
       var translated = 0;
       var fuzzy = 0;
       var errors = 0;
       var warnings = 0;
 
-      for (var i=0; i<translation.length; i++) {
-        if (entity.translation[i].approved) {
-          translated++;
-        }
-        if (entity.translation[i].fuzzy) {
-          fuzzy++;
-        }
-        if (entity.translation[i].errors.length) {
+      entity.translation.forEach(function (translation) {
+        if (self.isFailedCheckStatus(translation, 'errors')) {
           errors++;
         }
-        if (entity.translation[i].warnings.length) {
+        else if (self.isFailedCheckStatus(translation, 'warnings')) {
           warnings++;
         }
-      }
+        else if (translation.approved) {
+          translated++;
+        }
+        else if (translation.fuzzy) {
+          fuzzy++;
+        }
+      });
+
       if (errors > 0) {
         return 'errors';
       }
       else if (warnings > 0) {
         return 'warnings';
       }
-      else if (i === translated) {
+      else if (translated === entity.translation.length) {
         return 'translated';
       }
-      else if (i === fuzzy) {
+      else if (fuzzy === entity.translation.length) {
         return 'fuzzy';
       }
       else if (translated > 0 || fuzzy > 0) {
@@ -1930,7 +1931,7 @@ var Pontoon = (function (my) {
        * - Czech Windows keyboard: Ctrl + Alt + C/F/./,
        * - Polish keyboard: Alt + C
        */
-      $('#editor').on('keydown', 'textarea', function (e) {
+      editorShortcutsHandler = function (e) {
         var key = e.which;
 
         // Prevent triggering unnecessary events in 1-column layout
@@ -2003,6 +2004,11 @@ var Pontoon = (function (my) {
           var section = $('#helpers section:visible'),
               index = section.find('li.suggestion.hover').index() + 1;
 
+          // If no suggestions present, quit early
+          if (!section.find('li.suggestion').length) {
+            return;
+          }
+
           // If possible, select next suggestion, or select first
           if (section.find('li.suggestion:last').is('.hover')) {
             index = 0;
@@ -2020,13 +2026,16 @@ var Pontoon = (function (my) {
           self.updateScroll(section);
           return false;
         }
+      };
 
-      // Update length (keydown is triggered too early)
-      }).unbind("input propertychange").bind("input propertychange", function () {
-        self.updateCurrentTranslationLength();
-        self.updateInPlaceTranslation();
-        $('.warning-overlay:visible .cancel').click();
-      });
+      $('#editor')
+        .on('keydown', 'textarea', editorShortcutsHandler)
+        // Update length (keydown is triggered too early)
+        .unbind("input propertychange").bind("input propertychange", function () {
+            self.updateCurrentTranslationLength();
+            self.updateInPlaceTranslation();
+            $('.warning-overlay:visible .cancel').click();
+        });
 
       // Close warning box
       $('.warning-overlay .cancel').click(function (e) {
@@ -2751,6 +2760,17 @@ var Pontoon = (function (my) {
 
 
     /*
+     * Return true if Translation status matches given failed check type
+     *
+     * translation Translation to checks status for
+     * type "errors" or "warnings"
+     */
+    isFailedCheckStatus: function (translation, type) {
+      return translation[type].length && (translation.approved || translation.fuzzy);
+    },
+
+
+    /*
      * Toggle failed checks for translation
      *
      * translation Translation to show failed checks for
@@ -2758,11 +2778,11 @@ var Pontoon = (function (my) {
     toggleFailedChecks: function(translation) {
       var failedChecks = {};
 
-      if (translation.errors.length) {
+      if (this.isFailedCheckStatus(translation, 'errors')) {
         failedChecks.clErrors = translation.errors;
       }
 
-      if (translation.warnings.length) {
+      if (this.isFailedCheckStatus(translation, 'warnings')) {
         failedChecks.clWarnings = translation.warnings;
       }
 
@@ -3032,7 +3052,7 @@ var Pontoon = (function (my) {
       var self = this;
 
       // Main keyboard shortcuts
-      $('html').on('keydown', function (e) {
+      traversalShortcutsHandler = function (e) {
         var key = e.which;
 
         // Alt + Down: Go to next string
@@ -3054,7 +3074,8 @@ var Pontoon = (function (my) {
           }
           return false;
         }
-      });
+      };
+      $('html').on('keydown', traversalShortcutsHandler);
 
       // iFrame fix on hiding menus
       $('body').bind("click.main", function () {

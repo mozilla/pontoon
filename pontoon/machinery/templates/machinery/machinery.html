@@ -5,8 +5,25 @@
 
 {% block class %}machinery{% endblock %}
 
+{% block content %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     data-is-google-translate-supported="{{ is_google_translate_supported|to_json() }}"
+     data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported|to_json() }}"
+     >
+</div>
+
+{% include "header.html" %}
+
+{% block before %}
+{% endblock %}
+
 {% block heading %}
   {{ Heading.heading(title='Machinery', subtitle='Metasearch engine for translations') }}
+{% endblock %}
+
+{% block middle %}
 {% endblock %}
 
 {% block bottom %}
@@ -29,6 +46,8 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
 {% endblock %}
 
 {% block extend_css %}
