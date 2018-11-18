@@ -713,7 +713,7 @@ class Locale(AggregatedStats):
         validators=[validate_cldr],
         help_text="""
         A comma separated list of
-        <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">
+        <a href="https://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">
         CLDR plural rules</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
         E.g. 1,5
         """
@@ -725,7 +725,7 @@ class Locale(AggregatedStats):
         help_text="""
         The script used by this locale. Find it in
         <a
-        href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">
+        href="https://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">
         CLDR Languages and Scripts</a>.
         """
     )
