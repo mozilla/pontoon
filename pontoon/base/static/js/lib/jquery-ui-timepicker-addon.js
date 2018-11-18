@@ -546,7 +546,7 @@
 					this.timeDefined = timeDefined;
 				}
 
-				// slideAccess integration: http://trentrichardson.com/2011/11/11/jquery-ui-sliders-and-touch-accessibility/
+				// slideAccess integration: https://trentrichardson.com/2011/11/11/jquery-ui-sliders-and-touch-accessibility/
 				if (this._defaults.addSliderAccess) {
 					var sliderAccessArgs = this._defaults.sliderAccessArgs,
 						rtl = this._defaults.isRTL;
