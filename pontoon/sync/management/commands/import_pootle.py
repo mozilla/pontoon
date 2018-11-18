@@ -81,7 +81,7 @@ class Command(BaseCommand):
 
         # Get Pootle data
         filename = pootle_locale + '_' + pootle_project + '.json'
-        url = 'http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/' + filename
+        url = 'https://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/' + filename
 
         try:
             pootle = requests.get(url).json()
