@@ -17,7 +17,7 @@ Heroku-hosted instance of RabbitMQ:
    flower --broker=`heroku config:get RABBITMQ_URL --app=my-app-name`
 
 .. _Flower: https://github.com/mher/flower
-.. _Celery: https://www.celeryproject.org/
+.. _Celery: http://www.celeryproject.org/
 
 Releasing the queue
 -------------------
