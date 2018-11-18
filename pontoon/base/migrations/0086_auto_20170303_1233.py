@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='locale',
             name='script',
-            field=models.CharField(default=b'Latin', help_text=b'\n        The script used by this locale. Find it in\n        <a href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">CLDR Languages and Scripts</a>.\n        ', max_length=128),
+            field=models.CharField(default=b'Latin', help_text=b'\n        The script used by this locale. Find it in\n        <a href="https://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">CLDR Languages and Scripts</a>.\n        ', max_length=128),
         ),
     ]
