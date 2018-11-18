@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            "CREATE INDEX tm_locale_char_length_idx ON base_translationmemoryentry(locale_id, char_length(source))",
-            "DROP INDEX tm_locale_char_length_idx"
+            "CREATE INDEX tm_locale_source_length_idx ON base_translationmemoryentry(locale_id, length(source))",
+            "DROP INDEX tm_locale_source_length_idx"
         )
     ]
