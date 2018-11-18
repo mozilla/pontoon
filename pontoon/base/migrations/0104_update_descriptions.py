@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='locale',
             name='cldr_plurals',
-            field=models.CharField(blank=True, help_text='\n        A comma separated list of\n        <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">\n        CLDR plural rules</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.\n        E.g. 1,5\n        ', max_length=11, validators=[pontoon.base.models.validate_cldr], verbose_name='CLDR Plurals'),
+            field=models.CharField(blank=True, help_text='\n        A comma separated list of\n        <a href="https://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">\n        CLDR plural rules</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.\n        E.g. 1,5\n        ', max_length=11, validators=[pontoon.base.models.validate_cldr], verbose_name='CLDR Plurals'),
         ),
         migrations.AlterField(
             model_name='locale',
@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='locale',
             name='script',
-            field=models.CharField(default='Latin', help_text='\n        The script used by this locale. Find it in\n        <a\n        href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">\n        CLDR Languages and Scripts</a>.\n        ', max_length=128),
+            field=models.CharField(default='Latin', help_text='\n        The script used by this locale. Find it in\n        <a\n        href="https://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">\n        CLDR Languages and Scripts</a>.\n        ', max_length=128),
         ),
     ]
