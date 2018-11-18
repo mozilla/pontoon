@@ -24,7 +24,7 @@ Prerequisites
 Quickstart
 ----------
 
-1. Clone your `fork <http://help.github.com/fork-a-repo/>` of Pontoon repository::
+1. Clone your `fork <https://help.github.com/fork-a-repo/>` of Pontoon repository::
 
      $ git clone https://github.com/YOUR-USERNAME/pontoon.git
 
