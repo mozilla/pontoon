@@ -40,7 +40,7 @@ If you're on Ubuntu 17.04, you can install all the prerequisites using the follo
 .. _virtualenv: https://virtualenv.pypa.io/en/latest/
 .. _Node.js: https://nodejs.org/
 .. _npm: https://www.npmjs.com/
-.. _Postgres 9.4 or 9.5: http://www.postgresql.org/
+.. _Postgres 9.4 or 9.5: https://www.postgresql.org/
 
 Installation
 ------------
