@@ -143,7 +143,7 @@ Documentation
 =============
 
 Documentation for Pontoon is built with `Sphinx
-<http://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
+<https://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
 
 Building docs is not covered with docker yet, so you will have to do it on your host. To make
 a virtualenv to build docs, do this:
@@ -168,8 +168,8 @@ for example.
    you'll need to install it to generate graphs that use it. Most package
    managers, including `Homebrew`_, have a package available for install.
 
-.. _GraphViz: http://www.graphviz.org/
-.. _Homebrew: http://brew.sh/
+.. _GraphViz: https://www.graphviz.org/
+.. _Homebrew: https://brew.sh/
 
 
 Running tests
