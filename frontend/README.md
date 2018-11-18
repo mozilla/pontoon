@@ -22,7 +22,7 @@
     </tr>
     <tr>
         <td>Tests</td>
-        <td>Jest — http://jestjs.io/</td>
+        <td>Jest — https://jestjs.io/</td>
     </tr>
     <tr>
         <td>Type checking</td>
