@@ -512,7 +512,15 @@ class VCSConfiguration(object):
     def add_locale(self, locale_code):
         """
         Add new locale to project configuration.
+
+        TODO: For now we don't make changes to the configuration file to avoid
+        committing it to the VCS. The pytoml serializer messes with the file
+        layout (indents and newlines) pretty badly. We should fix the
+        serializer.
         """
+        self.parsed_configuration.locales.append(locale_code)
+        return
+
         # Update configuration file
         with open(self.configuration_path, 'r+b') as f:
             data = pytoml.load(f)
