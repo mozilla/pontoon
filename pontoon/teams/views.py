@@ -227,7 +227,6 @@ def request_locales(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors.as_json())
 
-
     if request.POST['code'] in locales:
         return HttpResponseBadRequest('Bad Request: Duplicate Locale Code specified')
 
@@ -248,7 +247,6 @@ def request_locales(request):
             ),
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True),
             reply_to=[user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
