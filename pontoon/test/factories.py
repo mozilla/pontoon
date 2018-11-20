@@ -148,8 +148,8 @@ class IdenticalTranslationFactory(TranslationFactory):
 
 
 class TranslationMemoryFactory(DjangoModelFactory):
-    source = Sequence(lambda n: 'source {0}'.format(n))
-    target = Sequence(lambda n: 'target {0}'.format(n))
+    source = Sequence(lambda n: u'source {0}'.format(n))
+    target = Sequence(lambda n: u'target {0}'.format(n))
     entity = SubFactory(EntityFactory, string=SelfAttribute('..source'))
     locale = SubFactory(LocaleFactory)
 

@@ -9,8 +9,7 @@ from collections import defaultdict
 
 from django import http
 from django.conf import settings
-from django.db import DataError
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
@@ -59,11 +58,10 @@ def translation_memory(request):
     locale = get_object_or_404(Locale, code=locale)
     entries = (
         TranslationMemoryEntry.objects
-        .minimum_levenshtein_ratio(text)
         .filter(locale=locale)
+        .minimum_levenshtein_ratio(text)
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
-
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
@@ -71,17 +69,13 @@ def translation_memory(request):
     entries = entries.values('source', 'target', 'quality').order_by('-quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
-    try:
-        for entry in entries:
-            if (
-                entry['target'] not in suggestions or
-                entry['quality'] > suggestions[entry['target']]['quality']
-            ):
-                suggestions[entry['target']].update(entry)
-            suggestions[entry['target']]['count'] += 1
-    except DataError as e:
-        # Catches 'argument exceeds the maximum length of 255 bytes' Error
-        return HttpResponse('Not Implemented: {error}'.format(error=e), status=501)
+    for entry in entries:
+        if (
+            entry['target'] not in suggestions or
+            entry['quality'] > suggestions[entry['target']]['quality']
+        ):
+            suggestions[entry['target']].update(entry)
+        suggestions[entry['target']]['count'] += 1
 
     return JsonResponse(
         sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
