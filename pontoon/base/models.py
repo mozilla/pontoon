@@ -10,8 +10,11 @@ import operator
 import os.path
 import re
 
+import Levenshtein
+
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
+from django.db.models.functions import Length, Substr, Cast
 from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
@@ -23,7 +26,17 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.db import models
-from django.db.models import Count, F, Prefetch, Q, Sum
+from django.db.models import (
+    Count,
+    F,
+    Prefetch,
+    Q,
+    Sum,
+    Case,
+    When,
+    Value,
+    ExpressionWrapper,
+)
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -40,7 +53,7 @@ from pontoon.sync.vcs.repositories import (
     PullFromRepositoryException,
 )
 from pontoon.base import utils
-from pontoon.db import IContainsCollate  # noqa
+from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
 from pontoon.sync import KEY_SEPARATOR
 
 
@@ -2874,30 +2887,148 @@ class Translation(DirtyFieldsMixin, models.Model):
         }
 
 
-class TranslationMemoryEntryManager(models.Manager):
+class TranslationMemoryEntryQuerySet(models.QuerySet):
+    def postgres_levenshtein_ratio(
+        self,
+        text,
+        min_quality,
+        min_dist,
+        max_dist,
+        levenshtein_param=None
+    ):
+        """
+        Filter TranslationMemory entries fully in PostgreSQL.
+        `levenshtein` function is provided by `fuzzystrmatch` module.
+        All strings are initially pre-filtered with min_dist and max_dist.
+
+        :arg str text: reference string to search in Translation Memory
+        :arg float min_quality: minimal quality of a levenshtein ratio
+        :arg int min_dist: minimum length distance from a text string
+        :arg int max_dist: maximum length distance from a text string
+        :arg django.db.models.Func levenshtein_param: a field or a sql expression, the first
+            argument of the levenshtein distance function. Default: the 'source' column.
+        :return: TranslationMemory Entries enriched with the quality metric.
+        """
+        text_length = Value(len(text))
+        levenshtein_param = levenshtein_param or F('source')
+        levenshtein_distance_expression = LevenshteinDistance(
+            levenshtein_param,
+            Value(text),
+            1,
+            2,
+            2,
+        )
+
+        entries = (
+            self.annotate(
+                source_length=Length(
+                    F('source')
+                ),
+                quality=ExpressionWrapper(
+                    (
+                        Cast(
+                            (F('source_length') + text_length - levenshtein_distance_expression),
+                            models.FloatField()
+                        ) / (F('source_length') + text_length)
+                    ) * 100,
+                    output_field=models.DecimalField()
+                )
+            )
+            .filter(
+                source_length__gte=min_dist,
+                source_length__lte=max_dist,
+                quality__gt=min_quality * 100,
+            )
+        )
+        return entries
+
+    def python_levenshtein_ratio(self, text, min_quality, min_dist, max_dist):
+        """
+        Filter TranslationMemory entries in Python, with the initial pre-filtering of
+        entities in the PostgreSQL.  All strings are initially pre-filtered
+        with min_dist and max_dist.
+
+        All implementations of the Levenshtein ratio algorithm have to return a QuerySet with
+        annotated with the quality column.
+
+        In the case of the in-memory (python) version, this method will make 2 queries
+        to the database:
+        1. initial set of pre-filtered possible matches
+        2. a queryset with matches annotated with the quality column
+
+        Extra query is made because there's no easy way to create a QuerySet
+        from already fetched data and it's not possible to annotate it with additional columns.
+
+        :arg str text: reference string to search in  TM
+        :arg float min_quality: minimal quality of a levenshtein ratio
+        :arg int min_dist: minimum length distance from a text string
+        :arg int max_dist: maximum length distance from a text string
+        :return: TranslationMemory Entries enriched with the quality metric.
+        """
+        # To minimalize number of entries to scan in Python. pre-filter TM entries
+        # with a substring of the original string limited to 255 characters.
+
+        possible_matches = self.postgres_levenshtein_ratio(
+            text[:255],
+            min_quality,
+            min_dist,
+            max_dist,
+            Substr(F('source'), 1, 255),
+        ).values_list('pk', 'source')
+
+        matches_pks = []
+
+        # In order to keep compatibility with `postgresql_levenshtein_ratio`,
+        # entries are annotate with the quality column.
+        quality_sql_map = []
+
+        for pk, source in possible_matches:
+            quality = Levenshtein.ratio(text, source)
+
+            if quality > min_quality:
+                matches_pks.append(pk)
+                quality_sql_map.append(
+                    When(
+                        pk=pk,
+                        then=Value(quality * 100)
+                    )
+                )
+
+        entries = (
+            self.filter(
+                pk__in=matches_pks,
+            ).annotate(
+                quality=Case(
+                    *quality_sql_map,
+                    **dict(
+                        default=Value(0),
+                        output_field=models.DecimalField(),
+                    )
+                )
+            )
+        )
+        return entries
+
     def minimum_levenshtein_ratio(self, text, min_quality=0.7):
         """
         Returns entries that match minimal levenshtein_ratio
         """
-        length = len(text)
-        min_dist = math.ceil(max(length * min_quality, 2))
-        max_dist = math.floor(min(length / min_quality, 1000))
-        levenshtein_ratio_equation = """(
-            (char_length(source) + char_length(%s) - levenshtein(source, %s, 1, 2, 2))::float /
-            (char_length(source) + char_length(%s))
-        )"""
-
         # Only check entities with similar length
-        entries = self.extra(
-            where=[
-                '(CHAR_LENGTH(source) BETWEEN %s AND %s)',
-                levenshtein_ratio_equation + ' > %s'
-            ],
-            params=(min_dist, max_dist, text, text, text, min_quality),
-            select={'quality': levenshtein_ratio_equation + '* 100'},
-            select_params=(text, text, text)
+        length = len(text)
+        min_dist = int(math.ceil(max(length * min_quality, 2)))
+        max_dist = int(math.floor(min(length / min_quality, 1000)))
+
+        get_matches = self.postgres_levenshtein_ratio
+
+        if min_dist > 255 or max_dist > 255:
+            get_matches = self.python_levenshtein_ratio
+
+        return get_matches(
+            text,
+            min_quality,
+            min_dist,
+            max_dist,
         )
-        return entries
 
 
 class TranslationMemoryEntry(models.Model):
@@ -2911,7 +3042,7 @@ class TranslationMemoryEntry(models.Model):
     locale = models.ForeignKey(Locale)
     project = models.ForeignKey(Project, null=True, related_name='memory_entries')
 
-    objects = TranslationMemoryEntryManager()
+    objects = TranslationMemoryEntryQuerySet.as_manager()
 
 
 class TranslatedResourceQuerySet(models.QuerySet):
