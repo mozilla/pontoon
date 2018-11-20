@@ -9,6 +9,11 @@ urlpatterns = [
         views.teams,
         name='pontoon.teams'),
 
+    # AJAX: Request locale to be added to Pontoon
+    url(r'^teams/requestlocale/$',
+        views.request_locales,
+        name='pontoon.teams.requestlocale'),
+
     # Redirect to a team page
     url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         RedirectView.as_view(url="/%(locale)s/", permanent=True)),

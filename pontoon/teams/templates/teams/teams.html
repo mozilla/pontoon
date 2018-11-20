@@ -6,6 +6,14 @@
 
 {% block class %}teams{% endblock %}
 
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+</div>
+{% endblock %}
+
 {% block heading %}
 <section id="heading">
   <div class="container clearfix">
@@ -58,10 +66,16 @@
 <section id="main" class="clearfix">
   <div class="container">
     <menu class="controls">
-      <div class="search-wrapper clearfix">
+      <div class="search-wrapper small clearfix">
         <div class="icon fa fa-search"></div>
         <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter teams" data-filter="td:nth-child(-n+2)">
       </div>
+
+      {% if user.is_authenticated() %}
+      <button class="request-toggle button small">
+        <span class="fa fa-chevron-right"></span>
+      </button>
+      {% endif %}
     </menu>
 
     {{ TeamList.header() }}
@@ -74,8 +88,8 @@
 
       {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True) }}
     {% endfor %}
-
-    {{ TeamList.footer() }}
+    {% set form = form %}
+    {{ TeamList.footer(request=True, form=form) }}
   </div>
 </section>
 {% endblock %}

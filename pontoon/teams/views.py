@@ -19,6 +19,7 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
+from pontoon.teams.forms import LocaleRequestForm
 
 
 def teams(request):
@@ -28,11 +29,14 @@ def teams(request):
         .prefetch_related('latest_translation__user')
     )
 
+    form = LocaleRequestForm()
+
     if not locales:
         raise Http404
 
     return render(request, 'teams/teams.html', {
         'locales': locales,
+        'form': form,
         'top_instances': locales.get_top_instances(),
     })
 
@@ -198,6 +202,48 @@ def request_projects(request, locale):
                 locale=locale.name, code=locale.code, projects=projects,
                 user=user.display_name_and_email,
                 user_role=user.locale_role(locale),
+                user_url=request.build_absolute_uri(user.profile_url)
+            ),
+            from_email='pontoon@mozilla.com',
+            to=settings.PROJECT_MANAGERS,
+            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True),
+            reply_to=[user.email]).send()
+    else:
+        raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
+
+    return HttpResponse('ok')
+
+
+@login_required(redirect_field_name='', login_url='/403')
+@require_POST
+def request_locales(request):
+    """Request locales to be added to pontoon."""
+    form = LocaleRequestForm(request.POST)
+    code = request.POST['code']
+    name = request.POST['name']
+
+    locales = Locale.objects.all().values_list('code', flat=True)
+
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors.as_json())
+
+
+    if request.POST['code'] in locales:
+        return HttpResponseBadRequest('Bad Request: Duplicate Locale Code specified')
+
+    user = request.user
+
+    if settings.PROJECT_MANAGERS[0] != '':
+        EmailMessage(
+            subject=u'New locale request for {locale} ({code})'.format(
+                locale=name, code=code
+            ),
+            body=u'''
+            Please add the Locale {locale} ({code}) to Pontoon
+            Requested by {user}:
+            {user_url}
+            '''.format(
+                locale=name, code=code, user=user.display_name_and_email,
                 user_url=request.build_absolute_uri(user.profile_url)
             ),
             from_email='pontoon@mozilla.com',

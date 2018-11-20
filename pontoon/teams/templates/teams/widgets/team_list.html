@@ -48,10 +48,23 @@
   </tr>
 {% endmacro %}
 
-{% macro footer(request=False) %}
+{% macro footer(request=False, form= None) %}
     </tbody>
   </table>
   {% if request %}
-    <button id="request-locales">Request new locales</button>
+    <form id="request-locale-form">
+      <div class="labels">
+        {{ form.name.label_tag() }}
+        {{ form.code.label_tag() }}
+      </div>
+      <div class="fields clearfix">
+        {{ form.name }}
+        {{ form.code }}
+      </div>
+      <div id="request-locales-note">
+        <p>The requested locale won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible.</p>
+      </div>
+      <button type="submit" id="request-locales">Request new locales</button>
+    </form>
   {% endif %}
 {% endmacro %}

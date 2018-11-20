@@ -312,6 +312,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/heading_info.css',
             'css/table.css',
+            'css/teams.css',
         ),
         'output_filename': 'css/teams.min.css',
     },
@@ -465,6 +466,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/table.js',
             'js/progress-chart.js',
+            'js/request_locales.js',
         ),
         'output_filename': 'js/teams.min.js',
     },
