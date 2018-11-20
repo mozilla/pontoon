@@ -483,7 +483,6 @@ class VCSConfiguration(object):
     For more information, see:
     https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html.
     """
-
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
@@ -512,12 +511,11 @@ class VCSConfiguration(object):
     def add_locale(self, locale_code):
         """
         Add new locale to project configuration.
-
-        TODO: For now we don't make changes to the configuration file to avoid
-        committing it to the VCS. The pytoml serializer messes with the file
-        layout (indents and newlines) pretty badly. We should fix the
-        serializer.
         """
+        # TODO: For now we don't make changes to the configuration file to
+        # avoid committing it to the VCS. The pytoml serializer messes with the
+        # file layout (indents and newlines) pretty badly. We should fix the
+        # serializer.
         self.parsed_configuration.locales.append(locale_code)
         return
 
@@ -590,7 +588,6 @@ class VCSConfiguration(object):
 
 class VCSResource(object):
     """Represents a single resource across multiple locales."""
-
     def __init__(self, vcs_project, path, locales=None):
         """
         Load the resource file for each enabled locale and store its

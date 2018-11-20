@@ -247,6 +247,15 @@ class VCSConfigurationTests(TestCase):
             repositories=[self.repository],
         )
 
+        checkout_path_patch = patch.object(
+            Repository,
+            'checkout_path',
+            new_callable=PropertyMock,
+            return_value=PROJECT_CONFIG_CHECKOUT_PATH
+        )
+        self.mock_checkout_path = checkout_path_patch.start()
+        self.addCleanup(checkout_path_patch.stop)
+
         self.resource_strings = ResourceFactory.create(
             project=self.db_project,
             path='values/strings.properties',
@@ -265,10 +274,75 @@ class VCSConfigurationTests(TestCase):
             self.db_project.configuration_file,
         )
 
-    @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
-    def test_locale_resources(self, checkout_path_mock):
-        checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+    def test_add_locale(self):
+        config = self.vcs_project.configuration.parsed_configuration
+        locale_code = 'new-locale-code'
 
+        assert_false(locale_code in config.locales)
+
+        self.vcs_project.configuration.add_locale(locale_code)
+
+        assert_true(locale_code in config.locales)
+
+    def test_get_or_set_project_files_reference(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = None
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_false(self.vcs_project.configuration.add_locale.called)
+
+    def test_get_or_set_project_files_l10n(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = self.locale.code
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_false(self.vcs_project.configuration.add_locale.called)
+
+    def test_get_or_set_project_files_new_locale(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = 'new-locale-code'
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_true(self.vcs_project.configuration.add_locale.called)
+
+    def test_l10n_path(self):
+        reference_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            'values/strings.properties',
+        )
+
+        l10n_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            'values-fr/strings.properties',
+        )
+
+        assert_equal(
+            self.vcs_project.configuration.l10n_path(
+                self.locale,
+                reference_path,
+            ),
+            l10n_path,
+        )
+
+    def test_locale_resources(self):
         assert_equal(
             self.vcs_project.configuration.locale_resources(self.locale),
             [self.resource_strings, self.resource_strings_reality],
