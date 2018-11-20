@@ -430,15 +430,15 @@ class VCSProject(object):
         List of all source resource paths, relative to source_directory_path.
         """
         if self.configuration:
-            paths = self.resource_paths_with_pc()
+            paths = self.resource_paths_config()
         else:
-            paths = self.resource_paths_without_pc()
+            paths = self.resource_paths_no_config()
 
         for path in paths:
             path = source_to_locale_path(path)
             yield os.path.relpath(path, self.source_directory_path)
 
-    def resource_paths_with_pc(self):
+    def resource_paths_config(self):
         """
         List of absolute paths for all supported source resources
         as specified through project configuration.
@@ -455,7 +455,7 @@ class VCSProject(object):
                 if project_files.match(absolute_path):
                     yield absolute_path
 
-    def resource_paths_without_pc(self):
+    def resource_paths_no_config(self):
         """
         List of absolute paths for all supported source resources
         found within the given path.

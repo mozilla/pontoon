@@ -55,7 +55,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
+            self.vcs_project.resource_paths_no_config = Mock(return_value=[
                 '/root/foo.po',
                 '/root/meh/bar.po'
             ])
@@ -74,7 +74,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
+            self.vcs_project.resource_paths_no_config = Mock(return_value=[
                 '/root/foo.pot',
                 '/root/meh/bar.pot'
             ])
@@ -175,7 +175,7 @@ class VCSProjectTests(TestCase):
             mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
 
     @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
-    def test_resource_paths_with_pc(self, checkout_path_mock):
+    def test_resource_paths_config(self, checkout_path_mock):
         """
         If project configuration provided, use it to collect absolute paths to all
         source resources within the source repository checkout path.
@@ -186,7 +186,7 @@ class VCSProjectTests(TestCase):
 
         assert_equal(
             sorted(list(
-                self.vcs_project.resource_paths_with_pc()
+                self.vcs_project.resource_paths_config()
             )),
             sorted([
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
@@ -195,10 +195,10 @@ class VCSProjectTests(TestCase):
         )
 
     @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
-    def test_resource_paths_without_pc_region_properties(self, source_directory_path_mock):
+    def test_resource_paths_no_config_region_properties(self, source_directory_path_mock):
         """
         If a project has a repository_url in pontoon.base.MOZILLA_REPOS,
-        resource_paths_without_pc should ignore files named
+        resource_paths_no_config should ignore files named
         "region.properties".
         """
         source_directory_path_mock.return_value = '/root'
@@ -215,12 +215,12 @@ class VCSProjectTests(TestCase):
             ]
 
             assert_equal(
-                list(self.vcs_project.resource_paths_without_pc()),
+                list(self.vcs_project.resource_paths_no_config()),
                 [os.path.join('/root', 'foo.pot')]
             )
 
     @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
-    def test_resource_paths_without_pc_exclude_hidden(self, source_directory_path_mock):
+    def test_resource_paths_no_config_exclude_hidden(self, source_directory_path_mock):
         """
         We should filter out resources that are contained in the hidden paths.
         """
@@ -233,7 +233,7 @@ class VCSProjectTests(TestCase):
             'pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths
         ):
             assert_equal(
-                list(self.vcs_project.resource_paths_without_pc()),
+                list(self.vcs_project.resource_paths_no_config()),
                 ['/root/templates/foo.pot']
             )
 
