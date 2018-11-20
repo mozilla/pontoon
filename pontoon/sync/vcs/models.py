@@ -3,7 +3,6 @@ Models for working with remote translation data stored in a VCS.
 """
 import logging
 import os
-import pytoml
 import scandir
 import shutil
 
@@ -14,7 +13,6 @@ from compare_locales.paths import (
 from datetime import datetime
 from itertools import chain
 
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.functional import cached_property
 
