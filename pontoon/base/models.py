@@ -2910,6 +2910,9 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         :return: TranslationMemory Entries enriched with the quality metric.
         """
         text_length = Value(len(text))
+
+        source_target_length = Length(F('source')) + text_length
+
         levenshtein_param = levenshtein_param or F('source')
         levenshtein_distance_expression = LevenshteinDistance(
             levenshtein_param,
@@ -2927,9 +2930,9 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
                 quality=ExpressionWrapper(
                     (
                         Cast(
-                            (F('source_length') + text_length - levenshtein_distance_expression),
+                            (source_target_length - levenshtein_distance_expression),
                             models.FloatField()
-                        ) / (F('source_length') + text_length)
+                        ) / source_target_length
                     ) * 100,
                     output_field=models.DecimalField()
                 )
