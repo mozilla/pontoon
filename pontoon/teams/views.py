@@ -219,15 +219,15 @@ def request_projects(request, locale):
 def request_locales(request):
     """Request locales to be added to pontoon."""
     form = LocaleRequestForm(request.POST)
-    code = request.POST['code']
-    name = request.POST['name']
-
     locales = Locale.objects.all().values_list('code', flat=True)
 
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors.as_json())
 
-    if request.POST['code'] in locales:
+    code = form.cleaned_data['code']
+    name = form.cleaned_data['name']
+
+    if code in locales:
         return HttpResponseBadRequest('Bad Request: Duplicate Locale Code specified')
 
     user = request.user
