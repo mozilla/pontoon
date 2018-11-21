@@ -15,6 +15,7 @@ from compare_locales import (
 from pontoon.sync import SyncError
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.utils import create_parent_directory
 from pontoon.sync.vcs.models import VCSTranslation
 
 
@@ -96,6 +97,9 @@ class CompareLocalesResource(ParsedResource):
             key: entity.strings[None] if entity.strings else None
             for key, entity in self.entities.items()
         }
+
+        # Create parent folders if necessary
+        create_parent_directory(self.path)
 
         with open(self.path, 'w') as output_file:
             log.debug('Saving file: %s', self.path)

@@ -27,8 +27,8 @@ from pontoon.sync.core import (
     update_entities,
     update_resources,
     update_translated_resources,
-    update_translated_resources_project_configuration,
-    update_translated_resources_no_project_configuration,
+    update_translated_resources_with_config,
+    update_translated_resources_without_config,
     update_translations,
 )
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase
@@ -135,12 +135,12 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
 
 
 class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
-    @patch('pontoon.sync.core.update_translated_resources_no_project_configuration')
-    @patch('pontoon.sync.core.update_translated_resources_project_configuration')
+    @patch('pontoon.sync.core.update_translated_resources_without_config')
+    @patch('pontoon.sync.core.update_translated_resources_with_config')
     def test_with_or_without_project_config(
         self,
-        update_translated_resources_project_configuration_mock,
-        update_translated_resources_no_project_configuration_mock,
+        update_translated_resources_with_config_mock,
+        update_translated_resources_without_config_mock,
     ):
         """
         Pick the right update_translated_resources() method, depending on
@@ -153,12 +153,12 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
             self.vcs_project,
             self.translated_locale,
         )
-        assert_false(update_translated_resources_project_configuration_mock.called)
-        assert_true(update_translated_resources_no_project_configuration_mock.called)
+        assert_false(update_translated_resources_with_config_mock.called)
+        assert_true(update_translated_resources_without_config_mock.called)
 
         # Reset called value
-        update_translated_resources_project_configuration_mock.called = False
-        update_translated_resources_no_project_configuration_mock.called = False
+        update_translated_resources_with_config_mock.called = False
+        update_translated_resources_without_config_mock.called = False
 
         # With project config
         self.vcs_project.configuration = True
@@ -167,8 +167,8 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
             self.vcs_project,
             self.translated_locale,
         )
-        assert_true(update_translated_resources_project_configuration_mock.called)
-        assert_false(update_translated_resources_no_project_configuration_mock.called)
+        assert_true(update_translated_resources_with_config_mock.called)
+        assert_false(update_translated_resources_without_config_mock.called)
 
     def test_project_configuration_basic(self):
         """
@@ -180,7 +180,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
                     self.other_db_resource,
                 ]
 
-                update_translated_resources_project_configuration(
+                update_translated_resources_with_config(
                     self.db_project,
                     self.vcs_project,
                     self.translated_locale,
@@ -205,7 +205,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         Create/update the TranslatedResource object on all resources
         available in the current locale.
         """
-        update_translated_resources_no_project_configuration(
+        update_translated_resources_without_config(
             self.db_project,
             self.vcs_project,
             self.translated_locale,
@@ -231,7 +231,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         with patch.object(Resource, 'is_asymmetric', new_callable=PropertyMock) as is_asymmetric:
             is_asymmetric.return_value = True
 
-            update_translated_resources_no_project_configuration(
+            update_translated_resources_without_config(
                 self.db_project,
                 self.vcs_project,
                 self.translated_locale,
@@ -254,7 +254,7 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         Only create/update the TranslatedResource object for active locales,
         even if the inactive locale has a resource.
         """
-        update_translated_resources_no_project_configuration(
+        update_translated_resources_without_config(
             self.db_project,
             self.vcs_project,
             self.translated_locale,

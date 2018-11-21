@@ -55,7 +55,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
+            self.vcs_project.resource_paths_without_config = Mock(return_value=[
                 '/root/foo.po',
                 '/root/meh/bar.po'
             ])
@@ -74,7 +74,7 @@ class VCSProjectTests(TestCase):
         with patch.object(
             VCSProject, 'source_directory_path', new_callable=PropertyMock, return_value='/root/'
         ):
-            self.vcs_project.resource_paths_without_pc = Mock(return_value=[
+            self.vcs_project.resource_paths_without_config = Mock(return_value=[
                 '/root/foo.pot',
                 '/root/meh/bar.pot'
             ])
@@ -175,7 +175,7 @@ class VCSProjectTests(TestCase):
             mock_log.error.assert_called_with(CONTAINS('failure', 'error message'))
 
     @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
-    def test_resource_paths_with_pc(self, checkout_path_mock):
+    def test_resource_paths_with_config(self, checkout_path_mock):
         """
         If project configuration provided, use it to collect absolute paths to all
         source resources within the source repository checkout path.
@@ -186,7 +186,7 @@ class VCSProjectTests(TestCase):
 
         assert_equal(
             sorted(list(
-                self.vcs_project.resource_paths_with_pc()
+                self.vcs_project.resource_paths_with_config()
             )),
             sorted([
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
@@ -195,10 +195,10 @@ class VCSProjectTests(TestCase):
         )
 
     @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
-    def test_resource_paths_without_pc_region_properties(self, source_directory_path_mock):
+    def test_resource_paths_without_config_region_properties(self, source_directory_path_mock):
         """
         If a project has a repository_url in pontoon.base.MOZILLA_REPOS,
-        resource_paths_without_pc should ignore files named
+        resource_paths_without_config should ignore files named
         "region.properties".
         """
         source_directory_path_mock.return_value = '/root'
@@ -215,12 +215,12 @@ class VCSProjectTests(TestCase):
             ]
 
             assert_equal(
-                list(self.vcs_project.resource_paths_without_pc()),
+                list(self.vcs_project.resource_paths_without_config()),
                 [os.path.join('/root', 'foo.pot')]
             )
 
     @patch.object(VCSProject, 'source_directory_path', new_callable=PropertyMock)
-    def test_resource_paths_without_pc_exclude_hidden(self, source_directory_path_mock):
+    def test_resource_paths_without_config_exclude_hidden(self, source_directory_path_mock):
         """
         We should filter out resources that are contained in the hidden paths.
         """
@@ -233,7 +233,7 @@ class VCSProjectTests(TestCase):
             'pontoon.sync.vcs.models.scandir.walk', wraps=scandir, return_value=hidden_paths
         ):
             assert_equal(
-                list(self.vcs_project.resource_paths_without_pc()),
+                list(self.vcs_project.resource_paths_without_config()),
                 ['/root/templates/foo.pot']
             )
 
@@ -246,6 +246,15 @@ class VCSConfigurationTests(TestCase):
         self.db_project = ProjectFactory.create(
             repositories=[self.repository],
         )
+
+        checkout_path_patch = patch.object(
+            Repository,
+            'checkout_path',
+            new_callable=PropertyMock,
+            return_value=PROJECT_CONFIG_CHECKOUT_PATH
+        )
+        self.mock_checkout_path = checkout_path_patch.start()
+        self.addCleanup(checkout_path_patch.stop)
 
         self.resource_strings = ResourceFactory.create(
             project=self.db_project,
@@ -260,10 +269,80 @@ class VCSConfigurationTests(TestCase):
         self.db_project.configuration_file = 'l10n.toml'
         self.vcs_project = VCSProject(self.db_project)
 
-    @patch.object(Repository, 'checkout_path', new_callable=PropertyMock)
-    def test_locale_resources(self, checkout_path_mock):
-        checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+        self.vcs_project.configuration.configuration_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            self.db_project.configuration_file,
+        )
 
+    def test_add_locale(self):
+        config = self.vcs_project.configuration.parsed_configuration
+        locale_code = 'new-locale-code'
+
+        assert_false(locale_code in config.locales)
+
+        self.vcs_project.configuration.add_locale(locale_code)
+
+        assert_true(locale_code in config.locales)
+
+    def test_get_or_set_project_files_reference(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = None
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_false(self.vcs_project.configuration.add_locale.called)
+
+    def test_get_or_set_project_files_l10n(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = self.locale.code
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_false(self.vcs_project.configuration.add_locale.called)
+
+    def test_get_or_set_project_files_new_locale(self):
+        self.vcs_project.configuration.add_locale = Mock()
+        locale_code = 'new-locale-code'
+
+        assert_equal(
+            self.vcs_project.configuration.get_or_set_project_files(
+                locale_code,
+            ).locale,
+            locale_code,
+        )
+
+        assert_true(self.vcs_project.configuration.add_locale.called)
+
+    def test_l10n_path(self):
+        reference_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            'values/strings.properties',
+        )
+
+        l10n_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH,
+            'values-fr/strings.properties',
+        )
+
+        assert_equal(
+            self.vcs_project.configuration.l10n_path(
+                self.locale,
+                reference_path,
+            ),
+            l10n_path,
+        )
+
+    def test_locale_resources(self):
         assert_equal(
             self.vcs_project.configuration.locale_resources(self.locale),
             [self.resource_strings, self.resource_strings_reality],
