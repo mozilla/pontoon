@@ -172,20 +172,20 @@ def update_translations(db_project, vcs_project, locale, changeset):
 def update_translated_resources(db_project, vcs_project, locale):
     """Update the TranslatedResource entries in the database."""
     if vcs_project.configuration:
-        update_translated_resources_project_configuration(
+        update_translated_resources_with_config(
             db_project,
             vcs_project,
             locale,
         )
     else:
-        update_translated_resources_no_project_configuration(
+        update_translated_resources_without_config(
             db_project,
             vcs_project,
             locale,
         )
 
 
-def update_translated_resources_project_configuration(db_project, vcs_project, locale):
+def update_translated_resources_with_config(db_project, vcs_project, locale):
     """
     Create/update the TranslatedResource objects for each Resource instance
     that is enabled for the given locale through project configuration.
@@ -197,7 +197,7 @@ def update_translated_resources_project_configuration(db_project, vcs_project, l
         translatedresource.calculate_stats()
 
 
-def update_translated_resources_no_project_configuration(db_project, vcs_project, locale):
+def update_translated_resources_without_config(db_project, vcs_project, locale):
     """
     We only want to create/update the TranslatedResource object if the
     resource exists in the current locale, UNLESS the file is asymmetric.

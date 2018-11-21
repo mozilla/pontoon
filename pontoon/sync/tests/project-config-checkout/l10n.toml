@@ -6,7 +6,7 @@ locales = [
 ]
 
 [env]
-    l = "{l10n_base}/{locale}/"
+    l = "{l10n_base}/values-{locale}/"
 
 [[paths]]
     reference = "values/strings.properties"

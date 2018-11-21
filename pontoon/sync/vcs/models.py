@@ -252,9 +252,14 @@ class VCSProject(object):
 
         for locale in self.locales:
             try:
-                locale_directory_paths[locale.code] = locale_directory_path(
-                    self.checkout_path, locale.code, parent_directories
-                )
+                if self.configuration:
+                    locale_directory_paths[locale.code] = self.configuration.l10n_base
+                else:
+                    locale_directory_paths[locale.code] = locale_directory_path(
+                        self.checkout_path,
+                        locale.code,
+                        parent_directories,
+                    )
                 parent_directory = get_parent_directory(locale_directory_paths[locale.code])
 
             except IOError:
@@ -423,21 +428,21 @@ class VCSProject(object):
         List of all source resource paths, relative to source_directory_path.
         """
         if self.configuration:
-            paths = self.resource_paths_with_pc()
+            paths = self.resource_paths_with_config()
         else:
-            paths = self.resource_paths_without_pc()
+            paths = self.resource_paths_without_config()
 
         for path in paths:
             path = source_to_locale_path(path)
             yield os.path.relpath(path, self.source_directory_path)
 
-    def resource_paths_with_pc(self):
+    def resource_paths_with_config(self):
         """
         List of absolute paths for all supported source resources
         as specified through project configuration.
         """
         path = self.source_directory_path
-        project_files = ProjectFiles(None, [self.configuration.parsed_configuration])
+        project_files = self.configuration.get_or_set_project_files(None)
 
         for root, dirnames, filenames in scandir.walk(path):
             if is_hidden(root):
@@ -448,7 +453,7 @@ class VCSProject(object):
                 if project_files.match(absolute_path):
                     yield absolute_path
 
-    def resource_paths_without_pc(self):
+    def resource_paths_without_config(self):
         """
         List of absolute paths for all supported source resources
         found within the given path.
@@ -476,24 +481,91 @@ class VCSConfiguration(object):
     For more information, see:
     https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html.
     """
-
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
+        self.configuration_path = os.path.join(
+            self.vcs_project.db_project.source_repository.checkout_path,
+            self.configuration_file,
+        )
+        self.project_files = {}
+
+    @cached_property
+    def l10n_base(self):
+        """
+        If project configuration provided, files could be stored in multiple
+        directories, so we just use the translation repository checkout path
+        """
+        return self.vcs_project.db_project.translation_repositories()[0].checkout_path
 
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        db_project = self.vcs_project.db_project
-
-        path = os.path.join(
-            db_project.source_repository.checkout_path,
-            self.configuration_file,
+        return TOMLParser().parse(
+            self.configuration_path,
+            env={'l10n_base': self.l10n_base},
         )
 
-        l10n_base = db_project.translation_repositories()[0].checkout_path
+    def add_locale(self, locale_code):
+        """
+        Add new locale to project configuration.
+        """
+        self.parsed_configuration.locales.append(locale_code)
 
-        return TOMLParser().parse(path, env={'l10n_base': l10n_base})
+        """
+        TODO: For now we don't make changes to the configuration file to
+        avoid committing it to the VCS. The pytoml serializer messes with the
+        file layout (indents and newlines) pretty badly. We should fix the
+        serializer and replace the content of this method with the following
+        code:
+
+        # Update configuration file
+        with open(self.configuration_path, 'r+b') as f:
+            data = pytoml.load(f)
+            data['locales'].append(locale_code)
+            f.seek(0)
+            f.write(pytoml.dumps(data, sort_keys=True))
+            f.truncate()
+
+        # Invalidate cached parsed configuration
+        del self.__dict__['parsed_configuration']
+
+        # Commit configuration file to VCS
+        commit_message = 'Update configuration file'
+        commit_author = User(
+            first_name='Mozilla Pontoon',
+            email='pontoon@mozilla.com',
+        )
+        repo = self.vcs_project.db_project.source_repository
+        repo.commit(commit_message, commit_author, repo.checkout_path)
+        """
+
+    def get_or_set_project_files(self, locale_code):
+        """
+        Get or set project files for the given locale code. This approach
+        allows us to cache the files for later use.
+
+        Also, make sure that the requested locale_code is available in the
+        configuration file.
+        """
+        if (
+            locale_code is not None and
+            locale_code not in self.parsed_configuration.locales
+        ):
+            self.add_locale(locale_code)
+
+        return self.project_files.setdefault(
+            locale_code,
+            ProjectFiles(locale_code, [self.parsed_configuration]),
+        )
+
+    def l10n_path(self, locale, reference_path):
+        """
+        Return l10n path for the given locale and reference path.
+        """
+        project_files = self.get_or_set_project_files(locale.code)
+
+        return project_files.match(reference_path)[0]
 
     def locale_resources(self, locale):
         """
@@ -501,7 +573,7 @@ class VCSConfiguration(object):
         given locale.
         """
         resources = []
-        project_files = ProjectFiles(locale.code, [self.parsed_configuration])
+        project_files = self.get_or_set_project_files(locale.code)
 
         for resource in self.vcs_project.db_project.resources.all():
             absolute_resource_path = os.path.join(
@@ -517,7 +589,6 @@ class VCSConfiguration(object):
 
 class VCSResource(object):
     """Represents a single resource across multiple locales."""
-
     def __init__(self, vcs_project, path, locales=None):
         """
         Load the resource file for each enabled locale and store its
@@ -556,7 +627,14 @@ class VCSResource(object):
         for locale in locales:
             locale_directory = self.vcs_project.locale_directory_paths[locale.code]
 
-            resource_path = os.path.join(locale_directory, self.path)
+            if self.vcs_project.configuration:
+                resource_path = self.vcs_project.configuration.l10n_path(
+                    locale,
+                    source_resource_path,
+                )
+            else:
+                resource_path = os.path.join(locale_directory, self.path)
+
             log.debug('Parsing resource file: %s', resource_path)
 
             try:
