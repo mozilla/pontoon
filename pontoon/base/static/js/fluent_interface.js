@@ -633,7 +633,6 @@ var Pontoon = (function (my) {
 
         // Unsupported string: render as source
         if (!isSupportedMessage(ast)) {
-          ast.comment = null; // Remove comment
           value = '<li class="source">' +
             fluentSerializer.serializeEntry(ast) +
           '</li>';
