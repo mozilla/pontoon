@@ -79,13 +79,11 @@ class FTLResource(ParsedResource):
         for obj in self.structure.body:
             if isinstance(obj, localizable_entries):
                 key = obj.id.name
-
-                # Do not store translation comments in the database
-                if source_resource:
-                    obj.comment = None
-
-                translation = serializer.serialize_entry(obj)
                 comment = [obj.comment.content] if obj.comment else []
+
+                # Do not store comments in the string column
+                obj.comment = None
+                translation = serializer.serialize_entry(obj)
 
                 self.entities[key] = FTLEntity(
                     key,
