@@ -53,3 +53,13 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
         instance: ${componentInstance}; gave up after ${maxTries} tries`
     );
 }
+
+
+/*
+ * Wait until `ms` milliseconds have passed.
+ *
+ * Source: https://stackoverflow.com/questions/951021
+ */
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

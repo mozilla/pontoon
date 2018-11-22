@@ -11,6 +11,7 @@ export type Navigation = {|
     project: string,
     resource: string,
     entity: number,
+    search: ?string,
 |};
 
 /**
@@ -34,12 +35,14 @@ export const getNavigation: Function = createSelector(
 
         const params = new URLSearchParams(query);
         const entity = Number(params.get('string'));
+        const search = params.get('search');
 
         return {
             locale,
             project,
             resource,
             entity,
+            search,
         };
     }
 );

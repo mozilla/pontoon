@@ -11,6 +11,7 @@ import { selectors as navSelectors } from 'core/navigation';
 import { UserAutoUpdater } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
+import { SearchBox } from 'modules/search';
 
 import type { Navigation } from 'core/navigation';
 
@@ -37,6 +38,7 @@ class App extends React.Component<InternalProps> {
         return <div id="app">
             <UserAutoUpdater />
             <section>
+                <SearchBox />
                 <EntitiesList />
             </section>
             <EntityDetails />

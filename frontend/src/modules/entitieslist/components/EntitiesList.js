@@ -46,9 +46,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // list and hide the previous entities.
         //
         // Notes:
-        //  * This solution is not entirely satisfying but it works for now.
-        //    In the future it will have to grow, to take into account search,
-        //    filters and so on.
         //  * It might seem to be an anti-pattern to change the state after the
         //    component has rendered, but that's actually the easiest way to
         //    implement that feature. Note that the first render is not shown
@@ -66,7 +63,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         if (
             previous.locale !== current.locale ||
             previous.project !== current.project ||
-            previous.resource !== current.resource
+            previous.resource !== current.resource ||
+            previous.search !== current.search
         ) {
             this.props.dispatch(actions.reset());
         }
@@ -78,7 +76,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getMoreEntities = () => {
         const { entities, parameters } = this.props;
-        const { locale, project, resource } = parameters;
+        const { locale, project, resource, search } = parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -97,6 +95,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 project,
                 resource,
                 currentEntityIds,
+                search,
             )
         );
     }

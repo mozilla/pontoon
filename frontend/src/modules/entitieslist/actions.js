@@ -71,7 +71,8 @@ export function get(
     locale: string,
     project: string,
     resource: string,
-    exclude: ?Array<number>,
+    exclude: Array<number>,
+    search: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request());
@@ -81,6 +82,7 @@ export function get(
             project,
             resource,
             exclude,
+            search,
         );
         dispatch(receive(content.entities, content.has_next));
     };
