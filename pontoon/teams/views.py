@@ -227,22 +227,21 @@ def request_locales(request):
     code = form.cleaned_data['code']
     name = form.cleaned_data['name']
 
-    if code in locales:
-        return HttpResponseBadRequest('Bad Request: Duplicate Locale Code specified')
-
     user = request.user
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
-            subject=u'New locale request for {locale} ({code})'.format(
+            subject=u'New team request: {locale} ({code})'.format(
                 locale=name, code=code
             ),
             body=u'''
-            Please add the Locale {locale} ({code}) to Pontoon
-            Requested by {user}:
+            Please add team {locale} ({code}) to Pontoon.\n
+            Requested by {user}, {user_role}:
             {user_url}
             '''.format(
-                locale=name, code=code, user=user.display_name_and_email,
+                locale=name, code=code,
+                user=user.display_name_and_email,
+                user_role=user.role(),
                 user_url=request.build_absolute_uri(user.profile_url)
             ),
             from_email='pontoon@mozilla.com',

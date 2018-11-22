@@ -3,12 +3,12 @@
 }
 
 .request-toggle:before {
-  content: "Request more locales";
+  content: "Request a new team";
   margin-right: 2px;
 }
 
 .request-toggle.back:after {
-  content: "Back to enabled locales";
+  content: "Back to enabled teams";
   margin-left: 2px;
 }
 
@@ -17,24 +17,24 @@
   content: "";
 }
 
-#request-locales-note {
+#request-team-note {
   margin: 25px 0 5px;
   display: none;
 }
 
-#request-locale-form {
+#request-team-form {
   margin: 25px 0 5px;
   display: none;
 }
 
-#request-locales-note p {
+#request-team-note p {
   font-style: italic;
   color: #AAAAAA;
   text-align: center;
   display: block;
 }
 
-#request-locales {
+#request-team {
   display: none;
   background: #7BC876;
   border: none;
@@ -45,7 +45,7 @@
   width: 100%;
 }
 
-#request-locale-form label {
+#request-team-form label {
   float: left;
   width: 444px;
   padding-bottom: 5px;
@@ -54,17 +54,17 @@
   text-align: left;
 }
 
-#request-locale-form input {
+#request-team-form input {
   height: 24px;
   width: 440px;
   box-shadow: 0 0;
   display: block;
 }
 
-#request-locale-form label[for*=id_code] {
+#request-team-form label[for*=id_code] {
   float: right;
 }
 
-#request-locale-form input[id*=id_code] {
+#request-team-form input[id*=id_code] {
   float: right;
 }

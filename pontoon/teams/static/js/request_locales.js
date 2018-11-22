@@ -1,14 +1,14 @@
 /* Public functions used across different files */
 var Pontoon = (function (my) {
   return $.extend(true, my, {
-    requestLocales: {
+    requestTeams: {
 
       /*
-       * Toggle available locales
+       * Toggle available teams
        *
-       * show request locale form
+       * show request team form
        */
-      toggleLocales: function (show) {
+      toggleTeams: function (show) {
 
         // Toggle
         $('.controls .request-toggle')
@@ -20,27 +20,27 @@ var Pontoon = (function (my) {
         // Hide all teams
         $('.team-list').toggle(show);
 
-        // Show locale form
-        $('#request-locale-form').toggle(!show);
+        // Show team form
+        $('#request-team-form').toggle(!show);
 
         $('.controls input[type=search]:visible').trigger('input');
-        Pontoon.requestLocales.toggleButton(!show);
+        Pontoon.requestTeams.toggleButton(!show);
       },
 
       /*
-       * Toggle request locale button
+       * Toggle request team button
        */
       toggleButton: function (condition) {
         condition = condition || true;
         var show = condition  &&
-          ($.trim($('#request-locale-form #id_name').val()) !== '') &&
-          ($.trim($('#request-locale-form #id_code').val()) !== '') ;
-        $('#request-locales-note').toggle(show);
-        $('#request-locales').toggle(show);
+          ($.trim($('#request-team-form #id_name').val()) !== '') &&
+          ($.trim($('#request-team-form #id_code').val()) !== '') ;
+        $('#request-team-note').toggle(show);
+        $('#request-team').toggle(show);
       },
 
       /*
-       * Request locale to be added to Pontoon
+       * Request team to be added to Pontoon
        */
       request: function(name, code) {
         $.ajax({
@@ -52,15 +52,15 @@ var Pontoon = (function (my) {
             code: code
           },
           success: function() {
-            Pontoon.endLoader("New projects request sent.", '', 5000);
+            Pontoon.endLoader("New team request sent.", '', 5000);
           },
           error: function() {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           },
           complete: function() {
-            $('#request-locale-form #id_name').val('');
-            $('#request-locale-form #id_code').val('');
-            Pontoon.requestProjects.toggleButton(true);
+            $('#request-team-form #id_name').val('');
+            $('#request-team-form #id_code').val('');
+            Pontoon.requestTeams.toggleButton(true);
             window.scrollTo(0, 0);
           }
         });
@@ -73,36 +73,36 @@ var Pontoon = (function (my) {
 $(function() {
   var container = $('#main .container');
 
-  // Switch between available locales and locales to request
+  // Switch between available teams and teams to request
   container.on('click', '.controls .request-toggle', function (e) {
     e.stopPropagation();
     e.preventDefault();
 
-    Pontoon.requestLocales.toggleLocales($(this).is('.back'));
+    Pontoon.requestTeams.toggleTeams($(this).is('.back'));
   });
 
-  // Enter locale details
-  container.on('keyup', '#request-locale-form input[type=text]', function (e) {
+  // Enter team details
+  container.on('keyup', '#request-team-form input[type=text]', function (e) {
     if ($('.controls .request-toggle').is('.back:visible')) {
       e.stopPropagation();
-      Pontoon.requestLocales.toggleButton();
+      Pontoon.requestTeams.toggleButton();
     }
   });
 
 
-  // Request locale
-  container.on('click', '#request-locales', function(e) {
+  // Request team
+  container.on('click', '#request-team', function(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    var name = $.trim($('#request-locale-form #id_name').val());
-    var code = $.trim($('#request-locale-form #id_code').val())
+    var name = $.trim($('#request-team-form #id_name').val());
+    var code = $.trim($('#request-team-form #id_code').val())
 
     if ($(this).is('.confirmed')) {
-      Pontoon.requestLocales.request(name, code);
+      Pontoon.requestTeams.request(name, code);
       $(this)
         .removeClass('confirmed')
-        .html('Request new locale');
+        .html('Request new team');
     } else {
       $(this)
         .addClass('confirmed')
