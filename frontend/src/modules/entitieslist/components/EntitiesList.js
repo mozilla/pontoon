@@ -64,7 +64,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.locale !== current.locale ||
             previous.project !== current.project ||
             previous.resource !== current.resource ||
-            previous.search !== current.search
+            previous.search !== current.search ||
+            previous.status !== current.status
         ) {
             this.props.dispatch(actions.reset());
         }
@@ -76,7 +77,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getMoreEntities = () => {
         const { entities, parameters } = this.props;
-        const { locale, project, resource, search } = parameters;
+        const { locale, project, resource, search, status } = parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -96,6 +97,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 resource,
                 currentEntityIds,
                 search,
+                status,
             )
         );
     }

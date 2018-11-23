@@ -17,6 +17,7 @@ export default class EntityAPI extends APIBase {
         resource: string,
         exclude: Array<number>,
         search: ?string,
+        status: ?string,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);
@@ -32,6 +33,10 @@ export default class EntityAPI extends APIBase {
 
         if (search) {
             payload.append('search', search);
+        }
+
+        if (status) {
+            payload.append('status', status);
         }
 
         const headers = new Headers();

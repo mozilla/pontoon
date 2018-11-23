@@ -8,12 +8,16 @@ import './SearchBox.css';
 
 import { selectors as navSelectors } from 'core/navigation';
 import type { Navigation } from 'core/navigation';
+import { NAME as STATS_NAME } from 'core/stats';
+import type { Stats } from 'core/stats';
 
 import { actions } from '..';
+import FiltersPanel from './FiltersPanel';
 
 
 type Props = {|
     parameters: Navigation,
+    stats: Stats,
     router: Object,
 |};
 
@@ -44,10 +48,16 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     updateSearchParams = debounce(() => {
-        this.props.dispatch(actions.update(this.state.search, this.props.router));
+        this.props.dispatch(actions.updateSearch(this.state.search, this.props.router));
     }, 500)
 
+    selectStatus = (status: ?string) => {
+        this.props.dispatch(actions.updateStatus(status, this.props.router));
+    }
+
     render() {
+        const { stats } = this.props;
+
         return <div className="search-box">
             <label htmlFor="search">
                 <div className="icon fa fa-search"></div>
@@ -61,6 +71,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 value={ this.state.search }
                 onChange={ this.updateSearchInput }
             />
+            <FiltersPanel stats={ stats } selectStatus={ this.selectStatus } />
         </div>;
     }
 }
@@ -69,6 +80,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 const mapStateToProps = (state: Object): Props => {
     return {
         parameters: navSelectors.getNavigation(state),
+        stats: state[STATS_NAME],
         router: state.router,
     };
 };

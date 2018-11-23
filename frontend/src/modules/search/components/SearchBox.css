@@ -1,11 +1,12 @@
 .search-box {
     border-bottom: 1px solid #5e6475;
-    position: relative;
+    position: static;
 }
 
 .search-box input[type="search"] {
     background: #4d5967;
     border: 0;
+    box-sizing: border-box;
     color: #fff;
     float: left;
     font-size: 16px;
@@ -14,8 +15,6 @@
     padding: 10px 35px 10px 43px;
     width: 100%;
 
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 
     /* Remove extra padding in Chrome search input */
     -webkit-appearance: textfield;
@@ -30,26 +29,15 @@
     top: 12px;
 }
 
-.search-box .button {
-    color: #FFFFFF;
-    cursor: pointer;
-    display: inline-block;
-    font-weight: 300;
-    line-height: 16px;
-    height: 17px;
-    padding: 4px 4px 3px;
-}
-
 .search-box .status.fa {
-	font-size: 16px;
-	left: 20px;
+    left: 14px;
+    top: 11px;
 	position: absolute;
-	top: 3px;
 }
 
-.search-box .all .status {
-    top: 11px;
-    left: 14px;
+.search-box .status.fa::before {
+    color: #4D5967;
+    content: "";
 }
 
 .search-box .all .status::before {
@@ -67,7 +55,7 @@
     font-size: 18px;
 }
 
-.search-box .translated .status:before {
+.search-box .approved .status:before {
     color: #7BC876;
 }
 
@@ -90,7 +78,7 @@
 
 .search-box .unreviewed .status:before {
     color: #4FC4F6;
-    content: "";
+    content: "";
 }
 
 .search-box .rejected .status:before {
@@ -100,5 +88,5 @@
 
 .search-box .time-range .status:before {
     color: #AAAAAA;
-    content: "";
+    content: "";
 }

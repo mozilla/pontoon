@@ -1,6 +1,7 @@
 /* @flow */
 
 import api from 'core/api';
+import { actions as statsActions } from 'core/stats';
 
 import type { Translation } from './reducer';
 
@@ -51,9 +52,9 @@ export type UpdateAction = {
     translation: Translation,
 };
 export function updateEntityTranslation(
-   entity: number,
-   pluralForm: number,
-   translation: Translation
+    entity: number,
+    pluralForm: number,
+    translation: Translation
 ): UpdateAction {
     return {
         type: UPDATE,
@@ -73,6 +74,7 @@ export function get(
     resource: string,
     exclude: Array<number>,
     search: ?string,
+    status: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request());
@@ -83,14 +85,16 @@ export function get(
             resource,
             exclude,
             search,
+            status,
         );
         dispatch(receive(content.entities, content.has_next));
+        dispatch(statsActions.update(content.stats));
     };
 }
 
 
 export type ResetAction = {
-   type: typeof RESET,
+    type: typeof RESET,
 };
 export function reset(): ResetAction {
     return {
