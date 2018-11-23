@@ -17,12 +17,12 @@
   content: "";
 }
 
-#request-team-note {
-  margin: 25px 0 5px;
+#request-team-form {
+  margin: 0 auto;
   display: none;
 }
 
-#request-team-form {
+#request-team-note {
   margin: 25px 0 5px;
   display: none;
 }
@@ -45,26 +45,38 @@
   width: 100%;
 }
 
-#request-team-form label {
-  float: left;
-  width: 444px;
-  padding-bottom: 5px;
-  color: #7BC876;
-  font-size: 16px;
-  text-align: left;
+#request-team.confirmed {
+  background: #FFA10F;
 }
 
-#request-team-form input {
-  height: 24px;
-  width: 440px;
-  box-shadow: 0 0;
+#team-form {
   display: block;
+  position: relative;
+  text-align: left;
+  margin: 0 auto 0px auto;
 }
 
-#request-team-form label[for*=id_code] {
-  float: right;
+#team-form .field {
+  margin: 20px 30px 20px 30px;
+  text-align: left;
+  display: inline-block;
 }
 
-#request-team-form input[id*=id_code] {
-  float: right;
+#team-form .field input {
+  color: #FFFFFF;
+  background: #333941;
+  border: 1px solid #4d5967;
+  border-radius: 3px;
+  float: none;
+  width: 420px;
+  padding: 4px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+label {
+  display: block;
+  padding-bottom: 3px;
+  text-align: left;
 }
