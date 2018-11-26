@@ -60,9 +60,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     render() {
         const { stats } = this.props;
 
-        return <div className="search-box">
-            <label htmlFor="search">
-                <div className="icon fa fa-search"></div>
+        return <div className="search-box clearfix">
+            <label htmlFor="search" className="icon">
+                <div className="fa fa-search"></div>
             </label>
             <input
                 id="search"

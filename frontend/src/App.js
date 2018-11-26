@@ -37,11 +37,13 @@ class App extends React.Component<InternalProps> {
     render() {
         return <div id="app">
             <UserAutoUpdater />
-            <section>
+            <section className="panel-list">
                 <SearchBox />
                 <EntitiesList />
             </section>
-            <EntityDetails />
+            <section className="panel-content">
+                <EntityDetails />
+            </section>
             <Lightbox />
         </div>;
     }

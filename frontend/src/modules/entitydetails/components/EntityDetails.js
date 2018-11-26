@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import './EntityDetails.css';
-
 import { actions as lightboxActions } from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
@@ -77,7 +75,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return <section className="entity-details">Select an entity</section>;
         }
 
-        return <section className="entity-details">
+        return <React.Fragment>
             <Metadata
                 entity={ state.selectedEntity }
                 locale={ state.locale }
@@ -91,7 +89,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 sendSuggestion={ this.sendSuggestion }
             />
             <History />
-        </section>;
+        </React.Fragment>;
     }
 }
 

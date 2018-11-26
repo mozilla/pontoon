@@ -3,6 +3,18 @@
     height: 100%;
 }
 
-#app > section {
+#app .panel-content,
+#app .panel-list {
     width: 50%;
+    height: 100%;
+}
+
+#app .panel-list {
+    position: absolute;
+}
+
+#app .panel-content {
+	border-left: 1px solid #5E6475;
+	box-sizing: border-box;
+	margin-left: 50%;
 }
