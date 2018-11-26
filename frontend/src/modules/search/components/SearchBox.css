@@ -15,12 +15,11 @@
     padding: 10px 35px 10px 43px;
     width: 100%;
 
-
     /* Remove extra padding in Chrome search input */
     -webkit-appearance: textfield;
 }
 
-.search-box .icon {
+.search-box > label {
 	color: #aaa;
     font-size: 19px;
     left: auto;
@@ -30,9 +29,14 @@
 }
 
 .search-box .status.fa {
+    position: absolute;
+    left: 16px;
+    top: 13px;
+}
+
+.search-box .all .status {
     left: 14px;
     top: 11px;
-	position: absolute;
 }
 
 .search-box .status.fa::before {
@@ -44,11 +48,6 @@
     color: #AAAAAA;
     content: "";
     font-size: 19px;
-}
-
-.search-box .unchanged .status:before {
-    color: #AAAAAA;
-    content: "";
 }
 
 .search-box .unreviewed .status:before {
@@ -71,22 +70,11 @@
     color: #F36;
 }
 
-.search-box .untranslated .status:before {
-    color: #AAAAAA;
-    content: "";
+.search-box .missing .status:before {
+    color: #3F4752;
 }
 
 .search-box .unreviewed .status:before {
     color: #4FC4F6;
     content: "";
-}
-
-.search-box .rejected .status:before {
-    color: #AAAAAA;
-    content: "";
-}
-
-.search-box .time-range .status:before {
-    color: #AAAAAA;
-    content: "";
 }

@@ -5,10 +5,14 @@ import onClickOutside from 'react-onclickoutside';
 
 import './FiltersPanel.css';
 
+import type { Navigation } from 'core/navigation';
 import type { Stats } from 'core/stats';
+
+import { FILTERS_STATUS } from '..';
 
 
 type Props = {|
+    parameters: Navigation,
     stats: Stats,
     selectStatus: Function,
 |};
@@ -18,17 +22,12 @@ type State = {|
 |};
 
 
-const FILTERS_STATUS = [
-    { title: 'All', tag: 'all', stat: 'total' },
-    { title: 'Approved', tag: 'approved' },
-    { title: 'Fuzzy', tag: 'fuzzy' },
-    { title: 'Warnings', tag: 'warnings' },
-    { title: 'Errors', tag: 'errors' },
-    { title: 'Missing', tag: 'missing' },
-    { title: 'Unreviewed', tag: 'unreviewed' },
-];
-
-
+/**
+ * Shows a list of filters (status, author, extras), used to filter the list
+ * of entities.
+ *
+ * Changes to the filters will be reflected in the URL.
+ */
 export class FiltersPanelBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -61,10 +60,19 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { stats } = this.props;
+        const { parameters, stats } = this.props;
+
+        let selectedStatus = FILTERS_STATUS.find(
+            item => item.tag === parameters.status
+        );
+        if (!selectedStatus) {
+            selectedStatus = { tag: 'all' };
+        }
+
+        const className = `visibility-switch ${selectedStatus.tag}`;
 
         return <div className="filters-panel">
-            <div className="visibility-switch all" onClick={ this.toggleVisibility }>
+            <div className={ className } onClick={ this.toggleVisibility }>
                 <span className="status fa"></span>
             </div>
             { !this.state.visible ? null : <div className="menu">

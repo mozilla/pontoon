@@ -14,6 +14,7 @@ import type { Navigation } from 'core/navigation';
 import { NAME as STATS_NAME } from 'core/stats';
 import type { Stats } from 'core/stats';
 
+import { FILTERS_STATUS } from '..';
 import FiltersPanel from './FiltersPanel';
 
 
@@ -33,6 +34,13 @@ type State = {|
 |};
 
 
+/**
+ * Shows and controls a search box, used to filter the list of entities.
+ *
+ * Changes to the search input will be reflected in the URL. The user input
+ * on that field is debounced, an update of the UI will only be triggered
+ * after some time has passed since the last key stroke.
+ */
 export class SearchBoxBase extends React.Component<InternalProps, State> {
     constructor(props: InternalProps) {
         super(props);
@@ -58,22 +66,34 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     render() {
-        const { stats } = this.props;
+        const { parameters, stats } = this.props;
+
+        let selectedStatus = FILTERS_STATUS.find(
+            item => item.tag === parameters.status
+        );
+        if (!selectedStatus) {
+            selectedStatus = { title: 'All' };
+        }
+        const placeholder = `Search in ${selectedStatus.title}`;
 
         return <div className="search-box clearfix">
-            <label htmlFor="search" className="icon">
+            <label htmlFor="search">
                 <div className="fa fa-search"></div>
             </label>
             <input
                 id="search"
                 autoComplete="off"
-                placeholder="Search in All"
+                placeholder={ placeholder }
                 title="Search Strings (Ctrl + Shift + F)"
                 type="search"
                 value={ this.state.search }
                 onChange={ this.updateSearchInput }
             />
-            <FiltersPanel stats={ stats } selectStatus={ this.selectStatus } />
+            <FiltersPanel
+                stats={ stats }
+                parameters={ parameters }
+                selectStatus={ this.selectStatus }
+            />
         </div>;
     }
 }
