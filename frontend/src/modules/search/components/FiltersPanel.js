@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import onClickOutside from 'react-onclickoutside';
 
 import './FiltersPanel.css';
 
@@ -28,7 +29,7 @@ const FILTERS_STATUS = [
 ];
 
 
-export default class FiltersPanel extends React.Component<Props, State> {
+export class FiltersPanelBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -51,6 +52,14 @@ export default class FiltersPanel extends React.Component<Props, State> {
         };
     }
 
+    // This method is called by the Higher-Order Component `onClickOutside`
+    // when a user clicks outside the search panel.
+    handleClickOutside = () => {
+        this.setState({
+            visible: false,
+        });
+    }
+
     render() {
         const { stats } = this.props;
 
@@ -69,7 +78,9 @@ export default class FiltersPanel extends React.Component<Props, State> {
                         >
                             <span className="status fa"></span>
                             <span className="title">{ filter.title }</span>
-                            <span className="count">{ filter.stat ? stats[filter.stat] : stats[filter.tag] }</span>
+                            <span className="count">
+                                { filter.stat ? stats[filter.stat] : stats[filter.tag] }
+                            </span>
                         </li>
                     }) }
                 </ul>
@@ -77,3 +88,6 @@ export default class FiltersPanel extends React.Component<Props, State> {
         </div>;
     }
 }
+
+
+export default onClickOutside(FiltersPanelBase);
