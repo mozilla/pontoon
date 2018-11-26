@@ -1,7 +1,5 @@
 /* @flow */
 
-export { default as actions } from './actions';
-
 export { default as SearchBox } from './components/SearchBox';
 
 

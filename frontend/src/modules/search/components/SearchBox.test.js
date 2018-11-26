@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget, sleep } from 'test/utils';
 
-import { actions } from '..';
+import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
 
 
@@ -29,7 +29,7 @@ describe('<SearchBox>', () => {
             SearchBoxBase
         );
 
-        const updateSpy = sinon.spy(actions, 'update');
+        const updateSpy = sinon.spy(actions, 'updateSearch');
 
         const event = { currentTarget: { value: 'test' } };
         wrapper.find('input#search').simulate('change', event);

@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import { selectors as navSelectors } from 'core/navigation';
+import {
+    actions as navActions,
+    selectors as navSelectors,
+} from 'core/navigation';
 import type { Navigation } from 'core/navigation';
 
 import { actions, NAME } from '..';
@@ -24,6 +26,7 @@ type Props = {|
         fetching: boolean,
     |},
     parameters: Navigation,
+    router: Object,
 |};
 
 type InternalProps = {|
@@ -72,7 +75,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     selectEntity = (entity: DbEntity) => {
-        this.props.dispatch(push(`?string=${entity.pk}`));
+        this.props.dispatch(
+            navActions.updateEntity(this.props.router, entity.pk.toString())
+        );
     }
 
     getMoreEntities = () => {
@@ -138,6 +143,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         entities: state[NAME],
         parameters: navSelectors.getNavigation(state),
+        router: state.router,
     };
 };
 
