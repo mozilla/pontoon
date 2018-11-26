@@ -44,7 +44,7 @@ var Pontoon = (function (my) {
        */
       request: function(name, code) {
         $.ajax({
-          url: '/teams/requestlocale/',
+          url: '/request/team/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),

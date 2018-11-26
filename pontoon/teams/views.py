@@ -172,80 +172,69 @@ def ajax_permissions(request, locale):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_projects(request, locale):
-    """Request projects to be added to locale."""
-    slug_list = request.POST.getlist('projects[]')
-    locale = get_object_or_404(Locale, code=locale)
-
-    # Validate projects
-    project_list = (
-        Project.objects.visible()
-        .filter(slug__in=slug_list, can_be_requested=True)
-    )
-    if not project_list:
-        return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
-
-    projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
+def request_item(request, locale=None):
+    """Request projects and teams to be added."""
     user = request.user
+    #requesting a project
+    if locale:
+        slug_list = request.POST.getlist('projects[]')
+        locale = get_object_or_404(Locale, code=locale)
 
-    if settings.PROJECT_MANAGERS[0] != '':
-        EmailMessage(
-            subject=u'Project request for {locale} ({code})'.format(
-                locale=locale.name, code=locale.code
-            ),
-            body=u'''
-            Please add the following projects to {locale} ({code}):
-            {projects}
-            Requested by {user}, {user_role}:
-            {user_url}
-            '''.format(
-                locale=locale.name, code=locale.code, projects=projects,
-                user=user.display_name_and_email,
-                user_role=user.locale_role(locale),
-                user_url=request.build_absolute_uri(user.profile_url)
-            ),
-            from_email='pontoon@mozilla.com',
-            to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True),
-            reply_to=[user.email]).send()
+        # Validate projects
+        project_list = (
+            Project.objects.visible()
+            .filter(slug__in=slug_list, can_be_requested=True)
+        )
+        if not project_list:
+            return HttpResponseBadRequest('Bad Request: Non-existent projects specified')
+
+        projects = ''.join('- {} ({})\n'.format(p.name, p.slug) for p in project_list)
+
+        mail_subject = u'Project request for {locale} ({code})'.format(
+            locale=locale.name, code=locale.code
+        )
+        mail_body = u'''
+        Please add the following projects to {locale} ({code}):
+        {projects}
+        Requested by {user}, {user_role}:
+        {user_url}
+        '''.format(
+            locale=locale.name, code=locale.code, projects=projects,
+            user=user.display_name_and_email,
+            user_role=user.locale_role(locale),
+            user_url=request.build_absolute_uri(user.profile_url)
+        )
+
+    # else requesting a locale
     else:
-        raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
+        form = LocaleRequestForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest(form.errors.as_json())
 
-    return HttpResponse('ok')
+        code = form.cleaned_data['code']
+        name = form.cleaned_data['name']
 
-
-@login_required(redirect_field_name='', login_url='/403')
-@require_POST
-def request_locales(request):
-    """Request locales to be added to pontoon."""
-    form = LocaleRequestForm(request.POST)
-    locales = Locale.objects.all().values_list('code', flat=True)
-
-    if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json())
-
-    code = form.cleaned_data['code']
-    name = form.cleaned_data['name']
-
-    user = request.user
+        mail_subject=u'New team request: {locale} ({code})'.format(
+            locale=name, code=code
+        )
+        mail_body=u'''
+        Please add team {locale} ({code}) to Pontoon.\n
+        Requested by {user}, {user_role}:
+        {user_url}
+        '''.format(
+            locale=name, code=code,
+            user=user.display_name_and_email,
+            user_role=user.role(),
+            user_url=request.build_absolute_uri(user.profile_url)
+        )
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
-            subject=u'New team request: {locale} ({code})'.format(
-                locale=name, code=code
-            ),
-            body=u'''
-            Please add team {locale} ({code}) to Pontoon.\n
-            Requested by {user}, {user_role}:
-            {user_url}
-            '''.format(
-                locale=name, code=code,
-                user=user.display_name_and_email,
-                user_role=user.role(),
-                user_url=request.build_absolute_uri(user.profile_url)
-            ),
+            subject=mail_subject,
+            body=mail_body,
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
+            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True) if locale else '',
             reply_to=[user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
