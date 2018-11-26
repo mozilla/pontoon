@@ -93,8 +93,12 @@ var Pontoon = (function (my) {
           success: function() {
             Pontoon.endLoader("New team request sent.", '', 5000);
           },
-          error: function() {
-            Pontoon.endLoader('Oops, something went wrong.', 'error');
+          error: function(res) {
+            if (res.status === 409) {
+              Pontoon.endLoader('This team already exists.', 'error');
+            } else {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            }
           },
           complete: function() {
             $('#request-team-form #id_name').val('');
@@ -157,14 +161,17 @@ $(function() {
             return $(element).siblings('.name').data('slug');
           }).get();
         Pontoon.requestItem.requestProjects(locale, projects);
+        $(this)
+          .removeClass('confirmed')
+          .html('Request new projects');
       } else if (type === 'team') {
         var name = $.trim($('#request-team-form #id_name').val());
         var code = $.trim($('#request-team-form #id_code').val());
         Pontoon.requestItem.requestTeam(name, code);
+        $(this)
+          .removeClass('confirmed')
+          .html('Request new team');
       }
-      $(this)
-        .removeClass('confirmed')
-        .html('Request new projects');
     } else {
       $(this)
         .addClass('confirmed')

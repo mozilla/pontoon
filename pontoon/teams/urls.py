@@ -71,5 +71,5 @@ urlpatterns = [
     # AJAX: Request projects to be added to locale
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/request/$',
         views.request_item,
-        name='pontoon.teams.request.project'),
+        name='pontoon.teams.request.projects'),
 ]

@@ -11,7 +11,7 @@
 }
 
 .request-team:before {
-  content: "Request a new team";
+  content: "Request new team";
 }
 
 .request-team.back:after {
@@ -64,14 +64,14 @@
 }
 
 #team-form {
-  display: block;
+  display: flex;
   position: relative;
   text-align: left;
   margin: 0 auto 0px auto;
+  justify-content: space-between;
 }
 
 #team-form .field {
-  margin: 20px 30px 20px 30px;
   text-align: left;
   display: inline-block;
 }
@@ -82,8 +82,9 @@
   border: 1px solid #4d5967;
   border-radius: 3px;
   float: none;
-  width: 420px;
+  width: 480px;
   padding: 4px;
+  box-shadow: none;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;

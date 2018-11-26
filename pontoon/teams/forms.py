@@ -10,3 +10,7 @@ class LocaleRequestForm(forms.ModelForm):
     class Meta:
         model = Locale
         fields = ('name', 'code')
+        labels = {
+            'name': 'Language Name',
+            'code': 'Locale Code'
+        }

@@ -209,6 +209,8 @@ def request_item(request, locale=None):
     else:
         form = LocaleRequestForm(request.POST)
         if not form.is_valid():
+            if form.has_error('code', 'unique'):
+                return HttpResponse('This team already exists.', status=409)
             return HttpResponseBadRequest(form.errors.as_json())
 
         code = form.cleaned_data['code']
