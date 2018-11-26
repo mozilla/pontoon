@@ -175,7 +175,7 @@ def ajax_permissions(request, locale):
 def request_item(request, locale=None):
     """Request projects and teams to be added."""
     user = request.user
-    #requesting a project
+    # Requesting a project
     if locale:
         slug_list = request.POST.getlist('projects[]')
         locale = get_object_or_404(Locale, code=locale)
@@ -214,10 +214,10 @@ def request_item(request, locale=None):
         code = form.cleaned_data['code']
         name = form.cleaned_data['name']
 
-        mail_subject=u'New team request: {locale} ({code})'.format(
+        mail_subject = u'New team request: {locale} ({code})'.format(
             locale=name, code=code
         )
-        mail_body=u'''
+        mail_body = u'''
         Please add team {locale} ({code}) to Pontoon.\n
         Requested by {user}, {user_role}:
         {user_url}
@@ -234,7 +234,8 @@ def request_item(request, locale=None):
             body=mail_body,
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list('email', flat=True) if locale else '',
+            cc=locale.managers_group.user_set.exclude(pk=user.pk)
+                .values_list('email', flat=True) if locale else '',
             reply_to=[user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
