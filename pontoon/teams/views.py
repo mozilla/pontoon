@@ -235,7 +235,7 @@ def request_item(request, locale=None):
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
             cc=locale.managers_group.user_set.exclude(pk=user.pk)
-                .values_list('email', flat=True) if locale else '',
+            .values_list('email', flat=True) if locale else '',
             reply_to=[user.email]).send()
     else:
         raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
