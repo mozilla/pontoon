@@ -7,6 +7,7 @@ import { shallowUntilTarget, sleep } from 'test/utils';
 
 import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
+import { FILTERS_STATUS } from '..';
 
 
 describe('<SearchBoxBase>', () => {
@@ -17,6 +18,14 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase parameters={ params } />);
 
         expect(wrapper.find('input#search')).toHaveLength(1);
+    });
+
+    it('has the correct placeholder based on parameters', () => {
+        for (let filter of FILTERS_STATUS) {
+            const params = { status: filter.tag };
+            const wrapper = shallow(<SearchBoxBase parameters={ params } />);
+            expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
+        }
     });
 });
 
