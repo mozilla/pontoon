@@ -2,8 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
-
 import { FiltersPanelBase } from './FiltersPanel';
 import { FILTERS_STATUS } from '..';
 
