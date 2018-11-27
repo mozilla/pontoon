@@ -34,4 +34,37 @@ export default class TranslationAPI extends APIBase {
 
         return this.fetch('/update/', 'POST', payload, headers);
     }
+
+    _changeStatus(url: string, id: number, resource: string) {
+        const csrfToken = this.getCSRFToken();
+
+        const payload = new URLSearchParams();
+        payload.append('translation', id.toString());
+
+        if (resource !== 'all') {
+            payload.append('paths[]', resource);
+        }
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+        headers.append('X-CSRFToken', csrfToken);
+
+        return this.fetch(url, 'POST', payload, headers);
+    }
+
+    approve(id: number, resource: string) {
+        return this._changeStatus('', id, resource);
+    }
+
+    unapprove(id: number, resource: string) {
+        return this._changeStatus('/unapprove-translation/', id, resource);
+    }
+
+    reject(id: number, resource: string) {
+        return this._changeStatus('/reject-translation/', id, resource);
+    }
+
+    unreject(id: number, resource: string) {
+        return this._changeStatus('/unreject-translation/', id, resource);
+    }
 }

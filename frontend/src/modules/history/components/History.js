@@ -6,7 +6,8 @@ import { Localized } from 'fluent-react';
 import './History.css';
 
 import Translation from './Translation';
-import type { HistoryState } from '..';
+import { actions } from '..';
+import type { DBTranslation, HistoryState } from '../reducer';
 
 
 type Props = {|
@@ -19,7 +20,47 @@ type Props = {|
  *
  * For each translation, show its author, date and status (approved, rejected).
  */
+<<<<<<< HEAD
 export default class History extends React.Component<Props> {
+=======
+export class HistoryBase extends React.Component<InternalProps> {
+    fetchHistory() {
+        const { parameters, pluralForm, dispatch } = this.props;
+
+        // This is a newly selected entity, remove the previous history
+        // then fetch the history of the new entity.
+        dispatch(actions.get(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+        ));
+    }
+
+    componentDidMount() {
+        this.fetchHistory();
+    }
+
+    componentDidUpdate(prevProps: InternalProps) {
+        if (
+            this.props.parameters.entity !== prevProps.parameters.entity ||
+            this.props.pluralForm !== prevProps.pluralForm
+        ) {
+            this.fetchHistory();
+        }
+    }
+
+    updateTranslationStatus = (translation: DBTranslation, change: string) => {
+        const { parameters, pluralForm, dispatch } = this.props;
+        dispatch(actions.updateStatus(
+            change,
+            parameters.entity,
+            pluralForm,
+            translation.pk,
+            parameters.resource
+        ));
+    }
+
+>>>>>>> Bug 1490351 - Add actions on status icons in History tab.
     renderNoResults() {
         return <section className="history">
             <Localized id="history-history-no-translations">
@@ -42,7 +83,11 @@ export default class History extends React.Component<Props> {
         return <section className="history">
             <ul>
                 { history.translations.map((translation, key) => {
-                    return <Translation translation={ translation } key={ key } />;
+                    return <Translation
+                        translation={ translation }
+                        updateTranslationStatus={ this.updateTranslationStatus }
+                        key={ key }
+                    />;
                 }) }
             </ul>
         </section>;

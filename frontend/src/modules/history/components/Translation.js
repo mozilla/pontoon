@@ -11,6 +11,7 @@ import type { DBTranslation } from '../reducer';
 
 type Props = {|
     translation: DBTranslation,
+    updateTranslationStatus: Function,
 |};
 
 /**
@@ -23,6 +24,22 @@ type Props = {|
  * change said status.
  */
 export default class Translation extends React.Component<Props> {
+    approve = () => {
+        this.props.updateTranslationStatus(this.props.translation, 'approve');
+    }
+
+    unapprove = () => {
+        this.props.updateTranslationStatus(this.props.translation, 'unapprove');
+    }
+
+    reject = () => {
+        this.props.updateTranslationStatus(this.props.translation, 'reject');
+    }
+
+    unreject = () => {
+        this.props.updateTranslationStatus(this.props.translation, 'unreject');
+    }
+
     getStatus() {
         const { translation } = this.props;
 
@@ -85,7 +102,11 @@ export default class Translation extends React.Component<Props> {
                         id="history-translation-button-unapprove"
                         attrs={{ title: true }}
                     >
-                        <button className='unapprove fa' title='Unapprove'></button>
+                        <button
+                            className='unapprove fa'
+                            title='Unapprove'
+                            onClick={ this.unapprove }
+                        ></button>
                     </Localized>
                     :
                     // Approve Button
@@ -93,7 +114,11 @@ export default class Translation extends React.Component<Props> {
                         id="history-translation-button-approve"
                         attrs={{ title: true }}
                     >
-                        <button className='approve fa' title='Approve'></button>
+                        <button
+                            className='approve fa'
+                            title='Approve'
+                            onClick={ this.approve }
+                        ></button>
                     </Localized>
                 }
                 { translation.rejected ?
@@ -102,7 +127,11 @@ export default class Translation extends React.Component<Props> {
                         id="history-translation-button-unreject"
                         attrs={{ title: true }}
                     >
-                        <button className='unreject fa' title='Unreject'></button>
+                        <button
+                            className='unreject fa'
+                            title='Unreject'
+                            onClick={ this.unreject }
+                        ></button>
                     </Localized>
                     :
                     // Reject Button
@@ -110,7 +139,11 @@ export default class Translation extends React.Component<Props> {
                         id="history-translation-button-reject"
                         attrs={{ title: true }}
                     >
-                        <button className='reject fa' title='Reject'></button>
+                        <button
+                            className='reject fa'
+                            title='Reject'
+                            onClick={ this.reject }
+                        ></button>
                     </Localized>
                 }
                 </menu>

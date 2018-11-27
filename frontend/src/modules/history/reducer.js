@@ -1,12 +1,13 @@
 /* @flow */
 
-import { RECEIVE, REQUEST } from './actions';
-import type { ReceiveAction, RequestAction } from './actions';
+import { RECEIVE, REQUEST, UPDATE } from './actions';
+import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
+    | UpdateAction
 ;
 
 
@@ -31,6 +32,16 @@ export type HistoryState = {|
 |};
 
 
+function updateTranslation(translations: Array<DBTranslation>, newTranslation: DBTranslation) {
+    return translations.map(translation => {
+        if (translation.pk === newTranslation.pk) {
+            return { ...translation, ...newTranslation };
+        }
+        return translation;
+    });
+}
+
+
 const initialState = {
     fetching: false,
     translations: [],
@@ -52,6 +63,11 @@ export default function reducer(
                 ...state,
                 fetching: false,
                 translations: action.translations,
+            };
+        case UPDATE:
+            return {
+                ...state,
+                translations: updateTranslation(state.translations, action.translation),
             };
         default:
             return state;

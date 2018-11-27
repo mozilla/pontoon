@@ -1,6 +1,5 @@
 .translation {
     border-bottom: 1px solid #5E6475;
-    cursor: pointer;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
 }
@@ -51,7 +50,7 @@
     border: none;
     color: #AAAAAA;
     display: inline-block;
-    pointer-events: none;
+    /* pointer-events: none; */
     opacity: 0.5;
     font-size: 1.8em;
     height: 22px;
