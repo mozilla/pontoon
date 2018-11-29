@@ -9,6 +9,11 @@ urlpatterns = [
         views.teams,
         name='pontoon.teams'),
 
+    # AJAX: Request team to be added to Pontoon
+    url(r'^teams/request/$',
+        views.request_item,
+        name='pontoon.teams.request.locale'),
+
     # Redirect to a team page
     url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
         RedirectView.as_view(url="/%(locale)s/", permanent=True)),
@@ -64,7 +69,7 @@ urlpatterns = [
         name='pontoon.teams.ajax.permissions'),
 
     # AJAX: Request projects to be added to locale
-    url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/request/$',
-        views.request_projects,
-        name='pontoon.teams.request'),
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/request/$',
+        views.request_item,
+        name='pontoon.teams.request.projects'),
 ]
