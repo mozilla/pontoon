@@ -174,10 +174,10 @@ def ajax_permissions(request, locale):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 def request_item(request, locale=None):
-    """Request projects to be enabled for team."""
-
+    """Request projects and teams to be added."""
     user = request.user
-    # Requesting a project
+
+    # Request projects to be enabled for team
     if locale:
         slug_list = request.POST.getlist('projects[]')
         locale = get_object_or_404(Locale, code=locale)
@@ -195,6 +195,7 @@ def request_item(request, locale=None):
         mail_subject = u'Project request for {locale} ({code})'.format(
             locale=locale.name, code=locale.code
         )
+
         payload = {
             'locale': locale.name,
             'code': locale.code,
@@ -203,9 +204,6 @@ def request_item(request, locale=None):
             'user_role': user.locale_role(locale),
             'user_url': request.build_absolute_uri(user.profile_url)
         }
-        template = get_template('teams/includes/email_request_item.txt')
-        mail_body = template.render(payload)
-        print(mail_body)
 
     # Request new teams to be enabled
     else:
@@ -229,11 +227,11 @@ def request_item(request, locale=None):
             'user_role': user.role(),
             'user_url': request.build_absolute_uri(user.profile_url)
         }
-        template = get_template('teams/includes/email_request_item.txt')
-        mail_body = template.render(payload)
-        print(mail_body)
 
     if settings.PROJECT_MANAGERS[0] != '':
+        template = get_template('teams/email_request_item.jinja')
+        mail_body = template.render(payload)
+
         EmailMessage(
             subject=mail_subject,
             body=mail_body,
@@ -241,7 +239,8 @@ def request_item(request, locale=None):
             to=settings.PROJECT_MANAGERS,
             cc=locale.managers_group.user_set.exclude(pk=user.pk)
             .values_list('email', flat=True) if locale else '',
-            reply_to=[user.email]).send()
+            reply_to=[user.email],
+        ).send()
     else:
         raise ImproperlyConfigured(
             "PROJECT_MANAGERS not defined in settings. Email recipient unknown."

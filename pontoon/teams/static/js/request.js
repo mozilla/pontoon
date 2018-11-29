@@ -16,6 +16,7 @@ var Pontoon = (function (my) {
 
         if (type === 'projects') {
           var localeProjects = $('#server').data('locale-projects');
+
           // Hide all projects
           $('.projects')
             .toggleClass('request', !show)
@@ -31,12 +32,14 @@ var Pontoon = (function (my) {
                 .toggleClass('limited', show)
                 .toggle(show);
           });
+
           Pontoon.requestItem.toggleButton(!show, 'projects');
         }
         else if (type === 'team') {
-          // Hide all teams and search bar
+          // Hide all teams and the search bar
           $('.team-list').toggle(show);
           $('.search-wrapper').toggle(show);
+
           // Show team form
           $('#request-team-form').toggle(!show);
           Pontoon.requestItem.toggleButton(!show, 'team');
@@ -48,6 +51,7 @@ var Pontoon = (function (my) {
       toggleButton: function (condition, type) {
         condition = condition || true;
         var show = condition
+
         if (type === 'projects') {
           show = condition && $('.projects td.check.enabled:visible').length > 0;
         }
@@ -96,8 +100,8 @@ var Pontoon = (function (my) {
             Pontoon.endLoader('New team request sent.', '', 5000);
           },
           error: function(res) {
-            if (res.responseText === 'This team already exists.') {
-              Pontoon.endLoader('This team already exists.', 'error');
+            if (res.status === 409) {
+              Pontoon.endLoader(res.responseText, 'error');
             }
             else {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -164,7 +168,9 @@ $(function() {
         var projects = $('.projects td.check.enabled').map(function(val, element) {
           return $(element).siblings('.name').data('slug');
         }).get();
+
         Pontoon.requestItem.requestProjects(locale, projects);
+
         $(this)
           .removeClass('confirmed')
           .html('Request new projects');
@@ -172,7 +178,9 @@ $(function() {
       else if (type === 'team') {
         var name = $.trim($('#request-team-form #id_name').val());
         var code = $.trim($('#request-team-form #id_code').val());
+
         Pontoon.requestItem.requestTeam(name, code);
+
         $(this)
           .removeClass('confirmed')
           .html('Request new team');
@@ -184,5 +192,4 @@ $(function() {
         .html('Are you sure?');
     }
   });
-
 });

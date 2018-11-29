@@ -67,13 +67,14 @@
   display: flex;
   position: relative;
   text-align: left;
-  margin: 30px auto;
+  margin: 0 auto;
   justify-content: space-between;
 }
 
 #team-form .field {
-  text-align: left;
   display: inline-block;
+  margin-top: 10px;
+  text-align: left;
 }
 
 #team-form .field input {
