@@ -17,7 +17,11 @@ describe('<Translation>', () => {
         uid: 0,
         unapproved_user: '',
         user: '',
-        username: '',
+        username: 'michel',
+    };
+
+    const DEFAULT_USER = {
+        username: 'michel',
     };
 
     describe('getStatus', () => {
@@ -141,6 +145,39 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(0);
             expect(wrapper.find('.reject')).toHaveLength(1);
             expect(wrapper.find('.unreject')).toHaveLength(0);
+        });
+    });
+
+    describe('permissions', () => {
+        it('allows the user to reject their own unapproved translation', () => {
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                user={ DEFAULT_USER }
+            />);
+
+            expect(wrapper.find('.can-reject')).toHaveLength(1);
+            expect(wrapper.find('.can-approve')).toHaveLength(0);
+        });
+
+        it('forbids the user to reject their own approved translation', () => {
+            const translation = { ...DEFAULT_TRANSLATION, approved: true };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                user={ DEFAULT_USER }
+            />);
+
+            expect(wrapper.find('.can-reject')).toHaveLength(0);
+            expect(wrapper.find('.can-approve')).toHaveLength(0);
+        });
+
+        it('allows translators to review the translation ', () => {
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                canReview={ true }
+            />);
+
+            expect(wrapper.find('.can-reject')).toHaveLength(1);
+            expect(wrapper.find('.can-approve')).toHaveLength(1);
         });
     });
 });

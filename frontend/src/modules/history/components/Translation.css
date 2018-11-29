@@ -50,7 +50,7 @@
     border: none;
     color: #AAAAAA;
     display: inline-block;
-    /* pointer-events: none; */
+    pointer-events: none;
     opacity: 0.5;
     font-size: 1.8em;
     height: 22px;
@@ -59,10 +59,10 @@
     width: 22px;
 }
 
-.translation > header.translator button,
-.translation > header.own button.reject,
-.translation > header.own button.unreject,
-.translation.approved > header button.approve {
+.translation.can-approve header button.approve,
+.translation.can-approve header button.unapprove,
+.translation.can-reject header button.reject,
+.translation.can-reject header button.unreject {
     pointer-events: auto;
     opacity: 1;
 }

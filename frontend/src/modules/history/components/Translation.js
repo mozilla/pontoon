@@ -6,11 +6,15 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
+import type { UserState } from 'core/user';
+
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
+    canReview: boolean,
     translation: DBTranslation,
+    user: UserState,
     updateTranslationStatus: Function,
 |};
 
@@ -85,15 +89,34 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { translation } = this.props;
+        const { canReview, translation, user } = this.props;
 
-        return <li
-            className={ 'translation ' + this.getStatus() }
-        >
+        // Does the currently logged in user own this translation?
+        const ownTranslation = (
+            user && user.username &&
+            user.username === translation.username
+        );
+
+        let className = 'translation ' + this.getStatus();
+        if (canReview) {
+            // This user is a translator for the current locale, they can
+            // perform all review actions.
+            className += ' can-approve can-reject';
+        }
+        else if (ownTranslation && !translation.approved) {
+            // This user owns the translation and it's not approved, they
+            // can only reject or unreject it.
+            className += ' can-reject';
+        }
+
+        return <li className={ className }>
             <header>
                 <div className="info">
                     { this.renderUser() }
-                    <TimeAgo date={ translation.date_iso } title={ `${translation.date} UTC` } />
+                    <TimeAgo
+                        date={ translation.date_iso }
+                        title={ `${translation.date} UTC` }
+                    />
                 </div>
                 <menu className="toolbar">
                 { translation.approved ?

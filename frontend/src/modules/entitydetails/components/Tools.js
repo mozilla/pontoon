@@ -45,7 +45,7 @@ export default class Tools extends React.Component<Props> {
             </TabList>
 
             <TabPanel>
-                <History history={ history } />
+                <History />
             </TabPanel>
             <TabPanel>
                 <Locales otherlocales={ otherlocales } parameters={ parameters } />
