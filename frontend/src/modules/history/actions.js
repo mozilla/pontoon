@@ -6,18 +6,17 @@ import { actions as listActions } from 'modules/entitieslist';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
 export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
+export const RESET: 'history/RESET' = 'history/RESET';
 export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +entity: number,
     +translations: Array<Object>,
 |};
-export function receive(entity: number, translations: Array<Object>): ReceiveAction {
+export function receive(translations: Array<Object>): ReceiveAction {
     return {
         type: RECEIVE,
-        entity,
         translations,
     };
 }
@@ -37,21 +36,29 @@ export function update(translation: Object) {
 
 export type RequestAction = {|
     +type: typeof REQUEST,
-    +entity: number,
 |};
-export function request(entity: number): RequestAction {
+export function request(): RequestAction {
     return {
         type: REQUEST,
-        entity,
+    };
+}
+
+
+export type ResetAction = {|
+    +type: typeof RESET,
+|};
+export function reset(): ResetAction {
+    return {
+        type: RESET,
     };
 }
 
 
 export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
-        dispatch(request(entity));
+        dispatch(request());
         const content = await api.entity.getHistory(entity, locale, pluralForm);
-        dispatch(receive(entity, content));
+        dispatch(receive(content));
     }
 }
 
@@ -76,55 +83,17 @@ function updateStatusOnServer(
 }
 
 
-function updateStatusInState(change: string, translation: number): Function {
-    return dispatch => {
-        let newTranslation;
-
-        switch (change) {
-            case 'approve':
-                newTranslation = {
-                    pk: translation,
-                    approved: true,
-                    fuzzy: false,
-                    rejected: false,
-                };
-                break;
-            case 'reject':
-                newTranslation = {
-                    pk: translation,
-                    approved: false,
-                    fuzzy: false,
-                    rejected: true,
-                };
-                break;
-            case 'unapprove':
-            case 'unreject':
-                newTranslation = {
-                    pk: translation,
-                    approved: false,
-                    fuzzy: false,
-                    rejected: false,
-                };
-                break;
-            default:
-                throw new Error('Unexpected translation status change: ' + change);
-        }
-
-        dispatch(update(newTranslation));
-    }
-}
-
-
 export function updateStatus(
     change: string,
     entity: number,
+    locale: string,
+    resource: string,
     pluralForm: number,
     translation: number,
-    resource: string
 ): Function {
     return async dispatch => {
         const results = await updateStatusOnServer(change, translation, resource);
-        dispatch(updateStatusInState(change, translation));
+        dispatch(get(entity, locale, pluralForm));
         dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
     }
 }
@@ -134,5 +103,6 @@ export default {
     get,
     receive,
     request,
+    reset,
     updateStatus,
 };

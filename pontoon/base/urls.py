@@ -64,6 +64,8 @@ urlpatterns = [
         name='pontoon.perform.checks'),
     url(r'^get-history/', views.get_translation_history,
         name='pontoon.get_history'),
+    url(r'^approve-translation/', views.approve_translation,
+        name='pontoon.approve_translation'),
     url(r'^unapprove-translation/', views.unapprove_translation,
         name='pontoon.unapprove_translation'),
     url(r'^reject-translation/', views.reject_translation,

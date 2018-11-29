@@ -53,7 +53,7 @@ export default class TranslationAPI extends APIBase {
     }
 
     approve(id: number, resource: string) {
-        return this._changeStatus('', id, resource);
+        return this._changeStatus('/approve-translation/', id, resource);
     }
 
     unapprove(id: number, resource: string) {

@@ -351,6 +351,93 @@ def get_translation_history(request):
 @utils.require_AJAX
 @login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
+def approve_translation(request):
+    """Approve given translation."""
+    try:
+        t = request.POST['translation']
+        paths = request.POST.getlist('paths[]')
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    translation = get_object_or_404(Translation, pk=t)
+    project = translation.entity.resource.project
+    locale = translation.locale
+    user = request.user
+
+    # Read-only translations cannot be approved
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This translation is in read-only mode"
+        )
+
+    if translation.approved:
+        return HttpResponseForbidden(
+            "Forbidden: This translation is already approved"
+        )
+
+    # Only privileged users can approve translations
+    if not user.can_translate(locale, project):
+        return HttpResponseForbidden(
+            "Forbidden: You don't have permission to approve this translation."
+        )
+
+    # Check for errors.
+    if project.slug == 'tutorial':
+        # Checks are disabled for the tutorial.
+        use_ttk_checks = False
+    else:
+        try:
+            use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
+        except UserProfile.DoesNotExist:
+            use_ttk_checks = True
+
+    if use_ttk_checks and translation.errors.all():
+        return HttpResponseForbidden(
+            "Forbidden: This translation has errors."
+        )
+
+    now = timezone.now()
+
+    # Reject previously approved translations.
+    translations = Translation.objects.filter(
+        entity=translation.entity,
+        locale=locale,
+        plural_form=translation.plural_form,
+    )
+    translations.filter(approved=True).update(
+        active=False,
+        approved=False,
+        rejected=True,
+        rejected_user=user,
+        rejected_date=now,
+    )
+
+    # Make sure there is no other active translation.
+    translations.filter(active=True).update(active=False)
+
+    # Update the translation status and save it.
+    translation.active = True
+    translation.approved = True
+    translation.approved_user = user
+    translation.approved_date = now
+    translation.unapproved_user = None
+    translation.unapproved_date = None
+    translation.fuzzy = False
+    translation.rejected = False
+    translation.rejected_user = None
+    translation.rejected_date = None
+
+    translation.save()
+
+    return JsonResponse({
+        'translation': translation.serialize(),
+        'stats': TranslatedResource.objects.stats(project, paths, locale),
+    })
+
+
+@utils.require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
 def unapprove_translation(request):
     """Unapprove given translation."""
     try:
