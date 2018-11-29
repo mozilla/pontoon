@@ -9,6 +9,7 @@ from django.db import transaction
 from django.db.models import Q, Count
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
+from django.template.loader import get_template
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
@@ -173,7 +174,8 @@ def ajax_permissions(request, locale):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 def request_item(request, locale=None):
-    """Request projects and teams to be added."""
+    """Request projects to be enabled for team."""
+
     user = request.user
     # Requesting a project
     if locale:
@@ -193,19 +195,19 @@ def request_item(request, locale=None):
         mail_subject = u'Project request for {locale} ({code})'.format(
             locale=locale.name, code=locale.code
         )
-        mail_body = u'''
-        Please add the following projects to {locale} ({code}):
-        {projects}
-        Requested by {user}, {user_role}:
-        {user_url}
-        '''.format(
-            locale=locale.name, code=locale.code, projects=projects,
-            user=user.display_name_and_email,
-            user_role=user.locale_role(locale),
-            user_url=request.build_absolute_uri(user.profile_url)
-        )
+        payload = {
+            'locale': locale.name,
+            'code': locale.code,
+            'projects': projects,
+            'user': user.display_name_and_email,
+            'user_role': user.locale_role(locale),
+            'user_url': request.build_absolute_uri(user.profile_url)
+        }
+        template = get_template('teams/includes/email_request_item.txt')
+        mail_body = template.render(payload)
+        print(mail_body)
 
-    # else requesting a locale
+    # Request new teams to be enabled
     else:
         form = LocaleRequestForm(request.POST)
         if not form.is_valid():
@@ -219,16 +221,17 @@ def request_item(request, locale=None):
         mail_subject = u'New team request: {locale} ({code})'.format(
             locale=name, code=code
         )
-        mail_body = u'''
-        Please add team {locale} ({code}) to Pontoon.\n
-        Requested by {user}, {user_role}:
-        {user_url}
-        '''.format(
-            locale=name, code=code,
-            user=user.display_name_and_email,
-            user_role=user.role(),
-            user_url=request.build_absolute_uri(user.profile_url)
-        )
+
+        payload = {
+            'locale': name,
+            'code': code,
+            'user': user.display_name_and_email,
+            'user_role': user.role(),
+            'user_url': request.build_absolute_uri(user.profile_url)
+        }
+        template = get_template('teams/includes/email_request_item.txt')
+        mail_body = template.render(payload)
+        print(mail_body)
 
     if settings.PROJECT_MANAGERS[0] != '':
         EmailMessage(
@@ -240,7 +243,9 @@ def request_item(request, locale=None):
             .values_list('email', flat=True) if locale else '',
             reply_to=[user.email]).send()
     else:
-        raise ImproperlyConfigured("ADMIN not defined in settings. Email recipient unknown.")
+        raise ImproperlyConfigured(
+            "PROJECT_MANAGERS not defined in settings. Email recipient unknown."
+        )
 
     return HttpResponse('ok')
 

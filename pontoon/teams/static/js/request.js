@@ -1,4 +1,3 @@
-/* Public functions used across different files */
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     requestItem: {
@@ -33,9 +32,11 @@ var Pontoon = (function (my) {
                 .toggle(show);
           });
           Pontoon.requestItem.toggleButton(!show, 'projects');
-        } else if (type === 'team') {
-          // Hide all teams
+        }
+        else if (type === 'team') {
+          // Hide all teams and search bar
           $('.team-list').toggle(show);
+          $('.search-wrapper').toggle(show);
           // Show team form
           $('#request-team-form').toggle(!show);
           Pontoon.requestItem.toggleButton(!show, 'team');
@@ -49,7 +50,8 @@ var Pontoon = (function (my) {
         var show = condition
         if (type === 'projects') {
           show = condition && $('.projects td.check.enabled:visible').length > 0;
-        } else if (type === 'team') {
+        }
+        else if (type === 'team') {
           show = condition &&
           ($.trim($('#request-team-form #id_name').val()) !== '') &&
           ($.trim($('#request-team-form #id_code').val()) !== '');
@@ -65,10 +67,10 @@ var Pontoon = (function (my) {
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
-            projects: projects
+            projects: projects,
           },
           success: function() {
-            Pontoon.endLoader("New projects request sent.", '', 5000);
+            Pontoon.endLoader('New projects request sent.', '', 5000);
           },
           error: function() {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -88,15 +90,16 @@ var Pontoon = (function (my) {
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
             name: name,
-            code: code
+            code: code,
           },
           success: function() {
-            Pontoon.endLoader("New team request sent.", '', 5000);
+            Pontoon.endLoader('New team request sent.', '', 5000);
           },
           error: function(res) {
-            if (res.status === 409) {
+            if (res.responseText === 'This team already exists.') {
               Pontoon.endLoader('This team already exists.', 'error');
-            } else {
+            }
+            else {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
             }
           },
@@ -114,7 +117,8 @@ var Pontoon = (function (my) {
 
 $(function() {
   var container = $('#main .container');
-  var type = ($('#server').data('locale'))?'projects':'team';
+  var type = $('#server').data('locale') ? 'projects' : 'team';
+
   // Switch between available projects/teams and projects/team to request
   container.on('click', '.controls .request-toggle', function (e) {
     e.stopPropagation();
@@ -156,15 +160,16 @@ $(function() {
 
     if ($(this).is('.confirmed')) {
       if (type === 'projects') {
-        var locale = $('#server').data('locale') || Pontoon.getSelectedLocale(),
-          projects = $('.projects td.check.enabled').map(function(val, element) {
-            return $(element).siblings('.name').data('slug');
-          }).get();
+        var locale = $('#server').data('locale') || Pontoon.getSelectedLocale();
+        var projects = $('.projects td.check.enabled').map(function(val, element) {
+          return $(element).siblings('.name').data('slug');
+        }).get();
         Pontoon.requestItem.requestProjects(locale, projects);
         $(this)
           .removeClass('confirmed')
           .html('Request new projects');
-      } else if (type === 'team') {
+      }
+      else if (type === 'team') {
         var name = $.trim($('#request-team-form #id_name').val());
         var code = $.trim($('#request-team-form #id_code').val());
         Pontoon.requestItem.requestTeam(name, code);
@@ -172,7 +177,8 @@ $(function() {
           .removeClass('confirmed')
           .html('Request new team');
       }
-    } else {
+    }
+    else {
       $(this)
         .addClass('confirmed')
         .html('Are you sure?');
