@@ -305,6 +305,7 @@ PIPELINE_CSS = {
             'css/heading_info.css',
             'css/team.css',
             'css/info.css',
+            'css/request.css'
         ),
         'output_filename': 'css/team.min.css',
     },
@@ -312,6 +313,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/heading_info.css',
             'css/table.css',
+            'css/request.css',
         ),
         'output_filename': 'css/teams.min.css',
     },
@@ -455,7 +457,7 @@ PIPELINE_JS = {
             'js/double_list_selector.js',
             'js/bugzilla.js',
             'js/tabs.js',
-            'js/request_projects.js',
+            'js/request.js',
             'js/permissions.js',
             'js/info.js',
         ),
@@ -465,6 +467,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/table.js',
             'js/progress-chart.js',
+            'js/request.js',
         ),
         'output_filename': 'js/teams.min.js',
     },
