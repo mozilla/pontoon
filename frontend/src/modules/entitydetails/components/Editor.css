@@ -1,3 +1,8 @@
+.editor {
+    background: rgb(39, 42, 47);
+    border-bottom: 1px solid #5E6475;
+}
+
 .editor > textarea {
     box-sizing: border-box;
     display: block;
@@ -8,4 +13,38 @@
     padding: 10px;
     resize: none;
     width: 100%;
+}
+
+.editor .options {
+    padding: 10px;
+}
+
+.editor .actions {
+    float: right;
+}
+
+.editor .actions button {
+    background: transparent;
+    border: none;
+    color: #EBEBEB;
+    height: 40px;
+    padding: 10px 3px;
+    text-transform: uppercase;
+}
+
+.editor .actions button:hover {
+    color: #7BC876;
+}
+
+.editor .actions .action-send {
+    background: #7BC876;
+    border-radius: 3px;
+    color: #272A2F;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.editor .actions .action-send:hover {
+    color: #EBEBEB;
 }
