@@ -123,6 +123,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 useWindow={ false }
                 threshold={ 600 }
             >
+            { (hasMore || entities.entities.length) ?
                 <ul>
                     { entities.entities.map((entity, i) => {
                         return <Entity
@@ -133,6 +134,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                         />;
                     }) }
                 </ul>
+                :
+                // When there are no results for the current search.
+                <h3 class="no-results">
+                    <div class="fa fa-exclamation-circle"></div>
+                    No results
+                </h3>
+            }
             </InfiniteScroll>
         </div>;
     }
