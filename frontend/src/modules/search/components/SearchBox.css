@@ -78,3 +78,7 @@
     color: #4FC4F6;
     content: "";
 }
+
+.search-box .missing:hover .status:before {
+    color: #4D5967;
+}

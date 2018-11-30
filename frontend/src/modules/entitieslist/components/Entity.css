@@ -75,3 +75,8 @@
     color: #AAAAAA;
     content: "";
 }
+
+.entity.missing.selected .status:before,
+.entity.missing:hover .status:before {
+    color: #3F4752;
+}
