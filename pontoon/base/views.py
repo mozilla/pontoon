@@ -382,16 +382,10 @@ def approve_translation(request):
         )
 
     # Check for errors.
-    if project.slug == 'tutorial':
-        # Checks are disabled for the tutorial.
-        use_ttk_checks = False
-    else:
-        try:
-            use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
-        except UserProfile.DoesNotExist:
-            use_ttk_checks = True
+    # Checks are disabled for the tutorial.
+    use_checks = project.slug != 'tutorial'
 
-    if use_ttk_checks and translation.errors.all():
+    if use_checks and translation.errors.exists():
         return HttpResponseForbidden(
             "Forbidden: This translation has errors."
         )
@@ -647,8 +641,14 @@ def perform_checks(request):
 @login_required(redirect_field_name='', login_url='/403')
 @transaction.atomic
 def update_translation(request):
-    """Update entity translation for the specified locale and user."""
+    """Update entity translation for the specified locale and user.
 
+    Note that this view is also used to approve a translation by the old
+    Translate app. Once we migrate to Translate.Next, we'll want to rework
+    this view to remove the bits about approving a translation, because that
+    has been delegated to the `approve_translation` view.
+
+    """
     try:
         entity = request.POST['entity']
         string = request.POST['translation']
