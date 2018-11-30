@@ -1,3 +1,4 @@
+/* Styling the react-tabs library */
 .react-tabs {
     -webkit-tap-highlight-color: transparent;
 }
@@ -50,4 +51,14 @@
 
 .react-tabs__tab-panel--selected {
     display: block;
+}
+
+/* Other tools styles */
+.react-tabs span.count {
+    background: #4D5967;
+    border-radius: 3px;
+    color: #CCCCCC;
+    font-weight: 300;
+    margin-left: 3px;
+    padding: 0 5px;
 }

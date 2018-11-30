@@ -11,7 +11,7 @@ import * as plural from 'core/plural';
 
 import Translation from './Translation';
 import { actions, NAME } from '..';
-import type { HistoryState } from '../reducer';
+import type { HistoryState } from '..';
 
 import type { Navigation } from 'core/navigation';
 

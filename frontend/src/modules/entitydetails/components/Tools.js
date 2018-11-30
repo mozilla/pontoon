@@ -8,7 +8,9 @@ import './Tools.css';
 import { History } from 'modules/history';
 
 
-type Props = {||};
+type Props = {|
+    historyCount: number,
+|};
 
 
 /**
@@ -18,9 +20,14 @@ type Props = {||};
  */
 export default class Tools extends React.Component<Props> {
     render() {
+        const { historyCount } = this.props;
+
         return <Tabs>
             <TabList>
-                <Tab>History</Tab>
+                <Tab>
+                    History
+                    <span className={ 'count' }>{ historyCount }</span>
+                </Tab>
                 <Tab>Locales</Tab>
             </TabList>
 
