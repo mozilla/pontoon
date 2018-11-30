@@ -136,8 +136,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 </ul>
                 :
                 // When there are no results for the current search.
-                <h3 class="no-results">
-                    <div class="fa fa-exclamation-circle"></div>
+                <h3 className="no-results">
+                    <div className="fa fa-exclamation-circle"></div>
                     No results
                 </h3>
             }
