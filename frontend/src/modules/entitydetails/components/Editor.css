@@ -1,13 +1,15 @@
 .editor {
     background: rgb(39, 42, 47);
     border-bottom: 1px solid #5E6475;
+    height: calc(20% + 60px);
+    min-height: 100px;
 }
 
 .editor > textarea {
     box-sizing: border-box;
     display: block;
-    height: 20%;
     line-height: 22px;
+    height: calc(100% - 60px);
     min-height: 100px;
     overflow: auto;
     padding: 10px;
