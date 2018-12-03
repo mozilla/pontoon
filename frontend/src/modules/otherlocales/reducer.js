@@ -1,5 +1,7 @@
 /* @flow */
 
+import api from 'core/api';
+
 import { INVALIDATE, RECEIVE, REQUEST } from './actions';
 import type { InvalidateAction, ReceiveAction, RequestAction } from './actions';
 
@@ -11,25 +13,10 @@ type Action =
 ;
 
 
-export type DBTranslation = {|
-    +approved: boolean,
-    +approved_user: string,
-    +date: string,
-    +date_iso: string,
-    +fuzzy: boolean,
-    +pk: number,
-    +rejected: boolean,
-    +string: string,
-    +uid: ?number,
-    +unapproved_user: string,
-    +user: string,
-    +username: string,
-|};
-
-export type HistoryState = {|
+export type LocalesState = {|
     +fetching: boolean,
     +didInvalidate: boolean,
-    +translations: Array<DBTranslation>,
+    +translations: Array<api.types.OtherLocaleTranslation>,
 |};
 
 
@@ -40,9 +27,9 @@ const initialState = {
 };
 
 export default function reducer(
-    state: HistoryState = initialState,
+    state: LocalesState = initialState,
     action: Action
-): HistoryState {
+): LocalesState {
     switch (action.type) {
         case INVALIDATE:
             return {

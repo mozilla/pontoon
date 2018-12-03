@@ -6,10 +6,12 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import './Tools.css';
 
 import { History } from 'modules/history';
+import { Locales } from 'modules/otherlocales';
 
 
 type Props = {|
     historyCount: number,
+    localesCount: number,
 |};
 
 
@@ -20,7 +22,7 @@ type Props = {|
  */
 export default class Tools extends React.Component<Props> {
     render() {
-        const { historyCount } = this.props;
+        const { historyCount, localesCount } = this.props;
 
         return <Tabs>
             <TabList>
@@ -28,14 +30,17 @@ export default class Tools extends React.Component<Props> {
                     History
                     <span className={ 'count' }>{ historyCount }</span>
                 </Tab>
-                <Tab>Locales</Tab>
+                <Tab>
+                    Locales
+                    <span className={ 'count' }>{ localesCount }</span>
+                </Tab>
             </TabList>
 
             <TabPanel>
                 <History />
             </TabPanel>
             <TabPanel>
-                <p>Locales</p>
+                <Locales />
             </TabPanel>
         </Tabs>;
     }

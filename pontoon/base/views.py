@@ -290,12 +290,21 @@ def get_translations_from_other_locales(request):
     try:
         entity = request.GET['entity']
         locale = request.GET['locale']
+        plural_form = request.GET['plural_form']
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
-    plural_form = None if entity.string_plural == "" else 0
+
+    # Sanitize plural_form parameter.
+    if entity.string_plural == "":
+        plural_form = None
+    else:
+        try:
+            plural_form = int(plural_form)
+        except ValueError:
+            plural_form = 0
 
     translations = Translation.objects.filter(
         entity=entity,

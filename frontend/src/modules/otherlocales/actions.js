@@ -2,9 +2,9 @@
 
 import api from 'core/api';
 
-export const INVALIDATE: 'history/INVALIDATE' = 'history/INVALIDATE';
-export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
-export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
+export const INVALIDATE: 'otherlocales/INVALIDATE' = 'otherlocales/INVALIDATE';
+export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
+export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 
 export type InvalidateAction = {|
@@ -20,9 +20,12 @@ export function invalidate(): InvalidateAction {
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +entity: number,
-    +translations: Array<Object>,
+    +translations: Array<api.types.OtherLocaleTranslation>,
 |};
-export function receive(entity: number, translations: Array<Object>): ReceiveAction {
+export function receive(
+    entity: number,
+    translations: Array<api.types.OtherLocaleTranslation>
+): ReceiveAction {
     return {
         type: RECEIVE,
         entity,
@@ -47,7 +50,7 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
     return async dispatch => {
         dispatch(request(entity));
 
-        const content = await api.entity.getHistory(entity, locale, pluralForm);
+        const content = await api.entity.getOtherLocales(entity, locale, pluralForm);
 
         dispatch(receive(entity, content));
     }

@@ -26,23 +26,13 @@ describe('<History>', () => {
 
     it('shows the correct number of translations', () => {
         const initialState = {
-            router: {
-                location: {
-                    pathname: '/kg/pro/all/',
-                    search: '?string=42',
-                },
-            },
             history: {
-                entity: 42,
                 translations: [
                     { pk: 1 },
                     { pk: 2 },
                     { pk: 3 },
                 ],
             },
-            plural: {
-                pluralForm: -1,
-            }
         };
         const store = createReduxStore(initialState);
         const wrapper = shallowUntilTarget(<History store={ store } />, HistoryBase);
@@ -51,18 +41,7 @@ describe('<History>', () => {
     });
 
     it('gets a new history when the entity is created', () => {
-        const initialState = {
-            router: {
-                location: {
-                    pathname: '/kg/pro/all/',
-                    search: '?string=42',
-                },
-            },
-            history: {
-                entity: 1,
-                translations: [],
-            }
-        };
+        const initialState = {};
         const store = createReduxStore(initialState);
         shallowUntilTarget(<History store={ store } />, HistoryBase);
 

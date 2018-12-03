@@ -2,6 +2,8 @@
 
 import APIBase from './base';
 
+import type { OtherLocaleTranslation } from './types';
+
 
 export default class EntityAPI extends APIBase {
     /**
@@ -59,5 +61,31 @@ export default class EntityAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
         return await this.fetch('/get-history/', 'GET', payload, headers);
+    }
+
+    async getOtherLocales(
+        entity: number,
+        locale: string,
+        pluralForm: number = -1,
+    ): Promise<Array<OtherLocaleTranslation>> {
+        const payload = new URLSearchParams();
+        payload.append('entity', entity.toString());
+        payload.append('locale', locale);
+        payload.append('plural_form', pluralForm.toString());
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        const results = await this.fetch('/other-locales/', 'GET', payload, headers);
+
+        return results.map(entry => {
+            return {
+                code: entry.locale__code,
+                locale: entry.locale__name,
+                direction: entry.locale__direction,
+                script: entry.locale__script,
+                translation: entry.string,
+            };
+        });
     }
 }

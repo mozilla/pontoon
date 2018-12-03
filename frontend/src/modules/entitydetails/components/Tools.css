@@ -62,3 +62,18 @@
     margin-left: 3px;
     padding: 0 5px;
 }
+
+.react-tabs {
+    height: calc(60% - 104px);
+}
+
+.react-tabs__tab,
+.react-tabs__tab-panel {
+    height: 100%;
+}
+
+.react-tabs__tab-panel > section {
+    height: 100%;
+    overflow-y: auto;
+    padding-top: 25px;
+}
