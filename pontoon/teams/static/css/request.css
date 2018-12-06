@@ -97,30 +97,30 @@
   text-align: left;
 }
 
-.project-list tbody tr:not(.limited) {
+.item-list tbody tr:not(.limited) {
   display: none;
 }
 
-.projects.request .project-list .all-strings {
+.items.request .item-list .all-strings {
   display: table-cell;
 }
 
-.projects.request .project-list th.check {
+.items.request .item-list th.check {
   text-align: right;
   width: auto;
 }
 
-.project-list .check,
-.project-list .all-strings {
+.item-list .check,
+.item-list .all-strings {
   display: none;
 }
 
-.projects.request .project-list .check {
+.items.request .item-list .check {
   cursor: pointer;
   display: block;
 }
 
-.project-list td.check {
+.item-list td.check {
   color: #3F4752;
   float: right;
   font-size: 16px;
@@ -132,24 +132,24 @@
   box-sizing: border-box;
 }
 
-.project-list td.check:before {
+.item-list td.check:before {
   content: "";
   display: block;
   margin-top: 16px;
 }
 
-.project-list td.check:hover:before,
-.project-list td.check.enabled:before {
+.item-list td.check:hover:before,
+.item-list td.check.enabled:before {
   content: "";
   color: #7BC876;
 }
 
-.project-list td.check.enabled:before {
+.item-list td.check.enabled:before {
   content: "";
 }
 
-.projects.request .project-list .latest-activity,
-.projects.request .project-list .progress,
-.projects.request .project-list .unreviewed-status {
+.items.request .item-list .latest-activity,
+.items.request .item-list .progress,
+.items.request .item-list .unreviewed-status {
   display: none;
 }

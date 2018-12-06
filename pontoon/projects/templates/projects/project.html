@@ -11,7 +11,9 @@
 <div id="server"
      class="hidden"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-     data-url-split="projects/{{ project.slug }}">
+     data-url-split="projects/{{ project.slug }}"
+     data-project="{{ project.slug }}"
+     data-locale-projects="{{ project.available_locales_list()|to_json }}">
 </div>
 {% endblock %}
 

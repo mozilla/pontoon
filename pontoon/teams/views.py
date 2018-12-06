@@ -173,15 +173,14 @@ def ajax_permissions(request, locale):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_item(request, locale=None):
+def request_item(request, type=None, code=None):
     """Request projects and teams to be added."""
     user = request.user
 
     # Request projects to be enabled for team
-    if locale:
-        slug_list = request.POST.getlist('projects[]')
-        locale = get_object_or_404(Locale, code=locale)
-
+    if code and type == 'projects':
+        slug_list = request.POST.getlist('items[]')
+        locale = get_object_or_404(Locale, code=code)
         # Validate projects
         project_list = (
             Project.objects.visible()
@@ -202,6 +201,34 @@ def request_item(request, locale=None):
             'projects': projects,
             'user': user.display_name_and_email,
             'user_role': user.locale_role(locale),
+            'user_url': request.build_absolute_uri(user.profile_url)
+        }
+
+    # Request projects to be enabled for team
+    elif code and type == 'teams':
+        code_list = request.POST.getlist('items[]')
+        project = get_object_or_404(Project, slug=code)
+
+        # Validate projects
+        locale_list = (
+            Locale.objects.available()
+            .filter(code__in=code_list)
+        )
+        if not locale_list:
+            return HttpResponseBadRequest('Bad Request: Non-existent teams specified')
+
+        locales = ''.join('- {} ({})\n'.format(l.name, l.code) for l in locale_list)
+
+        mail_subject = u'Locale request for {project} ({slug})'.format(
+            project=project.name, slug=project.slug
+        )
+
+        payload = {
+            'project': project.name,
+            'slug': project.slug,
+            'locales': locales,
+            'user': user.display_name_and_email,
+            'user_role': user.role(),
             'user_url': request.build_absolute_uri(user.profile_url)
         }
 
@@ -238,7 +265,7 @@ def request_item(request, locale=None):
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
             cc=locale.managers_group.user_set.exclude(pk=user.pk)
-            .values_list('email', flat=True) if locale else '',
+            .values_list('email', flat=True) if type is 'projects' else '',
             reply_to=[user.email],
         ).send()
     else:

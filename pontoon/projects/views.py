@@ -12,7 +12,7 @@ from guardian.decorators import permission_required_or_403
 from notifications.models import Notification
 from notifications.signals import notify
 
-from pontoon.base.models import Project
+from pontoon.base.models import Project, Locale
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.projects import forms
@@ -54,7 +54,7 @@ def ajax_teams(request, slug):
     project = get_object_or_404(Project.objects.available(), slug=slug)
 
     locales = (
-        project.locales.all()
+        Locale.objects.available()
         .prefetch_project_locale(project)
         .order_by('name')
     )
