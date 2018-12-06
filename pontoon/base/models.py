@@ -533,19 +533,14 @@ class AggregatedStats(models.Model):
         return diff
 
     @classmethod
-    def adjust_all_stats(cls, locale, project, resource, **stats_diff):
-        translated_resource = TranslatedResource.objects.get(
-            resource=resource,
-            locale=locale,
-        )
-
+    def adjust_all_stats(cls, locale, project, translatedresource, **stats_diff):
         project_locale = utils.get_object_or_none(
             ProjectLocale,
             project=project,
             locale=locale,
         )
 
-        translated_resource.adjust_stats(**stats_diff)
+        translatedresource.adjust_stats(**stats_diff)
         project.adjust_stats(**stats_diff)
 
         if not project.system_project:
@@ -2892,30 +2887,45 @@ class Translation(DirtyFieldsMixin, models.Model):
         if self.approved:
             self.entity.mark_changed(self.locale)
 
+        resource = self.entity.resource
+        project = resource.project
+        locale = self.locale
+
+        # In some places like e.g. tests, TranslationResource won't be created before the translation
+        translatedresource, _ = TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+
         # Update latest translation where necessary
-        self.update_latest_translation()
+        self.update_latest_translation(
+            locale,
+            project,
+            translatedresource,
+        )
 
         # Update stats AFTER changing approval status.
-        stats_after = self.entity.get_stats(self.locale)
+        stats_after = self.entity.get_stats(locale)
 
         stats_diff = AggregatedStats.get_stats_diff(stats_before, stats_after)
 
         AggregatedStats.adjust_all_stats(
-            self.locale,
-            self.entity.resource.project,
-            self.entity.resource,
+            locale,
+            project,
+            translatedresource,
             **stats_diff
         )
 
-    def update_latest_translation(self):
+    def update_latest_translation(self, locale=None, project=None, translatedresource=None):
         """
         Set `latest_translation` to this translation if its more recent than
         the currently stored translation. Do this for all affected models.
         """
-        resource = self.entity.resource
-        project = resource.project
-        locale = self.locale
-        translatedresource = TranslatedResource.objects.get(resource=resource, locale=locale)
+        locale = locale or self.locale
+        project = project or self.entity.resource.project
+
+        if not translatedresource:
+            translatedresource, _ = TranslatedResource.objects.get_or_create(
+                locale=locale,
+                resource=self.entity.resource
+            )
 
         instances = [project, locale, translatedresource]
 
