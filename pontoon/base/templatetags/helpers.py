@@ -329,8 +329,7 @@ def _serialize_value(value):
                     default_variant = _get_default_variant(element.expression.variants)
                     response += _serialize_value(default_variant.value)
                 else:
-                    expression = serializer.serialize_expression(element.expression)
-                    response += '{ {expression} }'.format(expression)
+                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
     return response
 
