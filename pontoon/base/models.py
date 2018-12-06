@@ -524,14 +524,24 @@ class AggregatedStats(models.Model):
         }
 
     @classmethod
-    def adjust_all_stats(cls, translation, **stats_diff):
-        entity = translation.entity
-        resource = entity.resource
-        project = resource.project
-        locale = translation.locale
+    def get_stats_diff(cls, stats_before, stats_after):
+        diff = {
+            stat_name: stats_after[stat_name] - stats_before[stat_name]
+            for stat_name in stats_before
+            if stats_before[stat_name] != stats_after[stat_name]
+        }
+        return diff
 
-        translated_resource, _ = TranslatedResource.objects.get_or_create(
+    @classmethod
+    def adjust_all_stats(cls, locale, project, resource, **stats_diff):
+        translated_resource = TranslatedResource.objects.get(
             resource=resource,
+            locale=locale,
+        )
+
+        project_locale = utils.get_object_or_none(
+            ProjectLocale,
+            project=project,
             locale=locale,
         )
 
@@ -541,15 +551,8 @@ class AggregatedStats(models.Model):
         if not project.system_project:
             locale.adjust_stats(**stats_diff)
 
-        project_locale = utils.get_object_or_none(
-            ProjectLocale,
-            project=project,
-            locale=locale,
-        )
-
         if project_locale:
             project_locale.adjust_stats(**stats_diff)
-        pass
 
     def adjust_stats(
         self,
@@ -2358,7 +2361,12 @@ class Entity(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def stats_states_map(self, locale):
+    def get_stats(self, locale):
+        """
+
+        :param locale:
+        :return:
+        """
         translations = list(
             self.translation_set
                 .filter(locale=locale)
@@ -2367,15 +2375,11 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         approved_strings_count = len([
             t for t in translations
-            if t.approved
+            if t.approved and not(t.errors.exists() or t.warnings.exists())
         ])
         fuzzy_strings_count = len([
             t for t in translations
-            if t.fuzzy
-        ])
-        unrevieved_count = len([
-            t for t in translations
-            if not (t.approved or t.fuzzy or t.rejected)
+            if t.fuzzy and not(t.errors.exists() or t.warnings.exists())
         ])
         errors_count = len([
             t for t in translations
@@ -2385,29 +2389,31 @@ class Entity(DirtyFieldsMixin, models.Model):
             t for t in translations
             if (t.approved or t.fuzzy) and t.warnings.exists()
         ])
+        unrevieved_count = len([
+            t for t in translations
+            if not (t.approved or t.fuzzy or t.rejected)
+        ])
 
         if self.string_plural:
-            approved_state = (approved_strings_count == locale.nplurals)
-            fuzzy_state = (fuzzy_strings_count == locale.nplurals)
+            approved = int(approved_strings_count == locale.nplurals)
+            fuzzy = int(fuzzy_strings_count == locale.nplurals)
         else:
-            approved_state = (approved_strings_count == 1)
-            fuzzy_state = (fuzzy_strings_count == 1)
+            approved = int(approved_strings_count == 1)
+            fuzzy = int(fuzzy_strings_count == 1)
 
-        if not (approved_state or fuzzy_state):
-            errors_state = (errors_count > 0)
-            warnings_state = (warnings_count > 0)
+        if not (approved or fuzzy):
+            errors = int(errors_count > 0)
+            warnings = int(warnings_count > 0)
         else:
-            errors_state = False
-            warnings_state = False
-
-        unrevieved_state = (unrevieved_count > 0)
+            errors = 0
+            warnings = 0
 
         return {
-            'approved_strings': approved_state,
-            'fuzzy_strings': fuzzy_state,
-            'strings_with_errors': errors_state,
-            'strings_with_warnings': warnings_state,
-            'unreviewed_strings': unrevieved_state,
+            'approved_strings_diff': approved,
+            'fuzzy_strings_diff': fuzzy,
+            'strings_with_errors__diff': errors,
+            'strings_with_warnings_diff': warnings,
+            'unreviewed_strings_diff': unrevieved_count
         }
 
     def has_changed(self, locale):
@@ -2843,7 +2849,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         return self.string
 
     def save(self, *args, **kwargs):
-        stats_before = self.entity.stats_states_map(self.locale)
+        stats_before = self.entity.get_stats(self.locale)
 
         super(Translation, self).save(*args, **kwargs)
 
@@ -2880,11 +2886,6 @@ class Translation(DirtyFieldsMixin, models.Model):
                     project=self.entity.resource.project,
                 )
 
-        # Update stats AFTER changing approval status.
-        translatedresource, _ = TranslatedResource.objects.get_or_create(
-            resource=self.entity.resource, locale=self.locale
-        )
-
         # Whenever a translation changes, mark the entity as having
         # changed in the appropriate locale. We could be smarter about
         # this but for now this is fine.
@@ -2894,15 +2895,17 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Update latest translation where necessary
         self.update_latest_translation()
 
-        stats_after = self.entity.stats_states_map(self.locale)
+        # Update stats AFTER changing approval status.
+        stats_after = self.entity.get_stats(self.locale)
 
-        stats_diff = {
-            stat_name + '_diff': stats_after[stat_name] - stats_before[stat_name]
-            for stat_name in stats_before
-            if stats_before[stat_name] != stats_after[stat_name]
-        }
+        stats_diff = AggregatedStats.get_stats_diff(stats_before, stats_after)
 
-        AggregatedStats.adjust_all_stats(self, **stats_diff)
+        AggregatedStats.adjust_all_stats(
+            self.locale,
+            self.entity.resource.project,
+            self.entity.resource,
+            **stats_diff
+        )
 
     def update_latest_translation(self):
         """
