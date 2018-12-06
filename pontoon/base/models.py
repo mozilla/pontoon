@@ -523,6 +523,34 @@ class AggregatedStats(models.Model):
             'most_missing': sorted(qs, key=lambda x: x.missing_strings)[-1],
         }
 
+    @classmethod
+    def adjust_all_stats(cls, translation, **stats_diff):
+        entity = translation.entity
+        resource = entity.resource
+        project = resource.project
+        locale = translation.locale
+
+        translated_resource, _ = TranslatedResource.objects.get_or_create(
+            resource=resource,
+            locale=locale,
+        )
+
+        translated_resource.adjust_stats(**stats_diff)
+        project.adjust_stats(**stats_diff)
+
+        if not project.system_project:
+            locale.adjust_stats(**stats_diff)
+
+        project_locale = utils.get_object_or_none(
+            ProjectLocale,
+            project=project,
+            locale=locale,
+        )
+
+        if project_locale:
+            project_locale.adjust_stats(**stats_diff)
+        pass
+
     def adjust_stats(
         self,
         total_strings_diff=0,
@@ -2814,45 +2842,10 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save_stats_diff(self, **stats_diff):
-        entity = self.entity
-        resource = entity.resource
-        project = resource.project
-        locale = self.locale
-
-        translated_resource, _ = TranslatedResource.objects.get_or_create(
-            resource=entity.resource,
-            locale=locale,
-        )
-
-        translated_resource.adjust_stats(**stats_diff)
-        project.adjust_stats(**stats_diff)
-
-        if not project.system_project:
-            locale.adjust_stats(**stats_diff)
-
-        project_locale = utils.get_object_or_none(
-            ProjectLocale,
-            project=project,
-            locale=locale,
-        )
-
-        if project_locale:
-            project_locale.adjust_stats(**stats_diff)
-
     def save(self, *args, **kwargs):
-        entity_states_before = self.entity.stats_states_map(self.locale)
+        stats_before = self.entity.stats_states_map(self.locale)
 
         super(Translation, self).save(*args, **kwargs)
-        entity_states_after = self.entity.stats_states_map(self.locale)
-
-        update_stats = {
-            stat_name + '_diff': entity_states_after[stat_name] - entity_states_before[stat_name]
-            for stat_name in entity_states_before
-            if entity_states_before[stat_name] != entity_states_after[stat_name]
-        }
-
-        self.save_stats_diff(**update_stats)
 
         # Only one translation can be approved at a time for any
         # Entity/Locale.
@@ -2891,7 +2884,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         translatedresource, _ = TranslatedResource.objects.get_or_create(
             resource=self.entity.resource, locale=self.locale
         )
-        # translatedresource.calculate_stats()
 
         # Whenever a translation changes, mark the entity as having
         # changed in the appropriate locale. We could be smarter about
@@ -2901,6 +2893,16 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         # Update latest translation where necessary
         self.update_latest_translation()
+
+        stats_after = self.entity.stats_states_map(self.locale)
+
+        stats_diff = {
+            stat_name + '_diff': stats_after[stat_name] - stats_before[stat_name]
+            for stat_name in stats_before
+            if stats_before[stat_name] != stats_after[stat_name]
+        }
+
+        AggregatedStats.adjust_all_stats(self, **stats_diff)
 
     def update_latest_translation(self):
         """
