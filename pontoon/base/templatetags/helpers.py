@@ -325,24 +325,11 @@ def _serialize_value(value):
                 response += element.value
 
             elif isinstance(element, ast.Placeable):
-                if isinstance(element.expression, ast.VariableReference):
-                    response += '{ $' + element.expression.id.name + ' }'
-
-                elif isinstance(element.expression, (ast.MessageReference, ast.TermReference)):
-                    response += '{ ' + element.expression.id.name + ' }'
-
-                elif isinstance(element.expression, (
-                    ast.CallExpression,
-                    ast.StringLiteral,
-                    ast.NumberLiteral,
-                    ast.VariantExpression,
-                    ast.AttributeExpression,
-                )):
-                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
-
-                elif hasattr(element.expression, 'variants'):
+                if hasattr(element.expression, 'variants'):
                     default_variant = _get_default_variant(element.expression.variants)
                     response += _serialize_value(default_variant.value)
+                else:
+                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
     return response
 

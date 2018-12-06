@@ -325,8 +325,8 @@ compare-locales==5.0.3 \
     --hash=sha256:dc34fa42384cfc3a5e488c17e42708909b9e6613e3274e6b050c6d70e33a970d
 
 # Required by compare-locales
-fluent==0.9.0 \
-    --hash=sha256:4fefdc742f6f13d86ce87d099642fa96e08cb9bf6e9bdff4646d3664feff1828
+https://github.com/stasm/python-fluent/archive/zeroeight.zip#egg=fluent==0.9.1 \
+    --hash=sha256:7282542a90c50418bdfa272847788dbfd1ca2d3dd4d1c61859e674293a86460b
 pytoml==0.1.14 \
     --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf
 django-waffle==0.14.0 \
