@@ -5,7 +5,7 @@ import views
 
 urlpatterns = [
     # AJAX: Request projects to be added to locale
-    url(r'^request/(?P<type>[A-Za-z0-9\-\@\.]+)/(?P<code>[A-Za-z0-9\-\@\.]+)/$',
+    url(r'^request/(?P<_type>[A-Za-z0-9\-\@\.]+)/(?P<code>[A-Za-z0-9\-\@\.]+)/$',
         views.request_item,
         name='pontoon.teams.request.projects'),
 

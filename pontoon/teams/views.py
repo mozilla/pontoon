@@ -173,14 +173,15 @@ def ajax_permissions(request, locale):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_item(request, type=None, code=None):
+def request_item(request, _type=None, code=None):
     """Request projects and teams to be added."""
     user = request.user
 
     # Request projects to be enabled for team
-    if code and type == 'projects':
+    if code and _type == 'projects':
         slug_list = request.POST.getlist('items[]')
         locale = get_object_or_404(Locale, code=code)
+
         # Validate projects
         project_list = (
             Project.objects.visible()
@@ -204,8 +205,8 @@ def request_item(request, type=None, code=None):
             'user_url': request.build_absolute_uri(user.profile_url)
         }
 
-    # Request projects to be enabled for team
-    elif code and type == 'teams':
+    # Request teams to be enabled for project
+    elif code and _type == 'teams':
         code_list = request.POST.getlist('items[]')
         project = get_object_or_404(Project, slug=code)
 
@@ -219,7 +220,7 @@ def request_item(request, type=None, code=None):
 
         locales = ''.join('- {} ({})\n'.format(l.name, l.code) for l in locale_list)
 
-        mail_subject = u'Locale request for {project} ({slug})'.format(
+        mail_subject = u'Team request for {project} ({slug})'.format(
             project=project.name, slug=project.slug
         )
 
@@ -265,7 +266,7 @@ def request_item(request, type=None, code=None):
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
             cc=locale.managers_group.user_set.exclude(pk=user.pk)
-            .values_list('email', flat=True) if type is 'projects' else '',
+            .values_list('email', flat=True) if _type is not None else '',
             reply_to=[user.email],
         ).send()
     else:
