@@ -176,6 +176,7 @@ def ajax_permissions(request, locale):
 def request_item(request, request_type=None, code=None):
     """Request projects and teams to be added."""
     user = request.user
+    cc = set()
 
     # Request projects to be enabled for team
     if code and request_type == 'projects':
@@ -230,14 +231,13 @@ def request_item(request, request_type=None, code=None):
             project=project.name, slug=project.slug
         )
 
-        cc = []
-
         for locale in locale_list:
-            cc += (
+            for email in (
                 locale.managers_group.user_set
                 .exclude(pk=user.pk)
                 .values_list('email', flat=True)
-            )
+            ):
+                cc.add(email)
 
         payload = {
             'project': project.name,
@@ -262,8 +262,6 @@ def request_item(request, request_type=None, code=None):
         mail_subject = u'New team request: {locale} ({code})'.format(
             locale=name, code=code
         )
-
-        cc = []
 
         payload = {
             'locale': name,
