@@ -413,10 +413,10 @@ var Pontoon = (function (my) {
           default:
             var expression = fluentSerializer.serializeExpression(element.expression);
             if (markPlaceables) {
-              string += `<mark class="placeable" title="${element.expression.type}">{ ${expression} }</mark>`;
+              string += '<mark class="placeable" title="' + element.expression.type + '">{ ' + expression + ' }</mark>';
             }
             else {
-              string += `{ ${expression} }`;
+              string += '{ ' + expression + ' }';
             }
         }
       }
