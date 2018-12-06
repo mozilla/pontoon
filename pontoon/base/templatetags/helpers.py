@@ -325,11 +325,12 @@ def _serialize_value(value):
                 response += element.value
 
             elif isinstance(element, ast.Placeable):
-                if hasattr(element.expression, 'variants'):
+                if isinstance(element.expression, ast.SelectExpression):
                     default_variant = _get_default_variant(element.expression.variants)
                     response += _serialize_value(default_variant.value)
                 else:
-                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
+                    expression = serializer.serialize_expression(element.expression)
+                    response += '{ {expression} }'.format(expression)
 
     return response
 
