@@ -5,6 +5,7 @@ import pytest
 from pontoon.base.models import (
     Entity,
     Translation,
+    TranslatedResource,
 )
 from pontoon.test.factories import (
     EntityFactory,
@@ -281,6 +282,10 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
     WarningFactory.create(
         translation=translations[2]
     )
+    translatedresource = TranslatedResource.objects.get(
+        resource=translations[2].entity.resource,
+        locale=translations[2].locale,
+    ).calculate_stats()
 
     translations[2].fuzzy = False
     translations[2].save()

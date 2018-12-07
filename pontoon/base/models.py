@@ -530,6 +530,7 @@ class AggregatedStats(models.Model):
             for stat_name in stats_before
             if stats_before[stat_name] != stats_after[stat_name]
         }
+
         return diff
 
     @classmethod
@@ -2406,7 +2407,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         return {
             'approved_strings_diff': approved,
             'fuzzy_strings_diff': fuzzy,
-            'strings_with_errors__diff': errors,
+            'strings_with_errors_diff': errors,
             'strings_with_warnings_diff': warnings,
             'unreviewed_strings_diff': unrevieved_count
         }
