@@ -173,15 +173,14 @@ def ajax_permissions(request, locale):
 
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
-def request_item(request, request_type=None, code=None):
+def request_item(request, locale=None):
     """Request projects and teams to be added."""
     user = request.user
-    cc = set()
 
     # Request projects to be enabled for team
-    if code and request_type == 'projects':
-        slug_list = request.POST.getlist('items[]')
-        locale = get_object_or_404(Locale, code=code)
+    if locale:
+        slug_list = request.POST.getlist('projects[]')
+        locale = get_object_or_404(Locale, code=locale)
 
         # Validate projects
         project_list = (
@@ -197,54 +196,12 @@ def request_item(request, request_type=None, code=None):
             locale=locale.name, code=locale.code
         )
 
-        cc = (
-            locale.managers_group.user_set
-            .exclude(pk=user.pk)
-            .values_list('email', flat=True)
-        )
-
         payload = {
             'locale': locale.name,
             'code': locale.code,
             'projects': projects,
             'user': user.display_name_and_email,
             'user_role': user.locale_role(locale),
-            'user_url': request.build_absolute_uri(user.profile_url)
-        }
-
-    # Request teams to be enabled for project
-    elif code and request_type == 'teams':
-        code_list = request.POST.getlist('items[]')
-        project = get_object_or_404(Project, slug=code)
-
-        # Validate projects
-        locale_list = (
-            Locale.objects.available()
-            .filter(code__in=code_list)
-        )
-        if not locale_list:
-            return HttpResponseBadRequest('Bad Request: Non-existent teams specified')
-
-        locales = ''.join('- {} ({})\n'.format(l.name, l.code) for l in locale_list)
-
-        mail_subject = u'Team request for {project} ({slug})'.format(
-            project=project.name, slug=project.slug
-        )
-
-        for locale in locale_list:
-            for email in (
-                locale.managers_group.user_set
-                .exclude(pk=user.pk)
-                .values_list('email', flat=True)
-            ):
-                cc.add(email)
-
-        payload = {
-            'project': project.name,
-            'slug': project.slug,
-            'locales': locales,
-            'user': user.display_name_and_email,
-            'user_role': user.role(),
             'user_url': request.build_absolute_uri(user.profile_url)
         }
 
@@ -280,7 +237,8 @@ def request_item(request, request_type=None, code=None):
             body=mail_body,
             from_email='pontoon@mozilla.com',
             to=settings.PROJECT_MANAGERS,
-            cc=cc,
+            cc=locale.managers_group.user_set.exclude(pk=user.pk)
+            .values_list('email', flat=True) if locale else '',
         ).send()
     else:
         raise ImproperlyConfigured(

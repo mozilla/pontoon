@@ -53,7 +53,7 @@ var Pontoon = (function (my) {
         var show = condition
 
         if (type === 'locale-projects') {
-          show = condition && $('.items td.check.enabled:visible').length > 0;
+          show = condition && $('.items td.enabled:visible').length > 0;
         }
         else if (type === 'team') {
           show = condition &&
@@ -65,13 +65,13 @@ var Pontoon = (function (my) {
         $('#request-item').toggle(show);
       },
 
-      requestProjects: function(code, items, type) {
+      requestProjects: function(locale, projects, type) {
         $.ajax({
-          url: '/request/' + type + '/' + code + '/',
+          url: '/' + locale + '/request/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
-            items: items,
+            projects: projects,
           },
           success: function() {
             Pontoon.endLoader('New ' + type + ' request sent.', '', 5000);
@@ -81,6 +81,7 @@ var Pontoon = (function (my) {
           },
           complete: function() {
             $('.items td.check').removeClass('enabled');
+            $('.items td.radio.fa-dot-circle').toggleClass('fa-circle fa-dot-circle enabled');
             Pontoon.requestItem.toggleItem(true, 'locale-projects');
             window.scrollTo(0, 0);
           }
@@ -141,6 +142,28 @@ $(function() {
     }
   });
 
+  // Radio button hover behavior
+  container.on({
+    mouseenter: function () {
+        $(this).toggleClass('far fa');
+    },
+    mouseleave: function () {
+        $(this).toggleClass('far fa');
+    }
+  },'.items td.radio');
+
+  // Select team
+  container.on('click', '.items td.radio', function (e) {
+    if ($('.controls .request-toggle').is('.back:visible')) {
+      e.stopPropagation();
+
+      $(this).add('.items td.radio.fa-dot-circle')
+      .toggleClass('fa-circle fa-dot-circle enabled');
+
+      Pontoon.requestItem.toggleButton(true, type='locale-projects');
+    }
+  });
+
   // Prevent openning project page from the request panel
   var menu = container.find('.project .menu');
   menu.find('a').click(function (e) {
@@ -177,12 +200,10 @@ $(function() {
       }
 
       else if (type === 'locale-projects' && $('body').hasClass('project')) {
-        var project = $('#server').data('project') || Pontoon.getSelectedLocale();
-        var locales = $('.items td.check.enabled').map(function(val, element) {
-          return $(element).siblings('.name').data('slug');
-        }).get();
+        var project = $('#server').data('project');
+        var locale = $('.items td.radio.enabled').siblings('.name').data('slug');
 
-        Pontoon.requestItem.requestProjects(project, locales, 'teams');
+        Pontoon.requestItem.requestProjects(locale, [project], 'team');
 
         $(this)
           .removeClass('confirmed')

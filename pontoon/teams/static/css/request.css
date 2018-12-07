@@ -111,16 +111,19 @@
 }
 
 .item-list .check,
+.item-list .radio,
 .item-list .all-strings {
   display: none;
 }
 
-.items.request .item-list .check {
+.items.request .item-list .check,
+.items.request .item-list .radio {
   cursor: pointer;
   display: block;
 }
 
-.item-list td.check {
+.item-list td.check,
+.item-list td.radio {
   color: #3F4752;
   float: right;
   font-size: 16px;
@@ -146,6 +149,15 @@
 
 .item-list td.check.enabled:before {
   content: "";
+}
+
+.item-list td.radio:before {
+  display: block;
+  margin-top: 16px;
+}
+
+.item-list td.radio.enabled:before {
+  color: #7BC876;
 }
 
 .items.request .item-list .latest-activity,

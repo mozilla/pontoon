@@ -2,9 +2,6 @@
 {% if projects %}
 Please add the following projects to {{locale}} ({{ code }}):
 {{ projects }}
-{% elif locales %}
-Please add the following teams to {{project}} ({{ slug }}):
-{{ locales }}
 {% else %}
 Please add team {{ locale }} ({{ code }}) to Pontoon.
 {% endif %}

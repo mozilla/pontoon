@@ -4,20 +4,10 @@ from django.views.generic import RedirectView
 import views
 
 urlpatterns = [
-    # AJAX: Request projects to be added to locale
-    url(r'^request/(?P<request_type>[A-Za-z0-9\-\@\.]+)/(?P<code>[A-Za-z0-9\-\@\.]+)/$',
-        views.request_item,
-        name='pontoon.teams.request.projects'),
-
     # Localization teams
     url(r'^teams/$',
         views.teams,
         name='pontoon.teams'),
-
-    # AJAX: Request team to be added to Pontoon
-    url(r'^request/team/$',
-        views.request_item,
-        name='pontoon.teams.request.locale'),
 
     # Redirect to a team page
     url(r'^teams/(?P<locale>[A-Za-z0-9\-\@\.]+)/$',
@@ -72,4 +62,13 @@ urlpatterns = [
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/ajax/permissions/$',
         views.ajax_permissions,
         name='pontoon.teams.ajax.permissions'),
+
+    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/request/$',
+        views.request_item,
+        name='pontoon.teams.request.projects'),
+
+    # AJAX: Request team to be added to Pontoon
+    url(r'^request/team/$',
+        views.request_item,
+        name='pontoon.teams.request.locale'),
 ]
