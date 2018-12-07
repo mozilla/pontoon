@@ -200,6 +200,9 @@ def run_checks(entity, locale_code, string):
         File(entity.resource.path, entity.resource.path, locale=locale_code),
         extra_tests
     )
+    if checker is None:
+        # compare-locales has no checks for this format, it's OK.
+        return {}
 
     # Currently, references are required only by DTD files but that may change in the future.
     if checker.needs_reference:
