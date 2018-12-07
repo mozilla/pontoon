@@ -22,7 +22,6 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
     Translation,
-    TranslatedResource,
 )
 from pontoon.base.utils import (
     require_AJAX,

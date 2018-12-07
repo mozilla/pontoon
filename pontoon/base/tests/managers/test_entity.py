@@ -282,7 +282,7 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
     WarningFactory.create(
         translation=translations[2]
     )
-    translatedresource = TranslatedResource.objects.get(
+    TranslatedResource.objects.get(
         resource=translations[2].entity.resource,
         locale=translations[2].locale,
     ).calculate_stats()

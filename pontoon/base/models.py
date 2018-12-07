@@ -2892,8 +2892,11 @@ class Translation(DirtyFieldsMixin, models.Model):
         project = resource.project
         locale = self.locale
 
-        # In some places like e.g. tests, TranslationResource won't be created before the translation
-        translatedresource, _ = TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+        # TranslatedResource has to be created during a sync run and in the backend.
+        translatedresource, _ = TranslatedResource.objects.get_or_create(
+            resource=resource,
+            locale=locale
+        )
 
         # Update latest translation where necessary
         self.update_latest_translation(
