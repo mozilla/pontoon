@@ -523,47 +523,20 @@ class AggregatedStats(models.Model):
             'most_missing': sorted(qs, key=lambda x: x.missing_strings)[-1],
         }
 
-    @classmethod
-    def get_stats_diff(cls, stats_before, stats_after):
-        diff = {
-            stat_name: stats_after[stat_name] - stats_before[stat_name]
-            for stat_name in stats_before
-            if stats_before[stat_name] != stats_after[stat_name]
-        }
-
-        return diff
-
-    @classmethod
-    def adjust_all_stats(cls, locale, project, translatedresource, **stats_diff):
-        project_locale = utils.get_object_or_none(
-            ProjectLocale,
-            project=project,
-            locale=locale,
-        )
-
-        translatedresource.adjust_stats(**stats_diff)
-        project.adjust_stats(**stats_diff)
-
-        if not project.system_project:
-            locale.adjust_stats(**stats_diff)
-
-        if project_locale:
-            project_locale.adjust_stats(**stats_diff)
-
     def adjust_stats(
         self,
-        total_strings_diff=0,
-        approved_strings_diff=0,
-        fuzzy_strings_diff=0,
-        strings_with_errors_diff=0,
-        strings_with_warnings_diff=0,
-        unreviewed_strings_diff=0,
+        total_strings_diff,
+        approved_strings_diff,
+        fuzzy_strings_diff,
+        strings_with_errors_diff,
+        strings_with_warnings_diff,
+        unreviewed_strings_diff,
     ):
         self.total_strings = F('total_strings') + total_strings_diff
         self.approved_strings = F('approved_strings') + approved_strings_diff
         self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
         self.strings_with_errors = F('strings_with_errors') + strings_with_errors_diff
-        self.strings_with_warnings = F('strings_with_warnings') + strings_with_warnings_diff
+        self.stringswith_warnings = F('strings_with_warnings') + strings_with_warnings_diff
         self.unreviewed_strings = F('unreviewed_strings') + unreviewed_strings_diff
 
         self.save(update_fields=[
@@ -2359,9 +2332,12 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def get_stats(self, locale):
         """
+        Get stats for a single entity. This will allow to generate differences between the state
+        before and after the save of a translation.
 
-        :param locale:
-        :return:
+        :arg Locale locale: filter translations for this locale.
+        :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
+            make them easier to pass into adjust_all_stats.
         """
         translations = list(
             self.translation_set
@@ -2405,11 +2381,26 @@ class Entity(DirtyFieldsMixin, models.Model):
             warnings = 0
 
         return {
+            'total_strings_diff': 0,
             'approved_strings_diff': approved,
             'fuzzy_strings_diff': fuzzy,
             'strings_with_errors_diff': errors,
             'strings_with_warnings_diff': warnings,
             'unreviewed_strings_diff': unrevieved_count
+        }
+
+    @classmethod
+    def get_stats_diff(cls, stats_before, stats_after):
+        """
+        Return difference between two stats states for the entity.
+
+        :arg dict stats_before: dict with stats of entity before translation is saved.
+        :arg dict stats_after: dict with stats of entity after translation is saved.
+        :return: dictionary with differences between provided stats.
+        """
+        return {
+            stat_name: stats_after[stat_name] - stats_before[stat_name]
+            for stat_name in stats_before
         }
 
     def has_changed(self, locale):
@@ -2889,7 +2880,6 @@ class Translation(DirtyFieldsMixin, models.Model):
             self.entity.mark_changed(self.locale)
 
         resource = self.entity.resource
-        project = resource.project
         locale = self.locale
 
         # TranslatedResource has to be created during a sync run and in the backend.
@@ -2899,37 +2889,23 @@ class Translation(DirtyFieldsMixin, models.Model):
         )
 
         # Update latest translation where necessary
-        self.update_latest_translation(
-            locale,
-            project,
-            translatedresource,
-        )
+        self.update_latest_translation()
 
         # Update stats AFTER changing approval status.
         stats_after = self.entity.get_stats(locale)
 
-        stats_diff = AggregatedStats.get_stats_diff(stats_before, stats_after)
+        stats_diff = Entity.get_stats_diff(stats_before, stats_after)
+        translatedresource.adjust_all_stats(**stats_diff)
 
-        AggregatedStats.adjust_all_stats(
-            locale,
-            project,
-            translatedresource,
-            **stats_diff
-        )
-
-    def update_latest_translation(self, locale=None, project=None, translatedresource=None):
+    def update_latest_translation(self):
         """
         Set `latest_translation` to this translation if its more recent than
         the currently stored translation. Do this for all affected models.
         """
-        locale = locale or self.locale
-        project = project or self.entity.resource.project
-
-        if not translatedresource:
-            translatedresource, _ = TranslatedResource.objects.get_or_create(
-                locale=locale,
-                resource=self.entity.resource
-            )
+        resource = self.entity.resource
+        project = resource.project
+        locale = self.locale
+        translatedresource = TranslatedResource.objects.get(resource=resource, locale=locale)
 
         instances = [project, locale, translatedresource]
 
@@ -3233,6 +3209,25 @@ class TranslatedResource(AggregatedStats):
 
     class Meta(object):
         unique_together = (('locale', 'resource'), )
+
+    def adjust_all_stats(self, **stats_diff):
+        project = self.resource.project
+        locale = self.locale
+
+        project_locale = utils.get_object_or_none(
+            ProjectLocale,
+            project=project,
+            locale=locale,
+        )
+
+        self.adjust_stats(**stats_diff)
+        project.adjust_stats(**stats_diff)
+
+        if not project.system_project:
+            locale.adjust_stats(**stats_diff)
+
+        if project_locale:
+            project_locale.adjust_stats(**stats_diff)
 
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
