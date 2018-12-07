@@ -536,7 +536,7 @@ class AggregatedStats(models.Model):
         self.approved_strings = F('approved_strings') + approved_strings_diff
         self.fuzzy_strings = F('fuzzy_strings') + fuzzy_strings_diff
         self.strings_with_errors = F('strings_with_errors') + strings_with_errors_diff
-        self.stringswith_warnings = F('strings_with_warnings') + strings_with_warnings_diff
+        self.strings_with_warnings = F('strings_with_warnings') + strings_with_warnings_diff
         self.unreviewed_strings = F('unreviewed_strings') + unreviewed_strings_diff
 
         self.save(update_fields=[
@@ -2332,8 +2332,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def get_stats(self, locale):
         """
-        Get stats for a single entity. This will allow to generate differences between the state
-        before and after the save of a translation.
+        Get stats for a single (entity, locale) pair.
 
         :arg Locale locale: filter translations for this locale.
         :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
@@ -2392,10 +2391,10 @@ class Entity(DirtyFieldsMixin, models.Model):
     @classmethod
     def get_stats_diff(cls, stats_before, stats_after):
         """
-        Return difference between two stats states for the entity.
+        Return stat difference between the two states of the entity.
 
-        :arg dict stats_before: dict with stats of entity before translation is saved.
-        :arg dict stats_after: dict with stats of entity after translation is saved.
+        :arg dict stats_before: dict returned by get_stats() for the initial state.
+        :arg dict stats_after: dict returned by get_stats() for the current state.
         :return: dictionary with differences between provided stats.
         """
         return {
@@ -2879,20 +2878,17 @@ class Translation(DirtyFieldsMixin, models.Model):
         if self.approved:
             self.entity.mark_changed(self.locale)
 
-        resource = self.entity.resource
-        locale = self.locale
-
-        # TranslatedResource has to be created during a sync run and in the backend.
+        # We use get_or_create() instead of just get() to make it easier to test.
         translatedresource, _ = TranslatedResource.objects.get_or_create(
-            resource=resource,
-            locale=locale
+            resource=self.entity.resource,
+            locale=self.locale
         )
 
         # Update latest translation where necessary
         self.update_latest_translation()
 
         # Update stats AFTER changing approval status.
-        stats_after = self.entity.get_stats(locale)
+        stats_after = self.entity.get_stats(self.locale)
 
         stats_diff = Entity.get_stats_diff(stats_before, stats_after)
         translatedresource.adjust_all_stats(**stats_diff)
