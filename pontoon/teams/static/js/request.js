@@ -145,10 +145,10 @@ $(function() {
   // Radio button hover behavior
   container.on({
     mouseenter: function () {
-        $(this).toggleClass('far fa');
+        $(this).toggleClass('fa-circle fa-dot-circle');
     },
     mouseleave: function () {
-        $(this).toggleClass('far fa');
+        $(this).toggleClass('fa-circle fa-dot-circle');
     }
   },'.items td.radio');
 
@@ -158,7 +158,7 @@ $(function() {
       e.stopPropagation();
 
       $(this).add('.items td.radio.fa-dot-circle')
-      .toggleClass('fa-circle fa-dot-circle enabled');
+      .toggleClass('fa far fa-circle fa-dot-circle enabled');
 
       Pontoon.requestItem.toggleButton(true, type='locale-projects');
     }

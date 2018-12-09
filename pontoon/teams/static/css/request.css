@@ -135,6 +135,11 @@
   box-sizing: border-box;
 }
 
++.item-list td.radio {
++  color: #4d5967;
++}
++
+
 .item-list td.check:before {
   content: "";
   display: block;
@@ -156,6 +161,7 @@
   margin-top: 16px;
 }
 
+.item-list td.radio:hover:before,
 .item-list td.radio.enabled:before {
   color: #7BC876;
 }
