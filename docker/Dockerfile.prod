@@ -1,0 +1,66 @@
+FROM node:10.14.1-alpine
+
+# Install build deps
+RUN set -ex \
+  && apk add --no-cache \
+  gcc \
+  make \
+  libc-dev \
+  musl-dev \
+  linux-headers \
+  pcre-dev \
+  postgresql-dev \
+  libxml2-dev \
+  libxslt \
+  libxslt-dev \
+  python2 \
+  py2-pip \
+  python2-dev \
+  git \
+  openssh-client \
+  build-base \
+  && pip install --upgrade pip \
+  && pip install virtualenv
+
+# Create the folder for frontend assets
+RUN mkdir -p /app/assets
+
+COPY requirements.txt /app
+
+# Install python deps
+RUN virtualenv /env \
+  && /env/bin/pip install -U 'pip>=8' -r /app/requirements.txt
+
+COPY . /app
+
+RUN cd /app && npm install
+RUN cd /app/frontend && yarn install
+
+# JavaScript applications paths
+ENV WEBPACK_BINARY /app/node_modules/.bin/webpack
+ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
+
+# Run webpack to compile JS files
+RUN cd /app/ && $WEBPACK_BINARY
+
+# Build Translate.Next frontend resources
+RUN cd /app/frontend/ && yarn build
+
+# pontoon service port
+EXPOSE 8000
+
+# Python environment variables
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONPATH /app
+
+COPY docker/run_gunicorn.sh /app
+RUN chmod +x /app/run_gunicorn.sh
+
+WORKDIR /app
+
+# Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
+RUN DATABASE_URL=none SECRET_KEY=none SITE_URL=none /env/bin/python manage.py collectstatic --noinput
+
+# Start the django app
+CMD ["/app/run_gunicorn.sh"]
