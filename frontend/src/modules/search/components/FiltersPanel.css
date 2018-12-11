@@ -127,11 +127,11 @@
 }
 
 .filters-panel .menu li .count {
-	background: #3F4752;
-	border-radius: 3px;
-	color: #CCCCCC;
-	margin-left: 5px;
-	padding: 0 5px;
+    background: #3F4752;
+    border-radius: 3px;
+    color: #CCCCCC;
+    margin-left: 5px;
+    padding: 0 5px;
     position: absolute;
     right: 4px;
     top: 4px;

@@ -43,7 +43,7 @@ export function updateEntity(router: Object, entity: string): Function {
 /**
  * Update the URL with a new `search` parameter.
  *
- * This function removes the `string` parameter from the URL is any, because
+ * This function removes the `string` parameter from the URL if any, because
  * it is possible that after the results have changed, the currently selected
  * entity won't be available anymore.
  * It keeps all other parameters in the URL the same.
@@ -56,7 +56,7 @@ export function updateSearch(router: Object, search: ?string): Function {
 /**
  * Update the URL with a new `status` parameter.
  *
- * This function removes the `string` parameter from the URL is any, because
+ * This function removes the `string` parameter from the URL if any, because
  * it is possible that after the results have changed, the currently selected
  * entity won't be available anymore.
  * It keeps all other parameters in the URL the same.

@@ -19,8 +19,13 @@
     -webkit-appearance: textfield;
 }
 
+/* Remove extra padding in Chrome search input */
+.search-box input[type=search]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
 .search-box > label {
-	color: #aaa;
+    color: #aaa;
     font-size: 19px;
     left: auto;
     position: absolute;
