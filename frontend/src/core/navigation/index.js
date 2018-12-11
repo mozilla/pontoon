@@ -1,5 +1,6 @@
 /* @flow */
 
+export { default as actions } from './actions';
 export { default as selectors } from './selectors';
 
 export type { Navigation } from './selectors';

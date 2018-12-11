@@ -1,0 +1,89 @@
+.search-box {
+    border-bottom: 1px solid #5e6475;
+    position: static;
+}
+
+.search-box input[type="search"] {
+    background: #4d5967;
+    border: 0;
+    box-sizing: border-box;
+    color: #fff;
+    float: left;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 23px;
+    padding: 10px 35px 10px 43px;
+    width: 100%;
+
+    /* Remove extra padding in Chrome search input */
+    -webkit-appearance: textfield;
+}
+
+/* Remove extra padding in Chrome search input */
+.search-box input[type=search]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+.search-box > label {
+    color: #aaa;
+    font-size: 19px;
+    left: auto;
+    position: absolute;
+    right: 10px;
+    top: 12px;
+}
+
+.search-box .status.fa {
+    position: absolute;
+    left: 16px;
+    top: 13px;
+}
+
+.search-box .all .status {
+    left: 14px;
+    top: 11px;
+}
+
+.search-box .status.fa::before {
+    color: #4D5967;
+    content: "";
+}
+
+.search-box .all .status::before {
+    color: #AAAAAA;
+    content: "";
+    font-size: 19px;
+}
+
+.search-box .unreviewed .status:before {
+    font-size: 18px;
+}
+
+.search-box .approved .status:before {
+    color: #7BC876;
+}
+
+.search-box .fuzzy .status:before {
+    color: #FED271;
+}
+
+.search-box .warnings .status:before {
+    color: #FFA10F;
+}
+
+.search-box .errors .status:before {
+    color: #F36;
+}
+
+.search-box .missing .status:before {
+    color: #3F4752;
+}
+
+.search-box .unreviewed .status:before {
+    color: #4FC4F6;
+    content: "";
+}
+
+.search-box .missing:hover .status:before {
+    color: #4D5967;
+}

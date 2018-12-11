@@ -15,7 +15,9 @@ export default class EntityAPI extends APIBase {
         locale: string,
         project: string,
         resource: string,
-        exclude: ?Array<number>,
+        exclude: Array<number>,
+        search: ?string,
+        status: ?string,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);
@@ -25,8 +27,16 @@ export default class EntityAPI extends APIBase {
             payload.append('paths[]', resource);
         }
 
-        if (exclude && exclude.length) {
+        if (exclude.length) {
             payload.append('exclude_entities', exclude.join(','));
+        }
+
+        if (search) {
+            payload.append('search', search);
+        }
+
+        if (status) {
+            payload.append('status', status);
         }
 
         const headers = new Headers();
