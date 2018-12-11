@@ -135,10 +135,10 @@
   box-sizing: border-box;
 }
 
-+.item-list td.radio {
-+  color: #4d5967;
-+}
-+
+.item-list td.radio {
+  color: #4d5967;
+}
+
 
 .item-list td.check:before {
   content: "";

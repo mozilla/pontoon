@@ -81,7 +81,7 @@ var Pontoon = (function (my) {
           },
           complete: function() {
             $('.items td.check').removeClass('enabled');
-            $('.items td.radio.fa-dot-circle').toggleClass('fa-circle fa-dot-circle enabled');
+            $('.items td.radio.enabled').toggleClass('far fa fa-circle fa-dot-circle enabled');
             Pontoon.requestItem.toggleItem(true, 'locale-projects');
             window.scrollTo(0, 0);
           }
@@ -145,20 +145,24 @@ $(function() {
   // Radio button hover behavior
   container.on({
     mouseenter: function () {
-        $(this).toggleClass('fa-circle fa-dot-circle');
+      $(this).toggleClass('fa-circle fa-dot-circle');
     },
     mouseleave: function () {
-        $(this).toggleClass('fa-circle fa-dot-circle');
+      $(this).toggleClass('fa-circle fa-dot-circle');
     }
-  },'.items td.radio');
+  },'.items td.radio:not(.enabled)');
 
   // Select team
   container.on('click', '.items td.radio', function (e) {
     if ($('.controls .request-toggle').is('.back:visible')) {
       e.stopPropagation();
 
-      $(this).add('.items td.radio.fa-dot-circle')
+      $(this).add('.items td.radio.enabled')
       .toggleClass('fa far fa-circle fa-dot-circle enabled');
+
+      if ($(this).hasClass('enabled')) {
+        $(this).toggleClass('fa-circle fa-dot-circle');
+      }
 
       Pontoon.requestItem.toggleButton(true, type='locale-projects');
     }
