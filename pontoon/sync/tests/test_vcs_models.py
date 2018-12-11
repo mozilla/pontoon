@@ -190,6 +190,7 @@ class VCSProjectTests(TestCase):
             )),
             sorted([
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_child.properties'),
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_reality.properties'),
             ])
         )
