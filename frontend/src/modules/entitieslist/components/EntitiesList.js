@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import { selectors as navSelectors } from 'core/navigation';
+import {
+    actions as navActions,
+    selectors as navSelectors,
+} from 'core/navigation';
 import type { Navigation } from 'core/navigation';
 
 import { actions, NAME } from '..';
@@ -24,6 +26,7 @@ type Props = {|
         fetching: boolean,
     |},
     parameters: Navigation,
+    router: Object,
 |};
 
 type InternalProps = {|
@@ -46,9 +49,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // list and hide the previous entities.
         //
         // Notes:
-        //  * This solution is not entirely satisfying but it works for now.
-        //    In the future it will have to grow, to take into account search,
-        //    filters and so on.
         //  * It might seem to be an anti-pattern to change the state after the
         //    component has rendered, but that's actually the easiest way to
         //    implement that feature. Note that the first render is not shown
@@ -66,19 +66,23 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         if (
             previous.locale !== current.locale ||
             previous.project !== current.project ||
-            previous.resource !== current.resource
+            previous.resource !== current.resource ||
+            previous.search !== current.search ||
+            previous.status !== current.status
         ) {
             this.props.dispatch(actions.reset());
         }
     }
 
     selectEntity = (entity: DbEntity) => {
-        this.props.dispatch(push(`?string=${entity.pk}`));
+        this.props.dispatch(
+            navActions.updateEntity(this.props.router, entity.pk.toString())
+        );
     }
 
     getMoreEntities = () => {
         const { entities, parameters } = this.props;
-        const { locale, project, resource } = parameters;
+        const { locale, project, resource, search, status } = parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -97,6 +101,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 project,
                 resource,
                 currentEntityIds,
+                search,
+                status,
             )
         );
     }
@@ -117,6 +123,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 useWindow={ false }
                 threshold={ 600 }
             >
+            { (hasMore || entities.entities.length) ?
                 <ul>
                     { entities.entities.map((entity, i) => {
                         return <Entity
@@ -127,6 +134,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                         />;
                     }) }
                 </ul>
+                :
+                // When there are no results for the current search.
+                <h3 className="no-results">
+                    <div className="fa fa-exclamation-circle"></div>
+                    No results
+                </h3>
+            }
             </InfiniteScroll>
         </div>;
     }
@@ -137,6 +151,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         entities: state[NAME],
         parameters: navSelectors.getNavigation(state),
+        router: state.router,
     };
 };
 

@@ -1,0 +1,142 @@
+.filters-panel {
+    display: inline-block;
+    float: left;
+    font-size: 14px;
+    margin-left: 0;
+    padding-left: 0;
+    position: static;
+    text-align: left;
+}
+
+.filters-panel .visibility-switch {
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 300;
+    height: 43px;
+    left: 0;
+    line-height: 16px;
+    padding: 0;
+    position: absolute;
+    width: 43px;
+}
+
+.filters-panel .visibility-switch .status.fa {
+    font-size: 16px;
+}
+
+.filters-panel .visibility-switch:hover .status:before {
+    color: #FFFFFF;
+}
+
+.filters-panel .menu {
+    background: #272A2F;
+    bottom: auto;
+    box-sizing: border-box;
+    color: #AAAAAA;
+    display: block;
+    left: 0;
+    list-style: none;
+    margin-left: 0;
+    max-height: calc(100% - 44px);
+    overflow-y: auto;
+    padding: 0;
+    position: absolute;
+    top: 44px;
+    width: 350px;
+    z-index: 20;
+}
+
+.filters-panel .menu ul {
+    margin: 10px 12px;
+    max-height: none;
+    list-style: none;
+    overflow: auto;
+    position: relative;
+}
+
+.filters-panel .menu li {
+    color: #AAAAAA;
+    cursor: pointer;
+    font-weight: 300;
+    padding: 2px 4px;
+}
+
+.filters-panel .menu li:hover {
+    color: #FFFFFF;
+    background-color: #3F4752;
+}
+
+.filters-panel .menu li.all .status {
+    left: 2px;
+    top: 2px;
+}
+
+.filters-panel .menu li:not(.horizontal-separator) {
+    padding: 4px 0 4px 30px;
+    position: relative;
+}
+
+.filters-panel .menu li .status {
+    font-size: 16px;
+    margin: -3px -13px -3px -16px;
+    padding: 3px 13px 3px 16px;
+    left: 4px;
+    top: 4px;
+}
+
+.filters-panel .menu li.all .status {
+    left: 2px;
+    top: 2px;
+}
+
+.filters-panel .menu li.unchanged:not(.selected) .status {
+    left: 3px;
+}
+
+.filters-panel .menu li.unreviewed:not(.selected) .status:hover,
+.filters-panel .menu li.unchanged:not(.selected) .status:hover {
+    left: 4px;
+}
+
+.filters-panel .menu li.horizontal-separator {
+    background: transparent;
+    border-top: none;
+    color: #7BC876;
+    cursor: default;
+    font-size: 13px;
+    height: auto;
+    margin: 5px 0;
+    padding: 0;
+    padding-top: 20px;
+    text-transform: uppercase;
+}
+
+.filters-panel .menu li.horizontal-separator:first-child {
+    padding-top: 0;
+}
+
+.filters-panel .menu li:not(.horizontal-separator) {
+    padding: 4px 0 4px 30px;
+    position: relative;
+}
+
+.filters-panel .menu li:hover .count {
+    background: #4D5967;
+    color: #CCCCCC;
+}
+
+.filters-panel .menu li .count {
+    background: #3F4752;
+    border-radius: 3px;
+    color: #CCCCCC;
+    margin-left: 5px;
+    padding: 0 5px;
+    position: absolute;
+    right: 4px;
+    top: 4px;
+}
+
+.filters-panel .menu li.selected .status:before {
+    content: "";
+}
