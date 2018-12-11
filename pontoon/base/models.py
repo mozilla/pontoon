@@ -3342,8 +3342,7 @@ class TranslatedResource(AggregatedStats):
         strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
 
-        # Translated Resource
-        self.adjust_stats(
+        self.adjust_all_stats(
             total_strings_diff,
             approved_strings_diff,
             fuzzy_strings_diff,
@@ -3351,41 +3350,3 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
-
-        # Project
-        project = resource.project
-        project.adjust_stats(
-            total_strings_diff,
-            approved_strings_diff,
-            fuzzy_strings_diff,
-            strings_with_errors_diff,
-            strings_with_warnings_diff,
-            unreviewed_strings_diff,
-        )
-
-        # Locale
-        if not project.system_project:
-            locale.adjust_stats(
-                total_strings_diff,
-                approved_strings_diff,
-                fuzzy_strings_diff,
-                strings_with_errors_diff,
-                strings_with_warnings_diff,
-                unreviewed_strings_diff,
-            )
-
-        # ProjectLocale
-        project_locale = utils.get_object_or_none(
-            ProjectLocale,
-            project=project,
-            locale=locale
-        )
-        if project_locale:
-            project_locale.adjust_stats(
-                total_strings_diff,
-                approved_strings_diff,
-                fuzzy_strings_diff,
-                strings_with_errors_diff,
-                strings_with_warnings_diff,
-                unreviewed_strings_diff,
-            )
