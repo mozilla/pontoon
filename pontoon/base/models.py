@@ -2926,13 +2926,14 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.unapproved_user = user
         self.unapproved_date = timezone.now()
 
-        if save:
-            self.save()
+        if not save:
+            return
 
+        self.save()
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def reject(self, user):
+    def reject(self, user, save=True):
         """
         Reject translation.
         """
@@ -2949,7 +2950,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.approved_user = None
         self.approved_date = None
         self.fuzzy = False
-        self.save()
+
+        if save:
+            self.save()
 
     def unreject(self, user):
         """
