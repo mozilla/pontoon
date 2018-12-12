@@ -213,7 +213,7 @@ $(function() {
 
         $(this)
           .removeClass('confirmed')
-          .html('Request new teams');
+          .html('Request new language');
       }
 
       else if (type === 'team') {

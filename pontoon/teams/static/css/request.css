@@ -26,6 +26,14 @@
   content: "Back to enabled projects";
 }
 
+.request-teams:before {
+  content: "Request new language";
+}
+
+.request-teams.back:after {
+  content: "Back to enabled languages";
+}
+
 .request-toggle:after,
 .request-toggle.back:before {
   content: "";
