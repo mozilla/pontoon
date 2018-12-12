@@ -37,6 +37,7 @@ from django.db.models import (
     Value,
     ExpressionWrapper,
 )
+from django.db.models.functions import Coalesce
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -2341,7 +2342,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         translations = list(
             self.translation_set
                 .filter(locale=locale)
-                .prefetch_related('errors', 'warnings')
+                .prefetch_related(
+                    'errors',
+                    'warnings',
+                )
         )
 
         approved_strings_count = len([
@@ -2360,7 +2364,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             t for t in translations
             if (t.approved or t.fuzzy) and t.warnings.exists()
         ])
-        unrevieved_count = len([
+        unreviewed_count = len([
             t for t in translations
             if not (t.approved or t.fuzzy or t.rejected)
         ])
@@ -2368,24 +2372,22 @@ class Entity(DirtyFieldsMixin, models.Model):
         if self.string_plural:
             approved = int(approved_strings_count == locale.nplurals)
             fuzzy = int(fuzzy_strings_count == locale.nplurals)
+            if not (approved or fuzzy):
+                if errors_count:
+                    errors_count = 1
+                elif warnings_count:
+                    warnings_count = 1
         else:
             approved = int(approved_strings_count == 1)
             fuzzy = int(fuzzy_strings_count == 1)
-
-        if not (approved or fuzzy):
-            errors = int(errors_count > 0)
-            warnings = int(warnings_count > 0)
-        else:
-            errors = 0
-            warnings = 0
 
         return {
             'total_strings_diff': 0,
             'approved_strings_diff': approved,
             'fuzzy_strings_diff': fuzzy,
-            'strings_with_errors_diff': errors,
-            'strings_with_warnings_diff': warnings,
-            'unreviewed_strings_diff': unrevieved_count
+            'strings_with_errors_diff': errors_count,
+            'strings_with_warnings_diff': warnings_count,
+            'unreviewed_strings_diff': unreviewed_count,
         }
 
     @classmethod
@@ -2834,8 +2836,9 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, *args, **kwargs):
-        stats_before = self.entity.get_stats(self.locale)
+    def save(self, update_stats=True, *args, **kwargs):
+        if update_stats:
+            stats_before = self.entity.get_stats(self.locale)
 
         super(Translation, self).save(*args, **kwargs)
 
@@ -2888,10 +2891,10 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.update_latest_translation()
 
         # Update stats AFTER changing approval status.
-        stats_after = self.entity.get_stats(self.locale)
-
-        stats_diff = Entity.get_stats_diff(stats_before, stats_after)
-        translatedresource.adjust_all_stats(**stats_diff)
+        if update_stats:
+            stats_after = self.entity.get_stats(self.locale)
+            stats_diff = Entity.get_stats_diff(stats_before, stats_after)
+            translatedresource.adjust_all_stats(**stats_diff)
 
     def update_latest_translation(self):
         """
@@ -2915,14 +2918,16 @@ class Translation(DirtyFieldsMixin, models.Model):
                 instance.latest_translation = self
                 instance.save(update_fields=['latest_translation'])
 
-    def unapprove(self, user):
+    def unapprove(self, user, save=True):
         """
         Unapprove translation.
         """
         self.approved = False
         self.unapproved_user = user
         self.unapproved_date = timezone.now()
-        self.save()
+
+        if save:
+            self.save()
 
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
@@ -3131,12 +3136,12 @@ class TranslationMemoryEntry(models.Model):
 class TranslatedResourceQuerySet(models.QuerySet):
     def aggregated_stats(self):
         return self.aggregate(
-            total=Sum('resource__total_strings'),
-            approved=Sum('approved_strings'),
-            fuzzy=Sum('fuzzy_strings'),
-            errors=Sum('strings_with_errors'),
-            warnings=Sum('strings_with_warnings'),
-            unreviewed=Sum('unreviewed_strings'),
+            total=Coalesce(Sum('resource__total_strings'), 0),
+            approved=Coalesce(Sum('approved_strings'), 0),
+            fuzzy=Coalesce(Sum('fuzzy_strings'), 0),
+            errors=Coalesce(Sum('strings_with_errors'), 0),
+            warnings=Coalesce(Sum('strings_with_warnings'), 0),
+            unreviewed=Coalesce(Sum('unreviewed_strings'), 0),
         )
 
     def aggregate_stats(self, instance):
@@ -3206,7 +3211,7 @@ class TranslatedResource(AggregatedStats):
     class Meta(object):
         unique_together = (('locale', 'resource'), )
 
-    def adjust_all_stats(self, **stats_diff):
+    def adjust_all_stats(self, *args, **kwargs):
         project = self.resource.project
         locale = self.locale
 
@@ -3216,14 +3221,14 @@ class TranslatedResource(AggregatedStats):
             locale=locale,
         )
 
-        self.adjust_stats(**stats_diff)
-        project.adjust_stats(**stats_diff)
+        self.adjust_stats(*args, **kwargs)
+        project.adjust_stats(*args, **kwargs)
 
         if not project.system_project:
-            locale.adjust_stats(**stats_diff)
+            locale.adjust_stats(*args, **kwargs)
 
         if project_locale:
-            project_locale.adjust_stats(**stats_diff)
+            project_locale.adjust_stats(*args, **kwargs)
 
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
@@ -3341,7 +3346,7 @@ class TranslatedResource(AggregatedStats):
         strings_with_errors_diff = errors - self.strings_with_errors
         strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
-
+        
         self.adjust_all_stats(
             total_strings_diff,
             approved_strings_diff,
