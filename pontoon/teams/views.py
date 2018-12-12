@@ -239,6 +239,7 @@ def request_item(request, locale=None):
             to=settings.PROJECT_MANAGERS,
             cc=locale.managers_group.user_set.exclude(pk=user.pk)
             .values_list('email', flat=True) if locale else '',
+            reply_to=[user.email],
         ).send()
     else:
         raise ImproperlyConfigured(
