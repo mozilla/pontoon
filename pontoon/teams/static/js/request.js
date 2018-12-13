@@ -90,7 +90,7 @@ var Pontoon = (function (my) {
 
       requestTeam: function(name, code) {
         $.ajax({
-          url: '/request/team/',
+          url: '/teams/request/',
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('#server').data('csrf'),
@@ -192,6 +192,7 @@ $(function() {
     var locale = '';
 
     if ($(this).is('.confirmed')) {
+      // Requesting from team page
       if (type === 'locale-projects' && $('body').hasClass('locale')) {
         var projects = $('.items td.check.enabled').map(function(val, element) {
           return $(element).siblings('.name').data('slug');
@@ -205,11 +206,12 @@ $(function() {
           .html('Request new projects');
       }
 
+      // Requesting from project page
       else if (type === 'locale-projects' && $('body').hasClass('project')) {
         var project = $('#server').data('project');
         locale = $('.items td.radio.enabled').siblings('.name').data('slug');
 
-        Pontoon.requestItem.requestProjects(locale, [project], 'team');
+        Pontoon.requestItem.requestProjects(locale, [project], 'language');
 
         $(this)
           .removeClass('confirmed')
