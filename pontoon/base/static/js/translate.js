@@ -170,7 +170,8 @@ var Pontoon = (function (my) {
         url: '/other-locales/',
         data: {
           entity: entity.pk,
-          locale: self.locale.code
+          locale: self.locale.code,
+          plural_form: self.getPluralForm(),
         },
         success: function(data) {
           if (data.length) {
