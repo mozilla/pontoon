@@ -14,11 +14,11 @@ var Pontoon = (function (my) {
             .toggleClass('fa-chevron-right', show)
             .toggleClass('fa-chevron-left', !show);
 
-        if (type === 'projects') {
+        if (type === 'locale-projects') {
           var localeProjects = $('#server').data('locale-projects');
 
           // Hide all projects
-          $('.projects')
+          $('.items')
             .toggleClass('request', !show)
             .find('tbody tr')
               .toggleClass('limited', !show)
@@ -26,14 +26,14 @@ var Pontoon = (function (my) {
 
           // Show requested projects
           $(localeProjects).each(function() {
-            $('.projects')
+            $('.items')
                 .find('td[data-slug="' + this + '"]')
               .parent()
                 .toggleClass('limited', show)
                 .toggle(show);
           });
 
-          Pontoon.requestItem.toggleButton(!show, 'projects');
+          Pontoon.requestItem.toggleButton(!show, 'locale-projects');
         }
         else if (type === 'team') {
           // Hide all teams and the search bar
@@ -52,8 +52,8 @@ var Pontoon = (function (my) {
         condition = condition || true;
         var show = condition
 
-        if (type === 'projects') {
-          show = condition && $('.projects td.check.enabled:visible').length > 0;
+        if (type === 'locale-projects') {
+          show = condition && $('.items td.enabled:visible').length > 0;
         }
         else if (type === 'team') {
           show = condition &&
@@ -65,7 +65,7 @@ var Pontoon = (function (my) {
         $('#request-item').toggle(show);
       },
 
-      requestProjects: function(locale, projects) {
+      requestProjects: function(locale, projects, type) {
         $.ajax({
           url: '/' + locale + '/request/',
           type: 'POST',
@@ -74,14 +74,15 @@ var Pontoon = (function (my) {
             projects: projects,
           },
           success: function() {
-            Pontoon.endLoader('New projects request sent.', '', 5000);
+            Pontoon.endLoader('New ' + type + ' request sent.', '', 5000);
           },
           error: function() {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           },
           complete: function() {
-            $('.projects td.check').removeClass('enabled');
-            Pontoon.requestItem.toggleItem(true, 'projects');
+            $('.items td.check').removeClass('enabled');
+            $('.items td.radio.enabled').toggleClass('far fa fa-circle fa-dot-circle enabled');
+            Pontoon.requestItem.toggleItem(true, 'locale-projects');
             window.scrollTo(0, 0);
           }
         });
@@ -121,7 +122,7 @@ var Pontoon = (function (my) {
 
 $(function() {
   var container = $('#main .container');
-  var type = $('#server').data('locale') ? 'projects' : 'team';
+  var type = $('#server').data('locale-projects') ? 'locale-projects' : 'team';
 
   // Switch between available projects/teams and projects/team to request
   container.on('click', '.controls .request-toggle', function (e) {
@@ -132,12 +133,38 @@ $(function() {
   });
 
   // Select projects
-  container.on('click', '.projects td.check', function (e) {
+  container.on('click', '.items td.check', function (e) {
     if ($('.controls .request-toggle').is('.back:visible')) {
       e.stopPropagation();
 
       $(this).toggleClass('enabled');
-      Pontoon.requestItem.toggleButton(true, type='projects');
+      Pontoon.requestItem.toggleButton(true, type='locale-projects');
+    }
+  });
+
+  // Radio button hover behavior
+  container.on({
+    mouseenter: function () {
+      $(this).toggleClass('fa-circle fa-dot-circle');
+    },
+    mouseleave: function () {
+      $(this).toggleClass('fa-circle fa-dot-circle');
+    }
+  },'.items td.radio:not(.enabled)');
+
+  // Select team
+  container.on('click', '.items td.radio', function (e) {
+    if ($('.controls .request-toggle').is('.back:visible')) {
+      e.stopPropagation();
+
+      $(this).add('.items td.radio.enabled')
+      .toggleClass('fa far fa-circle fa-dot-circle enabled');
+
+      if ($(this).hasClass('enabled')) {
+        $(this).toggleClass('fa-circle fa-dot-circle');
+      }
+
+      Pontoon.requestItem.toggleButton(true, type='locale-projects');
     }
   });
 
@@ -162,24 +189,40 @@ $(function() {
     e.preventDefault();
     e.stopPropagation();
 
+    var locale = '';
+
     if ($(this).is('.confirmed')) {
-      if (type === 'projects') {
-        var locale = $('#server').data('locale') || Pontoon.getSelectedLocale();
-        var projects = $('.projects td.check.enabled').map(function(val, element) {
+      // Requesting from team page
+      if (type === 'locale-projects' && $('body').hasClass('locale')) {
+        var projects = $('.items td.check.enabled').map(function(val, element) {
           return $(element).siblings('.name').data('slug');
         }).get();
+        locale = $('#server').data('locale') || Pontoon.getSelectedLocale();
 
-        Pontoon.requestItem.requestProjects(locale, projects);
+        Pontoon.requestItem.requestProjects(locale, projects, 'projects');
 
         $(this)
           .removeClass('confirmed')
           .html('Request new projects');
       }
+
+      // Requesting from project page
+      else if (type === 'locale-projects' && $('body').hasClass('project')) {
+        var project = $('#server').data('project');
+        locale = $('.items td.radio.enabled').siblings('.name').data('slug');
+
+        Pontoon.requestItem.requestProjects(locale, [project], 'language');
+
+        $(this)
+          .removeClass('confirmed')
+          .html('Request new language');
+      }
+
       else if (type === 'team') {
-        var name = $.trim($('#request-team-form #id_name').val());
+        locale = $.trim($('#request-team-form #id_name').val());
         var code = $.trim($('#request-team-form #id_code').val());
 
-        Pontoon.requestItem.requestTeam(name, code);
+        Pontoon.requestItem.requestTeam(locale, code);
 
         $(this)
           .removeClass('confirmed')

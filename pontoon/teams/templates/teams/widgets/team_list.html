@@ -2,7 +2,7 @@
 {% import 'widgets/progress_chart.html' as ProgressChart %}
 
 {% macro header(request=False) %}
-  <table class="table table-sort team-list">
+  <table class="table table-sort team-list item-list">
     <thead>
       <tr>
         <th class="name asc">Language<i class="fa"></i></th>
@@ -21,7 +21,7 @@
 
 {% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False) %}
   <tr class="{{ class }}">
-    <td class="name">
+    <td class="name" data-slug="{{ locale.code }}">
       <h4>
         <a href="{{ main_link }}">{{ locale.name }}</a>
       </h4>
@@ -43,7 +43,7 @@
       {% endif %}
     </td>
     {% if request %}
-      <td class="check fa fa-fw"></td>
+      <td class="radio far fa-circle"></td>
     {% endif %}
   </tr>
 {% endmacro %}
@@ -52,6 +52,7 @@
     </tbody>
   </table>
   {% if request %}
+    {% if form %}
     <form id="request-team-form">
       <div id="team-form">
         <div class="field">
@@ -68,5 +69,11 @@
       </div>
       <button type="submit" id="request-item">Request new team</button>
     </form>
+    {% else %}
+    <div id="request-item-note">
+      <p>The requested language won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the localization team if you are a new contributor.</p>
+    </div>
+    <button type="submit" id="request-item">Request new language</button>
+    {% endif %}
   {% endif %}
 {% endmacro %}
