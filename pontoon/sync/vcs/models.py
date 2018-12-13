@@ -629,7 +629,7 @@ class VCSResource(object):
             locale_directory = self.vcs_project.locale_directory_paths[locale.code]
 
             if self.vcs_project.configuration:
-                # Some resource might not be available for this locale
+                # Some resources might not be available for this locale
                 resource_path = self.vcs_project.configuration.l10n_path(
                     locale,
                     source_resource_path,
