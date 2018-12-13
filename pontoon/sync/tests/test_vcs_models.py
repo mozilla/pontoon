@@ -28,6 +28,7 @@ from pontoon.sync.tests import (
 )
 from pontoon.sync.vcs.models import (
     VCSConfiguration,
+    VCSResource,
     VCSProject,
 )
 
@@ -190,6 +191,7 @@ class VCSProjectTests(TestCase):
             )),
             sorted([
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_child.properties'),
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_reality.properties'),
             ])
         )
@@ -264,10 +266,17 @@ class VCSConfigurationTests(TestCase):
             project=self.db_project,
             path='values/strings_reality.properties',
         )
+        self.resource_strings_child = ResourceFactory.create(
+            project=self.db_project,
+            path='values/strings_child.properties',
+        )
 
         # Make sure VCSConfiguration instance is initialized
         self.db_project.configuration_file = 'l10n.toml'
-        self.vcs_project = VCSProject(self.db_project)
+        self.vcs_project = VCSProject(
+            self.db_project,
+            locales=[self.locale]
+        )
 
         self.vcs_project.configuration.configuration_path = os.path.join(
             PROJECT_CONFIG_CHECKOUT_PATH,
@@ -344,8 +353,103 @@ class VCSConfigurationTests(TestCase):
 
     def test_locale_resources(self):
         assert_equal(
-            self.vcs_project.configuration.locale_resources(self.locale),
-            [self.resource_strings, self.resource_strings_reality],
+            sorted(
+                self.vcs_project.configuration.locale_resources(self.locale),
+                key=lambda r: r.path
+            ),
+            [
+                self.resource_strings,
+                self.resource_strings_child,
+                self.resource_strings_reality,
+            ],
+        )
+
+
+def setUpResource(self):
+    self.repository = RepositoryFactory()
+    self.db_project = ProjectFactory.create(
+        repositories=[self.repository],
+    )
+
+    checkout_path_patch = patch.object(
+        Repository,
+        'checkout_path',
+        new_callable=PropertyMock,
+        return_value=PROJECT_CONFIG_CHECKOUT_PATH
+    )
+    self.mock_checkout_path = checkout_path_patch.start()
+    self.addCleanup(checkout_path_patch.stop)
+
+    # Make sure VCSConfiguration instance is initialized
+    self.db_project.configuration_file = 'l10n.toml'
+    self.vcs_project = VCSProject(
+        self.db_project,
+        locales=[self.locale]
+    )
+
+    self.vcs_project.configuration.configuration_path = os.path.join(
+        PROJECT_CONFIG_CHECKOUT_PATH,
+        self.db_project.configuration_file,
+    )
+
+
+class VCSConfigurationFullLocaleTests(TestCase):
+    def setUp(self):
+        self.locale, _ = Locale.objects.get_or_create(code='fr')
+        setUpResource(self)
+
+    def test_vcs_resource(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings.properties', [self.locale])
+        assert_equal(
+            r.files[self.locale].path,
+            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values-fr/strings.properties')
+        )
+
+    def test_vcs_resource_path(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings_reality.properties', [self.locale])
+        assert_equal(
+            r.files[self.locale].path,
+            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values-fr/strings_reality.properties')
+        )
+
+    def test_vcs_resource_child(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings_child.properties', [self.locale])
+        assert_equal(
+            r.files[self.locale].path,
+            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values-fr/strings_child.properties')
+        )
+
+
+class VCSConfigurationPartialLocaleTests(TestCase):
+    def setUp(self):
+        self.locale, _ = Locale.objects.get_or_create(code='sl')
+        setUpResource(self)
+
+    def test_vcs_resource(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings.properties', [self.locale])
+        assert_equal(
+            r.files[self.locale].path,
+            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values-sl/strings.properties')
+        )
+
+    def test_vcs_resource_path(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings_reality.properties', [self.locale])
+        assert_equal(
+            r.files,
+            {}
+        )
+
+    def test_vcs_resource_child(self):
+        self.vcs_project.configuration.add_locale(self.locale.code)
+        r = VCSResource(self.vcs_project, 'values/strings_child.properties', [self.locale])
+        assert_equal(
+            r.files,
+            {}
         )
 
 

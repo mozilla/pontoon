@@ -565,7 +565,8 @@ class VCSConfiguration(object):
         """
         project_files = self.get_or_set_project_files(locale.code)
 
-        return project_files.match(reference_path)[0]
+        m = project_files.match(reference_path)
+        return m[0] if m is not None else None
 
     def locale_resources(self, locale):
         """
@@ -628,10 +629,13 @@ class VCSResource(object):
             locale_directory = self.vcs_project.locale_directory_paths[locale.code]
 
             if self.vcs_project.configuration:
+                # Some resources might not be available for this locale
                 resource_path = self.vcs_project.configuration.l10n_path(
                     locale,
                     source_resource_path,
                 )
+                if resource_path is None:
+                    continue
             else:
                 resource_path = os.path.join(locale_directory, self.path)
 
