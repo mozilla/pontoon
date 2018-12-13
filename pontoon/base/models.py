@@ -1442,6 +1442,12 @@ class Project(AggregatedStats):
 
         return resource_priority
 
+    def available_locales_list(self):
+        """Get a list of available locale codes."""
+        return list(
+            self.locales.all().values_list('code', flat=True)
+        )
+
 
 @python_2_unicode_compatible
 class ExternalResource(models.Model):

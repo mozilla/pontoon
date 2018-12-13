@@ -273,6 +273,7 @@ PIPELINE_CSS = {
     'project': {
         'source_filenames': (
             'css/table.css',
+            'css/request.css',
             'css/contributors.css',
             'css/heading_info.css',
             'css/sidebar_menu.css',
@@ -435,6 +436,7 @@ PIPELINE_JS = {
     'project': {
         'source_filenames': (
             'js/table.js',
+            'js/request.js',
             'js/progress-chart.js',
             'js/tabs.js',
             'js/sidebar_menu.js',
