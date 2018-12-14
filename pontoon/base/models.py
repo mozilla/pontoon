@@ -530,7 +530,7 @@ class AggregatedStats(models.Model):
         fuzzy_strings_diff,
         strings_with_errors_diff,
         strings_with_warnings_diff,
-        unreviewed_strings_diff
+        unreviewed_strings_diff,
     ):
         self.total_strings = F('total_strings') + total_strings_diff
         self.approved_strings = F('approved_strings') + approved_strings_diff
@@ -2336,6 +2336,86 @@ class Entity(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
+    def get_stats(self, locale):
+        """
+        Get stats for a single (entity, locale) pair.
+
+        :arg Locale locale: filter translations for this locale.
+        :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
+            make them easier to pass into adjust_all_stats.
+        """
+        translations = list(
+            self.translation_set
+                .filter(locale=locale)
+                .prefetch_related(
+                    'errors',
+                    'warnings',
+                )
+        )
+
+        approved_strings_count = len([
+            t for t in translations
+            if t.approved and not(t.errors.exists() or t.warnings.exists())
+        ])
+
+        fuzzy_strings_count = len([
+            t for t in translations
+            if t.fuzzy and not(t.errors.exists() or t.warnings.exists())
+        ])
+
+        if self.string_plural:
+            approved = int(approved_strings_count == locale.nplurals)
+            fuzzy = int(fuzzy_strings_count == locale.nplurals)
+
+        else:
+            approved = int(approved_strings_count > 0)
+            fuzzy = int(fuzzy_strings_count > 0)
+
+        if not (approved or fuzzy):
+            has_errors = bool([
+                t for t in translations
+                if (t.approved or t.fuzzy) and t.errors.exists()
+            ])
+            has_warnings = bool([
+                t for t in translations
+                if (t.approved or t.fuzzy) and t.warnings.exists()
+            ])
+
+            errors = int(has_errors)
+            warnings = int(has_warnings)
+
+        else:
+            errors = 0
+            warnings = 0
+
+        unreviewed_count = len([
+            t for t in translations
+            if not (t.approved or t.fuzzy or t.rejected)
+        ])
+
+        return {
+            'total_strings_diff': 0,
+            'approved_strings_diff': approved,
+            'fuzzy_strings_diff': fuzzy,
+            'strings_with_errors_diff': errors,
+            'strings_with_warnings_diff': warnings,
+            'unreviewed_strings_diff': unreviewed_count,
+        }
+
+    @classmethod
+    def get_stats_diff(cls, stats_before, stats_after):
+        """
+        Return stat difference between the two states of the entity.
+
+        :arg dict stats_before: dict returned by get_stats() for the initial state.
+        :arg dict stats_after: dict returned by get_stats() for the current state.
+        :return: dictionary with differences between provided stats.
+        """
+        return {
+            stat_name: stats_after[stat_name] - stats_before[stat_name]
+            for stat_name in stats_before
+        }
+
     def has_changed(self, locale):
         """
         Check if translations in the given locale have changed since the
@@ -2768,7 +2848,11 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, *args, **kwargs):
+    def save(self, update_stats=True, *args, **kwargs):
+        # We parametrize update of stats to make testing easier.
+        if update_stats:
+            stats_before = self.entity.get_stats(self.locale)
+
         super(Translation, self).save(*args, **kwargs)
 
         # Only one translation can be approved at a time for any
@@ -2804,20 +2888,27 @@ class Translation(DirtyFieldsMixin, models.Model):
                     project=self.entity.resource.project,
                 )
 
-        # Update stats AFTER changing approval status.
-        translatedresource, _ = TranslatedResource.objects.get_or_create(
-            resource=self.entity.resource, locale=self.locale
-        )
-        translatedresource.calculate_stats()
-
         # Whenever a translation changes, mark the entity as having
         # changed in the appropriate locale. We could be smarter about
         # this but for now this is fine.
         if self.approved:
             self.entity.mark_changed(self.locale)
 
+        # We use get_or_create() instead of just get() to make it easier to test.
+        translatedresource, _ = TranslatedResource.objects.get_or_create(
+            resource=self.entity.resource,
+            locale=self.locale
+        )
+
         # Update latest translation where necessary
         self.update_latest_translation()
+
+        # We parametrize update of stats to make testing easier.
+        if update_stats:
+            # Update stats AFTER changing approval status.
+            stats_after = self.entity.get_stats(self.locale)
+            stats_diff = Entity.get_stats_diff(stats_before, stats_after)
+            translatedresource.adjust_all_stats(**stats_diff)
 
     def update_latest_translation(self):
         """
@@ -3132,6 +3223,25 @@ class TranslatedResource(AggregatedStats):
     class Meta(object):
         unique_together = (('locale', 'resource'), )
 
+    def adjust_all_stats(self, *args, **kwargs):
+        project = self.resource.project
+        locale = self.locale
+
+        project_locale = utils.get_object_or_none(
+            ProjectLocale,
+            project=project,
+            locale=locale,
+        )
+
+        self.adjust_stats(*args, **kwargs)
+        project.adjust_stats(*args, **kwargs)
+
+        if not project.system_project:
+            locale.adjust_stats(*args, **kwargs)
+
+        if project_locale:
+            project_locale.adjust_stats(*args, **kwargs)
+
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
         resource = self.resource
@@ -3179,8 +3289,6 @@ class TranslatedResource(AggregatedStats):
             rejected=False,
         ).count()
 
-        missing = resource.total_strings - approved - fuzzy - errors - warnings
-
         # Plural
         nplurals = locale.nplurals or 1
         for e in translated_entities.exclude(string_plural='').values_list('pk'):
@@ -3224,8 +3332,6 @@ class TranslatedResource(AggregatedStats):
                     errors += 1
                 elif plural_warnings_count:
                     warnings += 1
-                else:
-                    missing += 1
 
             plural_unreviewed_count = translations.filter(
                 approved=False,
@@ -3253,8 +3359,7 @@ class TranslatedResource(AggregatedStats):
         strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
 
-        # Translated Resource
-        self.adjust_stats(
+        self.adjust_all_stats(
             total_strings_diff,
             approved_strings_diff,
             fuzzy_strings_diff,
@@ -3262,41 +3367,3 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
-
-        # Project
-        project = resource.project
-        project.adjust_stats(
-            total_strings_diff,
-            approved_strings_diff,
-            fuzzy_strings_diff,
-            strings_with_errors_diff,
-            strings_with_warnings_diff,
-            unreviewed_strings_diff,
-        )
-
-        # Locale
-        if not project.system_project:
-            locale.adjust_stats(
-                total_strings_diff,
-                approved_strings_diff,
-                fuzzy_strings_diff,
-                strings_with_errors_diff,
-                strings_with_warnings_diff,
-                unreviewed_strings_diff,
-            )
-
-        # ProjectLocale
-        project_locale = utils.get_object_or_none(
-            ProjectLocale,
-            project=project,
-            locale=locale
-        )
-        if project_locale:
-            project_locale.adjust_stats(
-                total_strings_diff,
-                approved_strings_diff,
-                fuzzy_strings_diff,
-                strings_with_errors_diff,
-                strings_with_warnings_diff,
-                unreviewed_strings_diff,
-            )
