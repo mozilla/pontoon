@@ -63,100 +63,142 @@ def stats_update(db, request):
 
 @pytest.fixture
 def get_stats():
-    """
-    Fixture wrapper for function to get_stats of a TranslatedResource assigned to a translation.
-    """
     def f(translation):
-        return TranslatedResource.objects.stats(
-            translation.entity.resource.project,
-            None,
-            translation.locale,
+        return (
+            TranslatedResource.objects.filter(
+                resource=translation.entity.resource,
+                locale=translation.locale,
+            ).aggregated_stats()
         )
     return f
 
 
-@pytest.fixture
-def stats_dict():
-    def f(**override_stats):
-        stats = {
-            'approved': 0,
-            'fuzzy': 0,
-            'total': 0,
-            'unreviewed': 0,
-            'warnings': 0,
-            'errors': 0,
-        }
-        stats.update(override_stats)
-        return stats
-    return f
-
-
-def test_translation_approved(stats_update, get_stats, stats_dict, user_a, translation_a):
+def test_translation_approved(stats_update, get_stats, translation_a):
     translation_a.approved = True
     stats_update(translation_a)
 
-    assert get_stats(translation_a) == stats_dict(
-        approved=1,
-        total=1,
-    )
+    assert get_stats(translation_a) == {
+        'total': 1,
+        'approved': 1,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 0,
+        'errors': 0,
+    }
 
-    translation_a.unapprove(user_a, save=False)
+    translation_a.approved = False
     stats_update(translation_a)
 
-    assert get_stats(translation_a) == stats_dict(
-        unreviewed=1,
-        total=1,
-    )
+    assert get_stats(translation_a) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 1,
+        'warnings': 0,
+        'errors': 0,
+    }
 
 
-def test_translation_fuzzy(stats_update, get_stats, stats_dict, user_a, translation_a):
+def test_translation_fuzzy(stats_update, get_stats, translation_a):
     translation_a.fuzzy = True
     stats_update(translation_a)
 
-    assert get_stats(translation_a) == stats_dict(
-        fuzzy=1,
-        total=1,
-    )
+    assert get_stats(translation_a) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 1,
+        'unreviewed': 0,
+        'warnings': 0,
+        'errors': 0,
+    }
 
-    translation_a.reject(user_a, save=False)
+    translation_a.fuzzy = False
+    translation_a.rejected = True
     stats_update(translation_a)
 
-    assert get_stats(translation_a) == stats_dict(
-        total=1,
-    )
+    assert get_stats(translation_a) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 0,
+        'errors': 0,
+    }
 
 
-def test_translation_with_error(stats_update, get_stats, stats_dict, translation_with_error):
+def test_translation_with_error(stats_update, get_stats, translation_with_error):
     translation_with_error.approved = True
     stats_update(translation_with_error)
 
-    assert get_stats(translation_with_error) == stats_dict(
-        errors=1,
-        total=1,
-    )
+    assert get_stats(translation_with_error) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 0,
+        'errors': 1,
+    }
 
+    translation_with_error.approved = False
     translation_with_error.fuzzy = True
     stats_update(translation_with_error)
 
-    assert get_stats(translation_with_error) == stats_dict(
-        errors=1,
-        total=1,
-    )
+    assert get_stats(translation_with_error) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 0,
+        'errors': 1,
+    }
+
+    translation_with_error.fuzzy = False
+    stats_update(translation_with_error)
+
+    assert get_stats(translation_with_error) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 1,
+        'warnings': 0,
+        'errors': 0,
+    }
 
 
-def test_translation_with_warning(stats_update, get_stats, stats_dict, translation_with_warning):
+def test_translation_with_warning(stats_update, get_stats, translation_with_warning):
     translation_with_warning.approved = True
     stats_update(translation_with_warning)
 
-    assert get_stats(translation_with_warning) == stats_dict(
-        warnings=1,
-        total=1,
-    )
+    assert get_stats(translation_with_warning) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 1,
+        'errors': 0,
+    }
 
+    translation_with_warning.approved = False
     translation_with_warning.fuzzy = True
     stats_update(translation_with_warning)
 
-    assert get_stats(translation_with_warning) == stats_dict(
-        warnings=1,
-        total=1,
-    )
+    assert get_stats(translation_with_warning) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 0,
+        'warnings': 1,
+        'errors': 0,
+    }
+
+    translation_with_warning.fuzzy = False
+    stats_update(translation_with_warning)
+
+    assert get_stats(translation_with_warning) == {
+        'total': 1,
+        'approved': 0,
+        'fuzzy': 0,
+        'unreviewed': 1,
+        'warnings': 0,
+        'errors': 0,
+    }

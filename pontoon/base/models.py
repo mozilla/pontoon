@@ -37,7 +37,6 @@ from django.db.models import (
     Value,
     ExpressionWrapper,
 )
-from django.db.models.functions import Coalesce
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -2918,22 +2917,19 @@ class Translation(DirtyFieldsMixin, models.Model):
                 instance.latest_translation = self
                 instance.save(update_fields=['latest_translation'])
 
-    def unapprove(self, user, save=True):
+    def unapprove(self, user):
         """
         Unapprove translation.
         """
         self.approved = False
         self.unapproved_user = user
         self.unapproved_date = timezone.now()
-
-        if not save:
-            return
-
         self.save()
+
         TranslationMemoryEntry.objects.filter(translation=self).delete()
         self.entity.mark_changed(self.locale)
 
-    def reject(self, user, save=True):
+    def reject(self, user):
         """
         Reject translation.
         """
@@ -2950,9 +2946,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.approved_user = None
         self.approved_date = None
         self.fuzzy = False
-
-        if save:
-            self.save()
+        self.save()
 
     def unreject(self, user):
         """
@@ -3139,12 +3133,12 @@ class TranslationMemoryEntry(models.Model):
 class TranslatedResourceQuerySet(models.QuerySet):
     def aggregated_stats(self):
         return self.aggregate(
-            total=Coalesce(Sum('resource__total_strings'), 0),
-            approved=Coalesce(Sum('approved_strings'), 0),
-            fuzzy=Coalesce(Sum('fuzzy_strings'), 0),
-            errors=Coalesce(Sum('strings_with_errors'), 0),
-            warnings=Coalesce(Sum('strings_with_warnings'), 0),
-            unreviewed=Coalesce(Sum('unreviewed_strings'), 0),
+            total=Sum('resource__total_strings'),
+            approved=Sum('approved_strings'),
+            fuzzy=Sum('fuzzy_strings'),
+            errors=Sum('strings_with_errors'),
+            warnings=Sum('strings_with_warnings'),
+            unreviewed=Sum('unreviewed_strings'),
         )
 
     def aggregate_stats(self, instance):
@@ -3349,7 +3343,7 @@ class TranslatedResource(AggregatedStats):
         strings_with_errors_diff = errors - self.strings_with_errors
         strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
-        
+
         self.adjust_all_stats(
             total_strings_diff,
             approved_strings_diff,
