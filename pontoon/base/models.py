@@ -2351,41 +2351,48 @@ class Entity(DirtyFieldsMixin, models.Model):
             t for t in translations
             if t.approved and not(t.errors.exists() or t.warnings.exists())
         ])
+
         fuzzy_strings_count = len([
             t for t in translations
             if t.fuzzy and not(t.errors.exists() or t.warnings.exists())
-        ])
-        errors_count = len([
-            t for t in translations
-            if (t.approved or t.fuzzy) and t.errors.exists()
-        ])
-        warnings_count = len([
-            t for t in translations
-            if (t.approved or t.fuzzy) and t.warnings.exists()
-        ])
-        unreviewed_count = len([
-            t for t in translations
-            if not (t.approved or t.fuzzy or t.rejected)
         ])
 
         if self.string_plural:
             approved = int(approved_strings_count == locale.nplurals)
             fuzzy = int(fuzzy_strings_count == locale.nplurals)
-            if not (approved or fuzzy):
-                if errors_count:
-                    errors_count = 1
-                elif warnings_count:
-                    warnings_count = 1
+
         else:
-            approved = int(approved_strings_count == 1)
-            fuzzy = int(fuzzy_strings_count == 1)
+            approved = int(approved_strings_count > 0)
+            fuzzy = int(fuzzy_strings_count > 0)
+
+        if not (approved or fuzzy):
+            has_errors = bool([
+                t for t in translations
+                if (t.approved or t.fuzzy) and t.errors.exists()
+            ])
+            has_warnings = bool([
+                t for t in translations
+                if (t.approved or t.fuzzy) and t.warnings.exists()
+            ])
+
+            errors = int(has_errors)
+            warnings = int(has_warnings)
+
+        else:
+            errors = 0
+            warnings = 0
+
+        unreviewed_count = len([
+            t for t in translations
+            if not (t.approved or t.fuzzy or t.rejected)
+        ])
 
         return {
             'total_strings_diff': 0,
             'approved_strings_diff': approved,
             'fuzzy_strings_diff': fuzzy,
-            'strings_with_errors_diff': errors_count,
-            'strings_with_warnings_diff': warnings_count,
+            'strings_with_errors_diff': errors,
+            'strings_with_warnings_diff': warnings,
             'unreviewed_strings_diff': unreviewed_count,
         }
 
