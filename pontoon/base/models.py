@@ -2843,6 +2843,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         return self.string
 
     def save(self, update_stats=True, *args, **kwargs):
+        # We parametrize update of stats to make testing easier.
         if update_stats:
             stats_before = self.entity.get_stats(self.locale)
 
@@ -2896,8 +2897,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Update latest translation where necessary
         self.update_latest_translation()
 
-        # Update stats AFTER changing approval status.
+        # We parametrize update of stats to make testing easier.
         if update_stats:
+            # Update stats AFTER changing approval status.
             stats_after = self.entity.get_stats(self.locale)
             stats_diff = Entity.get_stats_diff(stats_before, stats_after)
             translatedresource.adjust_all_stats(**stats_diff)
