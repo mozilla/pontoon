@@ -321,8 +321,8 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-compare-locales==5.0.0 \
-    --hash=sha256:0d019e2a2f2398c5fbdeb29469f5c36b8f2c225cfd85562ec44f58eca90ca23c
+compare-locales==5.0.3 \
+    --hash=sha256:dc34fa42384cfc3a5e488c17e42708909b9e6613e3274e6b050c6d70e33a970d
 
 # Required by compare-locales
 fluent==0.9.0 \
