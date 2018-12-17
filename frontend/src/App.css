@@ -23,3 +23,13 @@
 	border-left: 1px solid #5E6475;
 	box-sizing: border-box;
 }
+
+.inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#app .inner {
+    display: table-cell;
+    vertical-align: middle;
+}

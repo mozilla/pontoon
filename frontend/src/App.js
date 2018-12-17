@@ -12,6 +12,7 @@ import { UserAutoUpdater } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { SearchBox } from 'modules/search';
+import { WaveLoader } from './core/loaders';
 
 
 type InternalProps = {
@@ -33,13 +34,15 @@ class App extends React.Component<InternalProps> {
             <header>
                 <Navigation />
             </header>
-            <section className="panel-list">
-                <SearchBox />
-                <EntitiesList />
-            </section>
-            <section className="panel-content">
-                <EntityDetails />
-            </section>
+            <WaveLoader>
+                <section className="panel-list">
+                    <SearchBox />
+                    <EntitiesList />
+                </section>
+                <section className="panel-content">
+                    <EntityDetails />
+                </section>
+            </WaveLoader>
             <Lightbox />
         </div>;
     }
