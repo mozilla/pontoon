@@ -14,7 +14,6 @@ import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as otherlocales from 'modules/otherlocales';
 
-import { suggest } from '../actions';
 import { selectors } from '..';
 import { suggest } from '../actions';
 import Editor from './Editor';
