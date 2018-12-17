@@ -3,6 +3,8 @@
     color: #AAA;
     font-size: 0.9em;
     font-style: italic;
+    height: 20%;
+    min-height: 100px;
     line-height: 22px;
     padding: 10px;
 }
@@ -39,4 +41,5 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    padding-top: 6px;
 }
