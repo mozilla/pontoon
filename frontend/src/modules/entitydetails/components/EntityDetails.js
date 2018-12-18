@@ -21,7 +21,7 @@ import Metadata from './Metadata';
 import Tools from './Tools';
 
 import type { Locale } from 'core/locales';
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { DbEntity } from 'modules/entitieslist';
 import type { HistoryState } from 'modules/history';
 import type { LocalesState } from 'modules/otherlocales';
@@ -30,9 +30,9 @@ import type { LocalesState } from 'modules/otherlocales';
 type Props = {|
     activeTranslation: string,
     history: HistoryState,
-    otherlocales: LocalesState,
     locale: ?Locale,
-    parameters: Navigation,
+    otherlocales: LocalesState,
+    parameters: NavigationParams,
     pluralForm: number,
     selectedEntity: ?DbEntity,
 |};
@@ -133,8 +133,8 @@ const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
         history: state[history.NAME],
-        otherlocales: state[otherlocales.NAME],
         locale: locales.selectors.getCurrentLocaleData(state),
+        otherlocales: state[otherlocales.NAME],
         parameters: navigation.selectors.getNavigation(state),
         pluralForm: plural.selectors.getPluralForm(state),
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),

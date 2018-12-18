@@ -10,7 +10,7 @@ import {
     actions as navActions,
     selectors as navSelectors,
 } from 'core/navigation';
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
@@ -25,7 +25,7 @@ type Props = {|
         hasMore: boolean,
         fetching: boolean,
     |},
-    parameters: Navigation,
+    parameters: NavigationParams,
     router: Object,
 |};
 
@@ -150,7 +150,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 const mapStateToProps = (state: Object): Props => {
     return {
         entities: state[NAME],
-        parameters: navSelectors.getNavigation(state),
+        parameters: navSelectors.getNavigationParams(state),
         router: state.router,
     };
 };

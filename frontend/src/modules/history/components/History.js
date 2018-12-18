@@ -6,7 +6,7 @@ import { Localized } from 'fluent-react';
 
 import './History.css';
 
-import { selectors as navSelectors } from 'core/navigation';
+import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 import { NAME as USER_NAME } from 'core/user';
@@ -14,7 +14,7 @@ import { NAME as USER_NAME } from 'core/user';
 import Translation from './Translation';
 import { actions, NAME } from '..';
 
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { DBTranslation, HistoryState } from '../reducer';
@@ -23,7 +23,7 @@ import type { DBTranslation, HistoryState } from '../reducer';
 type Props = {|
     history: HistoryState,
     nextEntity: ?DbEntity,
-    parameters: Navigation,
+    parameters: NavigationParams,
     pluralForm: number,
     router: Object,
     user: UserState,
@@ -100,7 +100,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         history: state[NAME],
         nextEntity: entitieslist.selectors.getNextEntity(state),
-        parameters: navSelectors.getNavigation(state),
+        parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         user: state[USER_NAME],

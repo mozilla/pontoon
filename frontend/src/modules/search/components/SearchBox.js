@@ -10,7 +10,7 @@ import {
     actions as navActions,
     selectors as navSelectors,
 } from 'core/navigation';
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import { NAME as STATS_NAME } from 'core/stats';
 import type { Stats } from 'core/stats';
 
@@ -19,7 +19,7 @@ import FiltersPanel from './FiltersPanel';
 
 
 type Props = {|
-    parameters: Navigation,
+    parameters: NavigationParams,
     stats: Stats,
     router: Object,
 |};
@@ -101,7 +101,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        parameters: navSelectors.getNavigation(state),
+        parameters: navSelectors.getNavigationParams(state),
         stats: state[STATS_NAME],
         router: state.router,
     };

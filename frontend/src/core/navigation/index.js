@@ -3,7 +3,9 @@
 export { default as actions } from './actions';
 export { default as selectors } from './selectors';
 
-export type { Navigation } from './selectors';
+export { default as Navigation } from './components/Navigation';
+
+export type { NavigationParams } from './selectors';
 
 
 // Name of this module.
