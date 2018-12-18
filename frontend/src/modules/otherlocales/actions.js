@@ -2,19 +2,8 @@
 
 import api from 'core/api';
 
-export const INVALIDATE: 'otherlocales/INVALIDATE' = 'otherlocales/INVALIDATE';
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
 export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
-
-
-export type InvalidateAction = {|
-    +type: typeof INVALIDATE,
-|};
-export function invalidate(): InvalidateAction {
-    return {
-        type: INVALIDATE,
-    };
-}
 
 
 export type ReceiveAction = {|
@@ -58,7 +47,6 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
 
 
 export default {
-    invalidate,
     get,
     receive,
     request,

@@ -10,8 +10,9 @@ import { Locales } from 'modules/otherlocales';
 
 
 type Props = {|
-    historyCount: number,
-    localesCount: number,
+    history: Object,
+    otherlocales: Object,
+    parameters: Object,
 |};
 
 
@@ -22,25 +23,32 @@ type Props = {|
  */
 export default class Tools extends React.Component<Props> {
     render() {
-        const { historyCount, localesCount } = this.props;
+        const { history, otherlocales, parameters } = this.props;
+
+        const historyCount = history.translations.length;
+        const otherlocalesCount = otherlocales.translations.length;
 
         return <Tabs>
             <TabList>
                 <Tab>
                     History
+                    { !historyCount ? null :
                     <span className={ 'count' }>{ historyCount }</span>
+                    }
                 </Tab>
                 <Tab>
                     Locales
-                    <span className={ 'count' }>{ localesCount }</span>
+                    { !otherlocalesCount ? null :
+                    <span className={ 'count' }>{ otherlocalesCount }</span>
+                    }
                 </Tab>
             </TabList>
 
             <TabPanel>
-                <History />
+                <History history={ history } />
             </TabPanel>
             <TabPanel>
-                <Locales />
+                <Locales otherlocales={ otherlocales } parameters={ parameters } />
             </TabPanel>
         </Tabs>;
     }

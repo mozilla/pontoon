@@ -53,14 +53,26 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    componentDidMount() {
+        this.fetchHelpersData();
+    }
+
     componentDidUpdate(prevProps: InternalProps) {
+        const { parameters, pluralForm } = this.props;
+
         if (
-            this.props.parameters.entity !== prevProps.parameters.entity ||
-            this.props.pluralForm !== prevProps.pluralForm
+            parameters.entity !== prevProps.parameters.entity ||
+            pluralForm !== prevProps.pluralForm
         ) {
-            this.props.dispatch(history.actions.invalidate());
-            this.props.dispatch(otherlocales.actions.invalidate());
+            this.fetchHelpersData();
         }
+    }
+
+    fetchHelpersData() {
+        const { dispatch, parameters, pluralForm } = this.props;
+
+        dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
+        dispatch(otherlocales.actions.get(parameters.entity, parameters.locale, pluralForm));
     }
 
     openLightbox = (image: string) => {
@@ -94,9 +106,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return <section className="entity-details">Select an entity</section>;
         }
 
-        const historyCount = state.history.translations.length;
-        const localesCount = state.otherlocales.translations.length;
-
         return <section className="entity-details">
             <Metadata
                 entity={ state.selectedEntity }
@@ -111,8 +120,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 sendSuggestion={ this.sendSuggestion }
             />
             <Tools
-                historyCount={ historyCount }
-                localesCount={ localesCount }
+                parameters={ state.parameters }
+                history={ state.history }
+                otherlocales={ state.otherlocales }
             />
         </section>;
     }

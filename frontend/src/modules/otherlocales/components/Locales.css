@@ -5,6 +5,7 @@
 
 .otherlocales > ul li {
     border-bottom: 1px solid #5E6475;
+    cursor: pointer;
     margin: 0;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
