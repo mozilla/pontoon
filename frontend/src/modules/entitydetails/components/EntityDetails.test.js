@@ -40,6 +40,7 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
         selectedEntity={ selectedEntity }
         parameters={ PARAMETERS }
         locale={ { code: 'kg' } }
+        dispatch={ () => {} }
     />);
 }
 
