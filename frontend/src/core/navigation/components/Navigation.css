@@ -1,0 +1,20 @@
+.navigation {
+    font-size: 1.1em;
+    line-height: 60px;
+    text-transform: uppercase;
+}
+
+.navigation ul {
+    list-style: none;
+    margin-left: 8px;
+}
+
+.navigation ul li {
+    display: inline;
+    padding: 0 8px;
+}
+
+.navigation ul li + li::before {
+    content: '/';
+    padding-right: 16px;
+}

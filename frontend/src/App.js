@@ -7,23 +7,20 @@ import './App.css';
 
 import { Lightbox } from 'core/lightbox';
 import * as locales from 'core/locales';
-import { selectors as navSelectors } from 'core/navigation';
+import { Navigation } from 'core/navigation';
 import { UserAutoUpdater } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { SearchBox } from 'modules/search';
 
-import type { Navigation } from 'core/navigation';
 
+type Props = {
+};
 
-type Props = {|
-    parameters: Navigation,
-|};
-
-type InternalProps = {|
+type InternalProps = {
     ...Props,
     dispatch: Function,
-|};
+};
 
 
 /**
@@ -37,6 +34,9 @@ class App extends React.Component<InternalProps> {
     render() {
         return <div id="app">
             <UserAutoUpdater />
+            <header>
+                <Navigation />
+            </header>
             <section className="panel-list">
                 <SearchBox />
                 <EntitiesList />
@@ -50,9 +50,7 @@ class App extends React.Component<InternalProps> {
 }
 
 const mapStateToProps = (state: Object): Props => {
-    return {
-        parameters: navSelectors.getNavigation(state),
-    };
+    return {};
 };
 
 export default connect(mapStateToProps)(App);

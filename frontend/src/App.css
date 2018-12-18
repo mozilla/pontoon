@@ -1,20 +1,25 @@
 #app {
-    display: flex;
-    height: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 60px auto;
+    height: 100vh;
+}
+
+#app header {
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
 #app .panel-content,
 #app .panel-list {
-    width: 50%;
-    height: 100%;
+    height: calc(100vh - 60px);
 }
 
 #app .panel-list {
-    position: absolute;
+    position: relative;
 }
 
 #app .panel-content {
 	border-left: 1px solid #5E6475;
 	box-sizing: border-box;
-	margin-left: 50%;
 }
