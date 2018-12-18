@@ -14,11 +14,7 @@ import { EntityDetails } from 'modules/entitydetails';
 import { SearchBox } from 'modules/search';
 
 
-type Props = {
-};
-
 type InternalProps = {
-    ...Props,
     dispatch: Function,
 };
 
@@ -49,8 +45,4 @@ class App extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {};
-};
-
-export default connect(mapStateToProps)(App);
+export default connect()(App);
