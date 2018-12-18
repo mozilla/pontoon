@@ -1,5 +1,8 @@
 /* Styling the react-tabs library */
 .react-tabs {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -14,6 +17,7 @@
     background: #4D5967;
     border-bottom: 1px solid #5E6475;
     border-right: 1px solid #5E6475;
+    box-sizing: border-box;
     color: #CCCCCC;
     cursor: pointer;
     display: table-cell;
@@ -47,6 +51,7 @@
 
 .react-tabs__tab-panel {
     display: none;
+    overflow-y: auto;
 }
 
 .react-tabs__tab-panel--selected {
@@ -67,17 +72,11 @@
     background: #4D5967;
 }
 
-.react-tabs {
-    height: calc(60% - 104px);
-}
-
 .react-tabs__tab,
 .react-tabs__tab-panel {
     height: 100%;
 }
 
 .react-tabs__tab-panel > section {
-    height: 100%;
-    overflow-y: auto;
     padding-top: 25px;
 }

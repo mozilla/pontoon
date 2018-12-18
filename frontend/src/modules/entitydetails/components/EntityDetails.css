@@ -1,4 +1,6 @@
 .entity-details {
     background: #3F4752;
+    display: flex;
+    flex-direction: column;
     height: 100%;
 }
