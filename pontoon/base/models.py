@@ -3339,7 +3339,7 @@ class TranslatedResource(AggregatedStats):
                 rejected=False
             ).count()
             if plural_unreviewed_count:
-                unreviewed += 1
+                unreviewed += plural_unreviewed_count
 
         if not save:
             self.total_strings = resource.total_strings
