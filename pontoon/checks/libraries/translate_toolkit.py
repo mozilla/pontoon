@@ -58,7 +58,7 @@ def run_checks(original, string, locale_code, disabled_checks=None):
         'startwhitespace': 'Starting whitespace',
         'tabs': 'Tabs',
         'unchanged': 'Unchanged',
-        'untranslated': 'Untranslated',
+        'untranslated': 'Empty translation',
         'urls': 'URLs',
         'validchars': 'Valid characters',
         'variables': 'Placeholders',
