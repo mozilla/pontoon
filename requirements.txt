@@ -321,12 +321,13 @@ nltk==3.2.5 \
     --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
 
 # ----------------------------------------------------------------------------------
-compare-locales==5.0.3 \
-    --hash=sha256:dc34fa42384cfc3a5e488c17e42708909b9e6613e3274e6b050c6d70e33a970d
+compare-locales==5.1.0 \
+    --hash=sha256:28cd42b63675798ca92a03a206e7ce772955b391fec5442d3c063cf0b1b638da \
+    --hash=sha256:e575373c6fa20eef158f01f013717d9139f07a917e3d8c850875d886271cf38e
 
 # Required by compare-locales
-https://github.com/stasm/python-fluent/archive/zeroeight.zip#egg=fluent==0.9.1 \
-    --hash=sha256:7282542a90c50418bdfa272847788dbfd1ca2d3dd4d1c61859e674293a86460b
+fluent==0.10.0 \
+    --hash=sha256:b5a270e6e4425cdf140ea10d1a7d9c1af713dd00d61b0412f05cd22e1ff84324
 pytoml==0.1.14 \
     --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf
 django-waffle==0.14.0 \
