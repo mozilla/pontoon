@@ -1,80 +1,39 @@
 import React from 'react';
-import sinon from 'sinon';
+import { shallow } from 'enzyme';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
-
-import { actions } from '..';
-import History, { HistoryBase } from './History';
+import History from './History';
 
 
 describe('<History>', () => {
-    beforeAll(() => {
-        sinon.stub(actions, 'get');
-        actions.get.returns({
-            type: 'whatever',
-        });
-    });
-
-    afterEach(() => {
-        actions.get.resetHistory();
-    });
-
-    afterAll(() => {
-        actions.get.restore();
-    });
-
     it('shows the correct number of translations', () => {
-        const initialState = {
-            router: {
-                location: {
-                    pathname: '/kg/pro/all/',
-                    search: '?string=42',
-                },
-            },
-            history: {
-                entity: 42,
-                translations: [
-                    { pk: 1 },
-                    { pk: 2 },
-                    { pk: 3 },
-                ],
-            },
-            plural: {
-                pluralForm: -1,
-            }
+        const history = {
+            translations: [
+                { pk: 1 },
+                { pk: 2 },
+                { pk: 3 },
+            ],
         };
-        const store = createReduxStore(initialState);
-        const wrapper = shallowUntilTarget(<History store={ store } />, HistoryBase);
+        const wrapper = shallow(<History history={ history } />);
 
         expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
-    it('gets a new history when the entity is created', () => {
-        const initialState = {
-            router: {
-                location: {
-                    pathname: '/kg/pro/all/',
-                    search: '?string=42',
-                },
-            },
-            history: {
-                entity: 1,
-                translations: [],
-            }
+    it('returns null while history is loading', () => {
+        const history = {
+            fetching: true,
         };
-        const store = createReduxStore(initialState);
-        shallowUntilTarget(<History store={ store } />, HistoryBase);
+        const wrapper = shallow(<History history={ history } />);
 
-        expect(actions.get.callCount).toEqual(1);
+        expect(wrapper.type()).toBeNull();
+    });
 
-        // TODO: complete this to test a change after the component has been
-        // mounted.
-        // I haven't been able to do that yet. In theory, we should update
-        // the store to change the current route, so that the selected entity
-        // becomes different, then update the `wrapper` and check that while
-        // updating, it called `actions.get`. That's the theory anyway, and
-        // in practice I haven't been able to make that work. Maybe there's a
-        // different way to test this, and I'll need to figure it out someday.
+    it('renders a no results message if history is empty', () => {
+        const history = {
+            fetching: false,
+            translations: [],
+        };
+        const wrapper = shallow(<History history={ history } />);
+
+        expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
     });
 });

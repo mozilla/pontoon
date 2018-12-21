@@ -20,6 +20,7 @@
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
     "react-scripts": "2.0.5",
+    "react-tabs": "^2.3.0",
     "react-timeago": "4.1.9",
     "redux": "4.0.1",
     "redux-logger": "3.0.6",
