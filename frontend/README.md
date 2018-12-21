@@ -215,3 +215,4 @@ In Fluent, the developer is not to be bothered with inner logic and complexity t
 - [Linkify](https://tasti.github.io/react-linkify/)
 - [reselect](https://github.com/reduxjs/reselect)
 - [TimeAgo](https://github.com/nmn/react-timeago)
+- [react-tabs](https://github.com/reactjs/react-tabs)

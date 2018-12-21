@@ -5,8 +5,7 @@
     transition: all 0.1s ease-out;
 }
 
-.translation:not(.disabled):hover,
-.translation:not(.disabled).hover {
+.translation:hover {
     background: #4D5967;
     border-color: #5E6475;
 }

@@ -1,0 +1,81 @@
+/* Styling the react-tabs library */
+.react-tabs {
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    height: calc(60% - 60px);
+}
+
+.react-tabs__tab-list {
+    display: table;
+    table-layout: fixed;
+    margin: 0;
+    width: 100%;
+}
+
+.react-tabs__tab {
+    background: #4D5967;
+    border-bottom: 1px solid #5E6475;
+    border-right: 1px solid #5E6475;
+    box-sizing: border-box;
+    color: #CCCCCC;
+    cursor: pointer;
+    display: table-cell;
+    font-weight: 300;
+    list-style: none;
+    padding: 10px 5px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.react-tabs__tab--selected {
+    background: #3F4752;
+    border-bottom: none;
+}
+
+.react-tabs__tab:focus {
+    box-shadow: 0 0 5px hsl(208, 99%, 50%);
+    border-color: hsl(208, 99%, 50%);
+    outline: none;
+}
+
+.react-tabs__tab:focus:after {
+    content: "";
+    position: absolute;
+    height: 5px;
+    left: -4px;
+    right: -4px;
+    bottom: -5px;
+    background: #fff;
+}
+
+.react-tabs__tab-panel {
+    display: none;
+    overflow-y: auto;
+}
+
+.react-tabs__tab-panel--selected {
+    display: block;
+}
+
+/* Other tools styles */
+.react-tabs span.count {
+    background: #3F4752;
+    border-radius: 3px;
+    color: #CCCCCC;
+    font-weight: 300;
+    margin-left: 3px;
+    padding: 0 5px;
+}
+
+.react-tabs .react-tabs__tab--selected span.count {
+    background: #4D5967;
+}
+
+.react-tabs__tab,
+.react-tabs__tab-panel {
+    height: calc(100% - 37px);
+}
+
+.react-tabs__tab-panel > section {
+    padding-top: 25px;
+}
