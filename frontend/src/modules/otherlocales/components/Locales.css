@@ -1,3 +1,7 @@
+.otherlocales {
+    line-height: 22px;
+}
+
 .otherlocales > ul {
     list-style: none;
     margin: 0;
@@ -35,4 +39,12 @@
     min-height: 22px;
     text-align: start;
     white-space: pre-wrap;
+}
+
+.otherlocales > p {
+    border-bottom: 1px solid #5E6475;
+    color: #aaa;
+    font-style: italic;
+    min-height: 22px;
+    padding: 5px 10px 20px 10px;
 }
