@@ -295,10 +295,12 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
+    plural_form = None if entity.string_plural == "" else 0
 
     translations = Translation.objects.filter(
         entity=entity,
         locale__in=locales,
+        plural_form=plural_form,
         approved=True
     ).order_by('locale__name')
 
