@@ -35,11 +35,11 @@ export function request(entity: number): RequestAction {
 }
 
 
-export function get(entity: number, locale: string, pluralForm: number): Function {
+export function get(entity: number, locale: string): Function {
     return async dispatch => {
         dispatch(request(entity));
 
-        const content = await api.entity.getOtherLocales(entity, locale, pluralForm);
+        const content = await api.entity.getOtherLocales(entity, locale);
 
         dispatch(receive(entity, content));
     }

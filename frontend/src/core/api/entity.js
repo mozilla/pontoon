@@ -66,12 +66,10 @@ export default class EntityAPI extends APIBase {
     async getOtherLocales(
         entity: number,
         locale: string,
-        pluralForm: number = -1,
     ): Promise<Array<OtherLocaleTranslation>> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);
-        payload.append('plural_form', pluralForm.toString());
 
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');

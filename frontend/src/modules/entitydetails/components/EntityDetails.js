@@ -72,7 +72,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, parameters, pluralForm } = this.props;
 
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
-        dispatch(otherlocales.actions.get(parameters.entity, parameters.locale, pluralForm));
+        dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 
     openLightbox = (image: string) => {
