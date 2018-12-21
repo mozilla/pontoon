@@ -1969,6 +1969,11 @@ body > header aside p {
   transition: all 0.1s ease-out;
 }
 
+#helpers > section ul li.delete {
+  -webkit-transform: scale(0); /* MANDATORY! Or transitionend in translate.js triggered too late */
+  transform: scale(0);
+}
+
 #helpers > section ul li:not(.disabled):hover,
 #helpers > section ul li:not(.disabled).hover {
   background: #4D5967;
@@ -2022,9 +2027,11 @@ body > header aside p {
   width: 22px;
 }
 
-#helpers > section ul li > header.translator button,
+#helpers > section ul li > header.translator button:not(.delete),
 #helpers > section ul li > header.own button.reject,
 #helpers > section ul li > header.own button.unreject,
+#helpers > section ul li.rejected > header.own button.delete,
+#helpers > section ul li.rejected > header.translator button.delete,
 #helpers > section ul li.translated > header button.approve {
   pointer-events: auto;
   opacity: 1;
@@ -2072,6 +2079,26 @@ body > header aside p {
 #helpers > section ul li > header button.reject:not(:hover):before,
 #helpers > section ul li > header button.unreject:hover:before {
   font-weight: 400; /* Replacement for the 'far' class */
+}
+
+#helpers > section ul li > header button.delete {
+  display: none;
+}
+
+#helpers > section ul li.rejected > header.own button.delete,
+#helpers > section ul li.rejected > header.translator button.delete {
+  display: inline-block;
+}
+
+#helpers > section ul li.rejected > header button.delete:before {
+  content: "";
+  float: left;
+  font-size: 19px;
+  margin-top: -1px;
+}
+
+#helpers > section ul li.rejected > header button.delete:hover:before {
+  color: #F36;
 }
 
 

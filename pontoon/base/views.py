@@ -483,6 +483,41 @@ def unreject_translation(request):
 
 
 @utils.require_AJAX
+@login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
+def delete_translation(request):
+    """Delete given translation."""
+    try:
+        t = request.POST['translation']
+    except MultiValueDictKeyError as e:
+        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+
+    translation = get_object_or_404(Translation, pk=t)
+    project = translation.entity.resource.project
+    locale = translation.locale
+
+    # Read-only translations cannot be deleted
+    if utils.readonly_exists(project, locale):
+        return HttpResponseForbidden(
+            "Forbidden: This string is in read-only mode"
+        )
+
+    # Only privileged users or authors can delete translations
+    if not translation.rejected or not (
+        request.user.can_translate(locale, project) or
+        request.user == translation.user or
+        translation.approved
+    ):
+        return HttpResponseForbidden(
+            "Forbidden: You can't delete this translation."
+        )
+
+    translation.delete()
+
+    return HttpResponse('ok')
+
+
+@utils.require_AJAX
 def perform_checks(request):
     """Perform quality checks and return a list of any failed ones."""
     try:
