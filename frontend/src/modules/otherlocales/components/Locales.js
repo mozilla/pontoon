@@ -38,7 +38,7 @@ export default class Locales extends React.Component<Props> {
             return this.renderNoResults();
         }
 
-        return <section className="otherlocales">
+        return <section className="other-locales">
             <ul>
                 { otherlocales.translations.map((translation, key) => {
                     return <li key={ key }>

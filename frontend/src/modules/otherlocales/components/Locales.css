@@ -1,13 +1,13 @@
-.otherlocales {
+.other-locales {
     line-height: 22px;
 }
 
-.otherlocales > ul {
+.other-locales > ul {
     list-style: none;
     margin: 0;
 }
 
-.otherlocales > ul li {
+.other-locales > ul li {
     border-bottom: 1px solid #5E6475;
     cursor: pointer;
     margin: 0;
@@ -15,12 +15,12 @@
     transition: all 0.1s ease-out;
 }
 
-.otherlocales > ul li:hover {
+.other-locales > ul li:hover {
     background: #4D5967;
     border-color: #5E6475;
 }
 
-.otherlocales > ul li > header {
+.other-locales > ul li > header {
     color: #AAAAAA;
     display: block;
     font-size: 11px;
@@ -30,18 +30,18 @@
     text-transform: uppercase;
 }
 
-.otherlocales > ul li > header span {
+.other-locales > ul li > header span {
     color: #7BC876;
     padding-left: 3px;
 }
 
-.otherlocales > ul li > p {
+.other-locales > ul li > p {
     min-height: 22px;
     text-align: start;
     white-space: pre-wrap;
 }
 
-.otherlocales > p {
+.other-locales > p {
     border-bottom: 1px solid #5E6475;
     color: #aaa;
     font-style: italic;

@@ -1,7 +1,5 @@
 /* Styling the react-tabs library */
 .react-tabs {
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
 }
