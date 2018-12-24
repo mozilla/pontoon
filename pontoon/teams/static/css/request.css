@@ -10,6 +10,11 @@
   margin-left: 2px;
 }
 
+/* Bug 1468997 */
+.request-team {
+  display: none;
+}
+
 .request-team:before {
   content: "Request new team";
 }
