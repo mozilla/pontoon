@@ -2169,7 +2169,7 @@ var Pontoon = (function (my) {
         $('.warning-overlay:visible .cancel').click();
       });
 
-      // Approve and delete translations
+      // Approve translations
       $('#helpers .history').on('click', 'menu .approve', function () {
         $(this).parents('li').click();
 
@@ -2181,6 +2181,7 @@ var Pontoon = (function (my) {
         self.updateOnServer(entity, translation, true);
       });
 
+      // Unapprove translations
       $('#helpers .history').on('click', 'menu .unapprove', function () {
         var button = $(this);
         var translationId = parseInt($(this).parents('li').data('id'));
@@ -2227,13 +2228,13 @@ var Pontoon = (function (my) {
         });
       });
 
+      // Reject translations
       $('#helpers .history').on('click', 'menu .reject', function () {
         var button = $(this);
         var item = button.parents('li');
         var entity = self.getEditorEntity();
         var pf = self.getPluralForm(true);
 
-        // Reject a translation.
         $.ajax({
           url: '/reject-translation/',
           type: 'POST',
@@ -2262,6 +2263,7 @@ var Pontoon = (function (my) {
         });
       });
 
+      // Unreject translations
       $('#helpers .history').on('click', 'menu .unreject', function () {
         var button = $(this);
         var translationId = parseInt($(this).parents('li').data('id'));
