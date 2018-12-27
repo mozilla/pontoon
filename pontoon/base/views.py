@@ -359,7 +359,7 @@ def unapprove_translation(request):
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    translation = Translation.objects.get(pk=t)
+    translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
     locale = translation.locale
 
@@ -449,7 +449,7 @@ def unreject_translation(request):
     except MultiValueDictKeyError as e:
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
-    translation = Translation.objects.get(pk=t)
+    translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
     locale = translation.locale
 
