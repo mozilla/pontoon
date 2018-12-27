@@ -1905,6 +1905,7 @@ body > header aside p {
 
 #editor #single > menu p.banner {
   font-style: italic;
+  line-height: 40px;
 }
 
 #editor #single > menu p.banner > a {
