@@ -70,6 +70,8 @@ urlpatterns = [
         name='pontoon.reject_translation'),
     url(r'^unreject-translation/', views.unreject_translation,
         name='pontoon.unreject_translation'),
+    url(r'^delete-translation/', views.delete_translation,
+        name='pontoon.delete_translation'),
     url(r'^other-locales/', views.get_translations_from_other_locales,
         name='pontoon.other_locales'),
     url(r'^download/', views.download,
