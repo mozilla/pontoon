@@ -27,10 +27,19 @@
   <h2 id="username">{{ contributor.first_name }}</h2>
 
   <ul class="info">
-    <li><span class="fa fa-fw fa-envelope"></span><a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a></li>
-    <li><span class="fa fa-fw fa-lock"></span>{{ contributor|display_permissions() }}</li>
+    <li>
+      <span class="fa fa-fw fa-envelope"></span>
+      <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
+    </li>
+    <li>
+      <span class="fa fa-fw fa-lock"></span>
+      {{ contributor|display_permissions() }}
+    </li>
     {% if my_profile %}
-      <li class="settings"><i class="fa fa-fw fa-cog"></i><a href="{{ url('pontoon.contributors.settings') }}">Change Settings</a></li>
+    <li class="settings">
+      <i class="fa fa-fw fa-cog"></i>
+      <a href="{{ url('pontoon.contributors.settings') }}">Change Settings</a>
+    </li>
     {% endif %}
   </ul>
 </section>
