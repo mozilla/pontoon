@@ -29,7 +29,16 @@
   <ul class="info">
     <li>
       <span class="fa fa-fw fa-envelope"></span>
+      {% if user.is_authenticated() %}
       <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
+      {% else %}
+      {% if settings.DJANGO_LOGIN %}
+        {% set login_url = url('standalone_login') %}
+      {% else %}
+        {% set login_url = provider_login_url(request) %}
+      {% endif %}
+      <a id="sidebar-signin" href="{{ login_url }}">Sign in to see email address</a>
+      {% endif %}
     </li>
     <li>
       <span class="fa fa-fw fa-lock"></span>
