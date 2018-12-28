@@ -326,6 +326,7 @@ var Pontoon = (function (my) {
                     '</div>' +
                     '<menu class="toolbar">' +
                       ((i > 0) ? '<a href="#" class="toggle-diff" data-alternative-text="Hide diff" title="Show diff against the currently active translation">Show diff</a>' : '') +
+                      '<button class="delete far" title="Delete"></button>' +
                       '<button class="' + (this.approved ? 'unapprove' : 'approve') + ' fa" title="' +
                        (this.approved ? 'Unapprove' : 'Approve')  + '"></button>' +
                       '<button class="' +
@@ -2168,7 +2169,7 @@ var Pontoon = (function (my) {
         $('.warning-overlay:visible .cancel').click();
       });
 
-      // Approve and delete translations
+      // Approve translations
       $('#helpers .history').on('click', 'menu .approve', function () {
         $(this).parents('li').click();
 
@@ -2180,6 +2181,7 @@ var Pontoon = (function (my) {
         self.updateOnServer(entity, translation, true);
       });
 
+      // Unapprove translations
       $('#helpers .history').on('click', 'menu .unapprove', function () {
         var button = $(this);
         var translationId = parseInt($(this).parents('li').data('id'));
@@ -2226,13 +2228,13 @@ var Pontoon = (function (my) {
         });
       });
 
+      // Reject translations
       $('#helpers .history').on('click', 'menu .reject', function () {
         var button = $(this);
         var item = button.parents('li');
         var entity = self.getEditorEntity();
         var pf = self.getPluralForm(true);
 
-        // Reject a translation.
         $.ajax({
           url: '/reject-translation/',
           type: 'POST',
@@ -2261,6 +2263,7 @@ var Pontoon = (function (my) {
         });
       });
 
+      // Unreject translations
       $('#helpers .history').on('click', 'menu .unreject', function () {
         var button = $(this);
         var translationId = parseInt($(this).parents('li').data('id'));
@@ -2304,6 +2307,48 @@ var Pontoon = (function (my) {
           self.endLoader('Translation unrejected');
         }, function() {
           self.endLoader("Couldn't unreject this translation.");
+        });
+      });
+
+      // Delete translations
+      $('#helpers .history').on('click', 'menu .delete', function () {
+        var button = $(this);
+
+        $.ajax({
+          url: '/delete-translation/',
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: $('#server').data('csrf'),
+            translation: $(this).parents('li').data('id'),
+          },
+          success: function() {
+            button.parents('li')
+              .addClass('delete')
+              .bind('transitionend', function() {
+                $(this).remove();
+
+                self.endLoader('Translation deleted');
+
+                var count = $('#helpers .history .suggestion').length;
+
+                // Last translation deleted, no alternative available
+                if (count === 0) {
+                  $('#helpers .history ul').append(
+                    '<li class="disabled">' +
+                      '<p>No translations available.</p>' +
+                    '</li>'
+                  );
+                }
+
+                // Update number of history entities
+                $('#helpers a[href="#history"] .count')
+                  .toggle(count > 0)
+                  .html(count);
+              });
+          },
+          error: function() {
+            self.endLoader('Oops, something went wrong.', 'error');
+          }
         });
       });
 
