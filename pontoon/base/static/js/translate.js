@@ -2109,7 +2109,7 @@ var Pontoon = (function (my) {
 
           // Reset to original string on empty search
           if (!source) {
-            source = entity['original' + self.getPluralSuffix()];
+            source = self.fluent.getSimplePreview(entity['original' + self.getPluralSuffix()]);
             customSearch = false;
           }
 
