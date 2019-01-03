@@ -135,7 +135,7 @@ const mapStateToProps = (state: Object): Props => {
         history: state[history.NAME],
         locale: locales.selectors.getCurrentLocaleData(state),
         otherlocales: state[otherlocales.NAME],
-        parameters: navigation.selectors.getNavigation(state),
+        parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
     };
