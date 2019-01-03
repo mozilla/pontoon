@@ -1,9 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { createReduxStore } from 'test/store';
-
-import History, { HistoryBase } from './History';
+import { HistoryBase } from './History';
 
 
 describe('<History>', () => {
