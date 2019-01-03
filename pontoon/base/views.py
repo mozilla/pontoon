@@ -386,9 +386,9 @@ def approve_translation(request):
     use_checks = project.slug != 'tutorial'
 
     if use_checks and translation.errors.exists():
-        return HttpResponseForbidden(
-            "Forbidden: This translation has errors."
-        )
+        return JsonResponse({
+            'failedChecks': translation.errors.all(),
+        })
 
     now = timezone.now()
 

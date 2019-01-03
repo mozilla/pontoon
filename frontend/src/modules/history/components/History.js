@@ -37,32 +37,6 @@ type InternalProps = {|
  * For each translation, show its author, date and status (approved, rejected).
  */
 export class HistoryBase extends React.Component<InternalProps> {
-    // fetchHistory() {
-    //     const { parameters, pluralForm, dispatch } = this.props;
-    //
-    //     // This is a newly selected entity, remove the previous history
-    //     // then fetch the history of the new entity.
-    //     dispatch(actions.reset());
-    //     dispatch(actions.get(
-    //         parameters.entity,
-    //         parameters.locale,
-    //         pluralForm,
-    //     ));
-    // }
-    //
-    // componentDidMount() {
-    //     this.fetchHistory();
-    // }
-    //
-    // componentDidUpdate(prevProps: InternalProps) {
-    //     if (
-    //         this.props.parameters.entity !== prevProps.parameters.entity ||
-    //         this.props.pluralForm !== prevProps.pluralForm
-    //     ) {
-    //         this.fetchHistory();
-    //     }
-    // }
-
     updateTranslationStatus = (translation: DBTranslation, change: string) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(actions.updateStatus(
