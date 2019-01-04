@@ -6,35 +6,43 @@
 <table>
     <tr>
         <td>Bootstrapper</td>
-        <td>create-react-app — https://github.com/facebook/create-react-app</td>
+        <td>create-react-app</td>
+        <td>https://github.com/facebook/create-react-app</td>
     </tr>
     <tr>
         <td>Package manager</td>
-        <td>Yarn — https://yarnpkg.com/</td>
+        <td>Yarn</td>
+        <td>https://yarnpkg.com/</td>
     </tr>
     <tr>
         <td>Views</td>
-        <td>React — https://reactjs.org/</td>
+        <td>React</td>
+        <td>https://reactjs.org/</td>
     </tr>
     <tr>
         <td>Data</td>
-        <td>Redux — https://redux.js.org/</td>
+        <td>Redux</td>
+        <td>https://redux.js.org/</td>
     </tr>
     <tr>
         <td>Tests</td>
-        <td>Jest — http://jestjs.io/</td>
+        <td>Jest</td>
+        <td>http://jestjs.io/</td>
     </tr>
     <tr>
         <td>Type checking</td>
-        <td>Flow — https://flow.org/</td>
+        <td>Flow</td>
+        <td>https://flow.org/</td>
     </tr>
     <tr>
         <td>Localization</td>
-        <td>Fluent — https://projectfluent.org/</td>
+        <td>Fluent</td>
+        <td>https://projectfluent.org/</td>
     </tr>
     <tr>
         <td>Style</td>
         <td>CSS</td>
+        <td></td>
     </tr>
 </table>
 
