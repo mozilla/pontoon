@@ -1191,6 +1191,9 @@ class Project(AggregatedStats):
         and attributions. Also prevents project from syncing with VCS.
     """)
 
+    date_created = models.DateTimeField(default=timezone.now)
+    date_disabled = models.DateTimeField(null=True, blank=True)
+
     sync_disabled = models.BooleanField(default=False, help_text="""
         Prevent project from syncing with VCS.
     """)
@@ -1875,6 +1878,10 @@ class Resource(models.Model):
     project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
     total_strings = models.PositiveIntegerField(default=0)
+    obsolete = models.BooleanField(default=False)
+
+    date_created = models.DateTimeField(default=timezone.now)
+    date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     # Format
     FORMAT_CHOICES = (
@@ -1894,7 +1901,6 @@ class Resource(models.Model):
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
     deadline = models.DateField(blank=True, null=True)
-    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=3)
 
     SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
