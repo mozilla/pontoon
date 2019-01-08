@@ -1191,6 +1191,9 @@ class Project(AggregatedStats):
         and attributions. Also prevents project from syncing with VCS.
     """)
 
+    date_created = models.DateTimeField(default=timezone.now)
+    date_disabled = models.DateTimeField(null=True, blank=True)
+
     sync_disabled = models.BooleanField(default=False, help_text="""
         Prevent project from syncing with VCS.
     """)
@@ -1269,6 +1272,10 @@ class Project(AggregatedStats):
                 original = Project.objects.get(pk=self.pk)
                 if self.disabled != original.disabled:
                     disabled_changed = True
+                    if self.disabled:
+                        self.date_disabled = timezone.now()
+                    else:
+                        self.date_disabled = None
             except Project.DoesNotExist:
                 pass
 
@@ -1875,6 +1882,10 @@ class Resource(models.Model):
     project = models.ForeignKey(Project, related_name='resources')
     path = models.TextField()  # Path to localization file
     total_strings = models.PositiveIntegerField(default=0)
+    obsolete = models.BooleanField(default=False)
+
+    date_created = models.DateTimeField(default=timezone.now)
+    date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     # Format
     FORMAT_CHOICES = (
