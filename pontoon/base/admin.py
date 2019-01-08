@@ -164,6 +164,8 @@ class ProjectAdmin(admin.ModelAdmin):
                 'configuration_file',
                 'can_be_requested',
                 'disabled',
+                'date_created',
+                'date_disabled',
                 'sync_disabled',
                 'system_project',
             ),
