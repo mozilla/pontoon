@@ -7,6 +7,8 @@ import './Editor.css';
 
 import { PluralSelector } from 'core/plural';
 
+import EditorProxy from './EditorProxy';
+
 import type { DbEntity } from 'modules/entitieslist';
 
 
@@ -24,6 +26,9 @@ type State = {|
 
 /**
  * Editor for translation strings.
+ *
+ * Will present a different editor depending on the file format of the string,
+ * see `EditorProxy` for more information.
  */
 export default class Editor extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -41,9 +46,9 @@ export default class Editor extends React.Component<Props, State> {
         }
     }
 
-    handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
+    updateTranslation = (translation: string) => {
         this.setState({
-            translation: event.currentTarget.value,
+            translation,
         });
     }
 
@@ -72,9 +77,10 @@ export default class Editor extends React.Component<Props, State> {
     render() {
         return <div className="editor">
             <PluralSelector />
-            <textarea
-                value={ this.state.translation }
-                onChange={ this.handleChange }
+            <EditorProxy
+                entity={ this.props.entity }
+                translation={ this.state.translation }
+                updateTranslation={ this.updateTranslation }
             />
             <div className="options">
                 <div className="actions">
