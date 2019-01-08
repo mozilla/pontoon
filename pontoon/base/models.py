@@ -1894,7 +1894,6 @@ class Resource(models.Model):
         "Format", max_length=20, blank=True, choices=FORMAT_CHOICES)
 
     deadline = models.DateField(blank=True, null=True)
-    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=3)
 
     SOURCE_EXTENSIONS = ['pot']  # Extensions of source-only formats.
     ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
