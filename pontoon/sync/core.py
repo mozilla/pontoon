@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from pontoon.base.models import (
     Entity,
@@ -29,7 +30,7 @@ def update_originals(db_project, now, force=False):
 
     with transaction.atomic():
         added_paths, removed_paths, changed_paths = update_resources(
-            db_project, vcs_project
+            db_project, vcs_project, now
         )
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
@@ -110,7 +111,7 @@ def update_entities(db_project, vcs_project, changeset):
             changeset.update_db_source_entity(db_entity, vcs_entity)
 
 
-def update_resources(db_project, vcs_project):
+def update_resources(db_project, vcs_project, now=timezone.now()):
     """Update the database on what resource files exist in VCS."""
     log.debug(f"Scanning {vcs_project.source_directory_path}")
     vcs_changed_files, vcs_removed_files = vcs_project.changed_source_files
@@ -123,8 +124,13 @@ def update_resources(db_project, vcs_project):
 
     added_paths = []
 
+<<<<<<< HEAD
     log.debug("Removed files: {}".format(", ".join(removed_paths) or "None"))
     removed_resources.delete()
+=======
+    log.debug('Removed files: {}'.format(', '.join(removed_paths) or 'None'))
+    removed_resources.update(obsolete=True, date_obsoleted=now)
+>>>>>>> Fix bug 1468840: Obsolete Resources instead of deleting them.
 
     for relative_path, vcs_resource in vcs_project.resources.items():
         resource, created = db_project.resources.get_or_create(path=relative_path)
