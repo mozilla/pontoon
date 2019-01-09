@@ -54,6 +54,7 @@
     display: inline-block;
     pointer-events: none;
     opacity: 0.5;
+    outline: none;
     font-size: 1.8em;
     height: 22px;
     padding: 0;
