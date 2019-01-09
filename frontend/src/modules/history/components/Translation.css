@@ -21,10 +21,12 @@
 .translation > header .info {
     float: left;
 }
-.history  ul li > header .toolbar {
+
+.translation > header .toolbar {
     display: block;
     float: right;
 }
+
 .translation > header + p {
     clear: both;
 }
@@ -67,8 +69,11 @@
     opacity: 1;
 }
 
-.translation.rejected:hover,
-.translation.rejected.hover {
+.translation.rejected {
+    opacity: 0.4;
+}
+
+.translation.rejected:hover {
     opacity: 1;
 }
 
