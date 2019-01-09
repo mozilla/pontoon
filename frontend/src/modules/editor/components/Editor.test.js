@@ -33,15 +33,6 @@ describe('<Editor>', () => {
         const wrapper = createShallowEditor();
 
         expect(wrapper.find('button')).toHaveLength(3);
-        expect(wrapper.find('textarea').html()).toContain(TRANSLATION);
-    });
-
-    it('updates the textarea when the state changes', () => {
-        const wrapper = createShallowEditor();
-
-        expect(wrapper.find('textarea').html()).not.toContain('something else');
-        wrapper.setState({translation: 'something else'});
-        expect(wrapper.find('textarea').html()).toContain('something else');
     });
 
     it('clears the text when the Clear button is clicked', () => {

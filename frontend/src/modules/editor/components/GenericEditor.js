@@ -9,6 +9,9 @@ export type EditorProps = {|
 |};
 
 
+/*
+ * Render a simple textarea to edit a translation.
+ */
 export default class GenericEditor extends React.Component<EditorProps> {
     handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
         this.props.updateTranslation(event.currentTarget.value);
