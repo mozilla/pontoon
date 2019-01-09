@@ -94,8 +94,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
     repo_formset = RepositoryInlineFormSet()
     external_resource_formset = ExternalResourceInlineFormSet()
     tag_formset = TagInlineFormSet()
-    locales_readonly = []
-    locales_selected = []
+    locales_readonly = Locale.objects.none()
+    locales_selected = Locale.objects.none()
     subtitle = 'Add project'
     pk = None
     project = None
@@ -237,6 +237,13 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Cannot use values_list() here, because it hits the DB again
             'locales': [l.pk for l in p.locales.all()],
         })
+        
+    locales_available = Locale.objects.exclude(pk__in=locales_selected)
+    
+    # Admins reason in terms of locale codes (see bug 1394194)
+    locales_readonly = locales_readonly.order_by('code')
+    locales_selected = locales_selected.order_by('code')
+    locales_available = locales_available.order_by('code')
 
     data = {
         'slug': slug,
@@ -247,7 +254,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
         'external_resource_formset': external_resource_formset,
         'locales_readonly': locales_readonly,
         'locales_selected': locales_selected,
-        'locales_available': Locale.objects.exclude(pk__in=locales_selected),
+        'locales_available': locales_available,
         'subtitle': subtitle,
         'pk': pk,
         'project': project,
