@@ -18,6 +18,6 @@ export default class GenericEditor extends React.Component<EditorProps> {
         return <textarea
             value={ this.props.translation }
             onChange={ this.handleChange }
-        />
+        />;
     }
 }

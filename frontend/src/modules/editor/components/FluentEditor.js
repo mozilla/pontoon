@@ -1,26 +1,44 @@
 /* @flow */
 
 import * as React from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import AceEditor from 'react-ace';
+
+import './editor-mode-fluent';
+import './editor-theme-fluent';
 
 import type { EditorProps } from './GenericEditor';
 
 
+/*
+ * Render an Ace editor for Fluent string editting.
+ */
 export default class FluentEditor extends React.Component<EditorProps> {
     render() {
         const options = {
-            lineNumbers: false,
-            wordWrap: 'on',
-            wrappingIndent: 'deepIndent',
-            minimap: {
-                enabled: false,
-            },
+            animatedScroll: false,
+            autoScrollEditorIntoView: false,
+            behavioursEnabled: false,
+            cursorStyle: 'ace',
+            displayIndentGuides: false,
+            fadeFoldWidgets: false,
+            fontSize: 14,
+            highlightActiveLine: false,
+            highlightSelectedWord: false,
+            printMargin: false,
+            printMarginColumn: false,
+            scrollPastEnd: false,
+            showInvisibles: false,
+            showFoldWidgets: false,
+            showLineNumbers: false,
+            showPrintMargin: false,
         };
 
-        return <MonacoEditor
-            theme='vs'
-            language='html'
-            options={ options }
+        return <AceEditor
+            mode='fluent'
+            theme='fluent'
+            width='100%'
+            wrapEnabled={ true }
+            setOptions={ options }
             value={ this.props.translation }
             onChange={ this.props.updateTranslation }
         />;
