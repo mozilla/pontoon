@@ -30,6 +30,32 @@ export const getSelectedEntity: Function = createSelector(
 );
 
 
+export function _getNextEntity(
+    entities: Entities,
+    params: Navigation,
+): ?DbEntity {
+    const currentIndex = entities.findIndex(element => element.pk === params.entity);
+
+    if (currentIndex === -1) {
+        return null;
+    }
+
+    const next = (currentIndex + 1 >= entities.length) ? 0 : currentIndex + 1;
+    return entities[next];
+}
+
+
+/**
+ * Return the Entity that follows the current one in the list.
+ */
+export const getNextEntity: Function = createSelector(
+    entitiesSelector,
+    navigation.selectors.getNavigation,
+    _getNextEntity
+);
+
+
 export default {
+    getNextEntity,
     getSelectedEntity,
 };

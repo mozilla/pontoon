@@ -1,7 +1,12 @@
 /* @flow */
 
 import api from 'core/api';
+
+import { actions as navActions } from 'core/navigation';
+import { actions as statsActions } from 'core/stats';
 import { actions as listActions } from 'modules/entitieslist';
+
+import type { DbEntity } from 'modules/entitieslist';
 
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
@@ -90,10 +95,23 @@ export function updateStatus(
     resource: string,
     pluralForm: number,
     translation: number,
+    nextEntity: ?DbEntity,
+    router: Object,
 ): Function {
     return async dispatch => {
         const results = await updateStatusOnServer(change, translation, resource);
-        dispatch(get(entity, locale, pluralForm));
+        if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
+            // The change did work, we want to move on to the next Entity.
+            dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
+        }
+        else {
+            dispatch(get(entity, locale, pluralForm));
+        }
+
+        if (results.stats) {
+            dispatch(statsActions.update(results.stats));
+        }
+
         dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
     }
 }

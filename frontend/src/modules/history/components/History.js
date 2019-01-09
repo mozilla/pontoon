@@ -8,6 +8,7 @@ import './History.css';
 
 import { selectors as navSelectors } from 'core/navigation';
 import * as plural from 'core/plural';
+import * as entitieslist from 'modules/entitieslist';
 import { NAME as USER_NAME } from 'core/user';
 
 import Translation from './Translation';
@@ -15,13 +16,16 @@ import { actions, NAME } from '..';
 
 import type { Navigation } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { DbEntity } from 'modules/entitieslist';
 import type { DBTranslation, HistoryState } from '../reducer';
 
 
 type Props = {|
     history: HistoryState,
+    nextEntity: ?DbEntity,
     parameters: Navigation,
     pluralForm: number,
+    router: Object,
     user: UserState,
 |};
 
@@ -38,7 +42,7 @@ type InternalProps = {|
  */
 export class HistoryBase extends React.Component<InternalProps> {
     updateTranslationStatus = (translation: DBTranslation, change: string) => {
-        const { parameters, pluralForm, dispatch } = this.props;
+        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(actions.updateStatus(
             change,
             parameters.entity,
@@ -46,6 +50,8 @@ export class HistoryBase extends React.Component<InternalProps> {
             parameters.resource,
             pluralForm,
             translation.pk,
+            nextEntity,
+            router,
         ));
     }
 
@@ -93,8 +99,10 @@ export class HistoryBase extends React.Component<InternalProps> {
 const mapStateToProps = (state: Object): Props => {
     return {
         history: state[NAME],
+        nextEntity: entitieslist.selectors.getNextEntity(state),
         parameters: navSelectors.getNavigation(state),
         pluralForm: plural.selectors.getPluralForm(state),
+        router: state.router,
         user: state[USER_NAME],
     };
 };
