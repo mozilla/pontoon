@@ -38,6 +38,9 @@
 backports.csv==1.0.5 \
     --hash=sha256:d3b0cefaaca92be3d2d4ceec140827cae1d871da7fff5db70697d72328357d65 \
     --hash=sha256:8c421385cbc6042ba90c68c871c5afc13672acaf91e1508546d6cda6725ebfc6
+bleach==3.0.2 \
+    --hash=sha256:48d39675b80a75f6d1c3bdbffec791cf0bbbab665cf01e20da701c77de278718 \
+    --hash=sha256:73d26f018af5d5adcdabf5c1c974add4361a9c76af215fe32fdec8a6fc5fb9b9
 dj-database-url==0.3.0 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353
@@ -122,22 +125,6 @@ https://github.com/mathjazz/silme/archive/v0.9.4.zip#egg=silme==0.9.4 \
 # Requirements with sub-dependencies.
 # ==================================================================================
 
-bleach==2.1.3 \
-    --hash=sha256:eb7386f632349d10d9ce9d4a838b134d4731571851149f9cc2c05a9a837a9a44 \
-    --hash=sha256:b8fa79e91f96c2c2cd9fd1f9eda906efb1b88b483048978ba62fef680e962b34
-
-# Required by bleach
-html5lib==0.999999999 \
-    --hash=sha256:b8934484cf22f1db684c0fae27569a0db404d0208d20163fbf51cc537245d008
-
-# Required by html5lib
-setuptools==36.6.0 \
-    --hash=sha256:904356c95cf90e6fdc21915afafbc9ad3d11409c7afeee7c85156f469b353efb \
-    --hash=sha256:62074589522a798da243f47348f38020d55b6c945652e2f2c09d3a96299812b7
-webencodings==0.5.1 \
-    --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
-
-# ----------------------------------------------------------------------------------
 celery==3.1.18 \
     --hash=sha256:dbf59618d5a9eff172d25021f36614be5af0501e4527975ca504b95863f14fed \
     --hash=sha256:0924f94070c6fc57d408b169848c5b38832668fffe060e48b4803fb23e0e3eaf
