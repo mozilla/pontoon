@@ -231,9 +231,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
     form.label_suffix = ''
 
     projects = []
-    for p in Project.objects.prefetch_related('locales').order_by('code'):
+    for p in Project.objects.prefetch_related('locales').order_by('name'):
         projects.append({
-            'name': p.code,
+            'name': p.name,
             # Cannot use values_list() here, because it hits the DB again
             'locales': [l.pk for l in p.locales.all()],
         })
