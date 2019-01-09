@@ -103,10 +103,10 @@ def manage_project(request, slug=None, template='admin_project.html'):
     # Save project
     if request.method == 'POST':
         locales_readonly = Locale.objects.filter(
-            pk__in=request.POST.getlist('locales_readonly').order_by('code')
+            pk__in=request.POST.getlist('locales_readonly')
         )
         locales_selected = Locale.objects.filter(
-            pk__in=request.POST.getlist('locales').order_by('code')
+            pk__in=request.POST.getlist('locales')
         ).exclude(
             pk__in=locales_readonly
         )
@@ -231,9 +231,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
     form.label_suffix = ''
 
     projects = []
-    for p in Project.objects.prefetch_related('locales').order_by('name'):
+    for p in Project.objects.prefetch_related('locales').order_by('code'):
         projects.append({
-            'name': p.name,
+            'name': p.code,
             # Cannot use values_list() here, because it hits the DB again
             'locales': [l.pk for l in p.locales.all()],
         })
