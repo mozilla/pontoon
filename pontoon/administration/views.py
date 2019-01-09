@@ -94,8 +94,8 @@ def manage_project(request, slug=None, template='admin_project.html'):
     repo_formset = RepositoryInlineFormSet()
     external_resource_formset = ExternalResourceInlineFormSet()
     tag_formset = TagInlineFormSet()
-    locales_readonly = []
-    locales_selected = []
+    locales_readonly = Locale.objects.none()
+    locales_selected = Locale.objects.none()
     subtitle = 'Add project'
     pk = None
     project = None
