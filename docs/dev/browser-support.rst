@@ -6,8 +6,8 @@ The following is the `browser support matrix of Pontoon <http://browserl.ist/?q=
 
     Firefox >= 52,
     FirefoxAndroid >= 52,
-    Chrome >= 55,
-    ChromeAndroid >= 55,
-    Edge >= 15,
+    Chrome >= 57,
+    ChromeAndroid >= 57,
+    Edge >= 16,
     Safari >= 10.1,
     iOS >= 10.3
