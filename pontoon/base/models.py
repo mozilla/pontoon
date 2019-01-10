@@ -2942,6 +2942,28 @@ class Translation(DirtyFieldsMixin, models.Model):
                 instance.latest_translation = self
                 instance.save(update_fields=['latest_translation'])
 
+    def approve(self, user):
+        """
+        Approve translation.
+        """
+        self.approved = True
+        self.approved_user = user
+        self.approved_date = timezone.now()
+
+        self.fuzzy = False
+
+        self.unapproved_user = None
+        self.unapproved_date = None
+
+        self.rejected = False
+        self.rejected_user = None
+        self.rejected_date = None
+
+        self.save()
+
+        TranslationMemoryEntry.objects.filter(translation=self).delete()
+        self.entity.mark_changed(self.locale)
+
     def unapprove(self, user):
         """
         Unapprove translation.

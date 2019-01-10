@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import History from './History';
+import { HistoryBase } from './History';
 
 
 describe('<History>', () => {
@@ -13,7 +13,8 @@ describe('<History>', () => {
                 { pk: 3 },
             ],
         };
-        const wrapper = shallow(<History history={ history } />);
+        const user = {};
+        const wrapper = shallow(<HistoryBase history={ history } user={ user } />);
 
         expect(wrapper.find('Translation')).toHaveLength(3);
     });
@@ -21,8 +22,9 @@ describe('<History>', () => {
     it('returns null while history is loading', () => {
         const history = {
             fetching: true,
+            translations: [],
         };
-        const wrapper = shallow(<History history={ history } />);
+        const wrapper = shallow(<HistoryBase history={ history } />);
 
         expect(wrapper.type()).toBeNull();
     });
@@ -32,7 +34,7 @@ describe('<History>', () => {
             fetching: false,
             translations: [],
         };
-        const wrapper = shallow(<History history={ history } />);
+        const wrapper = shallow(<HistoryBase history={ history } />);
 
         expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
     });
