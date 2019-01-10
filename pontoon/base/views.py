@@ -390,41 +390,15 @@ def approve_translation(request):
             "Forbidden: There are errors with this translation."
         )
 
-    now = timezone.now()
+    translation.approve(user)
 
-    # Reject previously approved translations.
-    translations = Translation.objects.filter(
-        entity=translation.entity,
+    active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
     )
-    translations.filter(approved=True).update(
-        active=False,
-        approved=False,
-        rejected=True,
-        rejected_user=user,
-        rejected_date=now,
-    )
-
-    # Make sure there is no other active translation.
-    translations.filter(active=True).update(active=False)
-
-    # Update the translation status and save it.
-    translation.active = True
-    translation.approved = True
-    translation.approved_user = user
-    translation.approved_date = now
-    translation.unapproved_user = None
-    translation.unapproved_date = None
-    translation.fuzzy = False
-    translation.rejected = False
-    translation.rejected_user = None
-    translation.rejected_date = None
-
-    translation.save()
 
     return JsonResponse({
-        'translation': translation.serialize(),
+        'translation': active_translation.serialize(),
         'stats': TranslatedResource.objects.stats(project, paths, locale),
     })
 
