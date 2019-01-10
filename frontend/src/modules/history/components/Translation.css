@@ -1,6 +1,5 @@
 .translation {
     border-bottom: 1px solid #5E6475;
-    cursor: pointer;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
 }
@@ -22,10 +21,12 @@
 .translation > header .info {
     float: left;
 }
-.history  ul li > header .toolbar {
+
+.translation > header .toolbar {
     display: block;
     float: right;
 }
+
 .translation > header + p {
     clear: both;
 }
@@ -53,6 +54,7 @@
     display: inline-block;
     pointer-events: none;
     opacity: 0.5;
+    outline: none;
     font-size: 1.8em;
     height: 22px;
     padding: 0;
@@ -60,16 +62,19 @@
     width: 22px;
 }
 
-.translation > header.translator button,
-.translation > header.own button.reject,
-.translation > header.own button.unreject,
-.translation.approved > header button.approve {
+.translation.can-approve header button.approve,
+.translation.can-approve header button.unapprove,
+.translation.can-reject header button.reject,
+.translation.can-reject header button.unreject {
     pointer-events: auto;
     opacity: 1;
 }
 
-.translation.rejected:hover,
-.translation.rejected.hover {
+.translation.rejected {
+    opacity: 0.4;
+}
+
+.translation.rejected:hover {
     opacity: 1;
 }
 
