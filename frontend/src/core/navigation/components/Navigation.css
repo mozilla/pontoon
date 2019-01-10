@@ -1,35 +1,36 @@
 .navigation {
-    font-size: 1.1em;
+    font-size: 14px;
     line-height: 60px;
 }
 
-.navigation ul {
-    list-style: none;
-    margin-left: 8px;
-}
-
 .navigation ul li {
-    display: inline;
-    padding: 0 8px;
+    display: inline-block;
 }
 
 .navigation ul li + li::before {
-    color: #666;
+    color: #4D5967;
     content: '/';
-    font-weight: bold;
-    padding-right: 16px;
+    font-size: 28px;
+    font-weight: 100;
+    vertical-align: bottom;
 }
 
 .navigation img {
+    margin-top: -2px;
     vertical-align: middle;
 }
 
 .navigation a {
-    color: white;
-    font-weight: 400;
+    color: #EBEBEB;
+    font-weight: 300;
+    padding: 0 12px;
+}
+
+.navigation a:hover {
+    color: #7BC876;
 }
 
 .navigation .locale-code {
     color: #7BC876;
-    padding-left: 5px;
+    padding-left: 8px;
 }

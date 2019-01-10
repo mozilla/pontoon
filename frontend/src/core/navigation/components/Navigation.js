@@ -45,8 +45,8 @@ export class NavigationBase extends React.Component<InternalProps> {
                     <a href="/">
                         <img
                             src="/static/img/logo.svg"
-                            width="24"
-                            height="24"
+                            width="32"
+                            height="32"
                             alt="Pontoon logo"
                         />
                     </a>
