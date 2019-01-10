@@ -32,7 +32,7 @@ export const getSelectedEntity: Function = createSelector(
 
 export function _getNextEntity(
     entities: Entities,
-    params: Navigation,
+    params: NavigationParams,
 ): ?DbEntity {
     const currentIndex = entities.findIndex(element => element.pk === params.entity);
 
@@ -50,7 +50,7 @@ export function _getNextEntity(
  */
 export const getNextEntity: Function = createSelector(
     entitiesSelector,
-    navigation.selectors.getNavigation,
+    navigation.selectors.getNavigationParams,
     _getNextEntity
 );
 

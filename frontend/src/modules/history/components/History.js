@@ -12,7 +12,7 @@ import * as entitieslist from 'modules/entitieslist';
 import { NAME as USER_NAME } from 'core/user';
 
 import Translation from './Translation';
-import { NAME } from '..';
+import { actions, NAME } from '..';
 
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
