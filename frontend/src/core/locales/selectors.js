@@ -6,7 +6,7 @@ import * as navigation from 'core/navigation';
 
 import { NAME } from '.';
 
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { Locale, LocalesState } from '.';
 
 
@@ -15,7 +15,7 @@ const localesSelector = (state): LocalesState => state[NAME].locales;
 
 export function _getCurrentLocaleData(
     locales: LocalesState,
-    parameters: Navigation
+    parameters: NavigationParams
 ): ?Locale {
     if (locales && parameters.locale && locales[parameters.locale]) {
         return locales[parameters.locale];
@@ -29,7 +29,7 @@ export function _getCurrentLocaleData(
  */
 export const getCurrentLocaleData: Function = createSelector(
     localesSelector,
-    navigation.selectors.getNavigation,
+    navigation.selectors.getNavigationParams,
     _getCurrentLocaleData
 );
 

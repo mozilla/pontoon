@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 const pathSelector = (state): string => state.router.location.pathname;
 const querySelector = (state): string => state.router.location.search;
 
-export type Navigation = {|
+export type NavigationParams = {|
     locale: string,
     project: string,
     resource: string,
@@ -19,10 +19,10 @@ export type Navigation = {|
  * Return the locale, project, resource and entity that correspond to the
  * current URL.
  */
-export const getNavigation: Function = createSelector(
+export const getNavigationParams: Function = createSelector(
     pathSelector,
     querySelector,
-    (path: string, query: string): Navigation => {
+    (path: string, query: string): NavigationParams => {
         const parts = path.split('/');
 
         // Because pathname always starts and finishes with a '/',
@@ -52,5 +52,5 @@ export const getNavigation: Function = createSelector(
 
 
 export default {
-    getNavigation,
+    getNavigationParams,
 };

@@ -1,0 +1,36 @@
+.navigation {
+    font-size: 14px;
+    line-height: 60px;
+}
+
+.navigation ul li {
+    display: inline-block;
+}
+
+.navigation ul li + li::before {
+    color: #4D5967;
+    content: '/';
+    font-size: 28px;
+    font-weight: 100;
+    vertical-align: bottom;
+}
+
+.navigation img {
+    margin-top: -2px;
+    vertical-align: middle;
+}
+
+.navigation a {
+    color: #EBEBEB;
+    font-weight: 300;
+    padding: 0 12px;
+}
+
+.navigation a:hover {
+    color: #7BC876;
+}
+
+.navigation .locale-code {
+    color: #7BC876;
+    padding-left: 8px;
+}
