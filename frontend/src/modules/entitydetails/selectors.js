@@ -6,7 +6,7 @@ import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { Entities } from 'modules/entitieslist';
 
 
@@ -15,7 +15,7 @@ const entitiesSelector = (state): string => state[entitieslist.NAME].entities;
 
 export function _getTranslationForSelectedEntity(
     entities: Entities,
-    params: Navigation,
+    params: NavigationParams,
     pluralForm: number,
 ): string {
     const entityId = params.entity;
@@ -39,7 +39,7 @@ export function _getTranslationForSelectedEntity(
  */
 export const getTranslationForSelectedEntity: Function = createSelector(
     entitiesSelector,
-    navigation.selectors.getNavigation,
+    navigation.selectors.getNavigationParams,
     plural.selectors.getPluralForm,
     _getTranslationForSelectedEntity
 );

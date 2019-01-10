@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect';
 
 import * as navigation from 'core/navigation';
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 
 import { NAME } from '.';
 import type { Entities, DbEntity } from './reducer';
@@ -14,7 +14,7 @@ const entitiesSelector = (state): string => state[NAME].entities;
 
 export function _getSelectedEntity(
     entities: Entities,
-    params: Navigation,
+    params: NavigationParams,
 ): ?DbEntity {
     return entities.find(element => element.pk === params.entity);
 }
@@ -25,14 +25,14 @@ export function _getSelectedEntity(
  */
 export const getSelectedEntity: Function = createSelector(
     entitiesSelector,
-    navigation.selectors.getNavigation,
+    navigation.selectors.getNavigationParams,
     _getSelectedEntity
 );
 
 
 export function _getNextEntity(
     entities: Entities,
-    params: Navigation,
+    params: NavigationParams,
 ): ?DbEntity {
     const currentIndex = entities.findIndex(element => element.pk === params.entity);
 
@@ -50,7 +50,7 @@ export function _getNextEntity(
  */
 export const getNextEntity: Function = createSelector(
     entitiesSelector,
-    navigation.selectors.getNavigation,
+    navigation.selectors.getNavigationParams,
     _getNextEntity
 );
 

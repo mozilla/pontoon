@@ -1,8 +1,8 @@
-import { getNavigation } from './selectors';
+import { getNavigationParams } from './selectors';
 
 
 describe('selectors', () => {
-    describe('getNavigation', () => {
+    describe('getNavigationParams', () => {
         it('correctly parses the pathname', () => {
             const pathname = '/kg/waterwolf/path/to/RESOURCE.po/';
             const search = '';
@@ -15,7 +15,7 @@ describe('selectors', () => {
                     },
                 },
             };
-            const res = getNavigation(fakeState);
+            const res = getNavigationParams(fakeState);
 
             expect(res.locale).toEqual('kg');
             expect(res.project).toEqual('waterwolf');
@@ -34,7 +34,7 @@ describe('selectors', () => {
                     },
                 },
             };
-            const res = getNavigation(fakeState);
+            const res = getNavigationParams(fakeState);
 
             expect(res.entity).toEqual(42);
         });
