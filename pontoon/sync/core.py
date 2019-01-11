@@ -124,13 +124,8 @@ def update_resources(db_project, vcs_project, now=timezone.now()):
 
     added_paths = []
 
-<<<<<<< HEAD
     log.debug("Removed files: {}".format(", ".join(removed_paths) or "None"))
-    removed_resources.delete()
-=======
-    log.debug('Removed files: {}'.format(', '.join(removed_paths) or 'None'))
-    removed_resources.update(obsolete=True, date_obsoleted=now)
->>>>>>> Fix bug 1468840: Obsolete Resources instead of deleting them.
+    removed_resources.obsolete(now)
 
     for relative_path, vcs_resource in vcs_project.resources.items():
         resource, created = db_project.resources.get_or_create(path=relative_path)

@@ -960,6 +960,7 @@ class Locale(AggregatedStats):
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
+            resource__obsolete=False,
             resource__project__system_project=False,
             resource__project__visibility=Project.Visibility.PUBLIC,
             locale=self,
@@ -1523,7 +1524,9 @@ class Project(AggregatedStats):
 
     def aggregate_stats(self):
         TranslatedResource.objects.filter(
-            resource__project=self, resource__entities__obsolete=False
+            resource__project=self,
+            resource__obsolete=False,
+            resource__entities__obsolete=False,
         ).distinct().aggregate_stats(self)
 
     def parts_to_paths(self, paths):
@@ -2043,6 +2046,10 @@ class Repository(models.Model):
 class ResourceQuerySet(models.QuerySet):
     def asymmetric(self):
         return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
+
+    def obsolete(self, now):
+        self.update(obsolete=True, date_obsoleted=now)
+        Entity.objects.filter(resource__in=self).update(obsolete=True, date_obsoleted=now)
 
 
 class Resource(models.Model):
