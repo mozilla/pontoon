@@ -1165,9 +1165,11 @@ class ProjectQuerySet(models.QuerySet):
     def available(self):
         """
         Available projects are not disabled and have at least one
-        resource defined.
+        non obsolete resource defined.
         """
-        return self.filter(disabled=False, resources__isnull=False).distinct()
+        return self.filter(
+            disabled=False, resources__isnull=False, resources__obsolete=False,
+        ).distinct()
 
     def visible(self):
         """
@@ -2049,7 +2051,7 @@ class ResourceQuerySet(models.QuerySet):
 
     def obsolete(self, now):
         self.update(obsolete=True, date_obsoleted=now)
-        Entity.objects.filter(resource__in=self).update(obsolete=True, date_obsoleted=now)
+        Entity.objects.filter(resource__in=self).obsolete(now)
 
 
 class Resource(models.Model):
@@ -2534,6 +2536,9 @@ class EntityQuerySet(models.QuerySet):
             if "word_count" not in fields:
                 fields.append("word_count")
         super().bulk_update(objs, fields=fields, batch_size=batch_size)
+
+    def obsolete(self, now):
+        self.update(obsolete=True, date_obsoleted=now)
 
 
 class Entity(DirtyFieldsMixin, models.Model):
