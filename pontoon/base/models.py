@@ -20,7 +20,7 @@ from six.moves import reduce
 from six.moves.urllib.parse import (urlencode, urlparse)
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group, UserManager
+from django.contrib.auth.models import User, Group
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -88,152 +88,6 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
     # when used between django ORM query objects.
     return reduce(operator.ior, filters)
-
-
-class UserTranslationsManager(UserManager):
-    def with_translation_counts(self, start_date=None, query_filters=None, limit=100):
-        """
-        Returns contributors list, sorted by count of their translations. Every user instance has
-        the following properties:
-        * translations_count
-        * translations_approved_count
-        * translations_unapproved_count
-        * translations_needs_work_count
-        * user_role
-
-        All counts will be returned from start_date to now().
-        :param date start_date: start date for translations.
-        :param django.db.models.Q query_filters: filters contributors by given query_filters.
-        :param int limit: limit results to this number.
-        """
-
-        # Collect data for faster user stats calculation.
-        user_stats = {}
-        translations = Translation.objects.exclude(user=None)
-
-        if start_date:
-            translations = translations.filter(date__gte=start_date)
-        if query_filters:
-            translations = translations.filter(query_filters)
-
-        translations = (
-            translations
-            .values('user', 'approved', 'fuzzy', 'rejected')
-            .annotate(count=Count('user'))
-        )
-
-        for translation in translations:
-            count = translation['count']
-            user = translation['user']
-
-            if translation['approved']:
-                status = 'approved'
-            elif translation['fuzzy']:
-                status = 'fuzzy'
-            elif translation['rejected']:
-                # Note that this is not exposed at the moment.
-                status = 'rejected'
-            else:
-                status = 'unreviewed'
-
-            if user not in user_stats:
-                user_stats[user] = {
-                    'total': 0,
-                    'approved': 0,
-                    'unreviewed': 0,
-                    'fuzzy': 0,
-                    'rejected': 0,
-                }
-
-            user_stats[user]['total'] += count
-            user_stats[user][status] += count
-
-        # Collect data for faster user role detection.
-        managers = defaultdict(set)
-        translators = defaultdict(set)
-
-        locales = Locale.objects.prefetch_related(
-            Prefetch(
-                'managers_group__user_set',
-                to_attr='fetched_managers'
-            ),
-            Prefetch(
-                'translators_group__user_set',
-                to_attr='fetched_translators'
-            )
-        )
-
-        for locale in locales:
-            for user in locale.managers_group.fetched_managers:
-                managers[user].add(locale.code)
-            for user in locale.translators_group.fetched_translators:
-                translators[user].add(locale.code)
-
-        # Assign properties to user objects.
-        contributors = self.filter(pk__in=user_stats.keys())
-
-        for contributor in contributors:
-            user = user_stats[contributor.pk]
-            contributor.translations_count = user['total']
-            contributor.translations_approved_count = user['approved']
-            contributor.translations_unapproved_count = user['unreviewed']
-            contributor.translations_needs_work_count = user['fuzzy']
-            contributor.user_role = contributor.role(managers, translators)
-
-        contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
-        if limit:
-            contributors_list = contributors_list[:limit]
-
-        return contributors_list
-
-
-class UserCustomManager(UserManager):
-    """
-    Django migrations is able to migrate managers, and throws an error if we directly call
-    UserManager.from_queryset(): Please note that you need to inherit from managers you dynamically
-    generated with 'from_queryset()'.
-    """
-    use_in_migrations = False
-
-    def map_translations_to_events(cls, days, translations):
-        """
-        Map translations into events (jsonable dictionaries).
-        :param QuerySet[Translation] events: a QuerySet with translastions.
-        :rtype: list[dict]
-        :return: A list of dicts with mapped fields.
-        """
-        timeline = []
-        for day in days:
-            daily = translations.filter(date__startswith=day['day'])
-            daily.prefetch_related('entity__resource__project')
-            example = daily.order_by('-pk').first()
-
-            timeline.append({
-                'date': example.date,
-                'type': 'translation',
-                'count': day['count'],
-                'project': example.entity.resource.project,
-                'translation': example,
-            })
-
-        return timeline
-
-
-class UserQuerySet(models.QuerySet):
-    def serialize(self):
-        users = []
-
-        for user in self:
-            users.append({
-                'email': user.email,
-                'display_name': user.name_or_email,
-                'id': user.id,
-                'gravatar_url': user.gravatar_url(44),
-                'translation_count': user.translation_count,
-                'role': user.role()
-            })
-
-        return users
 
 
 @property
@@ -411,8 +265,6 @@ User.add_to_class('translated_projects', user_translated_projects)
 User.add_to_class('managed_locales', user_managed_locales)
 User.add_to_class('role', user_role)
 User.add_to_class('locale_role', user_locale_role)
-User.add_to_class('translators', UserTranslationsManager())
-User.add_to_class('objects', UserCustomManager.from_queryset(UserQuerySet)())
 User.add_to_class('contributed_translations', contributed_translations)
 User.add_to_class('top_contributed_locale', top_contributed_locale)
 User.add_to_class('can_translate', can_translate)
@@ -2706,7 +2558,7 @@ class TranslationQuerySet(models.QuerySet):
              'role': user.user_role}
             for user
             in reversed(
-                User.translators.with_translation_counts(
+                utils.users_translations_counts(
                     None, Q(id__in=self), limit=100))]
 
     def counts_per_minute(self):

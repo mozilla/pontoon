@@ -1,9 +1,12 @@
 import pytest
 
-from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from pontoon.base.utils import aware_datetime
+from pontoon.base.utils import (
+    aware_datetime,
+    users_translations_counts,
+)
+
 from pontoon.test.factories import (
     EntityFactory,
     TranslationFactory,
@@ -17,7 +20,7 @@ def test_mgr_user_without_translations(translation_a, user_a, user_b):
     Checks if user contributors without translations aren't returned.
     """
     assert translation_a.user == user_a
-    top_contributors = get_user_model().translators.with_translation_counts()
+    top_contributors = users_translations_counts()
     assert user_a in top_contributors
     assert user_b not in top_contributors
 
@@ -44,7 +47,7 @@ def test_mgr_user_contributors_order(
 
     # Ordered by approved count
     assert (
-        list(get_user_model().translators.with_translation_counts())
+        list(users_translations_counts())
         == [contributors[i] for i in [2, 4, 1, 0, 3]]
     )
 
@@ -69,7 +72,7 @@ def test_mgr_user_contributors_limit(
             user=contrib,
             entity=entities[i],
         )
-    top_contributors = get_user_model().translators.with_translation_counts()
+    top_contributors = users_translations_counts()
     assert len(top_contributors) == 100
 
 
@@ -112,7 +115,7 @@ def test_mgr_user_translation_counts(
             fuzzy=args.get('fuzzy', False),
         )
 
-    top_contribs = get_user_model().translators.with_translation_counts()
+    top_contribs = users_translations_counts()
 
     assert len(top_contribs) == 3
     assert top_contribs[0] == contributors[1]
@@ -202,7 +205,7 @@ def test_mgr_user_period_filters(
             fuzzy=args.get('fuzzy', False),
         )
 
-    top_contribs = get_user_model().translators.with_translation_counts(
+    top_contribs = users_translations_counts(
         aware_datetime(2015, 6, 10)
     )
     assert len(top_contribs) == 1
@@ -211,7 +214,7 @@ def test_mgr_user_period_filters(
     assert top_contribs[0].translations_unapproved_count == 0
     assert top_contribs[0].translations_needs_work_count == 0
 
-    top_contribs = get_user_model().translators.with_translation_counts(
+    top_contribs = users_translations_counts(
         aware_datetime(2015, 5, 10)
     )
     assert len(top_contribs) == 2
@@ -224,7 +227,7 @@ def test_mgr_user_period_filters(
     assert top_contribs[1].translations_unapproved_count == 0
     assert top_contribs[1].translations_needs_work_count == 0
 
-    top_contribs = get_user_model().translators.with_translation_counts(
+    top_contribs = users_translations_counts(
         aware_datetime(2015, 1, 10)
     )
     assert len(top_contribs) == 2
@@ -315,7 +318,7 @@ def test_mgr_user_query_args_filtering(
             fuzzy=args.get('fuzzy', False),
         )
 
-    top_contribs = get_user_model().translators.with_translation_counts(
+    top_contribs = users_translations_counts(
         aware_datetime(2015, 1, 1),
         Q(locale=locale_a),
     )
@@ -331,7 +334,7 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[1].translations_unapproved_count == 1
     assert top_contribs[1].translations_needs_work_count == 2
 
-    top_contribs = get_user_model().translators.with_translation_counts(
+    top_contribs = users_translations_counts(
         aware_datetime(2015, 1, 1),
         Q(locale=locale_b),
     )

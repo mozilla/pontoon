@@ -22,6 +22,7 @@ from django.views.generic import TemplateView
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
+from pontoon.contributors.utils import map_translations_to_events
 
 
 @login_required(redirect_field_name='', login_url='/403')
@@ -62,7 +63,7 @@ def contributor_timeline(request, username):
         events_paginator = Paginator(counts_by_day, 10)
         timeline_events = []
 
-        timeline_events = User.objects.map_translations_to_events(
+        timeline_events = map_translations_to_events(
             events_paginator.page(page).object_list,
             contributor_translations
         )
