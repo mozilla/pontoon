@@ -111,7 +111,7 @@ export default class Translation extends React.Component<Props> {
         }
 
         return <li className={ className }>
-            <header>
+            <header className="clearfix">
                 <div className="info">
                     { this.renderUser() }
                     <TimeAgo
