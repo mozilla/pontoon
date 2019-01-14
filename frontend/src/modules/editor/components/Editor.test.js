@@ -16,12 +16,17 @@ const SELECTED_ENTITY = {
         { string: TRANSLATION_PLURAL },
     ],
 };
+const DEFAULT_LOCALE = {
+    direction: 'ltr',
+    code: 'kg',
+};
 
 
 function createShallowEditor(suggestMock = null, pluralForm = -1) {
     return shallow(<Editor
         translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
         entity={ SELECTED_ENTITY }
+        locale={ DEFAULT_LOCALE }
         sendSuggestion={ suggestMock }
         pluralForm={ pluralForm }
     />);

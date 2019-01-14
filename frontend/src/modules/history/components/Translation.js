@@ -6,14 +6,15 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
+import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
-
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
     canReview: boolean,
     translation: DBTranslation,
+    locale: Locale,
     user: UserState,
     updateTranslationStatus: Function,
 |};
@@ -89,7 +90,7 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { canReview, translation, user } = this.props;
+        const { canReview, translation, locale, user } = this.props;
 
         // Does the currently logged in user own this translation?
         const ownTranslation = (
@@ -171,7 +172,12 @@ export default class Translation extends React.Component<Props> {
                 }
                 </menu>
             </header>
-            <p>{ translation.string }</p>
+            <p
+                dir={ locale.direction }
+                lang={ locale.code }
+            >
+                { translation.string }
+            </p>
         </li>;
     }
 }

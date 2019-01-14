@@ -4,11 +4,13 @@ import React from 'react';
 
 import './Entity.css';
 
+import type { Locale } from 'core/locales';
 import type { DbEntity } from '../reducer';
 
 
 type Props = {
     entity: DbEntity,
+    locale: Locale,
     selected: boolean,
     selectEntity: Function,
 };
@@ -46,7 +48,7 @@ export default class Entity extends React.Component<Props> {
     }
 
     render() {
-        const { entity, selected } = this.props;
+        const { entity, locale, selected } = this.props;
 
         const classSelected = selected ? 'selected' : '';
 
@@ -58,7 +60,13 @@ export default class Entity extends React.Component<Props> {
                 <span className='status fa' />
                 <div>
                     <p className='source-string'>{ entity.original }</p>
-                    <p className='translation-string'>{ entity.translation[0].string }</p>
+                    <p
+                        className='translation-string'
+                        dir={ locale.direction }
+                        lang={ locale.code }
+                    >
+                        { entity.translation[0].string }
+                    </p>
                 </div>
             </li>
         );
