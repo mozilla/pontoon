@@ -65,6 +65,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
             value={ this.props.translation }
             annotations={ annotate(this.props.translation) }
             onChange={ this.props.updateTranslation }
+            debounceChangePeriod={200}
         />;
     }
 }
