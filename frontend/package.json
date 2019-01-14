@@ -9,6 +9,7 @@
     "fluent": "0.9.1",
     "fluent-langneg": "0.1.0",
     "fluent-react": "0.8.2",
+    "fluent-syntax": "0.10.0",
     "intl-pluralrules": "0.2.1",
     "linkify-it": "2.0.3",
     "lodash.debounce": "4.0.8",
