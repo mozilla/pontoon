@@ -24,6 +24,7 @@ export type DbEntity = {
     +original_plural: string,
     +comment: string,
     +key: string,
+    +format: string,
     +path: string,
     +project: Object,
     +source: Array<Array<string>> | Object,

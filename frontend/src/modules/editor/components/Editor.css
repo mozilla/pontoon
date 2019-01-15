@@ -8,6 +8,7 @@
 }
 
 .editor > textarea {
+    border: none;
     box-sizing: border-box;
     display: block;
     line-height: 22px;
