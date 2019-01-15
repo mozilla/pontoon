@@ -116,6 +116,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             <Editor
                 translation={ state.activeTranslation}
                 entity={ state.selectedEntity }
+                locale={ state.locale }
                 pluralForm= { state.pluralForm }
                 sendSuggestion={ this.sendSuggestion }
             />

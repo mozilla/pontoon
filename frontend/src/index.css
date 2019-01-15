@@ -30,3 +30,14 @@ a:active {
     color: #7BC876;
     text-decoration: none;
 }
+
+/* Bug 1351813
+ * Increase font size for the Arabic language to make it readable.
+*/
+[data-script="Arabic"] {
+    font-size: 1.1em;
+}
+
+[data-script="Arabic"] .placeable {
+    font-size: 0.9em;
+}

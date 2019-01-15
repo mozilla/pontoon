@@ -11,6 +11,7 @@ export type Locale = {|
     +pluralRule: string,
     +direction: string,
     +name: string,
+    +script: string,
 |};
 
 
@@ -45,6 +46,7 @@ export function get(): Function {
         results.data.locales.forEach(locale => {
             locales[locale.code] = {
                 ...locale,
+                direction: locale.direction.toLowerCase(),
                 cldrPlurals: locale.cldrPlurals.split(',').map(i => parseInt(i, 10)),
             };
         });

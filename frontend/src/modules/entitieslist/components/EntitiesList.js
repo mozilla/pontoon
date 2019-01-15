@@ -6,16 +6,15 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import {
-    actions as navActions,
-    selectors as navSelectors,
-} from 'core/navigation';
-import type { NavigationParams } from 'core/navigation';
+import * as locales from 'core/locales';
+import * as navigation from 'core/navigation';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
 import EntitiesLoader from './EntitiesLoader'
 
+import type { Locale } from 'core/locales';
+import type { NavigationParams } from 'core/navigation';
 import type { Entities, DbEntity } from '../reducer';
 
 
@@ -25,6 +24,7 @@ type Props = {|
         hasMore: boolean,
         fetching: boolean,
     |},
+    locale: Locale,
     parameters: NavigationParams,
     router: Object,
 |};
@@ -76,7 +76,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     selectEntity = (entity: DbEntity) => {
         this.props.dispatch(
-            navActions.updateEntity(this.props.router, entity.pk.toString())
+            navigation.actions.updateEntity(this.props.router, entity.pk.toString())
         );
     }
 
@@ -108,11 +108,11 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { entities } = this.props;
-        const selectedEntity = this.props.parameters.entity;
+        const state = this.props;
+        const selectedEntity = state.parameters.entity;
 
         // InfiniteScroll will display information about loading during the request
-        const hasMore = entities.fetching || entities.hasMore;
+        const hasMore = state.entities.fetching || state.entities.hasMore;
 
         return <div className="entities">
             <InfiniteScroll
@@ -123,11 +123,12 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 useWindow={ false }
                 threshold={ 600 }
             >
-            { (hasMore || entities.entities.length) ?
+            { (hasMore || state.entities.entities.length) ?
                 <ul>
-                    { entities.entities.map((entity, i) => {
+                    { state.entities.entities.map((entity, i) => {
                         return <Entity
                             entity={ entity }
+                            locale={ state.locale }
                             selectEntity={ this.selectEntity }
                             key={ i }
                             selected={ entity.pk === selectedEntity }
@@ -150,7 +151,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 const mapStateToProps = (state: Object): Props => {
     return {
         entities: state[NAME],
-        parameters: navSelectors.getNavigationParams(state),
+        parameters: navigation.selectors.getNavigationParams(state),
+        locale: locales.selectors.getCurrentLocaleData(state),
         router: state.router,
     };
 };
