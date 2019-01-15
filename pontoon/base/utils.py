@@ -22,9 +22,7 @@ from xml.sax.saxutils import (
     quoteattr,
 )
 
-from django.db.models import (
-    Prefetch,
-)
+from django.db.models import Prefetch
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -739,5 +737,3 @@ def readonly_exists(projects, locale):
         locale=locale,
         readonly=True,
     ).exists()
-
-
