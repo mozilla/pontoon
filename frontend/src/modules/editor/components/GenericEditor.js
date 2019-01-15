@@ -2,9 +2,12 @@
 
 import * as React from 'react';
 
+import type { Locale } from 'core/locales';
+
 
 export type EditorProps = {|
     translation: string,
+    locale: Locale,
     updateTranslation: Function,
 |};
 
@@ -21,6 +24,9 @@ export default class GenericEditor extends React.Component<EditorProps> {
         return <textarea
             value={ this.props.translation }
             onChange={ this.handleChange }
+            dir={ this.props.locale.direction }
+            lang={ this.props.locale.code }
+            data-script={ this.props.locale.script }
         />;
     }
 }

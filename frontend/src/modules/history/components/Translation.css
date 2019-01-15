@@ -29,6 +29,7 @@
 
 .translation > header + p {
     clear: both;
+    text-align: start;
 }
 
 .translation > header .info time {

@@ -12,6 +12,7 @@ export default class LocaleAPI extends APIBase {
                 cldrPlurals
                 pluralRule
                 direction
+                script
             }
         }`;
         const payload = new URLSearchParams();

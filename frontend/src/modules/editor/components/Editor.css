@@ -54,3 +54,7 @@
 .editor .actions .action-send:hover {
     color: #EBEBEB;
 }
+
+.editor > textarea[data-script="Arabic"] {
+    font-size: 15px;
+}

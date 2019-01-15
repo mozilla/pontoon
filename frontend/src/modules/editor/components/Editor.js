@@ -9,12 +9,14 @@ import { PluralSelector } from 'core/plural';
 
 import EditorProxy from './EditorProxy';
 
+import type { Locale } from 'core/locales';
 import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
     translation: string,
     entity: ?DbEntity,
+    locale: Locale,
     sendSuggestion: Function,
     pluralForm: number,
 |};
@@ -80,6 +82,7 @@ export default class Editor extends React.Component<Props, State> {
             <EditorProxy
                 entity={ this.props.entity }
                 translation={ this.state.translation }
+                locale={ this.props.locale }
                 updateTranslation={ this.updateTranslation }
             />
             <div className="options">

@@ -2,13 +2,13 @@
 
 import * as React from 'react';
 import AceEditor from 'react-ace';
-import { FluentParser, lineOffset, columnOffset }
-    from 'fluent-syntax';
+import { FluentParser, lineOffset, columnOffset } from 'fluent-syntax';
 
 import './editor-mode-fluent';
 import './editor-theme-fluent';
 
 import type { EditorProps } from './GenericEditor';
+
 
 const fluent_parser = new FluentParser();
 
