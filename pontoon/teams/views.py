@@ -20,8 +20,8 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import (
     require_AJAX,
-    users_translations_counts
 )
+from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.teams.forms import LocaleRequestForm
 
@@ -157,7 +157,7 @@ def ajax_permissions(request, locale):
 
     contributors_emails = set(
         contributor.email
-        for contributor in users_translations_counts(None, Q(locale=locale), None)
+        for contributor in users_with_translations_counts(None, Q(locale=locale), None)
     )
 
     locale_projects = locale.projects_permissions

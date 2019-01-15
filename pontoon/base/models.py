@@ -2549,6 +2549,11 @@ class TranslationQuerySet(models.QuerySet):
         """
         Return a list of translation authors.
         """
+        # *Important*
+        # pontoon.contributors.utils depends on a few models from pontoon.base.models and causes a
+        # circular dependency.
+        from pontoon.contributors.utils import users_with_translations_counts
+
         return [
             {'email': user.email,
              'display_name': user.name_or_email,
@@ -2558,7 +2563,7 @@ class TranslationQuerySet(models.QuerySet):
              'role': user.user_role}
             for user
             in reversed(
-                utils.users_translations_counts(
+                users_with_translations_counts(
                     None, Q(id__in=self), limit=100))]
 
     def counts_per_minute(self):
