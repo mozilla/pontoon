@@ -242,11 +242,11 @@ class ContributorsTests(TestCase):
         self.mock_render = mock_render.start()
         self.addCleanup(mock_render.stop)
 
-        mock_translations_manager = patch(
-            'pontoon.base.models.UserTranslationsManager.with_translation_counts'
+        mock_users_with_translations_counts = patch(
+            'pontoon.contributors.views.users_with_translations_counts'
         )
-        self.mock_translations_manager = mock_translations_manager.start()
-        self.addCleanup(mock_translations_manager.stop)
+        self.mock_users_with_translations_counts = mock_users_with_translations_counts.start()
+        self.addCleanup(mock_users_with_translations_counts.stop)
 
     def test_default_period(self):
         """
@@ -254,7 +254,7 @@ class ContributorsTests(TestCase):
         """
         self.client.get('/contributors/')
         assert_true(self.mock_render.call_args[0][0]['period'] is None)
-        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
 
     def test_invalid_period(self):
         """
@@ -263,12 +263,12 @@ class ContributorsTests(TestCase):
         # If period parameter is invalid value
         self.client.get('/contributors/?period=invalidperiod')
         assert_true(self.mock_render.call_args[0][0]['period'] is None)
-        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
 
         # Period shouldn't be negative integer
         self.client.get('/contributors/?period=-6')
         assert_true(self.mock_render.call_args[0][0]['period'] is None)
-        assert_true(self.mock_translations_manager.call_args[0][0] is None)
+        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
 
     def test_given_period(self):
         """
@@ -282,6 +282,6 @@ class ContributorsTests(TestCase):
             self.client.get('/contributors/?period=6')
             assert_equal(self.mock_render.call_args[0][0]['period'], 6)
             assert_equal(
-                self.mock_translations_manager.call_args[0][0],
+                self.mock_users_with_translations_counts.call_args[0][0],
                 aware_datetime(2015, 1, 5)
             )
