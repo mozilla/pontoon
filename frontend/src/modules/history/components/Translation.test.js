@@ -27,6 +27,7 @@ describe('<Translation>', () => {
     const DEFAULT_LOCALE = {
         direction: 'ltr',
         code: 'kg',
+        script: 'Latin',
     };
 
     describe('getStatus', () => {

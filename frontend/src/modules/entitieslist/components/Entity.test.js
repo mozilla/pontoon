@@ -38,6 +38,7 @@ describe('<Entity>', () => {
     const DEFAULT_LOCALE = {
         direction: 'ltr',
         code: 'kg',
+        script: 'Latin',
     };
 
     it('renders the source string and the first translation', () => {
