@@ -13,10 +13,10 @@ import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as otherlocales from 'modules/otherlocales';
+import { Editor } from 'modules/editor';
 
 import { selectors } from '..';
 import { suggest } from '../actions';
-import Editor from './Editor';
 import Metadata from './Metadata';
 import Tools from './Tools';
 
