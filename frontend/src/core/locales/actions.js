@@ -11,6 +11,7 @@ export type Locale = {|
     +pluralRule: string,
     +direction: string,
     +name: string,
+    +script: string,
 |};
 
 

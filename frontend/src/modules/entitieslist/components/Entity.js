@@ -64,6 +64,7 @@ export default class Entity extends React.Component<Props> {
                         className='translation-string'
                         dir={ locale.direction }
                         lang={ locale.code }
+                        data-script={ locale.script }
                     >
                         { entity.translation[0].string }
                     </p>

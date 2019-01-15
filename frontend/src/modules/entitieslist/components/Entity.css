@@ -33,9 +33,14 @@
 }
 .entity .translation-string {
     color: #AAAAAA;
-    font-style: italic;
     padding-left: 2%;
     text-align: start;
+}
+.entity .translation-string[data-script="Latin"],
+.entity .translation-string[data-script="Greek"],
+.entity .translation-string[data-script="Cyrillic"],
+.entity .translation-string[data-script="Vietnamese"] {
+    font-style: italic;
 }
 
 .entity > .status {

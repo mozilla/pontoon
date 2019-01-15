@@ -26,6 +26,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }
+            data-script={ this.props.locale.script }
         />;
     }
 }

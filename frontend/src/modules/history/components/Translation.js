@@ -115,6 +115,7 @@ export default class Translation extends React.Component<Props> {
                 <div className="info">
                     { this.renderUser() }
                     <TimeAgo
+                        dir="ltr"
                         date={ translation.date_iso }
                         title={ `${translation.date} UTC` }
                     />
@@ -175,6 +176,7 @@ export default class Translation extends React.Component<Props> {
             <p
                 dir={ locale.direction }
                 lang={ locale.code }
+                data-script={ locale.script }
             >
                 { translation.string }
             </p>
