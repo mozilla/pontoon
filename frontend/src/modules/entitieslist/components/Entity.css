@@ -43,6 +43,15 @@
     font-style: italic;
 }
 
+/* Bug 1353135
+ * Use a different font for Serbian and Macedonian because of a lack of
+ * support in Open Sans.
+ */
+.entity .translation-string[lang="mk"],
+.entity .translation-string[lang="sr"] {
+  font-family: "Ubuntu Regular";
+}
+
 .entity > .status {
     margin: -13px -13px -13px -16px;
     padding: 13px 13px 13px 16px;
