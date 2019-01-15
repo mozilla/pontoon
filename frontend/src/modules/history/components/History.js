@@ -58,6 +58,13 @@ export class HistoryBase extends React.Component<InternalProps> {
         ));
     }
 
+    deleteTranslation = (translation: DBTranslation) => {
+        const { dispatch } = this.props;
+        dispatch(actions.deleteTranslation(
+            translation.pk,
+        ));
+    }
+
     renderNoResults() {
         return <section className="history">
             <Localized id="history-history-no-translations">
@@ -91,6 +98,7 @@ export class HistoryBase extends React.Component<InternalProps> {
                         locale={ locale }
                         user={ user }
                         updateTranslationStatus={ this.updateTranslationStatus }
+                        deleteTranslation={ this.deleteTranslation }
                         key={ key }
                     />;
                 }) }

@@ -117,10 +117,20 @@ export function updateStatus(
 }
 
 
+export function deleteTranslation(
+    translation: number,
+): Function {
+    return async dispatch => {
+        await api.translation.delete(translation);
+    }
+}
+
+
 export default {
     get,
     receive,
     request,
     reset,
     updateStatus,
+    deleteTranslation,
 };

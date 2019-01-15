@@ -17,6 +17,7 @@ type Props = {|
     locale: Locale,
     user: UserState,
     updateTranslationStatus: Function,
+    deleteTranslation: Function,
 |};
 
 /**
@@ -43,6 +44,10 @@ export default class Translation extends React.Component<Props> {
 
     unreject = () => {
         this.props.updateTranslationStatus(this.props.translation, 'unreject');
+    }
+
+    delete = () => {
+        this.props.deleteTranslation(this.props.translation);
     }
 
     getStatus() {
@@ -121,6 +126,21 @@ export default class Translation extends React.Component<Props> {
                     />
                 </div>
                 <menu className="toolbar">
+                { translation.rejected ?
+                    // Delete Button
+                    <Localized
+                        id="history-translation-button-delete"
+                        attrs={{ title: true }}
+                    >
+                        <button
+                            className='delete far'
+                            title='Delete'
+                            onClick={ this.delete }
+                        ></button>
+                    </Localized>
+                    :
+                    null
+                }
                 { translation.approved ?
                     // Unapprove Button
                     <Localized

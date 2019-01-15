@@ -69,4 +69,16 @@ export default class TranslationAPI extends APIBase {
     unreject(id: number, resource: string) {
         return this._changeStatus('/unreject-translation/', id, resource);
     }
+
+    delete(id: number) {
+        const payload = new URLSearchParams();
+        payload.append('translation', id.toString());
+
+        const headers = new Headers();
+        const csrfToken = this.getCSRFToken();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+        headers.append('X-CSRFToken', csrfToken);
+
+        return this.fetch('/delete-translation/', 'POST', payload, headers);
+    }
 }
