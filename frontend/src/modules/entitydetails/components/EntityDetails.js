@@ -9,6 +9,7 @@ import { actions as lightboxActions } from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
+import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as otherlocales from 'modules/otherlocales';
@@ -21,6 +22,7 @@ import Tools from './Tools';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
+import type { Settings } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { HistoryState } from 'modules/history';
 import type { LocalesState } from 'modules/otherlocales';
@@ -34,6 +36,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     selectedEntity: ?DbEntity,
+    settings: Settings,
 |};
 
 type InternalProps = {|
@@ -94,6 +97,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    updateSettings = (settings: Settings) => {
+        this.props.dispatch(user.actions.updateSettings(settings));
+    }
+
     render() {
         const state = this.props;
 
@@ -117,7 +124,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 entity={ state.selectedEntity }
                 locale={ state.locale }
                 pluralForm= { state.pluralForm }
+                settings={ state.settings }
                 sendSuggestion={ this.sendSuggestion }
+                updateSettings={ this.updateSettings }
             />
             <Tools
                 parameters={ state.parameters }
@@ -138,6 +147,7 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        settings: state[user.NAME].settings,
     };
 };
 

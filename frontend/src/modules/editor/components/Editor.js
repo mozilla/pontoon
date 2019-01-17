@@ -8,8 +8,10 @@ import './Editor.css';
 import { PluralSelector } from 'core/plural';
 
 import EditorProxy from './EditorProxy';
+import EditorSettings from './EditorSettings';
 
 import type { Locale } from 'core/locales';
+import type { Settings } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 
 
@@ -17,8 +19,10 @@ type Props = {|
     translation: string,
     entity: ?DbEntity,
     locale: Locale,
-    sendSuggestion: Function,
     pluralForm: number,
+    settings: Settings,
+    sendSuggestion: Function,
+    updateSettings: Function,
 |};
 
 type State = {|
@@ -85,7 +89,11 @@ export default class Editor extends React.Component<Props, State> {
                 locale={ this.props.locale }
                 updateTranslation={ this.updateTranslation }
             />
-            <div className="options">
+            <menu>
+                <EditorSettings
+                    settings={ this.props.settings }
+                    updateSettings={ this.props.updateSettings }
+                />
                 <div className="actions">
                     <Localized id="entitydetails-editor-button-copy">
                         <button
@@ -114,7 +122,7 @@ export default class Editor extends React.Component<Props, State> {
                 </div>
                 <div className="clearfix">
                 </div>
-            </div>
+            </menu>
         </div>;
     }
 }

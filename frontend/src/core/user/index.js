@@ -5,6 +5,7 @@ export { default as reducer } from './reducer';
 
 export { default as UserAutoUpdater } from './components/UserAutoUpdater';
 
+export type { Settings } from './actions';
 export type { UserState } from './reducer';
 
 

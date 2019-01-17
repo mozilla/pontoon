@@ -20,8 +20,10 @@
     width: 100%;
 }
 
-.editor .options {
+.editor menu {
+    font-size: 14px;
     padding: 10px;
+    position: relative;
 }
 
 .editor .actions {

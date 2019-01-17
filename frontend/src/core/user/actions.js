@@ -3,19 +3,41 @@
 import api from 'core/api';
 
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
+export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
+
+
+export type Settings = {
+    runQualityChecks: boolean,
+    forceSuggestions: boolean,
+};
 
 
 /**
  * Update the user data.
  */
-export type UpdateAction = {
+export type UpdateAction = {|
     +type: typeof UPDATE,
     +data: Object,
-};
+|};
 export function update(data: Object): UpdateAction {
     return {
         type: UPDATE,
         data,
+    };
+}
+
+
+/**
+ * Update the user settings.
+ */
+export type UpdateSettingsAction = {|
+    +type: typeof UPDATE_SETTINGS,
+    +settings: Settings,
+|};
+export function updateSettings(settings: Settings): UpdateSettingsAction {
+    return {
+        type: UPDATE_SETTINGS,
+        settings,
     };
 }
 
@@ -35,6 +57,7 @@ export function get(): Function {
 
 
 export default {
-    update,
     get,
+    update,
+    updateSettings,
 };
