@@ -132,6 +132,8 @@ def update_resources(db_project, vcs_project, now=timezone.now()):
         resource, created = db_project.resources.get_or_create(path=relative_path)
         resource.format = Resource.get_path_format(relative_path)
         resource.total_strings = len(vcs_resource.entities)
+        resource.obsolete = False
+        resource.date_obsoleted = None
         resource.save()
 
         if created:
