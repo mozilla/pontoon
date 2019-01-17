@@ -910,6 +910,10 @@ def user_data(request):
             user.translated_locales.values_list('code', flat=True)
         ),
         'translator_for_projects': user.translated_projects,
+        'settings': {
+            'quality_checks': user.profile.quality_checks,
+            'force_suggestions': user.profile.force_suggestions,
+        },
     })
 
 
