@@ -44,6 +44,7 @@ def run_checks(
             'acronyms',
             'gconf',
             'kdecomments',
+            'untranslated',
         }
 
         # Some compare-locales checks overlap with Translate Toolkit checks
