@@ -19,7 +19,7 @@ Our [installation documentation](https://mozilla-pontoon.readthedocs.io/) is ava
 * For production installation, see [deployment documentation](http://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html)
 * For quick and easy deployment on the `Heroku` platform, click this button:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master)
 
 ## Contributing
 
