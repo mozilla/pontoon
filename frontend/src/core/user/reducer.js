@@ -11,7 +11,7 @@ type Action =
 ;
 
 
-type SettingsState = {|
+export type SettingsState = {|
     +runQualityChecks: boolean,
     +forceSuggestions: boolean,
 |};

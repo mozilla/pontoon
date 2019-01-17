@@ -11,7 +11,7 @@ import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 
 import type { Locale } from 'core/locales';
-import type { Settings } from 'core/user';
+import type { SettingsState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 
 
@@ -20,9 +20,9 @@ type Props = {|
     entity: ?DbEntity,
     locale: Locale,
     pluralForm: number,
-    settings: Settings,
+    settings: SettingsState,
     sendSuggestion: Function,
-    updateSettings: Function,
+    updateSetting: Function,
 |};
 
 type State = {|
@@ -92,7 +92,7 @@ export default class Editor extends React.Component<Props, State> {
             <menu>
                 <EditorSettings
                     settings={ this.props.settings }
-                    updateSettings={ this.props.updateSettings }
+                    updateSetting={ this.props.updateSetting }
                 />
                 <div className="actions">
                     <Localized id="entitydetails-editor-button-copy">
@@ -109,6 +109,14 @@ export default class Editor extends React.Component<Props, State> {
                             onClick={ this.clearEditor }
                         >
                             Clear
+                        </button>
+                    </Localized>
+                    <Localized id="entitydetails-editor-button-suggest">
+                        <button
+                            className="action-suggest"
+                            onClick={ this.sendSuggestion }
+                        >
+                            Suggest
                         </button>
                     </Localized>
                     <Localized id="entitydetails-editor-button-send">

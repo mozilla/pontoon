@@ -22,7 +22,7 @@ import Tools from './Tools';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
-import type { Settings } from 'core/user';
+import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { HistoryState } from 'modules/history';
 import type { LocalesState } from 'modules/otherlocales';
@@ -36,7 +36,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     selectedEntity: ?DbEntity,
-    settings: Settings,
+    user: UserState,
 |};
 
 type InternalProps = {|
@@ -97,8 +97,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    updateSettings = (settings: Settings) => {
-        this.props.dispatch(user.actions.updateSettings(settings));
+    updateSetting = (setting: string, value: boolean) => {
+        this.props.dispatch(user.actions.saveSetting(setting, value, this.props.user.username));
     }
 
     render() {
@@ -124,9 +124,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 entity={ state.selectedEntity }
                 locale={ state.locale }
                 pluralForm= { state.pluralForm }
-                settings={ state.settings }
+                settings={ state.user.settings }
                 sendSuggestion={ this.sendSuggestion }
-                updateSettings={ this.updateSettings }
+                updateSetting={ this.updateSetting }
             />
             <Tools
                 parameters={ state.parameters }
@@ -147,7 +147,7 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
-        settings: state[user.NAME].settings,
+        user: state[user.NAME],
     };
 };
 

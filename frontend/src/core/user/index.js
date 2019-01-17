@@ -6,7 +6,7 @@ export { default as reducer } from './reducer';
 export { default as UserAutoUpdater } from './components/UserAutoUpdater';
 
 export type { Settings } from './actions';
-export type { UserState } from './reducer';
+export type { SettingsState, UserState } from './reducer';
 
 
 // Name of this module.

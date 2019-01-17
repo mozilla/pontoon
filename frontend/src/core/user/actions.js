@@ -7,8 +7,8 @@ export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
 
 
 export type Settings = {
-    runQualityChecks: boolean,
-    forceSuggestions: boolean,
+    runQualityChecks?: boolean,
+    forceSuggestions?: boolean,
 };
 
 
@@ -42,6 +42,15 @@ export function updateSettings(settings: Settings): UpdateSettingsAction {
 }
 
 
+export function saveSetting(setting: string, value: boolean, username: string): Function {
+    return async dispatch => {
+        dispatch(updateSettings({ [setting]: value }));
+
+        await api.user.updateSetting(username, setting, value);
+    };
+}
+
+
 /**
  * Get data about the current user from the server.
  *
@@ -58,6 +67,7 @@ export function get(): Function {
 
 export default {
     get,
+    saveSetting,
     update,
     updateSettings,
 };

@@ -10,7 +10,7 @@ import type { Settings } from 'core/user';
 
 type Props = {|
     settings: Settings,
-    updateSettings: Function,
+    updateSetting: Function,
 |};
 
 type State = {|
@@ -45,10 +45,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
 
     toggleSetting(setting: string) {
         return () => {
-            const { settings } = this.props;
-            const newSettings = {};
-            newSettings[setting] = !settings[setting];
-            this.props.updateSettings(newSettings);
+            this.props.updateSetting(setting, !this.props.settings[setting]);
         };
     }
 
