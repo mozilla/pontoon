@@ -340,7 +340,8 @@ var Pontoon = (function (my) {
           ul = $('#helpers > .machinery').children('ul').empty(),
           tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
           requests = 0,
-          count = 0,
+          preferred = 0,
+          remaining = 0,
           sourcesMap = {};
 
       if (!customSearch) {
@@ -404,7 +405,12 @@ var Pontoon = (function (my) {
           '</li>');
           ul.append(li);
           sourcesMap[data.original + data.translation] = li.find('.sources');
-          count++;
+          if (data.source === 'Translation memory') {
+            preferred++;
+          }
+          else {
+            remaining++;
+          }
         }
 
         // Sort by quality
@@ -475,15 +481,19 @@ var Pontoon = (function (my) {
       function complete(jqXHR, status) {
         if (status !== "abort") {
           requests--;
-          tab.find('.count').html(count).show();
-          if (requests === 0) {
-            tab.removeClass('loading');
-            if (ul.children('li').length === 0) {
-              tab.find('.count').hide();
-              ul.append('<li class="disabled">' +
-                '<p>No translations available.</p>' +
-              '</li>');
-            }
+          tab
+            .find('.count')
+              .find('.preferred').html(preferred).toggle(preferred > 0).end()
+              .find('.plus').html('+').toggle(preferred > 0 && remaining > 0).end()
+              .find('.remaining').html(remaining).toggle(remaining > 0).end()
+              .toggle(preferred > 0 || remaining > 0);
+
+          // No match
+          if (requests === 0 && ul.children('li').length === 0) {
+            tab.find('.count').hide();
+            ul.append('<li class="disabled">' +
+              '<p>No translations available.</p>' +
+            '</li>');
           }
         }
       }
