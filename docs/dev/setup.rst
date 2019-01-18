@@ -57,7 +57,7 @@ Quickstart
 
         Alternatively, you can run ``docker-compose up postgresql`` and wait
         until it reports that the database is ready, then stop that and run
-        ``make dockerrun``.
+        ``make run``.
 
 
 4. Finally, you need to run some setup steps, while the webapp is running::
