@@ -70,12 +70,10 @@ def run_checks(entity, string):
             checks['pWarning'].append(
                 'Empty translation'
             )
-
         else:
             checks['pErrors'].append(
                 'Empty translations are not allowed'
             )
-
 
     # FTL checks
     if resource_ext == 'ftl' and string != '':
