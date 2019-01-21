@@ -247,7 +247,7 @@ def entities(request):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json())
+        return HttpResponseBadRequest(form.errors.as_json(escape_html=True))
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
 
