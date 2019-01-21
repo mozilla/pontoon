@@ -115,7 +115,9 @@ def test_empty_translations(get_entity_mock):
     assert run_checks(
         get_entity_mock('properties', allows_empty_translations=True),
         ''
-    ) == {}
+    ) == {
+        'pWarning': [u'Empty translation']
+    }
 
 
 def test_lang_newlines(get_entity_mock):
