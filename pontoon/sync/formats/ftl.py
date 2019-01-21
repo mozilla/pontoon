@@ -79,6 +79,11 @@ class FTLResource(ParsedResource):
         for obj in self.structure.body:
             if isinstance(obj, localizable_entries):
                 key = obj.id.name
+
+                # Bug 1521523: Term keys start with -
+                if isinstance(obj, ast.Term):
+                    key = '-' + key
+
                 comment = [obj.comment.content] if obj.comment else []
 
                 # Do not store comments in the string column
