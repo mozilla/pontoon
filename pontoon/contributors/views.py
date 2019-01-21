@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+from django.utils.html import escape
 
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project
@@ -127,7 +128,8 @@ def save_custom_homepage(request):
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
 
     if not form.is_valid():
-        return HttpResponseBadRequest(u'\n'.join(form.errors['custom_homepage']))
+        error = escape(u'\n'.join(form.errors['custom_homepage']))
+        return HttpResponseBadRequest(error)
 
     form.save()
 
