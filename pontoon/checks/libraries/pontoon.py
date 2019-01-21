@@ -67,7 +67,7 @@ def run_checks(entity, string):
     # Prevent empty translation submissions if not supported
     if string == "":
         if entity.resource.allows_empty_translations:
-            checks['pWarning'].append(
+            checks['pWarnings'].append(
                 'Empty translation'
             )
         else:
