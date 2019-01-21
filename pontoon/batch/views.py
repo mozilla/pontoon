@@ -112,7 +112,7 @@ def batch_edit_translations(request):
     """
     form = forms.BatchActionsForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json())
+        return HttpResponseBadRequest(form.errors.as_json(escape_html=True))
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
     entities = Entity.objects.filter(pk__in=form.cleaned_data['entities'])
