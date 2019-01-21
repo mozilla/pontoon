@@ -391,8 +391,6 @@ var Pontoon = (function (my) {
    */
   function stringifyElements(elements, markPlaceables) {
     var string = '';
-    var startMarker = '';
-    var endMarker = '';
 
     elements.forEach(function (element) {
       if (element.type === 'TextElement') {
@@ -405,43 +403,21 @@ var Pontoon = (function (my) {
       }
       else if (element.type === 'Placeable') {
         switch (element.expression.type) {
-          case 'VariableReference':
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="External Argument">';
-              endMarker = '</mark>';
-            }
-            string += startMarker + '{$' + element.expression.id.name + '}' + endMarker;
-            break;
-
-          case 'MessageReference':
-          case 'TermReference':
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="Message Reference">';
-              endMarker = '</mark>';
-            }
-            string += startMarker + '{' + element.expression.id.name + '}' + endMarker;
-            break;
-
-          case 'AttributeExpression':
-          case 'CallExpression':
-          case 'VariantExpression':
-          case 'NumberLiteral':
-          case 'StringLiteral':
-            var title = element.expression.type.replace('Expression', ' Expression');
-            if (markPlaceables) {
-              startMarker = '<mark class="placeable" title="' + title + '">';
-              endMarker = '</mark>';
-            }
-            var expression = fluentSerializer.serializeExpression(element.expression);
-            string += startMarker + '{' + expression + '}' + endMarker;
-            break;
-
           case 'SelectExpression':
             var variantElements = element.expression.variants.filter(function (variant) {
               return variant.default;
             })[0].value.elements;
             string += stringifyElements(variantElements, markPlaceables);
-            break;
+            return;
+
+          default:
+            var expression = fluentSerializer.serializeExpression(element.expression);
+            if (markPlaceables) {
+              string += '<mark class="placeable" title="' + element.expression.type + '">{ ' + expression + ' }</mark>';
+            }
+            else {
+              string += '{ ' + expression + ' }';
+            }
         }
       }
     });
