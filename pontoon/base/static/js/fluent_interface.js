@@ -104,7 +104,15 @@ var Pontoon = (function (my) {
     return elements.every(function(element) {
       return (
         isSimpleElement(element) ||
-        (element.type === 'Placeable' && element.expression.type === 'SelectExpression')
+        (
+          element.type === 'Placeable' &&
+          element.expression.type === 'SelectExpression' &&
+          element.expression.variants.every(function(variant) {
+            return variant.value.elements.every(function(element) {
+              return isSimpleElement(element);
+            });
+          })
+        )
       );
     });
   }
