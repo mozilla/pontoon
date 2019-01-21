@@ -135,7 +135,8 @@ def ajax_permissions(request, locale):
         else:
             errors = locale_form.errors
             errors.update(project_locale_form.errors_dict)
-            return HttpResponseBadRequest(json.dumps(errors))
+            error_msg = bleach.clean(json.dumps(errors))
+            return HttpResponseBadRequest(error_msg)
 
     else:
         project_locale_form = forms.ProjectLocalePermsFormsSet(
