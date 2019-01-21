@@ -13,6 +13,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.html import escape
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
@@ -296,6 +297,7 @@ def transvision(request):
         if 'error' in r.json():
             error = r.json()['error']
             log.error('Transvision error: {error}'.format(error=error))
+            error = escape(error)
             return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
 
         return JsonResponse(r.json(), safe=False)
