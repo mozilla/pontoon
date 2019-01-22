@@ -5,7 +5,7 @@ import api from 'core/api';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 
-export function suggest(
+export function sendTranslation(
     entity: number,
     translation: string,
     locale: string,
@@ -42,5 +42,5 @@ export function suggest(
 }
 
 export default {
-    suggest,
+    sendTranslation,
 };

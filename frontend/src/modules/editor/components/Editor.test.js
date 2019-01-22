@@ -22,7 +22,7 @@ function createShallowEditor(suggestMock = null, pluralForm = -1, forceSuggestio
     return shallow(<Editor
         translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
         entity={ SELECTED_ENTITY }
-        sendSuggestion={ suggestMock }
+        sendTranslation={ suggestMock }
         pluralForm={ pluralForm }
         settings={ { forceSuggestions } }
     />);

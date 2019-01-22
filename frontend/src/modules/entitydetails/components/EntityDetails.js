@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import './EntityDetails.css';
 
-import { actions as lightboxActions } from 'core/lightbox';
+import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
@@ -15,8 +15,7 @@ import * as history from 'modules/history';
 import * as otherlocales from 'modules/otherlocales';
 import { Editor } from 'modules/editor';
 
-import { selectors } from '..';
-import { suggest } from '../actions';
+import { actions, selectors } from '..';
 import Metadata from './Metadata';
 import Tools from './Tools';
 
@@ -78,17 +77,17 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     openLightbox = (image: string) => {
-        this.props.dispatch(lightboxActions.open(image));
+        this.props.dispatch(lightbox.actions.open(image));
     }
 
-    sendSuggestion = (translation: string) => {
+    sendTranslation = (translation: string) => {
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
             return;
         }
 
-        this.props.dispatch(suggest(
+        this.props.dispatch(actions.sendTranslation(
             state.selectedEntity.pk,
             translation,
             state.locale.code,
@@ -126,7 +125,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 locale={ state.locale }
                 pluralForm= { state.pluralForm }
                 settings={ state.user.settings }
-                sendSuggestion={ this.sendSuggestion }
+                sendTranslation={ this.sendTranslation }
                 updateSetting={ this.updateSetting }
             />
             <Tools

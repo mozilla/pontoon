@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
-import * as entityActions from '../actions';
+import { actions as entityActions } from '..';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 
@@ -75,20 +75,25 @@ describe('<EntityDetails>', () => {
     ];
 
     beforeAll(() => {
-        const suggestMock = sinon.stub(entityActions, 'suggest');
+        const suggestMock = sinon.stub(entityActions, 'sendTranslation');
         suggestMock.returns({
             type: 'whatever',
         });
     });
 
     afterAll(() => {
-        entityActions.suggest.restore();
+        entityActions.sendTranslation.restore();
     });
 
-    it('calls the suggest action when the sendSuggestion method is run', () => {
+    it('calls the sendTranslation action when the sendTranslation method is ran', () => {
         const initialState = {
             entities: {
                 entities: ENTITIES
+            },
+            user: {
+                settings: {
+                    forceSuggestions: true,
+                },
             },
             router: {
                 location: {
@@ -111,11 +116,11 @@ describe('<EntityDetails>', () => {
             EntityDetailsBase
         );
 
-        wrapper.instance().sendSuggestion('fake translation');
-        expect(entityActions.suggest.calledOnce).toEqual(true);
+        wrapper.instance().sendTranslation('fake translation');
+        expect(entityActions.sendTranslation.calledOnce).toBeTruthy();
         expect(
-            entityActions.suggest
+            entityActions.sendTranslation
             .calledWith(ENTITIES[0].pk, 'fake translation', 'kg', ENTITIES[0].original)
-        ).toEqual(true);
+        ).toBeTruthy();
     });
 });

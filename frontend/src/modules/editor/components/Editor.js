@@ -21,7 +21,7 @@ type Props = {|
     locale: Locale,
     pluralForm: number,
     settings: SettingsState,
-    sendSuggestion: Function,
+    sendTranslation: Function,
     updateSetting: Function,
 |};
 
@@ -76,8 +76,8 @@ export default class Editor extends React.Component<Props, State> {
         });
     }
 
-    sendSuggestion = () => {
-        this.props.sendSuggestion(this.state.translation);
+    sendTranslation = () => {
+        this.props.sendTranslation(this.state.translation);
     }
 
     render() {
@@ -112,19 +112,21 @@ export default class Editor extends React.Component<Props, State> {
                         </button>
                     </Localized>
                     { this.props.settings.forceSuggestions ?
+                    // Suggest button, will send an unreviewed translation.
                     <Localized id="entitydetails-editor-button-suggest">
                         <button
                             className="action-suggest"
-                            onClick={ this.sendSuggestion }
+                            onClick={ this.sendTranslation }
                         >
                             Suggest
                         </button>
                     </Localized>
                     :
+                    // Save button, will send an approved translation.
                     <Localized id="entitydetails-editor-button-save">
                         <button
                             className="action-save"
-                            onClick={ this.sendSuggestion }
+                            onClick={ this.sendTranslation }
                         >
                             Save
                         </button>

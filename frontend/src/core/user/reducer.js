@@ -72,18 +72,6 @@ export default function reducer(
 ): UserState {
     switch (action.type) {
         case UPDATE:
-            let newSettings = { ...state.settings };
-
-            // We only want to update the settings from the server once, because
-            // otherwise we risk erasing local changes to those settings.
-            // Thus, we check if the previous state of isAuthenticated is
-            // false, which indicates either that this is the first update
-            // or that the user was logged out, in which case the values
-            // should be overwritten.
-            if (!state.isAuthenticated && action.data.is_authenticated) {
-                newSettings = settings(state.settings, action)
-            }
-
             return {
                 isAuthenticated: action.data.is_authenticated,
                 id: action.data.id,
@@ -93,7 +81,7 @@ export default function reducer(
                 managerForLocales: action.data.manager_for_locales,
                 translatorForLocales: action.data.translator_for_locales,
                 translatorForProjects: action.data.translator_for_projects,
-                settings: newSettings,
+                settings: settings(state.settings, action),
             };
         case UPDATE_SETTINGS:
             return {
