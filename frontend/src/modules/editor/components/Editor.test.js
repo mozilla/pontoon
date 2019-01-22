@@ -32,7 +32,8 @@ describe('<Editor>', () => {
     it('renders correctly', () => {
         const wrapper = createShallowEditor();
 
-        expect(wrapper.find('button')).toHaveLength(3);
+        // 3 buttons to control the editor, 1 button for settings.
+        expect(wrapper.find('button')).toHaveLength(4);
     });
 
     it('clears the text when the Clear button is clicked', () => {
