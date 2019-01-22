@@ -94,6 +94,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             state.locale.code,
             state.selectedEntity.original,
             state.pluralForm,
+            state.user.settings.forceSuggestions,
         ));
     }
 

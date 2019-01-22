@@ -11,6 +11,7 @@ export function suggest(
     locale: string,
     original: string,
     pluralForm: number,
+    forceSuggestions: boolean,
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
@@ -19,6 +20,7 @@ export function suggest(
             locale,
             pluralForm,
             original,
+            forceSuggestions,
         );
 
         if (content.same) {

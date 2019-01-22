@@ -111,6 +111,7 @@ export default class Editor extends React.Component<Props, State> {
                             Clear
                         </button>
                     </Localized>
+                    { this.props.settings.forceSuggestions ?
                     <Localized id="entitydetails-editor-button-suggest">
                         <button
                             className="action-suggest"
@@ -119,14 +120,16 @@ export default class Editor extends React.Component<Props, State> {
                             Suggest
                         </button>
                     </Localized>
-                    <Localized id="entitydetails-editor-button-send">
+                    :
+                    <Localized id="entitydetails-editor-button-save">
                         <button
-                            className="action-send"
+                            className="action-save"
                             onClick={ this.sendSuggestion }
                         >
-                            Suggest
+                            Save
                         </button>
                     </Localized>
+                    }
                 </div>
                 <div className="clearfix">
                 </div>

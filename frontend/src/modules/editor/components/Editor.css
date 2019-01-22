@@ -44,7 +44,8 @@
     color: #7BC876;
 }
 
-.editor .actions .action-send {
+.editor .actions .action-save,
+.editor .actions .action-suggest {
     background: #7BC876;
     border-radius: 3px;
     color: #272A2F;
@@ -53,7 +54,12 @@
     padding: 10px;
 }
 
-.editor .actions .action-send:hover {
+.editor .actions .action-suggest {
+    background: #4FC4F6;
+}
+
+.editor .actions .action-save:hover,
+.editor .actions .action-suggest:hover {
     color: #EBEBEB;
 }
 
