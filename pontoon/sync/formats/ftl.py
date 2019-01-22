@@ -78,12 +78,7 @@ class FTLResource(ParsedResource):
         group_comment = []
         for obj in self.structure.body:
             if isinstance(obj, localizable_entries):
-                key = obj.id.name
-
-                # Bug 1521523: Term keys start with -
-                if isinstance(obj, ast.Term):
-                    key = '-' + key
-
+                key = get_key(obj)
                 comment = [obj.comment.content] if obj.comment else []
 
                 # Do not store comments in the string column
@@ -128,7 +123,8 @@ class FTLResource(ParsedResource):
         for obj in list(entities):
             if isinstance(obj, localizable_entries):
                 index = entities.index(obj)
-                entity = self.entities[obj.id.name]
+                key = get_key(obj)
+                entity = self.entities[key]
 
                 if entity.strings:
                     message = parser.parse_entry(entity.strings[None])
@@ -142,6 +138,19 @@ class FTLResource(ParsedResource):
         with codecs.open(self.path, 'w+', 'utf-8') as f:
             log.debug('Saving file: %s', self.path)
             f.write(serializer.serialize(structure))
+
+
+def get_key(obj):
+    """
+    Get FTL Message/Term key as it appears in the file.
+    In case of a Term, we need to prepend -. See bug 1521523.
+    """
+    key = obj.id.name
+
+    if isinstance(obj, ast.Term):
+        return '-' + key
+
+    return key
 
 
 def parse(path, source_path=None, locale=None):
