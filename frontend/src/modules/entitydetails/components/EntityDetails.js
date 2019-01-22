@@ -31,9 +31,11 @@ type Props = {|
     activeTranslation: string,
     history: HistoryState,
     locale: ?Locale,
+    nextEntity: ?DbEntity,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     pluralForm: number,
+    router: Object,
     selectedEntity: ?DbEntity,
     user: UserState,
 |};
@@ -94,6 +96,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             state.selectedEntity.original,
             state.pluralForm,
             state.user.settings.forceSuggestions,
+            state.nextEntity,
+            state.router,
         ));
     }
 
@@ -143,9 +147,11 @@ const mapStateToProps = (state: Object): Props => {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
         history: state[history.NAME],
         locale: locales.selectors.getCurrentLocaleData(state),
+        nextEntity: entitieslist.selectors.getNextEntity(state),
         otherlocales: state[otherlocales.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
+        router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
         user: state[user.NAME],
     };

@@ -2,7 +2,10 @@
 
 import api from 'core/api';
 
+import { actions as navActions } from 'core/navigation';
 import { actions as entitiesActions } from 'modules/entitieslist';
+
+import type { DbEntity } from 'modules/entitieslist';
 
 
 export function sendTranslation(
@@ -12,6 +15,8 @@ export function sendTranslation(
     original: string,
     pluralForm: number,
     forceSuggestions: boolean,
+    nextEntity: ?DbEntity,
+    router: Object,
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
@@ -37,6 +42,11 @@ export function sendTranslation(
                     content.translation
                 )
             );
+
+            if (nextEntity && nextEntity.pk !== entity) {
+                // The change did work, we want to move on to the next Entity.
+                dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
+            }
         }
     }
 }
