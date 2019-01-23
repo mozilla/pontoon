@@ -10,6 +10,18 @@ entitydetails-editor-button-save = Save
 entitydetails-editor-button-suggest = Suggest
 
 
+## EditorSettings
+## Shows options to update user settings regarding the editor.
+
+editor-settings-toolkit-checks = <glyph></glyph>Translate Toolkit Checks
+    .title = Run Translate Toolkit checks before submitting translations
+
+editor-settings-force-suggestions = <glyph></glyph>Make Suggestions
+    .title = Save suggestions instead of translations
+
+editor-settings-change-all = Change All Settings
+
+
 ## Metadata
 ## Shows metadata about an entity (original string)
 

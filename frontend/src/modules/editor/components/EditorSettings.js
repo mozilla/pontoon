@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
+import { Localized } from 'fluent-react';
 
 import './EditorSettings.css';
 
@@ -59,27 +60,48 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                 title="Settings"
                 onClick={ this.toggleVisibility }
             />
+
             { !this.state.visible ? null :
             <ul className="menu">
-                <li
-                    className={ 'check-box' + (settings.runQualityChecks ? ' enabled' : '') }
-                    title="Run Translate Toolkit checks before submitting translations"
-                    onClick={ this.toggleSetting('runQualityChecks') }
+                <Localized
+                    id="editor-settings-toolkit-checks"
+                    attrs={{ title: true }}
+                    glyph={
+                        <i className="fa fa-fw"></i>
+                    }
                 >
-                    <i className="fa fa-fw"></i>
-                    Translate Toolkit Checks
-                </li>
-                <li
-                    className={ 'check-box' + (settings.forceSuggestions ? ' enabled' : '') }
-                    title="Save suggestions instead of translations"
-                    onClick={ this.toggleSetting('forceSuggestions') }
+                    <li
+                        className={ 'check-box' + (settings.runQualityChecks ? ' enabled' : '') }
+                        title="Run Translate Toolkit checks before submitting translations"
+                        onClick={ this.toggleSetting('runQualityChecks') }
+                    >
+                        { '<glyph></glyph>Translate Toolkit Checks' }
+                    </li>
+                </Localized>
+
+                <Localized
+                    id="editor-settings-force-suggestions"
+                    attrs={{ title: true }}
+                    glyph={
+                        <i className="fa fa-fw"></i>
+                    }
                 >
-                    <i className="fa fa-fw"></i>
-                    Make Suggestions
-                </li>
+                    <li
+                        className={ 'check-box' + (settings.forceSuggestions ? ' enabled' : '') }
+                        title="Save suggestions instead of translations"
+                        onClick={ this.toggleSetting('forceSuggestions') }
+                    >
+                        { '<glyph></glyph>Make Suggestions' }
+                    </li>
+                </Localized>
+
                 <li className="horizontal-separator"></li>
                 <li>
-                    <a href="/settings/">Change All Settings</a>
+                    <a href="/settings/">
+                        <Localized id="editor-settings-change-all">
+                            { 'Change All Settings' }
+                        </Localized>
+                    </a>
                 </li>
             </ul>
             }
