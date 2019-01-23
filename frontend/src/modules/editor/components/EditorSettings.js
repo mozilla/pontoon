@@ -46,6 +46,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
     toggleSetting(setting: string) {
         return () => {
             this.props.updateSetting(setting, !this.props.settings[setting]);
+            this.toggleVisibility();
         };
     }
 

@@ -41,8 +41,8 @@
 }
 
 .editor-settings .menu li:hover,
-.editor-settings .menu li a:hover,
-.editor-settings .menu li a:active {
+.editor-settings .menu li:hover a,
+.editor-settings .menu li:active a {
     color: #fff;
 }
 
