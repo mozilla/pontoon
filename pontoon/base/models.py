@@ -53,6 +53,7 @@ from pontoon.sync.vcs.repositories import (
     PullFromRepositoryException,
 )
 from pontoon.base import utils
+from pontoon.checks.utils import save_failed_checks
 from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
 from pontoon.sync import KEY_SEPARATOR
 
@@ -2715,7 +2716,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, update_stats=True, *args, **kwargs):
+    def save(self, update_stats=True, failed_checks=None, *args, **kwargs):
         # We parametrize update of stats to make testing easier.
         if update_stats:
             stats_before = self.entity.get_stats(self.locale)
@@ -2769,6 +2770,9 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         # Update latest translation where necessary
         self.update_latest_translation()
+
+        if failed_checks is not None:
+            save_failed_checks(self, failed_checks)
 
         # We parametrize update of stats to make testing easier.
         if update_stats:
