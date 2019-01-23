@@ -8,8 +8,9 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 
-import history from './history';
 import rootReducer from 'rootReducer';
+
+import history from './history';
 
 
 export function createReduxStore(initialState = {}) {

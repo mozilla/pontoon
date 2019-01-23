@@ -1,6 +1,7 @@
 /* @flow */
 
 import { UPDATE } from './actions';
+
 import type { UpdateAction } from './actions';
 
 

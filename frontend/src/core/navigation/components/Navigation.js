@@ -7,9 +7,10 @@ import isEmpty from 'lodash.isempty';
 import './Navigation.css';
 
 import { NAME as LOCALES_NAME } from 'core/locales';
-import type { LocalesState } from 'core/locales';
 
 import { selectors } from '..';
+
+import type { LocalesState } from 'core/locales';
 import type { NavigationParams } from '..';
 
 

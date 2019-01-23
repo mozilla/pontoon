@@ -3,6 +3,7 @@
 import { FluentBundle } from 'fluent';
 
 import { RECEIVE, REQUEST } from './actions';
+
 import type { ReceiveAction, RequestAction } from './actions';
 
 

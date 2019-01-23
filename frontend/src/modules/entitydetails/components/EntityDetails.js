@@ -9,7 +9,6 @@ import { actions as lightboxActions } from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
-
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as otherlocales from 'modules/otherlocales';

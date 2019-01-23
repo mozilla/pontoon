@@ -4,7 +4,7 @@ import { createLogger } from 'redux-logger';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import history from './history';
-import rootReducer from 'rootReducer';
+import rootReducer from './rootReducer';
 
 
 const loggerMiddleware = createLogger();
