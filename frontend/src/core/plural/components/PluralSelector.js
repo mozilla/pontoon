@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 
 import './PluralSelector.css';
 
-import { actions, selectors } from '..';
 import * as locales from 'core/locales';
+
+import { actions, selectors } from '..';
 
 import type { Locale } from 'core/locales';
 

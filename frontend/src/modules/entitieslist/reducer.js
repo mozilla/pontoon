@@ -1,6 +1,7 @@
 /* @flow */
 
 import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
+
 import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
 
 

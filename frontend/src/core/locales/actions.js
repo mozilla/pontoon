@@ -2,6 +2,7 @@
 
 import api from 'core/api';
 
+
 export const RECEIVE: 'locales/RECEIVE' = 'locales/RECEIVE';
 export const REQUEST: 'locales/REQUEST' = 'locales/REQUEST';
 

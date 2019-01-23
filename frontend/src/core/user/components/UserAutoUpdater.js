@@ -7,11 +7,7 @@ import { connect } from 'react-redux';
 import { actions } from '..';
 
 
-type Props = {
-};
-
 type InternalProps = {
-    ...Props,
     dispatch: Function,
 };
 
@@ -43,8 +39,4 @@ export class UserAutoUpdaterBase extends React.Component<InternalProps> {
 }
 
 
-const mapStateToProps = (): Props => {
-    return {};
-};
-
-export default connect(mapStateToProps)(UserAutoUpdaterBase);
+export default connect()(UserAutoUpdaterBase);
