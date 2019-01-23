@@ -1,6 +1,5 @@
 /* @flow */
 
-
 export const CLOSE: 'lightbox/CLOSE' = 'lightbox/CLOSE';
 export const OPEN: 'lightbox/OPEN' = 'lightbox/OPEN';
 

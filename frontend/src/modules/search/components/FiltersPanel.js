@@ -5,10 +5,10 @@ import onClickOutside from 'react-onclickoutside';
 
 import './FiltersPanel.css';
 
+import { FILTERS_STATUS } from '..';
+
 import type { Navigation } from 'core/navigation';
 import type { Stats } from 'core/stats';
-
-import { FILTERS_STATUS } from '..';
 
 
 type Props = {|

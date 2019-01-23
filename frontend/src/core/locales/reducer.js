@@ -1,6 +1,7 @@
 /* @flow */
 
 import { RECEIVE, REQUEST } from './actions';
+
 import type { Locale, ReceiveAction, RequestAction } from './actions';
 
 

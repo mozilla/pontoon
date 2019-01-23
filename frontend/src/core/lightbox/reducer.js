@@ -1,6 +1,7 @@
 /* @flow */
 
 import { CLOSE, OPEN } from './actions';
+
 import type { CloseAction, OpenAction } from './actions';
 
 

@@ -3,6 +3,7 @@
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import { RESET, SELECT } from './actions';
+
 import type { ResetAction, SelectAction } from './actions';
 
 

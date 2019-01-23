@@ -6,16 +6,14 @@ import debounce from 'lodash.debounce';
 
 import './SearchBox.css';
 
-import {
-    actions as navActions,
-    selectors as navSelectors,
-} from 'core/navigation';
-import type { NavigationParams } from 'core/navigation';
+import * as navigation from 'core/navigation';
 import { NAME as STATS_NAME } from 'core/stats';
-import type { Stats } from 'core/stats';
 
 import { FILTERS_STATUS } from '..';
 import FiltersPanel from './FiltersPanel';
+
+import type { NavigationParams } from 'core/navigation';
+import type { Stats } from 'core/stats';
 
 
 type Props = {|
@@ -58,11 +56,15 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     updateSearchParams = debounce(() => {
-        this.props.dispatch(navActions.updateSearch(this.props.router, this.state.search));
+        this.props.dispatch(
+            navigation.actions.updateSearch(this.props.router, this.state.search)
+        );
     }, 500)
 
     selectStatus = (status: ?string) => {
-        this.props.dispatch(navActions.updateStatus(this.props.router, status));
+        this.props.dispatch(
+            navigation.actions.updateStatus(this.props.router, status)
+        );
     }
 
     render() {
@@ -101,7 +103,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        parameters: navSelectors.getNavigationParams(state),
+        parameters: navigation.selectors.getNavigationParams(state),
         stats: state[STATS_NAME],
         router: state.router,
     };
