@@ -28,7 +28,7 @@ def projects(request):
     )
 
     if not projects:
-        return render(request, 'add_project.html', {
+        return render(request, 'no_projects.html', {
             'title': 'Projects',
         })
 

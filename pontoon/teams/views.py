@@ -36,7 +36,7 @@ def teams(request):
     form = LocaleRequestForm()
 
     if not locales:
-        return render(request, 'add_project.html', {
+        return render(request, 'no_projects.html', {
             'title': 'Teams',
         })
 
