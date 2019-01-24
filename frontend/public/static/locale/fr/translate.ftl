@@ -6,7 +6,20 @@
 
 entitydetails-editor-button-copy = Copier
 entitydetails-editor-button-clear = Effacer
-entitydetails-editor-button-send = Envoyer
+entitydetails-editor-button-save = Sauvegarder
+entitydetails-editor-button-suggest = Suggérer
+
+
+## EditorSettings
+## Shows options to update user settings regarding the editor.
+
+editor-settings-toolkit-checks = <glyph></glyph>Vérifications Translate Toolkit
+    .title = Faire les vérifications Translate Toolkit avant d'envoyer les traductions
+
+editor-settings-force-suggestions = <glyph></glyph>Faire des suggestions
+    .title = Envoyer des suggestions au lieu de traductions
+
+editor-settings-change-all = Changer tous les paramètres
 
 
 ## Metadata

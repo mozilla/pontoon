@@ -6,7 +6,8 @@
 
 entitydetails-editor-button-copy = Copiar
 entitydetails-editor-button-clear = Borrar
-entitydetails-editor-button-send = Sugerir
+entitydetails-editor-button-save = Guardar
+entitydetails-editor-button-suggest = Sugerir
 
 
 ## Metadata
