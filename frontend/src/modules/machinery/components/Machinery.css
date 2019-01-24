@@ -1,0 +1,20 @@
+.machinery {
+    line-height: 22px;
+}
+
+.machinery ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.machinery p {
+    min-height: 22px;
+}
+
+.machinery > p {
+    border-bottom: 1px solid #5E6475;
+    color: #aaa;
+    font-style: italic;
+    padding: 5px 10px 20px 10px;
+}

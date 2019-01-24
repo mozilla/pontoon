@@ -13,6 +13,10 @@ export type Locale = {|
     +direction: string,
     +name: string,
     +script: string,
+    +googleTranslateCode: string,
+    +msTranslatorCode: string,
+    +msTerminologyCode: string,
+    +transvision: boolean,
 |};
 
 

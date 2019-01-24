@@ -6,6 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import './Tools.css';
 
 import { History } from 'modules/history';
+import { Machinery } from 'modules/machinery';
 import { Locales } from 'modules/otherlocales';
 
 
@@ -37,6 +38,9 @@ export default class Tools extends React.Component<Props> {
                     }
                 </Tab>
                 <Tab>
+                    Machinery
+                </Tab>
+                <Tab>
                     Locales
                     { !otherlocalesCount ? null :
                     <span className={ 'count' }>{ otherlocalesCount }</span>
@@ -46,6 +50,9 @@ export default class Tools extends React.Component<Props> {
 
             <TabPanel>
                 <History />
+            </TabPanel>
+            <TabPanel>
+                <Machinery />
             </TabPanel>
             <TabPanel>
                 <Locales otherlocales={ otherlocales } parameters={ parameters } />

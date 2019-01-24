@@ -12,6 +12,7 @@ import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
+import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import { Editor } from 'modules/editor';
 
@@ -61,20 +62,26 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { parameters, pluralForm } = this.props;
+        const { parameters, pluralForm, selectedEntity } = this.props;
 
         if (
             parameters.entity !== prevProps.parameters.entity ||
-            pluralForm !== prevProps.pluralForm
+            pluralForm !== prevProps.pluralForm ||
+            selectedEntity !== prevProps.selectedEntity
         ) {
             this.fetchHelpersData();
         }
     }
 
     fetchHelpersData() {
-        const { dispatch, parameters, pluralForm } = this.props;
+        const { dispatch, locale, parameters, pluralForm, selectedEntity } = this.props;
+
+        if (!parameters.entity || !selectedEntity || !locale) {
+            return;
+        }
 
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
+        dispatch(machinery.actions.get(selectedEntity, locale));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 

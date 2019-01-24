@@ -13,6 +13,10 @@ export default class LocaleAPI extends APIBase {
                 pluralRule
                 direction
                 script
+                googleTranslateCode
+                msTranslatorCode
+                msTerminologyCode
+                transvision
             }
         }`;
         const payload = new URLSearchParams();

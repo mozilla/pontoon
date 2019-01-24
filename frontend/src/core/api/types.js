@@ -10,3 +10,18 @@ export type OtherLocaleTranslation = {|
     +script: string,
     +translation: string,
 |};
+
+
+/*
+ * Translation that comes from a machine (Machine Translation,
+ * Translation Memory... ).
+ */
+export type MachineryTranslation = {|
+    source: string,
+    url: string,
+    title: string,
+    original: string,
+    translation: string,
+    quality?: string,
+    count?: number,
+|};
