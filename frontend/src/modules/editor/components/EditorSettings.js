@@ -97,11 +97,11 @@ export class EditorSettingsBase extends React.Component<Props, State> {
 
                 <li className="horizontal-separator"></li>
                 <li>
-                    <a href="/settings/">
-                        <Localized id="editor-settings-change-all">
+                    <Localized id="editor-settings-change-all">
+                        <a href="/settings/">
                             { 'Change All Settings' }
-                        </Localized>
-                    </a>
+                        </a>
+                    </Localized>
                 </li>
             </ul>
             }
