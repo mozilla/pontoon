@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block middle %}
+<section id="error">
+  <div class="inner">
+    <div id="box">
+      <a href={{ url('pontoon.admin.project.new') }}>
+        <div class="fas fa-plus-square"></div>
+      </a>
+      <p>There aren't any projects set up currently</p>
+    </div>
+    <div id="subtitle">
+      <a href={{ url('pontoon.admin.project.new') }}>
+        Set up your first project
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
