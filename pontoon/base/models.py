@@ -2771,6 +2771,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Update latest translation where necessary
         self.update_latest_translation()
 
+        # Failed checks must be saved before stats are updated (bug 1521606)
         if failed_checks is not None:
             save_failed_checks(self, failed_checks)
 
