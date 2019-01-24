@@ -28,7 +28,9 @@ def projects(request):
     )
 
     if not projects:
-        raise Http404
+        return render(request, 'add_project.html', {
+            'title': 'Projects',
+        })
 
     return render(request, 'projects/projects.html', {
         'projects': projects,

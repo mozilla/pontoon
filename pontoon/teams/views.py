@@ -36,7 +36,9 @@ def teams(request):
     form = LocaleRequestForm()
 
     if not locales:
-        raise Http404
+        return render(request, 'add_project.html', {
+            'title': 'Teams',
+        })
 
     return render(request, 'teams/teams.html', {
         'locales': locales,
