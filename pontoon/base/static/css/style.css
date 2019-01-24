@@ -1066,7 +1066,7 @@ noscript p {
 #error #box p {
   font-size: 32px;
   line-height: 50px;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 #subtitle, #subtitle a {
