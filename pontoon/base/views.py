@@ -43,10 +43,7 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import (
-    are_blocking_checks,
-    get_failed_checks_db_objects,
-)
+from pontoon.checks.utils import are_blocking_checks
 
 
 log = logging.getLogger(__name__)
@@ -722,8 +719,7 @@ def update_translation(request):
                     t.approved_user = user
                     t.approved_date = now
 
-                warnings, errors = get_failed_checks_db_objects(t, failed_checks)
-                t.save(warnings=warnings, errors=errors)
+                t.save(failed_checks=failed_checks)
 
                 return JsonResponse({
                     'type': 'updated',
@@ -747,8 +743,7 @@ def update_translation(request):
                 t.approved_user = user
                 t.approved_date = now
 
-            warnings, errors = get_failed_checks_db_objects(t, failed_checks)
-            t.save(warnings=warnings, errors=errors)
+            t.save(failed_checks=failed_checks)
 
             active_translation = e.reset_active_translation(
                 locale=locale,
@@ -778,8 +773,7 @@ def update_translation(request):
             t.approved_user = user
             t.approved_date = now
 
-        warnings, errors = get_failed_checks_db_objects(t, failed_checks)
-        t.save(warnings=warnings, errors=errors)
+        t.save(failed_checks=failed_checks)
 
         return JsonResponse({
             'type': 'saved',
