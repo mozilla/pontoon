@@ -1,13 +1,46 @@
 /* @flow */
 
-import { UPDATE } from './actions';
+import { UPDATE, UPDATE_SETTINGS } from './actions';
 
-import type { UpdateAction } from './actions';
+import type { UpdateAction, UpdateSettingsAction } from './actions';
 
 
 type Action =
     | UpdateAction
+    | UpdateSettingsAction
 ;
+
+
+export type SettingsState = {|
+    +runQualityChecks: boolean,
+    +forceSuggestions: boolean,
+|};
+
+const initialSettings: SettingsState = {
+    runQualityChecks: true,
+    forceSuggestions: true,
+};
+
+function settings(
+    state: SettingsState = initialSettings,
+    action: Action,
+): SettingsState {
+    switch (action.type) {
+        case UPDATE:
+            return {
+                runQualityChecks: action.data.settings.quality_checks,
+                forceSuggestions: action.data.settings.force_suggestions,
+            };
+        case UPDATE_SETTINGS:
+            return {
+                ...state,
+                ...action.settings,
+            };
+        default:
+            return state;
+    }
+}
+
 
 export type UserState = {|
     +isAuthenticated: boolean,
@@ -18,8 +51,8 @@ export type UserState = {|
     +managerForLocales: Array<string>,
     +translatorForLocales: Array<string>,
     +translatorForProjects: Array<string>,
+    +settings: SettingsState,
 |};
-
 
 const initial: UserState = {
     isAuthenticated: false,
@@ -30,6 +63,7 @@ const initial: UserState = {
     managerForLocales: [],
     translatorForLocales: [],
     translatorForProjects: [],
+    settings: initialSettings,
 };
 
 export default function reducer(
@@ -47,6 +81,12 @@ export default function reducer(
                 managerForLocales: action.data.manager_for_locales,
                 translatorForLocales: action.data.translator_for_locales,
                 translatorForProjects: action.data.translator_for_projects,
+                settings: settings(state.settings, action),
+            };
+        case UPDATE_SETTINGS:
+            return {
+                ...state,
+                settings: settings(state.settings, action),
             };
         default:
             return state;

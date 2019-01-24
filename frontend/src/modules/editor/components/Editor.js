@@ -8,8 +8,10 @@ import './Editor.css';
 import { PluralSelector } from 'core/plural';
 
 import EditorProxy from './EditorProxy';
+import EditorSettings from './EditorSettings';
 
 import type { Locale } from 'core/locales';
+import type { SettingsState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 
 
@@ -17,8 +19,10 @@ type Props = {|
     translation: string,
     entity: ?DbEntity,
     locale: Locale,
-    sendSuggestion: Function,
     pluralForm: number,
+    settings: SettingsState,
+    sendTranslation: Function,
+    updateSetting: Function,
 |};
 
 type State = {|
@@ -72,8 +76,8 @@ export default class Editor extends React.Component<Props, State> {
         });
     }
 
-    sendSuggestion = () => {
-        this.props.sendSuggestion(this.state.translation);
+    sendTranslation = () => {
+        this.props.sendTranslation(this.state.translation);
     }
 
     render() {
@@ -85,7 +89,11 @@ export default class Editor extends React.Component<Props, State> {
                 locale={ this.props.locale }
                 updateTranslation={ this.updateTranslation }
             />
-            <div className="options">
+            <menu>
+                <EditorSettings
+                    settings={ this.props.settings }
+                    updateSetting={ this.props.updateSetting }
+                />
                 <div className="actions">
                     <Localized id="entitydetails-editor-button-copy">
                         <button
@@ -103,18 +111,31 @@ export default class Editor extends React.Component<Props, State> {
                             Clear
                         </button>
                     </Localized>
-                    <Localized id="entitydetails-editor-button-send">
+                    { this.props.settings.forceSuggestions ?
+                    // Suggest button, will send an unreviewed translation.
+                    <Localized id="entitydetails-editor-button-suggest">
                         <button
-                            className="action-send"
-                            onClick={ this.sendSuggestion }
+                            className="action-suggest"
+                            onClick={ this.sendTranslation }
                         >
                             Suggest
                         </button>
                     </Localized>
+                    :
+                    // Save button, will send an approved translation.
+                    <Localized id="entitydetails-editor-button-save">
+                        <button
+                            className="action-save"
+                            onClick={ this.sendTranslation }
+                        >
+                            Save
+                        </button>
+                    </Localized>
+                    }
                 </div>
                 <div className="clearfix">
                 </div>
-            </div>
+            </menu>
         </div>;
     }
 }

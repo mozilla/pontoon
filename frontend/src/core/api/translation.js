@@ -15,7 +15,8 @@ export default class TranslationAPI extends APIBase {
         translation: string,
         locale: string,
         pluralForm: number,
-        original: string
+        original: string,
+        forceSuggestions: boolean,
     ) {
         const csrfToken = this.getCSRFToken();
 
@@ -25,6 +26,7 @@ export default class TranslationAPI extends APIBase {
         payload.append('locale', locale);
         payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
+        payload.append('force_suggestions', forceSuggestions.toString());
         payload.append('csrfmiddlewaretoken', csrfToken);
 
         const headers = new Headers();

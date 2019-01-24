@@ -1,0 +1,68 @@
+.editor-settings {
+    float: left;
+    line-height: 22px;
+}
+
+.editor-settings .selector {
+    cursor: pointer;
+    color: #aaa;
+    font-size: 22px;
+    padding: 9px 5px;
+}
+
+.editor-settings .selector:hover {
+    color: #7BC876;
+}
+
+.editor-settings .menu {
+    background-color: #272a2f;
+    bottom: auto;
+    color: #aaa;
+    list-style: none;
+    margin: 0;
+    max-height: 318px;
+    overflow: auto;
+    padding: 10px 12px;
+    position: absolute;
+    top: 60px;
+    width: 185px;
+    z-index: 20;
+}
+
+.editor-settings .menu li {
+    color: #aaa;
+    cursor: pointer;
+    font-weight: 300;
+    padding: 2px 4px;
+}
+
+.editor-settings .menu li:hover {
+    background: #3F4752;
+}
+
+.editor-settings .menu li:hover,
+.editor-settings .menu li:hover a,
+.editor-settings .menu li:active a {
+    color: #fff;
+}
+
+.editor-settings .menu .horizontal-separator {
+    border-top: 1px solid #525a65;
+    height: 0;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.editor-settings .menu .check-box .fa {
+    margin-right: 6px;
+}
+
+.editor-settings .menu .check-box .fa:before {
+    color: #F36;
+    content: "";
+}
+
+.editor-settings .menu .check-box.enabled .fa:before {
+    color: #7BC876;
+    content: "";
+}

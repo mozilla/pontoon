@@ -18,12 +18,13 @@ const SELECTED_ENTITY = {
 };
 
 
-function createShallowEditor(suggestMock = null, pluralForm = -1) {
+function createShallowEditor(suggestMock = null, pluralForm = -1, forceSuggestions = true) {
     return shallow(<Editor
         translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
         entity={ SELECTED_ENTITY }
-        sendSuggestion={ suggestMock }
+        sendTranslation={ suggestMock }
         pluralForm={ pluralForm }
+        settings={ { forceSuggestions } }
     />);
 }
 
@@ -32,6 +33,7 @@ describe('<Editor>', () => {
     it('renders correctly', () => {
         const wrapper = createShallowEditor();
 
+        // 3 buttons to control the editor.
         expect(wrapper.find('button')).toHaveLength(3);
     });
 
@@ -63,7 +65,24 @@ describe('<Editor>', () => {
         const suggestMock = sinon.spy();
         const wrapper = createShallowEditor(suggestMock);
 
-        wrapper.find('.action-send').simulate('click');
+        wrapper.find('.action-suggest').simulate('click');
+        expect(suggestMock.calledOnce).toBeTrue;
+    });
+
+    it('shows the Save button when forceSuggestions is off', () => {
+        const suggestMock = sinon.spy();
+        const wrapper = createShallowEditor(suggestMock, -1, false);
+
+        expect(wrapper.find('.action-save').exists()).toBeTruthy();
+        wrapper.find('.action-save').simulate('click');
+        expect(suggestMock.calledOnce).toBeTrue;
+    });
+
+    it('calls the suggest action when the Save button is clicked', () => {
+        const suggestMock = sinon.spy();
+        const wrapper = createShallowEditor(suggestMock, -1, false);
+
+        wrapper.find('.action-save').simulate('click');
         expect(suggestMock.calledOnce).toBeTrue;
     });
 });
