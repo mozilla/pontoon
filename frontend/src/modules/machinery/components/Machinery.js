@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-// import { Localized } from 'fluent-react';
+import { Localized } from 'fluent-react';
 
 import './Machinery.css';
 
@@ -40,7 +40,9 @@ export class MachineryBase extends React.Component<InternalProps> {
         return <section className="machinery">
             <div className="search-wrapper clearfix">
                 <div className="icon fa fa-search"></div>
-                <input type="search" autoComplete="off" placeholder="Type to search machinery" />
+                <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
+                    <input type="search" autoComplete="off" placeholder="Type to search machinery" />
+                </Localized>
             </div>
             <ul>
                 { machinery.translations.map((item, i) => {
