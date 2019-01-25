@@ -69,7 +69,7 @@ var Pontoon = (function (my) {
      */
     closeNotification: function () {
       $('.notification').animate({
-        bottom: '-60px',
+        top: '-60px',
       }, {
         duration: 200
       }, function() {
@@ -90,7 +90,7 @@ var Pontoon = (function (my) {
           .html('<li class="' + (type || '') + '">' + text + '</li>')
           .removeClass('hide')
           .animate({
-            bottom: 0,
+            top: 0,
           }, {
             duration: 200
           });
@@ -715,6 +715,11 @@ $(function() {
   if (notifications.length) {
     Pontoon.endLoader(notifications.text());
   }
+
+  // Close notification on click
+  $('body > header').on('click', '.notification', function() {
+    Pontoon.closeNotification();
+  });
 
   function getRedirectUrl() {
     return window.location.pathname + window.location.search;

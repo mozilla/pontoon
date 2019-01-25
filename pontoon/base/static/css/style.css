@@ -583,11 +583,12 @@ tfoot td a {
 .notification {
   background: rgba(51, 57, 65, 0.9);
   color: #7BC876;
+  cursor: pointer;
   font-style: italic;
   left: 0;
   margin: 0;
   position: fixed;
-  bottom: -60px;
+  top: -60px;
   width: 100%;
   z-index: 100;
 }
