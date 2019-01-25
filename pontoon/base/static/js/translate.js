@@ -3268,11 +3268,6 @@ var Pontoon = (function (my) {
         self.closeNotification();
       });
 
-      // Close notification on click
-      $('body > header').on('click', '.notification', function() {
-        Pontoon.closeNotification();
-      });
-
       // File upload
       $('#id_uploadfile').change(function() {
         self.updateFormFields($('form#upload-file'));
