@@ -3,6 +3,8 @@
 import React from 'react';
 // import { Localized } from 'fluent-react';
 
+import './Translation.css';
+
 import api from 'core/api';
 
 import type { Locale } from 'core/locales';
@@ -49,7 +51,7 @@ type Props = {|
                  { translation.original }
              </p>
              <p
-                className="translation"
+                className="suggestion"
                 dir={ locale.direction }
                 data-script={ locale.script }
                 lang={ locale.code }
