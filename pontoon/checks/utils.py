@@ -1,8 +1,6 @@
 from pontoon.checks import (
     DB_LIBRARIES,
 )
-from pontoon.checks.models import Warning, Error
-from pontoon.checks.libraries import run_checks
 
 
 def bulk_run_checks(translations):
@@ -12,6 +10,9 @@ def bulk_run_checks(translations):
     *Important*
     To avoid performance problems, translations have to prefetch entities and locales objects.
     """
+    from pontoon.checks.libraries import run_checks
+    from pontoon.checks.models import Warning, Error
+
     warnings, errors = [], []
     if not translations:
         return
@@ -52,6 +53,8 @@ def get_failed_checks_db_objects(translation, failed_checks):
     :arg Translation translation: instance of translation
     :arg dict failed_checks: dictionary with failed checks
     """
+    from pontoon.checks.models import Warning, Error
+
     warnings = []
     errors = []
 
@@ -76,6 +79,7 @@ def get_failed_checks_db_objects(translation, failed_checks):
                 translation=translation,
             ) for message in messages
         ])
+
     return warnings, errors
 
 
@@ -87,8 +91,11 @@ def save_failed_checks(translation, failed_checks):
     """
     warnings, errors = get_failed_checks_db_objects(translation, failed_checks)
 
-    Warning.objects.bulk_create(warnings)
-    Error.objects.bulk_create(errors)
+    translation.warnings.all().delete()
+    translation.errors.all().delete()
+
+    translation.warnings.bulk_create(warnings)
+    translation.errors.bulk_create(errors)
 
 
 def are_blocking_checks(checks, ignore_warnings):
