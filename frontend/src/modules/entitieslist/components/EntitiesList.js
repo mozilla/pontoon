@@ -11,7 +11,7 @@ import * as navigation from 'core/navigation';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
-import { CircleLoader } from '../../../core/loaders'
+import { CircleLoader } from 'core/loaders'
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';

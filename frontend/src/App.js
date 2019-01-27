@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import './App.css';
 import { L10nState } from 'core/l10n';
+import { LocaleState } from 'core/locales';
 import { Lightbox } from 'core/lightbox';
 import * as locales from 'core/locales';
 import { Navigation } from 'core/navigation';
