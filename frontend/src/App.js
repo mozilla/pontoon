@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import './App.css';
-
+import { L10nState } from 'core/l10n';
 import { Lightbox } from 'core/lightbox';
 import * as locales from 'core/locales';
 import { Navigation } from 'core/navigation';
@@ -14,6 +14,10 @@ import { EntityDetails } from 'modules/entitydetails';
 import { SearchBox } from 'modules/search';
 import { WaveLoader } from './core/loaders';
 
+type Props = {|
+    l10n: L10nState,
+    locales: LocaleState,
+|};
 
 type InternalProps = {
     dispatch: Function,
@@ -29,12 +33,15 @@ class App extends React.Component<InternalProps> {
     }
 
     render() {
+        const { l10n, locales } = this.props;
+        const isLoading = l10n.fetching || locales.fetching;
+
         return <div id="app">
             <UserAutoUpdater />
             <header>
                 <Navigation />
             </header>
-            <WaveLoader>
+            <WaveLoader isLoading={ isLoading }>
                 <section className="panel-list">
                     <SearchBox />
                     <EntitiesList />
@@ -48,4 +55,13 @@ class App extends React.Component<InternalProps> {
     }
 }
 
-export default connect()(App);
+const mapStateToProps = (state: Object): Props => {
+    const { l10n, locales } = state;
+
+    return {
+        l10n,
+        locales,
+    };
+};
+
+export default connect(mapStateToProps)(App);
