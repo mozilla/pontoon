@@ -3,5 +3,7 @@
 **/*.pyc
 __pycache__
 .cache
-venv
+assets
+node_modules
 static
+venv
