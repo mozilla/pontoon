@@ -25,3 +25,7 @@
 .translation > header sup {
     color: #7BC876;
 }
+
+.translation p.original {
+    color: #AAAAAA;
+}

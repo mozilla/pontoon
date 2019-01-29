@@ -41,7 +41,7 @@ export default class MachineryAPI extends APIBase {
                 source: 'Translation memory',
                 url: '/',
                 title: 'Pontoon Homepage',
-                original: entity.original,
+                original: item.source,
                 translation: item.target,
                 quality: Math.round(item.quality) + '%',
                 count: item.count,

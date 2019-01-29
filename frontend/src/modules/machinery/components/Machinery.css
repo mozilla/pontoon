@@ -18,3 +18,35 @@
     font-style: italic;
     padding: 5px 10px 20px 10px;
 }
+
+.machinery > .search-wrapper {
+    border-bottom: 1px solid #5E6475;
+    margin: 0 10px 10px;
+    position: relative;
+}
+
+.machinery > .search-wrapper .icon {
+    color: #AAAAAA;
+    font-size: 19px;
+    left: 2px;
+    position: absolute;
+    right: auto;
+    top: 12px;
+}
+
+.machinery > .search-wrapper input[type=search] {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 23px;
+    padding: 10px 10px 5px 25px;
+    width: 100%;
+
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    /* Remove extra padding in Chrome search input */
+    -webkit-appearance: textfield;
+}
