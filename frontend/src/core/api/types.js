@@ -17,11 +17,13 @@ export type OtherLocaleTranslation = {|
  * Translation Memory... ).
  */
 export type MachineryTranslation = {|
-    source: string,
-    url: string,
-    title: string,
+    sources: Array<{|
+        type: string,
+        url: string,
+        title: string,
+        count?: number,
+    |}>,
     original: string,
     translation: string,
-    quality?: string,
-    count?: number,
+    quality?: number,
 |};

@@ -13,6 +13,7 @@
 }
 
 .translation > header ul li {
+    display: inline-block;
     padding-left: 3px;
 }
 

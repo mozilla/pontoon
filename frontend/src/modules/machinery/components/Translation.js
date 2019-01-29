@@ -27,27 +27,29 @@ type Props = {|
              <li className="translation" title="Copy Into Translation (Tab)">
                  <header>
                      { !translation.quality ? null :
-                     <span className="stress">{ translation.quality }</span>
+                     <span className="stress">{ translation.quality + '%' }</span>
                      }
                      <ul className="sources">
-                         <li>
-                             <a
-                                className="translation-source"
-                                href={ translation.url }
-                                title={ translation.title }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                             >
-                                 <span>{ translation.source }</span>
-                                 { !translation.count ? null :
-                                 <Localized id="machinery-translation-number-occurrences" attrs={{ title: true }}>
-                                     <sup title="Number of translation occurrences">
-                                        { translation.count }
-                                    </sup>
-                                </Localized>
-                                 }
-                             </a>
-                         </li>
+                         { translation.sources.map((source, i) => {
+                             return  <li key={ i }>
+                                 <a
+                                    className="translation-source"
+                                    href={ source.url }
+                                    title={ source.title }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                 >
+                                     <span>{ source.type }</span>
+                                     { !source.count ? null :
+                                     <Localized id="machinery-translation-number-occurrences" attrs={{ title: true }}>
+                                         <sup title="Number of translation occurrences">
+                                            { source.count }
+                                        </sup>
+                                    </Localized>
+                                     }
+                                 </a>
+                             </li>;
+                         }) }
                      </ul>
                  </header>
                  <p className="original">

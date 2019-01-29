@@ -38,13 +38,15 @@ export default class MachineryAPI extends APIBase {
 
         return results.map(item => {
             return {
-                source: 'Translation memory',
-                url: '/',
-                title: 'Pontoon Homepage',
+                sources: [{
+                    type: 'Translation memory',
+                    url: '/',
+                    title: 'Pontoon Homepage',
+                    count: item.count,
+                }],
                 original: item.source,
                 translation: item.target,
-                quality: Math.round(item.quality) + '%',
-                count: item.count,
+                quality: Math.round(item.quality),
             };
         });
     }
@@ -63,9 +65,11 @@ export default class MachineryAPI extends APIBase {
 
         if (result.translation) {
             return [{
-                source: 'Google Translate',
-                url: 'https://translate.google.com/',
-                title: 'Visit Google Translate',
+                sources: [{
+                    type: 'Google Translate',
+                    url: 'https://translate.google.com/',
+                    title: 'Visit Google Translate',
+                }],
                 original: entity.original,
                 translation: result.translation,
             }];
@@ -88,9 +92,11 @@ export default class MachineryAPI extends APIBase {
 
         if (result.translation) {
             return [{
-                source: 'Microsoft Translator',
-                url: 'https://www.bing.com/translator',
-                title: 'Visit Bing Translator',
+                sources: [{
+                    type: 'Microsoft Translator',
+                    url: 'https://www.bing.com/translator',
+                    title: 'Visit Bing Translator',
+                }],
                 original: entity.original,
                 translation: result.translation,
             }];
@@ -111,16 +117,22 @@ export default class MachineryAPI extends APIBase {
 
         const results = await this._get(url, params);
 
-        return results.map(item => {
+        if (!results.translations) {
+            return [];
+        }
+
+        return results.translations.map(item => {
             return {
-                source: 'Microsoft',
-                url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-                     item.source + '&langID=' + locale.msTerminologyCode,
-                title: 'Visit Microsoft Terminology Service API.\n' +
-                       '© 2018 Microsoft Corporation. All rights reserved.',
+                sources: [{
+                    type: 'Microsoft',
+                    url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
+                        item.source + '&langID=' + locale.msTerminologyCode,
+                    title: 'Visit Microsoft Terminology Service API.\n' +
+                        '© 2018 Microsoft Corporation. All rights reserved.',
+                }],
                 original: item.source,
                 translation: item.target,
-                quality: Math.round(item.quality) + '%',
+                quality: Math.round(item.quality),
             };
         });
     }
@@ -139,14 +151,16 @@ export default class MachineryAPI extends APIBase {
 
         return results.map(item => {
             return {
-                source: 'Mozilla',
-                url: 'https://transvision.mozfr.org/?repo=global' +
-                     '&recherche=' + encodeURIComponent(entity.original) +
-                     '&locale=' + locale.code,
-                title: 'Visit Transvision',
+                sources: [{
+                    type: 'Mozilla',
+                    url: 'https://transvision.mozfr.org/?repo=global' +
+                        '&recherche=' + encodeURIComponent(entity.original) +
+                        '&locale=' + locale.code,
+                    title: 'Visit Transvision',
+                }],
                 original: item.source,
                 translation: item.target,
-                quality: Math.round(item.quality) + '%',
+                quality: Math.round(item.quality),
             };
         });
     }
@@ -167,9 +181,11 @@ export default class MachineryAPI extends APIBase {
 
         if (result.translation) {
             return [{
-                source: 'Caighdean',
-                url: 'https://github.com/kscanne/caighdean',
-                title: 'Visit Caighdean Machine Translation',
+                sources: [{
+                    type: 'Caighdean',
+                    url: 'https://github.com/kscanne/caighdean',
+                    title: 'Visit Caighdean Machine Translation',
+                }],
                 original: result.original,
                 translation: result.translation,
             }];

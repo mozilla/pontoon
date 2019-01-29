@@ -55,28 +55,28 @@ export function get(entity: DbEntity, locale: Locale): Function {
     return async dispatch => {
         dispatch(reset());
 
-        const memory = await api.machinery.getTranslationMemory(entity, locale);
-        dispatch(addTranslations(memory));
+        api.machinery.getTranslationMemory(entity, locale)
+        .then(results => dispatch(addTranslations(results)));
 
-        const googleTranslation = await api.machinery.getGoogleTranslation(entity, locale);
-        dispatch(addTranslations(googleTranslation));
+        api.machinery.getGoogleTranslation(entity, locale)
+        .then(results => dispatch(addTranslations(results)));
 
-        const microsoftTranslation = await api.machinery.getMicrosoftTranslation(entity, locale);
-        dispatch(addTranslations(microsoftTranslation));
+        api.machinery.getMicrosoftTranslation(entity, locale)
+        .then(results => dispatch(addTranslations(results)));
 
         if (locale.msTerminologyCode) {
-            const msTerminology = await api.machinery.getMicrosoftTerminology(entity, locale);
-            dispatch(addTranslations(msTerminology));
+            api.machinery.getMicrosoftTerminology(entity, locale)
+            .then(results => dispatch(addTranslations(results)));
         }
 
         if (locale.transvision) {
-            const transvisionMemory = await api.machinery.getTransvisionMemory(entity, locale);
-            dispatch(addTranslations(transvisionMemory));
+            api.machinery.getTransvisionMemory(entity, locale)
+            .then(results => dispatch(addTranslations(results)));
         }
 
         if (locale.code === 'ga-IE') {
-            const caighdean = await api.machinery.getCaighdeanTranslation(entity, locale);
-            dispatch(addTranslations(caighdean));
+            api.machinery.getCaighdeanTranslation(entity, locale)
+            .then(results => dispatch(addTranslations(results)));
         }
     }
 }
