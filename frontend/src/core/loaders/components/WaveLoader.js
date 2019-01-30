@@ -4,12 +4,7 @@ import React from 'react';
 
 import './WaveLoader.css';
 
-type Props = {
-    isLoading: boolean,
-    children?: React.Node,
-};
-
-export const WaveLoadingBar = (): React.Node => (
+export const WaveLoader = (): React.Node => (
     <div id="project-load" className="overlay">
         <div className="inner">
             <div className="animation">
@@ -28,8 +23,5 @@ export const WaveLoadingBar = (): React.Node => (
     </div>
 );
 
-const WaveLoader = (props: Props): React.Node => (
-     props.isLoading ? <WaveLoadingBar /> : props.children
-);
 
 export default WaveLoader;

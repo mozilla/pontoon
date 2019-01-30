@@ -35,22 +35,23 @@ class App extends React.Component<InternalProps> {
 
     render() {
         const { l10n, locales } = this.props;
-        const isLoading = l10n.fetching || locales.fetching;
+
+        if (l10n.fetching || locales.fetching) {
+            return <WaveLoader />;
+        }
 
         return <div id="app">
             <UserAutoUpdater />
             <header>
                 <Navigation />
             </header>
-            <WaveLoader isLoading={ isLoading }>
-                <section className="panel-list">
-                    <SearchBox />
-                    <EntitiesList />
-                </section>
-                <section className="panel-content">
-                    <EntityDetails />
-                </section>
-            </WaveLoader>
+            <section className="panel-list">
+                <SearchBox />
+                <EntitiesList />
+            </section>
+            <section className="panel-content">
+                <EntityDetails />
+            </section>
             <Lightbox />
         </div>;
     }
