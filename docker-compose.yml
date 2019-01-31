@@ -33,6 +33,8 @@ services:
       - ./frontend/src:/app/frontend/src
       - ./frontend/public:/app/frontend/public
       - ./tests:/app/tests
+      # git is used to run only tests that changed
+      - ./.git:/app/.git
 
   postgresql:
     build:
