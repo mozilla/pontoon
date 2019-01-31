@@ -25,6 +25,7 @@ import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { HistoryState } from 'modules/history';
+import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
 
@@ -32,6 +33,7 @@ type Props = {|
     activeTranslation: string,
     history: HistoryState,
     locale: ?Locale,
+    machinery: MachineryState,
     nextEntity: ?DbEntity,
     otherlocales: LocalesState,
     parameters: NavigationParams,
@@ -142,6 +144,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             <Tools
                 parameters={ state.parameters }
                 history={ state.history }
+                machinery={ state.machinery }
                 otherlocales={ state.otherlocales }
             />
         </section>;
@@ -154,6 +157,7 @@ const mapStateToProps = (state: Object): Props => {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
         history: state[history.NAME],
         locale: locales.selectors.getCurrentLocaleData(state),
+        machinery: state[machinery.NAME],
         nextEntity: entitieslist.selectors.getNextEntity(state),
         otherlocales: state[otherlocales.NAME],
         parameters: navigation.selectors.getNavigationParams(state),

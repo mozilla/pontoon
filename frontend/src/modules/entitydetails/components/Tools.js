@@ -9,12 +9,58 @@ import { History } from 'modules/history';
 import { Machinery } from 'modules/machinery';
 import { Locales } from 'modules/otherlocales';
 
+import type { HistoryState } from 'modules/history';
+import type { MachineryState } from 'modules/machinery';
+
 
 type Props = {|
-    history: Object,
+    history: HistoryState,
+    machinery: MachineryState,
     otherlocales: Object,
     parameters: Object,
 |};
+
+
+type CountProps = {|
+    machinery: MachineryState,
+|};
+
+
+class MachineryCount extends React.Component<CountProps> {
+    render() {
+        const { machinery } = this.props;
+
+        const machineryCount = machinery.translations.length;
+
+        const preferredCount = machinery.translations.reduce((count, item) => {
+            if (item.sources.find(source => source.type === 'Translation memory')) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
+
+        const remainingCount = machineryCount - preferredCount;
+
+        const preferred = (
+            !preferredCount ? null :
+            <span className='preferred'>{ preferredCount }</span>
+        );
+        const remaining = (
+            !remainingCount ? null :
+            <span>{ remainingCount }</span>
+        );
+        const plus = (
+            !remainingCount || !preferredCount ? null :
+            <span>{ '+' }</span>
+        );
+
+        return <span className='count'>
+            { preferred }
+            { plus }
+            { remaining }
+        </span>;
+    }
+};
 
 
 /**
@@ -24,7 +70,7 @@ type Props = {|
  */
 export default class Tools extends React.Component<Props> {
     render() {
-        const { history, otherlocales, parameters } = this.props;
+        const { history, machinery, otherlocales, parameters } = this.props;
 
         const historyCount = history.translations.length;
         const otherlocalesCount = otherlocales.translations.length;
@@ -39,6 +85,7 @@ export default class Tools extends React.Component<Props> {
                 </Tab>
                 <Tab>
                     Machinery
+                    <MachineryCount machinery={ machinery } />
                 </Tab>
                 <Tab>
                     Locales
