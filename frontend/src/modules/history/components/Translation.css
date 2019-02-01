@@ -134,9 +134,3 @@
 .translation.rejected.can-reject > header button.delete {
     display: inline-block;
 }
-
-/* MANDATORY, or transitionend is triggered too late */
-.translation.deleted {
-    transform: scale(0);
-    -webkit-transform: scale(0);
-}
