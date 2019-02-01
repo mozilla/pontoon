@@ -27,6 +27,9 @@ function settings(
 ): SettingsState {
     switch (action.type) {
         case UPDATE:
+            if (!action.data.settings) {
+                return state;
+            }
             return {
                 runQualityChecks: action.data.settings.quality_checks,
                 forceSuggestions: action.data.settings.force_suggestions,
