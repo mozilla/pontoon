@@ -63,19 +63,19 @@ export default class MachineryAPI extends APIBase {
 
         const result = await this._get(url, params);
 
-        if (result.translation) {
-            return [{
-                sources: [{
-                    type: 'Google Translate',
-                    url: 'https://translate.google.com/',
-                    title: 'Visit Google Translate',
-                }],
-                original: entity.original,
-                translation: result.translation,
-            }];
+        if (!result.translation) {
+            return [];
         }
 
-        return [];
+        return [{
+            sources: [{
+                type: 'Google Translate',
+                url: 'https://translate.google.com/',
+                title: 'Visit Google Translate',
+            }],
+            original: entity.original,
+            translation: result.translation,
+        }];
     }
 
     /**
@@ -90,19 +90,19 @@ export default class MachineryAPI extends APIBase {
 
         const result = await this._get(url, params);
 
-        if (result.translation) {
-            return [{
-                sources: [{
-                    type: 'Microsoft Translator',
-                    url: 'https://www.bing.com/translator',
-                    title: 'Visit Bing Translator',
-                }],
-                original: entity.original,
-                translation: result.translation,
-            }];
+        if (!result.translation) {
+            return [];
         }
 
-        return [];
+        return [{
+            sources: [{
+                type: 'Microsoft Translator',
+                url: 'https://www.bing.com/translator',
+                title: 'Visit Bing Translator',
+            }],
+            original: entity.original,
+            translation: result.translation,
+        }];
     }
 
     /**
@@ -179,18 +179,18 @@ export default class MachineryAPI extends APIBase {
 
         const result = await this._get(url, params);
 
-        if (result.translation) {
-            return [{
-                sources: [{
-                    type: 'Caighdean',
-                    url: 'https://github.com/kscanne/caighdean',
-                    title: 'Visit Caighdean Machine Translation',
-                }],
-                original: result.original,
-                translation: result.translation,
-            }];
+        if (!result.translation) {
+            return [];
         }
 
-        return [];
+        return [{
+            sources: [{
+                type: 'Caighdean',
+                url: 'https://github.com/kscanne/caighdean',
+                title: 'Visit Caighdean Machine Translation',
+            }],
+            original: result.original,
+            translation: result.translation,
+        }];
     }
 }
