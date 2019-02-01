@@ -66,6 +66,8 @@ history-history-no-translations = No translations available.
 ## History Translation
 ## Shows a specific translation for an entity, and actions around it
 
+history-translation-button-delete =
+    .title = Delete
 history-translation-button-approve =
     .title = Approve
 
