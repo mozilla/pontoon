@@ -59,8 +59,11 @@ export class HistoryBase extends React.Component<InternalProps> {
     }
 
     deleteTranslation = (translation: DBTranslation) => {
-        const { dispatch } = this.props;
+        const { parameters, pluralForm, dispatch } = this.props;
         dispatch(actions.deleteTranslation(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
             translation.pk,
         ));
     }

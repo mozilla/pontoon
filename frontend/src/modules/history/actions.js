@@ -118,10 +118,14 @@ export function updateStatus(
 
 
 export function deleteTranslation(
+    entity: number,
+    locale: string,
+    pluralForm: number,
     translation: number,
 ): Function {
     return async dispatch => {
         await api.translation.delete(translation);
+        dispatch(get(entity, locale, pluralForm));
     }
 }
 
