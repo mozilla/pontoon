@@ -17,7 +17,11 @@ type Props = {|
 
 
 /**
+ * Render a Translation in the Machinery tab.
  *
+ * Shows the original string and the translation, as well as a list of sources.
+ * Similar translations (same original and translation) are shown only once
+ * and their sources are merged.
  */
  export default class Translation extends React.Component<Props> {
      render() {
@@ -30,26 +34,24 @@ type Props = {|
                      <span className="stress">{ translation.quality + '%' }</span>
                      }
                      <ul className="sources">
-                         { translation.sources.map((source, i) => {
-                             return  <li key={ i }>
-                                 <a
-                                    className="translation-source"
-                                    href={ source.url }
-                                    title={ source.title }
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                 >
-                                     <span>{ source.type }</span>
-                                     { !source.count ? null :
-                                     <Localized id="machinery-translation-number-occurrences" attrs={{ title: true }}>
-                                         <sup title="Number of translation occurrences">
-                                            { source.count }
-                                        </sup>
-                                    </Localized>
-                                     }
-                                 </a>
-                             </li>;
-                         }) }
+                        { translation.sources.map((source, i) => <li key={ i }>
+                             <a
+                                className="translation-source"
+                                href={ source.url }
+                                title={ source.title }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                             >
+                                 <span>{ source.type }</span>
+                                 { !source.count ? null :
+                                 <Localized id="machinery-translation-number-occurrences" attrs={{ title: true }}>
+                                     <sup title="Number of translation occurrences">
+                                        { source.count }
+                                    </sup>
+                                </Localized>
+                                 }
+                             </a>
+                         </li>) }
                      </ul>
                  </header>
                  <p className="original">

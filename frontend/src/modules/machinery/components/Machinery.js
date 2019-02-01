@@ -12,7 +12,7 @@ import { NAME } from '..';
 import Translation from './Translation';
 
 import type { Locale } from 'core/locales';
-import type { MachineryState } from '../reducer';
+import type { MachineryState } from '..';
 
 
 type Props = {|
@@ -27,7 +27,11 @@ type InternalProps = {|
 
 
 /**
+ * Show translations from machines.
  *
+ * Shows a sorted list of translations for the same original string, or similar
+ * strings, coming from various sources like Translation Memory or
+ * third-party Machine Translation.
  */
 export class MachineryBase extends React.Component<InternalProps> {
     render() {
