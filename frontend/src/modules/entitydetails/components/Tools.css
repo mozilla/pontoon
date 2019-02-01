@@ -71,6 +71,10 @@
     background: #4D5967;
 }
 
+.react-tabs span.count .preferred {
+    color: #7BC876;
+}
+
 .react-tabs__tab,
 .react-tabs__tab-panel {
     height: calc(100% - 37px);
