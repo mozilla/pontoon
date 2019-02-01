@@ -159,6 +159,7 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(1);
             expect(wrapper.find('.reject')).toHaveLength(1);
             expect(wrapper.find('.unreject')).toHaveLength(0);
+            expect(wrapper.find('.delete')).toHaveLength(0);
         });
 
         it('shows the correct status for rejected translations', () => {
@@ -175,6 +176,7 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(0);
             expect(wrapper.find('.reject')).toHaveLength(0);
             expect(wrapper.find('.unreject')).toHaveLength(1);
+            expect(wrapper.find('.delete')).toHaveLength(1);
         });
 
         it('shows the correct status for unreviewed translations', () => {
@@ -187,6 +189,7 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(0);
             expect(wrapper.find('.reject')).toHaveLength(1);
             expect(wrapper.find('.unreject')).toHaveLength(0);
+            expect(wrapper.find('.delete')).toHaveLength(0);
         });
     });
 
