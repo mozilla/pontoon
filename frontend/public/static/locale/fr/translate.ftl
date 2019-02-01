@@ -22,19 +22,37 @@ editor-settings-force-suggestions = <glyph></glyph>Faire des suggestions
 editor-settings-change-all = Changer tous les paramètres
 
 
+## Machinery
+## Shows a list of translations from machines.
+
+machinery-machinery-search-placeholder =
+    .placeholder = Saisir pour rechercher la machinerie
+
+machinery-translation-copy =
+    .title = Copier la traduction (Tab)
+
+machinery-translation-number-occurrences =
+    .title = Nombre d'occurrences de la traduction
+
+
 ## Metadata
 ## Shows metadata about an entity (original string)
 
 entitydetails-metadata-plural = Pluriel
 entitydetails-metadata-singular = Singulier
+
 entitydetails-metadata-comment =
     .title = Commentaire
+
 entitydetails-metadata-context =
     .title = Contexte
+
 entitydetails-metadata-placeholder =
     .title = Exemples bouche-trous
+
 entitydetails-metadata-resource =
     .title = Ressource
+
 entitydetails-metadata-project =
     .title = Projet
 
@@ -50,9 +68,12 @@ history-history-no-translations = Pas de traduction disponible.
 
 history-translation-button-approve =
     .title = Approuver
+
 history-translation-button-unapprove =
     .title = Désapprouver
+
 history-translation-button-reject =
     .title = Rejeter
+
 history-translation-button-unreject =
     .title = Dérejeter

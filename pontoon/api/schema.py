@@ -74,6 +74,10 @@ class Locale(DjangoObjectType, Stats):
             'strings_with_errors',
             'strings_with_warnings',
             'unreviewed_strings',
+            'google_translate_code',
+            'ms_translator_code',
+            'ms_terminology_code',
+            'transvision',
         )
 
     localizations = graphene.List(
