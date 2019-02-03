@@ -24,11 +24,6 @@
 	box-sizing: border-box;
 }
 
-.inner {
-    display: table-cell;
-    vertical-align: middle;
-}
-
 #app .inner {
     display: table-cell;
     vertical-align: middle;

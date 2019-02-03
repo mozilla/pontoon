@@ -4,16 +4,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import './App.css';
-import { L10nState } from 'core/l10n';
-import { LocaleState } from 'core/locales';
+
+import { NAME as L10N_NAME } from 'core/l10n';
+import { NAME as LOCALES_NAME } from 'core/locales';
 import { Lightbox } from 'core/lightbox';
+import { WaveLoader } from 'core/loaders';
 import * as locales from 'core/locales';
 import { Navigation } from 'core/navigation';
 import { UserAutoUpdater } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { SearchBox } from 'modules/search';
-import { WaveLoader } from './core/loaders';
+
+import type { L10nState } from 'core/l10n';
+import type { LocalesState } from 'core/locales';
+
 
 type Props = {|
     l10n: L10nState,
@@ -58,11 +63,9 @@ class App extends React.Component<InternalProps> {
 }
 
 const mapStateToProps = (state: Object): Props => {
-    const { l10n, locales } = state;
-
     return {
-        l10n,
-        locales,
+        l10n: state[L10N_NAME],
+        locales: state[LOCALES_NAME],
     };
 };
 

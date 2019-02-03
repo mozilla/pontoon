@@ -1,24 +1,19 @@
-
-.overlay {
-    background: #3F4752;
-    display: table;
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    z-index: 14;
-}
-
 /*
 * SpinKit
 * https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 */
 
-#project-load {
+.wave-loader {
+    position: fixed;
+    z-index: 14;
+    display: table;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
     background: #3f4752;
 }
 
-#project-load .animation {
+.wave-loader .animation {
     margin: 20px auto;
     width: 100px;
     height: 60px;
@@ -26,45 +21,43 @@
     font-size: 20px;
 }
 
-#project-load .text {
-    font-size: 1.5em;
-    opacity: 0;
-    text-align: center;
-}
-
-#project-load .animation > div {
-    background-color: #7BC876;
-    height: 100%;
-    width: 12px;
+.wave-loader .animation > div {
     display: inline-block;
+    width: 12px;
+    height: 100%;
+    background-color: #7BC876;
 
     -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
     animation: stretchdelay 1.2s infinite ease-in-out;
 }
 
-#project-load .animation div:nth-child(2) {
+.wave-loader .animation div:nth-child(2) {
     -webkit-animation-delay: -1.1s;
     animation-delay: -1.1s;
 }
 
-#project-load .animation div:nth-child(3) {
+.wave-loader .animation div:nth-child(3) {
     -webkit-animation-delay: -1.0s;
     animation-delay: -1.0s;
 }
 
-#project-load .animation div:nth-child(4) {
+.wave-loader .animation div:nth-child(4) {
     -webkit-animation-delay: -0.9s;
     animation-delay: -0.9s;
 }
 
-#project-load .animation div:nth-child(5) {
+.wave-loader .animation div:nth-child(5) {
     -webkit-animation-delay: -0.8s;
     animation-delay: -0.8s;
 }
 
 @-webkit-keyframes stretchdelay {
-    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
-    20% { -webkit-transform: scaleY(1.0) }
+    0%, 40%, 100% {
+        -webkit-transform: scaleY(0.4)
+    }
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
 }
 
 @keyframes stretchdelay {
@@ -73,16 +66,24 @@
         -webkit-transform: scaleY(0.4);
     }
     20% {
-       transform: scaleY(1.0);
-       -webkit-transform: scaleY(1.0);
-   }
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+    }
+}
+
+.wave-loader .inner {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 /*
 * Loading text
  */
-#project-load .text {
+.wave-loader .text {
     display: block;
+    text-align: center;
+    font-size: 1.5em;
+    opacity: 0;
     animation: fadeInLoaderText 1s forwards;
     animation-delay: 3s;
 }
