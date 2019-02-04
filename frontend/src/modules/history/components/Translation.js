@@ -115,6 +115,8 @@ export default class Translation extends React.Component<Props> {
             className += ' can-reject';
         }
 
+        let canDelete = canReview || ownTranslation;
+
         return <li className={ className }>
             <header className="clearfix">
                 <div className="info">
@@ -126,7 +128,7 @@ export default class Translation extends React.Component<Props> {
                     />
                 </div>
                 <menu className="toolbar">
-                { !translation.rejected ? null :
+                { (!translation.rejected || !canDelete ) ? null :
                     // Delete Button
                     <Localized
                         id="history-translation-button-delete"

@@ -116,7 +116,6 @@
 }
 
 .translation > header button.delete {
-    display: none;
     margin-right: 1px;
 }
 
@@ -129,8 +128,4 @@
 
 .translation > header button.delete:hover:before {
     color: #F36;
-}
-
-.translation.rejected.can-reject > header button.delete {
-    display: inline-block;
 }
