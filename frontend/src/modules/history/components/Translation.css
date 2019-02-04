@@ -63,6 +63,7 @@
     width: 22px;
 }
 
+.translation.rejected.can-reject header button.delete,
 .translation.can-approve header button.approve,
 .translation.can-approve header button.unapprove,
 .translation.can-reject header button.reject,
@@ -112,4 +113,19 @@
 .translation > header button.reject:not(:hover):before,
 .translation > header button.unreject:hover:before {
     font-weight: 400;
+}
+
+.translation > header button.delete {
+    margin-right: 1px;
+}
+
+.translation > header button.delete:before {
+    content: "";
+    float: left;
+    font-size: 19px;
+    margin-top: -1px;
+}
+
+.translation > header button.delete:hover:before {
+    color: #F36;
 }
