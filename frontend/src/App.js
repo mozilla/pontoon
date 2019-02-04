@@ -22,7 +22,7 @@ import type { LocalesState } from 'core/locales';
 
 type Props = {|
     l10n: L10nState,
-    locales: LocaleState,
+    locales: LocalesState,
 |};
 
 type InternalProps = {
