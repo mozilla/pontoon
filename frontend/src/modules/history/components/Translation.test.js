@@ -159,7 +159,6 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(1);
             expect(wrapper.find('.reject')).toHaveLength(1);
             expect(wrapper.find('.unreject')).toHaveLength(0);
-            expect(wrapper.find('.delete')).toHaveLength(0);
         });
 
         it('shows the correct status for rejected translations', () => {
@@ -176,7 +175,6 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(0);
             expect(wrapper.find('.reject')).toHaveLength(0);
             expect(wrapper.find('.unreject')).toHaveLength(1);
-            expect(wrapper.find('.delete')).toHaveLength(1);
         });
 
         it('shows the correct status for unreviewed translations', () => {
@@ -189,7 +187,6 @@ describe('<Translation>', () => {
             expect(wrapper.find('.unapprove')).toHaveLength(0);
             expect(wrapper.find('.reject')).toHaveLength(1);
             expect(wrapper.find('.unreject')).toHaveLength(0);
-            expect(wrapper.find('.delete')).toHaveLength(0);
         });
     });
 
@@ -217,7 +214,7 @@ describe('<Translation>', () => {
             expect(wrapper.find('.can-approve')).toHaveLength(0);
         });
 
-        it('allows translators to review the translation ', () => {
+        it('allows translators to review the translation', () => {
             const wrapper = shallow(<Translation
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
@@ -226,6 +223,49 @@ describe('<Translation>', () => {
 
             expect(wrapper.find('.can-reject')).toHaveLength(1);
             expect(wrapper.find('.can-approve')).toHaveLength(1);
+        });
+
+        it('allows translators to delete the rejected translation', () => {
+            const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                locale={ DEFAULT_LOCALE }
+                canReview={ true }
+            />);
+
+            expect(wrapper.find('.delete')).toHaveLength(1);
+        });
+
+        it('forbids translators to delete non-rejected translation', () => {
+            const translation = { ...DEFAULT_TRANSLATION, rejected: false };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                locale={ DEFAULT_LOCALE }
+                canReview={ true }
+            />);
+
+            expect(wrapper.find('.delete')).toHaveLength(0);
+        });
+
+        it('allows the user to delete their own rejected translation', () => {
+            const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
+            />);
+
+            expect(wrapper.find('.delete')).toHaveLength(1);
+        });
+
+        it('forbids the user to delete rejected translation of another user', () => {
+            const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                locale={ DEFAULT_LOCALE }
+            />);
+
+            expect(wrapper.find('.delete')).toHaveLength(0);
         });
     });
 });
