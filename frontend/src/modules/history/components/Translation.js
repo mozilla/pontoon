@@ -126,7 +126,7 @@ export default class Translation extends React.Component<Props> {
                     />
                 </div>
                 <menu className="toolbar">
-                { translation.rejected ?
+                { !translation.rejected ? null :
                     // Delete Button
                     <Localized
                         id="history-translation-button-delete"
@@ -138,8 +138,6 @@ export default class Translation extends React.Component<Props> {
                             onClick={ this.delete }
                         />
                     </Localized>
-                    :
-                    null
                 }
                 { translation.approved ?
                     // Unapprove Button
