@@ -566,7 +566,9 @@ def delete_translation(request):
 
     translation.delete()
 
-    return HttpResponse('ok')
+    return JsonResponse({
+        'status': True,
+    })
 
 
 @utils.require_AJAX

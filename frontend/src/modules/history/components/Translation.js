@@ -17,6 +17,7 @@ type Props = {|
     locale: Locale,
     user: UserState,
     updateTranslationStatus: Function,
+    deleteTranslation: Function,
 |};
 
 /**
@@ -43,6 +44,10 @@ export default class Translation extends React.Component<Props> {
 
     unreject = () => {
         this.props.updateTranslationStatus(this.props.translation, 'unreject');
+    }
+
+    delete = () => {
+        this.props.deleteTranslation(this.props.translation);
     }
 
     getStatus() {
@@ -110,6 +115,8 @@ export default class Translation extends React.Component<Props> {
             className += ' can-reject';
         }
 
+        let canDelete = canReview || ownTranslation;
+
         return <li className={ className }>
             <header className="clearfix">
                 <div className="info">
@@ -121,6 +128,19 @@ export default class Translation extends React.Component<Props> {
                     />
                 </div>
                 <menu className="toolbar">
+                { (!translation.rejected || !canDelete ) ? null :
+                    // Delete Button
+                    <Localized
+                        id="history-translation-button-delete"
+                        attrs={{ title: true }}
+                    >
+                        <button
+                            className='delete far'
+                            title='Delete'
+                            onClick={ this.delete }
+                        />
+                    </Localized>
+                }
                 { translation.approved ?
                     // Unapprove Button
                     <Localized
@@ -131,7 +151,7 @@ export default class Translation extends React.Component<Props> {
                             className='unapprove fa'
                             title='Unapprove'
                             onClick={ this.unapprove }
-                        ></button>
+                        />
                     </Localized>
                     :
                     // Approve Button
@@ -143,7 +163,7 @@ export default class Translation extends React.Component<Props> {
                             className='approve fa'
                             title='Approve'
                             onClick={ this.approve }
-                        ></button>
+                        />
                     </Localized>
                 }
                 { translation.rejected ?
@@ -156,7 +176,7 @@ export default class Translation extends React.Component<Props> {
                             className='unreject fa'
                             title='Unreject'
                             onClick={ this.unreject }
-                        ></button>
+                        />
                     </Localized>
                     :
                     // Reject Button
@@ -168,7 +188,7 @@ export default class Translation extends React.Component<Props> {
                             className='reject fa'
                             title='Reject'
                             onClick={ this.reject }
-                        ></button>
+                        />
                     </Localized>
                 }
                 </menu>
