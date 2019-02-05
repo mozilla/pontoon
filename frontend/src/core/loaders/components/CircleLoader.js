@@ -1,14 +1,14 @@
 /* @flow */
 import React from 'react';
 
-import './EntitiesLoader.css';
+import './CircleLoader.css';
 
 
-const EntitiesLoader = () => (
+const CircleLoader = () => (
     <h3 className="loading">
         <div className="fa fa-sync fa-spin"></div>
     </h3>
 );
 
 
-export default EntitiesLoader;
+export default CircleLoader;

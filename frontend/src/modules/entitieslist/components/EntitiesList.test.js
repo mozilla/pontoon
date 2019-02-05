@@ -37,7 +37,7 @@ describe('<EntitiesList>', () => {
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
         const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
 
-        expect(scroll.find('EntitiesLoader')).toHaveLength(1);
+        expect(scroll.find('CircleLoader')).toHaveLength(1);
     });
 
     it("doesn't display a loading animation when there aren't entities to load", () => {
@@ -48,7 +48,7 @@ describe('<EntitiesList>', () => {
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
         const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
 
-        expect(scroll.find('EntitiesLoader')).toHaveLength(0);
+        expect(scroll.find('CircleLoader')).toHaveLength(0);
     });
 
     it("shows a loading animation when entities are being fetched from the server", () => {
@@ -59,7 +59,7 @@ describe('<EntitiesList>', () => {
         const wrapper = shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
         const scroll  = wrapper.find('InfiniteScroll').shallow({ disableLifecycleMethods: true });
 
-        expect(scroll.find('EntitiesLoader')).toHaveLength(1);
+        expect(scroll.find('CircleLoader')).toHaveLength(1);
     });
 
     it('shows the correct number of entities', () => {
