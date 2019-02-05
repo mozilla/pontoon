@@ -59,18 +59,26 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
+        super(props);
+        this.state = {
+            translation: this.props.activeTranslation,
+        };
+    }
+
     componentDidMount() {
         this.fetchHelpersData();
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { parameters, pluralForm, selectedEntity } = this.props;
+        const { parameters, pluralForm, selectedEntity, activeTranslation } = this.props;
 
         if (
             parameters.entity !== prevProps.parameters.entity ||
             pluralForm !== prevProps.pluralForm ||
             selectedEntity !== prevProps.selectedEntity
         ) {
+            this.updateEditorTranslation(activeTranslation);
             this.fetchHelpersData();
         }
     }
@@ -110,6 +118,36 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    updateEditorTranslation = (translation: string) => {
+        this.setState({
+            translation,
+        });
+    }
+
+    deleteTranslation = (translationId: number) => {
+        const { parameters, pluralForm, dispatch } = this.props;
+        dispatch(history.actions.deleteTranslation(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+            translationId,
+        ));
+    }
+
+    updateTranslationStatus = (translationId: number, change: string) => {
+        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        dispatch(history.actions.updateStatus(
+            change,
+            parameters.entity,
+            parameters.locale,
+            parameters.resource,
+            pluralForm,
+            translationId,
+            nextEntity,
+            router,
+        ));
+    }
+
     updateSetting = (setting: string, value: boolean) => {
         this.props.dispatch(user.actions.saveSetting(setting, value, this.props.user.username));
     }
@@ -133,7 +171,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 openLightbox={ this.openLightbox }
             />
             <Editor
-                translation={ state.activeTranslation}
+                translation={ this.state.translation }
                 entity={ state.selectedEntity }
                 locale={ state.locale }
                 pluralForm= { state.pluralForm }
@@ -142,10 +180,15 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 updateSetting={ this.updateSetting }
             />
             <Tools
-                parameters={ state.parameters }
                 history={ state.history }
+                locale={ state.locale }
                 machinery={ state.machinery }
                 otherlocales={ state.otherlocales }
+                parameters={ state.parameters }
+                user={ state.user }
+                deleteTranslation={ this.deleteTranslation }
+                updateTranslationStatus={ this.updateTranslationStatus }
+                updateEditorTranslation={ this.updateEditorTranslation }
             />
         </section>;
     }

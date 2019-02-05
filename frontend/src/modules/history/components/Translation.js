@@ -16,8 +16,9 @@ type Props = {|
     translation: DBTranslation,
     locale: Locale,
     user: UserState,
-    updateTranslationStatus: Function,
-    deleteTranslation: Function,
+    deleteTranslation: (number) => void,
+    updateEditorTranslation: (string) => void,
+    updateTranslationStatus: (number, string) => void,
 |};
 
 /**
@@ -31,23 +32,27 @@ type Props = {|
  */
 export default class Translation extends React.Component<Props> {
     approve = () => {
-        this.props.updateTranslationStatus(this.props.translation, 'approve');
+        this.props.updateTranslationStatus(this.props.translation.pk, 'approve');
     }
 
     unapprove = () => {
-        this.props.updateTranslationStatus(this.props.translation, 'unapprove');
+        this.props.updateTranslationStatus(this.props.translation.pk, 'unapprove');
     }
 
     reject = () => {
-        this.props.updateTranslationStatus(this.props.translation, 'reject');
+        this.props.updateTranslationStatus(this.props.translation.pk, 'reject');
     }
 
     unreject = () => {
-        this.props.updateTranslationStatus(this.props.translation, 'unreject');
+        this.props.updateTranslationStatus(this.props.translation.pk, 'unreject');
+    }
+
+    copyTranslationIntoEditor = () => {
+        this.props.updateEditorTranslation(this.props.translation.string);
     }
 
     delete = () => {
-        this.props.deleteTranslation(this.props.translation);
+        this.props.deleteTranslation(this.props.translation.pk);
     }
 
     getStatus() {
@@ -87,8 +92,8 @@ export default class Translation extends React.Component<Props> {
         return <a
             href={ `/contributors/${translation.username}` }
             title={ this.getApprovalTitle() }
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
         >
             { translation.user }
         </a>
@@ -117,89 +122,95 @@ export default class Translation extends React.Component<Props> {
 
         let canDelete = canReview || ownTranslation;
 
-        return <li className={ className }>
-            <header className="clearfix">
-                <div className="info">
-                    { this.renderUser() }
-                    <TimeAgo
-                        dir="ltr"
-                        date={ translation.date_iso }
-                        title={ `${translation.date} UTC` }
-                    />
-                </div>
-                <menu className="toolbar">
-                { (!translation.rejected || !canDelete ) ? null :
-                    // Delete Button
-                    <Localized
-                        id="history-translation-button-delete"
-                        attrs={{ title: true }}
-                    >
-                        <button
-                            className='delete far'
-                            title='Delete'
-                            onClick={ this.delete }
-                        />
-                    </Localized>
-                }
-                { translation.approved ?
-                    // Unapprove Button
-                    <Localized
-                        id="history-translation-button-unapprove"
-                        attrs={{ title: true }}
-                    >
-                        <button
-                            className='unapprove fa'
-                            title='Unapprove'
-                            onClick={ this.unapprove }
-                        />
-                    </Localized>
-                    :
-                    // Approve Button
-                    <Localized
-                        id="history-translation-button-approve"
-                        attrs={{ title: true }}
-                    >
-                        <button
-                            className='approve fa'
-                            title='Approve'
-                            onClick={ this.approve }
-                        />
-                    </Localized>
-                }
-                { translation.rejected ?
-                    // Unreject Button
-                    <Localized
-                        id="history-translation-button-unreject"
-                        attrs={{ title: true }}
-                    >
-                        <button
-                            className='unreject fa'
-                            title='Unreject'
-                            onClick={ this.unreject }
-                        />
-                    </Localized>
-                    :
-                    // Reject Button
-                    <Localized
-                        id="history-translation-button-reject"
-                        attrs={{ title: true }}
-                    >
-                        <button
-                            className='reject fa'
-                            title='Reject'
-                            onClick={ this.reject }
-                        />
-                    </Localized>
-                }
-                </menu>
-            </header>
-            <p
-                dir={ locale.direction }
-                lang={ locale.code }
-                data-script={ locale.script }
+        return <Localized id='history-translation-copy' attrs={{ title: true }}>
+            <li
+                className={ className }
+                title='Copy Into Translation (Tab)'
+                onClick={ this.copyTranslationIntoEditor }
             >
-                { translation.string }
-            </p>
-        </li>;
+                <header className='clearfix'>
+                    <div className='info'>
+                        { this.renderUser() }
+                        <TimeAgo
+                            dir='ltr'
+                            date={ translation.date_iso }
+                            title={ `${translation.date} UTC` }
+                        />
+                    </div>
+                    <menu className='toolbar'>
+                    { (!translation.rejected || !canDelete ) ? null :
+                        // Delete Button
+                        <Localized
+                            id='history-translation-button-delete'
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='delete far'
+                                title='Delete'
+                                onClick={ this.delete }
+                            />
+                        </Localized>
+                    }
+                    { translation.approved ?
+                        // Unapprove Button
+                        <Localized
+                            id='history-translation-button-unapprove'
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='unapprove fa'
+                                title='Unapprove'
+                                onClick={ this.unapprove }
+                            ></button>
+                        </Localized>
+                        :
+                        // Approve Button
+                        <Localized
+                            id='history-translation-button-approve'
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='approve fa'
+                                title='Approve'
+                                onClick={ this.approve }
+                            ></button>
+                        </Localized>
+                    }
+                    { translation.rejected ?
+                        // Unreject Button
+                        <Localized
+                            id='history-translation-button-unreject'
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='unreject fa'
+                                title='Unreject'
+                                onClick={ this.unreject }
+                            ></button>
+                        </Localized>
+                        :
+                        // Reject Button
+                        <Localized
+                            id='history-translation-button-reject'
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='reject fa'
+                                title='Reject'
+                                onClick={ this.reject }
+                            ></button>
+                        </Localized>
+                    }
+                    </menu>
+                </header>
+                <p
+                    dir={ locale.direction }
+                    lang={ locale.code }
+                    data-script={ locale.script }
+                >
+                    { translation.string }
+                </p>
+            </li>
+        </Localized>;
     }
 }
