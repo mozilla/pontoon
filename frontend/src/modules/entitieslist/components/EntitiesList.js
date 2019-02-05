@@ -11,7 +11,7 @@ import * as navigation from 'core/navigation';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
-import EntitiesLoader from './EntitiesLoader'
+import { CircleLoader } from 'core/loaders'
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -119,7 +119,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 pageStart={ 1 }
                 loadMore={ this.getMoreEntities }
                 hasMore={ hasMore }
-                loader={ <EntitiesLoader key={0} /> }
+                loader={ <CircleLoader key={0} /> }
                 useWindow={ false }
                 threshold={ 600 }
             >

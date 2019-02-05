@@ -47,11 +47,6 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
     render() {
         const { children, l10n } = this.props;
 
-        if (!l10n.bundles.length) {
-            // TODO: Show a loader.
-            return <div>LOADING</div>;
-        }
-
         return <LocalizationProvider bundles={ l10n.bundles }>
             { children }
         </LocalizationProvider>;
