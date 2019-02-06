@@ -5,7 +5,7 @@
     height: 100vh;
 }
 
-#app header {
+#app > header {
     background: #272a2f;
     border-bottom: 1px solid #333941;
     grid-column-start: 1;
