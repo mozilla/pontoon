@@ -17,6 +17,7 @@ import * as otherlocales from 'modules/otherlocales';
 import { Editor } from 'modules/editor';
 
 import { actions, selectors } from '..';
+import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Tools from './Tools';
 
@@ -164,6 +165,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         return <section className="entity-details">
+            <EntityNavigation
+                entity={ state.selectedEntity }
+            />
             <Metadata
                 entity={ state.selectedEntity }
                 locale={ state.locale }

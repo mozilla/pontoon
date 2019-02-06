@@ -1,0 +1,27 @@
+.entity-navigation {
+    background: #4D5967;
+    border-bottom: 1px solid #5E6475;
+    padding: 12px 10px 13px;
+    text-transform: uppercase;
+}
+
+.entity-navigation button {
+    background: none;
+    border: none;
+    color: #CCCCCC;
+    float: right;
+    font-weight: 300;
+    padding: 0;
+}
+
+.entity-navigation button#previous {
+    margin-right: 30px;
+}
+
+.entity-navigation button:hover {
+    color: #7BC876;
+}
+
+.entity-navigation button .fa {
+    padding-right: 5px;
+}

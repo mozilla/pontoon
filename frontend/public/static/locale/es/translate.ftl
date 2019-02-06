@@ -10,6 +10,15 @@ entitydetails-editor-button-save = Guardar
 entitydetails-editor-button-suggest = Sugerir
 
 
+## Entity Navigation
+## Shows next/previous buttons.
+
+entitynavigation-next = <glyph></glyph>Siguiente
+    .title = Go To Next String (Alt + Down)
+entitynavigation-previous = <glyph></glyph>Anterior
+    .title = Go To Previous String (Alt + Up)
+
+
 ## Metadata
 ## Shows metadata about an entity (original string)
 
