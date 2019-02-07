@@ -14,9 +14,9 @@ entitydetails-editor-button-suggest = Sugerir
 ## Shows next/previous buttons.
 
 entitynavigation-next = <glyph></glyph>Siguiente
-    .title = Go To Next String (Alt + Down)
+    .title = Ir a la cadena siguiente (Alt + Abajo)
 entitynavigation-previous = <glyph></glyph>Anterior
-    .title = Go To Previous String (Alt + Up)
+    .title = Ir a la cadena anterior (Alt + Arriba)
 
 
 ## Metadata

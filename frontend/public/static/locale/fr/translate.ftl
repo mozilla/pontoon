@@ -42,9 +42,9 @@ machinery-translation-number-occurrences =
 ## Shows next/previous buttons.
 
 entitynavigation-next = <glyph></glyph>Suivant
-    .title = Go To Next String (Alt + Down)
+    .title = Aller à la chaîne suivante (Alt + Bas)
 entitynavigation-previous = <glyph></glyph>Précédent
-    .title = Go To Previous String (Alt + Up)
+    .title = Aller à la chaîne précédente (Alt + Haut)
 
 
 ## Metadata
