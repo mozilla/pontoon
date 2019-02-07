@@ -655,7 +655,6 @@ class Locale(AggregatedStats):
     objects = LocaleQuerySet.as_manager()
 
     class Meta:
-        ordering = ['name', 'code']
         permissions = (
             ('can_translate_locale', 'Can add translations'),
             ('can_manage_locale', 'Can manage locale')
