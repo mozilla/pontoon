@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
-import * as navigation from 'core/navigation';
+// import * as navigation from 'core/navigation';
 import * as user from 'core/user';
 import * as history from 'modules/history';
 
@@ -163,7 +163,7 @@ describe('<EntityDetails>', () => {
     });
 
     it('updates translation state when props change', () => {
-        const [wrapper, store] = createEntityDetailsWithStore();
+        const [wrapper] = createEntityDetailsWithStore();
 
         expect(wrapper.state('translation')).toEqual(TRANSLATION);
 
