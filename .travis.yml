@@ -33,17 +33,22 @@ script:
   - pylama pontoon
   - pylama tests
   - ./node_modules/.bin/eslint .
-  - pushd frontend && npm run flow && popd
 
   # Build and collect static assets
   - ./node_modules/.bin/webpack
-  - pushd frontend && npm run build && popd
   - python manage.py collectstatic -v0 --noinput
 
   # Run tests
   - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - npm test
-  - pushd frontend && npm test && popd
+
+  # Run all frontend checks
+  - pushd frontend
+  - npm run flow
+  - npm run build
+  - npm test
+  - popd
+
   - codecov
 
   # Heroku deployment file is valid
