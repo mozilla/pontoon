@@ -33,6 +33,7 @@ script:
   - pylama pontoon
   - pylama tests
   - ./node_modules/.bin/eslint .
+  - pushd frontend && npm run flow && popd
 
   # Build and collect static assets
   - ./node_modules/.bin/webpack
