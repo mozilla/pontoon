@@ -36,6 +36,7 @@ script:
 
   # Build and collect static assets
   - ./node_modules/.bin/webpack
+  - pushd frontend && npm run build && popd
   - python manage.py collectstatic -v0 --noinput
 
   # Run tests
@@ -45,7 +46,6 @@ script:
   # Run all frontend checks
   - pushd frontend
   - npm run flow
-  - npm run build
   - npm test
   - popd
 
