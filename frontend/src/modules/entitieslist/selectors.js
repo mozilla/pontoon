@@ -56,7 +56,33 @@ export const getNextEntity: Function = createSelector(
 );
 
 
+export function _getPreviousEntity(
+    entities: Entities,
+    params: NavigationParams,
+): ?DbEntity {
+    const currentIndex = entities.findIndex(element => element.pk === params.entity);
+
+    if (currentIndex === -1) {
+        return null;
+    }
+
+    const previous = (currentIndex === 0) ? entities.length - 1 : currentIndex - 1;
+    return entities[previous];
+}
+
+
+/**
+ * Return the Entity that preceeds the current one in the list.
+ */
+export const getPreviousEntity: Function = createSelector(
+    entitiesSelector,
+    navigation.selectors.getNavigationParams,
+    _getPreviousEntity
+);
+
+
 export default {
     getNextEntity,
+    getPreviousEntity,
     getSelectedEntity,
 };
