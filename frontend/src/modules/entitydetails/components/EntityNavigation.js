@@ -5,11 +5,16 @@ import { Localized } from 'fluent-react';
 
 import './EntityNavigation.css';
 
+import { actions as navActions } from 'core/navigation';
+
 import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
-    +entity: DbEntity,
+    +nextEntity: DbEntity,
+    +previousEntity: DbEntity,
+    +router: Object,
+    +dispatch: Function,
 |};
 
 
@@ -20,11 +25,13 @@ type Props = {|
  */
 export default class EntityNavigation extends React.Component<Props> {
     goToNextEntity = () => {
-        const { entity } = this.props;
+        const { dispatch, router, nextEntity } = this.props;
+        dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
     }
 
     goToPreviousEntity = () => {
-        const { entity } = this.props;
+        const { dispatch, router, previousEntity } = this.props;
+        dispatch(navActions.updateEntity(router, previousEntity.pk.toString()));
     }
 
     render(): React.Node {

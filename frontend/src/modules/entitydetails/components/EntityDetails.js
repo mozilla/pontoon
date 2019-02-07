@@ -166,7 +166,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         return <section className="entity-details">
             <EntityNavigation
-                entity={ state.selectedEntity }
+                nextEntity={ state.nextEntity }
+                previousEntity={ state.previousEntity }
+                dispatch={ this.props.dispatch }
+                router={ state.router }
             />
             <Metadata
                 entity={ state.selectedEntity }
@@ -207,6 +210,7 @@ const mapStateToProps = (state: Object): Props => {
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],
         nextEntity: entitieslist.selectors.getNextEntity(state),
+        previousEntity: entitieslist.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
