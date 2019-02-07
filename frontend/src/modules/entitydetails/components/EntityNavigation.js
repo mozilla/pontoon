@@ -39,7 +39,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 }
             >
                 <button
-                    id="next"
+                    className="next"
                     title="Go To Next String (Alt + Down)"
                     onClick={ this.goToNextEntity(entity) }
                 >
@@ -54,7 +54,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 }
             >
                 <button
-                    id="previous"
+                    className="previous"
                     title="Go To Previous String (Alt + Up)"
                     onClick={ this.goToPreviousEntity(entity) }
                 >
