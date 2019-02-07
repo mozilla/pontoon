@@ -19,17 +19,15 @@ type Props = {|
  * Shows next/previous buttons.
  */
 export default class EntityNavigation extends React.Component<Props> {
-    goToNextEntity = (entity: DbEntity) => {
-        console.log("foo");
+    goToNextEntity = () => {
+        const { entity } = this.props;
     }
 
-    goToPreviousEntity = (entity: DbEntity) => {
-        console.log("bar");
+    goToPreviousEntity = () => {
+        const { entity } = this.props;
     }
 
     render(): React.Node {
-        const { entity } = this.props;
-
         return <div className='entity-navigation clearfix'>
             <Localized
                 id="entitynavigation-next"
@@ -41,7 +39,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="next"
                     title="Go To Next String (Alt + Down)"
-                    onClick={ this.goToNextEntity(entity) }
+                    onClick={ this.goToNextEntity }
                 >
                     { '<glyph></glyph>Next' }
                 </button>
@@ -56,7 +54,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="previous"
                     title="Go To Previous String (Alt + Up)"
-                    onClick={ this.goToPreviousEntity(entity) }
+                    onClick={ this.goToPreviousEntity }
                 >
                     { '<glyph></glyph>Previous' }
                 </button>
