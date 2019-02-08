@@ -26,6 +26,7 @@ type Props = {|
 |};
 
 type InternalProps = {
+    ...Props,
     dispatch: Function,
 };
 
