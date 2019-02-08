@@ -154,7 +154,8 @@ describe('<EntityDetails>', () => {
     it('calls the sendTranslation action when the sendTranslation method is ran', () => {
         const [wrapper] = createEntityDetailsWithStore();
 
-        wrapper.instance().sendTranslation('fake translation');
+        wrapper.instance().setState({translation: 'fake translation'});
+        wrapper.instance().sendTranslation();
         expect(entityActions.sendTranslation.calledOnce).toBeTruthy();
         expect(
             entityActions.sendTranslation

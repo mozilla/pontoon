@@ -47,12 +47,12 @@ export default class Translation extends React.Component<Props> {
         this.props.updateTranslationStatus(this.props.translation.pk, 'unreject');
     }
 
-    copyTranslationIntoEditor = () => {
-        this.props.updateEditorTranslation(this.props.translation.string);
-    }
-
     delete = () => {
         this.props.deleteTranslation(this.props.translation.pk);
+    }
+
+    copyTranslationIntoEditor = () => {
+        this.props.updateEditorTranslation(this.props.translation.string);
     }
 
     getStatus() {

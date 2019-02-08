@@ -99,7 +99,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(lightbox.actions.open(image));
     }
 
-    sendTranslation = (translation: string) => {
+    updateEditorTranslation = (translation: string) => {
+        this.setState({
+            translation,
+        });
+    }
+
+    sendTranslation = () => {
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
@@ -108,7 +114,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         this.props.dispatch(actions.sendTranslation(
             state.selectedEntity.pk,
-            translation,
+            this.state.translation,
             state.locale.code,
             state.selectedEntity.original,
             state.pluralForm,
@@ -116,12 +122,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             state.nextEntity,
             state.router,
         ));
-    }
-
-    updateEditorTranslation = (translation: string) => {
-        this.setState({
-            translation,
-        });
     }
 
     deleteTranslation = (translationId: number) => {
@@ -177,6 +177,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 pluralForm= { state.pluralForm }
                 settings={ state.user.settings }
                 sendTranslation={ this.sendTranslation }
+                updateEditorTranslation={ this.updateEditorTranslation }
                 updateSetting={ this.updateSetting }
             />
             <Tools

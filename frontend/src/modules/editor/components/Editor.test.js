@@ -18,11 +18,17 @@ const SELECTED_ENTITY = {
 };
 
 
-function createShallowEditor(suggestMock = null, pluralForm = -1, forceSuggestions = true) {
+function createShallowEditor({
+    suggestMock,
+    updateMock,
+    pluralForm = -1,
+    forceSuggestions = true
+} = {}) {
     return shallow(<Editor
         translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
         entity={ SELECTED_ENTITY }
         sendTranslation={ suggestMock }
+        updateEditorTranslation={ updateMock }
         pluralForm={ pluralForm }
         settings={ { forceSuggestions } }
     />);
@@ -38,51 +44,54 @@ describe('<Editor>', () => {
     });
 
     it('clears the text when the Clear button is clicked', () => {
-        const wrapper = createShallowEditor();
+        const updateMock = sinon.spy();
+        const wrapper = createShallowEditor({ updateMock });
 
-        expect(wrapper.state('translation')).toEqual(TRANSLATION);
         wrapper.find('.action-clear').simulate('click');
-        expect(wrapper.state('translation')).toEqual('');
+        expect(updateMock.calledOnce).toBeTruthy();
+        expect(updateMock.calledWith('')).toBeTruthy();
     });
 
     it('copies the original string in the textarea when the Copy button is clicked', () => {
-        const wrapper = createShallowEditor();
+        const updateMock = sinon.spy();
+        const wrapper = createShallowEditor({ updateMock });
 
-        expect(wrapper.state('translation')).toEqual(TRANSLATION);
         wrapper.find('.action-copy').simulate('click');
-        expect(wrapper.state('translation')).toEqual(SELECTED_ENTITY.original);
+        expect(updateMock.calledOnce).toBeTruthy();
+        expect(updateMock.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
     });
 
     it('copies the plural original string in the textarea when the Copy button is clicked', () => {
-        const wrapper = createShallowEditor(null, 5);
+        const updateMock = sinon.spy();
+        const wrapper = createShallowEditor({ updateMock, pluralForm: 5 });
 
-        expect(wrapper.state('translation')).toEqual(TRANSLATION_PLURAL);
         wrapper.find('.action-copy').simulate('click');
-        expect(wrapper.state('translation')).toEqual(SELECTED_ENTITY.original_plural);
+        expect(updateMock.calledOnce).toBeTruthy();
+        expect(updateMock.calledWith(SELECTED_ENTITY.original_plural)).toBeTruthy();
     });
 
     it('calls the suggest action when the Suggest button is clicked', () => {
         const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor(suggestMock);
+        const wrapper = createShallowEditor({ suggestMock });
 
         wrapper.find('.action-suggest').simulate('click');
-        expect(suggestMock.calledOnce).toBeTrue;
+        expect(suggestMock.calledOnce).toBeTruthy();
     });
 
     it('shows the Save button when forceSuggestions is off', () => {
         const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor(suggestMock, -1, false);
+        const wrapper = createShallowEditor({ suggestMock, pluralForm: -1, forceSuggestions: false });
 
         expect(wrapper.find('.action-save').exists()).toBeTruthy();
         wrapper.find('.action-save').simulate('click');
-        expect(suggestMock.calledOnce).toBeTrue;
+        expect(suggestMock.calledOnce).toBeTruthy();
     });
 
     it('calls the suggest action when the Save button is clicked', () => {
         const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor(suggestMock, -1, false);
+        const wrapper = createShallowEditor({ suggestMock, pluralForm: -1, forceSuggestions: false });
 
         wrapper.find('.action-save').simulate('click');
-        expect(suggestMock.calledOnce).toBeTrue;
+        expect(suggestMock.calledOnce).toBeTruthy();
     });
 });
