@@ -11,7 +11,7 @@ module.exports = {
   output: {
     // This copies each source entry into the extension dist folder named
     // after its entry config key.
-      path: path.resolve(__dirname, 'assets/webpack_bundles/'),
+      path: path.resolve(__dirname, 'frontend/build/static/'),
       filename: '[name].entry.chunk.js',
       chunkFilename: '[name].[chunkhash].js',
       publicPath: '/static/webpack_bundles/'
