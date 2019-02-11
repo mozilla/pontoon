@@ -174,6 +174,17 @@ var Pontoon = (function (my) {
   }
 
   /*
+   * Make sure multiline strings meet Fluent Syntax requirements.
+   */
+  function formatMultiline(value) {
+    if (value.indexOf('\n') !== -1) {
+      value = '\n  ' + value.replace(/\n/g, '\n  ');
+    }
+
+    return value;
+  }
+
+  /*
    * Render textarea element with the given properties
    */
   function renderTextareaElement(id, value, maxlength) {
@@ -356,7 +367,7 @@ var Pontoon = (function (my) {
     elementNodes.each(function (i, node) {
       // Simple element
       if (!node.hasAttribute('data-expression')) {
-        value += $(this).find('textarea').val();
+        value += formatMultiline($(this).find('textarea').val());
       }
 
       // SelectExpression
@@ -369,7 +380,7 @@ var Pontoon = (function (my) {
 
         variants.each(function(index) {
           var id = $(this).find('.id span:first').html();
-          var val = $(this).find('.value').val();
+          var val = formatMultiline($(this).find('.value').val());
 
           // TODO: UI should allow for explicitly selecting a default variant
           if (index === variants.length - 1) {
@@ -846,18 +857,13 @@ var Pontoon = (function (my) {
         else if (!this.isComplexFTL()) {
           value = $('#only-value').val();
 
-          // Multiline strings: mark with indent
-          if (value.indexOf('\n') !== -1) {
-            value = '\n  ' + value.replace(/\n/g, '\n  ');
-          }
-
           // Simple single-attribute string
           var attribute = $('#metadata .attribute .content').text();
           if (attribute) {
             value = '\n  .' + attribute + ' = ' + value;
           }
 
-          content += value;
+          content += formatMultiline(value);
         }
 
         // Value
