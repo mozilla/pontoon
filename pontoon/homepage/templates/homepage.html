@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Localize Mozilla{% endblock %}
+{% block title %}{{ strings[0] }}{% endblock %}
 
 {% block class %}homepage{% endblock %}
 
@@ -11,21 +11,18 @@
   <!-- Section-1: Introduction -->
   <section id="section-1" class="section">
     <div class="container">
-      <h1>Localize Mozilla</h1>
-      <p>
-        If you want to make Firefox available in your language,
-        join a global community of localizers from all over the world,
-        track progress of various Mozilla localization projects, and more,
-        Pontoon is there for you.
-      </p>
+      <h1>{{ strings[0] }}</h1>
+      <p>{{ strings[1] }}</p>
       <div class="flex">
-        <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
+        <a class="button primary" href="{{ start_url }}">{{ strings[2] }}</a>
         <span>or</span>
-        <a class="button" href="{{ url('pontoon.translate.locale.agnostic', 'tutorial', 'playground') }}">Take a Tour</a>
+        <a class="button" href="{{ url('pontoon.translate.locale.agnostic', 'tutorial', 'playground') }}">
+          {{ strings[3] }}
+        </a>
       </div>
     </div>
     <div class="footer">
-      <a href="#section-2" class="scroll">Learn more</a>
+      <a href="#section-2" class="scroll">{{ strings[4] }}</a>
     </div>
   </section>
 
@@ -33,15 +30,11 @@
   <section id="section-2" class="section">
     <div class="container">
       <div class="content-wrapper flex-col-2 flex-direction-col">
-        <h2>Here's why localizing Mozilla matters.</h2>
+        <h2>{{ strings[5] }}</h2>
         <p>
-          We are committed to an internet that includes all the peoples of the earth —
-          where a person’s demographic characteristics do not determine
-          their online access, opportunities, or quality of experience.
+          {{ strings[6] }}
           <br /><br />
-          The Mozilla Localization effort represents a commitment to advancing these aspirations.
-          We work together with people everywhere who share the goal
-          to make the internet an even better place for everyone.
+          {{ strings[7] }}
         </p>
       </div>
       <div class="flex-col-2 flex-direction-col"></div>
@@ -52,22 +45,22 @@
   <section id="section-3" class="section">
     <div class="container">
       <div class="content-wrapper flex-col-2 flex-direction-col">
-        <h2>This is how it works.</h2>
+        <h2>{{ strings[8] }}</h2>
         <p>
-          Pontoon is a simple and intuitive tool that requires little technical skills to use it.
-          Each language has its own team of localizers.
-          Join one, find a project you'd like to contribute to, and you're ready to start contributing!
+          {{ strings[9] }}
+          {{ strings[10] }}
+          {{ strings[11] }}
         </p>
       </div>
       <div class="flex-col-2 flex">
         <div class="timeline"></div>
         <ol>
-          <li class="first">Pick your team and project</li>
-          <li class="second">Submit a suggestion</li>
-          <li class="third">Have it approved by a trusted localizer</li>
+          <li class="first">{{ strings[12] }}</li>
+          <li class="second">{{ strings[13] }}</li>
+          <li class="third">{{ strings[14] }}</li>
           <li class="flex">
             <div class="checkmark fa fa-check"></div>
-            <p>Show it to your friends as it lands in product</p>
+            <p>{{ strings[15] }}</p>
           </li>
         </ol>
       </div>
@@ -78,12 +71,10 @@
   <section id="section-4" class="section">
     <div class="container">
       <div class="content-wrapper flex-col-2 flex-direction-col">
-        <h2>Things which make it special.</h2>
+        <h2>{{ strings[16] }}</h2>
         <p>
-          From the ground up, Pontoon has been designed as the tool
-          that brings all your team's localization tasks together in one place.
-          All the functionality and services you need are seamlessly integrated
-          into a single platform.
+          {{ strings[17] }}
+          {{ strings[18] }}
         </p>
       </div>
       <div class="flex-col-2">
@@ -125,17 +116,13 @@
   <section id="section-5" class="section">
     <div class="container">
       <div class="content-wrapper flex-col-2 flex-direction-col">
-        <h2>One more thing.</h2>
+        <h2>{{ strings[19] }}</h2>
         <p>
-          One of the coolest features of Pontoon
-          is localizing web content in-place,
-          on the web page itself.
-          The moment you submit a translation,
-          it replaces the original text in the web page,
-          making you the first proofreader and tester.
-          Talk about context?
+          {{ strings[20] }}
+          {{ strings[21] }}
+          {{ strings[22] }}
         </p>
-        <a class="button primary" href="{{ url('pontoon.translate.locale.agnostic', 'pontoon-intro', 'messages.properties') }}">Try In-context Localization</a>
+        <a class="button primary" href="{{ url('pontoon.translate.locale.agnostic', 'pontoon-intro', 'messages.properties') }}">{{ strings[23] }}</a>
       </div>
       <div class="image-wrapper flex-col-2">
         <img class="section-side-image-3" src="{{ static('img/section-5.svg') }}" />
@@ -147,11 +134,13 @@
   <section id="section-6" class="section">
     <div class="container">
       <div class="content-wrapper flex-direction-col">
-        <h2>Join us.</h2>
-        <p>Now that you know what Pontoon is, come on in!</p>
-        <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
-        <p>Want to learn more?</p>
-        <a class="button" href="{{ url('pontoon.translate.locale.agnostic', 'tutorial', 'playground') }}">Take a Tour</a>
+        <h2>{{ strings[24] }}</h2>
+        <p>{{ strings[25] }}</p>
+        <a class="button primary" href="{{ start_url }}">{{ strings[2] }}</a>
+        <p>{{ strings[26] }}</p>
+        <a class="button" href="{{ url('pontoon.translate.locale.agnostic', 'tutorial', 'playground') }}">
+          {{ strings[3] }}
+        </a>
       </div>
       <div class="footer flex">
         <div class="flex-col-3 mozilla">
@@ -160,10 +149,10 @@
           </a>
         </div>
         <div class="flex-col-3 github">
-          <a href="https://github.com/mozilla/pontoon/">Hack it on Github</a>
+          <a href="https://github.com/mozilla/pontoon/">{{ strings[27] }}</a>
         </div>
         <div class="flex-col-3 contact">
-          <a href="mailto:pontoon-team@mozilla.com">Get in touch</a>
+          <a href="mailto:{{ contact }}">{{ strings[28] }}</a>
         </div>
       </div>
     </div>

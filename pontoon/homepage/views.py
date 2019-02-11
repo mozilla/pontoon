@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.conf import settings
 
-from pontoon.base.models import Locale
+from pontoon.base.models import Locale, Project, Entity
 from pontoon.base.utils import get_project_locale_from_request
 
 
@@ -28,6 +29,15 @@ def homepage(request):
     else:
         start_url = reverse('pontoon.teams')
 
+    homepage = get_object_or_404(Project, slug='homepage')
+    strings = Entity.objects.filter(
+        resource__project=homepage,
+        obsolete=False,
+    ).values_list('string', flat=True)
+
     return render(request, 'homepage.html', {
         'start_url': start_url,
+        'contact': settings.PROJECT_MANAGERS[0] if settings.PROJECT_MANAGERS[0] else '',
+        'strings': strings,
+
     })

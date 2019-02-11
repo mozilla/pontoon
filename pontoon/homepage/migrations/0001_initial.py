@@ -32,8 +32,7 @@ Talk about context?
 Try In-context Localization
 Join us.
 Now that you know what Pontoon is, come on in!
-Start Localizing Now
-Take a Tour
+Want to learn more?
 Hack it on Github
 Get in touch
 """
@@ -104,7 +103,6 @@ def create_homepage_project(apps, schema_editor):
     project.save(update_fields=['total_strings'])
 
     # Update Locale stats
-    ProjectLocale = apps.get_model('base', 'ProjectLocale')
     for locale in project.locales.all():
         project_locale = ProjectLocale.objects.get(project=project, locale=locale)
         locale.total_strings = F('total_strings') + project_locale.total_strings

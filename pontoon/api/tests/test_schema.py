@@ -40,6 +40,9 @@ class TestCyclicQueries(TestCase):
                             'name': 'Pontoon Intro'
                         },
                         {
+                            'name': 'Homepage'
+                        },
+                        {
                             'name': 'Tutorial'
                         },
                     ]
