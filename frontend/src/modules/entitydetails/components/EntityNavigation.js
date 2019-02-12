@@ -7,8 +7,8 @@ import './EntityNavigation.css';
 
 
 type Props = {|
-    +goToNextEntity: Function,
-    +goToPreviousEntity: Function,
+    +goToNextEntity: () => void,
+    +goToPreviousEntity: () => void,
 |};
 
 
