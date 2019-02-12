@@ -42,7 +42,13 @@ script:
   # Run tests
   - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - npm test
-  - pushd frontend && npm test && popd
+
+  # Run all frontend checks
+  - pushd frontend
+  - npm run flow
+  - npm test
+  - popd
+
   - codecov
 
   # Heroku deployment file is valid
