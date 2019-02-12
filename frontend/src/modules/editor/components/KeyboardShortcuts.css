@@ -1,0 +1,61 @@
+.keyboard-shortcuts {
+    color: #AAAAAA;
+}
+
+.keyboard-shortcuts .selector {
+    cursor: pointer;
+    float: left;
+    font-size: 22px;
+    padding: 9px 5px;
+}
+
+.keyboard-shortcuts .overlay {
+    background: #272A2F;
+    border: 1px solid #333941;
+    font-size: 13px;
+    width: 400px;
+    height: 400px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    z-index: 20;
+    margin: auto;
+    padding: 10px 24px;
+}
+
+.keyboard-shortcuts .overlay h2 {
+    font-size: 20px;
+    font-weight: 300;
+    padding-bottom: 30px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.keyboard-shortcuts .overlay table {
+    width: 100%;
+}
+
+.keyboard-shortcuts .overlay td {
+    padding: 0;
+}
+
+.keyboard-shortcuts .overlay td:first-child {
+    font-weight: 300;
+    height: 35px;
+    width: 60%;
+}
+
+.keyboard-shortcuts .overlay td:last-child {
+    white-space: nowrap;
+}
+
+.keyboard-shortcuts .overlay span {
+    background: #3F4752;
+    border: 1px solid #5E6475;
+    border-radius: 2px;
+    font-weight: 300;
+    margin: 0 4px;
+    padding: 0 4px;
+}

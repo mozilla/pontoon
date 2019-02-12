@@ -9,6 +9,7 @@ import { PluralSelector } from 'core/plural';
 
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
+import KeyboardShortcuts from './KeyboardShortcuts';
 
 import type { Locale } from 'core/locales';
 import type { SettingsState } from 'core/user';
@@ -82,6 +83,7 @@ export default class Editor extends React.Component<Props, State> {
                     settings={ this.props.settings }
                     updateSetting={ this.props.updateSetting }
                 />
+                <KeyboardShortcuts />
                 <div className="actions">
                     <Localized id="entitydetails-editor-button-copy">
                         <button
