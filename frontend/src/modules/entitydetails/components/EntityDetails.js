@@ -96,6 +96,28 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 
+    goToNextEntity = () => {
+        const { router, nextEntity } = this.props;
+
+        this.props.dispatch(
+            navigation.actions.updateEntity(
+                router,
+                nextEntity.pk.toString(),
+            )
+        );
+    }
+
+    goToPreviousEntity = () => {
+        const { router, previousEntity } = this.props;
+
+        this.props.dispatch(
+            navigation.actions.updateEntity(
+                router,
+                previousEntity.pk.toString(),
+            )
+        );
+    }
+
     openLightbox = (image: string) => {
         this.props.dispatch(lightbox.actions.open(image));
     }
@@ -166,10 +188,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         return <section className="entity-details">
             <EntityNavigation
-                nextEntity={ state.nextEntity }
-                previousEntity={ state.previousEntity }
-                dispatch={ this.props.dispatch }
-                router={ state.router }
+                goToNextEntity={ this.goToNextEntity }
+                goToPreviousEntity={ this.goToPreviousEntity }
             />
             <Metadata
                 entity={ state.selectedEntity }
