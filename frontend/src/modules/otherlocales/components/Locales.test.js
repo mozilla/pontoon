@@ -21,7 +21,7 @@ describe('<Locales>', () => {
             <Locales otherlocales={ otherlocales } parameters={ params } />
         );
 
-        expect(wrapper.find('li')).toHaveLength(3);
+        expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
     it('returns null while otherlocales are loading', () => {

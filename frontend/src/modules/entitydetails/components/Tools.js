@@ -11,7 +11,9 @@ import { Locales } from 'modules/otherlocales';
 
 import MachineryCount from './MachineryCount';
 
+import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
+import type { UserState } from 'core/user';
 import type { HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
@@ -19,9 +21,14 @@ import type { LocalesState } from 'modules/otherlocales';
 
 type Props = {|
     history: HistoryState,
+    locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
     parameters: NavigationParams,
+    user: UserState,
+    deleteTranslation: (number) => void,
+    updateEditorTranslation: (string) => void,
+    updateTranslationStatus: (number, string) => void,
 |};
 
 
@@ -32,7 +39,17 @@ type Props = {|
  */
 export default class Tools extends React.Component<Props> {
     render() {
-        const { history, machinery, otherlocales, parameters } = this.props;
+        const {
+            history,
+            locale,
+            machinery,
+            otherlocales,
+            parameters,
+            user,
+            deleteTranslation,
+            updateEditorTranslation,
+            updateTranslationStatus,
+        } = this.props;
 
         const historyCount = history.translations.length;
         const machineryCount = machinery.translations.length;
@@ -61,13 +78,29 @@ export default class Tools extends React.Component<Props> {
             </TabList>
 
             <TabPanel>
-                <History />
+                <History
+                    history={ history }
+                    locale={ locale }
+                    parameters={ parameters }
+                    user={ user }
+                    deleteTranslation={ deleteTranslation }
+                    updateTranslationStatus={ updateTranslationStatus }
+                    updateEditorTranslation={ updateEditorTranslation }
+                />
             </TabPanel>
             <TabPanel>
-                <Machinery />
+                <Machinery
+                    machinery={ machinery }
+                    locale={ locale }
+                    updateEditorTranslation={ updateEditorTranslation }
+                />
             </TabPanel>
             <TabPanel>
-                <Locales otherlocales={ otherlocales } parameters={ parameters } />
+                <Locales
+                    otherlocales={ otherlocales }
+                    parameters={ parameters }
+                    updateEditorTranslation={ updateEditorTranslation }
+                />
             </TabPanel>
         </Tabs>;
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { MachineryBase } from './Machinery';
+import Machinery from './Machinery';
 
 
 describe('<Machinery>', () => {
@@ -13,7 +13,7 @@ describe('<Machinery>', () => {
         const machinery = {
             translations: [],
         };
-        const wrapper = shallow(<MachineryBase machinery={ machinery } locale={ LOCALE } />);
+        const wrapper = shallow(<Machinery machinery={ machinery } locale={ LOCALE } />);
 
         expect(wrapper.find('.search-wrapper')).toHaveLength(1);
         expect(wrapper.find('#machinery-machinery-search-placeholder')).toHaveLength(1);
@@ -27,13 +27,13 @@ describe('<Machinery>', () => {
                 { original: '3' },
             ],
         };
-        const wrapper = shallow(<MachineryBase machinery={ machinery } locale={ LOCALE } />);
+        const wrapper = shallow(<Machinery machinery={ machinery } locale={ LOCALE } />);
 
         expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
     it('returns null if there is no locale', () => {
-        const wrapper = shallow(<MachineryBase locale={ null } />);
+        const wrapper = shallow(<Machinery locale={ null } />);
         expect(wrapper.type()).toBeNull();
     });
 });

@@ -8,7 +8,7 @@ import type { Locale } from 'core/locales';
 export type EditorProps = {|
     translation: string,
     locale: Locale,
-    updateTranslation: Function,
+    updateTranslation: (string) => void,
 |};
 
 

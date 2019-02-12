@@ -21,8 +21,9 @@ type Props = {|
     locale: Locale,
     pluralForm: number,
     settings: SettingsState,
-    sendTranslation: Function,
-    updateSetting: Function,
+    sendTranslation: () => void,
+    updateEditorTranslation: (string) => void,
+    updateSetting: (string, boolean) => void,
 |};
 
 type State = {|
@@ -37,47 +38,34 @@ type State = {|
  * see `EditorProxy` for more information.
  */
 export default class Editor extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            translation: props.translation,
-        };
-    }
-
     componentDidUpdate(prevProps: Props) {
         if (this.props.translation !== prevProps.translation) {
-            this.setState({
-                translation: this.props.translation,
-            });
+            this.updateTranslation(this.props.translation);
         }
     }
 
     updateTranslation = (translation: string) => {
-        this.setState({
-            translation,
-        });
+        this.props.updateEditorTranslation(translation);
     }
 
     copyOriginalIntoEditor = () => {
         const { entity, pluralForm } = this.props;
         if (entity) {
             if (pluralForm === -1 || pluralForm === 1) {
-                this.setState({ translation: entity.original });
+                this.updateTranslation(entity.original);
             }
             else {
-                this.setState({ translation: entity.original_plural });
+                this.updateTranslation(entity.original_plural);
             }
         }
     }
 
     clearEditor = () => {
-        this.setState({
-            translation: '',
-        });
+        this.updateTranslation('');
     }
 
     sendTranslation = () => {
-        this.props.sendTranslation(this.state.translation);
+        this.props.sendTranslation();
     }
 
     render() {
@@ -85,7 +73,7 @@ export default class Editor extends React.Component<Props, State> {
             <PluralSelector />
             <EditorProxy
                 entity={ this.props.entity }
-                translation={ this.state.translation }
+                translation={ this.props.translation }
                 locale={ this.props.locale }
                 updateTranslation={ this.updateTranslation }
             />

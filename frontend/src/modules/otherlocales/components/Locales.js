@@ -5,6 +5,8 @@ import { Localized } from 'fluent-react';
 
 import './Locales.css';
 
+import Translation from './Translation';
+
 import type { Navigation } from 'core/navigation';
 import type { LocalesState } from '..';
 
@@ -12,6 +14,7 @@ import type { LocalesState } from '..';
 type Props = {|
     otherlocales: LocalesState,
     parameters: Navigation,
+    updateEditorTranslation: (string) => void,
 |};
 
 
@@ -28,7 +31,7 @@ export default class Locales extends React.Component<Props> {
     }
 
     render() {
-        const { otherlocales, parameters } = this.props;
+        const { otherlocales, parameters, updateEditorTranslation } = this.props;
 
         if (otherlocales.fetching) {
             return null;
@@ -41,25 +44,12 @@ export default class Locales extends React.Component<Props> {
         return <section className="other-locales">
             <ul>
                 { otherlocales.translations.map((translation, key) => {
-                    return <li key={ key }>
-                        <header>
-                            <a
-                                href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                { translation.locale }
-                                <span>{ translation.code }</span>
-                            </a>
-                        </header>
-                        <p
-                            lang={ translation.code }
-                            dir={ translation.direction }
-                            script={ translation.script }
-                        >
-                            { translation.translation }
-                        </p>
-                    </li>;
+                    return <Translation
+                        translation={ translation }
+                        parameters={ parameters }
+                        updateEditorTranslation={ updateEditorTranslation }
+                        key={ key }
+                    />;
                 }) }
             </ul>
         </section>;

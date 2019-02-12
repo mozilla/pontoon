@@ -28,6 +28,9 @@ editor-settings-change-all = Changer tous les paramètres
 machinery-machinery-search-placeholder =
     .placeholder = Saisir pour rechercher la machinerie
 
+## Machinery Translation
+## Shows a specific translation from machinery
+
 machinery-translation-copy =
     .title = Copier la traduction (Tab)
 
@@ -66,8 +69,12 @@ history-history-no-translations = Pas de traduction disponible.
 ## History Translation
 ## Shows a specific translation for an entity, and actions around it
 
+history-translation-copy =
+    .title = Copier la traduction (Tab)
+
 history-translation-button-delete =
     .title = Supprimer
+
 history-translation-button-approve =
     .title = Approuver
 
@@ -79,3 +86,10 @@ history-translation-button-reject =
 
 history-translation-button-unreject =
     .title = Dérejeter
+
+
+## OtherLocales Translation
+## Shows a specific translation from a different locale
+
+otherlocales-translation-copy =
+    .title = Copier la traduction (Tab)
