@@ -1,40 +1,26 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Localized } from 'fluent-react';
 
 import './History.css';
 
-import * as locales from 'core/locales';
-import * as navigation from 'core/navigation';
-import * as plural from 'core/plural';
-import * as entitieslist from 'modules/entitieslist';
-import { NAME as USER_NAME } from 'core/user';
-
 import Translation from './Translation';
-import { actions, NAME } from '..';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { DbEntity } from 'modules/entitieslist';
-import type { DBTranslation, HistoryState } from '../reducer';
+import type { HistoryState } from '..';
 
 
 type Props = {|
     history: HistoryState,
     locale: Locale,
-    nextEntity: ?DbEntity,
     parameters: NavigationParams,
-    pluralForm: number,
-    router: Object,
     user: UserState,
-|};
-
-type InternalProps = {|
-    ...Props,
-    dispatch: Function,
+    deleteTranslation: (number) => void,
+    updateEditorTranslation: (string) => void,
+    updateTranslationStatus: (number, string) => void,
 |};
 
 
@@ -43,31 +29,7 @@ type InternalProps = {|
  *
  * For each translation, show its author, date and status (approved, rejected).
  */
-export class HistoryBase extends React.Component<InternalProps> {
-    updateTranslationStatus = (translation: DBTranslation, change: string) => {
-        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
-        dispatch(actions.updateStatus(
-            change,
-            parameters.entity,
-            parameters.locale,
-            parameters.resource,
-            pluralForm,
-            translation.pk,
-            nextEntity,
-            router,
-        ));
-    }
-
-    deleteTranslation = (translation: DBTranslation) => {
-        const { parameters, pluralForm, dispatch } = this.props;
-        dispatch(actions.deleteTranslation(
-            parameters.entity,
-            parameters.locale,
-            pluralForm,
-            translation.pk,
-        ));
-    }
-
+export default class History extends React.Component<Props> {
     renderNoResults() {
         return <section className="history">
             <Localized id="history-history-no-translations">
@@ -77,7 +39,15 @@ export class HistoryBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { history, locale, parameters, user } = this.props;
+        const {
+            history,
+            locale,
+            parameters,
+            user,
+            deleteTranslation,
+            updateEditorTranslation,
+            updateTranslationStatus,
+        } = this.props;
 
         if (!history.translations.length) {
             if (history.fetching) {
@@ -100,8 +70,9 @@ export class HistoryBase extends React.Component<InternalProps> {
                         canReview={ canReview }
                         locale={ locale }
                         user={ user }
-                        updateTranslationStatus={ this.updateTranslationStatus }
-                        deleteTranslation={ this.deleteTranslation }
+                        deleteTranslation={ deleteTranslation }
+                        updateEditorTranslation={ updateEditorTranslation }
+                        updateTranslationStatus={ updateTranslationStatus }
                         key={ key }
                     />;
                 }) }
@@ -109,18 +80,3 @@ export class HistoryBase extends React.Component<InternalProps> {
         </section>;
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        history: state[NAME],
-        locale: locales.selectors.getCurrentLocaleData(state),
-        nextEntity: entitieslist.selectors.getNextEntity(state),
-        parameters: navigation.selectors.getNavigationParams(state),
-        pluralForm: plural.selectors.getPluralForm(state),
-        router: state.router,
-        user: state[USER_NAME],
-    };
-};
-
-export default connect(mapStateToProps)(HistoryBase);

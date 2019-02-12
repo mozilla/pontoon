@@ -13,6 +13,7 @@ import type { Locale } from 'core/locales';
 type Props = {|
     locale: Locale,
     translation: api.types.MachineryTranslation,
+    updateEditorTranslation: (string) => void,
 |};
 
 
@@ -24,11 +25,19 @@ type Props = {|
  * and their sources are merged.
  */
  export default class Translation extends React.Component<Props> {
+     copyTranslationIntoEditor = () => {
+         this.props.updateEditorTranslation(this.props.translation.translation);
+     }
+
      render() {
          const { translation, locale } = this.props;
 
          return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
-             <li className="translation" title="Copy Into Translation (Tab)">
+             <li
+                className="translation"
+                title="Copy Into Translation (Tab)"
+                onClick={ this.copyTranslationIntoEditor }
+            >
                  <header>
                      { !translation.quality ? null :
                      <span className="stress">{ translation.quality + '%' }</span>

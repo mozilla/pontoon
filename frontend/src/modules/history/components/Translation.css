@@ -1,15 +1,15 @@
-.translation {
+.history .translation {
     border-bottom: 1px solid #5E6475;
+    cursor: pointer;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
 }
 
-.translation:hover {
+.history .translation:hover {
     background: #4D5967;
-    border-color: #5E6475;
 }
 
-.translation > header {
+.history .translation > header {
     color: #AAAAAA;
     display: block;
     font-size: 11px;
@@ -18,37 +18,37 @@
     text-transform: uppercase;
 }
 
-.translation > header .info {
+.history .translation > header .info {
     float: left;
 }
 
-.translation > header .toolbar {
+.history .translation > header .toolbar {
     display: block;
     float: right;
 }
 
-.translation > header + p {
+.history .translation > header + p {
     clear: both;
     text-align: start;
 }
 
-.translation > header .info time {
+.history .translation > header .info time {
     color: #7BC876;
     padding-left: 3px;
 }
-.translation > header .info a {
+.history .translation > header .info a {
     text-transform: none;
 }
 
-.translation > header .toggle-diff {
+.history .translation > header .toggle-diff {
     margin-right: 6px;
 }
 
-.translation > header .toggle-diff.active {
+.history .translation > header .toggle-diff.active {
     color: #7BC876;
 }
 
-.translation > header button {
+.history .translation > header button {
     background: no-repeat transparent;
     border: none;
     color: #AAAAAA;
@@ -63,55 +63,55 @@
     width: 22px;
 }
 
-.translation.rejected.can-reject header button.delete,
-.translation.can-approve header button.approve,
-.translation.can-approve header button.unapprove,
-.translation.can-reject header button.reject,
-.translation.can-reject header button.unreject {
+.history .translation.rejected.can-reject header button.delete,
+.history .translation.can-approve header button.approve,
+.history .translation.can-approve header button.unapprove,
+.history .translation.can-reject header button.reject,
+.history .translation.can-reject header button.unreject {
     pointer-events: auto;
     opacity: 1;
 }
 
-.translation.rejected {
+.history .translation.rejected {
     opacity: 0.4;
 }
 
-.translation.rejected:hover {
+.history .translation.rejected:hover {
     opacity: 1;
 }
 
-.translation.fuzzy > header button.approve:before {
+.history .translation.fuzzy > header button.approve:before {
     color: #FED271;
 }
 
-.translation > header button.approve:before,
-.translation > header button.unapprove:before {
+.history .translation > header button.approve:before,
+.history .translation > header button.unapprove:before {
     content: "";
 }
 
-.translation > header button.approve:hover:before,
-.translation > header button.unapprove:before {
+.history .translation > header button.approve:hover:before,
+.history .translation > header button.unapprove:before {
     color: #7BC876;
 }
 
-.translation > header button.approve:not(:hover):before,
-.translation > header button.unapprove:hover:before {
+.history .translation > header button.approve:not(:hover):before,
+.history .translation > header button.unapprove:hover:before {
     font-weight: 400;
 }
 
-.translation > header button.reject:before,
-.translation > header button.unreject:before {
+.history .translation > header button.reject:before,
+.history .translation > header button.unreject:before {
     content: "";
     margin-left: 5px;
 }
 
-.translation > header button.reject:hover:before,
-.translation > header button.unreject:before {
+.history .translation > header button.reject:hover:before,
+.history .translation > header button.unreject:before {
     color: #F36;
 }
 
-.translation > header button.reject:not(:hover):before,
-.translation > header button.unreject:hover:before {
+.history .translation > header button.reject:not(:hover):before,
+.history .translation > header button.unreject:hover:before {
     font-weight: 400;
 }
 

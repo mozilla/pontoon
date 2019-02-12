@@ -1,14 +1,10 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Localized } from 'fluent-react';
 
 import './Machinery.css';
 
-import * as locales from 'core/locales';
-
-import { NAME } from '..';
 import Translation from './Translation';
 
 import type { Locale } from 'core/locales';
@@ -18,11 +14,7 @@ import type { MachineryState } from '..';
 type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
-|};
-
-type InternalProps = {|
-    ...Props,
-    dispatch: Function,
+    updateEditorTranslation: (string) => void,
 |};
 
 
@@ -33,9 +25,9 @@ type InternalProps = {|
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export class MachineryBase extends React.Component<InternalProps> {
+export default class Machinery extends React.Component<Props> {
     render() {
-        const { locale, machinery } = this.props;
+        const { locale, machinery, updateEditorTranslation } = this.props;
 
         if (!locale) {
             return null;
@@ -53,6 +45,7 @@ export class MachineryBase extends React.Component<InternalProps> {
                     return <Translation
                         translation={ item }
                         locale={ locale }
+                        updateEditorTranslation={ updateEditorTranslation }
                         key={ i }
                     />;
                 }) }
@@ -60,13 +53,3 @@ export class MachineryBase extends React.Component<InternalProps> {
         </section>;
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        locale: locales.selectors.getCurrentLocaleData(state),
-        machinery: state[NAME],
-    };
-};
-
-export default connect(mapStateToProps)(MachineryBase);

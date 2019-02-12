@@ -1,0 +1,32 @@
+.other-locales .translation {
+    border-bottom: 1px solid #5E6475;
+    cursor: pointer;
+    padding: 5px 10px 20px 10px;
+    transition: all 0.1s ease-out;
+}
+
+.other-locales .translation:hover {
+    background: #4D5967;
+    border-color: #5E6475;
+}
+
+.other-locales .translation > header {
+    color: #AAAAAA;
+    display: block;
+    font-size: 11px;
+    font-weight: 300;
+    padding: 1px 0 5px;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.other-locales .translation > header span {
+    color: #7BC876;
+    padding-left: 3px;
+}
+
+.other-locales .translation > p {
+    min-height: 22px;
+    text-align: start;
+    white-space: pre-wrap;
+}
