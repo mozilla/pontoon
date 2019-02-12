@@ -38,6 +38,15 @@ machinery-translation-number-occurrences =
     .title = Number of translation occurrences
 
 
+## Entity Navigation
+## Shows next/previous buttons.
+
+entitynavigation-next = <glyph></glyph>Next
+    .title = Go To Next String (Alt + Down)
+entitynavigation-previous = <glyph></glyph>Previous
+    .title = Go To Previous String (Alt + Up)
+
+
 ## Metadata
 ## Shows metadata about an entity (original string)
 

@@ -1,5 +1,6 @@
 import {
     _getNextEntity,
+    _getPreviousEntity,
     _getSelectedEntity,
 } from './selectors';
 
@@ -27,6 +28,32 @@ describe('selectors', () => {
         it('returns null when the current entity does not exist', () => {
             const params = { entity: 5 };
             const res = _getNextEntity(ENTITIES, params);
+            expect(res).toBeNull();
+        });
+    });
+
+    describe('getPreviousEntity', () => {
+        const ENTITIES = [
+            { pk: 1 },
+            { pk: 2 },
+            { pk: 3 },
+        ];
+
+        it('returns the previous entity in the list', () => {
+            const params = { entity: 2 };
+            const res = _getPreviousEntity(ENTITIES, params);
+            expect(res.pk).toEqual(1);
+        });
+
+        it('returns the last entity when the first one is selected', () => {
+            const params = { entity: 1 };
+            const res = _getPreviousEntity(ENTITIES, params);
+            expect(res.pk).toEqual(3);
+        });
+
+        it('returns null when the current entity does not exist', () => {
+            const params = { entity: 5 };
+            const res = _getPreviousEntity(ENTITIES, params);
             expect(res).toBeNull();
         });
     });
