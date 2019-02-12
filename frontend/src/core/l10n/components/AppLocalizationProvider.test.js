@@ -27,7 +27,9 @@ describe('<AppLocalizationProvider>', () => {
         const store = createReduxStore();
 
         shallowUntilTarget(
-            <AppLocalizationProvider store={store} />,
+            <AppLocalizationProvider store={store}>
+                <div />
+            </AppLocalizationProvider>,
             AppLocalizationProviderBase
         );
 
