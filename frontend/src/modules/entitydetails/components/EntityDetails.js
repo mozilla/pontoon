@@ -17,6 +17,7 @@ import * as otherlocales from 'modules/otherlocales';
 import { Editor } from 'modules/editor';
 
 import { actions, selectors } from '..';
+import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Tools from './Tools';
 
@@ -34,7 +35,8 @@ type Props = {|
     history: HistoryState,
     locale: ?Locale,
     machinery: MachineryState,
-    nextEntity: ?DbEntity,
+    nextEntity: DbEntity,
+    previousEntity: DbEntity,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     pluralForm: number,
@@ -93,6 +95,28 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         dispatch(machinery.actions.get(selectedEntity, locale));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+    }
+
+    goToNextEntity = () => {
+        const { router, nextEntity } = this.props;
+
+        this.props.dispatch(
+            navigation.actions.updateEntity(
+                router,
+                nextEntity.pk.toString(),
+            )
+        );
+    }
+
+    goToPreviousEntity = () => {
+        const { router, previousEntity } = this.props;
+
+        this.props.dispatch(
+            navigation.actions.updateEntity(
+                router,
+                previousEntity.pk.toString(),
+            )
+        );
     }
 
     openLightbox = (image: string) => {
@@ -164,6 +188,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         return <section className="entity-details">
+            <EntityNavigation
+                goToNextEntity={ this.goToNextEntity }
+                goToPreviousEntity={ this.goToPreviousEntity }
+            />
             <Metadata
                 entity={ state.selectedEntity }
                 locale={ state.locale }
@@ -203,6 +231,7 @@ const mapStateToProps = (state: Object): Props => {
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],
         nextEntity: entitieslist.selectors.getNextEntity(state),
+        previousEntity: entitieslist.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),

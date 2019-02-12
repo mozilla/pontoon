@@ -38,6 +38,15 @@ machinery-translation-number-occurrences =
     .title = Nombre d'occurrences de la traduction
 
 
+## Entity Navigation
+## Shows next/previous buttons.
+
+entitynavigation-next = <glyph></glyph>Suivant
+    .title = Aller à la chaîne suivante (Alt + Bas)
+entitynavigation-previous = <glyph></glyph>Précédent
+    .title = Aller à la chaîne précédente (Alt + Haut)
+
+
 ## Metadata
 ## Shows metadata about an entity (original string)
 
