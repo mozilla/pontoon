@@ -205,14 +205,14 @@ def test_repo_pull_multi_locale(project_locale_a, repo_git, locale_b):
                 == [
                     call(
                         'git',
-                        'https://example.com/%s' % locale_b.code,
-                        '/media/%s' % locale_b.code,
+                        'https://example.com/%s' % locale_a.code,
+                        '/media/%s' % locale_a.code,
                         '',
                     ),
                     call(
                         'git',
-                        'https://example.com/%s' % locale_a.code,
-                        '/media/%s' % locale_a.code,
+                        'https://example.com/%s' % locale_b.code,
+                        '/media/%s' % locale_b.code,
                         '',
                     ),
                 ]
