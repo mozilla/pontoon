@@ -58,7 +58,7 @@ def ajax_teams(request, slug):
     locales = (
         Locale.objects.available()
         .prefetch_project_locale(project)
-        .order_by('name')
+        .order_by('name', 'code')
     )
 
     return render(request, 'projects/includes/teams.html', {
@@ -102,7 +102,7 @@ def ajax_info(request, slug):
 def ajax_notifications(request, slug):
     """Notifications tab."""
     project = get_object_or_404(Project.objects.available(), slug=slug)
-    available_locales = project.locales.order_by('name')
+    available_locales = project.locales.order_by('code')
 
     # Send notifications
     if request.method == 'POST':

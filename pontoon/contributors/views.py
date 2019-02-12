@@ -165,10 +165,10 @@ def settings(request):
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(
         pk__in=[l.pk for l in selected_locales]
-    )
+    ).order_by('name', 'code')
 
     default_homepage_locale = Locale(name='Default homepage', code='')
-    all_locales = list(Locale.objects.all())
+    all_locales = list(Locale.objects.order_by('name', 'code'))
     all_locales.insert(0, default_homepage_locale)
 
     # Set custom homepage selector value

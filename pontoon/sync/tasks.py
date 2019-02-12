@@ -277,7 +277,7 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
-    for locale in locales:
+    for locale in locales.order_by('name', 'code'):
         try:
             with transaction.atomic():
                 # Sets VCSProject.synced_locales, needed to skip early

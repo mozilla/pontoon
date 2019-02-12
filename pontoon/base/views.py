@@ -98,7 +98,7 @@ def translate(request, locale, slug, part):
         'upload_form': forms.UploadFileForm(),
         'locale': locale,
         'locale_projects': locale.available_projects_list(),
-        'locales': Locale.objects.available(),
+        'locales': Locale.objects.available().order_by('name', 'code'),
         'part': part,
         'project': project,
         'projects': projects,

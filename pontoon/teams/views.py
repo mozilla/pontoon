@@ -30,6 +30,7 @@ def teams(request):
     """List all active localization teams."""
     locales = (
         Locale.objects.visible()
+        .order_by('name', 'code')
         .prefetch_related('latest_translation__user')
     )
 

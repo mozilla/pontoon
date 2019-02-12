@@ -40,7 +40,7 @@ def machinery(request):
 
     return render(request, 'machinery/machinery.html', {
         'locale': Locale.objects.get(code=locale),
-        'locales': Locale.objects.all(),
+        'locales': Locale.objects.order_by('name', 'code'),
         'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
         'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
     })
