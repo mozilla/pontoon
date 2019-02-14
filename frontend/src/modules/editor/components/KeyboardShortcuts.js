@@ -43,7 +43,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
     render() {
         return <div className="keyboard-shortcuts">
             <Localized
-                id="keyboard-shortcuts-button"
+                id="editor-keyboard-shortcuts-button"
                 attrs={{ title: true }}
             >
                 <div
@@ -58,13 +58,13 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                 className="overlay"
                 onClick={ this.toggleVisibility }
             >
-                <Localized id="keyboard-shortcuts-overlay-title">
+                <Localized id="editor-keyboard-shortcuts-overlay-title">
                     <h2>Keyboard Shortcuts</h2>
                 </Localized>
                 <table>
                     <tbody>
                         <tr>
-                            <Localized id="keyboard-shortcuts-save-translation">
+                            <Localized id="editor-keyboard-shortcuts-save-translation">
                                 <td>Save Translation</td>
                             </Localized>
                             <td>
@@ -72,7 +72,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-cancel-translation">
+                            <Localized id="editor-keyboard-shortcuts-cancel-translation">
                                 <td>Cancel Translation</td>
                             </Localized>
                             <td>
@@ -80,7 +80,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-insert-a-new-line">
+                            <Localized id="editor-keyboard-shortcuts-insert-a-new-line">
                                 <td>Insert A New Line</td>
                             </Localized>
                             <td>
@@ -88,7 +88,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-go-to-next-string">
+                            <Localized id="editor-keyboard-shortcuts-go-to-next-string">
                                 <td>Go To Next String</td>
                             </Localized>
                             <td>
@@ -96,7 +96,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-go-to-previous-string">
+                            <Localized id="editor-keyboard-shortcuts-go-to-previous-string">
                                 <td>Go To Previous String</td>
                             </Localized>
                             <td>
@@ -104,7 +104,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-copy-from-source">
+                            <Localized id="editor-keyboard-shortcuts-copy-from-source">
                                 <td>Copy From Source</td>
                             </Localized>
                             <td>
@@ -112,7 +112,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-clear-translation">
+                            <Localized id="editor-keyboard-shortcuts-clear-translation">
                                 <td>Clear Translation</td>
                             </Localized>
                             <td>
@@ -120,7 +120,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-search-strings">
+                            <Localized id="editor-keyboard-shortcuts-search-strings">
                                 <td>Search Strings</td>
                             </Localized>
                             <td>
@@ -128,7 +128,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-select-all-strings">
+                            <Localized id="editor-keyboard-shortcuts-select-all-strings">
                                 <td>Select All Strings</td>
                             </Localized>
                             <td>
@@ -136,7 +136,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <Localized id="keyboard-shortcuts-copy-from-helpers">
+                            <Localized id="editor-keyboard-shortcuts-copy-from-helpers">
                                 <td>Copy From Helpers</td>
                             </Localized>
                             <td>

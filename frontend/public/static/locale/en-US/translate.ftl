@@ -25,21 +25,21 @@ editor-settings-change-all = Change All Settings
 ## KeyboardShortcuts
 ## Shows a list of keyboard shortcuts.
 
-keyboard-shortcuts-button =
+editor-keyboard-shortcuts-button =
     .title = Keyboard Shortcuts
 
-keyboard-shortcuts-overlay-title = Keyboard Shortcuts
+editor-keyboard-shortcuts-overlay-title = Keyboard Shortcuts
 
-keyboard-shortcuts-save-translation = Save Translation
-keyboard-shortcuts-cancel-translation = Cancel Translation
-keyboard-shortcuts-insert-a-new-line = Insert A New Line
-keyboard-shortcuts-go-to-next-string = Go To Next String
-keyboard-shortcuts-go-to-previous-string = Go To Previous String
-keyboard-shortcuts-copy-from-source = Copy From Source
-keyboard-shortcuts-clear-translation = Clear Translation
-keyboard-shortcuts-search-strings = Search Strings
-keyboard-shortcuts-select-all-strings = Select All Strings
-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
+editor-keyboard-shortcuts-save-translation = Save Translation
+editor-keyboard-shortcuts-cancel-translation = Cancel Translation
+editor-keyboard-shortcuts-insert-a-new-line = Insert A New Line
+editor-keyboard-shortcuts-go-to-next-string = Go To Next String
+editor-keyboard-shortcuts-go-to-previous-string = Go To Previous String
+editor-keyboard-shortcuts-copy-from-source = Copy From Source
+editor-keyboard-shortcuts-clear-translation = Clear Translation
+editor-keyboard-shortcuts-search-strings = Search Strings
+editor-keyboard-shortcuts-select-all-strings = Select All Strings
+editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
 
 
 ## Machinery
