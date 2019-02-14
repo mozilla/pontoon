@@ -1,9 +1,9 @@
 .keyboard-shortcuts {
     color: #AAAAAA;
+    cursor: pointer;
 }
 
 .keyboard-shortcuts .selector {
-    cursor: pointer;
     float: left;
     font-size: 22px;
     padding: 9px 5px;
