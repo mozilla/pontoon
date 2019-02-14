@@ -37,25 +37,25 @@ editor-keyboard-shortcuts-cancel-translation = Cancel Translation
 editor-keyboard-shortcuts-cancel-translation-shortcut = Esc
 
 editor-keyboard-shortcuts-insert-a-new-line = Insert A New Line
-editor-keyboard-shortcuts-insert-a-new-line-shortcut = <span>Shift</span> + <span>Enter</span>
+editor-keyboard-shortcuts-insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
 editor-keyboard-shortcuts-go-to-next-string = Go To Next String
-editor-keyboard-shortcuts-go-to-next-string-shortcut = <span>Alt</span> + <span>Down</span>
+editor-keyboard-shortcuts-go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
 
 editor-keyboard-shortcuts-go-to-previous-string = Go To Previous String
-editor-keyboard-shortcuts-go-to-previous-string-shortcut = <span>Alt</span> + <span>Up</span>
+editor-keyboard-shortcuts-go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
 
 editor-keyboard-shortcuts-copy-from-source = Copy From Source
-editor-keyboard-shortcuts-copy-from-source-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>C</span>
+editor-keyboard-shortcuts-copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
 
 editor-keyboard-shortcuts-clear-translation = Clear Translation
-editor-keyboard-shortcuts-clear-translation-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>Backspace</span>
+editor-keyboard-shortcuts-clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>
 
 editor-keyboard-shortcuts-search-strings = Search Strings
-editor-keyboard-shortcuts-search-strings-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>F</span>
+editor-keyboard-shortcuts-search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>
 
 editor-keyboard-shortcuts-select-all-strings = Select All Strings
-editor-keyboard-shortcuts-select-all-strings-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>A</span>
+editor-keyboard-shortcuts-select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
 editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
 editor-keyboard-shortcuts-copy-from-helpers-shortcut = Tab
