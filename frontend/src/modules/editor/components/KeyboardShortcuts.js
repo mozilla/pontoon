@@ -27,8 +27,8 @@ export class EditorSettingsBase extends React.Component<Props, State> {
     }
 
     toggleVisibility = () => {
-        this.setState({
-            visible: !this.state.visible,
+        this.setState((state, props) => {
+            return { visible: !state.visible };
         });
     }
 
