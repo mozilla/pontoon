@@ -31,15 +31,34 @@ editor-keyboard-shortcuts-button =
 editor-keyboard-shortcuts-overlay-title = Keyboard Shortcuts
 
 editor-keyboard-shortcuts-save-translation = Save Translation
+editor-keyboard-shortcuts-save-translation-shortcut = Enter
+
 editor-keyboard-shortcuts-cancel-translation = Cancel Translation
+editor-keyboard-shortcuts-cancel-translation-shortcut = Esc
+
 editor-keyboard-shortcuts-insert-a-new-line = Insert A New Line
+editor-keyboard-shortcuts-insert-a-new-line-shortcut = <span>Shift</span> + <span>Enter</span>
+
 editor-keyboard-shortcuts-go-to-next-string = Go To Next String
+editor-keyboard-shortcuts-go-to-next-string-shortcut = <span>Alt</span> + <span>Down</span>
+
 editor-keyboard-shortcuts-go-to-previous-string = Go To Previous String
+editor-keyboard-shortcuts-go-to-previous-string-shortcut = <span>Alt</span> + <span>Up</span>
+
 editor-keyboard-shortcuts-copy-from-source = Copy From Source
+editor-keyboard-shortcuts-copy-from-source-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>C</span>
+
 editor-keyboard-shortcuts-clear-translation = Clear Translation
+editor-keyboard-shortcuts-clear-translation-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>Backspace</span>
+
 editor-keyboard-shortcuts-search-strings = Search Strings
+editor-keyboard-shortcuts-search-strings-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>F</span>
+
 editor-keyboard-shortcuts-select-all-strings = Select All Strings
+editor-keyboard-shortcuts-select-all-strings-shortcut = <span>Ctrl</span> + <span>Shift</span> + <span>A</span>
+
 editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
+editor-keyboard-shortcuts-copy-from-helpers-shortcut = Tab
 
 
 ## Machinery

@@ -68,7 +68,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Save Translation</td>
                             </Localized>
                             <td>
-                                <span>Enter</span>
+                                <Localized id="editor-keyboard-shortcuts-save-translation-shortcut">
+                                    <span>Enter</span>
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -76,7 +78,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Cancel Translation</td>
                             </Localized>
                             <td>
-                                <span>Esc</span>
+                                <Localized id="editor-keyboard-shortcuts-cancel-translation-shortcut">
+                                    <span>Esc</span>
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -84,7 +88,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Insert A New Line</td>
                             </Localized>
                             <td>
-                                <span>Shift</span> + <span>Enter</span>
+                                <Localized id="editor-keyboard-shortcuts-insert-a-new-line-shortcut">
+                                    { '<span>Shift</span> + <span>Enter</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -92,7 +98,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Go To Next String</td>
                             </Localized>
                             <td>
-                                <span>Alt</span> + <span>Down</span>
+                                <Localized id="editor-keyboard-shortcuts-go-to-next-string-shortcut">
+                                    { '<span>Alt</span> + <span>Down</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -100,7 +108,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Go To Previous String</td>
                             </Localized>
                             <td>
-                                <span>Alt</span> + <span>Up</span>
+                                <Localized id="editor-keyboard-shortcuts-go-to-previous-string-shortcut">
+                                    { '<span>Alt</span> + <span>Up</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -108,7 +118,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Copy From Source</td>
                             </Localized>
                             <td>
-                                <span>Ctrl</span> + <span>Shift</span> + <span>C</span>
+                                <Localized id="editor-keyboard-shortcuts-copy-from-source-shortcut">
+                                    { '<span>Ctrl</span> + <span>Shift</span> + <span>C</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -116,7 +128,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Clear Translation</td>
                             </Localized>
                             <td>
-                                <span>Ctrl</span> + <span>Shift</span> + <span>Backspace</span>
+                                <Localized id="editor-keyboard-shortcuts-clear-translation-shortcut">
+                                    { '<span>Ctrl</span> + <span>Shift</span> + <span>Backspace</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -124,7 +138,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Search Strings</td>
                             </Localized>
                             <td>
-                                <span>Ctrl</span> + <span>Shift</span> + <span>F</span>
+                                <Localized id="editor-keyboard-shortcuts-search-strings-shortcut">
+                                    { '<span>Ctrl</span> + <span>Shift</span> + <span>F</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -132,7 +148,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Select All Strings</td>
                             </Localized>
                             <td>
-                                <span>Ctrl</span> + <span>Shift</span> + <span>A</span>
+                                <Localized id="editor-keyboard-shortcuts-select-all-strings-shortcut">
+                                    { '<span>Ctrl</span> + <span>Shift</span> + <span>A</span>' }
+                                </Localized>
                             </td>
                         </tr>
                         <tr>
@@ -140,7 +158,9 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                                 <td>Copy From Helpers</td>
                             </Localized>
                             <td>
-                                <span>Tab</span>
+                                <Localized id="editor-keyboard-shortcuts-copy-from-helpers-shortcut">
+                                    <span>Tab</span>
+                                </Localized>
                             </td>
                         </tr>
                     </tbody>
