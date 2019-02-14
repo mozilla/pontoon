@@ -6,8 +6,9 @@ from django import http
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template import engines
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
 from . import URL_BASE
@@ -100,6 +101,24 @@ def get_preferred_locale(request):
 def translate(request, locale=None, project=None, resource=None):
     if not waffle.switch_is_active('translate_next'):
         raise Http404
+
+    # Redirect the user to the old Translate page if needed.
+    # To be removed as part of bug 1527853.
+    user = request.user
+    if user.is_authenticated and not user.profile.use_translate_next:
+        url = reverse(
+            'pontoon.translate',
+            kwargs={
+                'slug': project,
+                'locale': locale,
+                'part': resource,
+            }
+        )
+        query = request.GET.urlencode()
+        if query:
+            url += '?' + query
+
+        return redirect(url)
 
     context = {
         'locale': get_preferred_locale(request),
