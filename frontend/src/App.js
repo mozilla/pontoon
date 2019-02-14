@@ -30,8 +30,9 @@ const AppSwitcher = (props) => {
         <a
             href={ target }
             title='Switch back to the current Translate app'
+            className='toggle-translate-next'
         >
-            Cancel Translate.Next
+            Leave Translate.Next
         </a>
     </div>;
 }
