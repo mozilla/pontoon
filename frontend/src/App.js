@@ -40,6 +40,7 @@ const AppSwitcher = (props) => {
 type Props = {|
     l10n: L10nState,
     locales: LocalesState,
+    router: Object,
 |};
 
 type InternalProps = {
