@@ -20,6 +20,23 @@ import type { L10nState } from 'core/l10n';
 import type { LocalesState } from 'core/locales';
 
 
+const AppSwitcher = (props) => {
+    const { router } = props;
+
+    const currentURL = router.location.pathname + router.location.search;
+    const target = '/toggle-use-translate-next/?next=' + currentURL;
+
+    return <div className='options'>
+        <a
+            href={ target }
+            title='Switch back to the current Translate app'
+        >
+            Cancel Translate.Next
+        </a>
+    </div>;
+}
+
+
 type Props = {|
     l10n: L10nState,
     locales: LocalesState,
@@ -40,7 +57,7 @@ class App extends React.Component<InternalProps> {
     }
 
     render() {
-        const { l10n, locales } = this.props;
+        const { l10n, locales, router } = this.props;
 
         if (l10n.fetching || locales.fetching) {
             return <WaveLoader />;
@@ -49,6 +66,8 @@ class App extends React.Component<InternalProps> {
         return <div id="app">
             <UserAutoUpdater />
             <header>
+                { /* To be removed as part of bug 1527853. */ }
+                <AppSwitcher router={ router } />
                 <Navigation />
             </header>
             <section className="panel-list">
@@ -67,6 +86,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         l10n: state[L10N_NAME],
         locales: state[LOCALES_NAME],
+        router: state.router,
     };
 };
 

@@ -934,6 +934,21 @@ def user_data(request):
     })
 
 
+# To be removed as part of bug 1527853.
+@login_required(redirect_field_name='', login_url='/403')
+@transaction.atomic
+def toggle_use_translate_next(request):
+    profile = request.user.profile
+    profile.use_translate_next = not profile.use_translate_next
+    profile.save()
+
+    next = request.GET.get('next')
+    if next:
+        return redirect(next)
+
+    return redirect(reverse('pontoon.homepage'))
+
+
 class AjaxFormView(FormView):
     """A form view that when the form is submitted, it will return a json
     response containing either an ``errors`` object with a bad response status

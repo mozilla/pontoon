@@ -101,6 +101,16 @@
     </div>
 
     <div class="right">
+      {% if waffle.switch('translate_next') %}
+      <!-- A link to switch between the current and next Translate apps. -->
+      <a
+        href="{{ url('pontoon.user.toggle_use_translate_next') }}?next={{ request.get_full_path() }}"
+        title="Switch to using our new Translate app!"
+      >
+        Try Translate.Next
+      </a>
+      {% endif %}
+
       <!-- Hide by default to prevent covering the Next button -->
       <ul class="notification hide">
       {% for message in messages %}
@@ -119,8 +129,8 @@
             {{ Profile.top_menu() }}
 
             <li class="langpack"><a href=""><i class="fa fa-cloud-download-alt fa-fw"></i>Download Language Pack</a></li>
-            <li class="download-tmx"><a href=""><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translation Memory</i></a></li>
-            <li class="download"><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translations</i></li>
+            <li class="download-tmx"><a href=""><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translation Memory</a></li>
+            <li class="download"><i class="fa fa-cloud-download-alt fa-fw"></i>Download Translations</li>
             <li class="upload"><i class="fa fa-cloud-upload-alt fa-fw"></i>Upload Translations</li>
 
             <li class="horizontal-separator"></li>

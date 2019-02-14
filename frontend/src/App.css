@@ -12,6 +12,10 @@
     grid-column-end: 3;
 }
 
+#app > header .options {
+    float: right;
+}
+
 #app .panel-content,
 #app .panel-list {
     height: calc(100vh - 60px);
