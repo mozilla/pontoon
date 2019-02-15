@@ -67,21 +67,27 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             <Localized id="editor-keyboard-shortcuts-save-translation">
                                 <td>Save Translation</td>
                             </Localized>
-                            <td>
-                                <Localized id="editor-keyboard-shortcuts-save-translation-shortcut">
-                                    <span>Enter</span>
-                                </Localized>
-                            </td>
+                            <Localized
+                                id="editor-keyboard-shortcuts-save-translation-shortcut"
+                                accel={ <span/> }
+                            >
+                                <td>
+                                    { '<accel>Enter</accel>' }
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-cancel-translation">
                                 <td>Cancel Translation</td>
                             </Localized>
-                            <td>
-                                <Localized id="editor-keyboard-shortcuts-cancel-translation-shortcut">
-                                    <span>Esc</span>
-                                </Localized>
-                            </td>
+                            <Localized
+                                id="editor-keyboard-shortcuts-cancel-translation-shortcut"
+                                accel={ <span/> }
+                            >
+                                <td>
+                                    { '<accel>Esc</accel>' }
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-insert-a-new-line">
@@ -193,11 +199,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             <Localized id="editor-keyboard-shortcuts-copy-from-helpers">
                                 <td>Copy From Helpers</td>
                             </Localized>
-                            <td>
-                                <Localized id="editor-keyboard-shortcuts-copy-from-helpers-shortcut">
-                                    <span>Tab</span>
-                                </Localized>
-                            </td>
+                            <Localized
+                                id="editor-keyboard-shortcuts-copy-from-helpers-shortcut"
+                                accel={ <span/> }
+                            >
+                                <td>
+                                    { '<accel>Tab</accel>' }
+                                </td>
+                            </Localized>
                         </tr>
                     </tbody>
                 </table>

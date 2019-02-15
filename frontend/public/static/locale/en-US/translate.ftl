@@ -31,10 +31,10 @@ editor-keyboard-shortcuts-button =
 editor-keyboard-shortcuts-overlay-title = Keyboard Shortcuts
 
 editor-keyboard-shortcuts-save-translation = Save Translation
-editor-keyboard-shortcuts-save-translation-shortcut = Enter
+editor-keyboard-shortcuts-save-translation-shortcut = <accel>Enter</accel>
 
 editor-keyboard-shortcuts-cancel-translation = Cancel Translation
-editor-keyboard-shortcuts-cancel-translation-shortcut = Esc
+editor-keyboard-shortcuts-cancel-translation-shortcut = <accel>Esc</accel>
 
 editor-keyboard-shortcuts-insert-a-new-line = Insert A New Line
 editor-keyboard-shortcuts-insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
@@ -58,7 +58,7 @@ editor-keyboard-shortcuts-select-all-strings = Select All Strings
 editor-keyboard-shortcuts-select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
 editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
-editor-keyboard-shortcuts-copy-from-helpers-shortcut = Tab
+editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
 
 
 ## Machinery
