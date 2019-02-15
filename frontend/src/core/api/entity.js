@@ -25,7 +25,7 @@ export default class EntityAPI extends APIBase {
         payload.append('locale', locale);
         payload.append('project', project);
 
-        if (resource !== 'all') {
+        if (resource !== 'all-resources') {
             payload.append('paths[]', resource);
         }
 

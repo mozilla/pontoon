@@ -205,6 +205,7 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.templatetags.ext.PipelineExtension',
+                'waffle.jinja.WaffleExtension',
                 'webpack_loader.contrib.jinja2ext.WebpackExtension',
             ],
         }
