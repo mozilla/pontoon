@@ -18,7 +18,7 @@ type State = {|
 /*
  * Shows a list of keyboard shortcuts.
  */
-export class EditorSettingsBase extends React.Component<Props, State> {
+export class KeyboardShortcutsBase extends React.Component<Props, State> {
     constructor() {
         super();
         this.state = {
@@ -207,4 +207,4 @@ export class EditorSettingsBase extends React.Component<Props, State> {
     }
 }
 
-export default onClickOutside(EditorSettingsBase);
+export default onClickOutside(KeyboardShortcutsBase);
