@@ -12,6 +12,16 @@
     grid-column-end: 3;
 }
 
+#app > header .options {
+    float: right;
+}
+
+#app > header .options .toggle-translate-next {
+    color: #7BC876;
+    float: left;
+    margin: 22px 10px;
+}
+
 #app .panel-content,
 #app .panel-list {
     height: calc(100vh - 60px);
