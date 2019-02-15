@@ -4,10 +4,10 @@
 ## Editor
 ## Allows contributors to modify or propose a translation
 
-entitydetails-editor-button-copy = Copiar
-entitydetails-editor-button-clear = Borrar
-entitydetails-editor-button-save = Guardar
-entitydetails-editor-button-suggest = Sugerir
+editor-editor-button-copy = Copiar
+editor-editor-button-clear = Borrar
+editor-editor-button-save = Guardar
+editor-editor-button-suggest = Sugerir
 
 
 ## Entity Navigation
