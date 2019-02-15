@@ -101,7 +101,7 @@
     </div>
 
     <div class="right">
-      {% if waffle.switch('translate_next') %}
+      {% if waffle.switch('translate_next') and request.user.is_authenticated %}
       <!-- A link to switch between the current and next Translate apps. -->
       <a
         href="{{ url('pontoon.user.toggle_use_translate_next') }}?next={{ request.get_full_path() }}"
