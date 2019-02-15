@@ -22,6 +22,45 @@ editor-settings-force-suggestions = <glyph></glyph>Faire des suggestions
 editor-settings-change-all = Changer tous les paramètres
 
 
+## KeyboardShortcuts
+## Shows a list of keyboard shortcuts.
+
+editor-keyboard-shortcuts-button =
+    .title = Raccourcis clavier
+
+editor-keyboard-shortcuts-overlay-title = Raccourcis clavier
+
+editor-keyboard-shortcuts-save-translation = Sauvegarder une traduction
+editor-keyboard-shortcuts-save-translation-shortcut = <accel>Entrée</accel>
+
+editor-keyboard-shortcuts-cancel-translation = Annuler une traduction
+editor-keyboard-shortcuts-cancel-translation-shortcut = <accel>Échap</accel>
+
+editor-keyboard-shortcuts-insert-a-new-line = Insérer une nouvelle ligne
+editor-keyboard-shortcuts-insert-a-new-line-shortcut = <mod1>Maj</mod1> + <accel>Entrée</accel>
+
+editor-keyboard-shortcuts-go-to-next-string = Aller à la prochaine chaîne
+editor-keyboard-shortcuts-go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Bas</accel>
+
+editor-keyboard-shortcuts-go-to-previous-string = Aller à la chaîne précédente
+editor-keyboard-shortcuts-go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Haut</accel>
+
+editor-keyboard-shortcuts-copy-from-source = Copier depuis la source
+editor-keyboard-shortcuts-copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>C</accel>
+
+editor-keyboard-shortcuts-clear-translation = Effacer la traduction
+editor-keyboard-shortcuts-clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>Retour arrière</accel>
+
+editor-keyboard-shortcuts-search-strings = Chercher dans les chaînes
+editor-keyboard-shortcuts-search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>F</accel>
+
+editor-keyboard-shortcuts-select-all-strings = Sélectionner toutes les chaînes
+editor-keyboard-shortcuts-select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>A</accel>
+
+editor-keyboard-shortcuts-copy-from-helpers = Copier depuis les utilitaires
+editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
+
+
 ## Machinery
 ## Shows a list of translations from machines.
 
