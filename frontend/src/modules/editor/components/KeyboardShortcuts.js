@@ -87,15 +87,15 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             <Localized id="editor-keyboard-shortcuts-insert-a-new-line">
                                 <td>Insert A New Line</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-insert-a-new-line-shortcut"
-                                    mod1={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-insert-a-new-line-shortcut"
+                                mod1={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Shift</mod1> + <accel>Enter</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized
@@ -103,91 +103,91 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                             >
                                 <td>Go To Next String</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-go-to-next-string-shortcut"
-                                    mod1={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-go-to-next-string-shortcut"
+                                mod1={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Alt</mod1> + <accel>Down</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized
                                 id="editor-keyboard-shortcuts-go-to-previous-string">
                                 <td>Go To Previous String</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-go-to-previous-string-shortcut"
-                                    mod1={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-go-to-previous-string-shortcut"
+                                mod1={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Alt</mod1> + <accel>Up</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized
                                 id="editor-keyboard-shortcuts-copy-from-source">
                                 <td>Copy From Source</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-copy-from-source-shortcut"
-                                    mod1={ <span/> }
-                                    mod2={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-copy-from-source-shortcut"
+                                mod1={ <span/> }
+                                mod2={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-clear-translation">
                                 <td>Clear Translation</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-clear-translation-shortcut"
-                                    mod1={ <span/> }
-                                    mod2={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-clear-translation-shortcut"
+                                mod1={ <span/> }
+                                mod2={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-search-strings">
                                 <td>Search Strings</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-search-strings-shortcut"
-                                    mod1={ <span/> }
-                                    mod2={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-search-strings-shortcut"
+                                mod1={ <span/> }
+                                mod2={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-select-all-strings">
                                 <td>Select All Strings</td>
                             </Localized>
-                            <td>
-                                <Localized
-                                    id="editor-keyboard-shortcuts-select-all-strings-shortcut"
-                                    mod1={ <span/> }
-                                    mod2={ <span/> }
-                                    accel={ <span/> }
-                                >
+                            <Localized
+                                id="editor-keyboard-shortcuts-select-all-strings-shortcut"
+                                mod1={ <span/> }
+                                mod2={ <span/> }
+                                accel={ <span/> }
+                            >
+                                <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>' }
-                                </Localized>
-                            </td>
+                                </td>
+                            </Localized>
                         </tr>
                         <tr>
                             <Localized id="editor-keyboard-shortcuts-copy-from-helpers">
