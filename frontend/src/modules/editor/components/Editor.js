@@ -82,12 +82,12 @@ export default class Editor extends React.Component<Props, State> {
             { !this.props.user.isAuthenticated ?
                 <Localized
                     id="editor-editor-sign-in-to-translate"
-                    link={
+                    a={
                         <a href='/accounts/fxa/login/?scope=profile%3Auid+profile%3Aemail+profile%3Adisplay_name'></a>
                     }
                 >
                     <p className='banner'>
-                        { '<link>Sign in</link> to translate.' }
+                        { '<a>Sign in</a> to translate.' }
                     </p>
                 </Localized>
             :

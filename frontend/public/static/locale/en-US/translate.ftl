@@ -4,7 +4,7 @@
 ## Editor
 ## Allows contributors to modify or propose a translation
 
-editor-editor-sign-in-to-translate = <link>Sign in</link> to translate.
+editor-editor-sign-in-to-translate = <a>Sign in</a> to translate.
 editor-editor-button-copy = Copy
 editor-editor-button-clear = Clear
 editor-editor-button-save = Save
