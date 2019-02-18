@@ -80,7 +80,7 @@
 
     {{ TeamList.header() }}
 
-    {% for locale in locales %}
+    {% for locale in locales_list %}
       {% set main_link = url('pontoon.teams.team', locale.code) %}
       {% set chart_link = url('pontoon.translate', locale.code, 'all-projects', 'all-resources') %}
       {% set latest_activity = locale.get_latest_activity() %}

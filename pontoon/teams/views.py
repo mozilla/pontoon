@@ -30,8 +30,12 @@ def teams(request):
     """List all active localization teams."""
     locales = (
         Locale.objects.visible()
-        .order_by('name', 'code')
         .prefetch_related('latest_translation__user')
+    )
+
+    locales_list = sorted(
+        locales,
+        key=lambda x: (x.name, x.code)
     )
 
     form = LocaleRequestForm()
@@ -43,6 +47,7 @@ def teams(request):
 
     return render(request, 'teams/teams.html', {
         'locales': locales,
+        'locales_list': locales_list,
         'form': form,
         'top_instances': locales.get_top_instances(),
     })
