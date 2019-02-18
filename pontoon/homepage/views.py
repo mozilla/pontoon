@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.template import Template, Context
 
 from pontoon.base.models import Locale
+from pontoon.homepage.models import Homepage
 from pontoon.base.utils import get_project_locale_from_request
 
 
@@ -28,6 +30,23 @@ def homepage(request):
     else:
         start_url = reverse('pontoon.teams')
 
-    return render(request, 'homepage.html', {
+    playground_url = reverse('pontoon.translate.locale.agnostic', kwargs={
+        'slug': 'tutorial',
+        'part': 'playground',
+    })
+
+    intro_url = reverse('pontoon.translate.locale.agnostic', kwargs={
+        'slug': 'pontoon-intro',
+        'part': 'messages.properties',
+    })
+
+    homepage = Homepage.objects.all()[0]
+    content = Template(homepage.text).render(Context({
         'start_url': start_url,
+        'playground_url': playground_url,
+        'intro_url': intro_url,
+    }))
+
+    return render(request, 'homepage.html', {
+        'content': content,
     })
