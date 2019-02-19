@@ -24,7 +24,7 @@ def remove_homepage_entry(apps, schema_editor):
     Homepage = apps.get_model('homepage', 'Homepage')
 
     try:
-        homepage = Homepage.objects.all()[0]
+        homepage = Homepage.objects.last()
     except Homepage.DoesNotExist:
         return
 

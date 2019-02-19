@@ -40,7 +40,7 @@ def homepage(request):
         'part': 'messages.properties',
     })
 
-    homepage = Homepage.objects.all()[0]
+    homepage = Homepage.objects.first()
     content = Template(homepage.text).render(Context({
         'start_url': start_url,
         'playground_url': playground_url,
