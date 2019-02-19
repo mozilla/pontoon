@@ -161,7 +161,7 @@ export default class Translation extends React.Component<Props> {
                                 className='unapprove fa'
                                 title='Unapprove'
                                 onClick={ this.unapprove }
-                            ></button>
+                            />
                         </Localized>
                         :
                         // Approve Button
@@ -173,7 +173,7 @@ export default class Translation extends React.Component<Props> {
                                 className='approve fa'
                                 title='Approve'
                                 onClick={ this.approve }
-                            ></button>
+                            />
                         </Localized>
                     }
                     { translation.rejected ?
@@ -186,7 +186,7 @@ export default class Translation extends React.Component<Props> {
                                 className='unreject fa'
                                 title='Unreject'
                                 onClick={ this.unreject }
-                            ></button>
+                            />
                         </Localized>
                         :
                         // Reject Button
@@ -198,7 +198,7 @@ export default class Translation extends React.Component<Props> {
                                 className='reject fa'
                                 title='Reject'
                                 onClick={ this.reject }
-                            ></button>
+                            />
                         </Localized>
                     }
                     </menu>

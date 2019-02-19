@@ -30,6 +30,7 @@
 .history .translation > header + p {
     clear: both;
     text-align: start;
+    white-space: pre-wrap;
 }
 
 .history .translation > header .info time {

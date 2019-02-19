@@ -64,7 +64,7 @@ export default class History extends React.Component<Props> {
 
         return <section className="history">
             <ul>
-                { history.translations.map((translation, key) => {
+                { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }
                         canReview={ canReview }
@@ -73,7 +73,8 @@ export default class History extends React.Component<Props> {
                         deleteTranslation={ deleteTranslation }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateTranslationStatus={ updateTranslationStatus }
-                        key={ key }
+                        key={ index }
+                        index={ index }
                     />;
                 }) }
             </ul>

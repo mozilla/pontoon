@@ -41,12 +41,12 @@ export default class Machinery extends React.Component<Props> {
                 </Localized>
             </div>
             <ul>
-                { machinery.translations.map((item, i) => {
+                { machinery.translations.map((translation, index) => {
                     return <Translation
-                        translation={ item }
+                        translation={ translation }
                         locale={ locale }
                         updateEditorTranslation={ updateEditorTranslation }
-                        key={ i }
+                        key={ index }
                     />;
                 }) }
             </ul>
