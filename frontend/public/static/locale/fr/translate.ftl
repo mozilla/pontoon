@@ -4,10 +4,11 @@
 ## Editor
 ## Allows contributors to modify or propose a translation
 
-entitydetails-editor-button-copy = Copier
-entitydetails-editor-button-clear = Effacer
-entitydetails-editor-button-save = Sauvegarder
-entitydetails-editor-button-suggest = Suggérer
+editor-editor-sign-in-to-translate = <a>Connectez-vous</a> pour traduire.
+editor-editor-button-copy = Copier
+editor-editor-button-clear = Effacer
+editor-editor-button-save = Sauvegarder
+editor-editor-button-suggest = Suggérer
 
 
 ## EditorSettings
