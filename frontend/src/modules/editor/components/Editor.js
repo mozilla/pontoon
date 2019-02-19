@@ -83,6 +83,7 @@ export default class Editor extends React.Component<Props, State> {
                 <Localized
                     id="editor-editor-sign-in-to-translate"
                     a={
+                        /* eslint-disable-next-line */
                         <a href='/accounts/fxa/login/?scope=profile%3Auid+profile%3Aemail+profile%3Adisplay_name'></a>
                     }
                 >
