@@ -67,6 +67,7 @@ export default class History extends React.Component<Props> {
                 { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }
+                        activeTranslation={ history.translations[0] }
                         canReview={ canReview }
                         locale={ locale }
                         user={ user }

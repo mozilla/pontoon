@@ -42,9 +42,12 @@
 }
 
 .history .translation > header .toggle-diff {
+    font-size: inherit;
+    font-weight: 300;
     margin-right: 6px;
 }
 
+.history .translation > header .toggle-diff:hover,
 .history .translation > header .toggle-diff.active {
     color: #7BC876;
 }
@@ -54,14 +57,41 @@
     border: none;
     color: #AAAAAA;
     display: inline-block;
-    pointer-events: none;
-    opacity: 0.5;
+    padding: 0;
     outline: none;
+}
+
+.history .translation > header button.fa,
+.history .translation > header button.far {
     font-size: 1.8em;
     height: 22px;
-    padding: 0;
+    opacity: 0.5;
+    pointer-events: none;
     vertical-align: bottom;
     width: 22px;
+}
+
+.history .translation p ins,
+.history .translation p del {
+  border-radius: 2px;
+  white-space: pre-wrap;
+}
+
+.history .translation p ins {
+  background: #4B6259;
+  color: #9CD699;
+}
+
+.history .translation p del {
+  background: #674B54;
+  color: #FE8F8F;
+}
+
+.history .translation p ins mark,
+.history .translation p del mark {
+  background: transparent;
+  border-color: transparent;
+  margin: 0;
 }
 
 .history .translation.rejected.can-reject header button.delete,

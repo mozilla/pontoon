@@ -3,6 +3,7 @@
 import * as React from 'react';
 import TimeAgo from 'react-timeago';
 import { Localized } from 'fluent-react';
+import DiffMatchPatch from 'diff-match-patch';
 
 import './Translation.css';
 
@@ -14,12 +15,23 @@ import type { DBTranslation } from '../reducer';
 type Props = {|
     canReview: boolean,
     translation: DBTranslation,
+    activeTranslation: DBTranslation,
     locale: Locale,
     user: UserState,
+    index: number,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
     updateTranslationStatus: (number, string) => void,
 |};
+
+
+type State = {|
+    isDiffVisible: boolean,
+|};
+
+
+const dmp = new DiffMatchPatch();
+
 
 /**
  * Render a translation in the History tab.
@@ -30,7 +42,14 @@ type Props = {|
  * The status can be interact with if the user has sufficient permissions to
  * change said status.
  */
-export default class Translation extends React.Component<Props> {
+export default class Translation extends React.Component<Props, State> {
+    constructor() {
+        super();
+        this.state = {
+            isDiffVisible: false,
+        };
+    }
+
     approve = () => {
         this.props.updateTranslationStatus(this.props.translation.pk, 'approve');
     }
@@ -99,8 +118,50 @@ export default class Translation extends React.Component<Props> {
         </a>
     }
 
+    toggleDiff = () => {
+        this.setState((state) => {
+            return { isDiffVisible: !state.isDiffVisible };
+        });
+    }
+
+    getDiff(base: string, target: string) {
+        const diff = dmp.diff_main(base, target);
+
+        dmp.diff_cleanupSemantic(diff);
+        dmp.diff_cleanupEfficiency(diff);
+
+        return diff;
+    }
+
+    renderDiff(translation: DBTranslation, activeTranslation: DBTranslation) {
+        const diff = this.getDiff(activeTranslation.string, translation.string)
+
+        return diff.map((item, index) => {
+            let type = item[0];
+            let slice = item[1];
+
+            switch(type) {
+                case DiffMatchPatch.DIFF_INSERT:
+                    return <ins key={ index }>{ slice }</ins>;
+
+                case DiffMatchPatch.DIFF_DELETE:
+                    return <del key={ index }>{ slice }</del>;
+
+                default:
+                    return <span key={ index }>{ slice }</span>;
+            }
+        });
+    }
+
     render() {
-        const { canReview, translation, locale, user } = this.props;
+        const {
+            canReview,
+            translation,
+            locale,
+            user,
+            index,
+            activeTranslation,
+        } = this.props;
 
         // Does the currently logged in user own this translation?
         const ownTranslation = (
@@ -138,6 +199,36 @@ export default class Translation extends React.Component<Props> {
                         />
                     </div>
                     <menu className='toolbar'>
+                    { index === 0 ? null :
+                        this.state.isDiffVisible ?
+                            // Hide Diff
+                            <Localized
+                                id='history-translation-hide-diff'
+                                attrs={{ title: true }}
+                            >
+                                <button
+                                    className='toggle-diff'
+                                    title='Hide diff against the currently active translation'
+                                    onClick={ this.toggleDiff }
+                                >
+                                    { 'Hide diff' }
+                                </button>
+                            </Localized>
+                            :
+                            // Show Diff
+                            <Localized
+                                id='history-translation-show-diff'
+                                attrs={{ title: true }}
+                            >
+                                <button
+                                    className='toggle-diff'
+                                    title='Show diff against the currently active translation'
+                                    onClick={ this.toggleDiff }
+                                >
+                                    { 'Show diff' }
+                                </button>
+                            </Localized>
+                    }
                     { (!translation.rejected || !canDelete ) ? null :
                         // Delete Button
                         <Localized
@@ -203,13 +294,23 @@ export default class Translation extends React.Component<Props> {
                     }
                     </menu>
                 </header>
-                <p
-                    dir={ locale.direction }
-                    lang={ locale.code }
-                    data-script={ locale.script }
-                >
-                    { translation.string }
-                </p>
+                { this.state.isDiffVisible ?
+                    <p
+                        dir={ locale.direction }
+                        lang={ locale.code }
+                        data-script={ locale.script }
+                    >
+                        { this.renderDiff(translation, activeTranslation) }
+                    </p>
+                    :
+                    <p
+                        dir={ locale.direction }
+                        lang={ locale.code }
+                        data-script={ locale.script }
+                    >
+                        { translation.string }
+                    </p>
+                }
             </li>
         </Localized>;
     }
