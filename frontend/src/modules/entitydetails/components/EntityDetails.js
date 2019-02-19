@@ -203,7 +203,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 entity={ state.selectedEntity }
                 locale={ state.locale }
                 pluralForm= { state.pluralForm }
-                settings={ state.user.settings }
+                user={ state.user }
                 sendTranslation={ this.sendTranslation }
                 updateEditorTranslation={ this.updateEditorTranslation }
                 updateSetting={ this.updateSetting }

@@ -3,6 +3,8 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import Editor from './Editor';
+import EditorSettings from './EditorSettings';
+import KeyboardShortcuts from './KeyboardShortcuts';
 
 
 const TRANSLATION = 'test';
@@ -22,7 +24,8 @@ function createShallowEditor({
     suggestMock,
     updateMock,
     pluralForm = -1,
-    forceSuggestions = true
+    forceSuggestions = true,
+    isAuthenticated = true,
 } = {}) {
     return shallow(<Editor
         translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
@@ -30,7 +33,12 @@ function createShallowEditor({
         sendTranslation={ suggestMock }
         updateEditorTranslation={ updateMock }
         pluralForm={ pluralForm }
-        settings={ { forceSuggestions } }
+        user={ {
+            isAuthenticated,
+            settings: {
+                forceSuggestions,
+            },
+        } }
     />);
 }
 
@@ -93,5 +101,15 @@ describe('<Editor>', () => {
 
         wrapper.find('.action-save').simulate('click');
         expect(suggestMock.calledOnce).toBeTruthy();
+    });
+
+    it('hides the settings and actions when the user is logged out', () => {
+        const wrapper = createShallowEditor({ isAuthenticated: false });
+
+        expect(wrapper.find(EditorSettings)).toHaveLength(0);
+        expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
+        expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
+
+        expect(wrapper.find('#editor-editor-sign-in-to-translate')).toHaveLength(1);
     });
 });

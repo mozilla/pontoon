@@ -12,7 +12,7 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 import type { Locale } from 'core/locales';
-import type { SettingsState } from 'core/user';
+import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 
 
@@ -21,7 +21,7 @@ type Props = {|
     entity: ?DbEntity,
     locale: Locale,
     pluralForm: number,
-    settings: SettingsState,
+    user: UserState,
     sendTranslation: () => void,
     updateEditorTranslation: (string) => void,
     updateSetting: (string, boolean) => void,
@@ -79,13 +79,27 @@ export default class Editor extends React.Component<Props, State> {
                 updateTranslation={ this.updateTranslation }
             />
             <menu>
+            { !this.props.user.isAuthenticated ?
+                <Localized
+                    id="editor-editor-sign-in-to-translate"
+                    a={
+                        /* eslint-disable-next-line */
+                        <a href='/accounts/fxa/login/?scope=profile%3Auid+profile%3Aemail+profile%3Adisplay_name'></a>
+                    }
+                >
+                    <p className='banner'>
+                        { '<a>Sign in</a> to translate.' }
+                    </p>
+                </Localized>
+            :
+            <React.Fragment>
                 <EditorSettings
-                    settings={ this.props.settings }
+                    settings={ this.props.user.settings }
                     updateSetting={ this.props.updateSetting }
                 />
                 <KeyboardShortcuts />
                 <div className="actions">
-                    <Localized id="entitydetails-editor-button-copy">
+                    <Localized id="editor-editor-button-copy">
                         <button
                             className="action-copy"
                             onClick={ this.copyOriginalIntoEditor }
@@ -93,7 +107,7 @@ export default class Editor extends React.Component<Props, State> {
                             Copy
                         </button>
                     </Localized>
-                    <Localized id="entitydetails-editor-button-clear">
+                    <Localized id="editor-editor-button-clear">
                         <button
                             className="action-clear"
                             onClick={ this.clearEditor }
@@ -101,9 +115,9 @@ export default class Editor extends React.Component<Props, State> {
                             Clear
                         </button>
                     </Localized>
-                    { this.props.settings.forceSuggestions ?
+                    { this.props.user.settings.forceSuggestions ?
                     // Suggest button, will send an unreviewed translation.
-                    <Localized id="entitydetails-editor-button-suggest">
+                    <Localized id="editor-editor-button-suggest">
                         <button
                             className="action-suggest"
                             onClick={ this.sendTranslation }
@@ -113,7 +127,7 @@ export default class Editor extends React.Component<Props, State> {
                     </Localized>
                     :
                     // Save button, will send an approved translation.
-                    <Localized id="entitydetails-editor-button-save">
+                    <Localized id="editor-editor-button-save">
                         <button
                             className="action-save"
                             onClick={ this.sendTranslation }
@@ -123,8 +137,9 @@ export default class Editor extends React.Component<Props, State> {
                     </Localized>
                     }
                 </div>
-                <div className="clearfix">
-                </div>
+                <div className="clearfix" />
+            </React.Fragment>
+            }
             </menu>
         </div>;
     }
