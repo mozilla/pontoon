@@ -123,6 +123,12 @@ export default class Translation extends React.Component<Props, State> {
     }
 
     renderDiffToggle() {
+        const { index } = this.props;
+
+        if (index === 0) {
+            return null;
+        }
+
         // Hide Diff
         if (this.state.isDiffVisible) {
             return <Localized
@@ -162,7 +168,6 @@ export default class Translation extends React.Component<Props, State> {
             translation,
             locale,
             user,
-            index,
             activeTranslation,
         } = this.props;
 
@@ -203,7 +208,7 @@ export default class Translation extends React.Component<Props, State> {
                     </div>
                     <menu className='toolbar'>
 
-                    { index > 0 ? this.renderDiffToggle() : null }
+                    { this.renderDiffToggle() }
 
                     { (!translation.rejected || !canDelete ) ? null :
                         // Delete Button
