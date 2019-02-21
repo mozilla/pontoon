@@ -133,7 +133,7 @@ export default class Translation extends React.Component<Props, State> {
         return diff;
     }
 
-    renderDiff(base: string, target: string) {
+    renderTranslationDiff(base: string, target: string) {
         const diff = this.getDiff(base, target)
 
         return diff.map((item, index) => {
@@ -151,6 +151,40 @@ export default class Translation extends React.Component<Props, State> {
                     return <span key={ index }>{ slice }</span>;
             }
         });
+    }
+
+    renderDiffToggle() {
+        // Hide Diff
+        if (this.state.isDiffVisible) {
+            return <Localized
+                id='history-translation-hide-diff'
+                attrs={{ title: true }}
+            >
+                <button
+                    className='toggle-diff hide'
+                    title='Hide diff against the currently active translation'
+                    onClick={ this.toggleDiff }
+                >
+                    { 'Hide diff' }
+                </button>
+            </Localized>;
+        }
+
+        // Show Diff
+        else {
+            return <Localized
+                id='history-translation-show-diff'
+                attrs={{ title: true }}
+            >
+                <button
+                    className='toggle-diff show'
+                    title='Show diff against the currently active translation'
+                    onClick={ this.toggleDiff }
+                >
+                    { 'Show diff' }
+                </button>
+            </Localized>;
+        }
     }
 
     render() {
@@ -199,36 +233,9 @@ export default class Translation extends React.Component<Props, State> {
                         />
                     </div>
                     <menu className='toolbar'>
-                    { index === 0 ? null :
-                        this.state.isDiffVisible ?
-                            // Hide Diff
-                            <Localized
-                                id='history-translation-hide-diff'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='toggle-diff hide'
-                                    title='Hide diff against the currently active translation'
-                                    onClick={ this.toggleDiff }
-                                >
-                                    { 'Hide diff' }
-                                </button>
-                            </Localized>
-                            :
-                            // Show Diff
-                            <Localized
-                                id='history-translation-show-diff'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='toggle-diff show'
-                                    title='Show diff against the currently active translation'
-                                    onClick={ this.toggleDiff }
-                                >
-                                    { 'Show diff' }
-                                </button>
-                            </Localized>
-                    }
+
+                    { index > 0 ? this.renderDiffToggle() : null }
+
                     { (!translation.rejected || !canDelete ) ? null :
                         // Delete Button
                         <Localized
@@ -301,7 +308,7 @@ export default class Translation extends React.Component<Props, State> {
                         lang={ locale.code }
                         data-script={ locale.script }
                     >
-                        { this.renderDiff(translation.string, activeTranslation.string) }
+                        { this.renderTranslationDiff(translation.string, activeTranslation.string) }
                     </p>
                     :
                     <p
