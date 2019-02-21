@@ -321,25 +321,5 @@ describe('<Translation>', () => {
             expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
             expect(wrapper.find('.toggle-diff.hide')).toHaveLength(1);
         });
-
-        it('shows diff between the current and the active translation', () => {
-            const activeTranslation = {
-                ...DEFAULT_TRANSLATION,
-                ...{ string: 'The storm. We speak no more. End.' }
-            };
-
-            const wrapper = shallow(<Translation
-                translation={ DEFAULT_TRANSLATION }
-                activeTranslation={ activeTranslation }
-                locale={ DEFAULT_LOCALE }
-                user={ DEFAULT_USER }
-                index={ 1 }
-            />);
-
-            wrapper.instance().setState({isDiffVisible: true});
-
-            expect(wrapper.find('ins')).toHaveLength(1);
-            expect(wrapper.find('del')).toHaveLength(1);
-        });
     });
 });
