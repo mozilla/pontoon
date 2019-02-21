@@ -133,8 +133,8 @@ export default class Translation extends React.Component<Props, State> {
         return diff;
     }
 
-    renderDiff(translation: DBTranslation, activeTranslation: DBTranslation) {
-        const diff = this.getDiff(activeTranslation.string, translation.string)
+    renderDiff(base: string, target: string) {
+        const diff = this.getDiff(base, target)
 
         return diff.map((item, index) => {
             let type = item[0];
@@ -301,7 +301,7 @@ export default class Translation extends React.Component<Props, State> {
                         lang={ locale.code }
                         data-script={ locale.script }
                     >
-                        { this.renderDiff(translation, activeTranslation) }
+                        { this.renderDiff(translation.string, activeTranslation.string) }
                     </p>
                     :
                     <p
