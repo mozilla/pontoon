@@ -207,7 +207,7 @@ export default class Translation extends React.Component<Props, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='toggle-diff'
+                                    className='toggle-diff hide'
                                     title='Hide diff against the currently active translation'
                                     onClick={ this.toggleDiff }
                                 >
@@ -221,7 +221,7 @@ export default class Translation extends React.Component<Props, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='toggle-diff'
+                                    className='toggle-diff show'
                                     title='Show diff against the currently active translation'
                                     onClick={ this.toggleDiff }
                                 >
@@ -296,6 +296,7 @@ export default class Translation extends React.Component<Props, State> {
                 </header>
                 { this.state.isDiffVisible ?
                     <p
+                        className='diff'
                         dir={ locale.direction }
                         lang={ locale.code }
                         data-script={ locale.script }
@@ -304,6 +305,7 @@ export default class Translation extends React.Component<Props, State> {
                     </p>
                     :
                     <p
+                        className='default'
                         dir={ locale.direction }
                         lang={ locale.code }
                         data-script={ locale.script }
