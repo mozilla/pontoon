@@ -17,7 +17,7 @@ def get_homepage_content():
 
 def create_homepage_entry(apps, schema_editor):
     Homepage = apps.get_model('homepage', 'Homepage')
-    homepage = Homepage.objects.create(text=get_homepage_content())
+    homepage = Homepage.objects.create(text=get_homepage_content(), title="Localize Mozilla")
 
 
 def remove_homepage_entry(apps, schema_editor):

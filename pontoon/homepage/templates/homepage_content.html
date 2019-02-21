@@ -14,7 +14,7 @@
       <div class="flex">
         <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
         <span>or</span>
-        <a class="button" href="{{ playground_url }}">Take a Tour</a>
+        <a class="button" href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}">Take a Tour</a>
       </div>
     </div>
     <div class="footer">
@@ -128,7 +128,7 @@
           making you the first proofreader and tester.
           Talk about context?
         </p>
-        <a class="button primary" href="{{ intro_url }}">Try In-context Localization</a>
+        <a class="button primary" href="{% url 'pontoon.translate.locale.agnostic' 'pontoon-intro' 'messages.properties' %}">Try In-context Localization</a>
       </div>
       <div class="image-wrapper flex-col-2">
         <img class="section-side-image-3" src="static/img/section-5.svg" />
@@ -144,7 +144,7 @@
         <p>Now that you know what Pontoon is, come on in!</p>
         <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
         <p>Want to learn more?</p>
-        <a class="button" href="{{ playground_url }}">Take a Tour</a>
+        <a class="button" href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}">Take a Tour</a>
       </div>
       <div class="footer flex">
         <div class="flex-col-3 mozilla">

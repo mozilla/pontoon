@@ -30,23 +30,12 @@ def homepage(request):
     else:
         start_url = reverse('pontoon.teams')
 
-    playground_url = reverse('pontoon.translate.locale.agnostic', kwargs={
-        'slug': 'tutorial',
-        'part': 'playground',
-    })
-
-    intro_url = reverse('pontoon.translate.locale.agnostic', kwargs={
-        'slug': 'pontoon-intro',
-        'part': 'messages.properties',
-    })
-
     homepage = Homepage.objects.first()
     content = Template(homepage.text).render(Context({
         'start_url': start_url,
-        'playground_url': playground_url,
-        'intro_url': intro_url,
     }))
 
     return render(request, 'homepage.html', {
         'content': content,
+        'title': homepage.title
     })
