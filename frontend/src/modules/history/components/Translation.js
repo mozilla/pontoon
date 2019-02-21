@@ -3,9 +3,10 @@
 import * as React from 'react';
 import TimeAgo from 'react-timeago';
 import { Localized } from 'fluent-react';
-import DiffMatchPatch from 'diff-match-patch';
 
 import './Translation.css';
+
+import { TranslationDiff } from 'core/diff'
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
@@ -28,9 +29,6 @@ type Props = {|
 type State = {|
     isDiffVisible: boolean,
 |};
-
-
-const dmp = new DiffMatchPatch();
 
 
 /**
@@ -121,35 +119,6 @@ export default class Translation extends React.Component<Props, State> {
     toggleDiff = () => {
         this.setState((state) => {
             return { isDiffVisible: !state.isDiffVisible };
-        });
-    }
-
-    getDiff(base: string, target: string) {
-        const diff = dmp.diff_main(base, target);
-
-        dmp.diff_cleanupSemantic(diff);
-        dmp.diff_cleanupEfficiency(diff);
-
-        return diff;
-    }
-
-    renderTranslationDiff(base: string, target: string) {
-        const diff = this.getDiff(base, target)
-
-        return diff.map((item, index) => {
-            let type = item[0];
-            let slice = item[1];
-
-            switch(type) {
-                case DiffMatchPatch.DIFF_INSERT:
-                    return <ins key={ index }>{ slice }</ins>;
-
-                case DiffMatchPatch.DIFF_DELETE:
-                    return <del key={ index }>{ slice }</del>;
-
-                default:
-                    return <span key={ index }>{ slice }</span>;
-            }
         });
     }
 
@@ -308,7 +277,10 @@ export default class Translation extends React.Component<Props, State> {
                         lang={ locale.code }
                         data-script={ locale.script }
                     >
-                        { this.renderTranslationDiff(translation.string, activeTranslation.string) }
+                        <TranslationDiff
+                            base={ translation.string }
+                            target={ activeTranslation.string }
+                        />
                     </p>
                     :
                     <p
