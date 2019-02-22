@@ -28,14 +28,29 @@ Database
 ========
 
 By default, you will have default data loaded for only the Pontoon Intro project.
-If you have a database dump, you can load it into your PostgreSQL database by running::
+If you have a database dump, you can load it into your PostgreSQL database by running:
 
-  $ make loaddb DB_DUMP_FILE=path/to/my/dump
+.. code-block:: shell
+
+    $ make loaddb DB_DUMP_FILE=path/to/my/dump
 
 Note that your database container needs to be running while you do that. You
-can start just the postgresql container by runnin::
+can start just the postgresql container by running:
 
-  $ docker-compose run postgresql -d
+.. code-block:: shell
+
+    $ docker-compose run postgresql -d
+
+
+Interactive shell
+=================
+
+If you need to run specific commands, that are not covered by our `Makefile`,
+you can start an interactive shell inside a Pontoon container:
+
+.. code-block:: shell
+
+    $ make shell
 
 
 Python code conventions
@@ -43,23 +58,38 @@ Python code conventions
 
 Python code should follow PEP-8.
 
-Max line length is 100 characters.
+Max line length is 80 characters.
 
 4-space indentation.
 
-To run the linter, do::
+To run the linter, do (inside a docker container):
 
-  $ pylama pontoon
+.. code-block:: shell
+
+    $ pylama pontoon
 
 
-If you hit issues, use ``# noqa`` to make the linter ignore that error. Note that in most cases,
-it is better to fix the issues than ignoring them.
+If you hit issues, use ``# noqa`` to make the linter ignore that error. Note
+that in most cases, it is better to fix the issues than ignoring them.
 
 
 Javascript code conventions
 ===========================
 
+Outside the ``frontend`` folder, we don't follow strict rules other than using
 2-space indentation.
+
+Inside ``frontend`` (which contains the new Translate.Next app), we use 4-space
+indentation, as well as a lot of other rules that are defined in our
+``.eslintrc.js`` file.
+
+To run the linter, do:
+
+.. code-block:: shell
+
+    $ make lint-frontend
+
+For more specifics about the ```frontend`` folder, look at the README.md file there.
 
 
 Git conventions
@@ -67,11 +97,11 @@ Git conventions
 
 The first line is a summary of the commit. It should start with one of the following::
 
-  Fix bug XXXXXXX
+    Fix bug XXXXXXX
 
 or::
 
-  Bug XXXXXXX
+    Bug XXXXXXX
 
 
 The first, when it lands, will cause the bug to be closed. The second one does not.
@@ -122,19 +152,24 @@ Dependencies for production Pontoon are in ``requirements.txt``. Development dep
 
 Note that we use a specific format for our dependencies, in order to make them more maintainable. When adding a new requirement, you should add it to the appropriate section and group it with its sub-dependencies if applicable.
 
-For example, to add ``foobar`` version 5::
+For example, to add ``foobar`` version 5:
 
-  $ hashin -r requirements.txt foobar==5
+.. code-block:: shell
+
+    $ hashin -r requirements.txt foobar==5
 
 Then open ``requirements.txt`` and move the added dependencies to:
+
 * the first section if it has no other requirements
 * the second section if it has sub-dependencies, and add all its dependencies there as well.
 
 That format is documented more extensively inside the ``requirements.txt`` file.
 
-Once you are done adding or updating requirements, rebuild your docker environment::
+Once you are done adding or updating requirements, rebuild your docker environment:
 
-  $ make build
+.. code-block:: shell
+
+    $ make build
 
 If there are problems, it'll tell you.
 
@@ -175,39 +210,49 @@ for example.
 Running tests
 =============
 
-To run the tests, do::
+To run the tests, do:
 
-  $ make test
+.. code-block:: shell
+
+    $ make test
+
+
+To run only the ``frontend`` tests:
+
+.. code-block:: shell
+
+    $ make test-frontend
 
 
 To run specific tests or specify arguments, you'll want to start a shell in the
-test container::
+test container:
 
-  $ make shell
+.. code-block:: shell
+
+    $ make shell
 
 
 Then you can run tests as you like.
 
-Running all the unittests (make sure you run ``./manage.py collectstatic`` first)::
+Running all the unittests (make sure you run ``./manage.py collectstatic`` first):
 
-  app@...:/app$ ./manage.py test
+.. code-block:: shell
 
-
-Running a directory of tests::
-
-  app@...:/app$ ./manage.py test pontoon/base/
+    app@...:/app$ pytest
 
 
-Running a file of tests::
+Running a directory of tests:
 
-  app@...:/app$ ./manage.py test pontoon/base/tests/test_views.py
+.. code-block:: shell
+
+    app@...:/app$ pytest pontoon/base/
 
 
-Note that currently, we run some tests with `django` and some with `pytest`.
-`make test` runs all of them, but if you want to run just some specific tests,
-and they are using `pytest`, you should run::
+Running a file of tests:
 
-  app@...:/app$ pytest path/to/my/test.py
+.. code-block:: shell
+
+    app@...:/app$ pytest pontoon/base/tests/test_views.py
 
 
 Writing tests
@@ -258,13 +303,17 @@ Building front-end resources
 
 We use webpack to build our JavaScript files for some pages. While `make build` will build
 those files for you, you might want to rebuild them while programming on the front. To build
-the files just once, run::
+the files just once, run:
 
-  $ make build-frontend
+.. code-block:: shell
 
-If you want to have those files be built automatically when you make changes, you can run::
+    $ make build-frontend
 
-  $ make build-frontend-w
+If you want to have those files be built automatically when you make changes, you can run:
+
+.. code-block:: shell
+
+    $ make build-frontend-w
 
 
 Integration with fluent
