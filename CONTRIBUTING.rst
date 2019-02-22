@@ -79,7 +79,7 @@ Javascript code conventions
 Outside the ``frontend`` folder, we don't follow strict rules other than using
 2-space indentation.
 
-Inside ``frontend`` (which contains the new Translate.Next app), we use 4-space
+Inside ``frontend`` (which contains the Translate app), we use 4-space
 indentation, as well as a lot of other rules that are defined in our
 ``.eslintrc.js`` file.
 
