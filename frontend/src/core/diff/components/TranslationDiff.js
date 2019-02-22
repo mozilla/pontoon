@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
 import DiffMatchPatch from 'diff-match-patch';
 
 import './TranslationDiff.css';
@@ -56,4 +55,4 @@ export class TranslationDiffBase extends React.Component<InternalProps> {
 }
 
 
-export default connect()(TranslationDiffBase);
+export default TranslationDiffBase;
