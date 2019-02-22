@@ -1,0 +1,22 @@
+.history .translation p ins,
+.history .translation p del {
+  border-radius: 2px;
+  white-space: pre-wrap;
+}
+
+.history .translation p ins {
+  background: #4B6259;
+  color: #9CD699;
+}
+
+.history .translation p del {
+  background: #674B54;
+  color: #FE8F8F;
+}
+
+.history .translation p ins mark,
+.history .translation p del mark {
+  background: transparent;
+  border-color: transparent;
+  margin: 0;
+}

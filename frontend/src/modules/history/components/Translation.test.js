@@ -268,4 +268,58 @@ describe('<Translation>', () => {
             expect(wrapper.find('.delete')).toHaveLength(0);
         });
     });
+
+    describe('diff', () => {
+        it('shows default translation and no Show/Hide diff button for the first translation', () => {
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                activeTranslation={ DEFAULT_TRANSLATION }
+                locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
+                index={ 0 }
+            />);
+
+            expect(wrapper.find('.default')).toHaveLength(1);
+            expect(wrapper.find('.diff')).toHaveLength(0);
+
+            expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
+            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(0);
+        });
+
+        it('shows default translation and the Show diff button for a non-first translation', () => {
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                activeTranslation={ DEFAULT_TRANSLATION }
+                locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
+                index={ 1 }
+            />);
+
+            wrapper.instance().setState({isDiffVisible: false});
+
+            expect(wrapper.find('.default')).toHaveLength(1);
+            expect(wrapper.find('.diff')).toHaveLength(0);
+
+            expect(wrapper.find('.toggle-diff.show')).toHaveLength(1);
+            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(0);
+        });
+
+        it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                activeTranslation={ DEFAULT_TRANSLATION }
+                locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
+                index={ 1 }
+            />);
+
+            wrapper.instance().setState({isDiffVisible: true});
+
+            expect(wrapper.find('.default')).toHaveLength(0);
+            expect(wrapper.find('.diff')).toHaveLength(1);
+
+            expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
+            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(1);
+        });
+    });
 });

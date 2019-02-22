@@ -30,6 +30,7 @@
 .history .translation > header + p {
     clear: both;
     text-align: start;
+    white-space: pre-wrap;
 }
 
 .history .translation > header .info time {
@@ -41,9 +42,12 @@
 }
 
 .history .translation > header .toggle-diff {
+    font-size: inherit;
+    font-weight: 300;
     margin-right: 6px;
 }
 
+.history .translation > header .toggle-diff:hover,
 .history .translation > header .toggle-diff.active {
     color: #7BC876;
 }
@@ -53,12 +57,16 @@
     border: none;
     color: #AAAAAA;
     display: inline-block;
-    pointer-events: none;
-    opacity: 0.5;
+    padding: 0;
     outline: none;
+}
+
+.history .translation > header button.fa,
+.history .translation > header button.far {
     font-size: 1.8em;
     height: 22px;
-    padding: 0;
+    opacity: 0.5;
+    pointer-events: none;
     vertical-align: bottom;
     width: 22px;
 }
