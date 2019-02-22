@@ -58,6 +58,7 @@ module.exports = {
         'react',
     ],
     rules: {
+        'react/display-name': 1,
         'react/prefer-es6-class': 1,
         'react/prefer-stateless-function': 0,
         "react/prop-types": 0,
