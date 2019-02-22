@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { TranslationDiffBase } from './TranslationDiff';
+import TranslationDiff from './TranslationDiff';
 
 
-describe('<TranslationDiffBase>', () => {
+describe('<TranslationDiff>', () => {
     it('returns the correct diff for provided strings', () => {
         const wrapper = shallow(
-            <TranslationDiffBase
+            <TranslationDiff
                 base={ 'abcdef' }
                 target={ 'cdefgh' }
             />
@@ -20,7 +20,7 @@ describe('<TranslationDiffBase>', () => {
 
     it('returns the same string if provided strings are equal', () => {
         const wrapper = shallow(
-            <TranslationDiffBase
+            <TranslationDiff
                 base={ 'abcdef' }
                 target={ 'abcdef' }
             />

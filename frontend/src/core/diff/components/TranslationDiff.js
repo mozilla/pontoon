@@ -6,7 +6,7 @@ import DiffMatchPatch from 'diff-match-patch';
 import './TranslationDiff.css';
 
 
-type InternalProps = {|
+type Props = {|
     base: string,
     target: string,
 |};
@@ -22,7 +22,7 @@ const dmp = new DiffMatchPatch();
  * Added slices are wrapped in <ins>.
  * Removed slices are wrapped in <del>.
  */
-export class TranslationDiffBase extends React.Component<InternalProps> {
+export default class TranslationDiff extends React.Component<Props> {
     getDiff(base: string, target: string) {
         const diff = dmp.diff_main(base, target);
     
@@ -53,6 +53,3 @@ export class TranslationDiffBase extends React.Component<InternalProps> {
         });    
     }
 }
-
-
-export default TranslationDiffBase;
