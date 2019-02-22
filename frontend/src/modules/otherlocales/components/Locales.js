@@ -43,12 +43,12 @@ export default class Locales extends React.Component<Props> {
 
         return <section className="other-locales">
             <ul>
-                { otherlocales.translations.map((translation, key) => {
+                { otherlocales.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }
                         parameters={ parameters }
                         updateEditorTranslation={ updateEditorTranslation }
-                        key={ key }
+                        key={ index }
                     />;
                 }) }
             </ul>

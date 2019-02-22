@@ -6,6 +6,8 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
+import { TranslationDiff } from 'core/diff'
+
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
 import type { DBTranslation } from '../reducer';
@@ -14,12 +16,20 @@ import type { DBTranslation } from '../reducer';
 type Props = {|
     canReview: boolean,
     translation: DBTranslation,
+    activeTranslation: DBTranslation,
     locale: Locale,
     user: UserState,
+    index: number,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
     updateTranslationStatus: (number, string) => void,
 |};
+
+
+type State = {|
+    isDiffVisible: boolean,
+|};
+
 
 /**
  * Render a translation in the History tab.
@@ -30,7 +40,14 @@ type Props = {|
  * The status can be interact with if the user has sufficient permissions to
  * change said status.
  */
-export default class Translation extends React.Component<Props> {
+export default class Translation extends React.Component<Props, State> {
+    constructor() {
+        super();
+        this.state = {
+            isDiffVisible: false,
+        };
+    }
+
     approve = () => {
         this.props.updateTranslationStatus(this.props.translation.pk, 'approve');
     }
@@ -99,8 +116,60 @@ export default class Translation extends React.Component<Props> {
         </a>
     }
 
+    toggleDiff = () => {
+        this.setState((state) => {
+            return { isDiffVisible: !state.isDiffVisible };
+        });
+    }
+
+    renderDiffToggle() {
+        const { index } = this.props;
+
+        if (index === 0) {
+            return null;
+        }
+
+        // Hide Diff
+        if (this.state.isDiffVisible) {
+            return <Localized
+                id='history-translation-hide-diff'
+                attrs={{ title: true }}
+            >
+                <button
+                    className='toggle-diff hide'
+                    title='Hide diff against the currently active translation'
+                    onClick={ this.toggleDiff }
+                >
+                    { 'Hide diff' }
+                </button>
+            </Localized>;
+        }
+
+        // Show Diff
+        else {
+            return <Localized
+                id='history-translation-show-diff'
+                attrs={{ title: true }}
+            >
+                <button
+                    className='toggle-diff show'
+                    title='Show diff against the currently active translation'
+                    onClick={ this.toggleDiff }
+                >
+                    { 'Show diff' }
+                </button>
+            </Localized>;
+        }
+    }
+
     render() {
-        const { canReview, translation, locale, user } = this.props;
+        const {
+            canReview,
+            translation,
+            locale,
+            user,
+            activeTranslation,
+        } = this.props;
 
         // Does the currently logged in user own this translation?
         const ownTranslation = (
@@ -138,6 +207,9 @@ export default class Translation extends React.Component<Props> {
                         />
                     </div>
                     <menu className='toolbar'>
+
+                    { this.renderDiffToggle() }
+
                     { (!translation.rejected || !canDelete ) ? null :
                         // Delete Button
                         <Localized
@@ -161,7 +233,7 @@ export default class Translation extends React.Component<Props> {
                                 className='unapprove fa'
                                 title='Unapprove'
                                 onClick={ this.unapprove }
-                            ></button>
+                            />
                         </Localized>
                         :
                         // Approve Button
@@ -173,7 +245,7 @@ export default class Translation extends React.Component<Props> {
                                 className='approve fa'
                                 title='Approve'
                                 onClick={ this.approve }
-                            ></button>
+                            />
                         </Localized>
                     }
                     { translation.rejected ?
@@ -186,7 +258,7 @@ export default class Translation extends React.Component<Props> {
                                 className='unreject fa'
                                 title='Unreject'
                                 onClick={ this.unreject }
-                            ></button>
+                            />
                         </Localized>
                         :
                         // Reject Button
@@ -198,18 +270,33 @@ export default class Translation extends React.Component<Props> {
                                 className='reject fa'
                                 title='Reject'
                                 onClick={ this.reject }
-                            ></button>
+                            />
                         </Localized>
                     }
                     </menu>
                 </header>
-                <p
-                    dir={ locale.direction }
-                    lang={ locale.code }
-                    data-script={ locale.script }
-                >
-                    { translation.string }
-                </p>
+                { this.state.isDiffVisible ?
+                    <p
+                        className='diff'
+                        dir={ locale.direction }
+                        lang={ locale.code }
+                        data-script={ locale.script }
+                    >
+                        <TranslationDiff
+                            base={ translation.string }
+                            target={ activeTranslation.string }
+                        />
+                    </p>
+                    :
+                    <p
+                        className='default'
+                        dir={ locale.direction }
+                        lang={ locale.code }
+                        data-script={ locale.script }
+                    >
+                        { translation.string }
+                    </p>
+                }
             </li>
         </Localized>;
     }
