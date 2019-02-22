@@ -42,6 +42,7 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     the following properties:
     * translations_count
     * translations_approved_count
+    * translations_rejected_count
     * translations_unapproved_count
     * translations_needs_work_count
     * user_role
@@ -75,7 +76,6 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
         elif translation['fuzzy']:
             status = 'fuzzy'
         elif translation['rejected']:
-            # Note that this is not exposed at the moment.
             status = 'rejected'
         else:
             status = 'unreviewed'
@@ -120,6 +120,7 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
         user = user_stats[contributor.pk]
         contributor.translations_count = user['total']
         contributor.translations_approved_count = user['approved']
+        contributor.translations_rejected_count = user['rejected']
         contributor.translations_unapproved_count = user['unreviewed']
         contributor.translations_needs_work_count = user['fuzzy']
         contributor.user_role = contributor.role(managers, translators)
