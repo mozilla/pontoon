@@ -1,14 +1,15 @@
-from textwrap import dedent
 import os
 import shutil
 import tempfile
+
+from textwrap import dedent
+
 from django_nose.tools import (
     assert_equal,
     assert_raises,
     assert_true,
 )
 from pontoon.base.tests import (
-    assert_attributes_equal,
     TestCase,
     create_named_tempfile,
 )
@@ -30,11 +31,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def get_nonexistant_file_resource(self, path):
-        contents = dedent("""<?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <string name="source-string">Source String</string>
-            </resources>
-        """)
+        contents = dedent(""" """)
 
         source_path = create_named_tempfile(
             contents,
@@ -42,7 +39,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             suffix='.ftl',
             directory=self.tempdir,
         )
-        source_resource = ftl.FTLResource(source_path, locale=None)
+        source_resource = ftl.FTLResource(path=source_path, locale=None, source_resource=None)
 
         return ftl.FTLResource(
             path,
@@ -55,7 +52,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
 
     def test_init_missing_resource(self):
         """
-        If the FTLresource file doesn't exist and no source resource is
+        If the FTLResource file doesn't exist and no source resource is
         given, raise a IOError.
         """
         path = self.get_nonexistant_file_path()
@@ -64,7 +61,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
 
     def test_init_missing_resource_with_source(self):
         """
-        If the FTLresourcedoesn't exist but a source resource is
+        If the FTLResource doesn't exist but a source resource is
         given, return a resource with empty translations.
         """
         path = self.get_nonexistant_file_path()
@@ -73,3 +70,17 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         assert_equal(len(translated_resource.translations), 1)
         translation = translated_resource.translations[0]
         assert_equal(translation.strings, {})
+
+    def test_save_create_dirs(self):
+        """
+        If the directories in a resource's path don't exist, create them on
+        save.
+        """
+        path = self.get_nonexistant_file_path()
+        translated_resource = self.get_nonexistant_file_resource(path)
+
+        translated_resource.translations[0].strings = {
+            None: 'New Translated String'
+        }
+        translated_resource.save(LocaleFactory.create())
+        assert_true(os.path.exists(path))
