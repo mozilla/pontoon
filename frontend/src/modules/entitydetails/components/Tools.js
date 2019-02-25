@@ -10,6 +10,7 @@ import { Machinery } from 'modules/machinery';
 import { Locales } from 'modules/otherlocales';
 
 import MachineryCount from './MachineryCount';
+import OtherLocalesCount from './OtherLocalesCount';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -38,6 +39,23 @@ type Props = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export default class Tools extends React.Component<Props> {
+    preferredCount() {
+        const { otherlocales, user } = this.props;
+
+        if (!user.isAuthenticated) {
+            return 0;
+        }
+
+        const preferred = otherlocales.translations.reduce((count, item) => {
+            if (user.preferredLocales.indexOf(item.code) > -1) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
+
+        return preferred;
+    }
+
     render() {
         const {
             history,
@@ -72,7 +90,10 @@ export default class Tools extends React.Component<Props> {
                 <Tab>
                     Locales
                     { !otherlocalesCount ? null :
-                    <span className={ 'count' }>{ otherlocalesCount }</span>
+                    <OtherLocalesCount
+                        otherlocales={ otherlocales }
+                        preferredCount={ this.preferredCount() }
+                    />
                     }
                 </Tab>
             </TabList>
@@ -98,8 +119,10 @@ export default class Tools extends React.Component<Props> {
             <TabPanel>
                 <Locales
                     otherlocales={ otherlocales }
+                    user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }
+                    preferredCount={ this.preferredCount() }
                 />
             </TabPanel>
         </Tabs>;

@@ -5,6 +5,10 @@
     transition: all 0.1s ease-out;
 }
 
+.other-locales .translation.last-preferred {
+    border-bottom-color: #7BC876;
+}
+
 .other-locales .translation:hover {
     background: #4D5967;
     border-color: #5E6475;

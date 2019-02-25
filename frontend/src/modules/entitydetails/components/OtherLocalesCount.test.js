@@ -1,18 +1,21 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import MachineryCount from './MachineryCount';
+import OtherLocalesCount from './OtherLocalesCount';
 
 
-describe('<MachineryCount>', () => {
+describe('<OtherLocalesCount>', () => {
     it('shows the correct number of preferred translations', () => {
-        const machinery = {
+        const otherlocales = {
             translations: [
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Translation memory' }] },
+                { code: 'ab' },
+                { code: 'cd' },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<OtherLocalesCount
+            otherlocales={ otherlocales }
+            preferredCount={ 2 }
+        />);
 
         // There are only preferred results.
         expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -24,14 +27,17 @@ describe('<MachineryCount>', () => {
     });
 
     it('shows the correct number of remaining translations', () => {
-        const machinery = {
+        const otherlocales = {
             translations: [
-                { sources: [{ type: 'Microsoft' }] },
-                { sources: [{ type: 'Transvision' }] },
-                { sources: [{ type: 'Transvision' }] },
+                { code: 'ef' },
+                { code: 'gh' },
+                { code: 'ij' },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<OtherLocalesCount
+            otherlocales={ otherlocales }
+            preferredCount={ 0 }
+        />);
 
         // There are only remaining results.
         expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -44,16 +50,19 @@ describe('<MachineryCount>', () => {
     });
 
     it('shows the correct numbers of preferred and remaining translations', () => {
-        const machinery = {
+        const otherlocales = {
             translations: [
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Microsoft' }] },
-                { sources: [{ type: 'Transvision' }] },
-                { sources: [{ type: 'Transvision' }] },
+                { code: 'ab' },
+                { code: 'cd' },
+                { code: 'ef' },
+                { code: 'gh' },
+                { code: 'ij' },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<OtherLocalesCount
+            otherlocales={ otherlocales }
+            preferredCount={ 2 }
+        />);
 
         // There are both preferred and remaining, and the '+' sign.
         expect(wrapper.find('.count > span')).toHaveLength(3);

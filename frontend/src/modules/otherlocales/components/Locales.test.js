@@ -17,18 +17,54 @@ describe('<Locales>', () => {
             locale: 'kg',
             project: 'tmo',
         };
+        const user = {}
         const wrapper = shallow(
-            <Locales otherlocales={ otherlocales } parameters={ params } />
+            <Locales
+                otherlocales={ otherlocales }
+                parameters={ params }
+                user={ user }
+            />
         );
 
         expect(wrapper.find('Translation')).toHaveLength(3);
+    });
+
+    it('shows preferred locales first', () => {
+        const otherlocales = {
+            translations: [
+                { code: 'ar' },
+                { code: 'br' },
+                { code: 'cr' },
+            ],
+        };
+        const params = {
+            locale: 'kg',
+            project: 'tmo',
+        };
+        const user = {
+            isAuthenticated: true,
+            preferredLocales: ['ab', 'br', 'cd']
+        };
+        const wrapper = shallow(
+            <Locales
+                otherlocales={ otherlocales }
+                parameters={ params }
+                user={ user }
+            />
+        );
+
+        expect(wrapper.find('Translation:first-child .stress').text()).toContain('br');
     });
 
     it('returns null while otherlocales are loading', () => {
         const otherlocales = {
             fetching: true,
         };
-        const wrapper = shallow(<Locales otherlocales={ otherlocales } />);
+        const user = {}
+        const wrapper = shallow(<Locales
+            otherlocales={ otherlocales }
+            user={ user }
+        />);
 
         expect(wrapper.type()).toBeNull();
     });
@@ -38,7 +74,11 @@ describe('<Locales>', () => {
             fetching: false,
             translations: [],
         };
-        const wrapper = shallow(<Locales otherlocales={ otherlocales } />);
+        const user = {}
+        const wrapper = shallow(<Locales
+            otherlocales={ otherlocales }
+            user={ user }
+        />);
 
         expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
     });

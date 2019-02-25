@@ -55,6 +55,7 @@ export type UserState = {|
     +translatorForLocales: Array<string>,
     +translatorForProjects: Array<string>,
     +settings: SettingsState,
+    +preferredLocales: Array<string>,
 |};
 
 const initial: UserState = {
@@ -67,6 +68,7 @@ const initial: UserState = {
     translatorForLocales: [],
     translatorForProjects: [],
     settings: initialSettings,
+    preferredLocales: [],
 };
 
 export default function reducer(
@@ -85,6 +87,7 @@ export default function reducer(
                 translatorForLocales: action.data.translator_for_locales,
                 translatorForProjects: action.data.translator_for_projects,
                 settings: settings(state.settings, action),
+                preferredLocales: action.data.preferred_locales,
             };
         case UPDATE_SETTINGS:
             return {
