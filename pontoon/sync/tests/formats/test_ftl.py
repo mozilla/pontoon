@@ -80,3 +80,13 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         }
         translated_resource.save(LocaleFactory.create())
         assert_true(os.path.exists(path))
+
+    def test_parse_with_source_path(self):
+        contents = dedent("""text = Arise,awake and do not stop until the goal is reached.""")
+        source_path = create_named_tempfile(
+            contents,
+            prefix='strings',
+            suffix='.ftl',
+            directory=self.tempdir,
+        )
+        assert_true(ftl.FTLResource(source_path, locale=None))
