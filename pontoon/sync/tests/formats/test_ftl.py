@@ -82,11 +82,26 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         assert_true(os.path.exists(path))
 
     def test_parse_with_source_path(self):
-        contents = dedent("""text = Arise,awake and do not stop until the goal is reached.""")
+        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
         source_path = create_named_tempfile(
             contents,
             prefix='strings',
             suffix='.ftl',
             directory=self.tempdir,
         )
-        assert_true(ftl.FTLResource(source_path, locale=None))
+        path = self.get_nonexistant_file_path()
+        translate_resource = self.get_nonexistant_file_resource(path)
+        source_resource = ftl.FTLResource(source_path, locale=None)
+        ftl.parse(path, source_path=source_path, locale=None)
+        assert_true(ftl.FTLResource(path, locale=None, source_resource=source_resource))
+
+    def test_parse_with_no_source_path(self):
+        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
+        path = create_named_tempfile(
+            contents,
+            prefix='strings',
+            suffix='.ftl',
+            directory=self.tempdir,
+        )
+        ftl.parse(path, source_path=None, locale=None)
+        assert_true(ftl.FTLResource(path, locale=None, source_resource=None))
