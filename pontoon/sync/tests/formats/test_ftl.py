@@ -12,16 +12,12 @@ from django_nose.tools import (
 from pontoon.base.tests import (
     TestCase,
     create_named_tempfile,
+    LocaleFactory,
 )
 from pontoon.sync.formats import ftl
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 class FTLResourceTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(ftl.parse)
-    supports_source = False
-    supports_keys = False
-    supports_source_string = False
-
     def setUp(self):
         super(FTLResourceTests, self).setUp()
         self.tempdir = tempfile.mkdtemp()
@@ -31,7 +27,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def get_nonexistant_file_resource(self, path):
-        contents = dedent(""" """)
+        contents = dedent("""text = Arise,awake and do not stop until the goal is reached.""")
 
         source_path = create_named_tempfile(
             contents,
