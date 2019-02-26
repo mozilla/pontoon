@@ -3,7 +3,7 @@
 import React from 'react';
 import { Localized } from 'fluent-react';
 
-import './Locales.css';
+import './OtherLocales.css';
 
 import Translation from './Translation';
 
@@ -24,7 +24,7 @@ type Props = {|
 /**
  * Shows all translations of an entity in locales other than the current one.
  */
-export default class Locales extends React.Component<Props> {
+export default class OtherLocales extends React.Component<Props> {
     /**
      * Orders the list of locales. The list starts with prefered locales,
      * in order as they are defined. The remaining locales follow in the

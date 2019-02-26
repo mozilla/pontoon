@@ -7,7 +7,7 @@ import './Tools.css';
 
 import { History } from 'modules/history';
 import { Machinery, MachineryCount } from 'modules/machinery';
-import { Locales, OtherLocalesCount } from 'modules/otherlocales';
+import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -114,7 +114,7 @@ export default class Tools extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <Locales
+                <OtherLocales
                     otherlocales={ otherlocales }
                     user={ user }
                     parameters={ parameters }

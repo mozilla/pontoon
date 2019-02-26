@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Locales from './Locales';
+import OtherLocales from './OtherLocales';
 
 
-describe('<Locales>', () => {
+describe('<OtherLocales>', () => {
     it('shows the correct number of translations', () => {
         const otherlocales = {
             translations: [
@@ -19,7 +19,7 @@ describe('<Locales>', () => {
         };
         const user = {}
         const wrapper = shallow(
-            <Locales
+            <OtherLocales
                 otherlocales={ otherlocales }
                 parameters={ params }
                 user={ user }
@@ -46,7 +46,7 @@ describe('<Locales>', () => {
             preferredLocales: ['ab', 'br', 'cd']
         };
         const wrapper = shallow(
-            <Locales
+            <OtherLocales
                 otherlocales={ otherlocales }
                 parameters={ params }
                 user={ user }
@@ -61,7 +61,7 @@ describe('<Locales>', () => {
             fetching: true,
         };
         const user = {}
-        const wrapper = shallow(<Locales
+        const wrapper = shallow(<OtherLocales
             otherlocales={ otherlocales }
             user={ user }
         />);
@@ -75,7 +75,7 @@ describe('<Locales>', () => {
             translations: [],
         };
         const user = {}
-        const wrapper = shallow(<Locales
+        const wrapper = shallow(<OtherLocales
             otherlocales={ otherlocales }
             user={ user }
         />);
