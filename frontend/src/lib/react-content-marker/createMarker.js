@@ -7,7 +7,7 @@ import mark from './mark';
 
 
 type Props = {
-    children: string | Array<string | React.Node>,
+    children: ?string | Array<string | React.Node>,
 };
 
 
@@ -50,6 +50,10 @@ export default function createMarker(parsers: Array<Parser>) {
     return class ContentMarker extends React.Component<Props> {
         render() {
             let content = this.props.children;
+
+            if (!content) {
+                return null;
+            }
 
             for (let parser of parsers) {
                 const tag = enhanceTag(parser.tag);

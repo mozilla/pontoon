@@ -13,7 +13,8 @@ import zipfile
 from datetime import datetime, timedelta
 
 from guardian.decorators import (
-    permission_required as guardian_permission_required)
+    permission_required as guardian_permission_required
+)
 
 from django.utils.text import slugify
 from six import text_type

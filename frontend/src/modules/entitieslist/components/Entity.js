@@ -1,8 +1,10 @@
 /* @flow */
 
-import React from 'react';
+import * as React from 'react';
 
 import './Entity.css';
+
+import { WithPlaceables } from 'core/placeable';
 
 import type { Locale } from 'core/locales';
 import type { DbEntity } from '../reducer';
@@ -59,14 +61,20 @@ export default class Entity extends React.Component<Props> {
             >
                 <span className='status fa' />
                 <div>
-                    <p className='source-string'>{ entity.original }</p>
+                    <p className='source-string'>
+                        <WithPlaceables>
+                            { entity.original }
+                        </WithPlaceables>
+                    </p>
                     <p
                         className='translation-string'
                         dir={ locale.direction }
                         lang={ locale.code }
                         data-script={ locale.script }
                     >
-                        { entity.translation[0].string }
+                        <WithPlaceables>
+                            { entity.translation[0].string }
+                        </WithPlaceables>
                     </p>
                 </div>
             </li>
