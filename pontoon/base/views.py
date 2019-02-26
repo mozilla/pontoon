@@ -387,9 +387,10 @@ def approve_translation(request):
 
     # Read-only translations cannot be approved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This translation is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     if translation.approved:
         return HttpResponseForbidden(
@@ -441,9 +442,10 @@ def unapprove_translation(request):
 
     # Read-only translations cannot be un-approved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     # Only privileged users or authors can un-approve translations
     if not (
@@ -485,9 +487,10 @@ def reject_translation(request):
 
     # Read-only translations cannot be rejected
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     # Non-privileged users can only reject own unapproved translations
     if not request.user.can_translate(locale, project):
@@ -531,9 +534,10 @@ def unreject_translation(request):
 
     # Read-only translations cannot be un-rejected
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     # Only privileged users or authors can un-reject translations
     if not (
@@ -574,9 +578,10 @@ def delete_translation(request):
 
     # Read-only translations cannot be deleted
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
@@ -679,9 +684,10 @@ def update_translation(request):
 
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode',
+        }, status=403)
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
