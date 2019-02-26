@@ -15,7 +15,6 @@ from django.db.models import Q
 from django.http import (
     Http404,
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseForbidden,
     JsonResponse,
     StreamingHttpResponse
@@ -268,7 +267,10 @@ def entities(request):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json(escape_html=True))
+        return JsonResponse({
+            'status': False,
+            'message': '{error}'.format(error=form.errors.as_json(escape_html=True)),
+        }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
 
@@ -312,7 +314,10 @@ def get_translations_from_other_locales(request):
         entity = request.GET['entity']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
@@ -339,7 +344,10 @@ def get_translation_history(request):
         locale = request.GET['locale']
         plural_form = request.GET['plural_form']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
@@ -378,7 +386,10 @@ def approve_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -437,7 +448,10 @@ def unapprove_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -483,7 +497,10 @@ def reject_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -532,7 +549,10 @@ def unreject_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -577,7 +597,10 @@ def delete_translation(request):
     try:
         t = request.POST['translation']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -618,12 +641,18 @@ def perform_checks(request):
         string = request.POST['string']
         ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=request.user).quality_checks
@@ -670,7 +699,10 @@ def update_translation(request):
         force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         e = Entity.objects.get(pk=entity)
@@ -979,9 +1011,7 @@ class AjaxFormView(FormView):
         return super(AjaxFormView, self).post(*args, **kwargs)
 
     def form_invalid(self, form):
-        return HttpResponseBadRequest(
-            json.dumps(dict(errors=form.errors)),
-            content_type='application/json')
+        return JsonResponse(dict(errors=form.errors), status=400)
 
     def form_valid(self, form):
         return JsonResponse(dict(data=form.save()))
