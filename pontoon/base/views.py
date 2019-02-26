@@ -389,28 +389,31 @@ def approve_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     if translation.approved:
-        return HttpResponseForbidden(
-            "Forbidden: This translation is already approved"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This translation is already approved.',
+        }, status=403)
 
     # Only privileged users can approve translations
     if not user.can_translate(locale, project):
-        return HttpResponseForbidden(
-            "Forbidden: You don't have permission to approve this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You don't have permission to approve this translation.",
+        }, status=403)
 
     # Check for errors.
     # Checks are disabled for the tutorial.
     use_checks = project.slug != 'tutorial'
 
     if use_checks and translation.errors.exists():
-        return HttpResponseForbidden(
-            "Forbidden: There are errors with this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This translation has errors.',
+        }, status=403)
 
     translation.approve(user)
 
@@ -444,7 +447,7 @@ def unapprove_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     # Only privileged users or authors can un-approve translations
@@ -453,9 +456,10 @@ def unapprove_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't unapprove this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't unapprove this translation.",
+        }, status=403)
 
     translation.unapprove(request.user)
 
@@ -489,20 +493,22 @@ def reject_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     # Non-privileged users can only reject own unapproved translations
     if not request.user.can_translate(locale, project):
         if translation.user == request.user:
             if translation.approved is True:
-                return HttpResponseForbidden(
-                    "Forbidden: Can't reject approved translations"
-                )
+                return JsonResponse({
+                    'status': False,
+                    'message': "Forbidden: You can't reject approved translations.",
+                }, status=403)
         else:
-            return HttpResponseForbidden(
-                "Forbidden: Can't reject translations from other users"
-            )
+            return JsonResponse({
+                'status': False,
+                'message': "Forbidden: You can't reject translations from other users.",
+            }, status=403)
 
     translation.reject(request.user)
 
@@ -536,7 +542,7 @@ def unreject_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     # Only privileged users or authors can un-reject translations
@@ -545,9 +551,10 @@ def unreject_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't unreject this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't unreject this translation.",
+        }, status=403)
 
     translation.unreject(request.user)
 
@@ -580,7 +587,7 @@ def delete_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     # Only privileged users or authors can delete translations
@@ -589,9 +596,10 @@ def delete_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't delete this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't delete this translation.",
+        }, status=403)
 
     translation.delete()
 
@@ -686,7 +694,7 @@ def update_translation(request):
     if utils.readonly_exists(project, locale):
         return JsonResponse({
             'status': False,
-            'message': 'Forbidden: This string is in read-only mode',
+            'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
     try:
@@ -857,7 +865,7 @@ def upload(request):
         not request.user.can_translate(project=project, locale=locale)
         or utils.readonly_exists(project, locale)
     ):
-        return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
+        return HttpResponseForbidden("You don't have permission to upload files.")
 
     form = forms.UploadFileForm(request.POST, request.FILES)
 
