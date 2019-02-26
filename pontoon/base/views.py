@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime
 from urlparse import urlparse
@@ -737,7 +736,7 @@ def update_translation(request):
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
-    except UserProfile.DoesNotExist as error:
+    except UserProfile.DoesNotExist:
         use_ttk_checks = True
 
     # Disable checks for tutorial project.
