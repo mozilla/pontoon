@@ -672,7 +672,9 @@ def perform_checks(request):
             'failedChecks': failed_checks,
         })
     else:
-        return HttpResponse('ok')
+        return JsonResponse({
+            'status': True,
+        })
 
 
 @require_POST
@@ -706,15 +708,19 @@ def update_translation(request):
 
     try:
         e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
+    except Entity.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
+    except Locale.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     if plural_form == "-1":
         plural_form = None
