@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime
 from urlparse import urlparse
@@ -15,7 +14,6 @@ from django.db.models import Q
 from django.http import (
     Http404,
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseForbidden,
     JsonResponse,
     StreamingHttpResponse
@@ -268,7 +266,10 @@ def entities(request):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json(escape_html=True))
+        return JsonResponse({
+            'status': False,
+            'message': '{error}'.format(error=form.errors.as_json(escape_html=True)),
+        }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
 
@@ -312,7 +313,10 @@ def get_translations_from_other_locales(request):
         entity = request.GET['entity']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
@@ -339,7 +343,10 @@ def get_translation_history(request):
         locale = request.GET['locale']
         plural_form = request.GET['plural_form']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
@@ -378,7 +385,10 @@ def approve_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -387,29 +397,33 @@ def approve_translation(request):
 
     # Read-only translations cannot be approved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This translation is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     if translation.approved:
-        return HttpResponseForbidden(
-            "Forbidden: This translation is already approved"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This translation is already approved.',
+        }, status=403)
 
     # Only privileged users can approve translations
     if not user.can_translate(locale, project):
-        return HttpResponseForbidden(
-            "Forbidden: You don't have permission to approve this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You don't have permission to approve this translation.",
+        }, status=403)
 
     # Check for errors.
     # Checks are disabled for the tutorial.
     use_checks = project.slug != 'tutorial'
 
     if use_checks and translation.errors.exists():
-        return HttpResponseForbidden(
-            "Forbidden: There are errors with this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This translation has errors.',
+        }, status=403)
 
     translation.approve(user)
 
@@ -433,7 +447,10 @@ def unapprove_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -441,9 +458,10 @@ def unapprove_translation(request):
 
     # Read-only translations cannot be un-approved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     # Only privileged users or authors can un-approve translations
     if not (
@@ -451,9 +469,10 @@ def unapprove_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't unapprove this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't unapprove this translation.",
+        }, status=403)
 
     translation.unapprove(request.user)
 
@@ -477,7 +496,10 @@ def reject_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -485,21 +507,24 @@ def reject_translation(request):
 
     # Read-only translations cannot be rejected
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     # Non-privileged users can only reject own unapproved translations
     if not request.user.can_translate(locale, project):
         if translation.user == request.user:
             if translation.approved is True:
-                return HttpResponseForbidden(
-                    "Forbidden: Can't reject approved translations"
-                )
+                return JsonResponse({
+                    'status': False,
+                    'message': "Forbidden: You can't reject approved translations.",
+                }, status=403)
         else:
-            return HttpResponseForbidden(
-                "Forbidden: Can't reject translations from other users"
-            )
+            return JsonResponse({
+                'status': False,
+                'message': "Forbidden: You can't reject translations from other users.",
+            }, status=403)
 
     translation.reject(request.user)
 
@@ -523,7 +548,10 @@ def unreject_translation(request):
         t = request.POST['translation']
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -531,9 +559,10 @@ def unreject_translation(request):
 
     # Read-only translations cannot be un-rejected
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     # Only privileged users or authors can un-reject translations
     if not (
@@ -541,9 +570,10 @@ def unreject_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't unreject this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't unreject this translation.",
+        }, status=403)
 
     translation.unreject(request.user)
 
@@ -566,7 +596,10 @@ def delete_translation(request):
     try:
         t = request.POST['translation']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
     project = translation.entity.resource.project
@@ -574,9 +607,10 @@ def delete_translation(request):
 
     # Read-only translations cannot be deleted
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
@@ -584,9 +618,10 @@ def delete_translation(request):
         request.user == translation.user or
         translation.approved
     ):
-        return HttpResponseForbidden(
-            "Forbidden: You can't delete this translation."
-        )
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You can't delete this translation.",
+        }, status=403)
 
     translation.delete()
 
@@ -605,12 +640,18 @@ def perform_checks(request):
         string = request.POST['string']
         ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=request.user).quality_checks
@@ -630,7 +671,9 @@ def perform_checks(request):
             'failedChecks': failed_checks,
         })
     else:
-        return HttpResponse('ok')
+        return JsonResponse({
+            'status': True,
+        })
 
 
 @require_POST
@@ -657,19 +700,26 @@ def update_translation(request):
         force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         e = Entity.objects.get(pk=entity)
-    except Entity.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
+    except Entity.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as error:
-        log.error(str(error))
-        return HttpResponse("error")
+    except Locale.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     if plural_form == "-1":
         plural_form = None
@@ -679,13 +729,14 @@ def update_translation(request):
 
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
-        return HttpResponseForbidden(
-            "Forbidden: This string is in read-only mode"
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: This string is in read-only mode.',
+        }, status=403)
 
     try:
         use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
-    except UserProfile.DoesNotExist as error:
+    except UserProfile.DoesNotExist:
         use_ttk_checks = True
 
     # Disable checks for tutorial project.
@@ -851,7 +902,7 @@ def upload(request):
         not request.user.can_translate(project=project, locale=locale)
         or utils.readonly_exists(project, locale)
     ):
-        return HttpResponseForbidden("Forbidden: You don't have permission to upload files")
+        return HttpResponseForbidden("You don't have permission to upload files.")
 
     form = forms.UploadFileForm(request.POST, request.FILES)
 
@@ -965,9 +1016,7 @@ class AjaxFormView(FormView):
         return super(AjaxFormView, self).post(*args, **kwargs)
 
     def form_invalid(self, form):
-        return HttpResponseBadRequest(
-            json.dumps(dict(errors=form.errors)),
-            content_type='application/json')
+        return JsonResponse(dict(errors=form.errors), status=400)
 
     def form_valid(self, form):
         return JsonResponse(dict(data=form.save()))
