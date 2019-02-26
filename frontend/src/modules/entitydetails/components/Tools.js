@@ -6,11 +6,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import './Tools.css';
 
 import { History } from 'modules/history';
-import { Machinery } from 'modules/machinery';
-import { Locales } from 'modules/otherlocales';
-
-import MachineryCount from './MachineryCount';
-import OtherLocalesCount from './OtherLocalesCount';
+import { Machinery, MachineryCount } from 'modules/machinery';
+import { Locales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
