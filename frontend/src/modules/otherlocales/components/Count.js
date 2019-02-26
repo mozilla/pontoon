@@ -11,7 +11,7 @@ type Props = {|
 |};
 
 
-export default class OtherLocalesCount extends React.Component<Props> {
+export default class Count extends React.Component<Props> {
     render() {
         const { otherlocales, preferredCount } = this.props;
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import MachineryCount from './MachineryCount';
+import Count from './Count';
 
 
-describe('<MachineryCount>', () => {
+describe('<Count>', () => {
     it('shows the correct number of preferred translations', () => {
         const machinery = {
             translations: [
@@ -12,7 +12,7 @@ describe('<MachineryCount>', () => {
                 { sources: [{ type: 'Translation memory' }] },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<Count machinery={ machinery } />);
 
         // There are only preferred results.
         expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -31,7 +31,7 @@ describe('<MachineryCount>', () => {
                 { sources: [{ type: 'Transvision' }] },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<Count machinery={ machinery } />);
 
         // There are only remaining results.
         expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -53,7 +53,7 @@ describe('<MachineryCount>', () => {
                 { sources: [{ type: 'Transvision' }] },
             ],
         };
-        const wrapper = shallow(<MachineryCount machinery={ machinery } />);
+        const wrapper = shallow(<Count machinery={ machinery } />);
 
         // There are both preferred and remaining, and the '+' sign.
         expect(wrapper.find('.count > span')).toHaveLength(3);
