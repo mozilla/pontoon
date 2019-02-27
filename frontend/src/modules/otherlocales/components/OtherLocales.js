@@ -16,6 +16,7 @@ import type { UserState } from 'core/user';
 
 type Props = {|
     orderedOtherLocales: Array,
+    preferredCount: number,
     otherlocales: LocalesState,
     user: UserState,
 |};
@@ -23,7 +24,6 @@ type Props = {|
 type InternalProps = {|
     ...Props,
     parameters: Navigation,
-    preferredCount: number,
     updateEditorTranslation: (string) => void,
 |};
 
@@ -43,10 +43,10 @@ export class OtherLocalesBase extends React.Component<InternalProps> {
     render() {
         const {
             orderedOtherLocales,
+            preferredCount,
             otherlocales,
             parameters,
             updateEditorTranslation,
-            preferredCount,
         } = this.props;
 
         if (otherlocales.fetching) {
@@ -79,6 +79,7 @@ export class OtherLocalesBase extends React.Component<InternalProps> {
 const mapStateToProps = (state: Object): Props => {
     return {
         orderedOtherLocales: selectors.getOrderedOtherLocales(state),
+        preferredCount: selectors.getPreferredLocalesCount(state),
         otherlocales: state.otherlocales,
         user: state.user,
     };

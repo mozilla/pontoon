@@ -36,23 +36,6 @@ type Props = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export default class Tools extends React.Component<Props> {
-    preferredCount() {
-        const { otherlocales, user } = this.props;
-
-        if (!user.isAuthenticated) {
-            return 0;
-        }
-
-        const preferred = otherlocales.translations.reduce((count, item) => {
-            if (user.preferredLocales.indexOf(item.code) > -1) {
-                return count + 1;
-            }
-            return count;
-        }, 0);
-
-        return preferred;
-    }
-
     render() {
         const {
             history,
@@ -87,10 +70,7 @@ export default class Tools extends React.Component<Props> {
                 <Tab>
                     Locales
                     { !otherlocalesCount ? null :
-                    <OtherLocalesCount
-                        otherlocales={ otherlocales }
-                        preferredCount={ this.preferredCount() }
-                    />
+                    <OtherLocalesCount otherlocales={ otherlocales } />
                     }
                 </Tab>
             </TabList>
@@ -119,7 +99,6 @@ export default class Tools extends React.Component<Props> {
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }
-                    preferredCount={ this.preferredCount() }
                 />
             </TabPanel>
         </Tabs>;

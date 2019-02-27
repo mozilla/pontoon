@@ -55,6 +55,35 @@ export const getOrderedOtherLocales: Function = createSelector(
 );
 
 
+export function _getPreferredLocalesCount(
+    otherlocales: LocalesState,
+    user: UserState,
+): number {
+    if (!user.isAuthenticated) {
+        return 0;
+    }
+
+    return otherlocales.translations.reduce((count, item) => {
+        if (user.preferredLocales.indexOf(item.code) > -1) {
+            return count + 1;
+        }
+        return count;
+    }, 0);
+}
+
+
+/**
+ * Return number of user's prefered locales in the list of given translations
+ * from other locales.
+ */
+export const getPreferredLocalesCount: Function = createSelector(
+    otherLocalesSelector,
+    userSelector,
+    _getPreferredLocalesCount
+);
+
+
 export default {
     getOrderedOtherLocales,
+    getPreferredLocalesCount,
 };
