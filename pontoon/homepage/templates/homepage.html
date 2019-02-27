@@ -6,6 +6,16 @@
 
 {% block middle %}
 
+{% if user.is_superuser %}
+<div id="edit-homepage">
+  <div class="select controls">
+    <a class="button" target=blank href="{{ url('admin:homepage_homepage_change', homepage_id) }}">
+      <span class="fa fa-pencil-alt"></span>Edit Homepage
+    </a>
+  </div>
+</div>
+{% endif %}
+
 {{ content }}
 
 {% endblock %}

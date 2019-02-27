@@ -65,15 +65,7 @@
               {% endif %}
             </ul>
           </div>
-
         </div>
-        {% if homepage_id and user.is_authenticated() and user.is_superuser %}
-        <div id="edit-homepage" class="select controls">
-          <a class="edit-info button" target=blank href="{{ url('admin:homepage_homepage_change', homepage_id) }}">
-            <span class="fa fa-pencil-alt"></span>Edit Homepage
-          </a>
-        </div>
-        {% endif %}
       </div>
     </nav>
   </div>
