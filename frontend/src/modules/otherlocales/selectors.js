@@ -3,6 +3,8 @@
 
 import { createSelector } from 'reselect';
 
+import api from 'core/api';
+
 import type { LocalesState } from '.';
 import type { UserState } from 'core/user';
 
@@ -14,7 +16,7 @@ const userSelector = (state): UserState => state.user;
 export function _getOrderedOtherLocales(
     otherlocales: LocalesState,
     user: UserState,
-): Array {
+): Array<api.types.OtherLocaleTranslation> {
     const translations = otherlocales.translations;
 
     if (!user.isAuthenticated) {
@@ -28,7 +30,7 @@ export function _getOrderedOtherLocales(
         let indexB = preferredLocales.indexOf(b.code);
 
         if (indexA === -1 && indexB === -1) {
-            return a > b;
+            return a.code > b.code ? 1 : 0;
         }
         else if (indexA < indexB) {
             return 1;

@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 
 import './OtherLocales.css';
 
+import api from 'core/api';
 import { selectors } from '..';
 import Translation from './Translation';
 
@@ -15,7 +16,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {|
-    orderedOtherLocales: Array,
+    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
     preferredCount: number,
     otherlocales: LocalesState,
     user: UserState,
