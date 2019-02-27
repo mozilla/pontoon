@@ -30,7 +30,7 @@ def homepage(request):
     else:
         start_url = reverse('pontoon.teams')
 
-    homepage = Homepage.objects.first()
+    homepage = Homepage.objects.last()
     content = Template(homepage.text).render(Context({
         'start_url': start_url,
     }))

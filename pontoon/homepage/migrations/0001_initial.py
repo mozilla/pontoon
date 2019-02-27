@@ -21,8 +21,5 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(default='Pontoon', max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
-            options={
-                'ordering': ('-created_at',),
-            },
         ),
     ]
