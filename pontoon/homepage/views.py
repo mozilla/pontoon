@@ -37,5 +37,6 @@ def homepage(request):
 
     return render(request, 'homepage.html', {
         'content': content,
-        'title': homepage.title
+        'title': homepage.title,
+        'homepage_id': homepage.id,
     })

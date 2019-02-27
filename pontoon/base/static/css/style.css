@@ -475,6 +475,12 @@ tfoot td a {
   display: inline-block;
 }
 
+#edit-homepage {
+  float: right;
+  margin-top: 17px;
+  margin-bottom: 0;
+}
+
 .selector {
   cursor: pointer;
 }
