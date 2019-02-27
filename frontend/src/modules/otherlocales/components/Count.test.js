@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Count from './Count';
+import { CountBase } from './Count';
 
 
-describe('<Count>', () => {
+describe('<CountBase>', () => {
     it('shows the correct number of preferred translations', () => {
         const otherlocales = {
             translations: [
@@ -12,7 +12,7 @@ describe('<Count>', () => {
                 { code: 'cd' },
             ],
         };
-        const wrapper = shallow(<Count
+        const wrapper = shallow(<CountBase
             otherlocales={ otherlocales }
             preferredCount={ 2 }
         />);
@@ -34,7 +34,7 @@ describe('<Count>', () => {
                 { code: 'ij' },
             ],
         };
-        const wrapper = shallow(<Count
+        const wrapper = shallow(<CountBase
             otherlocales={ otherlocales }
             preferredCount={ 0 }
         />);
@@ -59,7 +59,7 @@ describe('<Count>', () => {
                 { code: 'ij' },
             ],
         };
-        const wrapper = shallow(<Count
+        const wrapper = shallow(<CountBase
             otherlocales={ otherlocales }
             preferredCount={ 2 }
         />);

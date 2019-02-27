@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import OtherLocales from './OtherLocales';
+import { OtherLocalesBase } from './OtherLocales';
 
 
-describe('<OtherLocales>', () => {
+describe('<OtherLocalesBase>', () => {
     it('shows the correct number of translations', () => {
         const otherlocales = {
             translations: [
@@ -13,14 +13,20 @@ describe('<OtherLocales>', () => {
                 { code: 'cr' },
             ],
         };
+        const orderedOtherLocales = [
+            { code: 'br' },
+            { code: 'ar' },
+            { code: 'cr' },
+        ];
         const params = {
             locale: 'kg',
             project: 'tmo',
         };
         const user = {}
         const wrapper = shallow(
-            <OtherLocales
+            <OtherLocalesBase
                 otherlocales={ otherlocales }
+                orderedOtherLocales={ orderedOtherLocales }
                 parameters={ params }
                 user={ user }
             />
@@ -29,39 +35,12 @@ describe('<OtherLocales>', () => {
         expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
-    it('shows preferred locales first', () => {
-        const otherlocales = {
-            translations: [
-                { code: 'ar' },
-                { code: 'br' },
-                { code: 'cr' },
-            ],
-        };
-        const params = {
-            locale: 'kg',
-            project: 'tmo',
-        };
-        const user = {
-            isAuthenticated: true,
-            preferredLocales: ['ab', 'br', 'cd']
-        };
-        const wrapper = shallow(
-            <OtherLocales
-                otherlocales={ otherlocales }
-                parameters={ params }
-                user={ user }
-            />
-        );
-
-        expect(wrapper.find('Translation:first-child .stress').text()).toContain('br');
-    });
-
     it('returns null while otherlocales are loading', () => {
         const otherlocales = {
             fetching: true,
         };
         const user = {}
-        const wrapper = shallow(<OtherLocales
+        const wrapper = shallow(<OtherLocalesBase
             otherlocales={ otherlocales }
             user={ user }
         />);
@@ -75,7 +54,7 @@ describe('<OtherLocales>', () => {
             translations: [],
         };
         const user = {}
-        const wrapper = shallow(<OtherLocales
+        const wrapper = shallow(<OtherLocalesBase
             otherlocales={ otherlocales }
             user={ user }
         />);
