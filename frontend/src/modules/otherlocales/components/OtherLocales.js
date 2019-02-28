@@ -15,7 +15,7 @@ import type { UserState } from 'core/user';
 
 type Props = {|
     orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
-    preferredCount: number,
+    preferredLocalesCount: number,
     otherlocales: LocalesState,
     parameters: Navigation,
     user: UserState,
@@ -38,7 +38,7 @@ export default class OtherLocales extends React.Component<Props> {
     render() {
         const {
             orderedOtherLocales,
-            preferredCount,
+            preferredLocalesCount,
             otherlocales,
             parameters,
             updateEditorTranslation,
@@ -55,7 +55,7 @@ export default class OtherLocales extends React.Component<Props> {
         return <section className="other-locales">
             <ul>
                 { orderedOtherLocales.map((translation, index) => {
-                    let lastPreferred = (index === preferredCount - 1);
+                    let lastPreferred = (index === preferredLocalesCount - 1);
 
                     return <Translation
                         translation={ translation }

@@ -25,7 +25,7 @@ type Props = {|
     machinery: MachineryState,
     otherlocales: LocalesState,
     orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
-    preferredCount: number,
+    preferredLocalesCount: number,
     parameters: NavigationParams,
     user: UserState,
     deleteTranslation: (number) => void,
@@ -47,7 +47,7 @@ export default class Tools extends React.Component<Props> {
             machinery,
             otherlocales,
             orderedOtherLocales,
-            preferredCount,
+            preferredLocalesCount,
             parameters,
             user,
             deleteTranslation,
@@ -78,7 +78,7 @@ export default class Tools extends React.Component<Props> {
                     { !otherlocalesCount ? null :
                     <OtherLocalesCount
                         otherlocales={ otherlocales }
-                        preferredCount={ preferredCount }
+                        preferredLocalesCount={ preferredLocalesCount }
                     />
                     }
                 </Tab>
@@ -106,7 +106,7 @@ export default class Tools extends React.Component<Props> {
                 <OtherLocales
                     otherlocales={ otherlocales }
                     orderedOtherLocales= { orderedOtherLocales }
-                    preferredCount={ preferredCount }
+                    preferredLocalesCount={ preferredLocalesCount }
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }

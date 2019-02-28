@@ -14,7 +14,7 @@ describe('<Count>', () => {
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
-            preferredCount={ 2 }
+            preferredLocalesCount={ 2 }
         />);
 
         // There are only preferred results.
@@ -36,7 +36,7 @@ describe('<Count>', () => {
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
-            preferredCount={ 0 }
+            preferredLocalesCount={ 0 }
         />);
 
         // There are only remaining results.
@@ -61,7 +61,7 @@ describe('<Count>', () => {
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
-            preferredCount={ 2 }
+            preferredLocalesCount={ 2 }
         />);
 
         // There are both preferred and remaining, and the '+' sign.
