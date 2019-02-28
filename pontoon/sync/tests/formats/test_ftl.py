@@ -17,6 +17,7 @@ from pontoon.base.tests import (
 from pontoon.sync.formats import ftl
 from pontoon.sync.tests.formats import FormatTestsMixin
 
+
 class FTLResourceTests(FormatTestsMixin, TestCase):
     def setUp(self):
         super(FTLResourceTests, self).setUp()
@@ -90,10 +91,11 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             directory=self.tempdir,
         )
         path = self.get_nonexistant_file_path()
-        translate_resource = self.get_nonexistant_file_resource(path)
-        source_resource = ftl.FTLResource(source_path, locale=None)
-        ftl.parse(path, source_path=source_path, locale=None)
-        assert_true(ftl.FTLResource(path, locale=None, source_resource=source_resource))
+        obj = ftl.parse(path, source_path=source_path, locale=None)
+        assert_equal(obj.path, path)
+        assert_equal(obj.locale, None)
+        assert_equal(obj.source_resource.path, source_path)
+        assert_equal(obj.source_resource.locale, None)
 
     def test_parse_with_no_source_path(self):
         contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
@@ -103,5 +105,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             suffix='.ftl',
             directory=self.tempdir,
         )
-        ftl.parse(path, source_path=None, locale=None)
-        assert_true(ftl.FTLResource(path, locale=None, source_resource=None))
+        obj = ftl.parse(path, source_path=None, locale=None)
+        assert_equal(obj.path, path)
+        assert_equal(obj.source_resource, None)
+        assert_equal(obj.locale, None)
