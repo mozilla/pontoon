@@ -110,7 +110,7 @@ If you can't turn on websockets, you will see errors in the console (that's not 
 
 ## Dependencies
 
-We manage our JavaScript dependencies with `yarn`. Dependencies and their version are listed in the `package.json` file, under `dependencies` for production and `devDependencies` for development.
+We manage our JavaScript dependencies with `yarn`. Dependencies and their versions are listed in the `package.json` file, under `dependencies` for production and `devDependencies` for development.
 
 To add a new dependency, run the following commands:
 
