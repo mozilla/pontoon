@@ -31,6 +31,7 @@ def homepage(request):
         start_url = reverse('pontoon.teams')
 
     homepage = Homepage.objects.last()
+
     content = Template(homepage.text).render(Context({
         'start_url': start_url,
     }))
