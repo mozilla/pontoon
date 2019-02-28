@@ -25,19 +25,28 @@ export default function markRegExp(
 ): Array<string | React.Node> {
     const output = [];
 
-    const parts = content.split(rule);
+    let remaining = content;
+    let matches = rule.exec(remaining);
 
-    for (let i = 0; i < parts.length; i++) {
-        if (!parts[i]) {
-            continue;
-        }
+    while (matches) {
+        // Use the last non-null matching form. This is to support several
+        // capture groups in the rule.
+        let match = matches.reduce((acc, cur) => cur || acc, '');
 
-        if (i % 2) {
-            output.push(tag(parts[i]));
+        const [previous, ...rest] = remaining.split(match);
+
+        if (previous) {
+            output.push(previous);
         }
-        else {
-            output.push(parts[i]);
-        }
+        output.push(tag(match));
+
+        // Compute the next step.
+        remaining = rest.join(match);
+        matches = rule.exec(remaining);
+    }
+
+    if (remaining) {
+        output.push(remaining);
     }
 
     return output;
