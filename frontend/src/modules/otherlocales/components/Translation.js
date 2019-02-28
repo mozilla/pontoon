@@ -12,6 +12,7 @@ type Props = {|
     translation: Object,
     parameters: Navigation,
     updateEditorTranslation: (string) => void,
+    lastPreferred: boolean,
 |};
 
 
@@ -27,11 +28,13 @@ type Props = {|
      }
 
      render() {
-         const { translation, parameters } = this.props;
+         const { translation, parameters, lastPreferred } = this.props;
+
+         const className = lastPreferred ? 'translation last-preferred' : 'translation';
 
          return <Localized id='otherlocales-translation-copy' attrs={{ title: true }}>
              <li
-                className='translation'
+                className={ className }
                 title='Copy Into Translation (Tab)'
                 onClick={ this.copyTranslationIntoEditor }
              >

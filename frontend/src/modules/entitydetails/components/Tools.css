@@ -21,10 +21,15 @@
     cursor: pointer;
     display: table-cell;
     font-weight: 300;
+    line-height: 22px;
     list-style: none;
     padding: 10px 5px;
     text-align: center;
     text-transform: uppercase;
+}
+
+.react-tabs__tab:last-child {
+    border-right: none;
 }
 
 .react-tabs__tab--selected {

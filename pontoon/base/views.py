@@ -982,6 +982,7 @@ def user_data(request):
             'quality_checks': user.profile.quality_checks,
             'force_suggestions': user.profile.force_suggestions,
         },
+        'preferred_locales': user.profile.sorted_locales_codes,
     })
 
 

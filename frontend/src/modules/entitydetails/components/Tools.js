@@ -5,11 +5,11 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import './Tools.css';
 
-import { History } from 'modules/history';
-import { Machinery } from 'modules/machinery';
-import { Locales } from 'modules/otherlocales';
+import api from 'core/api';
 
-import MachineryCount from './MachineryCount';
+import { History } from 'modules/history';
+import { Machinery, MachineryCount } from 'modules/machinery';
+import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -24,6 +24,8 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
+    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    preferredLocalesCount: number,
     parameters: NavigationParams,
     user: UserState,
     deleteTranslation: (number) => void,
@@ -44,6 +46,8 @@ export default class Tools extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
+            orderedOtherLocales,
+            preferredLocalesCount,
             parameters,
             user,
             deleteTranslation,
@@ -72,7 +76,10 @@ export default class Tools extends React.Component<Props> {
                 <Tab>
                     Locales
                     { !otherlocalesCount ? null :
-                    <span className={ 'count' }>{ otherlocalesCount }</span>
+                    <OtherLocalesCount
+                        otherlocales={ otherlocales }
+                        preferredLocalesCount={ preferredLocalesCount }
+                    />
                     }
                 </Tab>
             </TabList>
@@ -96,8 +103,11 @@ export default class Tools extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <Locales
+                <OtherLocales
                     otherlocales={ otherlocales }
+                    orderedOtherLocales= { orderedOtherLocales }
+                    preferredLocalesCount={ preferredLocalesCount }
+                    user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }
                 />

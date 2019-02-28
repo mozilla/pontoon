@@ -2,8 +2,10 @@
 
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
+export { default as selectors } from './selectors';
 
-export { default as Locales } from './components/Locales';
+export { default as OtherLocales } from './components/OtherLocales';
+export { default as OtherLocalesCount } from './components/Count';
 
 export type { LocalesState } from './reducer';
 

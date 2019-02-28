@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Locales from './Locales';
+import OtherLocales from './OtherLocales';
 
 
-describe('<Locales>', () => {
+describe('<OtherLocales>', () => {
     it('shows the correct number of translations', () => {
         const otherlocales = {
             translations: [
@@ -13,12 +13,23 @@ describe('<Locales>', () => {
                 { code: 'cr' },
             ],
         };
+        const orderedOtherLocales = [
+            { code: 'br' },
+            { code: 'ar' },
+            { code: 'cr' },
+        ];
         const params = {
             locale: 'kg',
             project: 'tmo',
         };
+        const user = {}
         const wrapper = shallow(
-            <Locales otherlocales={ otherlocales } parameters={ params } />
+            <OtherLocales
+                otherlocales={ otherlocales }
+                orderedOtherLocales={ orderedOtherLocales }
+                parameters={ params }
+                user={ user }
+            />
         );
 
         expect(wrapper.find('Translation')).toHaveLength(3);
@@ -28,7 +39,11 @@ describe('<Locales>', () => {
         const otherlocales = {
             fetching: true,
         };
-        const wrapper = shallow(<Locales otherlocales={ otherlocales } />);
+        const user = {}
+        const wrapper = shallow(<OtherLocales
+            otherlocales={ otherlocales }
+            user={ user }
+        />);
 
         expect(wrapper.type()).toBeNull();
     });
@@ -38,7 +53,11 @@ describe('<Locales>', () => {
             fetching: false,
             translations: [],
         };
-        const wrapper = shallow(<Locales otherlocales={ otherlocales } />);
+        const user = {}
+        const wrapper = shallow(<OtherLocales
+            otherlocales={ otherlocales }
+            user={ user }
+        />);
 
         expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
     });

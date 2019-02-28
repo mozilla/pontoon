@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import './EntityDetails.css';
 
+import api from 'core/api';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
@@ -38,6 +39,8 @@ type Props = {|
     nextEntity: DbEntity,
     previousEntity: DbEntity,
     otherlocales: LocalesState,
+    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    preferredLocalesCount: number,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
@@ -213,6 +216,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 locale={ state.locale }
                 machinery={ state.machinery }
                 otherlocales={ state.otherlocales }
+                orderedOtherLocales={ state.orderedOtherLocales }
+                preferredLocalesCount={ state.preferredLocalesCount }
                 parameters={ state.parameters }
                 user={ state.user }
                 deleteTranslation={ this.deleteTranslation }
@@ -233,6 +238,8 @@ const mapStateToProps = (state: Object): Props => {
         nextEntity: entitieslist.selectors.getNextEntity(state),
         previousEntity: entitieslist.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
+        orderedOtherLocales: otherlocales.selectors.getOrderedOtherLocales(state),
+        preferredLocalesCount: otherlocales.selectors.getPreferredLocalesCount(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
