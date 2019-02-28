@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import shortid from 'shortid';
 
 import mark from './mark';
 
@@ -12,8 +13,20 @@ type Props = {
 
 type Parser = {
     rule: string | RegExp,
-    tag: (string) => React.Node,
+    tag: (string) => React.Element<any>,
 };
+
+
+/**
+ * Returns a clone of the element returned by the tag function, but makes sure
+ * that it has a `key` attribute.
+ */
+function enhanceTag(tag: (string) => React.Element<any>) {
+    return (x: string) => {
+        const elt = tag(x);
+        return React.cloneElement(elt, { key: shortid.generate() });
+    };
+}
 
 
 /**
@@ -39,7 +52,8 @@ export default function createMarker(parsers: Array<Parser>) {
             let content = this.props.children;
 
             for (let parser of parsers) {
-                content = mark(content, parser.rule, parser.tag);
+                const tag = enhanceTag(parser.tag);
+                content = mark(content, parser.rule, tag);
             }
 
             return content;
