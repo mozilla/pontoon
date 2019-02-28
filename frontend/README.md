@@ -88,6 +88,7 @@ If you're using docker, `make run` automatically starts both a webpack server (o
 
 A common case during development is to have 3 terminals open: one for the dev servers, one for the tests and one for Flow:
 
+```shell
     # terminal 1
     $ make run
 
@@ -96,6 +97,7 @@ A common case during development is to have 3 terminals open: one for the dev se
 
     # terminal 3
     $ make flow
+```
 
 #### Enabling websocket and warm-reloading for dev
 
@@ -104,6 +106,24 @@ Currently websocket requests are redirected by Django to the webpack server. Sad
 As far as we know, it is not possible to make that work in Chrome or Edge. This only impacts development, as there's no hot reloading in production.
 
 If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your Django server regularly, because polling requests don't close, and after so many web page reloads, the Django process won't be able to accept new requests.
+
+
+## Dependencies
+
+We manage our JavaScript dependencies with `yarn`. Dependencies and their versions are listed in the `package.json` file, under `dependencies` for production and `devDependencies` for development.
+
+To add a new dependency, run the following commands:
+
+```shell
+    # Add the dependency. Make sure to use an exact version.
+    yarn add my-package:version
+
+    # Go back to the root folder.
+    cd ..
+
+    # Rebuild the Pontoon image so that it has the new dependencies.
+    make build
+```
 
 
 ## Type checking
