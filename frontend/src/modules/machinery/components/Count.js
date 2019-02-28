@@ -10,7 +10,7 @@ type Props = {|
 |};
 
 
-export default class MachineryCount extends React.Component<Props> {
+export default class Count extends React.Component<Props> {
     render() {
         const { machinery } = this.props;
 
