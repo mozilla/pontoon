@@ -2,14 +2,17 @@
 
 import { createSelector } from 'reselect';
 
+import * as user from 'core/user';
+import * as otherlocales from 'modules/otherlocales';
+
 import api from 'core/api';
 
 import type { LocalesState } from '.';
 import type { UserState } from 'core/user';
 
 
-const otherLocalesSelector = (state): LocalesState => state.otherlocales;
-const userSelector = (state): UserState => state.user;
+const otherLocalesSelector = (state): LocalesState => state[otherlocales.NAME];
+const userSelector = (state): UserState => state[user.NAME];
 
 
 export function _getOrderedOtherLocales(
