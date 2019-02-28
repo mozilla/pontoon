@@ -5,6 +5,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import './Tools.css';
 
+import api from 'core/api';
+
 import { History } from 'modules/history';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
@@ -22,6 +24,8 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
+    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    preferredCount: number,
     parameters: NavigationParams,
     user: UserState,
     deleteTranslation: (number) => void,
@@ -42,6 +46,8 @@ export default class Tools extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
+            orderedOtherLocales,
+            preferredCount,
             parameters,
             user,
             deleteTranslation,
@@ -70,7 +76,10 @@ export default class Tools extends React.Component<Props> {
                 <Tab>
                     Locales
                     { !otherlocalesCount ? null :
-                    <OtherLocalesCount otherlocales={ otherlocales } />
+                    <OtherLocalesCount
+                        otherlocales={ otherlocales }
+                        preferredCount={ preferredCount }
+                    />
                     }
                 </Tab>
             </TabList>
@@ -96,6 +105,8 @@ export default class Tools extends React.Component<Props> {
             <TabPanel>
                 <OtherLocales
                     otherlocales={ otherlocales }
+                    orderedOtherLocales= { orderedOtherLocales }
+                    preferredCount={ preferredCount }
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }

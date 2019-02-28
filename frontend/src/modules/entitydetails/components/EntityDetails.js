@@ -213,6 +213,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 locale={ state.locale }
                 machinery={ state.machinery }
                 otherlocales={ state.otherlocales }
+                orderedOtherLocales={ state.orderedOtherLocales }
+                preferredCount={ state.preferredCount }
                 parameters={ state.parameters }
                 user={ state.user }
                 deleteTranslation={ this.deleteTranslation }
@@ -233,6 +235,8 @@ const mapStateToProps = (state: Object): Props => {
         nextEntity: entitieslist.selectors.getNextEntity(state),
         previousEntity: entitieslist.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
+        orderedOtherLocales: otherlocales.selectors.getOrderedOtherLocales(state),
+        preferredCount: otherlocales.selectors.getPreferredLocalesCount(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,

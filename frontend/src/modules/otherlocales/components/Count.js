@@ -1,9 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-
-import { selectors } from '..';
 
 import type { LocalesState } from 'modules/otherlocales';
 
@@ -14,7 +11,7 @@ type Props = {|
 |};
 
 
-export class CountBase extends React.Component<Props> {
+export default class Count extends React.Component<Props> {
     render() {
         const { otherlocales, preferredCount } = this.props;
 
@@ -42,13 +39,3 @@ export class CountBase extends React.Component<Props> {
         </span>;
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        otherlocales: state.otherlocales,
-        preferredCount: selectors.getPreferredLocalesCount(state),
-    };
-};
-
-export default connect(mapStateToProps)(CountBase);

@@ -1,13 +1,11 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Localized } from 'fluent-react';
 
 import './OtherLocales.css';
 
 import api from 'core/api';
-import { selectors } from '..';
 import Translation from './Translation';
 
 import type { Navigation } from 'core/navigation';
@@ -19,12 +17,8 @@ type Props = {|
     orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
     preferredCount: number,
     otherlocales: LocalesState,
-    user: UserState,
-|};
-
-type InternalProps = {|
-    ...Props,
     parameters: Navigation,
+    user: UserState,
     updateEditorTranslation: (string) => void,
 |};
 
@@ -32,7 +26,7 @@ type InternalProps = {|
 /**
  * Shows all translations of an entity in locales other than the current one.
  */
-export class OtherLocalesBase extends React.Component<InternalProps> {
+export default class OtherLocales extends React.Component<Props> {
     renderNoResults() {
         return <section className="other-locales">
             <Localized id="history-history-no-translations">
@@ -75,15 +69,3 @@ export class OtherLocalesBase extends React.Component<InternalProps> {
         </section>;
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        orderedOtherLocales: selectors.getOrderedOtherLocales(state),
-        preferredCount: selectors.getPreferredLocalesCount(state),
-        otherlocales: state.otherlocales,
-        user: state.user,
-    };
-};
-
-export default connect(mapStateToProps)(OtherLocalesBase);
