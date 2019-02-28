@@ -9,5 +9,5 @@ class HomepageForm(forms.ModelForm):
         model = models.Homepage
         fields = '__all__'
         widgets = {
-            'text': AceWidget(mode='html', theme='tomorrow_night', width="900px", height="400px"),
+            'text': AceWidget(mode='django', theme='tomorrow_night', width="900px", height="400px"),
         }
