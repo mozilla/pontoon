@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 const unusualSpace = {
-    rule: /(^ +| +$|[\r\n\t]( +)| {2,})/gi,
+    rule: /(^ +| +$|[\r\n\t]( +)| {2,})/,
     tag: (x: string) => <mark className='placeable' title='Unusual space in string'>
         { x }
     </mark>,

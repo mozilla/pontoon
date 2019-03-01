@@ -9,7 +9,7 @@ import multipleSpaces from './multipleSpaces';
 describe('multipleSpaces', () => {
     it('marks the right parts of a string', () => {
         const Marker = createMarker([multipleSpaces]);
-        const content = `hello,   world`;
+        const content = 'hello,   world';
 
         const wrapper = mount(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);

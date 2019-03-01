@@ -9,7 +9,7 @@ import nonBreakingSpace from './nonBreakingSpace';
 describe('nonBreakingSpace', () => {
     it('marks the right parts of a string', () => {
         const Marker = createMarker([nonBreakingSpace]);
-        const content = `hello,\u00A0world`;
+        const content = 'hello,\u00A0world';
 
         const wrapper = mount(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);

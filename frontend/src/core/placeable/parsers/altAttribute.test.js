@@ -3,16 +3,16 @@ import { mount } from 'enzyme';
 
 import createMarker from 'lib/react-content-marker';
 
-import thinSpace from './thinSpace';
+import altAttribute from './altAttribute';
 
 
-describe('thinSpace', () => {
+describe('altAttribute', () => {
     it('marks the right parts of a string', () => {
-        const Marker = createMarker([thinSpace]);
-        const content = 'hello,\u2009world';
+        const Marker = createMarker([altAttribute]);
+        const content = 'alt="hello"';
 
         const wrapper = mount(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual('\u2009');
+        expect(wrapper.find('mark').text()).toEqual('alt="hello"');
     });
 });

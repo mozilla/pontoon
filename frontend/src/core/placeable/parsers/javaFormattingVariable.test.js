@@ -4,19 +4,18 @@ import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
 
-import pythonFormatString from './pythonFormatString';
+import javaFormattingVariable from './javaFormattingVariable';
 
 
-describe('pythonFormatString', () => {
+describe('javaFormattingVariable', () => {
     each([
-        ['{0}', 'hello, {0}'],
-        ['{name}', 'hello, {name}'],
-        ['{name!s}', 'hello, {name!s}'],
-        ['{someone.name}', 'hello, {someone.name}'],
-        ['{name[0]}', 'hello, {name[0]}'],
+        ['{1,time}', 'At {1,time}'],
+        ['{1,date}', 'on {1,date}, '],
+        ['{2}', 'there was {2} '],
+        ['{0,number,integer}', 'n planet {0,number,integer}.'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
-        const Marker = createMarker([pythonFormatString]);
+        const Marker = createMarker([javaFormattingVariable]);
         const wrapper = mount(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);

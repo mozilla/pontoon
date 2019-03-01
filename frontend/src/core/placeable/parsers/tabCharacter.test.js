@@ -9,7 +9,7 @@ import tabCharacter from './tabCharacter';
 describe('tabCharacter', () => {
     it('marks the right parts of a string', () => {
         const Marker = createMarker([tabCharacter]);
-        const content = `hello,\tworld`;
+        const content = 'hello,\tworld';
 
         const wrapper = mount(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);

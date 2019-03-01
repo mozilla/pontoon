@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 const multipleSpaces = {
-    rule: /(  +)/gi,
+    rule: /(  +)/,
     tag: () => <mark className='placeable' title='Multiple spaces'>
         { ' ' }&middot;{ ' ' }
     </mark>,
