@@ -11,3 +11,9 @@ class HomepageForm(forms.ModelForm):
         widgets = {
             'text': AceWidget(mode='django', theme='tomorrow_night', width="900px", height="400px"),
         }
+        help_texts = {
+            'text': """<h3>To keep the content compatible with the current slide structure of
+                the home page, the content is expected to be separated into sections with class
+                "section".</h3>"""
+        }
+
