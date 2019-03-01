@@ -14,6 +14,7 @@ type Props = {
 type Parser = {
     rule: string | RegExp,
     tag: (string) => React.Element<any>,
+    matchIndex?: number,
 };
 
 
@@ -40,7 +41,9 @@ function enhanceTag(tag: (string) => React.Element<any>) {
  * terms or a RegExp. Note that a RegExp must have parentheses surrounding
  * your pattern, otherwise matches won't be captured. The `tag` is a function
  * that accepts a string (the matched term or pattern) and returns a React
- * element that will replace the match in the output.
+ * element that will replace the match in the output. Parsers can also pass a
+ * `matchIndex` parameter, a number that will be used when using a RegExp to
+ * chose which match to pass to the `tag` function.
  *
  * @returns {Array} An array of strings and React components, similar to the
  * original content but where each matching pattern has been replaced by a
@@ -57,7 +60,7 @@ export default function createMarker(parsers: Array<Parser>) {
 
             for (let parser of parsers) {
                 const tag = enhanceTag(parser.tag);
-                content = mark(content, parser.rule, tag);
+                content = mark(content, parser.rule, tag, parser.matchIndex);
             }
 
             return content;

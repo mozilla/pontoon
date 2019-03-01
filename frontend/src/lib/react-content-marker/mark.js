@@ -18,6 +18,9 @@ import markTerm from './markTerm';
  * a React component or a string. The value returned by that function will
  * replace the term in the output.
  *
+ * @param {number} matchIndex The index of the match to use when marking with
+ * a RegExp. If not provided, will use the last non-null match available.
+ *
  * @returns {Array} An array of strings and React components, similar to the
  * original content but where each matching pattern has been replaced by a
  * marking component.
@@ -25,7 +28,8 @@ import markTerm from './markTerm';
 export default function mark(
     content: string | Array<string | React.Node>,
     rule: string | RegExp,
-    tag: (string) => React.Node
+    tag: (string) => React.Node,
+    matchIndex: ?number,
 ): Array<string | React.Node> {
     if (!Array.isArray(content)) {
         content = [content];
@@ -42,7 +46,7 @@ export default function mark(
             let marked;
 
             if (rule instanceof RegExp) {
-                marked = markRegExp(part, rule, tag);
+                marked = markRegExp(part, rule, tag, matchIndex);
             }
             else if (typeof rule === 'string') {
                 marked = markTerm(part, rule, tag);
