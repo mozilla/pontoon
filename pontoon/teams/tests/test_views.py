@@ -1,6 +1,7 @@
 import pytest
 from mock import patch
 
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from pontoon.test.factories import UserFactory
@@ -21,6 +22,43 @@ def translators():
 @pytest.fixture
 def managers():
     return _get_sorted_users()
+
+
+@pytest.mark.django_db
+def test_missing_locale(client):
+    """
+    Tests if the backend is returning an error on the missing locale.
+    """
+    response = client.get('/missing-locale/')
+
+    assert response.status_code == 404
+    assert response.resolver_match.view_name == 'pontoon.teams.team'
+
+
+@pytest.mark.django_db
+@patch('pontoon.teams.views.render', wraps=render)
+def test_locale_view(mock_render, translation_a, client):
+    """
+    Check if the locale view finds the right locale and passes it to the template.
+    """
+    client.get(
+        '/{locale}/'.format(
+            locale=translation_a.locale.code
+        )
+    )
+
+    assert mock_render.call_args[0][2]['locale'] == translation_a.locale
+
+
+@pytest.mark.django_db
+def test_contributors_of_missing_locale(client):
+    """
+    Tests if the contributors view is returning an error on the missing locale.
+    """
+    response = client.get('/missing-locale/contributors/')
+
+    assert response.status_code == 404
+    assert response.resolver_match.view_name == 'pontoon.teams.contributors'
 
 
 @pytest.mark.django_db
@@ -141,3 +179,36 @@ def test_users_permissions_for_ajax_permissions_view(
     )
     assert response.status_code == 403
     assert '<title>Forbidden page</title>' in response.content
+
+
+@pytest.mark.django_db
+@patch(
+    'pontoon.teams.views.LocaleContributorsView.render_to_response',
+    return_value=HttpResponse(''),
+)
+def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
+    """
+    Tests if the view returns top contributors specific for given locale.
+    """
+    client.get(
+        '/{locale}/ajax/contributors/'.format(
+            locale=translation_a.locale.code
+        ),
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+    )
+
+    response_context = mock_render.call_args[0][0]
+    assert response_context['locale'] == translation_a.locale
+    assert list(response_context['contributors']) == [translation_a.user]
+
+    client.get(
+        '/{locale}/ajax/contributors/'.format(
+            locale=locale_b.code
+        ),
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+    )
+
+    response_context = mock_render.call_args[0][0]
+    assert response_context['locale'] == locale_b
+    assert list(response_context['contributors']) == []
+
