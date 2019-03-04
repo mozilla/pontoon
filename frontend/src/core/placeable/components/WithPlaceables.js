@@ -37,21 +37,35 @@ const rules = [
     newlineCharacter,
     tabCharacter,
     escapeSequence,
+
+    // The spaces placeable can match '\n  ' and mask the newline,
+    // so it has to come later.
     unusualSpace,
     nonBreakingSpace,
     narrowNonBreakingSpace,
     thinSpace,
     multipleSpaces,
+
+
+    // The XML placeables must be marked before variable placeables
+    // to avoid marking variables, but leaving out tags. See:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1334926
     xmlTag,
     altAttribute,
     xmlEntity,
+
     pythonFormatNamedString,
     pythonFormatString,
     pythonFormattingVariable,
     javaFormattingVariable,
     stringFormattingVariable,
+
     jsonPlaceholder,
+
+    // The Qt variables can consume the %1 in %1$s which will mask a printf
+    // placeable, so it has to come later.
     qtFormatting,
+
     uriPattern,
     filePattern,
     emailPattern,
