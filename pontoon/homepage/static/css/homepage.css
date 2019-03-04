@@ -71,7 +71,6 @@ h2 {
 
 #main .button.primary {
   background-color: #7BC876;
-  color: #FFFFFF;
 }
 
 .flex {
@@ -98,6 +97,27 @@ h2 {
 
 #fp-nav ul li a.active span {
   background: #7BC876;
+}
+
+/* Edit Homepage button */
+#edit-homepage {
+  margin: 0 auto;
+  width: 980px;
+}
+
+#edit-homepage .select {
+  float: right;
+  top: 70px;
+  z-index: 10;
+}
+
+#edit-homepage .button {
+  background: #7BC876;
+  color: #000;
+}
+
+#edit-homepage .fa {
+  margin-right: 7px;
 }
 
 /* Section-1 */

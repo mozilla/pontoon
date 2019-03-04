@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'graphene_django',
     'webpack_loader',
     'waffle',
+    'django_ace',
 )
 
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')

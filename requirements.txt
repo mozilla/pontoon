@@ -112,6 +112,9 @@ six==1.11.0 \
 whitenoise==1.0.6 \
     --hash=sha256:3e4d80199960959b828951aa24cbfaa36cebed149dcd728c11e855798b15f870 \
     --hash=sha256:dac9419db3ece27bb53c7433243fc22ed42cf68de9d6c4129390e1d9aefe6310
+django-ace==1.0.5 \
+    --hash=sha256:1334f08b4c5548e8ab13b25787e6a3f49dfe5fc92bb3a3d845b5b42fa0e1aff6 \
+    --hash=sha256:a2616b0265bdc1f839cc905c77243f779d82c00f3fddf58d23c08eb07e91e189
 
 # Dependencies loaded from outside pypi.
 https://github.com/mathjazz/silme/archive/v0.9.4.zip#egg=silme==0.9.4 \
