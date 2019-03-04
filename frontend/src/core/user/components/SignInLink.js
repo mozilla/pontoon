@@ -5,6 +5,7 @@ import * as React from 'react';
 
 type Props = {|
     children?: React.Node,
+    url: string,
 |};
 
 
@@ -13,9 +14,7 @@ type Props = {|
  */
 export default class SignInLink extends React.Component<Props> {
     render() {
-        return <a
-            href='/accounts/fxa/login/?scope=profile%3Auid+profile%3Aemail+profile%3Adisplay_name'
-        >
+        return <a href={ this.props.url }>
             { this.props.children }
         </a>;
     }

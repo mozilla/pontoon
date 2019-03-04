@@ -34,7 +34,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
         return <div className='user-controls'>
             <UserAutoUpdater getUserData={ this.getUserData } />
 
-            { user.isAuthenticated ? <SignOut /> : <SignIn /> }
+            { user.isAuthenticated ?
+                <SignOut url={ user.signOutURL } /> :
+                <SignIn url={ user.signInURL } />
+            }
 
             { /* To be removed as part of bug 1527853. */ }
             <AppSwitcher router={ router } user={ user } />

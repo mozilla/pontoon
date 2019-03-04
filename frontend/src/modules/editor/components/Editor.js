@@ -84,7 +84,7 @@ export default class Editor extends React.Component<Props, State> {
                 <Localized
                     id="editor-editor-sign-in-to-translate"
                     a={
-                        <SignInLink></SignInLink>
+                        <SignInLink url={ this.props.user.signInURL }></SignInLink>
                     }
                 >
                     <p className='banner'>

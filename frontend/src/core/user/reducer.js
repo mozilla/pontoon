@@ -56,6 +56,8 @@ export type UserState = {|
     +translatorForProjects: Array<string>,
     +settings: SettingsState,
     +preferredLocales: Array<string>,
+    +signInURL: string,
+    +signOutURL: string,
 |};
 
 const initial: UserState = {
@@ -69,6 +71,8 @@ const initial: UserState = {
     translatorForProjects: [],
     settings: initialSettings,
     preferredLocales: [],
+    signInURL: '',
+    signOutURL: '',
 };
 
 export default function reducer(
@@ -88,6 +92,8 @@ export default function reducer(
                 translatorForProjects: action.data.translator_for_projects,
                 settings: settings(state.settings, action),
                 preferredLocales: action.data.preferred_locales,
+                signInURL: action.data.login_url,
+                signOutURL: action.data.logout_url,
             };
         case UPDATE_SETTINGS:
             return {
