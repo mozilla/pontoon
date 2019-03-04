@@ -15,6 +15,7 @@ import jsonPlaceholder from '../parsers/jsonPlaceholder';
 import multipleSpaces from '../parsers/multipleSpaces';
 import narrowNonBreakingSpace from '../parsers/narrowNonBreakingSpace';
 import newlineCharacter from '../parsers/newlineCharacter';
+import newlineEscape from '../parsers/newlineEscape';
 import nonBreakingSpace from '../parsers/nonBreakingSpace';
 import numberString from '../parsers/numberString';
 import optionPattern from '../parsers/optionPattern';
@@ -34,6 +35,7 @@ import xmlTag from '../parsers/xmlTag';
 
 // Note: the order of these MATTERS!
 const rules = [
+    newlineEscape,
     newlineCharacter,
     tabCharacter,
     escapeSequence,
