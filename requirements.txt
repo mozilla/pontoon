@@ -339,3 +339,11 @@ python-binary-memcached==0.28.0 \
     --hash=sha256:8cc4e71c20a2d9e75c30669c4bef35ee407bbfc72a631fc7ad130a2957bd1ed1
 uhashring==1.1 \
     --hash=sha256:7bedeef34a0e1df21f7d4396c6657f9a2a0cfb0ce9f77bc18e06df7e28eecebe
+
+# ----------------------------------------------------------------------------------
+wsgi-sslify==1.0.1 \
+    --hash=sha256:cde368fda0fb9958dd58bc2cb955d0bf3df1b79c132d97cee90be5fda34a5089
+
+# Required by wsgi-sslify
+werkzeug==0.10.1 \
+    --hash=sha256:9cf783990b1a99173e707a5768610800aa87775e9d86e211d17180d5b6c245ab
