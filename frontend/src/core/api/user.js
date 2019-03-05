@@ -29,7 +29,9 @@ export default class UserAPI extends APIBase {
         const payload = new URLSearchParams();
         payload.append('csrfmiddlewaretoken', csrfToken);
 
-        return await this.fetch(url, 'POST', payload);
+        const headers = new Headers();
+
+        return await this.fetch(url, 'POST', payload, headers);
     }
 
     async updateSetting(username: string, setting: string, value: boolean): Promise<string> {

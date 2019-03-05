@@ -47,6 +47,7 @@ export default class APIBase {
         }
         catch(error) {
             // Catch non-JSON responses
+            return await new Object();
         }
     }
 }
