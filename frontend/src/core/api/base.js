@@ -42,6 +42,16 @@ export default class APIBase {
             requestParams
         );
 
-        return await response.json();
+        try {
+            return await response.json();
+        }
+        catch (e) {
+            // Catch non-JSON responses
+            console.error('The response content is not JSON-compatible');
+            console.error(`URL: ${url} - Method: ${method}`);
+            console.error(e);
+
+            return {};
+        }
     }
 }

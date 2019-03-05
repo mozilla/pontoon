@@ -42,6 +42,7 @@ from pontoon.base.models import (
     Translation,
     UserProfile,
 )
+from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 
@@ -961,9 +962,20 @@ def user_data(request):
     user = request.user
 
     if not user.is_authenticated:
+        if settings.DJANGO_LOGIN:
+            login_url = reverse('standalone_login')
+        else:
+            login_url = provider_login_url(request)
+
         return JsonResponse({
             'is_authenticated': False,
+            'login_url': login_url,
         })
+
+    if settings.DJANGO_LOGIN:
+        logout_url = reverse('standalone_logout')
+    else:
+        logout_url = reverse('account_logout')
 
     return JsonResponse({
         'is_authenticated': True,
@@ -983,6 +995,7 @@ def user_data(request):
             'force_suggestions': user.profile.force_suggestions,
         },
         'preferred_locales': user.profile.sorted_locales_codes,
+        'logout_url': logout_url,
     })
 
 

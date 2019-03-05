@@ -147,3 +147,11 @@ history-translation-button-unreject =
 
 otherlocales-translation-copy =
     .title = Copier la traduction (Tab)
+
+
+## User
+## Shows options for users to sign in or out.
+
+user-AppSwitcher--leave-translate-next = Quitter Translate.Next
+user-SignIn--sign-in = Connectez-vous
+user-SignOut--sign-out = <glyph></glyph> Se déconnecter

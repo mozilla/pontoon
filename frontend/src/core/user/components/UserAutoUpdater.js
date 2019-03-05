@@ -2,24 +2,21 @@
 /* globals IntervalID */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-
-import { actions } from '..';
 
 
-type InternalProps = {
-    dispatch: Function,
+type Props = {
+    getUserData: () => void,
 };
 
 
 /**
  * Regularly fetch user data to keep it up-to-date with the server.
  */
-export class UserAutoUpdaterBase extends React.Component<InternalProps> {
+export default class UserAutoUpdater extends React.Component<Props> {
     timer: ?IntervalID;
 
     fetchUserData = () => {
-        this.props.dispatch(actions.get());
+        this.props.getUserData();
     }
 
     componentDidMount() {
@@ -37,6 +34,3 @@ export class UserAutoUpdaterBase extends React.Component<InternalProps> {
         return null;
     }
 }
-
-
-export default connect()(UserAutoUpdaterBase);

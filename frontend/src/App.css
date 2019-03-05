@@ -12,14 +12,8 @@
     grid-column-end: 3;
 }
 
-#app > header .options {
+#app > header .user-controls {
     float: right;
-}
-
-#app > header .options .toggle-translate-next {
-    color: #7BC876;
-    float: left;
-    margin: 22px 10px;
 }
 
 #app .panel-content,

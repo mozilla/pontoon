@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 import './Editor.css';
 
 import { PluralSelector } from 'core/plural';
+import { SignInLink } from 'core/user';
 
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
@@ -83,8 +84,7 @@ export default class Editor extends React.Component<Props, State> {
                 <Localized
                     id="editor-editor-sign-in-to-translate"
                     a={
-                        /* eslint-disable-next-line */
-                        <a href='/accounts/fxa/login/?scope=profile%3Auid+profile%3Aemail+profile%3Adisplay_name'></a>
+                        <SignInLink url={ this.props.user.signInURL }></SignInLink>
                     }
                 >
                     <p className='banner'>
