@@ -1,0 +1,15 @@
+.user-signout button {
+    background: none;
+    border: none;
+    color: #aaa;
+    display: inline-block;
+    font-size: 14px;
+    height: 17px;
+    line-height: 16px;
+    text-align: center;
+    margin: 22px 10px;
+}
+
+.user-signout button:hover {
+    color: white;
+}

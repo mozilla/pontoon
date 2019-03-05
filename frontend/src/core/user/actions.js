@@ -52,6 +52,18 @@ export function saveSetting(setting: string, value: boolean, username: string): 
 
 
 /**
+ * Sign out the current user.
+ */
+export function signOut(url: string): Function {
+    return async dispatch => {
+        await api.user.signOut(url);
+
+        dispatch(get());
+    }
+}
+
+
+/**
  * Get data about the current user from the server.
  *
  * This will fetch data about whether the user is authenticated or not,
@@ -68,6 +80,7 @@ export function get(): Function {
 export default {
     get,
     saveSetting,
+    signOut,
     update,
     updateSettings,
 };
