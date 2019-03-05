@@ -10,6 +10,7 @@ import pythonFormattingVariable from './pythonFormattingVariable';
 describe('pythonFormattingVariable', () => {
     each([
         ['%%', '100%% correct'],
+        ['%s', 'There were %s'],
         ['%(number)d', 'There were %(number)d cows'],
         ['%(cows.number)d', 'There were %(cows.number)d cows'],
         ['%(number of cows)d', 'There were %(number of cows)d cows'],

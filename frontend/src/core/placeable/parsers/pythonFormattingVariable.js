@@ -3,6 +3,21 @@
 import * as React from 'react';
 
 
+/**
+ * Marks Python string formatting variables.
+ *
+ * Implemented following Python documentation on String Formatting Operations:
+ * https://docs.python.org/2/library/stdtypes.html#string-formatting
+ *
+ * Example matches:
+ *
+ *   %s
+ *   %(tag)d
+ *   %(number)3.1d
+ *
+ * Source:
+ * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L317
+ */
 const pythonFormattingVariable = {
     rule: /(%(%|(\([^)]+\)){0,1}[-+0\s#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))/,
     matchIndex: 0,

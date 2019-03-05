@@ -3,6 +3,18 @@
 import * as React from 'react';
 
 
+/**
+ * Marks terms that look like a URI.
+ *
+ * Example matches:
+ *
+ *   https://example.org
+ *   www.example.org/resource/42
+ *   ftp://example.org/
+ *
+ * Source:
+ * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L192
+ */
 const uriPattern = {
     rule: new RegExp('('
         + '('

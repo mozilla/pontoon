@@ -11,6 +11,7 @@ describe('filePattern', () => {
     each([
         ['/home/lisa', 'Hello /home/lisa'],
         ['~/user', 'Hello ~/user'],
+        ['/home/homer/budget.md', 'The money is in /home/homer/budget.md'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([filePattern]);

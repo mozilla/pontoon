@@ -3,6 +3,12 @@
 import * as React from 'react';
 
 
+/**
+ * Marks individual punctuation characters.
+ *
+ * Source:
+ * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L229
+ */
 const punctuation = {
     rule: new RegExp(
         '('
