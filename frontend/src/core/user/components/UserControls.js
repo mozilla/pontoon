@@ -35,7 +35,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
             <UserAutoUpdater getUserData={ this.getUserData } />
 
             { user.isAuthenticated ?
-                <SignOut url={ user.signOutURL } /> :
+                <SignOut dispatch={ this.props.dispatch } url={ user.signOutURL } /> :
                 <SignIn url={ user.signInURL } />
             }
 

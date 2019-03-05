@@ -11,17 +11,25 @@ const SETTINGS_NAMES_MAP = {
 
 export default class UserAPI extends APIBase {
     /**
-     * Return a list of entities for a project and locale.
-     *
-     * Pass in a `resource` to restrict the list to a specific path.
-     * If the `exclude` array has values, those entities will be excluded from
-     * the query. Use this to query for the next set of entities.
+     * Return data about the current user from the server.
      */
     async get(): Promise<Object> {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
         return await this.fetch('/user-data/', 'GET', null, headers);
+    }
+
+    /**
+     * Sign out the current user.
+     */
+    async signOut(url: string): Promise<Object> {
+        const csrfToken = this.getCSRFToken();
+
+        const payload = new URLSearchParams();
+        payload.append('csrfmiddlewaretoken', csrfToken);
+
+        return await this.fetch(url, 'POST', payload);
     }
 
     async updateSetting(username: string, setting: string, value: boolean): Promise<string> {

@@ -1,4 +1,6 @@
-.user-signout a {
+.user-signout button {
+    background: none;
+    border: none;
     color: #aaa;
     display: inline-block;
     font-size: 14px;
@@ -8,6 +10,6 @@
     margin: 22px 10px;
 }
 
-.user-signout a:hover {
+.user-signout button:hover {
     color: white;
 }

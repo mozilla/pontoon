@@ -42,6 +42,11 @@ export default class APIBase {
             requestParams
         );
 
-        return await response.json();
+        try {
+            return await response.json();
+        }
+        catch(error) {
+            // Catch non-JSON responses
+        }
     }
 }
