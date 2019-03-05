@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 import createMarker from 'lib/react-content-marker';
 
@@ -11,7 +11,7 @@ describe('altAttribute', () => {
         const Marker = createMarker([altAttribute]);
         const content = 'alt="hello"';
 
-        const wrapper = mount(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('alt="hello"');
     });

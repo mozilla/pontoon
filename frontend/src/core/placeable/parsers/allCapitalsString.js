@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -18,9 +19,16 @@ import * as React from 'react';
  */
 const allCapitalsString = {
     rule: /(\b[A-Z][A-Z_/\-:*0-9]{1,}[A-Z0-9]\b[+]?)/,
-    tag: (x: string) => <mark className='placeable' title='Long all-caps string'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-allCapitalsString'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Long all-caps string'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default allCapitalsString;

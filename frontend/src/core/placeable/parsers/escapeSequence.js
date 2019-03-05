@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -8,9 +9,16 @@ import * as React from 'react';
  */
 const escapeSequence = {
     rule: '\\',
-    tag: (x: string) => <mark className='placeable' title='Escape sequence'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-escapeSequence'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Escape sequence'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default escapeSequence;

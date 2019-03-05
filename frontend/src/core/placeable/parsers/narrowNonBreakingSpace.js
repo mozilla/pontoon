@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -8,9 +9,16 @@ import * as React from 'react';
  */
 const narrowNonBreakingSpace = {
     rule: /([\u202F])/,
-    tag: (x: string) => <mark className='placeable' title='Narrow non-breaking space'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-narrowNonBreakingSpace'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Narrow non-breaking space'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default narrowNonBreakingSpace;

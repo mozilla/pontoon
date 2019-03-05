@@ -1,5 +1,6 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
+import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
 
@@ -7,39 +8,16 @@ import unusualSpace from './unusualSpace';
 
 
 describe('unusualSpace', () => {
-    it('marks a space at the beginning of a string', () => {
+    each([
+        [' ', ' hello'],
+        [' ', 'hello '],
+        [' ', 'hello,\n world'],
+        ['  ', 'hello,  beautiful world'],
+    ])
+    .it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([unusualSpace]);
-        const content = ' hello';
-
-        const wrapper = mount(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual(' ');
-    });
-
-    it('marks a space at the end of a string', () => {
-        const Marker = createMarker([unusualSpace]);
-        const content = 'hello ';
-
-        const wrapper = mount(<Marker>{ content }</Marker>);
-        expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual(' ');
-    });
-
-    it('marks a space at the beginning of a line', () => {
-        const Marker = createMarker([unusualSpace]);
-        const content = 'hello,\n world';
-
-        const wrapper = mount(<Marker>{ content }</Marker>);
-        expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual(' ');
-    });
-
-    it('marks several spaces anywhere in a string', () => {
-        const Marker = createMarker([unusualSpace]);
-        const content = 'hello,  beautiful world'
-
-        const wrapper = mount(<Marker>{ content }</Marker>);
-        expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual('  ');
+        expect(wrapper.find('mark').text()).toEqual(mark);
     });
 });

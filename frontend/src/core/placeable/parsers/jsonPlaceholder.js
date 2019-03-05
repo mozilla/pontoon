@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -16,9 +17,16 @@ import * as React from 'react';
  */
 const jsonPlaceholder = {
     rule: /(\$[A-Z0-9_]+\$)/,
-    tag: (x: string) => <mark className='placeable' title='JSON placeholder'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-jsonPlaceholder'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='JSON placeholder'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default jsonPlaceholder;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
@@ -15,7 +15,7 @@ describe('jsonPlaceholder', () => {
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([jsonPlaceholder]);
-        const wrapper = mount(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });
@@ -27,7 +27,7 @@ describe('jsonPlaceholder', () => {
     ])
     .it('does not mark anything in `%s`', (content) => {
         const Marker = createMarker([jsonPlaceholder]);
-        const wrapper = mount(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(0);
     });
 });

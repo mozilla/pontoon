@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -16,9 +17,16 @@ import * as React from 'react';
  */
 const altAttribute = {
     rule: /(alt=".*?")/i,
-    tag: (x: string) => <mark className='placeable' title="'alt' attribute inside XML tag">
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-altAttribute'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title="'alt' attribute inside XML tag">
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default altAttribute;

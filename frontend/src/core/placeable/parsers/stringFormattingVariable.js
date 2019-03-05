@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -20,9 +21,16 @@ import * as React from 'react';
 const stringFormattingVariable = {
     rule: /(%(\d+\$)?[-+0 #'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/,
     matchIndex: 0,
-    tag: (x: string) => <mark className='placeable' title='String formatting variable'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-stringFormattingVariable'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='String formatting variable'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default stringFormattingVariable;

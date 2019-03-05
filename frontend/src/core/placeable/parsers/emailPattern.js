@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -18,9 +19,16 @@ import * as React from 'react';
 const emailPattern = {
     rule: /(((mailto:)|)[A-Za-z0-9]+[-a-zA-Z0-9._%]*@(([-A-Za-z0-9]+)\.)+[a-zA-Z]{2,4})/,
     matchIndex: 0,
-    tag: (x: string) => <mark className='placeable' title='Email'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-emailPattern'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Email'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default emailPattern;

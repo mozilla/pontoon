@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
@@ -25,7 +25,7 @@ describe('stringFormattingVariable', () => {
     ])
     .it('marks `%s` in `%s`', (mark, content, matchesNumber) => {
         const Marker = createMarker([stringFormattingVariable]);
-        const wrapper = mount(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(matchesNumber);
         if (matchesNumber === 1) {
             expect(wrapper.find('mark').text()).toEqual(mark);

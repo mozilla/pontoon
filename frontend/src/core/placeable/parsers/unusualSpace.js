@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -15,9 +16,16 @@ import * as React from 'react';
  */
 const unusualSpace = {
     rule: /(^ +| +$|[\r\n\t]( +)| {2,})/,
-    tag: (x: string) => <mark className='placeable' title='Unusual space in string'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-unusualSpace'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Unusual space in string'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default unusualSpace;

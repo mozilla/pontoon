@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -17,9 +18,16 @@ import * as React from 'react';
  */
 const pythonFormatString = {
     rule: /(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})/,
-    tag: (x: string) => <mark className='placeable' title='Python format string'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-pythonFormatString'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Python format string'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default pythonFormatString;

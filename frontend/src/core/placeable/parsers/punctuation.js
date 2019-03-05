@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -27,9 +28,16 @@ const punctuation = {
         + ')'
     ),
     matchIndex: 0,
-    tag: (x: string) => <mark className='placeable' title='Punctuation'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-punctuation'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Punctuation'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default punctuation;

@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -18,9 +19,16 @@ import * as React from 'react';
 const filePattern = {
     rule: /((~\/|\/|\.\/)([-A-Za-z0-9_$.+!*(),;:@&=?/~#%]|\\){3,})/,
     matchIndex: 0,
-    tag: (x: string) => <mark className='placeable' title='File location'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-filePattern'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='File location'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default filePattern;

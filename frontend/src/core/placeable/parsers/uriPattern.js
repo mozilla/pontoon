@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -32,9 +33,16 @@ const uriPattern = {
         'i' // This one is not case sensitive.
     ),
     matchIndex: 0,
-    tag: (x: string) => <mark className='placeable' title='URI'>
-        { x }
-    </mark>,
+    tag: (x: string) => {
+        return <Localized
+            id='placeable-parser-uriPattern'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='URI'>
+                { x }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default uriPattern;

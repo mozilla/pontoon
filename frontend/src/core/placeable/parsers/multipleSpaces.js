@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -8,9 +9,16 @@ import * as React from 'react';
  */
 const multipleSpaces = {
     rule: /(  +)/,
-    tag: () => <mark className='placeable' title='Multiple spaces'>
-        { ' ' }&middot;{ ' ' }
-    </mark>,
+    tag: () => {
+        return <Localized
+            id='placeable-parser-multipleSpaces'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Multiple spaces'>
+                { ' ' }&middot;{ ' ' }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default multipleSpaces;

@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 
 
 /**
@@ -8,9 +9,16 @@ import * as React from 'react';
  */
 const newlineCharacter = {
     rule: '\n',
-    tag: () => <mark className='placeable' title='Newline character'>
-        { '¶\n' }
-    </mark>,
+    tag: () => {
+        return <Localized
+            id='placeable-parser-newlineCharacter'
+            attrs={{ title: true }}
+        >
+            <mark className='placeable' title='Newline character'>
+                { '¶\n' }
+            </mark>
+        </Localized>;
+    },
 };
 
 export default newlineCharacter;

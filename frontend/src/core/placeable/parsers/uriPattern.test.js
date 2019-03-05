@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
@@ -25,7 +25,7 @@ describe('uriPattern', () => {
     ])
     .it('correctly marks URI `%s`', (uri) => {
         const Marker = createMarker([uriPattern]);
-        const wrapper = mount(<Marker>{ uri }</Marker>);
+        const wrapper = shallow(<Marker>{ uri }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(uri);
     });
