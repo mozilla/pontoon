@@ -3,14 +3,11 @@
 import * as React from 'react';
 import { Localized } from 'fluent-react';
 
-import { actions } from '..';
-
 import './SignOut.css';
 
 
 type Props = {|
-    url: string,
-    dispatch: Function,
+    signOut: () => void,
 |};
 
 
@@ -19,7 +16,7 @@ type Props = {|
  */
 export default class SignOut extends React.Component<Props> {
     signOut = () => {
-        this.props.dispatch(actions.signOut(this.props.url));
+        this.props.signOut();
     }
 
     render() {

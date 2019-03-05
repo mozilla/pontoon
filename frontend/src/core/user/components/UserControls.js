@@ -28,6 +28,11 @@ export class UserControlsBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.get());
     }
 
+    signUserOut = () => {
+        const { user } = this.props;
+        this.props.dispatch(actions.signOut(user.signOutURL));
+    }
+
     render() {
         const { router, user } = this.props;
 
@@ -35,7 +40,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
             <UserAutoUpdater getUserData={ this.getUserData } />
 
             { user.isAuthenticated ?
-                <SignOut dispatch={ this.props.dispatch } url={ user.signOutURL } /> :
+                <SignOut signOut={ this.signUserOut } /> :
                 <SignIn url={ user.signInURL } />
             }
 

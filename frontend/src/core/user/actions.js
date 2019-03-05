@@ -81,6 +81,6 @@ export default {
     get,
     saveSetting,
     signOut,
-    updateSettings,
     update,
+    updateSettings,
 };
