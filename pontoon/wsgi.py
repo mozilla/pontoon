@@ -15,4 +15,6 @@ from wsgi_sslify import sslify
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
 from whitenoise.django import DjangoWhiteNoise  # noqa
 
+# sslify sets a Strict-Transport-Security header,
+# which instructs browsers to always use HTTPS.
 application = sslify(DjangoWhiteNoise(get_wsgi_application()))
