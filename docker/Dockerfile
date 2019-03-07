@@ -10,12 +10,10 @@ RUN DEBIAN_FRONTEND=noninteractive /tmp/set_up_ubuntu.sh
 RUN useradd --shell /bin/bash -c "" -m app
 
 # Install Pontoon Python requirements
-COPY requirements.txt /app/requirements.txt
-COPY requirements-dev.txt /app/requirements-dev.txt
-COPY requirements-test.txt /app/requirements-test.txt
+COPY requirements/* /app/requirements/
 RUN pip install -U 'pip>=8' && \
-    pip install --no-cache-dir --require-hashes -r requirements-dev.txt && \
-    pip install --no-cache-dir --require-hashes -r requirements-test.txt
+    pip install --no-cache-dir --require-hashes -r requirements/dev.txt && \
+    pip install --no-cache-dir --require-hashes -r requirements/test.txt
 
 # Install nodejs and npm from Nodesource's 10.x branch, as well as yarn
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
