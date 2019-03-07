@@ -1,0 +1,233 @@
+# This file defines all constraints of all sub-dependencies required by top-level dependencies.
+# Each dependency has, at the top, the list of libraries that use it.
+# All of them should be prefixed with the version pin (if there's any).
+# e.g.
+#
+# # >=3.3.0.20,<3.4 celery
+# billiard==3.3.0.20 \
+#     --hash=sha256:688f9466b1c3ae14106381e6dbd328115e75c5260c542eb48e6c46931f6928cc
+#
+# or (when there's no pinned version)
+# # celery
+# billiard==3.3.0.20 \
+#     --hash=sha256:688f9466b1c3ae14106381e6dbd328115e75c5260c542eb48e6c46931f6928cc
+
+# bleach
+webencodings==0.5.1 \
+    --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
+
+# >=3.3.0.20,<3.4 celery
+billiard==3.3.0.20 \
+    --hash=sha256:688f9466b1c3ae14106381e6dbd328115e75c5260c542eb48e6c46931f6928cc
+
+# >=3.0.25,<3.1 celery
+kombu==3.0.35 \
+    --hash=sha256:2c59a5e087d5895675cdb4d6a38a0aa147f0411366e68330a76e480ba3b25727 \
+    --hash=sha256:22ab336a17962717a5d9470547e5508d4bcf1b6ec10cd9486868daf4e5edb727
+
+# >=1.4.9,<2.0 kombu
+amqp==1.4.9 \
+    --hash=sha256:e0ed0ce6b8ffe5690a2e856c7908dc557e0e605283d6885dd1361d79f2928908 \
+    --hash=sha256:2dea4d16d073c902c3b89d9b96620fb6729ac0f7a923bbc777cb4ad827c0c61a
+
+# >=0.3.3 kombu
+anyjson==0.3.3 \
+    --hash=sha256:37812d863c9ad3e35c0734c42e0bf0320ce8c3bed82cd20ad54cb34d158157ba
+
+# >=2.2.5 django-allauth
+python-openid==2.2.5 \
+    --hash=sha256:92c51c3ecec846cbec4aeff11f9ff47303d4a63f93b0e6ac0ec02a091fed70ef \
+    --hash=sha256:c2d133e47e0a7705c9272eef00d7a09c174f5bf17a127fed8e2c6499556cc782
+
+# >=0.3.0 django-allauth
+requests-oauthlib==0.6.1 \
+    --hash=sha256:905306080ec0cc6b3c65c8101f471fccfdb9994c16dd116524fd3fc0790d46d7 \
+    --hash=sha256:7c708e8e2a4aa6a905cf91f28420d75db37270e0ec8fc951915c098dd8bde53e
+
+# >=0.6.2 requests-oauthlib
+oauthlib==2.0.2 \
+    --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
+
+# >=2.5 django-jinja
+Jinja2==2.8 \
+    --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
+    --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
+
+# Jinja2
+MarkupSafe==0.23 \
+    --hash=sha256:a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3
+
+# >=1.2.1 django-nose
+# >=1.2.1 nose-progressive
+nose==1.3.6 \
+    --hash=sha256:4772ab5189229392d16c70ba7b8bb66b5d3c18076694c55347afb98c950b283c \
+    --hash=sha256:e19b4f8a495681c367ab56c3c04f8bef30ddd7907ddfd9bee663a3f3286762b6 \
+    --hash=sha256:f61e0909a743eed37b1207e38a8e7b4a2fe0a82185e36f2be252ef1b3f901758
+
+# >=2.0.3 django-notifications-hq
+django-model-utils==2.0.3 \
+    --hash=sha256:fae8d517590d99730ed3cfc3fdf9378e0b3815325a8911b963241ee8e9761fd7
+
+# >=2.1.3 django-pipeline
+futures==3.0.4 \
+    --hash=sha256:4e860d18d866ff6c5f2804ebcbb16415f4f29cf57efea919178b809cf99326b6 \
+    --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
+
+# >=2.0 graphene-django
+graphene==2.0.1 \
+    --hash=sha256:698543001858c908c5e3526ddf38ae1d13049c6c1313ec3bb0afad02c81bd242 \
+    --hash=sha256:0763563fdccb6817311f15d0f0a4d4fe820a46cbe5de022076f95cd99413fd0f
+
+# graphene-django
+iso8601==0.1.12 \
+    --hash=sha256:210e0134677cc0d02f6028087fee1df1e1d76d372ee1db0bf30bf66c5c1c89a3 \
+    --hash=sha256:bbbae5fb4a7abfe71d4688fd64bff70b91bbd74ef6a99d964bab18f7fdf286dd \
+    --hash=sha256:49c4b20e1f38aa5cf109ddcd39647ac419f928512c869dc01d5c7098eddede82
+
+# >=3.4.0.3 graphene-django
+singledispatch==3.4.0.3 \
+    --hash=sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8 \
+    --hash=sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
+
+# >=2.0,<3 graphene
+graphql-core==2.0 \
+    --hash=sha256:4830699be53f9154273fa15726fc8b0c90bc22bbb8fc7c932586503b3cb9330e \
+    --hash=sha256:539355351343dede3ecb771e0d273a1b72405cb6d64f45bb8f92ecc4d7109af0
+
+# >=0.4.5,<1 graphene
+graphql-relay==0.4.5 \
+    --hash=sha256:2716b7245d97091af21abf096fabafac576905096d21ba7118fba722596f65db
+
+# >=2.1,<3 graphene
+promise==2.1 \
+    --hash=sha256:0bca4ed933e3d50e3d18fb54fc1432fa84b0564838cd093e824abcd718ab9304 \
+    --hash=sha256:95506bac89df7a495e0b8c813fd782dd1ae590decb52f95248e316c6659ca49b
+
+# >=1.6.0 graphql-core
+Rx==1.6.0 \
+    --hash=sha256:ad793d79843feba2ea25c0c01be245f3163d5d469418279d4019737b93d88c78 \
+    --hash=sha256:84ac6e140f2129266fd4c77a3d0903bbff0a761386079ea0cb99c8524695cac1
+
+# promise
+# python-binary-memcached
+typing==3.6.2 \
+    --hash=sha256:349b1f9c109c84b53ac79ac1d822eaa68fc91d63b321bd9392df15098f746f53 \
+    --hash=sha256:63a8255fe7c6269916baa440eb9b6a67139b0b97a01af632e7bd2842e1e02f15 \
+    --hash=sha256:d514bd84b284dd3e844f0305ac07511f097e325171f6cc4a20878d11ad771849
+
+# jsonschema
+functools32==3.2.3-2 \
+    --hash=sha256:f6253dfbe0538ad2e387bd8fdfd9293c925d63553f5813c4e587745416501e6d
+
+# mock
+funcsigs==0.4 \
+    --hash=sha256:ff5ad9e2f8d9e5d1e8bbfbcf47722ab527cf0d51caeeed9da6d0f40799383fde
+
+# >=0.11 mock
+pbr==1.6.0 \
+    --hash=sha256:6d0f47c050cced1d9abfc89a937ad06870a2974fda31ec0adfcafc2600b947ce
+
+# >=1.3.0 raygun4py
+blinker==1.3 \
+    --hash=sha256:6811010809262261e41ab7b92f3f6d23f35cf816fbec2bc05077992eebec6e2f
+
+# >=0.9.2 raygun4py
+jsonpickle==0.9.2 \
+    --hash=sha256:09bf1978d1d004943c2a359009fb5d09b67277bbaaf9aed281856b3c063979e7
+
+# >=3.0.2,<3.1.0 requests
+chardet==3.0.4 \
+    --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691 \
+    --hash=sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae
+
+# >=2017.4.17 requests
+certifi==2017.11.5 \
+    --hash=sha256:244be0d93b71e93fc0a0a479862051414d0e00e16435707e5bf5000f92e04694 \
+    --hash=sha256:5ec74291ca1136b40f0379e1128ff80e866597e4e2c1e755739a913bbc3613c0
+
+# >=1.21.1,<1.25 requests
+urllib3==1.24.1 \
+    --hash=sha256:61bf29cada3fc2fbefad4fdf059ea4bd1b4a86d2b6d15e1c7c0b582b9752fe39 \
+    --hash=sha256:de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22
+
+# >=2.5,<2.9 requests
+idna==2.6 \
+    --hash=sha256:8c7309c718f94b3a625cb648ace320157ad16ff131ae0af362c9f21b80ef6ec4 \
+    --hash=sha256:2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f
+
+# ==20121119 translate-toolkit
+diff-match-patch==20121119 \
+    --hash=sha256:9dba5611fbf27893347349fd51cc1911cb403682a7163373adacc565d11e2e4c
+
+# caighdean
+nltk==3.2.5 \
+    --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
+
+# caighdean
+requests==2.21.0 \
+    --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b
+
+# >=0.10.0,<0.11 compare-locales
+fluent==0.10.0 \
+    --hash=sha256:b5a270e6e4425cdf140ea10d1a7d9c1af713dd00d61b0412f05cd22e1ff84324
+
+# compare-locales
+pytoml==0.1.14 \
+    --hash=sha256:aff69147d436c3ba8c7f3bc1b3f4aa3d7e47d305a495f2631872e6429694aabf
+
+# django-bmemcached
+python-binary-memcached==0.28.0 \
+    --hash=sha256:8cc4e71c20a2d9e75c30669c4bef35ee407bbfc72a631fc7ad130a2957bd1ed1
+
+# python-binary-memcached
+uhashring==1.1 \
+    --hash=sha256:7bedeef34a0e1df21f7d4396c6657f9a2a0cfb0ce9f77bc18e06df7e28eecebe
+
+# hashin
+pip-api==0.0.1 \
+    --hash=sha256:3cb7b51c541d4c13df43bf254aca371d9feb4669dc6c1cf3cecb9e9360eb3cb6
+
+# hashin
+packaging==17.1 \
+    --hash=sha256:e9215d2d2535d3ae866c3d6efc77d5b24a0192cce0ff20e42896cc0664f889c0
+
+# >=2.0.2 packaging
+pyparsing==2.2.0 \
+    --hash=sha256:fee43f17a9c4087e7ed1605bd6df994c6173c1e977d7ade7b651292fab2bd010
+
+# >=1.3,<2.0 nose-progressive
+blessings==1.6 \
+    --hash=sha256:edc5713061f10966048bf6b40d9a514b381e0ba849c64e034c4ef6c1847d3007
+
+# pylama
+configparser==3.5.0 \
+    --hash=sha256:5308b47021bc2340965c371f0f058cc6971a04502638d4244225c49d80db273a
+
+# >=0.5.2 pylama
+mccabe==0.6.1 \
+    --hash=sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42
+
+# >=2.3.1 pylama
+pycodestyle==2.3.1 \
+    --hash=sha256:6c4245ade1edfad79c3446fadfc96b0de2759662dc29d07d80a6f27ad1ca6ba9
+
+# >=2.0.0 pylama
+pydocstyle==2.1.1 \
+    --hash=sha256:08a870edc94508264ed90510db466c6357c7192e0e866561d740624a8fc7d90c
+
+# >=1.5.0 pylama
+pyflakes==1.6.0 \
+    --hash=sha256:08bd6a50edf8cffa9fa09a463063c425ecaaf10d1eb0335a7e8b1401aef89e6f
+
+# pydocstyle
+snowballstemmer==1.2.1 \
+    --hash=sha256:9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89
+
+# >=1.4.33 pytest
+py==1.4.34 \
+    --hash=sha256:2ccb79b01769d99115aa600d7eed99f524bf752bba8f041dc1c184853514655a \
+    --hash=sha256:0f2d585d22050e90c7d293b6451c83db097df77871974d90efd5a30dc12fcde3
+
+# >=0.10.1 wsgi-sslify
+werkzeug==0.10.1 \
+--hash=sha256:9cf783990b1a99173e707a5768610800aa87775e9d86e211d17180d5b6c245ab

@@ -2,9 +2,9 @@ schedule: "every week on monday"
 search: False
 update: insecure
 requirements:
-  - requirements.txt:
+  - requirements/default.txt:
       update: security
-  - requirements-dev.txt:
+  - requirements/dev.txt:
       update: security
   - docs/requirements.txt:
       update: security

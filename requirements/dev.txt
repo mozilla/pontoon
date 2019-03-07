@@ -1,0 +1,42 @@
+# This requirements file is formatted to make it easy to see what are the
+# direct requirements of our application, and what are dependencies of
+# those requirements.
+#
+# The intent is to make this big mess of a file more maintainable. When removing
+# a dependency, it should be easy to see exactly what else can be removed. This
+# way we avoid keeping things in here that we don't require anymore.
+#
+# When adding a new requirement, it should fall in one of two categories:
+#
+# 1. Top-level requirements with no dependencies.
+# 2. Top-level requirement, followed by its dependencies.
+#
+# The first group is straight-forward: all top-level dependencies (resources that
+# are used by the application directly) are sorted by alphabetical order.
+# Dependencies that do not come from pypi (eg. eggs from github) are listed at
+# the end of that list.
+#
+# The second group are should be added to requirements-constraints.txt and follow conventions
+# explained there.
+# ----------------------------------------------------------------------------------
+#
+# requirements/default.txt contains all dependencies required to run python in the production environment.
+-r default.txt
+
+django-debug-toolbar==1.4 \
+    --hash=sha256:0cbae8760f4851d480a70b72ace5b075f8191ecf899bc97427715e50fb0e90b9 \
+    --hash=sha256:852a37b80df9597048591ebc87d0ce85a4edceaef015dc5360ad89cc5960c27b
+django-extensions==1.6.7 \
+    --hash=sha256:7c33f1be6acf7414539cfdef2967bf6240d3c9317551b5d84622dff7824cd3c6 \
+    --hash=sha256:ebdfc329207231f63b5ccb591407aadbc1a524af752e52690f0646eb7ff52943
+django-sslserver==0.19 \
+    --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
+dj.debug==0.0.2 \
+    --hash=sha256:0b7629bde97f1cce6077ac430537089f5a2552973004951cb3590e30fec9054a
+hashin==0.13.2 \
+    --hash=sha256:4aaa2890d63e0eff9e1038e8a602eccbfe2eb90aa8177ff2b2db018815e2be95
+nose-progressive==1.5.1 \
+    --hash=sha256:44bd41344c1cc1de434a72764ed47fdbbbdbcf03c7801114c0433cd6c696cb55 \
+    --hash=sha256:aac01f33c8446407b3c5e6f2185d5b09f5f3e6cb773f1db2df99efce5a70b81b
+sqlparse==0.1.19 \
+    --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
