@@ -1,0 +1,108 @@
+.user-menu {
+    float: right;
+}
+
+.user-menu .selector {
+    cursor: pointer;
+    margin: 6px 5px 6px 5px;
+}
+
+.user-menu .selector img,
+.user-menu .selector .menu-icon,
+.user-menu .menu li.details img {
+    border: 2px solid #4d5967;
+    border-radius: 100%;
+}
+
+.user-menu .selector img {
+    height: 44px;
+    width: 44px;
+}
+
+.user-menu .selector .menu-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    padding: 12px;
+    text-align: center;
+}
+
+.user-menu .menu {
+    background-color: #272a2f;
+    border: 1px solid #333941;
+    border-right: none;
+    border-top: none;
+    position: absolute;
+    right: 0;
+    top: 59px;
+    z-index: 20;
+}
+
+.user-menu .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px 12px;
+    position: relative;
+    width: 250px;
+}
+
+.user-menu .menu li {
+    color: #aaa;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 0 4px;
+}
+
+.user-menu .menu li.details {
+    padding: 10px 4px;
+    text-align: center;
+}
+
+.user-menu .menu li.details .name {
+    color: #EBEBEB;
+    font-size: 16px;
+}
+
+.user-menu .menu li.details .email {
+    color: #AAAAAA;
+    font-size: 12px;
+}
+
+.user-menu .menu li a,
+.user-menu .menu li button {
+    display: block;
+    line-height: 22px;
+}
+
+.user-menu li button {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-weight: 300;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+}
+
+.user-menu .menu li i.fa {
+    margin: 0 8px 0 -2px;
+}
+
+.user-menu .menu li:hover {
+    background: #3F4752;
+}
+
+.user-menu .menu li:hover,
+.user-menu .menu li:hover a,
+.user-menu .menu li:hover button,
+.user-menu .menu li:active a {
+    color: #fff;
+}
+
+.user-menu .menu .horizontal-separator {
+    border-top: 1px solid #525a65;
+    height: 0;
+    margin: 5px 0;
+    padding: 0;
+}
