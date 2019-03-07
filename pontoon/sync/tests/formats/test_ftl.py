@@ -28,7 +28,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def get_nonexistant_file_resource(self, path):
-        contents = dedent("""text = Arise,awake and do not stop until the goal is reached.""")
+        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
 
         source_path = create_named_tempfile(
             contents,
@@ -109,3 +109,139 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         assert_equal(obj.path, path)
         assert_equal(obj.source_resource, None)
         assert_equal(obj.locale, None)
+
+
+BASE_ANDROID_FTL_FILE = """
+# Sample comment
+Source-String = Translated String
+
+# First comment
+# Second comment
+Multiple-Comments = Translated Multiple Comments
+
+No-Comments-or-Sources = Translated No Comments or Sources
+Empty-Translation =
+"""
+
+
+class AndroidFTLTests(FormatTestsMixin, TestCase):
+    parse = staticmethod(ftl.parse)
+    supports_keys = False
+    supports_source = False
+    supports_source_string = False
+
+    def setUp(self):
+        super(AndroidFTLTests, self).setUp()
+        self.tempdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        super(AndroidFTLTests, self).tearDown()
+        shutil.rmtree(self.tempdir)
+
+    def parse_string(
+        self,
+        string,
+        source_string=None,
+        locale=None,
+        path=None,
+        source_path=None,
+    ):
+        """Android FTL files must contain the word 'strings'."""
+        path = create_named_tempfile(
+            string,
+            prefix='strings',
+            suffix='.ftl',
+            directory=self.tempdir,
+        )
+        if source_string is not None:
+            source_path = create_named_tempfile(
+                source_string,
+                prefix='strings',
+                suffix='.ftl',
+                directory=self.tempdir,
+            )
+        return super(AndroidFTLTests, self).parse_string(
+            string,
+            source_string=source_string,
+            locale=locale,
+            path=path,
+            source_path=source_path,
+        )
+
+    # def test_parse_basic(self):
+    #     self.run_parse_basic(BASE_ANDROID_FTL_FILE, 0)
+
+    # def test_parse_multiple_comments(self):
+    #     self.run_parse_multiple_comments(BASE_ANDROID_FTL_FILE, 1)
+
+    # def test_parse_no_comments_no_sources(self):
+    #     self.run_parse_no_comments_no_sources(BASE_ANDROID_FTL_FILE, 2)
+
+    # def test_parse_empty_translation(self):
+    #     self.run_parse_empty_translation(BASE_ANDROID_FTL_FILE, 3)
+
+    def test_save_basic(self):
+        input_string = dedent("""
+# Comment
+Source-String = Source String
+        """)
+        expected_string = dedent("""
+        """)
+
+        self.run_save_basic(input_string, expected_string, source_string=input_string)
+
+    def test_save_remove(self):
+        """Deleting strings removes them completely from the FTL file."""
+        input_string = dedent("""
+# Comment
+Source-String = Source String
+        """)
+        expected_string = dedent("""
+        """)
+
+        self.run_save_remove(input_string, expected_string, source_string=input_string)
+
+    def test_save_source_removed(self):
+        """
+        If an entity is missing from the source resource, remove it from
+        the translated resource.
+        """
+        source_string = dedent("""Source-String = Source String""")
+        input_string = dedent("""
+Missing-Source-String = Translated Missing String
+Source-String = Translated String
+        """)
+        expected_string = dedent("""Source-String = Translated String""")
+
+        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+
+    def test_save_source_no_translation(self):
+        """
+        If an entity is missing from the translated resource and has no
+        translation, do not add it back in.
+        """
+        source_string = dedent("""
+Source-String = Source String
+Other-Source-String = Other String
+        """)
+        input_string = dedent("""Other-Source-String = Translated Other String""")
+
+        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+
+#     def test_save_translation_missing(self):
+#         source_string = dedent("""String = Source String
+# Missing-String = Missing Source String
+#         """)
+#         input_string = dedent("""String = Translated String""")
+#         expected_string = dedent("""String = Translated String
+# Missing-String = Translated Missing String
+#         """)
+
+#         self.run_save_translation_missing(source_string, input_string, expected_string)
+
+    def test_save_translation_identical(self):
+        source_string = dedent("""String = Source String""")
+        input_string = dedent("""String = Translated String""")
+        expected_string = dedent("""""")
+
+        self.run_save_translation_identical(source_string, input_string, expected_string)
