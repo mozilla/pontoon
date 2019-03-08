@@ -181,21 +181,14 @@ class AndroidFTLTests(FormatTestsMixin, TestCase):
     #     self.run_parse_empty_translation(BASE_ANDROID_FTL_FILE, 3)
 
     def test_save_basic(self):
-        input_string = dedent("""
-# Comment
-Source-String = Source String
-        """)
-        expected_string = dedent("""
-        """)
+        input_string = dedent("""Source-String = Source String""")
+        expected_string = dedent("""""")
 
         self.run_save_basic(input_string, expected_string, source_string=input_string)
 
     def test_save_remove(self):
         """Deleting strings removes them completely from the FTL file."""
-        input_string = dedent("""
-# Comment
-Source-String = Source String
-        """)
+        input_string = dedent("""Source-String = Source String""")
         expected_string = dedent("""
         """)
 
@@ -237,7 +230,7 @@ Other-Source-String = Other String
 # Missing-String = Translated Missing String
 #         """)
 
-#         self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""String = Source String""")
