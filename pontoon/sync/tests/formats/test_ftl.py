@@ -113,14 +113,14 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
 
 BASE_ANDROID_FTL_FILE = """
 # Sample comment
-Source-String = Translated String
+SourceString = Translated String
 
 # First comment
 # Second comment
-Multiple-Comments = Translated Multiple Comments
+MultipleComments = Translated Multiple Comments
 
-No-Comments-or-Sources = Translated No Comments or Sources
-Empty-Translation =
+NoCommentsorSources = Translated No Comments or Sources
+EmptyTranslation =
 """
 
 
@@ -167,6 +167,10 @@ class AndroidFTLTests(FormatTestsMixin, TestCase):
             path=path,
             source_path=source_path,
         )
+
+    def key(self, source_string):
+        """FTL keys can't contain spaces."""
+        return super(AndroidFTLTests, self).key(source_string).replace(' ', '')
 
     # def test_parse_basic(self):
     #     self.run_parse_basic(BASE_ANDROID_FTL_FILE, 0)
@@ -230,7 +234,7 @@ Other-Source-String = Other String
 # Missing-String = Translated Missing String
 #         """)
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        # self.run_save_translation_missing(source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""String = Source String""")
