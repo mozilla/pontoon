@@ -185,7 +185,7 @@ class AndroidFTLTests(FormatTestsMixin, TestCase):
     #     self.run_parse_empty_translation(BASE_ANDROID_FTL_FILE, 3)
 
     def test_save_basic(self):
-        input_string = dedent("""Source-String = Source String""")
+        input_string = dedent("""SourceString = Source String""")
         expected_string = dedent("""""")
 
         self.run_save_basic(input_string, expected_string, source_string=input_string)
@@ -193,8 +193,7 @@ class AndroidFTLTests(FormatTestsMixin, TestCase):
     def test_save_remove(self):
         """Deleting strings removes them completely from the FTL file."""
         input_string = dedent("""Source-String = Source String""")
-        expected_string = dedent("""
-        """)
+        expected_string = dedent("""""")
 
         self.run_save_remove(input_string, expected_string, source_string=input_string)
 
@@ -203,12 +202,12 @@ class AndroidFTLTests(FormatTestsMixin, TestCase):
         If an entity is missing from the source resource, remove it from
         the translated resource.
         """
-        source_string = dedent("""Source-String = Source String""")
+        source_string = dedent("""SourceString = Source String""")
         input_string = dedent("""
-Missing-Source-String = Translated Missing String
-Source-String = Translated String
+MissingSourceString = Translated Missing String
+SourceString = Translated String
         """)
-        expected_string = dedent("""Source-String = Translated String""")
+        expected_string = dedent("""SourceString = Translated String""")
 
         self.run_save_no_changes(input_string, expected_string, source_string=source_string)
 
@@ -218,23 +217,21 @@ Source-String = Translated String
         translation, do not add it back in.
         """
         source_string = dedent("""
-Source-String = Source String
-Other-Source-String = Other String
+SourceString = Source String
+OtherSourceString = Other String
         """)
-        input_string = dedent("""Other-Source-String = Translated Other String""")
+        input_string = dedent("""OtherSourceString = Translated Other String""")
 
         self.run_save_no_changes(input_string, input_string, source_string=source_string)
 
-#     def test_save_translation_missing(self):
-#         source_string = dedent("""String = Source String
-# Missing-String = Missing Source String
-#         """)
-#         input_string = dedent("""String = Translated String""")
-#         expected_string = dedent("""String = Translated String
-# Missing-String = Translated Missing String
-#         """)
+    def test_save_translation_missing(self):
+        source_string = dedent("""String = Source String
+MissingString = Missing Source String
+        """)
+        input_string = dedent("""String = Translated String""")
+        expected_string = dedent("""String = Translated String""")
 
-        # self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
         source_string = dedent("""String = Source String""")
