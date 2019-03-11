@@ -48,7 +48,6 @@ const rules = [
     thinSpace,
     multipleSpaces,
 
-
     // The XML placeables must be marked before variable placeables
     // to avoid marking variables, but leaving out tags. See:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1334926
