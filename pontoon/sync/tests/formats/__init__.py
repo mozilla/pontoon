@@ -278,7 +278,9 @@ class FormatTestsMixin(object):
     # state of the translation file before and after the change being
     # tested is made to the parsed resource and saved.
 
-    def run_save_basic(self, input_string, expected_string, source_string=None, expected_translation=None):
+    def run_save_basic(
+        self, input_string, expected_string, source_string=None, expected_translation=None
+    ):
         """
         Test saving changes to an entity with a single translation.
         """
@@ -339,7 +341,9 @@ class FormatTestsMixin(object):
 
     # Save tests specifically for asymmetric formats.
 
-    def run_save_translation_missing(self, source_string, input_string, expected_string, expected_translation=None):
+    def run_save_translation_missing(
+        self, source_string, input_string, expected_string, expected_translation=None
+    ):
         """
         If the source resource has a string but the translated resource
         doesn't, the returned resource should have an empty translation
@@ -364,7 +368,9 @@ class FormatTestsMixin(object):
 
         self.assert_file_content(path, expected_string)
 
-    def run_save_translation_identical(self, source_string, input_string, expected_string, expected_translation=None):
+    def run_save_translation_identical(
+        self, source_string, input_string, expected_string, expected_translation=None
+    ):
         """
         If the updated translation is identical to the source
         translation, keep it.
