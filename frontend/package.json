@@ -12,6 +12,7 @@
     "fluent-react": "0.8.2",
     "fluent-syntax": "0.10.0",
     "intl-pluralrules": "0.2.1",
+    "jest-each": "24.0.0",
     "linkify-it": "2.0.3",
     "lodash.debounce": "4.0.8",
     "lodash.isempty": "4.4.0",
@@ -31,6 +32,7 @@
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
+    "shortid": "2.2.14",
     "tlds": "1.203.1"
   },
   "scripts": {

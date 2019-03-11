@@ -14,6 +14,9 @@ import * as React from 'react';
  * a React component or a string. The value returned by that function will
  * replace the term in the output.
  *
+ * @param {number} matchIndex The index of the match to use when marking with
+ * a RegExp. If not provided, will use the last non-null match available.
+ *
  * @returns {Array} An array of strings and React components, similar to the
  * original content but where each matching pattern has been replaced by a
  * marking component.
@@ -21,23 +24,39 @@ import * as React from 'react';
 export default function markRegExp(
     content: string,
     rule: RegExp,
-    tag: (string) => React.Node
+    tag: (string) => React.Node,
+    matchIndex: ?number,
 ): Array<string | React.Node> {
     const output = [];
 
-    const parts = content.split(rule);
+    let remaining = content;
+    let matches = rule.exec(remaining);
 
-    for (let i = 0; i < parts.length; i++) {
-        if (!parts[i]) {
-            continue;
-        }
-
-        if (i % 2) {
-            output.push(tag(parts[i]));
+    while (matches) {
+        let match;
+        if (typeof matchIndex !== 'undefined' && matchIndex !== null) {
+            match = matches[matchIndex];
         }
         else {
-            output.push(parts[i]);
+            // Use the last non-null matching form. This is to support several
+            // capture groups in the rule.
+            match = matches.reduce((acc, cur) => cur || acc, '');
         }
+
+        const [previous, ...rest] = remaining.split(match);
+
+        if (previous) {
+            output.push(previous);
+        }
+        output.push(tag(match));
+
+        // Compute the next step.
+        remaining = rest.join(match);
+        matches = rule.exec(remaining);
+    }
+
+    if (remaining) {
+        output.push(remaining);
     }
 
     return output;

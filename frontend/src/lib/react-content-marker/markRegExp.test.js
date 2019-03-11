@@ -65,4 +65,21 @@ describe('markRegExp', () => {
         const expected = [content];
         expect(res).toEqual(expected);
     });
+
+    it('supports having several capturing groups in the rule', () => {
+        const content = 'A horse, a horse, my kingdom for a horse.';
+
+        const res = markRegExp(content, /(a (horse)|A (horse))/, x => <mark>{x}</mark>);
+
+        const expected = [
+            'A ',
+            <mark>{ 'horse' }</mark>,
+            ', a ',
+            <mark>{ 'horse' }</mark>,
+            ', my kingdom for a ',
+            <mark>{ 'horse' }</mark>,
+            '.',
+        ];
+        expect(res).toEqual(expected);
+    });
 });

@@ -1,19 +1,33 @@
 /* @flow */
 
 import * as React from 'react';
+import shortid from 'shortid';
 
 import mark from './mark';
 
 
 type Props = {
-    children: string | Array<string | React.Node>,
+    children: ?string | Array<string | React.Node>,
 };
 
 
 type Parser = {
     rule: string | RegExp,
-    tag: (string) => React.Node,
+    tag: (string) => React.Element<any>,
+    matchIndex?: number,
 };
+
+
+/**
+ * Returns a clone of the element returned by the tag function, but makes sure
+ * that it has a `key` attribute.
+ */
+function enhanceTag(tag: (string) => React.Element<any>) {
+    return (x: string) => {
+        const elt = tag(x);
+        return React.cloneElement(elt, { key: shortid.generate() });
+    };
+}
 
 
 /**
@@ -27,7 +41,9 @@ type Parser = {
  * terms or a RegExp. Note that a RegExp must have parentheses surrounding
  * your pattern, otherwise matches won't be captured. The `tag` is a function
  * that accepts a string (the matched term or pattern) and returns a React
- * element that will replace the match in the output.
+ * element that will replace the match in the output. Parsers can also pass a
+ * `matchIndex` parameter, a number that will be used when using a RegExp to
+ * chose which match to pass to the `tag` function.
  *
  * @returns {Array} An array of strings and React components, similar to the
  * original content but where each matching pattern has been replaced by a
@@ -38,8 +54,13 @@ export default function createMarker(parsers: Array<Parser>) {
         render() {
             let content = this.props.children;
 
+            if (!content) {
+                return null;
+            }
+
             for (let parser of parsers) {
-                content = mark(content, parser.rule, parser.tag);
+                const tag = enhanceTag(parser.tag);
+                content = mark(content, parser.rule, tag, parser.matchIndex);
             }
 
             return content;
