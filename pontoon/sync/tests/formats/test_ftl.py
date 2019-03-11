@@ -10,9 +10,10 @@ from django_nose.tools import (
     assert_true,
 )
 from pontoon.base.tests import (
-    TestCase,
+    assert_attributes_equal,
     create_named_tempfile,
     LocaleFactory,
+    TestCase,
 )
 from pontoon.sync.formats import ftl
 from pontoon.sync.tests.formats import FormatTestsMixin
@@ -120,7 +121,6 @@ SourceString = Translated String
 MultipleComments = Translated Multiple Comments
 
 NoCommentsorSources = Translated No Comments or Sources
-EmptyTranslation =
 """
 
 
@@ -138,48 +138,56 @@ class FTLTests(FormatTestsMixin, TestCase):
         super(FTLTests, self).tearDown()
         shutil.rmtree(self.tempdir)
 
-    def parse_string(
-        self,
-        string,
-        source_string=None,
-        locale=None,
-        path=None,
-        source_path=None,
-    ):
-        """FTL files must contain the word 'strings'."""
-        path = create_named_tempfile(
-            string,
-            prefix='strings',
-            suffix='.ftl',
-            directory=self.tempdir,
-        )
-        if source_string is not None:
-            source_path = create_named_tempfile(
-                source_string,
-                prefix='strings',
-                suffix='.ftl',
-                directory=self.tempdir,
-            )
-        return super(FTLTests, self).parse_string(
-            string,
-            source_string=source_string,
-            locale=locale,
-            path=path,
-            source_path=source_path,
-        )
-
     def key(self, source_string):
         """FTL keys can't contain spaces."""
         return super(FTLTests, self).key(source_string).replace(' ', '')
 
-    # def test_parse_basic(self):
-    #     self.run_parse_basic(BASE_FTL_FILE, 0)
+    def test_parse_basic(self):
+        input_string = BASE_FTL_FILE
+        translation_index = 0
 
-    # def test_parse_multiple_comments(self):
-    #     self.run_parse_multiple_comments(BASE_FTL_FILE, 1)
+        path, resource = self.parse_string(input_string)
 
-    # def test_parse_no_comments_no_sources(self):
-    #     self.run_parse_no_comments_no_sources(BASE_FTL_FILE, 2)
+        assert_attributes_equal(
+            resource.translations[translation_index],
+            comments=['Sample comment'],
+            key=self.key('Source String'),
+            strings={None: 'SourceString = Translated String\n'},
+            fuzzy=False,
+            order=translation_index,
+        )
+
+    def test_parse_multiple_comments(self):
+        input_string = BASE_FTL_FILE
+        translation_index = 1
+
+        path, resource = self.parse_string(input_string)
+
+        assert_attributes_equal(
+            resource.translations[translation_index],
+            comments=['First comment\nSecond comment'],
+            source=[],
+            key=self.key('Multiple Comments'),
+            strings={None: 'MultipleComments = Translated Multiple Comments\n'},
+            fuzzy=False,
+            order=translation_index,
+        )
+
+    def test_parse_no_comments_no_sources(self):
+        input_string = BASE_FTL_FILE
+        translation_index = 2
+
+        path, resource = self.parse_string(input_string)
+
+        assert_attributes_equal(
+            resource.translations[translation_index],
+            comments=[],
+            source=[],
+            key=self.key('No Comments or Sources'),
+            strings={None: 'NoCommentsorSources = Translated No Comments or Sources\n'},
+            fuzzy=False,
+            order=translation_index,
+        )
 
     def test_save_basic(self):
         input_string = dedent("""
