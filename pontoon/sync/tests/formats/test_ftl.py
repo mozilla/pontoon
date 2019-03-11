@@ -145,7 +145,6 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_basic(self):
         input_string = BASE_FTL_FILE
         translation_index = 0
-
         path, resource = self.parse_string(input_string)
 
         assert_attributes_equal(
@@ -160,7 +159,6 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_multiple_comments(self):
         input_string = BASE_FTL_FILE
         translation_index = 1
-
         path, resource = self.parse_string(input_string)
 
         assert_attributes_equal(
@@ -176,7 +174,6 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_no_comments_no_sources(self):
         input_string = BASE_FTL_FILE
         translation_index = 2
-
         path, resource = self.parse_string(input_string)
 
         assert_attributes_equal(
@@ -193,9 +190,19 @@ class FTLTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             SourceString = Source String
         """)
-        expected_string = dedent("""""")
+        expected_translation = 'SourceString = New Translated String'
+        expected_string = dedent("""
+            {expected_translation}
+        """.format(
+            expected_translation=expected_translation
+        ))
 
-        self.run_save_basic(input_string, expected_string, source_string=input_string)
+        self.run_save_basic(
+            input_string,
+            expected_string,
+            source_string=input_string,
+            expected_translation=expected_translation,
+        )
 
     def test_save_remove(self):
         """Deleting strings removes them completely from the FTL file."""
@@ -247,11 +254,20 @@ class FTLTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             String = Translated String
         """)
+        expected_translation = 'MissingString = New Translated String'
         expected_string = dedent("""
             String = Translated String
-        """)
+            {expected_translation}
+        """.format(
+            expected_translation=expected_translation
+        ))
 
-        self.run_save_translation_missing(source_string, input_string, expected_string)
+        self.run_save_translation_missing(
+            source_string,
+            input_string,
+            expected_string,
+            expected_translation=expected_translation,
+        )
 
     def test_save_translation_identical(self):
         source_string = dedent("""
@@ -260,6 +276,16 @@ class FTLTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             String = Translated String
         """)
-        expected_string = dedent("""""")
+        expected_translation = 'String = Source String'
+        expected_string = dedent("""
+            {expected_translation}
+        """.format(
+            expected_translation=expected_translation
+        ))
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string,
+            input_string,
+            expected_string,
+            expected_translation=expected_translation,
+        )
