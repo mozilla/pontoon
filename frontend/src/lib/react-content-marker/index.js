@@ -1,3 +1,6 @@
 /* @flow */
 
-export { default as createMarker } from './createMarker';
+import createMarker from './createMarker';
+
+
+export default createMarker;

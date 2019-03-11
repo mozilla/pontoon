@@ -47,8 +47,9 @@ describe('<Entity>', () => {
             locale={ DEFAULT_LOCALE }
         />);
 
-        expect(wrapper.text()).toContain(ENTITY_A.original);
-        expect(wrapper.text()).toContain(ENTITY_A.translation[0].string);
+        const contents = wrapper.find('ContentMarker');
+        expect(contents.first().props().children).toContain(ENTITY_A.original);
+        expect(contents.last().props().children).toContain(ENTITY_A.translation[0].string);
     });
 
     it('shows the correct status class', () => {
