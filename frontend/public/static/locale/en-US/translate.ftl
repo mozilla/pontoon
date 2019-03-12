@@ -150,11 +150,23 @@ otherlocales-translation-copy =
 
 
 ## User
-## Shows options for users to sign in or out.
+## Shows user menu entries and options to sign in or out.
 
 user-AppSwitcher--leave-translate-next = Leave Translate.Next
 user-SignIn--sign-in = Sign in
-user-SignOut--sign-out = <glyph></glyph> Sign out
+
+user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
+
+user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
+user-UserMenu--machinery = <glyph></glyph>Machinery
+user-UserMenu--terms = <glyph></glyph>Terms of Use
+user-UserMenu--help = <glyph></glyph>Help
+
+user-UserMenu--admin = <glyph></glyph>Admin
+user-UserMenu--admin-project = <glyph></glyph>Admin · Current Project
+
+user-UserMenu--settings = <glyph></glyph>Settings
+user-SignOut--sign-out = <glyph></glyph>Sign out
 
 
 ## Placeable parsers
