@@ -8,7 +8,10 @@ import { UserMenuBase } from './UserMenu';
 describe('<UserMenuBase>', () => {
     it('shows the user avatar when the user is logged in', () => {
         const wrapper = shallow(
-            <UserMenuBase user={ { isAuthenticated: true } }/>
+            <UserMenuBase
+                user={ { isAuthenticated: true } }
+                parameters={ { locale: 'mylocale', project: 'myproject' } }
+            />
         );
 
         expect(wrapper.find('img')).toHaveLength(1);
@@ -17,7 +20,10 @@ describe('<UserMenuBase>', () => {
 
     it('shows the general menu icon when the user is logged out', () => {
         const wrapper = shallow(
-            <UserMenuBase user={ { isAuthenticated: false } }/>
+            <UserMenuBase
+                user={ { isAuthenticated: false } }
+                parameters={ { locale: 'mylocale', project: 'myproject' } }
+            />
         );
 
         expect(wrapper.find('img')).toHaveLength(0);

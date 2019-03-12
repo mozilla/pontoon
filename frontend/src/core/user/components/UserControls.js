@@ -4,6 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as navigation from 'core/navigation';
+
 import AppSwitcher from './AppSwitcher';
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';

@@ -32,18 +32,14 @@
     border: 1px solid #333941;
     border-right: none;
     border-top: none;
-    position: absolute;
-    right: 0;
-    top: 59px;
-    z-index: 20;
-}
-
-.user-menu .menu ul {
     list-style: none;
     margin: 0;
     padding: 10px 12px;
-    position: relative;
+    position: absolute;
+    right: 0;
+    top: 59px;
     width: 250px;
+    z-index: 20;
 }
 
 .user-menu .menu li {

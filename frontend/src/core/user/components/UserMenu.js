@@ -6,10 +6,10 @@ import { Localized } from 'fluent-react';
 
 import './UserMenu.css';
 
-import SignOut from './SignOut';
-
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+
+import SignOut from './SignOut';
 
 
 type Props = {
@@ -51,31 +51,34 @@ export class UserMenuBase extends React.Component<Props, State> {
     render() {
         const { parameters, signOut, user } = this.props;
 
+        const locale = parameters.locale;
+        const project = parameters.project;
+        const tm_href = `/${locale}/${project}/${locale}.${project}.tmx`;
+
         return <div className="user-menu">
             <div
                 className="button selector"
                 onClick={ this.toggleVisibility }
             >
                 { user.isAuthenticated ?
-                <img src={ user.gravatarURLSmall } alt="" /> :
+                <img src={ user.gravatarURLSmall } alt="User avatar" /> :
                 <div className="menu-icon fa fa-bars" />
                 }
             </div>
 
             { !this.state.visible ? null :
-            <div className="menu"><ul>
+            <ul className="menu">
                 { !user.isAuthenticated ? null :
-                <li className="details">
-                    <a href="/profile/">
-                        <img src={ user.gravatarURLBig } alt="User avatar" />
-                        <p className="name">{ user.nameOrEmail }</p>
-                        <p className="email">{ user.email }</p>
-                    </a>
-                </li>
-                }
-
-                { !user.isAuthenticated ? null :
-                <li className="horizontal-separator"></li>
+                <React.Fragment>
+                    <li className="details">
+                        <a href="/profile/">
+                            <img src={ user.gravatarURLBig } alt="User avatar" />
+                            <p className="name">{ user.nameOrEmail }</p>
+                            <p className="email">{ user.email }</p>
+                        </a>
+                    </li>
+                    <li className="horizontal-separator"></li>
+                </React.Fragment>
                 }
 
                 <li>
@@ -85,7 +88,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-cloud-download-alt fa-fw"></i>
                         }
                     >
-                        <a href={ `/${parameters.locale}/${parameters.project}/${parameters.locale}.${parameters.project}.tmx` }>
+                        <a href={ tm_href }>
                             { '<glyph></glyph>Download Translation Memory' }
                         </a>
                     </Localized>
@@ -150,56 +153,54 @@ export class UserMenuBase extends React.Component<Props, State> {
                 }
 
                 { !user.isAdmin ? null :
-                <li>
-                    <Localized
-                        id="user-UserMenu--admin"
-                        glyph={
-                            <i className="fa fa-wrench fa-fw"></i>
-                        }
-                    >
-                        <a href="/admin/">
-                            { '<glyph></glyph>Admin' }
-                        </a>
-                    </Localized>
-                </li>
-                }
-
-                { !user.isAdmin ? null :
-                <li>
-                    <Localized
-                        id="user-UserMenu--admin-project"
-                        glyph={
-                            <i className="fa fa-wrench fa-fw"></i>
-                        }
-                    >
-                        <a href={ `/admin/projects/${parameters.project}/` }>
-                            { '<glyph></glyph>Admin · Current Project' }
-                        </a>
-                    </Localized>
-                </li>
-                }
-
-                { !user.isAuthenticated ? null :
-                <li>
-                    <Localized
-                        id="user-UserMenu--settings"
-                        glyph={
-                            <i className="fa fa-cog fa-fw"></i>
-                        }
-                    >
-                        <a href="/settings/">
-                            { '<glyph></glyph>Settings' }
-                        </a>
-                    </Localized>
-                </li>
+                <React.Fragment>
+                    <li>
+                        <Localized
+                            id="user-UserMenu--admin"
+                            glyph={
+                                <i className="fa fa-wrench fa-fw"></i>
+                            }
+                        >
+                            <a href="/admin/">
+                                { '<glyph></glyph>Admin' }
+                            </a>
+                        </Localized>
+                    </li>
+                    <li>
+                        <Localized
+                            id="user-UserMenu--admin-project"
+                            glyph={
+                                <i className="fa fa-wrench fa-fw"></i>
+                            }
+                        >
+                            <a href={ `/admin/projects/${project}/` }>
+                                { '<glyph></glyph>Admin · Current Project' }
+                            </a>
+                        </Localized>
+                    </li>
+                </React.Fragment>
                 }
 
                 { !user.isAuthenticated ? null :
-                <li>
-                    <SignOut signOut={ signOut } />
-                </li>
+                <React.Fragment>
+                    <li>
+                        <Localized
+                            id="user-UserMenu--settings"
+                            glyph={
+                                <i className="fa fa-cog fa-fw"></i>
+                            }
+                        >
+                            <a href="/settings/">
+                                { '<glyph></glyph>Settings' }
+                            </a>
+                        </Localized>
+                    </li>
+                    <li>
+                        <SignOut signOut={ signOut } />
+                    </li>
+                </React.Fragment>
                 }
-            </ul></div>
+            </ul>
             }
         </div>;
     }
