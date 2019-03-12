@@ -6,6 +6,7 @@ from textwrap import dedent
 
 from django_nose.tools import (
     assert_equal,
+    assert_false,
     assert_raises,
     assert_true,
 )
@@ -84,6 +85,8 @@ class CompareLocalesResourceTests(TestCase):
         translated_resource.translations[0].strings = {
             None: 'New Translated String'
         }
+
+        assert_false(os.path.exists(path))
         translated_resource.save(LocaleFactory.create())
         assert_true(os.path.exists(path))
 

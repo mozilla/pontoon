@@ -6,6 +6,7 @@ from textwrap import dedent
 
 from django_nose.tools import (
     assert_equal,
+    assert_false,
     assert_raises,
     assert_true,
 )
@@ -29,7 +30,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def get_nonexistant_file_resource(self, path):
-        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
+        contents = "text = Arise, awake and do not stop until the goal is reached."
 
         source_path = create_named_tempfile(
             contents,
@@ -80,11 +81,13 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         translated_resource.translations[0].strings = {
             None: 'New Translated String'
         }
+
+        assert_false(os.path.exists(path))
         translated_resource.save(LocaleFactory.create())
         assert_true(os.path.exists(path))
 
     def test_parse_with_source_path(self):
-        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
+        contents = "text = Arise, awake and do not stop until the goal is reached."
         source_path = create_named_tempfile(
             contents,
             prefix='strings',
@@ -99,7 +102,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         assert_equal(obj.source_resource.locale, None)
 
     def test_parse_with_no_source_path(self):
-        contents = dedent("""text = Arise, awake and do not stop until the goal is reached.""")
+        contents = "text = Arise, awake and do not stop until the goal is reached."
         path = create_named_tempfile(
             contents,
             prefix='strings',
@@ -120,7 +123,7 @@ SourceString = Translated String
 # Second comment
 MultipleComments = Translated Multiple Comments
 
-NoCommentsorSources = Translated No Comments or Sources
+NoCommentsOrSources = Translated No Comments or Sources
 """
 
 
@@ -180,22 +183,18 @@ class FTLTests(FormatTestsMixin, TestCase):
             resource.translations[translation_index],
             comments=[],
             source=[],
-            key=self.key('No Comments or Sources'),
-            strings={None: 'NoCommentsorSources = Translated No Comments or Sources\n'},
+            key=self.key('No Comments Or Sources'),
+            strings={None: 'NoCommentsOrSources = Translated No Comments or Sources\n'},
             fuzzy=False,
             order=translation_index,
         )
 
     def test_save_basic(self):
-        input_string = dedent("""
-            SourceString = Source String
-        """)
-        expected_translation = 'SourceString = New Translated String'
-        expected_string = dedent("""
-            {expected_translation}
-        """.format(
+        input_string = "SourceString = Source String"
+        expected_translation = "SourceString = New Translated String"
+        expected_string = "{expected_translation}".format(
             expected_translation=expected_translation
-        ))
+        )
 
         self.run_save_basic(
             input_string,
@@ -206,10 +205,8 @@ class FTLTests(FormatTestsMixin, TestCase):
 
     def test_save_remove(self):
         """Deleting strings removes them completely from the FTL file."""
-        input_string = dedent("""
-            Source-String = Source String
-        """)
-        expected_string = dedent("""""")
+        input_string = "Source-String = Source String"
+        expected_string = ""
 
         self.run_save_remove(input_string, expected_string, source_string=input_string)
 
@@ -254,7 +251,7 @@ class FTLTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             String = Translated String
         """)
-        expected_translation = 'MissingString = New Translated String'
+        expected_translation = "MissingString = New Translated String"
         expected_string = dedent("""
             String = Translated String
             {expected_translation}
@@ -270,18 +267,12 @@ class FTLTests(FormatTestsMixin, TestCase):
         )
 
     def test_save_translation_identical(self):
-        source_string = dedent("""
-            String = Source String
-        """)
-        input_string = dedent("""
-            String = Translated String
-        """)
-        expected_translation = 'String = Source String'
-        expected_string = dedent("""
-            {expected_translation}
-        """.format(
+        source_string = "String = Source String"
+        input_string = "String = Translated String"
+        expected_translation = "String = Source String"
+        expected_string = "{expected_translation}".format(
             expected_translation=expected_translation
-        ))
+        )
 
         self.run_save_translation_identical(
             source_string,
