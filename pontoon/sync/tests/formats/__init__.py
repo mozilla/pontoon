@@ -278,18 +278,18 @@ class FormatTestsMixin(object):
     # state of the translation file before and after the change being
     # tested is made to the parsed resource and saved.
 
-    def run_save_basic(self, input_string, expected_string, source_string=None, resource_cb=None):
+    def run_save_basic(
+        self, input_string, expected_string, source_string=None, expected_translation=None
+    ):
         """
         Test saving changes to an entity with a single translation.
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
 
-        def test_default(res):
-            translation = res.translations[0]
-            translation.strings[None] = 'New Translated String'
-            translation.fuzzy = True
+        translation = resource.translations[0]
+        translation.strings[None] = expected_translation or 'New Translated String'
+        translation.fuzzy = True
 
-        (resource_cb or test_default)(resource)
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)
@@ -341,7 +341,9 @@ class FormatTestsMixin(object):
 
     # Save tests specifically for asymmetric formats.
 
-    def run_save_translation_missing(self, source_string, input_string, expected_string):
+    def run_save_translation_missing(
+        self, source_string, input_string, expected_string, expected_translation=None
+    ):
         """
         If the source resource has a string but the translated resource
         doesn't, the returned resource should have an empty translation
@@ -361,12 +363,14 @@ class FormatTestsMixin(object):
         path, resource = self.parse_string(input_string, source_string=source_string)
 
         missing_translation = match_attr(resource.translations, key=self.key('Missing String'))
-        missing_translation.strings = {None: 'Translated Missing String'}
+        missing_translation.strings = {None: expected_translation or 'Translated Missing String'}
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)
 
-    def run_save_translation_identical(self, source_string, input_string, expected_string):
+    def run_save_translation_identical(
+        self, source_string, input_string, expected_string, expected_translation=None
+    ):
         """
         If the updated translation is identical to the source
         translation, keep it.
@@ -383,7 +387,7 @@ class FormatTestsMixin(object):
         path, resource = self.parse_string(input_string, source_string=source_string)
 
         translation = match_attr(resource.translations, key='String')
-        translation.strings = {None: 'Source String'}
+        translation.strings = {None: expected_translation or 'Source String'}
         resource.save(self.locale)
 
         self.assert_file_content(path, expected_string)
