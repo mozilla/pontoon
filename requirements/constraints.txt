@@ -167,9 +167,10 @@ nltk==3.2.5 \
 requests==2.21.0 \
     --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b
 
-# >=0.10.0,<0.11 compare-locales
-fluent==0.10.0 \
-    --hash=sha256:b5a270e6e4425cdf140ea10d1a7d9c1af713dd00d61b0412f05cd22e1ff84324
+# >=0.12.0,<0.13 compare-locales
+fluent.syntax==0.12.0 \
+    --hash=sha256:70fe96c784d7e1727701bf100a272990bfc09ed6a2d2bc849702684b96366616\
+    --hash=sha256:32664ee53319f5eef62495d9d8d25298e37fc061f26c287d973b1e7d809c2454
 
 # compare-locales
 pytoml==0.1.14 \
