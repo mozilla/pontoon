@@ -979,9 +979,11 @@ def user_data(request):
 
     return JsonResponse({
         'is_authenticated': True,
+        'is_admin': user.has_perm('base.can_manage_project'),
         'id': user.id,
         'email': user.email,
         'display_name': user.display_name,
+        'name_or_email': user.name_or_email,
         'username': user.username,
         'manager_for_locales': list(
             user.managed_locales.values_list('code', flat=True)
@@ -996,6 +998,8 @@ def user_data(request):
         },
         'preferred_locales': user.profile.sorted_locales_codes,
         'logout_url': logout_url,
+        'gravatar_url_small': user.gravatar_url(44),
+        'gravatar_url_big': user.gravatar_url(88),
     })
 
 
