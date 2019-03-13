@@ -5,11 +5,11 @@ import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
 import './UserMenu.css';
+import FileDownload from './FileDownload';
+import SignOut from './SignOut';
 
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-
-import SignOut from './SignOut';
 
 
 type Props = {
@@ -92,6 +92,10 @@ export class UserMenuBase extends React.Component<Props, State> {
                             { '<glyph></glyph>Download Translation Memory' }
                         </a>
                     </Localized>
+                </li>
+
+                <li>
+                    <FileDownload parameters={ parameters } />
                 </li>
 
                 <li className="horizontal-separator"></li>

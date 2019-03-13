@@ -156,6 +156,8 @@ user-AppSwitcher--leave-translate-next = Leave Translate.Next
 user-SignIn--sign-in = Sign in
 
 user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
+user-UserMenu--download-translations = <glyph></glyph>Download Translations
+user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
 
 user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
 user-UserMenu--machinery = <glyph></glyph>Machinery
