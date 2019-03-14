@@ -7,6 +7,8 @@ import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 
+import { WithPlaceables } from 'core/placeable';
+
 import Screenshots from './Screenshots';
 
 import type { Locale } from 'core/locales';
@@ -56,28 +58,49 @@ type Props = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props> {
-    renderOriginal(entity: DbEntity): React.Node {
+    handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
+        if (e.currentTarget && e.currentTarget.classList.contains('placeable')) {
+            // console.log(e.currentTarget.childNodes[0].data);
+        }
+    }
+
+    getOriginalContent(entity: DbEntity) {
         const { pluralForm, locale } = this.props;
 
         if (pluralForm === -1) {
-            return <p className="original">{ entity.original }</p>;
+            return {
+                title: null,
+                original: entity.original,
+            };
         }
-
-        let title = <Localized id='entitydetails-metadata-plural'>
-            <h2>Plural</h2>
-        </Localized>;
-        let original = entity.original_plural;
 
         if (locale.cldrPlurals[pluralForm] === 1) {
-            title = <Localized id='entitydetails-metadata-singular'>
-                <h2>Singular</h2>
-            </Localized>;
-            original = entity.original;
+            return {
+                title: <Localized id='entitydetails-metadata-singular'>
+                    <h2>Singular</h2>
+                </Localized>,
+                original: entity.original,
+            };
         }
+
+        return {
+            title: <Localized id='entitydetails-metadata-plural'>
+                <h2>Plural</h2>
+            </Localized>,
+            original: entity.original_plural,
+        };
+    }
+
+    renderOriginal(entity: DbEntity): React.Node {
+        const { title, original } = this.getOriginalContent(entity);
 
         return <React.Fragment>
             { title }
-            <p className="original">{ original }</p>
+            <p className="original" onClick={ this.handleClickOnPlaceable }>
+                <WithPlaceables>
+                    { original }
+                </WithPlaceables>
+            </p>
         </React.Fragment>;
     }
 
