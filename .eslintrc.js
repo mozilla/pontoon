@@ -49,6 +49,7 @@ module.exports = {
         DIFF_DELETE: false,
         ga: false,
         SyntheticInputEvent: false,
+        SyntheticMouseEvent: false,
         SyntheticKeyboardEvent: false,
         generalShortcutsHandler: true,
         traversalShortcutsHandler: true,
