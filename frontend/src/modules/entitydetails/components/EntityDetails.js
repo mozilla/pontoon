@@ -15,9 +15,9 @@ import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
-import { Editor } from 'modules/editor';
+import * as editor from 'modules/editor';
 
-import { actions, selectors } from '..';
+import { selectors } from '..';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Tools from './Tools';
@@ -65,13 +65,6 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
-    constructor(props: InternalProps) {
-        super(props);
-        this.state = {
-            translation: this.props.activeTranslation,
-        };
-    }
-
     componentDidMount() {
         this.fetchHelpersData();
     }
@@ -128,28 +121,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     updateEditorTranslation = (translation: string) => {
-        this.setState({
-            translation,
-        });
-    }
-
-    sendTranslation = () => {
-        const state = this.props;
-
-        if (!state.selectedEntity || !state.locale) {
-            return;
-        }
-
-        this.props.dispatch(actions.sendTranslation(
-            state.selectedEntity.pk,
-            this.state.translation,
-            state.locale.code,
-            state.selectedEntity.original,
-            state.pluralForm,
-            state.user.settings.forceSuggestions,
-            state.nextEntity,
-            state.router,
-        ));
+        this.props.dispatch(editor.actions.update(translation));
     }
 
     deleteTranslation = (translationId: number) => {
@@ -176,10 +148,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    updateSetting = (setting: string, value: boolean) => {
-        this.props.dispatch(user.actions.saveSetting(setting, value, this.props.user.username));
-    }
-
     render() {
         const state = this.props;
 
@@ -202,16 +170,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 pluralForm={ state.pluralForm }
                 openLightbox={ this.openLightbox }
             />
-            <Editor
-                translation={ this.state.translation }
-                entity={ state.selectedEntity }
-                locale={ state.locale }
-                pluralForm= { state.pluralForm }
-                user={ state.user }
-                sendTranslation={ this.sendTranslation }
-                updateEditorTranslation={ this.updateEditorTranslation }
-                updateSetting={ this.updateSetting }
-            />
+            <editor.Editor />
             <Tools
                 entity={ state.selectedEntity }
                 history={ state.history }

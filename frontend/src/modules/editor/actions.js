@@ -8,6 +8,24 @@ import { actions as entitiesActions } from 'modules/entitieslist';
 import type { DbEntity } from 'modules/entitieslist';
 
 
+export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
+
+
+/**
+ *
+ */
+export type UpdateAction = {|
+    +type: typeof UPDATE,
+    +translation: string,
+|};
+export function update(translation: string): UpdateAction {
+    return {
+        type: UPDATE,
+        translation,
+    };
+}
+
+
 export function sendTranslation(
     entity: number,
     translation: string,
@@ -51,6 +69,8 @@ export function sendTranslation(
     }
 }
 
+
 export default {
     sendTranslation,
+    update,
 };

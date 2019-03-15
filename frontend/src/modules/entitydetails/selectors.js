@@ -20,12 +20,18 @@ export function _getTranslationForSelectedEntity(
 ): string {
     const entityId = params.entity;
     const entity = entities.find(element => element.pk === entityId);
+
     if (pluralForm === -1) {
         pluralForm = 0;
     }
-    if (entity && entity.translation[pluralForm].string && !entity.translation[pluralForm].rejected) {
+
+    if (
+        entity && entity.translation[pluralForm].string &&
+        !entity.translation[pluralForm].rejected
+    ) {
         return entity.translation[pluralForm].string;
     }
+
     return '';
 }
 

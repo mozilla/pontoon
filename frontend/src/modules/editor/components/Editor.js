@@ -1,13 +1,19 @@
 /* @flow */
 
 import * as React from 'react';
+import { connect } from 'react-redux';
+import debounce from 'lodash.debounce';
 import { Localized } from 'fluent-react';
 
 import './Editor.css';
 
-import { PluralSelector } from 'core/plural';
-import { SignInLink } from 'core/user';
+import * as locales from 'core/locales';
+import * as plural from 'core/plural';
+import * as user from 'core/user';
+import * as entitieslist from 'modules/entitieslist';
+import * as entitydetails from 'modules/entitydetails';
 
+import { actions, NAME } from '..';
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
@@ -15,17 +21,23 @@ import KeyboardShortcuts from './KeyboardShortcuts';
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
+import type { EditorState } from '../reducer';
 
 
 type Props = {|
-    translation: string,
-    entity: ?DbEntity,
-    locale: Locale,
+    activeTranslation: string,
+    editor: EditorState,
+    locale: ?Locale,
+    nextEntity: DbEntity,
     pluralForm: number,
+    router: Object,
+    selectedEntity: ?DbEntity,
     user: UserState,
-    sendTranslation: () => void,
-    updateEditorTranslation: (string) => void,
-    updateSetting: (string, boolean) => void,
+|};
+
+type InternalProps = {|
+    ...Props,
+    dispatch: Function,
 |};
 
 type State = {|
@@ -39,25 +51,55 @@ type State = {|
  * Will present a different editor depending on the file format of the string,
  * see `EditorProxy` for more information.
  */
-export default class Editor extends React.Component<Props, State> {
-    componentDidUpdate(prevProps: Props) {
-        if (this.props.translation !== prevProps.translation) {
-            this.updateTranslation(this.props.translation);
+export class EditorBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
+        super(props);
+
+        this.state = {
+            translation: props.activeTranslation,
+        };
+    }
+
+    componentDidUpdate(prevProps: InternalProps) {
+        if (prevProps.editor.translation !== this.props.editor.translation) {
+            this.updateTranslation(this.props.editor.translation);
         }
     }
 
     updateTranslation = (translation: string) => {
-        this.props.updateEditorTranslation(translation);
+        this.setState({ translation });
+
+        if (translation !== this.props.editor.translation) {
+            this.updateStoreTranslation(translation);
+        }
+    }
+
+    // We want to keep the store in sync with the local state, so that potential
+    // changes made outside the editor are based on a translation that is as
+    // current as possible. We still keep a short delay to avoid having
+    // performance issues.
+    updateStoreTranslation = debounce((translation: string) => {
+        this.props.dispatch(actions.update(translation));
+    }, 200)
+
+    updateSetting = (setting: string, value: boolean) => {
+        this.props.dispatch(
+            user.actions.saveSetting(
+                setting,
+                value,
+                this.props.user.username,
+            )
+        );
     }
 
     copyOriginalIntoEditor = () => {
-        const { entity, pluralForm } = this.props;
-        if (entity) {
+        const { selectedEntity, pluralForm } = this.props;
+        if (selectedEntity) {
             if (pluralForm === -1 || pluralForm === 1) {
-                this.updateTranslation(entity.original);
+                this.updateTranslation(selectedEntity.original);
             }
             else {
-                this.updateTranslation(entity.original_plural);
+                this.updateTranslation(selectedEntity.original_plural);
             }
         }
     }
@@ -67,15 +109,34 @@ export default class Editor extends React.Component<Props, State> {
     }
 
     sendTranslation = () => {
-        this.props.sendTranslation();
+        const state = this.props;
+
+        if (!state.selectedEntity || !state.locale) {
+            return;
+        }
+
+        this.props.dispatch(actions.sendTranslation(
+            state.selectedEntity.pk,
+            this.state.translation,
+            state.locale.code,
+            state.selectedEntity.original,
+            state.pluralForm,
+            state.user.settings.forceSuggestions,
+            state.nextEntity,
+            state.router,
+        ));
     }
 
     render() {
+        if (!this.props.locale) {
+            return null;
+        }
+
         return <div className="editor">
-            <PluralSelector />
+            <plural.PluralSelector />
             <EditorProxy
-                entity={ this.props.entity }
-                translation={ this.props.translation }
+                entity={ this.props.selectedEntity }
+                translation={ this.state.translation }
                 locale={ this.props.locale }
                 updateTranslation={ this.updateTranslation }
             />
@@ -84,7 +145,7 @@ export default class Editor extends React.Component<Props, State> {
                 <Localized
                     id="editor-editor-sign-in-to-translate"
                     a={
-                        <SignInLink url={ this.props.user.signInURL }></SignInLink>
+                        <user.SignInLink url={ this.props.user.signInURL }></user.SignInLink>
                     }
                 >
                     <p className='banner'>
@@ -95,7 +156,7 @@ export default class Editor extends React.Component<Props, State> {
             <React.Fragment>
                 <EditorSettings
                     settings={ this.props.user.settings }
-                    updateSetting={ this.props.updateSetting }
+                    updateSetting={ this.updateSetting }
                 />
                 <KeyboardShortcuts />
                 <div className="actions">
@@ -144,3 +205,19 @@ export default class Editor extends React.Component<Props, State> {
         </div>;
     }
 }
+
+
+const mapStateToProps = (state: Object): Props => {
+    return {
+        activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
+        editor: state[NAME],
+        locale: locales.selectors.getCurrentLocaleData(state),
+        nextEntity: entitieslist.selectors.getNextEntity(state),
+        pluralForm: plural.selectors.getPluralForm(state),
+        router: state.router,
+        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        user: state[user.NAME],
+    };
+};
+
+export default connect(mapStateToProps)(EditorBase);
