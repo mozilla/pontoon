@@ -46,7 +46,10 @@ $('body').on('mouseenter', '.latest-activity .latest time', function() {
     '</aside>');
   }, delay);
 
-}).on('mouseleave', '.latest-activity .latest time', function() {
+}).on('mouseleave', '.table .latest-activity .tooltip', function() {
+  $('.latest-activity .latest .tooltip').remove();
+  clearTimeout(timer);
+}).on('mouseleave', '.table .latest-activity', function() {
   $('.latest-activity .latest .tooltip').remove();
   clearTimeout(timer);
 });
