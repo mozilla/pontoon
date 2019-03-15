@@ -5,7 +5,6 @@ import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
 import './UserMenu.css';
-import FileDownload from './FileDownload';
 import SignOut from './SignOut';
 
 import type { NavigationParams } from 'core/navigation';
@@ -53,7 +52,10 @@ export class UserMenuBase extends React.Component<Props, State> {
 
         const locale = parameters.locale;
         const project = parameters.project;
+        const resource = parameters.resource;
+
         const tm_href = `/${locale}/${project}/${locale}.${project}.tmx`;
+        const trans_href = `/download/?code=${locale}&slug=${project}&part=${resource}`;
 
         return <div className="user-menu">
             <div
@@ -95,7 +97,16 @@ export class UserMenuBase extends React.Component<Props, State> {
                 </li>
 
                 <li>
-                    <FileDownload parameters={ parameters } />
+                    <Localized
+                        id="user-UserMenu--download-translations"
+                        glyph={
+                            <i className="fa fa-cloud-download-alt fa-fw"></i>
+                        }
+                    >
+                        <a href={ trans_href }>
+                            { '<glyph></glyph>Download Translations' }
+                        </a>
+                    </Localized>
                 </li>
 
                 <li className="horizontal-separator"></li>
