@@ -28,6 +28,7 @@ $('body').on('mouseenter', '.latest-activity .latest time', function() {
         avatar = $element.data('user-avatar'),
         action = $element.data('action'),
         name = $element.data('user-name'),
+        link = $element.data('user-link'),
         date = date_formatter.format(new Date($element.attr('datetime'))),
         time = time_formatter.format(new Date($element.attr('datetime')));
 
@@ -37,7 +38,7 @@ $('body').on('mouseenter', '.latest-activity .latest time', function() {
       '<footer class="clearfix">' +
         '<div class="wrapper">' +
           '<div class="translation-details">' +
-            '<p class="translation-action">' + action + ' <span class="translation-author">' + name + '</span></p>' +
+            '<p class="translation-action">' + action + ' <a href="' + link + '">' + name + '</a></p>' +
             '<p class="translation-time">on ' + date + ' at ' + time + '</p>' +
           '</div>' +
           (avatar ? '<img class="rounded" height="44" width="44" src="' + avatar + '">' : '') +
@@ -46,7 +47,7 @@ $('body').on('mouseenter', '.latest-activity .latest time', function() {
     '</aside>');
   }, delay);
 
-}).on('mouseleave', '.latest-activity .latest time', function() {
+}).on('mouseleave', 'td.latest-activity', function() {
   $('.latest-activity .latest .tooltip').remove();
   clearTimeout(timer);
 });
