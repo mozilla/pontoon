@@ -96,6 +96,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                     </Localized>
                 </li>
 
+                { project === 'all-projects' ? null :
                 <li>
                     <Localized
                         id="user-UserMenu--download-translations"
@@ -108,6 +109,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                         </a>
                     </Localized>
                 </li>
+                }
 
                 <li className="horizontal-separator"></li>
 
