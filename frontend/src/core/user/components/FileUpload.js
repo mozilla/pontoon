@@ -37,6 +37,7 @@ export default class FileUpload extends React.Component<Props> {
     render() {
         const { parameters } = this.props;
 
+        /* TODO: Refactor core.api.base and reuse getCSRFToken() here */
         let csrfToken = '';
         const rootElt = document.getElementById('root');
         if (rootElt) {
