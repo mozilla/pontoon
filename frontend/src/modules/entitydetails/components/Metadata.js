@@ -42,7 +42,8 @@ type Props = {|
     +entity: DbEntity,
     +locale: Locale,
     +pluralForm: number,
-    +openLightbox: Function,
+    +openLightbox: (string) => void,
+    +addTextToEditorTranslation: (string) => void,
 |};
 
 
@@ -59,8 +60,16 @@ type Props = {|
  */
 export default class Metadata extends React.Component<Props> {
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
-        if (e.currentTarget && e.currentTarget.classList.contains('placeable')) {
-            // console.log(e.currentTarget.childNodes[0].data);
+        // Flow requires that we use `e.currentTarget` instead of `e.target`.
+        // However in this case, we do want to use that, so I'm ignoring all
+        // errors Flow throws there.
+        // $FLOW_IGNORE
+        if (e.target && e.target.classList.contains('placeable')) {
+            // $FLOW_IGNORE
+            if (e.target.childNodes.length) {
+                // $FLOW_IGNORE
+                this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
+            }
         }
     }
 

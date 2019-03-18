@@ -25,6 +25,7 @@ import Tools from './Tools';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { EditorState } from 'modules/editor';
 import type { DbEntity } from 'modules/entitieslist';
 import type { HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
@@ -33,6 +34,7 @@ import type { LocalesState } from 'modules/otherlocales';
 
 type Props = {|
     activeTranslation: string,
+    editor: EditorState,
     history: HistoryState,
     isTranslator: boolean,
     locale: ?Locale,
@@ -124,6 +126,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(editor.actions.update(translation));
     }
 
+    addTextToEditorTranslation = (content: string) => {
+        const { editor } = this.props;
+
+        const translation = editor.translation + content;
+        this.updateEditorTranslation(translation);
+    }
+
     deleteTranslation = (translationId: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(history.actions.deleteTranslation(
@@ -169,6 +178,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 locale={ state.locale }
                 pluralForm={ state.pluralForm }
                 openLightbox={ this.openLightbox }
+                addTextToEditorTranslation={ this.addTextToEditorTranslation }
             />
             <editor.Editor />
             <Tools
@@ -194,6 +204,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
+        editor: state[editor.NAME],
         history: state[history.NAME],
         isTranslator: user.selectors.isTranslator(state),
         locale: locales.selectors.getCurrentLocaleData(state),
