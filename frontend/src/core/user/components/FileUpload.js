@@ -46,7 +46,7 @@ export default class FileUpload extends React.Component<Props> {
 
         return <form
             action="/upload/"
-            className="uploadform"
+            className="file-upload"
             encType="multipart/form-data"
             method="POST"
             ref={ this.uploadForm }
