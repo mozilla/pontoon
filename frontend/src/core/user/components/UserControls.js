@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import * as entitieslist from 'modules/entitieslist';
 import * as navigation from 'core/navigation';
+import * as user from 'core/user';
 
 import AppSwitcher from './AppSwitcher';
 import SignIn from './SignIn';
@@ -18,6 +19,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {|
+    isTranslator: boolean,
     parameters: NavigationParams,
     router: Object,
     selectedEntity: DbEntity,
@@ -41,7 +43,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { parameters, router, user, selectedEntity } = this.props;
+        const { isTranslator, parameters, router, user, selectedEntity } = this.props;
 
         const isReadOnly = selectedEntity ? selectedEntity.readonly : true;
 
@@ -50,6 +52,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
 
             <UserMenu
                 isReadOnly={ isReadOnly }
+                isTranslator={ isTranslator }
                 parameters={ parameters }
                 signOut={ this.signUserOut }
                 user={ user }
@@ -67,9 +70,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
         router: state.router,
+        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
         user: state[NAME],
     };
 };

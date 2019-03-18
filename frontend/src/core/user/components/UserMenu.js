@@ -14,6 +14,7 @@ import type { UserState } from 'core/user';
 
 type Props = {
     isReadOnly: boolean,
+    isTranslator: boolean,
     parameters: NavigationParams,
     signOut: () => void,
     user: UserState,
@@ -50,7 +51,7 @@ export class UserMenuBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { parameters, signOut, user, isReadOnly } = this.props;
+        const { isReadOnly, isTranslator, parameters, signOut, user } = this.props;
 
         const locale = parameters.locale;
         const project = parameters.project;
@@ -63,14 +64,11 @@ export class UserMenuBase extends React.Component<Props, State> {
             project !== 'all-projects' &&
             resource !== 'all-resources'
         );
-        const canReview = (
-            user.translatorForLocales &&
-            user.translatorForLocales.includes(locale)
-        );
+
         const canUpload = (
             /* TODO: Also disable for subpages (in-context l10n) when supported */
             canDownload &&
-            canReview &&
+            isTranslator &&
             !isReadOnly
         );
 

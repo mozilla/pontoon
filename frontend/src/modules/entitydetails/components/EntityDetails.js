@@ -34,6 +34,7 @@ import type { LocalesState } from 'modules/otherlocales';
 type Props = {|
     activeTranslation: string,
     history: HistoryState,
+    isTranslator: boolean,
     locale: ?Locale,
     machinery: MachineryState,
     nextEntity: DbEntity,
@@ -213,6 +214,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             />
             <Tools
                 history={ state.history }
+                isTranslator={ state.isTranslator }
                 locale={ state.locale }
                 machinery={ state.machinery }
                 otherlocales={ state.otherlocales }
@@ -233,6 +235,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
         history: state[history.NAME],
+        isTranslator: user.selectors.isTranslator(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],
         nextEntity: entitieslist.selectors.getNextEntity(state),
