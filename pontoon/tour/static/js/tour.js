@@ -279,7 +279,7 @@ $(function () {
           "(https://mozilla-l10n.github.io/localizer-documentation/)." +
           "<br /><br />" +
           "Next, feel free to explore this tutorial project or move straight to " +
-          "translating live projects!",
+          "[translating live projects](/" + Pontoon.state.locale + "/)!",
         format: "markdown",
         listeners: {
           afterStep: function() {
