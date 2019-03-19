@@ -21,6 +21,7 @@ import type { LocalesState } from 'modules/otherlocales';
 
 type Props = {|
     history: HistoryState,
+    isTranslator: boolean,
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
@@ -43,6 +44,7 @@ export default class Tools extends React.Component<Props> {
     render() {
         const {
             history,
+            isTranslator,
             locale,
             machinery,
             otherlocales,
@@ -87,8 +89,8 @@ export default class Tools extends React.Component<Props> {
             <TabPanel>
                 <History
                     history={ history }
+                    isTranslator={ isTranslator }
                     locale={ locale }
-                    parameters={ parameters }
                     user={ user }
                     deleteTranslation={ deleteTranslation }
                     updateTranslationStatus={ updateTranslationStatus }

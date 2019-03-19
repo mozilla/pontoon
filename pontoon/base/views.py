@@ -860,14 +860,13 @@ def update_translation(request):
         })
 
 
-@require_POST
 @transaction.atomic
 def download(request):
     """Download translated resource."""
     try:
-        slug = request.POST['slug']
-        code = request.POST['code']
-        part = request.POST['part']
+        slug = request.GET['slug']
+        code = request.GET['code']
+        part = request.GET['part']
     except MultiValueDictKeyError:
         raise Http404
 

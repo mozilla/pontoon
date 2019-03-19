@@ -3,7 +3,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import * as entitieslist from 'modules/entitieslist';
 import * as navigation from 'core/navigation';
+import * as user from 'core/user';
 
 import AppSwitcher from './AppSwitcher';
 import SignIn from './SignIn';
@@ -11,13 +13,16 @@ import UserAutoUpdater from './UserAutoUpdater';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
+import type { DbEntity } from 'modules/entitieslist';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
 
 type Props = {|
+    isTranslator: boolean,
     parameters: NavigationParams,
     router: Object,
+    selectedEntity: DbEntity,
     user: UserState,
 |};
 
@@ -38,12 +43,16 @@ export class UserControlsBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { parameters, router, user } = this.props;
+        const { isTranslator, parameters, router, user, selectedEntity } = this.props;
+
+        const isReadOnly = selectedEntity ? selectedEntity.readonly : true;
 
         return <div className='user-controls'>
             <UserAutoUpdater getUserData={ this.getUserData } />
 
             <UserMenu
+                isReadOnly={ isReadOnly }
+                isTranslator={ isTranslator }
                 parameters={ parameters }
                 signOut={ this.signUserOut }
                 user={ user }
@@ -61,8 +70,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
         router: state.router,
+        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
         user: state[NAME],
     };
 };

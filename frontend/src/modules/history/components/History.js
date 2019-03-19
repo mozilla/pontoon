@@ -8,15 +8,14 @@ import './History.css';
 import Translation from './Translation';
 
 import type { Locale } from 'core/locales';
-import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { HistoryState } from '..';
 
 
 type Props = {|
     history: HistoryState,
+    isTranslator: boolean,
     locale: Locale,
-    parameters: NavigationParams,
     user: UserState,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
@@ -41,8 +40,8 @@ export default class History extends React.Component<Props> {
     render() {
         const {
             history,
+            isTranslator,
             locale,
-            parameters,
             user,
             deleteTranslation,
             updateEditorTranslation,
@@ -57,18 +56,13 @@ export default class History extends React.Component<Props> {
             return this.renderNoResults();
         }
 
-        const canReview = (
-            user.translatorForLocales &&
-            user.translatorForLocales.includes(parameters.locale)
-        );
-
         return <section className="history">
             <ul>
                 { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }
                         activeTranslation={ history.translations[0] }
-                        canReview={ canReview }
+                        canReview={ isTranslator }
                         locale={ locale }
                         user={ user }
                         deleteTranslation={ deleteTranslation }
