@@ -30,6 +30,7 @@ export type DbEntity = {
     +project: Object,
     +source: Array<Array<string>> | Object,
     +translation: Array<Translation>,
+    +readonly: boolean,
 };
 
 export type Entities = Array<DbEntity>;

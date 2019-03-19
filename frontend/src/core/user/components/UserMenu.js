@@ -5,14 +5,16 @@ import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
 import './UserMenu.css';
+import FileUpload from './FileUpload';
+import SignOut from './SignOut';
 
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
-import SignOut from './SignOut';
-
 
 type Props = {
+    isReadOnly: boolean,
+    isTranslator: boolean,
     parameters: NavigationParams,
     signOut: () => void,
     user: UserState,
@@ -49,11 +51,26 @@ export class UserMenuBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { parameters, signOut, user } = this.props;
+        const { isReadOnly, isTranslator, parameters, signOut, user } = this.props;
 
         const locale = parameters.locale;
         const project = parameters.project;
-        const tm_href = `/${locale}/${project}/${locale}.${project}.tmx`;
+        const resource = parameters.resource;
+
+        const tmHref = `/${locale}/${project}/${locale}.${project}.tmx`;
+        const transHref = `/download/?code=${locale}&slug=${project}&part=${resource}`;
+
+        const canDownload = (
+            project !== 'all-projects' &&
+            resource !== 'all-resources'
+        );
+
+        const canUpload = (
+            /* TODO: Also disable for subpages (in-context l10n) when supported */
+            canDownload &&
+            isTranslator &&
+            !isReadOnly
+        );
 
         return <div className="user-menu">
             <div
@@ -88,11 +105,32 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-cloud-download-alt fa-fw"></i>
                         }
                     >
-                        <a href={ tm_href }>
+                        <a href={ tmHref }>
                             { '<glyph></glyph>Download Translation Memory' }
                         </a>
                     </Localized>
                 </li>
+
+                { !canDownload ? null :
+                <li>
+                    <Localized
+                        id="user-UserMenu--download-translations"
+                        glyph={
+                            <i className="fa fa-cloud-download-alt fa-fw"></i>
+                        }
+                    >
+                        <a href={ transHref }>
+                            { '<glyph></glyph>Download Translations' }
+                        </a>
+                    </Localized>
+                </li>
+                }
+
+                { !canUpload ? null :
+                <li>
+                    <FileUpload parameters={ parameters } />
+                </li>
+                }
 
                 <li className="horizontal-separator"></li>
 

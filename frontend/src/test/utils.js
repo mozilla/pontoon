@@ -1,3 +1,4 @@
+import { Localized } from 'fluent-react';
 import { shallow } from 'enzyme';
 
 /*
@@ -62,4 +63,16 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
  */
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+/*
+ * Find Localized elements by their ID.
+ *
+ * Source: https://github.com/mozilla/testpilot/blob/93c9ea7aa6104fbbdc21508e44d486d7ca7c77aa/frontend/test/app/util.js
+ */
+export function findLocalizedById(wrapper, id) {
+    return wrapper.findWhere(
+      elem => elem.type() === Localized && elem.prop("id") === id
+    );
 }

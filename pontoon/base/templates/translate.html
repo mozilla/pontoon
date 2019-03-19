@@ -531,8 +531,7 @@
   </div>
 </div>
 
-<form id="download-file" method="POST" action="{{ url('pontoon.download') }}">
-    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+<form id="download-file" method="GET" action="{{ url('pontoon.download') }}">
     {{ download_form.slug }}
     {{ download_form.code }}
     {{ download_form.part }}
