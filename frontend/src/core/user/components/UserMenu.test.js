@@ -64,7 +64,8 @@ describe('<UserMenuBase>', () => {
     it('shows upload & download menu items', () => {
         const wrapper = shallow(
             <UserMenuBase
-                user={ { translatorForLocales: ['mylocale'] } }
+                isTranslator={ true }
+                user={ { isAuthenticated: true } }
                 parameters={ { locale: 'mylocale', project: 'myproject', resource: 'myresource' } }
             />
         );
@@ -77,7 +78,8 @@ describe('<UserMenuBase>', () => {
     it('hides upload & download menu items when translating all projects', () => {
         const wrapper = shallow(
             <UserMenuBase
-                user={ { translatorForLocales: ['mylocale'] } }
+                isTranslator={ true }
+                user={ { isAuthenticated: true } }
                 parameters={ { locale: 'mylocale', project: 'all-projects', resource: 'myresource' } }
             />
         );
@@ -90,7 +92,8 @@ describe('<UserMenuBase>', () => {
     it('hides upload & download menu items when translating all resources', () => {
         const wrapper = shallow(
             <UserMenuBase
-                user={ { translatorForLocales: ['mylocale'] } }
+                isTranslator={ true }
+                user={ { isAuthenticated: true } }
                 parameters={ { locale: 'mylocale', project: 'myproject', resource: 'all-resources' } }
             />
         );
@@ -103,7 +106,8 @@ describe('<UserMenuBase>', () => {
     it('hides upload menu item fors users without permission to review translations', () => {
         const wrapper = shallow(
             <UserMenuBase
-                user={ { translatorForLocales: ['anotherlocale'] } }
+                isTranslator={ false }
+                user={ { isAuthenticated: true } }
                 parameters={ { locale: 'mylocale', project: 'myproject', resource: 'myresource' } }
             />
         );
@@ -116,7 +120,8 @@ describe('<UserMenuBase>', () => {
         const wrapper = shallow(
             <UserMenuBase
                 isReadOnly={ true }
-                user={ { translatorForLocales: ['mylocale'] } }
+                isTranslator={ true }
+                user={ { isAuthenticated: true } }
                 parameters={ { locale: 'mylocale', project: 'myproject', resource: 'myresource' } }
             />
         );
