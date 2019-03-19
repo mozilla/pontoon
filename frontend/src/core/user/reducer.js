@@ -55,7 +55,7 @@ export type UserState = {|
     +username: string,
     +managerForLocales: Array<string>,
     +translatorForLocales: Array<string>,
-    +translatorForProjects: Object,
+    +translatorForProjects: { [string]: boolean },
     +settings: SettingsState,
     +preferredLocales: Array<string>,
     +signInURL: string,
