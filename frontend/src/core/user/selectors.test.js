@@ -8,37 +8,48 @@ describe('isTranslator', () => {
                 { isAuthenticated: false },
                 { locale: 'mylocale', project: 'myproject' }
             )
-        ).toEqual(false);
+        ).toBeFalsy();
     });
 
     it('returns true if user is a manager of the locale', () => {
         expect(
             _isTranslator(
-                { managerForLocales: ['mylocale'] },
+                {
+                    isAuthenticated: true,
+                    managerForLocales: ['mylocale'],
+                    translatorForLocales: [],
+                    translatorForProjects: {},
+                },
                 { locale: 'mylocale', project: 'myproject' }
             )
-        ).toEqual(false);
+        ).toBeTruthy();
     });
 
     it('returns true if user is a translator of the locale', () => {
         expect(
             _isTranslator(
-                { translatorForLocales: ['mylocale'] },
+                {
+                    isAuthenticated: true,
+                    managerForLocales: [],
+                    translatorForLocales: ['mylocale'],
+                    translatorForProjects: {},
+                },
                 { locale: 'mylocale', project: 'myproject' }
             )
-        ).toEqual(false);
+        ).toBeTruthy();
     });
 
     it('returns true if user is a translator for project-locale', () => {
         expect(
             _isTranslator(
                 {
+                    isAuthenticated: true,
                     managerForLocales: ['localeA'],
                     translatorForLocales: ['localeB'],
                     translatorForProjects: { 'mylocale-myproject': true },
                 },
                 { locale: 'mylocale', project: 'myproject' }
             )
-        ).toEqual(false);
+        ).toBeTruthy();
     });
 });
