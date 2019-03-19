@@ -22,7 +22,7 @@ function createShallowUserMenu({
             isReadOnly={ isReadOnly }
             isTranslator={ isTranslator }
             user={ { isAuthenticated: isAuthenticated, isAdmin: isAdmin } }
-            parameters={ { locale: locale, project: project, resource: resource } }
+            parameters={ { locale, project, resource } }
         />
     );
 }
