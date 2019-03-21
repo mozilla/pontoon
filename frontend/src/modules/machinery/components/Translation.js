@@ -7,10 +7,14 @@ import './Translation.css';
 
 import api from 'core/api';
 
+import { TranslationDiff } from 'core/diff'
+
+import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 
 
 type Props = {|
+    entity: DbEntity,
     locale: Locale,
     translation: api.types.MachineryTranslation,
     updateEditorTranslation: (string) => void,
@@ -30,7 +34,7 @@ type Props = {|
      }
 
      render() {
-         const { translation, locale } = this.props;
+         const { entity, locale, translation } = this.props;
 
          return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
              <li
@@ -64,7 +68,10 @@ type Props = {|
                      </ul>
                  </header>
                  <p className="original">
-                     { translation.original }
+                     <TranslationDiff
+                         base={ entity.original }
+                         target={ translation.original }
+                     />
                  </p>
                  <p
                     className="suggestion"

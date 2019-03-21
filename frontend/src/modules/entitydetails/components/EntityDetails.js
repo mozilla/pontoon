@@ -213,6 +213,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 updateSetting={ this.updateSetting }
             />
             <Tools
+                entity={ state.selectedEntity }
                 history={ state.history }
                 isTranslator={ state.isTranslator }
                 locale={ state.locale }

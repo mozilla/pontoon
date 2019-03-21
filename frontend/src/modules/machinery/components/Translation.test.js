@@ -3,8 +3,11 @@ import { shallow } from 'enzyme';
 
 import Translation from './Translation';
 
+import { TranslationDiff } from 'core/diff'
+
 
 describe('<Translation>', () => {
+    const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
     const DEFAULT_TRANSLATION = {
         sources: [
             {
@@ -13,7 +16,7 @@ describe('<Translation>', () => {
                 title: 'Pontoon',
             },
         ],
-        original: 'A horse, a horse! My kingdom for a horse!',
+        original: ORIGINAL,
         translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
     };
 
@@ -23,13 +26,18 @@ describe('<Translation>', () => {
         script: 'Latin',
     };
 
+    const DEFAULT_ENTITY = {
+        original: ORIGINAL,
+    };
+
     it('renders a translation correctly', () => {
         const wrapper = shallow(<Translation
             translation={ DEFAULT_TRANSLATION }
             locale={ DEFAULT_LOCALE }
+            entity={ DEFAULT_ENTITY }
         />);
 
-        expect(wrapper.find('.original').text()).toContain('A horse, a horse!');
+        expect(wrapper.find('.original').find(TranslationDiff)).toHaveLength(1);
         expect(wrapper.find('.suggestion').text()).toContain('Un cheval, un cheval !');
 
         expect(wrapper.find('ul li')).toHaveLength(1);
@@ -49,6 +57,7 @@ describe('<Translation>', () => {
         const wrapper = shallow(<Translation
             translation={ translation }
             locale={ DEFAULT_LOCALE }
+            entity={ DEFAULT_ENTITY }
         />);
 
         expect(wrapper.find('.stress')).toHaveLength(1);
@@ -71,6 +80,7 @@ describe('<Translation>', () => {
         const wrapper = shallow(<Translation
             translation={ translation }
             locale={ DEFAULT_LOCALE }
+            entity={ DEFAULT_ENTITY }
         />);
 
         expect(wrapper.find('ul').text()).toContain('Translation memory');
