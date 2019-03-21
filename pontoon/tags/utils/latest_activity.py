@@ -23,6 +23,10 @@ class LatestActivityUser(object):
     def name_or_email(self):
         return self.first_name or self.email
 
+    @property
+    def username(self):
+        return self.user.get('user__username')
+
     def gravatar_url(self, *args):
         if self.email:
             return user_gravatar_url(self, *args)
