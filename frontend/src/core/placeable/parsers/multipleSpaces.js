@@ -9,12 +9,12 @@ import { Localized } from 'fluent-react';
  */
 const multipleSpaces = {
     rule: /(  +)/,
-    tag: () => {
+    tag: (x: string) => {
         return <Localized
             id='placeable-parser-multipleSpaces'
             attrs={{ title: true }}
         >
-            <mark className='placeable' title='Multiple spaces'>
+            <mark className='placeable' title='Multiple spaces' data-match={ x }>
                 { ' ' }&middot;{ ' ' }
             </mark>
         </Localized>;

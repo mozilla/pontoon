@@ -66,7 +66,14 @@ export default class Metadata extends React.Component<Props> {
         // $FLOW_IGNORE
         if (e.target && e.target.classList.contains('placeable')) {
             // $FLOW_IGNORE
-            if (e.target.childNodes.length) {
+            if (e.target.dataset['match']) {
+                this.props.addTextToEditorTranslation(
+                    // $FLOW_IGNORE
+                    e.target.dataset['match']
+                );
+            }
+            // $FLOW_IGNORE
+            else if (e.target.childNodes.length) {
                 // $FLOW_IGNORE
                 this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
             }
