@@ -275,28 +275,21 @@ export default class Translation extends React.Component<Props, State> {
                     }
                     </menu>
                 </header>
-                { this.state.isDiffVisible ?
-                    <p
-                        className='diff'
-                        dir={ locale.direction }
-                        lang={ locale.code }
-                        data-script={ locale.script }
-                    >
+                <p
+                    className={ this.state.isDiffVisible ? 'diff' : 'default' }
+                    dir={ locale.direction }
+                    lang={ locale.code }
+                    data-script={ locale.script }
+                >
+                    { this.state.isDiffVisible ?
                         <TranslationDiff
                             base={ translation.string }
                             target={ activeTranslation.string }
                         />
-                    </p>
-                    :
-                    <p
-                        className='default'
-                        dir={ locale.direction }
-                        lang={ locale.code }
-                        data-script={ locale.script }
-                    >
-                        { translation.string }
-                    </p>
-                }
+                        :
+                        translation.string
+                    }
+                </p>
             </li>
         </Localized>;
     }
