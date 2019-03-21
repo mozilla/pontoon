@@ -36,6 +36,35 @@ function annotate(source) {
  * Render an Ace editor for Fluent string editting.
  */
 export default class FluentEditor extends React.Component<EditorProps> {
+    aceEditor: any;
+
+    constructor(props: EditorProps) {
+        super(props);
+        this.aceEditor = React.createRef();
+    }
+
+    componentDidUpdate() {
+        // If there is content to add to the editor, do so, then remove
+        // the content so it isn't added again.
+        // This is an abuse of the redux store, because we want to update
+        // the content differently for each Editor type. Thus each Editor
+        // implements an `updateTranslationSelectionWith` method and that is
+        // used to update the translation.
+        if (this.props.editor.selectionReplacementContent) {
+            this.updateTranslationSelectionWith(
+                this.props.editor.selectionReplacementContent
+            );
+            this.props.resetSelectionContent();
+        }
+    }
+
+    updateTranslationSelectionWith(content: string) {
+        if (this.aceEditor) {
+            this.aceEditor.current.editor.insert(content);
+            this.props.updateTranslation(this.aceEditor.current.editor.getValue());
+        }
+    }
+
     render() {
         const options = {
             animatedScroll: false,
@@ -57,6 +86,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
         };
 
         return <AceEditor
+            ref={ this.aceEditor }
             mode='fluent'
             theme='fluent'
             width='100%'

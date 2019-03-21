@@ -1,23 +1,24 @@
 /* @flow */
 
-import { UPDATE } from './actions';
+import { UPDATE, UPDATE_SELECTION } from './actions';
 
-import type { UpdateAction } from './actions';
+import type { UpdateAction, UpdateSelectionAction } from './actions';
 
 
 type Action =
     | UpdateAction
+    | UpdateSelectionAction
 ;
 
 export type EditorState = {|
     +translation: string,
-    +caretPosition: number,
+    +selectionReplacementContent: string,
 |};
 
 
 const initial: EditorState = {
     translation: '',
-    caretPosition: 0,
+    selectionReplacementContent: '',
 };
 
 export default function reducer(
@@ -29,6 +30,11 @@ export default function reducer(
             return {
                 ...state,
                 translation: action.translation,
+            };
+        case UPDATE_SELECTION:
+            return {
+                ...state,
+                selectionReplacementContent: action.content,
             };
         default:
             return state;

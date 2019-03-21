@@ -127,10 +127,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     addTextToEditorTranslation = (content: string) => {
-        const { editor } = this.props;
-
-        const translation = editor.translation + content;
-        this.updateEditorTranslation(translation);
+        this.props.dispatch(editor.actions.updateSelection(content));
     }
 
     deleteTranslation = (translationId: number) => {

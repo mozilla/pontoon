@@ -55,6 +55,10 @@ export class EditorBase extends React.Component<InternalProps, State> {
     constructor(props: InternalProps) {
         super(props);
 
+        // This state acts as a buffer between the Editors and the editor state.
+        // We want to avoid updating the redux state at every key stroke, thus
+        // we keep track of changes in this state and only update the store
+        // every few milliseconds using debouce.
         this.state = {
             translation: props.activeTranslation,
         };
@@ -64,6 +68,10 @@ export class EditorBase extends React.Component<InternalProps, State> {
         if (prevProps.editor.translation !== this.props.editor.translation) {
             this.updateTranslation(this.props.editor.translation);
         }
+    }
+
+    resetSelectionContent = () => {
+        this.props.dispatch(actions.updateSelection(''));
     }
 
     updateTranslation = (translation: string) => {
@@ -136,8 +144,10 @@ export class EditorBase extends React.Component<InternalProps, State> {
             <plural.PluralSelector />
             <EditorProxy
                 entity={ this.props.selectedEntity }
+                editor={ this.props.editor }
                 translation={ this.state.translation }
                 locale={ this.props.locale }
+                resetSelectionContent={ this.resetSelectionContent }
                 updateTranslation={ this.updateTranslation }
             />
             <menu>
