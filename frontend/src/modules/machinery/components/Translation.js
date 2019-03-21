@@ -7,10 +7,14 @@ import './Translation.css';
 
 import api from 'core/api';
 
+import { TranslationDiff } from 'core/diff'
+
+import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 
 
 type Props = {|
+    entity: DbEntity,
     locale: Locale,
     translation: api.types.MachineryTranslation,
     updateEditorTranslation: (string) => void,
@@ -24,57 +28,63 @@ type Props = {|
  * Similar translations (same original and translation) are shown only once
  * and their sources are merged.
  */
- export default class Translation extends React.Component<Props> {
-     copyTranslationIntoEditor = () => {
-         this.props.updateEditorTranslation(this.props.translation.translation);
-     }
+export default class Translation extends React.Component<Props> {
+    copyTranslationIntoEditor = () => {
+        this.props.updateEditorTranslation(this.props.translation.translation);
+    }
 
-     render() {
-         const { translation, locale } = this.props;
+    render() {
+        const { entity, locale, translation } = this.props;
 
-         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
-             <li
+        return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
+            <li
                 className="translation"
                 title="Copy Into Translation (Tab)"
                 onClick={ this.copyTranslationIntoEditor }
             >
-                 <header>
-                     { !translation.quality ? null :
-                     <span className="stress">{ translation.quality + '%' }</span>
-                     }
-                     <ul className="sources">
+                <header>
+                    { !translation.quality ? null :
+                        <span className="stress">{ translation.quality + '%' }</span>
+                    }
+                    <ul className="sources">
                         { translation.sources.map((source, i) => <li key={ i }>
-                             <a
+                            <a
                                 className="translation-source"
                                 href={ source.url }
                                 title={ source.title }
                                 target="_blank"
                                 rel="noopener noreferrer"
-                             >
-                                 <span>{ source.type }</span>
-                                 { !source.count ? null :
-                                 <Localized id="machinery-translation-number-occurrences" attrs={{ title: true }}>
-                                     <sup title="Number of translation occurrences">
-                                        { source.count }
-                                    </sup>
-                                </Localized>
-                                 }
-                             </a>
-                         </li>) }
-                     </ul>
-                 </header>
-                 <p className="original">
-                     { translation.original }
-                 </p>
-                 <p
+                            >
+                                <span>{ source.type }</span>
+                                { !source.count ? null :
+                                    <Localized
+                                        id="machinery-translation-number-occurrences"
+                                        attrs={{ title: true }}
+                                    >
+                                        <sup title="Number of translation occurrences">
+                                            { source.count }
+                                        </sup>
+                                    </Localized>
+                                }
+                            </a>
+                        </li>) }
+                    </ul>
+                </header>
+                <p className="original">
+                    <TranslationDiff
+                        base={ entity.original }
+                        target={ translation.original }
+                    />
+                </p>
+                <p
                     className="suggestion"
                     dir={ locale.direction }
                     data-script={ locale.script }
                     lang={ locale.code }
-                 >
-                     { translation.translation }
-                 </p>
-             </li>
-         </Localized>;
-     }
- }
+                >
+                    { translation.translation }
+                </p>
+            </li>
+        </Localized>;
+    }
+}

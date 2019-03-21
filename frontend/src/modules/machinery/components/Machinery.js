@@ -7,11 +7,13 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
+import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 import type { MachineryState } from '..';
 
 
 type Props = {|
+    entity: DbEntity,
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
@@ -27,7 +29,7 @@ type Props = {|
  */
 export default class Machinery extends React.Component<Props> {
     render() {
-        const { locale, machinery, updateEditorTranslation } = this.props;
+        const { entity, locale, machinery, updateEditorTranslation } = this.props;
 
         if (!locale) {
             return null;
@@ -43,8 +45,9 @@ export default class Machinery extends React.Component<Props> {
             <ul>
                 { machinery.translations.map((translation, index) => {
                     return <Translation
-                        translation={ translation }
+                        entity={ entity }
                         locale={ locale }
+                        translation={ translation }
                         updateEditorTranslation={ updateEditorTranslation }
                         key={ index }
                     />;
