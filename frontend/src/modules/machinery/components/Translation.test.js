@@ -37,8 +37,8 @@ describe('<Translation>', () => {
             entity={ DEFAULT_ENTITY }
         />);
 
-        expect(wrapper.find('.original').find(TranslationDiff)).toHaveLength(1);
-        expect(wrapper.find('.suggestion').text()).toContain('Un cheval, un cheval !');
+        expect(wrapper.find('.original').find('WithDiff')).toHaveLength(1);
+        expect(wrapper.find('.suggestion').find('ContentMarker').props().children).toContain('Un cheval, un cheval !');
 
         expect(wrapper.find('ul li')).toHaveLength(1);
         expect(wrapper.find('ul li a').text()).toEqual('Translation memory');

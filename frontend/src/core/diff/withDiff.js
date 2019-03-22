@@ -1,0 +1,45 @@
+/* @flow */
+
+import * as React from 'react';
+import DiffMatchPatch from 'diff-match-patch';
+
+import './components/TranslationDiff.css';
+
+
+const dmp = new DiffMatchPatch();
+
+
+export function getDiff(base: string, target: string){
+    const diff = dmp.diff_main(base, target);
+
+    dmp.diff_cleanupSemantic(diff);
+    dmp.diff_cleanupEfficiency(diff);
+
+    return diff.map((item, index) => {
+        let type = item[0];
+        let slice = item[1];
+
+        switch(type) {
+            case DiffMatchPatch.DIFF_INSERT:
+                return <ins key={ index }>{ slice }</ins>;
+
+            case DiffMatchPatch.DIFF_DELETE:
+                return <del key={ index }>{ slice }</del>;
+
+            default:
+                return slice;
+        }
+    });
+}
+
+
+export default function withDiff<Config: Object>(
+    WrappedComponent: React.AbstractComponent<Config>
+): React.AbstractComponent<Config> {
+    return function WithDiff(props: $Diff<Config, { diffTarget: string }>) {
+        const base = props.children;
+        return <WrappedComponent { ...props }>
+            { getDiff(base, props.diffTarget) }
+        </WrappedComponent>;
+    };
+}
