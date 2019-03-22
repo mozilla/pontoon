@@ -33,7 +33,6 @@ def get_max_length(comment):
 def run_checks(entity, string):
     """
     Group all checks related to the base UI
-
     :arg pontoon.base.models.Entity entity: Source entity
     :arg basestring string: a translation
     """

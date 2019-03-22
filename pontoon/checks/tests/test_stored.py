@@ -4,7 +4,7 @@ import pytest
 
 from mock import MagicMock
 
-from pontoon.checks.libraries.pontoon import (
+from pontoon.checks.libraries.stored import (
     get_max_length,
     run_checks
 )
