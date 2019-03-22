@@ -17,3 +17,5 @@ def run_checks(entity, string):
             checks['pWarnings'].append(
                 'Empty translation'
             )
+
+    return checks
