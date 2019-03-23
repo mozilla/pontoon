@@ -4,7 +4,7 @@ import pytest
 
 from mock import MagicMock
 
-from pontoon.checks.libraries.stored import run_checks
+from pontoon.checks.libraries.not_stored import run_checks
 
 
 @pytest.fixture()
