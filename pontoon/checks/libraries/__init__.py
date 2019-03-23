@@ -25,7 +25,7 @@ def run_checks(
         * JsonResponse - If there are errors
         * None - If there's no errors and non-omitted warnings.
     """
-    pontoon_checks = pontoon.run_checks(entity, string)
+    pontoon_checks = stored.run_checks(entity, string)
 
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)
