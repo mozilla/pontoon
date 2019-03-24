@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from urlparse import urlparse
 
 import waffle
 
@@ -29,6 +28,8 @@ from django.views.decorators.http import (
     require_POST
 )
 from django.views.generic.edit import FormView
+
+from six.moves.urllib.parse import urlparse
 
 from pontoon.base import forms
 from pontoon.base import utils

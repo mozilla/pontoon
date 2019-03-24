@@ -1,5 +1,7 @@
 import pytest
 
+from six import text_type
+
 from pontoon.base.models import Entity
 from pontoon.test.factories import (
     EntityFactory,
@@ -235,15 +237,15 @@ def test_entity_project_locale_no_paths(
         'comment': '',
         'format': 'po',
         'obsolete': False,
-        'marked': unicode(entity_a.string),
+        'marked': text_type(entity_a.string),
         'key': '',
-        'path': unicode(resource0.path),
+        'path': text_type(resource0.path),
         'project': project_a.serialize(),
         'translation': [
             {
                 'pk': tr0.pk,
                 'fuzzy': False,
-                'string': unicode(tr0.string),
+                'string': text_type(tr0.string),
                 'approved': False,
                 'rejected': False,
                 'warnings': [],
@@ -252,7 +254,7 @@ def test_entity_project_locale_no_paths(
             {
                 'pk': tr0pl.pk,
                 'fuzzy': False,
-                'string': unicode(tr0pl.string),
+                'string': text_type(tr0pl.string),
                 'approved': False,
                 'rejected': False,
                 'warnings': [],
@@ -261,10 +263,10 @@ def test_entity_project_locale_no_paths(
         ],
         'order': 0,
         'source': [],
-        'original_plural': unicode(entity_a.string_plural),
-        'marked_plural': unicode(entity_a.string_plural),
+        'original_plural': text_type(entity_a.string_plural),
+        'marked_plural': text_type(entity_a.string_plural),
         'pk': entity_a.pk,
-        'original': unicode(entity_a.string),
+        'original': text_type(entity_a.string),
         'readonly': False,
         'visible': False,
     }

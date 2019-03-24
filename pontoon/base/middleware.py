@@ -3,6 +3,7 @@ from django.contrib import auth
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
 from raygun4py.middleware.django import Provider
+from six import text_type
 
 
 class RaygunExceptionMiddleware(Provider):
@@ -11,7 +12,7 @@ class RaygunExceptionMiddleware(Provider):
         # of these.
         if not isinstance(exception, (Http404, PermissionDenied)):
             return (super(RaygunExceptionMiddleware, self)
-                    .process_exception(request, unicode(exception).encode('utf-8')))
+                    .process_exception(request, text_type(exception).encode('utf-8')))
 
 
 class BlockedIpMiddleware(object):

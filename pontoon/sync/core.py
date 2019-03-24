@@ -137,7 +137,7 @@ def get_changed_resources(db_project, vcs_project):
 
     if changed_resources is not None:
         changed_resources = (
-            changed_resources.keys() +
+            list(changed_resources.keys()) +
             list(vcs_project.added_paths) +
             list(vcs_project.changed_paths)
         )

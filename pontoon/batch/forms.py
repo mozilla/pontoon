@@ -1,6 +1,6 @@
-import urllib
 
 from django import forms
+from six.moves import urllib
 
 from pontoon.base import utils
 from pontoon.batch.actions import ACTIONS_FN_MAP
@@ -26,7 +26,7 @@ class BatchActionsForm(forms.Form):
         Related bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1438575
         """
         field_val = str(self.cleaned_data.get(param_name, ''))
-        return urllib.unquote(field_val).decode('utf-8')
+        return urllib.parse.unquote(field_val).decode('utf-8')
 
     def clean_find(self):
         return self.decode_field('find')
