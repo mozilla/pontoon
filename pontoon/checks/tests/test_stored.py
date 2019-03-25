@@ -112,11 +112,6 @@ def test_empty_translations(get_entity_mock):
         'pErrors': [u'Empty translations are not allowed']
     }
 
-    assert run_checks(
-        get_entity_mock('properties', allows_empty_translations=True),
-        ''
-    ) == {}
-
 
 def test_lang_newlines(get_entity_mock):
     """Newlines aren't allowed in lang files"""
