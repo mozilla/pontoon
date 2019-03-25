@@ -3,8 +3,6 @@ import { shallow } from 'enzyme';
 
 import Translation from './Translation';
 
-import { TranslationDiff } from 'core/diff'
-
 
 describe('<Translation>', () => {
     const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
