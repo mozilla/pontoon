@@ -34,7 +34,7 @@ import xmlTag from '../parsers/xmlTag';
 
 
 // Note: the order of these MATTERS!
-const rules = [
+export const rules = [
     newlineEscape,
     newlineCharacter,
     tabCharacter,
