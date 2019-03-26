@@ -1,15 +1,15 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import WithPlaceablesNoUnusualSpace from './WithPlaceablesNoUnusualSpace';
+import WithPlaceablesNoLeadingSpace from './WithPlaceablesNoLeadingSpace';
 
 
-describe('<WithPlaceablesNoUnusualSpace>', () => {
+describe('<WithPlaceablesNoLeadingSpace>', () => {
     it('matches newlines in a string', () => {
         const content = 'Hello\nworld';
-        const wrapper = shallow(<WithPlaceablesNoUnusualSpace>
+        const wrapper = shallow(<WithPlaceablesNoLeadingSpace>
             { content }
-        </WithPlaceablesNoUnusualSpace>);
+        </WithPlaceablesNoLeadingSpace>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toContain('\n');
@@ -17,9 +17,9 @@ describe('<WithPlaceablesNoUnusualSpace>', () => {
 
     it('does not match spaces at the beginning of a string', () => {
         const content = ' Hello world';
-        const wrapper = shallow(<WithPlaceablesNoUnusualSpace>
+        const wrapper = shallow(<WithPlaceablesNoLeadingSpace>
             { content }
-        </WithPlaceablesNoUnusualSpace>);
+        </WithPlaceablesNoLeadingSpace>);
 
         expect(wrapper.text()).toEqual(content);
     });
