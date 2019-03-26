@@ -42,7 +42,13 @@ type InternalProps = {|
  *
  */
 export class EntitiesListBase extends React.Component<InternalProps> {
+    componentDidMount() {
+        this.selectFirstEntityIfNoneSelected();
+    }
+
     componentDidUpdate(prevProps: InternalProps) {
+        this.selectFirstEntityIfNoneSelected();
+
         // Whenever the route changes, we want to verify that the user didn't
         // change locale, project or resource. If they did, then we'll have
         // to reset the current list of entities, in order to start a fresh
@@ -71,6 +77,20 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.status !== current.status
         ) {
             this.props.dispatch(actions.reset());
+        }
+    }
+
+    selectFirstEntityIfNoneSelected() {
+        const { entities, parameters, router } = this.props;
+        const selectedEntity = parameters.entity;
+
+        if (!selectedEntity && entities.entities.length > 0) {
+            this.props.dispatch(
+                navigation.actions.updateEntity(
+                    router,
+                    entities.entities[0].pk.toString(),
+                )
+            );
         }
     }
 

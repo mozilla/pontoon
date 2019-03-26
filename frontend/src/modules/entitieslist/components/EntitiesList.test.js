@@ -4,6 +4,8 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
+import * as navigation from 'core/navigation';
+
 import { actions } from '..';
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
@@ -16,17 +18,19 @@ const ENTITIES = [
 
 describe('<EntitiesList>', () => {
     beforeAll(() => {
-        const getMock = sinon.stub(actions, 'get');
-        getMock.returns({type: 'whatever'});
+        sinon.stub(actions, 'get').returns({type: 'whatever'});
+        sinon.stub(navigation.actions, 'updateEntity').returns({type: 'whatever'});
     });
 
     afterEach(() => {
         // Make sure tests do not pollute one another.
         actions.get.resetHistory();
+        navigation.actions.updateEntity.resetHistory();
     });
 
     afterAll(() => {
         actions.get.restore();
+        navigation.actions.updateEntity.restore();
     });
 
     it('shows a loading animation when there are more entities to load', () => {
@@ -51,7 +55,7 @@ describe('<EntitiesList>', () => {
         expect(scroll.find('CircleLoader')).toHaveLength(0);
     });
 
-    it("shows a loading animation when entities are being fetched from the server", () => {
+    it('shows a loading animation when entities are being fetched from the server', () => {
         const store = createReduxStore();
 
         store.dispatch(actions.request());
@@ -83,5 +87,18 @@ describe('<EntitiesList>', () => {
 
         // Verify the 4th argument of `actions.get` is the list of current entities.
         expect(actions.get.args[0][3]).toEqual([1, 2]);
+    });
+
+    it('redirects to the first entity when none is selected', () => {
+        const store = createReduxStore();
+
+        store.dispatch(actions.receive(ENTITIES, false));
+
+        shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
+
+        expect(navigation.actions.updateEntity.calledOnce).toBeTruthy();
+
+        const call = navigation.actions.updateEntity.firstCall;
+        expect(call.args[1]).toEqual(ENTITIES[0].pk.toString());
     });
 });
