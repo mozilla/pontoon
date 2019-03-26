@@ -2787,9 +2787,9 @@ var Pontoon = (function (my) {
         this.showFailedCheckType('error', failedChecks.clErrors);
       }
 
-      if (failedChecks.pErrors) {
+      if (failedChecks.sErrors) {
         $('#save-anyway').hide();
-        this.showFailedCheckType('error', failedChecks.pErrors);
+        this.showFailedCheckType('error', failedChecks.sErrors);
       }
 
       if (failedChecks.clWarnings) {

@@ -42,7 +42,7 @@ def run_checks(entity, string):
     if resource_ext == 'lang':
         # Newlines are not allowed in .lang files (bug 1190754)
         if '\n' in string:
-            checks['pErrors'].append(
+            checks['sErrors'].append(
                 'Newline characters are not allowed'
             )
 
@@ -61,13 +61,13 @@ def run_checks(entity, string):
             )
 
             if string_length > max_length:
-                checks['pErrors'].append(
+                checks['sErrors'].append(
                     'Translation too long'
                 )
 
     # Prevent empty translation submissions if not supported
     if string == '' and not entity.resource.allows_empty_translations:
-        checks['pErrors'].append(
+        checks['sErrors'].append(
             'Empty translations are not allowed'
         )
 
@@ -78,19 +78,19 @@ def run_checks(entity, string):
 
         # Parse error
         if isinstance(translation_ast, ast.Junk):
-            checks['pErrors'].append(
+            checks['sErrors'].append(
                 translation_ast.annotations[0].message
             )
 
         # Not a localizable entry
         elif not isinstance(translation_ast, localizable_entries):
-            checks['pErrors'].append(
+            checks['sErrors'].append(
                 'Translation needs to be a valid localizable entry'
             )
 
         # Message ID mismatch
         elif entity_ast.id.name != translation_ast.id.name:
-            checks['pErrors'].append(
+            checks['sErrors'].append(
                 'Translation key needs to match source string key'
             )
 
