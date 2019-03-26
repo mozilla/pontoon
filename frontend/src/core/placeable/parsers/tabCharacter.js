@@ -9,12 +9,12 @@ import { Localized } from 'fluent-react';
  */
 const tabCharacter = {
     rule: '\t',
-    tag: () => {
+    tag: (x: string) => {
         return <Localized
             id='placeable-parser-tabCharacter'
             attrs={{ title: true }}
         >
-            <mark className='placeable' title='Tab character'>
+            <mark className='placeable' title='Tab character' data-match={ x }>
                 &rarr;
             </mark>
         </Localized>;

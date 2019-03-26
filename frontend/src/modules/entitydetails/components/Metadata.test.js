@@ -41,9 +41,10 @@ describe('<Metadata>', () => {
     it('renders correctly', () => {
         const wrapper = createShallowMetadata();
 
-        const text = wrapper.text();
-        expect(text).toContain(ENTITY.original);
-        expect(text).toContain(ENTITY.source[0][0]);
+        const originalContent = wrapper.find('ContentMarker').props().children;
+        expect(originalContent).toContain(ENTITY.original);
+
+        expect(wrapper.text()).toContain(ENTITY.source[0][0]);
 
         // Comments are hidden in a Linkify component.
         const content = wrapper.find('Linkify').map(item => item.props().children);
@@ -55,25 +56,28 @@ describe('<Metadata>', () => {
     it('renders the selected plural form as original string', () => {
         const wrapper = createShallowMetadata(ENTITY, 2);
 
-        const text = wrapper.text();
         expect(wrapper.find('#entitydetails-metadata-plural')).toHaveLength(1);
-        expect(text).toContain(ENTITY.original_plural);
+
+        const originalContent = wrapper.find('ContentMarker').props().children;
+        expect(originalContent).toContain(ENTITY.original_plural);
     });
 
     it('renders the selected singular form as original string', () => {
         const wrapper = createShallowMetadata(ENTITY, 0);
 
-        const text = wrapper.text();
         expect(wrapper.find('#entitydetails-metadata-singular')).toHaveLength(1);
-        expect(text).toContain(ENTITY.original);
+
+        const originalContent = wrapper.find('ContentMarker').props().children;
+        expect(originalContent).toContain(ENTITY.original);
     });
 
     it('does not require a comment', () => {
         const wrapper = createShallowMetadata({ ...ENTITY, ...{ comment: '' } });
 
-        const text = wrapper.text();
-        expect(text).toContain(ENTITY.original);
-        expect(text).toContain(ENTITY.source[0][0]);
+        const originalContent = wrapper.find('ContentMarker').props().children;
+        expect(originalContent).toContain(ENTITY.original);
+
+        expect(wrapper.text()).toContain(ENTITY.source[0][0]);
 
         // Comments are hidden in a Linkify component.
         const content = wrapper.find('Linkify').map(item => item.props().children);
@@ -83,9 +87,10 @@ describe('<Metadata>', () => {
     it('does not require a source', () => {
         const wrapper = createShallowMetadata({ ...ENTITY, ...{ source: [] } });
 
-        const text = wrapper.text();
-        expect(text).toContain(ENTITY.original);
-        expect(text).not.toContain(ENTITY.source[0][0]);
+        const originalContent = wrapper.find('ContentMarker').props().children;
+        expect(originalContent).toContain(ENTITY.original);
+
+        expect(wrapper.text()).not.toContain(ENTITY.source[0][0]);
 
         // Comments are hidden in a Linkify component.
         const content = wrapper.find('Linkify').map(item => item.props().children);

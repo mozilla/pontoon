@@ -1,6 +1,5 @@
 /* @flow */
 
-export { default as actions } from './actions';
 export { default as selectors } from './selectors';
 
 export { default as EntityDetails } from './components/EntityDetails';

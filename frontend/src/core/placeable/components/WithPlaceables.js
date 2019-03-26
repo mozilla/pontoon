@@ -12,6 +12,7 @@ import escapeSequence from '../parsers/escapeSequence';
 import filePattern from '../parsers/filePattern';
 import javaFormattingVariable from '../parsers/javaFormattingVariable';
 import jsonPlaceholder from '../parsers/jsonPlaceholder';
+import leadingSpace from '../parsers/leadingSpace';
 import multipleSpaces from '../parsers/multipleSpaces';
 import narrowNonBreakingSpace from '../parsers/narrowNonBreakingSpace';
 import newlineCharacter from '../parsers/newlineCharacter';
@@ -34,7 +35,7 @@ import xmlTag from '../parsers/xmlTag';
 
 
 // Note: the order of these MATTERS!
-const rules = [
+export const rules = [
     newlineEscape,
     newlineCharacter,
     tabCharacter,
@@ -42,6 +43,7 @@ const rules = [
 
     // The spaces placeable can match '\n  ' and mask the newline,
     // so it has to come later.
+    leadingSpace,
     unusualSpace,
     nonBreakingSpace,
     narrowNonBreakingSpace,
@@ -77,6 +79,10 @@ const rules = [
     numberString,
 ];
 
+
+/**
+ * Component that marks placeables in a string.
+ */
 const WithPlaceables = createMarker(rules);
 
 

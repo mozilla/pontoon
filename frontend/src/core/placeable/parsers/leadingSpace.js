@@ -5,19 +5,17 @@ import { Localized } from 'fluent-react';
 
 
 /**
- * Marks unusually placed spaces: at the beginning or end of a line,
- * after a newline or tab, or multiple spaces.
+ * Marks spaces at the beginning of a string.
  *
  * Example matches:
  *
- *   "Hellow, world "
- *   "Hello\t world"
+ *   " Hello, world"
  */
-const unusualSpace = {
-    rule: /( +$|[\r\n\t]( +)| {2,})/,
+const leadingSpace = {
+    rule: /(^ +)/,
     tag: (x: string) => {
         return <Localized
-            id='placeable-parser-unusualSpace'
+            id='placeable-parser-leadingSpace'
             attrs={{ title: true }}
         >
             <mark className='placeable' title='Unusual space in string'>
@@ -27,4 +25,4 @@ const unusualSpace = {
     },
 };
 
-export default unusualSpace;
+export default leadingSpace;

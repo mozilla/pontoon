@@ -7,7 +7,8 @@ import './Translation.css';
 
 import api from 'core/api';
 
-import { TranslationDiff } from 'core/diff'
+import { withDiff } from 'core/diff';
+import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
@@ -35,6 +36,8 @@ export default class Translation extends React.Component<Props> {
 
     render() {
         const { entity, locale, translation } = this.props;
+
+        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li
@@ -71,10 +74,11 @@ export default class Translation extends React.Component<Props> {
                     </ul>
                 </header>
                 <p className="original">
-                    <TranslationDiff
-                        base={ entity.original }
-                        target={ translation.original }
-                    />
+                    <TranslationPlaceablesDiff
+                        diffTarget={ translation.original }
+                    >
+                        { entity.original }
+                    </TranslationPlaceablesDiff>
                 </p>
                 <p
                     className="suggestion"
@@ -82,7 +86,9 @@ export default class Translation extends React.Component<Props> {
                     data-script={ locale.script }
                     lang={ locale.code }
                 >
-                    { translation.translation }
+                    <WithPlaceables>
+                        { translation.translation }
+                    </WithPlaceables>
                 </p>
             </li>
         </Localized>;

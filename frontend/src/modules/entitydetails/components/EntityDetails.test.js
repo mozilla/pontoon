@@ -6,10 +6,8 @@ import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
 // import * as navigation from 'core/navigation';
-import * as user from 'core/user';
+// import * as editor from 'modules/editor';
 import * as history from 'modules/history';
-
-import { actions as entityActions } from '..';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 
@@ -113,24 +111,13 @@ describe('<EntityDetailsBase>', () => {
 
 describe('<EntityDetails>', () => {
     beforeAll(() => {
-        const suggestMock = sinon.stub(entityActions, 'sendTranslation');
-        suggestMock.returns({
-            type: 'whatever',
-        });
-        const updateMock = sinon.stub(history.actions, 'updateStatus');
-        updateMock.returns({
-            type: 'whatever',
-        });
-        const saveSettingMock = sinon.stub(user.actions, 'saveSetting');
-        saveSettingMock.returns({
-            type: 'whatever',
-        });
+        // sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
+        sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever'});
     });
 
     afterAll(() => {
-        entityActions.sendTranslation.restore();
+        // editor.actions.update.restore();
         history.actions.updateStatus.restore();
-        user.actions.saveSetting.restore();
     });
 
     it('dispatches the updateStatus action when updateTranslationStatus is called', () => {
@@ -140,37 +127,12 @@ describe('<EntityDetails>', () => {
         expect(history.actions.updateStatus.calledOnce).toBeTruthy();
     });
 
-    it('dispatches the saveSetting action when updateSetting is called', () => {
-        const [wrapper] = createEntityDetailsWithStore();
-
-        wrapper.instance().updateSetting('setting', true);
-        expect(user.actions.saveSetting.calledOnce).toBeTruthy();
-        expect(
-            user.actions.saveSetting
-            .calledWith('setting', true, USER.username)
-        ).toBeTruthy();
-    });
-
-    it('calls the sendTranslation action when the sendTranslation method is ran', () => {
-        const [wrapper] = createEntityDetailsWithStore();
-
-        wrapper.instance().setState({translation: 'fake translation'});
-        wrapper.instance().sendTranslation();
-        expect(entityActions.sendTranslation.calledOnce).toBeTruthy();
-        expect(
-            entityActions.sendTranslation
-            .calledWith(ENTITIES[0].pk, 'fake translation', 'kg', ENTITIES[0].original)
-        ).toBeTruthy();
-    });
-
-    it('updates translation state when props change', () => {
-        const [wrapper] = createEntityDetailsWithStore();
-
-        expect(wrapper.state('translation')).toEqual(TRANSLATION);
-
-        // This doesn't work yet, see https://github.com/airbnb/enzyme/issues/2009
-        // store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
-        // wrapper.update();
-        // expect(wrapper.state('translation')).toEqual(ENTITIES[1].translation[0].string);
-    });
+    // This doesn't work yet, see https://github.com/airbnb/enzyme/issues/2009
+    // it('updates translation state when props change', () => {
+    //     const [ wrapper, store ] = createEntityDetailsWithStore();
+    //
+    //     store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
+    //     wrapper.update();
+    //     expect(editor.update.calledOnce).toBeTruthy();
+    // });
 });

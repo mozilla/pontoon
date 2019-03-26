@@ -5,6 +5,8 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
+import { WithPlaceables } from 'core/placeable';
+
 import type { Navigation } from 'core/navigation';
 
 
@@ -53,7 +55,9 @@ type Props = {|
                      dir={ translation.direction }
                      script={ translation.script }
                  >
-                     { translation.translation }
+                     <WithPlaceables>
+                         { translation.translation }
+                     </WithPlaceables>
                  </p>
              </li>
          </Localized>;
