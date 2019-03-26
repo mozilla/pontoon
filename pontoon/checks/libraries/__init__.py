@@ -16,9 +16,9 @@ def run_checks(
     Main function that performs all quality checks from frameworks handled in Pontoon.
 
     :arg pontoon.base.models.Entity entity: Source entity
-    :arg six.string_types locale_code: Locale code of a translation
-    :arg six.string_types original: an original string
-    :arg six.string_types string: a translation
+    :arg basestring locale_code: Locale code of a translation
+    :arg basestring original: an original string
+    :arg basestring string: a translation
     :arg bool use_tt_checks: use Translate Toolkit checks
 
     :return: Return types:

@@ -82,9 +82,9 @@ def cast_to_compare_locales(resource_ext, entity, string):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
 
-    :arg six.string_types resource_ext: extension of a resource.
+    :arg basestring resource_ext: extension of a resource.
     :arg pontoon.base.models.Entity entity: Source entity
-    :arg six.string_types string: a translation
+    :arg basestring string: a translation
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
@@ -168,8 +168,8 @@ def run_checks(entity, locale_code, string):
     """
     Run all compare-locales checks on provided translation and entity.
     :arg pontoon.base.models.Entity entity: Source entity instance
-    :arg six.string_types locale_code: Locale of a translation
-    :arg six.string_types string: translation string
+    :arg basestring locale_code: Locale of a translation
+    :arg basestring string: translation string
 
     :return: Dictionary with the following structure:
         {

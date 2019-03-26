@@ -89,7 +89,7 @@ def ajax_resources(request, code, slug):
         pages[page.name] = latest_page_translatedresource
 
     translatedresources = {s.resource.path: s for s in translatedresources_qs}
-    translatedresources = dict(list(translatedresources.items()) + pages.items())
+    translatedresources = dict(list(translatedresources.items()) + list(pages.items()))
     parts = locale.parts_stats(project)
 
     resource_priority_map = project.resource_priority_map()

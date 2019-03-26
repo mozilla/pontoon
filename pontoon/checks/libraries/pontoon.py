@@ -35,7 +35,7 @@ def run_checks(entity, string):
     Group all checks related to the base UI
 
     :arg pontoon.base.models.Entity entity: Source entity
-    :arg six.string_types string: a translation
+    :arg basestring string: a translation
     """
     checks = defaultdict(list)
     resource_ext = entity.resource.format
