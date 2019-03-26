@@ -8,7 +8,7 @@ import './Translation.css';
 import api from 'core/api';
 
 import { withDiff } from 'core/diff';
-import { WithPlaceables, WithPlaceablesNoUnusualSpace } from 'core/placeable';
+import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
@@ -37,7 +37,7 @@ export default class Translation extends React.Component<Props> {
     render() {
         const { entity, locale, translation } = this.props;
 
-        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoUnusualSpace);
+        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li

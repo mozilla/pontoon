@@ -4,17 +4,15 @@ import each from 'jest-each';
 
 import createMarker from 'lib/react-content-marker';
 
-import unusualSpace from './unusualSpace';
+import leadingSpace from './leadingSpace';
 
 
-describe('unusualSpace', () => {
+describe('leadingSpace', () => {
     each([
-        [' ', 'hello '],
-        [' ', 'hello,\n world'],
-        ['  ', 'hello,  beautiful world'],
+        [' ', ' hello'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
-        const Marker = createMarker([unusualSpace]);
+        const Marker = createMarker([leadingSpace]);
         const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
