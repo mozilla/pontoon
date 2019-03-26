@@ -72,7 +72,11 @@ export function sendTranslation(
             // Show an error.
             console.error('Same Translation Error');
         }
-        else if (content.type === 'added' || content.type === 'updated') {
+        else if (
+            content.type === 'added' ||
+            content.type === 'saved' ||
+            content.type === 'updated'
+        ) {
             dispatch(
                 entitiesActions.updateEntityTranslation(
                     entity,
