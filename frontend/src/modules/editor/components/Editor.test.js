@@ -2,39 +2,44 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Editor from './Editor';
+import * as user from 'core/user';
+import * as editor from 'modules/editor';
+
+import { EditorBase } from './Editor';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 
-const TRANSLATION = 'test';
-const TRANSLATION_PLURAL = 'test plural';
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
     original_plural: 'les tests',
     translation: [
-        { string: TRANSLATION },
-        { string: TRANSLATION_PLURAL },
+        { string: 'test' },
+        { string: 'test plural' },
     ],
 };
 
 
-function createShallowEditor({
-    suggestMock,
-    updateMock,
+function createEditorBase({
     pluralForm = -1,
     forceSuggestions = true,
     isAuthenticated = true,
 } = {}) {
-    return shallow(<Editor
-        translation={ (Math.abs(pluralForm) !== 1) ? TRANSLATION_PLURAL : TRANSLATION }
-        entity={ SELECTED_ENTITY }
-        sendTranslation={ suggestMock }
-        updateEditorTranslation={ updateMock }
+    return shallow(<EditorBase
+        dispatch={ () => {} }
+        activeTranslation='initial'
+        editor={
+            { translation: '' }
+        }
+        locale={
+            { code: 'kg' }
+        }
         pluralForm={ pluralForm }
+        selectedEntity={ SELECTED_ENTITY }
         user={ {
             isAuthenticated,
+            username: 'Sarevok',
             settings: {
                 forceSuggestions,
             },
@@ -43,73 +48,102 @@ function createShallowEditor({
 }
 
 
-describe('<Editor>', () => {
+describe('<EditorBase>', () => {
+    beforeAll(() => {
+        sinon.stub(editor.actions, 'sendTranslation').returns({ type: 'whatever' });
+        sinon.stub(user.actions, 'saveSetting').returns({ type: 'whatever' });
+    });
+
+    afterEach(() => {
+        editor.actions.sendTranslation.reset();
+        user.actions.saveSetting.reset();
+    });
+
+    afterAll(() => {
+        editor.actions.sendTranslation.restore();
+        user.actions.saveSetting.restore();
+    });
+
     it('renders correctly', () => {
-        const wrapper = createShallowEditor();
+        const wrapper = createEditorBase();
 
         // 3 buttons to control the editor.
         expect(wrapper.find('button')).toHaveLength(3);
     });
 
+    it('has the active translation as content when created', () => {
+        const wrapper = createEditorBase();
+        expect(wrapper.state().translation).toEqual('initial');
+    });
+
     it('clears the text when the Clear button is clicked', () => {
-        const updateMock = sinon.spy();
-        const wrapper = createShallowEditor({ updateMock });
+        const wrapper = createEditorBase();
 
         wrapper.find('.action-clear').simulate('click');
-        expect(updateMock.calledOnce).toBeTruthy();
-        expect(updateMock.calledWith('')).toBeTruthy();
+        expect(wrapper.state().translation).toEqual('');
     });
 
     it('copies the original string in the textarea when the Copy button is clicked', () => {
-        const updateMock = sinon.spy();
-        const wrapper = createShallowEditor({ updateMock });
+        const wrapper = createEditorBase();
 
         wrapper.find('.action-copy').simulate('click');
-        expect(updateMock.calledOnce).toBeTruthy();
-        expect(updateMock.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
+        expect(wrapper.state().translation).toEqual(SELECTED_ENTITY.original);
     });
 
     it('copies the plural original string in the textarea when the Copy button is clicked', () => {
-        const updateMock = sinon.spy();
-        const wrapper = createShallowEditor({ updateMock, pluralForm: 5 });
+        const wrapper = createEditorBase({ pluralForm: 5 });
 
         wrapper.find('.action-copy').simulate('click');
-        expect(updateMock.calledOnce).toBeTruthy();
-        expect(updateMock.calledWith(SELECTED_ENTITY.original_plural)).toBeTruthy();
+        expect(wrapper.state().translation).toEqual(SELECTED_ENTITY.original_plural);
     });
 
-    it('calls the suggest action when the Suggest button is clicked', () => {
-        const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor({ suggestMock });
+    it('calls the sendTranslation action when the Suggest button is clicked', () => {
+        const wrapper = createEditorBase();
 
         wrapper.find('.action-suggest').simulate('click');
-        expect(suggestMock.calledOnce).toBeTruthy();
+        expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
+        expect(
+            editor.actions.sendTranslation
+            .calledWith(SELECTED_ENTITY.pk, 'initial', 'kg', SELECTED_ENTITY.original)
+        ).toBeTruthy();
     });
 
     it('shows the Save button when forceSuggestions is off', () => {
-        const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor({ suggestMock, pluralForm: -1, forceSuggestions: false });
+        const wrapper = createEditorBase({ forceSuggestions: false });
 
         expect(wrapper.find('.action-save').exists()).toBeTruthy();
-        wrapper.find('.action-save').simulate('click');
-        expect(suggestMock.calledOnce).toBeTruthy();
     });
 
-    it('calls the suggest action when the Save button is clicked', () => {
-        const suggestMock = sinon.spy();
-        const wrapper = createShallowEditor({ suggestMock, pluralForm: -1, forceSuggestions: false });
+    it('calls the sendTranslation action when the Save button is clicked', () => {
+        const wrapper = createEditorBase({ forceSuggestions: false });
 
         wrapper.find('.action-save').simulate('click');
-        expect(suggestMock.calledOnce).toBeTruthy();
+        expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
+        expect(
+            editor.actions.sendTranslation
+            .calledWith(SELECTED_ENTITY.pk, 'initial', 'kg', SELECTED_ENTITY.original)
+        ).toBeTruthy();
     });
 
     it('hides the settings and actions when the user is logged out', () => {
-        const wrapper = createShallowEditor({ isAuthenticated: false });
+        const wrapper = createEditorBase({ isAuthenticated: false });
 
+        expect(wrapper.find('button')).toHaveLength(0);
         expect(wrapper.find(EditorSettings)).toHaveLength(0);
         expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
         expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
 
         expect(wrapper.find('#editor-editor-sign-in-to-translate')).toHaveLength(1);
+    });
+
+    it('dispatches the saveSetting action when updateSetting is called', () => {
+        const wrapper = createEditorBase();
+
+        wrapper.instance().updateSetting('setting', true);
+        expect(user.actions.saveSetting.calledOnce).toBeTruthy();
+        expect(
+            user.actions.saveSetting
+            .calledWith('setting', true, 'Sarevok')
+        ).toBeTruthy();
     });
 });

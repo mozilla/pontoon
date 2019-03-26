@@ -6,7 +6,8 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
-import { TranslationDiff } from 'core/diff'
+import { withDiff } from 'core/diff';
+import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
@@ -191,6 +192,8 @@ export default class Translation extends React.Component<Props, State> {
 
         let canDelete = canReview || ownTranslation;
 
+        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
+
         return <Localized id='history-translation-copy' attrs={{ title: true }}>
             <li
                 className={ className }
@@ -282,12 +285,15 @@ export default class Translation extends React.Component<Props, State> {
                     data-script={ locale.script }
                 >
                     { this.state.isDiffVisible ?
-                        <TranslationDiff
-                            base={ translation.string }
-                            target={ activeTranslation.string }
-                        />
-                        :
-                        translation.string
+                        <TranslationPlaceablesDiff
+                            diffTarget={ activeTranslation.string }
+                        >
+                            { translation.string }
+                        </TranslationPlaceablesDiff>
+                    :
+                        <WithPlaceables>
+                            { translation.string }
+                        </WithPlaceables>
                     }
                 </p>
             </li>

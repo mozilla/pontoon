@@ -8,6 +8,7 @@ import * as l10n from 'core/l10n';
 import * as plural from 'core/plural';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
+import * as editor from 'modules/editor';
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
@@ -24,6 +25,7 @@ export default combineReducers({
     [stats.NAME]: stats.reducer,
     [user.NAME]: user.reducer,
     // Application modules
+    [editor.NAME]: editor.reducer,
     [entitieslist.NAME]: entitieslist.reducer,
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,

@@ -41,6 +41,10 @@
     white-space: pre-wrap;
 }
 
+.metadata .original .placeable {
+    cursor: pointer;
+}
+
 .metadata ul {
     list-style: none;
     margin: 0;

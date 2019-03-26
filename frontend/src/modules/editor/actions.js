@@ -8,6 +8,44 @@ import { actions as entitiesActions } from 'modules/entitieslist';
 import type { DbEntity } from 'modules/entitieslist';
 
 
+export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
+export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
+
+
+/**
+ * Update the current translation of the selected entity.
+ */
+export type UpdateAction = {|
+    +type: typeof UPDATE,
+    +translation: string,
+|};
+export function update(translation: string): UpdateAction {
+    return {
+        type: UPDATE,
+        translation,
+    };
+}
+
+
+/**
+ * Update the content that should replace the currently selected text in the
+ * active editor.
+ */
+export type UpdateSelectionAction = {|
+    +type: typeof UPDATE_SELECTION,
+    +content: string,
+|};
+export function updateSelection(content: string): UpdateSelectionAction {
+    return {
+        type: UPDATE_SELECTION,
+        content,
+    };
+}
+
+
+/**
+ * Save the current translation.
+ */
 export function sendTranslation(
     entity: number,
     translation: string,
@@ -51,6 +89,9 @@ export function sendTranslation(
     }
 }
 
+
 export default {
     sendTranslation,
+    update,
+    updateSelection,
 };

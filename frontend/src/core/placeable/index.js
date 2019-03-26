@@ -1,6 +1,7 @@
 /* @flow */
 
 export { default as WithPlaceables } from './components/WithPlaceables';
+export { default as WithPlaceablesNoLeadingSpace } from './components/WithPlaceablesNoLeadingSpace';
 
 
 // Name of this module.

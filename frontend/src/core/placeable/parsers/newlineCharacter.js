@@ -9,12 +9,12 @@ import { Localized } from 'fluent-react';
  */
 const newlineCharacter = {
     rule: '\n',
-    tag: () => {
+    tag: (x: string) => {
         return <Localized
             id='placeable-parser-newlineCharacter'
             attrs={{ title: true }}
         >
-            <mark className='placeable' title='Newline character'>
+            <mark className='placeable' title='Newline character' data-match={ x }>
                 { '¶\n' }
             </mark>
         </Localized>;

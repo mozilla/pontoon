@@ -48,11 +48,14 @@ module.exports = {
         DIFF_EQUAL: false,
         DIFF_DELETE: false,
         ga: false,
-        SyntheticInputEvent: false,
-        SyntheticKeyboardEvent: false,
         generalShortcutsHandler: true,
         traversalShortcutsHandler: true,
         editorShortcutsHandler: true,
+        // Flow specific things
+        SyntheticInputEvent: false,
+        SyntheticMouseEvent: false,
+        SyntheticKeyboardEvent: false,
+        "$Diff": false,
     },
     plugins: [
         'react',

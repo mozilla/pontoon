@@ -15,7 +15,7 @@ describe('<TranslationDiff>', () => {
 
         expect(wrapper.find('ins')).toHaveLength(1);
         expect(wrapper.find('del')).toHaveLength(1);
-        expect(wrapper.find('span')).toHaveLength(1);
+        expect(wrapper.at(1).text()).toEqual('cdef');
     });
 
     it('returns the same string if provided strings are equal', () => {
@@ -28,6 +28,6 @@ describe('<TranslationDiff>', () => {
 
         expect(wrapper.find('ins')).toHaveLength(0);
         expect(wrapper.find('del')).toHaveLength(0);
-        expect(wrapper.find('span')).toHaveLength(1);
+        expect(wrapper.text()).toEqual('abcdef');
     });
 });
