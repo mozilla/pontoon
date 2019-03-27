@@ -168,7 +168,7 @@ def test_get_failed_checks_db_objects(translation_a):
             'clErrors': [
                 'compare-locales error 1',
             ],
-            'sErrors': [
+            'pErrors': [
                 'pontoon error 1'
             ]
         }

@@ -10,6 +10,6 @@ DB_FORMATS = (
 
 # Warnings and Errors from these libraries will be saved in the DB
 DB_LIBRARIES = (
-    'stored',
+    'p',
     'cl',
 )

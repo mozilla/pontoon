@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from . import compare_locales
 from . import translate_toolkit
-from . import stored
+from . import pontoon_db, pontoon_non_db
 
 
 def run_checks(
@@ -25,7 +25,8 @@ def run_checks(
         * JsonResponse - If there are errors
         * None - If there's no errors and non-omitted warnings.
     """
-    pontoon_checks = stored.run_checks(entity, string)
+    pontoon_db_checks = pontoon_db.run_checks(entity, string)
+    pontoon_non_db_checks = pontoon_non_db.run_checks(entity, string)
 
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)
@@ -82,6 +83,7 @@ def run_checks(
         **(cl_checks or {})
     )
 
-    checks.update(pontoon_checks)
+    checks.update(pontoon_db_checks)
+    checks.update(pontoon_non_db_checks)
 
     return checks

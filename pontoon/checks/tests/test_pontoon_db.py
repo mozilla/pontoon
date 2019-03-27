@@ -4,7 +4,7 @@ import pytest
 
 from mock import MagicMock
 
-from pontoon.checks.libraries.stored import (
+from pontoon.checks.libraries.pontoon_db import (
     get_max_length,
     run_checks
 )
@@ -74,7 +74,7 @@ def test_too_long_translation_html_tags(get_entity_mock):
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
         '<a href="pontoon.mozilla.org">012</a><i>23</i>'
     ) == {
-        'sErrors': ['Translation too long']
+        'pErrors': ['Translation too long']
     }
 
     # Check if entities are causing false errors
@@ -87,7 +87,7 @@ def test_too_long_translation_html_tags(get_entity_mock):
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
         '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>'
     ) == {
-        'sErrors': ['Translation too long']
+        'pErrors': ['Translation too long']
     }
 
 
@@ -98,7 +98,7 @@ def test_too_long_translation_invalid_length(get_entity_mock):
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 2'),
         '0123'
-    ) == {'sErrors': ['Translation too long']}
+    ) == {'pErrors': ['Translation too long']}
 
 
 def test_empty_translations(get_entity_mock):
@@ -109,7 +109,7 @@ def test_empty_translations(get_entity_mock):
         get_entity_mock('po'),
         ''
     ) == {
-        'sErrors': [u'Empty translations are not allowed']
+        'pErrors': [u'Empty translations are not allowed']
     }
 
 
@@ -119,7 +119,7 @@ def test_lang_newlines(get_entity_mock):
         get_entity_mock('lang'),
         'aaa\nbbb'
     ) == {
-        'sErrors': [u'Newline characters are not allowed']
+        'pErrors': [u'Newline characters are not allowed']
     }
 
     assert run_checks(
@@ -134,7 +134,7 @@ def test_ftl_parse_error(get_entity_mock):
         get_entity_mock('ftl', string='key = value'),
         'key'
     ) == {
-        'sErrors': [u'Expected message "key" to have a value or attributes']
+        'pErrors': [u'Expected message "key" to have a value or attributes']
     }
 
     assert run_checks(
@@ -149,7 +149,7 @@ def test_ftl_non_localizable_entries(get_entity_mock):
         get_entity_mock('ftl', string='key = value'),
         '[[foo]]'
     ) == {
-        'sErrors': [u'Translation needs to be a valid localizable entry']
+        'pErrors': [u'Translation needs to be a valid localizable entry']
     }
 
 
@@ -159,5 +159,5 @@ def test_ftl_id_missmatch(get_entity_mock):
         get_entity_mock('ftl', string='key = value'),
         'key1 = translation'
     ) == {
-        'sErrors': [u'Translation key needs to match source string key']
+        'pErrors': [u'Translation key needs to match source string key']
     }
