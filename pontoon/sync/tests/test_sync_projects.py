@@ -1,9 +1,9 @@
-import StringIO
 
 from django.core.management.base import CommandError
 
 from django_nose.tools import assert_equal, assert_false, assert_raises
 from mock import ANY, patch, PropertyMock
+from six import StringIO
 
 from pontoon.base.models import Project
 from pontoon.base.tests import ProjectFactory, TestCase
@@ -20,7 +20,7 @@ class CommandTests(TestCase):
         self.command.no_commit = False
         self.command.no_pull = False
         self.command.force = False
-        self.command.stderr = StringIO.StringIO()
+        self.command.stderr = StringIO()
 
         Project.objects.filter(slug='pontoon-intro').delete()
 

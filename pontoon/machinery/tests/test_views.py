@@ -1,11 +1,12 @@
 import json
-import urlparse
 
 import caighdean
 import pytest
 import requests_mock
 
 from django.core.urlresolvers import reverse
+
+from six.moves import urllib
 
 from pontoon.base.models import (
     Entity,
@@ -52,7 +53,7 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
     assert req.headers['Ocp-Apim-Subscription-Key'] == ms_api_key
     assert json.loads(req.text) == [{'Text': 'text'}]
     assert (
-        urlparse.parse_qs(req.query) ==
+        urllib.parse.parse_qs(req.query) ==
         {
             'api-version': ['3.0'],
             'from': ['en'],
@@ -110,7 +111,7 @@ def test_view_google_translate(client, google_translate_locale, google_translate
     req = m.request_history[0]
 
     assert (
-        urlparse.parse_qs(req.query) ==
+        urllib.parse.parse_qs(req.query) ==
         {
             'q': ['text'],
             'source': ['en'],
@@ -166,7 +167,7 @@ def test_view_caighdean(client, entity_a):
         }
     )
     assert (
-        urlparse.parse_qs(m.request_history[0].text)
+        urllib.parse.parse_qs(m.request_history[0].text)
         == {
             u'teacs': [translation.string],
             u'foinse': [gd.code],

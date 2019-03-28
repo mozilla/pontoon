@@ -5,10 +5,12 @@ from django.test import TestCase
 from django.conf import settings
 from django.core.urlresolvers import clear_url_caches
 
+from six.moves import reload_module
+
 
 def reload_urls():
     clear_url_caches()
-    reload(sys.modules[settings.ROOT_URLCONF])
+    reload_module(sys.modules[settings.ROOT_URLCONF])
 
 
 class TestGraphQL(TestCase):

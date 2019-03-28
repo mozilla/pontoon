@@ -136,7 +136,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == '.xml':
         parser = AndroidParser()
 
-        content = u"""<?xml version="1.0" encoding="utf-8"?>
+        content = """<?xml version="1.0" encoding="utf-8"?>
             <resources>
                 <string name="{key}"><![CDATA[{original}]]></string>
                 <string name="{key}"><![CDATA[{translation}]]></string>

@@ -1,3 +1,5 @@
+import six
+
 from django.db.models import Func
 from django.db.models.lookups import (
     Field,
@@ -28,7 +30,7 @@ class IContainsCollate(IContains):
     """
 
     def __init__(self, lhs, rhs):
-        if len(rhs) == 2 and not isinstance(rhs, basestring):
+        if len(rhs) == 2 and not isinstance(rhs, six.string_types):
             rhs, self.collation = rhs
         else:
             raise ValueError('You have to pass collation in order to use this lookup.')
