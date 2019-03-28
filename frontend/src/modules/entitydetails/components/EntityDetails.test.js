@@ -96,9 +96,9 @@ function createEntityDetailsWithStore() {
 
 
 describe('<EntityDetailsBase>', () => {
-    it('shows a message when no entity is selected', () => {
+    it('shows an empty section when no entity is selected', () => {
         const wrapper = createShallowEntityDetails(null);
-        expect(wrapper.text()).toContain('Select an entity');
+        expect(wrapper.text()).toContain('');
     });
 
     it('loads the correct list of components', () => {
