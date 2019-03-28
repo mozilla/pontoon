@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import HTMLParser
 import re
 
 import bleach
@@ -11,9 +10,12 @@ from fluent.syntax import FluentParser, ast
 from pontoon.sync.formats.ftl import localizable_entries
 
 
+from six.moves import html_parser
+
+
 MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
 parser = FluentParser()
-html_parser = HTMLParser.HTMLParser()
+html_parser = html_parser.HTMLParser()
 
 
 def get_max_length(comment):

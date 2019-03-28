@@ -5,7 +5,6 @@ import os
 import pytz
 import re
 import requests
-import StringIO
 import tempfile
 import time
 import zipfile
@@ -17,7 +16,10 @@ from guardian.decorators import (
 )
 
 from django.utils.text import slugify
-from six import text_type
+from six import (
+    text_type,
+    StringIO,
+)
 from xml.sax.saxutils import (
     escape as xml_escape,
     quoteattr,
@@ -374,7 +376,7 @@ def get_download_content(slug, code, part):
     resources = Resource.objects.filter(project=project, translatedresources__locale=locale)
     isZipable = 1 < len(resources) < 10
     if isZipable:
-        s = StringIO.StringIO()
+        s = StringIO()
         zf = zipfile.ZipFile(s, "w")
 
     # Download a single file if project has 1 or >= 10 resources

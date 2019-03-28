@@ -5,6 +5,7 @@ from celery import (
     signature,
 )
 from django.core.management.base import BaseCommand
+from six.moves import range
 
 from pontoon.base.models import Translation
 from pontoon.checks import DB_FORMATS
@@ -69,5 +70,5 @@ class Command(BaseCommand):
                 check_translations,
                 args=(translations_pks[i:i + batch_size],)
             )
-            for i in xrange(0, len(translations_pks), batch_size)
+            for i in range(0, len(translations_pks), batch_size)
         ).apply_async()

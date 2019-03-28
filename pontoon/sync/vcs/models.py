@@ -218,7 +218,7 @@ class VCSProject(object):
         # DB changes
         vcs = files
         db = self.db_project.changed_resources(self.now)
-        for path in set(vcs.keys() + db.keys()):
+        for path in set(list(vcs.keys()) + list(db.keys())):
             if path in vcs and path in db:
                 vcs[path] = set(list(vcs[path]) + list(db[path]))
 
