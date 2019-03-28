@@ -162,7 +162,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (!state.selectedEntity) {
-            return <section className="entity-details">Select an entity</section>;
+            return <section className="entity-details"></section>;
         }
 
         return <section className="entity-details">
