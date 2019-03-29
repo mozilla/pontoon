@@ -147,7 +147,9 @@ export class EditorBase extends React.Component<InternalProps, State> {
                 editor={ this.props.editor }
                 translation={ this.state.translation }
                 locale={ this.props.locale }
+                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                 resetSelectionContent={ this.resetSelectionContent }
+                sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
             />
             <menu>

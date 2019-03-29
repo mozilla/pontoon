@@ -53,4 +53,68 @@ describe('<GenericEditor>', () => {
         expect(updateMock.calledWith('hello world')).toBeTruthy();
         expect(resetMock.calledOnce).toBeTruthy();
     });
+
+    it('sends the translation on Enter', () => {
+        const mockSend = sinon.spy();
+        const wrapper = shallow(<GenericEditor
+            translation='hello'
+            locale={ DEFAULT_LOCALE }
+            sendTranslation={ mockSend }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
+    it('copies the original into the Editor on Ctrl + Shift + C', () => {
+        const mockCopy = sinon.spy();
+        const wrapper = shallow(<GenericEditor
+            translation='hello'
+            locale={ DEFAULT_LOCALE }
+            copyOriginalIntoEditor={ mockCopy }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 67,  // C
+            altKey: false,
+            ctrlKey: true,
+            shiftKey: true,
+        };
+
+        expect(mockCopy.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockCopy.calledOnce).toBeTruthy();
+    });
+
+    it('clears the translation on Ctrl + Shift + Backspace', () => {
+        const mockUpdate = sinon.spy();
+        const wrapper = shallow(<GenericEditor
+            translation='hello'
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ mockUpdate }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 8,  // Backspace
+            altKey: false,
+            ctrlKey: true,
+            shiftKey: true,
+        };
+
+        expect(mockUpdate.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockUpdate.calledOnce).toBeTruthy();
+        expect(mockUpdate.calledWith('')).toBeTruthy();
+    });
 });
