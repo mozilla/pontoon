@@ -10,7 +10,9 @@ export type EditorProps = {|
     editor: EditorState,
     translation: string,
     locale: Locale,
+    copyOriginalIntoEditor: () => void,
     resetSelectionContent: () => void,
+    sendTranslation: () => void,
     updateTranslation: (string) => void,
 |};
 
@@ -77,10 +79,42 @@ export default class GenericEditor extends React.Component<EditorProps> {
         this.props.updateTranslation(event.currentTarget.value);
     }
 
+    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+        const key = event.keyCode;
+
+        let handledEvent = false;
+
+        // On Enter, send the current translation.
+        if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.sendTranslation();
+        }
+
+        // On Ctrl + Shift + C, copy the original translation.
+        if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.copyOriginalIntoEditor();
+        }
+
+        // On Ctrl + Shift + Backspace, clear the content.
+        if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.updateTranslation('');
+        }
+
+        // On Tab, walk through current helper tab content and copy it.
+        // TODO
+
+        if (handledEvent) {
+            event.preventDefault();
+        }
+    }
+
     render() {
         return <textarea
             ref={ this.textarea }
             value={ this.props.translation }
+            onKeyDown={ this.handleShortcuts }
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }

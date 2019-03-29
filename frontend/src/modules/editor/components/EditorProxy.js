@@ -24,7 +24,7 @@ type EditorProxyProps = {|
  */
 export default class EditorProxy extends React.Component<EditorProxyProps> {
     render() {
-        const { editor, entity, translation, locale, updateTranslation, resetSelectionContent } = this.props;
+        const { entity } = this.props;
 
         if (!entity) {
             return null;
@@ -32,20 +32,24 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
 
         if (entity.format === 'ftl') {
             return <FluentEditor
-                editor={ editor }
-                translation={ translation }
-                locale={ locale }
-                resetSelectionContent={ resetSelectionContent }
-                updateTranslation={ updateTranslation }
+                editor={ this.props.editor }
+                translation={ this.props.translation }
+                locale={ this.props.locale }
+                copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
+                resetSelectionContent={ this.props.resetSelectionContent }
+                sendTranslation={ this.props.sendTranslation }
+                updateTranslation={ this.props.updateTranslation }
             />;
         }
 
         return <GenericEditor
-            editor={ editor }
-            translation={ translation }
-            locale={ locale }
-            resetSelectionContent={ resetSelectionContent }
-            updateTranslation={ updateTranslation }
+            editor={ this.props.editor }
+            translation={ this.props.translation }
+            locale={ this.props.locale }
+            copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
+            resetSelectionContent={ this.props.resetSelectionContent }
+            sendTranslation={ this.props.sendTranslation }
+            updateTranslation={ this.props.updateTranslation }
         />;
     }
 }
