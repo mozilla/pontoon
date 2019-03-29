@@ -4200,10 +4200,10 @@ fluent-langneg@0.1.1:
   resolved "https://registry.yarnpkg.com/fluent-langneg/-/fluent-langneg-0.1.1.tgz#8a6a95e0c57a1c339aa598cb1ee7e3df0c976adb"
   integrity sha512-7lCFviLfesnxV4SnwAJh1epnKw97doF1Fmrjx3rAjq1/bbgrmuC43rpL7Qx81keB4Eu+YsjFZ7hCMg2mM25SyA==
 
-fluent-react@0.8.3:
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.3.tgz#b3681d07748aa473cfd2b3e50b88006bc15f2956"
-  integrity sha512-uNP+kefHxZ/yAqtg/cQlsruY/K8oiVMbU2E7Tcd+LEaVd5GxKWjv6CvmQNVrAsrWai0VrrVAg5SRVD19vVPHog==
+fluent-react@0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/fluent-react/-/fluent-react-0.8.4.tgz#14a4fc8df84ebb24f5e57fff5f7213809b60d3bc"
+  integrity sha512-7iPKD9pwh982i2Mwqnf6vNbdRFdwIBBVyXrEuv48LX8s4vNgcowD9A/FRNY8b8mXy4XLv8jhIo8dlwgFOtW40w==
   dependencies:
     cached-iterable "^0.2.1"
     fluent-sequence "^0.2.0"
@@ -4214,15 +4214,15 @@ fluent-sequence@^0.2.0:
   resolved "https://registry.yarnpkg.com/fluent-sequence/-/fluent-sequence-0.2.0.tgz#f351d93e0194182de60c6d5dfbdb3c96772813f8"
   integrity sha512-t8fc4rHvzO9Yk8otP8LkTqWo6mzjdemooQcnHlDrNzrYAnwsSbVFIlthnkzK2pLsRnO9Ybmw4lXOYUx+fAIyJw==
 
-fluent-syntax@0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/fluent-syntax/-/fluent-syntax-0.10.0.tgz#2dfa934752866e5d297b3df763e6d2b0ced04c5d"
-  integrity sha512-6qRhwQXDTgJjS9DW3IiXZWzUMUPqNPzqh+bZZyUOr6t8xYwkIe+5JONYZuvfvbOUk65paAno0kd8s8kUD2ptNA==
+fluent-syntax@0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/fluent-syntax/-/fluent-syntax-0.12.0.tgz#6d08332516dcc4c2f5c382333ee5e723291f8c2c"
+  integrity sha512-ZQvs21EHRwta16BdIKPJ95AVzbmitgGIbVR6SWodr2t9aMLN5nh3Yj183fDP9lQdjNP1YrDc3kAOrlWVzwhMmQ==
 
-fluent@0.9.1:
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/fluent/-/fluent-0.9.1.tgz#d03d26b55ec0a5453b15b79779a3b4ae2cab126d"
-  integrity sha512-RCxPOgGzNm70GXaKaexZEcGVvuc/sOrNTELs2yZpwN4BwXpOn7Zbsrt74uzg8qsT2IrlMDTyQsso1xsPG8TV4g==
+fluent@0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/fluent/-/fluent-0.12.0.tgz#c5a5fcf042817abb1f786a700aff9dc068b5fb0d"
+  integrity sha512-rE5FSBv/1LoJ91suQy+dJm8vGhfq2fnzURgbC6/cfJQG/xVZn0TBeh3NVoZD9mlpryLJ37NKCKnX2u5gB4s2BQ==
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
@@ -5088,12 +5088,12 @@ internal-ip@^3.0.1:
     default-gateway "^2.6.0"
     ipaddr.js "^1.5.2"
 
-intl-pluralrules@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/intl-pluralrules/-/intl-pluralrules-0.2.1.tgz#ebb5395ae18e4e60912ece3e04b692ac1ea85708"
-  integrity sha512-sBJhZSblYSrzdhdmij0QHp6zyZWpAGbY9qIdytYeLjrhPluWdu7bDD68qXH2Agj0ZGytuCv4LuD1pPW4jlQQGQ==
+intl-pluralrules@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/intl-pluralrules/-/intl-pluralrules-1.0.0.tgz#918a3d5661e0324bafcfec319492ddf2ced0bf7f"
+  integrity sha512-I5kPt8J50JZvHy6Fj8cme9oLByd4SVX7uYD7JmIPXdGBN2gZtK61bWpe64K7FBP6n7Vr6YHSmYfutzyaT/djFQ==
   dependencies:
-    make-plural "^4.1.1"
+    make-plural "^4.3.0"
 
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
@@ -6473,7 +6473,7 @@ make-dir@^2.0.0:
     pify "^4.0.1"
     semver "^5.6.0"
 
-make-plural@^4.1.1:
+make-plural@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/make-plural/-/make-plural-4.3.0.tgz#f23de08efdb0cac2e0c9ba9f315b0dff6b4c2735"
   integrity sha512-xTYd4JVHpSCW+aqDof6w/MebaMVNTVYBZhbB/vi513xXdiPT92JMVCo0Jq8W2UZnzYRFeVbQiQ+I25l13JuKvA==
