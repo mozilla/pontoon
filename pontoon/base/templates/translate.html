@@ -304,7 +304,8 @@
         </ul>
       </nav>
 
-      <textarea {% if not user.is_authenticated() %} readonly {% endif %} id="translation" placeholder="Type translation and press Enter to save"></textarea>
+      <textarea {% if user.is_authenticated() %} id="translation" placeholder="Type translation and press Enter to save" 
+      {% else %} id="translation-no-login"  placeholder="Sign in below to begin translating."  {% endif %}></textarea>
 
       <div id="ftl-area" class="ftl-area">
         <section class="main-value">
