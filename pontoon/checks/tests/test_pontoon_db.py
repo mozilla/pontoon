@@ -4,7 +4,7 @@ import pytest
 
 from mock import MagicMock
 
-from pontoon.checks.libraries.pontoon import (
+from pontoon.checks.libraries.pontoon_db import (
     get_max_length,
     run_checks
 )
@@ -111,11 +111,6 @@ def test_empty_translations(get_entity_mock):
     ) == {
         'pErrors': [u'Empty translations are not allowed']
     }
-
-    assert run_checks(
-        get_entity_mock('properties', allows_empty_translations=True),
-        ''
-    ) == {}
 
 
 def test_lang_newlines(get_entity_mock):
