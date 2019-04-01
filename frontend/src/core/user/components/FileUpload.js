@@ -12,15 +12,11 @@ type Props = {|
     parameters: NavigationParams,
 |};
 
-type Ref = {
-    current: React.ElementRef<any> | null,
-};
-
 /*
  * Render a File Upload button.
  */
 export default class FileUpload extends React.Component<Props> {
-    uploadForm: Ref;
+    uploadForm: { current: ?HTMLFormElement };
 
     constructor(props: Props) {
         super(props);
@@ -28,9 +24,9 @@ export default class FileUpload extends React.Component<Props> {
     }
 
     submitForm = () => {
-        const current = this.uploadForm.current;
-        if (current) {
-            current.submit();
+        const form = this.uploadForm.current;
+        if (form) {
+            form.submit();
         }
     }
 

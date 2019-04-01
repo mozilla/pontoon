@@ -36,7 +36,7 @@ function annotate(source) {
  * Render an Ace editor for Fluent string editting.
  */
 export default class FluentEditor extends React.Component<EditorProps> {
-    aceEditor: any;
+    aceEditor: { current: any };
 
     constructor(props: EditorProps) {
         super(props);
@@ -59,7 +59,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
     }
 
     updateTranslationSelectionWith(content: string) {
-        if (this.aceEditor) {
+        if (this.aceEditor.current) {
             this.aceEditor.current.editor.insert(content);
             this.props.updateTranslation(this.aceEditor.current.editor.getValue());
         }

@@ -21,7 +21,7 @@ export type EditorProps = {|
  * Render a simple textarea to edit a translation.
  */
 export default class GenericEditor extends React.Component<EditorProps> {
-    textarea: any;
+    textarea: { current: any };
 
     constructor(props: EditorProps) {
         super(props);
@@ -29,7 +29,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
     }
 
     componentDidMount() {
-        if (!this.textarea || !this.textarea.current) {
+        if (!this.textarea.current) {
             return;
         }
 
@@ -56,7 +56,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
     }
 
     updateTranslationSelectionWith(content: string) {
-        if (!this.textarea) {
+        if (!this.textarea.current) {
             return;
         }
 
