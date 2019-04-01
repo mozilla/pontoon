@@ -41,10 +41,12 @@ def run_checks(
     if use_tt_checks and resource_ext != 'ftl':
         # Always disable checks we don't use. For details, see:
         # https://bugzilla.mozilla.org/show_bug.cgi?id=1410619
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1514691
         tt_disabled_checks = {
             'acronyms',
             'gconf',
             'kdecomments',
+            'untranslated',
         }
 
         # Some compare-locales checks overlap with Translate Toolkit checks
@@ -70,9 +72,6 @@ def run_checks(
             tt_disabled_checks.update([
                 'newlines',
             ])
-
-        if resource_ext not in {'properties', 'ini', 'dtd'} and string == '':
-            tt_disabled_checks.add('untranslated')
 
         tt_checks = translate_toolkit.run_checks(
             original, string, locale_code, tt_disabled_checks
