@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { createReduxStore } from 'test/store';
@@ -53,5 +53,32 @@ describe('<SearchBox>', () => {
         return sleep(500).then(() => {
             expect(updateSpy.calledOnce).toBeTruthy();
         });
+    });
+
+    it('puts focus on the search input on Ctrl + Shift + F', () => {
+        // Simulating the key presses on `document`.
+        // See https://github.com/airbnb/enzyme/issues/426
+        const eventsMap = {};
+        document.addEventListener = sinon.spy((event, cb) => {
+            eventsMap[event] = cb;
+        });
+
+        const params = {
+            search: '',
+        };
+        const wrapper = mount(<SearchBoxBase parameters={ params } />);
+        const searchInput = wrapper.instance().searchInput;
+
+        const focusMock = sinon.spy(searchInput.current, 'focus');
+        expect(focusMock.calledOnce).toBeFalsy();
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 70,  // Up
+            altKey: false,
+            ctrlKey: true,
+            shiftKey: true,
+        };
+        eventsMap.keydown(event);
+        expect(focusMock.calledOnce).toBeTruthy();
     });
 });

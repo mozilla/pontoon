@@ -40,6 +40,8 @@ type State = {|
  * after some time has passed since the last key stroke.
  */
 export class SearchBoxBase extends React.Component<InternalProps, State> {
+    searchInput: { current: ?HTMLInputElement };
+
     constructor(props: InternalProps) {
         super(props);
 
@@ -47,6 +49,30 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.state = {
             search: search ? search.toString() : '',
         };
+
+        this.searchInput = React.createRef();
+    }
+
+    componentDidMount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.addEventListener('keydown', this.handleShortcuts);
+    }
+
+    componentWillUnmount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.removeEventListener('keydown', this.handleShortcuts);
+    }
+
+    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+        const key = event.keyCode;
+
+        // On Ctrl + Shift + F, set focus on the search input.
+        if (key === 70 && !event.altKey && event.ctrlKey && event.shiftKey) {
+            event.preventDefault();
+            if (this.searchInput.current) {
+                this.searchInput.current.focus();
+            }
+        }
     }
 
     updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
@@ -84,6 +110,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             </label>
             <input
                 id="search"
+                ref={ this.searchInput }
                 autoComplete="off"
                 placeholder={ placeholder }
                 title="Search Strings (Ctrl + Shift + F)"
