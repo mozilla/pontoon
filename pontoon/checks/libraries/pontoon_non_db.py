@@ -5,7 +5,7 @@ from collections import defaultdict
 
 def run_checks(entity, string):
     """
-    Group all checks related to the base UI
+    Group all checks related to the base UI that do not get stored in the DB
     :arg pontoon.base.models.Entity entity: Source entity
     :arg basestring string: a translation
     """
@@ -13,7 +13,7 @@ def run_checks(entity, string):
 
     # Prevent empty translation submissions if supported
     if string == '' and entity.resource.allows_empty_translations:
-        checks['pWarnings'].append(
+        checks['pndbWarnings'].append(
             'Empty translation'
         )
 

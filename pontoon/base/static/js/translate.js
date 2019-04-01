@@ -2796,8 +2796,8 @@ var Pontoon = (function (my) {
         this.showFailedCheckType('warning', failedChecks.clWarnings);
       }
 
-      if (failedChecks.pWarnings) {
-        this.showFailedCheckType('warning', failedChecks.pWarnings);
+      if (failedChecks.pndbWarnings) {
+        this.showFailedCheckType('warning', failedChecks.pndbWarnings);
       }
 
       if (failedChecks.ttWarnings) {

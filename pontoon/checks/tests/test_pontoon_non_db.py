@@ -31,5 +31,5 @@ def test_empty_translations(get_entity_mock):
         get_entity_mock('properties', allows_empty_translations=True),
         ''
     ) == {
-        'pWarnings': [u'Empty translation']
+        'pndbWarnings': [u'Empty translation']
     }
