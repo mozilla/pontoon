@@ -9,14 +9,12 @@ import './Translation.css';
 import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
-import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
-    entity: DbEntity,
     isReadOnlyEditor: boolean,
     canReview: boolean,
     translation: DBTranslation,
@@ -171,8 +169,8 @@ export default class Translation extends React.Component<Props, State> {
 
     render() {
         const {
-            entity,
             canReview,
+            isReadOnlyEditor,
             translation,
             locale,
             user,
@@ -185,21 +183,19 @@ export default class Translation extends React.Component<Props, State> {
             user.username === translation.username
         );
 
-        const notReadOnly = entity && !entity.readonly;
-
         let className = 'translation ' + this.getStatus();
-        if (canReview && notReadOnly) {
+        if (canReview && !isReadOnlyEditor) {
             // This user is a translator for the current locale, they can
             // perform all review actions.
             className += ' can-approve can-reject';
         }
-        else if (ownTranslation && !translation.approved && notReadOnly) {
+        else if (ownTranslation && !translation.approved && !isReadOnlyEditor) {
             // This user owns the translation and it's not approved, they
             // can only reject or unreject it.
             className += ' can-reject';
         }
 
-        let canDelete = (canReview || ownTranslation) && notReadOnly;
+        let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
 
         const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 

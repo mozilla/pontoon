@@ -191,13 +191,8 @@ describe('<Translation>', () => {
     });
 
     describe('permissions', () => {
-        const DEFAULT_ENTITY = {
-            readonly: false,
-        };
-
         it('allows the user to reject their own unapproved translation', () => {
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -210,7 +205,6 @@ describe('<Translation>', () => {
         it('forbids the user to reject their own approved translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, approved: true };
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -222,7 +216,6 @@ describe('<Translation>', () => {
 
         it('allows translators to review the translation', () => {
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -235,7 +228,6 @@ describe('<Translation>', () => {
         it('allows translators to delete the rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -247,7 +239,6 @@ describe('<Translation>', () => {
         it('forbids translators to delete non-rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: false };
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -259,7 +250,6 @@ describe('<Translation>', () => {
         it('allows the user to delete their own rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -271,7 +261,6 @@ describe('<Translation>', () => {
         it('forbids the user to delete rejected translation of another user', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<Translation
-                entity={ DEFAULT_ENTITY }
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);

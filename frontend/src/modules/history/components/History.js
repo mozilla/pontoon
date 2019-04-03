@@ -7,14 +7,12 @@ import './History.css';
 
 import Translation from './Translation';
 
-import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
 import type { HistoryState } from '..';
 
 
 type Props = {|
-    entity: DbEntity,
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
@@ -42,7 +40,6 @@ export default class History extends React.Component<Props> {
 
     render() {
         const {
-            entity,
             history,
             isReadOnlyEditor,
             isTranslator,
@@ -65,7 +62,6 @@ export default class History extends React.Component<Props> {
             <ul>
                 { history.translations.map((translation, index) => {
                     return <Translation
-                        entity={ entity }
                         translation={ translation }
                         activeTranslation={ history.translations[0] }
                         isReadOnlyEditor={ isReadOnlyEditor }
