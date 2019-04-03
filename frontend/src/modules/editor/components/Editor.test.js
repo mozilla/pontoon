@@ -25,6 +25,7 @@ function createEditorBase({
     pluralForm = -1,
     forceSuggestions = true,
     isAuthenticated = true,
+    selectedEntity = SELECTED_ENTITY,
 } = {}) {
     return shallow(<EditorBase
         dispatch={ () => {} }
@@ -36,7 +37,7 @@ function createEditorBase({
             { code: 'kg' }
         }
         pluralForm={ pluralForm }
-        selectedEntity={ SELECTED_ENTITY }
+        selectedEntity={ selectedEntity }
         user={ {
             isAuthenticated,
             username: 'Sarevok',
@@ -47,6 +48,13 @@ function createEditorBase({
     />);
 }
 
+
+function expectHiddenSettingsAndActions(wrapper) {
+    expect(wrapper.find('button')).toHaveLength(0);
+    expect(wrapper.find(EditorSettings)).toHaveLength(0);
+    expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
+    expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
+}
 
 describe('<EditorBase>', () => {
     beforeAll(() => {
@@ -128,12 +136,21 @@ describe('<EditorBase>', () => {
     it('hides the settings and actions when the user is logged out', () => {
         const wrapper = createEditorBase({ isAuthenticated: false });
 
-        expect(wrapper.find('button')).toHaveLength(0);
-        expect(wrapper.find(EditorSettings)).toHaveLength(0);
-        expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
-        expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
+        expectHiddenSettingsAndActions(wrapper);
 
         expect(wrapper.find('#editor-editor-sign-in-to-translate')).toHaveLength(1);
+    });
+
+    it('hides the settings and actions when the entity is read-only', () => {
+        const selectedEntity = {
+            ...SELECTED_ENTITY,
+            readonly: true,
+        }
+        const wrapper = createEditorBase({ selectedEntity: selectedEntity });
+
+        expectHiddenSettingsAndActions(wrapper);
+
+        expect(wrapper.find('#editor-editor-read-only-localization')).toHaveLength(1);
     });
 
     it('dispatches the saveSetting action when updateSetting is called', () => {
