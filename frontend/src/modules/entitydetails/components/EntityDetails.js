@@ -173,6 +173,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             />
             <Metadata
                 entity={ state.selectedEntity }
+                isReadOnlyEditor={ state.isReadOnlyEditor }
                 locale={ state.locale }
                 pluralForm={ state.pluralForm }
                 openLightbox={ this.openLightbox }
