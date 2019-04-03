@@ -27,6 +27,7 @@ import type { EditorState } from '../reducer';
 type Props = {|
     activeTranslation: string,
     editor: EditorState,
+    isReadOnlyEditor: boolean,
     locale: ?Locale,
     nextEntity: DbEntity,
     pluralForm: number,
@@ -135,16 +136,6 @@ export class EditorBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    // Return true if editor must be read-only, which happens when:
-    //   - the user is not authenticated or
-    //   - the entity is read-only
-    isReadOnlyEditor = () => {
-        if (!this.props.user.isAuthenticated || this.props.selectedEntity.readonly) {
-            return true;
-        }
-        return false;
-    }
-
     render() {
         if (!this.props.locale) {
             return null;
@@ -153,7 +144,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
         return <div className="editor">
             <plural.PluralSelector />
             <EditorProxy
-                readOnly={ this.isReadOnlyEditor() }
+                isReadOnlyEditor={ this.props.isReadOnlyEditor }
                 entity={ this.props.selectedEntity }
                 editor={ this.props.editor }
                 translation={ this.state.translation }
@@ -175,7 +166,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
                         { '<a>Sign in</a> to translate.' }
                     </p>
                 </Localized>
-            : this.props.selectedEntity.readonly ?
+            : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
                 <Localized
                     id="editor-editor-read-only-localization"
                 >
@@ -240,6 +231,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
         editor: state[NAME],
+        isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         nextEntity: entitieslist.selectors.getNextEntity(state),
         pluralForm: plural.selectors.getPluralForm(state),

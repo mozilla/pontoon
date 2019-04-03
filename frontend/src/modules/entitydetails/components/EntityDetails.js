@@ -36,6 +36,7 @@ type Props = {|
     activeTranslation: string,
     editor: EditorState,
     history: HistoryState,
+    isReadOnlyEditor: boolean,
     isTranslator: boolean,
     locale: ?Locale,
     machinery: MachineryState,
@@ -181,6 +182,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             <Tools
                 entity={ state.selectedEntity }
                 history={ state.history }
+                isReadOnlyEditor={ state.isReadOnlyEditor }
                 isTranslator={ state.isTranslator }
                 locale={ state.locale }
                 machinery={ state.machinery }
@@ -203,6 +205,7 @@ const mapStateToProps = (state: Object): Props => {
         activeTranslation: selectors.getTranslationForSelectedEntity(state),
         editor: state[editor.NAME],
         history: state[history.NAME],
+        isReadOnlyEditor: selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],

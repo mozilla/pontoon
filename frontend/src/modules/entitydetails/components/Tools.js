@@ -23,6 +23,7 @@ import type { LocalesState } from 'modules/otherlocales';
 type Props = {|
     entity: DbEntity,
     history: HistoryState,
+    isReadOnlyEditor: boolean,
     isTranslator: boolean,
     locale: Locale,
     machinery: MachineryState,
@@ -47,6 +48,7 @@ export default class Tools extends React.Component<Props> {
         const {
             entity,
             history,
+            isReadOnlyEditor,
             isTranslator,
             locale,
             machinery,
@@ -93,6 +95,7 @@ export default class Tools extends React.Component<Props> {
                 <History
                     entity={ entity }
                     history={ history }
+                    isReadOnlyEditor={ isReadOnlyEditor }
                     isTranslator={ isTranslator }
                     locale={ locale }
                     user={ user }
@@ -104,6 +107,7 @@ export default class Tools extends React.Component<Props> {
             <TabPanel>
                 <Machinery
                     entity={ entity }
+                    isReadOnlyEditor={ isReadOnlyEditor }
                     locale={ locale }
                     machinery={ machinery }
                     updateEditorTranslation={ updateEditorTranslation }
@@ -111,6 +115,7 @@ export default class Tools extends React.Component<Props> {
             </TabPanel>
             <TabPanel>
                 <OtherLocales
+                    isReadOnlyEditor={ isReadOnlyEditor }
                     otherlocales={ otherlocales }
                     orderedOtherLocales= { orderedOtherLocales }
                     preferredLocalesCount={ preferredLocalesCount }

@@ -17,6 +17,7 @@ import type { DBTranslation } from '../reducer';
 
 type Props = {|
     entity: DbEntity,
+    isReadOnlyEditor: boolean,
     canReview: boolean,
     translation: DBTranslation,
     activeTranslation: DBTranslation,
@@ -72,6 +73,9 @@ export default class Translation extends React.Component<Props, State> {
     }
 
     copyTranslationIntoEditor = () => {
+        if (this.props.isReadOnlyEditor) {
+            return;
+        }
         this.props.updateEditorTranslation(this.props.translation.string);
     }
 
@@ -181,19 +185,21 @@ export default class Translation extends React.Component<Props, State> {
             user.username === translation.username
         );
 
+        const notReadOnly = entity && !entity.readonly;
+
         let className = 'translation ' + this.getStatus();
-        if (canReview && !entity.readonly) {
+        if (canReview && notReadOnly) {
             // This user is a translator for the current locale, they can
             // perform all review actions.
             className += ' can-approve can-reject';
         }
-        else if (ownTranslation && !translation.approved && !entity.readonly) {
+        else if (ownTranslation && !translation.approved && notReadOnly) {
             // This user owns the translation and it's not approved, they
             // can only reject or unreject it.
             className += ' can-reject';
         }
 
-        let canDelete = (canReview || ownTranslation) && !entity.readonly;
+        let canDelete = (canReview || ownTranslation) && notReadOnly;
 
         const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 

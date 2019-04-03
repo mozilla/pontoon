@@ -7,7 +7,7 @@ import type { EditorState } from '..';
 
 
 export type EditorProps = {|
-    readOnly: boolean,
+    isReadOnlyEditor: boolean,
     editor: EditorState,
     translation: string,
     locale: Locale,
@@ -113,7 +113,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
     render() {
         return <textarea
-            readOnly={ this.props.readOnly }
+            readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.translation }
             onKeyDown={ this.handleShortcuts }

@@ -16,6 +16,7 @@ import type { HistoryState } from '..';
 type Props = {|
     entity: DbEntity,
     history: HistoryState,
+    isReadOnlyEditor: boolean,
     isTranslator: boolean,
     locale: Locale,
     user: UserState,
@@ -43,6 +44,7 @@ export default class History extends React.Component<Props> {
         const {
             entity,
             history,
+            isReadOnlyEditor,
             isTranslator,
             locale,
             user,
@@ -66,6 +68,7 @@ export default class History extends React.Component<Props> {
                         entity={ entity }
                         translation={ translation }
                         activeTranslation={ history.translations[0] }
+                        isReadOnlyEditor={ isReadOnlyEditor }
                         canReview={ isTranslator }
                         locale={ locale }
                         user={ user }

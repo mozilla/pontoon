@@ -5,12 +5,15 @@ import { createSelector } from 'reselect';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
+import * as user from 'core/user';
 
+import type { DbEntity, Entities } from 'modules/entitieslist';
 import type { NavigationParams } from 'core/navigation';
-import type { Entities } from 'modules/entitieslist';
+import type { UserState } from 'core/user';
 
 
 const entitiesSelector = (state): string => state[entitieslist.NAME].entities;
+const userSelector = (state): UserState => state[user.NAME];
 
 
 export function _getTranslationForSelectedEntity(
@@ -51,6 +54,34 @@ export const getTranslationForSelectedEntity: Function = createSelector(
 );
 
 
+export function _isReadOnlyEditor(
+    entities: Entities,
+    params: NavigationParams,
+    user: UserState,
+): boolean {
+    const selectedEntity = entities.find(element => element.pk === params.entity);
+
+    return (
+        (selectedEntity && selectedEntity.readonly) ||
+        !user.isAuthenticated
+    );
+}
+
+
+/**
+ * Return true if editor must be read-only, which happens when:
+ *   - the entity is read-only OR
+ *   - the user is not authenticated
+ */
+export const isReadOnlyEditor: Function = createSelector(
+    entitiesSelector,
+    navigation.selectors.getNavigationParams,
+    userSelector,
+    _isReadOnlyEditor
+);
+
+
 export default {
     getTranslationForSelectedEntity,
+    isReadOnlyEditor,
 };

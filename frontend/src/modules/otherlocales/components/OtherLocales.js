@@ -14,6 +14,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {|
+    isReadOnlyEditor: boolean,
     orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
     preferredLocalesCount: number,
     otherlocales: LocalesState,
@@ -37,6 +38,7 @@ export default class OtherLocales extends React.Component<Props> {
 
     render() {
         const {
+            isReadOnlyEditor,
             orderedOtherLocales,
             preferredLocalesCount,
             otherlocales,
@@ -58,6 +60,7 @@ export default class OtherLocales extends React.Component<Props> {
                     let lastPreferred = (index === preferredLocalesCount - 1);
 
                     return <Translation
+                        isReadOnlyEditor={ isReadOnlyEditor }
                         translation={ translation }
                         parameters={ parameters }
                         updateEditorTranslation={ updateEditorTranslation }
