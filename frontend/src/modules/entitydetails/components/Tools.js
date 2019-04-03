@@ -91,6 +91,7 @@ export default class Tools extends React.Component<Props> {
 
             <TabPanel>
                 <History
+                    entity={ entity }
                     history={ history }
                     isTranslator={ isTranslator }
                     locale={ locale }
