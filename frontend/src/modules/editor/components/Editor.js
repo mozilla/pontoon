@@ -135,6 +135,16 @@ export class EditorBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    // Return true if editor must be read-only, which happens when:
+    //   - the user is not authenticated or
+    //   - the entity is read-only
+    isReadOnlyEditor = () => {
+        if (!this.props.user.isAuthenticated || this.props.selectedEntity.readonly) {
+            return true;
+        }
+        return false;
+    }
+
     render() {
         if (!this.props.locale) {
             return null;
@@ -143,6 +153,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
         return <div className="editor">
             <plural.PluralSelector />
             <EditorProxy
+                readOnly={ this.isReadOnlyEditor() }
                 entity={ this.props.selectedEntity }
                 editor={ this.props.editor }
                 translation={ this.state.translation }
