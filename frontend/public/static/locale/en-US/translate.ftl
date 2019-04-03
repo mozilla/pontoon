@@ -5,6 +5,7 @@
 ## Allows contributors to modify or propose a translation
 
 editor-editor-sign-in-to-translate = <a>Sign in</a> to translate.
+editor-editor-read-only-localization = This is a read-only localization.
 editor-editor-button-copy = Copy
 editor-editor-button-clear = Clear
 editor-editor-button-save = Save

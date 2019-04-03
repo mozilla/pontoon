@@ -175,6 +175,12 @@ export class EditorBase extends React.Component<InternalProps, State> {
                         { '<a>Sign in</a> to translate.' }
                     </p>
                 </Localized>
+            : this.props.selectedEntity.readonly ?
+                <Localized
+                    id="editor-editor-read-only-localization"
+                >
+                    <p className='banner'>This is a read-only localization.</p>
+                </Localized>
             :
             <React.Fragment>
                 <EditorSettings
