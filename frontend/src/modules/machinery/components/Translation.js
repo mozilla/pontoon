@@ -61,6 +61,7 @@ export default class Translation extends React.Component<Props> {
                                 title={ source.title }
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
                             >
                                 <span>{ source.type }</span>
                                 { !source.count ? null :
