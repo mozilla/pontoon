@@ -35,7 +35,7 @@ type Props = {|
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
     updateTranslationStatus: (number, string) => void,
-    fetchMachinery: () => void,
+    fetchMachinery: (string) => void,
 |};
 
 

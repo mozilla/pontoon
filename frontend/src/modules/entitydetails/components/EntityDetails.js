@@ -38,7 +38,7 @@ type Props = {|
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
-    locale: ?Locale,
+    locale: Locale,
     machinery: MachineryState,
     nextEntity: DbEntity,
     previousEntity: DbEntity,
@@ -97,9 +97,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 
-    fetchMachinery = () => {
+    fetchMachinery = (query: string) => {
         const { dispatch, locale, selectedEntity } = this.props;
-        dispatch(machinery.actions.get(selectedEntity, locale));
+
+        // Deep copy entity to avoid mutating state
+        const entity = JSON.parse(JSON.stringify(selectedEntity));
+
+        // On empty query, use source string as input
+        if (entity && query.length) {
+            entity.original = query;
+        }
+
+        dispatch(machinery.actions.get(entity, locale));
     }
 
     goToNextEntity = () => {

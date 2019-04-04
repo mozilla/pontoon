@@ -18,7 +18,7 @@ type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
-    fetchMachinery: () => void,
+    fetchMachinery: (string) => void,
 |};
 
 
@@ -36,7 +36,7 @@ export default class Machinery extends React.Component<Props> {
         // On Enter, trigger custom Machinery search
         if (key === 13) {
             event.preventDefault();
-            this.props.fetchMachinery();
+            this.props.fetchMachinery(event.currentTarget.value);
         }
     }
 
