@@ -18,7 +18,7 @@ type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
-    fetchMachinery: (string) => void,
+    customMachinerySearch: (string) => void,
 |};
 
 
@@ -33,10 +33,10 @@ export default class Machinery extends React.Component<Props> {
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
-        // On Enter, trigger custom Machinery search
+        // On Enter, search Machinery with custom query
         if (key === 13) {
             event.preventDefault();
-            this.props.fetchMachinery(event.currentTarget.value);
+            this.props.customMachinerySearch(event.currentTarget.value);
         }
     }
 
