@@ -78,6 +78,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
             highlightSelectedWord: false,
             printMargin: false,
             printMarginColumn: false,
+            readOnly: this.props.isReadOnlyEditor,
             scrollPastEnd: false,
             showInvisibles: false,
             showFoldWidgets: false,

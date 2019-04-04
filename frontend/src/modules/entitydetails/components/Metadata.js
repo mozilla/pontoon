@@ -40,6 +40,7 @@ class Property extends React.Component<PropertyProps> {
 
 type Props = {|
     +entity: DbEntity,
+    +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
     +openLightbox: (string) => void,
@@ -60,6 +61,9 @@ type Props = {|
  */
 export default class Metadata extends React.Component<Props> {
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
+        if (this.props.isReadOnlyEditor) {
+            return;
+        }
         // Flow requires that we use `e.currentTarget` instead of `e.target`.
         // However in this case, we do want to use that, so I'm ignoring all
         // errors Flow throws there.

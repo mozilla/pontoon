@@ -14,6 +14,7 @@ import type { MachineryState } from '..';
 
 type Props = {|
     entity: DbEntity,
+    isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
@@ -29,7 +30,13 @@ type Props = {|
  */
 export default class Machinery extends React.Component<Props> {
     render() {
-        const { entity, locale, machinery, updateEditorTranslation } = this.props;
+        const {
+            entity,
+            isReadOnlyEditor,
+            locale,
+            machinery,
+            updateEditorTranslation,
+        } = this.props;
 
         if (!locale) {
             return null;
@@ -46,6 +53,7 @@ export default class Machinery extends React.Component<Props> {
                 { machinery.translations.map((translation, index) => {
                     return <Translation
                         entity={ entity }
+                        isReadOnlyEditor={ isReadOnlyEditor }
                         locale={ locale }
                         translation={ translation }
                         updateEditorTranslation={ updateEditorTranslation }
