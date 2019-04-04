@@ -2,28 +2,21 @@
 
 import { createSelector } from 'reselect';
 
-import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 import * as user from 'core/user';
 
-import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { DbEntity, Entities } from 'modules/entitieslist';
+import type { DbEntity } from 'modules/entitieslist';
 
 
-const entitiesSelector = (state): string => state[entitieslist.NAME].entities;
 const userSelector = (state): UserState => state[user.NAME];
 
 
 export function _getTranslationForSelectedEntity(
-    entities: Entities,
-    params: NavigationParams,
+    entity: DbEntity,
     pluralForm: number,
 ): string {
-    const entityId = params.entity;
-    const entity = entities.find(element => element.pk === entityId);
-
     if (pluralForm === -1) {
         pluralForm = 0;
     }
@@ -47,8 +40,7 @@ export function _getTranslationForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationForSelectedEntity: Function = createSelector(
-    entitiesSelector,
-    navigation.selectors.getNavigationParams,
+    entitieslist.selectors.getSelectedEntity,
     plural.selectors.getPluralForm,
     _getTranslationForSelectedEntity
 );
