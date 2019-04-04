@@ -108,6 +108,7 @@ export default class Translation extends React.Component<Props, State> {
             title={ this.getApprovalTitle() }
             target='_blank'
             rel='noopener noreferrer'
+            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
         >
             { translation.user }
         </a>
