@@ -14,6 +14,7 @@ import type { HistoryState } from '..';
 
 type Props = {|
     history: HistoryState,
+    isReadOnlyEditor: boolean,
     isTranslator: boolean,
     locale: Locale,
     user: UserState,
@@ -40,6 +41,7 @@ export default class History extends React.Component<Props> {
     render() {
         const {
             history,
+            isReadOnlyEditor,
             isTranslator,
             locale,
             user,
@@ -62,6 +64,7 @@ export default class History extends React.Component<Props> {
                     return <Translation
                         translation={ translation }
                         activeTranslation={ history.translations[0] }
+                        isReadOnlyEditor={ isReadOnlyEditor }
                         canReview={ isTranslator }
                         locale={ locale }
                         user={ user }

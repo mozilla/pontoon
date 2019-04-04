@@ -32,6 +32,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
 
         if (entity.format === 'ftl') {
             return <FluentEditor
+                isReadOnlyEditor={ this.props.isReadOnlyEditor }
                 editor={ this.props.editor }
                 translation={ this.props.translation }
                 locale={ this.props.locale }
@@ -43,6 +44,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
         }
 
         return <GenericEditor
+            isReadOnlyEditor={ this.props.isReadOnlyEditor }
             editor={ this.props.editor }
             translation={ this.props.translation }
             locale={ this.props.locale }

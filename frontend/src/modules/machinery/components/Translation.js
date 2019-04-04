@@ -16,6 +16,7 @@ import type { Locale } from 'core/locales';
 
 type Props = {|
     entity: DbEntity,
+    isReadOnlyEditor: boolean,
     locale: Locale,
     translation: api.types.MachineryTranslation,
     updateEditorTranslation: (string) => void,
@@ -31,6 +32,9 @@ type Props = {|
  */
 export default class Translation extends React.Component<Props> {
     copyTranslationIntoEditor = () => {
+        if (this.props.isReadOnlyEditor) {
+            return;
+        }
         this.props.updateEditorTranslation(this.props.translation.translation);
     }
 

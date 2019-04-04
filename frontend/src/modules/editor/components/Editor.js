@@ -27,6 +27,7 @@ import type { EditorState } from '../reducer';
 type Props = {|
     activeTranslation: string,
     editor: EditorState,
+    isReadOnlyEditor: boolean,
     locale: ?Locale,
     nextEntity: DbEntity,
     pluralForm: number,
@@ -143,6 +144,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
         return <div className="editor">
             <plural.PluralSelector />
             <EditorProxy
+                isReadOnlyEditor={ this.props.isReadOnlyEditor }
                 entity={ this.props.selectedEntity }
                 editor={ this.props.editor }
                 translation={ this.state.translation }
@@ -163,6 +165,12 @@ export class EditorBase extends React.Component<InternalProps, State> {
                     <p className='banner'>
                         { '<a>Sign in</a> to translate.' }
                     </p>
+                </Localized>
+            : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
+                <Localized
+                    id="editor-editor-read-only-localization"
+                >
+                    <p className='banner'>This is a read-only localization.</p>
                 </Localized>
             :
             <React.Fragment>
@@ -223,6 +231,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
         editor: state[NAME],
+        isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         nextEntity: entitieslist.selectors.getNextEntity(state),
         pluralForm: plural.selectors.getPluralForm(state),
