@@ -5,38 +5,35 @@ import {
 
 
 describe('selectors', () => {
-    const entities = [
-        {
-            pk: 1,
-            readonly: false,
-            translation: [
-                {
-                    string: 'hello',
-                },
-            ],
-        },
-        {
-            pk: 2,
-            readonly: true,
-            translation: [
-                {
-                    string: 'world',
-                },
-            ],
-        },
-        {
-            pk: 3,
-            readonly: false,
-            translation: [
-                {
-                    string: 'wat',
-                    rejected: true,
-                },
-            ],
-        },
-    ];
-
     describe('getTranslationForSelectedEntity', () => {
+        const entities = [
+            {
+                pk: 1,
+                translation: [
+                    {
+                        string: 'hello',
+                    },
+                ],
+            },
+            {
+                pk: 2,
+                translation: [
+                    {
+                        string: 'world',
+                    },
+                ],
+            },
+            {
+                pk: 3,
+                translation: [
+                    {
+                        string: 'wat',
+                        rejected: true,
+                    },
+                ],
+            },
+        ];
+
         it('returns the correct string', () => {
             const navigation = {
                 entity: 2,
@@ -58,37 +55,37 @@ describe('selectors', () => {
 
     describe('isReadOnlyEditor', () => {
         it('returns true if user not authenticated', () => {
-            const navigation = {
-                entity: 1,
+            const entity = {
+                readonly: false,
             };
             const user = {
                 isAuthenticated: false,
             };
-            const res = _isReadOnlyEditor(entities, navigation, user);
+            const res = _isReadOnlyEditor(entity, user);
 
             expect(res).toBeTruthy();
         });
 
         it('returns true if entity read-only', () => {
-            const navigation = {
-                entity: 2,
+            const entity = {
+                readonly: true,
             };
             const user = {
                 isAuthenticated: true,
             };
-            const res = _isReadOnlyEditor(entities, navigation, user);
+            const res = _isReadOnlyEditor(entity, user);
 
             expect(res).toBeTruthy();
         });
 
         it('returns false if entity not read-only and user authenticated', () => {
-            const navigation = {
-                entity: 1,
+            const entity = {
+                readonly: false,
             };
             const user = {
                 isAuthenticated: true,
             };
-            const res = _isReadOnlyEditor(entities, navigation, user);
+            const res = _isReadOnlyEditor(entity, user);
 
             expect(res).toBeFalsy();
         });

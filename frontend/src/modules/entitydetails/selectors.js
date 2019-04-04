@@ -9,7 +9,7 @@ import * as user from 'core/user';
 
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { Entities } from 'modules/entitieslist';
+import type { DbEntity, Entities } from 'modules/entitieslist';
 
 
 const entitiesSelector = (state): string => state[entitieslist.NAME].entities;
@@ -55,14 +55,11 @@ export const getTranslationForSelectedEntity: Function = createSelector(
 
 
 export function _isReadOnlyEditor(
-    entities: Entities,
-    params: NavigationParams,
+    entity: DbEntity,
     user: UserState,
 ): boolean {
-    const selectedEntity = entities.find(element => element.pk === params.entity);
-
     return (
-        (selectedEntity && selectedEntity.readonly) ||
+        (entity && entity.readonly) ||
         !user.isAuthenticated
     );
 }
@@ -74,8 +71,7 @@ export function _isReadOnlyEditor(
  *   - the user is not authenticated
  */
 export const isReadOnlyEditor: Function = createSelector(
-    entitiesSelector,
-    navigation.selectors.getNavigationParams,
+    entitieslist.selectors.getSelectedEntity,
     userSelector,
     _isReadOnlyEditor
 );
