@@ -56,6 +56,7 @@ function expectHiddenSettingsAndActions(wrapper) {
     expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
 }
 
+
 describe('<EditorBase>', () => {
     beforeAll(() => {
         sinon.stub(editor.actions, 'sendTranslation').returns({ type: 'whatever' });
@@ -146,7 +147,7 @@ describe('<EditorBase>', () => {
             ...SELECTED_ENTITY,
             readonly: true,
         }
-        const wrapper = createEditorBase({ selectedEntity: selectedEntity });
+        const wrapper = createEditorBase({ selectedEntity });
 
         expectHiddenSettingsAndActions(wrapper);
 

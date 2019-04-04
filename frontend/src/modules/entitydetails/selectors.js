@@ -7,9 +7,9 @@ import * as plural from 'core/plural';
 import * as entitieslist from 'modules/entitieslist';
 import * as user from 'core/user';
 
-import type { DbEntity, Entities } from 'modules/entitieslist';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { Entities } from 'modules/entitieslist';
 
 
 const entitiesSelector = (state): string => state[entitieslist.NAME].entities;

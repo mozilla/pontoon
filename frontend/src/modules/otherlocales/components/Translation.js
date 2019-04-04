@@ -40,9 +40,9 @@ export default class Translation extends React.Component<Props> {
 
         return <Localized id='otherlocales-translation-copy' attrs={{ title: true }}>
             <li
-            className={ className }
-            title='Copy Into Translation (Tab)'
-            onClick={ this.copyTranslationIntoEditor }
+                className={ className }
+                title='Copy Into Translation (Tab)'
+                onClick={ this.copyTranslationIntoEditor }
             >
                 <header>
                     <a
