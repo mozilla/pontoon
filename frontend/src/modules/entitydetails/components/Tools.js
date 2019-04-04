@@ -35,6 +35,7 @@ type Props = {|
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
     updateTranslationStatus: (number, string) => void,
+    fetchMachinery: () => void,
 |};
 
 
@@ -60,6 +61,7 @@ export default class Tools extends React.Component<Props> {
             deleteTranslation,
             updateEditorTranslation,
             updateTranslationStatus,
+            fetchMachinery,
         } = this.props;
 
         const historyCount = history.translations.length;
@@ -110,6 +112,7 @@ export default class Tools extends React.Component<Props> {
                     locale={ locale }
                     machinery={ machinery }
                     updateEditorTranslation={ updateEditorTranslation }
+                    fetchMachinery={ fetchMachinery }
                 />
             </TabPanel>
             <TabPanel>

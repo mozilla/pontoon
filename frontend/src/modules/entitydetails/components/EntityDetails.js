@@ -97,6 +97,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 
+    fetchMachinery = () => {
+        const { dispatch, locale, selectedEntity } = this.props;
+        dispatch(machinery.actions.get(selectedEntity, locale));
+    }
+
     goToNextEntity = () => {
         const { router, nextEntity } = this.props;
 
@@ -195,6 +200,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 deleteTranslation={ this.deleteTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
                 updateEditorTranslation={ this.updateEditorTranslation }
+                fetchMachinery={ this.fetchMachinery }
             />
         </section>;
     }
