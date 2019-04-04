@@ -29,6 +29,16 @@ type Props = {|
  * third-party Machine Translation.
  */
 export default class Machinery extends React.Component<Props> {
+    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+        const key = event.keyCode;
+
+        // On Enter, trigger custom Machinery search
+        if (key === 13) {
+            event.preventDefault();
+            console.log("TODO: Refresh Machinery");
+        }
+    }
+
     render() {
         const {
             entity,
@@ -46,7 +56,12 @@ export default class Machinery extends React.Component<Props> {
             <div className="search-wrapper clearfix">
                 <div className="icon fa fa-search"></div>
                 <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
-                    <input type="search" autoComplete="off" placeholder="Type to search machinery" />
+                    <input
+                        type="search"
+                        autoComplete="off"
+                        placeholder="Type to search machinery"
+                        onKeyDown={ this.handleShortcuts }
+                    />
                 </Localized>
             </div>
             <ul>
