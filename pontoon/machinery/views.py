@@ -7,7 +7,6 @@ from six.moves.urllib.parse import quote
 
 from collections import defaultdict
 
-from django import http
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -244,21 +243,19 @@ def caighdean(request):
     if Translator is None:
         # This can happen only if you start Pontoon while offline. See comments
         # around the import of caighdean.
-        return http.HttpResponseServerError(
-            json.dumps({
-                'error': 500,
-                'message': 'Caighdean is unavailable offline',
-            }),
-            content_type='application/json',
-        )
+        return JsonResponse({
+            'status': False,
+            'message': 'Server Error: {error}'.format(error='Caighdean is unavailable offline'),
+        }, status=500)
 
     try:
         translation = Translator().translate(text)
         return JsonResponse({'original': text, 'translation': translation})
     except TranslationError as e:
-        return http.HttpResponseServerError(
-            json.dumps(dict(error=500, message=str(e))),
-            content_type='application/json')
+        return JsonResponse({
+            'status': False,
+            'message': 'Server Error: {error}'.format(error=str(e)),
+        }, status=500)
 
 
 def microsoft_terminology(request):
