@@ -10,7 +10,7 @@ from collections import defaultdict
 from django import http
 from django.conf import settings
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, get_list_or_404, render
+from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import escape
@@ -56,7 +56,15 @@ def translation_memory(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     max_results = 5
-    locale = get_object_or_404(Locale, code=locale)
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist:
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=str(e)),
+        }, status=404)
+
     entries = (
         TranslationMemoryEntry.objects
         .filter(locale=locale)
@@ -99,7 +107,11 @@ def microsoft_translator(request):
         return HttpResponseBadRequest("Missing api key.")
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_list_or_404(Locale, ms_translator_code=locale_code)
+    if not Locale.objects.filter(ms_translator_code=locale_code).exists():
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=locale_code),
+        }, status=404)
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {
@@ -147,7 +159,11 @@ def google_translate(request):
         return HttpResponseBadRequest('Missing api key.')
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_list_or_404(Locale, google_translate_code=locale_code)
+    if not Locale.objects.filter(google_translate_code=locale_code).exists():
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=locale_code),
+        }, status=404)
 
     url = 'https://translation.googleapis.com/language/translate/v2'
 
@@ -187,11 +203,12 @@ def caighdean(request):
             content_type='application/json')
 
     try:
-        entity = get_object_or_404(Entity, id=entityid)
-    except http.Http404 as e:
-        return http.HttpResponseNotFound(
-            json.dumps(dict(error=404, message=str(e))),
-            content_type='application/json')
+        entity = Entity.objects.get(id=entityid)
+    except Entity.DoesNotExist:
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=str(e)),
+        }, status=404)
 
     try:
         text = entity.translation_set.get(locale__code='gd').string
@@ -227,7 +244,11 @@ def microsoft_terminology(request):
         return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    get_list_or_404(Locale, ms_terminology_code=locale_code)
+    if not Locale.objects.filter(ms_terminology_code=locale_code).exists():
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=locale_code),
+        }, status=404)
 
     obj = {}
     url = 'http://api.terminology.microsoft.com/Terminology.svc'
