@@ -31,10 +31,14 @@ export function addTranslations(
  */
 export type ResetAction = {
     +type: typeof RESET,
+    +sourceString: string,
 };
-export function reset(): ResetAction {
+export function reset(
+    sourceString: string
+): ResetAction {
     return {
         type: RESET,
+        sourceString: sourceString,
     };
 }
 
@@ -52,7 +56,7 @@ export function reset(): ResetAction {
  */
 export function get(source: string, locale: Locale, pk: ?number): Function {
     return async dispatch => {
-        dispatch(reset());
+        dispatch(reset(source));
 
         api.machinery.getTranslationMemory(source, locale, pk)
         .then(results => dispatch(addTranslations(results)));

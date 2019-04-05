@@ -15,6 +15,7 @@ type Action =
 type Translations = Array<api.types.MachineryTranslation>;
 
 export type MachineryState = {|
+    sourceString: string,
     translations: Translations,
 |};
 
@@ -73,6 +74,7 @@ function dedupedTranslations(
 
 
 const initial: MachineryState = {
+    sourceString: '',
     translations: [],
 };
 
@@ -92,6 +94,7 @@ export default function reducer(
         case RESET:
             return {
                 ...state,
+                sourceString: action.sourceString,
                 translations: [],
             };
         default:

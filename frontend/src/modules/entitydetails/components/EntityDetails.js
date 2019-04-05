@@ -196,7 +196,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             />
             <editor.Editor />
             <Tools
-                entity={ state.selectedEntity }
                 history={ state.history }
                 isReadOnlyEditor={ state.isReadOnlyEditor }
                 isTranslator={ state.isTranslator }

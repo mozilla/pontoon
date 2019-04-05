@@ -7,13 +7,11 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
-import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 import type { MachineryState } from '..';
 
 
 type Props = {|
-    entity: DbEntity,
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
@@ -37,7 +35,6 @@ export default class Machinery extends React.Component<Props> {
 
     render() {
         const {
-            entity,
             isReadOnlyEditor,
             locale,
             machinery,
@@ -64,7 +61,7 @@ export default class Machinery extends React.Component<Props> {
             <ul>
                 { machinery.translations.map((translation, index) => {
                     return <Translation
-                        entity={ entity }
+                        sourceString={ machinery.sourceString }
                         isReadOnlyEditor={ isReadOnlyEditor }
                         locale={ locale }
                         translation={ translation }
