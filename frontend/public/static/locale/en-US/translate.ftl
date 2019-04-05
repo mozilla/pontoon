@@ -69,6 +69,7 @@ editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
 machinery-machinery-search-placeholder =
     .placeholder = Type to search machinery
 
+
 ## Machinery Translation
 ## Shows a specific translation from machinery
 
@@ -108,6 +109,14 @@ entitydetails-metadata-resource =
 
 entitydetails-metadata-project =
     .title = Project
+
+
+## Helpers
+## Shows helper tabs
+
+entitydetails-Helpers--history = History
+entitydetails-Helpers--machinery = Machinery
+entitydetails-Helpers--locales = Locales
 
 
 ## History
