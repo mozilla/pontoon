@@ -18,7 +18,7 @@ type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
-    customMachinerySearch: (string) => void,
+    searchMachinery: (string) => void,
 |};
 
 
@@ -32,7 +32,7 @@ type Props = {|
 export default class Machinery extends React.Component<Props> {
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
-        this.props.customMachinerySearch(event.currentTarget[0].value);
+        this.props.searchMachinery(event.currentTarget[0].value);
     }
 
     render() {

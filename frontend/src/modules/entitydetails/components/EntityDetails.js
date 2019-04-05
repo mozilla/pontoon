@@ -97,7 +97,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
     }
 
-    customMachinerySearch = (query: string) => {
+    searchMachinery = (query: string) => {
         const { dispatch, locale, selectedEntity } = this.props;
 
         // Deep copy entity to avoid mutating state
@@ -209,7 +209,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 deleteTranslation={ this.deleteTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
                 updateEditorTranslation={ this.updateEditorTranslation }
-                customMachinerySearch={ this.customMachinerySearch }
+                searchMachinery={ this.searchMachinery }
             />
         </section>;
     }
