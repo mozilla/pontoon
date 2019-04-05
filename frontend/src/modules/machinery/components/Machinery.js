@@ -28,9 +28,16 @@ type Props = {|
  * third-party Machine Translation.
  */
 export default class Machinery extends React.Component<Props> {
+    searchInput: { current: any };
+
+    constructor(props: Props) {
+        super(props);
+        this.searchInput = React.createRef();
+    }
+
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
-        this.props.searchMachinery(event.currentTarget[0].value);
+        this.props.searchMachinery(this.searchInput.current.value);
     }
 
     render() {
@@ -54,6 +61,7 @@ export default class Machinery extends React.Component<Props> {
                             type="search"
                             autoComplete="off"
                             placeholder="Type to search machinery"
+                            ref={ this.searchInput }
                         />
                     </Localized>
                 </form>
