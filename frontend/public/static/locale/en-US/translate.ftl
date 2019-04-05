@@ -159,7 +159,15 @@ otherlocales-translation-copy =
     .title = Copy Into Translation (Tab)
 
 
-## User
+## User Notifications
+## Shows user notifications menu.
+
+user-UserNotifications--no-notifications-title = No new notifications.
+user-UserNotifications--no-notifications-description = Here you’ll see updates for localizations you contribute to.
+user-UserNotifications--see-all-notifications = See all Notifications
+
+
+## User Menu
 ## Shows user menu entries and options to sign in or out.
 
 user-AppSwitcher--leave-translate-next = Leave Translate.Next

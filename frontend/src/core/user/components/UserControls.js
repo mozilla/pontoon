@@ -10,6 +10,7 @@ import * as user from 'core/user';
 import AppSwitcher from './AppSwitcher';
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';
+import UserNotifications from './UserNotifications';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
@@ -55,6 +56,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
                 isTranslator={ isTranslator }
                 parameters={ parameters }
                 signOut={ this.signUserOut }
+                user={ user }
+            />
+
+            <UserNotifications
                 user={ user }
             />
 
