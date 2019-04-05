@@ -9,7 +9,7 @@ from collections import defaultdict
 
 from django import http
 from django.conf import settings
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
@@ -53,7 +53,10 @@ def translation_memory(request):
         locale = request.GET['locale']
         pk = request.GET['pk']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     max_results = 5
 
@@ -98,13 +101,19 @@ def microsoft_translator(request):
         text = request.GET['text']
         locale_code = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
 
     if not api_key:
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
-        return HttpResponseBadRequest("Missing api key.")
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error='Missing api key.'),
+        }, status=400)
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(ms_translator_code=locale_code).exists():
@@ -134,14 +143,20 @@ def microsoft_translator(request):
 
         if 'error' in root:
             log.error('Microsoft Translator error: {error}'.format(error=root))
-            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
+            return JsonResponse({
+                'status': False,
+                'message': 'Bad Request: {error}'.format(error=root),
+            }, status=400)
 
         return JsonResponse({
             'translation': root[0]['translations'][0]['text'],
         })
 
     except requests.exceptions.RequestException as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
 
 def google_translate(request):
@@ -150,13 +165,19 @@ def google_translate(request):
         text = request.GET['text']
         locale_code = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
         log.error('GOOGLE_TRANSLATE_API_KEY not set')
-        return HttpResponseBadRequest('Missing api key.')
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error='Missing api key.'),
+        }, status=400)
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(google_translate_code=locale_code).exists():
@@ -181,14 +202,20 @@ def google_translate(request):
 
         if 'data' not in root:
             log.error('Google Translate error: {error}'.format(error=root))
-            return HttpResponseBadRequest('Bad Request: {error}'.format(error=root))
+            return JsonResponse({
+                'status': False,
+                'message': 'Bad Request: {error}'.format(error=root),
+            }, status=400)
 
         return JsonResponse({
             'translation': root['data']['translations'][0]['translatedText'],
         })
 
     except requests.exceptions.RequestException as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
 
 def caighdean(request):
@@ -196,11 +223,10 @@ def caighdean(request):
     try:
         entityid = int(request.GET['id'])
     except (MultiValueDictKeyError, ValueError) as e:
-        return HttpResponseBadRequest(
-            json.dumps(
-                dict(error=400,
-                     message='Bad Request: {error}'.format(error=e))),
-            content_type='application/json')
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         entity = Entity.objects.get(id=entityid)
@@ -241,7 +267,10 @@ def microsoft_terminology(request):
         text = request.GET['text']
         locale_code = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(ms_terminology_code=locale_code).exists():
@@ -287,7 +316,10 @@ def microsoft_terminology(request):
         return JsonResponse(obj)
 
     except requests.exceptions.RequestException as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
 
 def transvision(request):
@@ -296,12 +328,18 @@ def transvision(request):
         text = request.GET['text']
         locale = request.GET['locale']
     except MultiValueDictKeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     try:
         text = quote(text.encode('utf-8'))
     except KeyError as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     url = (
         u'https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/'
@@ -319,9 +357,15 @@ def transvision(request):
             error = r.json()['error']
             log.error('Transvision error: {error}'.format(error=error))
             error = escape(error)
-            return HttpResponseBadRequest('Bad Request: {error}'.format(error=error))
+            return JsonResponse({
+                'status': False,
+                'message': 'Bad Request: {error}'.format(error=error),
+            }, status=400)
 
         return JsonResponse(r.json(), safe=False)
 
     except requests.exceptions.RequestException as e:
-        return HttpResponseBadRequest('Bad Request: {error}'.format(error=e))
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
