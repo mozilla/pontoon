@@ -111,7 +111,7 @@ def microsoft_translator(request):
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
         return JsonResponse({
             'status': False,
-            'message': 'Bad Request: {error}'.format(error='Missing api key.'),
+            'message': 'Bad Request: Missing api key.',
         }, status=400)
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
@@ -175,7 +175,7 @@ def google_translate(request):
         log.error('GOOGLE_TRANSLATE_API_KEY not set')
         return JsonResponse({
             'status': False,
-            'message': 'Bad Request: {error}'.format(error='Missing api key.'),
+            'message': 'Bad Request: Missing api key.',
         }, status=400)
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
@@ -245,7 +245,7 @@ def caighdean(request):
         # around the import of caighdean.
         return JsonResponse({
             'status': False,
-            'message': 'Server Error: {error}'.format(error='Caighdean is unavailable offline'),
+            'message': 'Server Error: Caighdean is unavailable offline.',
         }, status=500)
 
     try:
