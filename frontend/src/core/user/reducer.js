@@ -62,6 +62,7 @@ export type UserState = {|
     +signOutURL: string,
     +gravatarURLSmall: string,
     +gravatarURLBig: string,
+    +notifications: Array,
 |};
 
 const initial: UserState = {
@@ -81,6 +82,7 @@ const initial: UserState = {
     signOutURL: '',
     gravatarURLSmall: '',
     gravatarURLBig: '',
+    notifications: [],
 };
 
 export default function reducer(
@@ -106,6 +108,7 @@ export default function reducer(
                 signOutURL: action.data.logout_url,
                 gravatarURLSmall: action.data.gravatar_url_small,
                 gravatarURLBig: action.data.gravatar_url_big,
+                notifications: action.data.notifications,
             };
         case UPDATE_SETTINGS:
             return {

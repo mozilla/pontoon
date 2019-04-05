@@ -255,6 +255,62 @@ def menu_notifications(self):
     return self.notifications.prefetch_related('actor', 'target')[:count]
 
 
+@property
+def serialized_notifications(self):
+    """Serialized list of notifications to display in the notifications menu."""
+    unread_count = self.notifications.unread().count()
+    count = settings.NOTIFICATIONS_MAX_COUNT
+
+    if unread_count > count:
+        count = unread_count
+
+    source = self.notifications.prefetch_related('actor', 'target')[:count]
+    target = []
+
+    for notification in source:
+        if hasattr(notification.actor, 'slug'):
+            actor_anchor = notification.actor.name
+            actor_url = reverse('pontoon.projects.project', kwargs={
+                'slug': notification.actor.slug
+            })
+        elif hasattr(notification.actor, 'email'):
+            actor_anchor = notification.actor.name_or_email
+            actor_url = reverse('pontoon.contributors.contributor.username', kwargs={
+                'username': notification.actor.username
+            })
+
+        target_anchor = None
+        target_url = None
+        if notification.target:
+            target_anchor = notification.target.name
+            target_url = reverse('pontoon.projects.project', kwargs={
+                'slug': notification.target.slug
+            })
+
+        target.append({
+            'id': notification.id,
+            'level': notification.level,
+            'unread': notification.unread,
+            'description': notification.description,
+            'verb': notification.verb,
+            'timeago': notification.timesince(),
+            'actor': {
+                'anchor': actor_anchor,
+                'url': actor_url,
+            },
+            'target': {
+                'anchor': target_anchor,
+                'url': target_url,
+            },
+            'target': notification.target.slug if notification.target else None,
+        })
+
+    return {
+        'has_unread': unread_count > 0,
+        'notifications': target,
+    }
+
+
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
 User.add_to_class('name_or_email', user_name_or_email)
@@ -270,6 +326,7 @@ User.add_to_class('contributed_translations', contributed_translations)
 User.add_to_class('top_contributed_locale', top_contributed_locale)
 User.add_to_class('can_translate', can_translate)
 User.add_to_class('menu_notifications', menu_notifications)
+User.add_to_class('serialized_notifications', serialized_notifications)
 
 
 class UserProfile(models.Model):
