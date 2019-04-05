@@ -7,17 +7,16 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
-import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 import type { MachineryState } from '..';
 
 
 type Props = {|
-    entity: DbEntity,
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string) => void,
+    searchMachinery: (string) => void,
 |};
 
 
@@ -29,9 +28,20 @@ type Props = {|
  * third-party Machine Translation.
  */
 export default class Machinery extends React.Component<Props> {
+    searchInput: { current: any };
+
+    constructor(props: Props) {
+        super(props);
+        this.searchInput = React.createRef();
+    }
+
+    submitForm = (event: SyntheticKeyboardEvent<>) => {
+        event.preventDefault();
+        this.props.searchMachinery(this.searchInput.current.value);
+    }
+
     render() {
         const {
-            entity,
             isReadOnlyEditor,
             locale,
             machinery,
@@ -45,14 +55,21 @@ export default class Machinery extends React.Component<Props> {
         return <section className="machinery">
             <div className="search-wrapper clearfix">
                 <div className="icon fa fa-search"></div>
-                <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
-                    <input type="search" autoComplete="off" placeholder="Type to search machinery" />
-                </Localized>
+                <form onSubmit={ this.submitForm }>
+                    <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
+                        <input
+                            type="search"
+                            autoComplete="off"
+                            placeholder="Type to search machinery"
+                            ref={ this.searchInput }
+                        />
+                    </Localized>
+                </form>
             </div>
             <ul>
                 { machinery.translations.map((translation, index) => {
                     return <Translation
-                        entity={ entity }
+                        sourceString={ machinery.sourceString }
                         isReadOnlyEditor={ isReadOnlyEditor }
                         locale={ locale }
                         translation={ translation }

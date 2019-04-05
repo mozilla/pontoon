@@ -208,7 +208,7 @@ def test_view_caighdean_bad(client, entity_a):
     assert response.get("Content-Type") == 'application/json'
     assert (
         json.loads(response.content)["message"]
-        == "No Entity matches the given query."
+        == 'Not Found: Entity matching query does not exist.'
     )
 
     translator = caighdean.Translator()
@@ -225,7 +225,7 @@ def test_view_caighdean_bad(client, entity_a):
     assert response.get("Content-Type") == 'application/json'
     assert (
         json.loads(response.content)["message"]
-        == 'Unable to connect to translation service'
+        == 'Server Error: Unable to connect to translation service'
     )
 
 

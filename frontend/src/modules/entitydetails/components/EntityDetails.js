@@ -38,7 +38,7 @@ type Props = {|
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
-    locale: ?Locale,
+    locale: Locale,
     machinery: MachineryState,
     nextEntity: DbEntity,
     previousEntity: DbEntity,
@@ -93,8 +93,23 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
-        dispatch(machinery.actions.get(selectedEntity, locale));
+        dispatch(machinery.actions.get(selectedEntity.original, locale, selectedEntity.pk));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+    }
+
+    searchMachinery = (query: string) => {
+        const { dispatch, locale, selectedEntity } = this.props;
+
+        let source = query;
+        let pk = null;
+
+        // On empty query, use source string as input
+        if (selectedEntity && !query.length) {
+            source = selectedEntity.original;
+            pk = selectedEntity.pk;
+        }
+
+        dispatch(machinery.actions.get(source, locale, pk));
     }
 
     goToNextEntity = () => {
@@ -181,7 +196,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             />
             <editor.Editor />
             <Tools
-                entity={ state.selectedEntity }
                 history={ state.history }
                 isReadOnlyEditor={ state.isReadOnlyEditor }
                 isTranslator={ state.isTranslator }
@@ -195,6 +209,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 deleteTranslation={ this.deleteTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
                 updateEditorTranslation={ this.updateEditorTranslation }
+                searchMachinery={ this.searchMachinery }
             />
         </section>;
     }

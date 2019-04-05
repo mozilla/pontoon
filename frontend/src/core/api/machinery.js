@@ -3,7 +3,6 @@
 import APIBase from './base';
 
 import type { Locale } from 'core/locales';
-import type { DbEntity } from 'modules/entitieslist';
 import type { MachineryTranslation } from './types';
 
 
@@ -26,12 +25,12 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translations from Pontoon's memory.
      */
-    async getTranslationMemory(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getTranslationMemory(source: string, locale: Locale, pk: ?number): Promise<Translations> {
         const url = '/translation-memory/';
         const params = {
-            text: entity.original,
+            text: source,
             locale: locale.code,
-            pk: entity.pk,
+            pk: (pk || '').toString(),
         };
 
         const results = await this._get(url, params);
@@ -54,10 +53,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translation by Google Translate.
      */
-    async getGoogleTranslation(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getGoogleTranslation(source: string, locale: Locale): Promise<Translations> {
         const url = '/google-translate/';
         const params = {
-            text: entity.original,
+            text: source,
             locale: locale.googleTranslateCode,
         };
 
@@ -73,7 +72,7 @@ export default class MachineryAPI extends APIBase {
                 url: 'https://translate.google.com/',
                 title: 'Visit Google Translate',
             }],
-            original: entity.original,
+            original: source,
             translation: result.translation,
         }];
     }
@@ -81,10 +80,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translation by Microsoft Translator.
      */
-    async getMicrosoftTranslation(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getMicrosoftTranslation(source: string, locale: Locale): Promise<Translations> {
         const url = '/microsoft-translator/';
         const params = {
-            text: entity.original,
+            text: source,
             locale: locale.msTranslatorCode,
         };
 
@@ -100,7 +99,7 @@ export default class MachineryAPI extends APIBase {
                 url: 'https://www.bing.com/translator',
                 title: 'Visit Bing Translator',
             }],
-            original: entity.original,
+            original: source,
             translation: result.translation,
         }];
     }
@@ -108,10 +107,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translations from Microsoft Terminology.
      */
-    async getMicrosoftTerminology(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getMicrosoftTerminology(source: string, locale: Locale): Promise<Translations> {
         const url = '/microsoft-terminology/';
         const params = {
-            text: entity.original,
+            text: source,
             locale: locale.msTerminologyCode,
         };
 
@@ -140,10 +139,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translations from Transvision.
      */
-    async getTransvisionMemory(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getTransvisionMemory(source: string, locale: Locale): Promise<Translations> {
         const url = '/transvision/';
         const params = {
-            text: entity.original,
+            text: source,
             locale: locale.code,
         };
 
@@ -154,7 +153,7 @@ export default class MachineryAPI extends APIBase {
                 sources: [{
                     type: 'Mozilla',
                     url: 'https://transvision.mozfr.org/?repo=global' +
-                        '&recherche=' + encodeURIComponent(entity.original) +
+                        '&recherche=' + encodeURIComponent(source) +
                         '&locale=' + locale.code,
                     title: 'Visit Transvision',
                 }],
@@ -170,10 +169,10 @@ export default class MachineryAPI extends APIBase {
      *
      * Works only for the `ga-IE` locale.
      */
-    async getCaighdeanTranslation(entity: DbEntity, locale: Locale): Promise<Translations> {
+    async getCaighdeanTranslation(source: string, locale: Locale, pk: number): Promise<Translations> {
         const url = '/caighdean/';
         const params = {
-            id: entity.pk,
+            id: pk,
             locale: locale.code,
         };
 
