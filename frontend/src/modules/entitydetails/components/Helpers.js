@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { Localized } from 'fluent-react';
 
-import './Tools.css';
+import './Helpers.css';
 
 import api from 'core/api';
 
@@ -42,7 +43,7 @@ type Props = {|
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export default class Tools extends React.Component<Props> {
+export default class Helpers extends React.Component<Props> {
     render() {
         const {
             history,
@@ -68,19 +69,25 @@ export default class Tools extends React.Component<Props> {
         return <Tabs>
             <TabList>
                 <Tab>
-                    History
+                    <Localized id='entitydetails-Helpers--history'>
+                        { 'History' }
+                    </Localized>
                     { !historyCount ? null :
                     <span className={ 'count' }>{ historyCount }</span>
                     }
                 </Tab>
                 <Tab>
-                    Machinery
+                    <Localized id='entitydetails-Helpers--machinery'>
+                        { 'Machinery' }
+                    </Localized>
                     { !machineryCount ? null :
                     <MachineryCount machinery={ machinery } />
                     }
                 </Tab>
                 <Tab>
-                    Locales
+                    <Localized id='entitydetails-Helpers--locales'>
+                        { 'Locales' }
+                    </Localized>
                     { !otherlocalesCount ? null :
                     <OtherLocalesCount
                         otherlocales={ otherlocales }
