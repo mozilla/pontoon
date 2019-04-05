@@ -10,14 +10,13 @@ import api from 'core/api';
 import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
-import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 
 
 type Props = {|
-    entity: DbEntity,
     isReadOnlyEditor: boolean,
     locale: Locale,
+    sourceString: string,
     translation: api.types.MachineryTranslation,
     updateEditorTranslation: (string) => void,
 |};
@@ -39,7 +38,7 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { entity, locale, translation } = this.props;
+        const { locale, sourceString, translation } = this.props;
 
         const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
@@ -82,7 +81,7 @@ export default class Translation extends React.Component<Props> {
                     <TranslationPlaceablesDiff
                         diffTarget={ translation.original }
                     >
-                        { entity.original }
+                        { sourceString }
                     </TranslationPlaceablesDiff>
                 </p>
                 <p

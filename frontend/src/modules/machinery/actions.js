@@ -3,7 +3,6 @@
 import api from 'core/api';
 
 import type { Locale } from 'core/locales';
-import type { DbEntity } from 'modules/entitieslist';
 
 
 export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' = 'machinery/ADD_TRANSLATIONS';
@@ -32,16 +31,20 @@ export function addTranslations(
  */
 export type ResetAction = {
     +type: typeof RESET,
+    +sourceString: string,
 };
-export function reset(): ResetAction {
+export function reset(
+    sourceString: string
+): ResetAction {
     return {
         type: RESET,
+        sourceString: sourceString,
     };
 }
 
 
 /**
- * Get all machinery results for a given entity.
+ * Get all machinery results for a given source string and locale.
  *
  * This will fetch and return data from:
  *  - Translation Memory
@@ -51,31 +54,31 @@ export function reset(): ResetAction {
  *  - Transvision (if enabled for the locale)
  *  - Caighdean (if enabled for the locale)
  */
-export function get(entity: DbEntity, locale: Locale): Function {
+export function get(source: string, locale: Locale, pk: ?number): Function {
     return async dispatch => {
-        dispatch(reset());
+        dispatch(reset(source));
 
-        api.machinery.getTranslationMemory(entity, locale)
+        api.machinery.getTranslationMemory(source, locale, pk)
         .then(results => dispatch(addTranslations(results)));
 
-        api.machinery.getGoogleTranslation(entity, locale)
+        api.machinery.getGoogleTranslation(source, locale)
         .then(results => dispatch(addTranslations(results)));
 
-        api.machinery.getMicrosoftTranslation(entity, locale)
+        api.machinery.getMicrosoftTranslation(source, locale)
         .then(results => dispatch(addTranslations(results)));
 
         if (locale.msTerminologyCode) {
-            api.machinery.getMicrosoftTerminology(entity, locale)
+            api.machinery.getMicrosoftTerminology(source, locale)
             .then(results => dispatch(addTranslations(results)));
         }
 
         if (locale.transvision) {
-            api.machinery.getTransvisionMemory(entity, locale)
+            api.machinery.getTransvisionMemory(source, locale)
             .then(results => dispatch(addTranslations(results)));
         }
 
-        if (locale.code === 'ga-IE') {
-            api.machinery.getCaighdeanTranslation(entity, locale)
+        if (locale.code === 'ga-IE' && pk) {
+            api.machinery.getCaighdeanTranslation(source, locale, pk)
             .then(results => dispatch(addTranslations(results)));
         }
     }
