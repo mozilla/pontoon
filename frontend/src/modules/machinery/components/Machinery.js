@@ -30,14 +30,9 @@ type Props = {|
  * third-party Machine Translation.
  */
 export default class Machinery extends React.Component<Props> {
-    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
-        const key = event.keyCode;
-
-        // On Enter, search Machinery with custom query
-        if (key === 13) {
-            event.preventDefault();
-            this.props.customMachinerySearch(event.currentTarget.value);
-        }
+    submitForm = (event: SyntheticKeyboardEvent<>) => {
+        event.preventDefault();
+        this.props.customMachinerySearch(event.currentTarget[0].value);
     }
 
     render() {
@@ -56,14 +51,15 @@ export default class Machinery extends React.Component<Props> {
         return <section className="machinery">
             <div className="search-wrapper clearfix">
                 <div className="icon fa fa-search"></div>
-                <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
-                    <input
-                        type="search"
-                        autoComplete="off"
-                        placeholder="Type to search machinery"
-                        onKeyDown={ this.handleShortcuts }
-                    />
-                </Localized>
+                <form onSubmit={ this.submitForm }>
+                    <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
+                        <input
+                            type="search"
+                            autoComplete="off"
+                            placeholder="Type to search machinery"
+                        />
+                    </Localized>
+                </form>
             </div>
             <ul>
                 { machinery.translations.map((translation, index) => {
