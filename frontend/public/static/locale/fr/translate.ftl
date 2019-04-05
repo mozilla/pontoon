@@ -109,6 +109,14 @@ entitydetails-metadata-project =
     .title = Projet
 
 
+## Helpers
+## Shows helper tabs
+
+entitydetails-Helpers--history = Historique
+entitydetails-Helpers--machinery = Machinerie
+entitydetails-Helpers--locales = Langues
+
+
 ## History
 ## Shows a list of translations for a specific entity
 

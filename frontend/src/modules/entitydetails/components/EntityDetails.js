@@ -20,7 +20,7 @@ import * as editor from 'modules/editor';
 import { selectors } from '..';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
-import Tools from './Tools';
+import Helpers from './Helpers';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -195,7 +195,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 addTextToEditorTranslation={ this.addTextToEditorTranslation }
             />
             <editor.Editor />
-            <Tools
+            <Helpers
                 history={ state.history }
                 isReadOnlyEditor={ state.isReadOnlyEditor }
                 isTranslator={ state.isTranslator }
