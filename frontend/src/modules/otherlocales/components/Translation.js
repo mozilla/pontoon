@@ -47,8 +47,9 @@ export default class Translation extends React.Component<Props> {
                 <header>
                     <a
                         href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
                     >
                         { translation.locale }
                         <span>{ translation.code }</span>
