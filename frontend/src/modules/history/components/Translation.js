@@ -50,23 +50,15 @@ export default class Translation extends React.Component<Props, State> {
         };
     }
 
-    approve = () => {
-        this.props.updateTranslationStatus(this.props.translation.pk, 'approve');
+    handleStatusChange = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        // $FLOW_IGNORE: Flow and the DOM… >_<
+        const action = event.target.name;
+        this.props.updateTranslationStatus(this.props.translation.pk, action);
     }
 
-    unapprove = () => {
-        this.props.updateTranslationStatus(this.props.translation.pk, 'unapprove');
-    }
-
-    reject = () => {
-        this.props.updateTranslationStatus(this.props.translation.pk, 'reject');
-    }
-
-    unreject = () => {
-        this.props.updateTranslationStatus(this.props.translation.pk, 'unreject');
-    }
-
-    delete = () => {
+    delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
         this.props.deleteTranslation(this.props.translation.pk);
     }
 
@@ -116,12 +108,14 @@ export default class Translation extends React.Component<Props, State> {
             title={ this.getApprovalTitle() }
             target='_blank'
             rel='noopener noreferrer'
+            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
         >
             { translation.user }
         </a>
     }
 
-    toggleDiff = () => {
+    toggleDiff = (event: SyntheticMouseEvent<>) => {
+        event.stopPropagation();
         this.setState((state) => {
             return { isDiffVisible: !state.isDiffVisible };
         });
@@ -240,7 +234,8 @@ export default class Translation extends React.Component<Props, State> {
                             <button
                                 className='unapprove fa'
                                 title='Unapprove'
-                                onClick={ this.unapprove }
+                                name='unapprove'
+                                onClick={ this.handleStatusChange }
                             />
                         </Localized>
                         :
@@ -252,7 +247,8 @@ export default class Translation extends React.Component<Props, State> {
                             <button
                                 className='approve fa'
                                 title='Approve'
-                                onClick={ this.approve }
+                                name='approve'
+                                onClick={ this.handleStatusChange }
                             />
                         </Localized>
                     }
@@ -265,7 +261,8 @@ export default class Translation extends React.Component<Props, State> {
                             <button
                                 className='unreject fa'
                                 title='Unreject'
-                                onClick={ this.unreject }
+                                name='unreject'
+                                onClick={ this.handleStatusChange }
                             />
                         </Localized>
                         :
@@ -277,7 +274,8 @@ export default class Translation extends React.Component<Props, State> {
                             <button
                                 className='reject fa'
                                 title='Reject'
-                                onClick={ this.reject }
+                                name='reject'
+                                onClick={ this.handleStatusChange }
                             />
                         </Localized>
                     }
