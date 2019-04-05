@@ -61,10 +61,10 @@ def translation_memory(request):
 
     try:
         locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
+    except Locale.DoesNotExist as e:
         return JsonResponse({
             'status': False,
-            'message': 'Not Found: {error}'.format(error=str(e)),
+            'message': 'Not Found: {error}'.format(error=e),
         }, status=404)
 
     entries = (
@@ -229,10 +229,10 @@ def caighdean(request):
 
     try:
         entity = Entity.objects.get(id=entityid)
-    except Entity.DoesNotExist:
+    except Entity.DoesNotExist as e:
         return JsonResponse({
             'status': False,
-            'message': 'Not Found: {error}'.format(error=str(e)),
+            'message': 'Not Found: {error}'.format(error=e),
         }, status=404)
 
     try:
@@ -254,7 +254,7 @@ def caighdean(request):
     except TranslationError as e:
         return JsonResponse({
             'status': False,
-            'message': 'Server Error: {error}'.format(error=str(e)),
+            'message': 'Server Error: {error}'.format(error=e),
         }, status=500)
 
 
