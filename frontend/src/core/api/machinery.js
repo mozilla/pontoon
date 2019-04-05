@@ -30,7 +30,7 @@ export default class MachineryAPI extends APIBase {
         const params = {
             text: source,
             locale: locale.code,
-            pk: pk || '',
+            pk: (pk || '').toString(),
         };
 
         const results = await this._get(url, params);
