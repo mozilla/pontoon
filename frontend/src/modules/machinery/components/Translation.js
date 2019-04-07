@@ -41,6 +41,9 @@ export default class Translation extends React.Component<Props> {
         const { locale, sourceString, translation } = this.props;
 
         const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
+        const types = translation.sources.map(function(source) {
+            return source.type;
+        });
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li
@@ -78,11 +81,15 @@ export default class Translation extends React.Component<Props> {
                     </ul>
                 </header>
                 <p className="original">
-                    <TranslationPlaceablesDiff
-                        diffTarget={ translation.original }
-                    >
-                        { sourceString }
-                    </TranslationPlaceablesDiff>
+                    { types.indexOf('Caighdean') === -1 ?
+                        <TranslationPlaceablesDiff
+                            diffTarget={ translation.original }
+                        >
+                            { sourceString }
+                        </TranslationPlaceablesDiff>
+                    :
+                        sourceString
+                    }
                 </p>
                 <p
                     className="suggestion"
