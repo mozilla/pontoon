@@ -13,6 +13,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
@@ -234,7 +235,9 @@ def mark_all_notifications_as_read(request):
     """Mark all notifications of the currently logged in user as read"""
     request.user.notifications.mark_all_as_read()
 
-    return HttpResponse('ok')
+    return JsonResponse({
+        'status': True,
+    })
 
 
 class ContributorsMixin(object):

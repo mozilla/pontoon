@@ -13,6 +13,21 @@ export type Settings = {
 
 
 /**
+ * Update the user settings.
+ */
+export type UpdateSettingsAction = {|
+    +type: typeof UPDATE_SETTINGS,
+    +settings: Settings,
+|};
+export function updateSettings(settings: Settings): UpdateSettingsAction {
+    return {
+        type: UPDATE_SETTINGS,
+        settings,
+    };
+}
+
+
+/**
  * Update the user data.
  */
 export type UpdateAction = {|
@@ -28,17 +43,14 @@ export function update(data: Object): UpdateAction {
 
 
 /**
- * Update the user settings.
+ * Sign out the current user.
  */
-export type UpdateSettingsAction = {|
-    +type: typeof UPDATE_SETTINGS,
-    +settings: Settings,
-|};
-export function updateSettings(settings: Settings): UpdateSettingsAction {
-    return {
-        type: UPDATE_SETTINGS,
-        settings,
-    };
+export function signOut(url: string): Function {
+    return async dispatch => {
+        await api.user.signOut(url);
+
+        dispatch(get());
+    }
 }
 
 
@@ -52,13 +64,21 @@ export function saveSetting(setting: string, value: boolean, username: string): 
 
 
 /**
- * Sign out the current user.
+ * Mark all notifications of the current user as read.
+ *
+ * Once the API call completes, add class needed for CSS transition from
+ * `unread` to `default` state. The class gets removed after user data is
+ * updated, which happens after 1000ms - when transition is complete.
  */
-export function signOut(url: string): Function {
+export function markAllNotificationsAsRead(element: HTMLElement): Function {
     return async dispatch => {
-        await api.user.signOut(url);
+        await api.user.markAllNotificationsAsRead();
 
-        dispatch(get());
+        element.classList.add('fadeout');
+
+        setTimeout(function() {
+            dispatch(get());
+        }, 1000);
     }
 }
 
@@ -79,6 +99,7 @@ export function get(): Function {
 
 export default {
     get,
+    markAllNotificationsAsRead,
     saveSetting,
     signOut,
     update,

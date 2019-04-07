@@ -12,6 +12,11 @@
     background: #3F4752;
 }
 
+.user-notifications.fadeout .notification[data-unread="true"] {
+    background: #272a2f;
+    transition: background-color 1.0s ease-out;
+}
+
 .notification .item-content {
     display: block;
     padding: 10px;

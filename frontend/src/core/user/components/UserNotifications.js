@@ -12,6 +12,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {
+    markAllNotificationsAsRead: () => void,
     user: UserState,
 };
 
@@ -24,17 +25,34 @@ type State = {|
  * Renders user notifications.
  */
 export class UserNotificationsBase extends React.Component<Props, State> {
+    notificationsWrapper: { current: any };
+
     constructor(props: Props) {
         super(props);
+        this.notificationsWrapper = React.createRef();
+
         this.state = {
             visible: false,
         };
+    }
+
+    handleClick = () => {
+        this.toggleVisibility();
+        this.markAllNotificationsAsRead();
     }
 
     toggleVisibility = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
+    }
+
+    markAllNotificationsAsRead = () => {
+        const element = this.notificationsWrapper.current;
+
+        if (element.classList.contains('unread')) {
+            this.props.markAllNotificationsAsRead(element);
+        }
     }
 
     // This method is called by the Higher-Order Component `onClickOutside`
@@ -59,10 +77,13 @@ export class UserNotificationsBase extends React.Component<Props, State> {
 
         const notifications = user.notifications.notifications;
 
-        return <div className={ className }>
+        return <div
+            className={ className }
+            ref={ this.notificationsWrapper }
+        >
             <div
                 className="selector"
-                onClick={ this.toggleVisibility }
+                onClick={ this.handleClick }
             >
                 <i className="icon far fa-bell fa-fw"></i>
             </div>

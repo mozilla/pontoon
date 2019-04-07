@@ -20,6 +20,11 @@
     color: #F36;
 }
 
+.user-notifications.unread.fadeout .selector .icon {
+    color: #4D5967;
+    transition: color 1.0s ease-out;
+}
+
 .user-notifications .menu {
     background-color: #272a2f;
     border: 1px solid #333941;

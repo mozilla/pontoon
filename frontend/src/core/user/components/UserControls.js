@@ -38,6 +38,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.get());
     }
 
+    markAllNotificationsAsRead = (element: HTMLElement) => {
+        this.props.dispatch(actions.markAllNotificationsAsRead(element));
+    }
+
     signUserOut = () => {
         const { user } = this.props;
         this.props.dispatch(actions.signOut(user.signOutURL));
@@ -60,6 +64,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
             />
 
             <UserNotifications
+                markAllNotificationsAsRead={ this.markAllNotificationsAsRead }
                 user={ user }
             />
 
