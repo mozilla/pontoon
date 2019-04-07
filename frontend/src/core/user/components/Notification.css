@@ -1,0 +1,86 @@
+.notification {
+    border-top: 1px solid #333941;
+    cursor: default;
+    padding: 0;
+}
+
+.notification:first-child {
+    border-color: #272a2f;
+}
+
+.notification[data-unread="true"] {
+    background: #3F4752;
+}
+
+.notification .item-content {
+    display: block;
+    padding: 10px;
+}
+
+.notification span {
+    float: none;
+}
+
+.notification a {
+    color: #F36;
+    display: inline;
+}
+
+.notification .verb {
+    color: #EBEBEB;
+    padding: 0 3px;
+}
+
+.notification .message {
+    padding: 10px;
+}
+
+.notification .message {
+    padding: 10px;
+}
+
+/* Users can include HTML tags in their messages */
+.notification .message h1,
+.notification .message h2,
+.notification .message h3,
+.notification .message h4,
+.notification .message h5,
+.notification .message h6 {
+    color: #EBEBEB;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.notification .message h1 {
+    font-size: 18px;
+}
+
+.notification .message h2 {
+    font-size: 16px;
+}
+
+.notification .message p {
+    padding: 5px 0;
+}
+
+.notification .message ol {
+    margin-left: 1.2em;
+}
+
+.notification .message ul {
+    list-style: inside;
+}
+/* End message styling */
+
+.notification .timeago {
+    color: #888888;
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    margin-top: 8px;
+    text-align: right;
+    text-transform: uppercase;
+}

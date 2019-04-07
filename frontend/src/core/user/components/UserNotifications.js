@@ -4,6 +4,8 @@ import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
+import Notification from './Notification';
+
 import './UserNotifications.css';
 
 import type { UserState } from 'core/user';
@@ -55,6 +57,8 @@ export class UserNotificationsBase extends React.Component<Props, State> {
             className += ' unread';
         }
 
+        const notifications = user.notifications.notifications;
+
         return <div className={ className }>
             <div
                 className="selector"
@@ -66,7 +70,14 @@ export class UserNotificationsBase extends React.Component<Props, State> {
             { !this.state.visible ? null :
             <div className="menu">
                 <ul className="notification-list">
-                { !user.notifications.length ? null :
+                { notifications.length ?
+                    notifications.map((notification, index) => {
+                        return <Notification
+                            notification={ notification }
+                            key={ index }
+                        />;
+                    })
+                    :
                     <li className="no">
                         <i className="icon fa fa-bell fa-fw"></i>
                         <Localized

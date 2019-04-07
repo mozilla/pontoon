@@ -293,7 +293,11 @@ def serialized_notifications(self):
             'unread': notification.unread,
             'description': notification.description,
             'verb': notification.verb,
-            'timeago': notification.timesince(),
+            'date': notification.timestamp.strftime('%b %d, %Y %H:%M'),
+            'date_iso': (
+                notification.timestamp.isoformat() +
+                timezone.now().strftime('%z')
+            ),
             'actor': {
                 'anchor': actor_anchor,
                 'url': actor_url,

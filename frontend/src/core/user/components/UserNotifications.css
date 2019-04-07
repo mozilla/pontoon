@@ -1,6 +1,7 @@
 .user-notifications {
     float: right;
     height: 60px;
+    position: relative;
 }
 
 .user-notifications .selector {
@@ -22,24 +23,28 @@
 .user-notifications .menu {
     background-color: #272a2f;
     border: 1px solid #333941;
-    border-right: none;
     border-top: none;
-    padding: 10px 12px;
+    padding: 0;
     position: absolute;
     right: 0;
     top: 59px;
-    width: 250px;
+    width: 350px;
     z-index: 20;
 }
 
 .user-notifications .menu ul {
     list-style: none;
     margin: 0;
+    max-height: none;
+    overflow: auto;
+}
+
+.user-notifications .menu ul.notification-list {
+    max-height: 280px;
 }
 
 .user-notifications .menu li {
     color: #aaa;
-    cursor: pointer;
     font-size: 14px;
     font-weight: 300;
     padding: 0 4px;
@@ -50,9 +55,9 @@
 }
 
 .user-notifications .menu .horizontal-separator {
-    border-top: 1px solid #525a65;
+    border-top: 1px solid #333941;
     height: 0;
-    margin: 5px 0;
+    margin: 0;
     padding: 0;
 }
 
@@ -77,19 +82,12 @@
 .user-notifications .menu li.no .description {
     color: #AAAAAA;
     font-size: 12px;
-}
-
-.user-notifications .menu li.no .description {
     padding-top: 4px;
 }
 
-.user-notifications .menu li a {
+.user-notifications .menu li.see-all a {
+    color: #FFFFFF;
     display: block;
-    line-height: 22px;
-}
-
-.user-notifications .menu li:hover,
-.user-notifications .menu li:hover a,
-.user-notifications .menu li:active a {
-    color: #fff;
+    padding: 10px;
+    text-align: center;
 }
