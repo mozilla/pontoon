@@ -1,0 +1,5 @@
+# All dependencies which should be installed in the Python 2 environment.
+# ----------------------------------------------------------------------------------
+
+mercurial==4.7.2 \
+    --hash=sha256:97f0594216f2348a2e37b2ad8a56eade044e741153fee8c584487e9934ca09fb
