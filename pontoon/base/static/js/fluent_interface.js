@@ -263,7 +263,7 @@ var Pontoon = (function (my) {
       if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
         if (element.expression.selector) {
-          expression = fluentSerializer.serializeExpression(element.expression.selector);
+          expression = FluentSyntax.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -306,7 +306,7 @@ var Pontoon = (function (my) {
       if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
         var expression = '';
         if (element.expression.selector) {
-          expression = fluentSerializer.serializeExpression(element.expression.selector);
+          expression = FluentSyntax.serializeExpression(element.expression.selector);
         }
         content += '<li data-expression="' + expression + '"><ul>';
 
@@ -408,7 +408,7 @@ var Pontoon = (function (my) {
             return;
 
           default:
-            var expression = fluentSerializer.serializeExpression(element.expression);
+            var expression = FluentSyntax.serializeExpression(element.expression);
             if (markPlaceables) {
               string += '<mark class="placeable" title="' + element.expression.type + '">{ ' + expression + ' }</mark>';
             }

@@ -7,6 +7,7 @@ from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from django_jinja import library
 from fluent.syntax import FluentParser, FluentSerializer, ast
+from fluent.syntax.serializer import serialize_expression
 from six import text_type
 from six.moves.urllib import parse as six_parse
 
@@ -324,7 +325,7 @@ def _serialize_value(value):
                 default_variant = _get_default_variant(element.expression.variants)
                 response += _serialize_value(default_variant.value)
             else:
-                response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
+                response += '{ ' + serialize_expression(element.expression) + ' }'
 
     return response
 
