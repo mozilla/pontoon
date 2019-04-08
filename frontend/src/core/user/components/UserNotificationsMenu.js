@@ -12,7 +12,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {
-    markAllNotificationsAsRead: () => void,
+    markAllNotificationsAsRead: (element: HTMLElement) => void,
     user: UserState,
 };
 
