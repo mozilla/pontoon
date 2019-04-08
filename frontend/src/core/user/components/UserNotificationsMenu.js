@@ -115,17 +115,13 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
                 }
                 </ul>
 
-                <ul>
-                    <li className="horizontal-separator"></li>
-
-                    <li className="see-all">
-                        <Localized
-                            id="user-UserNotificationsMenu--see-all-notifications"
-                        >
-                            <a href="/notifications">See all Notifications</a>
-                        </Localized>
-                    </li>
-                </ul>
+                <div className="see-all">
+                    <Localized
+                        id="user-UserNotificationsMenu--see-all-notifications"
+                    >
+                        <a href="/notifications">See all Notifications</a>
+                    </Localized>
+                </div>
             </div>
             }
         </div>;
