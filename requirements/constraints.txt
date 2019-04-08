@@ -168,9 +168,9 @@ requests==2.21.0 \
     --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b
 
 # >=0.12.0,<0.13 compare-locales
-fluent.syntax==0.12.0 \
-    --hash=sha256:70fe96c784d7e1727701bf100a272990bfc09ed6a2d2bc849702684b96366616\
-    --hash=sha256:32664ee53319f5eef62495d9d8d25298e37fc061f26c287d973b1e7d809c2454
+fluent.syntax==0.14.0 \
+    --hash=sha256:8e55a03678eb4a888550ae799a57764e4684fbebcead94a45ffc42539caaa2f9 \
+    --hash=sha256:e0befd7b965e944827337d14f791c92689a6878a8e1eb70c51c88fed66627067
 
 # compare-locales
 pytoml==0.1.14 \
