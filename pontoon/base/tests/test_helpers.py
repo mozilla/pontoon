@@ -43,11 +43,6 @@ ATTRIBUTE_SELECT_SOURCE = '''key =
         [win] Simple String
         *[other] Other Simple String
     }'''
-VARIANT_LIST_SOURCE = '''-term =
-    {
-        [variant-a] Simple String
-       *[variant-b] Other Simple String
-    }'''
 
 SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('empty', ('', '')),
@@ -69,9 +64,7 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ),
     ('string-literal', ('key = { "" }', '{ "" }')),
     ('number-literal', ('key = { 1 }', '{ 1 }')),
-    ('variant-expression', ('key = { -foo[bar] }', '{ -foo[bar] }')),
     ('attribute-expression', ('key = { foo.bar }', '{ foo.bar }')),
-    ('variant-list', (VARIANT_LIST_SOURCE, 'Other Simple String')),
 ))
 
 

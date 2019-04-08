@@ -6,31 +6,10 @@ var fluentSerializer = new FluentSyntax.FluentSerializer();
 var Pontoon = (function (my) {
 
   /*
-   * VariantLists behave the same as "selector-less SelectExpressions" in Pontoon.
-   * A custom parseEntry() method applies that logic to the AST, too. That
-   * allows us to use the same code for both, VariantLists and SelectExpressions.
-   */
-  function parseEntry(source) {
-    var ast = fluentParser.parseEntry(source);
-
-    if (ast.value && ast.value.type === 'VariantList') {
-      ast.value.elements = [{
-        expression: {
-          type: 'SelectExpression',
-          variants: ast.value.variants,
-        },
-        type: 'Placeable',
-      }];
-    }
-
-    return ast;
-  }
-
-  /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
    * - Placeable with expression type CallExpression, StringLiteral, NumberLiteral,
-   *   VariantExpression, AttributeExpression, VariableReference, MessageReference
+   *   AttributeExpression, VariableReference, MessageReference
    *   or TermReference
    */
   function isSimpleElement(element) {
@@ -43,7 +22,6 @@ var Pontoon = (function (my) {
       switch (element.expression.type) {
         case 'AttributeExpression':
         case 'CallExpression':
-        case 'VariantExpression':
         case 'MessageReference':
         case 'TermReference':
         case 'VariableReference':
@@ -511,7 +489,7 @@ var Pontoon = (function (my) {
           $('#translation').hide();
           $('#ftl').removeClass('active');
 
-          var entityAST = parseEntry(entity.original);
+          var entityAST = fluentParser.parseEntry(entity.original);
           $('#add-attribute').toggle(entityAST.type === 'Term');
         }
         else {
@@ -536,7 +514,7 @@ var Pontoon = (function (my) {
           return fallback;
         }
 
-        var ast = parseEntry(entity.original);
+        var ast = fluentParser.parseEntry(entity.original);
         var tree;
 
         // Simple string
@@ -594,7 +572,7 @@ var Pontoon = (function (my) {
           return false;
         }
 
-        var ast = parseEntry(entity.original);
+        var ast = fluentParser.parseEntry(entity.original);
 
         if (!isSimpleSingleAttributeMessage(ast)) {
           return false;
@@ -621,7 +599,7 @@ var Pontoon = (function (my) {
         $('#ftl-original').show();
         $('#ftl-original section ul').empty();
 
-        var ast = parseEntry(entity.original);
+        var ast = fluentParser.parseEntry(entity.original);
         var unsupported = false;
         var value = '';
         var attributes = '';
@@ -680,7 +658,7 @@ var Pontoon = (function (my) {
         var entityAttributes = [];
         var translatedAttributes = [];
 
-        var entityAST = parseEntry(entity.original);
+        var entityAST = fluentParser.parseEntry(entity.original);
         if (entityAST.attributes.length) {
           attributesTree = entityAST.attributes;
           entityAttributes = entityAST.attributes.map(function (attr) {
@@ -691,7 +669,7 @@ var Pontoon = (function (my) {
         translation = translation || entity.translation[0];
         var translationAST = null;
         if (translation.pk) {
-          translationAST = parseEntry(translation.string);
+          translationAST = fluentParser.parseEntry(translation.string);
           attributesTree = translationAST.attributes;
 
           // If translation doesn't include all entity attributes,
@@ -901,7 +879,7 @@ var Pontoon = (function (my) {
       getSimplePreview: function (source, fallback, markPlaceables) {
         source = source || '';
         fallback = fallback || source;
-        var ast = parseEntry(source);
+        var ast = fluentParser.parseEntry(source);
 
         // String with an error
         if (ast.type === 'Junk') {
@@ -1008,7 +986,7 @@ var Pontoon = (function (my) {
           $('#ftl-area ' + selector + ' textarea').each(function() {
             var value = $(this).val();
             var message = 'key = ' + value;
-            var ast = parseEntry(message);
+            var ast = fluentParser.parseEntry(message);
 
             if (ast.type !== 'Junk') {
               value = '';

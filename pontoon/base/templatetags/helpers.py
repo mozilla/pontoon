@@ -315,21 +315,16 @@ def _serialize_value(value):
     """Serialize AST values into a simple string."""
     response = ''
 
-    if isinstance(value, ast.VariantList):
-        default_variant = _get_default_variant(value.variants)
-        response += _serialize_value(default_variant.value)
+    for element in value.elements:
+        if isinstance(element, ast.TextElement):
+            response += element.value
 
-    elif isinstance(value, ast.Pattern):
-        for element in value.elements:
-            if isinstance(element, ast.TextElement):
-                response += element.value
-
-            elif isinstance(element, ast.Placeable):
-                if isinstance(element.expression, ast.SelectExpression):
-                    default_variant = _get_default_variant(element.expression.variants)
-                    response += _serialize_value(default_variant.value)
-                else:
-                    response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
+        elif isinstance(element, ast.Placeable):
+            if isinstance(element.expression, ast.SelectExpression):
+                default_variant = _get_default_variant(element.expression.variants)
+                response += _serialize_value(default_variant.value)
+            else:
+                response += '{ ' + serializer.serialize_expression(element.expression) + ' }'
 
     return response
 
