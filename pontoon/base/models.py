@@ -260,34 +260,38 @@ def serialized_notifications(self):
     """Serialized list of notifications to display in the notifications menu."""
     unread_count = self.notifications.unread().count()
     count = settings.NOTIFICATIONS_MAX_COUNT
+    notifications = []
 
     if unread_count > count:
         count = unread_count
 
-    source = self.notifications.prefetch_related('actor', 'target')[:count]
-    target = []
-
-    for notification in source:
+    for notification in self.notifications.prefetch_related('actor', 'target')[:count]:
+        actor = None
         if hasattr(notification.actor, 'slug'):
-            actor_anchor = notification.actor.name
-            actor_url = reverse('pontoon.projects.project', kwargs={
-                'slug': notification.actor.slug
-            })
+            actor = {
+                'anchor': notification.actor.name,
+                'url': reverse('pontoon.projects.project', kwargs={
+                    'slug': notification.actor.slug
+                }),
+            }
         elif hasattr(notification.actor, 'email'):
-            actor_anchor = notification.actor.name_or_email
-            actor_url = reverse('pontoon.contributors.contributor.username', kwargs={
-                'username': notification.actor.username
-            })
+            actor = {
+                'anchor': notification.actor.name_or_email,
+                'url': reverse('pontoon.contributors.contributor.username', kwargs={
+                    'username': notification.actor.username
+                }),
+            }
 
-        target_anchor = None
-        target_url = None
+        target = None
         if notification.target:
-            target_anchor = notification.target.name
-            target_url = reverse('pontoon.projects.project', kwargs={
-                'slug': notification.target.slug
-            })
+            target = {
+                'anchor': notification.target.name,
+                'url': reverse('pontoon.projects.project', kwargs={
+                    'slug': notification.target.slug
+                }),
+            }
 
-        target.append({
+        notifications.append({
             'id': notification.id,
             'level': notification.level,
             'unread': notification.unread,
@@ -298,20 +302,13 @@ def serialized_notifications(self):
                 notification.timestamp.isoformat() +
                 timezone.now().strftime('%z')
             ),
-            'actor': {
-                'anchor': actor_anchor,
-                'url': actor_url,
-            },
-            'target': {
-                'anchor': target_anchor,
-                'url': target_url,
-            },
-            'target': notification.target.slug if notification.target else None,
+            'actor': actor,
+            'target': target,
         })
 
     return {
         'has_unread': unread_count > 0,
-        'notifications': target,
+        'notifications': notifications,
     }
 
 
