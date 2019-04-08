@@ -268,7 +268,7 @@ var Pontoon = (function (my) {
         content += '<li data-expression="' + expression + '"><ul>';
 
         element.expression.variants.forEach(function (item) {
-          content += renderOriginalElement(item.key.value || item.key.name, item.value.elements);
+          content += renderOriginalElement(FluentSyntax.serializeVariantKey(item.key), item.value.elements);
         });
 
         content += '</ul></li>';
@@ -318,7 +318,7 @@ var Pontoon = (function (my) {
         else {
           element.expression.variants.forEach(function (item) {
             content += renderEditorElement(
-              item.key.value || item.key.name,
+              FluentSyntax.serializeVariantKey(item.key),
               item.value.elements,
               isPluralElement(element),
               isTranslated,
