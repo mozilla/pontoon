@@ -41,6 +41,7 @@ export default class Translation extends React.Component<Props> {
         const { locale, sourceString, translation } = this.props;
 
         const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
+        const types = translation.sources.map(source => source.type);
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li
@@ -78,11 +79,21 @@ export default class Translation extends React.Component<Props> {
                     </ul>
                 </header>
                 <p className="original">
-                    <TranslationPlaceablesDiff
-                        diffTarget={ translation.original }
-                    >
-                        { sourceString }
-                    </TranslationPlaceablesDiff>
+                    { types.indexOf('Caighdean') === -1 ?
+                        <TranslationPlaceablesDiff
+                            diffTarget={ translation.original }
+                        >
+                            { sourceString }
+                        </TranslationPlaceablesDiff>
+                    :
+                        /*
+                         * Caighdean takes `gd` translations as input, so we shouldn't
+                         * diff it against the `en-US` source string.
+                         */
+                        <WithPlaceables>
+                            { translation.original }
+                        </WithPlaceables>
+                    }
                 </p>
                 <p
                     className="suggestion"
