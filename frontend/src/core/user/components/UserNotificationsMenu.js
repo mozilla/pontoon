@@ -4,9 +4,9 @@ import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
-import Notification from './Notification';
+import UserNotification from './UserNotification';
 
-import './UserNotifications.css';
+import './UserNotificationsMenu.css';
 
 import type { UserState } from 'core/user';
 
@@ -24,7 +24,7 @@ type State = {|
 /**
  * Renders user notifications.
  */
-export class UserNotificationsBase extends React.Component<Props, State> {
+export class UserNotificationsMenuBase extends React.Component<Props, State> {
     notificationsWrapper: { current: any };
 
     constructor(props: Props) {
@@ -70,7 +70,7 @@ export class UserNotificationsBase extends React.Component<Props, State> {
             return null;
         }
 
-        let className = 'user-notifications';
+        let className = 'user-notifications-menu';
         if (user.notifications.has_unread) {
             className += ' unread';
         }
@@ -93,7 +93,7 @@ export class UserNotificationsBase extends React.Component<Props, State> {
                 <ul className="notification-list">
                 { notifications.length ?
                     notifications.map((notification, index) => {
-                        return <Notification
+                        return <UserNotification
                             notification={ notification }
                             key={ index }
                         />;
@@ -102,12 +102,12 @@ export class UserNotificationsBase extends React.Component<Props, State> {
                     <li className="no">
                         <i className="icon fa fa-bell fa-fw"></i>
                         <Localized
-                            id="user-UserNotifications--no-notifications-title"
+                            id="user-UserNotificationsMenu--no-notifications-title"
                         >
                             <p className="title">No new notifications.</p>
                         </Localized>
                         <Localized
-                            id="user-UserNotifications--no-notifications-description"
+                            id="user-UserNotificationsMenu--no-notifications-description"
                         >
                             <p className="description">Here you’ll see updates for localizations you contribute to.</p>
                         </Localized>
@@ -120,7 +120,7 @@ export class UserNotificationsBase extends React.Component<Props, State> {
 
                     <li className="see-all">
                         <Localized
-                            id="user-UserNotifications--see-all-notifications"
+                            id="user-UserNotificationsMenu--see-all-notifications"
                         >
                             <a href="/notifications">See all Notifications</a>
                         </Localized>
@@ -132,4 +132,4 @@ export class UserNotificationsBase extends React.Component<Props, State> {
     }
 }
 
-export default onClickOutside(UserNotificationsBase);
+export default onClickOutside(UserNotificationsMenuBase);

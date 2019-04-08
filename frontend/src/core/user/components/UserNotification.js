@@ -3,7 +3,7 @@
 import * as React from 'react';
 import TimeAgo from 'react-timeago';
 
-import './Notification.css';
+import './UserNotification.css';
 
 
 type Props = {
@@ -14,12 +14,12 @@ type Props = {
 /**
  * Renders a single notification in the notifications menu.
  */
-export default class Notification extends React.Component<Props> {
+export default class UserNotification extends React.Component<Props> {
     render() {
         const { notification } = this.props;
 
         return <li
-            className = "notification"
+            className = "user-notification"
             data-id={ notification.id }
             data-level={ notification.level }
             data-unread={ notification.unread }

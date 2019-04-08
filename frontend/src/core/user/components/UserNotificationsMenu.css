@@ -1,31 +1,31 @@
-.user-notifications {
+.user-notifications-menu {
     float: right;
     height: 60px;
     position: relative;
 }
 
-.user-notifications .selector {
+.user-notifications-menu .selector {
     cursor: pointer;
     height: 100%;
     padding: 0;
 }
 
-.user-notifications .selector .icon {
+.user-notifications-menu .selector .icon {
     color: #4D5967;
     font-size: 26px;
     margin-top: 17px;
 }
 
-.user-notifications.unread .selector .icon {
+.user-notifications-menu.unread .selector .icon {
     color: #F36;
 }
 
-.user-notifications.unread.fadeout .selector .icon {
+.user-notifications-menu.unread.fadeout .selector .icon {
     color: #4D5967;
     transition: color 1.0s ease-out;
 }
 
-.user-notifications .menu {
+.user-notifications-menu .menu {
     background-color: #272a2f;
     border: 1px solid #333941;
     border-top: none;
@@ -37,60 +37,60 @@
     z-index: 20;
 }
 
-.user-notifications .menu ul {
+.user-notifications-menu .menu ul {
     list-style: none;
     margin: 0;
     max-height: none;
     overflow: auto;
 }
 
-.user-notifications .menu ul.notification-list {
+.user-notifications-menu .menu ul.notification-list {
     max-height: 280px;
 }
 
-.user-notifications .menu li {
+.user-notifications-menu .menu li {
     color: #aaa;
     font-size: 14px;
     font-weight: 300;
     padding: 0 4px;
 }
 
-.user-notifications .menu li:hover {
+.user-notifications-menu .menu li:hover {
     background: #3F4752;
 }
 
-.user-notifications .menu .horizontal-separator {
+.user-notifications-menu .menu .horizontal-separator {
     border-top: 1px solid #333941;
     height: 0;
     margin: 0;
     padding: 0;
 }
 
-.user-notifications .menu li.no {
+.user-notifications-menu .menu li.no {
     background: transparent;
     color: inherit;
     padding: 0 4px 14px;
     text-align: center;
 }
 
-.user-notifications .menu li.no .icon {
+.user-notifications-menu .menu li.no .icon {
     color: #333941;
     font-size: 92px;
     padding-bottom: 8px;
 }
 
-.user-notifications .menu li.no .title {
+.user-notifications-menu .menu li.no .title {
     color: #EBEBEB;
     font-size: 16px;
 }
 
-.user-notifications .menu li.no .description {
+.user-notifications-menu .menu li.no .description {
     color: #AAAAAA;
     font-size: 12px;
     padding-top: 4px;
 }
 
-.user-notifications .menu li.see-all a {
+.user-notifications-menu .menu li.see-all a {
     color: #FFFFFF;
     display: block;
     padding: 10px;

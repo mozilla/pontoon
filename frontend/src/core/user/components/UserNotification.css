@@ -1,56 +1,56 @@
-.notification {
+.user-notification {
     border-top: 1px solid #333941;
     cursor: default;
     padding: 0;
 }
 
-.notification:first-child {
+.user-notification:first-child {
     border-color: #272a2f;
 }
 
-.notification[data-unread="true"] {
+.user-notification[data-unread="true"] {
     background: #3F4752;
 }
 
-.user-notifications.fadeout .notification[data-unread="true"] {
+.user-notifications-menu.fadeout .user-notification[data-unread="true"] {
     background: #272a2f;
     transition: background-color 1.0s ease-out;
 }
 
-.notification .item-content {
+.user-notification .item-content {
     display: block;
     padding: 10px;
 }
 
-.notification span {
+.user-notification span {
     float: none;
 }
 
-.notification a {
+.user-notification a {
     color: #F36;
     display: inline;
 }
 
-.notification .verb {
+.user-notification .verb {
     color: #EBEBEB;
     padding: 0 3px;
 }
 
-.notification .message {
+.user-notification .message {
     padding: 10px;
 }
 
-.notification .message {
+.user-notification .message {
     padding: 10px;
 }
 
 /* Users can include HTML tags in their messages */
-.notification .message h1,
-.notification .message h2,
-.notification .message h3,
-.notification .message h4,
-.notification .message h5,
-.notification .message h6 {
+.user-notification .message h1,
+.user-notification .message h2,
+.user-notification .message h3,
+.user-notification .message h4,
+.user-notification .message h5,
+.user-notification .message h6 {
     color: #EBEBEB;
     font-size: 14px;
     font-style: normal;
@@ -59,28 +59,28 @@
     text-transform: none;
 }
 
-.notification .message h1 {
+.user-notification .message h1 {
     font-size: 18px;
 }
 
-.notification .message h2 {
+.user-notification .message h2 {
     font-size: 16px;
 }
 
-.notification .message p {
+.user-notification .message p {
     padding: 5px 0;
 }
 
-.notification .message ol {
+.user-notification .message ol {
     margin-left: 1.2em;
 }
 
-.notification .message ul {
+.user-notification .message ul {
     list-style: inside;
 }
 /* End message styling */
 
-.notification .timeago {
+.user-notification .timeago {
     color: #888888;
     display: block;
     font-size: 11px;
