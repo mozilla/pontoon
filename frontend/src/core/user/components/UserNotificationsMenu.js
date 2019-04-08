@@ -109,7 +109,9 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
                         <Localized
                             id="user-UserNotificationsMenu--no-notifications-description"
                         >
-                            <p className="description">Here you’ll see updates for localizations you contribute to.</p>
+                            <p className="description">
+                                Here you’ll see updates for localizations you contribute to.
+                            </p>
                         </Localized>
                     </li>
                 }

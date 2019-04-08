@@ -62,7 +62,7 @@ export type UserState = {|
     +signOutURL: string,
     +gravatarURLSmall: string,
     +gravatarURLBig: string,
-    +notifications: Array,
+    +notifications: any,
 |};
 
 const initial: UserState = {
