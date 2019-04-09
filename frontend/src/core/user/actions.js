@@ -63,22 +63,11 @@ export function saveSetting(setting: string, value: boolean, username: string): 
 }
 
 
-/**
- * Mark all notifications of the current user as read.
- *
- * Once the API call completes, add class needed for CSS transition from
- * `unread` to `default` state. The class gets removed after user data is
- * updated, which happens after 1000ms - when transition is complete.
- */
-export function markAllNotificationsAsRead(element: HTMLElement): Function {
+export function markAllNotificationsAsRead(): Function {
     return async dispatch => {
         await api.user.markAllNotificationsAsRead();
 
-        element.classList.add('fadeout');
-
-        setTimeout(function() {
-            dispatch(get());
-        }, 1000);
+        dispatch(get());
     }
 }
 

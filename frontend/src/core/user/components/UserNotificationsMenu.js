@@ -12,7 +12,7 @@ import type { UserState } from 'core/user';
 
 
 type Props = {
-    markAllNotificationsAsRead: (element: HTMLElement) => void,
+    markAllNotificationsAsRead: () => void,
     user: UserState,
 };
 
@@ -25,11 +25,8 @@ type State = {|
  * Renders user notifications.
  */
 export class UserNotificationsMenuBase extends React.Component<Props, State> {
-    notificationsWrapper: { current: any };
-
     constructor(props: Props) {
         super(props);
-        this.notificationsWrapper = React.createRef();
 
         this.state = {
             visible: false,
@@ -48,10 +45,8 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
     }
 
     markAllNotificationsAsRead = () => {
-        const { user } = this.props;
-
-        if (user.notifications.has_unread) {
-            this.props.markAllNotificationsAsRead(this.notificationsWrapper.current);
+        if (this.props.user.notifications.has_unread) {
+            this.props.markAllNotificationsAsRead();
         }
     }
 
@@ -77,10 +72,7 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
 
         const notifications = user.notifications.notifications;
 
-        return <div
-            className={ className }
-            ref={ this.notificationsWrapper }
-        >
+        return <div className={ className }>
             <div
                 className="selector"
                 onClick={ this.handleClick }
