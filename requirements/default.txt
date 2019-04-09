@@ -138,8 +138,8 @@ wsgi-sslify==1.0.1 \
 
 
 # Dependencies loaded from outside pypi.
-https://github.com/mathjazz/silme/archive/python3.zip#egg=silme==0.10.0 \
-    --hash=sha256:6cc76700ba3f37515849c7d8c859d2951bde3c3a1cdfea6833b79c9935e020f4
+https://github.com/mathjazz/silme/archive/v0.10.0.zip#egg=silme==0.10.0 \
+    --hash=sha256:6227f6cb9b2e3a5898ce6761e339dad9ee6166a449d895202045c92815dc995d
 
 https://github.com/mathjazz/translate/archive/2.2.5.zip#egg=translate-toolkit==2.2.5 \
     --hash=sha256:9a23bda0f3ec07f36b6b662bf2a25492b6a354709500c736213229e94f462443

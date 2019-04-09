@@ -163,7 +163,7 @@ Then open ``requirements/default.txt`` and move the added dependencies to:
 * the ``requirements/constraints.txt`` if they are sub-dependencies, and add all their dependencies there as well.
 
 That format is documented more extensively inside the ``requirements/default.txt`` file.
-If a depedency has to be installed explicitly on Python2, add it to ``requirements/python2.txt`` and follow the same
+If a dependency has to be installed explicitly on Python2, add it to ``requirements/python2.txt`` and follow the same
 rules as for ``requirements/default.txt``.
 
 Once you are done adding or updating requirements, rebuild your docker environment:
