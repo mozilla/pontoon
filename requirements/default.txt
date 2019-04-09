@@ -97,8 +97,6 @@ jsonschema==2.6.0 \
     --hash=sha256:000e68abd33c972a5248544925a0cae7d1125f9bf6c58280d37546b946769a08
 lxml==3.4.4 \
     --hash=sha256:b3d362bac471172747cda3513238f115cbd6c5f8b8e6319bf6a97a7892724099
-mercurial==4.7.2 \
-    --hash=sha256:97f0594216f2348a2e37b2ad8a56eade044e741153fee8c584487e9934ca09fb
 mock==1.3.0 \
     --hash=sha256:3f573a18be94de886d1191f27c168427ef693e8dcfcecf95b170577b2eb69cbb
 newrelic==2.106.1.88 \
@@ -140,8 +138,8 @@ wsgi-sslify==1.0.1 \
 
 
 # Dependencies loaded from outside pypi.
-https://github.com/mathjazz/silme/archive/v0.9.4.zip#egg=silme==0.9.4 \
-    --hash=sha256:473c20e2d955359e69e84db8904db1a49fc10ecd2f8864c005404d070bd67b0c
+https://github.com/mathjazz/silme/archive/python3.zip#egg=silme==0.10.0 \
+    --hash=sha256:6cc76700ba3f37515849c7d8c859d2951bde3c3a1cdfea6833b79c9935e020f4
 
 https://github.com/mathjazz/translate/archive/2.2.5.zip#egg=translate-toolkit==2.2.5 \
     --hash=sha256:9a23bda0f3ec07f36b6b662bf2a25492b6a354709500c736213229e94f462443

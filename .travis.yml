@@ -20,9 +20,10 @@ before_install:
   # caches may need to be cleared from time to time https://docs.travis-ci.com/user/caching#Clearing-Caches
   - cp -a $HOME/virtualenv/python2.7.14/lib/python2.7/site-packages/ $HOME/py-workaround/
 install:
-  - pip install -U --force pip
-  - pip install --require-hashes -r requirements/default.txt
-  - pip install --require-hashes -r requirements/test.txt
+  - pip2 install -U --force pip
+  - pip2 install --require-hashes -r requirements/default.txt
+  - pip2 install --require-hashes -r requirements/test.txt
+  - pip2 install --require-hashes -r requirements/python2.txt
   - source $HOME/.nvm/nvm.sh
   - nvm install --lts node
   - nvm use --lts node

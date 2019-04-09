@@ -3,3 +3,6 @@
 #
 # Source: https://devcenter.heroku.com/articles/python-pip
 -r requirements/default.txt
+
+# All dependencies which support Python 2 only.
+-r requirements/python2.txt
