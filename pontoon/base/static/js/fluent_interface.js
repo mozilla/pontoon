@@ -9,7 +9,7 @@ var Pontoon = (function (my) {
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
    * - Placeable with expression type StringLiteral, NumberLiteral,
-   *   VariableReference, MessageReference, TermReference
+   *   VariableReference, MessageReference, TermReference, FunctionReference
    */
   function isSimpleElement(element) {
     if (element.type === 'TextElement') {
@@ -19,6 +19,7 @@ var Pontoon = (function (my) {
     // Placeable
     if (element.type === 'Placeable') {
       switch (element.expression.type) {
+        case 'FunctionReference':
         case 'TermReference':
         case 'MessageReference':
         case 'VariableReference':
