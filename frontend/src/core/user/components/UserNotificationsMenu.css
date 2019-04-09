@@ -14,15 +14,11 @@
     color: #4D5967;
     font-size: 26px;
     margin-top: 17px;
+    transition: color 1.0s ease-out;
 }
 
 .user-notifications-menu.unread .selector .icon {
     color: #F36;
-}
-
-.user-notifications-menu.unread.fadeout .selector .icon {
-    color: #4D5967;
-    transition: color 1.0s ease-out;
 }
 
 .user-notifications-menu .menu {
