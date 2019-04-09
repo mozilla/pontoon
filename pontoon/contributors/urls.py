@@ -19,12 +19,12 @@ urlpatterns = [
         name='pontoon.contributors.contributor.email'),
 
     # Contributor timeline
-    url(r'^contributors/(?P<username>[\w-]+)/timeline/$',
+    url(r'^contributors/(?P<username>[\w.@+-]+)/timeline/$',
         views.contributor_timeline,
         name='pontoon.contributors.contributor.timeline'),
 
     # Contributor profile by username
-    url(r'^contributors/(?P<username>[\w-]+)/$',
+    url(r'^contributors/(?P<username>[\w.@+-]+)/$',
         views.contributor_username,
         name='pontoon.contributors.contributor.username'),
 
@@ -46,7 +46,7 @@ urlpatterns = [
         name='pontoon.contributors.notifications.mark.all.as.read'),
 
     # API: Toogle user profile attribute
-    url(r'^api/v1/user/(?P<username>[\w-]+)/$',
+    url(r'^api/v1/user/(?P<username>[\w.@+-]+)/$',
         views.toggle_user_profile_attribute,
         name='pontoon.contributors.toggle_user_profile_attribute'),
 
