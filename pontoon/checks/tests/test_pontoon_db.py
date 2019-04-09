@@ -132,7 +132,7 @@ def test_ftl_parse_error(get_entity_mock):
     """Invalid FTL strings are not allowed"""
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
-        'key'
+        'key ='
     ) == {
         'pErrors': [u'Expected message "key" to have a value or attributes']
     }
@@ -149,7 +149,7 @@ def test_ftl_non_localizable_entries(get_entity_mock):
         get_entity_mock('ftl', string='key = value'),
         '[[foo]]'
     ) == {
-        'pErrors': [u'Translation needs to be a valid localizable entry']
+        'pErrors': [u'Expected an entry start']
     }
 
 
