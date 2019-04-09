@@ -413,7 +413,7 @@ def test_dtd_entity_with_quotes():
                 """),
             ),
             {
-                'clWarnings': ['Attribute "pontoon" occurs 2 times']
+                'clWarnings': ['Attribute "pontoon" is duplicated']
             }
         )
     )
