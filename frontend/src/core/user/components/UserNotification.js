@@ -10,19 +10,41 @@ type Props = {
     notification: Object,
 };
 
+type State = {|
+    unread: boolean,
+|};
+
 
 /**
  * Renders a single notification in the notifications menu.
  */
-export default class UserNotification extends React.Component<Props> {
+export default class UserNotification extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            unread: false,
+        };
+    }
+
+    componentDidMount() {
+        this.setState({
+            unread: this.props.notification.unread,
+        });
+    }
+
     render() {
         const { notification } = this.props;
 
+        let className = 'user-notification';
+        if (this.state.unread) {
+            className += ' unread';
+        }
+
         return <li
-            className="user-notification"
+            className={ className }
             data-id={ notification.id }
             data-level={ notification.level }
-            data-unread={ notification.unread }
         >
             <div className="item-content">
                 <span className="actor">

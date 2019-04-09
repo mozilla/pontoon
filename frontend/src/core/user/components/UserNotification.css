@@ -8,12 +8,8 @@
     border-color: #272a2f;
 }
 
-.user-notification[data-unread="true"] {
+.user-notification.unread {
     background: #3F4752;
-}
-
-.user-notifications-menu.fadeout .user-notification[data-unread="true"] {
-    background: #272a2f;
     transition: background-color 1.0s ease-out;
 }
 
