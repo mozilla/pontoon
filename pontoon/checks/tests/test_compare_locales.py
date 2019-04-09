@@ -391,7 +391,7 @@ def test_dtd_entity_with_quotes():
                     .baz = Fuz
                 """),
                 translation=dedent("""
-                windowTitle
+                windowTitle =
                     .baz = Fuz
                 """),
             ),
@@ -413,7 +413,7 @@ def test_dtd_entity_with_quotes():
                 """),
             ),
             {
-                'clWarnings': ['Attribute "pontoon" occurs 2 times']
+                'clWarnings': ['Attribute "pontoon" is duplicated']
             }
         )
     )

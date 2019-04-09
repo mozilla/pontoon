@@ -1,47 +1,9 @@
-/* fluent-syntax@0.9.0 */
+/* fluent-syntax@0.12.0 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('fluent-syntax', ['exports'], factory) :
   (factory((global.FluentSyntax = {})));
 }(this, (function (exports) { 'use strict';
-
-  function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-  }
-
-  function _arrayWithHoles(arr) {
-    if (Array.isArray(arr)) return arr;
-  }
-
-  function _iterableToArrayLimit(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"] != null) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
-  }
 
   /*
    * Base class for all Fluent AST nodes.
@@ -53,6 +15,126 @@
   class BaseNode {
     constructor() {}
 
+    equals(other) {
+      let ignoredFields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ["span"];
+      const thisKeys = new Set(Object.keys(this));
+      const otherKeys = new Set(Object.keys(other));
+
+      if (ignoredFields) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = ignoredFields[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            const fieldName = _step.value;
+            thisKeys.delete(fieldName);
+            otherKeys.delete(fieldName);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+
+      if (thisKeys.size !== otherKeys.size) {
+        return false;
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = thisKeys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          const fieldName = _step2.value;
+
+          if (!otherKeys.has(fieldName)) {
+            return false;
+          }
+
+          const thisVal = this[fieldName];
+          const otherVal = other[fieldName];
+
+          if (typeof thisVal !== typeof otherVal) {
+            return false;
+          }
+
+          if (thisVal instanceof Array) {
+            if (thisVal.length !== otherVal.length) {
+              return false;
+            }
+
+            for (let i = 0; i < thisVal.length; ++i) {
+              if (!scalarsEqual(thisVal[i], otherVal[i], ignoredFields)) {
+                return false;
+              }
+            }
+          } else if (!scalarsEqual(thisVal, otherVal, ignoredFields)) {
+            return false;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    clone() {
+      function visit(value) {
+        if (value instanceof BaseNode) {
+          return value.clone();
+        }
+
+        if (Array.isArray(value)) {
+          return value.map(visit);
+        }
+
+        return value;
+      }
+
+      const clone = Object.create(this.constructor.prototype);
+
+      var _arr = Object.keys(this);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        const prop = _arr[_i];
+        clone[prop] = visit(this[prop]);
+      }
+
+      return clone;
+    }
+
+  }
+
+  function scalarsEqual(thisVal, otherVal, ignoredFields) {
+    if (thisVal instanceof BaseNode) {
+      return thisVal.equals(otherVal, ignoredFields);
+    }
+
+    return thisVal === otherVal;
   }
   /*
    * Base class for AST nodes which can have Spans.
@@ -107,14 +189,6 @@
     }
 
   }
-  class VariantList extends SyntaxNode {
-    constructor(variants) {
-      super();
-      this.type = "VariantList";
-      this.variants = variants;
-    }
-
-  }
   class Pattern extends SyntaxNode {
     constructor(elements) {
       super();
@@ -148,37 +222,99 @@
    * An abstract base class for expressions.
    */
 
-  class Expression extends SyntaxNode {}
-  class StringLiteral extends Expression {
-    constructor(raw, value) {
-      super();
-      this.type = "StringLiteral";
-      this.raw = raw;
+  class Expression extends SyntaxNode {} // An abstract base class for Literals.
+
+  class Literal extends Expression {
+    constructor(value) {
+      super(); // The "value" field contains the exact contents of the literal,
+      // character-for-character.
+
       this.value = value;
     }
 
+    parse() {
+      return {
+        value: this.value
+      };
+    }
+
   }
-  class NumberLiteral extends Expression {
+  class StringLiteral extends Literal {
     constructor(value) {
-      super();
+      super(value);
+      this.type = "StringLiteral";
+    }
+
+    parse() {
+      // Backslash backslash, backslash double quote, uHHHH, UHHHHHH.
+      const KNOWN_ESCAPES = /(?:\\\\|\\"|\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{6}))/g;
+
+      function from_escape_sequence(match, codepoint4, codepoint6) {
+        switch (match) {
+          case "\\\\":
+            return "\\";
+
+          case "\\\"":
+            return "\"";
+
+          default:
+            let codepoint = parseInt(codepoint4 || codepoint6, 16);
+
+            if (codepoint <= 0xD7FF || 0xE000 <= codepoint) {
+              // It's a Unicode scalar value.
+              return String.fromCodePoint(codepoint);
+            } // Escape sequences reresenting surrogate code points are
+            // well-formed but invalid in Fluent. Replace them with U+FFFD
+            // REPLACEMENT CHARACTER.
+
+
+            return "�";
+        }
+      }
+
+      let value = this.value.replace(KNOWN_ESCAPES, from_escape_sequence);
+      return {
+        value
+      };
+    }
+
+  }
+  class NumberLiteral extends Literal {
+    constructor(value) {
+      super(value);
       this.type = "NumberLiteral";
-      this.value = value;
+    }
+
+    parse() {
+      let value = parseFloat(this.value);
+      let decimal_position = this.value.indexOf(".");
+      let precision = decimal_position > 0 ? this.value.length - decimal_position - 1 : 0;
+      return {
+        value,
+        precision
+      };
     }
 
   }
   class MessageReference extends Expression {
     constructor(id) {
+      let attribute = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       super();
       this.type = "MessageReference";
       this.id = id;
+      this.attribute = attribute;
     }
 
   }
   class TermReference extends Expression {
     constructor(id) {
+      let attribute = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      let args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
       super();
       this.type = "TermReference";
       this.id = id;
+      this.attribute = attribute;
+      this.arguments = args;
     }
 
   }
@@ -191,10 +327,11 @@
 
   }
   class FunctionReference extends Expression {
-    constructor(id) {
+    constructor(id, args) {
       super();
       this.type = "FunctionReference";
       this.id = id;
+      this.arguments = args;
     }
 
   }
@@ -207,31 +344,12 @@
     }
 
   }
-  class AttributeExpression extends Expression {
-    constructor(ref, name) {
+  class CallArguments extends SyntaxNode {
+    constructor() {
+      let positional = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      let named = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       super();
-      this.type = "AttributeExpression";
-      this.ref = ref;
-      this.name = name;
-    }
-
-  }
-  class VariantExpression extends Expression {
-    constructor(ref, key) {
-      super();
-      this.type = "VariantExpression";
-      this.ref = ref;
-      this.key = key;
-    }
-
-  }
-  class CallExpression extends Expression {
-    constructor(callee) {
-      let positional = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-      let named = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-      super();
-      this.type = "CallExpression";
-      this.callee = callee;
+      this.type = "CallArguments";
       this.positional = positional;
       this.named = named;
     }
@@ -332,10 +450,48 @@
       super();
       this.type = "Annotation";
       this.code = code;
-      this.args = args;
+      this.arguments = args;
       this.message = message;
     }
 
+  }
+
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  }
+
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArrayLimit(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"] != null) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
 
   class ParseError extends Error {
@@ -401,7 +557,7 @@
         return "The callee has to be an upper-case identifier or a term";
 
       case "E0009":
-        return "The key has to be a simple identifier";
+        return "The argument name has to be a simple identifier";
 
       case "E0010":
         return "Expected one of the variants to be marked as default (*)";
@@ -827,6 +983,7 @@
 
   }
 
+  /*  eslint no-magic-numbers: [0]  */
   const trailingWSRe = /[ \t\n\r]+$/;
 
   function withSpan(fn) {
@@ -861,7 +1018,7 @@
 
       this.withSpans = withSpans; // Poor man's decorators.
 
-      const methodNames = ["getComment", "getMessage", "getTerm", "getAttribute", "getIdentifier", "getVariant", "getNumber", "getPattern", "getVariantList", "getTextElement", "getPlaceable", "getExpression", "getInlineExpression", "getCallArgument", "getString", "getSimpleExpression", "getLiteral"];
+      const methodNames = ["getComment", "getMessage", "getTerm", "getAttribute", "getIdentifier", "getVariant", "getNumber", "getPattern", "getTextElement", "getPlaceable", "getExpression", "getInlineExpression", "getCallArgument", "getCallArguments", "getString", "getLiteral"];
 
       for (var _i = 0; _i < methodNames.length; _i++) {
         const name = methodNames[_i];
@@ -1070,10 +1227,8 @@
       ps.expectChar("-");
       const id = this.getIdentifier(ps);
       ps.skipBlankInline();
-      ps.expectChar("="); // Syntax 0.8 compat: VariantLists are supported but deprecated. They can
-      // only be found as values of Terms. Nested VariantLists are not allowed.
-
-      const value = this.maybeGetVariantList(ps) || this.maybeGetPattern(ps);
+      ps.expectChar("=");
+      const value = this.maybeGetPattern(ps);
 
       if (value === null) {
         throw new ParseError("E0006", id.name);
@@ -1150,7 +1305,6 @@
 
         ps.next();
         defaultIndex = true;
-        hasDefault = true;
       }
 
       ps.expectChar("[");
@@ -1213,22 +1367,21 @@
     }
 
     getNumber(ps) {
-      let num = "";
+      let value = "";
 
       if (ps.currentChar === "-") {
-        num += "-";
         ps.next();
+        value += `-${this.getDigits(ps)}`;
+      } else {
+        value += this.getDigits(ps);
       }
-
-      num = `${num}${this.getDigits(ps)}`;
 
       if (ps.currentChar === ".") {
-        num += ".";
         ps.next();
-        num = `${num}${this.getDigits(ps)}`;
+        value += `.${this.getDigits(ps)}`;
       }
 
-      return new NumberLiteral(num);
+      return new NumberLiteral(value);
     } // maybeGetPattern distinguishes between patterns which start on the same line
     // as the identifier (a.k.a. inline signleline patterns and inline multiline
     // patterns) and patterns which start on a new line (a.k.a. block multiline
@@ -1257,39 +1410,6 @@
       }
 
       return null;
-    } // Deprecated in Syntax 0.8. VariantLists are only allowed as values of Terms.
-    // Values of Messages, Attributes and Variants must be Patterns. This method
-    // is only used in getTerm.
-
-
-    maybeGetVariantList(ps) {
-      ps.peekBlank();
-
-      if (ps.currentPeek === "{") {
-        const start = ps.peekOffset;
-        ps.peek();
-        ps.peekBlankInline();
-
-        if (ps.currentPeek === EOL) {
-          ps.peekBlank();
-
-          if (ps.isVariantStart()) {
-            ps.resetPeek(start);
-            ps.skipToPeek();
-            return this.getVariantList(ps);
-          }
-        }
-      }
-
-      ps.resetPeek();
-      return null;
-    }
-
-    getVariantList(ps) {
-      ps.expectChar("{");
-      var variants = this.getVariants(ps);
-      ps.expectChar("}");
-      return new VariantList(variants);
     }
 
     getPattern(ps, _ref3) {
@@ -1471,7 +1591,7 @@
         case "\\":
         case "\"":
           ps.next();
-          return [`\\${next}`, next];
+          return `\\${next}`;
 
         case "u":
           return this.getUnicodeEscapeSequence(ps, next, 4);
@@ -1498,13 +1618,7 @@
         sequence += ch;
       }
 
-      const codepoint = parseInt(sequence, 16);
-      const unescaped = codepoint <= 0xD7FF || 0xE000 <= codepoint // It's a Unicode scalar value.
-      ? String.fromCodePoint(codepoint) // Escape sequences reresenting surrogate code points are well-formed
-      // but invalid in Fluent. Replace them with U+FFFD REPLACEMENT
-      // CHARACTER.
-      : "�";
-      return [`\\${u}${sequence}`, unescaped];
+      return `\\${u}${sequence}`;
     }
 
     getPlaceable(ps) {
@@ -1526,18 +1640,14 @@
         }
 
         if (selector.type === "MessageReference") {
-          throw new ParseError("E0016");
+          if (selector.attribute === null) {
+            throw new ParseError("E0016");
+          } else {
+            throw new ParseError("E0018");
+          }
         }
 
-        if (selector.type === "AttributeExpression" && selector.ref.type === "MessageReference") {
-          throw new ParseError("E0018");
-        }
-
-        if (selector.type === "TermReference" || selector.type === "VariantExpression") {
-          throw new ParseError("E0017");
-        }
-
-        if (selector.type === "CallExpression" && selector.callee.type === "TermReference") {
+        if (selector.type === "TermReference" && selector.attribute === null) {
           throw new ParseError("E0017");
         }
 
@@ -1549,11 +1659,7 @@
         return new SelectExpression(selector, variants);
       }
 
-      if (selector.type === "AttributeExpression" && selector.ref.type === "TermReference") {
-        throw new ParseError("E0019");
-      }
-
-      if (selector.type === "CallExpression" && selector.callee.type === "AttributeExpression") {
+      if (selector.type === "TermReference" && selector.attribute !== null) {
         throw new ParseError("E0019");
       }
 
@@ -1565,68 +1671,6 @@
         return this.getPlaceable(ps);
       }
 
-      let expr = this.getSimpleExpression(ps);
-
-      switch (expr.type) {
-        case "NumberLiteral":
-        case "StringLiteral":
-        case "VariableReference":
-          return expr;
-
-        case "MessageReference":
-          {
-            if (ps.currentChar === ".") {
-              ps.next();
-              const attr = this.getIdentifier(ps);
-              return new AttributeExpression(expr, attr);
-            }
-
-            if (ps.currentChar === "(") {
-              // It's a Function. Ensure it's all upper-case.
-              if (!/^[A-Z][A-Z_?-]*$/.test(expr.id.name)) {
-                throw new ParseError("E0008");
-              }
-
-              const func = new FunctionReference(expr.id);
-
-              if (this.withSpans) {
-                func.addSpan(expr.span.start, expr.span.end);
-              }
-
-              return new CallExpression(func, ...this.getCallArguments(ps));
-            }
-
-            return expr;
-          }
-
-        case "TermReference":
-          {
-            if (ps.currentChar === "[") {
-              ps.next();
-              const key = this.getVariantKey(ps);
-              ps.expectChar("]");
-              return new VariantExpression(expr, key);
-            }
-
-            if (ps.currentChar === ".") {
-              ps.next();
-              const attr = this.getIdentifier(ps);
-              expr = new AttributeExpression(expr, attr);
-            }
-
-            if (ps.currentChar === "(") {
-              return new CallExpression(expr, ...this.getCallArguments(ps));
-            }
-
-            return expr;
-          }
-
-        default:
-          throw new ParseError("E0028");
-      }
-    }
-
-    getSimpleExpression(ps) {
       if (ps.isNumberStart()) {
         return this.getNumber(ps);
       }
@@ -1644,12 +1688,43 @@
       if (ps.currentChar === "-") {
         ps.next();
         const id = this.getIdentifier(ps);
-        return new TermReference(id);
+        let attr;
+
+        if (ps.currentChar === ".") {
+          ps.next();
+          attr = this.getIdentifier(ps);
+        }
+
+        let args;
+
+        if (ps.currentChar === "(") {
+          args = this.getCallArguments(ps);
+        }
+
+        return new TermReference(id, attr, args);
       }
 
       if (ps.isIdentifierStart()) {
         const id = this.getIdentifier(ps);
-        return new MessageReference(id);
+
+        if (ps.currentChar === "(") {
+          // It's a Function. Ensure it's all upper-case.
+          if (!/^[A-Z][A-Z0-9_-]*$/.test(id.name)) {
+            throw new ParseError("E0008");
+          }
+
+          let args = this.getCallArguments(ps);
+          return new FunctionReference(id, args);
+        }
+
+        let attr;
+
+        if (ps.currentChar === ".") {
+          ps.next();
+          attr = this.getIdentifier(ps);
+        }
+
+        return new MessageReference(id, attr);
       }
 
       throw new ParseError("E0028");
@@ -1663,14 +1738,14 @@
         return exp;
       }
 
-      if (exp.type !== "MessageReference") {
-        throw new ParseError("E0009");
+      if (exp.type === "MessageReference" && exp.attribute === null) {
+        ps.next();
+        ps.skipBlank();
+        const value = this.getLiteral(ps);
+        return new NamedArgument(exp.id, value);
       }
 
-      ps.next();
-      ps.skipBlank();
-      const value = this.getLiteral(ps);
-      return new NamedArgument(exp.id, value);
+      throw new ParseError("E0009");
     }
 
     getCallArguments(ps) {
@@ -1712,26 +1787,18 @@
       }
 
       ps.expectChar(")");
-      return [positional, named];
+      return new CallArguments(positional, named);
     }
 
     getString(ps) {
-      let raw = "";
-      let value = "";
       ps.expectChar("\"");
+      let value = "";
       let ch;
 
       while (ch = ps.takeChar(x => x !== '"' && x !== EOL)) {
         if (ch === "\\") {
-          const _this$getEscapeSequen = this.getEscapeSequence(ps),
-                _this$getEscapeSequen2 = _slicedToArray(_this$getEscapeSequen, 2),
-                sequence = _this$getEscapeSequen2[0],
-                unescaped = _this$getEscapeSequen2[1];
-
-          raw += sequence;
-          value += unescaped;
+          value += this.getEscapeSequence(ps);
         } else {
-          raw += ch;
           value += ch;
         }
       }
@@ -1741,7 +1808,7 @@
       }
 
       ps.expectChar("\"");
-      return new StringLiteral(raw, value);
+      return new StringLiteral(value);
     }
 
     getLiteral(ps) {
@@ -1768,8 +1835,7 @@
 
   function isSelectExpr(elem) {
     return elem.type === "Placeable" && elem.expression.type === "SelectExpression";
-  } // Bit masks representing the state of the serializer.
-
+  }
 
   const HAS_ENTRIES = 1;
   class FluentSerializer {
@@ -1861,10 +1927,6 @@
       }
     }
 
-    serializeExpression(expr) {
-      return serializeExpression(expr);
-    }
-
   }
 
   function serializeComment(comment) {
@@ -1888,7 +1950,7 @@
     parts.push(`${message.id.name} =`);
 
     if (message.value) {
-      parts.push(serializeValue(message.value));
+      parts.push(serializePattern(message.value));
     }
 
     var _iteratorNormalCompletion2 = true;
@@ -1927,7 +1989,7 @@
     }
 
     parts.push(`-${term.id.name} =`);
-    parts.push(serializeValue(term.value));
+    parts.push(serializePattern(term.value));
     var _iteratorNormalCompletion3 = true;
     var _didIteratorError3 = false;
     var _iteratorError3 = undefined;
@@ -1957,21 +2019,8 @@
   }
 
   function serializeAttribute(attribute) {
-    const value = indent(serializeValue(attribute.value));
+    const value = indent(serializePattern(attribute.value));
     return `\n    .${attribute.id.name} =${value}`;
-  }
-
-  function serializeValue(value) {
-    switch (value.type) {
-      case "Pattern":
-        return serializePattern(value);
-
-      case "VariantList":
-        return serializeVariantList(value);
-
-      default:
-        throw new Error(`Unknown value type: ${value.type}`);
-    }
   }
 
   function serializePattern(pattern) {
@@ -1983,22 +2032,6 @@
     }
 
     return ` ${content}`;
-  }
-
-  function serializeVariantList(varlist) {
-    const content = varlist.variants.map(serializeVariant).join("");
-    return `\n    {${indent(content)}\n    }`;
-  }
-
-  function serializeVariant(variant) {
-    const key = serializeVariantKey(variant.key);
-    const value = indent(serializeValue(variant.value));
-
-    if (variant.default) {
-      return `\n   *[${key}]${value}`;
-    }
-
-    return `\n    [${key}]${value}`;
   }
 
   function serializeElement(element) {
@@ -2024,7 +2057,7 @@
       case "SelectExpression":
         // Special-case select expression to control the whitespace around the
         // opening and the closing brace.
-        return `{ ${serializeSelectExpression(expr)}}`;
+        return `{ ${serializeExpression(expr)}}`;
 
       default:
         return `{ ${serializeExpression(expr)} }`;
@@ -2034,32 +2067,72 @@
   function serializeExpression(expr) {
     switch (expr.type) {
       case "StringLiteral":
-        return `"${expr.raw}"`;
+        return `"${expr.value}"`;
 
       case "NumberLiteral":
         return expr.value;
 
-      case "MessageReference":
-      case "FunctionReference":
-        return expr.id.name;
-
-      case "TermReference":
-        return `-${expr.id.name}`;
-
       case "VariableReference":
         return `$${expr.id.name}`;
 
-      case "AttributeExpression":
-        return serializeAttributeExpression(expr);
+      case "TermReference":
+        {
+          let out = `-${expr.id.name}`;
 
-      case "VariantExpression":
-        return serializeVariantExpression(expr);
+          if (expr.attribute) {
+            out += `.${expr.attribute.name}`;
+          }
 
-      case "CallExpression":
-        return serializeCallExpression(expr);
+          if (expr.arguments) {
+            out += serializeCallArguments(expr.arguments);
+          }
+
+          return out;
+        }
+
+      case "MessageReference":
+        {
+          let out = expr.id.name;
+
+          if (expr.attribute) {
+            out += `.${expr.attribute.name}`;
+          }
+
+          return out;
+        }
+
+      case "FunctionReference":
+        return `${expr.id.name}${serializeCallArguments(expr.arguments)}`;
 
       case "SelectExpression":
-        return serializeSelectExpression(expr);
+        {
+          let out = `${serializeExpression(expr.selector)} ->`;
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = expr.variants[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              let variant = _step4.value;
+              out += serializeVariant(variant);
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+                _iterator4.return();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
+              }
+            }
+          }
+
+          return `${out}\n`;
+        }
 
       case "Placeable":
         return serializePlaceable(expr);
@@ -2069,59 +2142,26 @@
     }
   }
 
-  function serializeSelectExpression(expr) {
-    const parts = [];
-    const selector = `${serializeExpression(expr.selector)} ->`;
-    parts.push(selector);
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
+  function serializeVariant(variant) {
+    const key = serializeVariantKey(variant.key);
+    const value = indent(serializePattern(variant.value));
 
-    try {
-      for (var _iterator4 = expr.variants[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-        const variant = _step4.value;
-        parts.push(serializeVariant(variant));
-      }
-    } catch (err) {
-      _didIteratorError4 = true;
-      _iteratorError4 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-          _iterator4.return();
-        }
-      } finally {
-        if (_didIteratorError4) {
-          throw _iteratorError4;
-        }
-      }
+    if (variant.default) {
+      return `\n   *[${key}]${value}`;
     }
 
-    parts.push("\n");
-    return parts.join("");
+    return `\n    [${key}]${value}`;
   }
 
-  function serializeAttributeExpression(expr) {
-    const ref = serializeExpression(expr.ref);
-    return `${ref}.${expr.name.name}`;
-  }
-
-  function serializeVariantExpression(expr) {
-    const ref = serializeExpression(expr.ref);
-    const key = serializeVariantKey(expr.key);
-    return `${ref}[${key}]`;
-  }
-
-  function serializeCallExpression(expr) {
-    const callee = serializeExpression(expr.callee);
+  function serializeCallArguments(expr) {
     const positional = expr.positional.map(serializeExpression).join(", ");
     const named = expr.named.map(serializeNamedArgument).join(", ");
 
     if (expr.positional.length > 0 && expr.named.length > 0) {
-      return `${callee}(${positional}, ${named})`;
+      return `(${positional}, ${named})`;
     }
 
-    return `${callee}(${positional || named})`;
+    return `(${positional || named})`;
   }
 
   function serializeNamedArgument(arg) {
@@ -2134,9 +2174,83 @@
       case "Identifier":
         return key.name;
 
+      case "NumberLiteral":
+        return key.value;
+
       default:
-        return serializeExpression(key);
+        throw new Error(`Unknown variant key type: ${key.type}`);
     }
+  }
+
+  /*
+   * Abstract Visitor pattern
+   */
+
+  class Visitor {
+    visit(node) {
+      if (Array.isArray(node)) {
+        node.forEach(child => this.visit(child));
+        return;
+      }
+
+      if (!(node instanceof BaseNode)) {
+        return;
+      }
+
+      const visit = this[`visit${node.type}`] || this.genericVisit;
+      visit.call(this, node);
+    }
+
+    genericVisit(node) {
+      var _arr = Object.keys(node);
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        const propname = _arr[_i];
+        this.visit(node[propname]);
+      }
+    }
+
+  }
+  /*
+   * Abstract Transformer pattern
+   */
+
+  class Transformer extends Visitor {
+    visit(node) {
+      if (!(node instanceof BaseNode)) {
+        return node;
+      }
+
+      const visit = this[`visit${node.type}`] || this.genericVisit;
+      return visit.call(this, node);
+    }
+
+    genericVisit(node) {
+      var _arr2 = Object.keys(node);
+
+      for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+        const propname = _arr2[_i2];
+        const propvalue = node[propname];
+
+        if (Array.isArray(propvalue)) {
+          const newvals = propvalue.map(child => this.visit(child)).filter(newchild => newchild !== undefined);
+          node[propname] = newvals;
+        }
+
+        if (propvalue instanceof BaseNode) {
+          const new_val = this.visit(propvalue);
+
+          if (new_val === undefined) {
+            delete node[propname];
+          } else {
+            node[propname] = new_val;
+          }
+        }
+      }
+
+      return node;
+    }
+
   }
 
   function parse(source, opts) {
@@ -2166,22 +2280,21 @@
     return pos - prevLineBreak - 1;
   }
 
-  exports.FluentParser = FluentParser;
-  exports.FluentSerializer = FluentSerializer;
   exports.parse = parse;
   exports.serialize = serialize;
   exports.lineOffset = lineOffset;
   exports.columnOffset = columnOffset;
+  exports.BaseNode = BaseNode;
   exports.Resource = Resource;
   exports.Entry = Entry;
   exports.Message = Message;
   exports.Term = Term;
-  exports.VariantList = VariantList;
   exports.Pattern = Pattern;
   exports.PatternElement = PatternElement;
   exports.TextElement = TextElement;
   exports.Placeable = Placeable;
   exports.Expression = Expression;
+  exports.Literal = Literal;
   exports.StringLiteral = StringLiteral;
   exports.NumberLiteral = NumberLiteral;
   exports.MessageReference = MessageReference;
@@ -2189,9 +2302,7 @@
   exports.VariableReference = VariableReference;
   exports.FunctionReference = FunctionReference;
   exports.SelectExpression = SelectExpression;
-  exports.AttributeExpression = AttributeExpression;
-  exports.VariantExpression = VariantExpression;
-  exports.CallExpression = CallExpression;
+  exports.CallArguments = CallArguments;
   exports.Attribute = Attribute;
   exports.Variant = Variant;
   exports.NamedArgument = NamedArgument;
@@ -2203,6 +2314,13 @@
   exports.Junk = Junk;
   exports.Span = Span;
   exports.Annotation = Annotation;
+  exports.FluentParser = FluentParser;
+  exports.HAS_ENTRIES = HAS_ENTRIES;
+  exports.FluentSerializer = FluentSerializer;
+  exports.serializeExpression = serializeExpression;
+  exports.serializeVariantKey = serializeVariantKey;
+  exports.Visitor = Visitor;
+  exports.Transformer = Transformer;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

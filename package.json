@@ -13,7 +13,7 @@
     "iOS >= 10.3"
   ],
   "dependencies": {
-    "fluent-syntax": "^0.9.0"
+    "fluent-syntax": "^0.12.0"
   },
   "repository": {
     "type": "git",
