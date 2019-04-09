@@ -4,9 +4,9 @@ import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
-import UserNotification from './UserNotification';
-
 import './UserNotificationsMenu.css';
+
+import UserNotification from './UserNotification';
 
 import type { UserState } from 'core/user';
 
@@ -48,10 +48,10 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
     }
 
     markAllNotificationsAsRead = () => {
-        const element = this.notificationsWrapper.current;
+        const { user } = this.props;
 
-        if (element.classList.contains('unread')) {
-            this.props.markAllNotificationsAsRead(element);
+        if (user.notifications.has_unread) {
+            this.props.markAllNotificationsAsRead(this.notificationsWrapper.current);
         }
     }
 

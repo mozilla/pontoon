@@ -19,7 +19,7 @@ export default class UserNotification extends React.Component<Props> {
         const { notification } = this.props;
 
         return <li
-            className = "user-notification"
+            className="user-notification"
             data-id={ notification.id }
             data-level={ notification.level }
             data-unread={ notification.unread }
@@ -50,6 +50,10 @@ export default class UserNotification extends React.Component<Props> {
                 { !notification.description ? null :
                     <div
                         className="message"
+                        // We can safely use notification.description as it is either generated
+                        // by the code or sanitized when coming from the DB. See:
+                        //   - pontoon.projects.forms.NotificationsForm()
+                        //   - pontoon.base.forms.HtmlField()
                         dangerouslySetInnerHTML={{ __html: notification.description }}
                     />
                 }
