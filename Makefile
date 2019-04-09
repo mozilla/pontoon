@@ -33,6 +33,7 @@ build:
 
 	${DC} build base
 	${DC} build webapp
+	${DC} build webapp.python3
 
 	touch .docker-build
 

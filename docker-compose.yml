@@ -12,6 +12,12 @@ services:
       dockerfile: ./docker/Dockerfile.base
     image: local/pontoon_base
 
+  webapp.python3:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.py3.base
+    image: local/pontoon_base
+
   # Webapp app
   webapp:
     build:
