@@ -61,7 +61,7 @@ module.exports = {
         'react',
     ],
     rules: {
-        'react/display-name': 1,
+        'react/display-name': 0,
         'react/prefer-es6-class': 1,
         'react/prefer-stateless-function': 0,
         "react/prop-types": 0,
@@ -70,6 +70,5 @@ module.exports = {
         'react/jsx-uses-vars': 1,
         "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
         "no-console": 1,
-        "react/prefer-stateless-function": [1, {"ignorePureComponents": true}]
     },
 };
