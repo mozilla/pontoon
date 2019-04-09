@@ -391,7 +391,7 @@ def test_dtd_entity_with_quotes():
                     .baz = Fuz
                 """),
                 translation=dedent("""
-                windowTitle
+                windowTitle =
                     .baz = Fuz
                 """),
             ),
