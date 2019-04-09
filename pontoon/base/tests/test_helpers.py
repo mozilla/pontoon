@@ -56,15 +56,15 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict((
     ('attributes-select-expression', (ATTRIBUTE_SELECT_SOURCE, 'Other Simple String')),
     ('variable-reference', ('key = { $variable }', '{ $variable }')),
     ('message-reference', ('key = { message }', '{ message }')),
+    ('message-reference-attribute', ('key = { foo.bar }', '{ foo.bar }')),
     ('term-reference', ('key = { -term }', '{ -term }')),
     (
-        'call-expression',
+        'function-reference',
         ('warning-upgrade = { LINK("Link text", title: "Link title") }Simple String',
          '{ LINK("Link text", title: "Link title") }Simple String')
     ),
     ('string-literal', ('key = { "" }', '{ "" }')),
     ('number-literal', ('key = { 1 }', '{ 1 }')),
-    ('attribute-expression', ('key = { foo.bar }', '{ foo.bar }')),
 ))
 
 
