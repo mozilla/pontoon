@@ -9,8 +9,22 @@
 }
 
 .user-notification.unread {
-    background: #3F4752;
-    transition: background-color 1.0s ease-out;
+    animation-duration: 2s;
+    animation-name: fadeout-background;
+}
+
+@keyframes fadeout-background {
+    0% {
+        background: #3F4752;
+    }
+
+    50% {
+        background: #3F4752;
+    }
+
+    100% {
+        background: #272a2f;
+    }
 }
 
 .user-notification .item-content {

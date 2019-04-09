@@ -17,6 +17,7 @@ type Props = {
 };
 
 type State = {|
+    unread: boolean,
     visible: boolean,
 |};
 
@@ -29,8 +30,19 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            unread: false,
             visible: false,
         };
+    }
+
+    componentDidMount() {
+        if (!this.props.user.isAuthenticated) {
+            return null;
+        }
+
+        this.setState({
+            unread: this.props.user.notifications.has_unread,
+        });
     }
 
     handleClick = () => {
@@ -42,6 +54,21 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return { visible: !state.visible };
         });
+
+        // After the menu with unread notifications has been openned for the first time,
+        // we start a CSS animation, which takes 2000 ms. After it's done, we set the
+        // `unread` state to false to prevent executing the animation in the future.
+        if (this.state.unread) {
+            setTimeout(
+                function() {
+                    this.setState({
+                        unread: false,
+                    });
+                }
+                .bind(this),
+                2000
+            );
+        }
     }
 
     markAllNotificationsAsRead = () => {
@@ -66,8 +93,11 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         }
 
         let className = 'user-notifications-menu';
-        if (user.notifications.has_unread) {
+        if (this.state.unread) {
             className += ' unread';
+        }
+        if (this.state.visible) {
+            className += ' menu-visible';
         }
 
         const notifications = user.notifications.notifications;

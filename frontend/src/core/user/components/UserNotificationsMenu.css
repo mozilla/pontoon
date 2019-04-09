@@ -14,12 +14,31 @@
     color: #4D5967;
     font-size: 26px;
     margin-top: 17px;
-    transition: color 1.0s ease-out;
 }
 
 .user-notifications-menu.unread .selector .icon {
     color: #F36;
 }
+
+.user-notifications-menu.unread.menu-visible .selector .icon {
+    animation-duration: 2s;
+    animation-name: fadeout-color;
+}
+
+@keyframes fadeout-color {
+    0% {
+        color: #F36;
+    }
+
+    50% {
+        color: #F36;
+    }
+
+    100% {
+        color: #4D5967;
+    }
+}
+
 
 .user-notifications-menu .menu {
     background-color: #272a2f;
