@@ -8,9 +8,8 @@ var Pontoon = (function (my) {
   /*
    * Is ast element of type that can be presented as a simple string:
    * - TextElement
-   * - Placeable with expression type CallExpression, StringLiteral, NumberLiteral,
-   *   AttributeExpression, VariableReference, MessageReference
-   *   or TermReference
+   * - Placeable with expression type StringLiteral, NumberLiteral,
+   *   VariableReference, MessageReference, TermReference
    */
   function isSimpleElement(element) {
     if (element.type === 'TextElement') {
@@ -20,10 +19,8 @@ var Pontoon = (function (my) {
     // Placeable
     if (element.type === 'Placeable') {
       switch (element.expression.type) {
-        case 'AttributeExpression':
-        case 'CallExpression':
-        case 'MessageReference':
         case 'TermReference':
+        case 'MessageReference':
         case 'VariableReference':
         case 'NumberLiteral':
         case 'StringLiteral':
