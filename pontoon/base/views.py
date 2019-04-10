@@ -41,7 +41,6 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     TranslatedResource,
     Translation,
-    UserProfile,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -385,6 +384,7 @@ def approve_translation(request):
     """Approve given translation."""
     try:
         t = request.POST['translation']
+        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
         paths = request.POST.getlist('paths[]')
     except MultiValueDictKeyError as e:
         return JsonResponse({
@@ -393,7 +393,8 @@ def approve_translation(request):
         }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
+    entity = translation.entity
+    project = entity.resource.project
     locale = translation.locale
     user = request.user
 
@@ -421,11 +422,19 @@ def approve_translation(request):
     # Checks are disabled for the tutorial.
     use_checks = project.slug != 'tutorial'
 
-    if use_checks and translation.errors.exists():
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This translation has errors.',
-        }, status=403)
+    if use_checks:
+        failed_checks = run_checks(
+            entity,
+            locale.code,
+            entity.string,
+            translation.string,
+            user.profile.quality_checks,
+        )
+
+        if are_blocking_checks(failed_checks, ignore_warnings):
+            return JsonResponse({
+                'failedChecks': failed_checks,
+            })
 
     translation.approve(user)
 
@@ -655,17 +664,12 @@ def perform_checks(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    try:
-        use_ttk_checks = UserProfile.objects.get(user=request.user).quality_checks
-    except UserProfile.DoesNotExist:
-        use_ttk_checks = True
-
     failed_checks = run_checks(
         entity,
         locale_code,
         original,
         string,
-        use_ttk_checks,
+        request.user.profile.quality_checks,
     )
 
     if are_blocking_checks(failed_checks, ignore_warnings):
@@ -736,15 +740,6 @@ def update_translation(request):
             'message': 'Forbidden: This string is in read-only mode.',
         }, status=403)
 
-    try:
-        use_ttk_checks = UserProfile.objects.get(user=user).quality_checks
-    except UserProfile.DoesNotExist:
-        use_ttk_checks = True
-
-    # Disable checks for tutorial project.
-    if project.slug == 'tutorial':
-        use_ttk_checks = False
-
     now = timezone.now()
     can_translate = (
         request.user.can_translate(project=project, locale=locale) and
@@ -763,18 +758,23 @@ def update_translation(request):
             'same': True,
         })
 
-    failed_checks = run_checks(
-        e,
-        locale.code,
-        original,
-        string,
-        use_ttk_checks,
-    )
+    # Check for errors.
+    # Checks are disabled for the tutorial.
+    use_checks = project.slug != 'tutorial'
 
-    if are_blocking_checks(failed_checks, ignore_warnings):
-        return JsonResponse({
-            'failedChecks': failed_checks,
-        })
+    if use_checks:
+        failed_checks = run_checks(
+            e,
+            locale.code,
+            original,
+            string,
+            user.profile.quality_checks,
+        )
+
+        if are_blocking_checks(failed_checks, ignore_warnings):
+            return JsonResponse({
+                'failedChecks': failed_checks,
+            })
 
     # Translations exist
     if len(translations) > 0:
