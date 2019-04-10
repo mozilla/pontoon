@@ -13,6 +13,21 @@ export type Settings = {
 
 
 /**
+ * Update the user settings.
+ */
+export type UpdateSettingsAction = {|
+    +type: typeof UPDATE_SETTINGS,
+    +settings: Settings,
+|};
+export function updateSettings(settings: Settings): UpdateSettingsAction {
+    return {
+        type: UPDATE_SETTINGS,
+        settings,
+    };
+}
+
+
+/**
  * Update the user data.
  */
 export type UpdateAction = {|
@@ -28,17 +43,14 @@ export function update(data: Object): UpdateAction {
 
 
 /**
- * Update the user settings.
+ * Sign out the current user.
  */
-export type UpdateSettingsAction = {|
-    +type: typeof UPDATE_SETTINGS,
-    +settings: Settings,
-|};
-export function updateSettings(settings: Settings): UpdateSettingsAction {
-    return {
-        type: UPDATE_SETTINGS,
-        settings,
-    };
+export function signOut(url: string): Function {
+    return async dispatch => {
+        await api.user.signOut(url);
+
+        dispatch(get());
+    }
 }
 
 
@@ -51,12 +63,9 @@ export function saveSetting(setting: string, value: boolean, username: string): 
 }
 
 
-/**
- * Sign out the current user.
- */
-export function signOut(url: string): Function {
+export function markAllNotificationsAsRead(): Function {
     return async dispatch => {
-        await api.user.signOut(url);
+        await api.user.markAllNotificationsAsRead();
 
         dispatch(get());
     }
@@ -79,6 +88,7 @@ export function get(): Function {
 
 export default {
     get,
+    markAllNotificationsAsRead,
     saveSetting,
     signOut,
     update,

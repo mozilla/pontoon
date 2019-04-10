@@ -74,7 +74,7 @@ export class UserMenuBase extends React.Component<Props, State> {
 
         return <div className="user-menu">
             <div
-                className="button selector"
+                className="selector"
                 onClick={ this.toggleVisibility }
             >
                 { user.isAuthenticated ?

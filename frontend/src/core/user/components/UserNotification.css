@@ -1,0 +1,109 @@
+.user-notification {
+    border-top: 1px solid #333941;
+    cursor: default;
+    padding: 0;
+}
+
+.user-notification:first-child {
+    border-color: #272a2f;
+}
+
+.user-notification:first-child:hover {
+    border-color: #333941;
+}
+
+.user-notification.unread {
+    background: #3F4752;
+}
+
+.user-notification.read {
+    animation-duration: 2s;
+    animation-name: fadeout-background;
+}
+
+@keyframes fadeout-background {
+    0% {
+        background: #3F4752;
+    }
+
+    50% {
+        background: #3F4752;
+    }
+
+    100% {
+        background: #272a2f;
+    }
+}
+
+.user-notification .item-content {
+    display: block;
+    padding: 10px;
+}
+
+.user-notification span {
+    float: none;
+}
+
+.user-notification a {
+    color: #F36;
+    display: inline;
+}
+
+.user-notification .verb {
+    color: #EBEBEB;
+    padding: 0 3px;
+}
+
+.user-notification .message {
+    padding: 10px;
+}
+
+.user-notification .message {
+    padding: 10px;
+}
+
+/* Users can include HTML tags in their messages */
+.user-notification .message h1,
+.user-notification .message h2,
+.user-notification .message h3,
+.user-notification .message h4,
+.user-notification .message h5,
+.user-notification .message h6 {
+    color: #EBEBEB;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.user-notification .message h1 {
+    font-size: 18px;
+}
+
+.user-notification .message h2 {
+    font-size: 16px;
+}
+
+.user-notification .message p {
+    padding: 5px 0;
+}
+
+.user-notification .message ol {
+    margin-left: 1.2em;
+}
+
+.user-notification .message ul {
+    list-style: inside;
+}
+/* End message styling */
+
+.user-notification .timeago {
+    color: #888888;
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    margin-top: 8px;
+    text-align: right;
+    text-transform: uppercase;
+}

@@ -21,6 +21,16 @@ export default class UserAPI extends APIBase {
     }
 
     /**
+     * Mark all notifications of the current user as read.
+     */
+    async markAllNotificationsAsRead(): Promise<Object> {
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        return await this.fetch('/notifications/mark-all-as-read/', 'GET', null, headers);
+    }
+
+    /**
      * Sign out the current user.
      */
     async signOut(url: string): Promise<Object> {

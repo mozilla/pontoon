@@ -10,6 +10,7 @@ import * as user from 'core/user';
 import AppSwitcher from './AppSwitcher';
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';
+import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
@@ -37,6 +38,10 @@ export class UserControlsBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.get());
     }
 
+    markAllNotificationsAsRead = () => {
+        this.props.dispatch(actions.markAllNotificationsAsRead());
+    }
+
     signUserOut = () => {
         const { user } = this.props;
         this.props.dispatch(actions.signOut(user.signOutURL));
@@ -55,6 +60,11 @@ export class UserControlsBase extends React.Component<InternalProps> {
                 isTranslator={ isTranslator }
                 parameters={ parameters }
                 signOut={ this.signUserOut }
+                user={ user }
+            />
+
+            <UserNotificationsMenu
+                markAllNotificationsAsRead={ this.markAllNotificationsAsRead }
                 user={ user }
             />
 
