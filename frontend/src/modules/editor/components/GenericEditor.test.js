@@ -12,7 +12,7 @@ const DEFAULT_LOCALE = {
 };
 
 const EDITOR = {
-    translation: 'hello',
+    translation: 'world',
 };
 
 
@@ -24,7 +24,7 @@ describe('<GenericEditor>', () => {
         />);
 
         expect(wrapper.find('textarea')).toHaveLength(1);
-        expect(wrapper.find('textarea').html()).toContain('hello');
+        expect(wrapper.find('textarea').html()).toContain('world');
     });
 
     it('calls the updateTranslation function on change', () => {
@@ -51,7 +51,7 @@ describe('<GenericEditor>', () => {
             updateTranslation={ updateMock }
         />);
 
-        wrapper.setProps({ editor: { selectionReplacementContent: ' world' } });
+        wrapper.setProps({ editor: { selectionReplacementContent: 'hello ' } });
 
         expect(updateMock.calledOnce).toBeTruthy();
         expect(updateMock.calledWith('hello world')).toBeTruthy();

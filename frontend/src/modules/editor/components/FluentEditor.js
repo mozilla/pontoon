@@ -43,7 +43,20 @@ export default class FluentEditor extends React.Component<EditorProps> {
         this.aceEditor = React.createRef();
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
+        if (!this.aceEditor.current) {
+            return;
+        }
+        this.aceEditor.current.editor.focus();
+        this.aceEditor.current.editor.moveCursorTo(0, 0);
+        this.aceEditor.current.editor.clearSelection();
+    }
+
+    componentDidUpdate(prevProps: EditorProps) {
+        if (!this.aceEditor.current) {
+            return;
+        }
+
         // If there is content to add to the editor, do so, then remove
         // the content so it isn't added again.
         // This is an abuse of the redux store, because we want to update
@@ -56,6 +69,8 @@ export default class FluentEditor extends React.Component<EditorProps> {
             );
             this.props.resetSelectionContent();
         }
+
+        this.aceEditor.current.editor.focus();
     }
 
     updateTranslationSelectionWith(content: string) {
@@ -91,6 +106,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
             mode='fluent'
             theme='fluent'
             width='100%'
+            focus={ true }
             wrapEnabled={ true }
             setOptions={ options }
             value={ this.props.editor.translation }
