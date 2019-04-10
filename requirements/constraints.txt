@@ -49,9 +49,9 @@ oauthlib==2.0.2 \
     --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
 
 # >=2.5 django-jinja
-Jinja2==2.8 \
-    --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
-    --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
+Jinja2==2.8.1 \
+    --hash=sha256:35341f3a97b46327b3ef1eb624aadea87a535b8f50863036e085e7c426ac5891 \
+    --hash=sha256:3997cf273f1424207c60d5895264f74483fce72702f15a7cd51a8551d43663ca
 
 # Jinja2
 MarkupSafe==0.23 \
