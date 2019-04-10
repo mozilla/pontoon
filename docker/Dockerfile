@@ -1,4 +1,5 @@
-FROM local/pontoon_base
+ARG pythonversion
+FROM local/pontoon_base_${pythonversion}
 
 WORKDIR /app
 

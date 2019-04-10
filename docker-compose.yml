@@ -10,7 +10,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.base
-    image: local/pontoon_base
+      args:
+        pythonversion: "${PYTHON_VERSION}"
+    image: local/pontoon_base_${PYTHON_VERSION}
 
   # Webapp app
   webapp:
@@ -18,8 +20,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
       args:
-        - pythonversion=2.7.16
-    image: local/pontoon
+        pythonversion: "${PYTHON_VERSION}"
+    image: local/pontoon_py${PYTHON_VERSION}
     env_file:
       - docker/config/webapp.env
     environment:
