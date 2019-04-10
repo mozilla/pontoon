@@ -1,4 +1,5 @@
-FROM python:2.7.16-stretch
+ARG pythonversion
+FROM python:${pythonversion}-stretch
 
 RUN apt-get update && apt-get -y --no-install-recommends install \
     ca-certificates \

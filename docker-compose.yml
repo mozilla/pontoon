@@ -12,19 +12,13 @@ services:
       dockerfile: ./docker/Dockerfile.base
     image: local/pontoon_base
 
-  webapp.python3:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.py3.base
-      args:
-        - pythonversion=3.6.8
-    image: local/pontoon_base
-
   # Webapp app
   webapp:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+      args:
+        - pythonversion=2.7.16
     image: local/pontoon
     env_file:
       - docker/config/webapp.env

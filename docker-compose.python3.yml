@@ -1,0 +1,11 @@
+# docker-compose for Pontoon python3 development
+#
+# Note: Requires docker-compose 1.10+.
+version: "2"
+services:
+  # Pontoon python3 base image
+  webapp.python3:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.py3.base
+    image: local/pontoon_base
