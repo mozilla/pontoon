@@ -8,7 +8,15 @@
     border-color: #272a2f;
 }
 
+.user-notification:first-child:hover {
+    border-color: #333941;
+}
+
 .user-notification.unread {
+    background: #3F4752;
+}
+
+.user-notification.read {
     animation-duration: 2s;
     animation-name: fadeout-background;
 }

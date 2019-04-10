@@ -20,7 +20,7 @@
     color: #F36;
 }
 
-.user-notifications-menu.unread.menu-visible .selector .icon {
+.user-notifications-menu.read.menu-visible .selector .icon {
     animation-duration: 2s;
     animation-name: fadeout-color;
 }
