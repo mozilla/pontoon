@@ -52,7 +52,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
         this.aceEditor.current.editor.clearSelection();
     }
 
-    componentDidUpdate(prevProps: EditorProps) {
+    componentDidUpdate() {
         if (!this.aceEditor.current) {
             return;
         }
