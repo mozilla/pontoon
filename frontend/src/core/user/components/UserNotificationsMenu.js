@@ -52,7 +52,9 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
 
     handleClick = () => {
         if (this.state.markAsRead) {
-            this.setState({ markAsRead: false });
+            this.setState({
+                markAsRead: false,
+            });
         }
 
         this.toggleVisibility();

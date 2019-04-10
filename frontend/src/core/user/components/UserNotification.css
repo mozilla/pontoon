@@ -5,7 +5,11 @@
 }
 
 .user-notification:first-child {
-    border: none;
+    border-color: #272a2f;
+}
+
+.user-notification:first-child:hover {
+    border-color: #333941;
 }
 
 .user-notification.unread {
