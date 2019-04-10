@@ -85,7 +85,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             {
               "SourceString": {
-                "message": "Source String", 
+                "message": "Source String",
                 "description": "Comment"
               }
             }
@@ -93,7 +93,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         expected_string = dedent("""
             {
               "SourceString": {
-                "message": "New Translated String", 
+                "message": "New Translated String",
                 "description": "Comment"
               }
             }

@@ -1,6 +1,5 @@
 
 import json
-from contextlib import nested
 
 import pytest
 
@@ -17,7 +16,7 @@ def test_view_ajax_form(rf):
         patch('pontoon.base.views.AjaxFormView.get_form'),
         patch('pontoon.base.views.AjaxFormView.render_to_response')]
 
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with _patch_ctx as (form_m, response_m):
         form_m.return_value = 7
         response_m.return_value = 23
 
@@ -45,7 +44,7 @@ def test_view_ajax_form_post(rf):
         patch('pontoon.base.views.AjaxFormPostView.get_form'),
         patch('pontoon.base.views.AjaxFormPostView.render_to_response')]
 
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with _patch_ctx as (form_m, response_m):
         with pytest.raises(Http404):
             AjaxFormPostView.as_view()(rf.get('/foo/bar'))
         with pytest.raises(Http404):
@@ -61,7 +60,7 @@ def test_view_ajax_form_submit_bad(rf):
         patch('pontoon.base.views.AjaxFormView.get_form'),
         patch('pontoon.base.views.AjaxFormView.render_to_response')]
 
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with _patch_ctx as (form_m, response_m):
         _form = MagicMock()
         _form.is_valid.return_value = False
         type(_form).errors = PropertyMock(return_value=['BAD', 'STUFF'])
@@ -89,7 +88,7 @@ def test_view_ajax_form_submit_success(rf):
         patch('pontoon.base.views.AjaxFormView.get_form'),
         patch('pontoon.base.views.AjaxFormView.render_to_response')]
 
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with _patch_ctx as (form_m, response_m):
         _form = MagicMock()
         _form.is_valid.return_value = True
         _form.save.return_value = 23

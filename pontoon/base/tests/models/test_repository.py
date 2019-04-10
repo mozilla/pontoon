@@ -1,5 +1,4 @@
 import os
-from contextlib import nested
 
 import pytest
 from mock import call, patch, Mock
@@ -147,7 +146,7 @@ def test_repo_url_for_path_no_match(repo_git, locale_a, settings):
 
 @pytest.mark.django_db
 def test_repo_pull(repo_git):
-    _patch_ctx = nested(
+    _patch_ctx = (
         patch('pontoon.base.models.update_from_vcs'),
         patch('pontoon.base.models.get_revision'),
     )

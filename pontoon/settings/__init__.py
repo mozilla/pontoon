@@ -20,7 +20,7 @@ if TEST:
 
 
 # Import settings that are helpful during the process of development.
-if DEV:
+if DEV:  # noqa
     try:
         from .dev import *  # noqa
     except ImportError:
