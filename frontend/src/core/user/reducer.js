@@ -45,6 +45,31 @@ function settings(
 }
 
 
+export type Notification = {|
+    +id: number,
+    +level: string,
+    +unread: string,
+    +description: string,
+    +verb: string,
+    +date: string,
+    +date_iso: string,
+    +actor: {
+        +anchor: string,
+        +url: string,
+    },
+    +target: {
+        +anchor: string,
+        +url: string,
+    },
+|};
+
+
+export type Notifications = {|
+    has_unread: boolean,
+    notifications: Array<Notification>,
+|};
+
+
 export type UserState = {|
     +isAuthenticated: boolean,
     +isAdmin: boolean,
@@ -62,6 +87,7 @@ export type UserState = {|
     +signOutURL: string,
     +gravatarURLSmall: string,
     +gravatarURLBig: string,
+    +notifications: Notifications,
 |};
 
 const initial: UserState = {
@@ -81,6 +107,10 @@ const initial: UserState = {
     signOutURL: '',
     gravatarURLSmall: '',
     gravatarURLBig: '',
+    notifications: {
+        has_unread: false,
+        notifications: [],
+    },
 };
 
 export default function reducer(
@@ -106,6 +136,7 @@ export default function reducer(
                 signOutURL: action.data.logout_url,
                 gravatarURLSmall: action.data.gravatar_url_small,
                 gravatarURLBig: action.data.gravatar_url_big,
+                notifications: action.data.notifications,
             };
         case UPDATE_SETTINGS:
             return {

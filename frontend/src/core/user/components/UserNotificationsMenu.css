@@ -1,0 +1,111 @@
+.user-notifications-menu {
+    float: right;
+    height: 60px;
+    position: relative;
+}
+
+.user-notifications-menu .selector {
+    cursor: pointer;
+    height: 100%;
+    padding: 0;
+}
+
+.user-notifications-menu .selector .icon {
+    color: #4D5967;
+    font-size: 26px;
+    margin-top: 17px;
+}
+
+.user-notifications-menu.unread .selector .icon {
+    color: #F36;
+}
+
+.user-notifications-menu.read.menu-visible .selector .icon {
+    animation-duration: 2s;
+    animation-name: fadeout-color;
+}
+
+@keyframes fadeout-color {
+    0% {
+        color: #F36;
+    }
+
+    50% {
+        color: #F36;
+    }
+
+    100% {
+        color: #4D5967;
+    }
+}
+
+
+.user-notifications-menu .menu {
+    background-color: #272a2f;
+    border: 1px solid #333941;
+    border-top: none;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 59px;
+    width: 350px;
+    z-index: 20;
+}
+
+.user-notifications-menu .menu .notification-list {
+    list-style: none;
+    margin: 0;
+    max-height: 280px;
+    overflow: auto;
+}
+
+.user-notifications-menu .menu li {
+    color: #aaa;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 0 4px;
+}
+
+.user-notifications-menu .menu li:hover {
+    background: #3F4752;
+}
+
+.user-notifications-menu .menu li.no {
+    background: transparent;
+    color: inherit;
+    padding: 0 4px 14px;
+    text-align: center;
+}
+
+.user-notifications-menu .menu li.no .icon {
+    color: #333941;
+    font-size: 92px;
+    padding-bottom: 8px;
+}
+
+.user-notifications-menu .menu li.no .title {
+    color: #EBEBEB;
+    font-size: 16px;
+}
+
+.user-notifications-menu .menu li.no .description {
+    color: #AAAAAA;
+    font-size: 12px;
+    padding-top: 4px;
+}
+
+.user-notifications-menu .menu .see-all {
+    border-top: 1px solid #333941;
+}
+
+.user-notifications-menu .menu .see-all a {
+    display: block;
+    font-size: 14px;
+    padding: 10px;
+    text-align: center;
+}
+
+.user-notifications-menu .menu .see-all a:hover {
+    background: #3F4752;
+    color: #FFFFFF;
+}

@@ -1,10 +1,11 @@
 .user-menu {
     float: right;
+    height: 60px;
 }
 
 .user-menu .selector {
     cursor: pointer;
-    margin: 6px 5px 6px 5px;
+    height: 100%;
 }
 
 .user-menu .selector img,
@@ -17,12 +18,14 @@
 .user-menu .selector img {
     height: 44px;
     width: 44px;
+    margin: 6px 5px 6px 5px;
 }
 
 .user-menu .selector .menu-icon {
     font-size: 20px;
     height: 20px;
     width: 20px;
+    margin: 6px 5px 6px 5px;
     padding: 12px;
     text-align: center;
 }
