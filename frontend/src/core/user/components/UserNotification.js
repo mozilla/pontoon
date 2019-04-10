@@ -11,7 +11,7 @@ type Props = {
 };
 
 type State = {|
-    unread: boolean,
+    markAsRead: boolean,
 |};
 
 
@@ -23,22 +23,27 @@ export default class UserNotification extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            unread: false,
+            markAsRead: false,
         };
     }
 
-    componentDidMount() {
-        this.setState({
-            unread: this.props.notification.unread,
-        });
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.notification.unread && !this.props.notification.unread) {
+            this.setState({
+                markAsRead: true,
+            });
+        }
     }
 
     render() {
         const { notification } = this.props;
 
         let className = 'user-notification';
-        if (this.state.unread) {
+        if (notification.unread) {
             className += ' unread';
+        }
+        else if (this.state.markAsRead) {
+            className += ' read';
         }
 
         return <li

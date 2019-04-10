@@ -17,7 +17,7 @@ type Props = {
 };
 
 type State = {|
-    unread: boolean,
+    markAsRead: boolean,
     visible: boolean,
 |};
 
@@ -30,22 +30,31 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            unread: false,
+            markAsRead: false,
             visible: false,
         };
     }
 
-    componentDidMount() {
+    componentDidUpdate(prevProps: Props) {
         if (!this.props.user.isAuthenticated) {
-            return null;
+            return;
         }
 
-        this.setState({
-            unread: this.props.user.notifications.has_unread,
-        });
+        if (
+            prevProps.user.notifications.has_unread &&
+            !this.props.user.notifications.has_unread
+        ) {
+            this.setState({
+                markAsRead: true,
+            });
+        }
     }
 
     handleClick = () => {
+        if (this.state.markAsRead) {
+            this.setState({ markAsRead: false });
+        }
+
         this.toggleVisibility();
         this.markAllNotificationsAsRead();
     }
@@ -54,21 +63,6 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return { visible: !state.visible };
         });
-
-        // After the menu with unread notifications has been openned for the first time,
-        // we start a CSS animation, which takes 2000 ms. After it's done, we set the
-        // `unread` state to false to prevent executing the animation in the future.
-        if (this.state.unread) {
-            setTimeout(
-                function() {
-                    this.setState({
-                        unread: false,
-                    });
-                }
-                .bind(this),
-                2000
-            );
-        }
     }
 
     markAllNotificationsAsRead = () => {
@@ -93,9 +87,13 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
         }
 
         let className = 'user-notifications-menu';
-        if (this.state.unread) {
+        if (this.props.user.notifications.has_unread) {
             className += ' unread';
         }
+        else if (this.state.markAsRead) {
+            className += ' read';
+        }
+
         if (this.state.visible) {
             className += ' menu-visible';
         }
@@ -114,10 +112,10 @@ export class UserNotificationsMenuBase extends React.Component<Props, State> {
             <div className="menu">
                 <ul className="notification-list">
                 { notifications.length ?
-                    notifications.map((notification, index) => {
+                    notifications.map((notification) => {
                         return <UserNotification
                             notification={ notification }
-                            key={ index }
+                            key={ notification.id }
                         />;
                     })
                     :

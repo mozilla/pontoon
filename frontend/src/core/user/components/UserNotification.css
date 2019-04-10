@@ -5,10 +5,14 @@
 }
 
 .user-notification:first-child {
-    border-color: #272a2f;
+    border: none;
 }
 
 .user-notification.unread {
+    background: #3F4752;
+}
+
+.user-notification.read {
     animation-duration: 2s;
     animation-name: fadeout-background;
 }
