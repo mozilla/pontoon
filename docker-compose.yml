@@ -14,6 +14,15 @@ services:
         pythonversion: "${PYTHON_VERSION}"
     image: local/pontoon_base_${PYTHON_VERSION}
 
+  # Pontoon python3 base image
+  webapp.python3:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.base
+      args:
+        pythonversion: "${PYTHON_VERSION}"
+    image: local/pontoon-py3
+
   # Webapp app
   webapp:
     build:
