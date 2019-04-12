@@ -27,6 +27,8 @@ backports.csv==1.0.5 \
 bleach==3.0.2 \
     --hash=sha256:48d39675b80a75f6d1c3bdbffec791cf0bbbab665cf01e20da701c77de278718 \
     --hash=sha256:73d26f018af5d5adcdabf5c1c974add4361a9c76af215fe32fdec8a6fc5fb9b9
+caighdean==0.0.4 \
+    --hash=sha256:a0a05b39f8e185a3698a4fb67dd2b388e7fb01b28f7f53c041e0857680655d4e
 celery==3.1.18 \
     --hash=sha256:dbf59618d5a9eff172d25021f36614be5af0501e4527975ca504b95863f14fed \
     --hash=sha256:0924f94070c6fc57d408b169848c5b38832668fffe060e48b4803fb23e0e3eaf
@@ -143,6 +145,3 @@ https://github.com/mathjazz/silme/archive/v0.10.0.zip#egg=silme==0.10.0 \
 
 https://github.com/mathjazz/translate/archive/2.2.5.zip#egg=translate-toolkit==2.2.5 \
     --hash=sha256:9a23bda0f3ec07f36b6b662bf2a25492b6a354709500c736213229e94f462443
-
-https://github.com/mathjazz/python-caighdean/archive/v0.0.4.zip#egg=caighdean==0.0.4 \
-    --hash=sha256:c0225c877b94c069d393ffc520fa7f81e6d6a627c49c63eabf91d2f8ceb02aee
