@@ -149,7 +149,11 @@ def test_view_caighdean(client, entity_a):
     assert json.loads(response.content) == {}
 
     translation = TranslationFactory.create(
-        entity=entity_a, locale=gd, string='GD translation'
+        entity=entity_a,
+        locale=gd,
+        string='GD translation',
+        plural_form=None,
+        approved=True,
     )
     entity_a.translation_set.add(translation)
 
@@ -213,7 +217,11 @@ def test_view_caighdean_bad(client, entity_a):
 
     translator = caighdean.Translator()
     translation = TranslationFactory.create(
-        entity=entity_a, locale=gd, string='foo'
+        entity=entity_a,
+        locale=gd,
+        string='foo',
+        plural_form=None,
+        approved=True,
     )
     entity_a.translation_set.add(translation)
 

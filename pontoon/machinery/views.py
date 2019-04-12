@@ -236,7 +236,16 @@ def caighdean(request):
         }, status=404)
 
     try:
-        text = entity.translation_set.get(locale__code='gd').string
+        text = (
+            entity
+            .translation_set
+            .get(
+                locale__code='gd',
+                plural_form=None if entity.string_plural == '' else 0,
+                approved=True
+            )
+            .string
+        )
     except Translation.DoesNotExist:
         return JsonResponse({})
 
