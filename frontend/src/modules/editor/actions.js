@@ -8,6 +8,7 @@ import { actions as entitiesActions } from 'modules/entitieslist';
 import type { DbEntity } from 'modules/entitieslist';
 
 
+export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
 
@@ -39,6 +40,20 @@ export function updateSelection(content: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+    };
+}
+
+
+/**
+ * Update the content that should replace the currently selected text in the
+ * active editor.
+ */
+export type ResetSelectionAction = {|
+    +type: typeof RESET_SELECTION,
+|};
+export function resetSelection(): ResetSelectionAction {
+    return {
+        type: RESET_SELECTION,
     };
 }
 
@@ -95,6 +110,7 @@ export function sendTranslation(
 
 
 export default {
+    resetSelection,
     sendTranslation,
     update,
     updateSelection,

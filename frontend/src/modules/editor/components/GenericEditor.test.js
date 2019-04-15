@@ -11,11 +11,15 @@ const DEFAULT_LOCALE = {
     script: 'Latin',
 };
 
+const EDITOR = {
+    translation: 'hello',
+};
+
 
 describe('<GenericEditor>', () => {
     it('renders a textarea with some content', () => {
         const wrapper = shallow(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
         />);
 
@@ -26,7 +30,7 @@ describe('<GenericEditor>', () => {
     it('calls the updateTranslation function on change', () => {
         const mockUpdate = sinon.spy();
         const wrapper = shallow(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
         />);
@@ -41,7 +45,7 @@ describe('<GenericEditor>', () => {
         const updateMock = sinon.stub();
 
         const wrapper = mount(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             resetSelectionContent={ resetMock }
             updateTranslation={ updateMock }
@@ -57,7 +61,7 @@ describe('<GenericEditor>', () => {
     it('sends the translation on Enter', () => {
         const mockSend = sinon.spy();
         const wrapper = shallow(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
         />);
@@ -78,7 +82,7 @@ describe('<GenericEditor>', () => {
     it('copies the original into the Editor on Ctrl + Shift + C', () => {
         const mockCopy = sinon.spy();
         const wrapper = shallow(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             copyOriginalIntoEditor={ mockCopy }
         />);
@@ -99,7 +103,7 @@ describe('<GenericEditor>', () => {
     it('clears the translation on Ctrl + Shift + Backspace', () => {
         const mockUpdate = sinon.spy();
         const wrapper = shallow(<GenericEditor
-            translation='hello'
+            editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
         />);

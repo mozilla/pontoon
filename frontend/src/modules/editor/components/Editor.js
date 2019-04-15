@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import debounce from 'lodash.debounce';
 import { Localized } from 'fluent-react';
 
 import './Editor.css';
@@ -25,7 +24,6 @@ import type { EditorState } from '../reducer';
 
 
 type Props = {|
-    activeTranslation: string,
     editor: EditorState,
     isReadOnlyEditor: boolean,
     locale: ?Locale,
@@ -41,10 +39,6 @@ type InternalProps = {|
     dispatch: Function,
 |};
 
-type State = {|
-    translation: string,
-|};
-
 
 /**
  * Editor for translation strings.
@@ -52,53 +46,13 @@ type State = {|
  * Will present a different editor depending on the file format of the string,
  * see `EditorProxy` for more information.
  */
-export class EditorBase extends React.Component<InternalProps, State> {
-    constructor(props: InternalProps) {
-        super(props);
-
-        // This state acts as a buffer between the Editors and the editor state.
-        // We want to avoid updating the redux state at every key stroke, thus
-        // we keep track of changes in this state and only update the store
-        // every few milliseconds using debouce.
-        this.state = {
-            translation: props.activeTranslation,
-        };
-    }
-
-    componentDidUpdate(prevProps: InternalProps) {
-        if (prevProps.editor.translation !== this.props.editor.translation) {
-            this.updateTranslation(this.props.editor.translation);
-        }
-    }
-
+export class EditorBase extends React.Component<InternalProps> {
     resetSelectionContent = () => {
-        this.props.dispatch(actions.updateSelection(''));
+        this.props.dispatch(actions.resetSelection());
     }
 
     updateTranslation = (translation: string) => {
-        this.setState({ translation });
-
-        if (translation !== this.props.editor.translation) {
-            this.updateStoreTranslation(translation);
-        }
-    }
-
-    // We want to keep the store in sync with the local state, so that potential
-    // changes made outside the editor are based on a translation that is as
-    // current as possible. We still keep a short delay to avoid having
-    // performance issues.
-    updateStoreTranslation = debounce((translation: string) => {
         this.props.dispatch(actions.update(translation));
-    }, 200)
-
-    updateSetting = (setting: string, value: boolean) => {
-        this.props.dispatch(
-            user.actions.saveSetting(
-                setting,
-                value,
-                this.props.user.username,
-            )
-        );
     }
 
     copyOriginalIntoEditor = () => {
@@ -126,7 +80,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
 
         this.props.dispatch(actions.sendTranslation(
             state.selectedEntity.pk,
-            this.state.translation,
+            state.editor.translation,
             state.locale.code,
             state.selectedEntity.original,
             state.pluralForm,
@@ -134,6 +88,16 @@ export class EditorBase extends React.Component<InternalProps, State> {
             state.nextEntity,
             state.router,
         ));
+    }
+
+    updateSetting = (setting: string, value: boolean) => {
+        this.props.dispatch(
+            user.actions.saveSetting(
+                setting,
+                value,
+                this.props.user.username,
+            )
+        );
     }
 
     render() {
@@ -147,7 +111,6 @@ export class EditorBase extends React.Component<InternalProps, State> {
                 isReadOnlyEditor={ this.props.isReadOnlyEditor }
                 entity={ this.props.selectedEntity }
                 editor={ this.props.editor }
-                translation={ this.state.translation }
                 locale={ this.props.locale }
                 copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                 resetSelectionContent={ this.resetSelectionContent }
@@ -229,7 +192,6 @@ export class EditorBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
         editor: state[NAME],
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
