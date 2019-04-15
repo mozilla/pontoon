@@ -29,9 +29,8 @@ function createEditorBase({
 } = {}) {
     return shallow(<EditorBase
         dispatch={ () => {} }
-        activeTranslation='initial'
         editor={
-            { translation: '' }
+            { translation: 'initial' }
         }
         locale={
             { code: 'kg' }
@@ -60,16 +59,19 @@ function expectHiddenSettingsAndActions(wrapper) {
 describe('<EditorBase>', () => {
     beforeAll(() => {
         sinon.stub(editor.actions, 'sendTranslation').returns({ type: 'whatever' });
+        sinon.stub(editor.actions, 'update').returns({ type: 'whatever' });
         sinon.stub(user.actions, 'saveSetting').returns({ type: 'whatever' });
     });
 
     afterEach(() => {
         editor.actions.sendTranslation.reset();
+        editor.actions.update.reset();
         user.actions.saveSetting.reset();
     });
 
     afterAll(() => {
         editor.actions.sendTranslation.restore();
+        editor.actions.update.restore();
         user.actions.saveSetting.restore();
     });
 
@@ -80,30 +82,28 @@ describe('<EditorBase>', () => {
         expect(wrapper.find('button')).toHaveLength(3);
     });
 
-    it('has the active translation as content when created', () => {
-        const wrapper = createEditorBase();
-        expect(wrapper.state().translation).toEqual('initial');
-    });
-
     it('clears the text when the Clear button is clicked', () => {
         const wrapper = createEditorBase();
 
         wrapper.find('.action-clear').simulate('click');
-        expect(wrapper.state().translation).toEqual('');
+        expect(editor.actions.update.calledOnce).toBeTruthy();
+        expect(editor.actions.update.calledWith('')).toBeTruthy();
     });
 
     it('copies the original string in the textarea when the Copy button is clicked', () => {
         const wrapper = createEditorBase();
 
         wrapper.find('.action-copy').simulate('click');
-        expect(wrapper.state().translation).toEqual(SELECTED_ENTITY.original);
+        expect(editor.actions.update.calledOnce).toBeTruthy();
+        expect(editor.actions.update.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
     });
 
     it('copies the plural original string in the textarea when the Copy button is clicked', () => {
         const wrapper = createEditorBase({ pluralForm: 5 });
 
         wrapper.find('.action-copy').simulate('click');
-        expect(wrapper.state().translation).toEqual(SELECTED_ENTITY.original_plural);
+        expect(editor.actions.update.calledOnce).toBeTruthy();
+        expect(editor.actions.update.calledWith(SELECTED_ENTITY.original_plural)).toBeTruthy();
     });
 
     it('calls the sendTranslation action when the Suggest button is clicked', () => {

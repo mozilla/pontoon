@@ -34,7 +34,6 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
             return <FluentEditor
                 isReadOnlyEditor={ this.props.isReadOnlyEditor }
                 editor={ this.props.editor }
-                translation={ this.props.translation }
                 locale={ this.props.locale }
                 copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
                 resetSelectionContent={ this.props.resetSelectionContent }
@@ -46,7 +45,6 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
         return <GenericEditor
             isReadOnlyEditor={ this.props.isReadOnlyEditor }
             editor={ this.props.editor }
-            translation={ this.props.translation }
             locale={ this.props.locale }
             copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
             resetSelectionContent={ this.props.resetSelectionContent }

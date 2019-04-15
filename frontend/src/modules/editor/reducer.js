@@ -1,11 +1,16 @@
 /* @flow */
 
-import { UPDATE, UPDATE_SELECTION } from './actions';
+import { RESET_SELECTION, UPDATE, UPDATE_SELECTION } from './actions';
 
-import type { UpdateAction, UpdateSelectionAction } from './actions';
+import type {
+    ResetSelectionAction,
+    UpdateAction,
+    UpdateSelectionAction,
+} from './actions';
 
 
 type Action =
+    | ResetSelectionAction
     | UpdateAction
     | UpdateSelectionAction
 ;
@@ -35,6 +40,11 @@ export default function reducer(
             return {
                 ...state,
                 selectionReplacementContent: action.content,
+            };
+        case RESET_SELECTION:
+            return {
+                ...state,
+                selectionReplacementContent: '',
             };
         default:
             return state;
