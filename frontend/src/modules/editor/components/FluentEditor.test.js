@@ -6,8 +6,12 @@ import FluentEditor from './FluentEditor';
 
 
 describe('<FluentEditor>', () => {
+    const EDITOR = {
+        translation: 'hello',
+    };
+
     it('renders a textarea with some content', () => {
-        const wrapper = shallow(<FluentEditor translation='hello' />);
+        const wrapper = shallow(<FluentEditor editor={ EDITOR } />);
 
         expect(wrapper.find('ReactAce')).toHaveLength(1);
     });
@@ -17,12 +21,17 @@ describe('<FluentEditor>', () => {
         const updateMock = sinon.stub();
 
         const wrapper = mount(<FluentEditor
-            translation='hello'
+            editor={ EDITOR }
             resetSelectionContent={ resetMock }
             updateTranslation={ updateMock }
         />);
 
-        wrapper.setProps({ editor: { selectionReplacementContent: ' world' } });
+        wrapper.setProps({
+            editor: {
+                ...EDITOR,
+                selectionReplacementContent: ' world'
+            }
+        });
 
         expect(updateMock.calledOnce).toBeTruthy();
         expect(updateMock.calledWith('hello world')).toBeTruthy();

@@ -93,8 +93,8 @@ export default class FluentEditor extends React.Component<EditorProps> {
             width='100%'
             wrapEnabled={ true }
             setOptions={ options }
-            value={ this.props.translation }
-            annotations={ annotate(this.props.translation) }
+            value={ this.props.editor.translation }
+            annotations={ annotate(this.props.editor.translation) }
             onChange={ this.props.updateTranslation }
             debounceChangePeriod={200}
         />;

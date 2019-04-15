@@ -9,7 +9,6 @@ import type { EditorState } from '..';
 export type EditorProps = {|
     isReadOnlyEditor: boolean,
     editor: EditorState,
-    translation: string,
     locale: Locale,
     copyOriginalIntoEditor: () => void,
     resetSelectionContent: () => void,
@@ -36,8 +35,8 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
         // After mounting, put the cursor at the end of the content.
         this.textarea.current.setSelectionRange(
-            this.props.translation.length,
-            this.props.translation.length,
+            this.props.editor.translation.length,
+            this.props.editor.translation.length,
         );
     }
 
@@ -115,7 +114,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
         return <textarea
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
-            value={ this.props.translation }
+            value={ this.props.editor.translation }
             onKeyDown={ this.handleShortcuts }
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }
