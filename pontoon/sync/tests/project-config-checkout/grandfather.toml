@@ -1,0 +1,4 @@
+basepath = "."
+
+[[includes]]
+    path = "l10n.toml"

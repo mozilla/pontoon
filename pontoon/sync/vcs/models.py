@@ -510,7 +510,9 @@ class VCSConfiguration(object):
         """
         Add new locale to project configuration.
         """
-        self.parsed_configuration.locales.append(locale_code)
+        locales = self.parsed_configuration.locales or []
+        locales.append(locale_code)
+        self.parsed_configuration.set_locales(locales)
 
         """
         TODO: For now we don't make changes to the configuration file to
@@ -550,7 +552,7 @@ class VCSConfiguration(object):
         """
         if (
             locale_code is not None and
-            locale_code not in self.parsed_configuration.locales
+            locale_code not in self.parsed_configuration.all_locales
         ):
             self.add_locale(locale_code)
 

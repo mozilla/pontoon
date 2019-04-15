@@ -241,6 +241,8 @@ class VCSProjectTests(TestCase):
 
 
 class VCSConfigurationTests(TestCase):
+    toml = 'l10n.toml'
+
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code='fr')
 
@@ -272,7 +274,7 @@ class VCSConfigurationTests(TestCase):
         )
 
         # Make sure VCSConfiguration instance is initialized
-        self.db_project.configuration_file = 'l10n.toml'
+        self.db_project.configuration_file = self.toml
         self.vcs_project = VCSProject(
             self.db_project,
             locales=[self.locale]
@@ -287,7 +289,7 @@ class VCSConfigurationTests(TestCase):
         config = self.vcs_project.configuration.parsed_configuration
         locale_code = 'new-locale-code'
 
-        assert_false(locale_code in config.locales)
+        assert_false(locale_code in config.all_locales)
 
         self.vcs_project.configuration.add_locale(locale_code)
 
@@ -363,6 +365,10 @@ class VCSConfigurationTests(TestCase):
                 self.resource_strings_reality,
             ],
         )
+
+
+class GrandFatheredVCSConfigurationTest(VCSConfigurationTests):
+    toml = 'grandfather.toml'
 
 
 def setUpResource(self):
