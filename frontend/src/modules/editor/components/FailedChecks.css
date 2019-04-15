@@ -1,0 +1,70 @@
+.failed-checks {
+    background: #272A2F;
+    border-top: 1px solid #5E6475;
+    bottom: 0;
+    left: 0;
+    min-height: 90px;
+    padding: 10px;
+    position: absolute;
+    text-align: left;
+    width: 100%;
+
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.failed-checks .cancel {
+    background: none;
+    border: none;
+    color: #AAAAAA;
+    float: right;
+    font-size: 24px;
+    font-weight: 100;
+    line-height: 22px;
+    margin-top: -3px;
+    padding: 0;
+}
+
+.failed-checks .cancel:hover {
+    color: #FFFFFF;
+}
+
+.failed-checks .title {
+    color: #F36;
+    font-size: 14px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 5px;
+}
+
+.failed-checks ul {
+    font-style: italic;
+    line-height: 22px;
+    list-style: none;
+    margin: 0px;
+    width: calc(100% - 140px);
+}
+
+.failed-checks ul i {
+    font-size: 18px;
+    margin: 0px 8px;
+    vertical-align: text-bottom;
+}
+
+.failed-checks .warning {
+    color: #AAAAAA;
+}
+
+.failed-checks .warning i {
+    color: #4D5967;
+}
+
+.failed-checks .error i {
+    color: #F36;
+}
+
+.failed-checks .save-anyway {
+    bottom: 10px;
+    position: absolute;
+    right: 10px;
+}

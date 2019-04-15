@@ -10,6 +10,7 @@ import type { DbEntity } from 'modules/entitieslist';
 
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
+export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
 
 
@@ -42,6 +43,30 @@ export function updateSelection(content: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+    };
+}
+
+
+/**
+ * Update failed checks in the active editor.
+ */
+export type FailedChecks = {|
+    +clErrors: Array<string>,
+    +pErrors: Array<string>,
+    +clWarnings: Array<string>,
+    +pndbWarnings: Array<string>,
+    +ttWarnings: Array<string>,
+|};
+export type UpdateFailedChecksAction = {|
+    +type: typeof UPDATE_FAILED_CHECKS,
+    +failedChecks: FailedChecks,
+|};
+export function updateFailedChecks(
+    failedChecks: FailedChecks,
+): UpdateFailedChecksAction {
+    return {
+        type: UPDATE_FAILED_CHECKS,
+        failedChecks: failedChecks,
     };
 }
 
@@ -83,7 +108,10 @@ export function sendTranslation(
             forceSuggestions,
         );
 
-        if (content.same) {
+        if (content.failedChecks) {
+            dispatch(updateFailedChecks(content.failedChecks));
+        }
+        else if (content.same) {
             // The translation that was provided is the same as an existing
             // translation for that entity.
             // Show an error.
@@ -115,5 +143,6 @@ export default {
     resetSelection,
     sendTranslation,
     update,
+    updateFailedChecks,
     updateSelection,
 };

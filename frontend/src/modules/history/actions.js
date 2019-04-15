@@ -4,6 +4,7 @@ import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
 import { actions as statsActions } from 'core/stats';
+import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -100,7 +101,10 @@ export function updateStatus(
 ): Function {
     return async dispatch => {
         const results = await updateStatusOnServer(change, translation, resource);
-        if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
+        if (results.failedChecks) {
+            dispatch(editorActions.updateFailedChecks(results.failedChecks));
+        }
+        else if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
             // The change did work, we want to move on to the next Entity.
             dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
         }
@@ -112,7 +116,9 @@ export function updateStatus(
             dispatch(statsActions.update(results.stats));
         }
 
-        dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
+        if (results.translation) {
+            dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
+        }
     }
 }
 

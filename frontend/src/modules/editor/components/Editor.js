@@ -13,6 +13,7 @@ import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 
 import { actions, NAME } from '..';
+import FailedChecks from './FailedChecks';
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
@@ -101,6 +102,27 @@ export class EditorBase extends React.Component<InternalProps> {
         );
     }
 
+    getFailedChecksOfType = (type: string) => {
+        const { editor, pluralForm, selectedEntity } = this.props;
+
+        if (!selectedEntity) {
+            return [];
+        }
+
+        if (editor[type].length) {
+            return editor[type];
+        }
+
+        const plural = pluralForm === -1 ? 0 : pluralForm;
+        const translation = selectedEntity.translation[plural];
+
+        if (!translation || (!translation.approved && !translation.fuzzy)) {
+            return [];
+        }
+
+        return translation[type];
+    }
+
     render() {
         if (!this.props.locale) {
             return null;
@@ -119,6 +141,10 @@ export class EditorBase extends React.Component<InternalProps> {
                 updateTranslation={ this.updateTranslation }
             />
             <menu>
+                <FailedChecks
+                    errors={ this.getFailedChecksOfType('errors') }
+                    warnings={ this.getFailedChecksOfType('warnings') }
+                    />
                 { !this.props.user.isAuthenticated ?
                     <Localized
                         id="editor-editor-sign-in-to-translate"

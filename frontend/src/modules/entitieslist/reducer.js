@@ -13,6 +13,7 @@ export type Action =
 ;
 
 export type Translation = {
+    +pk: number,
     +string: ?string,
     +approved: boolean,
     +fuzzy: boolean,
