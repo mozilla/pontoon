@@ -7,7 +7,7 @@ export PYTHON_VERSION := 2.7.13
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
 SITE_URL ?= http://localhost:8000
 
-.PHONY: build build.py3 setup run clean test shell loaddb build-frontend build-frontend-w
+.PHONY: build build-py3 setup run clean test shell loaddb build-frontend build-frontend-w
 
 help:
 	@echo "Welcome to Pontoon!\n"
