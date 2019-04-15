@@ -119,72 +119,72 @@ export class EditorBase extends React.Component<InternalProps> {
                 updateTranslation={ this.updateTranslation }
             />
             <menu>
-            { !this.props.user.isAuthenticated ?
-                <Localized
-                    id="editor-editor-sign-in-to-translate"
-                    a={
-                        <user.SignInLink url={ this.props.user.signInURL }></user.SignInLink>
-                    }
-                >
-                    <p className='banner'>
-                        { '<a>Sign in</a> to translate.' }
-                    </p>
-                </Localized>
-            : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
-                <Localized
-                    id="editor-editor-read-only-localization"
-                >
-                    <p className='banner'>This is a read-only localization.</p>
-                </Localized>
-            :
-            <React.Fragment>
-                <EditorSettings
-                    settings={ this.props.user.settings }
-                    updateSetting={ this.updateSetting }
-                />
-                <KeyboardShortcuts />
-                <div className="actions">
-                    <Localized id="editor-editor-button-copy">
-                        <button
-                            className="action-copy"
-                            onClick={ this.copyOriginalIntoEditor }
-                        >
-                            Copy
-                        </button>
+                { !this.props.user.isAuthenticated ?
+                    <Localized
+                        id="editor-editor-sign-in-to-translate"
+                        a={
+                            <user.SignInLink url={ this.props.user.signInURL }></user.SignInLink>
+                        }
+                    >
+                        <p className='banner'>
+                            { '<a>Sign in</a> to translate.' }
+                        </p>
                     </Localized>
-                    <Localized id="editor-editor-button-clear">
-                        <button
-                            className="action-clear"
-                            onClick={ this.clearEditor }
-                        >
-                            Clear
-                        </button>
+                : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
+                    <Localized
+                        id="editor-editor-read-only-localization"
+                    >
+                        <p className='banner'>This is a read-only localization.</p>
                     </Localized>
-                    { this.props.user.settings.forceSuggestions ?
-                    // Suggest button, will send an unreviewed translation.
-                    <Localized id="editor-editor-button-suggest">
-                        <button
-                            className="action-suggest"
-                            onClick={ this.sendTranslation }
-                        >
-                            Suggest
-                        </button>
-                    </Localized>
-                    :
-                    // Save button, will send an approved translation.
-                    <Localized id="editor-editor-button-save">
-                        <button
-                            className="action-save"
-                            onClick={ this.sendTranslation }
-                        >
-                            Save
-                        </button>
-                    </Localized>
-                    }
-                </div>
-                <div className="clearfix" />
-            </React.Fragment>
-            }
+                :
+                    <React.Fragment>
+                        <EditorSettings
+                            settings={ this.props.user.settings }
+                            updateSetting={ this.updateSetting }
+                        />
+                        <KeyboardShortcuts />
+                        <div className="actions">
+                            <Localized id="editor-editor-button-copy">
+                                <button
+                                    className="action-copy"
+                                    onClick={ this.copyOriginalIntoEditor }
+                                >
+                                    Copy
+                                </button>
+                            </Localized>
+                            <Localized id="editor-editor-button-clear">
+                                <button
+                                    className="action-clear"
+                                    onClick={ this.clearEditor }
+                                >
+                                    Clear
+                                </button>
+                            </Localized>
+                            { this.props.user.settings.forceSuggestions ?
+                            // Suggest button, will send an unreviewed translation.
+                            <Localized id="editor-editor-button-suggest">
+                                <button
+                                    className="action-suggest"
+                                    onClick={ this.sendTranslation }
+                                >
+                                    Suggest
+                                </button>
+                            </Localized>
+                            :
+                            // Save button, will send an approved translation.
+                            <Localized id="editor-editor-button-save">
+                                <button
+                                    className="action-save"
+                                    onClick={ this.sendTranslation }
+                                >
+                                    Save
+                                </button>
+                            </Localized>
+                            }
+                        </div>
+                        <div className="clearfix" />
+                    </React.Fragment>
+                }
             </menu>
         </div>;
     }
