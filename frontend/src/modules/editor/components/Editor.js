@@ -51,18 +51,19 @@ export class EditorBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.resetSelection());
     }
 
-    updateTranslation = (translation: string) => {
-        this.props.dispatch(actions.update(translation));
+    updateTranslation = (translation: string, fromOutsideEditor?: boolean) => {
+        const source = fromOutsideEditor ? 'external' : 'internal';
+        this.props.dispatch(actions.update(translation, source));
     }
 
     copyOriginalIntoEditor = () => {
         const { selectedEntity, pluralForm } = this.props;
         if (selectedEntity) {
             if (pluralForm === -1 || pluralForm === 1) {
-                this.updateTranslation(selectedEntity.original);
+                this.updateTranslation(selectedEntity.original, true);
             }
             else {
-                this.updateTranslation(selectedEntity.original_plural);
+                this.updateTranslation(selectedEntity.original_plural, true);
             }
         }
     }
