@@ -37,7 +37,7 @@ export type EditorState = {|
  */
 function extractFailedChecksOfType(
     failedChecks: FailedChecks,
-    type: string,
+    type: 'Errors' | 'Warnings',
 ): Array<string> {
     let extractedFailedChecks = [];
     const keys = Object.keys(failedChecks);

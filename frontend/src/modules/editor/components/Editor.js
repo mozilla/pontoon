@@ -102,7 +102,7 @@ export class EditorBase extends React.Component<InternalProps> {
         );
     }
 
-    getFailedChecksOfType = (type: string) => {
+    getFailedChecksOfType = (type: 'errors' | 'warnings') => {
         const { editor, pluralForm, selectedEntity } = this.props;
 
         if (!selectedEntity) {
@@ -116,6 +116,8 @@ export class EditorBase extends React.Component<InternalProps> {
         const plural = pluralForm === -1 ? 0 : pluralForm;
         const translation = selectedEntity.translation[plural];
 
+        // Only show failed checks popup for active translations that are approved or fuzzy,
+        // in which case their status icon is also colored as error/warning in string list
         if (!translation || (!translation.approved && !translation.fuzzy)) {
             return [];
         }
@@ -144,7 +146,7 @@ export class EditorBase extends React.Component<InternalProps> {
                 <FailedChecks
                     errors={ this.getFailedChecksOfType('errors') }
                     warnings={ this.getFailedChecksOfType('warnings') }
-                    />
+                />
                 { !this.props.user.isAuthenticated ?
                     <Localized
                         id="editor-editor-sign-in-to-translate"

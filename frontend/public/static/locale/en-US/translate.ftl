@@ -12,6 +12,14 @@ editor-editor-button-save = Save
 editor-editor-button-suggest = Suggest
 
 
+## Failed Checks
+## Renders the failed checks popup
+
+editor-settings-toolkit-checks = ×
+    .aria-label = Close failed checks popup
+editor-FailedChecks--title = The following checks have failed
+
+
 ## EditorSettings
 ## Shows options to update user settings regarding the editor.
 

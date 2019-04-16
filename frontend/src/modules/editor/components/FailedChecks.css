@@ -8,12 +8,13 @@
     position: absolute;
     text-align: left;
     width: 100%;
+    z-index: 10;
 
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-.failed-checks .cancel {
+.failed-checks .close {
     background: none;
     border: none;
     color: #AAAAAA;
@@ -25,7 +26,7 @@
     padding: 0;
 }
 
-.failed-checks .cancel:hover {
+.failed-checks .close:hover {
     color: #FFFFFF;
 }
 
@@ -45,22 +46,26 @@
     width: calc(100% - 140px);
 }
 
-.failed-checks ul i {
+.failed-checks ul li:before {
+    content: '';
+    font-family: 'Font Awesome 5 Free';
     font-size: 18px;
+    font-style: normal;
+    font-weight: bold;
     margin: 0px 8px;
-    vertical-align: text-bottom;
+    vertical-align: sub;
 }
 
 .failed-checks .warning {
     color: #AAAAAA;
 }
 
-.failed-checks .warning i {
-    color: #4D5967;
+.failed-checks .error:before {
+    color: #F36;
 }
 
-.failed-checks .error i {
-    color: #F36;
+.failed-checks .warning:before {
+    color: #4D5967;
 }
 
 .failed-checks .save-anyway {

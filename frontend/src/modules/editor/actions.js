@@ -66,7 +66,7 @@ export function updateFailedChecks(
 ): UpdateFailedChecksAction {
     return {
         type: UPDATE_FAILED_CHECKS,
-        failedChecks: failedChecks,
+        failedChecks,
     };
 }
 

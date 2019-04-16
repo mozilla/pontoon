@@ -5,8 +5,6 @@ import { Localized } from 'fluent-react';
 
 import './FailedChecks.css';
 
-import type { DbEntity } from 'modules/entitieslist';
-
 
 type Props = {|
     errors: Array<string>,
@@ -20,11 +18,11 @@ type State = {|
 
 
 /*
- * Renders an appropriate Editor for an entity, based on its file format.
+ * Renders the failed checks popup.
  */
 export default class FailedChecks extends React.Component<Props, State> {
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         this.state = {
             visible: true,
         };
@@ -56,7 +54,16 @@ export default class FailedChecks extends React.Component<Props, State> {
         }
 
         return <div className="failed-checks">
-            <button className="cancel" onClick={ this.closeFailedChecks }>&times;</button>
+            <Localized
+                id="editor-FailedChecks--close"
+                attrs={{ ariaLabel: true }}
+            >
+                <button
+                    aria-label="Close failed checks popup"
+                    className="close"
+                    onClick={ this.closeFailedChecks }
+                >×</button>
+            </Localized>
             <Localized
                 id="editor-FailedChecks--title"
             >
@@ -66,7 +73,6 @@ export default class FailedChecks extends React.Component<Props, State> {
                 {
                     errors.map((error, key) => {
                         return <li className="error" key={ key }>
-                            <i className="fa fa-times-circle"></i>
                             { error }
                         </li>;
                     })
@@ -74,7 +80,6 @@ export default class FailedChecks extends React.Component<Props, State> {
                 {
                     warnings.map((warning, key) => {
                         return <li className="warning" key={ key }>
-                            <i className="fa fa-times-circle"></i>
                             { warning }
                         </li>;
                     })
