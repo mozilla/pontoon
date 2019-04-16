@@ -33,11 +33,9 @@ export default class GenericEditor extends React.Component<EditorProps> {
             return;
         }
 
-        // After mounting, put the cursor at the end of the content.
-        this.textarea.current.setSelectionRange(
-            this.props.editor.translation.length,
-            this.props.editor.translation.length,
-        );
+        this.textarea.current.focus();
+        // After mounting, put the cursor at the beginning of the content.
+        this.textarea.current.setSelectionRange(0, 0);
     }
 
     componentDidUpdate() {
@@ -52,6 +50,12 @@ export default class GenericEditor extends React.Component<EditorProps> {
                 this.props.editor.selectionReplacementContent
             );
             this.props.resetSelectionContent();
+        }
+
+        this.textarea.current.focus();
+
+        if (this.props.editor.changeSource === 'external') {
+            this.textarea.current.setSelectionRange(0, 0);
         }
     }
 

@@ -7,7 +7,7 @@ import FluentEditor from './FluentEditor';
 
 describe('<FluentEditor>', () => {
     const EDITOR = {
-        translation: 'hello',
+        translation: 'world',
     };
 
     it('renders a textarea with some content', () => {
@@ -29,7 +29,7 @@ describe('<FluentEditor>', () => {
         wrapper.setProps({
             editor: {
                 ...EDITOR,
-                selectionReplacementContent: ' world'
+                selectionReplacementContent: 'hello '
             }
         });
 
