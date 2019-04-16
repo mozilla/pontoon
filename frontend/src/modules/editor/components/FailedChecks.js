@@ -29,9 +29,9 @@ export default class FailedChecks extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
-        if (!prevState.visible) {
+        if (prevState.visible) {
             this.setState(() => {
-                return { visible: true };
+                return { visible: false };
             });
         }
     }
