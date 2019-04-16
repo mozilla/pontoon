@@ -38,8 +38,8 @@ build:
 
 	touch .docker-build
 
-build.py3: override PYTHON_VERSION=3.7.3
-build.py3: build
+build-py3: override PYTHON_VERSION=3.7.3
+build-py3: build
 
 setup: .docker-build
 	${DC} run webapp /app/docker/set_up_webapp.sh
