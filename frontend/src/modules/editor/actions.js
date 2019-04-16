@@ -19,11 +19,13 @@ export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECT
 export type UpdateAction = {|
     +type: typeof UPDATE,
     +translation: string,
+    +changeSource: string,
 |};
-export function update(translation: string): UpdateAction {
+export function update(translation: string, changeSource?: string): UpdateAction {
     return {
         type: UPDATE,
         translation,
+        changeSource: changeSource || 'internal',
     };
 }
 

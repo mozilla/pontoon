@@ -53,6 +53,10 @@ export default class GenericEditor extends React.Component<EditorProps> {
         }
 
         this.textarea.current.focus();
+
+        if (this.props.editor.changeSource === 'external') {
+            this.textarea.current.setSelectionRange(0, 0);
+        }
     }
 
     updateTranslationSelectionWith(content: string) {

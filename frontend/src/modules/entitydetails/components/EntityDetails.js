@@ -139,7 +139,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     updateEditorTranslation = (translation: string) => {
-        this.props.dispatch(editor.actions.update(translation));
+        this.props.dispatch(editor.actions.update(translation, 'external'));
     }
 
     addTextToEditorTranslation = (content: string) => {
