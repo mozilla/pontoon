@@ -32,6 +32,7 @@ export type EditorState = {|
     +selectionReplacementContent: string,
     +errors: Array<string>,
     +warnings: Array<string>,
+    +source: '' | 'stored' | 'submitted' | 'approved',
 |};
 
 
@@ -72,6 +73,7 @@ const initial: EditorState = {
     selectionReplacementContent: '',
     errors: [],
     warnings: [],
+    source: '',
 };
 
 export default function reducer(
@@ -90,6 +92,7 @@ export default function reducer(
                 ...state,
                 errors: extractFailedChecksOfType(action.failedChecks, 'Errors'),
                 warnings: extractFailedChecksOfType(action.failedChecks, 'Warnings'),
+                source: action.source,
             };
         case UPDATE_SELECTION:
             return {

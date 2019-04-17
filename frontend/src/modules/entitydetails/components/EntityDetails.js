@@ -118,7 +118,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 pndbWarnings: [],
                 ttWarnings: [],
             };
-            dispatch(editor.actions.updateFailedChecks(failedChecks));
+            dispatch(editor.actions.updateFailedChecks(failedChecks, 'stored'));
         } else {
             dispatch(editor.actions.resetFailedChecks());
         }

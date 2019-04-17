@@ -68,8 +68,24 @@
     color: #4D5967;
 }
 
-.failed-checks .save-anyway {
+.failed-checks .anyway {
+    background: #7BC876;
+    border: none;
+    border-radius: 3px;
     bottom: 10px;
+    color: #272A2F;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 10px;
     position: absolute;
     right: 10px;
+    text-transform: uppercase;
+}
+
+.failed-checks .anyway.suggest {
+    background: #4FC4F6;
+}
+
+.failed-checks .anyway:hover {
+    color: #EBEBEB;
 }

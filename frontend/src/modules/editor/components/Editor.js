@@ -125,6 +125,8 @@ export class EditorBase extends React.Component<InternalProps> {
             />
             <menu>
                 <FailedChecks
+                    source={ this.props.editor.source }
+                    user={ this.props.user }
                     errors={ this.props.editor.errors }
                     warnings={ this.props.editor.warnings }
                     resetFailedChecks={ this.resetFailedChecks }

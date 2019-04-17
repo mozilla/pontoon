@@ -102,7 +102,7 @@ export function updateStatus(
     return async dispatch => {
         const results = await updateStatusOnServer(change, translation, resource);
         if (results.failedChecks) {
-            dispatch(editorActions.updateFailedChecks(results.failedChecks));
+            dispatch(editorActions.updateFailedChecks(results.failedChecks, 'approved'));
         }
         else if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
             // The change did work, we want to move on to the next Entity.

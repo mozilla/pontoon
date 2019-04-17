@@ -6,7 +6,12 @@ import { Localized } from 'fluent-react';
 import './FailedChecks.css';
 
 
+import type { UserState } from 'core/user';
+
+
 type Props = {|
+    source: '' | 'stored' | 'submitted' | 'approved',
+    user: UserState,
     errors: Array<string>,
     warnings: Array<string>,
     resetFailedChecks: () => void,
@@ -21,8 +26,16 @@ export default class FailedChecks extends React.Component<Props> {
         this.props.resetFailedChecks();
     }
 
+    approveAnyway = () => {
+        return null;
+    }
+
+    submitAnyway = () => {
+        return null;
+    }
+
     render() {
-        const { errors, warnings } = this.props;
+        const { source, user, errors, warnings } = this.props;
 
         if (!errors.length && !warnings.length) {
             return null;
@@ -60,6 +73,35 @@ export default class FailedChecks extends React.Component<Props> {
                     })
                 }
             </ul>
+            { (source === 'stored' || errors.length) ? null :
+                source === 'approved' ?
+                <Localized id="editor-FailedChecks--approve-anyway">
+                    <button
+                        className="approve anyway"
+                        onClick={ this.approveAnyway }
+                    >
+                        Approve anyway
+                    </button>
+                </Localized>
+                : user.settings.forceSuggestions ?
+                <Localized id="editor-FailedChecks--suggest-anyway">
+                    <button
+                        className="suggest anyway"
+                        onClick={ this.submitAnyway }
+                    >
+                        Suggest anyway
+                    </button>
+                </Localized>
+                :
+                <Localized id="editor-FailedChecks--save-anyway">
+                    <button
+                        className="save anyway"
+                        onClick={ this.submitAnyway }
+                    >
+                        Save anyway
+                    </button>
+                </Localized>
+            }
         </div>;
     }
 }

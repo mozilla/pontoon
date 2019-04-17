@@ -61,13 +61,16 @@ export type FailedChecks = {|
 export type UpdateFailedChecksAction = {|
     +type: typeof UPDATE_FAILED_CHECKS,
     +failedChecks: FailedChecks,
+    +source: '' | 'stored' | 'submitted' | 'approved',
 |};
 export function updateFailedChecks(
     failedChecks: FailedChecks,
+    source: '' | 'stored' | 'submitted' | 'approved',
 ): UpdateFailedChecksAction {
     return {
         type: UPDATE_FAILED_CHECKS,
         failedChecks,
+        source,
     };
 }
 
@@ -122,7 +125,7 @@ export function sendTranslation(
         );
 
         if (content.failedChecks) {
-            dispatch(updateFailedChecks(content.failedChecks));
+            dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
         }
         else if (content.same) {
             // The translation that was provided is the same as an existing
