@@ -102,27 +102,8 @@ export class EditorBase extends React.Component<InternalProps> {
         );
     }
 
-    getFailedChecksOfType = (type: 'errors' | 'warnings') => {
-        const { editor, pluralForm, selectedEntity } = this.props;
-
-        if (!selectedEntity) {
-            return [];
-        }
-
-        if (editor[type].length) {
-            return editor[type];
-        }
-
-        const plural = pluralForm === -1 ? 0 : pluralForm;
-        const translation = selectedEntity.translation[plural];
-
-        // Only show failed checks popup for active translations that are approved or fuzzy,
-        // in which case their status icon is also colored as error/warning in string list
-        if (!translation || (!translation.approved && !translation.fuzzy)) {
-            return [];
-        }
-
-        return translation[type];
+    resetFailedChecks = () => {
+        this.props.dispatch(actions.resetFailedChecks());
     }
 
     render() {
@@ -144,8 +125,9 @@ export class EditorBase extends React.Component<InternalProps> {
             />
             <menu>
                 <FailedChecks
-                    errors={ this.getFailedChecksOfType('errors') }
-                    warnings={ this.getFailedChecksOfType('warnings') }
+                    errors={ this.props.editor.errors }
+                    warnings={ this.props.editor.warnings }
+                    resetFailedChecks={ this.resetFailedChecks }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

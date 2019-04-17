@@ -9,44 +9,19 @@ import './FailedChecks.css';
 type Props = {|
     errors: Array<string>,
     warnings: Array<string>,
-|};
-
-
-type State = {|
-    visible: boolean,
+    resetFailedChecks: () => void,
 |};
 
 
 /*
  * Renders the failed checks popup.
  */
-export default class FailedChecks extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            visible: true,
-        };
-    }
-
-    componentDidUpdate(prevProps: Props, prevState: State) {
-        if (prevState.visible) {
-            this.setState(() => {
-                return { visible: false };
-            });
-        }
-    }
-
+export default class FailedChecks extends React.Component<Props> {
     closeFailedChecks = () => {
-        this.setState(() => {
-            return { visible: false };
-        });
+        this.props.resetFailedChecks();
     }
 
     render() {
-        if (!this.state.visible) {
-            return null;
-        }
-
         const { errors, warnings } = this.props;
 
         if (!errors.length && !warnings.length) {

@@ -1,6 +1,7 @@
 /* @flow */
 
 import {
+    RESET_FAILED_CHECKS,
     RESET_SELECTION,
     UPDATE,
     UPDATE_FAILED_CHECKS,
@@ -9,6 +10,7 @@ import {
 
 import type {
     FailedChecks,
+    ResetFailedChecksAction,
     ResetSelectionAction,
     UpdateAction,
     UpdateFailedChecksAction,
@@ -17,6 +19,7 @@ import type {
 
 
 type Action =
+    | ResetFailedChecksAction
     | ResetSelectionAction
     | UpdateAction
     | UpdateFailedChecksAction
@@ -93,6 +96,12 @@ export default function reducer(
                 ...state,
                 selectionReplacementContent: action.content,
                 changeSource: 'internal',
+            };
+        case RESET_FAILED_CHECKS:
+            return {
+                ...state,
+                errors: [],
+                warnings: [],
             };
         case RESET_SELECTION:
             return {

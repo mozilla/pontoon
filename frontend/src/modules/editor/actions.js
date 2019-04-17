@@ -8,6 +8,7 @@ import { actions as entitiesActions } from 'modules/entitieslist';
 import type { DbEntity } from 'modules/entitieslist';
 
 
+export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
@@ -72,8 +73,7 @@ export function updateFailedChecks(
 
 
 /**
- * Update the content that should replace the currently selected text in the
- * active editor.
+ * Reset content to default value.
  */
 export type ResetSelectionAction = {|
     +type: typeof RESET_SELECTION,
@@ -81,6 +81,19 @@ export type ResetSelectionAction = {|
 export function resetSelection(): ResetSelectionAction {
     return {
         type: RESET_SELECTION,
+    };
+}
+
+
+/**
+ * Reset failed checks to default value.
+ */
+export type ResetFailedChecksAction = {|
+    +type: typeof RESET_FAILED_CHECKS,
+|};
+export function resetFailedChecks(): ResetFailedChecksAction {
+    return {
+        type: RESET_FAILED_CHECKS,
     };
 }
 
@@ -140,6 +153,7 @@ export function sendTranslation(
 
 
 export default {
+    resetFailedChecks,
     resetSelection,
     sendTranslation,
     update,

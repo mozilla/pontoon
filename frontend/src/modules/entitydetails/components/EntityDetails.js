@@ -81,6 +81,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             selectedEntity !== prevProps.selectedEntity
         ) {
             this.updateEditorTranslation(activeTranslation);
+            this.updateFailedChecks();
             this.fetchHelpersData();
         }
     }
@@ -95,6 +96,32 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         dispatch(machinery.actions.get(selectedEntity.original, locale, selectedEntity.pk));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+    }
+
+    updateFailedChecks() {
+        const { dispatch, pluralForm, selectedEntity } = this.props;
+
+        if (!selectedEntity) {
+            return;
+        }
+
+        const plural = pluralForm === -1 ? 0 : pluralForm;
+        const translation = selectedEntity.translation[plural];
+
+        // Only show failed checks for active translations that are approved or fuzzy,
+        // i.e. when their status icon is colored as error/warning in the string list
+        if (translation && (translation.approved || translation.fuzzy)) {
+            const failedChecks = {
+                clErrors: translation.errors,
+                clWarnings: translation.warnings,
+                pErrors: [],
+                pndbWarnings: [],
+                ttWarnings: [],
+            };
+            dispatch(editor.actions.updateFailedChecks(failedChecks));
+        } else {
+            dispatch(editor.actions.resetFailedChecks());
+        }
     }
 
     searchMachinery = (query: string) => {
