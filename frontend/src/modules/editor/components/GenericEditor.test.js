@@ -13,6 +13,8 @@ const DEFAULT_LOCALE = {
 
 const EDITOR = {
     translation: 'world',
+    errors: [],
+    warnings: [],
 };
 
 

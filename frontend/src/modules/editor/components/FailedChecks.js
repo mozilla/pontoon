@@ -15,6 +15,7 @@ type Props = {|
     errors: Array<string>,
     warnings: Array<string>,
     resetFailedChecks: () => void,
+    sendTranslation: (ignoreWarnings: ?boolean) => void,
 |};
 
 
@@ -31,7 +32,7 @@ export default class FailedChecks extends React.Component<Props> {
     }
 
     submitAnyway = () => {
-        return null;
+        this.props.sendTranslation(true);
     }
 
     render() {

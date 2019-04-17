@@ -17,6 +17,7 @@ export default class TranslationAPI extends APIBase {
         pluralForm: number,
         original: string,
         forceSuggestions: boolean,
+        ignoreWarnings: ?boolean,
     ) {
         const csrfToken = this.getCSRFToken();
 
@@ -27,6 +28,11 @@ export default class TranslationAPI extends APIBase {
         payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
         payload.append('force_suggestions', forceSuggestions.toString());
+
+        if (ignoreWarnings) {
+            payload.append('ignore_warnings', ignoreWarnings.toString());
+        }
+
         payload.append('csrfmiddlewaretoken', csrfToken);
 
         const headers = new Headers();

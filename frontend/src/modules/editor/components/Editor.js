@@ -73,7 +73,7 @@ export class EditorBase extends React.Component<InternalProps> {
         this.updateTranslation('');
     }
 
-    sendTranslation = () => {
+    sendTranslation = (ignoreWarnings: ?boolean) => {
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
@@ -89,6 +89,7 @@ export class EditorBase extends React.Component<InternalProps> {
             state.user.settings.forceSuggestions,
             state.nextEntity,
             state.router,
+            ignoreWarnings,
         ));
     }
 
@@ -130,6 +131,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     errors={ this.props.editor.errors }
                     warnings={ this.props.editor.warnings }
                     resetFailedChecks={ this.resetFailedChecks }
+                    sendTranslation={ this.sendTranslation }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

@@ -113,6 +113,7 @@ export function sendTranslation(
     forceSuggestions: boolean,
     nextEntity: ?DbEntity,
     router: Object,
+    ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
@@ -122,6 +123,7 @@ export function sendTranslation(
             pluralForm,
             original,
             forceSuggestions,
+            ignoreWarnings,
         );
 
         if (content.failedChecks) {
