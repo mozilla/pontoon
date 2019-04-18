@@ -64,19 +64,19 @@ export default class Entity extends React.Component<Props> {
             }
         });
 
-        if (errors > 0) {
+        if (errors) {
             return 'errors';
         }
-        else if (warnings > 0) {
+        if (warnings) {
             return 'warnings';
         }
-        else if (approved === translations.length) {
+        if (approved === translations.length) {
             return 'approved';
         }
-        else if (fuzzy === translations.length) {
+        if (fuzzy === translations.length) {
             return 'fuzzy';
         }
-        else if (approved > 0 || fuzzy > 0) {
+        if (approved > 0 || fuzzy > 0) {
             return 'partial';
         }
         return 'missing';
