@@ -72,11 +72,12 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
 function updateStatusOnServer(
     change: string,
     translation: number,
-    resource: string
+    resource: string,
+    ignoreWarnings: ?boolean,
 ): Promise<Object> {
     switch (change) {
         case 'approve':
-            return api.translation.approve(translation, resource);
+            return api.translation.approve(translation, resource, ignoreWarnings);
         case 'unapprove':
             return api.translation.unapprove(translation, resource);
         case 'reject':
@@ -98,11 +99,13 @@ export function updateStatus(
     translation: number,
     nextEntity: ?DbEntity,
     router: Object,
+    ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
-        const results = await updateStatusOnServer(change, translation, resource);
+        const results = await updateStatusOnServer(change, translation, resource, ignoreWarnings);
         if (results.failedChecks) {
-            dispatch(editorActions.updateFailedChecks(results.failedChecks, 'approved'));
+            dispatch(editorActions.update(results.string, 'external'));
+            dispatch(editorActions.updateFailedChecks(results.failedChecks, translation));
         }
         else if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
             // The change did work, we want to move on to the next Entity.

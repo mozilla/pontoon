@@ -14,6 +14,11 @@ export type EditorProps = {|
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings: ?boolean) => void,
     updateTranslation: (string) => void,
+    updateTranslationStatus: (
+        translationId: number,
+        change: string,
+        ignoreWarnings: ?boolean,
+    ) => void,
 |};
 
 
@@ -91,10 +96,18 @@ export default class GenericEditor extends React.Component<EditorProps> {
         // On Enter, send the current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
             handledEvent = true;
+
             const errors = this.props.editor.errors;
             const warnings = this.props.editor.warnings;
+            const source = this.props.editor.source;
             const ignoreWarnings = !!(errors.length || warnings.length);
-            this.props.sendTranslation(ignoreWarnings);
+
+            if (typeof(source) === 'number') {
+                this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
+            }
+            else {
+                this.props.sendTranslation(ignoreWarnings);
+            }
         }
 
         // On Ctrl + Shift + C, copy the original translation.

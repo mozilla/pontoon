@@ -10,12 +10,17 @@ import type { UserState } from 'core/user';
 
 
 type Props = {|
-    source: '' | 'stored' | 'submitted' | 'approved',
+    source: '' | 'stored' | 'submitted' | number,
     user: UserState,
     errors: Array<string>,
     warnings: Array<string>,
     resetFailedChecks: () => void,
     sendTranslation: (ignoreWarnings: ?boolean) => void,
+    updateTranslationStatus: (
+        translationId: number,
+        change: string,
+        ignoreWarnings: ?boolean,
+    ) => void,
 |};
 
 
@@ -28,7 +33,10 @@ export default class FailedChecks extends React.Component<Props> {
     }
 
     approveAnyway = () => {
-        return null;
+        const translationId = this.props.source;
+        if (typeof(translationId) === 'number') {
+            this.props.updateTranslationStatus(translationId, 'approve', true);
+        }
     }
 
     submitAnyway = () => {
@@ -75,7 +83,7 @@ export default class FailedChecks extends React.Component<Props> {
                 }
             </ul>
             { (source === 'stored' || errors.length) ? null :
-                source === 'approved' ?
+                source !== 'submitted' ?
                 <Localized id="editor-FailedChecks--approve-anyway">
                     <button
                         className="approve anyway"

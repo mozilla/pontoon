@@ -61,11 +61,11 @@ export type FailedChecks = {|
 export type UpdateFailedChecksAction = {|
     +type: typeof UPDATE_FAILED_CHECKS,
     +failedChecks: FailedChecks,
-    +source: '' | 'stored' | 'submitted' | 'approved',
+    +source: '' | 'stored' | 'submitted' | number,
 |};
 export function updateFailedChecks(
     failedChecks: FailedChecks,
-    source: '' | 'stored' | 'submitted' | 'approved',
+    source: '' | 'stored' | 'submitted' | number,
 ): UpdateFailedChecksAction {
     return {
         type: UPDATE_FAILED_CHECKS,

@@ -7,10 +7,12 @@ import { Localized } from 'fluent-react';
 import './Editor.css';
 
 import * as locales from 'core/locales';
+import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
+import * as history from 'modules/history';
 
 import { actions, NAME } from '..';
 import FailedChecks from './FailedChecks';
@@ -19,6 +21,7 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 import type { Locale } from 'core/locales';
+import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { EditorState } from '../reducer';
@@ -29,6 +32,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     nextEntity: DbEntity,
+    parameters: NavigationParams,
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
@@ -103,6 +107,30 @@ export class EditorBase extends React.Component<InternalProps> {
         );
     }
 
+    updateTranslationStatus = (
+        translationId: number,
+        change: string,
+        ignoreWarnings: ?boolean,
+    ) => {
+        const state = this.props;
+
+        if (!state.selectedEntity || !state.locale) {
+            return;
+        }
+
+        this.props.dispatch(history.actions.updateStatus(
+            change,
+            state.selectedEntity.pk,
+            state.locale.code,
+            state.parameters.resource,
+            state.pluralForm,
+            translationId,
+            state.nextEntity,
+            state.router,
+            ignoreWarnings,
+        ));
+    }
+
     resetFailedChecks = () => {
         this.props.dispatch(actions.resetFailedChecks());
     }
@@ -123,6 +151,7 @@ export class EditorBase extends React.Component<InternalProps> {
                 resetSelectionContent={ this.resetSelectionContent }
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
+                updateTranslationStatus={ this.updateTranslationStatus }
             />
             <menu>
                 <FailedChecks
@@ -132,6 +161,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     warnings={ this.props.editor.warnings }
                     resetFailedChecks={ this.resetFailedChecks }
                     sendTranslation={ this.sendTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized
@@ -211,6 +241,7 @@ const mapStateToProps = (state: Object): Props => {
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         nextEntity: entitieslist.selectors.getNextEntity(state),
+        parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),

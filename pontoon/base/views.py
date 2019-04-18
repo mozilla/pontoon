@@ -433,6 +433,7 @@ def approve_translation(request):
 
         if are_blocking_checks(failed_checks, ignore_warnings):
             return JsonResponse({
+                'string': translation.string,
                 'failedChecks': failed_checks,
             })
 

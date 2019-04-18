@@ -40,6 +40,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
                 resetSelectionContent={ this.props.resetSelectionContent }
                 sendTranslation={ this.props.sendTranslation }
                 updateTranslation={ this.props.updateTranslation }
+                updateTranslationStatus={ this.props.updateTranslationStatus }
             />;
         }
 
@@ -52,6 +53,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
             resetSelectionContent={ this.props.resetSelectionContent }
             sendTranslation={ this.props.sendTranslation }
             updateTranslation={ this.props.updateTranslation }
+            updateTranslationStatus={ this.props.updateTranslationStatus }
         />;
     }
 }
