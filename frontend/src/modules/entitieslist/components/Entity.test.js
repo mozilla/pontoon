@@ -12,6 +12,8 @@ describe('<Entity>', () => {
             {
                 string: 'chaine a',
                 approved: true,
+                errors: [],
+                warnings: [],
             },
         ],
     };
@@ -22,6 +24,8 @@ describe('<Entity>', () => {
             {
                 string: 'chaine b',
                 fuzzy: true,
+                errors: [],
+                warnings: [],
             },
         ],
     };
@@ -31,6 +35,50 @@ describe('<Entity>', () => {
         translation: [
             {
                 string: 'chaine c',
+                errors: [],
+                warnings: [],
+            },
+        ],
+    };
+
+    const ENTITY_D = {
+        original: 'string d',
+        translation: [
+            {
+                string: 'chaine d',
+                approved: true,
+                errors: ['error'],
+                warnings: [],
+            },
+        ],
+    };
+
+    const ENTITY_E = {
+        original: 'string e',
+        translation: [
+            {
+                string: 'chaine e',
+                fuzzy: true,
+                errors: [],
+                warnings: ['warning'],
+            },
+        ],
+    };
+
+    const ENTITY_F = {
+        original: 'string f',
+        translation: [
+            {
+                string: 'chaine f1',
+                approved: true,
+                errors: [],
+                warnings: [],
+            },
+            {
+                string: 'chaine f2',
+                fuzzy: true,
+                errors: [],
+                warnings: [],
             },
         ],
     };
@@ -70,6 +118,24 @@ describe('<Entity>', () => {
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('missing');
+
+        wrapper = shallow(<Entity
+            entity={ ENTITY_D }
+            locale={ DEFAULT_LOCALE }
+        />);
+        expect(wrapper.instance().status).toEqual('errors');
+
+        wrapper = shallow(<Entity
+            entity={ ENTITY_E }
+            locale={ DEFAULT_LOCALE }
+        />);
+        expect(wrapper.instance().status).toEqual('warnings');
+
+        wrapper = shallow(<Entity
+            entity={ ENTITY_F }
+            locale={ DEFAULT_LOCALE }
+        />);
+        expect(wrapper.instance().status).toEqual('partial');
     });
 
     it('calls the selectEntity function on click', () => {

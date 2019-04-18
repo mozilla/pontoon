@@ -23,9 +23,12 @@ type Props = {
  * The format of this element is: "[Status] Source (Translation)"
  *
  * "Status" is the current status of the translation. Can be:
- *   - "approved": there is an approved translation
- *   - "fuzzy": there is a fuzzy translation
- *   - "missing": there is no approved or fuzzy translations
+ *   - "errors": one of the plural forms has errors and is approved or fuzzy
+ *   - "warnings": one of the plural forms has warnings and is approved or fuzzy
+ *   - "approved": all plural forms are approved and don't have errors or warnings
+ *   - "fuzzy": all plural forms are fuzzy and don't have errors or warnings
+ *   - "partial": some plural forms have either approved or fuzzy translations, but not all
+ *   - "missing": none of the plural forms have an approved or fuzzy translation
  *
  * "Source" is the original string from the project. Usually it's the en-US string.
  *
@@ -34,13 +37,47 @@ type Props = {
  */
 export default class Entity extends React.Component<Props> {
     get status(): string {
-        const translation = this.props.entity.translation[0];
+        const translations = this.props.entity.translation;
+        let approved = 0;
+        let fuzzy = 0;
+        let errors = 0;
+        let warnings = 0;
 
-        if (translation.approved) {
+        translations.forEach(function (translation) {
+            if (
+                translation.errors.length &&
+                (translation.approved || translation.fuzzy)
+            ) {
+                errors++;
+            }
+            else if (
+                translation.warnings.length &&
+                (translation.approved || translation.fuzzy)
+            ) {
+                warnings++;
+            }
+            else if (translation.approved) {
+                approved++;
+            }
+            else if (translation.fuzzy) {
+                fuzzy++;
+            }
+        });
+
+        if (errors > 0) {
+            return 'errors';
+        }
+        else if (warnings > 0) {
+            return 'warnings';
+        }
+        else if (approved === translations.length) {
             return 'approved';
         }
-        if (translation.fuzzy) {
+        else if (fuzzy === translations.length) {
             return 'fuzzy';
+        }
+        else if (approved > 0 || fuzzy > 0) {
+            return 'partial';
         }
         return 'missing';
     }
