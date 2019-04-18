@@ -10,6 +10,7 @@
     outline: 0;
     font-size: 100%;
 }
+
 .entity.selected,
 .entity:hover {
     background-color: #4d5967;
@@ -31,11 +32,13 @@
     white-space: nowrap;
     width: 49%;
 }
+
 .entity .translation-string {
     color: #AAAAAA;
     padding-left: 2%;
     text-align: start;
 }
+
 .entity .translation-string[data-script="Latin"],
 .entity .translation-string[data-script="Greek"],
 .entity .translation-string[data-script="Cyrillic"],
@@ -63,34 +66,31 @@
     top: 13px;
     position: absolute;
 }
+
 .entity .status:before {
     color: #4D5967;
     content: "";
 }
-.entity.fuzzy .status:before {
-    color: #FED271;
-}
+
 .entity.approved .status:before {
     color: #7BC876;
 }
-.entity.untranslated .status:before {
-    color: #AAAAAA;
-    content: "";
+
+.entity.fuzzy .status:before {
+    color: #FED271;
 }
-.entity.unreviewed .status:before {
-    color: #4FC4F6;
-    content: "";
+
+.entity.errors .status:before {
+    color: #F36;
 }
-.entity.rejected .status:before {
-    color: #AAAAAA;
-    content: "";
-}
-.entity.time-range .status:before {
-    color: #AAAAAA;
-    content: "";
+
+.entity.warnings .status:before {
+    color: #FFA10F;
 }
 
 .entity.missing.selected .status:before,
-.entity.missing:hover .status:before {
+.entity.missing:hover .status:before,
+.entity.partial.selected .status:before,
+.entity.partial:hover .status:before {
     color: #3F4752;
 }
