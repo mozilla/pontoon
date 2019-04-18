@@ -13,9 +13,9 @@ alabaster==0.7.7 \
 Babel==2.2.0 \
     --hash=sha256:fed07cbcdcb3de79b53a8220eebed21c93f8dbb3dbce1d9c6b1c4b09e8aecf2b \
     --hash=sha256:d8cb4c0e78148aee89560f9fe21587aa57739c975bb89ff66b1e842cc697428f
-Jinja2==2.8 \
-    --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
-    --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
+Jinja2==2.10.1 \
+    --hash=sha256:065c4f02ebe7f7cf559e49ee5a95fb800a9e4528727aec6f24402a5374c65013 \
+    --hash=sha256:14dd6caf1527abb21f08f86c784eac40853ba93edb79552aa1e4b8aef1b61c7b
 docutils==0.12 \
     --hash=sha256:dcebd4928112631626f4c4d0df59787c748404e66dda952110030ea883d3b8cd \
     --hash=sha256:c7db717810ab6965f66c8cf0398a98c9d8df982da39b4cd7f162911eb89596fa
