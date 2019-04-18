@@ -17,6 +17,8 @@ export type Translation = {
     +approved: boolean,
     +fuzzy: boolean,
     +rejected: boolean,
+    +errors: Array<string>,
+    +warnings: Array<string>,
 };
 
 export type DbEntity = {
