@@ -33,7 +33,7 @@ export type EditorState = {|
     +errors: Array<string>,
     +warnings: Array<string>,
 
-    // A source of failed checks (erros and warnings). Possible values:
+    // A source of failed checks (errors and warnings). Possible values:
     //   - '': no failed checks are displayed (default)
     //   - 'stored': failed checks of the translation stored in the DB
     //   - 'submitted': failed checks of the submitted translation
