@@ -37,6 +37,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
                 editor={ this.props.editor }
                 locale={ this.props.locale }
                 copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
+                resetFailedChecks={ this.props.resetFailedChecks }
                 resetSelectionContent={ this.props.resetSelectionContent }
                 sendTranslation={ this.props.sendTranslation }
                 updateTranslation={ this.props.updateTranslation }
@@ -50,6 +51,7 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
             editor={ this.props.editor }
             locale={ this.props.locale }
             copyOriginalIntoEditor={ this.props.copyOriginalIntoEditor }
+            resetFailedChecks={ this.props.resetFailedChecks }
             resetSelectionContent={ this.props.resetSelectionContent }
             sendTranslation={ this.props.sendTranslation }
             updateTranslation={ this.props.updateTranslation }

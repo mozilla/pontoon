@@ -52,7 +52,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
         this.aceEditor.current.editor.clearSelection();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: EditorProps) {
         if (!this.aceEditor.current) {
             return;
         }
@@ -71,6 +71,20 @@ export default class FluentEditor extends React.Component<EditorProps> {
         }
 
         this.aceEditor.current.editor.focus();
+
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+        if (
+            prevEditor.translation !== editor.translation &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
+        }
     }
 
     updateTranslationSelectionWith(content: string) {

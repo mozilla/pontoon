@@ -148,6 +148,7 @@ export class EditorBase extends React.Component<InternalProps> {
                 editor={ this.props.editor }
                 locale={ this.props.locale }
                 copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
+                resetFailedChecks={ this.resetFailedChecks }
                 resetSelectionContent={ this.resetSelectionContent }
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }

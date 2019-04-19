@@ -11,6 +11,7 @@ export type EditorProps = {|
     editor: EditorState,
     locale: Locale,
     copyOriginalIntoEditor: () => void,
+    resetFailedChecks: () => void,
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings: ?boolean) => void,
     updateTranslation: (string) => void,
@@ -43,7 +44,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
         this.textarea.current.setSelectionRange(0, 0);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: EditorProps) {
         // If there is content to add to the editor, do so, then remove
         // the content so it isn't added again.
         // This is an abuse of the redux store, because we want to update
@@ -61,6 +62,20 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
         if (this.props.editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);
+        }
+
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+        if (
+            prevEditor.translation !== editor.translation &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
         }
     }
 
