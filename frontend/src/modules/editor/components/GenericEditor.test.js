@@ -81,6 +81,60 @@ describe('<GenericEditor>', () => {
         expect(mockSend.calledOnce).toBeTruthy();
     });
 
+    it('approves the translation on Enter if failed checks triggered by approval', () => {
+        const mockSend = sinon.spy();
+
+        const editor = {
+            ...EDITOR,
+            errors: ['error1'],
+            warnings: ['warning1'],
+            source: 1,
+        }
+
+        const wrapper = shallow(<GenericEditor
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslationStatus={ mockSend }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
+    it('closes failed checks popup if open on Esc', () => {
+        const mockSend = sinon.spy();
+
+        const editor = {
+            ...EDITOR,
+            errors: ['error1'],
+            warnings: ['warning1'],
+        }
+
+        const wrapper = shallow(<GenericEditor
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            resetFailedChecks={ mockSend }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 27,  // Esc
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
     it('copies the original into the Editor on Ctrl + Shift + C', () => {
         const mockCopy = sinon.spy();
         const wrapper = shallow(<GenericEditor
