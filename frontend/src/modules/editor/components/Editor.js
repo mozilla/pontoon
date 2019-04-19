@@ -107,26 +107,22 @@ export class EditorBase extends React.Component<InternalProps> {
         );
     }
 
-    updateTranslationStatus = (
-        translationId: number,
-        change: string,
-        ignoreWarnings: ?boolean,
-    ) => {
-        const state = this.props;
-
-        if (!state.selectedEntity || !state.locale) {
-            return;
-        }
-
-        this.props.dispatch(history.actions.updateStatus(
+    /*
+     * This is a copy of EntityDetailsBase.updateTranslationStatus().
+     * When changing this function, you probably want to change both.
+     * We might want to refactor to keep the logic in one place only.
+     */
+    updateTranslationStatus = (translationId: number, change: string, ignoreWarnings: ?boolean) => {
+        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        dispatch(history.actions.updateStatus(
             change,
-            state.selectedEntity.pk,
-            state.locale.code,
-            state.parameters.resource,
-            state.pluralForm,
+            parameters.entity,
+            parameters.locale,
+            parameters.resource,
+            pluralForm,
             translationId,
-            state.nextEntity,
-            state.router,
+            nextEntity,
+            router,
             ignoreWarnings,
         ));
     }

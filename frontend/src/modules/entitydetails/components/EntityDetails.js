@@ -183,6 +183,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    /*
+     * This is a copy of EditorBase.updateTranslationStatus().
+     * When changing this function, you probably want to change both.
+     * We might want to refactor to keep the logic in one place only.
+     */
     updateTranslationStatus = (translationId: number, change: string) => {
         const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
