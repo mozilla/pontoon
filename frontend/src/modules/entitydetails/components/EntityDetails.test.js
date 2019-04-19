@@ -130,6 +130,7 @@ describe('<EntityDetailsBase>', () => {
                     approved: true,
                     string: 'quelque chose',
                     errors: ['Error1'],
+                    warnings: ['Warning1'],
                 }],
             },
         });
@@ -149,11 +150,13 @@ describe('<EntityDetailsBase>', () => {
                 translation: [{
                     approved: true,
                     string: 'quelque chose',
+                    errors: [],
+                    warnings: [],
                 }],
             },
         });
 
-        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeTruthy();
         expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
     });
 });

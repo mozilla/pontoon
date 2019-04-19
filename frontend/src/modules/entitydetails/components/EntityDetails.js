@@ -110,7 +110,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         // Only show failed checks for active translations that are approved or fuzzy,
         // i.e. when their status icon is colored as error/warning in the string list
-        if (translation && (translation.approved || translation.fuzzy)) {
+        if (
+            translation &&
+            (translation.errors.length || translation.warnings.length) &&
+            (translation.approved || translation.fuzzy)
+        ) {
             const failedChecks = {
                 clErrors: translation.errors,
                 clWarnings: translation.warnings,
