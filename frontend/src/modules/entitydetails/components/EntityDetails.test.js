@@ -96,6 +96,16 @@ function createEntityDetailsWithStore() {
 
 
 describe('<EntityDetailsBase>', () => {
+    beforeAll(() => {
+        sinon.stub(editor.actions, 'updateFailedChecks').returns({ type: 'whatever'});
+        sinon.stub(editor.actions, 'resetFailedChecks').returns({ type: 'whatever'});
+    });
+
+    afterAll(() => {
+        editor.actions.updateFailedChecks.restore();
+        editor.actions.resetFailedChecks.restore();
+    });
+
     it('shows an empty section when no entity is selected', () => {
         const wrapper = createShallowEntityDetails(null);
         expect(wrapper.text()).toContain('');
@@ -112,6 +122,7 @@ describe('<EntityDetailsBase>', () => {
         const wrapper = createShallowEntityDetails();
 
         wrapper.setProps({
+            pluralForm: -1,
             selectedEntity: {
                 pk: 2,
                 original: 'something',
@@ -123,14 +134,15 @@ describe('<EntityDetailsBase>', () => {
             },
         });
 
-        expect(editor.actions.updateFailedChecks.calledOnce.toBeTruthy());
-        expect(editor.actions.resetFailedChecks.calledOnce.toBeFalsy());
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeTruthy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeFalsy();
     });
 
     it('hides failed checks for approved (or fuzzy) translations without errors or warnings', () => {
         const wrapper = createShallowEntityDetails();
 
         wrapper.setProps({
+            pluralForm: -1,
             selectedEntity: {
                 pk: 2,
                 original: 'something',
@@ -141,8 +153,8 @@ describe('<EntityDetailsBase>', () => {
             },
         });
 
-        expect(editor.actions.updateFailedChecks.calledOnce.toBeFalsy());
-        expect(editor.actions.resetFailedChecks.calledOnce.toBeTruthy());
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
     });
 });
 
