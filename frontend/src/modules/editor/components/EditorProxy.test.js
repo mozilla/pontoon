@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import EditorProxy from './EditorProxy';
@@ -35,7 +35,7 @@ describe('<EditorProxy>', () => {
     it('resets failed checks when translation changes, but errors and warnings do not', () => {
         const resetMock = sinon.stub();
 
-        const wrapper = mount(<EditorProxy
+        const wrapper = shallow(<EditorProxy
             editor={ EDITOR }
             resetFailedChecks={ resetMock }
         />);
@@ -53,7 +53,7 @@ describe('<EditorProxy>', () => {
     it('keeps failed checks when translation changes, along with errors or warnings', () => {
         const resetMock = sinon.stub();
 
-        const wrapper = mount(<EditorProxy
+        const wrapper = shallow(<EditorProxy
             editor={ EDITOR }
             resetFailedChecks={ resetMock }
         />);
