@@ -96,12 +96,12 @@ function createEntityDetailsWithStore() {
 
 
 describe('<EntityDetailsBase>', () => {
-    beforeAll(() => {
+    beforeEach(() => {
         sinon.stub(editor.actions, 'updateFailedChecks').returns({ type: 'whatever'});
         sinon.stub(editor.actions, 'resetFailedChecks').returns({ type: 'whatever'});
     });
 
-    afterAll(() => {
+    afterEach(() => {
         editor.actions.updateFailedChecks.restore();
         editor.actions.resetFailedChecks.restore();
     });
@@ -156,7 +156,7 @@ describe('<EntityDetailsBase>', () => {
             },
         });
 
-        expect(editor.actions.updateFailedChecks.calledOnce).toBeTruthy();
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
         expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
     });
 });
