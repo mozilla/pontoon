@@ -43,7 +43,7 @@ export default class TranslationAPI extends APIBase {
         const payload = new URLSearchParams();
         payload.append('translation', id.toString());
 
-        if (resource !== 'all') {
+        if (resource !== 'all-resources') {
             payload.append('paths[]', resource);
         }
 
