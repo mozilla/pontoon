@@ -125,6 +125,18 @@ export default class GenericEditor extends React.Component<EditorProps> {
             }
         }
 
+        // On Esc, close failed checks popup if open.
+        if (key === 27) {
+            handledEvent = true;
+
+            const errors = this.props.editor.errors;
+            const warnings = this.props.editor.warnings;
+
+            if (errors.length || warnings.length) {
+                this.props.resetFailedChecks();
+            }
+        }
+
         // On Ctrl + Shift + C, copy the original translation.
         if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
             handledEvent = true;
