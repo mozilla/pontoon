@@ -3,6 +3,7 @@
 import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
+import * as notification from 'core/notification';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -133,7 +134,9 @@ export function sendTranslation(
             // The translation that was provided is the same as an existing
             // translation for that entity.
             // Show an error.
-            console.error('Same Translation Error');
+            dispatch(
+                notification.actions.add('Same translation already exists.', 'error')
+            );
         }
         else if (
             content.type === 'added' ||

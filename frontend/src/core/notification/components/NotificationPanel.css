@@ -1,0 +1,32 @@
+.notification-panel {
+    background: rgba(51, 57, 65, 0.9);
+    color: #7BC876;
+    cursor: pointer;
+    font-style: italic;
+    left: 0;
+    margin: 0;
+    position: fixed;
+    top: -60px;
+    width: 100%;
+    z-index: 100;
+    transition: 500ms;
+}
+
+.notification-panel.showing {
+    top: 0;
+}
+
+.notification-panel.hiding {
+    top: -60px;
+}
+
+.notification-panel li {
+    font-size: 14px;
+    line-height: 60px;
+    list-style: none;
+    text-align: center;
+}
+
+.notification-panel li.error {
+    color: #F36;
+}

@@ -10,6 +10,7 @@ import { Lightbox } from 'core/lightbox';
 import { WaveLoader } from 'core/loaders';
 import * as locales from 'core/locales';
 import { Navigation } from 'core/navigation';
+import { NotificationPanel } from 'core/notification';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
@@ -49,6 +50,7 @@ class App extends React.Component<InternalProps> {
             <header>
                 <UserControls />
                 <Navigation />
+                <NotificationPanel />
             </header>
             <section className="panel-list">
                 <SearchBox />
