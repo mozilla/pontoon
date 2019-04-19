@@ -5,7 +5,6 @@ import { Localized } from 'fluent-react';
 
 import './FailedChecks.css';
 
-
 import type { UserState } from 'core/user';
 
 
