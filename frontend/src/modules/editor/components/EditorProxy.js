@@ -23,6 +23,22 @@ type EditorProxyProps = {|
  *   - default -> GenericEditor
  */
 export default class EditorProxy extends React.Component<EditorProxyProps> {
+    componentDidUpdate(prevProps: EditorProxyProps) {
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+        if (
+            prevEditor.translation !== editor.translation &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
+        }
+    }
+
     render() {
         const { entity } = this.props;
 

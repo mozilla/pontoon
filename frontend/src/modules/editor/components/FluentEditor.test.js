@@ -10,7 +10,7 @@ describe('<FluentEditor>', () => {
         translation: 'world',
     };
 
-    it('renders a textarea with some content', () => {
+    it('renders ReactAce editor with some content', () => {
         const wrapper = shallow(<FluentEditor editor={ EDITOR } />);
 
         expect(wrapper.find('ReactAce')).toHaveLength(1);
