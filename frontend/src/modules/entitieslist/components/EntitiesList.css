@@ -2,6 +2,7 @@
     background-color: #3f4752;
     height: calc(100% - 44px);
     overflow-y: auto;
+    position: relative;
     width: 100%;
 }
 

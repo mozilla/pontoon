@@ -42,6 +42,13 @@ type InternalProps = {|
  *
  */
 export class EntitiesListBase extends React.Component<InternalProps> {
+    list: { current: any };
+
+    constructor(props: InternalProps) {
+        super(props);
+        this.list = React.createRef();
+    }
+
     componentDidMount() {
         this.selectFirstEntityIfNoneSelected();
     }
@@ -77,6 +84,32 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.status !== current.status
         ) {
             this.props.dispatch(actions.reset());
+        }
+
+        this.scrollToSelectedElement();
+    }
+
+    scrollToSelectedElement() {
+        const list = this.list.current;
+        const element = list.querySelector('li.selected');
+
+        if (!element) {
+            return;
+        }
+
+        const listTop = list.scrollTop;
+        const listHeight = list.clientHeight;
+        const listBottom = listTop + listHeight;
+
+        const elementTop = element.offsetTop;
+        const elementHeight = element.offsetHeight;
+        const elementBottom = elementTop + elementHeight;
+
+        if (elementTop < listTop) {
+            list.scrollTop = elementTop;
+        }
+        else if (elementBottom >= listBottom) {
+            list.scrollTop = Math.max(elementBottom - listHeight, 0);
         }
     }
 
@@ -134,7 +167,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // InfiniteScroll will display information about loading during the request
         const hasMore = state.entities.fetching || state.entities.hasMore;
 
-        return <div className="entities">
+        return <div
+            className="entities"
+            ref={ this.list }
+        >
             <InfiniteScroll
                 pageStart={ 1 }
                 loadMore={ this.getMoreEntities }
