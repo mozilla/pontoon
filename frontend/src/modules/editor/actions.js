@@ -144,6 +144,9 @@ export function sendTranslation(
             content.type === 'updated'
         ) {
             dispatch(
+                notification.actions.add('Translation ' + content.type, 'info')
+            );
+            dispatch(
                 entitiesActions.updateEntityTranslation(
                     entity,
                     pluralForm,

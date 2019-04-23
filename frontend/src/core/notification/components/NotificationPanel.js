@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import './NotificationPanel.css';
 
-import { actions, NAME } from '..';
+import { NAME } from '..';
 
 import type { NotificationState } from '../reducer';
 
@@ -19,10 +19,16 @@ type InternalProps = {|
     dispatch: Function,
 |};
 
+type State = {|
+    hiding: boolean,
+|};
+
 
 /**
  */
-export class NotificationPanelBase extends React.Component<InternalProps> {
+export class NotificationPanelBase extends React.Component<InternalProps, State> {
+    hideTimeout: TimeoutID;
+
     constructor(props: InternalProps) {
         super(props);
 
@@ -32,32 +38,42 @@ export class NotificationPanelBase extends React.Component<InternalProps> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        if (prevProps.notification.messages[0] !== this.props.notification.messages[0]) {
+        if (
+            this.props.notification.message &&
+            prevProps.notification.message !== this.props.notification.message
+        ) {
             this.setState({ hiding: false });
-            setTimeout(() => {
-                this.setState({ hiding: true });
+            this.hideTimeout = setTimeout(() => {
+                this.hide();
             }, 2000);
         }
+    }
+
+    hide = () => {
+        clearTimeout(this.hideTimeout);
+        this.setState({ hiding: true });
     }
 
     render() {
         const { notification } = this.props;
 
         let hideClass = '';
-        if (notification.messages.length) {
+        if (notification.message) {
             hideClass = ' showing';
         }
         if (this.state.hiding) {
             hideClass = ' hide';
         }
 
-        return <ul className={ 'notification-panel' + hideClass }>
-            { notification.messages.map((notif, index) => {
-                return <li key={ index } className={ notif.type }>
+        const notif = notification.message;
+
+        return <div className={ 'notification-panel' + hideClass } onClick={ this.hide }>
+            { !notif ? null :
+                <span className={ notif.type }>
                     { notif.message }
-                </li>;
-            }) }
-        </ul>
+                </span>
+            }
+        </div>
     }
 }
 

@@ -3,7 +3,7 @@
 export const ADD: 'notification/ADD' = 'notification/ADD';
 
 
-export type NotificationType = 'error';
+export type NotificationType = 'error' | 'info';
 
 
 /**

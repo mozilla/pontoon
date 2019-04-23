@@ -3,6 +3,7 @@
 import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
+import * as notification from 'core/notification';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
@@ -102,12 +103,40 @@ export function updateStatus(
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
-        const results = await updateStatusOnServer(change, translation, resource, ignoreWarnings);
+        const results = await updateStatusOnServer(
+            change, translation, resource, ignoreWarnings
+        );
+
+        // Show a notification to explain what happened.
+        if (results.translation) {
+            let statusChange = change;
+            if (change.endsWith('e')) {
+                statusChange += 'd';
+            }
+            else {
+                statusChange += 'ed';
+            }
+            dispatch(
+                notification.actions.add('Translation ' + statusChange, 'info')
+            );
+        }
+        else {
+            dispatch(
+                notification.actions.add(`Unable to ${change} translation`, 'error')
+            );
+        }
+
+        // Update the UI based on the response.
         if (results.failedChecks) {
             dispatch(editorActions.update(results.string, 'external'));
             dispatch(editorActions.updateFailedChecks(results.failedChecks, translation));
         }
-        else if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
+        else if (
+            results.translation &&
+            change === 'approve' &&
+            nextEntity &&
+            nextEntity.pk !== entity
+        ) {
             // The change did work, we want to move on to the next Entity.
             dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
         }
@@ -115,12 +144,16 @@ export function updateStatus(
             dispatch(get(entity, locale, pluralForm));
         }
 
+        // Update stats for the search panel if possible.
         if (results.stats) {
             dispatch(statsActions.update(results.stats));
         }
 
+        // Refresh the data now that it has changed on the server.
         if (results.translation) {
-            dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
+            dispatch(
+                listActions.updateEntityTranslation(entity, pluralForm, results.translation)
+            );
         }
     }
 }
@@ -134,6 +167,9 @@ export function deleteTranslation(
 ): Function {
     return async dispatch => {
         await api.translation.delete(translation);
+        dispatch(
+            notification.actions.add('Translation deleted', 'info')
+        );
         dispatch(get(entity, locale, pluralForm));
     }
 }

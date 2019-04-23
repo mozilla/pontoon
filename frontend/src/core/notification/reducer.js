@@ -13,18 +13,17 @@ type Action =
 export type NotificationMessage = {|
     +type: NotificationType,
     +message: string,
-    +status: 'new' | 'read',
 |};
 
 
 // Read-only state (marked by '+').
 export type NotificationState = {|
-    +messages: Array<NotificationMessage>,
+    +message: ?NotificationMessage,
 |};
 
 
 const initial: NotificationState = {
-    messages: [],
+    message: null,
 };
 
 export default function reducer(
@@ -34,13 +33,10 @@ export default function reducer(
     switch (action.type) {
         case ADD:
             return {
-                messages: [
-                    {
-                        type: action.contentType,
-                        message: action.message,
-                        status: 'new',
-                    },
-                ],
+                message: {
+                    type: action.contentType,
+                    message: action.message,
+                },
             };
         default:
             return state;
