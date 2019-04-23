@@ -7,17 +7,21 @@ import { Localized } from 'fluent-react';
 import './Editor.css';
 
 import * as locales from 'core/locales';
+import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
+import * as history from 'modules/history';
 
 import { actions, NAME } from '..';
+import FailedChecks from './FailedChecks';
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 import type { Locale } from 'core/locales';
+import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
 import type { EditorState } from '../reducer';
@@ -28,6 +32,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     nextEntity: DbEntity,
+    parameters: NavigationParams,
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
@@ -72,7 +77,7 @@ export class EditorBase extends React.Component<InternalProps> {
         this.updateTranslation('');
     }
 
-    sendTranslation = () => {
+    sendTranslation = (ignoreWarnings: ?boolean) => {
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
@@ -88,6 +93,7 @@ export class EditorBase extends React.Component<InternalProps> {
             state.user.settings.forceSuggestions,
             state.nextEntity,
             state.router,
+            ignoreWarnings,
         ));
     }
 
@@ -99,6 +105,30 @@ export class EditorBase extends React.Component<InternalProps> {
                 this.props.user.username,
             )
         );
+    }
+
+    /*
+     * This is a copy of EntityDetailsBase.updateTranslationStatus().
+     * When changing this function, you probably want to change both.
+     * We might want to refactor to keep the logic in one place only.
+     */
+    updateTranslationStatus = (translationId: number, change: string, ignoreWarnings: ?boolean) => {
+        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        dispatch(history.actions.updateStatus(
+            change,
+            parameters.entity,
+            parameters.locale,
+            parameters.resource,
+            pluralForm,
+            translationId,
+            nextEntity,
+            router,
+            ignoreWarnings,
+        ));
+    }
+
+    resetFailedChecks = () => {
+        this.props.dispatch(actions.resetFailedChecks());
     }
 
     render() {
@@ -114,77 +144,88 @@ export class EditorBase extends React.Component<InternalProps> {
                 editor={ this.props.editor }
                 locale={ this.props.locale }
                 copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
+                resetFailedChecks={ this.resetFailedChecks }
                 resetSelectionContent={ this.resetSelectionContent }
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
+                updateTranslationStatus={ this.updateTranslationStatus }
             />
             <menu>
-            { !this.props.user.isAuthenticated ?
-                <Localized
-                    id="editor-editor-sign-in-to-translate"
-                    a={
-                        <user.SignInLink url={ this.props.user.signInURL }></user.SignInLink>
-                    }
-                >
-                    <p className='banner'>
-                        { '<a>Sign in</a> to translate.' }
-                    </p>
-                </Localized>
-            : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
-                <Localized
-                    id="editor-editor-read-only-localization"
-                >
-                    <p className='banner'>This is a read-only localization.</p>
-                </Localized>
-            :
-            <React.Fragment>
-                <EditorSettings
-                    settings={ this.props.user.settings }
-                    updateSetting={ this.updateSetting }
+                <FailedChecks
+                    source={ this.props.editor.source }
+                    user={ this.props.user }
+                    errors={ this.props.editor.errors }
+                    warnings={ this.props.editor.warnings }
+                    resetFailedChecks={ this.resetFailedChecks }
+                    sendTranslation={ this.sendTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
                 />
-                <KeyboardShortcuts />
-                <div className="actions">
-                    <Localized id="editor-editor-button-copy">
-                        <button
-                            className="action-copy"
-                            onClick={ this.copyOriginalIntoEditor }
-                        >
-                            Copy
-                        </button>
+                { !this.props.user.isAuthenticated ?
+                    <Localized
+                        id="editor-editor-sign-in-to-translate"
+                        a={
+                            <user.SignInLink url={ this.props.user.signInURL }></user.SignInLink>
+                        }
+                    >
+                        <p className='banner'>
+                            { '<a>Sign in</a> to translate.' }
+                        </p>
                     </Localized>
-                    <Localized id="editor-editor-button-clear">
-                        <button
-                            className="action-clear"
-                            onClick={ this.clearEditor }
-                        >
-                            Clear
-                        </button>
+                : (this.props.selectedEntity && this.props.selectedEntity.readonly) ?
+                    <Localized
+                        id="editor-editor-read-only-localization"
+                    >
+                        <p className='banner'>This is a read-only localization.</p>
                     </Localized>
-                    { this.props.user.settings.forceSuggestions ?
-                    // Suggest button, will send an unreviewed translation.
-                    <Localized id="editor-editor-button-suggest">
-                        <button
-                            className="action-suggest"
-                            onClick={ this.sendTranslation }
-                        >
-                            Suggest
-                        </button>
-                    </Localized>
-                    :
-                    // Save button, will send an approved translation.
-                    <Localized id="editor-editor-button-save">
-                        <button
-                            className="action-save"
-                            onClick={ this.sendTranslation }
-                        >
-                            Save
-                        </button>
-                    </Localized>
-                    }
-                </div>
-                <div className="clearfix" />
-            </React.Fragment>
-            }
+                :
+                    <React.Fragment>
+                        <EditorSettings
+                            settings={ this.props.user.settings }
+                            updateSetting={ this.updateSetting }
+                        />
+                        <KeyboardShortcuts />
+                        <div className="actions">
+                            <Localized id="editor-editor-button-copy">
+                                <button
+                                    className="action-copy"
+                                    onClick={ this.copyOriginalIntoEditor }
+                                >
+                                    Copy
+                                </button>
+                            </Localized>
+                            <Localized id="editor-editor-button-clear">
+                                <button
+                                    className="action-clear"
+                                    onClick={ this.clearEditor }
+                                >
+                                    Clear
+                                </button>
+                            </Localized>
+                            { this.props.user.settings.forceSuggestions ?
+                            // Suggest button, will send an unreviewed translation.
+                            <Localized id="editor-editor-button-suggest">
+                                <button
+                                    className="action-suggest"
+                                    onClick={ this.sendTranslation }
+                                >
+                                    Suggest
+                                </button>
+                            </Localized>
+                            :
+                            // Save button, will send an approved translation.
+                            <Localized id="editor-editor-button-save">
+                                <button
+                                    className="action-save"
+                                    onClick={ this.sendTranslation }
+                                >
+                                    Save
+                                </button>
+                            </Localized>
+                            }
+                        </div>
+                        <div className="clearfix" />
+                    </React.Fragment>
+                }
             </menu>
         </div>;
     }
@@ -197,6 +238,7 @@ const mapStateToProps = (state: Object): Props => {
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         nextEntity: entitieslist.selectors.getNextEntity(state),
+        parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
