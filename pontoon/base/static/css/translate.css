@@ -1474,10 +1474,9 @@ body > header aside p {
   font-size: 15px;
 }
 
-#editor #translation-no-login {
+#editor textarea[readonly] {
   background: #C7CACF;
   height: 20%;
-  min-height: 100px;
 }
 
 #editor #translation {
