@@ -81,6 +81,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             selectedEntity !== prevProps.selectedEntity
         ) {
             this.updateEditorTranslation(activeTranslation);
+            this.updateFailedChecks();
             this.fetchHelpersData();
         }
     }
@@ -95,6 +96,36 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         dispatch(machinery.actions.get(selectedEntity.original, locale, selectedEntity.pk));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+    }
+
+    updateFailedChecks() {
+        const { dispatch, pluralForm, selectedEntity } = this.props;
+
+        if (!selectedEntity) {
+            return;
+        }
+
+        const plural = pluralForm === -1 ? 0 : pluralForm;
+        const translation = selectedEntity.translation[plural];
+
+        // Only show failed checks for active translations that are approved or fuzzy,
+        // i.e. when their status icon is colored as error/warning in the string list
+        if (
+            translation &&
+            (translation.errors.length || translation.warnings.length) &&
+            (translation.approved || translation.fuzzy)
+        ) {
+            const failedChecks = {
+                clErrors: translation.errors,
+                clWarnings: translation.warnings,
+                pErrors: [],
+                pndbWarnings: [],
+                ttWarnings: [],
+            };
+            dispatch(editor.actions.updateFailedChecks(failedChecks, 'stored'));
+        } else {
+            dispatch(editor.actions.resetFailedChecks());
+        }
     }
 
     searchMachinery = (query: string) => {
@@ -156,6 +187,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    /*
+     * This is a copy of EditorBase.updateTranslationStatus().
+     * When changing this function, you probably want to change both.
+     * We might want to refactor to keep the logic in one place only.
+     */
     updateTranslationStatus = (translationId: number, change: string) => {
         const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(history.actions.updateStatus(

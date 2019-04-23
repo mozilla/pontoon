@@ -6,7 +6,7 @@ import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
 // import * as navigation from 'core/navigation';
-// import * as editor from 'modules/editor';
+import * as editor from 'modules/editor';
 import * as history from 'modules/history';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
@@ -96,6 +96,21 @@ function createEntityDetailsWithStore() {
 
 
 describe('<EntityDetailsBase>', () => {
+    beforeAll(() => {
+        sinon.stub(editor.actions, 'updateFailedChecks').returns({ type: 'whatever'});
+        sinon.stub(editor.actions, 'resetFailedChecks').returns({ type: 'whatever'});
+    });
+
+    afterEach(() => {
+        editor.actions.updateFailedChecks.reset();
+        editor.actions.resetFailedChecks.reset();
+    });
+
+    afterAll(() => {
+        editor.actions.updateFailedChecks.restore();
+        editor.actions.resetFailedChecks.restore();
+    });
+
     it('shows an empty section when no entity is selected', () => {
         const wrapper = createShallowEntityDetails(null);
         expect(wrapper.text()).toContain('');
@@ -106,6 +121,48 @@ describe('<EntityDetailsBase>', () => {
 
         expect(wrapper.text()).toContain('Metadata');
         expect(wrapper.text()).toContain('Editor');
+    });
+
+    it('shows failed checks for approved (or fuzzy) translations with errors or warnings', () => {
+        const wrapper = createShallowEntityDetails();
+
+        wrapper.setProps({
+            pluralForm: -1,
+            selectedEntity: {
+                pk: 2,
+                original: 'something',
+                translation: [{
+                    approved: true,
+                    string: 'quelque chose',
+                    errors: ['Error1'],
+                    warnings: ['Warning1'],
+                }],
+            },
+        });
+
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeTruthy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeFalsy();
+    });
+
+    it('hides failed checks for approved (or fuzzy) translations without errors or warnings', () => {
+        const wrapper = createShallowEntityDetails();
+
+        wrapper.setProps({
+            pluralForm: -1,
+            selectedEntity: {
+                pk: 2,
+                original: 'something',
+                translation: [{
+                    approved: true,
+                    string: 'quelque chose',
+                    errors: [],
+                    warnings: [],
+                }],
+            },
+        });
+
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
     });
 });
 

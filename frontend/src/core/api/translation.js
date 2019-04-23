@@ -17,6 +17,7 @@ export default class TranslationAPI extends APIBase {
         pluralForm: number,
         original: string,
         forceSuggestions: boolean,
+        ignoreWarnings: ?boolean,
     ) {
         const csrfToken = this.getCSRFToken();
 
@@ -27,6 +28,11 @@ export default class TranslationAPI extends APIBase {
         payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
         payload.append('force_suggestions', forceSuggestions.toString());
+
+        if (ignoreWarnings) {
+            payload.append('ignore_warnings', ignoreWarnings.toString());
+        }
+
         payload.append('csrfmiddlewaretoken', csrfToken);
 
         const headers = new Headers();
@@ -37,7 +43,7 @@ export default class TranslationAPI extends APIBase {
         return this.fetch('/update/', 'POST', payload, headers);
     }
 
-    _changeStatus(url: string, id: number, resource: string) {
+    _changeStatus(url: string, id: number, resource: string, ignoreWarnings: ?boolean) {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -47,6 +53,10 @@ export default class TranslationAPI extends APIBase {
             payload.append('paths[]', resource);
         }
 
+        if (ignoreWarnings) {
+            payload.append('ignore_warnings', ignoreWarnings.toString());
+        }
+
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
@@ -54,8 +64,8 @@ export default class TranslationAPI extends APIBase {
         return this.fetch(url, 'POST', payload, headers);
     }
 
-    approve(id: number, resource: string) {
-        return this._changeStatus('/approve-translation/', id, resource);
+    approve(id: number, resource: string, ignoreWarnings: ?boolean) {
+        return this._changeStatus('/approve-translation/', id, resource, ignoreWarnings);
     }
 
     unapprove(id: number, resource: string) {

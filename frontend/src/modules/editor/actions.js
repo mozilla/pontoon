@@ -8,8 +8,10 @@ import { actions as entitiesActions } from 'modules/entitieslist';
 import type { DbEntity } from 'modules/entitieslist';
 
 
+export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
+export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
 
 
@@ -47,8 +49,34 @@ export function updateSelection(content: string): UpdateSelectionAction {
 
 
 /**
- * Update the content that should replace the currently selected text in the
- * active editor.
+ * Update failed checks in the active editor.
+ */
+export type FailedChecks = {|
+    +clErrors: Array<string>,
+    +pErrors: Array<string>,
+    +clWarnings: Array<string>,
+    +pndbWarnings: Array<string>,
+    +ttWarnings: Array<string>,
+|};
+export type UpdateFailedChecksAction = {|
+    +type: typeof UPDATE_FAILED_CHECKS,
+    +failedChecks: FailedChecks,
+    +source: '' | 'stored' | 'submitted' | number,
+|};
+export function updateFailedChecks(
+    failedChecks: FailedChecks,
+    source: '' | 'stored' | 'submitted' | number,
+): UpdateFailedChecksAction {
+    return {
+        type: UPDATE_FAILED_CHECKS,
+        failedChecks,
+        source,
+    };
+}
+
+
+/**
+ * Reset content to default value.
  */
 export type ResetSelectionAction = {|
     +type: typeof RESET_SELECTION,
@@ -56,6 +84,19 @@ export type ResetSelectionAction = {|
 export function resetSelection(): ResetSelectionAction {
     return {
         type: RESET_SELECTION,
+    };
+}
+
+
+/**
+ * Reset failed checks to default value.
+ */
+export type ResetFailedChecksAction = {|
+    +type: typeof RESET_FAILED_CHECKS,
+|};
+export function resetFailedChecks(): ResetFailedChecksAction {
+    return {
+        type: RESET_FAILED_CHECKS,
     };
 }
 
@@ -72,6 +113,7 @@ export function sendTranslation(
     forceSuggestions: boolean,
     nextEntity: ?DbEntity,
     router: Object,
+    ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
@@ -81,9 +123,13 @@ export function sendTranslation(
             pluralForm,
             original,
             forceSuggestions,
+            ignoreWarnings,
         );
 
-        if (content.same) {
+        if (content.failedChecks) {
+            dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
+        }
+        else if (content.same) {
             // The translation that was provided is the same as an existing
             // translation for that entity.
             // Show an error.
@@ -112,8 +158,10 @@ export function sendTranslation(
 
 
 export default {
+    resetFailedChecks,
     resetSelection,
     sendTranslation,
     update,
+    updateFailedChecks,
     updateSelection,
 };

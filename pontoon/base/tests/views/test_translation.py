@@ -37,6 +37,7 @@ def test_approve_translation_basic(translation_a, client_superuser):
     params = {
         'translation': translation_a.pk,
         'paths': [],
+        'ignore_warnings': 'true',
     }
     response = client_superuser.post(url, params)
     assert response.status_code == 400
@@ -63,6 +64,7 @@ def test_approve_translation_rejects_previous_approved(
     params = {
         'translation': translation_a.pk,
         'paths': [],
+        'ignore_warnings': 'true',
     }
 
     response = client_superuser.post(
