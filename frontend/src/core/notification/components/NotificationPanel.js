@@ -25,6 +25,11 @@ type State = {|
 
 
 /**
+ * Show a status notification for a short period of time.
+ *
+ * This supports showing 'info' (in green) or 'error' (in red) notifications,
+ * once at a time. The notification will hide after a 2s timeout, or when
+ * clicked.
  */
 export class NotificationPanelBase extends React.Component<InternalProps, State> {
     hideTimeout: TimeoutID;
@@ -32,6 +37,8 @@ export class NotificationPanelBase extends React.Component<InternalProps, State>
     constructor(props: InternalProps) {
         super(props);
 
+        // This state is used to start the in and out animations for
+        // notifications.
         this.state = {
             hiding: false,
         };

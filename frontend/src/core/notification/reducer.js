@@ -16,7 +16,6 @@ export type NotificationMessage = {|
 |};
 
 
-// Read-only state (marked by '+').
 export type NotificationState = {|
     +message: ?NotificationMessage,
 |};
@@ -25,6 +24,7 @@ export type NotificationState = {|
 const initial: NotificationState = {
     message: null,
 };
+
 
 export default function reducer(
     state: NotificationState = initial,

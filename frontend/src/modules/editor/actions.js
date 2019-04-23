@@ -133,7 +133,6 @@ export function sendTranslation(
         else if (content.same) {
             // The translation that was provided is the same as an existing
             // translation for that entity.
-            // Show an error.
             dispatch(
                 notification.actions.add('Same translation already exists.', 'error')
             );
@@ -143,9 +142,11 @@ export function sendTranslation(
             content.type === 'saved' ||
             content.type === 'updated'
         ) {
+            // Notify the user of the change that happened.
             dispatch(
                 notification.actions.add('Translation ' + content.type, 'info')
             );
+
             dispatch(
                 entitiesActions.updateEntityTranslation(
                     entity,
