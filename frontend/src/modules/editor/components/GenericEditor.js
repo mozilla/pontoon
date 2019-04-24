@@ -145,6 +145,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
     render() {
         return <textarea
+            placeHolder={ this.props.isReadOnlyEditor ? null : 'Type translation and press Enter to save' }
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.editor.translation }
