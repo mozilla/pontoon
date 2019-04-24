@@ -7,7 +7,7 @@
     min-height: 160px;
 }
 
-.editor > textarea {
+.editor textarea {
     border: none;
     box-sizing: border-box;
     display: block;
@@ -18,6 +18,14 @@
     padding: 10px;
     resize: none;
     width: 100%;
+}
+
+.editor textarea[readonly] {
+    background: #C7CACF;
+}
+
+.editor textarea[data-script="Arabic"] {
+    font-size: 15px;
 }
 
 .editor .banner {
@@ -70,8 +78,4 @@
 .editor .actions .action-save:hover,
 .editor .actions .action-suggest:hover {
     color: #EBEBEB;
-}
-
-.editor > textarea[data-script="Arabic"] {
-    font-size: 15px;
 }
