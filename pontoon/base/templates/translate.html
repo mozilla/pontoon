@@ -304,13 +304,29 @@
         </ul>
       </nav>
 
-      <textarea id="translation" {% if user.is_authenticated() %} placeholder="Type translation and press Enter to save" {% else %} readonly placeholder="Sign in below to begin translating."  {% endif %}></textarea>
+      <textarea
+        id="translation"
+        {% if user.is_authenticated() %}
+          placeholder="Type translation and press Enter to save"
+        {% else %}
+          readonly
+          placeholder="Sign in below to begin translating."
+        {% endif %}
+        ></textarea>
 
       <div id="ftl-area" class="ftl-area">
         <section class="main-value">
           <ul>
             <li>
-              <textarea id="translation" {% if user.is_authenticated() %} placeholder="Type translation and press Enter to save" {% else %} readonly placeholder="Sign in below to begin translating."  {% endif %}></textarea>
+              <textarea
+                id="only-value"
+                {% if user.is_authenticated() %}
+                  placeholder="Type translation and press Enter to save"
+                {% else %}
+                  readonly
+                  placeholder="Sign in below to begin translating."
+                {% endif %}
+              ></textarea>
             </li>
           </ul>
         </section>
