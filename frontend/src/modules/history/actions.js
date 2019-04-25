@@ -4,11 +4,13 @@ import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
 import * as notification from 'core/notification';
+import { actions as pluralActions } from 'core/plural';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
+import type { Locale } from 'core/locales';
 
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
@@ -128,7 +130,7 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
 export function updateStatus(
     change: ChangeOperation,
     entity: number,
-    locale: string,
+    locale: Locale,
     resource: string,
     pluralForm: number,
     translation: number,
@@ -150,17 +152,18 @@ export function updateStatus(
             dispatch(editorActions.update(results.string, 'external'));
             dispatch(editorActions.updateFailedChecks(results.failedChecks, translation));
         }
-        else if (
-            results.translation &&
-            change === 'approve' &&
-            nextEntity &&
-            nextEntity.pk !== entity
-        ) {
-            // The change did work, we want to move on to the next Entity.
-            dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
+        else if (results.translation && change === 'approve' && nextEntity) {
+            // The change did work, we want to move on to the next Entity or pluralForm.
+            const nextPluralForm = pluralForm + 1;
+            if (pluralForm !== -1 && nextPluralForm < locale.cldrPlurals.length) {
+                dispatch(pluralActions.select(nextPluralForm));
+            }
+            else if (nextEntity.pk !== entity) {
+                dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
+            }
         }
         else {
-            dispatch(get(entity, locale, pluralForm));
+            dispatch(get(entity, locale.code, pluralForm));
         }
 
         // Update stats for the search panel if possible.
