@@ -11,13 +11,13 @@ export type NotificationType = 'error' | 'info';
  */
 export type AddAction = {
     type: typeof ADD,
-    message: string,
+    content: string,
     contentType: NotificationType,
 };
 export function add(message: string, type: NotificationType): AddAction {
     return {
         type: ADD,
-        message,
+        content: message,
         contentType: type,
     };
 }

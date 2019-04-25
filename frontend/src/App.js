@@ -10,7 +10,7 @@ import { Lightbox } from 'core/lightbox';
 import { WaveLoader } from 'core/loaders';
 import * as locales from 'core/locales';
 import { Navigation } from 'core/navigation';
-import { NotificationPanel } from 'core/notification';
+import * as notification from 'core/notification';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
@@ -23,6 +23,7 @@ import type { LocalesState } from 'core/locales';
 type Props = {|
     l10n: L10nState,
     locales: LocalesState,
+    notification: notification.NotificationState,
 |};
 
 type InternalProps = {
@@ -50,7 +51,7 @@ class App extends React.Component<InternalProps> {
             <header>
                 <UserControls />
                 <Navigation />
-                <NotificationPanel />
+                <notification.NotificationPanel notification={ state.notification } />
             </header>
             <section className="panel-list">
                 <SearchBox />
@@ -68,6 +69,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         l10n: state[l10n.NAME],
         locales: state[locales.NAME],
+        notification: state[notification.NAME],
     };
 };
 

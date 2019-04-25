@@ -1,22 +1,14 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import './NotificationPanel.css';
-
-import { NAME } from '..';
 
 import type { NotificationState } from '../reducer';
 
 
 type Props = {|
     notification: NotificationState,
-|};
-
-type InternalProps = {|
-    ...Props,
-    dispatch: Function,
 |};
 
 type State = {|
@@ -31,10 +23,10 @@ type State = {|
  * once at a time. The notification will hide after a 2s timeout, or when
  * clicked.
  */
-export class NotificationPanelBase extends React.Component<InternalProps, State> {
+export default class NotificationPanel extends React.Component<Props, State> {
     hideTimeout: TimeoutID;
 
-    constructor(props: InternalProps) {
+    constructor(props: Props) {
         super(props);
 
         // This state is used to start the in and out animations for
@@ -44,7 +36,7 @@ export class NotificationPanelBase extends React.Component<InternalProps, State>
         };
     }
 
-    componentDidUpdate(prevProps: InternalProps) {
+    componentDidUpdate(prevProps: Props) {
         if (
             this.props.notification.message &&
             prevProps.notification.message !== this.props.notification.message
@@ -65,11 +57,8 @@ export class NotificationPanelBase extends React.Component<InternalProps, State>
         const { notification } = this.props;
 
         let hideClass = '';
-        if (notification.message) {
+        if (notification.message && !this.state.hiding) {
             hideClass = ' showing';
-        }
-        if (this.state.hiding) {
-            hideClass = ' hide';
         }
 
         const notif = notification.message;
@@ -77,18 +66,9 @@ export class NotificationPanelBase extends React.Component<InternalProps, State>
         return <div className={ 'notification-panel' + hideClass } onClick={ this.hide }>
             { !notif ? null :
                 <span className={ notif.type }>
-                    { notif.message }
+                    { notif.content }
                 </span>
             }
         </div>
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        notification: state[NAME],
-    };
-};
-
-export default connect(mapStateToProps)(NotificationPanelBase);

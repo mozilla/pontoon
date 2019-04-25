@@ -10,9 +10,9 @@ type Action =
 ;
 
 
-export type NotificationMessage = {|
+type NotificationMessage = {|
     +type: NotificationType,
-    +message: string,
+    +content: string,
 |};
 
 
@@ -35,7 +35,7 @@ export default function reducer(
             return {
                 message: {
                     type: action.contentType,
-                    message: action.message,
+                    content: action.content,
                 },
             };
         default:

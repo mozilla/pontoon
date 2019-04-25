@@ -27,7 +27,3 @@
 .notification-panel.showing {
     top: 0;
 }
-
-.notification-panel.hiding {
-    top: -60px;
-}
