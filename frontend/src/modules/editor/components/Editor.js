@@ -23,6 +23,7 @@ import KeyboardShortcuts from './KeyboardShortcuts';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { ChangeOperation } from 'modules/history';
 import type { DbEntity } from 'modules/entitieslist';
 import type { EditorState } from '../reducer';
 
@@ -112,7 +113,7 @@ export class EditorBase extends React.Component<InternalProps> {
      * When changing this function, you probably want to change both.
      * We might want to refactor to keep the logic in one place only.
      */
-    updateTranslationStatus = (translationId: number, change: string, ignoreWarnings: ?boolean) => {
+    updateTranslationStatus = (translationId: number, change: ChangeOperation, ignoreWarnings: ?boolean) => {
         const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
             change,

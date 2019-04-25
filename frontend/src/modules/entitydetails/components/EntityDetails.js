@@ -27,7 +27,7 @@ import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { EditorState } from 'modules/editor';
 import type { DbEntity } from 'modules/entitieslist';
-import type { HistoryState } from 'modules/history';
+import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
@@ -192,7 +192,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      * When changing this function, you probably want to change both.
      * We might want to refactor to keep the logic in one place only.
      */
-    updateTranslationStatus = (translationId: number, change: string) => {
+    updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
         const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
             change,

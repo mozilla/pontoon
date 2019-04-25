@@ -102,6 +102,20 @@ export function resetFailedChecks(): ResetFailedChecksAction {
 }
 
 
+function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
+    switch (change) {
+        case 'added':
+            return notification.messages.TRANSLATION_ADDED;
+        case 'saved':
+            return notification.messages.TRANSLATION_SAVED;
+        case 'updated':
+            return notification.messages.TRANSLATION_UPDATED;
+        default:
+            throw new Error('Unexpected translation status change: ' + change);
+    }
+}
+
+
 /**
  * Save the current translation.
  */
@@ -134,7 +148,9 @@ export function sendTranslation(
             // The translation that was provided is the same as an existing
             // translation for that entity.
             dispatch(
-                notification.actions.add('Same translation already exists.', 'error')
+                notification.actions.add(
+                    notification.messages.SAME_TRANSLATION
+                )
             );
         }
         else if (
@@ -143,9 +159,8 @@ export function sendTranslation(
             content.type === 'updated'
         ) {
             // Notify the user of the change that happened.
-            dispatch(
-                notification.actions.add('Translation ' + content.type, 'info')
-            );
+            const notif = _getOperationNotif(content.type);
+            dispatch(notification.actions.add(notif));
 
             dispatch(
                 entitiesActions.updateEntityTranslation(

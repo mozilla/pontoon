@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 import './FailedChecks.css';
 
 import type { UserState } from 'core/user';
+import type { ChangeOperation } from 'modules/history';
 
 
 type Props = {|
@@ -17,7 +18,7 @@ type Props = {|
     sendTranslation: (ignoreWarnings: ?boolean) => void,
     updateTranslationStatus: (
         translationId: number,
-        change: string,
+        change: ChangeOperation,
         ignoreWarnings: ?boolean,
     ) => void,
 |};

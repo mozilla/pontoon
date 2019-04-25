@@ -1,5 +1,7 @@
 /* @flow */
 
+import { Localized } from 'fluent-react';
+
 import { ADD } from './actions';
 
 import type { AddAction, NotificationType } from './actions';
@@ -12,7 +14,7 @@ type Action =
 
 type NotificationMessage = {|
     +type: NotificationType,
-    +content: string,
+    +content: string | typeof Localized,
 |};
 
 
@@ -33,10 +35,7 @@ export default function reducer(
     switch (action.type) {
         case ADD:
             return {
-                message: {
-                    type: action.contentType,
-                    content: action.content,
-                },
+                message: action.message,
             };
         default:
             return state;

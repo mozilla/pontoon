@@ -1,9 +1,17 @@
 /* @flow */
 
+import { Localized } from 'fluent-react';
+
+
 export const ADD: 'notification/ADD' = 'notification/ADD';
 
 
 export type NotificationType = 'error' | 'info';
+
+export type NotificationMessage = {|
+    content: typeof Localized,
+    type: NotificationType,
+|};
 
 
 /**
@@ -11,14 +19,12 @@ export type NotificationType = 'error' | 'info';
  */
 export type AddAction = {
     type: typeof ADD,
-    content: string,
-    contentType: NotificationType,
+    message: NotificationMessage,
 };
-export function add(message: string, type: NotificationType): AddAction {
+export function add(message: NotificationMessage): AddAction {
     return {
         type: ADD,
-        content: message,
-        contentType: type,
+        message,
     };
 }
 

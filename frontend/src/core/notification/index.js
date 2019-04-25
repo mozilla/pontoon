@@ -2,6 +2,7 @@
 
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
+export { default as messages } from './messages';
 
 export { default as NotificationPanel } from './components/NotificationPanel';
 

@@ -9,7 +9,7 @@ import Translation from './Translation';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
-import type { HistoryState } from '..';
+import type { ChangeOperation, HistoryState } from '..';
 
 
 type Props = {|
@@ -20,7 +20,7 @@ type Props = {|
     user: UserState,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
-    updateTranslationStatus: (number, string) => void,
+    updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
 

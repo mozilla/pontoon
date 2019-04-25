@@ -15,7 +15,7 @@ import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { HistoryState } from 'modules/history';
+import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
@@ -33,7 +33,7 @@ type Props = {|
     user: UserState,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
-    updateTranslationStatus: (number, string) => void,
+    updateTranslationStatus: (number, ChangeOperation) => void,
     searchMachinery: (string) => void,
 |};
 

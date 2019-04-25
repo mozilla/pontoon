@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import type { Locale } from 'core/locales';
+import type { ChangeOperation } from 'modules/history';
 import type { EditorState } from '..';
 
 
@@ -17,7 +18,7 @@ export type EditorProps = {|
     updateTranslation: (string) => void,
     updateTranslationStatus: (
         translationId: number,
-        change: string,
+        change: ChangeOperation,
         ignoreWarnings: ?boolean,
     ) => void,
 |};

@@ -70,8 +70,10 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
 }
 
 
+export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
+
 function updateStatusOnServer(
-    change: string,
+    change: ChangeOperation,
     translation: number,
     resource: string,
     ignoreWarnings: ?boolean,
@@ -91,8 +93,40 @@ function updateStatusOnServer(
 }
 
 
+function _getOperationNotif(change: ChangeOperation, success: boolean) {
+    if (success) {
+        switch (change) {
+            case 'approve':
+                return notification.messages.TRANSLATION_APPROVED;
+            case 'unapprove':
+                return notification.messages.TRANSLATION_UNAPPROVED;
+            case 'reject':
+                return notification.messages.TRANSLATION_REJECTED;
+            case 'unreject':
+                return notification.messages.TRANSLATION_UNREJECTED;
+            default:
+                throw new Error('Unexpected translation status change: ' + change);
+        }
+    }
+    else {
+        switch (change) {
+            case 'approve':
+                return notification.messages.UNABLE_TO_APPROVE_TRANSLATION;
+            case 'unapprove':
+                return notification.messages.UNABLE_TO_UNAPPROVE_TRANSLATION;
+            case 'reject':
+                return notification.messages.UNABLE_TO_REJECT_TRANSLATION;
+            case 'unreject':
+                return notification.messages.UNABLE_TO_UNREJECT_TRANSLATION;
+            default:
+                throw new Error('Unexpected translation status change: ' + change);
+        }
+    }
+}
+
+
 export function updateStatus(
-    change: string,
+    change: ChangeOperation,
     entity: number,
     locale: string,
     resource: string,
@@ -108,23 +142,8 @@ export function updateStatus(
         );
 
         // Show a notification to explain what happened.
-        if (results.translation) {
-            let statusChange = change;
-            if (change.endsWith('e')) {
-                statusChange += 'd';
-            }
-            else {
-                statusChange += 'ed';
-            }
-            dispatch(
-                notification.actions.add('Translation ' + statusChange, 'info')
-            );
-        }
-        else {
-            dispatch(
-                notification.actions.add(`Unable to ${change} translation`, 'error')
-            );
-        }
+        const notif = _getOperationNotif(change, !!results.translation);
+        dispatch(notification.actions.add(notif));
 
         // Update the UI based on the response.
         if (results.failedChecks) {
@@ -168,7 +187,7 @@ export function deleteTranslation(
     return async dispatch => {
         await api.translation.delete(translation);
         dispatch(
-            notification.actions.add('Translation deleted', 'info')
+            notification.actions.add(notification.messages.TRANSLATION_DELETED)
         );
         dispatch(get(entity, locale, pluralForm));
     }
