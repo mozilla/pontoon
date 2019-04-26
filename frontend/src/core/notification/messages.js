@@ -81,4 +81,28 @@ export default {
         </Localized>,
         type: 'error',
     },
+    'CHECKS_ENABLED': {
+        content: <Localized id='notification--tt-checks-enabled'>
+            Translate Toolkit Checks enabled
+        </Localized>,
+        type: 'info',
+    },
+    'CHECKS_DISABLED': {
+        content: <Localized id='notification--tt-checks-disabled'>
+            Translate Toolkit Checks disabled
+        </Localized>,
+        type: 'info',
+    },
+    'SUGGESTIONS_ENABLED': {
+        content: <Localized id='notification--make-suggestions-enabled'>
+            Make Suggestions enabled
+        </Localized>,
+        type: 'info',
+    },
+    'SUGGESTIONS_DISABLED': {
+        content: <Localized id='notification--make-suggestions-disabled'>
+            Make Suggestions disabled
+        </Localized>,
+        type: 'info',
+    },
 };

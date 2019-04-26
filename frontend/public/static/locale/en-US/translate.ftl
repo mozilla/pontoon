@@ -215,6 +215,10 @@ notification--unable-to-unapprove-translation = Unable to unapprove translation
 notification--unable-to-reject-translation = Unable to reject translation
 notification--unable-to-unreject-translation = Unable to unreject translation
 notification--same-translation = Same translation already exists
+notification--tt-checks-enabled = Translate Toolkit Checks enabled
+notification--tt-checks-disabled = Translate Toolkit Checks disabled
+notification--make-suggestions-enabled = Make Suggestions enabled
+notification--make-suggestions-disabled = Make Suggestions disabled
 
 
 ## Placeable parsers
