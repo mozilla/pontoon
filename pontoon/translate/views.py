@@ -83,7 +83,7 @@ def catchall_dev(request, context=None):
 # static folders. We can thus simply return a template view of index.html.
 @ensure_csrf_cookie
 def catchall_prod(request, context=None):
-    return render(request, 'index.html', context=context)
+    return render(request, 'index.html', context=context, using='jinja2')
 
 
 def get_preferred_locale(request):
