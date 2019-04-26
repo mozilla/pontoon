@@ -16,24 +16,24 @@ type Props = {|
 /*
  * Shows translation length vs. original string length, or countdown.
  * 
- * Countdown is current only supported for LANG strings, which use special
+ * Countdown is currently only supported for LANG strings, which use special
  * syntax in the comment to define maximum translation length. MAX_LENGTH
  * is provided for strings without HTML tags, so they need to be stripped.
  */
-export default class TranslationLengthBase extends React.Component<Props> {
+export default class TranslationLength extends React.Component<Props> {
     getLimit() {
         const entity = this.props.entity;
 
-        if (!entity) {
+        if (!entity || entity.format !== 'lang') {
             return null;
         }
 
-        const split = entity.comment.split('\n');
+        const parts = entity.comment.split('\n');
 
-        if (entity.format === 'lang' && split[0].startsWith('MAX_LENGTH')) {
+        if (parts[0].startsWith('MAX_LENGTH')) {
             try {
                 return parseInt(
-                    split[0].split('MAX_LENGTH: ')[1].split(' ')[0],
+                    parts[0].split('MAX_LENGTH: ')[1].split(' ')[0],
                     10,
                 );
             } catch (e) {

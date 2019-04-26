@@ -1,23 +1,23 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import TranslationLengthBase from './TranslationLength';
+import TranslationLength from './TranslationLength';
 
 
-describe('<TranslationLengthBase>', () => {
+describe('<TranslationLength>', () => {
     const LENGTH_ENTITY = {
         comment: '',
         original: '12345',
     };
 
     const COUNTDOWN_ENTITY = {
-        comment: 'MAX_LENGTH: 5',
+        comment: 'MAX_LENGTH: 5\nThis is an actual comment.',
         format: 'lang',
         original: '12345',
     };
 
     it('shows translation length and original string length', () => {
-        const wrapper = shallow(<TranslationLengthBase
+        const wrapper = shallow(<TranslationLength
             translation='1234567'
             entity={ LENGTH_ENTITY }
         />);
@@ -29,7 +29,7 @@ describe('<TranslationLengthBase>', () => {
     });
 
     it('shows countdown if MAX_LENGTH provided in LANG entity comment', () => {
-        const wrapper = shallow(<TranslationLengthBase
+        const wrapper = shallow(<TranslationLength
             translation='123'
             entity={ COUNTDOWN_ENTITY }
         />);
@@ -40,7 +40,7 @@ describe('<TranslationLengthBase>', () => {
     });
 
     it('marks countdown overflow', () => {
-        const wrapper = shallow(<TranslationLengthBase
+        const wrapper = shallow(<TranslationLength
             translation='123456'
             entity={ COUNTDOWN_ENTITY }
         />);
@@ -49,7 +49,7 @@ describe('<TranslationLengthBase>', () => {
     });
 
     it('strips html from translation when calculating countdown', () => {
-        const wrapper = shallow(<TranslationLengthBase
+        const wrapper = shallow(<TranslationLength
             translation='12<span>34</span>56'
             entity={ COUNTDOWN_ENTITY }
         />);
@@ -58,7 +58,7 @@ describe('<TranslationLengthBase>', () => {
     });
 
     it('does not strips html from translation when calculating length', () => {
-        const wrapper = shallow(<TranslationLengthBase
+        const wrapper = shallow(<TranslationLength
             translation='12<span>34</span>56'
             entity={ LENGTH_ENTITY }
         />);
