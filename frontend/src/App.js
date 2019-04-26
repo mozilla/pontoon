@@ -40,6 +40,31 @@ class App extends React.Component<InternalProps> {
         this.props.dispatch(locales.actions.get());
     }
 
+    componentDidUpdate(prevProps: InternalProps) {
+        // If there's a notification in the DOM, passed by django, show it.
+        // Note that we only show it once, and only when the UI has already
+        // been rendered, to make sure users do see it.
+        if (
+            !this.props.l10n.fetching &&
+            !this.props.locales.fetching &&
+            (prevProps.l10n.fetching ||
+            prevProps.locales.fetching)
+        ) {
+            let notifications = [];
+            const rootElt = document.getElementById('root');
+            if (rootElt) {
+                notifications = JSON.parse(rootElt.dataset.notifications);
+            }
+
+            if (notifications.length) {
+                // Our notification system only supports showing one notification
+                // for the moment, so we only add the first notification here.
+                const notif = notifications[0];
+                this.props.dispatch(notification.actions.addRaw(notif.content, notif.type));
+            }
+        }
+    }
+
     render() {
         const state = this.props;
 
