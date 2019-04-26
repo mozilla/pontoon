@@ -8,6 +8,7 @@ describe('<TranslationLength>', () => {
     const LENGTH_ENTITY = {
         comment: '',
         original: '12345',
+        original_plural: '123456',
     };
 
     const COUNTDOWN_ENTITY = {
@@ -19,6 +20,7 @@ describe('<TranslationLength>', () => {
     it('shows translation length and original string length', () => {
         const wrapper = shallow(<TranslationLength
             translation='1234567'
+            pluralForm={ -1 }
             entity={ LENGTH_ENTITY }
         />);
 
@@ -26,6 +28,16 @@ describe('<TranslationLength>', () => {
         expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual('7');
         expect(wrapper.find('.translation-vs-original').childAt(1).text()).toEqual('|');
         expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual('5');
+    });
+
+    it('shows translation length and plural original string length', () => {
+        const wrapper = shallow(<TranslationLength
+            translation='1234567'
+            pluralForm={ 1 }
+            entity={ LENGTH_ENTITY }
+        />);
+
+        expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual('6');
     });
 
     it('shows countdown if MAX_LENGTH provided in LANG entity comment', () => {

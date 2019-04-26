@@ -9,6 +9,7 @@ import type { DbEntity } from 'modules/entitieslist';
 
 type Props = {|
     entity: ?DbEntity,
+    pluralForm: number,
     translation: string,
 |};
 
@@ -60,7 +61,7 @@ export default class TranslationLength extends React.Component<Props> {
     }
 
     render() {
-        const { entity, translation } = this.props;
+        const { entity, pluralForm, translation } = this.props;
 
         if (!entity) {
             return null;
@@ -69,6 +70,8 @@ export default class TranslationLength extends React.Component<Props> {
         const limit = this.getLimit();
         const translationLength = this.stripHTML(translation).length;
         const countdown = limit !== null ? limit - translationLength : null;
+        const original = (pluralForm === -1 || pluralForm === 0) ?
+            entity.original : entity.original_plural;
 
         return <div className="translation-length">
             { countdown !== null ?
@@ -79,7 +82,7 @@ export default class TranslationLength extends React.Component<Props> {
                 </div>
             :
                 <div className="translation-vs-original">
-                    <span>{ translation.length }</span>|<span>{ entity.original.length }</span>
+                    <span>{ translation.length }</span>|<span>{ original.length }</span>
                 </div>
             }
         </div>;
