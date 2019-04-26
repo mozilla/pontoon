@@ -1,0 +1,87 @@
+/* @flow */
+
+import * as React from 'react';
+
+import './TranslationLength.css';
+
+import type { DbEntity } from 'modules/entitieslist';
+
+
+type Props = {|
+    entity: ?DbEntity,
+    translation: string,
+|};
+
+
+/*
+ * Shows translation length vs. original string length, or countdown.
+ * 
+ * Countdown is current only supported for LANG strings, which use special
+ * syntax in the comment to define maximum translation length. MAX_LENGTH
+ * is provided for strings without HTML tags, so they need to be stripped.
+ */
+export default class TranslationLengthBase extends React.Component<Props> {
+    getLimit() {
+        const entity = this.props.entity;
+
+        if (!entity) {
+            return null;
+        }
+
+        const split = entity.comment.split('\n');
+
+        if (entity.format === 'lang' && split[0].startsWith('MAX_LENGTH')) {
+            try {
+                return parseInt(
+                    split[0].split('MAX_LENGTH: ')[1].split(' ')[0],
+                    10,
+                );
+            } catch (e) {
+                // Catch unexpected comment structure
+            }
+        }
+
+        return null;
+    }
+
+    /*
+     * Only used for countdown.
+     * 
+     * Source: https://stackoverflow.com/a/47140708
+     */
+    stripHTML(translation: string) {
+        const doc = new DOMParser().parseFromString(translation, 'text/html');
+
+        if (!doc.body) {
+            return '';
+        }
+
+        return doc.body.textContent || '';
+    }
+
+    render() {
+        const { entity, translation } = this.props;
+
+        if (!entity) {
+            return null;
+        }
+
+        const limit = this.getLimit();
+        const translationLength = this.stripHTML(translation).length;
+        const countdown = limit !== null ? limit - translationLength : null;
+
+        return <div className="translation-length">
+            { countdown !== null ?
+                <div className="countdown">
+                    <span className={ countdown < 0 ? "overflow" : null }>
+                        { countdown }
+                    </span>
+                </div>
+            :
+                <div className="translation-vs-original">
+                    <span>{ translation.length }</span>|<span>{ entity.original.length }</span>
+                </div>
+            }
+        </div>;
+    }
+}

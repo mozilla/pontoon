@@ -19,6 +19,7 @@ import FailedChecks from './FailedChecks';
 import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
+import TranslationLength from './TranslationLength';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -184,6 +185,10 @@ export class EditorBase extends React.Component<InternalProps> {
                             updateSetting={ this.updateSetting }
                         />
                         <KeyboardShortcuts />
+                        <TranslationLength
+                            entity={ this.props.selectedEntity }
+                            translation={ this.props.editor.translation }
+                        />
                         <div className="actions">
                             <Localized id="editor-editor-button-copy">
                                 <button
