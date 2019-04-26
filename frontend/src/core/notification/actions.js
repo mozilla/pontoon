@@ -1,6 +1,7 @@
 /* @flow */
 
 import { Localized } from 'fluent-react';
+import shortid from 'shortid';
 
 
 export const ADD: 'notification/ADD' = 'notification/ADD';
@@ -9,8 +10,9 @@ export const ADD: 'notification/ADD' = 'notification/ADD';
 export type NotificationType = 'debug' | 'error' | 'info' | 'success' | 'warning';
 
 export type NotificationMessage = {|
-    content: typeof Localized,
-    type: NotificationType,
+    +type: NotificationType,
+    +content: string | typeof Localized,
+    +key?: string,
 |};
 
 
@@ -24,6 +26,12 @@ export type AddAction = {
     message: NotificationMessage,
 };
 export function add(message: NotificationMessage): AddAction {
+    // This unique key is a mechanism to force React to re-render a notification
+    // when the same one is added twice in a row.
+    if (!message.key) {
+        message = { ...message, key: shortid() };
+    }
+
     return {
         type: ADD,
         message,

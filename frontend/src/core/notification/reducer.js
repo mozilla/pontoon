@@ -1,21 +1,13 @@
 /* @flow */
 
-import { Localized } from 'fluent-react';
-
 import { ADD } from './actions';
 
-import type { AddAction, NotificationType } from './actions';
+import type { AddAction, NotificationMessage } from './actions';
 
 
 type Action =
     | AddAction
 ;
-
-
-type NotificationMessage = {|
-    +type: NotificationType,
-    +content: string | typeof Localized,
-|};
 
 
 export type NotificationState = {|
