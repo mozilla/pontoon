@@ -81,6 +81,30 @@ describe('<GenericEditor>', () => {
         expect(mockSend.calledOnce).toBeTruthy();
     });
 
+    it('prevents multiple simultaneous sendTranslation calls on Enter', () => {
+        const mockSend = sinon.spy();
+
+        const wrapper = shallow(<GenericEditor
+            editor={ EDITOR }
+            locale={ DEFAULT_LOCALE }
+            sendTranslation={ mockSend }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        wrapper.find('textarea').simulate('keydown', event);
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
     it('approves the translation on Enter if failed checks triggered by approval', () => {
         const mockSend = sinon.spy();
 

@@ -23,15 +23,23 @@ export type EditorProps = {|
     ) => void,
 |};
 
+type State = {|
+    isEnterShortcutDisabled: boolean,
+|};
+
 
 /*
  * Render a simple textarea to edit a translation.
  */
-export default class GenericEditor extends React.Component<EditorProps> {
+export default class GenericEditor extends React.Component<EditorProps, State> {
     textarea: { current: any };
 
     constructor(props: EditorProps) {
         super(props);
+
+        this.state = {
+            isEnterShortcutDisabled: false,
+        };
         this.textarea = React.createRef();
     }
 
@@ -45,7 +53,7 @@ export default class GenericEditor extends React.Component<EditorProps> {
         this.textarea.current.setSelectionRange(0, 0);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: EditorProps, prevState: State) {
         // If there is content to add to the editor, do so, then remove
         // the content so it isn't added again.
         // This is an abuse of the redux store, because we want to update
@@ -59,10 +67,16 @@ export default class GenericEditor extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        this.textarea.current.focus();
+        if (this.textarea.current) {
+            this.textarea.current.focus();
+        }
 
         if (this.props.editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);
+        }
+
+        if (prevState.isEnterShortcutDisabled) {
+            this.setState({ isEnterShortcutDisabled: false });
         }
     }
 
@@ -97,6 +111,12 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
         // On Enter, send the current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            if (this.state.isEnterShortcutDisabled) {
+                event.preventDefault();
+                return;
+            }
+            this.setState({ isEnterShortcutDisabled: true });
+
             handledEvent = true;
 
             const errors = this.props.editor.errors;
