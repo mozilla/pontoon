@@ -136,6 +136,15 @@ describe('<EditorBase>', () => {
         ).toBeTruthy();
     });
 
+    it('prevents multiple Save button clicks to trigger simultaneous sendTranslation calls', () => {
+        const wrapper = createEditorBase({ forceSuggestions: false });
+
+        wrapper.find('.action-save').simulate('click');
+        wrapper.find('.action-save').simulate('click');
+        wrapper.find('.action-save').simulate('click');
+        expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
+    });
+
     it('hides the settings and actions when the user is logged out', () => {
         const wrapper = createEditorBase({ isAuthenticated: false });
 

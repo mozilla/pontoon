@@ -46,6 +46,10 @@ type InternalProps = {|
     dispatch: Function,
 |};
 
+type State = {|
+    isSendTranslationDisabled: boolean,
+|};
+
 
 /**
  * Editor for translation strings.
@@ -53,7 +57,21 @@ type InternalProps = {|
  * Will present a different editor depending on the file format of the string,
  * see `EditorProxy` for more information.
  */
-export class EditorBase extends React.Component<InternalProps> {
+export class EditorBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
+        super(props);
+
+        this.state = {
+            isSendTranslationDisabled: false,
+        };
+    }
+
+    componentDidUpdate(prevProps: InternalProps, prevState: State) {
+        if (prevState.isSendTranslationDisabled) {
+            this.setState({ isSendTranslationDisabled: false });
+        }
+    }
+
     resetSelectionContent = () => {
         this.props.dispatch(actions.resetSelection());
     }
@@ -80,6 +98,11 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     sendTranslation = (ignoreWarnings: ?boolean) => {
+        if (this.state.isSendTranslationDisabled) {
+            return;
+        }
+        this.setState({ isSendTranslationDisabled: true });
+
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
@@ -213,6 +236,7 @@ export class EditorBase extends React.Component<InternalProps> {
                             <Localized id="editor-editor-button-suggest">
                                 <button
                                     className="action-suggest"
+                                    disabled={ this.state.isSendTranslationDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Suggest
@@ -223,6 +247,7 @@ export class EditorBase extends React.Component<InternalProps> {
                             <Localized id="editor-editor-button-save">
                                 <button
                                     className="action-save"
+                                    disabled={ this.state.isSendTranslationDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Save
