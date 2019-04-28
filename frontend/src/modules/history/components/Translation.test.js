@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
 import Translation from './Translation';
 
@@ -320,6 +321,47 @@ describe('<Translation>', () => {
 
             expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
             expect(wrapper.find('.toggle-diff.hide')).toHaveLength(1);
+        });
+    });
+
+    describe('multiple requests', () => {
+        it('prevents multiple simultaneous status change requests', () => {
+            const mockUpdate = sinon.spy();
+            const wrapper = shallow(<Translation
+                translation={ DEFAULT_TRANSLATION }
+                locale={ DEFAULT_LOCALE }
+                updateTranslationStatus={ mockUpdate }
+            />);
+            const event = {
+                stopPropagation: sinon.spy(),
+                target: 'approve',
+            };
+
+            expect(mockUpdate.called).toBeFalsy();
+            wrapper.find('.approve').simulate('click', event);
+            wrapper.find('.approve').simulate('click', event);
+            wrapper.find('.approve').simulate('click', event);
+            expect(mockUpdate.calledOnce).toBeTruthy();
+        });
+
+        it('prevents multiple simultaneous delete requests', () => {
+            const mockDelete = sinon.spy();
+            const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+            const wrapper = shallow(<Translation
+                translation={ translation }
+                locale={ DEFAULT_LOCALE }
+                canReview={ true }
+                deleteTranslation={ mockDelete }
+            />);
+            const event = {
+                stopPropagation: sinon.spy(),
+            };
+
+            expect(mockDelete.called).toBeFalsy();
+            wrapper.find('.delete').simulate('click', event);
+            wrapper.find('.delete').simulate('click', event);
+            wrapper.find('.delete').simulate('click', event);
+            expect(mockDelete.calledOnce).toBeTruthy();
         });
     });
 });
