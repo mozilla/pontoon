@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
 import FailedChecks from './FailedChecks';
 
@@ -69,5 +70,26 @@ describe('<FailedChecks>', () => {
         />);
 
         expect(wrapper.find('.approve.anyway')).toHaveLength(1);
+    });
+
+    it('prevents multiple save anyway button clicks to trigger simultaneous sendTranslation calls', () => {
+        const mockUpdate = sinon.spy();
+        const wrapper = shallow(<FailedChecks
+            source={ 'submitted' }
+            errors={ [] }
+            warnings={ ['Warning1'] }
+            user={ {
+                settings: {
+                    forceSuggestions: false,
+                },
+            } }
+            sendTranslation={ mockUpdate }
+        />);
+
+        expect(mockUpdate.called).toBeFalsy();
+        wrapper.find('.save.anyway').simulate('click');
+        wrapper.find('.save.anyway').simulate('click');
+        wrapper.find('.save.anyway').simulate('click');
+        expect(mockUpdate.calledOnce).toBeTruthy();
     });
 });

@@ -23,16 +23,39 @@ type Props = {|
     ) => void,
 |};
 
+type State = {|
+    isConfirmationButtonDisabled: boolean,
+|};
+
 
 /*
  * Renders the failed checks popup.
  */
-export default class FailedChecks extends React.Component<Props> {
+export default class FailedChecks extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            isConfirmationButtonDisabled: false,
+        };
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        if (prevState.isConfirmationButtonDisabled) {
+            this.setState({ isConfirmationButtonDisabled: false });
+        }
+    }
+
     closeFailedChecks = () => {
         this.props.resetFailedChecks();
     }
 
     approveAnyway = () => {
+        if (this.state.isConfirmationButtonDisabled) {
+            return;
+        }
+        this.setState({ isConfirmationButtonDisabled: true });
+
         const translationId = this.props.source;
         if (typeof(translationId) === 'number') {
             this.props.updateTranslationStatus(translationId, 'approve', true);
@@ -40,6 +63,11 @@ export default class FailedChecks extends React.Component<Props> {
     }
 
     submitAnyway = () => {
+        if (this.state.isConfirmationButtonDisabled) {
+            return;
+        }
+        this.setState({ isConfirmationButtonDisabled: true });
+
         this.props.sendTranslation(true);
     }
 
@@ -87,6 +115,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--approve-anyway">
                     <button
                         className="approve anyway"
+                        disabled={ this.state.isConfirmationButtonDisabled }
                         onClick={ this.approveAnyway }
                     >
                         Approve anyway
@@ -96,6 +125,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--suggest-anyway">
                     <button
                         className="suggest anyway"
+                        disabled={ this.state.isConfirmationButtonDisabled }
                         onClick={ this.submitAnyway }
                     >
                         Suggest anyway
@@ -105,6 +135,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--save-anyway">
                     <button
                         className="save anyway"
+                        disabled={ this.state.isConfirmationButtonDisabled }
                         onClick={ this.submitAnyway }
                     >
                         Save anyway
