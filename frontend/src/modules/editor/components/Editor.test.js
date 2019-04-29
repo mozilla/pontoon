@@ -10,6 +10,10 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 
 
+const LOCALE = {
+    code: 'kg',
+}
+
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
@@ -32,9 +36,7 @@ function createEditorBase({
         editor={
             { translation: 'initial' }
         }
-        locale={
-            { code: 'kg' }
-        }
+        locale={ LOCALE }
         pluralForm={ pluralForm }
         selectedEntity={ selectedEntity }
         user={ {
@@ -113,7 +115,7 @@ describe('<EditorBase>', () => {
         expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
         expect(
             editor.actions.sendTranslation
-            .calledWith(SELECTED_ENTITY.pk, 'initial', 'kg', SELECTED_ENTITY.original)
+            .calledWith(SELECTED_ENTITY.pk, 'initial', LOCALE, SELECTED_ENTITY.original)
         ).toBeTruthy();
     });
 
@@ -130,7 +132,7 @@ describe('<EditorBase>', () => {
         expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
         expect(
             editor.actions.sendTranslation
-            .calledWith(SELECTED_ENTITY.pk, 'initial', 'kg', SELECTED_ENTITY.original)
+            .calledWith(SELECTED_ENTITY.pk, 'initial', LOCALE, SELECTED_ENTITY.original)
         ).toBeTruthy();
     });
 
