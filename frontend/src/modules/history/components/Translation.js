@@ -46,8 +46,9 @@ type State = {|
  * change said status.
  */
 export default class Translation extends React.Component<Props, State> {
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
+
         this.state = {
             isDeleteDisabled: false,
             isDiffVisible: false,
