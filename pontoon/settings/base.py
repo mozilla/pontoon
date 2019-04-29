@@ -594,7 +594,14 @@ def _allowed_hosts():
     from six.moves.urllib.parse import urlparse
 
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
-    host = host.rsplit(':', 1)[0]  # Remove port
+
+    # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
+    # have a version of the host that contains the port. This only applies
+    # to local development (usually the host is localhost:8000).
+    if ':' in host:
+        host_no_port = host.rsplit(':', 1)[0]
+        return [host, host_no_port]
+
     return [host]
 
 
