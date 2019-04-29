@@ -4,7 +4,6 @@ import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
 import * as notification from 'core/notification';
-import { actions as pluralActions } from 'core/plural';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -173,13 +172,14 @@ export function sendTranslation(
             );
             if (nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
-                const nextPluralForm = pluralForm + 1;
-                if (pluralForm !== -1 && nextPluralForm < locale.cldrPlurals.length) {
-                    dispatch(pluralActions.select(nextPluralForm));
-                }
-                else if (nextEntity.pk !== entity) {
-                    dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
-                }
+                navActions.moveToNextTranslation(
+                    dispatch,
+                    router,
+                    entity,
+                    nextEntity.pk,
+                    pluralForm,
+                    locale,
+                );
             }
         }
     }

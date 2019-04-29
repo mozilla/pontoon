@@ -2,6 +2,30 @@
 
 import { push } from 'connected-react-router';
 
+import { actions as pluralActions } from 'core/plural';
+
+import type { Locale } from 'core/locales';
+
+
+/**
+ * Move to next Entity or pluralForm.
+ */
+export function moveToNextTranslation(
+    dispatch: Function,
+    router: Object,
+    entity: number,
+    nextEntity: number,
+    pluralForm: number,
+    locale: Locale,
+): Function {
+    if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+        dispatch(pluralActions.select(pluralForm + 1));
+    }
+    else if (nextEntity !== entity) {
+        dispatch(updateEntity(router, nextEntity.toString()));
+    }
+}
+
 
 function update(router: Object, parameter: string, value: ?string): Function {
     return dispatch => {
@@ -67,6 +91,7 @@ export function updateStatus(router: Object, status: ?string): Function {
 
 
 export default {
+    moveToNextTranslation,
     updateEntity,
     updateSearch,
     updateStatus,
