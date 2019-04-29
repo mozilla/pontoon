@@ -38,7 +38,7 @@
     <div
         id="root"
         data-csrf-token="{{ csrf_token }}"
-        data-notifications="{{ notifications | tojson | forceescape }}"
+        data-notifications="{{ notifications | to_json | forceescape }}"
     ></div>
     <!--
       This HTML file is a template.

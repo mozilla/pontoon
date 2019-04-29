@@ -15,7 +15,8 @@
     transition: 200ms;
 }
 
-.notification-panel .info {
+.notification-panel .info,
+.notification-panel .success {
     color: #7BC876;
 }
 
