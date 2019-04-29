@@ -11,6 +11,7 @@ import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
+import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
 
@@ -24,7 +25,7 @@ type Props = {|
     index: number,
     deleteTranslation: (number) => void,
     updateEditorTranslation: (string) => void,
-    updateTranslationStatus: (number, string) => void,
+    updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
 

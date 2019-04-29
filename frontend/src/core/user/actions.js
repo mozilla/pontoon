@@ -1,6 +1,7 @@
 /* @flow */
 
 import api from 'core/api';
+import * as notification from 'core/notification';
 
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
 export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
@@ -54,11 +55,31 @@ export function signOut(url: string): Function {
 }
 
 
+function _getOperationNotif(setting, value) {
+    if (setting === 'runQualityChecks' && value) {
+        return notification.messages.CHECKS_ENABLED;
+    }
+    if (setting === 'runQualityChecks' && !value) {
+        return notification.messages.CHECKS_DISABLED;
+    }
+    if (setting === 'forceSuggestions' && value) {
+        return notification.messages.SUGGESTIONS_ENABLED;
+    }
+    if (setting === 'forceSuggestions' && !value) {
+        return notification.messages.SUGGESTIONS_DISABLED;
+    }
+
+    throw new Error('Unsupported operation on setting: ' + setting);
+}
+
 export function saveSetting(setting: string, value: boolean, username: string): Function {
     return async dispatch => {
         dispatch(updateSettings({ [setting]: value }));
 
         await api.user.updateSetting(username, setting, value);
+
+        const notif = _getOperationNotif(setting, value);
+        dispatch(notification.actions.add(notif));
     };
 }
 

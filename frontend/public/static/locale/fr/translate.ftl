@@ -177,6 +177,26 @@ user-UserMenu--settings = <glyph></glyph>Paramètres
 user-SignOut--sign-out = <glyph></glyph>Se déconnecter
 
 
+## Notification
+## Messages shown to users after they perform actions.
+notification--translation-approved = Traduction approuvée
+notification--translation-unaproved = Traduction désapprouvée
+notification--translation-rejected = Traduction rejetée
+notification--translation-unrejected = Traduction dérejetée
+notification--translation-deleted = Traduction supprimée
+notification--translation-added = Traduction ajoutée
+notification--translation-saved = Traduction enregistrée
+notification--translation-updated = Traduction mise à jour
+notification--unable-to-approve-translation = Impossible d'approuver la traduction
+notification--unable-to-unapprove-translation = Impossible de désapprouver la traduction
+notification--unable-to-reject-translation = Impossible de rejeter la traduction
+notification--unable-to-unreject-translation = Impossible de dérejeter la traduction
+notification--same-translation = Une traduction identique existe déjà
+notification--tt-checks-enabled = Vérifications Translate Toolkit activées
+notification--tt-checks-disabled = Vérifications Translate Toolkit désactivées
+notification--make-suggestions-enabled = Faire des suggestions activé
+notification--make-suggestions-disabled = Faire des suggestions désactivé
+
 
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.

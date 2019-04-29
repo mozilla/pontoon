@@ -3,6 +3,7 @@
 import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
+import * as notification from 'core/notification';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -101,6 +102,20 @@ export function resetFailedChecks(): ResetFailedChecksAction {
 }
 
 
+function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
+    switch (change) {
+        case 'added':
+            return notification.messages.TRANSLATION_ADDED;
+        case 'saved':
+            return notification.messages.TRANSLATION_SAVED;
+        case 'updated':
+            return notification.messages.TRANSLATION_UPDATED;
+        default:
+            throw new Error('Unexpected translation status change: ' + change);
+    }
+}
+
+
 /**
  * Save the current translation.
  */
@@ -132,14 +147,21 @@ export function sendTranslation(
         else if (content.same) {
             // The translation that was provided is the same as an existing
             // translation for that entity.
-            // Show an error.
-            console.error('Same Translation Error');
+            dispatch(
+                notification.actions.add(
+                    notification.messages.SAME_TRANSLATION
+                )
+            );
         }
         else if (
             content.type === 'added' ||
             content.type === 'saved' ||
             content.type === 'updated'
         ) {
+            // Notify the user of the change that happened.
+            const notif = _getOperationNotif(content.type);
+            dispatch(notification.actions.add(notif));
+
             dispatch(
                 entitiesActions.updateEntityTranslation(
                     entity,

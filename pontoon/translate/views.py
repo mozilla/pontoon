@@ -4,6 +4,7 @@ import waffle
 
 from django import http
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -82,7 +83,7 @@ def catchall_dev(request, context=None):
 # static folders. We can thus simply return a template view of index.html.
 @ensure_csrf_cookie
 def catchall_prod(request, context=None):
-    return render(request, 'index.html', context=context)
+    return render(request, 'index.html', context=context, using='jinja2')
 
 
 def get_preferred_locale(request):
@@ -122,7 +123,17 @@ def translate(request, locale=None, project=None, resource=None):
 
     context = {
         'locale': get_preferred_locale(request),
+        'notifications': [],
     }
+
+    # Get system notifications and pass them down. We need to transform the
+    # django object so that it can be turned into JSON.
+    notifications = messages.get_messages(request)
+    if notifications:
+        context['notifications'] = map(
+            lambda x: {'content': str(x), 'type': x.tags},
+            notifications
+        )
 
     if settings.DEBUG:
         return catchall_dev(request, context=context)

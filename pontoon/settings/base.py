@@ -189,6 +189,9 @@ TEMPLATES = [
         'BACKEND': 'django_jinja.backend.Jinja2',
         'NAME': 'jinja2',
         'APP_DIRS': True,
+        'DIRS': [
+            os.path.join(FRONTEND_DIR, 'build'),
+        ],
         'OPTIONS': {
             'match_extension': '',
             'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja|js)$',
@@ -215,7 +218,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             path('pontoon/base/templates/django'),
-            os.path.join(FRONTEND_DIR, 'build'),
         ],
         'OPTIONS': {
             'debug': DEBUG,
