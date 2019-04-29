@@ -866,7 +866,7 @@ $(function() {
         attribute: self.data('attribute'),
         value: !self.is('.enabled')
       },
-      success: function(data) {
+      success: function() {
         self.toggleClass('enabled');
         var is_enabled = self.is('.enabled'),
             status = is_enabled ? 'enabled' : 'disabled';
