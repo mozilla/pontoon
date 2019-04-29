@@ -86,7 +86,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             this.props.dispatch(actions.reset());
         }
 
-        this.scrollToSelectedElement();
+        if (previous.entity !== current.entity) {
+            this.scrollToSelectedElement();
+        }
     }
 
     scrollToSelectedElement() {
