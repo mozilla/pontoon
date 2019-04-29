@@ -1,0 +1,10 @@
+.translation-length {
+    color: #AAAAAA;
+    float: left;
+    line-height: 22px;
+    padding: 9px 5px;
+}
+
+.translation-length .countdown .overflow {
+    color: #F36;
+}
