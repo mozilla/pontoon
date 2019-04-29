@@ -763,6 +763,7 @@ def update_translation(request):
     # Checks are disabled for the tutorial.
     use_checks = project.slug != 'tutorial'
 
+    failed_checks = None
     if use_checks:
         failed_checks = run_checks(
             e,
