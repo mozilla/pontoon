@@ -42,6 +42,7 @@ export default class NotificationPanel extends React.Component<Props, State> {
             prevProps.notification.message !== this.props.notification.message
         ) {
             this.setState({ hiding: false });
+            clearTimeout(this.hideTimeout);
             this.hideTimeout = setTimeout(() => {
                 this.hide();
             }, 2000);
