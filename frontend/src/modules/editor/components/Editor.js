@@ -32,7 +32,7 @@ import type { EditorState } from '../reducer';
 type Props = {|
     editor: EditorState,
     isReadOnlyEditor: boolean,
-    locale: ?Locale,
+    locale: Locale,
     nextEntity: DbEntity,
     parameters: NavigationParams,
     pluralForm: number,
@@ -89,7 +89,7 @@ export class EditorBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.sendTranslation(
             state.selectedEntity.pk,
             state.editor.translation,
-            state.locale.code,
+            state.locale,
             state.selectedEntity.original,
             state.pluralForm,
             state.user.settings.forceSuggestions,
@@ -115,11 +115,11 @@ export class EditorBase extends React.Component<InternalProps> {
      * We might want to refactor to keep the logic in one place only.
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation, ignoreWarnings: ?boolean) => {
-        const { nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        const { locale, nextEntity, parameters, pluralForm, router, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
             change,
             parameters.entity,
-            parameters.locale,
+            locale,
             parameters.resource,
             pluralForm,
             translationId,

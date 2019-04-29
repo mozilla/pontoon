@@ -2,11 +2,12 @@
 
 import api from 'core/api';
 
-import { actions as navActions } from 'core/navigation';
 import * as notification from 'core/notification';
+import { actions as pluralActions } from 'core/plural';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
+import type { Locale } from 'core/locales';
 
 
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
@@ -122,7 +123,7 @@ function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
 export function sendTranslation(
     entity: number,
     translation: string,
-    locale: string,
+    locale: Locale,
     original: string,
     pluralForm: number,
     forceSuggestions: boolean,
@@ -134,7 +135,7 @@ export function sendTranslation(
         const content = await api.translation.updateTranslation(
             entity,
             translation,
-            locale,
+            locale.code,
             pluralForm,
             original,
             forceSuggestions,
@@ -169,10 +170,16 @@ export function sendTranslation(
                     content.translation
                 )
             );
-
-            if (nextEntity && nextEntity.pk !== entity) {
-                // The change did work, we want to move on to the next Entity.
-                dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
+            if (nextEntity) {
+                // The change did work, we want to move on to the next Entity or pluralForm.
+                pluralActions.moveToNextTranslation(
+                    dispatch,
+                    router,
+                    entity,
+                    nextEntity.pk,
+                    pluralForm,
+                    locale,
+                );
             }
         }
     }
