@@ -5,6 +5,7 @@ import { combineReducers } from 'redux';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as l10n from 'core/l10n';
+import * as notification from 'core/notification';
 import * as plural from 'core/plural';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
@@ -21,6 +22,7 @@ export default combineReducers({
     [lightbox.NAME]: lightbox.reducer,
     [locales.NAME]: locales.reducer,
     [l10n.NAME]: l10n.reducer,
+    [notification.NAME]: notification.reducer,
     [plural.NAME]: plural.reducer,
     [stats.NAME]: stats.reducer,
     [user.NAME]: user.reducer,

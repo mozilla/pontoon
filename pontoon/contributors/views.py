@@ -12,7 +12,6 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseForbidden,
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render, redirect
@@ -104,21 +103,32 @@ def contributor(request, user):
 def toggle_user_profile_attribute(request, username):
     user = get_object_or_404(User, username=username)
     if user != request.user:
-        return HttpResponseForbidden("Forbidden: You don't have permission to edit this user")
+        return JsonResponse({
+            'status': False,
+            'message': "Forbidden: You don't have permission to edit this user",
+        }, status=403)
 
     attribute = request.POST.get('attribute', None)
     if attribute not in ['quality_checks', 'force_suggestions']:
-        return HttpResponseForbidden('Forbidden: Attribute not allowed')
+        return JsonResponse({
+            'status': False,
+            'message': 'Forbidden: Attribute not allowed',
+        }, status=403)
 
     value = request.POST.get('value', None)
     if not value:
-        return HttpResponseBadRequest('Bad Request: Value not set')
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: Value not set',
+        }, status=400)
 
     profile = user.profile
     setattr(profile, attribute, json.loads(value))
     profile.save()
 
-    return HttpResponse('ok')
+    return JsonResponse({
+        'status': True,
+    })
 
 
 @login_required(redirect_field_name='', login_url='/403')

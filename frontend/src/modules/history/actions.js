@@ -3,6 +3,7 @@
 import api from 'core/api';
 
 import { actions as navActions } from 'core/navigation';
+import * as notification from 'core/notification';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
@@ -69,8 +70,10 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
 }
 
 
+export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
+
 function updateStatusOnServer(
-    change: string,
+    change: ChangeOperation,
     translation: number,
     resource: string,
     ignoreWarnings: ?boolean,
@@ -90,8 +93,40 @@ function updateStatusOnServer(
 }
 
 
+function _getOperationNotif(change: ChangeOperation, success: boolean) {
+    if (success) {
+        switch (change) {
+            case 'approve':
+                return notification.messages.TRANSLATION_APPROVED;
+            case 'unapprove':
+                return notification.messages.TRANSLATION_UNAPPROVED;
+            case 'reject':
+                return notification.messages.TRANSLATION_REJECTED;
+            case 'unreject':
+                return notification.messages.TRANSLATION_UNREJECTED;
+            default:
+                throw new Error('Unexpected translation status change: ' + change);
+        }
+    }
+    else {
+        switch (change) {
+            case 'approve':
+                return notification.messages.UNABLE_TO_APPROVE_TRANSLATION;
+            case 'unapprove':
+                return notification.messages.UNABLE_TO_UNAPPROVE_TRANSLATION;
+            case 'reject':
+                return notification.messages.UNABLE_TO_REJECT_TRANSLATION;
+            case 'unreject':
+                return notification.messages.UNABLE_TO_UNREJECT_TRANSLATION;
+            default:
+                throw new Error('Unexpected translation status change: ' + change);
+        }
+    }
+}
+
+
 export function updateStatus(
-    change: string,
+    change: ChangeOperation,
     entity: number,
     locale: string,
     resource: string,
@@ -102,12 +137,25 @@ export function updateStatus(
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
-        const results = await updateStatusOnServer(change, translation, resource, ignoreWarnings);
+        const results = await updateStatusOnServer(
+            change, translation, resource, ignoreWarnings
+        );
+
+        // Show a notification to explain what happened.
+        const notif = _getOperationNotif(change, !!results.translation);
+        dispatch(notification.actions.add(notif));
+
+        // Update the UI based on the response.
         if (results.failedChecks) {
             dispatch(editorActions.update(results.string, 'external'));
             dispatch(editorActions.updateFailedChecks(results.failedChecks, translation));
         }
-        else if (results.translation && change === 'approve' && nextEntity && nextEntity.pk !== entity) {
+        else if (
+            results.translation &&
+            change === 'approve' &&
+            nextEntity &&
+            nextEntity.pk !== entity
+        ) {
             // The change did work, we want to move on to the next Entity.
             dispatch(navActions.updateEntity(router, nextEntity.pk.toString()));
         }
@@ -115,12 +163,16 @@ export function updateStatus(
             dispatch(get(entity, locale, pluralForm));
         }
 
+        // Update stats for the search panel if possible.
         if (results.stats) {
             dispatch(statsActions.update(results.stats));
         }
 
+        // Refresh the data now that it has changed on the server.
         if (results.translation) {
-            dispatch(listActions.updateEntityTranslation(entity, pluralForm, results.translation));
+            dispatch(
+                listActions.updateEntityTranslation(entity, pluralForm, results.translation)
+            );
         }
     }
 }
@@ -134,6 +186,9 @@ export function deleteTranslation(
 ): Function {
     return async dispatch => {
         await api.translation.delete(translation);
+        dispatch(
+            notification.actions.add(notification.messages.TRANSLATION_DELETED)
+        );
         dispatch(get(entity, locale, pluralForm));
     }
 }

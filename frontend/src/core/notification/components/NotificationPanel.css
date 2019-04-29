@@ -1,0 +1,30 @@
+.notification-panel {
+    background: rgba(51, 57, 65, 0.9);
+    cursor: pointer;
+    font-size: 14px;
+    font-style: italic;
+    left: 0;
+    line-height: 60px;
+    list-style: none;
+    margin: 0;
+    position: fixed;
+    text-align: center;
+    top: -60px;
+    width: 100%;
+    z-index: 100;
+    transition: 200ms;
+}
+
+.notification-panel .info,
+.notification-panel .success {
+    color: #7BC876;
+}
+
+.notification-panel .error {
+    color: #F36;
+}
+
+/* Showing and hiding animations. */
+.notification-panel.showing {
+    top: 0;
+}

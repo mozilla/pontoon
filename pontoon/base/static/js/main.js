@@ -866,23 +866,21 @@ $(function() {
         attribute: self.data('attribute'),
         value: !self.is('.enabled')
       },
-      success: function(data) {
-        if (data === 'ok') {
-          self.toggleClass('enabled');
-          var is_enabled = self.is('.enabled'),
-              status = is_enabled ? 'enabled' : 'disabled';
+      success: function() {
+        self.toggleClass('enabled');
+        var is_enabled = self.is('.enabled'),
+            status = is_enabled ? 'enabled' : 'disabled';
 
-          Pontoon.endLoader(self.text() + ' ' + status + '.');
+        Pontoon.endLoader(self.text() + ' ' + status + '.');
 
-          if (self.is('.force-suggestions') && Pontoon.user) {
-            Pontoon.user.forceSuggestions = is_enabled;
-            Pontoon.postMessage("UPDATE-ATTRIBUTE", {
-              object: 'user',
-              attribute: 'forceSuggestions',
-              value: is_enabled
-            });
-            Pontoon.updateSaveButtons();
-          }
+        if (self.is('.force-suggestions') && Pontoon.user) {
+          Pontoon.user.forceSuggestions = is_enabled;
+          Pontoon.postMessage("UPDATE-ATTRIBUTE", {
+            object: 'user',
+            attribute: 'forceSuggestions',
+            value: is_enabled
+          });
+          Pontoon.updateSaveButtons();
         }
       },
       error: function() {

@@ -5,6 +5,7 @@ export { default as reducer } from './reducer';
 
 export { default as History } from './components/History';
 
+export type { ChangeOperation } from './actions';
 export type { HistoryState } from './reducer';
 
 // Name of this module.

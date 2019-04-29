@@ -55,6 +55,7 @@ module.exports = {
         SyntheticInputEvent: false,
         SyntheticMouseEvent: false,
         SyntheticKeyboardEvent: false,
+        TimeoutID: false,
         "$Diff": false,
     },
     plugins: [
