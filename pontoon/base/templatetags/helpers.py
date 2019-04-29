@@ -12,6 +12,7 @@ from six import text_type
 from six.moves.urllib import parse as six_parse
 
 from django import template
+from django.conf import settings
 from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
@@ -19,6 +20,7 @@ from django.db.models import QuerySet
 from django.utils.encoding import smart_str
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
+from django.utils.http import is_safe_url
 
 
 register = template.Library()
@@ -62,7 +64,10 @@ def url(viewname, *args, **kwargs):
 @library.global_function
 def return_url(request):
     """Get an url of the previous page."""
-    return request.POST.get('return_url', request.META.get('HTTP_REFERER', '/'))
+    url = request.POST.get('return_url', request.META.get('HTTP_REFERER', '/'))
+    if not is_safe_url(url, allowed_hosts=settings.ALLOWED_HOSTS):
+        return settings.SITE_URL
+    return url
 
 
 @library.filter
