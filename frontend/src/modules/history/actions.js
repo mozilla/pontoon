@@ -2,8 +2,8 @@
 
 import api from 'core/api';
 
-import { actions as navActions } from 'core/navigation';
 import * as notification from 'core/notification';
+import { actions as pluralActions } from 'core/plural';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
@@ -153,7 +153,7 @@ export function updateStatus(
         }
         else if (results.translation && change === 'approve' && nextEntity) {
             // The change did work, we want to move on to the next Entity or pluralForm.
-            navActions.moveToNextTranslation(
+            pluralActions.moveToNextTranslation(
                 dispatch,
                 router,
                 entity,

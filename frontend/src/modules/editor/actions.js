@@ -2,8 +2,8 @@
 
 import api from 'core/api';
 
-import { actions as navActions } from 'core/navigation';
 import * as notification from 'core/notification';
+import { actions as pluralActions } from 'core/plural';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -172,7 +172,7 @@ export function sendTranslation(
             );
             if (nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
-                navActions.moveToNextTranslation(
+                pluralActions.moveToNextTranslation(
                     dispatch,
                     router,
                     entity,
