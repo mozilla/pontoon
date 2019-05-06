@@ -20,6 +20,7 @@ import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
+import UnsavedChanges from './UnsavedChanges';
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -141,6 +142,14 @@ export class EditorBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.resetFailedChecks());
     }
 
+    hideUnsavedChanges = () => {
+        this.props.dispatch(actions.hideUnsavedChanges());
+    }
+
+    ignoreUnsavedChanges = () => {
+        this.props.dispatch(actions.ignoreUnsavedChanges());
+    }
+
     render() {
         if (!this.props.locale) {
             return null;
@@ -169,6 +178,12 @@ export class EditorBase extends React.Component<InternalProps> {
                     resetFailedChecks={ this.resetFailedChecks }
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
+                />
+                <UnsavedChanges
+                    callback={ this.props.editor.unsavedChangesCallback }
+                    hide={ this.hideUnsavedChanges }
+                    ignore={ this.ignoreUnsavedChanges }
+                    show={ this.props.editor.unsavedChanges }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

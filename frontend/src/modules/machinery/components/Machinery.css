@@ -37,15 +37,13 @@
 .machinery > .search-wrapper input[type=search] {
     background: transparent;
     border: none;
+    box-sizing: border-box;
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 300;
     line-height: 23px;
     padding: 10px 10px 5px 25px;
     width: 100%;
-
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 
     /* Remove extra padding in Chrome search input */
     -webkit-appearance: textfield;

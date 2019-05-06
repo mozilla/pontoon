@@ -15,12 +15,22 @@ editor-editor-button-suggest = Suggest
 ## Failed Checks
 ## Renders the failed checks popup
 
-editor-settings-toolkit-checks = ×
+editor-FailedChecks--close = ×
     .aria-label = Close failed checks popup
 editor-FailedChecks--title = The following checks have failed
 editor-FailedChecks--save-anyway = Save anyway
 editor-FailedChecks--suggest-anyway = Suggest anyway
 editor-FailedChecks--approve-anyway = Approve anyway
+
+
+## Unsaved Changes
+## Renders the unsaved changes popup
+
+editor-UnsavedChanges--close = ×
+    .aria-label = Close unsaved changes popup
+editor-UnsavedChanges--title = You have unsaved changes
+editor-UnsavedChanges--body = Sure you want to leave?
+editor-UnsavedChanges--leave-anyway = Leave anyway
 
 
 ## EditorSettings

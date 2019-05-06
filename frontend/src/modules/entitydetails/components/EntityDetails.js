@@ -145,26 +145,44 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(machinery.actions.get(source, locale, pk));
     }
 
-    goToNextEntity = () => {
-        const { router, nextEntity } = this.props;
+    checkUnsavedChanges = (callback: Function) => {
+        const { activeTranslation, dispatch } = this.props;
+        const { translation, unsavedChangesIgnore } = this.props.editor;
 
-        this.props.dispatch(
-            navigation.actions.updateEntity(
-                router,
-                nextEntity.pk.toString(),
-            )
-        );
+        if (!unsavedChangesIgnore && translation !== activeTranslation) {
+            dispatch(
+                editor.actions.showUnsavedChanges(callback)
+            );
+            return;
+        }
+
+        callback();
+    }
+
+    goToNextEntity = () => {
+        const { dispatch, nextEntity, router } = this.props;
+
+        this.checkUnsavedChanges(() => {
+            dispatch(
+                navigation.actions.updateEntity(
+                    router,
+                    nextEntity.pk.toString(),
+                )
+            );
+        });
     }
 
     goToPreviousEntity = () => {
-        const { router, previousEntity } = this.props;
+        const { dispatch, previousEntity, router } = this.props;
 
-        this.props.dispatch(
-            navigation.actions.updateEntity(
-                router,
-                previousEntity.pk.toString(),
-            )
-        );
+        this.checkUnsavedChanges(() => {
+            dispatch(
+                navigation.actions.updateEntity(
+                    router,
+                    previousEntity.pk.toString(),
+                )
+            );
+        });
     }
 
     openLightbox = (image: string) => {
