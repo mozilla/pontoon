@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 import './FailedChecks.css';
 
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 
 
@@ -21,15 +22,19 @@ type Props = {|
         change: ChangeOperation,
         ignoreWarnings: ?boolean,
     ) => void,
+|};
+
+type InternalProps = {|
+    ...Props,
     isActionDisabled: boolean,
-    restoreAction: () => void,
+    disableAction: () => void,
 |};
 
 
 /*
  * Renders the failed checks popup.
  */
-export default class FailedChecks extends React.Component<Props> {
+export class FailedChecksBase extends React.Component<InternalProps> {
     closeFailedChecks = () => {
         this.props.resetFailedChecks();
     }
@@ -38,7 +43,7 @@ export default class FailedChecks extends React.Component<Props> {
         if (this.props.isActionDisabled) {
             return;
         }
-        this.props.restoreAction();
+        this.props.disableAction();
 
         const translationId = this.props.source;
         if (typeof(translationId) === 'number') {
@@ -50,7 +55,7 @@ export default class FailedChecks extends React.Component<Props> {
         if (this.props.isActionDisabled) {
             return;
         }
-        this.props.restoreAction();
+        this.props.disableAction();
 
         this.props.sendTranslation(true);
     }
@@ -129,3 +134,6 @@ export default class FailedChecks extends React.Component<Props> {
         </div>;
     }
 }
+
+
+export default withActionsDisabled(FailedChecksBase);

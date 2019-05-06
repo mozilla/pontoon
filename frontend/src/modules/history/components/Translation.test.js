@@ -1,11 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
-import Translation from './Translation';
+import { TranslationBase } from './Translation';
 
 
-describe('<Translation>', () => {
+describe('<TranslationBase>', () => {
     const DEFAULT_TRANSLATION = {
         approved: false,
         approved_user: '',
@@ -37,7 +36,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ approved: true }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -50,7 +49,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ rejected: true }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -63,7 +62,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ fuzzy: true }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -72,7 +71,7 @@ describe('<Translation>', () => {
         });
 
         it('returns the correct status for unreviewed translations', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -87,7 +86,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ approved: true, approved_user: 'Cespenar' }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -100,7 +99,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ unapproved_user: 'Bhaal' }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -109,7 +108,7 @@ describe('<Translation>', () => {
         });
 
         it('returns the correct approver title when neither approved or unapproved', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -124,7 +123,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ uid: 1, username: 'id_Sarevok', user: 'Sarevok' }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -136,7 +135,7 @@ describe('<Translation>', () => {
         });
 
         it('returns no link when the author is not known', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -151,7 +150,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ approved: true }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -167,7 +166,7 @@ describe('<Translation>', () => {
                 ...DEFAULT_TRANSLATION,
                 ...{ rejected: true }
             };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -179,7 +178,7 @@ describe('<Translation>', () => {
         });
 
         it('shows the correct status for unreviewed translations', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -193,7 +192,7 @@ describe('<Translation>', () => {
 
     describe('permissions', () => {
         it('allows the user to reject their own unapproved translation', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -205,7 +204,7 @@ describe('<Translation>', () => {
 
         it('forbids the user to reject their own approved translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, approved: true };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -216,7 +215,7 @@ describe('<Translation>', () => {
         });
 
         it('allows translators to review the translation', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -228,7 +227,7 @@ describe('<Translation>', () => {
 
         it('allows translators to delete the rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -239,7 +238,7 @@ describe('<Translation>', () => {
 
         it('forbids translators to delete non-rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: false };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
@@ -250,7 +249,7 @@ describe('<Translation>', () => {
 
         it('allows the user to delete their own rejected translation', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -261,7 +260,7 @@ describe('<Translation>', () => {
 
         it('forbids the user to delete rejected translation of another user', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ translation }
                 locale={ DEFAULT_LOCALE }
             />);
@@ -272,7 +271,7 @@ describe('<Translation>', () => {
 
     describe('diff', () => {
         it('shows default translation and no Show/Hide diff button for the first translation', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
@@ -288,7 +287,7 @@ describe('<Translation>', () => {
         });
 
         it('shows default translation and the Show diff button for a non-first translation', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
@@ -306,7 +305,7 @@ describe('<Translation>', () => {
         });
 
         it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
-            const wrapper = shallow(<Translation
+            const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
@@ -321,47 +320,6 @@ describe('<Translation>', () => {
 
             expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
             expect(wrapper.find('.toggle-diff.hide')).toHaveLength(1);
-        });
-    });
-
-    describe('multiple requests', () => {
-        it('prevents multiple simultaneous status change requests', () => {
-            const mockUpdate = sinon.spy();
-            const wrapper = shallow(<Translation
-                translation={ DEFAULT_TRANSLATION }
-                locale={ DEFAULT_LOCALE }
-                updateTranslationStatus={ mockUpdate }
-            />);
-            const event = {
-                stopPropagation: sinon.spy(),
-                target: 'approve',
-            };
-
-            expect(mockUpdate.called).toBeFalsy();
-            wrapper.find('.approve').simulate('click', event);
-            wrapper.find('.approve').simulate('click', event);
-            wrapper.find('.approve').simulate('click', event);
-            expect(mockUpdate.calledOnce).toBeTruthy();
-        });
-
-        it('prevents multiple simultaneous delete requests', () => {
-            const mockDelete = sinon.spy();
-            const translation = { ...DEFAULT_TRANSLATION, rejected: true };
-            const wrapper = shallow(<Translation
-                translation={ translation }
-                locale={ DEFAULT_LOCALE }
-                canReview={ true }
-                deleteTranslation={ mockDelete }
-            />);
-            const event = {
-                stopPropagation: sinon.spy(),
-            };
-
-            expect(mockDelete.called).toBeFalsy();
-            wrapper.find('.delete').simulate('click', event);
-            wrapper.find('.delete').simulate('click', event);
-            wrapper.find('.delete').simulate('click', event);
-            expect(mockDelete.calledOnce).toBeTruthy();
         });
     });
 });

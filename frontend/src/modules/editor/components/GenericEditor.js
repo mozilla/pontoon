@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import type { Locale } from 'core/locales';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { EditorState } from '..';
 
@@ -23,23 +24,22 @@ export type EditorProps = {|
     ) => void,
 |};
 
-type State = {|
-    isEnterShortcutDisabled: boolean,
+type InternalProps = {|
+    ...EditorProps,
+    isActionDisabled: boolean,
+    disableAction: () => void,
 |};
 
 
 /*
  * Render a simple textarea to edit a translation.
  */
-export default class GenericEditor extends React.Component<EditorProps, State> {
+export class GenericEditorBase extends React.Component<InternalProps> {
     textarea: { current: any };
 
-    constructor(props: EditorProps) {
+    constructor(props: InternalProps) {
         super(props);
 
-        this.state = {
-            isEnterShortcutDisabled: false,
-        };
         this.textarea = React.createRef();
     }
 
@@ -53,7 +53,7 @@ export default class GenericEditor extends React.Component<EditorProps, State> {
         this.textarea.current.setSelectionRange(0, 0);
     }
 
-    componentDidUpdate(prevProps: EditorProps, prevState: State) {
+    componentDidUpdate() {
         // If there is content to add to the editor, do so, then remove
         // the content so it isn't added again.
         // This is an abuse of the redux store, because we want to update
@@ -73,10 +73,6 @@ export default class GenericEditor extends React.Component<EditorProps, State> {
 
         if (this.props.editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);
-        }
-
-        if (prevState.isEnterShortcutDisabled) {
-            this.setState({ isEnterShortcutDisabled: false });
         }
     }
 
@@ -111,11 +107,11 @@ export default class GenericEditor extends React.Component<EditorProps, State> {
 
         // On Enter, send the current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-            if (this.state.isEnterShortcutDisabled) {
+            if (this.props.isActionDisabled) {
                 event.preventDefault();
                 return;
             }
-            this.setState({ isEnterShortcutDisabled: true });
+            this.props.disableAction();
 
             handledEvent = true;
 
@@ -166,7 +162,10 @@ export default class GenericEditor extends React.Component<EditorProps, State> {
 
     render() {
         return <textarea
-            placeholder={ this.props.isReadOnlyEditor ? null : 'Type translation and press Enter to save' }
+            placeholder={
+                this.props.isReadOnlyEditor ? null :
+                'Type translation and press Enter to save'
+            }
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.editor.translation }
@@ -178,3 +177,6 @@ export default class GenericEditor extends React.Component<EditorProps, State> {
         />;
     }
 }
+
+
+export default withActionsDisabled(GenericEditorBase);

@@ -16,7 +16,7 @@ describe('<History>', () => {
         const user = {};
         const wrapper = shallow(<History history={ history } user={ user } />);
 
-        expect(wrapper.find('Translation')).toHaveLength(3);
+        expect(wrapper.find('ul > *')).toHaveLength(3);
     });
 
     it('returns null while history is loading', () => {
