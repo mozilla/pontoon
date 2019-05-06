@@ -161,8 +161,6 @@ export class EditorBase extends React.Component<InternalProps, State> {
             return null;
         }
 
-        const FailedChecksWithActionsDisabled = entitydetails.withActionsDisabled(FailedChecks);
-
         return <div className="editor">
             <plural.PluralSelector />
             <EditorProxy
@@ -178,7 +176,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
                 updateTranslationStatus={ this.updateTranslationStatus }
             />
             <menu>
-                <FailedChecksWithActionsDisabled
+                <FailedChecks
                     source={ this.props.editor.source }
                     user={ this.props.user }
                     errors={ this.props.editor.errors }
@@ -186,8 +184,6 @@ export class EditorBase extends React.Component<InternalProps, State> {
                     resetFailedChecks={ this.resetFailedChecks }
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
-                    isActionDisabled={ self.isActionDisabled }
-                    restoreAction={ self.restoreAction }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

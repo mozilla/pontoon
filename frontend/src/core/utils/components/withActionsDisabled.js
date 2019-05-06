@@ -3,18 +3,21 @@
 import * as React from 'react';
 
 
-type Props = Object;
+type Props = {
+    isActionDisabled: boolean | void,
+    disableAction: (() => void) | void,
+};
 
 type State = {|
     isActionDisabled: boolean,
 |};
 
 
-export default function withActionsDisabled<Config: Object>(
+export default function withActionsDisabled<Config: {}>(
     WrappedComponent: React.AbstractComponent<Config>
-): React.AbstractComponent<Config> {
-    return class extends React.Component<Props, State> {
-        constructor(props: Props) {
+): React.AbstractComponent<$Diff<Config, Props>> {
+    return class extends React.Component<$Diff<Config, Props>, State> {
+        constructor(props: $Diff<Config, Props>) {
             super(props);
 
             this.state = {
@@ -22,21 +25,21 @@ export default function withActionsDisabled<Config: Object>(
             };
         }
 
-        componentDidUpdate(prevProps: Props, prevState: State) {
+        componentDidUpdate(prevProps: $Diff<Config, Props>, prevState: State) {
             if (prevState.isActionDisabled) {
                 this.setState({ isActionDisabled: false });
             }
         }
 
-        restoreAction() {
+        disableAction = () => {
             this.setState({ isActionDisabled: true });
         }
 
         render() {
             return <WrappedComponent
-                isActionDisabled={ this.state.isActionDisabled }
-                restoreAction={ this.restoreAction }
                 { ...this.props }
+                isActionDisabled={ this.state.isActionDisabled }
+                disableAction={ this.disableAction }
             />;
         }
     };

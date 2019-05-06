@@ -11,6 +11,7 @@ import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
@@ -28,11 +29,15 @@ type Props = {|
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
+type InternalProps = {|
+    ...Props,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
+
 
 type State = {|
-    isDeleteDisabled: boolean,
     isDiffVisible: boolean,
-    isStatusChangeDisabled: boolean,
 |};
 
 
@@ -45,31 +50,20 @@ type State = {|
  * The status can be interact with if the user has sufficient permissions to
  * change said status.
  */
-export default class Translation extends React.Component<Props, State> {
-    constructor(props: Props) {
+export class TranslationBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
         super(props);
 
         this.state = {
-            isDeleteDisabled: false,
             isDiffVisible: false,
-            isStatusChangeDisabled: false,
         };
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
-        if (prevState.isDeleteDisabled) {
-            this.setState({ isDeleteDisabled: false });
-        }
-        if (prevState.isStatusChangeDisabled) {
-            this.setState({ isStatusChangeDisabled: false });
-        }
-    }
-
     handleStatusChange = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
-        if (this.state.isStatusChangeDisabled) {
+        if (this.props.isActionDisabled) {
             return;
         }
-        this.setState({ isStatusChangeDisabled: true });
+        this.props.disableAction();
 
         event.stopPropagation();
         // $FLOW_IGNORE: Flow and the DOM… >_<
@@ -79,10 +73,10 @@ export default class Translation extends React.Component<Props, State> {
     }
 
     delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
-        if (this.state.isDeleteDisabled) {
+        if (this.props.isActionDisabled) {
             return;
         }
-        this.setState({ isDeleteDisabled: true });
+        this.props.disableAction();
 
         event.stopPropagation();
         this.props.deleteTranslation(this.props.translation.pk);
@@ -248,7 +242,7 @@ export default class Translation extends React.Component<Props, State> {
                                 className='delete far'
                                 title='Delete'
                                 onClick={ this.delete }
-                                disabled={ this.state.isDeleteDisabled }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -263,7 +257,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Unapprove'
                                 name='unapprove'
                                 onClick={ this.handleStatusChange }
-                                disabled={ this.state.isStatusChangeDisabled }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                         :
@@ -277,7 +271,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Approve'
                                 name='approve'
                                 onClick={ this.handleStatusChange }
-                                disabled={ this.state.isStatusChangeDisabled }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -292,7 +286,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Unreject'
                                 name='unreject'
                                 onClick={ this.handleStatusChange }
-                                disabled={ this.state.isStatusChangeDisabled }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                         :
@@ -306,7 +300,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Reject'
                                 name='reject'
                                 onClick={ this.handleStatusChange }
-                                disabled={ this.state.isStatusChangeDisabled }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -334,3 +328,6 @@ export default class Translation extends React.Component<Props, State> {
         </Localized>;
     }
 }
+
+
+export default withActionsDisabled(TranslationBase);

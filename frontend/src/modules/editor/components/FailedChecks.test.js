@@ -1,13 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
-import FailedChecks from './FailedChecks';
+import { FailedChecksBase } from './FailedChecks';
 
 
-describe('<FailedChecks>', () => {
+describe('<FailedChecksBase>', () => {
     it('do not render if no errors or warnings present', () => {
-        const wrapper = shallow(<FailedChecks
+        const wrapper = shallow(<FailedChecksBase
             errors={ [] }
             warnings={ [] }
         />);
@@ -16,7 +15,7 @@ describe('<FailedChecks>', () => {
     });
 
     it('render popup with errors and warnings', () => {
-        const wrapper = shallow(<FailedChecks
+        const wrapper = shallow(<FailedChecksBase
             errors={ ['Error1'] }
             warnings={ ['Warning1', 'Warning2'] }
         />);
@@ -29,7 +28,7 @@ describe('<FailedChecks>', () => {
     });
 
     it('render save anyway button if translation with warnings submitted', () => {
-        const wrapper = shallow(<FailedChecks
+        const wrapper = shallow(<FailedChecksBase
             source={ 'submitted' }
             errors={ [] }
             warnings={ ['Warning1'] }
@@ -44,7 +43,7 @@ describe('<FailedChecks>', () => {
     });
 
     it('render suggest anyway button if translation with warnings suggested', () => {
-        const wrapper = shallow(<FailedChecks
+        const wrapper = shallow(<FailedChecksBase
             source={ 'submitted' }
             errors={ [] }
             warnings={ ['Warning1'] }
@@ -59,7 +58,7 @@ describe('<FailedChecks>', () => {
     });
 
     it('render approve anyway button if translation with warnings approved', () => {
-        const wrapper = shallow(<FailedChecks
+        const wrapper = shallow(<FailedChecksBase
             errors={ [] }
             warnings={ ['Warning1'] }
             user={ {
@@ -70,26 +69,5 @@ describe('<FailedChecks>', () => {
         />);
 
         expect(wrapper.find('.approve.anyway')).toHaveLength(1);
-    });
-
-    it('prevents multiple save anyway button clicks to trigger simultaneous sendTranslation calls', () => {
-        const mockUpdate = sinon.spy();
-        const wrapper = shallow(<FailedChecks
-            source={ 'submitted' }
-            errors={ [] }
-            warnings={ ['Warning1'] }
-            user={ {
-                settings: {
-                    forceSuggestions: false,
-                },
-            } }
-            sendTranslation={ mockUpdate }
-        />);
-
-        expect(mockUpdate.called).toBeFalsy();
-        wrapper.find('.save.anyway').simulate('click');
-        wrapper.find('.save.anyway').simulate('click');
-        wrapper.find('.save.anyway').simulate('click');
-        expect(mockUpdate.calledOnce).toBeTruthy();
     });
 });
