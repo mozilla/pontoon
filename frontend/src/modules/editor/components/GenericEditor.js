@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import type { Locale } from 'core/locales';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { EditorState } from '..';
 
@@ -23,15 +24,22 @@ export type EditorProps = {|
     ) => void,
 |};
 
+type InternalProps = {|
+    ...EditorProps,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
+
 
 /*
  * Render a simple textarea to edit a translation.
  */
-export default class GenericEditor extends React.Component<EditorProps> {
+export class GenericEditorBase extends React.Component<InternalProps> {
     textarea: { current: any };
 
-    constructor(props: EditorProps) {
+    constructor(props: InternalProps) {
         super(props);
+
         this.textarea = React.createRef();
     }
 
@@ -59,7 +67,9 @@ export default class GenericEditor extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        this.textarea.current.focus();
+        if (this.textarea.current) {
+            this.textarea.current.focus();
+        }
 
         if (this.props.editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);
@@ -97,6 +107,12 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
         // On Enter, send the current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            if (this.props.isActionDisabled) {
+                event.preventDefault();
+                return;
+            }
+            this.props.disableAction();
+
             handledEvent = true;
 
             const errors = this.props.editor.errors;
@@ -146,7 +162,10 @@ export default class GenericEditor extends React.Component<EditorProps> {
 
     render() {
         return <textarea
-            placeholder={ this.props.isReadOnlyEditor ? null : 'Type translation and press Enter to save' }
+            placeholder={
+                this.props.isReadOnlyEditor ? null :
+                'Type translation and press Enter to save'
+            }
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.editor.translation }
@@ -158,3 +177,6 @@ export default class GenericEditor extends React.Component<EditorProps> {
         />;
     }
 }
+
+
+export default withActionsDisabled(GenericEditorBase);

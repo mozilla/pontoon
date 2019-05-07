@@ -24,6 +24,7 @@ import TranslationLength from './TranslationLength';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { DbEntity } from 'modules/entitieslist';
 import type { EditorState } from '../reducer';
@@ -44,6 +45,8 @@ type Props = {|
 type InternalProps = {|
     ...Props,
     dispatch: Function,
+    isActionDisabled: boolean,
+    disableAction: () => void,
 |};
 
 
@@ -80,6 +83,11 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     sendTranslation = (ignoreWarnings: ?boolean) => {
+        if (this.props.isActionDisabled) {
+            return;
+        }
+        this.props.disableAction();
+
         const state = this.props;
 
         if (!state.selectedEntity || !state.locale) {
@@ -213,6 +221,7 @@ export class EditorBase extends React.Component<InternalProps> {
                             <Localized id="editor-editor-button-suggest">
                                 <button
                                     className="action-suggest"
+                                    disabled={ this.props.isActionDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Suggest
@@ -223,6 +232,7 @@ export class EditorBase extends React.Component<InternalProps> {
                             <Localized id="editor-editor-button-save">
                                 <button
                                     className="action-save"
+                                    disabled={ this.props.isActionDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Save
@@ -253,4 +263,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(EditorBase);
+export default withActionsDisabled(connect(mapStateToProps)(EditorBase));

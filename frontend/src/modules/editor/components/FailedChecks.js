@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 import './FailedChecks.css';
 
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 
 
@@ -23,16 +24,27 @@ type Props = {|
     ) => void,
 |};
 
+type InternalProps = {|
+    ...Props,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
+
 
 /*
  * Renders the failed checks popup.
  */
-export default class FailedChecks extends React.Component<Props> {
+export class FailedChecksBase extends React.Component<InternalProps> {
     closeFailedChecks = () => {
         this.props.resetFailedChecks();
     }
 
     approveAnyway = () => {
+        if (this.props.isActionDisabled) {
+            return;
+        }
+        this.props.disableAction();
+
         const translationId = this.props.source;
         if (typeof(translationId) === 'number') {
             this.props.updateTranslationStatus(translationId, 'approve', true);
@@ -40,6 +52,11 @@ export default class FailedChecks extends React.Component<Props> {
     }
 
     submitAnyway = () => {
+        if (this.props.isActionDisabled) {
+            return;
+        }
+        this.props.disableAction();
+
         this.props.sendTranslation(true);
     }
 
@@ -87,6 +104,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--approve-anyway">
                     <button
                         className="approve anyway"
+                        disabled={ this.props.isActionDisabled }
                         onClick={ this.approveAnyway }
                     >
                         Approve anyway
@@ -96,6 +114,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--suggest-anyway">
                     <button
                         className="suggest anyway"
+                        disabled={ this.props.isActionDisabled }
                         onClick={ this.submitAnyway }
                     >
                         Suggest anyway
@@ -105,6 +124,7 @@ export default class FailedChecks extends React.Component<Props> {
                 <Localized id="editor-FailedChecks--save-anyway">
                     <button
                         className="save anyway"
+                        disabled={ this.props.isActionDisabled }
                         onClick={ this.submitAnyway }
                     >
                         Save anyway
@@ -114,3 +134,6 @@ export default class FailedChecks extends React.Component<Props> {
         </div>;
     }
 }
+
+
+export default withActionsDisabled(FailedChecksBase);
