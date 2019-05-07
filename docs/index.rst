@@ -34,5 +34,6 @@ Contents
    dev/contributing
    dev/browser-support
    admin/deployment
+   admin/setup-first-project
    admin/maintenance
    dev/setup-virtualenv

@@ -278,3 +278,5 @@ Gotchas
   triggering builds without making code changes.
 
 .. _Heroku Repo: https://github.com/heroku/heroku-repo
+
+Now go :doc:`setup-first-project` for localization!
