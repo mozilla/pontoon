@@ -121,7 +121,7 @@ describe('<EntityDetailsBase>', () => {
 
         expect(wrapper.text()).toContain('EntityNavigation');
         expect(wrapper.text()).toContain('Metadata');
-        //expect(wrapper.text()).toContain('Editor');
+        expect(wrapper.text()).toContain('Editor');
         expect(wrapper.text()).toContain('Helpers');
     });
 

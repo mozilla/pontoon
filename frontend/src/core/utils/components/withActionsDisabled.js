@@ -16,7 +16,7 @@ type State = {|
 export default function withActionsDisabled<Config: {}>(
     WrappedComponent: React.AbstractComponent<Config>
 ): React.AbstractComponent<$Diff<Config, Props>> {
-    return class extends React.Component<$Diff<Config, Props>, State> {
+    class WithActionsDisabled extends React.Component<$Diff<Config, Props>, State> {
         constructor(props: $Diff<Config, Props>) {
             super(props);
 
@@ -42,5 +42,12 @@ export default function withActionsDisabled<Config: {}>(
                 disableAction={ this.disableAction }
             />;
         }
-    };
+    }
+
+    WithActionsDisabled.displayName = `WithSubscription(${
+        WrappedComponent.displayName ||
+        WrappedComponent.name ||
+        'Component'
+    })`;
+    return WithActionsDisabled;
 }
