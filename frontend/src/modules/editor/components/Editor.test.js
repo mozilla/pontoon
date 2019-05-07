@@ -46,6 +46,7 @@ function createEditorBase({
                 forceSuggestions,
             },
         } }
+        disableAction={ sinon.spy() }
     />);
 }
 

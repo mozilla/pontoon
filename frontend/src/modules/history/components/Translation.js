@@ -11,6 +11,7 @@ import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
@@ -28,6 +29,12 @@ type Props = {|
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
+type InternalProps = {|
+    ...Props,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
+
 
 type State = {|
     isDiffVisible: boolean,
@@ -43,22 +50,34 @@ type State = {|
  * The status can be interact with if the user has sufficient permissions to
  * change said status.
  */
-export default class Translation extends React.Component<Props, State> {
-    constructor() {
-        super();
+export class TranslationBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
+        super(props);
+
         this.state = {
             isDiffVisible: false,
         };
     }
 
     handleStatusChange = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        if (this.props.isActionDisabled) {
+            return;
+        }
+        this.props.disableAction();
+
         event.stopPropagation();
         // $FLOW_IGNORE: Flow and the DOM… >_<
         const action = event.target.name;
+
         this.props.updateTranslationStatus(this.props.translation.pk, action);
     }
 
     delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        if (this.props.isActionDisabled) {
+            return;
+        }
+        this.props.disableAction();
+
         event.stopPropagation();
         this.props.deleteTranslation(this.props.translation.pk);
     }
@@ -223,6 +242,7 @@ export default class Translation extends React.Component<Props, State> {
                                 className='delete far'
                                 title='Delete'
                                 onClick={ this.delete }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -237,6 +257,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Unapprove'
                                 name='unapprove'
                                 onClick={ this.handleStatusChange }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                         :
@@ -250,6 +271,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Approve'
                                 name='approve'
                                 onClick={ this.handleStatusChange }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -264,6 +286,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Unreject'
                                 name='unreject'
                                 onClick={ this.handleStatusChange }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                         :
@@ -277,6 +300,7 @@ export default class Translation extends React.Component<Props, State> {
                                 title='Reject'
                                 name='reject'
                                 onClick={ this.handleStatusChange }
+                                disabled={ this.props.isActionDisabled }
                             />
                         </Localized>
                     }
@@ -304,3 +328,6 @@ export default class Translation extends React.Component<Props, State> {
         </Localized>;
     }
 }
+
+
+export default withActionsDisabled(TranslationBase);

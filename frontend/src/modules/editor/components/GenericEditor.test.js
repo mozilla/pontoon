@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import GenericEditor from './GenericEditor';
+import { GenericEditorBase } from './GenericEditor';
 
 
 const DEFAULT_LOCALE = {
@@ -18,9 +18,9 @@ const EDITOR = {
 };
 
 
-describe('<GenericEditor>', () => {
+describe('<GenericEditorBase>', () => {
     it('renders a textarea with some content', () => {
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
         />);
@@ -31,7 +31,7 @@ describe('<GenericEditor>', () => {
 
     it('calls the updateTranslation function on change', () => {
         const mockUpdate = sinon.spy();
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
@@ -46,7 +46,7 @@ describe('<GenericEditor>', () => {
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<GenericEditor
+        const wrapper = mount(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             resetSelectionContent={ resetMock }
@@ -62,10 +62,11 @@ describe('<GenericEditor>', () => {
 
     it('sends the translation on Enter', () => {
         const mockSend = sinon.spy();
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
+            disableAction={ sinon.spy() }
         />);
 
         const event = {
@@ -91,10 +92,11 @@ describe('<GenericEditor>', () => {
             source: 1,
         }
 
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             updateTranslationStatus={ mockSend }
+            disableAction={ sinon.spy() }
         />);
 
         const event = {
@@ -119,7 +121,7 @@ describe('<GenericEditor>', () => {
             warnings: ['warning1'],
         }
 
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             resetFailedChecks={ mockSend }
@@ -137,7 +139,7 @@ describe('<GenericEditor>', () => {
 
     it('copies the original into the Editor on Ctrl + Shift + C', () => {
         const mockCopy = sinon.spy();
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             copyOriginalIntoEditor={ mockCopy }
@@ -158,7 +160,7 @@ describe('<GenericEditor>', () => {
 
     it('clears the translation on Ctrl + Shift + Backspace', () => {
         const mockUpdate = sinon.spy();
-        const wrapper = shallow(<GenericEditor
+        const wrapper = shallow(<GenericEditorBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
