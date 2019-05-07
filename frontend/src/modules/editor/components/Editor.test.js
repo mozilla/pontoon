@@ -46,6 +46,7 @@ function createEditorBase({
                 forceSuggestions,
             },
         } }
+        disableAction={ sinon.spy() }
     />);
 }
 
@@ -134,15 +135,6 @@ describe('<EditorBase>', () => {
             editor.actions.sendTranslation
             .calledWith(SELECTED_ENTITY.pk, 'initial', LOCALE, SELECTED_ENTITY.original)
         ).toBeTruthy();
-    });
-
-    it('prevents multiple Save button clicks to trigger simultaneous sendTranslation calls', () => {
-        const wrapper = createEditorBase({ forceSuggestions: false });
-
-        wrapper.find('.action-save').simulate('click');
-        wrapper.find('.action-save').simulate('click');
-        wrapper.find('.action-save').simulate('click');
-        expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
     });
 
     it('hides the settings and actions when the user is logged out', () => {

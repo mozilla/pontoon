@@ -24,6 +24,7 @@ import TranslationLength from './TranslationLength';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { DbEntity } from 'modules/entitieslist';
 import type { EditorState } from '../reducer';
@@ -44,10 +45,8 @@ type Props = {|
 type InternalProps = {|
     ...Props,
     dispatch: Function,
-|};
-
-type State = {|
-    isSendTranslationDisabled: boolean,
+    isActionDisabled: boolean,
+    disableAction: () => void,
 |};
 
 
@@ -57,21 +56,7 @@ type State = {|
  * Will present a different editor depending on the file format of the string,
  * see `EditorProxy` for more information.
  */
-export class EditorBase extends React.Component<InternalProps, State> {
-    constructor(props: InternalProps) {
-        super(props);
-
-        this.state = {
-            isSendTranslationDisabled: false,
-        };
-    }
-
-    componentDidUpdate(prevProps: InternalProps, prevState: State) {
-        if (prevState.isSendTranslationDisabled) {
-            this.setState({ isSendTranslationDisabled: false });
-        }
-    }
-
+export class EditorBase extends React.Component<InternalProps> {
     resetSelectionContent = () => {
         this.props.dispatch(actions.resetSelection());
     }
@@ -98,10 +83,10 @@ export class EditorBase extends React.Component<InternalProps, State> {
     }
 
     sendTranslation = (ignoreWarnings: ?boolean) => {
-        if (this.state.isSendTranslationDisabled) {
+        if (this.props.isActionDisabled) {
             return;
         }
-        this.setState({ isSendTranslationDisabled: true });
+        this.props.disableAction();
 
         const state = this.props;
 
@@ -236,7 +221,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
                             <Localized id="editor-editor-button-suggest">
                                 <button
                                     className="action-suggest"
-                                    disabled={ this.state.isSendTranslationDisabled }
+                                    disabled={ this.props.isActionDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Suggest
@@ -247,7 +232,7 @@ export class EditorBase extends React.Component<InternalProps, State> {
                             <Localized id="editor-editor-button-save">
                                 <button
                                     className="action-save"
-                                    disabled={ this.state.isSendTranslationDisabled }
+                                    disabled={ this.props.isActionDisabled }
                                     onClick={ this.sendTranslation }
                                 >
                                     Save
@@ -278,4 +263,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(EditorBase);
+export default withActionsDisabled(connect(mapStateToProps)(EditorBase));

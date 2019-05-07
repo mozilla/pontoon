@@ -119,8 +119,10 @@ describe('<EntityDetailsBase>', () => {
     it('loads the correct list of components', () => {
         const wrapper = createShallowEntityDetails();
 
+        expect(wrapper.text()).toContain('EntityNavigation');
         expect(wrapper.text()).toContain('Metadata');
-        expect(wrapper.text()).toContain('Editor');
+        //expect(wrapper.text()).toContain('Editor');
+        expect(wrapper.text()).toContain('Helpers');
     });
 
     it('shows failed checks for approved (or fuzzy) translations with errors or warnings', () => {
