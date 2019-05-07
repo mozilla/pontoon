@@ -44,7 +44,7 @@ export default function withActionsDisabled<Config: {}>(
         }
     }
 
-    WithActionsDisabled.displayName = `WithSubscription(${
+    WithActionsDisabled.displayName = `WithActionsDisabled(${
         WrappedComponent.displayName ||
         WrappedComponent.name ||
         'Component'
