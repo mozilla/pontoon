@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import createMarker from 'lib/react-content-marker';
+import createMarker from 'react-content-marker';
 
 import xmlTag from './xmlTag';
 
