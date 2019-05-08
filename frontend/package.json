@@ -18,6 +18,7 @@
     "lodash.isempty": "4.4.0",
     "react": "16.8.6",
     "react-ace": "6.4.0",
+    "react-content-marker": "1.0.1",
     "react-dom": "16.8.6",
     "react-infinite-scroller": "1.2.4",
     "react-linkify": "0.2.2",
