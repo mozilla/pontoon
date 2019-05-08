@@ -2,7 +2,7 @@
 
 import './WithPlaceables.css';
 
-import createMarker from 'lib/react-content-marker';
+import createMarker from 'react-content-marker';
 
 import allCapitalsString from '../parsers/allCapitalsString';
 import altAttribute from '../parsers/altAttribute';

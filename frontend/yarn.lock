@@ -8535,6 +8535,13 @@ react-app-polyfill@^0.2.2:
     raf "3.4.1"
     whatwg-fetch "3.0.0"
 
+react-content-marker@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.0.1.tgz#6f68fb4ce9fec840cfa97ff1fdac4000c424bbff"
+  integrity sha512-//w8MuqVbg/53D6Yo4tpvGU/L5dMVwkO3yRWK+qKbgNEkxvhWfr3VEyHcZqxdzwKpuQFIxazmlIMUI3w2GrVeg==
+  dependencies:
+    shortid "^2.2.14"
+
 react-dev-utils@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-8.0.0.tgz#7c5b227a45a32ea8ff7fbc318f336cf9e2c6e34c"
@@ -9423,7 +9430,7 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shortid@2.2.14:
+shortid@2.2.14, shortid@^2.2.14:
   version "2.2.14"
   resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.14.tgz#80db6aafcbc3e3a46850b3c88d39e051b84c8d18"
   integrity sha512-4UnZgr9gDdA1kaKj/38IiudfC3KHKhDc1zi/HSxd9FQDR0VLwH3/y79tZJLsVYPsJgIjeHjqIWaWVRJUj9qZOQ==

@@ -2,7 +2,7 @@
 
 import './WithPlaceables.css';
 
-import createMarker from 'lib/react-content-marker';
+import createMarker from 'react-content-marker';
 
 import { rules } from './WithPlaceables';
 import leadingSpace from '../parsers/leadingSpace';
