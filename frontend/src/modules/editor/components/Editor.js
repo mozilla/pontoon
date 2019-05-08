@@ -180,10 +180,11 @@ export class EditorBase extends React.Component<InternalProps> {
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
                 <UnsavedChanges
+                    areChangesIgnored={ this.props.editor.unsavedChangesIgnored }
+                    areChangesPresent={ this.props.editor.unsavedChanges }
                     callback={ this.props.editor.unsavedChangesCallback }
                     hide={ this.hideUnsavedChanges }
                     ignore={ this.ignoreUnsavedChanges }
-                    hasChanges={ this.props.editor.unsavedChanges }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

@@ -41,7 +41,7 @@ export type EditorState = {|
     +selectionReplacementContent: string,
     +unsavedChanges: boolean,
     +unsavedChangesCallback: Function,
-    +unsavedChangesIgnore: boolean,
+    +unsavedChangesIgnored: boolean,
     +errors: Array<string>,
     +warnings: Array<string>,
 
@@ -91,7 +91,7 @@ const initial: EditorState = {
     selectionReplacementContent: '',
     unsavedChanges: false,
     unsavedChangesCallback: null,
-    unsavedChangesIgnore: false,
+    unsavedChangesIgnored: false,
     errors: [],
     warnings: [],
     source: '',
@@ -132,12 +132,12 @@ export default function reducer(
                 ...state,
                 unsavedChanges: false,
                 unsavedChangesCallback: null,
-                unsavedChangesIgnore: false,
+                unsavedChangesIgnored: false,
             };
         case IGNORE_UNSAVED_CHANGES:
             return {
                 ...state,
-                unsavedChangesIgnore: true,
+                unsavedChangesIgnored: true,
             };
         case RESET_FAILED_CHECKS:
             return {

@@ -147,9 +147,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     checkUnsavedChanges = (callback: Function) => {
         const { activeTranslation, dispatch } = this.props;
-        const { translation, unsavedChangesIgnore } = this.props.editor;
+        const { translation, unsavedChangesIgnored } = this.props.editor;
 
-        if (!unsavedChangesIgnore && translation !== activeTranslation) {
+        if (!unsavedChangesIgnored && translation !== activeTranslation) {
             dispatch(
                 editor.actions.showUnsavedChanges(callback)
             );

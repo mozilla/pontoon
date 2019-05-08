@@ -7,10 +7,11 @@ import './UnsavedChanges.css';
 
 
 type Props = {|
+    areChangesIgnored: boolean,
+    areChangesPresent: boolean,
     callback: ?Function,
     hide: () => void,
     ignore: () => void,
-    hasChanges: boolean,
 |};
 
 
@@ -18,26 +19,27 @@ type Props = {|
  * Renders the unsaved changes popup.
  */
 export default class UnsavedChanges extends React.Component<Props> {
+    componentDidUpdate(prevProps: Props) {
+        const { callback, hide } = this.props;
+
+        if (!prevProps.areChangesIgnored && this.props.areChangesIgnored) {
+            if (callback) {
+                callback();
+                hide();
+            }
+        }
+    }
+
     hideUnsavedChanges = () => {
         this.props.hide();
     }
 
     leaveAnyway = () => {
-        const { callback, hide, ignore } = this.props;
-        if (callback) {
-            ignore();
-
-            setTimeout(() => {
-                callback();
-                hide();
-            }, 10);
-        }
+        this.props.ignore();
     }
 
     render() {
-        const { hasChanges } = this.props;
-
-        if (!hasChanges) {
+        if (!this.props.areChangesPresent) {
             return null;
         }
 
