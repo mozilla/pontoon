@@ -183,7 +183,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     callback={ this.props.editor.unsavedChangesCallback }
                     hide={ this.hideUnsavedChanges }
                     ignore={ this.ignoreUnsavedChanges }
-                    show={ this.props.editor.unsavedChanges }
+                    hasChanges={ this.props.editor.unsavedChanges }
                 />
                 { !this.props.user.isAuthenticated ?
                     <Localized

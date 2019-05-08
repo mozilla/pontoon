@@ -10,7 +10,7 @@ type Props = {|
     callback: ?Function,
     hide: () => void,
     ignore: () => void,
-    show: boolean,
+    hasChanges: boolean,
 |};
 
 
@@ -35,9 +35,9 @@ export default class UnsavedChanges extends React.Component<Props> {
     }
 
     render() {
-        const { show } = this.props;
+        const { hasChanges } = this.props;
 
-        if (!show) {
+        if (!hasChanges) {
             return null;
         }
 
