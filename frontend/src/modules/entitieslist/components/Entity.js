@@ -5,6 +5,7 @@ import * as React from 'react';
 import './Entity.css';
 
 import { WithPlaceables } from 'core/placeable';
+import { fluent } from 'core/utils'
 
 import type { Locale } from 'core/locales';
 import type { DbEntity } from '../reducer';
@@ -86,6 +87,13 @@ export default class Entity extends React.Component<Props> {
         this.props.selectEntity(this.props.entity);
     }
 
+    getFluentContent(content: ?string) {
+        if (this.props.entity.format === 'ftl') {
+            return fluent.getSimplePreview(content);
+        }
+        return content;
+    }
+
     render() {
         const { entity, locale, selected } = this.props;
 
@@ -100,7 +108,7 @@ export default class Entity extends React.Component<Props> {
                 <div>
                     <p className='source-string'>
                         <WithPlaceables>
-                            { entity.original }
+                            { this.getFluentContent(entity.original) }
                         </WithPlaceables>
                     </p>
                     <p
@@ -110,7 +118,7 @@ export default class Entity extends React.Component<Props> {
                         data-script={ locale.script }
                     >
                         <WithPlaceables>
-                            { entity.translation[0].string }
+                            { this.getFluentContent(entity.translation[0].string) }
                         </WithPlaceables>
                     </p>
                 </div>
