@@ -314,7 +314,7 @@ def dict_html_attrs(dict_obj):
 
 def _get_default_variant(variants):
     """Return default variant from the list of variants."""
-    return filter(lambda x: x.default, variants)[0]
+    return next(filter(lambda x: x.default, variants))
 
 
 def _serialize_value(value):

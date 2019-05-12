@@ -672,12 +672,10 @@ def glob_to_regex(glob):
     It prefixes the regex with `^`, and replaces the more complex match ending
     provided by fnmatch, with the simpler `$`
 
+    Python 3: The behaviour of fnmatch was changed in
     """
-    regex = "^%s" % fnmatch.translate(glob)
-    return (
-        "%s$" % regex[:-7]
-        if regex[-7:] == "\Z(?ms)"
-        else regex)
+    regex = re.findall(r'\(\?s:(.*)\)\\Z', fnmatch.translate(glob))[0]
+    return '^%s$' % regex
 
 
 def get_m2m_changes(current_qs, new_qs):

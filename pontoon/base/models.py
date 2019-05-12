@@ -99,7 +99,7 @@ def user_profile_url(self):
 
 
 def user_gravatar_url(self, size):
-    email = hashlib.md5(self.email.lower()).hexdigest()
+    email = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
     data = {'s': str(size)}
 
     if not settings.DEBUG:

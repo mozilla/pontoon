@@ -107,7 +107,7 @@ def test_manage_project_strings_new(client_superuser, locale_a):
         assert entity.order == index
 
     # Verify new strings appear on the page.
-    assert 'Hey, I just met you' in response.content
+    assert 'Hey, I just met you' in response.content.decode('utf-8')
 
 
 @pytest.mark.django_db
@@ -225,7 +225,7 @@ def test_manage_project_strings_list(client_superuser):
     response = client_superuser.get(url)
     assert response.status_code == 200
     for i in range(nb_entities):
-        assert 'string %s' % i in response.content
+        assert 'string %s' % i in response.content.decode('utf-8')
 
     # Test editing strings and comments.
     form_data = {
@@ -243,10 +243,10 @@ def test_manage_project_strings_list(client_superuser):
 
     response = client_superuser.post(url, form_data)
     assert response.status_code == 200
-    assert 'changed 0' in response.content
-    assert 'Wubba lubba dub dub' in response.content
-    assert 'string 0' not in response.content
-    assert 'string 1' not in response.content  # It's been removed.
+    assert 'changed 0' in response.content.decode('utf-8')
+    assert 'Wubba lubba dub dub' in response.content.decode('utf-8')
+    assert 'string 0' not in response.content.decode('utf-8')
+    assert 'string 1' not in response.content.decode('utf-8')  # It's been removed.
 
     total = Entity.objects.filter(
         resource=resource, obsolete=False,
@@ -269,9 +269,9 @@ def test_manage_project_strings_list(client_superuser):
 
     response = client_superuser.post(url, form_data)
     assert response.status_code == 200
-    assert 'changed 0' in response.content
-    assert 'new string' in response.content
-    assert 'adding this entity now' in response.content
+    assert 'changed 0' in response.content.decode('utf-8')
+    assert 'new string' in response.content.decode('utf-8')
+    assert 'adding this entity now' in response.content.decode('utf-8')
 
     total = Entity.objects.filter(
         resource=resource, obsolete=False,
@@ -313,13 +313,13 @@ def test_manage_project_strings_download_csv(client_superuser):
     assert response._headers['content-type'] == ('Content-Type', 'text/csv')
 
     # Verify the original content is here.
-    assert 'pedestal' in response.content
-    assert 'Ozymandias' in response.content
-    assert 'Mighty' in response.content
+    assert 'pedestal' in response.content.decode('utf-8')
+    assert 'Ozymandias' in response.content.decode('utf-8')
+    assert 'Mighty' in response.content.decode('utf-8')
 
     # Verify we have the locale columns.
-    assert 'kl' in response.content
-    assert 'gs' in response.content
+    assert 'kl' in response.content.decode('utf-8')
+    assert 'gs' in response.content.decode('utf-8')
 
     # Now add some translations.
     entity = Entity.objects.filter(string='And on the pedestal these words appear:')[0]
@@ -367,13 +367,13 @@ def test_manage_project_strings_download_csv(client_superuser):
     response = client_superuser.get(url, {'format': 'csv'})
 
     # Verify the translated content is here.
-    assert 'pedestal' in response.content
-    assert 'piédestal' in response.content
-    assert 'Sockel' in response.content
+    assert 'pedestal' in response.content.decode('utf-8')
+    assert 'piédestal' in response.content.decode('utf-8')
+    assert 'Sockel' in response.content.decode('utf-8')
 
-    assert 'Mighty' in response.content
-    assert 'puissants' in response.content
-    assert 'Mächt’ge' in response.content
+    assert 'Mighty' in response.content.decode('utf-8')
+    assert 'puissants' in response.content.decode('utf-8')
+    assert 'Mächt’ge' in response.content.decode('utf-8')
 
 
 @pytest.mark.django_db
@@ -420,7 +420,7 @@ def test_project_add_locale(client_superuser):
 
     response = client_superuser.post(url, form_data)
     assert response.status_code == 200
-    assert '. Error.' not in response.content
+    assert '. Error.' not in response.content.decode('utf-8')
 
     # Verify we have the right ProjectLocale objects.
     pl = ProjectLocale.objects.filter(project=project)

@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 def admin(request):
     """Admin interface."""
     if not request.user.has_perm('base.can_manage_project'):
-        raise PermissionDenied
+        raise PermissionDenied()
 
     projects = (
         Project.objects.all()
@@ -87,7 +87,7 @@ def manage_project(request, slug=None, template='admin_project.html'):
     log.debug("Admin project.")
 
     if not request.user.has_perm('base.can_manage_project'):
-        raise PermissionDenied
+        raise PermissionDenied()
 
     form = ProjectForm()
     subpage_formset = SubpageInlineFormSet()
@@ -423,7 +423,7 @@ def manage_project_strings(request, slug=None):
 
     """
     if not request.user.has_perm('base.can_manage_project'):
-        raise PermissionDenied
+        raise PermissionDenied()
 
     try:
         project = Project.objects.get(slug=slug)
