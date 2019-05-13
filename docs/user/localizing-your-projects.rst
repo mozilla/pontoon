@@ -6,7 +6,7 @@ instance.
 
 Pontoon specializes in using version control systems as the source and store of
 localizable strings. While internal Pontoon DB can be used for that purpose as
-well, steps below assume you are using a `GitHub repository`_.
+well, steps below assume you store strings in a `GitHub repository`_.
 
 Prerequisites
 -------------
@@ -19,7 +19,7 @@ Before you can set up a new project in Pontoon:
 
    .. Note::
 
-        The recommended way for that is to create a dedicated GitHub account,
+        The recommended way for that is to create a dedicated GitHub account
         for your Pontoon instance, `add it as a collaborator`_ to your
         repository, and set ``SSH_KEY`` and ``SSH_CONFIG`` `as documented`_.
 
@@ -36,32 +36,32 @@ paths in the `project config file`_ or strictly follow the file and folder
 structure as expected by Pontoon:
 
 1. Locale folders (including source locale) must be located at the same nesting
-   level of the directory tree. You may want to put all locale folders into a
-   dedicated ``locales`` folder.
+   level of the directory tree. You may want to put all locale folders under a
+   ``locales`` folder.
 2. Source locale needs to be called ``templates``, ``en-US``, ``en-us`` or
    ``en``. If multiple folders with such name exist in the repository and
    contain files in a supported file format, the first one will be used.
 3. Locale code must not be part of the file name.
 
-   Correct pattern::
+Correct pattern::
 
-       locales/{locale_code}/path/to/file.extension
+    locales/{locale_code}/path/to/file.extension
 
-   Incorrect pattern::
+Incorrect pattern::
 
-       locales/{locale_code}/path/to/file.{locale_code}.extension
+    locales/{locale_code}/path/to/file.{locale_code}.extension
 
 .. _project config file: https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html
 
 Adding a new project to Pontoon
 -------------------------------
-When accessing your newly deployed app, your email address is your login in the
-Sign In page and your password is the one picked during the setup phase. After
-you log in, access Pontoon Admin (``/admin/``), click `ADD NEW PROJECT` and
-fill out the following required fields:
+When accessing your deployed app, your email address is your login in the Sign
+In page and your password is the one picked during setup. After you log in,
+access Pontoon Admin (``/admin/``), click **ADD NEW PROJECT** and fill out the
+following required fields:
 
-1. **Name**: name of the project to be displayed in Pontoon dashboards.
-2. **Slug**: used in URLs, will be generated automatically based on Name.
+1. **Name**: name of the project to be displayed throughout Pontoon app.
+2. **Slug**: used in URLs, will be generated automatically based on the Name.
 3. **Locales**: select at least one Localizable locale by clicking on it.
 4. **Repository URL**: enter your repository's SSH URL of the form
    ``git@github.com:user/repo.git``.
