@@ -5,11 +5,10 @@ Pontoon is a translation management system used and developed by the
 specializes in open source localization that is driven by the community and
 uses version-control systems for storing translations.
 
-Check out our documentation to:
+Check out our documentation to learn how to:
 
-* [Learn how to localize with Pontoon](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/)
-* [Learn how to manage projects on Pontoon](https://mozilla-l10n.github.io/documentation/tools/pontoon/)
-* [Make your project localizable with Pontoon](https://developer.mozilla.org/docs/Mozilla/Implementing_Pontoon_in_a_Mozilla_website)
+* [Localize with Pontoon](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/)
+* [Make your projects localizable with Pontoon](https://mozilla-pontoon.readthedocs.io/en/latest/user/localizing-your-projects.html)
 
 ## Installation
 
