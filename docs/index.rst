@@ -32,7 +32,7 @@ Contents
 
    dev/setup
    dev/contributing
-   dev/browser-support
    admin/deployment
    admin/maintenance
+   user/localizing-your-projects
    dev/setup-virtualenv
