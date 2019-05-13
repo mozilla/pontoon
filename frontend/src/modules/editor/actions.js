@@ -10,11 +10,8 @@ import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 
 
-export const HIDE_UNSAVED_CHANGES: 'editor/HIDE_UNSAVED_CHANGES' = 'editor/HIDE_UNSAVED_CHANGES';
-export const IGNORE_UNSAVED_CHANGES: 'editor/IGNORE_UNSAVED_CHANGES' = 'editor/IGNORE_UNSAVED_CHANGES';
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
-export const SHOW_UNSAVED_CHANGES: 'editor/SHOW_UNSAVED_CHANGES' = 'editor/SHOW_UNSAVED_CHANGES';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
@@ -121,47 +118,6 @@ function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
 
 
 /**
- * Hide unsaved changes notice.
- */
-export type HideUnsavedChangesAction = {|
-    +type: typeof HIDE_UNSAVED_CHANGES,
-|};
-export function hideUnsavedChanges(): HideUnsavedChangesAction {
-    return {
-        type: HIDE_UNSAVED_CHANGES,
-    };
-}
-
-
-/**
- * Ignore unsaved changes.
- */
-export type IgnoreUnsavedChangesAction = {|
-    +type: typeof IGNORE_UNSAVED_CHANGES,
-|};
-export function ignoreUnsavedChanges(): IgnoreUnsavedChangesAction {
-    return {
-        type: IGNORE_UNSAVED_CHANGES,
-    };
-}
-
-
-/**
- * Show unsaved changes notice.
- */
-export type ShowUnsavedChangesAction = {|
-    +type: typeof SHOW_UNSAVED_CHANGES,
-    unsavedChangesCallback: Function,
-|};
-export function showUnsavedChanges(unsavedChangesCallback: Function): ShowUnsavedChangesAction {
-    return {
-        type: SHOW_UNSAVED_CHANGES,
-        unsavedChangesCallback,
-    };
-}
-
-
-/**
  * Save the current translation.
  */
 export function sendTranslation(
@@ -230,36 +186,10 @@ export function sendTranslation(
 }
 
 
-/**
- * Check if the editor has unsaved changes by comparing its content
- * with the active translation. Show unsaved changes if they exist and
- * aren't explicitly ignored, or else execute callback function.
- */
-export function checkUnsavedChanges(
-    content: string,
-    activeTranslation: string,
-    unsavedChangesIgnored: boolean,
-    callback: Function,
-): Function {
-    return dispatch => {
-        if (!unsavedChangesIgnored && content !== activeTranslation) {
-            dispatch(showUnsavedChanges(callback));
-            return;
-        }
-
-        callback();
-    }
-}
-
-
 export default {
-    checkUnsavedChanges,
-    hideUnsavedChanges,
-    ignoreUnsavedChanges,
     resetFailedChecks,
     resetSelection,
     sendTranslation,
-    showUnsavedChanges,
     update,
     updateFailedChecks,
     updateSelection,

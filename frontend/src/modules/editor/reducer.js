@@ -1,11 +1,8 @@
 /* @flow */
 
 import {
-    HIDE_UNSAVED_CHANGES,
-    IGNORE_UNSAVED_CHANGES,
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
-    SHOW_UNSAVED_CHANGES,
     UPDATE,
     UPDATE_FAILED_CHECKS,
     UPDATE_SELECTION,
@@ -13,11 +10,8 @@ import {
 
 import type {
     FailedChecks,
-    HideUnsavedChangesAction,
-    IgnoreUnsavedChangesAction,
     ResetFailedChecksAction,
     ResetSelectionAction,
-    ShowUnsavedChangesAction,
     UpdateAction,
     UpdateFailedChecksAction,
     UpdateSelectionAction,
@@ -25,11 +19,8 @@ import type {
 
 
 type Action =
-    | HideUnsavedChangesAction
-    | IgnoreUnsavedChangesAction
     | ResetFailedChecksAction
     | ResetSelectionAction
-    | ShowUnsavedChangesAction
     | UpdateAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
@@ -39,9 +30,6 @@ export type EditorState = {|
     +translation: string,
     +changeSource: string,
     +selectionReplacementContent: string,
-    +unsavedChanges: boolean,
-    +unsavedChangesCallback: Function,
-    +unsavedChangesIgnored: boolean,
     +errors: Array<string>,
     +warnings: Array<string>,
 
@@ -89,9 +77,6 @@ const initial: EditorState = {
     // we have different Editor implementations, we need to let those components
     // perform the actual replacement logic.
     selectionReplacementContent: '',
-    unsavedChanges: false,
-    unsavedChangesCallback: null,
-    unsavedChangesIgnored: false,
     errors: [],
     warnings: [],
     source: '',
@@ -120,24 +105,6 @@ export default function reducer(
                 ...state,
                 selectionReplacementContent: action.content,
                 changeSource: 'internal',
-            };
-        case SHOW_UNSAVED_CHANGES:
-            return {
-                ...state,
-                unsavedChanges: true,
-                unsavedChangesCallback: action.unsavedChangesCallback,
-            };
-        case HIDE_UNSAVED_CHANGES:
-            return {
-                ...state,
-                unsavedChanges: false,
-                unsavedChangesCallback: null,
-                unsavedChangesIgnored: false,
-            };
-        case IGNORE_UNSAVED_CHANGES:
-            return {
-                ...state,
-                unsavedChangesIgnored: true,
             };
         case RESET_FAILED_CHECKS:
             return {

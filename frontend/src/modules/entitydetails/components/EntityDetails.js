@@ -16,6 +16,7 @@ import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as editor from 'modules/editor';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { selectors } from '..';
 import EntityNavigation from './EntityNavigation';
@@ -30,6 +31,7 @@ import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -49,6 +51,7 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
+    unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
 
@@ -149,10 +152,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, nextEntity, router } = this.props;
 
         dispatch(
-            editor.actions.checkUnsavedChanges(
+            unsavedchanges.actions.checkUnsavedChanges(
                 this.props.editor.translation,
                 this.props.activeTranslation,
-                this.props.editor.unsavedChangesIgnored,
+                this.props.unsavedchanges.unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -169,10 +172,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, previousEntity, router } = this.props;
 
         dispatch(
-            editor.actions.checkUnsavedChanges(
+            unsavedchanges.actions.checkUnsavedChanges(
                 this.props.editor.translation,
                 this.props.activeTranslation,
-                this.props.editor.unsavedChangesIgnored,
+                this.props.unsavedchanges.unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -290,6 +293,7 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
 };

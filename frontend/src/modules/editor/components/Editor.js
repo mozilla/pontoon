@@ -13,6 +13,7 @@ import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, NAME } from '..';
 import FailedChecks from './FailedChecks';
@@ -20,15 +21,15 @@ import EditorProxy from './EditorProxy';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
-import UnsavedChanges from './UnsavedChanges';
 
+import type { EditorState } from '../reducer';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import { withActionsDisabled } from 'core/utils';
-import type { ChangeOperation } from 'modules/history';
 import type { DbEntity } from 'modules/entitieslist';
-import type { EditorState } from '../reducer';
+import type { ChangeOperation } from 'modules/history';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -40,6 +41,7 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
+    unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
 
@@ -143,11 +145,11 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     hideUnsavedChanges = () => {
-        this.props.dispatch(actions.hideUnsavedChanges());
+        this.props.dispatch(unsavedchanges.actions.hideUnsavedChanges());
     }
 
     ignoreUnsavedChanges = () => {
-        this.props.dispatch(actions.ignoreUnsavedChanges());
+        this.props.dispatch(unsavedchanges.actions.ignoreUnsavedChanges());
     }
 
     render() {
@@ -179,10 +181,10 @@ export class EditorBase extends React.Component<InternalProps> {
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
-                <UnsavedChanges
-                    areChangesIgnored={ this.props.editor.unsavedChangesIgnored }
-                    areChangesPresent={ this.props.editor.unsavedChanges }
-                    callback={ this.props.editor.unsavedChangesCallback }
+                <unsavedchanges.UnsavedChanges
+                    areChangesIgnored={ this.props.unsavedchanges.unsavedChangesIgnored }
+                    areChangesPresent={ this.props.unsavedchanges.unsavedChanges }
+                    callback={ this.props.unsavedchanges.unsavedChangesCallback }
                     hide={ this.hideUnsavedChanges }
                     ignore={ this.ignoreUnsavedChanges }
                 />
@@ -275,6 +277,7 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
 };
