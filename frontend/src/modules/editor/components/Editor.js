@@ -145,11 +145,11 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     hideUnsavedChanges = () => {
-        this.props.dispatch(unsavedchanges.actions.hideUnsavedChanges());
+        this.props.dispatch(unsavedchanges.actions.hide());
     }
 
     ignoreUnsavedChanges = () => {
-        this.props.dispatch(unsavedchanges.actions.ignoreUnsavedChanges());
+        this.props.dispatch(unsavedchanges.actions.ignore());
     }
 
     render() {
@@ -182,9 +182,9 @@ export class EditorBase extends React.Component<InternalProps> {
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
                 <unsavedchanges.UnsavedChanges
-                    areChangesIgnored={ this.props.unsavedchanges.unsavedChangesIgnored }
-                    areChangesPresent={ this.props.unsavedchanges.unsavedChanges }
-                    callback={ this.props.unsavedchanges.unsavedChangesCallback }
+                    ignored={ this.props.unsavedchanges.ignored }
+                    exist={ this.props.unsavedchanges.exist }
+                    callback={ this.props.unsavedchanges.callback }
                     hide={ this.hideUnsavedChanges }
                     ignore={ this.ignoreUnsavedChanges }
                 />

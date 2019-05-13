@@ -1,36 +1,36 @@
 /* @flow */
 
 import {
-    HIDE_UNSAVED_CHANGES,
-    IGNORE_UNSAVED_CHANGES,
-    SHOW_UNSAVED_CHANGES,
+    HIDE,
+    IGNORE,
+    SHOW,
 } from './actions';
 
 import type {
-    HideUnsavedChangesAction,
-    IgnoreUnsavedChangesAction,
-    ShowUnsavedChangesAction,
+    HideAction,
+    IgnoreAction,
+    ShowAction,
 } from './actions';
 
 
 type Action =
-    | HideUnsavedChangesAction
-    | IgnoreUnsavedChangesAction
-    | ShowUnsavedChangesAction
+    | HideAction
+    | IgnoreAction
+    | ShowAction
 ;
 
 
 export type UnsavedChangesState = {|
-    +unsavedChanges: boolean,
-    +unsavedChangesCallback: Function,
-    +unsavedChangesIgnored: boolean,
+    +exist: boolean,
+    +callback: ?Function,
+    +ignored: boolean,
 |};
 
 
 const initialState = {
-    unsavedChanges: false,
-    unsavedChangesCallback: null,
-    unsavedChangesIgnored: false,
+    exist: false,
+    callback: null,
+    ignored: false,
 };
 
 export default function reducer(
@@ -38,23 +38,23 @@ export default function reducer(
     action: Action,
 ): UnsavedChangesState {
     switch (action.type) {
-        case SHOW_UNSAVED_CHANGES:
+        case SHOW:
             return {
                 ...state,
-                unsavedChanges: true,
-                unsavedChangesCallback: action.unsavedChangesCallback,
+                exist: true,
+                callback: action.callback,
             };
-        case HIDE_UNSAVED_CHANGES:
+        case HIDE:
             return {
                 ...state,
-                unsavedChanges: false,
-                unsavedChangesCallback: null,
-                unsavedChangesIgnored: false,
+                exist: false,
+                callback: null,
+                ignored: false,
             };
-        case IGNORE_UNSAVED_CHANGES:
+        case IGNORE:
             return {
                 ...state,
-                unsavedChangesIgnored: true,
+                ignored: true,
             };
         default:
             return state;

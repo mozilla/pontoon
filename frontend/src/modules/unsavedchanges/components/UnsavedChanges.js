@@ -7,8 +7,8 @@ import './UnsavedChanges.css';
 
 
 type Props = {|
-    areChangesIgnored: boolean,
-    areChangesPresent: boolean,
+    ignored: boolean,
+    exist: boolean,
     callback: ?Function,
     hide: () => void,
     ignore: () => void,
@@ -22,7 +22,7 @@ export default class UnsavedChanges extends React.Component<Props> {
     componentDidUpdate(prevProps: Props) {
         const { callback, hide } = this.props;
 
-        if (!prevProps.areChangesIgnored && this.props.areChangesIgnored) {
+        if (!prevProps.ignored && this.props.ignored) {
             if (callback) {
                 callback();
                 hide();
@@ -39,7 +39,7 @@ export default class UnsavedChanges extends React.Component<Props> {
     }
 
     render() {
-        if (!this.props.areChangesPresent) {
+        if (!this.props.exist) {
             return null;
         }
 

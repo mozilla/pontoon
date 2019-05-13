@@ -152,10 +152,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, nextEntity, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.checkUnsavedChanges(
+            unsavedchanges.actions.check(
                 this.props.editor.translation,
                 this.props.activeTranslation,
-                this.props.unsavedchanges.unsavedChangesIgnored,
+                this.props.unsavedchanges.ignored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -172,10 +172,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, previousEntity, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.checkUnsavedChanges(
+            unsavedchanges.actions.check(
                 this.props.editor.translation,
                 this.props.activeTranslation,
-                this.props.unsavedchanges.unsavedChangesIgnored,
+                this.props.unsavedchanges.ignored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(

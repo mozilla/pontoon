@@ -1,49 +1,8 @@
 /* @flow */
 
-export const HIDE_UNSAVED_CHANGES: 'editor/HIDE_UNSAVED_CHANGES' = 'editor/HIDE_UNSAVED_CHANGES';
-export const IGNORE_UNSAVED_CHANGES: 'editor/IGNORE_UNSAVED_CHANGES' = 'editor/IGNORE_UNSAVED_CHANGES';
-export const SHOW_UNSAVED_CHANGES: 'editor/SHOW_UNSAVED_CHANGES' = 'editor/SHOW_UNSAVED_CHANGES';
-
-
-/**
- * Hide unsaved changes notice.
- */
-export type HideUnsavedChangesAction = {|
-    +type: typeof HIDE_UNSAVED_CHANGES,
-|};
-export function hideUnsavedChanges(): HideUnsavedChangesAction {
-    return {
-        type: HIDE_UNSAVED_CHANGES,
-    };
-}
-
-
-/**
- * Ignore unsaved changes.
- */
-export type IgnoreUnsavedChangesAction = {|
-    +type: typeof IGNORE_UNSAVED_CHANGES,
-|};
-export function ignoreUnsavedChanges(): IgnoreUnsavedChangesAction {
-    return {
-        type: IGNORE_UNSAVED_CHANGES,
-    };
-}
-
-
-/**
- * Show unsaved changes notice.
- */
-export type ShowUnsavedChangesAction = {|
-    +type: typeof SHOW_UNSAVED_CHANGES,
-    unsavedChangesCallback: Function,
-|};
-export function showUnsavedChanges(unsavedChangesCallback: Function): ShowUnsavedChangesAction {
-    return {
-        type: SHOW_UNSAVED_CHANGES,
-        unsavedChangesCallback,
-    };
-}
+export const HIDE: 'editor/HIDE' = 'editor/HIDE';
+export const IGNORE: 'editor/IGNORE' = 'editor/IGNORE';
+export const SHOW: 'editor/SHOW' = 'editor/SHOW';
 
 
 /**
@@ -51,15 +10,15 @@ export function showUnsavedChanges(unsavedChangesCallback: Function): ShowUnsave
  * with the active translation. Show unsaved changes if they exist and
  * aren't explicitly ignored, or else execute callback function.
  */
-export function checkUnsavedChanges(
+export function check(
     content: string,
     activeTranslation: string,
-    unsavedChangesIgnored: boolean,
+    ignored: boolean,
     callback: Function,
 ): Function {
     return dispatch => {
-        if (!unsavedChangesIgnored && content !== activeTranslation) {
-            dispatch(showUnsavedChanges(callback));
+        if (!ignored && content !== activeTranslation) {
+            dispatch(show(callback));
             return;
         }
 
@@ -68,9 +27,50 @@ export function checkUnsavedChanges(
 }
 
 
+/**
+ * Hide unsaved changes notice.
+ */
+export type HideAction = {|
+    +type: typeof HIDE,
+|};
+export function hide(): HideAction {
+    return {
+        type: HIDE,
+    };
+}
+
+
+/**
+ * Ignore unsaved changes notice ("Leave anyway").
+ */
+export type IgnoreAction = {|
+    +type: typeof IGNORE,
+|};
+export function ignore(): IgnoreAction {
+    return {
+        type: IGNORE,
+    };
+}
+
+
+/**
+ * Show unsaved changes notice.
+ */
+export type ShowAction = {|
+    +type: typeof SHOW,
+    callback: Function,
+|};
+export function show(callback: Function): ShowAction {
+    return {
+        type: SHOW,
+        callback,
+    };
+}
+
+
 export default {
-    checkUnsavedChanges,
-    hideUnsavedChanges,
-    ignoreUnsavedChanges,
-    showUnsavedChanges,
+    check,
+    hide,
+    ignore,
+    show,
 };

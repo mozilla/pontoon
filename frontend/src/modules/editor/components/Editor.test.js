@@ -25,9 +25,9 @@ const SELECTED_ENTITY = {
 };
 
 const UNSAVED_CHANGES = {
-    unsavedChanges: false,
-    unsavedChangesCallback: null,
-    unsavedChangesIgnored: false,
+    exist: false,
+    callback: null,
+    ignored: false,
 }
 
 
