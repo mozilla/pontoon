@@ -64,15 +64,13 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     updateTranslation = (translation: string, fromOutsideEditor?: boolean) => {
-        const { activeTranslation } = this.props;
         const source = fromOutsideEditor ? 'external' : 'internal';
+        this.props.dispatch(actions.update(translation, source));
+    }
 
+    updateUnsavedChanges = (translation: string) => {
         this.props.dispatch(
-            actions.update(translation, source)
-        );
-
-        this.props.dispatch(
-            unsavedchanges.actions.update(translation, activeTranslation)
+            unsavedchanges.actions.update(translation, this.props.activeTranslation)
         );
     }
 
@@ -169,6 +167,7 @@ export class EditorBase extends React.Component<InternalProps> {
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
+                updateUnsavedChanges={ this.updateUnsavedChanges }
             />
             <menu>
                 <FailedChecks

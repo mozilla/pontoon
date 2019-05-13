@@ -12,6 +12,7 @@ import type { EditorProps } from './GenericEditor';
 type EditorProxyProps = {|
     ...EditorProps,
     entity: ?DbEntity,
+    updateUnsavedChanges: (string) => void,
 |};
 
 
@@ -36,6 +37,10 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
             (editor.errors.length || editor.warnings.length)
         ) {
             this.props.resetFailedChecks();
+        }
+
+        if (prevEditor.translation !== editor.translation) {
+            this.props.updateUnsavedChanges(editor.translation);
         }
     }
 

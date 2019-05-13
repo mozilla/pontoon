@@ -21,10 +21,10 @@ export function check(
     return dispatch => {
         if (unsavedchanges.exist && !unsavedchanges.ignored) {
             dispatch(show(callback));
-            return;
         }
-
-        callback();
+        else {
+            callback();
+        }
     }
 }
 
