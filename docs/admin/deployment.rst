@@ -8,8 +8,11 @@ below assume you've already created an app and have installed the
 
 For quick and easy deployment without leaving your web browser, click this button:
 
-.. image:: https://www.herokucdn.com/deploy/button.svg
-   :target: https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master
+.. raw:: html
+
+   <a class="reference external image-reference" href="https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master">
+      <img src="https://www.herokucdn.com/deploy/button.svg">
+   </a>
 
 .. _Heroku Toolbelt: https://toolbelt.heroku.com/
 
@@ -197,7 +200,7 @@ variables from the cache add-on:
    addon you wish to use, such as ``memcachier:100``. Use the
    ``heroku addons`` command to see a list of resource names that are available.
 
-.. _django-bmemcached:: https://github.com/jaysonsantos/python-binary-memcached
+.. _django-bmemcached: https://github.com/jaysonsantos/python-binary-memcached
 
 RabbitMQ Add-ons
 ~~~~~~~~~~~~~~~~

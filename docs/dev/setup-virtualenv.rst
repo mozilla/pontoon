@@ -187,4 +187,4 @@ The following extra settings can be added to your ``.env`` file.
 
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/
-.. _Mozillians API key: https://wiki.mozilla.org/Mozillians/API-Specification
+.. _Google Cloud Translation API key: https://cloud.google.com/translate/
