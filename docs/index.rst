@@ -33,6 +33,6 @@ Contents
    dev/setup
    dev/contributing
    admin/deployment
-   user/localizing-your-projects
    admin/maintenance
+   user/localizing-your-projects
    dev/setup-virtualenv
