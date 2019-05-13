@@ -10,7 +10,8 @@ For quick and easy deployment without leaving your web browser, click this butto
 
 .. raw:: html
 
-   <a class="reference external image-reference" href="https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master">   <img src="https://www.herokucdn.com/deploy/button.svg">
+   <a class="reference external image-reference" href="https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master">
+      <img src="https://www.herokucdn.com/deploy/button.svg">
    </a>
 
 .. _Heroku Toolbelt: https://toolbelt.heroku.com/
