@@ -279,4 +279,4 @@ Gotchas
 
 .. _Heroku Repo: https://github.com/heroku/heroku-repo
 
-Now go :doc:`setup-first-project` for localization!
+And so you're ready to start :doc:`../user/localizing-your-projects`!

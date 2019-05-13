@@ -32,8 +32,7 @@ Contents
 
    dev/setup
    dev/contributing
-   dev/browser-support
    admin/deployment
-   admin/setup-first-project
+   user/localizing-your-projects
    admin/maintenance
    dev/setup-virtualenv
