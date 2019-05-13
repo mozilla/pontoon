@@ -24,12 +24,6 @@ const SELECTED_ENTITY = {
     ],
 };
 
-const UNSAVED_CHANGES = {
-    shown: false,
-    callback: null,
-    ignored: false,
-}
-
 
 function createEditorBase({
     pluralForm = -1,
@@ -52,7 +46,6 @@ function createEditorBase({
                 forceSuggestions,
             },
         } }
-        unsavedchanges={ UNSAVED_CHANGES }
         disableAction={ sinon.spy() }
     />);
 }
