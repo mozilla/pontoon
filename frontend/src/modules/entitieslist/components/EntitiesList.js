@@ -9,6 +9,7 @@ import './EntitiesList.css';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
@@ -17,6 +18,7 @@ import { CircleLoader } from 'core/loaders'
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { Entities, DbEntity } from '../reducer';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -28,6 +30,7 @@ type Props = {|
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
+    unsavedchanges: UnsavedChangesState,
 |};
 
 type InternalProps = {|
@@ -153,11 +156,19 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { dispatch, router } = this.props;
 
         dispatch(
-            navigation.actions.updateEntity(
-                router,
-                entity.pk.toString(),
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            entity.pk.toString(),
+                        )
+                    );
+                }
             )
         );
+
     }
 
     getMoreEntities = () => {
@@ -238,6 +249,7 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         router: state.router,
+        unsavedchanges: state[unsavedchanges.NAME],
     };
 };
 
