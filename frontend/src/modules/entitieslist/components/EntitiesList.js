@@ -150,8 +150,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     selectEntity = (entity: DbEntity) => {
-        this.props.dispatch(
-            navigation.actions.updateEntity(this.props.router, entity.pk.toString())
+        const { dispatch, router } = this.props;
+
+        dispatch(
+            navigation.actions.updateEntity(
+                router,
+                entity.pk.toString(),
+            )
         );
     }
 
