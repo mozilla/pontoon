@@ -35,7 +35,7 @@ function serialize(elements) {
 
 
 /**
- * Turn a Fluent message into a simple version of that message.
+ * Turn a Fluent message into a simple string, without any syntax sigils.
  *
  * This function returns the most pertinent content that can be found in the
  * message, without the ID, attributes or selectors.

@@ -87,7 +87,7 @@ export default class Entity extends React.Component<Props> {
         this.props.selectEntity(this.props.entity);
     }
 
-    getFluentContent(content: ?string) {
+    getContent(content: ?string) {
         if (this.props.entity.format === 'ftl') {
             return fluent.getSimplePreview(content);
         }
@@ -108,7 +108,7 @@ export default class Entity extends React.Component<Props> {
                 <div>
                     <p className='source-string'>
                         <WithPlaceables>
-                            { this.getFluentContent(entity.original) }
+                            { this.getContent(entity.original) }
                         </WithPlaceables>
                     </p>
                     <p
@@ -118,7 +118,7 @@ export default class Entity extends React.Component<Props> {
                         data-script={ locale.script }
                     >
                         <WithPlaceables>
-                            { this.getFluentContent(entity.translation[0].string) }
+                            { this.getContent(entity.translation[0].string) }
                         </WithPlaceables>
                     </p>
                 </div>
