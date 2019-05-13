@@ -6,6 +6,7 @@ import type { Locale } from 'core/locales';
 import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { EditorState } from '..';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 export type EditorProps = {|
@@ -22,6 +23,9 @@ export type EditorProps = {|
         change: ChangeOperation,
         ignoreWarnings: ?boolean,
     ) => void,
+    unsavedchanges: UnsavedChangesState,
+    hideUnsavedChanges: () => void,
+    ignoreUnsavedChanges: () => void,
 |};
 
 type InternalProps = {|
@@ -105,7 +109,10 @@ export class GenericEditorBase extends React.Component<InternalProps> {
 
         let handledEvent = false;
 
-        // On Enter, send the current translation.
+        // On Enter:
+        //   - If unsaved changes popup is shown, leave anyway.
+        //   - If failed checks popup is shown after approving a translation, approve it anyway.
+        //   - In other cases, send current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
             if (this.props.isActionDisabled) {
                 event.preventDefault();
@@ -120,22 +127,33 @@ export class GenericEditorBase extends React.Component<InternalProps> {
             const source = this.props.editor.source;
             const ignoreWarnings = !!(errors.length || warnings.length);
 
-            if (typeof(source) === 'number') {
+            // Leave anyway
+            if (this.props.unsavedchanges.shown) {
+                this.props.ignoreUnsavedChanges();
+            }
+            // Approve anyway
+            else if (typeof(source) === 'number') {
                 this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
             }
+            // Send translation
             else {
                 this.props.sendTranslation(ignoreWarnings);
             }
         }
 
-        // On Esc, close failed checks popup if open.
+        // On Esc, close unsaved changes and failed checks popups if open.
         if (key === 27) {
             handledEvent = true;
 
             const errors = this.props.editor.errors;
             const warnings = this.props.editor.warnings;
 
-            if (errors.length || warnings.length) {
+            // Close unsaved changes popup
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            // Close failed checks popup
+            else if (errors.length || warnings.length) {
                 this.props.resetFailedChecks();
             }
         }

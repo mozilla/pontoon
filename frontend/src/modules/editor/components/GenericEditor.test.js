@@ -67,6 +67,7 @@ describe('<GenericEditorBase>', () => {
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
             disableAction={ sinon.spy() }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {
@@ -97,6 +98,7 @@ describe('<GenericEditorBase>', () => {
             locale={ DEFAULT_LOCALE }
             updateTranslationStatus={ mockSend }
             disableAction={ sinon.spy() }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {
@@ -125,6 +127,7 @@ describe('<GenericEditorBase>', () => {
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             resetFailedChecks={ mockSend }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {

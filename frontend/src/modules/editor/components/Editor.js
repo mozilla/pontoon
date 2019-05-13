@@ -29,6 +29,7 @@ import type { UserState } from 'core/user';
 import { withActionsDisabled } from 'core/utils';
 import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from 'modules/history';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -41,6 +42,7 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
+    unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
 
@@ -68,10 +70,17 @@ export class EditorBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.update(translation, source));
     }
 
+    hideUnsavedChanges = () => {
+        this.props.dispatch(unsavedchanges.actions.hide());
+    }
+
+    ignoreUnsavedChanges = () => {
+        this.props.dispatch(unsavedchanges.actions.ignore());
+    }
+
     updateUnsavedChanges = (translation: string) => {
-        this.props.dispatch(
-            unsavedchanges.actions.update(translation, this.props.activeTranslation)
-        );
+        const { activeTranslation } = this.props;
+        this.props.dispatch(unsavedchanges.actions.update(translation, activeTranslation));
     }
 
     copyOriginalIntoEditor = () => {
@@ -167,6 +176,9 @@ export class EditorBase extends React.Component<InternalProps> {
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
+                unsavedchanges={ this.props.unsavedchanges }
+                hideUnsavedChanges={ this.hideUnsavedChanges }
+                ignoreUnsavedChanges={ this.ignoreUnsavedChanges }
                 updateUnsavedChanges={ this.updateUnsavedChanges }
             />
             <menu>
@@ -270,6 +282,7 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
 };
