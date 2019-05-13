@@ -168,7 +168,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 }
             )
         );
-
     }
 
     getMoreEntities = () => {
