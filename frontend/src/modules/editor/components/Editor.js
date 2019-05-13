@@ -13,7 +13,7 @@ import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { UnsavedChanges } from 'modules/unsavedchanges';
 
 import { actions, NAME } from '..';
 import FailedChecks from './FailedChecks';
@@ -29,7 +29,6 @@ import type { UserState } from 'core/user';
 import { withActionsDisabled } from 'core/utils';
 import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from 'modules/history';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -41,7 +40,6 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
-    unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
 
@@ -144,14 +142,6 @@ export class EditorBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.resetFailedChecks());
     }
 
-    hideUnsavedChanges = () => {
-        this.props.dispatch(unsavedchanges.actions.hide());
-    }
-
-    ignoreUnsavedChanges = () => {
-        this.props.dispatch(unsavedchanges.actions.ignore());
-    }
-
     render() {
         if (!this.props.locale) {
             return null;
@@ -181,13 +171,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
-                <unsavedchanges.UnsavedChanges
-                    ignored={ this.props.unsavedchanges.ignored }
-                    exist={ this.props.unsavedchanges.exist }
-                    callback={ this.props.unsavedchanges.callback }
-                    hide={ this.hideUnsavedChanges }
-                    ignore={ this.ignoreUnsavedChanges }
-                />
+                <UnsavedChanges />
                 { !this.props.user.isAuthenticated ?
                     <Localized
                         id="editor-editor-sign-in-to-translate"
@@ -277,7 +261,6 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
-        unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
 };

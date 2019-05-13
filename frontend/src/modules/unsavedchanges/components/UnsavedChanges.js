@@ -1,45 +1,49 @@
 /* @flow */
 
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Localized } from 'fluent-react';
 
 import './UnsavedChanges.css';
 
+import { actions, NAME } from '..';
+
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
+
 
 type Props = {|
-    ignored: boolean,
-    exist: boolean,
-    callback: ?Function,
-    hide: () => void,
-    ignore: () => void,
+    unsavedchanges: UnsavedChangesState,
+|};
+
+type InternalProps = {|
+    ...Props,
+    dispatch: Function,
 |};
 
 
 /*
  * Renders the unsaved changes popup.
  */
-export default class UnsavedChanges extends React.Component<Props> {
-    componentDidUpdate(prevProps: Props) {
-        const { callback, hide } = this.props;
-
-        if (!prevProps.ignored && this.props.ignored) {
-            if (callback) {
-                callback();
-                hide();
+export class UnsavedChangesBase extends React.Component<InternalProps> {
+    componentDidUpdate(prevProps: InternalProps) {
+        if (!prevProps.unsavedchanges.ignored && this.props.unsavedchanges.ignored) {
+            if (this.props.unsavedchanges.callback) {
+                this.props.unsavedchanges.callback();
+                this.props.dispatch(actions.hide());
             }
         }
     }
 
     hideUnsavedChanges = () => {
-        this.props.hide();
+        this.props.dispatch(actions.hide());
     }
 
-    leaveAnyway = () => {
-        this.props.ignore();
+    ignoreUnsavedChanges = () => {
+        this.props.dispatch(actions.ignore());
     }
 
     render() {
-        if (!this.props.exist) {
+        if (!this.props.unsavedchanges.exist) {
             return null;
         }
 
@@ -68,7 +72,7 @@ export default class UnsavedChanges extends React.Component<Props> {
             <Localized id="editor-UnsavedChanges--leave-anyway">
                 <button
                     className="leave anyway"
-                    onClick={ this.leaveAnyway }
+                    onClick={ this.ignoreUnsavedChanges }
                 >
                     Leave anyway
                 </button>
@@ -76,3 +80,12 @@ export default class UnsavedChanges extends React.Component<Props> {
         </div>;
     }
 }
+
+
+const mapStateToProps = (state: Object): Props => {
+    return {
+        unsavedchanges: state[NAME],
+    };
+};
+
+export default connect(mapStateToProps)(UnsavedChangesBase);
