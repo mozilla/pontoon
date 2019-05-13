@@ -13,7 +13,7 @@ import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
-import { UnsavedChanges } from 'modules/unsavedchanges';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, NAME } from '..';
 import FailedChecks from './FailedChecks';
@@ -32,6 +32,7 @@ import type { ChangeOperation } from 'modules/history';
 
 
 type Props = {|
+    activeTranslation: string,
     editor: EditorState,
     isReadOnlyEditor: boolean,
     locale: Locale,
@@ -63,8 +64,16 @@ export class EditorBase extends React.Component<InternalProps> {
     }
 
     updateTranslation = (translation: string, fromOutsideEditor?: boolean) => {
+        const { activeTranslation } = this.props;
         const source = fromOutsideEditor ? 'external' : 'internal';
-        this.props.dispatch(actions.update(translation, source));
+
+        this.props.dispatch(
+            actions.update(translation, source)
+        );
+
+        this.props.dispatch(
+            unsavedchanges.actions.update(translation, activeTranslation)
+        );
     }
 
     copyOriginalIntoEditor = () => {
@@ -171,7 +180,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
-                <UnsavedChanges />
+                <unsavedchanges.UnsavedChanges />
                 { !this.props.user.isAuthenticated ?
                     <Localized
                         id="editor-editor-sign-in-to-translate"
@@ -253,6 +262,7 @@ export class EditorBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
         editor: state[NAME],
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),

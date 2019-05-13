@@ -1,8 +1,12 @@
 /* @flow */
 
-export const HIDE: 'editor/HIDE' = 'editor/HIDE';
-export const IGNORE: 'editor/IGNORE' = 'editor/IGNORE';
-export const SHOW: 'editor/SHOW' = 'editor/SHOW';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
+
+
+export const HIDE: 'unsavedchanges/HIDE' = 'unsavedchanges/HIDE';
+export const IGNORE: 'unsavedchanges/IGNORE' = 'unsavedchanges/IGNORE';
+export const SHOW: 'unsavedchanges/SHOW' = 'unsavedchanges/SHOW';
+export const UPDATE: 'unsavedchanges/UPDATE' = 'unsavedchanges/UPDATE';
 
 
 /**
@@ -11,13 +15,11 @@ export const SHOW: 'editor/SHOW' = 'editor/SHOW';
  * aren't explicitly ignored, or else execute callback function.
  */
 export function check(
-    content: string,
-    activeTranslation: string,
-    ignored: boolean,
+    unsavedchanges: UnsavedChangesState,
     callback: Function,
 ): Function {
     return dispatch => {
-        if (!ignored && content !== activeTranslation) {
+        if (unsavedchanges.exist && !unsavedchanges.ignored) {
             dispatch(show(callback));
             return;
         }
@@ -68,9 +70,25 @@ export function show(callback: Function): ShowAction {
 }
 
 
+/**
+ * Update unsaved changes status.
+ */
+export type UpdateAction = {|
+    +exist: boolean,
+    +type: typeof UPDATE,
+|};
+export function update(activeTranslation: string, editorTranslation: string): UpdateAction {
+    return {
+        exist: editorTranslation !== activeTranslation,
+        type: UPDATE,
+    };
+}
+
+
 export default {
     check,
     hide,
     ignore,
     show,
+    update,
 };

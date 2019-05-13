@@ -4,12 +4,14 @@ import {
     HIDE,
     IGNORE,
     SHOW,
+    UPDATE,
 } from './actions';
 
 import type {
     HideAction,
     IgnoreAction,
     ShowAction,
+    UpdateAction,
 } from './actions';
 
 
@@ -17,20 +19,23 @@ type Action =
     | HideAction
     | IgnoreAction
     | ShowAction
+    | UpdateAction
 ;
 
 
 export type UnsavedChangesState = {|
-    +shown: boolean,
     +callback: ?Function,
+    +exist: boolean,
     +ignored: boolean,
+    +shown: boolean,
 |};
 
 
 const initialState = {
-    shown: false,
     callback: null,
+    exist: false,
     ignored: false,
+    shown: false,
 };
 
 export default function reducer(
@@ -38,12 +43,6 @@ export default function reducer(
     action: Action,
 ): UnsavedChangesState {
     switch (action.type) {
-        case SHOW:
-            return {
-                ...state,
-                shown: true,
-                callback: action.callback,
-            };
         case HIDE:
             return {
                 ...state,
@@ -55,6 +54,17 @@ export default function reducer(
             return {
                 ...state,
                 ignored: true,
+            };
+        case SHOW:
+            return {
+                ...state,
+                shown: true,
+                callback: action.callback,
+            };
+        case UPDATE:
+            return {
+                ...state,
+                exist: action.exist,
             };
         default:
             return state;

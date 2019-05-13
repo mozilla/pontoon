@@ -153,9 +153,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.editor.translation,
-                this.props.activeTranslation,
-                this.props.unsavedchanges.ignored,
+                this.props.unsavedchanges,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -173,9 +171,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.editor.translation,
-                this.props.activeTranslation,
-                this.props.unsavedchanges.ignored,
+                this.props.unsavedchanges,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
