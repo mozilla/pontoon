@@ -230,7 +230,30 @@ export function sendTranslation(
 }
 
 
+/**
+ * Check if the editor has unsaved changes by comparing its content
+ * with the active translation. Show unsaved changes if they exist and
+ * aren't explicitly ignored, or else execute callback function.
+ */
+export function checkUnsavedChanges(
+    content: string,
+    activeTranslation: string,
+    unsavedChangesIgnored: boolean,
+    callback: Function,
+): Function {
+    return dispatch => {
+        if (!unsavedChangesIgnored && content !== activeTranslation) {
+            dispatch(showUnsavedChanges(callback));
+            return;
+        }
+
+        callback();
+    }
+}
+
+
 export default {
+    checkUnsavedChanges,
     hideUnsavedChanges,
     ignoreUnsavedChanges,
     resetFailedChecks,

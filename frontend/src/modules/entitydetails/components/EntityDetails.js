@@ -145,44 +145,44 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(machinery.actions.get(source, locale, pk));
     }
 
-    checkUnsavedChanges = (callback: Function) => {
-        const { activeTranslation, dispatch } = this.props;
-        const { translation, unsavedChangesIgnored } = this.props.editor;
-
-        if (!unsavedChangesIgnored && translation !== activeTranslation) {
-            dispatch(
-                editor.actions.showUnsavedChanges(callback)
-            );
-            return;
-        }
-
-        callback();
-    }
-
     goToNextEntity = () => {
         const { dispatch, nextEntity, router } = this.props;
 
-        this.checkUnsavedChanges(() => {
-            dispatch(
-                navigation.actions.updateEntity(
-                    router,
-                    nextEntity.pk.toString(),
-                )
-            );
-        });
+        dispatch(
+            editor.actions.checkUnsavedChanges(
+                this.props.editor.translation,
+                this.props.activeTranslation,
+                this.props.editor.unsavedChangesIgnored,
+                () => {
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            nextEntity.pk.toString(),
+                        )
+                    );
+                }
+            )
+        );
     }
 
     goToPreviousEntity = () => {
         const { dispatch, previousEntity, router } = this.props;
 
-        this.checkUnsavedChanges(() => {
-            dispatch(
-                navigation.actions.updateEntity(
-                    router,
-                    previousEntity.pk.toString(),
-                )
-            );
-        });
+        dispatch(
+            editor.actions.checkUnsavedChanges(
+                this.props.editor.translation,
+                this.props.activeTranslation,
+                this.props.editor.unsavedChangesIgnored,
+                () => {
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            previousEntity.pk.toString(),
+                        )
+                    );
+                }
+            )
+        );
     }
 
     openLightbox = (image: string) => {
