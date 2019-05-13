@@ -43,7 +43,7 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
     }
 
     render() {
-        if (!this.props.unsavedchanges.exist) {
+        if (!this.props.unsavedchanges.shown) {
             return null;
         }
 

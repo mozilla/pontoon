@@ -21,14 +21,14 @@ type Action =
 
 
 export type UnsavedChangesState = {|
-    +exist: boolean,
+    +shown: boolean,
     +callback: ?Function,
     +ignored: boolean,
 |};
 
 
 const initialState = {
-    exist: false,
+    shown: false,
     callback: null,
     ignored: false,
 };
@@ -41,13 +41,13 @@ export default function reducer(
         case SHOW:
             return {
                 ...state,
-                exist: true,
+                shown: true,
                 callback: action.callback,
             };
         case HIDE:
             return {
                 ...state,
-                exist: false,
+                shown: false,
                 callback: null,
                 ignored: false,
             };
