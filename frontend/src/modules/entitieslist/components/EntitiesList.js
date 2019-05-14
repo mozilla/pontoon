@@ -8,6 +8,7 @@ import './EntitiesList.css';
 
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
+import * as notification from 'core/notification';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
@@ -123,17 +124,28 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
+    /*
+     * If entity not provided through a URL parameter, or if provided entity
+     * cannot be found, select the first entity in the list.
+     */
     selectFirstEntityIfNoneSelected() {
-        const { entities, parameters, router } = this.props;
+        const { dispatch, entities, parameters } = this.props;
         const selectedEntity = parameters.entity;
+        const firstEntity = entities.entities[0];
 
-        if (!selectedEntity && entities.entities.length > 0) {
-            this.props.dispatch(
-                navigation.actions.updateEntity(
-                    router,
-                    entities.entities[0].pk.toString(),
-                )
-            );
+        const entityIds = entities.entities.map(entity => entity.pk);
+        const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
+
+        if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
+            this.selectEntity(firstEntity);
+
+            if (selectedEntity && !isSelectedEntityValid) {
+                dispatch(
+                    notification.actions.add(
+                        notification.messages.ENTITY_NOT_FOUND
+                    )
+                );
+            }
         }
     }
 
