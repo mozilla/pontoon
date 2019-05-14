@@ -121,14 +121,14 @@ you create:
    SSH private key to use for authentication when Pontoon connects to VCS
    servers via SSH.
 
-``STATIC_HOST``
-   Optional. Hostname to prepend to static resources paths. Useful for serving
-   static files from a CDN. Example: ``//asdf.cloudfront.net``.
+.. note:: Changing the ``SSH_CONFIG`` or ``SSH_KEY`` environment variables *requires*
+   a rebuild of the site, as these settings are only used at build time. Simply
+   changing them will not actually update the site until the next build.
 
-``SVN_LD_LIBRARY_PATH``
-   Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary
-   on Heroku because the Python buildpack alters the path in a way that breaks
-   the built-in SVN command. Set this to ``/usr/lib/x86_64-linux-gnu/``.
+   The `Heroku Repo`_ plugin includes a rebuild command that is handy for
+   triggering builds without making code changes.
+
+   .. _Heroku Repo: https://github.com/heroku/heroku-repo
 
 .. note:: Some environment variables, such as the SSH-related ones, may contain
    newlines. The easiest way to set these is using the ``heroku`` command-line
@@ -138,31 +138,26 @@ you create:
 
       heroku config:set SSH_KEY="`cat /path/to/key_rsa`"
 
-.. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
+``STATIC_HOST``
+   Optional. Hostname to prepend to static resources paths. Useful for serving
+   static files from a CDN. Example: ``//asdf.cloudfront.net``.
+
+``SVN_LD_LIBRARY_PATH``
+   Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary
+   on Heroku because the Python buildpack alters the path in a way that breaks
+   the built-in SVN command. Set this to ``/usr/lib/x86_64-linux-gnu/``.
 
 ``TZ``
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
    this to ``UTC``.
 
-Provisioning Workers
---------------------
-Pontoon executes asynchronous jobs using `Celery`_. These jobs are handled by
-the ``worker`` process type. You'll need to manually provision workers based on
-how many projects you plan to support and how complex they are. At a minimum,
-you'll want to provision at least one ``worker`` dyno:
-
-.. code-block:: bash
-
-   heroku ps:scale worker=1
-
-.. _Celery: http://www.celeryproject.org/
+.. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 
 Add-ons
 -------
 Pontoon is designed to run with the following add-ons enabled:
 
 - Database: Heroku Postgres
-- Performance Monitoring: New Relic APM
 - Log Management: Papertrail
 - Error Tracking: Raygun.io
 - Email: Sendgrid
@@ -220,15 +215,30 @@ RabbitMQ add-on:
 
 Scheduled Jobs
 --------------
-Pontoon requires a single scheduled job that runs the following command:
+While internal Pontoon DB can be used for storing localizable strings, Pontoon
+specializes in using version control systems for that purpose. If you choose
+this option as well, you'll need to run the following scheduled job:
 
 .. code-block:: bash
 
    ./manage.py sync_projects
 
-It's recommended to run this job once an hour. It commits any string changes in
-the database to the remote VCS servers associated with each project, and pulls
-down the latest changes to keep the database in sync.
+It's recommended to run this job at least once an hour. It commits any string
+changes in the database to the remote VCS servers associated with each project,
+and pulls down the latest changes to keep the database in sync.
+
+Provisioning Workers
+~~~~~~~~~~~~~~~~~~~~
+Pontoon executes scheduled jobs using `Celery`_. These jobs are handled by
+the ``worker`` process type. You'll need to manually provision workers based on
+how many projects you plan to support and how complex they are. At a minimum,
+you'll want to provision at least one ``worker`` dyno:
+
+.. code-block:: bash
+
+   heroku ps:scale worker=1
+
+.. _Celery: http://www.celeryproject.org/
 
 Sync Log Retention
 ~~~~~~~~~~~~~~~~~~
@@ -271,15 +281,4 @@ you'll have to use the Django shell to mark your user account as an admin:
    >>> user.save()
    >>> exit()
 
-Gotchas
--------
-- Changing the ``SSH_KEY`` or ``SSH_CONFIG`` environment variables *requires*
-  a rebuild of the site, as these settings are only used at build time. Simply
-  changing them will not actually update the site until the next build.
-
-  The `Heroku Repo`_ plugin includes a rebuild command that is handy for
-  triggering builds without making code changes.
-
-.. _Heroku Repo: https://github.com/heroku/heroku-repo
-
-And so you're ready to start :doc:`../user/localizing-your-projects`!
+And with that, you're ready to start :doc:`../user/localizing-your-projects`!
