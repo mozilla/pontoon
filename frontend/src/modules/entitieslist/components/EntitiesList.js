@@ -137,7 +137,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getMoreEntities = () => {
         const { entities, parameters } = this.props;
-        const { locale, project, resource, search, status } = parameters;
+        const { locale, project, resource, entity, search, status } = parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -156,6 +156,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 project,
                 resource,
                 currentEntityIds,
+                entity.toString(),
                 search,
                 status,
             )

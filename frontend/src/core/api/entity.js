@@ -18,6 +18,7 @@ export default class EntityAPI extends APIBase {
         project: string,
         resource: string,
         exclude: Array<number>,
+        entity: ?string,
         search: ?string,
         status: ?string,
     ): Promise<Object> {
@@ -31,6 +32,10 @@ export default class EntityAPI extends APIBase {
 
         if (exclude.length) {
             payload.append('exclude_entities', exclude.join(','));
+        }
+
+        if (entity) {
+            payload.append('entity', entity);
         }
 
         if (search) {

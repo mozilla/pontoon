@@ -73,6 +73,7 @@ export function get(
     project: string,
     resource: string,
     exclude: Array<number>,
+    entity: ?string,
     search: ?string,
     status: ?string,
 ): Function {
@@ -84,6 +85,7 @@ export function get(
             project,
             resource,
             exclude,
+            entity,
             search,
             status,
         );
