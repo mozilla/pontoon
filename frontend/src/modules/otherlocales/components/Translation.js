@@ -6,11 +6,14 @@ import { Localized } from 'fluent-react';
 import './Translation.css';
 
 import { WithPlaceables } from 'core/placeable';
+import * as utils from 'core/utils';
 
 import type { Navigation } from 'core/navigation';
+import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     translation: Object,
     parameters: Navigation,
@@ -34,9 +37,14 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { translation, parameters, lastPreferred } = this.props;
+        const { entity, translation, parameters, lastPreferred } = this.props;
 
         const className = lastPreferred ? 'translation last-preferred' : 'translation';
+
+        const translationContent = utils.getOptimizedContent(
+            translation.translation,
+            entity.format
+        );
 
         return <Localized id='otherlocales-translation-copy' attrs={{ title: true }}>
             <li
@@ -61,7 +69,7 @@ export default class Translation extends React.Component<Props> {
                     script={ translation.script }
                 >
                     <WithPlaceables>
-                        { translation.translation }
+                        { translationContent }
                     </WithPlaceables>
                 </p>
             </li>

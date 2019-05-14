@@ -6,14 +6,19 @@ import { Localized } from 'fluent-react';
 import './Translation.css';
 
 import api from 'core/api';
-
 import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import * as utils from 'core/utils';
 
 import type { Locale } from 'core/locales';
+import type { DbEntity } from 'modules/entitieslist';
+
+
+const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     locale: Locale,
     sourceString: string,
@@ -38,10 +43,22 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { locale, sourceString, translation } = this.props;
+        const { entity, locale, sourceString, translation } = this.props;
 
-        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
         const types = translation.sources.map(source => source.type);
+
+        const sourceContent = utils.getOptimizedContent(
+            sourceString,
+            entity.format
+        );
+        const originalContent = utils.getOptimizedContent(
+            translation.original,
+            entity.format
+        );
+        const translationContent = utils.getOptimizedContent(
+            translation.translation,
+            entity.format
+        );
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li
@@ -81,9 +98,9 @@ export default class Translation extends React.Component<Props> {
                 <p className="original">
                     { types.indexOf('Caighdean') === -1 ?
                         <TranslationPlaceablesDiff
-                            diffTarget={ translation.original }
+                            diffTarget={ originalContent }
                         >
-                            { sourceString }
+                            { sourceContent }
                         </TranslationPlaceablesDiff>
                     :
                         /*
@@ -91,7 +108,7 @@ export default class Translation extends React.Component<Props> {
                          * diff it against the `en-US` source string.
                          */
                         <WithPlaceables>
-                            { translation.original }
+                            { originalContent }
                         </WithPlaceables>
                     }
                 </p>
@@ -102,7 +119,7 @@ export default class Translation extends React.Component<Props> {
                     lang={ locale.code }
                 >
                     <WithPlaceables>
-                        { translation.translation }
+                        { translationContent }
                     </WithPlaceables>
                 </p>
             </li>

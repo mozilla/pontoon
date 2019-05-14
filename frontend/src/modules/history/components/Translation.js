@@ -8,15 +8,17 @@ import './Translation.css';
 
 import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import * as utils from 'core/utils';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
-import { withActionsDisabled } from 'core/utils';
+import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     canReview: boolean,
     translation: DBTranslation,
@@ -39,6 +41,9 @@ type InternalProps = {|
 type State = {|
     isDiffVisible: boolean,
 |};
+
+
+const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
 
 /**
@@ -184,6 +189,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     render() {
         const {
             canReview,
+            entity,
             isReadOnlyEditor,
             translation,
             locale,
@@ -211,7 +217,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
 
-        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
+        const translationContent = utils.getOptimizedContent(translation.string, entity.format);
 
         return <Localized id='history-translation-copy' attrs={{ title: true }}>
             <li
@@ -316,11 +322,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         <TranslationPlaceablesDiff
                             diffTarget={ activeTranslation.string }
                         >
-                            { translation.string }
+                            { translationContent }
                         </TranslationPlaceablesDiff>
                     :
                         <WithPlaceables>
-                            { translation.string }
+                            { translationContent }
                         </WithPlaceables>
                     }
                 </p>
@@ -330,4 +336,4 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 }
 
 
-export default withActionsDisabled(TranslationBase);
+export default utils.withActionsDisabled(TranslationBase);
