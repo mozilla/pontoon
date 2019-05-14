@@ -65,7 +65,7 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
                 <p className="title">You have unsaved changes</p>
             </Localized>
 
-            <Localized id="editor-UnsavedChanges--title">
+            <Localized id="editor-UnsavedChanges--body">
                 <p className="body">Sure you want to leave?</p>
             </Localized>
 
