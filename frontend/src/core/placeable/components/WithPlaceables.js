@@ -1,8 +1,8 @@
 /* @flow */
 
-import './WithPlaceables.css';
-
 import createMarker from 'react-content-marker';
+
+import './WithPlaceables.css';
 
 import allCapitalsString from '../parsers/allCapitalsString';
 import altAttribute from '../parsers/altAttribute';

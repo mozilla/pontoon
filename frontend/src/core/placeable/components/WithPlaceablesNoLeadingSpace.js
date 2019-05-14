@@ -1,8 +1,8 @@
 /* @flow */
 
-import './WithPlaceables.css';
-
 import createMarker from 'react-content-marker';
+
+import './WithPlaceables.css';
 
 import { rules } from './WithPlaceables';
 import leadingSpace from '../parsers/leadingSpace';
