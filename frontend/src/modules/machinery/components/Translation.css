@@ -28,12 +28,18 @@
     padding-left: 3px;
 }
 
-.machinery .translation > header ul li::before {
+.machinery .translation > header ul li:not(:first-child)::before {
     content: "•";
     padding-right: 3px;
 }
 
-.machinery .translation > header .stress,
+.machinery .translation > header .quality::after {
+    content: "•";
+    color: #AAAAAA;
+    padding-left: 3px;
+}
+
+.machinery .translation > header .quality,
 .machinery .translation > header sup {
     color: #7BC876;
 }
