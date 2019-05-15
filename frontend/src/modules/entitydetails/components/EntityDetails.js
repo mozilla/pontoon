@@ -69,6 +69,8 @@ type State = {|
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
     componentDidMount() {
+        this.updateEditorTranslation(this.props.activeTranslation);
+        this.updateFailedChecks();
         this.fetchHelpersData();
     }
 
