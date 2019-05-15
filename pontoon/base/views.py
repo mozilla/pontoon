@@ -58,7 +58,7 @@ def translate(request, locale, slug, part):
     # To be removed as part of bug 1527853.
     user = request.user
     if (
-        waffle.switch_is_active('translate_next') and
+        waffle.flag_is_active(request, 'translate_next') and
         user.is_authenticated and
         user.profile.use_translate_next
     ):
