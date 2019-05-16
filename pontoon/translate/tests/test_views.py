@@ -2,7 +2,7 @@ import pytest
 
 from django.urls import reverse
 
-from waffle.testutils import override_switch
+from waffle.testutils import override_flag
 
 from pontoon.translate.views import get_preferred_locale
 
@@ -15,13 +15,13 @@ def user_arabic(user_a):
 
 
 @pytest.mark.django_db
-def test_translate_behind_switch(client):
+def test_translate_behind_flag(client):
     url = reverse('pontoon.translate.next')
 
     response = client.get(url)
     assert response.status_code == 404
 
-    with override_switch('translate_next', active=True):
+    with override_flag('translate_next', active=True):
         response = client.get(url)
         assert response.status_code == 200
 
@@ -30,7 +30,7 @@ def test_translate_behind_switch(client):
 def test_translate_template(client):
     url = reverse('pontoon.translate.next')
 
-    with override_switch('translate_next', active=True):
+    with override_flag('translate_next', active=True):
         response = client.get(url)
         assert response.status_code == 200
         assert 'Translate.Next' in response.content

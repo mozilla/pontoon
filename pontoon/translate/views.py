@@ -100,7 +100,7 @@ def get_preferred_locale(request):
 
 
 def translate(request, locale=None, project=None, resource=None):
-    if not waffle.switch_is_active('translate_next'):
+    if not waffle.flag_is_active(request, 'translate_next'):
         raise Http404
 
     # Redirect the user to the old Translate page if needed.
