@@ -16,12 +16,20 @@ const ENTITIES = [
     {
         pk: 42,
         original: 'le test',
-        translation: [{string: 'test'}],
+        translation: [{
+            string: 'test',
+            errors: [],
+            warnings: [],
+        }],
     },
     {
         pk: 1,
         original: 'something',
-        translation: [{string: 'quelque chose'}],
+        translation: [{
+            string: 'quelque chose',
+            errors: [],
+            warnings: [],
+        }],
     },
 ];
 const TRANSLATION = 'test';
@@ -128,6 +136,10 @@ describe('<EntityDetailsBase>', () => {
     it('shows failed checks for approved (or fuzzy) translations with errors or warnings', () => {
         const wrapper = createShallowEntityDetails();
 
+        // componentDidMount(): reset failed checks
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
+
         wrapper.setProps({
             pluralForm: -1,
             selectedEntity: {
@@ -142,12 +154,17 @@ describe('<EntityDetailsBase>', () => {
             },
         });
 
+        // componentDidUpdate(): update failed checks
         expect(editor.actions.updateFailedChecks.calledOnce).toBeTruthy();
-        expect(editor.actions.resetFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
     });
 
     it('hides failed checks for approved (or fuzzy) translations without errors or warnings', () => {
         const wrapper = createShallowEntityDetails();
+
+        // componentDidMount(): reset failed checks
+        expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
+        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
 
         wrapper.setProps({
             pluralForm: -1,
@@ -163,8 +180,9 @@ describe('<EntityDetailsBase>', () => {
             },
         });
 
+        // componentDidUpdate(): reset failed checks
         expect(editor.actions.updateFailedChecks.calledOnce).toBeFalsy();
-        expect(editor.actions.resetFailedChecks.calledOnce).toBeTruthy();
+        expect(editor.actions.resetFailedChecks.calledTwice).toBeTruthy();
     });
 });
 

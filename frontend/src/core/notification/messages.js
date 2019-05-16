@@ -105,4 +105,10 @@ export default {
         </Localized>,
         type: 'info',
     },
+    'ENTITY_NOT_FOUND': {
+        content: <Localized id='notification--entity-not-found'>
+            Can’t load specified string
+        </Localized>,
+        type: 'error',
+    },
 };
