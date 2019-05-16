@@ -51,7 +51,7 @@ export default class Translation extends React.Component<Props> {
             >
                 <header>
                     { !translation.quality ? null :
-                        <span className="stress">{ translation.quality + '%' }</span>
+                        <span className="quality">{ translation.quality + '%' }</span>
                     }
                     <ul className="sources">
                         { translation.sources.map((source, i) => <li key={ i }>
