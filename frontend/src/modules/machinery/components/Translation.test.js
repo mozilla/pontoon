@@ -44,7 +44,7 @@ describe('<Translation>', () => {
         // No count.
         expect(wrapper.find('ul li sup')).toHaveLength(0);
         // No quality.
-        expect(wrapper.find('.stress')).toHaveLength(0);
+        expect(wrapper.find('.quality')).toHaveLength(0);
     });
 
     it('shows quality when possible', () => {
@@ -58,8 +58,8 @@ describe('<Translation>', () => {
             entity={ DEFAULT_ENTITY }
         />);
 
-        expect(wrapper.find('.stress')).toHaveLength(1);
-        expect(wrapper.find('.stress').text()).toEqual('100%');
+        expect(wrapper.find('.quality')).toHaveLength(1);
+        expect(wrapper.find('.quality').text()).toEqual('100%');
     });
 
     it('shows several sources', () => {
