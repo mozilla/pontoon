@@ -8,6 +8,7 @@ import './EntitiesList.css';
 
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
+import * as notification from 'core/notification';
 
 import { actions, NAME } from '..';
 import Entity from './Entity';
@@ -86,7 +87,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             this.props.dispatch(actions.reset());
         }
 
-        if (previous.entity !== current.entity) {
+        // Scroll to selected entity when entity changes
+        // and when entity list loads for the first time
+        if (
+            previous.entity !== current.entity ||
+            (
+                !prevProps.entities.entities.length &&
+                this.props.entities.entities.length
+            )
+        ) {
             this.scrollToSelectedElement();
         }
     }
@@ -115,17 +124,28 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
+    /*
+     * If entity not provided through a URL parameter, or if provided entity
+     * cannot be found, select the first entity in the list.
+     */
     selectFirstEntityIfNoneSelected() {
-        const { entities, parameters, router } = this.props;
+        const { dispatch, entities, parameters } = this.props;
         const selectedEntity = parameters.entity;
+        const firstEntity = entities.entities[0];
 
-        if (!selectedEntity && entities.entities.length > 0) {
-            this.props.dispatch(
-                navigation.actions.updateEntity(
-                    router,
-                    entities.entities[0].pk.toString(),
-                )
-            );
+        const entityIds = entities.entities.map(entity => entity.pk);
+        const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
+
+        if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
+            this.selectEntity(firstEntity);
+
+            if (selectedEntity && !isSelectedEntityValid) {
+                dispatch(
+                    notification.actions.add(
+                        notification.messages.ENTITY_NOT_FOUND
+                    )
+                );
+            }
         }
     }
 
@@ -137,7 +157,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getMoreEntities = () => {
         const { entities, parameters } = this.props;
-        const { locale, project, resource, search, status } = parameters;
+        const { locale, project, resource, entity, search, status } = parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -156,6 +176,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 project,
                 resource,
                 currentEntityIds,
+                entity.toString(),
                 search,
                 status,
             )
