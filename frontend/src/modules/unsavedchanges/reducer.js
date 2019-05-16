@@ -46,9 +46,10 @@ export default function reducer(
         case HIDE:
             return {
                 ...state,
-                shown: false,
                 callback: null,
+                exist: false,
                 ignored: false,
+                shown: false,
             };
         case IGNORE:
             return {
