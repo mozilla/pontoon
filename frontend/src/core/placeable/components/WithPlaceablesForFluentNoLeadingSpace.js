@@ -10,15 +10,10 @@ import { getRulesWithoutLeadingSpace } from './WithPlaceablesNoLeadingSpace';
 
 
 /**
- * Component that marks placeables in a string. Same as WithPlaceables but
- * without the leadingSpace parser.
+ * Component that marks placeables in a string. Same as WithPlaceablesForFluent
+ * but without some space parsers.
  *
- * The leadingSpace parser checks for spaces at the beginning of a line.
- * If the input was previously split, then that parser will generate a lot of
- * false positive (for example, if something else was marked just before a
- * space, it thus becomes a space the beginning of a line). We thus want to
- * have a special Placeables component without that parser, for use in
- * combination with other parsing tools (like diff).
+ * See ./WithPlaceablesNoLeadingSpace.js for documentation.
  */
 const WithPlaceablesForFluentNoLeadingSpace = createMarker(
     getRulesWithFluent(
