@@ -3,20 +3,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
+import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
 import { NAME as LOCALES_NAME } from 'core/locales';
+import * as resource from 'core/resource';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { selectors } from '..';
 
 import type { LocalesState } from 'core/locales';
 import type { NavigationParams } from '..';
+import type { ResourcesState } from 'core/resource';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
-    parameters: NavigationParams,
     locales: LocalesState,
+    parameters: NavigationParams,
+    resources: ResourcesState,
+    unsavedchanges: UnsavedChangesState,
 |};
 
 type InternalProps = {|
@@ -31,14 +38,46 @@ type InternalProps = {|
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
 export class NavigationBase extends React.Component<InternalProps> {
+    componentDidMount() {
+        const { parameters } = this.props;
+
+        // We don't load resource in All Projects view
+        if (parameters.project === 'all-projects') {
+            return;
+        }
+
+        this.props.dispatch(
+            resource.actions.get(
+                parameters.locale,
+                parameters.project,
+            )
+        );
+    }
+
+    navigateToPath = (path: string) => {
+        const { dispatch } = this.props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => { dispatch(push(path)); }
+            )
+        );
+    }
+
     render() {
-        const { parameters, locales } = this.props;
+        const { locales, parameters } = this.props;
 
         if (isEmpty(locales.locales)) {
             return null;
         }
 
         const locale = locales.locales[parameters.locale];
+
+        let projectName = parameters.project;
+        if (projectName === 'all-projects') {
+            projectName = 'All Projects';
+        }
 
         return <nav className="navigation">
             <ul>
@@ -59,8 +98,15 @@ export class NavigationBase extends React.Component<InternalProps> {
                     </a>
                 </li>
                 <li>
-                    <a href={ `/${locale.code}/${parameters.project}/` }>{ parameters.project }</a>
+                    <a href={ `/${locale.code}/${parameters.project}/` }>
+                        { projectName }
+                    </a>
                 </li>
+                <resource.ResourceMenu
+                    navigateToPath={ this.navigateToPath }
+                    parameters={ this.props.parameters }
+                    resources={ this.props.resources }
+                />
             </ul>
         </nav>;
     }
@@ -69,8 +115,10 @@ export class NavigationBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        parameters: selectors.getNavigationParams(state),
         locales: state[LOCALES_NAME],
+        parameters: selectors.getNavigationParams(state),
+        resources: state[resource.NAME],
+        unsavedchanges: state[unsavedchanges.NAME],
     };
 };
 

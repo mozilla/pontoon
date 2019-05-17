@@ -1,0 +1,164 @@
+/* @flow */
+
+import * as React from 'react';
+import { Localized } from 'fluent-react';
+import onClickOutside from 'react-onclickoutside';
+
+import './ResourceMenu.css';
+
+import type { NavigationParams } from 'core/navigation';
+import type { Resource, ResourcesState } from '..';
+
+
+type Props = {|
+    parameters: NavigationParams,
+    resources: ResourcesState,
+    navigateToPath: (string) => void,
+|};
+
+type State = {|
+    visible: boolean,
+|};
+
+
+/**
+ * Render a resource menu for the main navigation bar.
+ *
+ * Allows to switch between resources without reloading the Translate app.
+ */
+export class ResourceMenuBase extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            visible: false,
+        };
+    }
+
+    toggleVisibility = () => {
+        this.setState((state) => {
+            return { visible: !state.visible };
+        });
+    }
+
+    // This method is called by the Higher-Order Component `onClickOutside`
+    // when a user clicks outside the user menu.
+    handleClickOutside = () => {
+        this.setState({
+            visible: false,
+        });
+    }
+
+    navigateToPath = (event: SyntheticMouseEvent<>) => {
+        event.preventDefault();
+
+        // $FLOW_IGNORE
+        const path = event.currentTarget.pathname;
+        this.props.navigateToPath(path);
+
+        this.setState({
+            visible: false,
+        });
+    }
+
+    renderPercent = (resource: Resource) => {
+        return Math.floor(resource.approved_strings / resource.total_strings * 100) + '%';
+    }
+
+    renderResource = (resource: Resource, i: number) => {
+        const { parameters } = this.props;
+
+        return <li
+            className={ parameters.resource === resource.path ? 'current' : null }
+            key={ i }
+        >
+            <a
+                href={ `/${parameters.locale}/${parameters.project}/${resource.path}/` }
+                onClick={ this.navigateToPath }
+            >
+                <span>{ resource.path }</span>
+                <span className="percent">{ this.renderPercent(resource) }</span>
+            </a>
+        </li>;
+    }
+
+    render() {
+        const { parameters, resources } = this.props;
+
+        if (parameters.project === 'all-projects') {
+            return null;
+        }
+
+        let className = 'resource-menu';
+        if (!this.state.visible) {
+            className += ' closed';
+        }
+
+        let resourceName = parameters.resource.split('/').slice(-1)[0];
+        if (resourceName === 'all-resources') {
+            resourceName = 'All Resources';
+        }
+
+        // Extract All Resources entry for more exposed presentation
+        const allResources = resources.resources.slice(-1)[0];
+
+        return <li>
+            <div className={ className }>
+                <div
+                    className="selector unselectable"
+                    onClick={ this.toggleVisibility }
+                    title={ parameters.resource }
+                >
+                    <span>{ resourceName }</span>
+                    <span className="icon fa fa-caret-down"></span>
+                </div>
+
+                { !this.state.visible ? null :
+                <div className="menu">
+                    <div className="search-wrapper">
+                        <div className="icon fa fa-search"></div>
+                        <input type="search" autoComplete="off" autoFocus />
+                    </div>
+
+                    <ul>
+                        { resources.resources.map((resource, i) => {
+                            // Skip All Resources entry for more exposed presentation below
+                            if (i === resources.resources.length - 1) {
+                                return null;
+                            }
+
+                            return this.renderResource(resource, i);
+                        }) }
+                    </ul>
+
+                    <ul className="static-links">
+                        <li className={ parameters.resource === 'all-resources' ? 'current' : null }>
+                            <a
+                                href={ `/${parameters.locale}/${parameters.project}/all-resources/` }
+                                onClick={ this.navigateToPath }
+                            >
+                                <Localized id='navigation-ResourceMenu-all-resources'>
+                                    <span>All Resources</span>
+                                </Localized>
+                                <span className="percent">{ this.renderPercent(allResources) }</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href={ `/${parameters.locale}/all-projects/all-resources/` }
+                                onClick={ this.navigateToPath }
+                            >
+                                <Localized id='navigation-ResourceMenu-all-projects'>
+                                    <span>All Projects</span>
+                                </Localized>
+                                <span className="percent"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                }
+            </div>
+        </li>;
+    }
+}
+
+export default onClickOutside(ResourceMenuBase);

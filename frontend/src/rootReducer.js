@@ -7,6 +7,7 @@ import * as locales from 'core/locales';
 import * as l10n from 'core/l10n';
 import * as notification from 'core/notification';
 import * as plural from 'core/plural';
+import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
 import * as editor from 'modules/editor';
@@ -25,6 +26,7 @@ export default combineReducers({
     [l10n.NAME]: l10n.reducer,
     [notification.NAME]: notification.reducer,
     [plural.NAME]: plural.reducer,
+    [resource.NAME]: resource.reducer,
     [stats.NAME]: stats.reducer,
     [user.NAME]: user.reducer,
     // Application modules
