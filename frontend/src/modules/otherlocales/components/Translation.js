@@ -5,8 +5,7 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
-import { WithPlaceables } from 'core/placeable';
-import * as utils from 'core/utils';
+import { TranslationProxy } from 'core/translation';
 
 import type { Navigation } from 'core/navigation';
 import type { DbEntity } from 'modules/entitieslist';
@@ -41,11 +40,6 @@ export default class Translation extends React.Component<Props> {
 
         const className = lastPreferred ? 'translation last-preferred' : 'translation';
 
-        const translationContent = utils.getOptimizedContent(
-            translation.translation,
-            entity.format
-        );
-
         return <Localized id='otherlocales-translation-copy' attrs={{ title: true }}>
             <li
                 className={ className }
@@ -68,9 +62,10 @@ export default class Translation extends React.Component<Props> {
                     dir={ translation.direction }
                     script={ translation.script }
                 >
-                    <WithPlaceables>
-                        { translationContent }
-                    </WithPlaceables>
+                    <TranslationProxy
+                        content={ translation.translation }
+                        format={ entity.format }
+                    />
                 </p>
             </li>
         </Localized>;

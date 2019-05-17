@@ -6,15 +6,10 @@ import { Localized } from 'fluent-react';
 import './Translation.css';
 
 import api from 'core/api';
-import { withDiff } from 'core/diff';
-import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
-import * as utils from 'core/utils';
+import { TranslationProxy } from 'core/translation';
 
 import type { Locale } from 'core/locales';
 import type { DbEntity } from 'modules/entitieslist';
-
-
-const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
 
 type Props = {|
@@ -46,19 +41,6 @@ export default class Translation extends React.Component<Props> {
         const { entity, locale, sourceString, translation } = this.props;
 
         const types = translation.sources.map(source => source.type);
-
-        const sourceContent = utils.getOptimizedContent(
-            sourceString,
-            entity.format
-        );
-        const originalContent = utils.getOptimizedContent(
-            translation.original,
-            entity.format
-        );
-        const translationContent = utils.getOptimizedContent(
-            translation.translation,
-            entity.format
-        );
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
             <li
@@ -97,19 +79,20 @@ export default class Translation extends React.Component<Props> {
                 </header>
                 <p className="original">
                     { types.indexOf('Caighdean') === -1 ?
-                        <TranslationPlaceablesDiff
-                            diffTarget={ originalContent }
-                        >
-                            { sourceContent }
-                        </TranslationPlaceablesDiff>
+                        <TranslationProxy
+                            content={ sourceString }
+                            diffTarget={ translation.original }
+                            format={ entity.format }
+                        />
                     :
                         /*
                          * Caighdean takes `gd` translations as input, so we shouldn't
                          * diff it against the `en-US` source string.
                          */
-                        <WithPlaceables>
-                            { originalContent }
-                        </WithPlaceables>
+                         <TranslationProxy
+                             content= { translation.original }
+                             format={ entity.format }
+                         />
                     }
                 </p>
                 <p
@@ -118,9 +101,10 @@ export default class Translation extends React.Component<Props> {
                     data-script={ locale.script }
                     lang={ locale.code }
                 >
-                    <WithPlaceables>
-                        { translationContent }
-                    </WithPlaceables>
+                    <TranslationProxy
+                        content={ translation.translation }
+                        format={ entity.format }
+                    />
                 </p>
             </li>
         </Localized>;

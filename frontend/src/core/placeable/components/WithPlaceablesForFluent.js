@@ -12,7 +12,7 @@ import fluentTerm from '../parsers/fluentTerm';
 import multipleSpaces from '../parsers/multipleSpaces';
 
 
-function getRulesWithFluent(rules: Array<Object>) {
+export function getRulesWithFluent(rules: Array<Object>) {
     const newRules = [ ...rules ];
 
     // Insert after the last space-related rule.

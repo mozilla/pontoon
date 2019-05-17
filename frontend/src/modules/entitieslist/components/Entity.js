@@ -4,8 +4,7 @@ import * as React from 'react';
 
 import './Entity.css';
 
-import { WithPlaceables } from 'core/placeable';
-import { getOptimizedContent } from 'core/utils'
+import { TranslationProxy } from 'core/translation';
 
 import type { Locale } from 'core/locales';
 import type { DbEntity } from '../reducer';
@@ -100,9 +99,10 @@ export default class Entity extends React.Component<Props> {
                 <span className='status fa' />
                 <div>
                     <p className='source-string'>
-                        <WithPlaceables>
-                            { getOptimizedContent(entity.original, entity.format) }
-                        </WithPlaceables>
+                        <TranslationProxy
+                            content={ entity.original }
+                            format={ entity.format }
+                        />
                     </p>
                     <p
                         className='translation-string'
@@ -110,9 +110,10 @@ export default class Entity extends React.Component<Props> {
                         lang={ locale.code }
                         data-script={ locale.script }
                     >
-                        <WithPlaceables>
-                            { getOptimizedContent(entity.translation[0].string, entity.format) }
-                        </WithPlaceables>
+                        <TranslationProxy
+                            content={ entity.translation[0].string }
+                            format={ entity.format }
+                        />
                     </p>
                 </div>
             </li>
