@@ -6,17 +6,18 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
-import { withDiff } from 'core/diff';
-import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import { TranslationProxy } from 'core/translation';
+import * as utils from 'core/utils';
 
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
-import { withActionsDisabled } from 'core/utils';
+import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     canReview: boolean,
     translation: DBTranslation,
@@ -184,6 +185,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     render() {
         const {
             canReview,
+            entity,
             isReadOnlyEditor,
             translation,
             locale,
@@ -210,8 +212,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         }
 
         let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
-
-        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
         return <Localized id='history-translation-copy' attrs={{ title: true }}>
             <li
@@ -312,17 +312,13 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     lang={ locale.code }
                     data-script={ locale.script }
                 >
-                    { this.state.isDiffVisible ?
-                        <TranslationPlaceablesDiff
-                            diffTarget={ activeTranslation.string }
-                        >
-                            { translation.string }
-                        </TranslationPlaceablesDiff>
-                    :
-                        <WithPlaceables>
-                            { translation.string }
-                        </WithPlaceables>
-                    }
+                    <TranslationProxy
+                        content={ translation.string }
+                        diffTarget={
+                            this.state.isDiffVisible ? activeTranslation.string : null
+                        }
+                        format={ entity.format }
+                    />
                 </p>
             </li>
         </Localized>;
@@ -330,4 +326,4 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 }
 
 
-export default withActionsDisabled(TranslationBase);
+export default utils.withActionsDisabled(TranslationBase);

@@ -1,16 +1,18 @@
 /* @flow */
 
-import './WithPlaceables.css';
-
 import createMarker from 'react-content-marker';
+
+import './WithPlaceables.css';
 
 import { rules } from './WithPlaceables';
 import leadingSpace from '../parsers/leadingSpace';
+import unusualSpace from '../parsers/unusualSpace';
 
 
-function getRulesWithoutLeadingSpace(rules: Array<Object>) {
+export function getRulesWithoutLeadingSpace(rules: Array<Object>) {
     let newRules = [ ...rules ];
     newRules.splice(newRules.indexOf(leadingSpace), 1);
+    newRules.splice(newRules.indexOf(unusualSpace), 1);
     return newRules;
 }
 
