@@ -11,6 +11,7 @@ import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
+import * as utils from 'core/utils';
 import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
@@ -96,8 +97,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
-        dispatch(machinery.actions.get(selectedEntity.original, locale, selectedEntity.pk));
         dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+
+        const source = utils.getOptimizedContent(selectedEntity.original, selectedEntity.format);
+        dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
     }
 
     updateFailedChecks() {
@@ -234,6 +237,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             />
             <editor.Editor />
             <Helpers
+                entity={ state.selectedEntity }
                 history={ state.history }
                 isReadOnlyEditor={ state.isReadOnlyEditor }
                 isTranslator={ state.isTranslator }

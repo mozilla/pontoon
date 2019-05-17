@@ -6,14 +6,14 @@ import { Localized } from 'fluent-react';
 import './Translation.css';
 
 import api from 'core/api';
-
-import { withDiff } from 'core/diff';
-import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import { TranslationProxy } from 'core/translation';
 
 import type { Locale } from 'core/locales';
+import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     locale: Locale,
     sourceString: string,
@@ -38,9 +38,8 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { locale, sourceString, translation } = this.props;
+        const { entity, locale, sourceString, translation } = this.props;
 
-        const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
         const types = translation.sources.map(source => source.type);
 
         return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
@@ -80,19 +79,20 @@ export default class Translation extends React.Component<Props> {
                 </header>
                 <p className="original">
                     { types.indexOf('Caighdean') === -1 ?
-                        <TranslationPlaceablesDiff
+                        <TranslationProxy
+                            content={ sourceString }
                             diffTarget={ translation.original }
-                        >
-                            { sourceString }
-                        </TranslationPlaceablesDiff>
+                            format={ entity.format }
+                        />
                     :
                         /*
                          * Caighdean takes `gd` translations as input, so we shouldn't
                          * diff it against the `en-US` source string.
                          */
-                        <WithPlaceables>
-                            { translation.original }
-                        </WithPlaceables>
+                         <TranslationProxy
+                             content= { translation.original }
+                             format={ entity.format }
+                         />
                     }
                 </p>
                 <p
@@ -101,9 +101,10 @@ export default class Translation extends React.Component<Props> {
                     data-script={ locale.script }
                     lang={ locale.code }
                 >
-                    <WithPlaceables>
-                        { translation.translation }
-                    </WithPlaceables>
+                    <TranslationProxy
+                        content={ translation.translation }
+                        format={ entity.format }
+                    />
                 </p>
             </li>
         </Localized>;

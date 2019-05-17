@@ -9,11 +9,13 @@ import api from 'core/api';
 import Translation from './Translation';
 
 import type { Navigation } from 'core/navigation';
-import type { LocalesState } from '..';
 import type { UserState } from 'core/user';
+import type { DbEntity } from 'modules/entitieslist';
+import type { LocalesState } from '..';
 
 
 type Props = {|
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
     preferredLocalesCount: number,
@@ -38,6 +40,7 @@ export default class OtherLocales extends React.Component<Props> {
 
     render() {
         const {
+            entity,
             isReadOnlyEditor,
             orderedOtherLocales,
             preferredLocalesCount,
@@ -60,6 +63,7 @@ export default class OtherLocales extends React.Component<Props> {
                     let lastPreferred = (index === preferredLocalesCount - 1);
 
                     return <Translation
+                        entity={ entity }
                         isReadOnlyEditor={ isReadOnlyEditor }
                         translation={ translation }
                         parameters={ parameters }

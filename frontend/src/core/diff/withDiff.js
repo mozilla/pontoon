@@ -33,10 +33,15 @@ export function getDiff(base: string, target: string){
 }
 
 
+type Props = {
+    diffTarget: string,
+};
+
+
 export default function withDiff<Config: Object>(
     WrappedComponent: React.AbstractComponent<Config>
 ): React.AbstractComponent<Config> {
-    return function WithDiff(props: $Diff<Config, { diffTarget: string }>) {
+    return function WithDiff(props: { ...Config, ...Props }) {
         const base = props.children;
         return <WrappedComponent { ...props }>
             { getDiff(base, props.diffTarget) }

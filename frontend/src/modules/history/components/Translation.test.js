@@ -30,6 +30,10 @@ describe('<TranslationBase>', () => {
         script: 'Latin',
     };
 
+    const DEFAULT_ENTITY = {
+        format: 'po',
+    };
+
     describe('getStatus', () => {
         it('returns the correct status for approved translations', () => {
             const translation = {
@@ -38,6 +42,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -51,6 +56,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -64,6 +70,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -73,6 +80,7 @@ describe('<TranslationBase>', () => {
         it('returns the correct status for unreviewed translations', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -88,6 +96,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -101,6 +110,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -110,6 +120,7 @@ describe('<TranslationBase>', () => {
         it('returns the correct approver title when neither approved or unapproved', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -125,6 +136,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -137,6 +149,7 @@ describe('<TranslationBase>', () => {
         it('returns no link when the author is not known', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -152,6 +165,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -168,6 +182,7 @@ describe('<TranslationBase>', () => {
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -180,6 +195,7 @@ describe('<TranslationBase>', () => {
         it('shows the correct status for unreviewed translations', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -194,6 +210,7 @@ describe('<TranslationBase>', () => {
         it('allows the user to reject their own unapproved translation', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
             />);
@@ -206,6 +223,7 @@ describe('<TranslationBase>', () => {
             const translation = { ...DEFAULT_TRANSLATION, approved: true };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
             />);
@@ -217,6 +235,7 @@ describe('<TranslationBase>', () => {
         it('allows translators to review the translation', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
             />);
@@ -229,6 +248,7 @@ describe('<TranslationBase>', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
             />);
@@ -240,6 +260,7 @@ describe('<TranslationBase>', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: false };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 canReview={ true }
             />);
@@ -251,6 +272,7 @@ describe('<TranslationBase>', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
             />);
@@ -262,6 +284,7 @@ describe('<TranslationBase>', () => {
             const translation = { ...DEFAULT_TRANSLATION, rejected: true };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
+                entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
             />);
 
@@ -273,6 +296,7 @@ describe('<TranslationBase>', () => {
         it('shows default translation and no Show/Hide diff button for the first translation', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -289,6 +313,7 @@ describe('<TranslationBase>', () => {
         it('shows default translation and the Show diff button for a non-first translation', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
@@ -307,6 +332,7 @@ describe('<TranslationBase>', () => {
         it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
             const wrapper = shallow(<TranslationBase
                 translation={ DEFAULT_TRANSLATION }
+                entity={ DEFAULT_ENTITY }
                 activeTranslation={ DEFAULT_TRANSLATION }
                 locale={ DEFAULT_LOCALE }
                 user={ DEFAULT_USER }
