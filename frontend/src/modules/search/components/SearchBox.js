@@ -8,18 +8,21 @@ import './SearchBox.css';
 
 import * as navigation from 'core/navigation';
 import { NAME as STATS_NAME } from 'core/stats';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { FILTERS_STATUS } from '..';
 import FiltersPanel from './FiltersPanel';
 
 import type { NavigationParams } from 'core/navigation';
 import type { Stats } from 'core/stats';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
     parameters: NavigationParams,
     stats: Stats,
     router: Object,
+    unsavedchanges: UnsavedChangesState,
 |};
 
 type InternalProps = {|
@@ -82,14 +85,38 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     updateSearchParams = debounce(() => {
-        this.props.dispatch(
-            navigation.actions.updateSearch(this.props.router, this.state.search)
+        const { dispatch, router } = this.props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(
+                        navigation.actions.updateSearch(
+                            router,
+                            this.state.search,
+                        )
+                    );
+                }
+            )
         );
     }, 500)
 
     selectStatus = (status: ?string) => {
-        this.props.dispatch(
-            navigation.actions.updateStatus(this.props.router, status)
+        const { dispatch, router } = this.props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(
+                        navigation.actions.updateStatus(
+                            router,
+                            status,
+                        )
+                    );
+                }
+            )
         );
     }
 
@@ -133,6 +160,7 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         stats: state[STATS_NAME],
         router: state.router,
+        unsavedchanges: state[unsavedchanges.NAME],
     };
 };
 
