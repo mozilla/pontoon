@@ -14,6 +14,7 @@ import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 
 // Combine reducers from all modules, using their NAME constant as key.
@@ -32,4 +33,5 @@ export default combineReducers({
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
+    [unsavedchanges.NAME]: unsavedchanges.reducer,
 });

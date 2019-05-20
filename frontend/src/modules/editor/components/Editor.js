@@ -13,6 +13,7 @@ import * as user from 'core/user';
 import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, NAME } from '..';
 import FailedChecks from './FailedChecks';
@@ -21,16 +22,18 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
+import type { EditorState } from '../reducer';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import { withActionsDisabled } from 'core/utils';
-import type { ChangeOperation } from 'modules/history';
 import type { DbEntity } from 'modules/entitieslist';
-import type { EditorState } from '../reducer';
+import type { ChangeOperation } from 'modules/history';
+import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
+    activeTranslation: string,
     editor: EditorState,
     isReadOnlyEditor: boolean,
     locale: Locale,
@@ -39,6 +42,7 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: ?DbEntity,
+    unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
 
@@ -64,6 +68,19 @@ export class EditorBase extends React.Component<InternalProps> {
     updateTranslation = (translation: string, fromOutsideEditor?: boolean) => {
         const source = fromOutsideEditor ? 'external' : 'internal';
         this.props.dispatch(actions.update(translation, source));
+    }
+
+    hideUnsavedChanges = () => {
+        this.props.dispatch(unsavedchanges.actions.hide());
+    }
+
+    ignoreUnsavedChanges = () => {
+        this.props.dispatch(unsavedchanges.actions.ignore());
+    }
+
+    updateUnsavedChanges = (translation: string) => {
+        const { activeTranslation } = this.props;
+        this.props.dispatch(unsavedchanges.actions.update(translation, activeTranslation));
     }
 
     copyOriginalIntoEditor = () => {
@@ -159,6 +176,10 @@ export class EditorBase extends React.Component<InternalProps> {
                 sendTranslation={ this.sendTranslation }
                 updateTranslation={ this.updateTranslation }
                 updateTranslationStatus={ this.updateTranslationStatus }
+                unsavedchanges={ this.props.unsavedchanges }
+                hideUnsavedChanges={ this.hideUnsavedChanges }
+                ignoreUnsavedChanges={ this.ignoreUnsavedChanges }
+                updateUnsavedChanges={ this.updateUnsavedChanges }
             />
             <menu>
                 <FailedChecks
@@ -170,6 +191,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     sendTranslation={ this.sendTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
                 />
+                <unsavedchanges.UnsavedChanges />
                 { !this.props.user.isAuthenticated ?
                     <Localized
                         id="editor-editor-sign-in-to-translate"
@@ -251,6 +273,7 @@ export class EditorBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        activeTranslation: entitydetails.selectors.getTranslationForSelectedEntity(state),
         editor: state[NAME],
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
@@ -259,6 +282,7 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
 };

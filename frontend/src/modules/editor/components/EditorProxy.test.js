@@ -38,6 +38,8 @@ describe('<EditorProxy>', () => {
         const wrapper = shallow(<EditorProxy
             editor={ EDITOR }
             resetFailedChecks={ resetMock }
+            unsavedchanges={ { shown: false } }
+            updateUnsavedChanges={ sinon.spy() }
         />);
 
         wrapper.setProps({
@@ -56,6 +58,8 @@ describe('<EditorProxy>', () => {
         const wrapper = shallow(<EditorProxy
             editor={ EDITOR }
             resetFailedChecks={ resetMock }
+            unsavedchanges={ { shown: false } }
+            updateUnsavedChanges={ sinon.spy() }
         />);
 
         wrapper.setProps({

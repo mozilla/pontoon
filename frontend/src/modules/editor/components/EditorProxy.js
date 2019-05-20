@@ -12,6 +12,7 @@ import type { EditorProps } from './GenericEditor';
 type EditorProxyProps = {|
     ...EditorProps,
     entity: ?DbEntity,
+    updateUnsavedChanges: (string) => void,
 |};
 
 
@@ -37,6 +38,16 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
         ) {
             this.props.resetFailedChecks();
         }
+
+        // When content of the editor changes
+        //   - close unsaved changes popup if open
+        //   - update unsaved changes status
+        if (prevEditor.translation !== editor.translation) {
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            this.props.updateUnsavedChanges(editor.translation);
+        }
     }
 
     render() {
@@ -58,6 +69,9 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
                 sendTranslation={ this.props.sendTranslation }
                 updateTranslation={ this.props.updateTranslation }
                 updateTranslationStatus={ this.props.updateTranslationStatus }
+                unsavedchanges={ this.props.unsavedchanges }
+                hideUnsavedChanges={ this.props.hideUnsavedChanges }
+                ignoreUnsavedChanges={ this.props.ignoreUnsavedChanges }
             />;
         }
 
@@ -72,6 +86,9 @@ export default class EditorProxy extends React.Component<EditorProxyProps> {
             sendTranslation={ this.props.sendTranslation }
             updateTranslation={ this.props.updateTranslation }
             updateTranslationStatus={ this.props.updateTranslationStatus }
+            unsavedchanges={ this.props.unsavedchanges }
+            hideUnsavedChanges={ this.props.hideUnsavedChanges }
+            ignoreUnsavedChanges={ this.props.ignoreUnsavedChanges }
         />;
     }
 }
