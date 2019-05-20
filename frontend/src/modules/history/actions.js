@@ -65,6 +65,10 @@ export function reset(): ResetAction {
 export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
         dispatch(request());
+
+        // Abort all previously running requests.
+        await api.entity.abort();
+
         const content = await api.entity.getHistory(entity, locale, pluralForm);
         dispatch(receive(content));
     }
