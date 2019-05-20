@@ -75,7 +75,7 @@ def test_view_tmx_empty_file():
         xml = f.read().decode('utf-8')
 
     tmx_contents = build_translation_memory_file(
-        datetime(2010, 01, 01), 'sl', ()
+        datetime(2010, 1, 1), 'sl', ()
     )
     _check_xml(
         ''.join(tmx_contents).encode('utf-8'),
@@ -97,7 +97,7 @@ def test_view_tmx_valid_entries():
         xml = f.read().decode('utf-8')
 
     tmx_contents = build_translation_memory_file(
-        datetime(2010, 01, 01),
+        datetime(2010, 1, 1),
         'sl',
         (
             (
