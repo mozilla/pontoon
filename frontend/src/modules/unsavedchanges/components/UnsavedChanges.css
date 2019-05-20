@@ -1,4 +1,4 @@
-.failed-checks {
+.unsaved-changes {
     background: #272A2F;
     border-top: 1px solid #5E6475;
     bottom: 0;
@@ -13,7 +13,7 @@
     z-index: 10;
 }
 
-.failed-checks .close {
+.unsaved-changes .close {
     background: none;
     border: none;
     color: #AAAAAA;
@@ -25,11 +25,11 @@
     padding: 0;
 }
 
-.failed-checks .close:hover {
+.unsaved-changes .close:hover {
     color: #FFFFFF;
 }
 
-.failed-checks .title {
+.unsaved-changes .title {
     color: #F36;
     font-size: 14px;
     font-weight: 300;
@@ -37,37 +37,12 @@
     padding-bottom: 5px;
 }
 
-.failed-checks ul {
+.unsaved-changes .body {
     font-style: italic;
-    list-style: none;
-    margin: 0px;
-    width: calc(100% - 140px);
 }
 
-.failed-checks ul li:before {
-    content: '';
-    font-family: 'Font Awesome 5 Free';
-    font-size: 18px;
-    font-style: normal;
-    font-weight: bold;
-    margin: 0px 8px;
-    vertical-align: sub;
-}
-
-.failed-checks .warning {
-    color: #AAAAAA;
-}
-
-.failed-checks .error:before {
-    color: #F36;
-}
-
-.failed-checks .warning:before {
-    color: #4D5967;
-}
-
-.failed-checks .anyway {
-    background: #7BC876;
+.unsaved-changes .anyway {
+    background: #FF0A43;
     border: none;
     border-radius: 3px;
     bottom: 10px;
@@ -80,10 +55,6 @@
     text-transform: uppercase;
 }
 
-.failed-checks .anyway.suggest {
-    background: #4FC4F6;
-}
-
-.failed-checks .anyway:hover {
+.unsaved-changes .anyway:hover {
     color: #EBEBEB;
 }

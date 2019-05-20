@@ -67,6 +67,7 @@ describe('<GenericEditorBase>', () => {
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
             disableAction={ sinon.spy() }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {
@@ -97,6 +98,7 @@ describe('<GenericEditorBase>', () => {
             locale={ DEFAULT_LOCALE }
             updateTranslationStatus={ mockSend }
             disableAction={ sinon.spy() }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {
@@ -105,6 +107,49 @@ describe('<GenericEditorBase>', () => {
             altKey: false,
             ctrlKey: false,
             shiftKey: false,
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
+    it('ignores unsaved changes on Enter if unsaved changes popup is shown', () => {
+        const mockSend = sinon.spy();
+        const wrapper = shallow(<GenericEditorBase
+            editor={ EDITOR }
+            locale={ DEFAULT_LOCALE }
+            ignoreUnsavedChanges={ mockSend }
+            disableAction={ sinon.spy() }
+            unsavedchanges={ { shown: true } }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(mockSend.calledOnce).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(mockSend.calledOnce).toBeTruthy();
+    });
+
+    it('closes unsaved changes popup if open on Esc', () => {
+        const mockSend = sinon.spy();
+
+        const wrapper = shallow(<GenericEditorBase
+            editor={ EDITOR }
+            locale={ DEFAULT_LOCALE }
+            hideUnsavedChanges={ mockSend }
+            unsavedchanges={ { shown: true } }
+        />);
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 27,  // Esc
         };
 
         expect(mockSend.calledOnce).toBeFalsy();
@@ -125,6 +170,7 @@ describe('<GenericEditorBase>', () => {
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             resetFailedChecks={ mockSend }
+            unsavedchanges={ { shown: false } }
         />);
 
         const event = {

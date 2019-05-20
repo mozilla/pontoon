@@ -20,6 +20,10 @@
     width: 100%;
 }
 
+.editor .plural-selector ~ textarea {
+    min-height: auto;
+}
+
 .editor textarea[readonly] {
     background: #C7CACF;
 }
