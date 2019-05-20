@@ -13,6 +13,7 @@ describe('xmlTag', () => {
         ['</user>', 'hello, </user>'],
         ['<user name="John">', 'hello, <user name="John">'],
         ["<user name='John'>", "hello, <user name='John'>"],
+        ["<user data-name='John'>", "hello, <user data-name='John'>"],
         ['<User.Birthday>', 'Happy <User.Birthday>!'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {

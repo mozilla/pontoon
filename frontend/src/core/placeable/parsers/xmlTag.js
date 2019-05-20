@@ -17,7 +17,7 @@ import { Localized } from 'fluent-react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L301
  */
 const xmlTag = {
-    rule: /(<[\w.:]+(\s([\w.:]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/,
+    rule: /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/,
     matchIndex: 0,
     tag: (x: string) => {
         return <Localized
