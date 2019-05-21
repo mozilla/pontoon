@@ -81,6 +81,10 @@ export default class EntityAPI extends APIBase {
 
         const results = await this.fetch('/other-locales/', 'GET', payload, headers);
 
+        if (!Array.isArray(results)) {
+            return [];
+        }
+
         return results.map(entry => {
             return {
                 code: entry.locale__code,

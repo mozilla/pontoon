@@ -35,6 +35,10 @@ export default class MachineryAPI extends APIBase {
 
         const results = await this._get(url, params);
 
+        if (!Array.isArray(results)) {
+            return [];
+        }
+
         return results.map(item => {
             return {
                 sources: [{

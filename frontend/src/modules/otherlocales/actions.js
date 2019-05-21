@@ -39,6 +39,9 @@ export function get(entity: number, locale: string): Function {
     return async dispatch => {
         dispatch(request(entity));
 
+        // Abort all previously running requests.
+        await api.entity.abort();
+
         const content = await api.entity.getOtherLocales(entity, locale);
 
         dispatch(receive(entity, content));

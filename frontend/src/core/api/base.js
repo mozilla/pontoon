@@ -1,7 +1,27 @@
 /* @flow */
 
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
+
 
 export default class APIBase {
+    abortController: AbortController;
+    signal: ?AbortSignal;
+
+    constructor() {
+        // Create a controller to abort fetch requests.
+        this.abortController = new AbortController();
+        this.signal = this.abortController.signal;
+    }
+
+    abort() {
+        // Abort the previously started requests.
+        this.abortController.abort();
+
+        // Now create a new controller for the next round of requests.
+        this.abortController = new AbortController();
+        this.signal = this.abortController.signal;
+    }
+
     getCSRFToken(): string {
         let csrfToken = '';
         const rootElt = document.getElementById('root');
@@ -28,6 +48,9 @@ export default class APIBase {
         requestParams.credentials = 'same-origin';
         requestParams.headers = headers;
 
+        // This signal is used to cancel requests with the `abort()` method.
+        requestParams.signal = this.signal;
+
         if (payload !== null) {
             if (method === 'POST') {
                 requestParams.body = payload;
@@ -37,10 +60,20 @@ export default class APIBase {
             }
         }
 
-        const response = await fetch(
-            fullUrl,
-            requestParams
-        );
+        let response;
+        try {
+            response = await fetch(
+                fullUrl,
+                requestParams
+            );
+        }
+        catch (e) {
+            // Swallow Abort errors because we trigger them ourselves.
+            if (e.name === 'AbortError') {
+                return {};
+            }
+            throw e;
+        }
 
         try {
             return await response.json();
