@@ -1,5 +1,7 @@
 /* @flow */
 
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
+
 
 export default class APIBase {
     abortController: AbortController;
