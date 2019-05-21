@@ -132,7 +132,6 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                     parameters={ parameters }
                                     resource={ resource }
                                     navigateToPath={ this.navigateToPath }
-                                    index={ index }
                                     key={ index }
                                 />;
                             })

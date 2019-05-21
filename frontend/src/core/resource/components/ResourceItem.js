@@ -11,7 +11,6 @@ import type { Resource } from '..';
 
 
 type Props = {|
-    index: number,
     parameters: NavigationParams,
     resource: Resource,
     navigateToPath: (SyntheticMouseEvent<>) => void,
@@ -22,10 +21,10 @@ type Props = {|
  * Render a resource menu item.
  */
 export default function ResourceItem(props: Props) {
-    const { index, parameters, resource, navigateToPath } = props;
+    const { parameters, resource, navigateToPath } = props;
     const className = parameters.resource === resource.path ? 'current' : null;
 
-    return <li className={ className } key={ index }>
+    return <li className={ className }>
         <a
             href={ `/${parameters.locale}/${parameters.project}/${resource.path}/` }
             onClick={ navigateToPath }
