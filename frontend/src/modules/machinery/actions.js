@@ -58,6 +58,9 @@ export function get(source: string, locale: Locale, pk: ?number): Function {
     return async dispatch => {
         dispatch(reset(source));
 
+        // Abort all previously running requests.
+        await api.machinery.abort();
+
         api.machinery.getTranslationMemory(source, locale, pk)
         .then(results => dispatch(addTranslations(results)));
 
