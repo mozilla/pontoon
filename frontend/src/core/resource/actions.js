@@ -4,7 +4,7 @@ import api from 'core/api';
 
 
 export const RECEIVE: 'resource/RECEIVE' = 'resource/RECEIVE';
-export const REQUEST: 'resource/REQUEST' = 'resource/REQUEST';
+export const UPDATE: 'resource/UPDATE' = 'resource/UPDATE';
 
 
 export type Resource = {|
@@ -14,12 +14,14 @@ export type Resource = {|
 |};
 
 
-export type RequestAction = {|
-    type: typeof REQUEST,
+export type UpdateAction = {|
+    type: typeof UPDATE,
+    resource: Resource,
 |};
-export function request() {
+export function update(resource: Resource): UpdateAction {
     return {
-        type: REQUEST,
+        type: UPDATE,
+        resource,
     };
 }
 
@@ -28,7 +30,7 @@ export type ReceiveAction = {|
     type: typeof RECEIVE,
     resources: Array<Resource>,
 |};
-export function receive(resources: Array<Resource>) {
+export function receive(resources: Array<Resource>): ReceiveAction {
     return {
         type: RECEIVE,
         resources,
@@ -38,8 +40,6 @@ export function receive(resources: Array<Resource>) {
 
 export function get(locale: string, project: string): Function {
     return async dispatch => {
-        dispatch(request());
-
         const results = await api.resource.getAll(locale, project);
 
         const resources = results.map(resource => {
@@ -56,4 +56,5 @@ export function get(locale: string, project: string): Function {
 
 export default {
     get,
+    update,
 };

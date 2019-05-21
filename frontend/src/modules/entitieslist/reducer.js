@@ -69,7 +69,7 @@ function updateEntityTranslation(
             ...item,
             translation: translations,
         };
-    })
+    });
 }
 
 
