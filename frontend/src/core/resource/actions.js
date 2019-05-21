@@ -42,13 +42,12 @@ export function get(locale: string, project: string): Function {
 
         const results = await api.resource.getAll(locale, project);
 
-        const resources = [];
-        results.forEach(resource => {
-            resources.push({
+        const resources = results.map(resource => {
+            return {
                 path: resource.resource__path,
                 approved_strings: resource.approved_strings,
                 total_strings: resource.resource__total_strings,
-            });
+            };
         });
 
         dispatch(receive(resources));
