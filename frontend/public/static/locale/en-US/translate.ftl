@@ -212,6 +212,7 @@ user-SignOut--sign-out = <glyph></glyph>Sign out
 
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
+navigation-ResourceMenu-no-results = No results
 navigation-ResourceMenu-all-resources = All Resources
 navigation-ResourceMenu-all-projects = All Projects
 

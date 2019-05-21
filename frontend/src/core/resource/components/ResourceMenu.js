@@ -19,6 +19,7 @@ type Props = {|
 |};
 
 type State = {|
+    search: string,
     visible: boolean,
 |};
 
@@ -32,6 +33,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            search: '',
             visible: false,
         };
     }
@@ -62,6 +64,12 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         });
     }
 
+    updateResourceList = (event: SyntheticInputEvent<HTMLInputElement>) => {
+        this.setState({
+            search: event.currentTarget.value,
+        });
+    }
+
     render() {
         const { parameters, resources } = this.props;
 
@@ -82,6 +90,12 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         // Extract All Resources entry for more exposed presentation
         const allResources = resources.resources.slice(-1)[0];
 
+        // Search resources
+        const search = this.state.search;
+        const resourceElements = resources.resources.filter(
+            resource => resource.path.indexOf(search) > -1
+        );
+
         return <li>
             <div className={ className }>
                 <div
@@ -97,24 +111,37 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                 <div className="menu">
                     <div className="search-wrapper">
                         <div className="icon fa fa-search"></div>
-                        <input type="search" autoComplete="off" autoFocus />
+                        <input
+                            type="search"
+                            autoComplete="off"
+                            autoFocus
+                            value={ this.state.search }
+                            onChange={ this.updateResourceList }
+                        />
                     </div>
 
                     <ul>
-                        { resources.resources.map((resource, index) => {
-                            // Skip All Resources entry for more exposed presentation below
-                            if (index === resources.resources.length - 1) {
-                                return null;
-                            }
+                        { resourceElements.length ?
+                            resourceElements.map((resource, index) => {
+                                // Skip All Resources entry for more exposed presentation below
+                                if (index === resourceElements.length - 1) {
+                                    return null;
+                                }
 
-                            return <ResourceItem
-                                parameters={ parameters }
-                                resource={ resource }
-                                navigateToPath={ this.navigateToPath }
-                                index={ index }
-                                key={ index }
-                            />;
-                        }) }
+                                return <ResourceItem
+                                    parameters={ parameters }
+                                    resource={ resource }
+                                    navigateToPath={ this.navigateToPath }
+                                    index={ index }
+                                    key={ index }
+                                />;
+                            })
+                            :
+                            // No resources found
+                            <Localized id='navigation-ResourceMenu-no-results'>
+                                <li className="no-results">No results</li>
+                            </Localized>
+                        }
                     </ul>
 
                     <ul className="static-links">
