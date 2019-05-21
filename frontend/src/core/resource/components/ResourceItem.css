@@ -1,0 +1,9 @@
+.resource-menu .menu li a {
+    display: block;
+    padding: 2px 4px;
+}
+
+.resource-menu .menu li a:hover {
+    background: #3F4752;
+    color: #fff;
+}

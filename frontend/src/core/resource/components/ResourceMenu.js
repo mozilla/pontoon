@@ -6,8 +6,10 @@ import onClickOutside from 'react-onclickoutside';
 
 import './ResourceMenu.css';
 
+import { ResourceItem, ResourcePercent } from '..';
+
 import type { NavigationParams } from 'core/navigation';
-import type { Resource, ResourcesState } from '..';
+import type { ResourcesState } from '..';
 
 
 type Props = {|
@@ -60,27 +62,6 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         });
     }
 
-    renderPercent = (resource: Resource) => {
-        return Math.floor(resource.approved_strings / resource.total_strings * 100) + '%';
-    }
-
-    renderResource = (resource: Resource, i: number) => {
-        const { parameters } = this.props;
-
-        return <li
-            className={ parameters.resource === resource.path ? 'current' : null }
-            key={ i }
-        >
-            <a
-                href={ `/${parameters.locale}/${parameters.project}/${resource.path}/` }
-                onClick={ this.navigateToPath }
-            >
-                <span>{ resource.path }</span>
-                <span className="percent">{ this.renderPercent(resource) }</span>
-            </a>
-        </li>;
-    }
-
     render() {
         const { parameters, resources } = this.props;
 
@@ -120,13 +101,19 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                     </div>
 
                     <ul>
-                        { resources.resources.map((resource, i) => {
+                        { resources.resources.map((resource, index) => {
                             // Skip All Resources entry for more exposed presentation below
-                            if (i === resources.resources.length - 1) {
+                            if (index === resources.resources.length - 1) {
                                 return null;
                             }
 
-                            return this.renderResource(resource, i);
+                            return <ResourceItem
+                                parameters={ parameters }
+                                resource={ resource }
+                                navigateToPath={ this.navigateToPath }
+                                index={ index }
+                                key={ index }
+                            />;
                         }) }
                     </ul>
 
@@ -139,7 +126,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                 <Localized id='navigation-ResourceMenu-all-resources'>
                                     <span>All Resources</span>
                                 </Localized>
-                                <span className="percent">{ this.renderPercent(allResources) }</span>
+                                <ResourcePercent resource={ allResources } />
                             </a>
                         </li>
                         <li>
@@ -150,7 +137,6 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                 <Localized id='navigation-ResourceMenu-all-projects'>
                                     <span>All Projects</span>
                                 </Localized>
-                                <span className="percent"></span>
                             </a>
                         </li>
                     </ul>
