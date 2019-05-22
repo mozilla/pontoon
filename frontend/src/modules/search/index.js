@@ -12,7 +12,7 @@ export const NAME: string = 'search';
 // This list controls the creation of the UI.
 export const FILTERS_STATUS = [
     { title: 'All', tag: 'all', stat: 'total' },
-    { title: 'Approved', tag: 'approved' },
+    { title: 'Translated', tag: 'translated', stat: 'approved' },
     { title: 'Fuzzy', tag: 'fuzzy' },
     { title: 'Warnings', tag: 'warnings' },
     { title: 'Errors', tag: 'errors' },
