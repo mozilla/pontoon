@@ -130,6 +130,7 @@ export function sendTranslation(
     forceSuggestions: boolean,
     nextEntity: ?DbEntity,
     router: Object,
+    resource: string,
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
@@ -140,6 +141,7 @@ export function sendTranslation(
             pluralForm,
             original,
             forceSuggestions,
+            resource,
             ignoreWarnings,
         );
 
