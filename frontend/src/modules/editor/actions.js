@@ -4,6 +4,7 @@ import api from 'core/api';
 
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
+import { actions as statsActions } from 'core/stats';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -170,6 +171,12 @@ export function sendTranslation(
                     content.translation
                 )
             );
+
+            // Update stats for the search panel if possible.
+            if (content.stats) {
+                dispatch(statsActions.update(content.stats));
+            }
+
             if (nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
                 pluralActions.moveToNextTranslation(
