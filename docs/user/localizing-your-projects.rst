@@ -24,7 +24,7 @@ Before you can set up a new project in Pontoon:
         repository, and set ``SSH_KEY`` and ``SSH_CONFIG`` `as documented`_.
 
 .. _GitHub repository: https://help.github.com/en/articles/create-a-repo
-.. _supported l10n frameworks: ../index.html/
+.. _supported l10n frameworks: ../index.html
 .. _add it as a collaborator: https://help.github.com/en/articles/inviting-collaborators-to-a-personal-repository
 .. _as documented: ../admin/deployment.html/
 
