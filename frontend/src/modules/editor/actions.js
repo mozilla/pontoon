@@ -178,7 +178,13 @@ export function sendTranslation(
             // Update stats in the filter panel and resource menu if possible.
             if (content.stats) {
                 dispatch(statsActions.update(content.stats));
-                dispatch(resourceActions.update(resource, content.stats.approved));
+                dispatch(
+                    resourceActions.update(
+                        resource,
+                        content.stats.approved,
+                        content.stats.warnings,
+                    )
+                );
             }
 
             if (nextEntity) {

@@ -170,7 +170,13 @@ export function updateStatus(
         // Update stats in the filter panel and resource menu if possible.
         if (results.stats) {
             dispatch(statsActions.update(results.stats));
-            dispatch(resourceActions.update(resource, results.stats.approved));
+            dispatch(
+                resourceActions.update(
+                    resource,
+                    results.stats.approved,
+                    results.stats.warnings,
+                )
+            );
         }
 
         // Refresh the data now that it has changed on the server.
