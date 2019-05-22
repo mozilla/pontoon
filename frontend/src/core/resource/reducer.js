@@ -17,15 +17,19 @@ export type ResourcesState = {|
 
 function updateResource(
     state: Object,
-    resource: Resource,
+    resource_path: string,
+    approved_strings: number,
 ): Array<Resource> {
     return state.resources.map(item => {
-        if (item.path === resource.path) {
-            return resource;
+        if (item.path === resource_path) {
+            const allResources = state.resources.slice(-1)[0];
+            const diff = approved_strings - item.approved_strings;
+
+            item.approved_strings += diff;
+            allResources.approved_strings += diff;
         }
-        else {
-            return item;
-        }
+
+        return item;
     });
 }
 
@@ -49,7 +53,8 @@ export default function reducer(
                 ...state,
                 resources: updateResource(
                     state,
-                    action.resource,
+                    action.resource_path,
+                    action.approved_strings,
                 ),
             };
         default:

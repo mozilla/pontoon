@@ -4,6 +4,7 @@ import api from 'core/api';
 
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
+import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
@@ -174,9 +175,10 @@ export function sendTranslation(
                 )
             );
 
-            // Update stats for the search panel if possible.
+            // Update stats in the filter panel and resource menu if possible.
             if (content.stats) {
                 dispatch(statsActions.update(content.stats));
+                dispatch(resourceActions.update(resource, content.stats.approved));
             }
 
             if (nextEntity) {

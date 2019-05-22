@@ -16,12 +16,17 @@ export type Resource = {|
 
 export type UpdateAction = {|
     type: typeof UPDATE,
-    resource: Resource,
+    resource_path: string,
+    approved_strings: number,
 |};
-export function update(resource: Resource): UpdateAction {
+export function update(
+    resource_path: string,
+    approved_strings: number,
+): UpdateAction {
     return {
         type: UPDATE,
-        resource,
+        resource_path,
+        approved_strings,
     };
 }
 

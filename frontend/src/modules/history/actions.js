@@ -4,6 +4,7 @@ import api from 'core/api';
 
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
+import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 import { actions as listActions } from 'modules/entitieslist';
@@ -166,9 +167,10 @@ export function updateStatus(
             dispatch(get(entity, locale.code, pluralForm));
         }
 
-        // Update stats for the search panel if possible.
+        // Update stats in the filter panel and resource menu if possible.
         if (results.stats) {
             dispatch(statsActions.update(results.stats));
+            dispatch(resourceActions.update(resource, results.stats.approved));
         }
 
         // Refresh the data now that it has changed on the server.
