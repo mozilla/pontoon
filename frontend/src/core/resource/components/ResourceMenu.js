@@ -92,8 +92,9 @@ export class ResourceMenuBase extends React.Component<Props, State> {
 
         // Search resources
         const search = this.state.search;
-        const resourceElements = resources.resources.filter(
-            resource => resource.path.indexOf(search) > -1
+        const resourceElements = resources.resources.filter(resource =>
+            typeof resource.path === 'string' &&  // Exclude All Resources
+            resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
         return <li>
