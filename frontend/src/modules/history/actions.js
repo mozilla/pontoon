@@ -142,28 +142,30 @@ export function updateStatus(
             change, translation, resource, ignoreWarnings
         );
 
-        // Show a notification to explain what happened.
-        const notif = _getOperationNotif(change, !!results.translation);
-        dispatch(notification.actions.add(notif));
-
         // Update the UI based on the response.
         if (results.failedChecks) {
             dispatch(editorActions.update(results.string, 'external'));
             dispatch(editorActions.updateFailedChecks(results.failedChecks, translation));
         }
-        else if (results.translation && change === 'approve' && nextEntity) {
-            // The change did work, we want to move on to the next Entity or pluralForm.
-            pluralActions.moveToNextTranslation(
-                dispatch,
-                router,
-                entity,
-                nextEntity.pk,
-                pluralForm,
-                locale,
-            );
-        }
         else {
-            dispatch(get(entity, locale.code, pluralForm));
+            // Show a notification to explain what happened.
+            const notif = _getOperationNotif(change, !!results.translation);
+            dispatch(notification.actions.add(notif));
+
+            if (results.translation && change === 'approve' && nextEntity) {
+                // The change did work, we want to move on to the next Entity or pluralForm.
+                pluralActions.moveToNextTranslation(
+                    dispatch,
+                    router,
+                    entity,
+                    nextEntity.pk,
+                    pluralForm,
+                    locale,
+                );
+            }
+            else {
+                dispatch(get(entity, locale.code, pluralForm));
+            }
         }
 
         // Update stats for the search panel if possible.
