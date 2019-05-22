@@ -123,11 +123,6 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                     <ul>
                         { resourceElements.length ?
                             resourceElements.map((resource, index) => {
-                                // Skip All Resources entry for more exposed presentation below
-                                if (index === resourceElements.length - 1) {
-                                    return null;
-                                }
-
                                 return <ResourceItem
                                     parameters={ parameters }
                                     resource={ resource }
