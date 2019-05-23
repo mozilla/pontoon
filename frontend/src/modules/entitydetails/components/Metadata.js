@@ -202,10 +202,9 @@ export default class Metadata extends React.Component<Props> {
         return this.renderSourceObject(entity.source);
     }
 
-    navigateToPath = (event: SyntheticMouseEvent<>) => {
+    navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
 
-        // $FLOW_IGNORE
         const path = event.currentTarget.pathname;
         this.props.navigateToPath(path);
     }

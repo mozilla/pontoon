@@ -13,7 +13,7 @@ import type { Resource } from '..';
 type Props = {|
     parameters: NavigationParams,
     resource: Resource,
-    navigateToPath: (SyntheticMouseEvent<>) => void,
+    navigateToPath: (SyntheticMouseEvent<HTMLAnchorElement>) => void,
 |};
 
 

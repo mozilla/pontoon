@@ -53,10 +53,9 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         });
     }
 
-    navigateToPath = (event: SyntheticMouseEvent<>) => {
+    navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
 
-        // $FLOW_IGNORE
         const path = event.currentTarget.pathname;
         this.props.navigateToPath(path);
 
