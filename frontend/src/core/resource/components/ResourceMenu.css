@@ -1,14 +1,13 @@
 .resource-menu {
-    float: right;
     font-weight: 100;
-    padding: 4px 6px;
 }
 
 .resource-menu .selector {
     border-radius: 2px;
     cursor: pointer;
     line-height: 24px;
-    margin: 10px 0;
+    margin: 14px 6px;
+    float: right;
     padding: 4px 6px;
 }
 

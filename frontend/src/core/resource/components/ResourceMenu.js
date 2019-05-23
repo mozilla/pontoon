@@ -98,74 +98,72 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
-        return <li>
-            <div className={ className }>
-                <div
-                    className="selector unselectable"
-                    onClick={ this.toggleVisibility }
-                    title={ parameters.resource }
-                >
-                    <span>{ resourceName }</span>
-                    <span className="icon fa fa-caret-down"></span>
-                </div>
-
-                { !this.state.visible ? null :
-                <div className="menu">
-                    <div className="search-wrapper">
-                        <div className="icon fa fa-search"></div>
-                        <input
-                            type="search"
-                            autoComplete="off"
-                            autoFocus
-                            value={ this.state.search }
-                            onChange={ this.updateResourceList }
-                        />
-                    </div>
-
-                    <ul>
-                        { resourceElements.length ?
-                            resourceElements.map((resource, index) => {
-                                return <ResourceItem
-                                    parameters={ parameters }
-                                    resource={ resource }
-                                    navigateToPath={ this.navigateToPath }
-                                    key={ index }
-                                />;
-                            })
-                            :
-                            // No resources found
-                            <Localized id='navigation-ResourceMenu-no-results'>
-                                <li className="no-results">No results</li>
-                            </Localized>
-                        }
-                    </ul>
-
-                    <ul className="static-links">
-                        <li className={ parameters.resource === 'all-resources' ? 'current' : null }>
-                            <a
-                                href={ `/${parameters.locale}/${parameters.project}/all-resources/` }
-                                onClick={ this.navigateToPath }
-                            >
-                                <Localized id='navigation-ResourceMenu-all-resources'>
-                                    <span>All Resources</span>
-                                </Localized>
-                                <ResourcePercent resource={ allResources } />
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href={ `/${parameters.locale}/all-projects/all-resources/` }
-                                onClick={ this.navigateToPath }
-                            >
-                                <Localized id='navigation-ResourceMenu-all-projects'>
-                                    <span>All Projects</span>
-                                </Localized>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                }
+        return <li className={ className }>
+            <div
+                className="selector unselectable"
+                onClick={ this.toggleVisibility }
+                title={ parameters.resource }
+            >
+                <span>{ resourceName }</span>
+                <span className="icon fa fa-caret-down"></span>
             </div>
+
+            { !this.state.visible ? null :
+            <div className="menu">
+                <div className="search-wrapper">
+                    <div className="icon fa fa-search"></div>
+                    <input
+                        type="search"
+                        autoComplete="off"
+                        autoFocus
+                        value={ this.state.search }
+                        onChange={ this.updateResourceList }
+                    />
+                </div>
+
+                <ul>
+                    { resourceElements.length ?
+                        resourceElements.map((resource, index) => {
+                            return <ResourceItem
+                                parameters={ parameters }
+                                resource={ resource }
+                                navigateToPath={ this.navigateToPath }
+                                key={ index }
+                            />;
+                        })
+                        :
+                        // No resources found
+                        <Localized id='navigation-ResourceMenu-no-results'>
+                            <li className="no-results">No results</li>
+                        </Localized>
+                    }
+                </ul>
+
+                <ul className="static-links">
+                    <li className={ parameters.resource === 'all-resources' ? 'current' : null }>
+                        <a
+                            href={ `/${parameters.locale}/${parameters.project}/all-resources/` }
+                            onClick={ this.navigateToPath }
+                        >
+                            <Localized id='navigation-ResourceMenu-all-resources'>
+                                <span>All Resources</span>
+                            </Localized>
+                            <ResourcePercent resource={ allResources } />
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href={ `/${parameters.locale}/all-projects/all-resources/` }
+                            onClick={ this.navigateToPath }
+                        >
+                            <Localized id='navigation-ResourceMenu-all-projects'>
+                                <span>All Projects</span>
+                            </Localized>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            }
         </li>;
     }
 }
