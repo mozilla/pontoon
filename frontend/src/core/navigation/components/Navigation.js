@@ -66,7 +66,7 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { locales, parameters } = this.props;
+        const { locales, parameters, resources } = this.props;
 
         if (isEmpty(locales.locales)) {
             return null;
@@ -104,8 +104,8 @@ export class NavigationBase extends React.Component<InternalProps> {
                 </li>
                 <resource.ResourceMenu
                     navigateToPath={ this.navigateToPath }
-                    parameters={ this.props.parameters }
-                    resources={ this.props.resources }
+                    parameters={ parameters }
+                    resources={ resources }
                 />
             </ul>
         </nav>;
