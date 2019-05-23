@@ -9,21 +9,25 @@ import * as l10n from 'core/l10n';
 import { Lightbox } from 'core/lightbox';
 import { WaveLoader } from 'core/loaders';
 import * as locales from 'core/locales';
-import { Navigation } from 'core/navigation';
+import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
+import * as project from 'core/project';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
+import { ProjectInfo } from 'modules/projectinfo';
 import { SearchBox } from 'modules/search';
 
 import type { L10nState } from 'core/l10n';
 import type { LocalesState } from 'core/locales';
+import type { NavigationParams } from 'core/navigation';
 
 
 type Props = {|
     l10n: L10nState,
     locales: LocalesState,
     notification: notification.NotificationState,
+    parameters: NavigationParams,
 |};
 
 type InternalProps = {
@@ -38,6 +42,7 @@ type InternalProps = {
 class App extends React.Component<InternalProps> {
     componentDidMount() {
         this.props.dispatch(locales.actions.get());
+        this.props.dispatch(project.actions.get(this.props.parameters.project));
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -75,7 +80,8 @@ class App extends React.Component<InternalProps> {
         return <div id="app">
             <header>
                 <UserControls />
-                <Navigation />
+                <navigation.Navigation />
+                <ProjectInfo />
                 <notification.NotificationPanel notification={ state.notification } />
             </header>
             <section className="panel-list">
@@ -95,6 +101,7 @@ const mapStateToProps = (state: Object): Props => {
         l10n: state[l10n.NAME],
         locales: state[locales.NAME],
         notification: state[notification.NAME],
+        parameters: navigation.selectors.getNavigationParams(state),
     };
 };
 

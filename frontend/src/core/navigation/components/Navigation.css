@@ -1,4 +1,5 @@
 .navigation {
+    float: left;
     font-size: 14px;
     line-height: 60px;
 }

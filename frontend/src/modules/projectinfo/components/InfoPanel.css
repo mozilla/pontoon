@@ -1,0 +1,40 @@
+.info-panel {
+    font-size: 14px;
+}
+
+.info-panel .button {
+    cursor: pointer;
+    font-size: 1.4em;
+    font-weight: 900;
+    line-height: 16px;
+    height: 17px;
+    padding: 21px 7px;
+}
+
+.info-panel .panel {
+    background: #272a2f;
+    bottom: auto;
+    color: #aaa;
+    padding: 10px 12px;
+    position: absolute;
+    top: 59px;
+    width: 360px;
+    z-index: 20;
+}
+
+.info-panel .panel h2 {
+    color: #888888;
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 15px;
+    padding-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.info-panel .panel p {
+    font-weight: 300;
+}
+
+.info-panel .panel a {
+    color: #7bc876;
+}
