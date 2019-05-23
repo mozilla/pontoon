@@ -74,7 +74,7 @@ describe('<ResourceMenuBase>', () => {
         expect(wrapper.find('.resource-menu .menu #navigation-ResourceMenu-all-projects')).toHaveLength(1);
     });
 
-    it('renders resource menu correctly', () => {
+    it('searches resource items correctly', () => {
         const SEARCH = 'bc';
         const wrapper = createShallowResourceMenu();
         wrapper.instance().setState({
