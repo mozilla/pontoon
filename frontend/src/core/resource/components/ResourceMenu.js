@@ -84,7 +84,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         }
 
         let resourceName = parameters.resource.split('/').slice(-1)[0];
-        if (resourceName === 'all-resources') {
+        if (parameters.resource === 'all-resources') {
             resourceName = 'All Resources';
         }
 
