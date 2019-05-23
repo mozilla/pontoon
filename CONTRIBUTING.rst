@@ -81,7 +81,7 @@ To run the linter, do (inside a docker container):
 
 .. code-block:: shell
 
-    $ pylama pontoon
+    $ flake8 pontoon
 
 
 If you hit issues, use ``# noqa`` to make the linter ignore that error. Note

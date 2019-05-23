@@ -1,0 +1,15 @@
+[flake8]
+max_line_length = 100
+ignore = W503, W504
+
+exclude =
+    media/*,
+    */pontoon-intro/*,
+    docs/conf.py,
+    */migrations/*,
+    docs/conf.py,
+    setup.py,
+    node_modules,
+    bin,
+    frontend
+

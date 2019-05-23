@@ -521,11 +521,11 @@ PIPELINE_JS = {
         'output_filename': 'js/machinery.min.js',
     },
     'homepage': {
-        'source_filenames' : (
+        'source_filenames': (
             'js/lib/fullpage.js',
             'js/homepage.js'
         ),
-        'output_filename' : 'js/homepage.min.js',
+        'output_filename': 'js/homepage.min.js',
     },
     'tour': {
         'source_filenames': (

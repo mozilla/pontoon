@@ -676,7 +676,7 @@ def glob_to_regex(glob):
     regex = "^%s" % fnmatch.translate(glob)
     return (
         "%s$" % regex[:-7]
-        if regex[-7:] == "\Z(?ms)"
+        if regex[-7:] == "\\Z(?ms)"
         else regex)
 
 

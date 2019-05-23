@@ -69,7 +69,7 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         original=properties_entity.string,
         locale=locale_a.code,
-        translation='bad suggestion \q %q',
+        translation='bad suggestion \\q %q',
         ignore_warnings='true',
     )
 
@@ -77,7 +77,7 @@ def test_run_checks_during_translation_update(
     assert response.json() == {
         u'failedChecks': {
             u'clErrors': [u'Found single %'],
-            u'clWarnings': [u'unknown escape sequence, \q'],
+            u'clWarnings': [u'unknown escape sequence, \\q'],
         },
     }
 

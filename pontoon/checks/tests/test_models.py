@@ -30,7 +30,7 @@ def translation_compare_locales_warning(translation_properties):
     translation = Translation.objects.get(pk=translation_properties.pk)
     translation.pk = None
 
-    translation.string = 'raise warning \q'
+    translation.string = 'raise warning \\q'
     translation.save()
 
     yield translation
@@ -136,7 +136,7 @@ def test_bulk_run_checks(
 
     assert cl_warning.pk is not None
     assert cl_warning.library == 'cl'
-    assert cl_warning.message == 'unknown escape sequence, \q'
+    assert cl_warning.message == 'unknown escape sequence, \\q'
     assert cl_warning.translation == translation_compare_locales_warning
 
     assert cl_error.pk is not None

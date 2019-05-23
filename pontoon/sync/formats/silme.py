@@ -176,7 +176,7 @@ class SilmeResource(ParsedResource):
                 if type(line) == text_type and line.startswith('\n'):
                     line = line[len('\n'):]
                     new_structure[pos] = line
-                    if len(line) is 0:
+                    if len(line) == 0:
                         new_structure.remove_element(pos)
 
         # Temporary fix for bug 1236281 until bug 721211 lands

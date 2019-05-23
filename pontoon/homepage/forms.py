@@ -16,4 +16,3 @@ class HomepageForm(forms.ModelForm):
                 home page, the content is expected to be separated into sections with class
                 "section"."""
         }
-
