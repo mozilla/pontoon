@@ -6,7 +6,8 @@ import onClickOutside from 'react-onclickoutside';
 
 import './ResourceMenu.css';
 
-import { ResourceItem, ResourcePercent } from '..';
+import ResourceItem from './ResourceItem.js';
+import ResourcePercent from './ResourcePercent.js';
 
 import type { NavigationParams } from 'core/navigation';
 import type { ResourcesState } from '..';

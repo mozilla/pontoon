@@ -1,7 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import ResourceItem from './ResourceItem';
+import ResourceItem from './ResourceItem.js';
+
 import { ResourceMenuBase } from './ResourceMenu';
 
 

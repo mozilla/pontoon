@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import './ResourceItem.css';
 
-import { ResourcePercent } from '..';
+import ResourcePercent from './ResourcePercent.js';
 
 import type { NavigationParams } from 'core/navigation';
 import type { Resource } from '..';
