@@ -9,28 +9,28 @@ export const UPDATE: 'resource/UPDATE' = 'resource/UPDATE';
 
 export type Resource = {|
     +path: string,
-    +approved_strings: number,
-    +strings_with_warnings: number,
-    +total_strings: number,
+    +approvedStrings: number,
+    +stringsWithWarnings: number,
+    +totalStrings: number,
 |};
 
 
 export type UpdateAction = {|
     type: typeof UPDATE,
-    resource_path: string,
-    approved_strings: number,
-    strings_with_warnings: number,
+    resourcePath: string,
+    approvedStrings: number,
+    stringsWithWarnings: number,
 |};
 export function update(
-    resource_path: string,
-    approved_strings: number,
-    strings_with_warnings: number,
+    resourcePath: string,
+    approvedStrings: number,
+    stringsWithWarnings: number,
 ): UpdateAction {
     return {
         type: UPDATE,
-        resource_path,
-        approved_strings,
-        strings_with_warnings,
+        resourcePath,
+        approvedStrings,
+        stringsWithWarnings,
     };
 }
 
@@ -54,9 +54,9 @@ export function get(locale: string, project: string): Function {
         const resources = results.map(resource => {
             return {
                 path: resource.resource__path,
-                approved_strings: resource.approved_strings,
-                strings_with_warnings: resource.strings_with_warnings,
-                total_strings: resource.resource__total_strings,
+                approvedStrings: resource.approved_strings,
+                stringsWithWarnings: resource.strings_with_warnings,
+                totalStrings: resource.resource__total_strings,
             };
         });
 

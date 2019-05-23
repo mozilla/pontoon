@@ -5,14 +5,14 @@ import { RECEIVE, UPDATE } from './actions';
 describe('reducer', () => {
     const RESOURCES = [{
         path: 'path/to.file',
-        approved_strings: 1,
-        strings_with_warnings: 1,
-        total_strings: 2,
+        approvedStrings: 1,
+        stringsWithWarnings: 1,
+        totalStrings: 2,
     }, {
         path: [],
-        approved_strings: 1,
-        strings_with_warnings: 1,
-        total_strings: 2,
+        approvedStrings: 1,
+        stringsWithWarnings: 1,
+        totalStrings: 2,
     }];
 
     it('returns the initial state', () => {
@@ -44,14 +44,14 @@ describe('reducer', () => {
     it('handles the UPDATE action', () => {
         const UPDATED_RESOURCES = [{
             path: 'path/to.file',
-            approved_strings: 2,
-            strings_with_warnings: 0,
-            total_strings: 2,
+            approvedStrings: 2,
+            stringsWithWarnings: 0,
+            totalStrings: 2,
         }, {
             path: [],
-            approved_strings: 2,
-            strings_with_warnings: 0,
-            total_strings: 2,
+            approvedStrings: 2,
+            stringsWithWarnings: 0,
+            totalStrings: 2,
         }];
 
         const res = reducer(
@@ -60,9 +60,9 @@ describe('reducer', () => {
             },
             {
                 type: UPDATE,
-                resource_path: 'path/to.file',
-                approved_strings: 2,
-                strings_with_warnings: 0,
+                resourcePath: 'path/to.file',
+                approvedStrings: 2,
+                stringsWithWarnings: 0,
             }
         );
 

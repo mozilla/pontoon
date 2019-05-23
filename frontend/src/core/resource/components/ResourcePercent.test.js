@@ -6,9 +6,9 @@ import ResourcePercent from './ResourcePercent';
 
 describe('<ResourcePercent>', () => {
     const RESOURCE = {
-        approved_strings: 2,
-        strings_with_warnings: 3,
-        total_strings: 10,
+        approvedStrings: 2,
+        stringsWithWarnings: 3,
+        totalStrings: 10,
     };
 
     it('renders correctly', () => {

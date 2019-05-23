@@ -16,10 +16,10 @@ type Props = {|
  * Render a resource item percentage.
  */
 export default function ResourcePercent(props: Props) {
-    const { approved_strings, strings_with_warnings, total_strings }  = props.resource;
-    const complete_strings = approved_strings + strings_with_warnings;
+    const { approvedStrings, stringsWithWarnings, totalStrings } = props.resource;
+    const completeStrings = approvedStrings + stringsWithWarnings;
 
-    const percent = Math.floor(complete_strings / total_strings * 100) + '%';
+    const percent = Math.floor(completeStrings / totalStrings * 100) + '%';
 
     return <span className="percent">{ percent }</span>;
 }

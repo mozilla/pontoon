@@ -17,21 +17,21 @@ export type ResourcesState = {|
 
 function updateResource(
     state: Object,
-    resource_path: string,
-    approved_strings: number,
-    strings_with_warnings: number,
+    resourcePath: string,
+    approvedStrings: number,
+    stringsWithWarnings: number,
 ): Array<Resource> {
     return state.resources.map(item => {
-        if (item.path === resource_path) {
+        if (item.path === resourcePath) {
             const allResources = state.resources.slice(-1)[0];
 
-            const diff_approved = approved_strings - item.approved_strings;
-            item.approved_strings += diff_approved;
-            allResources.approved_strings += diff_approved;
+            const diffApproved = approvedStrings - item.approvedStrings;
+            item.approvedStrings += diffApproved;
+            allResources.approvedStrings += diffApproved;
 
-            const diff_warnings = strings_with_warnings - item.strings_with_warnings;
-            item.strings_with_warnings += diff_warnings;
-            allResources.strings_with_warnings += diff_warnings;
+            const diffWarnings = stringsWithWarnings - item.stringsWithWarnings;
+            item.stringsWithWarnings += diffWarnings;
+            allResources.stringsWithWarnings += diffWarnings;
         }
 
         return item;
@@ -58,9 +58,9 @@ export default function reducer(
                 ...state,
                 resources: updateResource(
                     state,
-                    action.resource_path,
-                    action.approved_strings,
-                    action.strings_with_warnings,
+                    action.resourcePath,
+                    action.approvedStrings,
+                    action.stringsWithWarnings,
                 ),
             };
         default:
