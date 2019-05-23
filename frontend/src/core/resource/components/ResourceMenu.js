@@ -87,13 +87,9 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             resourceName = 'All Resources';
         }
 
-        // Extract All Resources entry for more exposed presentation
-        const allResources = resources.resources.slice(-1)[0];
-
         // Search resources
         const search = this.state.search;
         const resourceElements = resources.resources.filter(resource =>
-            typeof resource.path === 'string' &&  // Exclude All Resources
             resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
@@ -147,7 +143,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                             <Localized id='navigation-ResourceMenu-all-resources'>
                                 <span>All Resources</span>
                             </Localized>
-                            <ResourcePercent resource={ allResources } />
+                            <ResourcePercent resource={ resources.allResources } />
                         </a>
                     </li>
                     <li>

@@ -12,35 +12,58 @@ type Action =
 
 export type ResourcesState = {|
     +resources: Array<Resource>,
+    +allResources: Resource,
 |};
 
 
 function updateResource(
-    state: Object,
+    resources: Array<Resource>,
     resourcePath: string,
     approvedStrings: number,
     stringsWithWarnings: number,
 ): Array<Resource> {
-    return state.resources.map(item => {
+    return resources.map(item => {
         if (item.path === resourcePath) {
-            const allResources = state.resources.slice(-1)[0];
-
-            const diffApproved = approvedStrings - item.approvedStrings;
-            item.approvedStrings += diffApproved;
-            allResources.approvedStrings += diffApproved;
-
-            const diffWarnings = stringsWithWarnings - item.stringsWithWarnings;
-            item.stringsWithWarnings += diffWarnings;
-            allResources.stringsWithWarnings += diffWarnings;
+            return {
+                ...item,
+                approvedStrings,
+                stringsWithWarnings,
+            }
         }
-
-        return item;
+        else {
+            return item;
+        }
     });
+}
+
+
+function updateAllResources(
+    state: Object,
+    resourcePath: string,
+    approvedStrings: number,
+    stringsWithWarnings: number,
+): Resource {
+    const updatedResource = state.resources.find(item => item.path === resourcePath);
+
+    const diffApproved = approvedStrings - updatedResource.approvedStrings;
+    const diffWarnings = stringsWithWarnings - updatedResource.stringsWithWarnings;
+
+    return {
+        ...state.allResources,
+        approvedStrings: state.allResources.approvedStrings + diffApproved,
+        stringsWithWarnings: state.allResources.stringsWithWarnings + diffWarnings,
+    }
 }
 
 
 const initial: ResourcesState = {
     resources: [],
+    allResources: {
+        path: 'all-resources',
+        approvedStrings: 0,
+        stringsWithWarnings: 0,
+        totalStrings: 0,
+    },
 };
 
 export default function reducer(
@@ -52,11 +75,18 @@ export default function reducer(
             return {
                 ...state,
                 resources: action.resources,
+                allResources: action.allResources,
             };
         case UPDATE:
             return {
                 ...state,
                 resources: updateResource(
+                    state.resources,
+                    action.resourcePath,
+                    action.approvedStrings,
+                    action.stringsWithWarnings,
+                ),
+                allResources: updateAllResources(
                     state,
                     action.resourcePath,
                     action.approvedStrings,

@@ -38,11 +38,16 @@ export function update(
 export type ReceiveAction = {|
     type: typeof RECEIVE,
     resources: Array<Resource>,
+    allResources: Resource,
 |};
-export function receive(resources: Array<Resource>): ReceiveAction {
+export function receive(
+    resources: Array<Resource>,
+    allResources: Resource,
+): ReceiveAction {
     return {
         type: RECEIVE,
         resources,
+        allResources,
     };
 }
 
@@ -53,14 +58,16 @@ export function get(locale: string, project: string): Function {
 
         const resources = results.map(resource => {
             return {
-                path: resource.resource__path,
+                path: resource.title,
                 approvedStrings: resource.approved_strings,
                 stringsWithWarnings: resource.strings_with_warnings,
                 totalStrings: resource.resource__total_strings,
             };
         });
 
-        dispatch(receive(resources));
+        const allResources = resources.pop();
+
+        dispatch(receive(resources, allResources));
     }
 }
 
