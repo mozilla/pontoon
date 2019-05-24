@@ -38,22 +38,6 @@ type InternalProps = {|
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
 export class NavigationBase extends React.Component<InternalProps> {
-    componentDidMount() {
-        const { parameters } = this.props;
-
-        // We don't load resource in All Projects view
-        if (parameters.project === 'all-projects') {
-            return;
-        }
-
-        this.props.dispatch(
-            resource.actions.get(
-                parameters.locale,
-                parameters.project,
-            )
-        );
-    }
-
     navigateToPath = (path: string) => {
         const { dispatch } = this.props;
 
