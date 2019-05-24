@@ -17,16 +17,12 @@ import { CircleLoader } from 'core/loaders'
 
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
-import type { Entities, DbEntity } from '../reducer';
+import type { DbEntity, EntitiesListState } from '../reducer';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
-    entities: {|
-        entities: Entities,
-        hasMore: boolean,
-        fetching: boolean,
-    |},
+    entities: EntitiesListState,
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
@@ -37,6 +33,7 @@ type InternalProps = {|
     ...Props,
     dispatch: Function,
 |};
+
 
 /**
  * Displays a list of entities and their current translation.
@@ -142,7 +139,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
             this.selectEntity(firstEntity);
 
-            if (selectedEntity && !isSelectedEntityValid) {
+            // Only do this the very first time entities are loaded.
+            if (entities.fetchCount === 1 && selectedEntity && !isSelectedEntityValid) {
                 dispatch(
                     notification.actions.add(
                         notification.messages.ENTITY_NOT_FOUND
