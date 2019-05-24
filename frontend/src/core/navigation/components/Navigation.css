@@ -3,11 +3,11 @@
     line-height: 60px;
 }
 
-.navigation ul li {
-    display: inline-block;
+.navigation > ul > li {
+    float: left;
 }
 
-.navigation ul li + li::before {
+.navigation > ul > li + li::before {
     color: #4D5967;
     content: '/';
     font-size: 28px;
@@ -15,22 +15,22 @@
     vertical-align: bottom;
 }
 
-.navigation img {
-    margin-top: -2px;
-    vertical-align: middle;
-}
-
-.navigation a {
+.navigation > ul > li > a {
     color: #EBEBEB;
     font-weight: 300;
     padding: 0 12px;
 }
 
-.navigation a:hover {
+.navigation > ul > li > a:hover {
     color: #7BC876;
+}
+
+.navigation img {
+    margin-top: -2px;
+    vertical-align: middle;
 }
 
 .navigation .locale-code {
     color: #7BC876;
-    padding-left: 8px;
+    padding-left: 7px;
 }

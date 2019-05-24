@@ -37,6 +37,9 @@ function createEditorBase({
             { translation: 'initial' }
         }
         locale={ LOCALE }
+        parameters={
+            { resource: 'resource' }
+        }
         pluralForm={ pluralForm }
         selectedEntity={ selectedEntity }
         user={ {

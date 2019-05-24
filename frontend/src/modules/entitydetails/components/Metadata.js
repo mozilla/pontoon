@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import Linkify from 'react-linkify';
 import { Localized } from 'fluent-react';
 
@@ -45,6 +44,7 @@ type Props = {|
     +pluralForm: number,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
+    +navigateToPath: (string) => void,
 |};
 
 
@@ -202,6 +202,13 @@ export default class Metadata extends React.Component<Props> {
         return this.renderSourceObject(entity.source);
     }
 
+    navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+
+        const path = event.currentTarget.pathname;
+        this.props.navigateToPath(path);
+    }
+
     render(): React.Node {
         const { entity, locale, openLightbox } = this.props;
 
@@ -217,9 +224,12 @@ export default class Metadata extends React.Component<Props> {
             { this.renderSources(entity) }
             <Localized id='entitydetails-metadata-resource' attrs={ { title: true } }>
                 <Property title='Resource' className='resource'>
-                    <Link to={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }>
+                    <a
+                        href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
+                        onClick={ this.navigateToPath }
+                    >
                         { entity.path }
-                    </Link>
+                    </a>
                 </Property>
             </Localized>
             <Localized id='entitydetails-metadata-project' attrs={ { title: true } }>

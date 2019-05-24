@@ -120,6 +120,7 @@ export class EditorBase extends React.Component<InternalProps> {
             state.user.settings.forceSuggestions,
             state.nextEntity,
             state.router,
+            state.parameters.resource,
             ignoreWarnings,
         ));
     }

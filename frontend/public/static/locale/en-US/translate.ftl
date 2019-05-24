@@ -210,8 +210,16 @@ user-UserMenu--settings = <glyph></glyph>Settings
 user-SignOut--sign-out = <glyph></glyph>Sign out
 
 
+## Resource menu
+## Used in the resource menu in the main navigation bar.
+navigation-ResourceMenu-no-results = No results
+navigation-ResourceMenu-all-resources = All Resources
+navigation-ResourceMenu-all-projects = All Projects
+
+
 ## Notification
 ## Messages shown to users after they perform actions.
+
 notification--translation-approved = Translation approved
 notification--translation-unaproved = Translation unaproved
 notification--translation-rejected = Translation rejected

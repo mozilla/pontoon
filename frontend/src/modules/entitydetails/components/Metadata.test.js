@@ -50,7 +50,7 @@ describe('<Metadata>', () => {
         const content = wrapper.find('Linkify').map(item => item.props().children);
         expect(content).toContain(ENTITY.comment);
 
-        expect(wrapper.find('Link').props().to).toContain(ENTITY.path);
+        expect(wrapper.find('#entitydetails-metadata-resource a').text()).toContain(ENTITY.path);
     });
 
     it('renders the selected plural form as original string', () => {
