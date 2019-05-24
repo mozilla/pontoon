@@ -12,6 +12,7 @@ import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as project from 'core/project';
+import * as resource from 'core/resource';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
@@ -43,8 +44,17 @@ type InternalProps = {
  */
 class App extends React.Component<InternalProps> {
     componentDidMount() {
+        const { parameters } = this.props;
+
         this.props.dispatch(locales.actions.get());
-        this.props.dispatch(project.actions.get(this.props.parameters.project));
+        this.props.dispatch(project.actions.get(parameters.project));
+
+        // Load resources, unless we're in the All Projects view
+        if (parameters.project !== 'all-projects') {
+            this.props.dispatch(
+                resource.actions.get(parameters.locale, parameters.project)
+            );
+        }
     }
 
     componentDidUpdate(prevProps: InternalProps) {
