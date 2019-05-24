@@ -1,54 +1,55 @@
 import React from 'react';
-import sinon from 'sinon';
+import { shallow } from 'enzyme';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
-
-import * as project from 'core/project';
-
-import ProjectInfo, { ProjectInfoBase } from './ProjectInfo';
+import { ProjectInfoBase } from './ProjectInfo';
 
 
 describe('<ProjectInfo>', () => {
-    beforeAll(() => {
-        sinon.stub(project.actions, 'get').returns({type: 'whatever'});
+    const PROJECT = {
+        fetching: false,
+        name: 'hello',
+        info: 'Hello, World!',
+    };
+
+    it('shows only a button by default', () => {
+        const wrapper = shallow(<ProjectInfoBase project={ PROJECT } />);
+
+        expect(wrapper.find('.button').exists()).toBeTruthy();
+        expect(wrapper.find('.panel').exists()).toBeFalsy();
     });
 
-    afterEach(() => {
-        // Make sure tests do not pollute one another.
-        project.actions.get.resetHistory();
-    });
+    it('shows the info panel after a click', () => {
+        const wrapper = shallow(<ProjectInfoBase project={ PROJECT } />);
+        wrapper.find('.button').simulate('click');
 
-    afterAll(() => {
-        project.actions.get.restore();
+        expect(wrapper.find('.panel').exists()).toBeTruthy();
     });
 
     it('returns null when data is being fetched', () => {
-        const store = createReduxStore();
-        store.dispatch(project.actions.request());
-        const wrapper = shallowUntilTarget(<ProjectInfo store={ store } />, ProjectInfoBase);
+        const project = {
+            ...PROJECT,
+            fetching: true,
+        };
+        const wrapper = shallow(<ProjectInfoBase project={ project } />);
 
         expect(wrapper.type()).toBeNull();
     });
 
-    it('returns null when name is null', () => {
-        const store = createReduxStore();
-        store.dispatch(project.actions.receive({ name: '', info: '' }));
-        const wrapper = shallowUntilTarget(<ProjectInfo store={ store } />, ProjectInfoBase);
+    it('returns null when info is null', () => {
+        const project = {
+            ...PROJECT,
+            info: '',
+        };
+        const wrapper = shallow(<ProjectInfoBase project={ project } />);
 
         expect(wrapper.type()).toBeNull();
     });
 
     it('returns null when project is all-projects', () => {
-        const store = createReduxStore({
-            router: {
-                location: {
-                    pathname: '/kg/all-projects/all-resources/',
-                }
-            },
-        });
-        store.dispatch(project.actions.receive({ name: 'All The Projects', info: '' }));
-        const wrapper = shallowUntilTarget(<ProjectInfo store={ store } />, ProjectInfoBase);
+        const wrapper = shallow(<ProjectInfoBase
+            projectSlug={ 'all-projects' }
+            project={ PROJECT }
+        />);
 
         expect(wrapper.type()).toBeNull();
     });

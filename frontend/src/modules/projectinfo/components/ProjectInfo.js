@@ -1,55 +1,71 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import onClickOutside from 'react-onclickoutside';
 
 import './ProjectInfo.css';
 
-import * as navigation from 'core/navigation';
-import * as project from 'core/project';
-
-import InfoPanel from './InfoPanel';
-
-import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 
 
 type Props = {|
-    parameters: NavigationParams,
+    projectSlug: string,
     project: ProjectState,
 |};
 
-type InternalProps = {|
-    ...Props,
-    dispatch: Function,
+type State = {|
+    visible: boolean,
 |};
 
 
 /**
- * Render the current project's completion status and its info panel.
+ * Show a panel with the information provided for the current project.
  */
-export class ProjectInfoBase extends React.Component<InternalProps> {
+export class ProjectInfoBase extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            visible: false,
+        };
+    }
+
+    toggleVisibility = () => {
+        this.setState((state) => {
+            return { visible: !state.visible };
+        });
+    }
+
+    // This method is called by the Higher-Order Component `onClickOutside`
+    // when a user clicks outside the search panel.
+    handleClickOutside = () => {
+        this.setState({
+            visible: false,
+        });
+    }
+
     render() {
         if (
             this.props.project.fetching ||
-            !this.props.project.name ||
-            this.props.parameters.project === 'all-projects'
+            !this.props.project.info ||
+            this.props.projectSlug === 'all-projects'
         ) {
             return null;
         }
 
-        return <div className="project-info">
-            <InfoPanel info={ this.props.project.info } />
+        return <div className="info-panel">
+            <div className="button" onClick={ this.toggleVisibility }>
+                <span className="fa fa-info"></span>
+            </div>
+            { !this.state.visible ? null :
+            <div className="panel">
+                <h2>Project Info</h2>
+                {/* We can safely use project.info because it is validated by
+                    bleach before being saved into the database. */}
+                <p dangerouslySetInnerHTML={ { __html: this.props.project.info } } />
+            </div> }
         </div>;
     }
 }
 
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        parameters: navigation.selectors.getNavigationParams(state),
-        project: state[project.NAME],
-    };
-};
-
-export default connect(mapStateToProps)(ProjectInfoBase);
+export default onClickOutside(ProjectInfoBase);

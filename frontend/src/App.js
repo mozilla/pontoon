@@ -21,6 +21,7 @@ import { SearchBox } from 'modules/search';
 import type { L10nState } from 'core/l10n';
 import type { LocalesState } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
+import type { ProjectState } from 'core/project';
 
 
 type Props = {|
@@ -28,6 +29,7 @@ type Props = {|
     locales: LocalesState,
     notification: notification.NotificationState,
     parameters: NavigationParams,
+    project: ProjectState,
 |};
 
 type InternalProps = {
@@ -81,7 +83,10 @@ class App extends React.Component<InternalProps> {
             <header>
                 <UserControls />
                 <navigation.Navigation />
-                <ProjectInfo />
+                <ProjectInfo
+                    projectSlug={ state.parameters.project }
+                    project={ state.project }
+                />
                 <notification.NotificationPanel notification={ state.notification } />
             </header>
             <section className="panel-list">
@@ -102,6 +107,7 @@ const mapStateToProps = (state: Object): Props => {
         locales: state[locales.NAME],
         notification: state[notification.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
+        project: state[project.NAME],
     };
 };
 
