@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
@@ -187,6 +188,17 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     }
 
+    navigateToPath = (path: string) => {
+        const { dispatch } = this.props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => { dispatch(push(path)); }
+            )
+        );
+    }
+
     openLightbox = (image: string) => {
         this.props.dispatch(lightbox.actions.open(image));
     }
@@ -251,6 +263,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 pluralForm={ state.pluralForm }
                 openLightbox={ this.openLightbox }
                 addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                navigateToPath={ this.navigateToPath }
             />
             <editor.Editor />
             <Helpers

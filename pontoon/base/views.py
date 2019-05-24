@@ -157,13 +157,29 @@ def locale_stats(request, locale):
 @utils.require_AJAX
 def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
-    locale = get_object_or_404(Locale, code=locale)
-    project = get_object_or_404(Project, slug=slug)
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=e),
+        }, status=404)
+
+    try:
+        project = Project.objects.get(slug=slug)
+    except Project.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=e),
+        }, status=404)
 
     try:
         return JsonResponse(locale.parts_stats(project), safe=False)
     except ProjectLocale.DoesNotExist:
-        raise Http404('Locale not enabled for selected project.')
+        return JsonResponse({
+            'status': False,
+            'message': 'Locale not enabled for selected project.',
+        }, status=400)
 
 
 @utils.require_AJAX

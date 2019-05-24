@@ -4,6 +4,8 @@ import api from 'core/api';
 
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
+import { actions as resourceActions } from 'core/resource';
+import { actions as statsActions } from 'core/stats';
 import { actions as entitiesActions } from 'modules/entitieslist';
 
 import type { DbEntity } from 'modules/entitieslist';
@@ -129,6 +131,7 @@ export function sendTranslation(
     forceSuggestions: boolean,
     nextEntity: ?DbEntity,
     router: Object,
+    resource: string,
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
@@ -139,6 +142,7 @@ export function sendTranslation(
             pluralForm,
             original,
             forceSuggestions,
+            resource,
             ignoreWarnings,
         );
 
@@ -170,6 +174,19 @@ export function sendTranslation(
                     content.translation
                 )
             );
+
+            // Update stats in the filter panel and resource menu if possible.
+            if (content.stats) {
+                dispatch(statsActions.update(content.stats));
+                dispatch(
+                    resourceActions.update(
+                        resource,
+                        content.stats.approved,
+                        content.stats.warnings,
+                    )
+                );
+            }
+
             if (nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
                 pluralActions.moveToNextTranslation(
