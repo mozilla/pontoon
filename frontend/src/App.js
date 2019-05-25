@@ -13,16 +13,19 @@ import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
+import * as stats from 'core/stats';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { ProjectInfo } from 'modules/projectinfo';
+import { ProgressChart } from 'modules/progresschart';
 import { SearchBox } from 'modules/search';
 
 import type { L10nState } from 'core/l10n';
 import type { LocalesState } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
+import type { Stats } from 'core/stats';
 
 
 type Props = {|
@@ -31,6 +34,7 @@ type Props = {|
     notification: notification.NotificationState,
     parameters: NavigationParams,
     project: ProjectState,
+    stats: Stats,
 |};
 
 type InternalProps = {
@@ -91,13 +95,16 @@ class App extends React.Component<InternalProps> {
 
         return <div id="app">
             <header>
-                <UserControls />
                 <navigation.Navigation />
+                <ProgressChart
+                    stats={ state.stats }
+                />
                 <ProjectInfo
                     projectSlug={ state.parameters.project }
                     project={ state.project }
                 />
                 <notification.NotificationPanel notification={ state.notification } />
+                <UserControls />
             </header>
             <section className="panel-list">
                 <SearchBox />
@@ -118,6 +125,7 @@ const mapStateToProps = (state: Object): Props => {
         notification: state[notification.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
+        stats: state[stats.NAME],
     };
 };
 

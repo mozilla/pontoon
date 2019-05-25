@@ -6,9 +6,9 @@ export const UPDATE: 'stats/UPDATE' = 'stats/UPDATE';
 export type APIStats = {|
     approved: number,
     fuzzy: number,
-    unreviewed: number,
     warnings: number,
     errors: number,
+    unreviewed: number,
     total: number,
 |};
 
