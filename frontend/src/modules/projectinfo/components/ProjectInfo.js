@@ -52,7 +52,7 @@ export class ProjectInfoBase extends React.Component<Props, State> {
             return null;
         }
 
-        return <div className="info-panel">
+        return <div className="project-info">
             <div className="button" onClick={ this.toggleVisibility }>
                 <span className="fa fa-info"></span>
             </div>
