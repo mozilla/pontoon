@@ -47,17 +47,18 @@ def machinery(request):
     })
 
 
-def translation_memory(request):
+def translation_memory(request=None, text=None, locale=None, pk=None):
     """Get translations from internal translations memory."""
-    try:
-        text = request.GET['text']
-        locale = request.GET['locale']
-        pk = request.GET['pk']
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+    if request:
+        try:
+            text = request.GET['text']
+            locale = request.GET['locale']
+            pk = request.GET['pk']
+        except MultiValueDictKeyError as e:
+            return JsonResponse({
+                'status': False,
+                'message': 'Bad Request: {error}'.format(error=e),
+            }, status=400)
 
     MAX_RESULTS = 5
 
@@ -168,16 +169,17 @@ def microsoft_translator(request):
         }, status=400)
 
 
-def google_translate(request):
+def google_translate(request=None, text=None, locale_code=None):
     """Get translation from Google machine translation service."""
-    try:
-        text = request.GET['text']
-        locale_code = request.GET['locale']
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+    if request:
+        try:
+            text = request.GET['text']
+            locale_code = request.GET['locale']
+        except MultiValueDictKeyError as e:
+            return JsonResponse({
+                'status': False,
+                'message': 'Bad Request: {error}'.format(error=e),
+            }, status=400)
 
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
