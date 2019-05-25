@@ -1147,6 +1147,8 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
+    pre_translation_enabled = models.BooleanField(default=False)
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
