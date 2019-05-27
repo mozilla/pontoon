@@ -237,9 +237,9 @@ def manage_project(request, slug=None, template='admin_project.html'):
             # Cannot use values_list() here, because it hits the DB again
             'locales': [l.pk for l in p.locales.all()],
         })
-        
+
     locales_available = Locale.objects.exclude(pk__in=locales_selected)
-    
+
     # Admins reason in terms of locale codes (see bug 1394194)
     locales_readonly = locales_readonly.order_by('code')
     locales_selected = locales_selected.order_by('code')
