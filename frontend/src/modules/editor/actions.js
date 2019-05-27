@@ -123,10 +123,9 @@ function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
  * Save the current translation.
  */
 export function sendTranslation(
-    entity: number,
+    entity: DbEntity,
     translation: string,
     locale: Locale,
-    original: string,
     pluralForm: number,
     forceSuggestions: boolean,
     nextEntity: ?DbEntity,
@@ -136,11 +135,11 @@ export function sendTranslation(
 ): Function {
     return async dispatch => {
         const content = await api.translation.updateTranslation(
-            entity,
+            entity.pk,
             translation,
             locale.code,
             pluralForm,
-            original,
+            entity.original,
             forceSuggestions,
             resource,
             ignoreWarnings,
@@ -169,7 +168,7 @@ export function sendTranslation(
 
             dispatch(
                 entitiesActions.updateEntityTranslation(
-                    entity,
+                    entity.pk,
                     pluralForm,
                     content.translation
                 )
@@ -180,7 +179,7 @@ export function sendTranslation(
                 dispatch(statsActions.update(content.stats));
                 dispatch(
                     resourceActions.update(
-                        resource,
+                        entity.path,
                         content.stats.approved,
                         content.stats.warnings,
                     )
@@ -192,7 +191,7 @@ export function sendTranslation(
                 pluralActions.moveToNextTranslation(
                     dispatch,
                     router,
-                    entity,
+                    entity.pk,
                     nextEntity.pk,
                     pluralForm,
                     locale,
