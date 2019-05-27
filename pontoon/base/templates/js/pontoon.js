@@ -650,7 +650,7 @@
     if (!window.jQuery) {
       if (!jqueryAppended && document.body) {
         var script = document.createElement('script');
-        script.src = '//pontoon.mozilla.org/static/js/jquery-1.11.1.min.js';
+        script.src = '//pontoon.mozilla.org/static/js/lib/jquery-1.11.1.min.js';
         document.body.appendChild(script);
 
         jqueryAppended = true;
