@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { ProgressChartBase } from './ProgressChart';
+import { ResourceProgressBase } from './ResourceProgress';
 
 
-describe('<ProgressChart>', () => {
+describe('<ResourceProgress>', () => {
     const STATS = {
         approved: 5,
         fuzzy: 4,
@@ -16,14 +16,14 @@ describe('<ProgressChart>', () => {
     };
 
     it('shows only a selector by default', () => {
-        const wrapper = shallow(<ProgressChartBase stats={ STATS } />);
+        const wrapper = shallow(<ResourceProgressBase stats={ STATS } />);
 
         expect(wrapper.find('.selector').exists()).toBeTruthy();
         expect(wrapper.find('.menu').exists()).toBeFalsy();
     });
 
     it('shows the info menu after a click', () => {
-        const wrapper = shallow(<ProgressChartBase stats={ STATS } />);
+        const wrapper = shallow(<ResourceProgressBase stats={ STATS } />);
         wrapper.find('.selector').simulate('click');
 
         expect(wrapper.find('.menu').exists()).toBeTruthy();

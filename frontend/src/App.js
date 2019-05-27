@@ -18,7 +18,7 @@ import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { ProjectInfo } from 'modules/projectinfo';
-import { ProgressChart } from 'modules/progresschart';
+import { ResourceProgress } from 'modules/resourceprogress';
 import { SearchBox } from 'modules/search';
 
 import type { L10nState } from 'core/l10n';
@@ -96,7 +96,7 @@ class App extends React.Component<InternalProps> {
         return <div id="app">
             <header>
                 <navigation.Navigation />
-                <ProgressChart
+                <ResourceProgress
                     stats={ state.stats }
                 />
                 <ProjectInfo

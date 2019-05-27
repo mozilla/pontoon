@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import './Canvas.css';
+import './ProgressChart.css';
 
 import type { Stats } from 'core/stats';
 
@@ -16,7 +16,7 @@ type Props = {|
 /**
  * Render current resource progress data on canvas.
  */
-export default class Canvas extends React.Component<Props> {
+export default class ProgressChart extends React.Component<Props> {
     canvas: { current: HTMLCanvasElement | null };
 
     constructor(props: Props) {

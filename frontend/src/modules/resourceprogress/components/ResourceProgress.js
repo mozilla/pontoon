@@ -3,9 +3,9 @@
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 
-import './ProgressChart.css';
+import './ResourceProgress.css';
 
-import Canvas from './Canvas';
+import ProgressChart from './ProgressChart';
 
 import type { Stats } from 'core/stats';
 
@@ -22,7 +22,7 @@ type State = {|
 /**
  * Show a panel with progress chart and stats for the current resource.
  */
-export class ProgressChartBase extends React.Component<Props, State> {
+export class ResourceProgressBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -55,7 +55,7 @@ export class ProgressChartBase extends React.Component<Props, State> {
 
         return <div className="progress-chart">
             <div className="selector" onClick={ this.toggleVisibility }>
-                <Canvas stats={ this.props.stats } size={ 44 } />
+                <ProgressChart stats={ this.props.stats } size={ 44 } />
                 <span className="percent unselectable">{ percent }</span>
             </div>
             { !this.state.visible ? null :
@@ -65,7 +65,7 @@ export class ProgressChartBase extends React.Component<Props, State> {
                         <h2>All strings <span className="value">{ total }</span></h2>
                         <h2 className="small">Unreviewed <span className="value">{ unreviewed }</span></h2>
                     </header>
-                    <Canvas stats={ this.props.stats } size={ 220 } />
+                    <ProgressChart stats={ this.props.stats } size={ 220 } />
                     <span className="percent">{ percent }</span>
                 </div>
                 <div className="details">
@@ -97,4 +97,4 @@ export class ProgressChartBase extends React.Component<Props, State> {
 }
 
 
-export default onClickOutside(ProgressChartBase);
+export default onClickOutside(ResourceProgressBase);
