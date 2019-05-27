@@ -39,11 +39,11 @@ export type DbEntity = {
 export type Entities = Array<DbEntity>;
 
 // Read-only state (marked by '+').
-export type State = {
+export type EntitiesListState = {
     +entities: Entities,
     +fetching: boolean,
+    +fetchCount: number,
     +hasMore: boolean,
-    +errors: Array<string>,
 };
 
 
@@ -73,23 +73,24 @@ function updateEntityTranslation(
 }
 
 
-const initial: State = {
+const initial: EntitiesListState = {
     entities: [],
     fetching: false,
+    fetchCount: 0,
     hasMore: true,
-    errors: [],
 };
 
 export default function reducer(
-    state: State = initial,
+    state: EntitiesListState = initial,
     action: Action,
-): State {
+): EntitiesListState {
     switch (action.type) {
         case RECEIVE:
             return {
                 ...state,
                 entities: state.entities.concat(action.entities),
                 fetching: false,
+                fetchCount: state.fetchCount + 1,
                 hasMore: action.hasMore,
             };
         case REQUEST:
