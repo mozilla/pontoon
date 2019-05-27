@@ -64,6 +64,11 @@
     width: 100%;
 }
 
+/* Remove highlight in Chrome */
+.resource-menu .menu .search-wrapper input[type="search"]:focus {
+    outline: none;
+}
+
 .resource-menu .menu .search-wrapper input[type="search"]::-webkit-search-decoration,
 .resource-menu .menu .search-wrapper input[type="search"]::-webkit-search-cancel-button {
     display: none;
