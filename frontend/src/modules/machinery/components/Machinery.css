@@ -48,3 +48,8 @@
     /* Remove extra padding in Chrome search input */
     -webkit-appearance: textfield;
 }
+
+/* Remove highlight in Chrome */
+.machinery > .search-wrapper input[type=search]:focus {
+    outline: none;
+}

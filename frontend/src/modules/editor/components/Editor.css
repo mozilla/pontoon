@@ -20,6 +20,11 @@
     width: 100%;
 }
 
+/* Remove highlight in Chrome */
+.editor textarea:focus {
+    outline: none;
+}
+
 .editor .plural-selector ~ textarea {
     min-height: auto;
 }

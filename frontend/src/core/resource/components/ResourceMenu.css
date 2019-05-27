@@ -14,6 +14,7 @@
 .resource-menu .selector.unselectable {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
+    -webkit-touch-callout: none;
     -webkit-user-select: none;
     -o-user-select: none;
     user-select: none;
@@ -62,6 +63,11 @@
     font-weight: 300;
     padding: 4px 0 3px 25px;
     width: 100%;
+}
+
+/* Remove highlight in Chrome */
+.resource-menu .menu .search-wrapper input[type="search"]:focus {
+    outline: none;
 }
 
 .resource-menu .menu .search-wrapper input[type="search"]::-webkit-search-decoration,

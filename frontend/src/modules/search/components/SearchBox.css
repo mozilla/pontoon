@@ -19,6 +19,11 @@
     -webkit-appearance: textfield;
 }
 
+/* Remove highlight in Chrome */
+.search-box input[type="search"]:focus {
+    outline: none;
+}
+
 /* Remove extra padding in Chrome search input */
 .search-box input[type=search]::-webkit-search-decoration {
     -webkit-appearance: none;
