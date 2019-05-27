@@ -133,7 +133,7 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
 
 export function updateStatus(
     change: ChangeOperation,
-    entity: number,
+    entity: DbEntity,
     locale: Locale,
     resource: string,
     pluralForm: number,
@@ -162,14 +162,14 @@ export function updateStatus(
                 pluralActions.moveToNextTranslation(
                     dispatch,
                     router,
-                    entity,
+                    entity.pk,
                     nextEntity.pk,
                     pluralForm,
                     locale,
                 );
             }
             else {
-                dispatch(get(entity, locale.code, pluralForm));
+                dispatch(get(entity.pk, locale.code, pluralForm));
             }
         }
 
@@ -178,7 +178,7 @@ export function updateStatus(
             dispatch(statsActions.update(results.stats));
             dispatch(
                 resourceActions.update(
-                    resource,
+                    entity.path,
                     results.stats.approved,
                     results.stats.warnings,
                 )
@@ -188,7 +188,7 @@ export function updateStatus(
         // Refresh the data now that it has changed on the server.
         if (results.translation) {
             dispatch(
-                listActions.updateEntityTranslation(entity, pluralForm, results.translation)
+                listActions.updateEntityTranslation(entity.pk, pluralForm, results.translation)
             );
         }
     }

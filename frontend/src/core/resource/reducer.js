@@ -45,6 +45,11 @@ function updateAllResources(
 ): Resource {
     const updatedResource = state.resources.find(item => item.path === resourcePath);
 
+    // That can happen in All Projects view
+    if (!updatedResource) {
+        return state.allResources;
+    }
+
     const diffApproved = approvedStrings - updatedResource.approvedStrings;
     const diffWarnings = stringsWithWarnings - updatedResource.stringsWithWarnings;
 
