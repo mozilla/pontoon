@@ -85,7 +85,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         input_string = dedent("""
             {
               "SourceString": {
-                "message": "Source String", 
+                "message": "Source String",
                 "description": "Comment"
               }
             }
@@ -97,7 +97,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
                 "description": "Comment"
               }
             }
-        """)
+        """) # noqa
 
         self.run_save_basic(
             input_string,

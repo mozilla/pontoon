@@ -148,11 +148,11 @@ def test_tt_disabled_checks(
         entity_properties_mock,
         'en-US',
         entity_properties_mock.string,
-        'invalid translation \q',
+        'invalid translation \\q',
         True,
     ) == {
         'clWarnings': [
-            'unknown escape sequence, \q'
+            'unknown escape sequence, \\q'
         ]
     }
     run_tt_checks_mock.assert_called_with(

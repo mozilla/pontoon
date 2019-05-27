@@ -19,7 +19,7 @@ def test_tt_invalid_translation(mock_locale):
     """
     assert run_checks(
         'Original string',
-        'Translation \q',
+        'Translation \\q',
         mock_locale,
     ) == {
         'ttWarnings': ['Escapes']
@@ -32,7 +32,7 @@ def test_tt_disabled_checks(mock_locale):
     """
     assert run_checks(
         'Original string',
-        'Translation \q',
+        'Translation \\q',
         mock_locale,
         disabled_checks={'escapes'}
     ) == {}

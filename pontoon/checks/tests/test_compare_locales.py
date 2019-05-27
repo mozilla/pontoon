@@ -189,7 +189,7 @@ def test_valid_translations(quality_check_args):
             mock_quality_check_args(
                 resource_ext='properties',
                 string='%s Foo %s bar %s',
-                translation='%d Bar %d foo %d \q %',
+                translation='%d Bar %d foo %d \\q %',
             ),
             {
                 'clWarnings': [u'unknown escape sequence, \\q'],

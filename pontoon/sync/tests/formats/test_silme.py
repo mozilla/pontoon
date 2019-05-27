@@ -186,10 +186,10 @@ class DTDTests(FormatTestsMixin, TestCase):
     def test_quotes(self):
         input_strings = dedent("""
             <!ENTITY SingleQuote "\'">
-            <!ENTITY SingleQuoteHTMLEntity "\&apos;">
+            <!ENTITY SingleQuoteHTMLEntity "\\&apos;">
             <!ENTITY SingleQuoteUnicode "\u0027">
             <!ENTITY DoubleQuote '\"'>
-            <!ENTITY DoubleQuoteHTMLEntity "\&quot;">
+            <!ENTITY DoubleQuoteHTMLEntity "\\&quot;">
             <!ENTITY DoubleQuoteUnicode "\u0022">
         """)
 
@@ -221,12 +221,12 @@ class DTDTests(FormatTestsMixin, TestCase):
         translated_resource.save(self.locale)
 
         expected_string = dedent("""
-            <!ENTITY SingleQuote "Single Quote \&apos;">
-            <!ENTITY SingleQuoteHTMLEntity "\&apos;">
-            <!ENTITY SingleQuoteUnicode "\&apos;">
-            <!ENTITY DoubleQuote 'Double Quote \&quot;'>
-            <!ENTITY DoubleQuoteHTMLEntity "\&quot;">
-            <!ENTITY DoubleQuoteUnicode "\&quot;">
+            <!ENTITY SingleQuote "Single Quote \\&apos;">
+            <!ENTITY SingleQuoteHTMLEntity "\\&apos;">
+            <!ENTITY SingleQuoteUnicode "\\&apos;">
+            <!ENTITY DoubleQuote 'Double Quote \\&quot;'>
+            <!ENTITY DoubleQuoteHTMLEntity "\\&quot;">
+            <!ENTITY DoubleQuoteUnicode "\\&quot;">
         """)
         self.assert_file_content(path, expected_string)
 

@@ -211,4 +211,3 @@ def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     response_context = mock_render.call_args[0][0]
     assert response_context['locale'] == locale_b
     assert list(response_context['contributors']) == []
-

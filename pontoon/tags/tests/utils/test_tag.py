@@ -217,7 +217,7 @@ def test_util_tag_tool_object(tag_mock):
         slug=7)
 
     # object returns tag_manager.select_related().get()
-    assert tag_tool.object is 23
+    assert tag_tool.object == 23
 
     # tag_manager.select_related().get() is called with the tag pk
     assert (

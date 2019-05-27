@@ -19,8 +19,7 @@ install:
   - pushd frontend && npm install && popd
 script:
   # Lint code
-  - pylama pontoon
-  - pylama tests
+  - flake8
   - ./node_modules/.bin/eslint .
 
   # Build and collect static assets
