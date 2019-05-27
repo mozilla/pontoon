@@ -57,12 +57,12 @@ export class ProjectInfoBase extends React.Component<Props, State> {
                 <span className="fa fa-info"></span>
             </div>
             { !this.state.visible ? null :
-            <div className="panel">
+            <aside className="panel">
                 <h2>Project Info</h2>
                 {/* We can safely use project.info because it is validated by
                     bleach before being saved into the database. */}
                 <p dangerouslySetInnerHTML={ { __html: this.props.project.info } } />
-            </div> }
+            </aside> }
         </div>;
     }
 }
