@@ -11,13 +11,13 @@ type Action =
 
 
 const initial: Stats = {
-   approved: 0,
-   fuzzy: 0,
-   unreviewed: 0,
-   warnings: 0,
-   errors: 0,
-   missing: 0,
-   total: 0,
+    approved: 0,
+    fuzzy: 0,
+    warnings: 0,
+    errors: 0,
+    missing: 0,
+    unreviewed: 0,
+    total: 0,
 };
 
 export default function reducer(

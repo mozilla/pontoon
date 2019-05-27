@@ -1,9 +1,9 @@
-.info-panel {
+.project-info {
     float: left;
     font-size: 14px;
 }
 
-.info-panel .button {
+.project-info .button {
     cursor: pointer;
     font-size: 1.4em;
     font-weight: 900;
@@ -12,7 +12,7 @@
     padding: 19px 7px 23px;
 }
 
-.info-panel .panel {
+.project-info .panel {
     background: #272a2f;
     bottom: auto;
     color: #aaa;
@@ -23,7 +23,7 @@
     z-index: 20;
 }
 
-.info-panel .panel h2 {
+.project-info .panel h2 {
     color: #888888;
     font-size: 14px;
     font-weight: 300;
@@ -32,10 +32,10 @@
     text-transform: uppercase;
 }
 
-.info-panel .panel p {
+.project-info .panel p {
     font-weight: 300;
 }
 
-.info-panel .panel a {
+.project-info .panel a {
     color: #7bc876;
 }
