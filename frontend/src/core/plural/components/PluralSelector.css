@@ -11,7 +11,6 @@
     border-left: none;
     display: table-cell;
     text-align: center;
-    text-transform: uppercase;
 }
 
 .plural-selector ul li.active,
@@ -29,7 +28,9 @@
     color: #ccc;
     cursor: pointer;
     display: block;
+    font-weight: 300;
     padding: 10px;
+    text-transform: uppercase;
     width: 100%;
 }
 

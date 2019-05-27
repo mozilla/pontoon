@@ -41,7 +41,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
-    selectedEntity: ?DbEntity,
+    selectedEntity: DbEntity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
@@ -112,10 +112,9 @@ export class EditorBase extends React.Component<InternalProps> {
         }
 
         this.props.dispatch(actions.sendTranslation(
-            state.selectedEntity.pk,
+            state.selectedEntity,
             state.editor.translation,
             state.locale,
-            state.selectedEntity.original,
             state.pluralForm,
             state.user.settings.forceSuggestions,
             state.nextEntity,
@@ -141,10 +140,10 @@ export class EditorBase extends React.Component<InternalProps> {
      * We might want to refactor to keep the logic in one place only.
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation, ignoreWarnings: ?boolean) => {
-        const { locale, nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
             change,
-            parameters.entity,
+            selectedEntity,
             locale,
             parameters.resource,
             pluralForm,

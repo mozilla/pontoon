@@ -52,7 +52,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
-    selectedEntity: ?DbEntity,
+    selectedEntity: DbEntity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
@@ -227,10 +227,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      * We might want to refactor to keep the logic in one place only.
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
-        const { locale, nextEntity, parameters, pluralForm, router, dispatch } = this.props;
+        const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
         dispatch(history.actions.updateStatus(
             change,
-            parameters.entity,
+            selectedEntity,
             locale,
             parameters.resource,
             pluralForm,

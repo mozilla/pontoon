@@ -119,7 +119,7 @@ describe('<EditorBase>', () => {
         expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
         expect(
             editor.actions.sendTranslation
-            .calledWith(SELECTED_ENTITY.pk, 'initial', LOCALE, SELECTED_ENTITY.original)
+            .calledWith(SELECTED_ENTITY, 'initial', LOCALE)
         ).toBeTruthy();
     });
 
@@ -136,7 +136,7 @@ describe('<EditorBase>', () => {
         expect(editor.actions.sendTranslation.calledOnce).toBeTruthy();
         expect(
             editor.actions.sendTranslation
-            .calledWith(SELECTED_ENTITY.pk, 'initial', LOCALE, SELECTED_ENTITY.original)
+            .calledWith(SELECTED_ENTITY, 'initial', LOCALE)
         ).toBeTruthy();
     });
 
