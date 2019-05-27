@@ -9,9 +9,7 @@ import type { Stats } from 'core/stats';
 
 type Props = {|
     stats: Stats,
-    height: number,
-    width: number,
-    class: string,
+    size: number,
 |};
 
 
@@ -108,9 +106,8 @@ export default class Canvas extends React.Component<Props> {
     render() {
         return <canvas
             ref={ this.canvas }
-            height={ this.props.height }
-            width={ this.props.width }
-            className={ this.props.class }
+            height={ this.props.size }
+            width={ this.props.size }
         />;
     }
 }

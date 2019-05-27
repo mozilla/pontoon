@@ -55,7 +55,7 @@ export class ProgressChartBase extends React.Component<Props, State> {
 
         return <div className="progress-chart">
             <div className="selector" onClick={ this.toggleVisibility }>
-                <Canvas stats={ this.props.stats } height={ 44 } width={ 44 } class="small" />
+                <Canvas stats={ this.props.stats } size={ 44 } />
                 <span className="percent unselectable">{ percent }</span>
             </div>
             { !this.state.visible ? null :
@@ -65,7 +65,7 @@ export class ProgressChartBase extends React.Component<Props, State> {
                         <h2>All strings <span className="value">{ total }</span></h2>
                         <h2 className="small">Unreviewed <span className="value">{ unreviewed }</span></h2>
                     </header>
-                    <Canvas stats={ this.props.stats } height={ 220 } width={ 220 } class="big" />
+                    <Canvas stats={ this.props.stats } size={ 220 } />
                     <span className="percent">{ percent }</span>
                 </div>
                 <div className="details">
