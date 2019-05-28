@@ -3,7 +3,7 @@
 import api from 'core/api';
 import * as stats from 'core/stats';
 
-import type { Entities, EntityTranslation } from 'core/api/types';
+import type { Entities, EntityTranslation } from 'core/api';
 
 
 export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';

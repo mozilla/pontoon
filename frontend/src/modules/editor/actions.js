@@ -8,7 +8,7 @@ import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 
 

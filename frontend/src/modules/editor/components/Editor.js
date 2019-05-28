@@ -22,7 +22,7 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { EditorState } from '../reducer';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';

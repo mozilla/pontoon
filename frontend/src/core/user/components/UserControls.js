@@ -14,7 +14,7 @@ import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 

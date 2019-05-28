@@ -9,7 +9,7 @@ import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 
 

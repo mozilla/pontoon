@@ -6,7 +6,7 @@ import * as entities from 'core/entities';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { UserState } from 'core/user';
 
 

@@ -10,7 +10,7 @@ import { WithPlaceables } from 'core/placeable';
 
 import Screenshots from './Screenshots';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 
 

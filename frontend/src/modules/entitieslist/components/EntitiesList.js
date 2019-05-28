@@ -15,7 +15,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import Entity from './Entity';
 import { CircleLoader } from 'core/loaders'
 
-import type { Entity as DbEntity } from 'core/api/types';
+import type { Entity as DbEntity } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';

@@ -2,7 +2,7 @@
 
 import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
 
-import type { Entities, EntityTranslation } from 'core/api/types';
+import type { Entities, EntityTranslation } from 'core/api';
 import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
 
 

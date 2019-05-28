@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 
 import * as entities from 'core/entities';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 
 
 const pluralSelector = (state): number => state.plural.pluralForm;

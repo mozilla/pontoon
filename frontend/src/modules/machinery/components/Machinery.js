@@ -7,7 +7,7 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { MachineryState } from '..';
 

@@ -6,7 +6,7 @@ import * as navigation from 'core/navigation';
 
 import { NAME } from '.';
 
-import type { Entities, Entity } from 'core/api/types';
+import type { Entities, Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 
 

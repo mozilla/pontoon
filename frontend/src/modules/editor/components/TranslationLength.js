@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import './TranslationLength.css';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 
 
 type Props = {|

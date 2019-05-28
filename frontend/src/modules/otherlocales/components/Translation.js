@@ -7,7 +7,7 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 
-import type { Entity } from 'core/api/types';
+import type { Entity } from 'core/api';
 import type { Navigation } from 'core/navigation';
 
 
