@@ -5,10 +5,9 @@ import { createSelector } from 'reselect';
 import * as user from 'core/user';
 import * as otherlocales from 'modules/otherlocales';
 
-import api from 'core/api';
-
-import type { LocalesState } from '.';
+import type { OtherLocaleTranslation } from 'core/api';
 import type { UserState } from 'core/user';
+import type { LocalesState } from '.';
 
 
 const otherLocalesSelector = (state): LocalesState => state[otherlocales.NAME];
@@ -18,7 +17,7 @@ const userSelector = (state): UserState => state[user.NAME];
 export function _getOrderedOtherLocales(
     otherlocales: LocalesState,
     user: UserState,
-): Array<api.types.OtherLocaleTranslation> {
+): Array<OtherLocaleTranslation> {
     const translations = otherlocales.translations;
 
     if (!user.isAuthenticated) {

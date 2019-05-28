@@ -6,12 +6,11 @@ import { Localized } from 'fluent-react';
 
 import './Helpers.css';
 
-import api from 'core/api';
-
 import { History } from 'modules/history';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
+import type { OtherLocaleTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
@@ -29,7 +28,7 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
-    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
     parameters: NavigationParams,
     user: UserState,
