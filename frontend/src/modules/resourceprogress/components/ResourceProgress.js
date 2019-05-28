@@ -52,6 +52,10 @@ export class ResourceProgressBase extends React.Component<Props, State> {
         if (total) {
             percent = Math.floor(complete / total * 100);
         }
+        // Do not show resource progress until stats are available
+        else {
+            return false;
+        }
 
         return <div className="progress-chart">
             <div className="selector" onClick={ this.toggleVisibility }>
