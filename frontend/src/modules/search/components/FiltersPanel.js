@@ -7,6 +7,8 @@ import './FiltersPanel.css';
 
 import { FILTERS_STATUS } from '..';
 
+import { asLocaleString } from 'core/utils';
+
 import type { Navigation } from 'core/navigation';
 import type { Stats } from 'core/stats';
 
@@ -88,7 +90,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             <span className="status fa"></span>
                             <span className="title">{ filter.title }</span>
                             <span className="count">
-                                { Number(count).toLocaleString('en-US') }
+                                { asLocaleString(count) }
                             </span>
                         </li>
                     }) }
