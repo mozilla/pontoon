@@ -4,11 +4,11 @@ import * as React from 'react';
 
 import './TranslationLength.css';
 
-import type { DbEntity } from 'modules/entitieslist';
+import type { Entity } from 'core/api';
 
 
 type Props = {|
-    entity: ?DbEntity,
+    entity: ?Entity,
     pluralForm: number,
     translation: string,
 |};
@@ -16,7 +16,7 @@ type Props = {|
 
 /*
  * Shows translation length vs. original string length, or countdown.
- * 
+ *
  * Countdown is currently only supported for LANG strings, which use special
  * syntax in the comment to define maximum translation length. MAX_LENGTH
  * is provided for strings without HTML tags, so they need to be stripped.
@@ -47,7 +47,7 @@ export default class TranslationLength extends React.Component<Props> {
 
     /*
      * Only used for countdown.
-     * 
+     *
      * Source: https://stackoverflow.com/a/47140708
      */
     stripHTML(translation: string) {

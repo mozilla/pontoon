@@ -2,14 +2,14 @@
 
 import api from 'core/api';
 
+import { actions as entitiesActions } from 'core/entities';
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import { actions as editorActions } from 'modules/editor';
-import { actions as listActions } from 'modules/entitieslist';
 
-import type { DbEntity } from 'modules/entitieslist';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 
 
@@ -133,12 +133,12 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
 
 export function updateStatus(
     change: ChangeOperation,
-    entity: DbEntity,
+    entity: Entity,
     locale: Locale,
     resource: string,
     pluralForm: number,
     translation: number,
-    nextEntity: ?DbEntity,
+    nextEntity: ?Entity,
     router: Object,
     ignoreWarnings: ?boolean,
 ): Function {
@@ -188,7 +188,7 @@ export function updateStatus(
         // Refresh the data now that it has changed on the server.
         if (results.translation) {
             dispatch(
-                listActions.updateEntityTranslation(entity.pk, pluralForm, results.translation)
+                entitiesActions.updateEntityTranslation(entity.pk, pluralForm, results.translation)
             );
         }
     }
