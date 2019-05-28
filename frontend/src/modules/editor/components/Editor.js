@@ -6,11 +6,11 @@ import { Localized } from 'fluent-react';
 
 import './Editor.css';
 
+import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
-import * as entitieslist from 'modules/entitieslist';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
 import * as unsavedchanges from 'modules/unsavedchanges';
@@ -22,12 +22,12 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
+import type { Entity } from 'core/api';
 import type { EditorState } from '../reducer';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import { withActionsDisabled } from 'core/utils';
-import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from 'modules/history';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
@@ -37,11 +37,11 @@ type Props = {|
     editor: EditorState,
     isReadOnlyEditor: boolean,
     locale: Locale,
-    nextEntity: DbEntity,
+    nextEntity: Entity,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
-    selectedEntity: DbEntity,
+    selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
@@ -277,11 +277,11 @@ const mapStateToProps = (state: Object): Props => {
         editor: state[NAME],
         isReadOnlyEditor: entitydetails.selectors.isReadOnlyEditor(state),
         locale: locales.selectors.getCurrentLocaleData(state),
-        nextEntity: entitieslist.selectors.getNextEntity(state),
+        nextEntity: entities.selectors.getNextEntity(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
-        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
+        selectedEntity: entities.selectors.getSelectedEntity(state),
         unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };
