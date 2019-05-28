@@ -7,6 +7,8 @@ import './ResourceProgress.css';
 
 import ProgressChart from './ProgressChart';
 
+import { asLocaleString } from 'core/utils';
+
 import type { Stats } from 'core/stats';
 
 
@@ -52,6 +54,10 @@ export class ResourceProgressBase extends React.Component<Props, State> {
         if (total) {
             percent = Math.floor(complete / total * 100);
         }
+        // Do not show resource progress until stats are available
+        else {
+            return null;
+        }
 
         return <div className="progress-chart">
             <div className="selector" onClick={ this.toggleVisibility }>
@@ -62,8 +68,14 @@ export class ResourceProgressBase extends React.Component<Props, State> {
             <aside className="menu">
                 <div className="main">
                     <header>
-                        <h2>All strings <span className="value">{ total }</span></h2>
-                        <h2 className="small">Unreviewed <span className="value">{ unreviewed }</span></h2>
+                        <h2>
+                            All strings
+                            <span className="value">{ asLocaleString(total) }</span>
+                        </h2>
+                        <h2 className="small">
+                            Unreviewed
+                            <span className="value">{ asLocaleString(unreviewed) }</span>
+                        </h2>
                     </header>
                     <ProgressChart stats={ this.props.stats } size={ 220 } />
                     <span className="percent">{ percent }</span>
@@ -71,23 +83,23 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                 <div className="details">
                     <div className="approved">
                         <span className="title">Translated</span>
-                        <p className="value">{ approved }</p>
+                        <p className="value">{ asLocaleString(approved) }</p>
                     </div>
                     <div className="fuzzy">
                         <span className="title">Fuzzy</span>
-                        <p className="value">{ fuzzy }</p>
+                        <p className="value">{ asLocaleString(fuzzy) }</p>
                     </div>
                     <div className="warnings">
                         <span className="title">Warnings</span>
-                        <p className="value">{ warnings }</p>
+                        <p className="value">{ asLocaleString(warnings) }</p>
                     </div>
                     <div className="errors">
                         <span className="title">Errors</span>
-                        <p className="value">{ errors }</p>
+                        <p className="value">{ asLocaleString(errors) }</p>
                     </div>
                     <div className="missing">
                         <span className="title">Missing</span>
-                        <p className="value">{ missing }</p>
+                        <p className="value">{ asLocaleString(missing) }</p>
                     </div>
                 </div>
             </aside>

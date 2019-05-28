@@ -7,6 +7,8 @@ import './FiltersPanel.css';
 
 import { FILTERS_STATUS } from '..';
 
+import { asLocaleString } from 'core/utils';
+
 import type { Navigation } from 'core/navigation';
 import type { Stats } from 'core/stats';
 
@@ -79,6 +81,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 <ul>
                     <li className="horizontal-separator">Translation Status</li>
                     { FILTERS_STATUS.map((filter, i) => {
+                        const count = filter.stat ? stats[filter.stat] : stats[filter.tag];
                         return <li
                             className={ filter.tag }
                             key={ i }
@@ -87,7 +90,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             <span className="status fa"></span>
                             <span className="title">{ filter.title }</span>
                             <span className="count">
-                                { filter.stat ? stats[filter.stat] : stats[filter.tag] }
+                                { asLocaleString(count) }
                             </span>
                         </li>
                     }) }
