@@ -5,9 +5,9 @@ import { Localized } from 'fluent-react';
 
 import './OtherLocales.css';
 
-import api from 'core/api';
 import Translation from './Translation';
 
+import type { OtherLocaleTranslation } from 'core/api';
 import type { Navigation } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { DbEntity } from 'modules/entitieslist';
@@ -17,7 +17,7 @@ import type { LocalesState } from '..';
 type Props = {|
     entity: DbEntity,
     isReadOnlyEditor: boolean,
-    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
     otherlocales: LocalesState,
     parameters: Navigation,

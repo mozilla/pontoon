@@ -5,9 +5,9 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
-import api from 'core/api';
 import { TranslationProxy } from 'core/translation';
 
+import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { DbEntity } from 'modules/entitieslist';
 
@@ -17,7 +17,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: Locale,
     sourceString: string,
-    translation: api.types.MachineryTranslation,
+    translation: MachineryTranslation,
     updateEditorTranslation: (string) => void,
 |};
 

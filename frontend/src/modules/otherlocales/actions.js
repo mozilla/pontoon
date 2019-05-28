@@ -2,6 +2,9 @@
 
 import api from 'core/api';
 
+import type { OtherLocaleTranslation } from 'core/api';
+
+
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
 export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
@@ -9,11 +12,11 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +entity: number,
-    +translations: Array<api.types.OtherLocaleTranslation>,
+    +translations: Array<OtherLocaleTranslation>,
 |};
 export function receive(
     entity: number,
-    translations: Array<api.types.OtherLocaleTranslation>
+    translations: Array<OtherLocaleTranslation>
 ): ReceiveAction {
     return {
         type: RECEIVE,
