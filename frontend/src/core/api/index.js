@@ -11,6 +11,9 @@ import UserAPI from './user';
 
 
 export type {
+    Entities,
+    Entity,
+    EntityTranslation,
     MachineryTranslation,
     OtherLocaleTranslation,
 } from './types';

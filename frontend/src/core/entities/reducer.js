@@ -2,6 +2,7 @@
 
 import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
 
+import type { Entities, EntityTranslation } from 'core/api';
 import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
 
 
@@ -12,34 +13,9 @@ export type Action =
     | UpdateAction
 ;
 
-export type Translation = {
-    +pk: number,
-    +string: ?string,
-    +approved: boolean,
-    +fuzzy: boolean,
-    +rejected: boolean,
-    +errors: Array<string>,
-    +warnings: Array<string>,
-};
-
-export type DbEntity = {
-    +pk: number,
-    +original: string,
-    +original_plural: string,
-    +comment: string,
-    +key: string,
-    +format: string,
-    +path: string,
-    +project: Object,
-    +source: Array<Array<string>> | Object,
-    +translation: Array<Translation>,
-    +readonly: boolean,
-};
-
-export type Entities = Array<DbEntity>;
 
 // Read-only state (marked by '+').
-export type EntitiesListState = {
+export type EntitiesState = {
     +entities: Entities,
     +fetching: boolean,
     +fetchCount: number,
@@ -51,7 +27,7 @@ function updateEntityTranslation(
     state: Object,
     entity: number,
     pluralForm: number,
-    translation: Translation
+    translation: EntityTranslation
 ): Entities {
     return state.entities.map(item => {
         if (item.pk !== entity) {
@@ -73,7 +49,7 @@ function updateEntityTranslation(
 }
 
 
-const initial: EntitiesListState = {
+const initial: EntitiesState = {
     entities: [],
     fetching: false,
     fetchCount: 0,
@@ -81,9 +57,9 @@ const initial: EntitiesListState = {
 };
 
 export default function reducer(
-    state: EntitiesListState = initial,
+    state: EntitiesState = initial,
     action: Action,
-): EntitiesListState {
+): EntitiesState {
     switch (action.type) {
         case RECEIVE:
             return {

@@ -7,13 +7,12 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 
-import type { MachineryTranslation } from 'core/api';
+import type { Entity, MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
-import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
-    entity: DbEntity,
+    entity: Entity,
     isReadOnlyEditor: boolean,
     locale: Locale,
     sourceString: string,

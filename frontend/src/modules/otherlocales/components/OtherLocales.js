@@ -7,15 +7,14 @@ import './OtherLocales.css';
 
 import Translation from './Translation';
 
-import type { OtherLocaleTranslation } from 'core/api';
+import type { Entity, OtherLocaleTranslation } from 'core/api';
 import type { Navigation } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { DbEntity } from 'modules/entitieslist';
 import type { LocalesState } from '..';
 
 
 type Props = {|
-    entity: DbEntity,
+    entity: Entity,
     isReadOnlyEditor: boolean,
     orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
