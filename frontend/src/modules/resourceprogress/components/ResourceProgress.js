@@ -62,8 +62,14 @@ export class ResourceProgressBase extends React.Component<Props, State> {
             <aside className="menu">
                 <div className="main">
                     <header>
-                        <h2>All strings <span className="value">{ total }</span></h2>
-                        <h2 className="small">Unreviewed <span className="value">{ unreviewed }</span></h2>
+                        <h2>
+                            All strings
+                            <span className="value">{ Number(total).toLocaleString('en-US') }</span>
+                        </h2>
+                        <h2 className="small">
+                            Unreviewed
+                            <span className="value">{ Number(unreviewed).toLocaleString('en-US') }</span>
+                        </h2>
                     </header>
                     <ProgressChart stats={ this.props.stats } size={ 220 } />
                     <span className="percent">{ percent }</span>
@@ -71,23 +77,23 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                 <div className="details">
                     <div className="approved">
                         <span className="title">Translated</span>
-                        <p className="value">{ approved }</p>
+                        <p className="value">{ Number(approved).toLocaleString('en-US') }</p>
                     </div>
                     <div className="fuzzy">
                         <span className="title">Fuzzy</span>
-                        <p className="value">{ fuzzy }</p>
+                        <p className="value">{ Number(fuzzy).toLocaleString('en-US') }</p>
                     </div>
                     <div className="warnings">
                         <span className="title">Warnings</span>
-                        <p className="value">{ warnings }</p>
+                        <p className="value">{ Number(warnings).toLocaleString('en-US') }</p>
                     </div>
                     <div className="errors">
                         <span className="title">Errors</span>
-                        <p className="value">{ errors }</p>
+                        <p className="value">{ Number(errors).toLocaleString('en-US') }</p>
                     </div>
                     <div className="missing">
                         <span className="title">Missing</span>
-                        <p className="value">{ missing }</p>
+                        <p className="value">{ Number(missing).toLocaleString('en-US') }</p>
                     </div>
                 </div>
             </aside>
