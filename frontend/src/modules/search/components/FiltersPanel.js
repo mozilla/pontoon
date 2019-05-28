@@ -79,6 +79,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 <ul>
                     <li className="horizontal-separator">Translation Status</li>
                     { FILTERS_STATUS.map((filter, i) => {
+                        const count = filter.stat ? stats[filter.stat] : stats[filter.tag];
                         return <li
                             className={ filter.tag }
                             key={ i }
@@ -87,7 +88,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             <span className="status fa"></span>
                             <span className="title">{ filter.title }</span>
                             <span className="count">
-                                { filter.stat ? stats[filter.stat] : stats[filter.tag] }
+                                { Number(count).toLocaleString('en-US') }
                             </span>
                         </li>
                     }) }
