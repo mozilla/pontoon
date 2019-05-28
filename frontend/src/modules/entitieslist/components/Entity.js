@@ -6,12 +6,12 @@ import './Entity.css';
 
 import { TranslationProxy } from 'core/translation';
 
-import type { Entity as DbEntity } from 'core/api';
+import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locales';
 
 
 type Props = {
-    entity: DbEntity,
+    entity: EntityType,
     locale: Locale,
     selected: boolean,
     selectEntity: Function,

@@ -15,7 +15,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import Entity from './Entity';
 import { CircleLoader } from 'core/loaders'
 
-import type { Entity as DbEntity } from 'core/api';
+import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -151,7 +151,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    selectEntity = (entity: DbEntity) => {
+    selectEntity = (entity: EntityType) => {
         const { dispatch, router } = this.props;
 
         dispatch(
