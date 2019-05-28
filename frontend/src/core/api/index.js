@@ -9,7 +9,11 @@ import ResourceAPI from './resource';
 import TranslationAPI from './translation';
 import UserAPI from './user';
 
-import * as types from './types';
+
+export type {
+    MachineryTranslation,
+    OtherLocaleTranslation,
+} from './types';
 
 
 export default {
@@ -21,5 +25,4 @@ export default {
     resource: new ResourceAPI(),
     translation: new TranslationAPI(),
     user: new UserAPI(),
-    types,
 };

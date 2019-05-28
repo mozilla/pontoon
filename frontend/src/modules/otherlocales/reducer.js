@@ -1,9 +1,8 @@
 /* @flow */
 
-import api from 'core/api';
-
 import { RECEIVE, REQUEST } from './actions';
 
+import type { OtherLocaleTranslation } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
 
@@ -15,7 +14,7 @@ type Action =
 
 export type LocalesState = {|
     +fetching: boolean,
-    +translations: Array<api.types.OtherLocaleTranslation>,
+    +translations: Array<OtherLocaleTranslation>,
 |};
 
 

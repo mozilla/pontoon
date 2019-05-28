@@ -2,6 +2,7 @@
 
 import api from 'core/api';
 
+import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 
 
@@ -14,10 +15,10 @@ export const RESET: 'machinery/RESET' = 'machinery/RESET';
  */
 export type AddTranslationsAction = {
     +type: typeof ADD_TRANSLATIONS,
-    +translations: Array<api.types.MachineryTranslation>,
+    +translations: Array<MachineryTranslation>,
 };
 export function addTranslations(
-    translations: Array<api.types.MachineryTranslation>
+    translations: Array<MachineryTranslation>
 ): AddTranslationsAction {
     return {
         type: ADD_TRANSLATIONS,

@@ -1,9 +1,8 @@
 /* @flow */
 
-import api from 'core/api';
-
 import { ADD_TRANSLATIONS, RESET } from './actions';
 
+import type { MachineryTranslation } from 'core/api';
 import type { AddTranslationsAction, ResetAction } from './actions';
 
 
@@ -12,7 +11,7 @@ type Action =
     | ResetAction
 ;
 
-type Translations = Array<api.types.MachineryTranslation>;
+type Translations = Array<MachineryTranslation>;
 
 export type MachineryState = {|
     sourceString: string,

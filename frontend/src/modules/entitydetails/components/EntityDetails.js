@@ -6,7 +6,6 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
-import api from 'core/api';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
@@ -25,6 +24,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
+import type { OtherLocaleTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
@@ -47,7 +47,7 @@ type Props = {|
     nextEntity: DbEntity,
     previousEntity: DbEntity,
     otherlocales: LocalesState,
-    orderedOtherLocales: Array<api.types.OtherLocaleTranslation>,
+    orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
     parameters: NavigationParams,
     pluralForm: number,
