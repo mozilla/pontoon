@@ -6,23 +6,24 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
+import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { actions, NAME } from '..';
 import Entity from './Entity';
 import { CircleLoader } from 'core/loaders'
 
+import type { Entity as DbEntity } from 'core/api/types';
+import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
-import type { DbEntity, EntitiesListState } from '../reducer';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
-    entities: EntitiesListState,
+    entities: EntitiesState,
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
@@ -84,7 +85,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.search !== current.search ||
             previous.status !== current.status
         ) {
-            this.props.dispatch(actions.reset());
+            this.props.dispatch(entities.actions.reset());
         }
 
         // Scroll to selected entity when entity changes
@@ -129,19 +130,19 @@ export class EntitiesListBase extends React.Component<InternalProps> {
      * cannot be found, select the first entity in the list.
      */
     selectFirstEntityIfNoneSelected() {
-        const { dispatch, entities, parameters } = this.props;
-        const selectedEntity = parameters.entity;
-        const firstEntity = entities.entities[0];
+        const props = this.props;
+        const selectedEntity = props.parameters.entity;
+        const firstEntity = props.entities.entities[0];
 
-        const entityIds = entities.entities.map(entity => entity.pk);
+        const entityIds = props.entities.entities.map(entity => entity.pk);
         const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
 
         if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
             this.selectEntity(firstEntity);
 
             // Only do this the very first time entities are loaded.
-            if (entities.fetchCount === 1 && selectedEntity && !isSelectedEntityValid) {
-                dispatch(
+            if (props.entities.fetchCount === 1 && selectedEntity && !isSelectedEntityValid) {
+                props.dispatch(
                     notification.actions.add(
                         notification.messages.ENTITY_NOT_FOUND
                     )
@@ -169,22 +170,22 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     getMoreEntities = () => {
-        const { entities, parameters } = this.props;
-        const { locale, project, resource, entity, search, status } = parameters;
+        const props = this.props;
+        const { locale, project, resource, entity, search, status } = props.parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
         // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
         // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
-        if (entities.fetching) {
+        if (props.entities.fetching) {
             return;
         }
 
         // Currently shown entities should be excluded from the next results.
-        const currentEntityIds = entities.entities.map(entity => entity.pk);
+        const currentEntityIds = props.entities.entities.map(entity => entity.pk);
 
-        this.props.dispatch(
-            actions.get(
+        props.dispatch(
+            entities.actions.get(
                 locale,
                 project,
                 resource,
@@ -197,11 +198,11 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const state = this.props;
-        const selectedEntity = state.parameters.entity;
+        const props = this.props;
+        const selectedEntity = props.parameters.entity;
 
         // InfiniteScroll will display information about loading during the request
-        const hasMore = state.entities.fetching || state.entities.hasMore;
+        const hasMore = props.entities.fetching || props.entities.hasMore;
 
         return <div
             className="entities"
@@ -215,12 +216,12 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 useWindow={ false }
                 threshold={ 600 }
             >
-            { (hasMore || state.entities.entities.length) ?
+            { (hasMore || props.entities.entities.length) ?
                 <ul>
-                    { state.entities.entities.map((entity, i) => {
+                    { props.entities.entities.map((entity, i) => {
                         return <Entity
                             entity={ entity }
-                            locale={ state.locale }
+                            locale={ props.locale }
                             selectEntity={ this.selectEntity }
                             key={ i }
                             selected={ entity.pk === selectedEntity }
@@ -242,7 +243,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        entities: state[NAME],
+        entities: state[entities.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         router: state.router,

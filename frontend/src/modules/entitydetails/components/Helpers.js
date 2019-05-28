@@ -10,18 +10,17 @@ import { History } from 'modules/history';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
-import type { OtherLocaleTranslation } from 'core/api';
+import type { Entity, OtherLocaleTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
 
 type Props = {|
-    entity: DbEntity,
+    entity: Entity,
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,

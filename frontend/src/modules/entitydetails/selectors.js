@@ -2,19 +2,19 @@
 
 import { createSelector } from 'reselect';
 
+import * as entities from 'core/entities';
 import * as plural from 'core/plural';
-import * as entitieslist from 'modules/entitieslist';
 import * as user from 'core/user';
 
+import type { Entity } from 'core/api/types';
 import type { UserState } from 'core/user';
-import type { DbEntity } from 'modules/entitieslist';
 
 
 const userSelector = (state): UserState => state[user.NAME];
 
 
 export function _getTranslationForSelectedEntity(
-    entity: DbEntity,
+    entity: Entity,
     pluralForm: number,
 ): string {
     if (pluralForm === -1) {
@@ -40,14 +40,14 @@ export function _getTranslationForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationForSelectedEntity: Function = createSelector(
-    entitieslist.selectors.getSelectedEntity,
+    entities.selectors.getSelectedEntity,
     plural.selectors.getPluralForm,
     _getTranslationForSelectedEntity
 );
 
 
 export function _isReadOnlyEditor(
-    entity: DbEntity,
+    entity: Entity,
     user: UserState,
 ): boolean {
     return (
@@ -63,7 +63,7 @@ export function _isReadOnlyEditor(
  *   - the user is not authenticated
  */
 export const isReadOnlyEditor: Function = createSelector(
-    entitieslist.selectors.getSelectedEntity,
+    entities.selectors.getSelectedEntity,
     userSelector,
     _isReadOnlyEditor
 );

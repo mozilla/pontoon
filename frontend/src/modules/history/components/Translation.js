@@ -9,15 +9,15 @@ import './Translation.css';
 import { TranslationProxy } from 'core/translation';
 import * as utils from 'core/utils';
 
+import type { Entity } from 'core/api/types';
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
-import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';
 
 
 type Props = {|
-    entity: DbEntity,
+    entity: Entity,
     isReadOnlyEditor: boolean,
     canReview: boolean,
     translation: DBTranslation,

@@ -6,8 +6,8 @@ import './Entity.css';
 
 import { TranslationProxy } from 'core/translation';
 
+import type { Entity as DbEntity } from 'core/api/types';
 import type { Locale } from 'core/locales';
-import type { DbEntity } from '../reducer';
 
 
 type Props = {

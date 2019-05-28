@@ -2,6 +2,7 @@
 
 import { combineReducers } from 'redux';
 
+import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as l10n from 'core/l10n';
@@ -12,7 +13,6 @@ import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
 import * as editor from 'modules/editor';
-import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
@@ -22,6 +22,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 // Combine reducers from all modules, using their NAME constant as key.
 export default combineReducers({
     // Core modules
+    [entities.NAME]: entities.reducer,
     [lightbox.NAME]: lightbox.reducer,
     [locales.NAME]: locales.reducer,
     [l10n.NAME]: l10n.reducer,
@@ -33,7 +34,6 @@ export default combineReducers({
     [user.NAME]: user.reducer,
     // Application modules
     [editor.NAME]: editor.reducer,
-    [entitieslist.NAME]: entitieslist.reducer,
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
