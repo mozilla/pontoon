@@ -11,6 +11,7 @@ import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
+import { withActionsDisabled } from 'core/utils';
 import * as entitydetails from 'modules/entitydetails';
 import * as history from 'modules/history';
 import * as unsavedchanges from 'modules/unsavedchanges';
@@ -23,13 +24,12 @@ import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
 import type { Entity } from 'core/api';
-import type { EditorState } from '../reducer';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import { withActionsDisabled } from 'core/utils';
 import type { ChangeOperation } from 'modules/history';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
+import type { EditorState } from '../reducer';
 
 
 type Props = {|

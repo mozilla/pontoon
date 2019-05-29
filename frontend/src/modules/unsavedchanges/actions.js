@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
+import type { UnsavedChangesState } from './reducer';
 
 
 export const HIDE: 'unsavedchanges/HIDE' = 'unsavedchanges/HIDE';
