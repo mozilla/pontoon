@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url
 
-import views
-from . import URL_BASE
+from . import URL_BASE, views
 
 
 LOCALE_PART = r'(?P<locale>[A-Za-z0-9\-\@\.]+)'

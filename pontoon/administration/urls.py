@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-import views
+from . import views
 
 import pontoon.tags.admin.views as tags_admin_views
 

@@ -22,7 +22,9 @@
 -c constraints.txt
 
 coverage==4.4.2	\
-    --hash=sha256:eea9135432428d3ca7ee9be86af27cb8e56243f73764a9b6c3e0bda1394916be
+    --hash=sha256:eea9135432428d3ca7ee9be86af27cb8e56243f73764a9b6c3e0bda1394916be \
+    --hash=sha256:309d91bd7a35063ec7a0e4d75645488bfab3f0b66373e7722f23da7f5b0f34cc
+
 codecov==2.0.9 \
     --hash=sha256:ad82f054837b02081f86ed1eb6c04cddc029fbc734eaf92ff73da1db3a79188b
 pytest==3.2.3 \

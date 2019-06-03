@@ -1,21 +1,24 @@
 ARG pythonversion
 FROM local/pontoon_base_${pythonversion}
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HGPYTHON3=1
+
 WORKDIR /app
 
 # Install OS-level things
-COPY docker/set_up_ubuntu.sh /tmp/
-RUN DEBIAN_FRONTEND=noninteractive /tmp/set_up_ubuntu.sh
+COPY docker/set_up_ubuntu.sh /tmp/set_up_ubuntu.sh
+
+RUN /tmp/set_up_ubuntu.sh
 
 # Create the app user
 RUN useradd --shell /bin/bash -c "" -m app
 
 # Install Pontoon Python requirements
 COPY requirements/* /app/requirements/
-RUN pip2 install -U 'pip>=8' && \
-    pip2 install --no-cache-dir --require-hashes -r requirements/dev.txt && \
-    pip2 install --no-cache-dir --require-hashes -r requirements/python2.txt && \
-    pip2 install --no-cache-dir --require-hashes -r requirements/test.txt
+RUN pip install -U 'pip>=8' && \
+    pip install --no-cache-dir --require-hashes -r requirements/dev.txt && \
+    pip install --no-cache-dir --require-hashes -r requirements/test.txt
 
 # Install nodejs and npm from Nodesource's 10.x branch, as well as yarn
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \

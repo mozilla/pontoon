@@ -63,6 +63,16 @@ requests-oauthlib==0.6.1 \
     --hash=sha256:905306080ec0cc6b3c65c8101f471fccfdb9994c16dd116524fd3fc0790d46d7 \
     --hash=sha256:7c708e8e2a4aa6a905cf91f28420d75db37270e0ec8fc951915c098dd8bde53e
 
+# >=3.0.8 django-allauth
+python3-openid==3.1.0 \
+    --hash=sha256:0086da6b6ef3161cfe50fb1ee5cceaf2cda1700019fda03c2c5c440ca6abe4fa \
+    --hash=sha256:628d365d687e12da12d02c6691170f4451db28d6d68d050007e4a40065868502
+
+# python3-openid
+defusedxml==0.6.0 \
+    --hash=sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93 \
+    --hash=sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5
+
 # >=0.6.2 requests-oauthlib
 oauthlib==2.0.2 \
     --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
@@ -263,3 +273,7 @@ py==1.4.34 \
 # >=0.10.1 wsgi-sslify
 werkzeug==0.10.1 \
 --hash=sha256:9cf783990b1a99173e707a5768610800aa87775e9d86e211d17180d5b6c245ab
+
+# django-debug-toolbar
+sqlparse==0.1.19 \
+    --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8

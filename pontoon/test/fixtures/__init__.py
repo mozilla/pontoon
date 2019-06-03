@@ -1,2 +1,2 @@
-from asserts import *  # noqa
-from base import *  # noqa
+from .asserts import *  # noqa
+from .base import *  # noqa
