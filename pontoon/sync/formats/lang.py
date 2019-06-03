@@ -138,13 +138,16 @@ class LangVisitor(NodeVisitor):
 
         return children
 
-    def visit_comment(self, node, (marker, content, end)):
+    def visit_comment(self, node, node_info):
+        marker, content, end = node_info
         return LangComment(node_text(marker), node_text(content), node_text(end))
 
-    def visit_blank_line(self, node, (whitespace, newline)):
+    def visit_blank_line(self, node, _):
         return BLANK_LINE
 
-    def visit_entity(self, node, (string, translation)):
+    def visit_entity(self, node, node_info):
+        string, translation = node_info
+
         # Strip tags out of translation if they exist.
         tags = []
         tag_matches = list(re.finditer(TAG_REGEX, translation))
@@ -160,10 +163,12 @@ class LangVisitor(NodeVisitor):
 
         return LangEntity(string, translation, tags)
 
-    def visit_string(self, node, (marker, content, end)):
+    def visit_string(self, node, node_info):
+        marker, content, end = node_info
         return content.text.strip()
 
-    def visit_translation(self, node, (content, end)):
+    def visit_translation(self, node, node_info):
+        content, end = node_info
         return content.text.strip()
 
     def generic_visit(self, node, children):

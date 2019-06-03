@@ -1,6 +1,4 @@
-
 import json
-from contextlib import nested
 
 import pytest
 
@@ -12,12 +10,8 @@ from pontoon.base.views import AjaxFormView, AjaxFormPostView
 
 
 def test_view_ajax_form(rf):
-
-    _patch_ctx = [
-        patch('pontoon.base.views.AjaxFormView.get_form'),
-        patch('pontoon.base.views.AjaxFormView.render_to_response')]
-
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with patch('pontoon.base.views.AjaxFormView.get_form') as form_m, \
+            patch('pontoon.base.views.AjaxFormView.render_to_response') as response_m:
         form_m.return_value = 7
         response_m.return_value = 23
 
@@ -40,12 +34,8 @@ def test_view_ajax_form(rf):
 
 
 def test_view_ajax_form_post(rf):
-
-    _patch_ctx = [
-        patch('pontoon.base.views.AjaxFormPostView.get_form'),
-        patch('pontoon.base.views.AjaxFormPostView.render_to_response')]
-
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with patch('pontoon.base.views.AjaxFormPostView.get_form') as form_m, \
+            patch('pontoon.base.views.AjaxFormPostView.render_to_response'):
         with pytest.raises(Http404):
             AjaxFormPostView.as_view()(rf.get('/foo/bar'))
         with pytest.raises(Http404):
@@ -56,12 +46,8 @@ def test_view_ajax_form_post(rf):
 
 
 def test_view_ajax_form_submit_bad(rf):
-
-    _patch_ctx = [
-        patch('pontoon.base.views.AjaxFormView.get_form'),
-        patch('pontoon.base.views.AjaxFormView.render_to_response')]
-
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with patch('pontoon.base.views.AjaxFormView.get_form') as form_m, \
+            patch('pontoon.base.views.AjaxFormView.render_to_response') as response_m:
         _form = MagicMock()
         _form.is_valid.return_value = False
         type(_form).errors = PropertyMock(return_value=['BAD', 'STUFF'])
@@ -84,12 +70,8 @@ def test_view_ajax_form_submit_bad(rf):
 
 
 def test_view_ajax_form_submit_success(rf):
-
-    _patch_ctx = [
-        patch('pontoon.base.views.AjaxFormView.get_form'),
-        patch('pontoon.base.views.AjaxFormView.render_to_response')]
-
-    with nested(*_patch_ctx) as (form_m, response_m):
+    with patch('pontoon.base.views.AjaxFormView.get_form') as form_m, \
+            patch('pontoon.base.views.AjaxFormView.render_to_response'):
         _form = MagicMock()
         _form.is_valid.return_value = True
         _form.save.return_value = 23

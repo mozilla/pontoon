@@ -1,14 +1,16 @@
 from pontoon.base.models import PermissionChangelog
 
 
-def log_user_groups(admin, user, (add_groups, remove_groups)):
+def log_user_groups(admin, user, changed_groups):
     """Log all changes of a user's groups.
 
     :arg User admin: a super user who perform changes on groups.
     :arg User user: an edited users
-    :arg QuerySet add_groups: QuerySet with groups to add
-    :arg QuerySet remove_groups: QuerySet with groups to remove
+    :arg tuple changed_groups: Contains two querysets:
+        * add - QuerySet with groups to add
+        * remove - QuerySet with groups to remove
     """
+    add_groups, remove_groups = changed_groups
     log_entries = [
         PermissionChangelog(
             action_type='added',
@@ -30,14 +32,16 @@ def log_user_groups(admin, user, (add_groups, remove_groups)):
     PermissionChangelog.objects.bulk_create(log_entries)
 
 
-def log_group_members(manager, group, (add_users, remove_users)):
+def log_group_members(manager, group, changed_groups):
     """Log all changes a group's members.
 
     :arg django.contrib.auth.models.User manager: a manager who perform changes on groups.
     :arg django.contrib.auth.models.Group group: group of translators/managers
-    :arg django.db.models.QuerySet add_groups: QuerySet with users to add
-    :arg django.db.models.QuerySet remove_groups: QuerySet with users to remove
+    :arg tuple changed_groups: Contains two querysets:
+        * add - QuerySet with groups to add
+        * remove - QuerySet with groups to remove
     """
+    add_users, remove_users = changed_groups
     log_entries = [
         PermissionChangelog(
             action_type='added',

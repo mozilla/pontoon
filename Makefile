@@ -7,7 +7,7 @@ export PYTHON_VERSION := 2.7.13
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
 SITE_URL ?= http://localhost:8000
 
-.PHONY: build build-py3 setup run clean test shell loaddb build-frontend build-frontend-w
+.PHONY: build build-py3 setup run clean test test-py3 shell shell-py3 loaddb build-frontend build-frontend-w
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -25,6 +25,7 @@ help:
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
 
+
 .docker-build:
 	make build
 
@@ -40,6 +41,13 @@ build:
 
 build-py3: override PYTHON_VERSION=3.7.3
 build-py3: build
+
+test-py3: override PYTHON_VERSION=3.7.3
+test-py3: test
+
+shell-py3: override PYTHON_VERSION=3.7.3
+shell-py3: shell
+
 
 setup: .docker-build
 	${DC} run webapp /app/docker/set_up_webapp.sh

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import RedirectView, TemplateView
 
-import views
+from . import views
 
 urlpatterns = [
     # Terms
