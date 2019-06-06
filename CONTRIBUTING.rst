@@ -178,8 +178,6 @@ Then open ``requirements/default.txt`` and move the added dependencies to:
 * the ``requirements/constraints.txt`` if they are sub-dependencies, and add all their dependencies there as well.
 
 That format is documented more extensively inside the ``requirements/default.txt`` file.
-If a dependency has to be installed explicitly on Python2, add it to ``requirements/python2.txt`` and follow the same
-rules as for ``requirements/default.txt``.
 
 Once you are done adding or updating requirements, rebuild your docker environment:
 
@@ -309,7 +307,6 @@ steps, as they don't affect your setup if nothing has changed:
 
    # Install new dependencies or update existing ones.
    pip2 install -U --force --require-hashes -r requirements/default.txt
-   pip2 install -U --force --require-hashes -r requirements/python2.txt
 
    # Run database migrations.
    python manage.py migrate
