@@ -6,8 +6,6 @@ requirements:
       update: security
   - requirements/dev.txt:
       update: security
-  - requirements/python2.txt:
-      update: security
   - requirements/test.txt:
       update: security
   - docs/requirements.txt:
