@@ -31,6 +31,40 @@ export const getPluralForm: Function = createSelector(
 );
 
 
+export function _getTranslationForSelectedEntity(
+    entity: Entity,
+    pluralForm: number,
+): string {
+    if (pluralForm === -1) {
+        pluralForm = 0;
+    }
+
+    if (
+        entity && entity.translation[pluralForm].string &&
+        !entity.translation[pluralForm].rejected
+    ) {
+        return entity.translation[pluralForm].string;
+    }
+
+    return '';
+}
+
+
+/**
+ * Return the active translation string for the currently selected entity
+ * and plural form.
+ *
+ * The active translation is either the approved one, the fuzzy one, or the
+ * most recent non-rejected one.
+ */
+export const getTranslationForSelectedEntity: Function = createSelector(
+    entities.selectors.getSelectedEntity,
+    getPluralForm,
+    _getTranslationForSelectedEntity
+);
+
+
 export default {
     getPluralForm,
+    getTranslationForSelectedEntity,
 };

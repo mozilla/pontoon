@@ -2,12 +2,12 @@
 
 import api from 'core/api';
 
+import { actions as editorActions } from 'core/editor';
 import { actions as entitiesActions } from 'core/entities';
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
-import { actions as editorActions } from 'modules/editor';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';

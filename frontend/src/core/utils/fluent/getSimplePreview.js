@@ -1,37 +1,12 @@
 /* @flow */
 
-import { FluentParser, serializeExpression } from 'fluent-syntax';
+import { FluentParser } from 'fluent-syntax';
 import flattenDeep from 'lodash.flattendeep';
+
+import serialize from './serialize';
 
 
 const parser = new FluentParser({ withSpans: false });
-
-
-/**
- * Returns a list of values from a Fluent AST.
- *
- * Walks the given elements' AST and return the most pertinent value for each.
- */
-function serialize(elements) {
-    return elements.map(elt => {
-        if (elt.type === 'TextElement') {
-            return elt.value;
-        }
-
-        if (elt.type === 'Placeable') {
-            if (elt.expression.type === 'SelectExpression') {
-                const defaultVariants = elt.expression.variants.filter(v => v.default);
-                return serialize(defaultVariants[0].value.elements);
-            }
-            else {
-                const expression = serializeExpression(elt.expression);
-                return `{ ${expression} }`;
-            }
-        }
-
-        return null;
-    });
-}
 
 
 /**

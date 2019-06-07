@@ -1,4 +1,4 @@
-import { _getPluralForm } from './selectors';
+import { _getPluralForm, _getTranslationForSelectedEntity } from './selectors';
 
 
 describe('getPluralForm', () => {
@@ -12,5 +12,39 @@ describe('getPluralForm', () => {
         expect(
             _getPluralForm(-1, { original_plural: 'I have a plural!' })
         ).toEqual(0);
+    });
+});
+
+describe('getTranslationForSelectedEntity', () => {
+    const entities = [
+        {
+            translation: [
+                {
+                    string: 'world',
+                },
+            ],
+        },
+        {
+            translation: [
+                {
+                    string: 'wat',
+                    rejected: true,
+                },
+            ],
+        },
+    ];
+
+    it('returns the correct string', () => {
+        const entity = entities[0];
+        const res = _getTranslationForSelectedEntity(entity, -1);
+
+        expect(res).toEqual('world');
+    });
+
+    it('does not return rejected translations', () => {
+        const entity = entities[1];
+        const res = _getTranslationForSelectedEntity(entity, -1);
+
+        expect(res).toEqual('');
     });
 });

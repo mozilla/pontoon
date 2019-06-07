@@ -5,8 +5,7 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
-import * as navigation from 'core/navigation';
-import * as editor from 'modules/editor';
+import * as editor from 'core/editor';
 import * as history from 'modules/history';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
@@ -206,13 +205,5 @@ describe('<EntityDetails>', () => {
 
         wrapper.instance().updateTranslationStatus(42, 'fake translation');
         expect(history.actions.updateStatus.calledOnce).toBeTruthy();
-    });
-
-    it('updates translation state when props change', () => {
-        const [ wrapper, store ] = createEntityDetailsWithStore();
-
-        store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
-        wrapper.update();
-        expect(editor.actions.update.calledOnce).toBeTruthy();
     });
 });

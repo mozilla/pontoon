@@ -2,16 +2,16 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import FluentEditor from './FluentEditor';
+import SourceTranslationForm from './SourceTranslationForm';
 
 
-describe('<FluentEditor>', () => {
+describe('<SourceTranslationForm>', () => {
     const EDITOR = {
         translation: 'world',
     };
 
     it('renders ReactAce editor with some content', () => {
-        const wrapper = shallow(<FluentEditor editor={ EDITOR } />);
+        const wrapper = shallow(<SourceTranslationForm editor={ EDITOR } />);
 
         expect(wrapper.find('ReactAce')).toHaveLength(1);
     });
@@ -20,7 +20,7 @@ describe('<FluentEditor>', () => {
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<FluentEditor
+        const wrapper = mount(<SourceTranslationForm
             editor={ EDITOR }
             resetSelectionContent={ resetMock }
             updateTranslation={ updateMock }

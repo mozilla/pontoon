@@ -14,6 +14,7 @@ import type { Locale } from 'core/locales';
 
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
+export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' = 'editor/SET_INITIAL_TRANSLATION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
@@ -48,6 +49,22 @@ export function updateSelection(content: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+    };
+}
+
+
+/**
+ * Update the content that should replace the currently selected text in the
+ * active editor.
+ */
+export type InitialTranslationAction = {|
+    +type: typeof SET_INITIAL_TRANSLATION,
+    +translation: string,
+|};
+export function setInitialTranslation(translation: string): InitialTranslationAction {
+    return {
+        type: SET_INITIAL_TRANSLATION,
+        translation,
     };
 }
 
@@ -206,6 +223,7 @@ export default {
     resetFailedChecks,
     resetSelection,
     sendTranslation,
+    setInitialTranslation,
     update,
     updateFailedChecks,
     updateSelection,
