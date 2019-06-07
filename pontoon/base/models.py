@@ -1177,6 +1177,8 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
+        pre_translate_changed = False
+
         if self.pk is not None:
             try:
                 original = Project.objects.get(pk=self.pk)
@@ -1186,6 +1188,8 @@ class Project(AggregatedStats):
                         self.date_disabled = timezone.now()
                     else:
                         self.date_disabled = None
+                if self.pre_translation_enabled != original.pre_translation_enabled:
+                    pre_translate_changed = True
             except Project.DoesNotExist:
                 pass
 
@@ -1194,6 +1198,8 @@ class Project(AggregatedStats):
         if disabled_changed:
             for locale in self.locales.all():
                 locale.aggregate_stats()
+        if pre_translate_changed and self.pre_translation_enabled:
+            pre_translate(self)
 
     def changed_resources(self, now):
         """
@@ -2678,7 +2684,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     # Active translations are displayed in the string list and as the first
     # entry in the History tab. There can only be one active translation for
-    # each (entity, locale, plural_form) combination. See bug 1481175.
+    # each (entity, locale, plural_foclass rm) combination. See bug 1481175.
     active = models.BooleanField(default=False)
 
     fuzzy = models.BooleanField(default=False)
@@ -3349,3 +3355,73 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
+
+
+from pontoon.machinery.views import translation_memory
+from pontoon.machinery.views import google_translate
+
+
+def pre_translate(project, locales=None, entities=None):
+    """
+    Identifies strings without any translations and any suggestions.
+    Engages TheAlgorithm (bug 1552796) to gather pre-translations.
+    Stores pre-translations as suggestions (approved=False) to DB.
+    Author should be set to a name like "Pontoon Translator <pontoon@mozilla.com>".
+    Stats and Latest activity should be updated
+
+    """
+
+    if not locales:
+        locales = project.locales.filter(project_locale__readonly=False)
+
+    if not entities:
+        entities = Entity.objects.filter(
+            resource__project=project,
+            obsolete=False,
+            translation__isnull=True,
+        )
+
+    now = timezone.now()
+
+    resources = project.resources.filter(obsolete=False)
+
+    user = User.objects.get(pk=2)
+    for locale in locales:
+        for entity in entities:
+            string = ""
+            tm_response = translation_memory(
+                text=entity.string,
+                locale=locale.code,
+            )
+
+            tm_response = json.loads(tm_response.content)
+
+            if tm_response and int(float(tm_response[0]['quality'])) is 100:
+                string = tm_response[0]['target']
+
+            elif locale.google_translate_code:
+                gt_response = google_translate(
+                    text=entity.string,
+                    locale_code=locale.google_translate_code,
+                )
+
+                gt_response = json.loads(gt_response.content)
+
+                if 'translation' in gt_response.keys():
+                    string = gt_response['translation']
+
+            if string:
+                t = Translation(
+                    entity=entity,
+                    locale=locale,
+                    string=string,
+                    user=user,
+                    date=now,
+                    approved=False,
+                )
+                t.save()
+                t.update_latest_translation()
+
+        for resource in resources:
+            translatedresource = TranslatedResource.objects.get(resource=resource, locale=locale)
+            translatedresource.calculate_stats()

@@ -14,7 +14,8 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Translation,
-    TranslationMemoryEntry
+    TranslationMemoryEntry,
+    pre_translate,
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
@@ -231,6 +232,9 @@ class ChangeSet(object):
                         approved_date=self.now if not vcs_translation.fuzzy else None,
                         fuzzy=vcs_translation.fuzzy
                     ))
+
+        if len(new_entities) > 0 and self.db_project.pre_translation_enabled:
+            pre_translate(project=self.db_project, entities=new_entities)
 
         self.send_notifications(new_entities)
 

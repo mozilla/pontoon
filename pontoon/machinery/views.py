@@ -218,9 +218,11 @@ def google_translate(request=None, text=None, locale_code=None):
                 'message': 'Bad Request: {error}'.format(error=root),
             }, status=400)
 
-        return JsonResponse({
+        suggestion = {
             'translation': root['data']['translations'][0]['translatedText'],
-        })
+        }
+
+        return JsonResponse(suggestion)
 
     except requests.exceptions.RequestException as e:
         return JsonResponse({
