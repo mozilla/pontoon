@@ -224,7 +224,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         { this.renderUser() }
                         <TimeAgo
                             dir='ltr'
-                            date={ translation.date_iso }
+                            date={ new Date(translation.date_iso) }
                             title={ `${translation.date} UTC` }
                         />
                     </div>

@@ -298,10 +298,7 @@ def serialized_notifications(self):
             'description': notification.description,
             'verb': notification.verb,
             'date': notification.timestamp.strftime('%b %d, %Y %H:%M'),
-            'date_iso': (
-                notification.timestamp.isoformat() +
-                timezone.now().strftime('%z')
-            ),
+            'date_iso': notification.timestamp.isoformat(),
             'actor': actor,
             'target': target,
         })

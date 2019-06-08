@@ -68,7 +68,7 @@ describe('<UserNotificationsMenuBase>', () => {
                     description: 'description',
                     verb: 'verb',
                     date: 'Jan 31, 2000 10:20',
-                    date_iso: '2019-01-31T10:20:00+00:00+0000',
+                    date_iso: '2019-01-31T10:20:00+00:00',
                     actor: {
                         anchor: 'actor_anchor',
                         url: 'actor_url',

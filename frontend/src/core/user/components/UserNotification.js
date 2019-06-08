@@ -70,7 +70,7 @@ export default class UserNotification extends React.Component<Props, State> {
 
                 <TimeAgo
                     className="timeago"
-                    date={ notification.date_iso }
+                    date={ new Date(notification.date_iso) }
                     title={ `${notification.date} UTC` }
                 />
 
