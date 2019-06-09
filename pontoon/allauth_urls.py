@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 '''
 Pontoon requires a very specific subset of functionality implemented in django allauth.
 Because of concerns related to the security concerns it's a better to keep only selected

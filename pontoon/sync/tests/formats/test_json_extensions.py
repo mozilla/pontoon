@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from textwrap import dedent
 
 from pontoon.base.tests import assert_attributes_equal, TestCase

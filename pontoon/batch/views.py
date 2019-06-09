@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import logging
 
 from bulk_update.helper import bulk_update

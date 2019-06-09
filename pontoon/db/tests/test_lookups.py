@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from nose.tools import raises
 from django_nose.tools import (
     assert_equal,

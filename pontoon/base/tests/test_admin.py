@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import pytest
 
 from django.contrib.auth.models import User

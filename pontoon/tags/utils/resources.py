@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django.db.models import Q
 
 from pontoon.base.utils import glob_to_regex

@@ -1,6 +1,8 @@
 """
 Tests related to the utils provided in pontoon.teams.libraries
 """
+from __future__ import absolute_import
+
 
 import pytest
 

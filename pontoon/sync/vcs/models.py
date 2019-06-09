@@ -1,6 +1,8 @@
 """
 Models for working with remote translation data stored in a VCS.
 """
+from __future__ import absolute_import
+
 import logging
 import os
 import scandir

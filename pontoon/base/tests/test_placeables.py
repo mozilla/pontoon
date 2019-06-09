@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 
 from pontoon.base.utils import NewlineEscapePlaceable, mark_placeables
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from difflib import Differ
 from textwrap import dedent
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 
 # The classes here provide similar functionality to
 # ProjectLocale.get_latest_activity in mangling latest activity data,
