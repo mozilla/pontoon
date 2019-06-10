@@ -2885,7 +2885,16 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         self.save()
 
-        TranslationMemoryEntry.objects.filter(translation=self).delete()
+        if not self.memory_entries.exists():
+            TranslationMemoryEntry.objects.create(
+                source=self.entity.string,
+                target=self.string,
+                entity=self.entity,
+                translation=self,
+                locale=self.locale,
+                project=self.entity.resource.project,
+            )
+
         self.entity.mark_changed(self.locale)
 
     def unapprove(self, user):

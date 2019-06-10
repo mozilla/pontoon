@@ -39,6 +39,7 @@ def test_approve_translation_basic(translation_a, client_superuser):
         'paths': [],
         'ignore_warnings': 'true',
     }
+
     response = client_superuser.post(url, params)
     assert response.status_code == 400
     assert response.content == 'Bad Request: Request must be AJAX'
@@ -48,9 +49,11 @@ def test_approve_translation_basic(translation_a, client_superuser):
         HTTP_X_REQUESTED_WITH='XMLHttpRequest',
     )
     assert response.status_code == 200, response.content
+
     translation_a.refresh_from_db()
     assert translation_a.approved is True
     assert translation_a.approved_user == response.wsgi_request.user
+    assert translation_a.memory_entries.exists() is True
 
 
 @pytest.mark.django_db
@@ -59,7 +62,7 @@ def test_approve_translation_rejects_previous_approved(
     translation_a,
     client_superuser,
 ):
-    """Check if approve view works properly."""
+    """Check if previously approved translations get rejected on approve."""
     url = reverse('pontoon.approve_translation')
     params = {
         'translation': translation_a.pk,
@@ -73,10 +76,9 @@ def test_approve_translation_rejects_previous_approved(
     )
 
     assert response.status_code == 200, response.content
-
     approved_translation.refresh_from_db()
-    translation_a.refresh_from_db()
 
+    translation_a.refresh_from_db()
     assert translation_a.approved is True
     assert translation_a.active is True
     assert approved_translation.approved is False
