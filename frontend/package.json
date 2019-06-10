@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "chokidar-cli": "1.2.2",
-    "enzyme": "3.9.0",
+    "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.11.2",
     "sinon": "7.3.1"
   }
