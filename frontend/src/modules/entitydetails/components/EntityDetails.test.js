@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
-// import * as navigation from 'core/navigation';
+import * as navigation from 'core/navigation';
 import * as editor from 'modules/editor';
 import * as history from 'modules/history';
 
@@ -188,12 +188,16 @@ describe('<EntityDetailsBase>', () => {
 
 describe('<EntityDetails>', () => {
     beforeAll(() => {
-        // sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
+        sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
         sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever'});
     });
 
+    afterEach(() => {
+        editor.actions.update.resetHistory();
+    });
+
     afterAll(() => {
-        // editor.actions.update.restore();
+        editor.actions.update.restore();
         history.actions.updateStatus.restore();
     });
 
@@ -204,12 +208,11 @@ describe('<EntityDetails>', () => {
         expect(history.actions.updateStatus.calledOnce).toBeTruthy();
     });
 
-    // This doesn't work yet, see https://github.com/airbnb/enzyme/issues/2009
-    // it('updates translation state when props change', () => {
-    //     const [ wrapper, store ] = createEntityDetailsWithStore();
-    //
-    //     store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
-    //     wrapper.update();
-    //     expect(editor.update.calledOnce).toBeTruthy();
-    // });
+    it('updates translation state when props change', () => {
+        const [ wrapper, store ] = createEntityDetailsWithStore();
+
+        store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
+        wrapper.update();
+        expect(editor.actions.update.calledOnce).toBeTruthy();
+    });
 });

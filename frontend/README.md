@@ -125,6 +125,19 @@ To add a new dependency, run the following commands:
     make build
 ```
 
+To upgrade dependency to a specific version, run the following commands:
+
+```shell
+    # Upgrade dependency to the specified version.
+    yarn upgrade my-package@version
+
+    # Go back to the root folder.
+    cd ..
+
+    # Rebuild the Pontoon image so that it has the upgraded dependencies.
+    make build
+```
+
 
 ## Type checking
 
