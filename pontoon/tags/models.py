@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-
 from django.db import models
 
 from pontoon.base.models import PRIORITY_CHOICES, Project, Resource

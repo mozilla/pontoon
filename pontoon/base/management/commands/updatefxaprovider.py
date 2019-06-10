@@ -1,11 +1,11 @@
-from __future__ import absolute_import
-
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 # This file has been copied from http://github.com/mozilla/testpilot
 # and has been modified in order to use Fxa provider from the allauth package.
+from __future__ import absolute_import
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.conf import settings

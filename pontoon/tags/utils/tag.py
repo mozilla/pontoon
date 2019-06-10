@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-
 from django.utils.functional import cached_property
 
 from .tagged import Tagged, TaggedLocale

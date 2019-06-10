@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-
 from django.utils.functional import cached_property
 
 from pontoon.base.utils import glob_to_regex

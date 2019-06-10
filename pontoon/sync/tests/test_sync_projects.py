@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-
 from django.core.management.base import CommandError
 
 from django_nose.tools import assert_equal, assert_false, assert_raises
