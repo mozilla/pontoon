@@ -188,12 +188,12 @@ describe('<EntityDetailsBase>', () => {
 
 describe('<EntityDetails>', () => {
     beforeAll(() => {
-        // sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
+        sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
         sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever'});
     });
 
     afterAll(() => {
-        // editor.actions.update.restore();
+        editor.actions.update.restore();
         history.actions.updateStatus.restore();
     });
 
@@ -209,6 +209,6 @@ describe('<EntityDetails>', () => {
 
         store.dispatch(navigation.actions.updateEntity(store.getState().router, ENTITIES[1].pk));
         wrapper.update();
-        expect(editor.update.calledOnce).toBeTruthy();
+        expect(editor.actions.update.calledOnce).toBeTruthy();
     });
 });
