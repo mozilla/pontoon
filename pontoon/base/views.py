@@ -374,7 +374,6 @@ def get_translation_history(request):
     translations = translations.order_by('-active', 'rejected', '-date')
 
     payload = []
-    offset = timezone.now().strftime('%z')
 
     for t in translations:
         u = t.user
@@ -384,7 +383,7 @@ def get_translation_history(request):
             "uid": "" if u is None else u.id,
             "username": "" if u is None else u.username,
             "date": t.date.strftime('%b %d, %Y %H:%M'),
-            "date_iso": t.date.isoformat() + offset,
+            "date_iso": t.date.isoformat(),
             "approved_user": User.display_name_or_blank(t.approved_user),
             "unapproved_user": User.display_name_or_blank(t.unapproved_user),
         })
