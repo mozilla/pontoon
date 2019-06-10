@@ -192,6 +192,10 @@ describe('<EntityDetails>', () => {
         sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever'});
     });
 
+    afterEach(() => {
+        editor.actions.update.resetHistory();
+    });
+
     afterAll(() => {
         editor.actions.update.restore();
         history.actions.updateStatus.restore();
