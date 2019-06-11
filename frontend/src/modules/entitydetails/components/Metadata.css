@@ -29,7 +29,7 @@
 /* Bug 1228873: do not cross element select on double click */
 .metadata .title,
 .metadata .content {
-  display: inline-block;
+    display: inline-block;
 }
 
 .metadata p a {
