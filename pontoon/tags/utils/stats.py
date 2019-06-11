@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 
 # The classes here provide similar functionality to
 # TranslatedResource.stats in mangling stats data,

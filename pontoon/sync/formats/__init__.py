@@ -3,6 +3,8 @@ Parsing resource files.
 
 See base.py for the ParsedResource base class.
 """
+from __future__ import absolute_import
+
 import os.path
 
 from pontoon.sync.formats import (

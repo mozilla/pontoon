@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 
 from .latest_activity import LatestActivity, LatestActivityUser
 from .resources import TagsResourcesTool

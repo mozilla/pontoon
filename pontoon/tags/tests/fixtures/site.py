@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import functools
 import math
 from datetime import datetime, timedelta

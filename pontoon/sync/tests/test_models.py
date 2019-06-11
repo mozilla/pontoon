@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django_nose.tools import assert_equal, assert_false, assert_is_none, assert_true
 
 from pontoon.base.tests import ProjectFactory, RepositoryFactory, TestCase

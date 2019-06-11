@@ -1,6 +1,8 @@
 """
 Parser for the xliff translation format.
 """
+from __future__ import absolute_import
+
 from six import text_type
 from translate.storage import xliff
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from bulk_update.helper import bulk_update
 from collections import Counter
 from datetime import datetime

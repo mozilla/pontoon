@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import logout
