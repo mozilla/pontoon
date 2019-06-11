@@ -2,13 +2,13 @@
 
 import api from 'core/api';
 
-import { actions as entitiesActions } from 'core/entities';
 import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
+import { actions as entitiesActions } from 'modules/entitieslist';
 
-import type { Entity } from 'core/api';
+import type { DbEntity } from 'modules/entitieslist';
 import type { Locale } from 'core/locales';
 
 
@@ -123,12 +123,12 @@ function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
  * Save the current translation.
  */
 export function sendTranslation(
-    entity: Entity,
+    entity: DbEntity,
     translation: string,
     locale: Locale,
     pluralForm: number,
     forceSuggestions: boolean,
-    nextEntity: ?Entity,
+    nextEntity: ?DbEntity,
     router: Object,
     resource: string,
     ignoreWarnings: ?boolean,

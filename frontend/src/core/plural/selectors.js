@@ -2,15 +2,15 @@
 
 import { createSelector } from 'reselect';
 
-import * as entities from 'core/entities';
+import * as entitieslist from 'modules/entitieslist';
 
-import type { Entity } from 'core/api';
+import type { DbEntity } from 'modules/entitieslist';
 
 
 const pluralSelector = (state): number => state.plural.pluralForm;
 
 
-export function _getPluralForm(pluralForm: number, entity: ?Entity): number {
+export function _getPluralForm(pluralForm: number, entity: ?DbEntity): number {
     if (pluralForm === -1 && entity && entity.original_plural) {
         return 0;
     }
@@ -26,7 +26,7 @@ export function _getPluralForm(pluralForm: number, entity: ?Entity): number {
  */
 export const getPluralForm: Function = createSelector(
     pluralSelector,
-    entities.selectors.getSelectedEntity,
+    entitieslist.selectors.getSelectedEntity,
     _getPluralForm
 );
 

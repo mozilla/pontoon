@@ -6,13 +6,13 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
-import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as utils from 'core/utils';
+import * as entitieslist from 'modules/entitieslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
@@ -24,11 +24,12 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity, OtherLocaleTranslation } from 'core/api';
+import type { OtherLocaleTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { EditorState } from 'modules/editor';
+import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
@@ -43,15 +44,15 @@ type Props = {|
     isTranslator: boolean,
     locale: Locale,
     machinery: MachineryState,
-    nextEntity: Entity,
-    previousEntity: Entity,
+    nextEntity: DbEntity,
+    previousEntity: DbEntity,
     otherlocales: LocalesState,
     orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
-    selectedEntity: Entity,
+    selectedEntity: DbEntity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
 |};
@@ -296,15 +297,15 @@ const mapStateToProps = (state: Object): Props => {
         isTranslator: user.selectors.isTranslator(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],
-        nextEntity: entities.selectors.getNextEntity(state),
-        previousEntity: entities.selectors.getPreviousEntity(state),
+        nextEntity: entitieslist.selectors.getNextEntity(state),
+        previousEntity: entitieslist.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
         orderedOtherLocales: otherlocales.selectors.getOrderedOtherLocales(state),
         preferredLocalesCount: otherlocales.selectors.getPreferredLocalesCount(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
-        selectedEntity: entities.selectors.getSelectedEntity(state),
+        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
         unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
     };

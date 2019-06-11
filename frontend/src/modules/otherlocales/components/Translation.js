@@ -7,12 +7,12 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 
-import type { Entity } from 'core/api';
 import type { Navigation } from 'core/navigation';
+import type { DbEntity } from 'modules/entitieslist';
 
 
 type Props = {|
-    entity: Entity,
+    entity: DbEntity,
     isReadOnlyEditor: boolean,
     translation: Object,
     parameters: Navigation,
