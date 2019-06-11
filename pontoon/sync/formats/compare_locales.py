@@ -42,7 +42,12 @@ class CompareLocalesResource(ParsedResource):
         self.path = path
         self.entities = OrderedDict()  # Preserve entity order.
         self.source_resource = source_resource
-        self.parser = parser.getParser(self.path)
+
+        try:
+            self.parser = parser.getParser(self.path)
+        except UserWarning as err:
+            raise ParseError(err)
+
         self.parsed_objects = []
 
         # A monolingual l10n file might not contain all entities, but the code
