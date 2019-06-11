@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import os.path
 
 from django_nose.tools import (

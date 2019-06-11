@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django.apps import AppConfig
 from django.contrib import admin
 from django.contrib.admin.sites import AdminSite

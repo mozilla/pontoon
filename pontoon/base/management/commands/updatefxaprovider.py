@@ -4,6 +4,8 @@
 
 # This file has been copied from http://github.com/mozilla/testpilot
 # and has been modified in order to use Fxa provider from the allauth package.
+from __future__ import absolute_import
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.conf import settings

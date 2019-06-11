@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
 from mock import ANY, patch, PropertyMock
 

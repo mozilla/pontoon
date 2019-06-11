@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import fnmatch
 import functools
 from collections import OrderedDict

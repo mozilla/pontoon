@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
