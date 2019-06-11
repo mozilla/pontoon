@@ -5,13 +5,13 @@ import * as React from 'react';
 import FluentEditor from './FluentEditor';
 import GenericEditor from './GenericEditor';
 
-import type { Entity } from 'core/api';
+import type { DbEntity } from 'modules/entitieslist';
 import type { EditorProps } from './GenericEditor';
 
 
 type EditorProxyProps = {|
     ...EditorProps,
-    entity: ?Entity,
+    entity: ?DbEntity,
     updateUnsavedChanges: (string) => void,
 |};
 

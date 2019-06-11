@@ -7,14 +7,14 @@ import './History.css';
 
 import Translation from './Translation';
 
-import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
 import type { UserState } from 'core/user';
+import type { DbEntity } from 'modules/entitieslist';
 import type { ChangeOperation, HistoryState } from '..';
 
 
 type Props = {|
-    entity: Entity,
+    entity: DbEntity,
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,

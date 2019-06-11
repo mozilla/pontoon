@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as entities from 'core/entities';
+import * as entitieslist from 'modules/entitieslist';
 import * as navigation from 'core/navigation';
 import * as user from 'core/user';
 
@@ -14,7 +14,7 @@ import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
-import type { Entity } from 'core/api';
+import type { DbEntity } from 'modules/entitieslist';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
@@ -23,7 +23,7 @@ type Props = {|
     isTranslator: boolean,
     parameters: NavigationParams,
     router: Object,
-    selectedEntity: Entity,
+    selectedEntity: DbEntity,
     user: UserState,
 |};
 
@@ -83,7 +83,7 @@ const mapStateToProps = (state: Object): Props => {
         isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
         router: state.router,
-        selectedEntity: entities.selectors.getSelectedEntity(state),
+        selectedEntity: entitieslist.selectors.getSelectedEntity(state),
         user: state[NAME],
     };
 };
