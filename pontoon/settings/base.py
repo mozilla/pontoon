@@ -711,6 +711,10 @@ CSP_FONT_SRC = ("'self'",)
 CSP_IMG_SRC = (
     "'self'",
     "https:",
+
+    # Needed for ACE editor images
+    "data:",
+
     "https://*.wp.com/pontoon.mozilla.org/",
     "https://www.google-analytics.com",
     "https://www.gravatar.com/avatar/",
