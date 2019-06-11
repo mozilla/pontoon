@@ -91,6 +91,7 @@ export default class FluentEditor extends React.Component<EditorProps> {
             fontSize: 14,
             highlightActiveLine: false,
             highlightSelectedWord: false,
+            indentedSoftWrap: false,
             printMargin: false,
             printMarginColumn: false,
             readOnly: this.props.isReadOnlyEditor,
