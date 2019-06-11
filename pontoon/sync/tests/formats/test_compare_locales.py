@@ -30,6 +30,9 @@ class CompareLocalesResourceTests(TestCase):
         super(CompareLocalesResourceTests, self).tearDown()
         shutil.rmtree(self.tempdir)
 
+    def get_invalid_file_path(self):
+        return os.path.join(self.tempdir, 'invalid.xml')
+
     def get_nonexistant_file_path(self):
         return os.path.join(self.tempdir, 'strings.xml')
 
@@ -52,6 +55,15 @@ class CompareLocalesResourceTests(TestCase):
             path,
             source_resource=source_resource,
         )
+
+    def test_init_invalid_resource(self):
+        """
+        If no parser cannot be found for the translated resource,
+        raise a ParseError.
+        """
+        path = self.get_invalid_file_path()
+        with assert_raises(ParseError):
+            compare_locales.CompareLocalesResource(path, source_resource=None)
 
     def test_init_missing_resource(self):
         """
