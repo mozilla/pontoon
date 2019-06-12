@@ -27,6 +27,21 @@ describe('<SearchBoxBase>', () => {
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
         }
     });
+
+    it('empties the search field after navigation parameter "search" gets removed', () => {
+        const params = {
+            search: 'search',
+        };
+        const wrapper = shallow(<SearchBoxBase parameters={ params } />);
+
+        wrapper.setProps({
+            parameters: {
+                search: null,
+            },
+        });
+
+        expect(wrapper.state().search).toEqual('');
+    });
 });
 
 
