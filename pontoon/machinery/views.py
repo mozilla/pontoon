@@ -7,8 +7,6 @@ import xml.etree.ElementTree as ET
 from uuid import uuid4
 from six.moves.urllib.parse import quote
 
-from collections import defaultdict
-
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -17,7 +15,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import escape
 
 from pontoon.base import utils
-from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
+from pontoon.base.models import Entity, Locale, Translation
 from pontoon.machinery.utils import google_translate_util, translation_memory_util
 
 # caighdean depends on nltk which tries to download files when it is imported.
@@ -149,7 +147,6 @@ def google_translate(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(google_translate_code=locale_code).exists():
         return JsonResponse({
@@ -163,7 +160,6 @@ def google_translate(request):
         return JsonResponse(data, status=400)
 
     return JsonResponse(data)
-
 
 
 def caighdean(request):

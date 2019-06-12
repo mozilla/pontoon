@@ -63,5 +63,8 @@ def pre_translate(project, locales=None, entities=None):
                 t.update_latest_translation()
 
         for resource in resources:
-            translatedresource = base.models.TranslatedResource.objects.get(resource=resource, locale=locale)
+            translatedresource = base.models.TranslatedResource.objects.get(
+                resource=resource,
+                locale=locale
+            )
             translatedresource.calculate_stats()
