@@ -163,25 +163,27 @@ export class EditorBase extends React.Component<InternalProps> {
             return null;
         }
 
-        return <div className="editor">
+        return <React.Fragment>
             <plural.PluralSelector />
-            <EditorProxy
-                isReadOnlyEditor={ this.props.isReadOnlyEditor }
-                entity={ this.props.selectedEntity }
-                editor={ this.props.editor }
-                locale={ this.props.locale }
-                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
-                resetFailedChecks={ this.resetFailedChecks }
-                resetSelectionContent={ this.resetSelectionContent }
-                sendTranslation={ this.sendTranslation }
-                updateTranslation={ this.updateTranslation }
-                updateTranslationStatus={ this.updateTranslationStatus }
-                unsavedchanges={ this.props.unsavedchanges }
-                hideUnsavedChanges={ this.hideUnsavedChanges }
-                ignoreUnsavedChanges={ this.ignoreUnsavedChanges }
-                updateUnsavedChanges={ this.updateUnsavedChanges }
-            />
-            <menu>
+            <div className="editor">
+                <EditorProxy
+                    isReadOnlyEditor={ this.props.isReadOnlyEditor }
+                    entity={ this.props.selectedEntity }
+                    editor={ this.props.editor }
+                    locale={ this.props.locale }
+                    copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
+                    resetFailedChecks={ this.resetFailedChecks }
+                    resetSelectionContent={ this.resetSelectionContent }
+                    sendTranslation={ this.sendTranslation }
+                    updateTranslation={ this.updateTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
+                    unsavedchanges={ this.props.unsavedchanges }
+                    hideUnsavedChanges={ this.hideUnsavedChanges }
+                    ignoreUnsavedChanges={ this.ignoreUnsavedChanges }
+                    updateUnsavedChanges={ this.updateUnsavedChanges }
+                />
+            </div>
+            <menu className="editor-menu">
                 <FailedChecks
                     source={ this.props.editor.source }
                     user={ this.props.user }
@@ -265,7 +267,7 @@ export class EditorBase extends React.Component<InternalProps> {
                     </React.Fragment>
                 }
             </menu>
-        </div>;
+        </React.Fragment>;
     }
 }
 

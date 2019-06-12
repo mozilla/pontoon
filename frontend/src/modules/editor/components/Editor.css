@@ -1,23 +1,18 @@
 .editor {
     background: rgb(39, 42, 47);
-    border-bottom: 1px solid #5E6475;
     display: flex;
     flex-direction: column;
-    height: calc(20% + 60px);
-    min-height: 160px;
+    height: 20%;
+    min-height: 100px;
 }
 
 .editor textarea {
     border: none;
     box-sizing: border-box;
-    display: block;
     line-height: 22px;
-    height: calc(100% - 60px);
-    min-height: 100px;
-    overflow: auto;
+    height: 100%;
     padding: 10px;
     resize: none;
-    width: 100%;
 }
 
 /* Remove highlight in Chrome */
@@ -37,26 +32,25 @@
     font-size: 15px;
 }
 
-.editor .banner {
+.banner {
     font-style: italic;
     line-height: 40px;
 }
 
-.editor .banner a {
+.banner a {
     color: #7BC876;
 }
 
-.editor menu {
+.editor-menu {
+    background: rgb(39, 42, 47);
+    border-bottom: 1px solid #5E6475;
     color: #fff;
     padding: 10px;
     position: relative;
+    text-align: right;
 }
 
-.editor .actions {
-    float: right;
-}
-
-.editor .actions button {
+.editor-menu .actions button {
     background: transparent;
     border: none;
     color: #EBEBEB;
@@ -66,12 +60,12 @@
     text-transform: uppercase;
 }
 
-.editor .actions button:hover {
+.editor-menu .actions button:hover {
     color: #7BC876;
 }
 
-.editor .actions .action-save,
-.editor .actions .action-suggest {
+.editor-menu .actions .action-save,
+.editor-menu .actions .action-suggest {
     background: #7BC876;
     border-radius: 3px;
     color: #272A2F;
@@ -80,11 +74,11 @@
     padding: 10px;
 }
 
-.editor .actions .action-suggest {
+.editor-menu .actions .action-suggest {
     background: #4FC4F6;
 }
 
-.editor .actions .action-save:hover,
-.editor .actions .action-suggest:hover {
+.editor-menu .actions .action-save:hover,
+.editor-menu .actions .action-suggest:hover {
     color: #EBEBEB;
 }
