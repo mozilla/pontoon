@@ -82,7 +82,7 @@
 
 .react-tabs__tab,
 .react-tabs__tab-panel {
-    height: calc(100% - 37px);
+    height: calc(100% - 43px);
 }
 
 .react-tabs__tab-panel > section {
