@@ -30,8 +30,11 @@ class Property extends React.Component<PropertyProps> {
     render(): React.Node {
         const { children, className, title } = this.props;
         return <p className={ className }>
-            <span className="title">{ title }</span>
-            <span className="content">{ children }</span>
+            {
+                /* Space between <span> elements also prevents cross
+                   element selection on double click (bug 1228873) */
+            }
+            <span className="title">{ title }</span> <span className="content">{ children }</span>
         </p>;
     }
 }
