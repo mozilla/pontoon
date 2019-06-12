@@ -38,7 +38,7 @@ def pre_translate(project, locales=None, entities=None):
                 max_results=5,
             )
 
-            if tm_response and int(float(tm_response[0]['quality'])) is 100:
+            if tm_response and int(float(tm_response[0]['quality'])) == 100:
                 string = tm_response[0]['target']
 
             elif locale.google_translate_code:
