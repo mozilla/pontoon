@@ -18,6 +18,7 @@ from django.utils.html import escape
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
+from pontoon.machinery.utils import google_translate_util, translation_memory_util
 
 # caighdean depends on nltk which tries to download files when it is imported.
 # This is doomed to fail when you start Pontoon while offline. To let
@@ -47,18 +48,17 @@ def machinery(request):
     })
 
 
-def translation_memory(request=None, text=None, locale=None, pk=None):
+def translation_memory(request):
     """Get translations from internal translations memory."""
-    if request:
-        try:
-            text = request.GET['text']
-            locale = request.GET['locale']
-            pk = request.GET['pk']
-        except MultiValueDictKeyError as e:
-            return JsonResponse({
-                'status': False,
-                'message': 'Bad Request: {error}'.format(error=e),
-            }, status=400)
+    try:
+        text = request.GET['text']
+        locale = request.GET['locale']
+        pk = request.GET['pk']
+    except MultiValueDictKeyError as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=e),
+        }, status=400)
 
     MAX_RESULTS = 5
 
@@ -70,39 +70,8 @@ def translation_memory(request=None, text=None, locale=None, pk=None):
             'message': 'Not Found: {error}'.format(error=e),
         }, status=404)
 
-    entries = (
-        TranslationMemoryEntry.objects
-        .filter(locale=locale)
-        .minimum_levenshtein_ratio(text)
-        .exclude(translation__approved=False, translation__fuzzy=False)
-    )
-
-    # Exclude existing entity
-    if pk:
-        entries = entries.exclude(entity__pk=pk)
-
-    entries = entries.values('source', 'target', 'quality')
-    entries_merged = defaultdict(lambda: {'count': 0, 'quality': 0})
-
-    # Group entries with the same target and count them
-    for entry in entries:
-        if (
-            entry['target'] not in entries_merged or
-            entry['quality'] > entries_merged[entry['target']]['quality']
-        ):
-            entries_merged[entry['target']].update(entry)
-        entries_merged[entry['target']]['count'] += 1
-
-    # Sort entries in descending order by quality and then count
-    # Limit entries count by `MAX_RESULTS`
-    return JsonResponse(
-        sorted(
-            entries_merged.values(),
-            key=lambda e: (e['quality'], e['count']),
-            reverse=True,
-        )[:MAX_RESULTS],
-        safe=False
-    )
+    data = translation_memory_util(text, locale, max_results, pk)
+    return JsonResponse(data, safe=False)
 
 
 def microsoft_translator(request):
@@ -169,26 +138,17 @@ def microsoft_translator(request):
         }, status=400)
 
 
-def google_translate(request=None, text=None, locale_code=None):
+def google_translate(request):
     """Get translation from Google machine translation service."""
-    if request:
-        try:
-            text = request.GET['text']
-            locale_code = request.GET['locale']
-        except MultiValueDictKeyError as e:
-            return JsonResponse({
-                'status': False,
-                'message': 'Bad Request: {error}'.format(error=e),
-            }, status=400)
-
-    api_key = settings.GOOGLE_TRANSLATE_API_KEY
-
-    if not api_key:
-        log.error('GOOGLE_TRANSLATE_API_KEY not set')
+    try:
+        text = request.GET['text']
+        locale_code = request.GET['locale']
+    except MultiValueDictKeyError as e:
         return JsonResponse({
             'status': False,
-            'message': 'Bad Request: Missing api key.',
+            'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
+
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(google_translate_code=locale_code).exists():
@@ -197,38 +157,13 @@ def google_translate(request=None, text=None, locale_code=None):
             'message': 'Not Found: {error}'.format(error=locale_code),
         }, status=404)
 
-    url = 'https://translation.googleapis.com/language/translate/v2'
+    data = google_translate_util(text, locale_code)
 
-    payload = {
-        'q': text,
-        'source': 'en',
-        'target': locale_code,
-        'format': 'text',
-        'key': api_key,
-    }
+    if 'status' in data.keys():
+        return JsonResponse(data, status=400)
 
-    try:
-        r = requests.post(url, params=payload)
-        root = json.loads(r.content)
+    return JsonResponse(data)
 
-        if 'data' not in root:
-            log.error('Google Translate error: {error}'.format(error=root))
-            return JsonResponse({
-                'status': False,
-                'message': 'Bad Request: {error}'.format(error=root),
-            }, status=400)
-
-        suggestion = {
-            'translation': root['data']['translations'][0]['translatedText'],
-        }
-
-        return JsonResponse(suggestion)
-
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
 
 
 def caighdean(request):

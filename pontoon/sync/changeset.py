@@ -15,10 +15,10 @@ from pontoon.base.models import (
     Locale,
     Translation,
     TranslationMemoryEntry,
-    pre_translate,
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
+from pontoon.pretranslation.utils import pre_translate
 
 log = logging.getLogger(__name__)
 
