@@ -78,13 +78,32 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
+``DJANGO_LOGIN``
+   Required for non-Mozilla deployments, which cannot use `Firefox Accounts`_ for
+   login. Set to True if you want to use the default Django login instead. This will
+   allow you to log in via accounts created using `manage.py shell`.
+
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters
    a system error. See `Heroku Reference`_ for more information.
 
+``GOOGLE_ANALYTICS_KEY``
+   Optional. Set your `Google Analytics key`_ to use Google Analytics.
+
+``GOOGLE_TRANSLATE_API_KEY``
+   Optional. Set your `Google Cloud Translation API key`_ to use machine translation
+   by Google.
+
 ``MAINTENANCE_PAGE_URL``
    Optional. URL to the page displayed to your users when the application is placed
    in the maintenance state. See `Heroku Reference`_ for more information.
+
+``MANUAL_SYNC``
+   Optional. Enable Sync button in project Admin.
+
+``MICROSOFT_TRANSLATOR_API_KEY``
+   Optional. Set your `Microsoft Translator API key`_ to use machine translation
+   by Microsoft.
 
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
@@ -152,6 +171,10 @@ you create:
    this to ``UTC``.
 
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
+.. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
+.. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
+.. _Google Analytics key: https://www.google.com/analytics/
+.. _Google Cloud Translation API key: https://cloud.google.com/translate/
 
 Add-ons
 -------
