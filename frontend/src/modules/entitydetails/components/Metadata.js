@@ -31,6 +31,11 @@ class Property extends React.Component<PropertyProps> {
         const { children, className, title } = this.props;
         return <p className={ className }>
             <span className="title">{ title }</span>
+            {
+                /* Extra space between <span> elements prevents cross
+                   element selection on double click (bug 1228873) */
+            }
+            { ' ' }
             <span className="content">{ children }</span>
         </p>;
     }
