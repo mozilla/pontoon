@@ -1,10 +1,10 @@
 .keyboard-shortcuts {
     color: #AAAAAA;
     cursor: pointer;
+    float: left;
 }
 
 .keyboard-shortcuts .selector {
-    float: left;
     font-size: 22px;
     padding: 9px 5px;
 }

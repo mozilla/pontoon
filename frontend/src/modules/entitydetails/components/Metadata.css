@@ -1,7 +1,7 @@
 .metadata {
     background-color: #3f4752;
     color: #AAA;
-    font-size: 0.9em;
+    font-size: 12px;
     font-style: italic;
     height: 20%;
     min-height: 100px;
@@ -22,14 +22,7 @@
 
 .metadata .title {
     color: #888;
-    padding-right: 3px;
     text-transform: uppercase;
-}
-
-/* Bug 1228873: do not cross element select on double click */
-.metadata .title,
-.metadata .content {
-    display: inline-block;
 }
 
 .metadata p a {
@@ -39,8 +32,10 @@
 
 .metadata .original {
     color: white;
-    font-size: 1.1em;
+    font-size: 13px;
     font-style: normal;
+    line-height: 22px;
+    padding-bottom: 6px;
     text-align: start;
     white-space: pre-wrap;
 }
@@ -53,5 +48,4 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    padding-top: 6px;
 }

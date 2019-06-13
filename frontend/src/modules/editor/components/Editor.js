@@ -262,7 +262,6 @@ export class EditorBase extends React.Component<InternalProps> {
                             </Localized>
                             }
                         </div>
-                        <div className="clearfix" />
                     </React.Fragment>
                 }
             </menu>
