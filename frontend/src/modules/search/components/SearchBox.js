@@ -61,6 +61,18 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         document.addEventListener('keydown', this.handleShortcuts);
     }
 
+    componentDidUpdate(prevProps: InternalProps) {
+        // Clear search field when navigating to a new file
+        if (
+            this.props.parameters.search === null &&
+            prevProps.parameters.search !== null
+        ) {
+            this.setState({
+                search: '',
+            });
+        }
+    }
+
     componentWillUnmount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
