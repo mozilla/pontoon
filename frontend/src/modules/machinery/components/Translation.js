@@ -34,6 +34,12 @@ export default class Translation extends React.Component<Props> {
         if (this.props.isReadOnlyEditor) {
             return;
         }
+
+        // Ignore if selecting text
+        if (window.getSelection().toString()) {
+            return;
+        }
+
         this.props.updateEditorTranslation(this.props.translation.translation);
     }
 
