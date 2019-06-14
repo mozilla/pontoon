@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import TimeAgo from 'react-timeago';
+import ReactTimeAgo from 'react-time-ago'
 import { Localized } from 'fluent-react';
 
 import './Translation.css';
@@ -228,7 +228,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 <header className='clearfix'>
                     <div className='info'>
                         { this.renderUser() }
-                        <TimeAgo
+                        <ReactTimeAgo
                             dir='ltr'
                             date={ new Date(translation.date_iso) }
                             title={ `${translation.date} UTC` }
