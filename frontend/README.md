@@ -116,7 +116,7 @@ To add a new dependency, run the following commands:
 
 ```shell
     # Add the dependency. Make sure to use an exact version.
-    yarn add my-package:version
+    yarn add my-package@version
 
     # Go back to the root folder.
     cd ..
@@ -255,5 +255,5 @@ In Fluent, the developer is not to be bothered with inner logic and complexity t
 - [Infinite Scroller](https://cassetterocks.github.io/react-infinite-scroller/)
 - [Linkify](https://tasti.github.io/react-linkify/)
 - [reselect](https://github.com/reduxjs/reselect)
-- [TimeAgo](https://github.com/nmn/react-timeago)
+- [ReactTimeAgo](https://github.com/catamphetamine/react-time-ago)
 - [react-tabs](https://github.com/reactjs/react-tabs)
