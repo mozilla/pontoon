@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import TimeAgo from 'react-timeago';
+import ReactTimeAgo from 'react-time-ago'
 
 import './UserNotification.css';
 
@@ -68,7 +68,7 @@ export default class UserNotification extends React.Component<Props, State> {
                     </span>
                 }
 
-                <TimeAgo
+                <ReactTimeAgo
                     className="timeago"
                     date={ new Date(notification.date_iso) }
                     title={ `${notification.date} UTC` }
