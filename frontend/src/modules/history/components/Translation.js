@@ -87,6 +87,12 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         if (this.props.isReadOnlyEditor) {
             return;
         }
+
+        // Ignore if selecting text
+        if (window.getSelection().toString()) {
+            return;
+        }
+
         this.props.updateEditorTranslation(this.props.translation.string);
     }
 
