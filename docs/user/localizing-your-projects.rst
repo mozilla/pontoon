@@ -12,7 +12,7 @@ Prerequisites
 -------------
 Before you can set up a new project in Pontoon:
 
-1. Ensure your project works with one of the :doc:`supported l10n frameworks <../index>`
+1. Ensure your project works with one of the :doc:`supported l10n frameworks <../index>`.
 2. Extract localizable strings into resource files.
 3. Push resource files to your GitHub repository.
 4. Make sure your Pontoon instance has write access to your repository.
@@ -21,7 +21,7 @@ Before you can set up a new project in Pontoon:
 
         The recommended way for that is to create a dedicated GitHub account
         for your Pontoon instance, `add it as a collaborator`_ to your
-        repository, and set ``SSH_KEY`` and ``SSH_CONFIG`` :doc:`as documented <../admin/deployment>`
+        repository, and set ``SSH_KEY`` and ``SSH_CONFIG`` :doc:`as documented <../admin/deployment>`.
 
 .. _GitHub repository: https://help.github.com/en/articles/create-a-repo
 .. _add it as a collaborator: https://help.github.com/en/articles/inviting-collaborators-to-a-personal-repository
