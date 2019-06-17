@@ -18,7 +18,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.pretranslation.utils import pre_translate
+from pontoon.pretranslation.utils import pretranslate
 
 log = logging.getLogger(__name__)
 
@@ -234,7 +234,7 @@ class ChangeSet(object):
                     ))
 
         if len(new_entities) > 0 and self.db_project.pre_translation_enabled:
-            pre_translate(project=self.db_project, entities=new_entities)
+            pretranslate(project=self.db_project, entities=new_entities)
 
         self.send_notifications(new_entities)
 

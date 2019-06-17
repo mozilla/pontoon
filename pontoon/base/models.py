@@ -1200,7 +1200,7 @@ class Project(AggregatedStats):
             for locale in self.locales.all():
                 locale.aggregate_stats()
         if pre_translate_changed and self.pre_translation_enabled:
-            pre_translate(self)
+            pretranslate(self)
 
     def changed_resources(self, now):
         """
