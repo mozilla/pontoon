@@ -3,8 +3,6 @@
 export { default as actions } from './actions';
 export { default as selectors } from './selectors';
 
-export { default as Navigation } from './components/Navigation';
-
 export type { NavigationParams } from './selectors';
 
 

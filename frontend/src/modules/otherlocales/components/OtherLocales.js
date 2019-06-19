@@ -8,7 +8,7 @@ import './OtherLocales.css';
 import Translation from './Translation';
 
 import type { Entity, OtherLocaleTranslation } from 'core/api';
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { LocalesState } from '..';
 
@@ -19,7 +19,7 @@ type Props = {|
     orderedOtherLocales: Array<OtherLocaleTranslation>,
     preferredLocalesCount: number,
     otherlocales: LocalesState,
-    parameters: Navigation,
+    parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string) => void,
 |};

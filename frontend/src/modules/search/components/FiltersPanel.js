@@ -9,12 +9,12 @@ import { FILTERS_STATUS } from '..';
 
 import { asLocaleString } from 'core/utils';
 
-import type { Navigation } from 'core/navigation';
+import type { NavigationParams } from 'core/navigation';
 import type { Stats } from 'core/stats';
 
 
 type Props = {|
-    parameters: Navigation,
+    parameters: NavigationParams,
     stats: Stats,
     selectStatus: Function,
 |};
