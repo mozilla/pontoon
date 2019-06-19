@@ -17,6 +17,7 @@ import * as stats from 'core/stats';
 import { UserControls } from 'core/user';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
+import { Navigation } from 'modules/navbar';
 import { ProjectInfo } from 'modules/projectinfo';
 import { ResourceProgress } from 'modules/resourceprogress';
 import { SearchBox } from 'modules/search';
@@ -95,7 +96,7 @@ class App extends React.Component<InternalProps> {
 
         return <div id="app">
             <header>
-                <navigation.Navigation />
+                <Navigation />
                 <ResourceProgress
                     stats={ state.stats }
                 />
