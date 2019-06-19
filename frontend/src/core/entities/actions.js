@@ -1,15 +1,15 @@
 /* @flow */
 
 import api from 'core/api';
-import { actions as statsActions } from 'core/stats';
+import * as stats from 'core/stats';
 
-import type { Translation } from './reducer';
+import type { Entities, EntityTranslation } from 'core/api';
 
 
-export const RECEIVE: 'entitieslist/RECEIVE' = 'entitieslist/RECEIVE';
-export const REQUEST: 'entitieslist/REQUEST' = 'entitieslist/REQUEST';
-export const RESET: 'entitieslist/RESET' = 'entitieslist/RESET';
-export const UPDATE: 'entitieslist/UPDATE' = 'entitieslist/UPDATE';
+export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
+export const REQUEST: 'entities/REQUEST' = 'entities/REQUEST';
+export const RESET: 'entities/RESET' = 'entities/RESET';
+export const UPDATE: 'entities/UPDATE' = 'entities/UPDATE';
 
 
 /**
@@ -30,10 +30,10 @@ export function request(): RequestAction {
  */
 export type ReceiveAction = {
     type: typeof RECEIVE,
-    entities: Array<Object>,
+    entities: Entities,
     hasMore: boolean,
 };
-export function receive(entities: Array<Object>, hasMore: boolean): ReceiveAction {
+export function receive(entities: Entities, hasMore: boolean): ReceiveAction {
     return {
         type: RECEIVE,
         entities,
@@ -49,12 +49,12 @@ export type UpdateAction = {
     type: typeof UPDATE,
     entity: number,
     pluralForm: number,
-    translation: Translation,
+    translation: EntityTranslation,
 };
 export function updateEntityTranslation(
     entity: number,
     pluralForm: number,
-    translation: Translation
+    translation: EntityTranslation
 ): UpdateAction {
     return {
         type: UPDATE,
@@ -90,7 +90,7 @@ export function get(
             status,
         );
         dispatch(receive(content.entities, content.has_next));
-        dispatch(statsActions.update(content.stats));
+        dispatch(stats.actions.update(content.stats));
     };
 }
 

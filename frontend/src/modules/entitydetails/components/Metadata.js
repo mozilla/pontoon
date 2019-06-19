@@ -10,8 +10,8 @@ import { WithPlaceables } from 'core/placeable';
 
 import Screenshots from './Screenshots';
 
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
-import type { DbEntity } from 'modules/entitieslist';
 
 
 type PropertyProps = {|
@@ -43,7 +43,7 @@ class Property extends React.Component<PropertyProps> {
 
 
 type Props = {|
-    +entity: DbEntity,
+    +entity: Entity,
     +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
@@ -89,7 +89,7 @@ export default class Metadata extends React.Component<Props> {
         }
     }
 
-    getOriginalContent(entity: DbEntity) {
+    getOriginalContent(entity: Entity) {
         const { pluralForm, locale } = this.props;
 
         if (pluralForm === -1) {
@@ -116,7 +116,7 @@ export default class Metadata extends React.Component<Props> {
         };
     }
 
-    renderOriginal(entity: DbEntity): React.Node {
+    renderOriginal(entity: Entity): React.Node {
         const { title, original } = this.getOriginalContent(entity);
 
         return <React.Fragment>
@@ -129,7 +129,7 @@ export default class Metadata extends React.Component<Props> {
         </React.Fragment>;
     }
 
-    renderComment(entity: DbEntity): React.Node {
+    renderComment(entity: Entity): React.Node {
         if (!entity.comment) {
             return null;
         }
@@ -152,7 +152,7 @@ export default class Metadata extends React.Component<Props> {
         </Localized>;
     }
 
-    renderContext(entity: DbEntity): React.Node {
+    renderContext(entity: Entity): React.Node {
         if (!entity.key) {
             return null;
         }
@@ -195,7 +195,7 @@ export default class Metadata extends React.Component<Props> {
         </Localized>;
     }
 
-    renderSources(entity: DbEntity): React.Node {
+    renderSources(entity: Entity): React.Node {
         if (!entity.source) {
             return null;
         }

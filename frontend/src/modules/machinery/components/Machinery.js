@@ -7,13 +7,13 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
-import type { DbEntity } from 'modules/entitieslist';
 import type { MachineryState } from '..';
 
 
 type Props = {|
-    entity: DbEntity,
+    entity: Entity,
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
