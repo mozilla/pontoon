@@ -5,10 +5,9 @@ import { NavigationBase } from './Navigation';
 
 
 describe('<Navigation>', () => {
-    const LOCALES = {
-        locales: {
-            'kg': { code: 'kg', name: 'Klingon' },
-        },
+    const LOCALE = {
+        code: 'kg',
+        name: 'Klingon'
     };
     const PROJECT = {
         name: 'Mark 42',
@@ -21,7 +20,7 @@ describe('<Navigation>', () => {
 
     it('shows navigation', () => {
         const wrapper = shallow(<NavigationBase
-            locales={ LOCALES }
+            locale={ LOCALE }
             parameters={ PARAMETERS }
             project={ PROJECT }
         />);
@@ -33,7 +32,7 @@ describe('<Navigation>', () => {
 
     it('shows a link to locale dashboard when all projects are loaded', () => {
         const wrapper = shallow(<NavigationBase
-            locales={ LOCALES }
+            locale={ LOCALE }
             parameters={ { ...PARAMETERS, project: 'all-projects' } }
             project={ PROJECT }
         />);
