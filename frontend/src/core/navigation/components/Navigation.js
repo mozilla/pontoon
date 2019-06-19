@@ -2,19 +2,18 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import isEmpty from 'lodash.isempty';
 import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
-import { NAME as LOCALES_NAME } from 'core/locales';
+import * as locales from 'core/locales';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { selectors } from '..';
 
-import type { LocalesState } from 'core/locales';
+import type { Locale } from 'core/locales';
 import type { NavigationParams } from '..';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
@@ -22,7 +21,7 @@ import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
-    locales: LocalesState,
+    locale: Locale,
     parameters: NavigationParams,
     project: ProjectState,
     resources: ResourcesState,
@@ -53,13 +52,11 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { locales, parameters, project, resources } = this.props;
+        const { locale, parameters, project, resources } = this.props;
 
-        if (isEmpty(locales.locales)) {
+        if (!locale) {
             return null;
         }
-
-        const locale = locales.locales[parameters.locale];
 
         const localeDashboardURL = `/${locale.code}/`;
         let projectDashboardURL = `/${locale.code}/${parameters.project}/`;
@@ -107,7 +104,7 @@ export class NavigationBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locales: state[LOCALES_NAME],
+        locale: locales.selectors.getCurrentLocaleData(state),
         parameters: selectors.getNavigationParams(state),
         project: state[project.NAME],
         resources: state[resource.NAME],
