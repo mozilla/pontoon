@@ -17,7 +17,6 @@
     "linkify-it": "2.1.0",
     "lodash.debounce": "4.0.8",
     "lodash.flattendeep": "4.4.0",
-    "lodash.isempty": "4.4.0",
     "react": "16.8.6",
     "react-ace": "6.4.0",
     "react-content-marker": "1.0.1",
