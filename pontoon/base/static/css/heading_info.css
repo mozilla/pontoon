@@ -41,7 +41,13 @@ ul {
 #heading .details .title {
   color: #AAAAAA;
   padding-right: 5px;
+  position: relative;
   text-transform: uppercase;
+}
+
+#heading .details .title sup {
+  position: absolute;
+  top: -5px;
 }
 
 #heading .details .value {
