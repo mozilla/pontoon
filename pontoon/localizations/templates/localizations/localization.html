@@ -68,7 +68,8 @@
           'Resources',
           url('pontoon.localizations.localization', locale.code, project.slug),
           is_active = (current_page == ''),
-          count = resource_count
+          count = resource_count,
+          icon = 'file',
         )
       }}
       {% if project.tags_enabled and tags %}
@@ -76,27 +77,33 @@
            'Tags',
            url('pontoon.localizations.tags', locale.code, project.slug),
            is_active = (current_page == 'tags'),
-           count = tags) }}
+           count = tags,
+           icon = 'tag',
+         )
+      }}
       {% endif %}
       {{ Menu.item(
           'Contributors',
           url('pontoon.localizations.contributors', locale.code, project.slug),
           is_active = (current_page == 'contributors'),
-          count = False
+          count = False,
+          icon = 'users',
         )
       }}
       {{ Menu.item(
           'Project Info',
           url('pontoon.localizations.project-info', locale.code, project.slug),
           is_active = (current_page == 'project-info'),
-          count = 1 if project.info else False
+          count = False,
+          icon = 'info-circle',
         )
       }}
       {{ Menu.item(
           'Team Info',
           url('pontoon.localizations.team-info', locale.code, project.slug),
           is_active = (current_page == 'team-info'),
-          count = 1 if locale.team_description else False
+          count = False,
+          icon = 'info-circle',
         )
       }}
     {% endcall %}
