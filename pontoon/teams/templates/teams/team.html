@@ -102,7 +102,7 @@
           'Info',
           url('pontoon.teams.info', locale.code),
           is_active = (current_page == 'info'),
-          count = False,
+          count = 1 if locale.team_description else False,
           icon = 'info-circle',
         )
       }}

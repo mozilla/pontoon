@@ -94,7 +94,7 @@
           'Project Info',
           url('pontoon.localizations.project-info', locale.code, project.slug),
           is_active = (current_page == 'project-info'),
-          count = False,
+          count = 1 if project.info else False,
           icon = 'info-circle',
         )
       }}
@@ -102,7 +102,7 @@
           'Team Info',
           url('pontoon.localizations.team-info', locale.code, project.slug),
           is_active = (current_page == 'team-info'),
-          count = False,
+          count = 1 if locale.team_description else False,
           icon = 'info-circle',
         )
       }}
