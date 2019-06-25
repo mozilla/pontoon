@@ -2,15 +2,21 @@ sudo: false
 language: python
 python:
   - '2.7'
+  - '3.7'
+
+matrix:
+  allow_failures:
+  - python: '3.7'
+
 cache:
   pip: true
   npm: true
   directories:
     - node_modules
 install:
-  - pip2 install -U --force pip
-  - pip2 install --require-hashes -r requirements/default.txt
-  - pip2 install --require-hashes -r requirements/test.txt
+  - pip install -U --force pip
+  - pip install --require-hashes -r requirements/default.txt
+  - pip install --require-hashes -r requirements/test.txt
   - source $HOME/.nvm/nvm.sh
   - nvm install --lts node
   - nvm use --lts node
@@ -52,3 +58,4 @@ env:
     - SECRET_KEY=asdf
     - DATABASE_URL=postgres://postgres@localhost/pontoon
     - HMAC_KEY=asdf
+    - HGPYTHON3=1
