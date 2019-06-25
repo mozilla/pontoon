@@ -78,28 +78,32 @@
           'Projects',
           url('pontoon.teams.team', locale.code),
           is_active = (current_page == ''),
-          count = count
+          count = count,
+          icon = 'folder',
         )
       }}
       {{ Menu.item(
           'Contributors',
           url('pontoon.teams.contributors', locale.code),
           is_active = (current_page == 'contributors'),
-          count = False
+          count = False,
+          icon = 'users',
         )
       }}
       {{ Menu.item(
           'Bugs',
           url('pontoon.teams.bugs', locale.code),
           is_active = (current_page == 'bugs'),
-          count = False
+          count = False,
+          icon = 'bug',
         )
       }}
       {{ Menu.item(
           'Info',
           url('pontoon.teams.info', locale.code),
           is_active = (current_page == 'info'),
-          count = 1 if locale.team_description else False
+          count = 1 if locale.team_description else False,
+          icon = 'info-circle',
         )
       }}
       {% if request.user.has_perm('base.can_manage_locale', locale) %}
@@ -107,7 +111,8 @@
             'Permissions',
             url('pontoon.teams.permissions', locale.code),
             is_active = (current_page == 'permissions'),
-            count = False
+            count = False,
+            icon = 'cog',
           )
         }}
       {% endif %}

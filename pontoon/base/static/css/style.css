@@ -1036,6 +1036,10 @@ nav .links li {
   color: #FFFFFF;
 }
 
+.submenu.tabs .links a .fa {
+  margin-right: 4px;
+}
+
 noscript p {
   text-transform: uppercase;
 }
