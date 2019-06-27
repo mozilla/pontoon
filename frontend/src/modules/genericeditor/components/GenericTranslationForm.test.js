@@ -22,7 +22,6 @@ describe('<GenericTranslationFormBase>', () => {
     it('renders a textarea with some content', () => {
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
         />);
 
@@ -34,7 +33,6 @@ describe('<GenericTranslationFormBase>', () => {
         const mockUpdate = sinon.spy();
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
         />);
@@ -50,10 +48,11 @@ describe('<GenericTranslationFormBase>', () => {
 
         const wrapper = mount(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
+            unsavedchanges={ { shown: false } }
             resetSelectionContent={ resetMock }
             updateTranslation={ updateMock }
+            updateUnsavedChanges={ sinon.stub() }
         />);
 
         wrapper.setProps({ editor: { selectionReplacementContent: 'hello ' } });
@@ -67,7 +66,6 @@ describe('<GenericTranslationFormBase>', () => {
         const mockSend = sinon.spy();
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
             disableAction={ sinon.spy() }
@@ -99,7 +97,6 @@ describe('<GenericTranslationFormBase>', () => {
 
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ editor }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             updateTranslationStatus={ mockSend }
             disableAction={ sinon.spy() }
@@ -123,7 +120,6 @@ describe('<GenericTranslationFormBase>', () => {
         const mockSend = sinon.spy();
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             ignoreUnsavedChanges={ mockSend }
             disableAction={ sinon.spy() }
@@ -148,7 +144,6 @@ describe('<GenericTranslationFormBase>', () => {
 
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             hideUnsavedChanges={ mockSend }
             unsavedchanges={ { shown: true } }
@@ -175,7 +170,6 @@ describe('<GenericTranslationFormBase>', () => {
 
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ editor }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             resetFailedChecks={ mockSend }
             unsavedchanges={ { shown: false } }
@@ -195,7 +189,6 @@ describe('<GenericTranslationFormBase>', () => {
         const mockCopy = sinon.spy();
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             copyOriginalIntoEditor={ mockCopy }
         />);
@@ -217,7 +210,6 @@ describe('<GenericTranslationFormBase>', () => {
         const mockUpdate = sinon.spy();
         const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
-            translation={ EDITOR.translation }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
         />);

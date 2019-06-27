@@ -56,7 +56,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             const fromSyntax = this.state.forceSource ? 'simple' : 'complex';
             const toSyntax = this.state.forceSource ? 'complex' : 'simple';
             this.updateEditorContent(
-                this.props.translation,
+                this.props.editor.translation,
                 fromSyntax,
                 toSyntax,
             );
@@ -103,9 +103,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
         const props = this.props;
 
         let translationContent = translation;
+        let originalContent = props.activeTranslation;
 
         if (fromSyntax === 'complex' && toSyntax === 'simple') {
             translationContent = fluent.getSimplePreview(translation);
+            originalContent = fluent.getSimplePreview(originalContent);
         }
         else if (fromSyntax === 'simple' && toSyntax === 'complex') {
             translationContent = fluent.getReconstructedSimpleMessage(
@@ -114,7 +116,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             );
         }
 
-        props.setInitialTranslation(translationContent);
+        props.setInitialTranslation(originalContent);
         props.updateTranslation(translationContent);
     }
 

@@ -43,7 +43,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
         if (
-            prevProps.translation !== this.props.translation &&
+            prevProps.editor.translation !== this.props.editor.translation &&
             prevEditor.errors === editor.errors &&
             prevEditor.warnings === editor.warnings &&
             (editor.errors.length || editor.warnings.length)
@@ -54,11 +54,11 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         // When content of the translation changes
         //   - close unsaved changes popup if open
         //   - update unsaved changes status
-        if (prevProps.translation !== this.props.translation) {
+        if (prevProps.editor.translation !== this.props.editor.translation) {
             if (this.props.unsavedchanges.shown) {
                 this.props.hideUnsavedChanges();
             }
-            this.props.updateUnsavedChanges(this.props.translation);
+            this.props.updateUnsavedChanges(this.props.editor.translation);
         }
 
         // If there is content to add to the editor, do so, then remove
@@ -189,7 +189,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             }
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
-            value={ this.props.translation }
+            value={ this.props.editor.translation }
             onKeyDown={ this.handleShortcuts }
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }

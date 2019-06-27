@@ -77,7 +77,7 @@ describe('<Editor>', () => {
 
         // We've mocked the `updateTranslation` method so it's never called.
         // Simulate here what it would do.
-        wrapper.setProps({ translation: 'Salut' });
+        wrapper.setProps({ editor: { translation: 'Salut' } });
 
         // Force source mode.
         wrapper.instance().toggleForceSource();

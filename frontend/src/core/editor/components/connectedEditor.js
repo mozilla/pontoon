@@ -50,7 +50,6 @@ export type EditorProps = {|
     isReadOnlyEditor: boolean,
     locale: Locale,
     pluralForm: number,
-    translation: string,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
     clearEditor: () => void,
@@ -192,7 +191,6 @@ export default function connectedEditor<Object>(
                     editor={ this.props.editor }
                     locale={ this.props.locale }
                     pluralForm={ this.props.pluralForm }
-                    translation={ this.props.editor.translation }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
                     clearEditor={ this.clearEditor }
