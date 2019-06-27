@@ -2,19 +2,18 @@
 
 import * as React from 'react';
 import AceEditor from 'react-ace';
-import { FluentParser, lineOffset, columnOffset } from 'fluent-syntax';
+import { lineOffset, columnOffset } from 'fluent-syntax';
 
 import './editor-mode-fluent';
 import './editor-theme-fluent';
 
+import { fluent } from 'core/utils';
+
 import type { EditorProps } from 'core/editor';
 
 
-const fluentParser = new FluentParser();
-
-
 function annotate(source) {
-    let resource = fluentParser.parse(source);
+    let resource = fluent.parser.parse(source);
     let junks = resource.body.filter(entry => entry.type === 'Junk');
     let annotations = [];
 
