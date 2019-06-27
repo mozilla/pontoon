@@ -8,27 +8,32 @@ import { EditorBase } from './Editor';
 const ENTITIES = [
     {
         pk: 1,
+        original: 'my-message = Hello',
         translation: [{
-            string: 'quelque chose',
+            string: 'my-message = Salut',
         }],
     },
     {
         pk: 2,
+        original: 'my-message = Hello\n    .my-attr = World!',
         translation: [
-            { string: 'test' },
+            { string: 'my-message = Salut\n    .my-attr = Monde !' },
         ],
     },
 ];
 
 
-function createEditorBase() {
+function createEditorBase({
+    entityIndex = 0,
+} = {}) {
     const updateTranslationMock = sinon.stub();
     const wrapper = shallow(<EditorBase
+        activeTranslation={ ENTITIES[entityIndex].translation[0].string }
+        entity={ ENTITIES[entityIndex] }
         pluralForm={ -1 }
-        entity={ ENTITIES[0] }
-        activeTranslation={ ENTITIES[0].translation[0].string }
-        updateTranslation={ updateTranslationMock }
+        translation={ ENTITIES[entityIndex].translation[0].string }
         setInitialTranslation={ sinon.stub() }
+        updateTranslation={ updateTranslationMock }
     />);
 
     return [wrapper, updateTranslationMock];
@@ -47,5 +52,37 @@ describe('<Editor>', () => {
 
         wrapper.setProps({ entity: ENTITIES[1] });
         expect(updateTranslationMock.calledTwice).toBeTruthy();
+    });
+
+    it('renders the simple form when passing a simple string', () => {
+        const [wrapper, ] = createEditorBase();
+
+        expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
+        expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
+    });
+
+    it('renders the source form when passing a complex string', () => {
+        const [wrapper, ] = createEditorBase({
+            entityIndex: 1,
+        });
+
+        expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
+        expect(wrapper.find('SimpleEditor').exists()).toBeFalsy();
+    });
+
+    it('converts translation when switching source mode', () => {
+        const [wrapper, updateTranslationMock] = createEditorBase();
+        expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
+        expect(updateTranslationMock.calledWith('Salut')).toBeTruthy();
+
+        // We've mocked the `updateTranslation` method so it's never called.
+        // Simulate here what it would do.
+        wrapper.setProps({ translation: 'Salut' });
+
+        // Force source mode.
+        wrapper.instance().toggleForceSource();
+
+        expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
+        expect(updateTranslationMock.lastCall.calledWith('my-message = Salut')).toBeTruthy();
     });
 });

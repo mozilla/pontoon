@@ -16,10 +16,7 @@ type Props = {
 
 
 /**
- * Editor for translation strings.
- *
- * Will present a different editor depending on the file format of the string,
- * see `EditorProxy` for more information.
+ * Editor for simple Fluent strings.
  */
 export default class SimpleEditor extends React.Component<Props> {
     componentDidUpdate(prevProps: Props) {
