@@ -9,7 +9,7 @@ import leadingSpace from './leadingSpace';
 
 describe('leadingSpace', () => {
     each([
-        [' ', ' hello'],
+        [' ', ' hello world'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([leadingSpace]);

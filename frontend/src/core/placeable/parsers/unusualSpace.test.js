@@ -9,9 +9,9 @@ import unusualSpace from './unusualSpace';
 
 describe('unusualSpace', () => {
     each([
-        [' ', 'hello '],
-        [' ', 'hello,\n world'],
-        ['  ', 'hello,  beautiful world'],
+        [' ', 'hello world '],
+        [' ', 'hello\n world'],
+        ['  ', 'hello  world'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([unusualSpace]);
