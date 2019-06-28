@@ -45,6 +45,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.props.entity &&
             this.props.entity !== prevProps.entity
         ) {
+            this.setState({ forceSource: false });
             this.analyzeFluentMessage();
         }
         // Otherwise if the user switched the source mode, update the editor
