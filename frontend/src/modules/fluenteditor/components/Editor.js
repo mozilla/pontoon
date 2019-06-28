@@ -88,7 +88,10 @@ export class EditorBase extends React.Component<EditorProps, State> {
     getSyntaxType(message: Object) {
         let syntaxType = 'complex';
 
-        if (fluent.isSimpleMessage(message)) {
+        if (
+            fluent.isSimpleMessage(message) ||
+            fluent.isSimpleSingleAttributeMessage(message)
+        ) {
             syntaxType = 'simple';
         }
 

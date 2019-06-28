@@ -20,6 +20,13 @@ const ENTITIES = [
             { string: 'my-message = Salut\n    .my-attr = Monde !' },
         ],
     },
+    {
+        pk: 3,
+        original: 'my-message =\n    .my-attr = Something guud',
+        translation: [
+            { string: 'my-message =\n    .my-attr = Quelque chose de bien' },
+        ],
+    },
 ];
 
 
@@ -57,6 +64,15 @@ describe('<Editor>', () => {
     it('renders the simple form when passing a simple string', () => {
         const [wrapper, ] = createEditorBase();
 
+        expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
+        expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
+    });
+
+    it('renders the simple form when passing a simple string with one attribute', () => {
+        const [wrapper, ] = createEditorBase({
+            entityIndex: 2,
+        });
+        
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
