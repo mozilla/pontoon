@@ -7,6 +7,7 @@ import * as notification from 'core/notification';
 import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
@@ -182,6 +183,9 @@ export function sendTranslation(
             // Notify the user of the change that happened.
             const notif = _getOperationNotif(content.type);
             dispatch(notification.actions.add(notif));
+
+            // Ignore existing unsavedchanges because they are saved now.
+            dispatch(unsavedchanges.actions.ignore());
 
             dispatch(
                 entitiesActions.updateEntityTranslation(
