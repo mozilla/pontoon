@@ -18,7 +18,7 @@ const leadingSpace = {
             id='placeable-parser-leadingSpace'
             attrs={{ title: true }}
         >
-            <mark className='placeable' title='Unusual space in string'>
+            <mark className='placeable' title='Leading space'>
                 { x }
             </mark>
         </Localized>;
