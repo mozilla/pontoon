@@ -1,11 +1,13 @@
+from six.moves import reduce
+import operator
+
 from django.utils import timezone
-from django.db.models import CharField, Value as V
+from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 from bulk_update.helper import bulk_update
 
 import pontoon.base as base
-from pontoon.machinery.utils import google_translate_util, translation_memory_util
-# from pontoon.base.models import Entity, Locale, Translation, TranslatedResource, User
+from pontoon.machinery.utils import get_google_translate_data, get_translation_memory_data
 
 
 def pretranslate(project, locales=None, entities=None):
@@ -15,58 +17,61 @@ def pretranslate(project, locales=None, entities=None):
     Stores pre-translations as suggestions (approved=False) to DB.
     Author should be set to a name like "Pontoon Translator <pontoon@mozilla.com>".
     Stats and Latest activity should be updated
-
     """
-
     if not locales:
-        locales = project.locales.filter(project_locale__readonly=False)
+        locales = project.locales.filter(
+            project_locale__readonly=False,
+        ).prefetch_project_locale(project)
 
     if not entities:
         entities = base.models.Entity.objects.filter(
             resource__project=project,
             obsolete=False,
-        )
+        ).prefetch_related('resource')
+
+    # Fetch all distinct locale-entity pairs for which translation exists
+    translated_entities = base.models.Translation.objects.filter(
+        locale__in=locales,
+        entity__in=entities,
+    ).annotate(
+        locale_entity=Concat('locale_id', V('-'), 'entity_id', output_field=CharField())
+    ).values_list('locale_entity', flat=True).distinct()
+
+    translated_entities = list(translated_entities)
 
     now = timezone.now()
 
-    resources = project.resources.filter(obsolete=False)
-
-    user, created = base.models.User.objects.get_or_create(
-        email = "pontoon@mozilla.com",
-        username = "Pontoon-Translator",
+    user, _ = base.models.User.objects.get_or_create(
+        email="pontoon@mozilla.com",
+        username="pontoon-translator",
+        first_name="Pontoon Translator",
     )
-
-    locale_entities = base.models.Translation.objects.filter(
-            locale__in=locales,
-            entity__in=entities
-        ).annotate(
-            locale_entity=Concat('locale_id', V('-'), 'entity_id',output_field=CharField())
-        ).values_list('locale_entity', flat=True).distinct()
-
-    locale_entities = list(locale_entities)
 
     translations = []
 
-    locale_list = []
-    translatedresource_dict = {}
-    projectlocale_list = []
+    # To keep track of changed Locales and TranslatedResources
+    # Also, their latest_translation and stats count
+    locale_dict = {}
+    tr_dict = {}
+
+    tr_filter = []
+    index = -1
 
     for locale in locales:
         for entity in entities:
             locale_entity = '{}-{}'.format(locale.id, entity.id)
-            if not locale_entity in locale_entities:
+            if locale_entity not in translated_entities:
                 string = ""
-                tm_response = translation_memory_util(
+                tm_response = get_translation_memory_data(
                     text=entity.string,
                     locale=locale,
-                    max_results=5,
                 )
 
-                if tm_response and int(float(tm_response[0]['quality'])) == 100:
+                if tm_response and int(tm_response[0]['quality']) == 100:
                     string = tm_response[0]['target']
 
                 elif locale.google_translate_code:
-                    gt_response = google_translate_util(
+                    gt_response = get_google_translate_data(
                         text=entity.string,
                         locale_code=locale.google_translate_code,
                     )
@@ -84,39 +89,74 @@ def pretranslate(project, locales=None, entities=None):
                         approved=False,
                         active=True,
                     )
+
                     translations.append(t)
+
+                    index += 1
+
                     locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
-
-                    if not locale_resource in translatedresource_dict.keys():
-                        translatedresource = base.models.TranslatedResource.objects.get(
-                            resource=entity.resource,
-                            locale=locale
+                    if locale_resource not in tr_dict.keys():
+                        tr_dict[locale_resource] = [index, 0]
+                        # Add query for fetching respective TranslatedResource.
+                        tr_filter.append(
+                            Q(locale__id=locale.id)
+                            & Q(resource__id=entity.resource.id)
                         )
-                        translatedresource_dict[locale_resource] = translatedresource
 
+                    if locale.code not in locale_dict.keys():
+                        locale_dict[locale.code] = [locale, index, 0]
 
+                    # Increment number of translations (used to adjust stats)
+                    tr_dict[locale_resource][1] += 1
+                    locale_dict[locale.code][2] += 1
 
+    if len(translations) == 0:
+        return
 
     translations = base.models.Translation.objects.bulk_create(translations)
 
-    # update latest activity once and for all
-    if len(translations)>0:
-        project.latest_translation = translations[0]
-        project.save(update_fields=['latest_translation'])
+    # Store the instances to be updated.
+    locale_list = []
+    projectlocale_list = []
+    tr_list = []
 
-    # for locale in locale_list:
-    #     locale.save(update_fields=['latest_translation'])
+    tr_filter = tuple(tr_filter)
+    # Combine all generated filters with an OK operator.
+    # `operator.ior` is the '|' Python operator, which turns into a logical OR
+    # when used between django ORM query objects.
+    tr_query = reduce(operator.ior, tr_filter)
 
-    # for projectlocale in projectlocale_list:
-    #     projectlocale.save(update_fields=['latest_translation'])
+    translatedresources = base.models.TranslatedResource.objects.filter(
+        tr_query
+    ).annotate(
+        locale_resource=Concat('locale_id', V('-'), 'resource_id', output_field=CharField())
+    )
 
-    # bulk_update(locale_list, update_fields=['latest_translation'])
-    # bulk_update(projectlocale_list, update_fields=['latest_translation'])
-    # bulk_update(translatedresource_dict.values(), update_fields=['latest_translation'])
+    for tr in translatedresources:
+        index, diff = tr_dict[tr.locale_resource]
+        tr.latest_translation = translations[index]
+        tr.unreviewed_strings += diff
+        tr_list.append(tr)
 
-    for translation in translations:
-        translation.update_latest_translation()
+    for locale, index, diff in locale_dict.values():
+        projectlocale = locale.fetched_project_locale[0]
 
-    for translatedresource in translatedresource_dict.values():
-        # translatedresource.save(update_fields=['latest_translation'])
-        translatedresource.calculate_stats()
+        locale.latest_translation = translations[index]
+        projectlocale.latest_translation = translations[index]
+
+        # Since the translations fall into unreviewed category.
+        locale.unreviewed_strings += diff
+        projectlocale.unreviewed_strings += diff
+
+        locale_list.append(locale)
+        projectlocale_list.append(projectlocale)
+
+    # Update latest activity and unreviewed count for the project.
+    project.latest_translation = translations[0]
+    project.unreviewed_strings += len(translations)
+    project.save(update_fields=['latest_translation', 'unreviewed_strings'])
+
+    # Update latest activity and unreviewed count for changed instances.
+    bulk_update(locale_list, update_fields=['latest_translation', 'unreviewed_strings'])
+    bulk_update(projectlocale_list, update_fields=['latest_translation', 'unreviewed_strings'])
+    bulk_update(tr_list, update_fields=['latest_translation', 'unreviewed_strings'])

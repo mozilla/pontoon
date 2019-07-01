@@ -1178,7 +1178,7 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
-        pre_translate_changed = False
+        pre_translation_status_changed = False
 
         if self.pk is not None:
             try:
@@ -1190,7 +1190,7 @@ class Project(AggregatedStats):
                     else:
                         self.date_disabled = None
                 if self.pre_translation_enabled != original.pre_translation_enabled:
-                    pre_translate_changed = True
+                    pre_translation_status_changed = True
             except Project.DoesNotExist:
                 pass
 
@@ -1199,7 +1199,8 @@ class Project(AggregatedStats):
         if disabled_changed:
             for locale in self.locales.all():
                 locale.aggregate_stats()
-        if pre_translate_changed and self.pre_translation_enabled:
+
+        if pre_translation_status_changed and self.pre_translation_enabled:
             pretranslate(self)
 
     def changed_resources(self, now):

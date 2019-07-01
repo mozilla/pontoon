@@ -11,7 +11,7 @@ import pontoon.base as base
 log = logging.getLogger(__name__)
 
 
-def google_translate_util(text, locale_code):
+def get_google_translate_data(text, locale_code):
 
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
@@ -48,13 +48,16 @@ def google_translate_util(text, locale_code):
         }
 
     except requests.exceptions.RequestException as e:
+        log.error('Google Translate error: {error}'.format(error=e))
         return {
             'status': False,
             'message': 'Bad Request: {error}'.format(error=e),
         }
 
 
-def translation_memory_util(text, locale, max_results, pk=None):
+def get_translation_memory_data(text, locale, pk=None):
+    max_results = 5
+
     entries = (
         base.models.TranslationMemoryEntry.objects
         .filter(locale=locale)

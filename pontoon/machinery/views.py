@@ -16,7 +16,7 @@ from django.utils.html import escape
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation
-from pontoon.machinery.utils import google_translate_util, translation_memory_util
+from pontoon.machinery.utils import get_google_translate_data, get_translation_memory_data
 
 # caighdean depends on nltk which tries to download files when it is imported.
 # This is doomed to fail when you start Pontoon while offline. To let
@@ -58,17 +58,7 @@ def translation_memory(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    MAX_RESULTS = 5
-
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Not Found: {error}'.format(error=e),
-        }, status=404)
-
-    data = translation_memory_util(text, locale, max_results, pk)
+    data = get_translation_memory_data(text, locale, pk)
     return JsonResponse(data, safe=False)
 
 
@@ -154,7 +144,7 @@ def google_translate(request):
             'message': 'Not Found: {error}'.format(error=locale_code),
         }, status=404)
 
-    data = google_translate_util(text, locale_code)
+    data = get_google_translate_data(text, locale_code)
 
     if 'status' in data.keys():
         return JsonResponse(data, status=400)

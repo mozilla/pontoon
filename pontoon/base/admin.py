@@ -104,7 +104,7 @@ class LocaleAdminForm(ModelForm):
 class LocaleAdmin(admin.ModelAdmin):
     search_fields = ['name', 'code']
     list_display = ('pk', 'name', 'code', 'script', 'direction', 'population',
-                    'cldr_plurals', 'nplurals', 'plural_rule', 'latest_translation')
+                    'cldr_plurals', 'nplurals', 'plural_rule')
     exclude = ('translators_group', 'managers_group')
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
     inlines = (ExternalLocaleResourceInline,)
@@ -141,7 +141,7 @@ class SubpageInline(admin.TabularInline):
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
     list_display = ('name', 'slug', 'deadline', 'priority', 'contact_person',
-                    'pk', 'enabled', 'sync_disabled', 'system_project', 'pre_translation_enabled', 'latest_translation')
+                    'pk', 'enabled', 'sync_disabled', 'system_project', 'pre_translation_enabled')
     ordering = ('disabled',)
 
     def contact_person(self, obj):
@@ -191,7 +191,7 @@ class ResourceAdmin(admin.ModelAdmin):
 
 class TranslatedResourceAdmin(admin.ModelAdmin):
     search_fields = ['resource__path', 'locale__name', 'locale__code']
-    list_display = ('pk', 'resource', 'locale', 'latest_translation')
+    list_display = ('pk', 'resource', 'locale')
     readonly_fields = AGGREGATED_STATS_FIELDS + ('latest_translation',)
     raw_id_fields = ('resource',)
 
