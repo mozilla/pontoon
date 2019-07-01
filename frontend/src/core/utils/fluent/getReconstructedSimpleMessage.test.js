@@ -13,6 +13,6 @@ describe('getReconstructedSimpleMessage', () => {
         const original = 'spoilers =\n    .who-dies = Who dies?';
         const translation = 'Qui meurt ?';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('spoilers =\n\t.who-dies = Qui meurt ?');
+        expect(res).toEqual('spoilers =\n    .who-dies = Qui meurt ?');
     });
 });
