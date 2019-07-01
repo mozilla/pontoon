@@ -8,6 +8,7 @@ import './connectedEditor.css';
 import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
+import * as notification from 'core/notification';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as history from 'modules/history';
@@ -58,6 +59,7 @@ export type EditorProps = {|
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
     setInitialTranslation: (string) => void,
+    showNotSupportedMessage: () => void,
     updateTranslation: (string, fromOutsideEditor?: boolean) => void,
     updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
     hideUnsavedChanges: () => void,
@@ -178,6 +180,14 @@ export default function connectedEditor<Object>(
             this.props.dispatch(actions.resetFailedChecks());
         }
 
+        showNotSupportedMessage = () => {
+            this.props.dispatch(
+                notification.actions.add(
+                    notification.messages.FTL_NOT_SUPPORTED_RICH_EDITOR
+                )
+            );
+        }
+
         render() {
             if (!this.props.locale) {
                 return null;
@@ -199,6 +209,7 @@ export default function connectedEditor<Object>(
                     resetSelectionContent={ this.resetSelectionContent }
                     sendTranslation={ this.sendTranslation }
                     setInitialTranslation={ this.setInitialTranslation }
+                    showNotSupportedMessage={ this.showNotSupportedMessage }
                     updateTranslation={ this.updateTranslation }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     hideUnsavedChanges={ this.hideUnsavedChanges }
