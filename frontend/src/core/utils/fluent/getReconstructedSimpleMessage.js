@@ -12,7 +12,7 @@ export default function getReconstructedSimpleMessage(original, translation) {
     let content;
     if (message.attributes && message.attributes.length === 1) {
         const attribute = message.attributes[0].id.name;
-        content = `${key} =\n\t.${attribute} = ${translation}`;
+        content = `${key} =\n    .${attribute} = ${translation}`;
     }
     else {
         content = `${key} = ${translation}`;
