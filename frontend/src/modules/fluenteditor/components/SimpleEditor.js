@@ -27,7 +27,10 @@ export default class SimpleEditor extends React.Component<Props> {
             props.editor.changeSource === 'external'
         ) {
             const message = fluent.parser.parseEntry(props.editor.translation);
-            if (fluent.isSimpleMessage(message)) {
+            if (
+                fluent.isSimpleMessage(message) ||
+                fluent.isSimpleSingleAttributeMessage(message)
+            ) {
                 props.updateTranslation(
                     fluent.getSimplePreview(props.editor.translation),
                     true,
