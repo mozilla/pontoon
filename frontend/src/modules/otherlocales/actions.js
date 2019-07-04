@@ -28,19 +28,17 @@ export function receive(
 
 export type RequestAction = {|
     +type: typeof REQUEST,
-    +entity: number,
 |};
-export function request(entity: number): RequestAction {
+export function request(): RequestAction {
     return {
         type: REQUEST,
-        entity,
     };
 }
 
 
 export function get(entity: number, locale: string): Function {
     return async dispatch => {
-        dispatch(request(entity));
+        dispatch(request());
 
         // Abort all previously running requests.
         await api.entity.abort();
