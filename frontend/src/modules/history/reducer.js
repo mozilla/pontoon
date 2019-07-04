@@ -1,14 +1,13 @@
 /* @flow */
 
-import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
+import { RECEIVE, REQUEST, UPDATE } from './actions';
 
-import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
+import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
-    | ResetAction
     | UpdateAction
 ;
 
@@ -68,11 +67,6 @@ export default function reducer(
                 fetching: false,
                 entity: action.entity,
                 translations: action.translations,
-            };
-        case RESET:
-            return {
-                ...state,
-                translations: [],
             };
         case UPDATE:
             return {

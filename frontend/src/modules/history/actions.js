@@ -15,7 +15,6 @@ import type { Locale } from 'core/locales';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
 export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
-export const RESET: 'history/RESET' = 'history/RESET';
 export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 
 
@@ -54,16 +53,6 @@ export type RequestAction = {|
 export function request(): RequestAction {
     return {
         type: REQUEST,
-    };
-}
-
-
-export type ResetAction = {|
-    +type: typeof RESET,
-|};
-export function reset(): ResetAction {
-    return {
-        type: RESET,
     };
 }
 
@@ -220,7 +209,6 @@ export default {
     get,
     receive,
     request,
-    reset,
     updateStatus,
     deleteTranslation,
 };
