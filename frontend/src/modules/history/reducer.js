@@ -30,6 +30,7 @@ export type DBTranslation = {|
 export type HistoryState = {|
     +fetching: boolean,
     +entity: ?number,
+    +pluralForm: ?number,
     +translations: Array<DBTranslation>,
 |};
 
@@ -47,6 +48,7 @@ function updateTranslation(translations: Array<DBTranslation>, newTranslation: D
 const initialState = {
     fetching: false,
     entity: null,
+    pluralForm: null,
     translations: [],
 };
 
@@ -60,6 +62,7 @@ export default function reducer(
                 ...state,
                 fetching: true,
                 entity: null,
+                pluralForm: null,
                 translations: [],
             };
         case RECEIVE:
@@ -67,6 +70,7 @@ export default function reducer(
                 ...state,
                 fetching: false,
                 entity: action.entity,
+                pluralForm: action.pluralForm,
                 translations: action.translations,
             };
         case UPDATE:

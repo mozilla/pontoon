@@ -21,15 +21,18 @@ export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +entity: number,
+    +pluralForm: number,
     +translations: Array<Object>,
 |};
 export function receive(
     entity: number,
+    pluralForm: number,
     translations: Array<Object>,
 ): ReceiveAction {
     return {
         type: RECEIVE,
         entity,
+        pluralForm,
         translations,
     };
 }
@@ -65,7 +68,7 @@ export function get(entity: number, locale: string, pluralForm: number): Functio
         await api.entity.abort();
 
         const content = await api.entity.getHistory(entity, locale, pluralForm);
-        dispatch(receive(entity, content));
+        dispatch(receive(entity, pluralForm, content));
     }
 }
 

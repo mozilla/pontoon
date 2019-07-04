@@ -93,7 +93,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     /*
-     * Only fetch helpers data if the entity has changed.
+     * Only fetch helpers data if the entity changes.
+     * Also fetch history data if the pluralForm changes.
      */
     fetchHelpersData() {
         const { dispatch, locale, parameters, pluralForm, selectedEntity } = this.props;
@@ -102,7 +103,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return;
         }
 
-        if (selectedEntity.pk !== this.props.history.entity) {
+        if (
+            selectedEntity.pk !== this.props.history.entity ||
+            pluralForm !== this.props.history.pluralForm
+        ) {
             dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         }
 
