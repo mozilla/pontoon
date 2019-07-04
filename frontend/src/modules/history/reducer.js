@@ -60,6 +60,7 @@ export default function reducer(
                 ...state,
                 fetching: true,
                 entity: null,
+                translations: [],
             };
         case RECEIVE:
             return {
