@@ -20,19 +20,13 @@ export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +entity: number,
-    +pluralForm: number,
     +translations: Array<Object>,
 |};
 export function receive(
-    entity: number,
-    pluralForm: number,
     translations: Array<Object>,
 ): ReceiveAction {
     return {
         type: RECEIVE,
-        entity,
-        pluralForm,
         translations,
     };
 }
@@ -52,23 +46,30 @@ export function update(translation: Object) {
 
 export type RequestAction = {|
     +type: typeof REQUEST,
+    +entity: number,
+    +pluralForm: number,
 |};
-export function request(): RequestAction {
+export function request(
+    entity: number,
+    pluralForm: number,
+): RequestAction {
     return {
         type: REQUEST,
+        entity,
+        pluralForm,
     };
 }
 
 
 export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
-        dispatch(request());
+        dispatch(request(entity, pluralForm));
 
         // Abort all previously running requests.
         await api.entity.abort();
 
         const content = await api.entity.getHistory(entity, locale, pluralForm);
-        dispatch(receive(entity, pluralForm, content));
+        dispatch(receive(content));
     }
 }
 

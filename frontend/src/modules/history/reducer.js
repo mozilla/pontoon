@@ -61,16 +61,14 @@ export default function reducer(
             return {
                 ...state,
                 fetching: true,
-                entity: null,
-                pluralForm: null,
+                entity: action.entity,
+                pluralForm: action.pluralForm,
                 translations: [],
             };
         case RECEIVE:
             return {
                 ...state,
                 fetching: false,
-                entity: action.entity,
-                pluralForm: action.pluralForm,
                 translations: action.translations,
             };
         case UPDATE:

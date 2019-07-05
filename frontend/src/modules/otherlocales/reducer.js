@@ -34,14 +34,13 @@ export default function reducer(
             return {
                 ...state,
                 fetching: true,
-                entity: null,
+                entity: action.entity,
                 translations: [],
             };
         case RECEIVE:
             return {
                 ...state,
                 fetching: false,
-                entity: action.entity,
                 translations: action.translations,
             };
         default:
