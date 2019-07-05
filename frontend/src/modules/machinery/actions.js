@@ -32,13 +32,16 @@ export function addTranslations(
  */
 export type ResetAction = {
     +type: typeof RESET,
+    +entity: ?number,
     +sourceString: string,
 };
 export function reset(
-    sourceString: string
+    entity: ?number,
+    sourceString: string,
 ): ResetAction {
     return {
         type: RESET,
+        entity: entity,
         sourceString: sourceString,
     };
 }
@@ -57,7 +60,7 @@ export function reset(
  */
 export function get(source: string, locale: Locale, pk: ?number): Function {
     return async dispatch => {
-        dispatch(reset(source));
+        dispatch(reset(pk, source));
 
         // Abort all previously running requests.
         await api.machinery.abort();
