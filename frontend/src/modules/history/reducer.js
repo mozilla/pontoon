@@ -1,14 +1,13 @@
 /* @flow */
 
-import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
+import { RECEIVE, REQUEST, UPDATE } from './actions';
 
-import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
+import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
-    | ResetAction
     | UpdateAction
 ;
 
@@ -30,6 +29,8 @@ export type DBTranslation = {|
 
 export type HistoryState = {|
     +fetching: boolean,
+    +entity: ?number,
+    +pluralForm: ?number,
     +translations: Array<DBTranslation>,
 |};
 
@@ -46,6 +47,8 @@ function updateTranslation(translations: Array<DBTranslation>, newTranslation: D
 
 const initialState = {
     fetching: false,
+    entity: null,
+    pluralForm: null,
     translations: [],
 };
 
@@ -58,17 +61,15 @@ export default function reducer(
             return {
                 ...state,
                 fetching: true,
+                entity: action.entity,
+                pluralForm: action.pluralForm,
+                translations: [],
             };
         case RECEIVE:
             return {
                 ...state,
                 fetching: false,
                 translations: action.translations,
-            };
-        case RESET:
-            return {
-                ...state,
-                translations: [],
             };
         case UPDATE:
             return {

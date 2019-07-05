@@ -15,7 +15,6 @@ import type { Locale } from 'core/locales';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
 export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
-export const RESET: 'history/RESET' = 'history/RESET';
 export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 
 
@@ -23,7 +22,9 @@ export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +translations: Array<Object>,
 |};
-export function receive(translations: Array<Object>): ReceiveAction {
+export function receive(
+    translations: Array<Object>,
+): ReceiveAction {
     return {
         type: RECEIVE,
         translations,
@@ -45,27 +46,24 @@ export function update(translation: Object) {
 
 export type RequestAction = {|
     +type: typeof REQUEST,
+    +entity: number,
+    +pluralForm: number,
 |};
-export function request(): RequestAction {
+export function request(
+    entity: number,
+    pluralForm: number,
+): RequestAction {
     return {
         type: REQUEST,
-    };
-}
-
-
-export type ResetAction = {|
-    +type: typeof RESET,
-|};
-export function reset(): ResetAction {
-    return {
-        type: RESET,
+        entity,
+        pluralForm,
     };
 }
 
 
 export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
-        dispatch(request());
+        dispatch(request(entity, pluralForm));
 
         // Abort all previously running requests.
         await api.entity.abort();
@@ -215,7 +213,6 @@ export default {
     get,
     receive,
     request,
-    reset,
     updateStatus,
     deleteTranslation,
 };

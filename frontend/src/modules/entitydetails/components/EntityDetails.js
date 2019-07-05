@@ -79,10 +79,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { parameters, pluralForm, selectedEntity, activeTranslation } = this.props;
+        const { pluralForm, selectedEntity, activeTranslation } = this.props;
 
         if (
-            parameters.entity !== prevProps.parameters.entity ||
             pluralForm !== prevProps.pluralForm ||
             selectedEntity !== prevProps.selectedEntity
         ) {
@@ -92,6 +91,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
     }
 
+    /*
+     * Only fetch helpers data if the entity changes.
+     * Also fetch history data if the pluralForm changes.
+     */
     fetchHelpersData() {
         const { dispatch, locale, parameters, pluralForm, selectedEntity } = this.props;
 
@@ -99,11 +102,21 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return;
         }
 
-        dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
-        dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+        if (
+            selectedEntity.pk !== this.props.history.entity ||
+            pluralForm !== this.props.history.pluralForm
+        ) {
+            dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
+        }
 
-        const source = utils.getOptimizedContent(selectedEntity.original, selectedEntity.format);
-        dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
+        if (selectedEntity.pk !== this.props.otherlocales.entity) {
+            dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+        }
+
+        if (selectedEntity.pk !== this.props.machinery.entity) {
+            const source = utils.getOptimizedContent(selectedEntity.original, selectedEntity.format);
+            dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
+        }
     }
 
     updateFailedChecks() {

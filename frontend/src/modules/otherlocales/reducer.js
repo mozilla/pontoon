@@ -14,12 +14,14 @@ type Action =
 
 export type LocalesState = {|
     +fetching: boolean,
+    +entity: ?number,
     +translations: Array<OtherLocaleTranslation>,
 |};
 
 
 const initialState = {
     fetching: false,
+    entity: null,
     translations: [],
 };
 
@@ -32,6 +34,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: true,
+                entity: action.entity,
                 translations: [],
             };
         case RECEIVE:
