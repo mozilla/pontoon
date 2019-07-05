@@ -81,8 +81,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     componentDidUpdate(prevProps: InternalProps) {
         const { parameters, pluralForm, selectedEntity, activeTranslation } = this.props;
 
+        // We should not use parameters.entity here, because it's already set from the URL
         if (
-            parameters.entity !== prevProps.parameters.entity ||
             pluralForm !== prevProps.pluralForm ||
             selectedEntity !== prevProps.selectedEntity
         ) {
