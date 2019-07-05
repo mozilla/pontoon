@@ -263,7 +263,7 @@ var Pontoon = (function (my) {
         if (element.expression.selector) {
           expression = FluentSyntax.serializeExpression(element.expression.selector);
         }
-        content += '<li data-expression="' + expression + '"><ul>';
+        content += '<li data-expression="' + escape(expression) + '"><ul>';
 
         element.expression.variants.forEach(function (item) {
           content += renderOriginalElement(FluentSyntax.serializeVariantKey(item.key), item.value.elements);
@@ -306,7 +306,7 @@ var Pontoon = (function (my) {
         if (element.expression.selector) {
           expression = FluentSyntax.serializeExpression(element.expression.selector);
         }
-        content += '<li data-expression="' + expression + '"><ul>';
+        content += '<li data-expression="' + escape(expression) + '"><ul>';
 
         if (isPluralElement(element) && !isTranslated) {
           getPluralForms(element).forEach(function (pluralName) {
@@ -349,7 +349,7 @@ var Pontoon = (function (my) {
       // SelectExpression
       else {
         var expression = $(node).data('expression');
-        var nodeValue = expression ? ' ' + expression + ' ->' : '';
+        var nodeValue = expression ? ' ' + unescape(expression) + ' ->' : '';
         var variants = $(node).find('ul li');
         var hasTranslatedVariants = false;
         var defaultMarker = '';
