@@ -15,6 +15,7 @@
     "intl-pluralrules": "1.0.0",
     "jest-each": "24.5.0",
     "linkify-it": "2.1.0",
+    "lodash": "4.17.14",
     "lodash.debounce": "4.0.8",
     "lodash.flattendeep": "4.4.0",
     "lodash.template": "4.5.0",
