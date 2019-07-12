@@ -67,5 +67,16 @@ Quickstart
    This will ask you to create a superuser, and then will update your Firefox
    account settings.
 
-At that point, you're ready to start :doc:`contributing`! Access the webapp via this URL:
-http://localhost:8000/ or the custom SITE_URL.
+The app should now be available at http://localhost:8000 or the custom SITE_URL.
+
+   .. Warning::
+
+        After you execute ``make run``, the console output might trick you into
+        accessing Pontoon in the browser at http://localhost:3000/. Note that
+        the URL only refers to the frontend app, which is not meant to be used
+        standalone.
+
+        To access Pontoon app, you should use http://localhost:8000 or the
+        custom SITE_URL.
+
+And with that, you're ready to start :doc:`contributing`!
