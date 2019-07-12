@@ -4729,6 +4729,11 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
+highlight-words-core@^1.2.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/highlight-words-core/-/highlight-words-core-1.2.2.tgz#1eff6d7d9f0a22f155042a00791237791b1eeaaa"
+  integrity sha512-BXUKIkUuh6cmmxzi5OIbUJxrG8OAk2MqoL1DtO3Wo9D2faJg2ph5ntyuQeLqaHJmzER6H5tllCDA9ZnNe9BVGg==
+
 history@^4.7.2:
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/history/-/history-4.9.0.tgz#84587c2068039ead8af769e9d6a6860a14fa1bca"
@@ -8475,6 +8480,14 @@ react-error-overlay@^5.1.6:
   version "5.1.6"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.6.tgz#0cd73407c5d141f9638ae1e0c63e7b2bf7e9929d"
   integrity sha512-X1Y+0jR47ImDVr54Ab6V9eGk0Hnu7fVWGeHQSOXHf/C2pF9c6uy3gef8QUeuUiWlNb0i08InPSE5a/KJzNzw1Q==
+
+react-highlight-words@0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-highlight-words/-/react-highlight-words-0.11.0.tgz#4f3c2039a8fd275f3ab795e59946b0324d8e6bee"
+  integrity sha512-b+fgdQXNjX6RwHfiBYn6qH2D2mJEDNLuxdsqRseIiQffoCAoj7naMQ5EktUkmo9Bh1mXq/aMpJbdx7Lf2PytcQ==
+  dependencies:
+    highlight-words-core "^1.2.0"
+    prop-types "^15.5.8"
 
 react-infinite-scroller@1.2.4:
   version "1.2.4"

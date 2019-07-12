@@ -13,6 +13,7 @@ import type { Locale } from 'core/locales';
 type Props = {
     entity: EntityType,
     locale: Locale,
+    search: ?string,
     selected: boolean,
     selectEntity: Function,
 };
@@ -87,7 +88,7 @@ export default class Entity extends React.Component<Props> {
     }
 
     render() {
-        const { entity, locale, selected } = this.props;
+        const { entity, locale, search, selected } = this.props;
 
         const classSelected = selected ? 'selected' : '';
 
@@ -102,6 +103,7 @@ export default class Entity extends React.Component<Props> {
                         <TranslationProxy
                             content={ entity.original }
                             format={ entity.format }
+                            search={ search }
                         />
                     </p>
                     <p
@@ -113,6 +115,7 @@ export default class Entity extends React.Component<Props> {
                         <TranslationProxy
                             content={ entity.translation[0].string }
                             format={ entity.format }
+                            search={ search }
                         />
                     </p>
                 </div>

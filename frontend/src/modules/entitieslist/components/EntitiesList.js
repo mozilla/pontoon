@@ -199,6 +199,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     render() {
         const props = this.props;
+        const search = props.parameters.search;
         const selectedEntity = props.parameters.entity;
 
         // InfiniteScroll will display information about loading during the request
@@ -222,9 +223,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                         return <Entity
                             entity={ entity }
                             locale={ props.locale }
+                            search={ search }
+                            selected={ entity.pk === selectedEntity }
                             selectEntity={ this.selectEntity }
                             key={ i }
-                            selected={ entity.pk === selectedEntity }
                         />;
                     }) }
                 </ul>
