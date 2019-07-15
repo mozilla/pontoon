@@ -7,24 +7,27 @@ import { EditorBase } from './Editor';
 
 const ENTITIES = [
     {
-        pk: 1,
         original: 'my-message = Hello',
         translation: [{
             string: 'my-message = Salut',
         }],
     },
     {
-        pk: 2,
         original: 'my-message = Hello\n    .my-attr = World!',
         translation: [
             { string: 'my-message = Salut\n    .my-attr = Monde !' },
         ],
     },
     {
-        pk: 3,
         original: 'my-message =\n    .my-attr = Something guud',
         translation: [
             { string: 'my-message =\n    .my-attr = Quelque chose de bien' },
+        ],
+    },
+    {
+        original: 'my-message = Hello',
+        translation: [
+            { string: '' },
         ],
     },
 ];
@@ -34,16 +37,17 @@ function createEditorBase({
     entityIndex = 0,
 } = {}) {
     const updateTranslationMock = sinon.stub();
+    const setInitialTranslationMock = sinon.stub();
     const wrapper = shallow(<EditorBase
         activeTranslation={ ENTITIES[entityIndex].translation[0].string }
         entity={ ENTITIES[entityIndex] }
         pluralForm={ -1 }
         translation={ ENTITIES[entityIndex].translation[0].string }
-        setInitialTranslation={ sinon.stub() }
+        setInitialTranslation={ setInitialTranslationMock }
         updateTranslation={ updateTranslationMock }
     />);
 
-    return [wrapper, updateTranslationMock];
+    return [wrapper, updateTranslationMock, setInitialTranslationMock];
 }
 
 
@@ -72,7 +76,7 @@ describe('<Editor>', () => {
         const [wrapper, ] = createEditorBase({
             entityIndex: 2,
         });
-        
+
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
@@ -100,5 +104,21 @@ describe('<Editor>', () => {
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
         expect(updateTranslationMock.lastCall.calledWith('my-message = Salut')).toBeTruthy();
+    });
+
+    it('sets empty initial translation in source mode when untranslated', () => {
+        const [
+            wrapper, updateTranslationMock, setInitialTranslationMock
+        ] = createEditorBase({ entityIndex: 3 });
+
+        // We've mocked the `updateTranslation` method so it's never called.
+        // Simulate here what it would do.
+        wrapper.setProps({ editor: { translation: '' } });
+
+        // Force source mode.
+        wrapper.instance().toggleForceSource();
+
+        expect(updateTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
+        expect(setInitialTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
     });
 });

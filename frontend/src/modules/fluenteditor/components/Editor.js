@@ -110,14 +110,32 @@ export class EditorBase extends React.Component<EditorProps, State> {
         let originalContent = props.activeTranslation;
 
         if (fromSyntax === 'complex' && toSyntax === 'simple') {
-            translationContent = fluent.getSimplePreview(translation);
+            translationContent = fluent.getSimplePreview(translationContent);
             originalContent = fluent.getSimplePreview(originalContent);
+
+            // If any of the contents are junk, discard them.
+            if (translationContent === translation) {
+                translationContent = '';
+            }
+            if (originalContent === props.activeTranslation) {
+                originalContent = '';
+            }
         }
         else if (fromSyntax === 'simple' && toSyntax === 'complex') {
             translationContent = fluent.getReconstructedSimpleMessage(
                 props.entity.original,
                 translation,
             );
+
+            // If there is no active translation (it's an untranslated string)
+            // we make the initial translation an empty fluent message to avoid
+            // showing unchanged content warnings.
+            if (!originalContent) {
+                originalContent = fluent.getReconstructedSimpleMessage(
+                    props.entity.original,
+                    '',
+                );
+            }
         }
 
         props.setInitialTranslation(originalContent);
