@@ -15,4 +15,18 @@ describe('getReconstructedSimpleMessage', () => {
         const res = getReconstructedSimpleMessage(original, translation);
         expect(res).toEqual('spoilers =\n    .who-dies = Qui meurt ?');
     });
+
+    it('returns indented content for a multiline simple message', () => {
+        const original = 'time-travel = They discovered Time Travel';
+        const translation = 'Ils ont inventé le\nvoyage temporel';
+        const res = getReconstructedSimpleMessage(original, translation);
+        expect(res).toEqual('time-travel =\n    Ils ont inventé le\n    voyage temporel');
+    });
+
+    it('returns indented content for a multiline single attribute', () => {
+        const original = 'slow-walks =\n    .title = They walk in slow motion';
+        const translation = 'Ils se déplacent\nen mouvement lents';
+        const res = getReconstructedSimpleMessage(original, translation);
+        expect(res).toEqual('slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents');
+    });
 });
