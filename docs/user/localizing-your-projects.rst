@@ -39,7 +39,7 @@ structure as expected by Pontoon:
 2. Source locale needs to be called ``templates``, ``en-US``, ``en-us`` or
    ``en``. If multiple folders with such name exist in the repository and
    contain files in a supported file format, the first one will be used.
-3. Locale folder names must always match `BCP 47`_ locale identifiers used by.
+3. Locale folder names must always match `BCP 47`_ locale identifiers used by
    Pontoon. If your application requires different identifiers, you can try
    creating symbolic links to locale folders.
 4. Locale code must not be part of the file name.
