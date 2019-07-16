@@ -2,13 +2,16 @@
 
 import * as React from 'react';
 
-import HighlightedTranslation from './HighlightedTranslation';
 import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import { withSearch } from 'modules/search';
 
 
 // $FLOW_IGNORE: I just can't get HOC working with Flow.
 const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
+
+// $FLOW_IGNORE: I just can't get HOC working with Flow.
+const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 
 export type TranslationProps = {|
@@ -29,15 +32,9 @@ export default class GenericTranslation extends React.Component<TranslationProps
         }
 
         if (search) {
-            // Split search string on spaces except if between non-escaped quotes.
-            const searchWords = search.replace(/\\"/g, '☠').match(/[^\s"]+|"[^"]+"/g);
-
-            if (searchWords) {
-                return <HighlightedTranslation
-                    searchWords={ searchWords }
-                    textToHighlight={ content }
-                />;
-            }
+            return <TranslationPlaceablesSearch search={ search }>
+                { content }
+            </TranslationPlaceablesSearch>;
         }
 
         return <WithPlaceables>{ content }</WithPlaceables>;
