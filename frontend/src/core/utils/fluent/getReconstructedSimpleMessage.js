@@ -7,7 +7,13 @@ import parser from './parser';
  */
 export default function getReconstructedSimpleMessage(original, translation) {
     const message = parser.parseEntry(original);
-    const key = message.id.name;
+    let key = message.id.name;
+
+    // For Terms, the leading dash is removed in the identifier. We need to add
+    // it back manually.
+    if (message.type === 'Term') {
+        key = '-' + key;
+    }
 
     const isMultilineTranslation = translation.indexOf('\n') > -1;
 

@@ -29,4 +29,11 @@ describe('getReconstructedSimpleMessage', () => {
         const res = getReconstructedSimpleMessage(original, translation);
         expect(res).toEqual('slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents');
     });
+
+    it('adds the leading dash to the id of Term messages', () => {
+        const original = '-my-term = My Term';
+        const translation = 'Mon Terme';
+        const res = getReconstructedSimpleMessage(original, translation);
+        expect(res).toEqual('-my-term = Mon Terme');
+    });
 });
