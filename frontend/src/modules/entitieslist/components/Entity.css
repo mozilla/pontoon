@@ -21,6 +21,14 @@
     line-height: 22px;
 }
 
+.entity mark.search {
+    color: #FFA10F;
+    font-weight: normal;
+    font-style: inherit;
+    background: #676054;
+    border-radius: 2px;
+}
+
 .entity .source-string,
 .entity .translation-string {
     display: inline-block;
