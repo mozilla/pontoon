@@ -26,10 +26,8 @@ export function highlightSearch(base: string, search: string){
 
         for (let searchWord of searchWords) {
             const rule = new RegExp(searchWord, 'i');
-
-            const key = shortid.generate();
-            const markup = <mark className='search' key={ key }>{ searchWord }</mark>;
-            const tag = searchWord => markup;
+            const tag = (x: string) =>
+                <mark className='search' key={ shortid.generate() }>{ x }</mark>;
 
             base = mark(base, rule, tag);
         }
