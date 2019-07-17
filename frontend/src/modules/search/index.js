@@ -1,6 +1,7 @@
 /* @flow */
 
 export { default as SearchBox } from './components/SearchBox';
+export { default as withSearch } from './withSearch';
 
 
 // Name of this module.
