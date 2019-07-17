@@ -52,7 +52,8 @@ export class EditorBase extends React.Component<EditorProps, State> {
         // content to match the form type.
         else if (
             this.props.entity &&
-            this.state.forceSource !== prevState.forceSource
+            this.state.forceSource !== prevState.forceSource &&
+            this.props.editor.translation === prevProps.editor.translation
         ) {
             const fromSyntax = this.state.forceSource ? 'simple' : 'complex';
             const toSyntax = this.state.forceSource ? 'complex' : 'simple';
