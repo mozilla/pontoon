@@ -48,9 +48,8 @@ export default function withSearch<Config: Object>(
     WrappedComponent: React.AbstractComponent<Config>
 ): React.AbstractComponent<Config> {
     return function WithSearch(props: { ...Config, ...Props }) {
-        const base = props.children;
         return <WrappedComponent { ...props }>
-            { highlightSearch(base, props.search) }
+            { highlightSearch(props.children, props.search) }
         </WrappedComponent>;
     };
 }

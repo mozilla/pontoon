@@ -17,7 +17,6 @@ const TranslationPlaceablesDiff = withDiff(WithPlaceablesForFluentNoLeadingSpace
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesForFluentNoLeadingSpace);
 
 
-
 export default class FluentTranslation extends React.Component<TranslationProps> {
     render() {
         const { content, diffTarget, search } = this.props;

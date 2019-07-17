@@ -8,9 +8,9 @@ import GenericTranslation from './GenericTranslation';
 
 type Props = {|
     content: ?string,
-    diffTarget?: ?string,
+    diffTarget: ?string,
     format: string,
-    search?: ?string,
+    search: ?string,
 |};
 
 
