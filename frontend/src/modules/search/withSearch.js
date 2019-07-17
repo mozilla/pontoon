@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import createMarker from 'react-content-marker';
+import mark from 'react-content-marker';
 
 
 export function highlightSearch(base: string, search: string){
@@ -22,17 +22,14 @@ export function highlightSearch(base: string, search: string){
         searchWords.sort(function(a, b) {
             return b.length - a.length;
         });
-        
-        const rules = searchWords.map(function(searchWord) {
-            return {
-                rule: new RegExp(searchWord, 'i'),
-                tag: searchWord => <mark className='search'>{ searchWord }</mark>,
-            };
+
+        return searchWords.map(function(searchWord) {
+            return mark(
+                searchWord,
+                new RegExp(searchWord, 'i'),
+                searchWord => <mark className='search'>{ searchWord }</mark>,
+            );
         });
-
-        const WithSearch = createMarker(rules);
-
-        return <WithSearch>{ base }</WithSearch>;
     }
 
     return base;

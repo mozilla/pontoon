@@ -8411,10 +8411,10 @@ react-app-polyfill@^1.0.1:
     regenerator-runtime "0.13.2"
     whatwg-fetch "3.0.0"
 
-react-content-marker@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.0.2.tgz#643599b9b6df2d61a53099821b3e97bbbb96813e"
-  integrity sha512-h1F4MnuXwPgV5H7pbhrQEGdEYxXXjAd64fM6MDuA0+shcPExUTLtgQOBNGWOldGPiVaxWLJ6N76ub8zdKQp27A==
+react-content-marker@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.1.0.tgz#78e58dfb6ea3f8e3f35d82154a77336f6133cbb4"
+  integrity sha512-eU5CWYT2+CLXeHmOJmOvg13jhagWPVMED62RQMnP8Jsb6CSxWjSBXOatGSzUe5PpYZuBemyEjovLaQq5idiViw==
   dependencies:
     shortid "^2.2.14"
 
