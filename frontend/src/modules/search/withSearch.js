@@ -1,7 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
-import mark from 'react-content-marker';
+import shortid from 'shortid';
+import { mark } from 'react-content-marker';
 
 
 export function highlightSearch(base: string, search: string){
@@ -23,13 +24,15 @@ export function highlightSearch(base: string, search: string){
             return b.length - a.length;
         });
 
-        return searchWords.map(function(searchWord) {
-            return mark(
-                searchWord,
-                new RegExp(searchWord, 'i'),
-                searchWord => <mark className='search'>{ searchWord }</mark>,
-            );
-        });
+        for (let searchWord of searchWords) {
+            const rule = new RegExp(searchWord, 'i');
+
+            const key = shortid.generate();
+            const markup = <mark className='search' key={ key }>{ searchWord }</mark>;
+            const tag = searchWord => markup;
+
+            base = mark(base, rule, tag);
+        }
     }
 
     return base;
