@@ -5,27 +5,27 @@ import shortid from 'shortid';
 import { mark } from 'react-content-marker';
 
 
-export function highlightSearch(base: string, search: string){
+export function markSearchTerms(base: string, search: string){
     // Split search string on spaces except if between non-escaped quotes.
     const unusable = '☠';
-    const searchWords = search.replace(/\\"/g, unusable).match(/[^\s"]+|"[^"]+"/g);
+    const searchTerms = search.replace(/\\"/g, unusable).match(/[^\s"]+|"[^"]+"/g);
 
-    if (searchWords) {
+    if (searchTerms) {
         const reg = new RegExp(unusable, 'g');
-        var i = searchWords.length;
+        var i = searchTerms.length;
 
         while(i--) {
-            searchWords[i] = searchWords[i].replace(/^["]|["]$/g, '');
-            searchWords[i] = searchWords[i].replace(reg, '"');
+            searchTerms[i] = searchTerms[i].replace(/^["]|["]$/g, '');
+            searchTerms[i] = searchTerms[i].replace(reg, '"');
         }
 
         // Sort array in decreasing order of string length
-        searchWords.sort(function(a, b) {
+        searchTerms.sort(function(a, b) {
             return b.length - a.length;
         });
 
-        for (let searchWord of searchWords) {
-            const rule = new RegExp(searchWord, 'i');
+        for (let searchTerm of searchTerms) {
+            const rule = new RegExp(searchTerm, 'i');
             const tag = (x: string) =>
                 <mark className='search' key={ shortid.generate() }>{ x }</mark>;
 
@@ -47,7 +47,7 @@ export default function withSearch<Config: Object>(
 ): React.AbstractComponent<Config> {
     return function WithSearch(props: { ...Config, ...Props }) {
         return <WrappedComponent { ...props }>
-            { highlightSearch(props.children, props.search) }
+            { markSearchTerms(props.children, props.search) }
         </WrappedComponent>;
     };
 }
