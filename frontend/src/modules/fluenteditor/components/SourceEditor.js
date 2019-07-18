@@ -16,7 +16,10 @@ type Props = {
 
 
 /**
- * Editor
+ * Editor for complex Fluent strings.
+ *
+ * Displayed when the Rich Editor cannot handle the translation, or if a user
+ * forces showing the Fluent source.
  */
 export default class SourceEditor extends React.Component<Props> {
     render() {

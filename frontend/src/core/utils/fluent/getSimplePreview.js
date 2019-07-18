@@ -1,12 +1,9 @@
 /* @flow */
 
-import { FluentParser } from 'fluent-syntax';
 import flattenDeep from 'lodash.flattendeep';
 
+import parser from './parser';
 import serialize from './serialize';
-
-
-const parser = new FluentParser({ withSpans: false });
 
 
 /**

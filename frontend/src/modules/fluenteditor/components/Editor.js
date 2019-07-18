@@ -48,7 +48,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.setState({ forceSource: false });
             this.analyzeFluentMessage();
         }
-        // Otherwise if the user switched the source mode, update the editor
+        // Otherwise if the user switched the editor mode, update the editor
         // content to match the form type.
         else if (
             this.props.entity &&
@@ -153,9 +153,9 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     render() {
-        let EditorImpl = SourceEditor;
+        let EditorImplementation = SourceEditor;
         if (!this.state.forceSource && this.state.syntaxType === 'simple') {
-            EditorImpl = SimpleEditor;
+            EditorImplementation = SimpleEditor;
         }
 
         // If the type of the string is not 'complex', meaning we show an
@@ -175,7 +175,10 @@ export class EditorBase extends React.Component<EditorProps, State> {
             FTL
         </button>;
 
-        return <EditorImpl { ...this.props } ftlSwitch={ ftlSwitch } />;
+        return <EditorImplementation
+            { ...this.props }
+            ftlSwitch={ ftlSwitch }
+        />;
     }
 }
 
