@@ -33,8 +33,10 @@ type State = {|
 export class FiltersPanelBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
+
         this.state = {
             visible: false,
+            filters: this.getInitialFilters(),
         };
     }
 
@@ -44,12 +46,41 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         });
     }
 
-    selectStatus(status: string) {
-        const newStatus = status === 'all' ? null : status;
+    createHandleSelectFilter = (filter: string) => {
+        if (filter === 'all') {
+            return null;
+        }
+
+        return (event) => {
+            event.stopPropagation();
+            this.setState(state => {
+                return {
+                    filters: {
+                        ...state.filters,
+                        [filter]: !state.filters[filter],
+                    },
+                };
+            })
+        };
+    }
+
+    getInitialFilters() {
+        const initialFilters = {};
+        FILTERS_STATUS.forEach(f => initialFilters[f.tag] = false);
+        return initialFilters;
+    }
+
+    createSetFilter(filter: string) {
+        const newFilter = filter === 'all' ? null : filter;
 
         return () => {
             this.toggleVisibility();
-            return this.props.selectStatus(newStatus);
+
+            const filters = this.getInitialFilters();
+            filters[filter] = true;
+            this.setState({ filters });
+
+            return this.props.selectStatus(newFilter);
         };
     }
 
@@ -82,12 +113,22 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     <li className="horizontal-separator">Translation Status</li>
                     { FILTERS_STATUS.map((filter, i) => {
                         const count = filter.stat ? stats[filter.stat] : stats[filter.tag];
+                        const selected = this.state.filters[filter.tag];
+
+                        let className = filter.tag;
+                        if (selected) {
+                            className += ' selected';
+                        }
+
                         return <li
-                            className={ filter.tag }
+                            className={ className }
                             key={ i }
-                            onClick={ this.selectStatus(filter.tag) }
+                            onClick={ this.createSetFilter(filter.tag) }
                         >
-                            <span className="status fa"></span>
+                            <span
+                                className="status fa"
+                                onClick={ this.createHandleSelectFilter(filter.tag) }
+                            ></span>
                             <span className="title">{ filter.title }</span>
                             <span className="count">
                                 { asLocaleString(count) }
