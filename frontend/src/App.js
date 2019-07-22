@@ -15,7 +15,7 @@ import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import { UserControls } from 'core/user';
-import { BatchEditor } from 'modules/batcheditor';
+import { BatchActions } from 'modules/batchactions';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { Navigation } from 'modules/navbar';
@@ -116,7 +116,7 @@ class App extends React.Component<InternalProps> {
                 { false ?
                     <EntityDetails />
                     :
-                    <BatchEditor
+                    <BatchActions
                         count={ 2 }
                     />
                 }

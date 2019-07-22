@@ -6,30 +6,30 @@
 # keep strings in order of appearance.
 
 
-## BatchEditor
+## BatchActions
 ## Renders batch editor, used for performing mass actions on translations.
 
-batcheditor-BatchEditor--header-selected-count =
+batchactions-BatchActions--header-selected-count =
     { $count ->
         [one] <glyph></glyph> <stress>{ $count }</stress> string selected
        *[other] <glyph></glyph> <stress>{ $count }</stress> strings selected
     }
     .title = Quit Batch Editing (Esc)
-batcheditor-BatchEditor--header-select-all = <glyph></glyph> Select All
+batchactions-BatchActions--header-select-all = <glyph></glyph> Select All
     .title = Select All Strings (Ctrl + Shift + A)
 
-batcheditor-BatchEditor--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
+batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
 
-batcheditor-BatchEditor--review-heading = Review translations
-batcheditor-BatchEditor--approve-all-button = Approve all
-batcheditor-BatchEditor--reject-all-button = Reject all unreviewed suggestions
+batchactions-BatchActions--review-heading = Review translations
+batchactions-BatchActions--approve-all-button = Approve all
+batchactions-BatchActions--reject-all-button = Reject all unreviewed suggestions
 
-batcheditor-BatchEditor--find-replace-heading = Find & Replace in translations
-batcheditor-BatchEditor--find =
+batchactions-BatchActions--find-replace-heading = Find & Replace in translations
+batchactions-BatchActions--find =
     .placeholder = Find
-batcheditor-BatchEditor--replace-with =
+batchactions-BatchActions--replace-with =
     .placeholder = Replace with
-batcheditor-BatchEditor--replace-all-button = Replace all
+batchactions-BatchActions--replace-all-button = Replace all
 
 
 ## Editor Menu

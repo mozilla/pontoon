@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Localized } from 'fluent-react';
 
-import './BatchEditor.css';
+import './BatchActions.css';
 
 
 type Props = {
@@ -14,15 +14,15 @@ type Props = {
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
-export default class BatchEditor extends React.Component<Props> {
+export default class BatchActions extends React.Component<Props> {
     render() {
         const { count } = this.props;
 
-        return <div className="batch-editor">
+        return <div className="batch-actions">
             <div className="topbar clearfix">
                 <div className="selecting fa fa-sync fa-spin"></div>
                 <Localized
-                    id="batcheditor-BatchEditor--header-selected-count"
+                    id="batchactions-BatchActions--header-selected-count"
                     attrs={{ title: true }}
                     glyph={
                         <i className="fa fa-times fa-lg"></i>
@@ -38,7 +38,7 @@ export default class BatchEditor extends React.Component<Props> {
                     </button>
                 </Localized>
                 <Localized
-                    id="batcheditor-BatchEditor--header-select-all"
+                    id="batchactions-BatchActions--header-select-all"
                     attrs={{ title: true }}
                     glyph={
                         <i className="fa fa-check fa-lg"></i>
@@ -56,7 +56,7 @@ export default class BatchEditor extends React.Component<Props> {
             <div className="main-content">
                 <div className="intro">
                     <Localized
-                        id="batcheditor-BatchEditor--warning"
+                        id="batchactions-BatchActions--warning"
                         stress={ <span className="stress" /> }
                     >
                         <p><stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.</p>
@@ -64,19 +64,19 @@ export default class BatchEditor extends React.Component<Props> {
                 </div>
 
                 <div className="review">
-                    <Localized id="batcheditor-BatchEditor--review-heading">
+                    <Localized id="batchactions-BatchActions--review-heading">
                         <h2>Review translations</h2>
                     </Localized>
 
                     <button className="approve-all">
-                        <Localized id="batcheditor-BatchEditor--approve-all-button">
+                        <Localized id="batchactions-BatchActions--approve-all-button">
                             <span className="title">Approve all</span>
                         </Localized>
                         <span className="fa fa-2x fa-sync fa-spin"></span>
                     </button>
 
                     <button className="reject-all">
-                        <Localized id="batcheditor-BatchEditor--reject-all-button">
+                        <Localized id="batchactions-BatchActions--reject-all-button">
                             <span className="title">Reject all unreviewed suggestions</span>
                         </Localized>
                         <span className="fa fa-2x fa-sync fa-spin"></span>
@@ -84,11 +84,11 @@ export default class BatchEditor extends React.Component<Props> {
                 </div>
 
                 <div className="find-replace">
-                    <Localized id="batcheditor-BatchEditor--find-replace-heading">
+                    <Localized id="batchactions-BatchActions--find-replace-heading">
                         <h2>Find & Replace in translations</h2>
                     </Localized>
 
-                    <Localized id="batcheditor-BatchEditor--find" attrs={{ placeholder: true }}>
+                    <Localized id="batchactions-BatchActions--find" attrs={{ placeholder: true }}>
                         <input
                             className="find"
                             type="search"
@@ -96,7 +96,7 @@ export default class BatchEditor extends React.Component<Props> {
                             placeholder="Find"
                         />
                     </Localized>
-                    <Localized id="batcheditor-BatchEditor--replace-with" attrs={{ placeholder: true }}>
+                    <Localized id="batchactions-BatchActions--replace-with" attrs={{ placeholder: true }}>
                         <input
                             className="replace"
                             type="search"
@@ -106,7 +106,7 @@ export default class BatchEditor extends React.Component<Props> {
                     </Localized>
 
                     <button className="replace-all">
-                        <Localized id="batcheditor-BatchEditor--replace-all-button">
+                        <Localized id="batchactions-BatchActions--replace-all-button">
                             <span className="title">Replace all</span>
                         </Localized>
                         <span className="fa fa-2x fa-sync fa-spin"></span>
