@@ -2,6 +2,7 @@ import {
     _getNextEntity,
     _getPreviousEntity,
     _getSelectedEntity,
+    _isReadOnlyEditor,
 } from './selectors';
 
 
@@ -86,6 +87,44 @@ describe('selectors', () => {
             const res = _getSelectedEntity(entities, navigation);
 
             expect(res).toEqual(undefined);
+        });
+    });
+
+    describe('isReadOnlyEditor', () => {
+        it('returns true if user not authenticated', () => {
+            const entity = {
+                readonly: false,
+            };
+            const user = {
+                isAuthenticated: false,
+            };
+            const res = _isReadOnlyEditor(entity, user);
+
+            expect(res).toBeTruthy();
+        });
+
+        it('returns true if entity read-only', () => {
+            const entity = {
+                readonly: true,
+            };
+            const user = {
+                isAuthenticated: true,
+            };
+            const res = _isReadOnlyEditor(entity, user);
+
+            expect(res).toBeTruthy();
+        });
+
+        it('returns false if entity not read-only and user authenticated', () => {
+            const entity = {
+                readonly: false,
+            };
+            const user = {
+                isAuthenticated: true,
+            };
+            const res = _isReadOnlyEditor(entity, user);
+
+            expect(res).toBeFalsy();
         });
     });
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { GenericEditorBase } from './GenericEditor';
+import { GenericTranslationFormBase } from './GenericTranslationForm';
 
 
 const DEFAULT_LOCALE = {
@@ -18,9 +18,9 @@ const EDITOR = {
 };
 
 
-describe('<GenericEditorBase>', () => {
+describe('<GenericTranslationFormBase>', () => {
     it('renders a textarea with some content', () => {
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
         />);
@@ -31,7 +31,7 @@ describe('<GenericEditorBase>', () => {
 
     it('calls the updateTranslation function on change', () => {
         const mockUpdate = sinon.spy();
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }
@@ -46,11 +46,13 @@ describe('<GenericEditorBase>', () => {
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<GenericEditorBase
+        const wrapper = mount(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
+            unsavedchanges={ { shown: false } }
             resetSelectionContent={ resetMock }
             updateTranslation={ updateMock }
+            updateUnsavedChanges={ sinon.stub() }
         />);
 
         wrapper.setProps({ editor: { selectionReplacementContent: 'hello ' } });
@@ -62,7 +64,7 @@ describe('<GenericEditorBase>', () => {
 
     it('sends the translation on Enter', () => {
         const mockSend = sinon.spy();
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             sendTranslation={ mockSend }
@@ -93,7 +95,7 @@ describe('<GenericEditorBase>', () => {
             source: 1,
         }
 
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             updateTranslationStatus={ mockSend }
@@ -116,7 +118,7 @@ describe('<GenericEditorBase>', () => {
 
     it('ignores unsaved changes on Enter if unsaved changes popup is shown', () => {
         const mockSend = sinon.spy();
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             ignoreUnsavedChanges={ mockSend }
@@ -140,7 +142,7 @@ describe('<GenericEditorBase>', () => {
     it('closes unsaved changes popup if open on Esc', () => {
         const mockSend = sinon.spy();
 
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             hideUnsavedChanges={ mockSend }
@@ -166,7 +168,7 @@ describe('<GenericEditorBase>', () => {
             warnings: ['warning1'],
         }
 
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ editor }
             locale={ DEFAULT_LOCALE }
             resetFailedChecks={ mockSend }
@@ -185,7 +187,7 @@ describe('<GenericEditorBase>', () => {
 
     it('copies the original into the Editor on Ctrl + Shift + C', () => {
         const mockCopy = sinon.spy();
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             copyOriginalIntoEditor={ mockCopy }
@@ -206,7 +208,7 @@ describe('<GenericEditorBase>', () => {
 
     it('clears the translation on Ctrl + Shift + Backspace', () => {
         const mockUpdate = sinon.spy();
-        const wrapper = shallow(<GenericEditorBase
+        const wrapper = shallow(<GenericTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ mockUpdate }

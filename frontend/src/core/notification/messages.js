@@ -105,6 +105,12 @@ export default {
         </Localized>,
         type: 'info',
     },
+    'FTL_NOT_SUPPORTED_RICH_EDITOR': {
+        content: <Localized id='notification--ftl-not-supported-rich-editor'>
+            Translation not supported in rich editor
+        </Localized>,
+        type: 'error',
+    },
     'ENTITY_NOT_FOUND': {
         content: <Localized id='notification--entity-not-found'>
             Can’t load specified string

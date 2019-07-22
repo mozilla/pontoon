@@ -195,6 +195,7 @@ notification--same-translation = Une traduction identique existe déjà
 notification--tt-checks-enabled = Vérifications Translate Toolkit activées
 notification--tt-checks-disabled = Vérifications Translate Toolkit désactivées
 notification--make-suggestions-enabled = Faire des suggestions activé
+notification--ftl-not-supported-rich-editor = Traduction non supportée dans l'éditeur avancé
 notification--make-suggestions-disabled = Faire des suggestions désactivé
 
 

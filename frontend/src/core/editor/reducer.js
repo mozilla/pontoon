@@ -3,6 +3,7 @@
 import {
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
+    SET_INITIAL_TRANSLATION,
     UPDATE,
     UPDATE_FAILED_CHECKS,
     UPDATE_SELECTION,
@@ -12,6 +13,7 @@ import type {
     FailedChecks,
     ResetFailedChecksAction,
     ResetSelectionAction,
+    InitialTranslationAction,
     UpdateAction,
     UpdateFailedChecksAction,
     UpdateSelectionAction,
@@ -21,6 +23,7 @@ import type {
 type Action =
     | ResetFailedChecksAction
     | ResetSelectionAction
+    | InitialTranslationAction
     | UpdateAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
@@ -28,6 +31,7 @@ type Action =
 
 export type EditorState = {|
     +translation: string,
+    +initialTranslation: string,
     +changeSource: string,
     +selectionReplacementContent: string,
     +errors: Array<string>,
@@ -66,6 +70,7 @@ function extractFailedChecksOfType(
 
 const initial: EditorState = {
     translation: '',
+    initialTranslation: '',
 
     // Source of the current change. 'internal' or missing if from inside the
     // Editor, 'external' otherwise. This allows the Editor to behave
@@ -105,6 +110,11 @@ export default function reducer(
                 ...state,
                 selectionReplacementContent: action.content,
                 changeSource: 'internal',
+            };
+        case SET_INITIAL_TRANSLATION:
+            return {
+                ...state,
+                initialTranslation: action.translation,
             };
         case RESET_FAILED_CHECKS:
             return {

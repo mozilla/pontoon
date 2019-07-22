@@ -1,0 +1,38 @@
+.editor {
+    background: rgb(39, 42, 47);
+    border-bottom: 1px solid #5E6475;
+    display: flex;
+    flex-direction: column;
+    height: calc(20% + 60px);
+    min-height: 160px;
+}
+
+.editor textarea {
+    border: none;
+    box-sizing: border-box;
+    display: block;
+    line-height: 22px;
+    height: calc(100% - 60px);
+    min-height: 100px;
+    overflow: auto;
+    padding: 10px;
+    resize: none;
+    width: 100%;
+}
+
+/* Remove highlight in Chrome */
+.editor textarea:focus {
+    outline: none;
+}
+
+.editor .plural-selector ~ textarea {
+    min-height: auto;
+}
+
+.editor textarea[readonly] {
+    background: #C7CACF;
+}
+
+.editor textarea[data-script="Arabic"] {
+    font-size: 15px;
+}

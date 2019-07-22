@@ -16,7 +16,7 @@ type Props = {|
     errors: Array<string>,
     warnings: Array<string>,
     resetFailedChecks: () => void,
-    sendTranslation: (ignoreWarnings: ?boolean) => void,
+    sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
     updateTranslationStatus: (
         translationId: number,
         change: ChangeOperation,
