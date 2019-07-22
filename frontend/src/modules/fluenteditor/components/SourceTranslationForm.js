@@ -2,18 +2,18 @@
 
 import * as React from 'react';
 import AceEditor from 'react-ace';
-import { FluentParser, lineOffset, columnOffset } from 'fluent-syntax';
+import { lineOffset, columnOffset } from 'fluent-syntax';
 
 import './editor-mode-fluent';
 import './editor-theme-fluent';
 
-import type { EditorProps } from './GenericEditor';
+import { fluent } from 'core/utils';
 
+import type { EditorProps } from 'core/editor';
 
-const fluent_parser = new FluentParser();
 
 function annotate(source) {
-    let resource = fluent_parser.parse(source);
+    let resource = fluent.parser.parse(source);
     let junks = resource.body.filter(entry => entry.type === 'Junk');
     let annotations = [];
 
@@ -35,7 +35,7 @@ function annotate(source) {
 /*
  * Render an Ace editor for Fluent string editting.
  */
-export default class FluentEditor extends React.Component<EditorProps> {
+export default class SourceTranslationForm extends React.Component<EditorProps> {
     aceEditor: { current: any };
 
     constructor(props: EditorProps) {
@@ -52,7 +52,31 @@ export default class FluentEditor extends React.Component<EditorProps> {
         this.aceEditor.current.editor.clearSelection();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: EditorProps) {
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+        if (
+            prevEditor.translation !== editor.translation &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
+        }
+
+        // When content of the editor changes
+        //   - close unsaved changes popup if open
+        //   - update unsaved changes status
+        if (prevEditor.translation !== editor.translation) {
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            this.props.updateUnsavedChanges(editor.translation);
+        }
+
         if (!this.aceEditor.current) {
             return;
         }

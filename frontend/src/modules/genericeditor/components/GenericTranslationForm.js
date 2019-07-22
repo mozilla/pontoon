@@ -2,31 +2,10 @@
 
 import * as React from 'react';
 
-import type { Locale } from 'core/locales';
 import { withActionsDisabled } from 'core/utils';
-import type { ChangeOperation } from 'modules/history';
-import type { EditorState } from '..';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
+import type { EditorProps } from 'core/editor';
 
-export type EditorProps = {|
-    isReadOnlyEditor: boolean,
-    editor: EditorState,
-    locale: Locale,
-    copyOriginalIntoEditor: () => void,
-    resetFailedChecks: () => void,
-    resetSelectionContent: () => void,
-    sendTranslation: (ignoreWarnings: ?boolean) => void,
-    updateTranslation: (string) => void,
-    updateTranslationStatus: (
-        translationId: number,
-        change: ChangeOperation,
-        ignoreWarnings: ?boolean,
-    ) => void,
-    unsavedchanges: UnsavedChangesState,
-    hideUnsavedChanges: () => void,
-    ignoreUnsavedChanges: () => void,
-|};
 
 type InternalProps = {|
     ...EditorProps,
@@ -38,7 +17,7 @@ type InternalProps = {|
 /*
  * Render a simple textarea to edit a translation.
  */
-export class GenericEditorBase extends React.Component<InternalProps> {
+export class GenericTranslationFormBase extends React.Component<InternalProps> {
     textarea: { current: any };
 
     constructor(props: InternalProps) {
@@ -57,7 +36,31 @@ export class GenericEditorBase extends React.Component<InternalProps> {
         this.textarea.current.setSelectionRange(0, 0);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: InternalProps) {
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+        if (
+            prevProps.editor.translation !== this.props.editor.translation &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
+        }
+
+        // When content of the translation changes
+        //   - close unsaved changes popup if open
+        //   - update unsaved changes status
+        if (prevProps.editor.translation !== this.props.editor.translation) {
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            this.props.updateUnsavedChanges(this.props.editor.translation);
+        }
+
         // If there is content to add to the editor, do so, then remove
         // the content so it isn't added again.
         // This is an abuse of the redux store, because we want to update
@@ -197,4 +200,4 @@ export class GenericEditorBase extends React.Component<InternalProps> {
 }
 
 
-export default withActionsDisabled(GenericEditorBase);
+export default withActionsDisabled(GenericTranslationFormBase);

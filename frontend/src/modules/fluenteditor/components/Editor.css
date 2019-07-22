@@ -1,0 +1,17 @@
+.editor .ftl {
+    background: transparent;
+    border: 0;
+    color: #aaa;
+    float: left;
+    font-size: 18px;
+    font-weight: bold;
+    height: 40px;
+    line-height: 0;
+    padding: 10px 5px 10px 0;
+    text-transform: uppercase;
+}
+
+.editor .ftl.active,
+.editor .ftl:hover {
+    color: #7bc876;
+}

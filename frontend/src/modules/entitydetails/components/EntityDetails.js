@@ -6,6 +6,7 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
 import * as locales from 'core/locales';
@@ -16,19 +17,19 @@ import * as utils from 'core/utils';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
-import * as editor from 'modules/editor';
+import * as genericeditor from 'modules/genericeditor';
+import * as fluenteditor from 'modules/fluenteditor';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { selectors } from '..';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
 import type { Entity, OtherLocaleTranslation } from 'core/api';
+import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { EditorState } from 'modules/editor';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
@@ -73,19 +74,17 @@ type State = {|
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
     componentDidMount() {
-        this.updateEditorTranslation(this.props.activeTranslation);
         this.updateFailedChecks();
         this.fetchHelpersData();
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { pluralForm, selectedEntity, activeTranslation } = this.props;
+        const { pluralForm, selectedEntity } = this.props;
 
         if (
             pluralForm !== prevProps.pluralForm ||
             selectedEntity !== prevProps.selectedEntity
         ) {
-            this.updateEditorTranslation(activeTranslation);
             this.updateFailedChecks();
             this.fetchHelpersData();
         }
@@ -277,7 +276,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 addTextToEditorTranslation={ this.addTextToEditorTranslation }
                 navigateToPath={ this.navigateToPath }
             />
-            <editor.Editor />
+            { state.selectedEntity.format === 'ftl' ?
+                <fluenteditor.Editor /> :
+                <genericeditor.Editor />
+            }
             <Helpers
                 entity={ state.selectedEntity }
                 history={ state.history }
@@ -302,10 +304,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        activeTranslation: selectors.getTranslationForSelectedEntity(state),
+        activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
         editor: state[editor.NAME],
         history: state[history.NAME],
-        isReadOnlyEditor: selectors.isReadOnlyEditor(state),
+        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         machinery: state[machinery.NAME],
