@@ -2,10 +2,10 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Entity from './Entity';
+import { EntityBase } from './Entity';
 
 
-describe('<Entity>', () => {
+describe('<EntityBase>', () => {
     const ENTITY_A = {
         original: 'string a',
         translation: [
@@ -90,7 +90,7 @@ describe('<Entity>', () => {
     };
 
     it('renders the source string and the first translation', () => {
-        const wrapper = shallow(<Entity
+        const wrapper = shallow(<EntityBase
             entity={ ENTITY_A }
             locale={ DEFAULT_LOCALE }
         />);
@@ -101,37 +101,37 @@ describe('<Entity>', () => {
     });
 
     it('shows the correct status class', () => {
-        let wrapper = shallow(<Entity
+        let wrapper = shallow(<EntityBase
             entity={ ENTITY_A }
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('approved');
 
-        wrapper = shallow(<Entity
+        wrapper = shallow(<EntityBase
             entity={ ENTITY_B }
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('fuzzy');
 
-        wrapper = shallow(<Entity
+        wrapper = shallow(<EntityBase
             entity={ ENTITY_C }
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('missing');
 
-        wrapper = shallow(<Entity
+        wrapper = shallow(<EntityBase
             entity={ ENTITY_D }
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('errors');
 
-        wrapper = shallow(<Entity
+        wrapper = shallow(<EntityBase
             entity={ ENTITY_E }
             locale={ DEFAULT_LOCALE }
         />);
         expect(wrapper.instance().status).toEqual('warnings');
 
-        wrapper = shallow(<Entity
+        wrapper = shallow(<EntityBase
             entity={ ENTITY_F }
             locale={ DEFAULT_LOCALE }
         />);
@@ -140,7 +140,7 @@ describe('<Entity>', () => {
 
     it('calls the selectEntity function on click', () => {
         const selectEntityFn = sinon.spy();
-        const wrapper = mount(<Entity
+        const wrapper = mount(<EntityBase
             entity={ ENTITY_A }
             selectEntity={ selectEntityFn }
             locale={ DEFAULT_LOCALE }

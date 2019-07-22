@@ -1,23 +1,35 @@
 /* @flow */
 
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Localized } from 'fluent-react';
 
 import './BatchActions.css';
 
+import * as batchactions from 'modules/batchactions';
+
+import type { BatchActionsState } from 'modules/batchactions';
+
 
 type Props = {
-    count: number,
+    batchactions: BatchActionsState,
 };
+
+type InternalProps = {|
+    ...Props,
+    dispatch: Function,
+|};
 
 
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
-export default class BatchActions extends React.Component<Props> {
-    render() {
-        const { count } = this.props;
+export class BatchActionsBase extends React.Component<InternalProps> {
+    quitBatchActions = () => {
+        this.props.dispatch(batchactions.actions.reset());
+    }
 
+    render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
                 <div className="selecting fa fa-sync fa-spin"></div>
@@ -28,11 +40,12 @@ export default class BatchActions extends React.Component<Props> {
                         <i className="fa fa-times fa-lg"></i>
                     }
                     stress={ <span className="stress" /> }
-                    $count={ count }
+                    $count={ this.props.batchactions.entities.length }
                 >
                     <button
                         className="selected-count"
                         title="Quit Batch Editing (Esc)"
+                        onClick={ this.quitBatchActions }
                     >
                         { '<glyph></glyph> <stress>{ $count }</stress> strings selected' }
                     </button>
@@ -116,3 +129,12 @@ export default class BatchActions extends React.Component<Props> {
         </div>;
     }
 }
+
+
+const mapStateToProps = (state: Object): Props => {
+    return {
+        batchactions: state[batchactions.NAME],
+    };
+};
+
+export default connect(mapStateToProps)(BatchActionsBase);

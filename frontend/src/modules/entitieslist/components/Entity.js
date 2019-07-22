@@ -1,17 +1,24 @@
 /* @flow */
 
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import './Entity.css';
 
+import * as entities from 'core/entities';
 import { TranslationProxy } from 'core/translation';
+import * as user from 'core/user';
 
 import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locales';
 
 
 type Props = {
+    checkedForBatchEditing: boolean,
+    toggleForBatchEditing: Function,
     entity: EntityType,
+    isReadOnlyEditor: boolean,
+    isTranslator: boolean,
     locale: Locale,
     search: ?string,
     selected: boolean,
@@ -36,7 +43,7 @@ type Props = {
  * "Translation" is the current "best" translation. It shows either the approved
  * translation, or the fuzzy translation, or the last suggested translation.
  */
-export default class Entity extends React.Component<Props> {
+export class EntityBase extends React.Component<Props> {
     get status(): string {
         const translations = this.props.entity.translation;
         let approved = 0;
@@ -83,21 +90,52 @@ export default class Entity extends React.Component<Props> {
         return 'missing';
     }
 
-    selectEntity = () => {
+    selectEntity = (e: SyntheticMouseEvent<HTMLLIElement>) => {
+        // Flow requires that we use `e.currentTarget` instead of `e.target`.
+        // However in this case, we do want to use that, so I'm ignoring all
+        // errors Flow throws there.
+        // $FLOW_IGNORE
+        if (e.target && e.target.classList.contains('status')) {
+            return null;
+        }
+
         this.props.selectEntity(this.props.entity);
     }
 
+    toggleForBatchEditing = (e: SyntheticMouseEvent<HTMLSpanElement>) => {
+        const { entity, isReadOnlyEditor, isTranslator } = this.props;
+
+        if (isTranslator && !isReadOnlyEditor) {
+            this.props.toggleForBatchEditing(entity);
+        }
+    }
+
     render() {
-        const { entity, locale, search, selected } = this.props;
+        const {
+            checkedForBatchEditing,
+            entity,
+            isReadOnlyEditor,
+            isTranslator,
+            locale,
+            search,
+            selected,
+        } = this.props;
 
         const classSelected = selected ? 'selected' : '';
 
+        const classBatchEditable = (isTranslator && !isReadOnlyEditor) ? 'batch-editable' : '';
+
+        const classChecked = checkedForBatchEditing ? 'checked' : '';
+
         return (
             <li
-                className={ `entity ${this.status} ${classSelected}` }
+                className={ `entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}` }
                 onClick={ this.selectEntity }
             >
-                <span className='status fa' />
+                <span
+                    className='status fa'
+                    onClick={ this.toggleForBatchEditing }
+                />
                 <div>
                     <p className='source-string'>
                         <TranslationProxy
@@ -123,3 +161,13 @@ export default class Entity extends React.Component<Props> {
         );
     }
 }
+
+
+const mapStateToProps = (state: Object): Props => {
+    return {
+        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
+        isTranslator: user.selectors.isTranslator(state),
+    };
+};
+
+export default connect(mapStateToProps)(EntityBase);

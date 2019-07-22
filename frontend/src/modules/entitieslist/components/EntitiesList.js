@@ -10,11 +10,13 @@ import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
+import * as batchactions from 'modules/batchactions';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import Entity from './Entity';
 import { CircleLoader } from 'core/loaders'
 
+import type { BatchActionsState } from 'modules/batchactions';
 import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locales';
@@ -23,6 +25,7 @@ import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
+    batchactions: BatchActionsState,
     entities: EntitiesState,
     locale: Locale,
     parameters: NavigationParams,
@@ -159,9 +162,29 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 this.props.unsavedchanges,
                 () => {
                     dispatch(
+                        batchactions.actions.reset()
+                    );
+                    dispatch(
                         navigation.actions.updateEntity(
                             router,
                             entity.pk.toString(),
+                        )
+                    );
+                }
+            )
+        );
+    }
+
+    toggleForBatchEditing = (entity: EntityType) => {
+        const { dispatch } = this.props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(
+                        batchactions.actions.toggle(
+                            entity.pk,
                         )
                     );
                 }
@@ -221,6 +244,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 <ul>
                     { props.entities.entities.map((entity, i) => {
                         return <Entity
+                            checkedForBatchEditing={ props.batchactions.entities.includes(entity.pk) }
+                            toggleForBatchEditing={ this.toggleForBatchEditing }
                             entity={ entity }
                             locale={ props.locale }
                             search={ search }
@@ -245,6 +270,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        batchactions: state[batchactions.NAME],
         entities: state[entities.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         locale: locales.selectors.getCurrentLocaleData(state),
