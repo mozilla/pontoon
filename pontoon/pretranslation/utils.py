@@ -47,11 +47,8 @@ def pretranslate(project, locales=None, entities=None):
 
     now = timezone.now()
 
-    user, _ = base.models.User.objects.get_or_create(
-        email="pontoon@mozilla.com",
-        username="pontoon-translator",
-        first_name="Pontoon Translator",
-    )
+    tm_user = base.models.User.objects.get(email="pontoon-tm@mozilla.com")
+    gt_user = base.models.User.objects.get(email="pontoon-gt@mozilla.com")
 
     translations = []
 
@@ -71,6 +68,7 @@ def pretranslate(project, locales=None, entities=None):
 
             if locale_entity not in translated_entities:
                 strings = []
+                user = None
                 tm_response = get_translation_memory_data(
                     text=entity.string,
                     locale=locale,
@@ -87,6 +85,7 @@ def pretranslate(project, locales=None, entities=None):
                             plurals = [t for t in tm_response if t['plural_form'] == plural_form]
                             if plurals:
                                 strings.append(((plurals[0]['target'], plural_form)))
+                    user = tm_user
 
                 elif locale.google_translate_code:
                     gt_response = get_google_translate_data(
@@ -105,10 +104,10 @@ def pretranslate(project, locales=None, entities=None):
                             )
                             if 'translation' in gt_response.keys():
                                 strings.append((gt_response['translation'], plural_forms[1]))
+                        user = gt_user
 
                 if strings:
                     for string, plural_form in strings:
-                        print string
                         t = base.models.Translation(
                             entity=entity,
                             locale=locale,

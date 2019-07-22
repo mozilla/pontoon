@@ -18,7 +18,6 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.pretranslation.utils import pretranslate
 
 log = logging.getLogger(__name__)
 
