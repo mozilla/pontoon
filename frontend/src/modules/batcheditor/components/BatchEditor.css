@@ -1,0 +1,135 @@
+.batch-editor {
+    height: 100%;
+    line-height: 22px;
+}
+
+.batch-editor .topbar {
+    background: #4D5967;
+    border-bottom: 1px solid #5E6475;
+    padding: 12px 10px 13px;
+    text-transform: uppercase;
+}
+
+.batch-editor .topbar .selecting {
+    color: #CCCCCC;
+    display: none;
+    float: left;
+    margin-top: 6px;
+}
+
+.batch-editor .topbar.selecting-all-entities .selecting {
+    display: block;
+}
+
+.batch-editor .topbar button {
+    background: none;
+    border: none;
+    color: #CCCCCC;
+    font-weight: 300;
+    padding: 0;
+}
+
+.batch-editor .topbar button:hover {
+    color: #7BC876;
+}
+
+.batch-editor .topbar.selecting-all-entities button {
+    display: none;
+}
+
+.batch-editor .topbar button.selected-count {
+    float: left;
+}
+
+.batch-editor .topbar button.selected-count .stress {
+    color: #7BC876;
+}
+
+.batch-editor .topbar button.select-all {
+    float: right;
+}
+
+.batch-editor .topbar button .fa {
+    padding-right: 5px;
+}
+
+.batch-editor .topbar .selected-count .fa-times {
+    display: inline;
+}
+
+.batch-editor .main-content {
+    overflow: auto;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.batch-editor .main-content div {
+    margin: 0 auto;
+    min-width: 300px;
+    padding: 20px;
+    width: 50%;
+}
+
+.batch-editor .main-content h2 {
+    color: #CCCCCC;
+    font-size: 14px;
+    font-weight: 300;
+    padding-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.batch-editor .main-content .intro p {
+    color: #AAAAAA;
+    font-style: italic;
+}
+
+.batch-editor .main-content .intro p .warning {
+    color: #F36;
+}
+
+.batch-editor .main-content button,
+.batch-editor .main-content input {
+    display: block;
+    width: 100%;
+}
+
+.batch-editor .main-content button {
+    background: #7BC876;
+    border: none;
+    border-radius: 3px;
+    color: #272A2F;
+    font-weight: 600;
+    margin-top: 10px;
+    padding: 15px 5px;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.batch-editor .main-content button .fa {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    opacity: 0.5;
+}
+
+.batch-editor .main-content button.loading .fa {
+    display: block;
+}
+
+.batch-editor .main-content button.reject-all {
+    background: #F36;
+}
+
+.batch-editor .main-content input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #5E6475;
+    color: #FFFFFF;
+    float: none;
+    margin-bottom: 10px;
+    padding: 15px 0 5px;
+}

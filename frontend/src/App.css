@@ -20,9 +20,6 @@
 #app .panel-content,
 #app .panel-list {
     height: calc(100vh - 60px);
-}
-
-#app .panel-list {
     position: relative;
 }
 

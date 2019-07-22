@@ -15,6 +15,7 @@ import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import { UserControls } from 'core/user';
+import { BatchEditor } from 'modules/batcheditor';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { Navigation } from 'modules/navbar';
@@ -112,7 +113,13 @@ class App extends React.Component<InternalProps> {
                 <EntitiesList />
             </section>
             <section className="panel-content">
-                <EntityDetails />
+                { false ?
+                    <EntityDetails />
+                    :
+                    <BatchEditor
+                        count={ 2 }
+                    />
+                }
             </section>
             <Lightbox />
         </div>;

@@ -6,6 +6,33 @@
 # keep strings in order of appearance.
 
 
+## BatchEditor
+## Renders batch editor, used for performing mass actions on translations.
+
+batcheditor-BatchEditor--header-selected-count =
+    { $count ->
+        [one] <glyph></glyph> <stress>{ $count }</stress> string selected
+       *[other] <glyph></glyph> <stress>{ $count }</stress> strings selected
+    }
+    .title = Quit Batch Editing (Esc)
+batcheditor-BatchEditor--header-select-all = <glyph></glyph> Select All
+    .title = Select All Strings (Ctrl + Shift + A)
+
+batcheditor-BatchEditor--warning-title = Warning:
+batcheditor-BatchEditor--warning-content = These actions will be applied to all selected strings and cannot be undone.
+
+batcheditor-BatchEditor--review-heading = Review translations
+batcheditor-BatchEditor--approve-all-button = Approve all
+batcheditor-BatchEditor--reject-all-button = Reject all unreviewed suggestions
+
+batcheditor-BatchEditor--find-replace-heading = Find & Replace in translations
+batcheditor-BatchEditor--find
+    .placeholder = Find
+batcheditor-BatchEditor--replace-with
+    .placeholder = Replace with
+batcheditor-BatchEditor--replace-all-button = Replace all
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
@@ -78,6 +105,16 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
 editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
 
+
+## Machinery
+## Shows a list of translations from machines.
+
+machinery-machinery-search-placeholder =
+    .placeholder = Type to search machinery
+
+
+## Machinery Translation
+## Shows a specific translation from machinery
 
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
