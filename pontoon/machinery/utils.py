@@ -5,6 +5,7 @@ import requests
 from collections import defaultdict
 
 from django.conf import settings
+from django.db.models import F
 
 import pontoon.base as base
 
@@ -63,11 +64,12 @@ def get_translation_memory_data(text, locale, pk=None):
         .filter(locale=locale)
         .minimum_levenshtein_ratio(text)
         .exclude(translation__approved=False, translation__fuzzy=False)
+        .annotate(plural_form=F('translation__plural_form'))
     )
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
-    entries = entries.values('source', 'target', 'quality').order_by('-quality')
+    entries = entries.values('source', 'target', 'quality', 'plural_form').order_by('-quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
     for entry in entries:

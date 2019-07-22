@@ -233,9 +233,6 @@ class ChangeSet(object):
                         fuzzy=vcs_translation.fuzzy
                     ))
 
-        if len(new_entities) > 0 and self.db_project.pre_translation_enabled:
-            pretranslate(project=self.db_project, entities=new_entities)
-
         self.send_notifications(new_entities)
 
     def update_entity_translations_from_vcs(

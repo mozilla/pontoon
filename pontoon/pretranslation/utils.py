@@ -1,5 +1,6 @@
 from six.moves import reduce
 import operator
+import logging
 
 from django.utils import timezone
 from django.db.models import Q, CharField, Value as V
@@ -8,6 +9,8 @@ from bulk_update.helper import bulk_update
 
 import pontoon.base as base
 from pontoon.machinery.utils import get_google_translate_data, get_translation_memory_data
+
+log = logging.getLogger(__name__)
 
 
 def pretranslate(project, locales=None, entities=None):
@@ -18,6 +21,9 @@ def pretranslate(project, locales=None, entities=None):
     Author should be set to a name like "Pontoon Translator <pontoon@mozilla.com>".
     Stats and Latest activity should be updated
     """
+
+    log.info("Fetching pretranslations for project {} started".format(project.name))
+
     if not locales:
         locales = project.locales.filter(
             project_locale__readonly=False,
@@ -58,17 +64,29 @@ def pretranslate(project, locales=None, entities=None):
     index = -1
 
     for locale in locales:
+        log.info("Fetching pretranslations for locale {} started".format(locale.code))
         for entity in entities:
             locale_entity = '{}-{}'.format(locale.id, entity.id)
+            plural_forms = range(0, locale.nplurals or 1)
+
             if locale_entity not in translated_entities:
-                string = ""
+                strings = []
                 tm_response = get_translation_memory_data(
                     text=entity.string,
                     locale=locale,
                 )
 
-                if tm_response and int(tm_response[0]['quality']) == 100:
-                    string = tm_response[0]['target']
+                tm_response = [t for t in tm_response if int(t['quality']) == 100]
+                tm_response = sorted(tm_response, key=lambda e: e['plural_form'])
+
+                if tm_response:
+                    if entity.string_plural == "":
+                        strings = [(tm_response[0]['target'], None)]
+                    else:
+                        for plural_form in plural_forms:
+                            plurals = [t for t in tm_response if t['plural_form'] == plural_form]
+                            if plurals:
+                                strings.append(((plurals[0]['target'], plural_form)))
 
                 elif locale.google_translate_code:
                     gt_response = get_google_translate_data(
@@ -77,38 +95,52 @@ def pretranslate(project, locales=None, entities=None):
                     )
 
                     if 'translation' in gt_response.keys():
-                        string = gt_response['translation']
+                        if entity.string_plural == "":
+                            strings = [(gt_response['translation'], None)]
+                        else:
+                            strings.append((gt_response['translation'], plural_forms[0]))
+                            gt_response = get_google_translate_data(
+                                text=entity.string,
+                                locale_code=locale.google_translate_code,
+                            )
+                            if 'translation' in gt_response.keys():
+                                strings.append((gt_response['translation'], plural_forms[1]))
 
-                if string:
-                    t = base.models.Translation(
-                        entity=entity,
-                        locale=locale,
-                        string=string,
-                        user=user,
-                        date=now,
-                        approved=False,
-                        active=True,
-                    )
-
-                    translations.append(t)
-
-                    index += 1
-
-                    locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
-                    if locale_resource not in tr_dict.keys():
-                        tr_dict[locale_resource] = [index, 0]
-                        # Add query for fetching respective TranslatedResource.
-                        tr_filter.append(
-                            Q(locale__id=locale.id)
-                            & Q(resource__id=entity.resource.id)
+                if strings:
+                    for string, plural_form in strings:
+                        print string
+                        t = base.models.Translation(
+                            entity=entity,
+                            locale=locale,
+                            string=string,
+                            user=user,
+                            date=now,
+                            approved=False,
+                            active=True,
+                            plural_form=plural_form,
                         )
 
-                    if locale.code not in locale_dict.keys():
-                        locale_dict[locale.code] = [locale, index, 0]
+                        translations.append(t)
 
-                    # Increment number of translations (used to adjust stats)
-                    tr_dict[locale_resource][1] += 1
-                    locale_dict[locale.code][2] += 1
+                        index += 1
+
+                        locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
+                        if locale_resource not in tr_dict.keys():
+                            tr_dict[locale_resource] = [index, 0]
+                            # Add query for fetching respective TranslatedResource.
+                            tr_filter.append(
+                                Q(locale__id=locale.id)
+                                & Q(resource__id=entity.resource.id)
+                            )
+
+                        if locale.code not in locale_dict.keys():
+                            locale_dict[locale.code] = [locale, index, 0]
+
+                        # Increment number of translations (used to adjust stats)
+                        tr_dict[locale_resource][1] += 1
+                        locale_dict[locale.code][2] += 1
+
+        log.info("Fetching pretranslations for locale {} done".format(locale.code))
 
     if len(translations) == 0:
         return
@@ -160,3 +192,5 @@ def pretranslate(project, locales=None, entities=None):
     bulk_update(locale_list, update_fields=['latest_translation', 'unreviewed_strings'])
     bulk_update(projectlocale_list, update_fields=['latest_translation', 'unreviewed_strings'])
     bulk_update(tr_list, update_fields=['latest_translation', 'unreviewed_strings'])
+
+    log.info("Fetching pretranslations for project {} done".format(project.name))
