@@ -7,7 +7,6 @@
     background: #4D5967;
     border-bottom: 1px solid #5E6475;
     padding: 12px 10px 13px;
-    text-transform: uppercase;
 }
 
 .batch-actions .topbar .selecting {
@@ -27,6 +26,7 @@
     color: #CCCCCC;
     font-weight: 300;
     padding: 0;
+    text-transform: uppercase;
 }
 
 .batch-actions .topbar button:hover {
@@ -132,4 +132,19 @@
     float: none;
     margin-bottom: 10px;
     padding: 15px 0 5px;
+}
+
+/* Remove highlight in Chrome */
+.batch-actions .main-content input:focus {
+    outline: none;
+}
+
+/* Remove cancel button in Chrome */
+.batch-actions .main-content input::-webkit-search-cancel-button {
+    display: none;
+}
+
+/* Style placeholder color in Chrome */
+.batch-actions .main-content input::-webkit-input-placeholder {
+    color: #AAAAAA;
 }

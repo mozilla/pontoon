@@ -2,7 +2,6 @@
     background: #4D5967;
     border-bottom: 1px solid #5E6475;
     padding: 12px 10px 13px;
-    text-transform: uppercase;
 }
 
 .entity-navigation button {
@@ -12,6 +11,7 @@
     float: right;
     font-weight: 300;
     padding: 0;
+    text-transform: uppercase;
 }
 
 .entity-navigation button.previous {
