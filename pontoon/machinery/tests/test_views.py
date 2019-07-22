@@ -283,6 +283,7 @@ def test_view_translation_memory_best_quality_entry(
         json.loads(response.content)
         == [{
             "count": 1,
+            "plural_form": None,
             "source": u"aaa",
             "quality": u"100",
             "target": u"ddd",
@@ -342,6 +343,7 @@ def test_view_translation_memory_translation_counts(
         result
         == [{
             u'count': 3,
+            u'plural_form': None,
             u'quality': u'75',
             u'target': u'ccc'
         }]
