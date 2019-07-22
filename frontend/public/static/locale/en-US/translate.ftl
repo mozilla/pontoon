@@ -18,17 +18,16 @@ batcheditor-BatchEditor--header-selected-count =
 batcheditor-BatchEditor--header-select-all = <glyph></glyph> Select All
     .title = Select All Strings (Ctrl + Shift + A)
 
-batcheditor-BatchEditor--warning-title = Warning:
-batcheditor-BatchEditor--warning-content = These actions will be applied to all selected strings and cannot be undone.
+batcheditor-BatchEditor--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
 
 batcheditor-BatchEditor--review-heading = Review translations
 batcheditor-BatchEditor--approve-all-button = Approve all
 batcheditor-BatchEditor--reject-all-button = Reject all unreviewed suggestions
 
 batcheditor-BatchEditor--find-replace-heading = Find & Replace in translations
-batcheditor-BatchEditor--find
+batcheditor-BatchEditor--find =
     .placeholder = Find
-batcheditor-BatchEditor--replace-with
+batcheditor-BatchEditor--replace-with =
     .placeholder = Replace with
 batcheditor-BatchEditor--replace-all-button = Replace all
 

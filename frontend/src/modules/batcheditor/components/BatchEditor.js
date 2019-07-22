@@ -55,15 +55,12 @@ export default class BatchEditor extends React.Component<Props> {
 
             <div className="main-content">
                 <div className="intro">
-                    <p>
-                        <Localized id="batcheditor-BatchEditor--warning-title">
-                            <span className="warning">Warning:</span>
-                        </Localized>
-                        { ' ' }
-                        <Localized id="batcheditor-BatchEditor--warning-content">
-                            <span className="content">These actions will be applied to all selected strings and cannot be undone.</span>
-                        </Localized>
-                    </p>
+                    <Localized
+                        id="batcheditor-BatchEditor--warning"
+                        stress={ <span className="stress" /> }
+                    >
+                        <p><stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.</p>
+                    </Localized>
                 </div>
 
                 <div className="review">
