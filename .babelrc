@@ -1,13 +1,13 @@
 {
   "presets": [
-     "env",
-     "stage-2",
-     "react"
+    "@babel/preset-env",
+    "@babel/preset-react"
   ],
   "plugins": [
-     "transform-runtime"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime"
   ],
   "ignore": [
-     "node_modules",
+    "node_modules",
   ]
 }
