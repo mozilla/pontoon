@@ -82,9 +82,8 @@
     "react-test-renderer": "^16.4.2",
     "request": "^2.87.0",
     "style-loader": "^0.19.1",
-    "sync-exec": "^0.6.2",
     "webpack": "^4.36.1",
-    "webpack-bundle-tracker": "^0.3.0",
+    "webpack-bundle-tracker": "^0.4.2-beta",
     "webpack-cli": "^3.1.1",
     "yuglify": "^2.0.0"
   }
