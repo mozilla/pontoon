@@ -11,9 +11,9 @@ import * as batchactions from 'modules/batchactions';
 import type { BatchActionsState } from 'modules/batchactions';
 
 
-type Props = {
+type Props = {|
     batchactions: BatchActionsState,
-};
+|};
 
 type InternalProps = {|
     ...Props,
@@ -26,7 +26,7 @@ type InternalProps = {|
  */
 export class BatchActionsBase extends React.Component<InternalProps> {
     quitBatchActions = () => {
-        this.props.dispatch(batchactions.actions.reset());
+        this.props.dispatch(batchactions.actions.resetSelection());
     }
 
     render() {

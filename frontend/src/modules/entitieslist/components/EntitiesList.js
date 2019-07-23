@@ -10,6 +10,7 @@ import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
+import * as user from 'core/user';
 import * as batchactions from 'modules/batchactions';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
@@ -27,6 +28,8 @@ import type { UnsavedChangesState } from 'modules/unsavedchanges';
 type Props = {|
     batchactions: BatchActionsState,
     entities: EntitiesState,
+    isReadOnlyEditor: boolean,
+    isTranslator: boolean,
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
@@ -162,7 +165,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 this.props.unsavedchanges,
                 () => {
                     dispatch(
-                        batchactions.actions.reset()
+                        batchactions.actions.resetSelection()
                     );
                     dispatch(
                         navigation.actions.updateEntity(
@@ -183,7 +186,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 this.props.unsavedchanges,
                 () => {
                     dispatch(
-                        batchactions.actions.toggle(
+                        batchactions.actions.toggleSelection(
                             entity.pk,
                         )
                     );
@@ -247,6 +250,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                             checkedForBatchEditing={ props.batchactions.entities.includes(entity.pk) }
                             toggleForBatchEditing={ this.toggleForBatchEditing }
                             entity={ entity }
+                            isReadOnlyEditor={ props.isReadOnlyEditor }
+                            isTranslator={ props.isTranslator }
                             locale={ props.locale }
                             search={ search }
                             selected={ entity.pk === selectedEntity }
@@ -272,6 +277,8 @@ const mapStateToProps = (state: Object): Props => {
     return {
         batchactions: state[batchactions.NAME],
         entities: state[entities.NAME],
+        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
+        isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         router: state.router,

@@ -1,13 +1,10 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import './Entity.css';
 
-import * as entities from 'core/entities';
 import { TranslationProxy } from 'core/translation';
-import * as user from 'core/user';
 
 import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locales';
@@ -43,7 +40,7 @@ type Props = {
  * "Translation" is the current "best" translation. It shows either the approved
  * translation, or the fuzzy translation, or the last suggested translation.
  */
-export class EntityBase extends React.Component<Props> {
+export default class Entity extends React.Component<Props> {
     get status(): string {
         const translations = this.props.entity.translation;
         let approved = 0;
@@ -161,13 +158,3 @@ export class EntityBase extends React.Component<Props> {
         );
     }
 }
-
-
-const mapStateToProps = (state: Object): Props => {
-    return {
-        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
-        isTranslator: user.selectors.isTranslator(state),
-    };
-};
-
-export default connect(mapStateToProps)(EntityBase);

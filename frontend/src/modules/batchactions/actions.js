@@ -8,7 +8,7 @@ export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
 export type ResetAction = {|
     type: typeof RESET,
 |};
-export function reset(): ResetAction {
+export function resetSelection(): ResetAction {
     return {
         type: RESET,
     };
@@ -19,7 +19,7 @@ export type ToggleAction = {|
     type: typeof TOGGLE,
     entity: number,
 |};
-export function toggle(entity: number): ToggleAction {
+export function toggleSelection(entity: number): ToggleAction {
     return {
         type: TOGGLE,
         entity,
@@ -27,6 +27,6 @@ export function toggle(entity: number): ToggleAction {
 }
 
 export default {
-    reset,
-    toggle,
+    resetSelection,
+    toggleSelection,
 };
