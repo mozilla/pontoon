@@ -159,6 +159,8 @@ INSTALLED_APPS = (
 BLOCKED_IPS = os.environ.get('BLOCKED_IPS', '').split(',')
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django_cookies_samesite.middleware.CookiesSameSite',
     'django.middleware.gzip.GZipMiddleware',
     'pontoon.base.middleware.RaygunExceptionMiddleware',
@@ -170,7 +172,6 @@ MIDDLEWARE_CLASSES = (
     'session_csrf.CsrfMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
     'waffle.middleware.WaffleMiddleware',
@@ -578,7 +579,7 @@ MEDIA_URL = '/media/'
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = STATIC_HOST + '/static/'
 
-STATICFILES_STORAGE = 'pontoon.base.storage.GzipManifestPipelineStorage'
+STATICFILES_STORAGE = 'pontoon.base.storage.CompressedManifestPipelineStorage'
 STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
