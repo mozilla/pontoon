@@ -178,18 +178,45 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     }
 
-    toggleForBatchEditing = (entity: EntityType) => {
-        const { dispatch } = this.props;
+    toggleForBatchEditing = (entity: number, shiftKeyPressed: boolean) => {
+        const props = this.props;
+        const { dispatch } = props;
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                props.unsavedchanges,
                 () => {
-                    dispatch(
-                        batchactions.actions.toggleSelection(
-                            entity.pk,
+                    // If holding Shift, check all entities in the entity list between the
+                    // lastCheckedEntity and the entity if entity not checked. If entity
+                    // checked, uncheck all entities in-between.
+                    const lastCheckedEntity = props.batchactions.lastCheckedEntity;
+
+                    if (shiftKeyPressed && lastCheckedEntity) {
+                        const entityListIds = props.entities.entities.map(e => e.pk);
+                        const start = entityListIds.indexOf(entity);
+                        const end = entityListIds.indexOf(lastCheckedEntity);
+
+                        const entitySelection = entityListIds.slice(
+                            Math.min(start, end),
+                            Math.max(start, end) + 1
                         )
-                    );
+
+                        if (props.batchactions.entities.includes(entity)) {
+                            dispatch(
+                                batchactions.actions.uncheckSelection(entitySelection, entity)
+                            );
+                        }
+                        else {
+                            dispatch(
+                                batchactions.actions.checkSelection(entitySelection, entity)
+                            );
+                        }
+                    }
+                    else {
+                        dispatch(
+                            batchactions.actions.toggleSelection(entity)
+                        );
+                    }
                 }
             )
         );
@@ -232,7 +259,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const hasMore = props.entities.fetching || props.entities.hasMore;
 
         return <div
-            className="entities"
+            className="entities unselectable"
             ref={ this.list }
         >
             <InfiniteScroll

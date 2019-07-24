@@ -103,7 +103,7 @@ export default class Entity extends React.Component<Props> {
         const { entity, isReadOnlyEditor, isTranslator } = this.props;
 
         if (isTranslator && !isReadOnlyEditor) {
-            this.props.toggleForBatchEditing(entity);
+            this.props.toggleForBatchEditing(entity.pk, e.shiftKey);
         }
     }
 
