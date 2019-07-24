@@ -25,6 +25,25 @@ type InternalProps = {|
  * Renders batch editor, used for performing mass actions on translations.
  */
 export class BatchActionsBase extends React.Component<InternalProps> {
+    componentDidMount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.addEventListener('keydown', this.handleShortcuts);
+    }
+
+    componentWillUnmount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.removeEventListener('keydown', this.handleShortcuts);
+    }
+
+    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+        const key = event.keyCode;
+
+        // On Esc, quit batch actions
+        if (key === 27) {
+            this.quitBatchActions();
+        }
+    }
+
     quitBatchActions = () => {
         this.props.dispatch(batchactions.actions.resetSelection());
     }
