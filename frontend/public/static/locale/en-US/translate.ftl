@@ -1,5 +1,9 @@
 ### Localization for the Translate page of Pontoon
 
+# Naming convention for l10n IDs: "module-ComponentName--sentence-summary".
+# This allows us to minimize the risk of conflicting IDs throughout the app.
+# Please sort alphabetically by (module name, component name).
+
 
 ## Editor
 ## Allows contributors to modify or propose a translation
@@ -12,7 +16,7 @@ editor-editor-button-save = Save
 editor-editor-button-suggest = Suggest
 
 
-## Failed Checks
+## Editor Failed Checks
 ## Renders the failed checks popup
 
 editor-FailedChecks--close = ×
@@ -23,29 +27,7 @@ editor-FailedChecks--suggest-anyway = Suggest anyway
 editor-FailedChecks--approve-anyway = Approve anyway
 
 
-## Unsaved Changes
-## Renders the unsaved changes popup
-
-editor-UnsavedChanges--close = ×
-    .aria-label = Close unsaved changes popup
-editor-UnsavedChanges--title = You have unsaved changes
-editor-UnsavedChanges--body = Sure you want to leave?
-editor-UnsavedChanges--leave-anyway = Leave anyway
-
-
-## EditorSettings
-## Shows options to update user settings regarding the editor.
-
-editor-settings-toolkit-checks = <glyph></glyph>Translate Toolkit Checks
-    .title = Run Translate Toolkit checks before submitting translations
-
-editor-settings-force-suggestions = <glyph></glyph>Make Suggestions
-    .title = Save suggestions instead of translations
-
-editor-settings-change-all = Change All Settings
-
-
-## KeyboardShortcuts
+## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
 
 editor-keyboard-shortcuts-button =
@@ -84,33 +66,37 @@ editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
 editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
 
 
-## Machinery
-## Shows a list of translations from machines.
+## Editor Settings
+## Shows options to update user settings regarding the editor.
 
-machinery-machinery-search-placeholder =
-    .placeholder = Type to search machinery
+editor-settings-toolkit-checks = <glyph></glyph>Translate Toolkit Checks
+    .title = Run Translate Toolkit checks before submitting translations
 
+editor-settings-force-suggestions = <glyph></glyph>Make Suggestions
+    .title = Save suggestions instead of translations
 
-## Machinery Translation
-## Shows a specific translation from machinery
-
-machinery-translation-copy =
-    .title = Copy Into Translation (Tab)
-
-machinery-translation-number-occurrences =
-    .title = Number of translation occurrences
+editor-settings-change-all = Change All Settings
 
 
-## Entity Navigation
-## Shows next/previous buttons.
+## Editor Unsaved Changes
+## Renders the unsaved changes popup
 
-entitynavigation-next = <glyph></glyph>Next
-    .title = Go To Next String (Alt + Down)
-entitynavigation-previous = <glyph></glyph>Previous
-    .title = Go To Previous String (Alt + Up)
+editor-UnsavedChanges--close = ×
+    .aria-label = Close unsaved changes popup
+editor-UnsavedChanges--title = You have unsaved changes
+editor-UnsavedChanges--body = Sure you want to leave?
+editor-UnsavedChanges--leave-anyway = Leave anyway
 
 
-## Metadata
+## Entity Details Helpers
+## Shows helper tabs
+
+entitydetails-Helpers--history = History
+entitydetails-Helpers--machinery = Machinery
+entitydetails-Helpers--locales = Locales
+
+
+## Entity Details Metadata
 ## Shows metadata about an entity (original string)
 
 entitydetails-metadata-plural = Plural
@@ -132,12 +118,13 @@ entitydetails-metadata-project =
     .title = Project
 
 
-## Helpers
-## Shows helper tabs
+## Entity Navigation
+## Shows next/previous buttons.
 
-entitydetails-Helpers--history = History
-entitydetails-Helpers--machinery = Machinery
-entitydetails-Helpers--locales = Locales
+entitynavigation-next = <glyph></glyph>Next
+    .title = Go To Next String (Alt + Down)
+entitynavigation-previous = <glyph></glyph>Previous
+    .title = Go To Previous String (Alt + Up)
 
 
 ## History
@@ -173,48 +160,21 @@ history-translation-button-unreject =
     .title = Unreject
 
 
-## OtherLocales Translation
-## Shows a specific translation from a different locale
+## Machinery
+## Shows a list of translations from machines.
 
-otherlocales-translation-copy =
+machinery-machinery-search-placeholder =
+    .placeholder = Type to search machinery
+
+
+## Machinery Translation
+## Shows a specific translation from machinery
+
+machinery-translation-copy =
     .title = Copy Into Translation (Tab)
 
-
-## User Notifications
-## Shows user notifications menu.
-
-user-UserNotificationsMenu--no-notifications-title = No new notifications.
-user-UserNotificationsMenu--no-notifications-description = Here you’ll see updates for localizations you contribute to.
-user-UserNotificationsMenu--see-all-notifications = See all Notifications
-
-
-## User Menu
-## Shows user menu entries and options to sign in or out.
-
-user-AppSwitcher--leave-translate-next = Leave Translate.Next
-user-SignIn--sign-in = Sign in
-
-user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
-user-UserMenu--download-translations = <glyph></glyph>Download Translations
-user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
-
-user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
-user-UserMenu--machinery = <glyph></glyph>Machinery
-user-UserMenu--terms = <glyph></glyph>Terms of Use
-user-UserMenu--help = <glyph></glyph>Help
-
-user-UserMenu--admin = <glyph></glyph>Admin
-user-UserMenu--admin-project = <glyph></glyph>Admin · Current Project
-
-user-UserMenu--settings = <glyph></glyph>Settings
-user-SignOut--sign-out = <glyph></glyph>Sign out
-
-
-## Resource menu
-## Used in the resource menu in the main navigation bar.
-navigation-ResourceMenu-no-results = No results
-navigation-ResourceMenu-all-resources = All Resources
-navigation-ResourceMenu-all-projects = All Projects
+machinery-translation-number-occurrences =
+    .title = Number of translation occurrences
 
 
 ## Notification
@@ -237,8 +197,14 @@ notification--tt-checks-enabled = Translate Toolkit Checks enabled
 notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
-notification--ftl-not-supported-rich-editor = Translation not supported in rich editor
 notification--entity-not-found = Can’t load specified string
+
+
+## OtherLocales Translation
+## Shows a specific translation from a different locale
+
+otherlocales-translation-copy =
+    .title = Copy Into Translation (Tab)
 
 
 ## Placeable parsers
@@ -298,3 +264,40 @@ placeable-parser-xmlEntity =
     .title = XML entity
 placeable-parser-xmlTag =
     .title = XML tag
+
+
+## Resource menu
+## Used in the resource menu in the main navigation bar.
+navigation-ResourceMenu-no-results = No results
+navigation-ResourceMenu-all-resources = All Resources
+navigation-ResourceMenu-all-projects = All Projects
+
+
+## User Menu
+## Shows user menu entries and options to sign in or out.
+
+user-AppSwitcher--leave-translate-next = Leave Translate.Next
+user-SignIn--sign-in = Sign in
+
+user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
+user-UserMenu--download-translations = <glyph></glyph>Download Translations
+user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
+
+user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
+user-UserMenu--machinery = <glyph></glyph>Machinery
+user-UserMenu--terms = <glyph></glyph>Terms of Use
+user-UserMenu--help = <glyph></glyph>Help
+
+user-UserMenu--admin = <glyph></glyph>Admin
+user-UserMenu--admin-project = <glyph></glyph>Admin · Current Project
+
+user-UserMenu--settings = <glyph></glyph>Settings
+user-SignOut--sign-out = <glyph></glyph>Sign out
+
+
+## User Notifications
+## Shows user notifications menu.
+
+user-UserNotificationsMenu--no-notifications-title = No new notifications.
+user-UserNotificationsMenu--no-notifications-description = Here you’ll see updates for localizations you contribute to.
+user-UserNotificationsMenu--see-all-notifications = See all Notifications
