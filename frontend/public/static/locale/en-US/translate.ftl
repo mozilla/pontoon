@@ -5,17 +5,6 @@
 # Please sort alphabetically by (module name, component name).
 
 
-## Editor
-## Allows contributors to modify or propose a translation
-
-editor-editor-sign-in-to-translate = <a>Sign in</a> to translate.
-editor-editor-read-only-localization = This is a read-only localization.
-editor-editor-button-copy = Copy
-editor-editor-button-clear = Clear
-editor-editor-button-save = Save
-editor-editor-button-suggest = Suggest
-
-
 ## Editor Failed Checks
 ## Renders the failed checks popup
 
@@ -30,52 +19,63 @@ editor-FailedChecks--approve-anyway = Approve anyway
 ## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
 
-editor-keyboard-shortcuts-button =
+editor-KeyboardShortcuts--button =
     .title = Keyboard Shortcuts
 
-editor-keyboard-shortcuts-overlay-title = Keyboard Shortcuts
+editor-KeyboardShortcuts--overlay-title = Keyboard Shortcuts
 
-editor-keyboard-shortcuts-save-translation = Save Translation
-editor-keyboard-shortcuts-save-translation-shortcut = <accel>Enter</accel>
+editor-KeyboardShortcuts--save-translation = Save Translation
+editor-KeyboardShortcuts--save-translation-shortcut = <accel>Enter</accel>
 
-editor-keyboard-shortcuts-cancel-translation = Cancel Translation
-editor-keyboard-shortcuts-cancel-translation-shortcut = <accel>Esc</accel>
+editor-KeyboardShortcuts--cancel-translation = Cancel Translation
+editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
 
-editor-keyboard-shortcuts-insert-a-new-line = Insert A New Line
-editor-keyboard-shortcuts-insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
+editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
+editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
-editor-keyboard-shortcuts-go-to-next-string = Go To Next String
-editor-keyboard-shortcuts-go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
+editor-KeyboardShortcuts--go-to-next-string = Go To Next String
+editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
 
-editor-keyboard-shortcuts-go-to-previous-string = Go To Previous String
-editor-keyboard-shortcuts-go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
+editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
+editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
 
-editor-keyboard-shortcuts-copy-from-source = Copy From Source
-editor-keyboard-shortcuts-copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
+editor-KeyboardShortcuts--copy-from-source = Copy From Source
+editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
 
-editor-keyboard-shortcuts-clear-translation = Clear Translation
-editor-keyboard-shortcuts-clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>
+editor-KeyboardShortcuts--clear-translation = Clear Translation
+editor-KeyboardShortcuts--clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>
 
-editor-keyboard-shortcuts-search-strings = Search Strings
-editor-keyboard-shortcuts-search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>
+editor-KeyboardShortcuts--search-strings = Search Strings
+editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>
 
-editor-keyboard-shortcuts-select-all-strings = Select All Strings
-editor-keyboard-shortcuts-select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
+editor-KeyboardShortcuts--select-all-strings = Select All Strings
+editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
-editor-keyboard-shortcuts-copy-from-helpers = Copy From Helpers
-editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
+editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
+editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
+
+
+## Editor Menu
+## Allows contributors to modify or propose a translation
+
+editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
+editor-EditorMenu--read-only-localization = This is a read-only localization.
+editor-EditorMenu--button-copy = Copy
+editor-EditorMenu--button-clear = Clear
+editor-EditorMenu--button-save = Save
+editor-EditorMenu--button-suggest = Suggest
 
 
 ## Editor Settings
 ## Shows options to update user settings regarding the editor.
 
-editor-settings-toolkit-checks = <glyph></glyph>Translate Toolkit Checks
+editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit Checks
     .title = Run Translate Toolkit checks before submitting translations
 
-editor-settings-force-suggestions = <glyph></glyph>Make Suggestions
+editor-EditorSettings--force-suggestions = <glyph></glyph>Make Suggestions
     .title = Save suggestions instead of translations
 
-editor-settings-change-all = Change All Settings
+editor-EditorSettings--change-all = Change All Settings
 
 
 ## Editor Unsaved Changes
@@ -99,85 +99,85 @@ entitydetails-Helpers--locales = Locales
 ## Entity Details Metadata
 ## Shows metadata about an entity (original string)
 
-entitydetails-metadata-plural = Plural
-entitydetails-metadata-singular = Singular
+entitydetails-Metadata--plural = Plural
+entitydetails-Metadata--singular = Singular
 
-entitydetails-metadata-comment =
+entitydetails-Metadata--comment =
     .title = Comment
 
-entitydetails-metadata-context =
+entitydetails-Metadata--context =
     .title = Context
 
-entitydetails-metadata-placeholder =
+entitydetails-Metadata--placeholder =
     .title = Placeholder Examples
 
-entitydetails-metadata-resource =
+entitydetails-Metadata--resource =
     .title = Resource
 
-entitydetails-metadata-project =
+entitydetails-Metadata--project =
     .title = Project
 
 
-## Entity Navigation
+## Entity Details Navigation
 ## Shows next/previous buttons.
 
-entitynavigation-next = <glyph></glyph>Next
+entitydetails-EntityNavigation--next = <glyph></glyph>Next
     .title = Go To Next String (Alt + Down)
-entitynavigation-previous = <glyph></glyph>Previous
+entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
     .title = Go To Previous String (Alt + Up)
 
 
 ## History
 ## Shows a list of translations for a specific entity
 
-history-history-no-translations = No translations available.
+history-History--no-translations = No translations available.
 
 
 ## History Translation
 ## Shows a specific translation for an entity, and actions around it
 
-history-translation-copy =
+history-Translation--copy =
     .title = Copy Into Translation (Tab)
 
-history-translation-hide-diff = Hide diff
+history-Translation--hide-diff = Hide diff
     .title = Hide diff against the currently active translation
-history-translation-show-diff = Show diff
+history-Translation--show-diff = Show diff
     .title = Show diff against the currently active translation
 
-history-translation-button-delete =
+history-Translation--button-delete =
     .title = Delete
 
-history-translation-button-approve =
+history-Translation--button-approve =
     .title = Approve
 
-history-translation-button-unapprove =
+history-Translation--button-unapprove =
     .title = Unapprove
 
-history-translation-button-reject =
+history-Translation--button-reject =
     .title = Reject
 
-history-translation-button-unreject =
+history-Translation--button-unreject =
     .title = Unreject
 
 
 ## Machinery
 ## Shows a list of translations from machines.
 
-machinery-machinery-search-placeholder =
+machinery-Machinery--search-placeholder =
     .placeholder = Type to search machinery
 
 
 ## Machinery Translation
 ## Shows a specific translation from machinery
 
-machinery-translation-copy =
+machinery-Translation--copy =
     .title = Copy Into Translation (Tab)
 
-machinery-translation-number-occurrences =
+machinery-Translation--number-occurrences =
     .title = Number of translation occurrences
 
 
-## Notification
+## Notification Messages
 ## Messages shown to users after they perform actions.
 
 notification--translation-approved = Translation approved
@@ -203,7 +203,7 @@ notification--entity-not-found = Can’t load specified string
 ## OtherLocales Translation
 ## Shows a specific translation from a different locale
 
-otherlocales-translation-copy =
+otherlocales-Translation--copy =
     .title = Copy Into Translation (Tab)
 
 
@@ -268,9 +268,9 @@ placeable-parser-xmlTag =
 
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
-navigation-ResourceMenu-no-results = No results
-navigation-ResourceMenu-all-resources = All Resources
-navigation-ResourceMenu-all-projects = All Projects
+resource-ResourceMenu--no-results = No results
+resource-ResourceMenu--all-resources = All Resources
+resource-ResourceMenu--all-projects = All Projects
 
 
 ## User Menu
@@ -278,6 +278,7 @@ navigation-ResourceMenu-all-projects = All Projects
 
 user-AppSwitcher--leave-translate-next = Leave Translate.Next
 user-SignIn--sign-in = Sign in
+user-SignOut--sign-out = <glyph></glyph>Sign out
 
 user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
 user-UserMenu--download-translations = <glyph></glyph>Download Translations
@@ -292,7 +293,6 @@ user-UserMenu--admin = <glyph></glyph>Admin
 user-UserMenu--admin-project = <glyph></glyph>Admin · Current Project
 
 user-UserMenu--settings = <glyph></glyph>Settings
-user-SignOut--sign-out = <glyph></glyph>Sign out
 
 
 ## User Notifications

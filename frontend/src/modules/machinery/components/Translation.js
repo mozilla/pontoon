@@ -47,7 +47,7 @@ export default class Translation extends React.Component<Props> {
 
         const types = translation.sources.map(source => source.type);
 
-        return <Localized id="machinery-translation-copy" attrs={{ title: true }}>
+        return <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
             <li
                 className="translation"
                 title="Copy Into Translation (Tab)"
@@ -70,7 +70,7 @@ export default class Translation extends React.Component<Props> {
                                 <span>{ source.type }</span>
                                 { !source.count ? null :
                                     <Localized
-                                        id="machinery-translation-number-occurrences"
+                                        id="machinery-Translation--number-occurrences"
                                         attrs={{ title: true }}
                                     >
                                         <sup title="Number of translation occurrences">

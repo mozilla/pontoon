@@ -59,7 +59,7 @@ export default class Machinery extends React.Component<Props> {
             <div className="search-wrapper clearfix">
                 <div className="icon fa fa-search"></div>
                 <form onSubmit={ this.submitForm }>
-                    <Localized id="machinery-machinery-search-placeholder" attrs={{ placeholder: true }}>
+                    <Localized id="machinery-Machinery--search-placeholder" attrs={{ placeholder: true }}>
                         <input
                             type="search"
                             autoComplete="off"

@@ -36,6 +36,6 @@ describe('<History>', () => {
         };
         const wrapper = shallow(<History history={ history } />);
 
-        expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
+        expect(wrapper.find('#history-History--no-translations')).toHaveLength(1);
     });
 });

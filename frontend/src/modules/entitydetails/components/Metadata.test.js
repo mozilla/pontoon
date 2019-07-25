@@ -50,13 +50,13 @@ describe('<Metadata>', () => {
         const content = wrapper.find('Linkify').map(item => item.props().children);
         expect(content).toContain(ENTITY.comment);
 
-        expect(wrapper.find('#entitydetails-metadata-resource a').text()).toContain(ENTITY.path);
+        expect(wrapper.find('#entitydetails-Metadata--resource a').text()).toContain(ENTITY.path);
     });
 
     it('renders the selected plural form as original string', () => {
         const wrapper = createShallowMetadata(ENTITY, 2);
 
-        expect(wrapper.find('#entitydetails-metadata-plural')).toHaveLength(1);
+        expect(wrapper.find('#entitydetails-Metadata--plural')).toHaveLength(1);
 
         const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original_plural);
@@ -65,7 +65,7 @@ describe('<Metadata>', () => {
     it('renders the selected singular form as original string', () => {
         const wrapper = createShallowMetadata(ENTITY, 0);
 
-        expect(wrapper.find('#entitydetails-metadata-singular')).toHaveLength(1);
+        expect(wrapper.find('#entitydetails-Metadata--singular')).toHaveLength(1);
 
         const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original);

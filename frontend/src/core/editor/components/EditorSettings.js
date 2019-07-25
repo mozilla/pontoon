@@ -64,7 +64,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
             { !this.state.visible ? null :
             <ul className="menu">
                 <Localized
-                    id="editor-settings-toolkit-checks"
+                    id="editor-EditorSettings--toolkit-checks"
                     attrs={{ title: true }}
                     glyph={
                         <i className="fa fa-fw"></i>
@@ -80,7 +80,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                 </Localized>
 
                 <Localized
-                    id="editor-settings-force-suggestions"
+                    id="editor-EditorSettings--force-suggestions"
                     attrs={{ title: true }}
                     glyph={
                         <i className="fa fa-fw"></i>
@@ -97,7 +97,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
 
                 <li className="horizontal-separator"></li>
                 <li>
-                    <Localized id="editor-settings-change-all">
+                    <Localized id="editor-EditorSettings--change-all">
                         <a href="/settings/">
                             { 'Change All Settings' }
                         </a>
