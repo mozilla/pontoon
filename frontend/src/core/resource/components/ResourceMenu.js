@@ -128,7 +128,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                         })
                         :
                         // No resources found
-                        <Localized id='navigation-ResourceMenu-no-results'>
+                        <Localized id='resource-ResourceMenu--no-results'>
                             <li className="no-results">No results</li>
                         </Localized>
                     }
@@ -140,7 +140,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                             href={ `/${parameters.locale}/${parameters.project}/all-resources/` }
                             onClick={ this.navigateToPath }
                         >
-                            <Localized id='navigation-ResourceMenu-all-resources'>
+                            <Localized id='resource-ResourceMenu--all-resources'>
                                 <span>All Resources</span>
                             </Localized>
                             <ResourcePercent resource={ resources.allResources } />
@@ -151,7 +151,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                             href={ `/${parameters.locale}/all-projects/all-resources/` }
                             onClick={ this.navigateToPath }
                         >
-                            <Localized id='navigation-ResourceMenu-all-projects'>
+                            <Localized id='resource-ResourceMenu--all-projects'>
                                 <span>All Projects</span>
                             </Localized>
                         </a>

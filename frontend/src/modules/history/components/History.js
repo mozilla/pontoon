@@ -34,7 +34,7 @@ type Props = {|
 export default class History extends React.Component<Props> {
     renderNoResults() {
         return <section className="history">
-            <Localized id="history-history-no-translations">
+            <Localized id="history-History--no-translations">
                 <p>No translations available.</p>
             </Localized>
         </section>

@@ -38,7 +38,7 @@ export default class EditorMenu extends React.Component<Props> {
             <unsavedchanges.UnsavedChanges />
             { !props.user.isAuthenticated ?
                 <Localized
-                    id="editor-editor-sign-in-to-translate"
+                    id="editor-EditorMenu--sign-in-to-translate"
                     a={
                         <user.SignInLink url={ props.user.signInURL }></user.SignInLink>
                     }
@@ -49,7 +49,7 @@ export default class EditorMenu extends React.Component<Props> {
                 </Localized>
             : (props.entity && props.entity.readonly) ?
                 <Localized
-                    id="editor-editor-read-only-localization"
+                    id="editor-EditorMenu--read-only-localization"
                 >
                     <p className='banner'>This is a read-only localization.</p>
                 </Localized>
@@ -66,7 +66,7 @@ export default class EditorMenu extends React.Component<Props> {
                         translation={ props.editor.translation }
                     />
                     <div className="actions">
-                        <Localized id="editor-editor-button-copy">
+                        <Localized id="editor-EditorMenu--button-copy">
                             <button
                                 className="action-copy"
                                 onClick={ props.copyOriginalIntoEditor }
@@ -74,7 +74,7 @@ export default class EditorMenu extends React.Component<Props> {
                                 Copy
                             </button>
                         </Localized>
-                        <Localized id="editor-editor-button-clear">
+                        <Localized id="editor-EditorMenu--button-clear">
                             <button
                                 className="action-clear"
                                 onClick={ props.clearEditor }
@@ -84,7 +84,7 @@ export default class EditorMenu extends React.Component<Props> {
                         </Localized>
                         { props.user.settings.forceSuggestions ?
                         // Suggest button, will send an unreviewed translation.
-                        <Localized id="editor-editor-button-suggest">
+                        <Localized id="editor-EditorMenu--button-suggest">
                             <button
                                 className="action-suggest"
                                 onClick={ props.sendTranslation }
@@ -94,7 +94,7 @@ export default class EditorMenu extends React.Component<Props> {
                         </Localized>
                         :
                         // Save button, will send an approved translation.
-                        <Localized id="editor-editor-button-save">
+                        <Localized id="editor-EditorMenu--button-save">
                             <button
                                 className="action-save"
                                 onClick={ props.sendTranslation }

@@ -70,8 +70,8 @@ describe('<ResourceMenuBase>', () => {
         expect(wrapper.find('.resource-menu .menu > ul')).toHaveLength(2);
         expect(wrapper.find('.resource-menu .menu > ul').find(ResourceItem)).toHaveLength(3);
         expect(wrapper.find('.resource-menu .menu .static-links')).toHaveLength(1);
-        expect(wrapper.find('.resource-menu .menu #navigation-ResourceMenu-all-resources')).toHaveLength(1);
-        expect(wrapper.find('.resource-menu .menu #navigation-ResourceMenu-all-projects')).toHaveLength(1);
+        expect(wrapper.find('.resource-menu .menu #resource-ResourceMenu--all-resources')).toHaveLength(1);
+        expect(wrapper.find('.resource-menu .menu #resource-ResourceMenu--all-projects')).toHaveLength(1);
     });
 
     it('searches resource items correctly', () => {

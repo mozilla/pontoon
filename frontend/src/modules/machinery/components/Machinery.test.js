@@ -16,7 +16,7 @@ describe('<Machinery>', () => {
         const wrapper = shallow(<Machinery machinery={ machinery } locale={ LOCALE } />);
 
         expect(wrapper.find('.search-wrapper')).toHaveLength(1);
-        expect(wrapper.find('#machinery-machinery-search-placeholder')).toHaveLength(1);
+        expect(wrapper.find('#machinery-Machinery--search-placeholder')).toHaveLength(1);
     });
 
     it('shows the correct number of translations', () => {
