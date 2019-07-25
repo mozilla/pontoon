@@ -54,7 +54,7 @@ function expectHiddenSettingsAndActions(wrapper) {
     expect(wrapper.find(EditorSettings)).toHaveLength(0);
     expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
     expect(wrapper.find(TranslationLength)).toHaveLength(0);
-    expect(wrapper.find('#editor-editor-button-copy')).toHaveLength(0);
+    expect(wrapper.find('#editor-EditorMenu--button-copy')).toHaveLength(0);
 }
 
 
@@ -77,7 +77,7 @@ describe('<EditorMenu>', () => {
 
         expectHiddenSettingsAndActions(wrapper);
 
-        expect(wrapper.find('#editor-editor-sign-in-to-translate')).toHaveLength(1);
+        expect(wrapper.find('#editor-EditorMenu--sign-in-to-translate')).toHaveLength(1);
     });
 
     it('hides the settings and actions when the entity is read-only', () => {
@@ -89,7 +89,7 @@ describe('<EditorMenu>', () => {
 
         expectHiddenSettingsAndActions(wrapper);
 
-        expect(wrapper.find('#editor-editor-read-only-localization')).toHaveLength(1);
+        expect(wrapper.find('#editor-EditorMenu--read-only-localization')).toHaveLength(1);
     });
 
     it('accepts a firstItemHook and shows it as its first child', () => {

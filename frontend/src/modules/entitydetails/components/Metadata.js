@@ -101,7 +101,7 @@ export default class Metadata extends React.Component<Props> {
 
         if (locale.cldrPlurals[pluralForm] === 1) {
             return {
-                title: <Localized id='entitydetails-metadata-singular'>
+                title: <Localized id='entitydetails-Metadata--singular'>
                     <h2>Singular</h2>
                 </Localized>,
                 original: entity.original,
@@ -109,7 +109,7 @@ export default class Metadata extends React.Component<Props> {
         }
 
         return {
-            title: <Localized id='entitydetails-metadata-plural'>
+            title: <Localized id='entitydetails-Metadata--plural'>
                 <h2>Plural</h2>
             </Localized>,
             original: entity.original_plural,
@@ -143,7 +143,7 @@ export default class Metadata extends React.Component<Props> {
             comment = parts.join('\n');
         }
 
-        return <Localized id='entitydetails-metadata-comment' attrs={ { title: true } }>
+        return <Localized id='entitydetails-Metadata--comment' attrs={ { title: true } }>
             <Property title='Comment' className='comment'>
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { comment }
@@ -157,7 +157,7 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Localized id='entitydetails-metadata-context' attrs={ { title: true } }>
+        return <Localized id='entitydetails-Metadata--context' attrs={ { title: true } }>
             <Property title='Context' className='context'>
                 { entity.key }
             </Property>
@@ -186,7 +186,7 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        return <Localized id='entitydetails-metadata-placeholder' attrs={ { title: true } }>
+        return <Localized id='entitydetails-Metadata--placeholder' attrs={ { title: true } }>
             <Property title='Placeholder Examples' className='placeholder'>
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { examples.join(', ') }
@@ -227,7 +227,7 @@ export default class Metadata extends React.Component<Props> {
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
-            <Localized id='entitydetails-metadata-resource' attrs={ { title: true } }>
+            <Localized id='entitydetails-Metadata--resource' attrs={ { title: true } }>
                 <Property title='Resource' className='resource'>
                     <a
                         href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
@@ -237,7 +237,7 @@ export default class Metadata extends React.Component<Props> {
                     </a>
                 </Property>
             </Localized>
-            <Localized id='entitydetails-metadata-project' attrs={ { title: true } }>
+            <Localized id='entitydetails-Metadata--project' attrs={ { title: true } }>
                 <Property title='Project' className='project'>
                     <a href={ `/${locale.code}/${entity.project.slug}/` }>
                         { entity.project.name }

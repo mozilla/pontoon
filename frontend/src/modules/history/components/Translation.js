@@ -158,7 +158,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         // Hide Diff
         if (this.state.isDiffVisible) {
             return <Localized
-                id='history-translation-hide-diff'
+                id='history-Translation--hide-diff'
                 attrs={{ title: true }}
             >
                 <button
@@ -174,7 +174,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         // Show Diff
         else {
             return <Localized
-                id='history-translation-show-diff'
+                id='history-Translation--show-diff'
                 attrs={{ title: true }}
             >
                 <button
@@ -219,7 +219,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
 
-        return <Localized id='history-translation-copy' attrs={{ title: true }}>
+        return <Localized id='history-Translation--copy' attrs={{ title: true }}>
             <li
                 className={ className }
                 title='Copy Into Translation (Tab)'
@@ -241,7 +241,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     { (!translation.rejected || !canDelete ) ? null :
                         // Delete Button
                         <Localized
-                            id='history-translation-button-delete'
+                            id='history-Translation--button-delete'
                             attrs={{ title: true }}
                         >
                             <button
@@ -255,7 +255,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     { translation.approved ?
                         // Unapprove Button
                         <Localized
-                            id='history-translation-button-unapprove'
+                            id='history-Translation--button-unapprove'
                             attrs={{ title: true }}
                         >
                             <button
@@ -269,7 +269,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         :
                         // Approve Button
                         <Localized
-                            id='history-translation-button-approve'
+                            id='history-Translation--button-approve'
                             attrs={{ title: true }}
                         >
                             <button
@@ -284,7 +284,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     { translation.rejected ?
                         // Unreject Button
                         <Localized
-                            id='history-translation-button-unreject'
+                            id='history-Translation--button-unreject'
                             attrs={{ title: true }}
                         >
                             <button
@@ -298,7 +298,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         :
                         // Reject Button
                         <Localized
-                            id='history-translation-button-reject'
+                            id='history-Translation--button-reject'
                             attrs={{ title: true }}
                         >
                             <button
