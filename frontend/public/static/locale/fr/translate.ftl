@@ -5,6 +5,17 @@
 # Please sort alphabetically by (module name, component name).
 
 
+## Editor Failed Checks
+## Renders the failed checks popup
+
+editor-FailedChecks--close = ×
+    .aria-label = Cacher les vérifications échouées
+editor-FailedChecks--title = Les vérifications suivantes ont échoué
+editor-FailedChecks--save-anyway = Sauvegarder quand même
+editor-FailedChecks--suggest-anyway = Suggérer quand même
+editor-FailedChecks--approve-anyway = Approuver quand même
+
+
 ## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
 
@@ -48,6 +59,7 @@ editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
 ## Allows contributors to modify or propose a translation
 
 editor-EditorMenu--sign-in-to-translate = <a>Connectez-vous</a> pour traduire.
+editor-EditorMenu--read-only-localization = Cette traduction est en lecture seule.
 editor-EditorMenu--button-copy = Copier
 editor-EditorMenu--button-clear = Effacer
 editor-EditorMenu--button-save = Sauvegarder
@@ -64,6 +76,16 @@ editor-EditorSettings--force-suggestions = <glyph></glyph>Faire des suggestions
     .title = Envoyer des suggestions au lieu de traductions
 
 editor-EditorSettings--change-all = Changer tous les paramètres
+
+
+## Editor Unsaved Changes
+## Renders the unsaved changes popup
+
+editor-UnsavedChanges--close = ×
+    .aria-label = Cacher les changements non-sauvegardés
+editor-UnsavedChanges--title = Vous avez des changements non-sauvegardés
+editor-UnsavedChanges--body = Voulez-vous vraiment quitter ?
+editor-UnsavedChanges--leave-anyway = Quitter quand même
 
 
 ## Entity Details Helpers
@@ -144,6 +166,7 @@ history-Translation--button-unreject =
 machinery-Machinery--search-placeholder =
     .placeholder = Saisir pour rechercher la machinerie
 
+
 ## Machinery Translation
 ## Shows a specific translation from machinery
 
@@ -154,8 +177,9 @@ machinery-Translation--number-occurrences =
     .title = Nombre d'occurrences de la traduction
 
 
-## Notification
+## Notification Messages
 ## Messages shown to users after they perform actions.
+
 notification--translation-approved = Traduction approuvée
 notification--translation-unaproved = Traduction désapprouvée
 notification--translation-rejected = Traduction rejetée
@@ -173,6 +197,7 @@ notification--tt-checks-enabled = Vérifications Translate Toolkit activées
 notification--tt-checks-disabled = Vérifications Translate Toolkit désactivées
 notification--make-suggestions-enabled = Faire des suggestions activé
 notification--make-suggestions-disabled = Faire des suggestions désactivé
+notification--entity-not-found = Impossible de charger la chaîne spécifiée
 
 
 ## OtherLocales Translation
@@ -241,7 +266,14 @@ placeable-parser-xmlTag =
     .title = Balise XML
 
 
-## User
+## Resource menu
+## Used in the resource menu in the main navigation bar.
+resource-ResourceMenu--no-results = Pas de résultat
+resource-ResourceMenu--all-resources = Toutes les ressources
+resource-ResourceMenu--all-projects = Tous les projets
+
+
+## User Menu
 ## Shows user menu entries and options to sign in or out.
 
 user-AppSwitcher--leave-translate-next = Quitter Translate.Next
@@ -249,6 +281,8 @@ user-SignIn--sign-in = Connectez-vous
 user-SignOut--sign-out = <glyph></glyph>Se déconnecter
 
 user-UserMenu--download-tm = <glyph></glyph>Télécharger la Mémoire de traduction
+user-UserMenu--download-translations = <glyph></glyph>Télécharger les traductions
+user-UserMenu--upload-translations = <glyph></glyph>Envoyer des traductions
 
 user-UserMenu--top-contributors = <glyph></glyph>Contributeurs et contributrices remarquables
 user-UserMenu--machinery = <glyph></glyph>Machinerie
@@ -259,3 +293,11 @@ user-UserMenu--admin = <glyph></glyph>Admin
 user-UserMenu--admin-project = <glyph></glyph>Admin · Projet actuel
 
 user-UserMenu--settings = <glyph></glyph>Paramètres
+
+
+## User Notifications
+## Shows user notifications menu.
+
+user-UserNotificationsMenu--no-notifications-title = Pas de nouvelle notification.
+user-UserNotificationsMenu--no-notifications-description = Vous trouverez ici des mises à jour sur les langues auxquelles vous contribuez.
+user-UserNotificationsMenu--see-all-notifications = Voir toutes les notifications
