@@ -1,5 +1,9 @@
 ### Localization for the Translate page of Pontoon
 
+# Naming convention for l10n IDs: "module-ComponentName--sentence-summary".
+# This allows us to minimize the risk of conflicting IDs throughout the app.
+# Please sort alphabetically by (module name, component name).
+
 
 ## Editor
 ## Allows contributors to modify or propose a translation
@@ -11,19 +15,7 @@ editor-editor-button-save = Sauvegarder
 editor-editor-button-suggest = Suggérer
 
 
-## EditorSettings
-## Shows options to update user settings regarding the editor.
-
-editor-settings-toolkit-checks = <glyph></glyph>Vérifications Translate Toolkit
-    .title = Faire les vérifications Translate Toolkit avant d'envoyer les traductions
-
-editor-settings-force-suggestions = <glyph></glyph>Faire des suggestions
-    .title = Envoyer des suggestions au lieu de traductions
-
-editor-settings-change-all = Changer tous les paramètres
-
-
-## KeyboardShortcuts
+## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
 
 editor-keyboard-shortcuts-button =
@@ -62,32 +54,27 @@ editor-keyboard-shortcuts-copy-from-helpers = Copier depuis les utilitaires
 editor-keyboard-shortcuts-copy-from-helpers-shortcut = <accel>Tab</accel>
 
 
-## Machinery
-## Shows a list of translations from machines.
+## Editor Settings
+## Shows options to update user settings regarding the editor.
 
-machinery-machinery-search-placeholder =
-    .placeholder = Saisir pour rechercher la machinerie
+editor-settings-toolkit-checks = <glyph></glyph>Vérifications Translate Toolkit
+    .title = Faire les vérifications Translate Toolkit avant d'envoyer les traductions
 
-## Machinery Translation
-## Shows a specific translation from machinery
+editor-settings-force-suggestions = <glyph></glyph>Faire des suggestions
+    .title = Envoyer des suggestions au lieu de traductions
 
-machinery-translation-copy =
-    .title = Copier la traduction (Tab)
-
-machinery-translation-number-occurrences =
-    .title = Nombre d'occurrences de la traduction
+editor-settings-change-all = Changer tous les paramètres
 
 
-## Entity Navigation
-## Shows next/previous buttons.
+## Entity Details Helpers
+## Shows helper tabs
 
-entitynavigation-next = <glyph></glyph>Suivant
-    .title = Aller à la chaîne suivante (Alt + Bas)
-entitynavigation-previous = <glyph></glyph>Précédent
-    .title = Aller à la chaîne précédente (Alt + Haut)
+entitydetails-Helpers--history = Historique
+entitydetails-Helpers--machinery = Machinerie
+entitydetails-Helpers--locales = Langues
 
 
-## Metadata
+## Entity Details Metadata
 ## Shows metadata about an entity (original string)
 
 entitydetails-metadata-plural = Pluriel
@@ -109,12 +96,13 @@ entitydetails-metadata-project =
     .title = Projet
 
 
-## Helpers
-## Shows helper tabs
+## Entity Navigation
+## Shows next/previous buttons.
 
-entitydetails-Helpers--history = Historique
-entitydetails-Helpers--machinery = Machinerie
-entitydetails-Helpers--locales = Langues
+entitynavigation-next = <glyph></glyph>Suivant
+    .title = Aller à la chaîne suivante (Alt + Bas)
+entitynavigation-previous = <glyph></glyph>Précédent
+    .title = Aller à la chaîne précédente (Alt + Haut)
 
 
 ## History
@@ -150,31 +138,20 @@ history-translation-button-unreject =
     .title = Dérejeter
 
 
-## OtherLocales Translation
-## Shows a specific translation from a different locale
+## Machinery
+## Shows a list of translations from machines.
 
-otherlocales-translation-copy =
+machinery-machinery-search-placeholder =
+    .placeholder = Saisir pour rechercher la machinerie
+
+## Machinery Translation
+## Shows a specific translation from machinery
+
+machinery-translation-copy =
     .title = Copier la traduction (Tab)
 
-
-## User
-## Shows user menu entries and options to sign in or out.
-
-user-AppSwitcher--leave-translate-next = Quitter Translate.Next
-user-SignIn--sign-in = Connectez-vous
-
-user-UserMenu--download-tm = <glyph></glyph>Télécharger la Mémoire de traduction
-
-user-UserMenu--top-contributors = <glyph></glyph>Contributeurs et contributrices remarquables
-user-UserMenu--machinery = <glyph></glyph>Machinerie
-user-UserMenu--terms = <glyph></glyph>Conditions d’utilisation
-user-UserMenu--help = <glyph></glyph>Aide
-
-user-UserMenu--admin = <glyph></glyph>Admin
-user-UserMenu--admin-project = <glyph></glyph>Admin · Projet actuel
-
-user-UserMenu--settings = <glyph></glyph>Paramètres
-user-SignOut--sign-out = <glyph></glyph>Se déconnecter
+machinery-translation-number-occurrences =
+    .title = Nombre d'occurrences de la traduction
 
 
 ## Notification
@@ -195,8 +172,14 @@ notification--same-translation = Une traduction identique existe déjà
 notification--tt-checks-enabled = Vérifications Translate Toolkit activées
 notification--tt-checks-disabled = Vérifications Translate Toolkit désactivées
 notification--make-suggestions-enabled = Faire des suggestions activé
-notification--ftl-not-supported-rich-editor = Traduction non supportée dans l'éditeur avancé
 notification--make-suggestions-disabled = Faire des suggestions désactivé
+
+
+## OtherLocales Translation
+## Shows a specific translation from a different locale
+
+otherlocales-translation-copy =
+    .title = Copier la traduction (Tab)
 
 
 ## Placeable parsers
@@ -256,3 +239,23 @@ placeable-parser-xmlEntity =
     .title = Entité XML
 placeable-parser-xmlTag =
     .title = Balise XML
+
+
+## User
+## Shows user menu entries and options to sign in or out.
+
+user-AppSwitcher--leave-translate-next = Quitter Translate.Next
+user-SignIn--sign-in = Connectez-vous
+
+user-UserMenu--download-tm = <glyph></glyph>Télécharger la Mémoire de traduction
+
+user-UserMenu--top-contributors = <glyph></glyph>Contributeurs et contributrices remarquables
+user-UserMenu--machinery = <glyph></glyph>Machinerie
+user-UserMenu--terms = <glyph></glyph>Conditions d’utilisation
+user-UserMenu--help = <glyph></glyph>Aide
+
+user-UserMenu--admin = <glyph></glyph>Admin
+user-UserMenu--admin-project = <glyph></glyph>Admin · Projet actuel
+
+user-UserMenu--settings = <glyph></glyph>Paramètres
+user-SignOut--sign-out = <glyph></glyph>Se déconnecter
