@@ -1,9 +1,12 @@
 /* @flow */
 
+import api from 'core/api';
+
 
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
-export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
 export const RESET: 'batchactions/RESET' = 'batchactions/RESET';
+export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
+export const SELECT_ALL: 'batchactions/SELECT_ALL' = 'batchactions/SELECT_ALL';
 export const UNCHECK: 'batchactions/UNCHECK' = 'batchactions/UNCHECK';
 
 
@@ -20,6 +23,30 @@ export function checkSelection(
         type: CHECK,
         entities,
         lastCheckedEntity,
+    };
+}
+
+
+export function getEntityIds(
+    locale: string,
+    project: string,
+    resource: string,
+    search: ?string,
+    status: ?string,
+): Function {
+    return async dispatch => {
+        const content = await api.entity.getEntities(
+            locale,
+            project,
+            resource,
+            [],
+            null,
+            search,
+            status,
+            true,
+        );
+
+        dispatch(selectAll(content.entity_pks));
     };
 }
 
@@ -46,6 +73,22 @@ export function toggleSelection(entity: number): ToggleAction {
 }
 
 
+export type SelectAllAction = {|
+    type: typeof SELECT_ALL,
+    entities: Array<number>,
+    lastCheckedEntity: number | null,
+|};
+export function selectAll(
+    entities: Array<number>,
+): SelectAllAction {
+    return {
+        type: SELECT_ALL,
+        entities,
+        lastCheckedEntity: entities[0],
+    };
+}
+
+
 export type UncheckAction = {|
     type: typeof UNCHECK,
     entities: Array<number>,
@@ -64,7 +107,9 @@ export function uncheckSelection(
 
 export default {
     checkSelection,
+    getEntityIds,
     resetSelection,
+    selectAll,
     toggleSelection,
     uncheckSelection,
 };

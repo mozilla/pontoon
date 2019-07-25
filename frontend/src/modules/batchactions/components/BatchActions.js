@@ -6,13 +6,16 @@ import { Localized } from 'fluent-react';
 
 import './BatchActions.css';
 
+import * as navigation from 'core/navigation';
 import * as batchactions from 'modules/batchactions';
 
 import type { BatchActionsState } from 'modules/batchactions';
+import type { NavigationParams } from 'core/navigation';
 
 
 type Props = {|
     batchactions: BatchActionsState,
+    parameters: NavigationParams,
 |};
 
 type InternalProps = {|
@@ -48,6 +51,20 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         this.props.dispatch(batchactions.actions.resetSelection());
     }
 
+    selectAllEntities = () => {
+        const { locale, project, resource, entity, search, status } = this.props.parameters;
+
+        this.props.dispatch(
+            batchactions.actions.getEntityIds(
+                locale,
+                project,
+                resource,
+                search,
+                status,
+            )
+        );
+    }
+
     render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
@@ -79,6 +96,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                     <button
                         className="select-all"
                         title="Select All Strings (Ctrl + Shift + A)"
+                        onClick={ this.selectAllEntities }
                     >
                         { '<glyph></glyph> Select All' }
                     </button>
@@ -153,6 +171,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
 const mapStateToProps = (state: Object): Props => {
     return {
         batchactions: state[batchactions.NAME],
+        parameters: navigation.selectors.getNavigationParams(state),
     };
 };
 

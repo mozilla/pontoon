@@ -1,13 +1,14 @@
 /* @flow */
 
-import { CHECK, RESET, TOGGLE, UNCHECK } from './actions';
+import { CHECK, RESET, SELECT_ALL, TOGGLE, UNCHECK } from './actions';
 
-import type { CheckAction, ResetAction, ToggleAction, UncheckAction } from './actions';
+import type { CheckAction, ResetAction, SelectAllAction, ToggleAction, UncheckAction } from './actions';
 
 
 type Action =
     | CheckAction
     | ResetAction
+    | SelectAllAction
     | ToggleAction
     | UncheckAction
 ;
@@ -61,6 +62,11 @@ export default function reducer(
         case RESET:
             return {
                 ...initial,
+            };
+        case SELECT_ALL:
+            return {
+                entities: action.entities,
+                lastCheckedEntity: action.lastCheckedEntity,
             };
         case UNCHECK:
             return {

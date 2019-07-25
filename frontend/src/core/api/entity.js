@@ -21,6 +21,7 @@ export default class EntityAPI extends APIBase {
         entity: ?string,
         search: ?string,
         status: ?string,
+        pk_only: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);
@@ -44,6 +45,10 @@ export default class EntityAPI extends APIBase {
 
         if (status) {
             payload.append('status', status);
+        }
+
+        if (pk_only) {
+            payload.append('pk_only', 'true');
         }
 
         const headers = new Headers();
