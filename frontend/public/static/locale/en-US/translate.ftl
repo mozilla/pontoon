@@ -1,8 +1,32 @@
 ### Localization for the Translate page of Pontoon
 
-# Naming convention for l10n IDs: "module-ComponentName--sentence-summary".
+# Naming convention for l10n IDs: "module-ComponentName--string-summary".
 # This allows us to minimize the risk of conflicting IDs throughout the app.
-# Please sort alphabetically by (module name, component name).
+# Please sort alphabetically by (module name, component name). For each module,
+# keep strings in order of appearance.
+
+
+## Editor Menu
+## Allows contributors to modify or propose a translation
+
+editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
+editor-EditorMenu--read-only-localization = This is a read-only localization.
+editor-EditorMenu--button-copy = Copy
+editor-EditorMenu--button-clear = Clear
+editor-EditorMenu--button-save = Save
+editor-EditorMenu--button-suggest = Suggest
+
+
+## Editor Settings
+## Shows options to update user settings regarding the editor.
+
+editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit Checks
+    .title = Run Translate Toolkit checks before submitting translations
+
+editor-EditorSettings--force-suggestions = <glyph></glyph>Make Suggestions
+    .title = Save suggestions instead of translations
+
+editor-EditorSettings--change-all = Change All Settings
 
 
 ## Editor Failed Checks
@@ -55,29 +79,6 @@ editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
 editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
 
 
-## Editor Menu
-## Allows contributors to modify or propose a translation
-
-editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
-editor-EditorMenu--read-only-localization = This is a read-only localization.
-editor-EditorMenu--button-copy = Copy
-editor-EditorMenu--button-clear = Clear
-editor-EditorMenu--button-save = Save
-editor-EditorMenu--button-suggest = Suggest
-
-
-## Editor Settings
-## Shows options to update user settings regarding the editor.
-
-editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit Checks
-    .title = Run Translate Toolkit checks before submitting translations
-
-editor-EditorSettings--force-suggestions = <glyph></glyph>Make Suggestions
-    .title = Save suggestions instead of translations
-
-editor-EditorSettings--change-all = Change All Settings
-
-
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
 
@@ -86,6 +87,15 @@ editor-UnsavedChanges--close = ×
 editor-UnsavedChanges--title = You have unsaved changes
 editor-UnsavedChanges--body = Sure you want to leave?
 editor-UnsavedChanges--leave-anyway = Leave anyway
+
+
+## Entity Details Navigation
+## Shows next/previous buttons.
+
+entitydetails-EntityNavigation--next = <glyph></glyph>Next
+    .title = Go To Next String (Alt + Down)
+entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
+    .title = Go To Previous String (Alt + Up)
 
 
 ## Entity Details Helpers
@@ -116,15 +126,6 @@ entitydetails-Metadata--resource =
 
 entitydetails-Metadata--project =
     .title = Project
-
-
-## Entity Details Navigation
-## Shows next/previous buttons.
-
-entitydetails-EntityNavigation--next = <glyph></glyph>Next
-    .title = Go To Next String (Alt + Down)
-entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
-    .title = Go To Previous String (Alt + Up)
 
 
 ## History
