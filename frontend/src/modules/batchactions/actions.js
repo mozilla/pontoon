@@ -6,7 +6,6 @@ import api from 'core/api';
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
 export const RESET: 'batchactions/RESET' = 'batchactions/RESET';
 export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
-export const SELECT_ALL: 'batchactions/SELECT_ALL' = 'batchactions/SELECT_ALL';
 export const UNCHECK: 'batchactions/UNCHECK' = 'batchactions/UNCHECK';
 
 
@@ -27,7 +26,17 @@ export function checkSelection(
 }
 
 
-export function getEntityIds(
+export type ResetAction = {|
+    type: typeof RESET,
+|};
+export function resetSelection(): ResetAction {
+    return {
+        type: RESET,
+    };
+}
+
+
+export function selectAll(
     locale: string,
     project: string,
     resource: string,
@@ -46,17 +55,9 @@ export function getEntityIds(
             true,
         );
 
-        dispatch(selectAll(content.entity_pks));
-    };
-}
+        const entities = content.entity_pks;
 
-
-export type ResetAction = {|
-    type: typeof RESET,
-|};
-export function resetSelection(): ResetAction {
-    return {
-        type: RESET,
+        dispatch(checkSelection(entities, entities[0]));
     };
 }
 
@@ -69,22 +70,6 @@ export function toggleSelection(entity: number): ToggleAction {
     return {
         type: TOGGLE,
         entity,
-    };
-}
-
-
-export type SelectAllAction = {|
-    type: typeof SELECT_ALL,
-    entities: Array<number>,
-    lastCheckedEntity: number | null,
-|};
-export function selectAll(
-    entities: Array<number>,
-): SelectAllAction {
-    return {
-        type: SELECT_ALL,
-        entities,
-        lastCheckedEntity: entities[0],
     };
 }
 
@@ -107,7 +92,6 @@ export function uncheckSelection(
 
 export default {
     checkSelection,
-    getEntityIds,
     resetSelection,
     selectAll,
     toggleSelection,
