@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
+import { Localized } from 'fluent-react';
 
 import './FiltersPanel.css';
 
@@ -41,9 +42,40 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     toggleVisibility = () => {
-        this.setState((state) => {
+        this.setState(state => {
             return { visible: !state.visible };
         });
+    }
+
+    toggleFilterSelection(filter: string) {
+        this.setState(state => {
+            return {
+                filters: {
+                    ...state.filters,
+                    [filter]: !state.filters[filter],
+                },
+            };
+        });
+    }
+
+    getInitialFilters() {
+        const initialFilters = {};
+        FILTERS_STATUS.forEach(f => initialFilters[f.tag] = false);
+        return initialFilters;
+    }
+
+    getSelectedFiltersCount() {
+        let count = 0;
+        Object.keys(this.state.filters).forEach(f => {
+            if (this.state.filters[f]) {
+                count++;
+            }
+        });
+        return count;
+    }
+
+    resetFilters = () => {
+        this.setState({ filters: this.getInitialFilters() });
     }
 
     createHandleSelectFilter = (filter: string) => {
@@ -53,21 +85,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
         return (event) => {
             event.stopPropagation();
-            this.setState(state => {
-                return {
-                    filters: {
-                        ...state.filters,
-                        [filter]: !state.filters[filter],
-                    },
-                };
-            })
+            this.toggleFilterSelection(filter);
         };
-    }
-
-    getInitialFilters() {
-        const initialFilters = {};
-        FILTERS_STATUS.forEach(f => initialFilters[f.tag] = false);
-        return initialFilters;
     }
 
     createSetFilter(filter: string) {
@@ -77,7 +96,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             this.toggleVisibility();
 
             const filters = this.getInitialFilters();
-            filters[filter] = true;
+            filters[newFilter] = true;
             this.setState({ filters });
 
             return this.props.selectStatus(newFilter);
@@ -94,6 +113,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
     render() {
         const { parameters, stats } = this.props;
+
+        console.debug(this.state);
+
+        const selectedFiltersCount = this.getSelectedFiltersCount();
 
         let selectedStatus = FILTERS_STATUS.find(
             item => item.tag === parameters.status
@@ -136,6 +159,38 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
                 </ul>
+                { selectedFiltersCount === 0 ? null :
+                <div className="toolbar clearfix">
+                    <Localized
+                        id="search-FiltersPanel--clear-selection"
+                        attrs={ { title: true } }
+                        glyph={ <i className="fa fa-times fa-lg"></i> }
+                    >
+                        <button
+                            title="Uncheck selected filters"
+                            onClick={ this.resetFilters }
+                            className="clear-selection"
+                        >
+                            <i className="fa fa-times fa-lg"></i>
+                            Clear
+                        </button>
+                    </Localized>
+                    <Localized
+                        id="search-FiltersPanel--apply-filters"
+                        attrs={ { title: true } }
+                        glyph={ <i className="fa fa-check fa-lg"></i> }
+                        stress={ <span className="applied-count"></span> }
+                        $count={ selectedFiltersCount }
+                    >
+                        <button
+                            title="Apply Selected Filters"
+                            className="apply-selected"
+                        >
+                            <i className="fa fa-check fa-lg"></i>
+                            { 'Apply <stress>{ $count }</stress> filters' }
+                        </button>
+                    </Localized>
+                </div> }
             </div> }
         </div>;
     }

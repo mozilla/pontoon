@@ -140,3 +140,47 @@
 .filters-panel .menu li.selected .status:before {
     content: "";
 }
+
+.filters-panel .toolbar {
+    background: #111111;
+    border-top: 1px solid #5E6475;
+    line-height: 23px;
+    padding: 10px 12px;
+    text-transform: uppercase;
+    width: 100%;
+
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.filters-panel .toolbar.fixed {
+    position: fixed;
+    bottom: 0;
+    width: 350px;
+    z-index: 10;
+}
+
+.filters-panel .toolbar button {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-weight: 300;
+}
+
+.filters-panel .toolbar button .fa {
+    padding-right: 4px;
+}
+
+.filters-panel .toolbar .clear-selection {
+    float: left;
+}
+
+.filters-panel .toolbar .apply-selected {
+    float: right;
+    text-align: right;
+}
+
+.filters-panel .toolbar .apply-selected:hover,
+.filters-panel .toolbar .apply-selected .applied-count {
+    color: #7BC876;
+}
