@@ -4,6 +4,8 @@ import api from 'core/api';
 
 
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
+export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';
+export const REQUEST: 'batchactions/REQUEST' = 'batchactions/REQUEST';
 export const RESET: 'batchactions/RESET' = 'batchactions/RESET';
 export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
 export const UNCHECK: 'batchactions/UNCHECK' = 'batchactions/UNCHECK';
@@ -26,6 +28,28 @@ export function checkSelection(
 }
 
 
+export type ReceiveAction = {|
+    type: typeof RECEIVE,
+|};
+export function receive(): ReceiveAction {
+    return {
+        type: RECEIVE,
+    };
+}
+
+
+export type RequestAction = {|
+    source: string,
+    type: typeof REQUEST,
+|};
+export function request(source: string): RequestAction {
+    return {
+        source,
+        type: REQUEST,
+    };
+}
+
+
 export type ResetAction = {|
     type: typeof RESET,
 |};
@@ -44,6 +68,8 @@ export function selectAll(
     status: ?string,
 ): Function {
     return async dispatch => {
+        dispatch(request('select-all'));
+
         const content = await api.entity.getEntities(
             locale,
             project,
@@ -57,6 +83,7 @@ export function selectAll(
 
         const entities = content.entity_pks;
 
+        dispatch(receive());
         dispatch(checkSelection(entities, entities[0]));
     };
 }

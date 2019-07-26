@@ -1,12 +1,28 @@
 /* @flow */
 
-import { CHECK, RESET, TOGGLE, UNCHECK } from './actions';
+import {
+    CHECK,
+    RECEIVE,
+    REQUEST,
+    RESET,
+    TOGGLE,
+    UNCHECK
+} from './actions';
 
-import type { CheckAction, ResetAction, ToggleAction, UncheckAction } from './actions';
+import type {
+    CheckAction,
+    ReceiveAction,
+    RequestAction,
+    ResetAction,
+    ToggleAction,
+    UncheckAction
+} from './actions';
 
 
 type Action =
     | CheckAction
+    | ReceiveAction
+    | RequestAction
     | ResetAction
     | ToggleAction
     | UncheckAction
@@ -14,12 +30,14 @@ type Action =
 
 export type BatchActionsState = {|
     +entities: Array<number>,
+    +fetching: string | null,
     +lastCheckedEntity: number | null,
 |};
 
 
 const initial: BatchActionsState = {
     entities: [],
+    fetching: null,
     lastCheckedEntity: null,
 };
 
@@ -52,15 +70,25 @@ export default function reducer(
                 ),
                 lastCheckedEntity: action.lastCheckedEntity,
             };
+        case RECEIVE:
+            return {
+                ...state,
+                fetching: null,
+            };
+        case REQUEST:
+            return {
+                ...state,
+                fetching: action.source,
+            };
+        case RESET:
+            return {
+                ...initial,
+            };
         case TOGGLE:
             return {
                 ...state,
                 entities: toggleEntity(state.entities, action.entity),
                 lastCheckedEntity: action.entity,
-            };
-        case RESET:
-            return {
-                ...initial,
             };
         case UNCHECK:
             return {

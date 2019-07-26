@@ -11,13 +11,8 @@
 
 .batch-actions .topbar .selecting {
     color: #CCCCCC;
-    display: none;
     float: left;
-    margin-top: 6px;
-}
-
-.batch-actions .topbar.selecting-all-entities .selecting {
-    display: block;
+    margin-top: 2px;
 }
 
 .batch-actions .topbar button {
@@ -31,10 +26,6 @@
 
 .batch-actions .topbar button:hover {
     color: #7BC876;
-}
-
-.batch-actions .topbar.selecting-all-entities button {
-    display: none;
 }
 
 .batch-actions .topbar button.selected-count {
@@ -109,15 +100,10 @@
 }
 
 .batch-actions .main-content button .fa {
-    display: none;
     position: absolute;
     right: 10px;
     top: 12px;
     opacity: 0.5;
-}
-
-.batch-actions .main-content button.loading .fa {
-    display: block;
 }
 
 .batch-actions .main-content button.reject-all {

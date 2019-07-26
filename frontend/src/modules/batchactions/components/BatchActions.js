@@ -68,24 +68,27 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
-                <div className="selecting fa fa-sync fa-spin"></div>
-                <Localized
-                    id="batchactions-BatchActions--header-selected-count"
-                    attrs={{ title: true }}
-                    glyph={
-                        <i className="fa fa-times fa-lg"></i>
-                    }
-                    stress={ <span className="stress" /> }
-                    $count={ this.props.batchactions.entities.length }
-                >
-                    <button
-                        className="selected-count"
-                        title="Quit Batch Editing (Esc)"
-                        onClick={ this.quitBatchActions }
+                { this.props.batchactions.fetching === 'select-all' ?
+                    <div className="selecting fa fa-sync fa-spin"></div>
+                    :
+                    <Localized
+                        id="batchactions-BatchActions--header-selected-count"
+                        attrs={{ title: true }}
+                        glyph={
+                            <i className="fa fa-times fa-lg"></i>
+                        }
+                        stress={ <span className="stress" /> }
+                        $count={ this.props.batchactions.entities.length }
                     >
-                        { '<glyph></glyph> <stress>{ $count }</stress> strings selected' }
-                    </button>
-                </Localized>
+                        <button
+                            className="selected-count"
+                            title="Quit Batch Editing (Esc)"
+                            onClick={ this.quitBatchActions }
+                        >
+                            { '<glyph></glyph> <stress>{ $count }</stress> strings selected' }
+                        </button>
+                    </Localized>
+                }
                 <Localized
                     id="batchactions-BatchActions--header-select-all"
                     attrs={{ title: true }}
@@ -122,14 +125,18 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         <Localized id="batchactions-BatchActions--approve-all-button">
                             <span className="title">Approve all</span>
                         </Localized>
-                        <span className="fa fa-2x fa-sync fa-spin"></span>
+                        { this.props.batchactions.fetching !== 'approve' ? null :
+                            <span className="fa fa-2x fa-sync fa-spin"></span>
+                        }
                     </button>
 
                     <button className="reject-all">
                         <Localized id="batchactions-BatchActions--reject-all-button">
-                            <span className="title">Reject all unreviewed suggestions</span>
+                            <span className="title">Reject all</span>
                         </Localized>
-                        <span className="fa fa-2x fa-sync fa-spin"></span>
+                        { this.props.batchactions.fetching !== 'reject' ? null :
+                            <span className="fa fa-2x fa-sync fa-spin"></span>
+                        }
                     </button>
                 </div>
 
@@ -159,7 +166,9 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         <Localized id="batchactions-BatchActions--replace-all-button">
                             <span className="title">Replace all</span>
                         </Localized>
-                        <span className="fa fa-2x fa-sync fa-spin"></span>
+                        { this.props.batchactions.fetching !== 'replace' ? null :
+                            <span className="fa fa-2x fa-sync fa-spin"></span>
+                        }
                     </button>
                 </div>
             </div>

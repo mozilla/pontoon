@@ -22,7 +22,7 @@ batchactions-BatchActions--warning = <stress>Warning:</stress> These actions wil
 
 batchactions-BatchActions--review-heading = Review translations
 batchactions-BatchActions--approve-all-button = Approve all
-batchactions-BatchActions--reject-all-button = Reject all unreviewed suggestions
+batchactions-BatchActions--reject-all-button = Reject all
 
 batchactions-BatchActions--find-replace-heading = Find & Replace in translations
 batchactions-BatchActions--find =
