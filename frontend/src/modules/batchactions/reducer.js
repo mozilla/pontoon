@@ -5,6 +5,7 @@ import {
     RECEIVE,
     REQUEST,
     RESET,
+    RESET_RESPONSE,
     TOGGLE,
     UNCHECK
 } from './actions';
@@ -14,6 +15,8 @@ import type {
     ReceiveAction,
     RequestAction,
     ResetAction,
+    ResetResponseAction,
+    ResponseType,
     ToggleAction,
     UncheckAction
 } from './actions';
@@ -24,14 +27,16 @@ type Action =
     | ReceiveAction
     | RequestAction
     | ResetAction
+    | ResetResponseAction
     | ToggleAction
     | UncheckAction
 ;
 
 export type BatchActionsState = {|
     +entities: Array<number>,
-    +fetching: string | null,
-    +lastCheckedEntity: number | null,
+    +fetching: ?string,
+    +lastCheckedEntity: ?number,
+    +response: ?ResponseType,
 |};
 
 
@@ -39,6 +44,7 @@ const initial: BatchActionsState = {
     entities: [],
     fetching: null,
     lastCheckedEntity: null,
+    response: null,
 };
 
 
@@ -74,6 +80,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: null,
+                response: action.response,
             };
         case REQUEST:
             return {
@@ -83,6 +90,11 @@ export default function reducer(
         case RESET:
             return {
                 ...initial,
+            };
+        case RESET_RESPONSE:
+            return {
+                ...state,
+                response: initial.response,
             };
         case TOGGLE:
             return {

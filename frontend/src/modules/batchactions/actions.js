@@ -7,6 +7,7 @@ export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
 export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';
 export const REQUEST: 'batchactions/REQUEST' = 'batchactions/REQUEST';
 export const RESET: 'batchactions/RESET' = 'batchactions/RESET';
+export const RESET_RESPONSE: 'batchactions/RESET_RESPONSE' = 'batchactions/RESET_RESPONSE';
 export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
 export const UNCHECK: 'batchactions/UNCHECK' = 'batchactions/UNCHECK';
 
@@ -28,11 +29,54 @@ export function checkSelection(
 }
 
 
+export function performAction(
+    action: string,
+    locale: string,
+    entities: Array<number>,
+): Function {
+    return async dispatch => {
+        dispatch(request(action));
+
+        const data = await api.entity.batchEdit(
+            action,
+            locale,
+            entities,
+        );
+
+        const response = {};
+        response.action = action;
+
+        if ('count' in data) {
+            response.changedCount = data.count;
+            response.invalidCount = data.invalid_translation_count;
+        }
+        else {
+            response.error = true;
+        }
+
+        dispatch(receive(response));
+
+        setTimeout(() => {
+            dispatch(reset_response());
+        }, 3000);
+    };
+}
+
+
+export type ResponseType = {
+    action: string,
+    changedCount: ?number,
+    invalidCount: ?number,
+    error: ?boolean,
+};
+
 export type ReceiveAction = {|
+    response: ?ResponseType,
     type: typeof RECEIVE,
 |};
-export function receive(): ReceiveAction {
+export function receive(response: ?ResponseType): ReceiveAction {
     return {
+        response,
         type: RECEIVE,
     };
 }
@@ -46,6 +90,16 @@ export function request(source: string): RequestAction {
     return {
         source,
         type: REQUEST,
+    };
+}
+
+
+export type ResetResponseAction = {|
+    type: typeof RESET_RESPONSE,
+|};
+export function reset_response(): ResetResponseAction {
+    return {
+        type: RESET_RESPONSE,
     };
 }
 
@@ -119,6 +173,7 @@ export function uncheckSelection(
 
 export default {
     checkSelection,
+    performAction,
     resetSelection,
     selectAll,
     toggleSelection,

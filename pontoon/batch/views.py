@@ -6,11 +6,7 @@ from bulk_update.helper import bulk_update
 
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import (
-    HttpResponseBadRequest,
-    HttpResponseForbidden,
-    JsonResponse,
-)
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import (
     require_POST
@@ -114,7 +110,10 @@ def batch_edit_translations(request):
     """
     form = forms.BatchActionsForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json(escape_html=True))
+        return JsonResponse({
+            'status': False,
+            'message': '{error}'.format(error=form.errors.as_json(escape_html=True)),
+        }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
     entities = Entity.objects.filter(pk__in=form.cleaned_data['entities'])
@@ -133,9 +132,10 @@ def batch_edit_translations(request):
             not request.user.can_translate(project=project, locale=locale)
             or readonly_exists(projects, locale)
         ):
-            return HttpResponseForbidden(
-                "Forbidden: You don't have permission for batch editing"
-            )
+            return JsonResponse({
+                'status': False,
+                'message': "Forbidden: You don't have permission for batch editing.",
+            }, status=403)
 
     # Find all impacted active translations, including plural forms.
     active_translations = Translation.objects.filter(
