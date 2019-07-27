@@ -6,6 +6,19 @@
 # keep strings in order of appearance.
 
 
+## ApproveAll
+## Renders Approve All batch action button.
+
+batchactions-ApproveAll--default = Approve all
+batchactions-ApproveAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string approved
+       *[other] { $changedCount } strings approved
+    }
+batchactions-ApproveAll--invalid = { $invalidCount } failed
+batchactions-ApproveAll--error = Oops, something went wrong
+
+
 ## BatchActions
 ## Renders batch editor, used for performing mass actions on translations.
 
@@ -21,7 +34,6 @@ batchactions-BatchActions--header-select-all = <glyph></glyph> Select All
 batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
 
 batchactions-BatchActions--review-heading = Review translations
-batchactions-BatchActions--approve-all-button = Approve all
 batchactions-BatchActions--reject-all-button = Reject all
 
 batchactions-BatchActions--find-replace-heading = Find & Replace in translations

@@ -9,6 +9,8 @@ import './BatchActions.css';
 import * as navigation from 'core/navigation';
 import * as batchactions from 'modules/batchactions';
 
+import ApproveAll from './ApproveAll';
+
 import type { BatchActionsState } from 'modules/batchactions';
 import type { NavigationParams } from 'core/navigation';
 
@@ -61,6 +63,16 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 resource,
                 search,
                 status,
+            )
+        );
+    }
+
+    approveAll = () => {
+        this.props.dispatch(
+            batchactions.actions.performAction(
+                'approve',
+                this.props.parameters.locale,
+                this.props.batchactions.entities,
             )
         );
     }
@@ -121,14 +133,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         <h2>Review translations</h2>
                     </Localized>
 
-                    <button className="approve-all">
-                        <Localized id="batchactions-BatchActions--approve-all-button">
-                            <span className="title">Approve all</span>
-                        </Localized>
-                        { this.props.batchactions.fetching !== 'approve' ? null :
-                            <span className="fa fa-2x fa-sync fa-spin"></span>
-                        }
-                    </button>
+                    <ApproveAll
+                        approveAll = { this.approveAll }
+                        batchactions = { this.props.batchactions }
+                    />
 
                     <button className="reject-all">
                         <Localized id="batchactions-BatchActions--reject-all-button">
