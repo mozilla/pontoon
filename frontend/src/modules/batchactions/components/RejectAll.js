@@ -1,0 +1,136 @@
+/* @flow */
+
+import * as React from 'react';
+import { Localized } from 'fluent-react';
+
+import type { BatchActionsState } from 'modules/batchactions';
+
+
+type Props = {|
+    rejectAll: () => void,
+    batchactions: BatchActionsState,
+|};
+
+type State = {|
+    isConfirmationVisible: boolean,
+|};
+
+
+/**
+ * Renders Reject All batch action button.
+ */
+export default class RejectAll extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            isConfirmationVisible: false,
+        };
+    }
+
+    rejectAll = () => {
+        if (!this.state.isConfirmationVisible) {
+            this.setState((state) => {
+                return { isConfirmationVisible: true };
+            });
+        }
+        else {
+            this.props.rejectAll();
+            this.setState((state) => {
+                return { isConfirmationVisible: false };
+            });
+        }
+    }
+
+    renderConfirmation() {
+        return <Localized
+            id="batchactions-RejectAll--confirmation"
+        >
+            { 'Are you sure?' }
+        </Localized>;
+    }
+
+    renderDefault() {
+        return <Localized
+            id="batchactions-RejectAll--default"
+        >
+            { 'Reject all' }
+        </Localized>;
+    }
+
+    renderError() {
+        return <Localized
+            id="batchactions-RejectAll--error"
+        >
+            { 'Oops, something went wrong' }
+        </Localized>;
+    }
+
+    renderInvalid() {
+        const { response } = this.props.batchactions;
+
+        if (!response) {
+            return null;
+        }
+
+        return <Localized
+            id="batchactions-RejectAll--invalid"
+            $invalidCount={ response.invalidCount }
+        >
+            { '{ $invalidCount } failed' }
+        </Localized>;
+    }
+
+    renderSuccess() {
+        const { response } = this.props.batchactions;
+
+        if (!response) {
+            return null;
+        }
+
+        return <Localized
+            id="batchactions-RejectAll--success"
+            $changedCount={ response.changedCount }
+        >
+            { '{ $changedCount } strings rejected' }
+        </Localized>;
+    }
+
+    renderTitle() {
+        const { response } = this.props.batchactions;
+
+        if (response && response.action === 'reject') {
+            if (response.error) {
+                return this.renderError();
+            }
+            else if (response.invalidCount) {
+                return <>
+                    { this.renderSuccess() }
+                    { ' · ' }
+                    { this.renderInvalid() }
+                </>;
+            }
+            else {
+                return this.renderSuccess();
+            }
+        }
+        else if (this.state.isConfirmationVisible) {
+            return this.renderConfirmation();
+        }
+        else {
+            return this.renderDefault();
+        }
+    }
+
+    render() {
+        return <button
+            className="reject-all"
+            onClick={ this.rejectAll }
+        >
+            { this.renderTitle() }
+            { this.props.batchactions.fetching !== 'reject' ? null :
+                <span className="fa fa-2x fa-sync fa-spin"></span>
+            }
+        </button>;
+    }
+}

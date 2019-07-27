@@ -10,6 +10,7 @@ import * as navigation from 'core/navigation';
 import * as batchactions from 'modules/batchactions';
 
 import ApproveAll from './ApproveAll';
+import RejectAll from './RejectAll';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { NavigationParams } from 'core/navigation';
@@ -77,6 +78,16 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     }
 
+    rejectAll = () => {
+        this.props.dispatch(
+            batchactions.actions.performAction(
+                'reject',
+                this.props.parameters.locale,
+                this.props.batchactions.entities,
+            )
+        );
+    }
+
     render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
@@ -138,14 +149,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         batchactions = { this.props.batchactions }
                     />
 
-                    <button className="reject-all">
-                        <Localized id="batchactions-BatchActions--reject-all-button">
-                            <span className="title">Reject all</span>
-                        </Localized>
-                        { this.props.batchactions.fetching !== 'reject' ? null :
-                            <span className="fa fa-2x fa-sync fa-spin"></span>
-                        }
-                    </button>
+                    <RejectAll
+                        rejectAll = { this.rejectAll }
+                        batchactions = { this.props.batchactions }
+                    />
                 </div>
 
                 <div className="find-replace">

@@ -19,6 +19,20 @@ batchactions-ApproveAll--invalid = { $invalidCount } failed
 batchactions-ApproveAll--error = Oops, something went wrong
 
 
+## RejectAll
+## Renders Reject All batch action button.
+
+batchactions-RejectAll--default = Reject all
+batchactions-RejectAll--confirmation = Are you sure?
+batchactions-RejectAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string rejected
+       *[other] { $changedCount } strings rejected
+    }
+batchactions-RejectAll--invalid = { $invalidCount } failed
+batchactions-RejectAll--error = Oops, something went wrong
+
+
 ## BatchActions
 ## Renders batch editor, used for performing mass actions on translations.
 
@@ -34,7 +48,6 @@ batchactions-BatchActions--header-select-all = <glyph></glyph> Select All
 batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
 
 batchactions-BatchActions--review-heading = Review translations
-batchactions-BatchActions--reject-all-button = Reject all
 
 batchactions-BatchActions--find-replace-heading = Find & Replace in translations
 batchactions-BatchActions--find =
