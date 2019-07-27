@@ -19,20 +19,6 @@ batchactions-ApproveAll--invalid = { $invalidCount } failed
 batchactions-ApproveAll--error = Oops, something went wrong
 
 
-## RejectAll
-## Renders Reject All batch action button.
-
-batchactions-RejectAll--default = Reject all
-batchactions-RejectAll--confirmation = Are you sure?
-batchactions-RejectAll--success =
-    { $changedCount ->
-        [one] { $changedCount } string rejected
-       *[other] { $changedCount } strings rejected
-    }
-batchactions-RejectAll--invalid = { $invalidCount } failed
-batchactions-RejectAll--error = Oops, something went wrong
-
-
 ## BatchActions
 ## Renders batch editor, used for performing mass actions on translations.
 
@@ -54,7 +40,33 @@ batchactions-BatchActions--find =
     .placeholder = Find
 batchactions-BatchActions--replace-with =
     .placeholder = Replace with
-batchactions-BatchActions--replace-all-button = Replace all
+
+
+## RejectAll
+## Renders Reject All batch action button.
+
+batchactions-RejectAll--default = Reject all
+batchactions-RejectAll--confirmation = Are you sure?
+batchactions-RejectAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string rejected
+       *[other] { $changedCount } strings rejected
+    }
+batchactions-RejectAll--invalid = { $invalidCount } failed
+batchactions-RejectAll--error = Oops, something went wrong
+
+
+## ReplaceAll
+## Renders Replace All batch action button.
+
+batchactions-ReplaceAll--default = Replace all
+batchactions-ReplaceAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string replaced
+       *[other] { $changedCount } strings replaced
+    }
+batchactions-ReplaceAll--invalid = { $invalidCount } failed
+batchactions-ReplaceAll--error = Oops, something went wrong
 
 
 ## Editor Menu

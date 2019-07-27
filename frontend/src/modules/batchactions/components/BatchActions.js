@@ -11,6 +11,7 @@ import * as batchactions from 'modules/batchactions';
 
 import ApproveAll from './ApproveAll';
 import RejectAll from './RejectAll';
+import ReplaceAll from './ReplaceAll';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { NavigationParams } from 'core/navigation';
@@ -31,6 +32,16 @@ type InternalProps = {|
  * Renders batch editor, used for performing mass actions on translations.
  */
 export class BatchActionsBase extends React.Component<InternalProps> {
+    find: { current: ?HTMLInputElement };
+    replace: { current: ?HTMLInputElement };
+
+    constructor(props: InternalProps) {
+        super(props);
+
+        this.find = React.createRef();
+        this.replace = React.createRef();
+    }
+
     componentDidMount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
@@ -86,6 +97,40 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 this.props.batchactions.entities,
             )
         );
+    }
+
+    replaceAll = () => {
+        const find = this.find.current;
+        const replace = this.replace.current;
+
+        if (!find || !replace) {
+            return;
+        }
+
+        if (find.value === '') {
+            find.focus();
+            return;
+        }
+
+        if (find.value === replace.value) {
+            replace.focus();
+            return;
+        }
+
+        this.props.dispatch(
+            batchactions.actions.performAction(
+                'replace',
+                this.props.parameters.locale,
+                this.props.batchactions.entities,
+                find.value,
+                replace.value,
+            )
+        );
+    }
+
+    submitReplaceForm = (event: SyntheticKeyboardEvent<>) => {
+        event.preventDefault();
+        this.replaceAll();
     }
 
     render() {
@@ -160,31 +205,32 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         <h2>Find & Replace in translations</h2>
                     </Localized>
 
-                    <Localized id="batchactions-BatchActions--find" attrs={{ placeholder: true }}>
-                        <input
-                            className="find"
-                            type="search"
-                            autoComplete="off"
-                            placeholder="Find"
-                        />
-                    </Localized>
-                    <Localized id="batchactions-BatchActions--replace-with" attrs={{ placeholder: true }}>
-                        <input
-                            className="replace"
-                            type="search"
-                            autoComplete="off"
-                            placeholder="Replace with"
-                        />
-                    </Localized>
-
-                    <button className="replace-all">
-                        <Localized id="batchactions-BatchActions--replace-all-button">
-                            <span className="title">Replace all</span>
+                    <form onSubmit={ this.submitReplaceForm }>
+                        <Localized id="batchactions-BatchActions--find" attrs={{ placeholder: true }}>
+                            <input
+                                className="find"
+                                type="search"
+                                autoComplete="off"
+                                placeholder="Find"
+                                ref={ this.find }
+                            />
                         </Localized>
-                        { this.props.batchactions.fetching !== 'replace' ? null :
-                            <span className="fa fa-2x fa-sync fa-spin"></span>
-                        }
-                    </button>
+
+                        <Localized id="batchactions-BatchActions--replace-with" attrs={{ placeholder: true }}>
+                            <input
+                                className="replace"
+                                type="search"
+                                autoComplete="off"
+                                placeholder="Replace with"
+                                ref={ this.replace }
+                            />
+                        </Localized>
+
+                        <ReplaceAll
+                            replaceAll = { this.replaceAll }
+                            batchactions = { this.props.batchactions }
+                        />
+                    </form>
                 </div>
             </div>
         </div>;

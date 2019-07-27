@@ -33,6 +33,8 @@ export function performAction(
     action: string,
     locale: string,
     entities: Array<number>,
+    find: ?string,
+    replace: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request(action));
@@ -41,6 +43,8 @@ export function performAction(
             action,
             locale,
             entities,
+            find,
+            replace,
         );
 
         const response = {};
