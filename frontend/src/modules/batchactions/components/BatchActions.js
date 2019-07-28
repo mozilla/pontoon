@@ -80,6 +80,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     approveAll = () => {
+        if (this.props.batchactions.fetching) {
+            return;
+        }
+
         this.props.dispatch(
             batchactions.actions.performAction(
                 'approve',
@@ -90,6 +94,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     rejectAll = () => {
+        if (this.props.batchactions.fetching) {
+            return;
+        }
+
         this.props.dispatch(
             batchactions.actions.performAction(
                 'reject',
@@ -100,6 +108,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     replaceAll = () => {
+        if (this.props.batchactions.fetching) {
+            return;
+        }
+
         const find = this.find.current;
         const replace = this.replace.current;
 
