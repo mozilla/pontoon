@@ -85,8 +85,8 @@ describe('<EntitiesList>', () => {
 
         wrapper.instance().getMoreEntities();
 
-        // Verify the 4th argument of `actions.get` is the list of current entities.
-        expect(entities.actions.get.args[0][3]).toEqual([1, 2]);
+        // Verify the 5th argument of `actions.get` is the list of current entities.
+        expect(entities.actions.get.args[0][4]).toEqual([1, 2]);
     });
 
     it('redirects to the first entity when none is selected', () => {

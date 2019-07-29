@@ -84,10 +84,14 @@ export class BatchActionsBase extends React.Component<InternalProps> {
             return;
         }
 
+        const { locale, project, resource } = this.props.parameters;
+
         this.props.dispatch(
             batchactions.actions.performAction(
                 'approve',
-                this.props.parameters.locale,
+                locale,
+                project,
+                resource,
                 this.props.batchactions.entities,
             )
         );
@@ -98,10 +102,14 @@ export class BatchActionsBase extends React.Component<InternalProps> {
             return;
         }
 
+        const { locale, project, resource } = this.props.parameters;
+
         this.props.dispatch(
             batchactions.actions.performAction(
                 'reject',
-                this.props.parameters.locale,
+                locale,
+                project,
+                resource,
                 this.props.batchactions.entities,
             )
         );
@@ -129,10 +137,14 @@ export class BatchActionsBase extends React.Component<InternalProps> {
             return;
         }
 
+        const { locale, project, resource } = this.props.parameters;
+
         this.props.dispatch(
             batchactions.actions.performAction(
                 'replace',
-                this.props.parameters.locale,
+                locale,
+                project,
+                resource,
                 this.props.batchactions.entities,
                 find.value,
                 replace.value,

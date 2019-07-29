@@ -2,6 +2,10 @@
 
 import api from 'core/api';
 
+import { actions as entitiesActions } from 'core/entities';
+import { actions as resourceActions } from 'core/resource';
+import { actions as statsActions } from 'core/stats';
+
 
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
 export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';
@@ -32,6 +36,8 @@ export function checkSelection(
 export function performAction(
     action: string,
     locale: string,
+    project: string,
+    resource: string,
     entities: Array<number>,
     find: ?string,
     replace: ?string,
@@ -53,6 +59,50 @@ export function performAction(
         if ('count' in data) {
             response.changedCount = data.count;
             response.invalidCount = data.invalid_translation_count;
+
+            if (data.count > 0) {
+                const entitiesData = await api.entity.getEntities(
+                    locale,
+                    project,
+                    resource,
+                    entities,
+                    [],
+                );
+
+                if (entitiesData.stats) {
+                    // Update stats in progress chart and filter panel.
+                    dispatch(statsActions.update(entitiesData.stats));
+
+                    /*
+                     * Update stats in the resource menu.
+                     *
+                     * TODO: Update stats for all affected resources. ATM that's not possbile,
+                     * since the backend only returns stats for the passed resource.
+                     */
+                    if (resource !== 'all-resources') {
+                        dispatch(
+                            resourceActions.update(
+                                resource,
+                                entitiesData.stats.approved,
+                                entitiesData.stats.warnings,
+                            )
+                        );
+                    }
+                }
+
+                // Refresh entity translation data now that it has changed on the server.
+                for (let entity of entitiesData.entities) {
+                    entity.translation.forEach(function(translation, pluralForm) {
+                        dispatch(
+                            entitiesActions.updateEntityTranslation(
+                                entity.pk,
+                                pluralForm,
+                                translation,
+                            )
+                        );
+                    });
+                }
+            }
         }
         else {
             response.error = true;
@@ -132,6 +182,7 @@ export function selectAll(
             locale,
             project,
             resource,
+            null,
             [],
             null,
             search,

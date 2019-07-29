@@ -47,6 +47,7 @@ export default class EntityAPI extends APIBase {
         locale: string,
         project: string,
         resource: string,
+        entity_ids: ?Array<number>,
         exclude: Array<number>,
         entity: ?string,
         search: ?string,
@@ -59,6 +60,10 @@ export default class EntityAPI extends APIBase {
 
         if (resource !== 'all-resources') {
             payload.append('paths[]', resource);
+        }
+
+        if (entity_ids && entity_ids.length) {
+            payload.append('entity_ids', entity_ids.join(','));
         }
 
         if (exclude.length) {
