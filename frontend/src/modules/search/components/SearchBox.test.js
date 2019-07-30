@@ -11,6 +11,18 @@ import { FILTERS_STATUS } from '..';
 
 
 describe('<SearchBoxBase>', () => {
+    beforeAll(() => {
+        sinon.stub(actions, 'updateStatus').returns({ type: 'whatever'});
+    });
+
+    afterEach(() => {
+        actions.updateStatus.reset();
+    });
+
+    afterAll(() => {
+        actions.updateStatus.restore();
+    });
+
     it('shows a search input', () => {
         const params = {
             search: '',
@@ -41,6 +53,88 @@ describe('<SearchBoxBase>', () => {
         });
 
         expect(wrapper.state().search).toEqual('');
+    });
+
+    it('returns correct list of selected statuses', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        const selected = wrapper.instance().getSelectedStatuses();
+        expect(selected).toEqual(['warnings', 'errors']);
+    });
+
+    it('toggles a status', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+        wrapper.setState({ statuses: { missing: false } });
+
+        wrapper.instance().toggleStatus('missing');
+
+        expect(wrapper.state('statuses').missing).toBeTruthy();
+    });
+
+    it('sets a single status', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        wrapper.instance().setSingleStatus('missing');
+        expect(wrapper.state('statuses').warnings).toBeFalsy();
+        expect(wrapper.state('statuses').errors).toBeFalsy();
+        expect(wrapper.state('statuses').missing).toBeTruthy();
+    });
+
+    it('resets to initial statuses', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        wrapper.instance().resetStatuses();
+        expect(wrapper.state('statuses').warnings).toBeFalsy();
+        expect(wrapper.state('statuses').errors).toBeFalsy();
+        expect(wrapper.state('statuses').missing).toBeFalsy();
+    });
+
+    it('sets status to null when "all" is selected', () => {
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            router={ {} }
+            dispatch={ () => {} }
+        />);
+        wrapper.setState({ statuses: { all: true } });
+
+        wrapper.instance().updateStatus();
+        expect(actions.updateStatus.calledWith({}, null)).toBeTruthy();
+    });
+
+    it('sets correct status', () => {
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            router={ {} }
+            dispatch={ () => {} }
+        />);
+        wrapper.setState({ statuses: { missing: true, warnings: true } });
+
+        wrapper.instance().updateStatus();
+        expect(actions.updateStatus.calledWith({}, 'missing,warnings')).toBeTruthy();
     });
 });
 
