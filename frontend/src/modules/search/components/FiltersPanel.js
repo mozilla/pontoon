@@ -10,14 +10,16 @@ import { FILTERS_STATUS } from '..';
 
 import { asLocaleString } from 'core/utils';
 
-import type { NavigationParams } from 'core/navigation';
 import type { Stats } from 'core/stats';
 
 
 type Props = {|
-    parameters: NavigationParams,
+    statuses: { [string]: boolean },
     stats: Stats,
-    selectStatus: Function,
+    resetStatuses: () => void,
+    setSingleStatus: (status: ?string, callback?: () => void) => void,
+    toggleStatus: (string) => void,
+    update: () => void,
 |};
 
 type State = {|
@@ -37,7 +39,6 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
         this.state = {
             visible: false,
-            filters: this.getInitialFilters(),
         };
     }
 
@@ -47,59 +48,30 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         });
     }
 
-    toggleFilterSelection(filter: string) {
-        this.setState(state => {
-            return {
-                filters: {
-                    ...state.filters,
-                    [filter]: !state.filters[filter],
-                },
-            };
-        });
-    }
-
-    getInitialFilters() {
-        const initialFilters = {};
-        FILTERS_STATUS.forEach(f => initialFilters[f.tag] = false);
-        return initialFilters;
-    }
-
-    getSelectedFiltersCount() {
-        let count = 0;
-        Object.keys(this.state.filters).forEach(f => {
-            if (this.state.filters[f]) {
-                count++;
-            }
-        });
-        return count;
+    applyFilters = () => {
+        this.toggleVisibility();
+        return this.props.update();
     }
 
     resetFilters = () => {
-        this.setState({ filters: this.getInitialFilters() });
+        this.props.resetStatuses();
     }
 
-    createHandleSelectFilter = (filter: string) => {
-        if (filter === 'all') {
+    createHandleSelectStatus = (status: string) => {
+        if (status === 'all') {
             return null;
         }
 
-        return (event) => {
+        return (event: SyntheticInputEvent<>) => {
             event.stopPropagation();
-            this.toggleFilterSelection(filter);
+            this.props.toggleStatus(status);
         };
     }
 
-    createSetFilter(filter: string) {
-        const newFilter = filter === 'all' ? null : filter;
-
+    createSetStatus(status: string) {
         return () => {
             this.toggleVisibility();
-
-            const filters = this.getInitialFilters();
-            filters[newFilter] = true;
-            this.setState({ filters });
-
-            return this.props.selectStatus(newFilter);
+            this.props.setSingleStatus(status, this.props.update);
         };
     }
 
@@ -112,54 +84,58 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { parameters, stats } = this.props;
+        const { statuses, stats } = this.props;
 
-        console.debug(this.state);
+        const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
+        const selectedStatusesCount = selectedStatuses.length;
 
-        const selectedFiltersCount = this.getSelectedFiltersCount();
+        // If there are zero or several selected statuses, show the "All" icon.
+        let reducedStatus = { tag: 'all' };
 
-        let selectedStatus = FILTERS_STATUS.find(
-            item => item.tag === parameters.status
-        );
-        if (!selectedStatus) {
-            selectedStatus = { tag: 'all' };
+        // Otherwise show the approriate status icon.
+        if (selectedStatusesCount === 1) {
+            const selectedStatus = FILTERS_STATUS.find(s => s.tag === selectedStatuses[0]);
+            if (selectedStatus) {
+                reducedStatus = selectedStatus;
+            }
         }
 
-        const className = `visibility-switch ${selectedStatus.tag}`;
-
         return <div className="filters-panel">
-            <div className={ className } onClick={ this.toggleVisibility }>
+            <div
+                className={ `visibility-switch ${reducedStatus.tag}` }
+                onClick={ this.toggleVisibility }
+            >
                 <span className="status fa"></span>
             </div>
             { !this.state.visible ? null : <div className="menu">
                 <ul>
                     <li className="horizontal-separator">Translation Status</li>
-                    { FILTERS_STATUS.map((filter, i) => {
-                        const count = filter.stat ? stats[filter.stat] : stats[filter.tag];
-                        const selected = this.state.filters[filter.tag];
+                    { FILTERS_STATUS.map((status, i) => {
+                        const count = status.stat ? stats[status.stat] : stats[status.tag];
+                        const selected = statuses[status.tag];
 
-                        let className = filter.tag;
-                        if (selected) {
+                        let className = status.tag;
+                        if (selected && status.tag !== 'all') {
                             className += ' selected';
                         }
 
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createSetFilter(filter.tag) }
+                            onClick={ this.createSetStatus(status.tag) }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createHandleSelectFilter(filter.tag) }
+                                onClick={ this.createHandleSelectStatus(status.tag) }
                             ></span>
-                            <span className="title">{ filter.title }</span>
+                            <span className="title">{ status.title }</span>
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
                         </li>
                     }) }
                 </ul>
-                { selectedFiltersCount === 0 ? null :
+                { selectedStatusesCount === 0 ? null :
                 <div className="toolbar clearfix">
                     <Localized
                         id="search-FiltersPanel--clear-selection"
@@ -180,10 +156,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         attrs={ { title: true } }
                         glyph={ <i className="fa fa-check fa-lg"></i> }
                         stress={ <span className="applied-count"></span> }
-                        $count={ selectedFiltersCount }
+                        $count={ selectedStatusesCount }
                     >
                         <button
                             title="Apply Selected Filters"
+                            onClick={ this.applyFilters }
                             className="apply-selected"
                         >
                             <i className="fa fa-check fa-lg"></i>

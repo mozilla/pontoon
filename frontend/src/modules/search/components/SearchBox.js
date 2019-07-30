@@ -32,6 +32,7 @@ type InternalProps = {|
 
 type State = {|
     search: string,
+    statuses: { [string]: boolean },
 |};
 
 
@@ -49,8 +50,17 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         super(props);
 
         const search = props.parameters.search;
+
+        const statuses =  this.getInitialStatuses();
+        if (props.parameters.status) {
+            props.parameters.status.split(',').forEach(f => {
+                statuses[f] = true;
+            });
+        }
+
         this.state = {
             search: search ? search.toString() : '',
+            statuses,
         };
 
         this.searchInput = React.createRef();
@@ -78,6 +88,42 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
+    getInitialStatuses() {
+        const statuses = {};
+        FILTERS_STATUS.forEach(s => statuses[s.tag] = false);
+        return statuses;
+    }
+
+    getSelectedStatuses(): Array<string> {
+        return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
+    }
+
+    toggleStatus = (status: string) => {
+        this.setState(state => {
+            return {
+                statuses: {
+                    ...state.statuses,
+                    [status]: !state.statuses[status],
+                },
+            };
+        });
+    }
+
+    setSingleStatus = (status: string, callback?: () => void) => {
+        const statuses = this.getInitialStatuses();
+        statuses[status] = true;
+        if (callback) {
+            this.setState({ statuses }, callback);
+        }
+        else {
+            this.setState({ statuses });
+        }
+    }
+
+    resetStatuses = () => {
+        this.setState({ statuses: this.getInitialStatuses() });
+    }
+
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
@@ -97,51 +143,61 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     updateSearchParams = debounce(() => {
-        const { dispatch, router } = this.props;
-
-        dispatch(
-            unsavedchanges.actions.check(
-                this.props.unsavedchanges,
-                () => {
-                    dispatch(
-                        navigation.actions.updateSearch(
-                            router,
-                            this.state.search,
-                        )
-                    );
-                }
-            )
-        );
+        this.update();
     }, 500)
 
-    selectStatus = (status: ?string) => {
-        const { dispatch, router } = this.props;
-
-        dispatch(
-            unsavedchanges.actions.check(
-                this.props.unsavedchanges,
-                () => {
-                    dispatch(
-                        navigation.actions.updateStatus(
-                            router,
-                            status,
-                        )
-                    );
-                }
+    updateSearch() {
+        this.props.dispatch(
+            navigation.actions.updateSearch(
+                this.props.router,
+                this.state.search,
             )
         );
     }
 
-    render() {
-        const { parameters, stats } = this.props;
+    updateStatus() {
+        const statuses = Object.keys(this.state.statuses).filter(f => this.state.statuses[f]);
+        let status = statuses.join(',');
 
-        let selectedStatus = FILTERS_STATUS.find(
-            item => item.tag === parameters.status
-        );
-        if (!selectedStatus) {
-            selectedStatus = { title: 'All' };
+        if (status === 'all') {
+            status = null;
         }
-        const placeholder = `Search in ${selectedStatus.title}`;
+
+        this.props.dispatch(
+            navigation.actions.updateStatus(
+                this.props.router,
+                status,
+            )
+        );
+    }
+
+    _update = () => {
+        this.updateSearch();
+        this.updateStatus();
+    }
+
+    update = () => {
+        this.props.dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                this._update,
+            )
+        )
+    }
+
+    render() {
+        const { stats } = this.props;
+
+        const statuses = this.getSelectedStatuses();
+        let selectedStatuses = FILTERS_STATUS.filter(
+            item => statuses.includes(item.tag)
+        );
+        if (!selectedStatuses.length) {
+            selectedStatuses = [{ title: 'All' }];
+        }
+
+        const statusesStr = selectedStatuses.map(item => item.title).join(', ');
+        const placeholder = `Search in ${statusesStr}`;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -158,9 +214,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 onChange={ this.updateSearchInput }
             />
             <FiltersPanel
+                statuses={ this.state.statuses }
                 stats={ stats }
-                parameters={ parameters }
-                selectStatus={ this.selectStatus }
+                resetStatuses={ this.resetStatuses }
+                setSingleStatus={ this.setSingleStatus }
+                toggleStatus={ this.toggleStatus }
+                update={ this.update }
             />
         </div>;
     }
