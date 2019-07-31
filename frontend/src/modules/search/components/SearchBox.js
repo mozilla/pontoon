@@ -51,7 +51,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
         const search = props.parameters.search;
 
-        const statuses =  this.getInitialStatuses();
+        const statuses = this.getInitialStatuses();
         if (props.parameters.status) {
             props.parameters.status.split(',').forEach(f => {
                 statuses[f] = true;
@@ -90,7 +90,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
     getInitialStatuses() {
         const statuses = {};
-        FILTERS_STATUS.forEach(s => statuses[s.tag] = false);
+        FILTERS_STATUS.forEach(s => statuses[s.slug] = false);
         return statuses;
     }
 
@@ -149,7 +149,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }, 500)
 
     _update = () => {
-        const statuses = Object.keys(this.state.statuses).filter(f => this.state.statuses[f]);
+        const statuses = this.getSelectedStatuses();
         let status = statuses.join(',');
 
         if (status === 'all') {
@@ -181,7 +181,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
         const statuses = this.getSelectedStatuses();
         let selectedStatuses = FILTERS_STATUS.filter(
-            item => statuses.includes(item.tag)
+            item => statuses.includes(item.slug)
         );
         if (!selectedStatuses.length) {
             selectedStatuses = [{ title: 'All' }];

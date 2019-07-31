@@ -57,7 +57,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.props.resetStatuses();
     }
 
-    createHandleSelectStatus = (status: string) => {
+    createSelectStatus = (status: string) => {
         if (status === 'all') {
             return null;
         }
@@ -90,11 +90,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         const selectedStatusesCount = selectedStatuses.length;
 
         // If there are zero or several selected statuses, show the "All" icon.
-        let reducedStatus = { tag: 'all' };
+        let reducedStatus = { slug: 'all' };
 
         // Otherwise show the approriate status icon.
         if (selectedStatusesCount === 1) {
-            const selectedStatus = FILTERS_STATUS.find(s => s.tag === selectedStatuses[0]);
+            const selectedStatus = FILTERS_STATUS.find(s => s.slug === selectedStatuses[0]);
             if (selectedStatus) {
                 reducedStatus = selectedStatus;
             }
@@ -102,7 +102,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
         return <div className="filters-panel">
             <div
-                className={ `visibility-switch ${reducedStatus.tag}` }
+                className={ `visibility-switch ${reducedStatus.slug}` }
                 onClick={ this.toggleVisibility }
             >
                 <span className="status fa"></span>
@@ -111,22 +111,22 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 <ul>
                     <li className="horizontal-separator">Translation Status</li>
                     { FILTERS_STATUS.map((status, i) => {
-                        const count = status.stat ? stats[status.stat] : stats[status.tag];
-                        const selected = statuses[status.tag];
+                        const count = status.stat ? stats[status.stat] : stats[status.slug];
+                        const selected = statuses[status.slug];
 
-                        let className = status.tag;
-                        if (selected && status.tag !== 'all') {
+                        let className = status.slug;
+                        if (selected && status.slug !== 'all') {
                             className += ' selected';
                         }
 
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createSetStatus(status.tag) }
+                            onClick={ this.createSetStatus(status.slug) }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createHandleSelectStatus(status.tag) }
+                                onClick={ this.createSelectStatus(status.slug) }
                             ></span>
                             <span className="title">{ status.title }</span>
                             <span className="count">

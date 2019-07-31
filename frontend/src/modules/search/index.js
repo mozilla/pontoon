@@ -14,32 +14,32 @@ export const NAME: string = 'search';
 export const FILTERS_STATUS = [
     {
         title: 'All',
-        tag: 'all',
+        slug: 'all',
         stat: 'total',
     },
     {
         title: 'Translated',
-        tag: 'translated',
+        slug: 'translated',
         stat: 'approved',
     },
     {
         title: 'Fuzzy',
-        tag: 'fuzzy',
+        slug: 'fuzzy',
     },
     {
         title: 'Warnings',
-        tag: 'warnings',
+        slug: 'warnings',
     },
     {
         title: 'Errors',
-        tag: 'errors',
+        slug: 'errors',
     },
     {
         title: 'Missing',
-        tag: 'missing',
+        slug: 'missing',
     },
     {
         title: 'Unreviewed',
-        tag: 'unreviewed',
+        slug: 'unreviewed',
     },
 ];

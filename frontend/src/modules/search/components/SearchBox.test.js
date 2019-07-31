@@ -34,7 +34,7 @@ describe('<SearchBoxBase>', () => {
 
     it('has the correct placeholder based on parameters', () => {
         for (let filter of FILTERS_STATUS) {
-            const params = { status: filter.tag };
+            const params = { status: filter.slug };
             const wrapper = shallow(<SearchBoxBase parameters={ params } />);
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
         }

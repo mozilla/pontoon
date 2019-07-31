@@ -32,6 +32,11 @@ export function update(router: Object, params: { [string]: ?string }): Function 
             }
         });
 
+        // If the URL did not change, don't do anything.
+        if (queryString === '?' + currentParams.toString()) {
+            return;
+        }
+
         // When we change the URL, we want to remove the `string` parameter
         // because with the new results, that entity might not be available
         // anymore.

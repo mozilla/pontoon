@@ -22,7 +22,7 @@ describe('<FiltersPanelBase>', () => {
     it('has the correct icon based on parameters', () => {
         for (let filter of FILTERS_STATUS) {
             const statuses = {
-                [filter.tag]: true,
+                [filter.slug]: true,
             };
             const stats = {};
 
@@ -31,7 +31,7 @@ describe('<FiltersPanelBase>', () => {
             );
 
             expect(
-                wrapper.find('.visibility-switch').hasClass(filter.tag)
+                wrapper.find('.visibility-switch').hasClass(filter.slug)
             ).toBeTruthy();
         }
     });
@@ -50,14 +50,14 @@ describe('<FiltersPanelBase>', () => {
         wrapper.find('.visibility-switch').simulate('click');
 
         for (let filter of FILTERS_STATUS) {
-            if (statuses[filter.tag]) {
+            if (statuses[filter.slug]) {
                 expect(
-                    wrapper.find(`.menu .${filter.tag}`).hasClass('selected')
+                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
                 ).toBeTruthy();
             }
             else {
                 expect(
-                    wrapper.find(`.menu .${filter.tag}`).hasClass('selected')
+                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
                 ).toBeFalsy();
             }
         }
@@ -68,7 +68,7 @@ describe('<FiltersPanelBase>', () => {
 
         for (let filter of FILTERS_STATUS) {
             const statuses = {
-                [filter.tag]: true,
+                [filter.slug]: true,
             };
             const stats = {};
             setSingleStatus = sinon.spy()
@@ -81,9 +81,9 @@ describe('<FiltersPanelBase>', () => {
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
-            wrapper.find(`.menu .${filter.tag}`).simulate('click');
+            wrapper.find(`.menu .${filter.slug}`).simulate('click');
 
-            expect(setSingleStatus.calledWith(filter.tag)).toBeTruthy();
+            expect(setSingleStatus.calledWith(filter.slug)).toBeTruthy();
         }
     });
 
@@ -92,7 +92,7 @@ describe('<FiltersPanelBase>', () => {
 
         for (let filter of FILTERS_STATUS) {
             const statuses = {
-                [filter.tag]: false,
+                [filter.slug]: false,
             };
             const stats = {};
             toggleStatus = sinon.spy()
@@ -105,16 +105,16 @@ describe('<FiltersPanelBase>', () => {
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
-            wrapper.find(`.menu .${filter.tag} .status`).simulate(
+            wrapper.find(`.menu .${filter.slug} .status`).simulate(
                 'click',
                 { stopPropagation: sinon.fake() }
             );
 
-            if (filter.tag === 'all') {
+            if (filter.slug === 'all') {
                 expect(toggleStatus.called).toBeFalsy();
             }
             else {
-                expect(toggleStatus.calledWith(filter.tag)).toBeTruthy();
+                expect(toggleStatus.calledWith(filter.slug)).toBeTruthy();
             }
         }
     });

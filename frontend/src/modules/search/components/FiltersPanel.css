@@ -165,6 +165,7 @@
     border: none;
     color: #aaa;
     font-weight: 300;
+    text-transform: uppercase;
 }
 
 .filters-panel .toolbar button .fa {
@@ -180,6 +181,7 @@
     text-align: right;
 }
 
+.filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
     color: #7BC876;
