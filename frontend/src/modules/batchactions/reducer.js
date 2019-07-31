@@ -48,7 +48,23 @@ const initial: BatchActionsState = {
 };
 
 
-function toggleEntity(entities: Array<number>, entity: number) {
+function checkEntities(
+    state_entities: Array<number>,
+    action_entities: Array<number>,
+) {
+    // Union with duplicates removed
+    return state_entities.concat(
+        action_entities.filter(
+            e => state_entities.indexOf(e) < 0
+        )
+    );
+}
+
+
+function toggleEntity(
+    entities: Array<number>,
+    entity: number,
+) {
     // Remove entity if present
     if (entities.includes(entity)) {
         return entities.filter(e => e !== entity);
@@ -60,6 +76,14 @@ function toggleEntity(entities: Array<number>, entity: number) {
 }
 
 
+function uncheckEntities(
+    state_entities: Array<number>,
+    action_entities: Array<number>,
+) {
+    return state_entities.filter(e => action_entities.indexOf(e) < 0);
+}
+
+
 export default function reducer(
     state: BatchActionsState = initial,
     action: Action,
@@ -68,12 +92,7 @@ export default function reducer(
         case CHECK:
             return {
                 ...state,
-                // Union with duplicates removed
-                entities: state.entities.concat(
-                    action.entities.filter(
-                        e => state.entities.indexOf(e) < 0
-                    )
-                ),
+                entities: checkEntities(state.entities, action.entities),
                 lastCheckedEntity: action.lastCheckedEntity,
             };
         case RECEIVE:
@@ -105,7 +124,7 @@ export default function reducer(
         case UNCHECK:
             return {
                 ...state,
-                entities: state.entities.filter(e => action.entities.indexOf(e) < 0),
+                entities: uncheckEntities(state.entities, action.entities),
                 lastCheckedEntity: action.lastCheckedEntity,
             };
         default:
