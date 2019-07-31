@@ -142,16 +142,6 @@ editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
 editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
 
 
-## Machinery
-## Shows a list of translations from machines.
-
-machinery-machinery-search-placeholder =
-    .placeholder = Type to search machinery
-
-
-## Machinery Translation
-## Shows a specific translation from machinery
-
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
 
