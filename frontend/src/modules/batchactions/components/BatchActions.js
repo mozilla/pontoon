@@ -204,7 +204,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         id="batchactions-BatchActions--warning"
                         stress={ <span className="stress" /> }
                     >
-                        <p><stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.</p>
+                        <p>{ '<stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.' }</p>
                     </Localized>
                 </div>
 
