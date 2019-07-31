@@ -111,7 +111,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
     setSingleStatus = (status: string, callback?: () => void) => {
         const statuses = this.getInitialStatuses();
-        statuses[status] = true;
+        if (status !== 'all') {
+            statuses[status] = true;
+        }
         if (callback) {
             this.setState({ statuses }, callback);
         }
