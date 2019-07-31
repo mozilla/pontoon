@@ -58,7 +58,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     componentDidMount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.addEventListener('keydown', this.handleShortcuts);
+
         this.selectFirstEntityIfNoneSelected();
+    }
+
+    componentWillUnmount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.removeEventListener('keydown', this.handleShortcuts);
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -104,6 +112,27 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             )
         ) {
             this.scrollToSelectedElement();
+        }
+    }
+
+    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+        const key = event.keyCode;
+
+        // On Ctrl + Shift + A, select all entities for batch editing.
+        if (key === 65 && !event.altKey && event.ctrlKey && event.shiftKey) {
+            event.preventDefault();
+
+            const { locale, project, resource, search, status } = this.props.parameters;
+
+            this.props.dispatch(
+                batchactions.actions.selectAll(
+                    locale,
+                    project,
+                    resource,
+                    search,
+                    status,
+                )
+            );
         }
     }
 
