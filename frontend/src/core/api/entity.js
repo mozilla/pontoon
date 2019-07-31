@@ -47,12 +47,12 @@ export default class EntityAPI extends APIBase {
         locale: string,
         project: string,
         resource: string,
-        entity_ids: ?Array<number>,
+        entityIds: ?Array<number>,
         exclude: Array<number>,
         entity: ?string,
         search: ?string,
         status: ?string,
-        pk_only: ?boolean,
+        pkOnly: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);
@@ -62,8 +62,8 @@ export default class EntityAPI extends APIBase {
             payload.append('paths[]', resource);
         }
 
-        if (entity_ids && entity_ids.length) {
-            payload.append('entity_ids', entity_ids.join(','));
+        if (entityIds && entityIds.length) {
+            payload.append('entity_ids', entityIds.join(','));
         }
 
         if (exclude.length) {
@@ -82,7 +82,7 @@ export default class EntityAPI extends APIBase {
             payload.append('status', status);
         }
 
-        if (pk_only) {
+        if (pkOnly) {
             payload.append('pk_only', 'true');
         }
 
