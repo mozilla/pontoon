@@ -148,16 +148,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.update();
     }, 500)
 
-    updateSearch() {
-        this.props.dispatch(
-            navigation.actions.updateSearch(
-                this.props.router,
-                this.state.search,
-            )
-        );
-    }
-
-    updateStatus() {
+    _update = () => {
         const statuses = Object.keys(this.state.statuses).filter(f => this.state.statuses[f]);
         let status = statuses.join(',');
 
@@ -166,16 +157,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
 
         this.props.dispatch(
-            navigation.actions.updateStatus(
+            navigation.actions.update(
                 this.props.router,
-                status,
+                {
+                    search: this.state.search,
+                    status,
+                },
             )
         );
-    }
-
-    _update = () => {
-        this.updateSearch();
-        this.updateStatus();
     }
 
     update = () => {

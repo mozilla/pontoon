@@ -12,15 +12,15 @@ import { FILTERS_STATUS } from '..';
 
 describe('<SearchBoxBase>', () => {
     beforeAll(() => {
-        sinon.stub(actions, 'updateStatus').returns({ type: 'whatever'});
+        sinon.stub(actions, 'update').returns({ type: 'whatever'});
     });
 
     afterEach(() => {
-        actions.updateStatus.reset();
+        actions.update.reset();
     });
 
     afterAll(() => {
-        actions.updateStatus.restore();
+        actions.update.restore();
     });
 
     it('shows a search input', () => {
@@ -121,8 +121,10 @@ describe('<SearchBoxBase>', () => {
         />);
         wrapper.setState({ statuses: { all: true } });
 
-        wrapper.instance().updateStatus();
-        expect(actions.updateStatus.calledWith({}, null)).toBeTruthy();
+        wrapper.instance()._update();
+        expect(
+            actions.update.calledWith({}, { status: null, search: '' })
+        ).toBeTruthy();
     });
 
     it('sets correct status', () => {
@@ -133,8 +135,10 @@ describe('<SearchBoxBase>', () => {
         />);
         wrapper.setState({ statuses: { missing: true, warnings: true } });
 
-        wrapper.instance().updateStatus();
-        expect(actions.updateStatus.calledWith({}, 'missing,warnings')).toBeTruthy();
+        wrapper.instance()._update();
+        expect(
+            actions.update.calledWith({}, { status: 'missing,warnings', search: '' })
+        ).toBeTruthy();
     });
 });
 
@@ -147,7 +151,7 @@ describe('<SearchBox>', () => {
             SearchBoxBase
         );
 
-        const updateSpy = sinon.spy(actions, 'updateSearch');
+        const updateSpy = sinon.spy(actions, 'update');
 
         const event = { currentTarget: { value: 'test' } };
         wrapper.find('input#search').simulate('change', event);

@@ -3,30 +3,44 @@
 import { push } from 'connected-react-router';
 
 
-function update(router: Object, parameter: string, value: ?string): Function {
+/**
+ * Update the URL with a set of new parameters.
+ *
+ * This function removes the `string` parameter from the URL if any, because
+ * it is possible that after the results have changed, the currently selected
+ * entity won't be available anymore.
+ * It keeps all other unaffected parameters in the URL the same.
+ */
+export function update(router: Object, params: { [string]: ?string }): Function {
     return dispatch => {
         const queryString = router.location.search;
-        const params = new URLSearchParams(queryString);
-        const prev = params.get(parameter);
+        const currentParams = new URLSearchParams(queryString);
 
-        if (value === prev || (!value && !prev)) {
-            return;
-        }
+        Object.keys(params).forEach((param: string) => {
+            const prev = currentParams.get(param);
+            const value = params[param];
+
+            if (value === prev || (!value && !prev)) {
+                return;
+            }
+
+            if (!value) {
+                currentParams.delete(param);
+            }
+            else {
+                currentParams.set(param, value);
+            }
+        });
 
         // When we change the URL, we want to remove the `string` parameter
         // because with the new results, that entity might not be available
         // anymore.
-        params.delete('string');
-
-        if (!value) {
-            params.delete(parameter);
-        }
-        else {
-            params.set(parameter, value);
+        if (!params['string']) {
+            currentParams.delete('string');
         }
 
-        dispatch(push('?' + params.toString()));
-    };
+        dispatch(push('?' + currentParams.toString()));
+    }
 }
 
 
@@ -36,7 +50,7 @@ function update(router: Object, parameter: string, value: ?string): Function {
  * This function keeps all other parameters in the URL the same.
  */
 export function updateEntity(router: Object, entity: string): Function {
-    return update(router, 'string', entity);
+    return update(router, { string: entity });
 }
 
 
@@ -49,7 +63,7 @@ export function updateEntity(router: Object, entity: string): Function {
  * It keeps all other parameters in the URL the same.
  */
 export function updateSearch(router: Object, search: ?string): Function {
-    return update(router, 'search', search);
+    return update(router, { search });
 }
 
 
@@ -62,11 +76,12 @@ export function updateSearch(router: Object, search: ?string): Function {
  * It keeps all other parameters in the URL the same.
  */
 export function updateStatus(router: Object, status: ?string): Function {
-    return update(router, 'status', status);
+    return update(router, { status });
 }
 
 
 export default {
+    update,
     updateEntity,
     updateSearch,
     updateStatus,
