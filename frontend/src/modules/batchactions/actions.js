@@ -33,6 +33,58 @@ export function checkSelection(
 }
 
 
+function _updateUI(
+    locale: string,
+    project: string,
+    resource: string,
+    entities: Array<number>,
+): Function {
+    return async dispatch => {
+        const entitiesData = await api.entity.getEntities(
+            locale,
+            project,
+            resource,
+            entities,
+            [],
+        );
+
+        if (entitiesData.stats) {
+            // Update stats in progress chart and filter panel.
+            dispatch(statsActions.update(entitiesData.stats));
+
+            /*
+            * Update stats in the resource menu.
+            *
+            * TODO: Update stats for all affected resources. ATM that's not possbile,
+            * since the backend only returns stats for the passed resource.
+            */
+            if (resource !== 'all-resources') {
+                dispatch(
+                    resourceActions.update(
+                        resource,
+                        entitiesData.stats.approved,
+                        entitiesData.stats.warnings,
+                    )
+                );
+            }
+        }
+
+        // Update entity translation data now that it has changed on the server.
+        for (let entity of entitiesData.entities) {
+            entity.translation.forEach(function(translation, pluralForm) {
+                dispatch(
+                    entitiesActions.updateEntityTranslation(
+                        entity.pk,
+                        pluralForm,
+                        translation,
+                    )
+                );
+            });
+        }
+    }
+}
+
+
 export function performAction(
     action: string,
     locale: string,
@@ -61,47 +113,7 @@ export function performAction(
             response.invalidCount = data.invalid_translation_count;
 
             if (data.count > 0) {
-                const entitiesData = await api.entity.getEntities(
-                    locale,
-                    project,
-                    resource,
-                    entities,
-                    [],
-                );
-
-                if (entitiesData.stats) {
-                    // Update stats in progress chart and filter panel.
-                    dispatch(statsActions.update(entitiesData.stats));
-
-                    /*
-                     * Update stats in the resource menu.
-                     *
-                     * TODO: Update stats for all affected resources. ATM that's not possbile,
-                     * since the backend only returns stats for the passed resource.
-                     */
-                    if (resource !== 'all-resources') {
-                        dispatch(
-                            resourceActions.update(
-                                resource,
-                                entitiesData.stats.approved,
-                                entitiesData.stats.warnings,
-                            )
-                        );
-                    }
-                }
-
-                // Refresh entity translation data now that it has changed on the server.
-                for (let entity of entitiesData.entities) {
-                    entity.translation.forEach(function(translation, pluralForm) {
-                        dispatch(
-                            entitiesActions.updateEntityTranslation(
-                                entity.pk,
-                                pluralForm,
-                                translation,
-                            )
-                        );
-                    });
-                }
+                dispatch(_updateUI(locale, project, resource, entities));
             }
         }
         else {

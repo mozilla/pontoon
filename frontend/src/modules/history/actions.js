@@ -185,7 +185,7 @@ export function updateStatus(
             );
         }
 
-        // Refresh entity translation data now that it has changed on the server.
+        // Update entity translation data now that it has changed on the server.
         if (results.translation) {
             dispatch(
                 entitiesActions.updateEntityTranslation(
