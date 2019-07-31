@@ -30,14 +30,14 @@ export default class RejectAll extends React.Component<Props, State> {
 
     rejectAll = () => {
         if (!this.state.isConfirmationVisible) {
-            this.setState((state) => {
-                return { isConfirmationVisible: true };
+            this.setState({
+                isConfirmationVisible: true,
             });
         }
         else {
             this.props.rejectAll();
-            this.setState((state) => {
-                return { isConfirmationVisible: false };
+            this.setState({
+                isConfirmationVisible: false,
             });
         }
     }
