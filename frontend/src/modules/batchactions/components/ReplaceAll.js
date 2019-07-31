@@ -16,10 +16,6 @@ type Props = {|
  * Renders Replace All batch action button.
  */
 export default class ReplaceAll extends React.Component<Props> {
-    replaceAll = () => {
-        this.props.replaceAll();
-    }
-
     renderDefault() {
         return <Localized
             id="batchactions-ReplaceAll--default"
@@ -92,7 +88,7 @@ export default class ReplaceAll extends React.Component<Props> {
     render() {
         return <button
             className="replace-all"
-            onClick={ this.replaceAll }
+            onClick={ this.props.replaceAll }
         >
             { this.renderTitle() }
             { this.props.batchactions.requestInProgress !== 'replace' ? null :

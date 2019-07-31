@@ -16,10 +16,6 @@ type Props = {|
  * Renders Approve All batch action button.
  */
 export default class ApproveAll extends React.Component<Props> {
-    approveAll = () => {
-        this.props.approveAll();
-    }
-
     renderDefault() {
         return <Localized
             id="batchactions-ApproveAll--default"
@@ -92,7 +88,7 @@ export default class ApproveAll extends React.Component<Props> {
     render() {
         return <button
             className="approve-all"
-            onClick={ this.approveAll }
+            onClick={ this.props.approveAll }
         >
             { this.renderTitle() }
             { this.props.batchactions.requestInProgress !== 'approve' ? null :
