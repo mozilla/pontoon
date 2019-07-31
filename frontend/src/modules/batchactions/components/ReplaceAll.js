@@ -95,7 +95,7 @@ export default class ReplaceAll extends React.Component<Props> {
             onClick={ this.replaceAll }
         >
             { this.renderTitle() }
-            { this.props.batchactions.fetching !== 'replace' ? null :
+            { this.props.batchactions.requestInProgress !== 'replace' ? null :
                 <span className="fa fa-2x fa-sync fa-spin"></span>
             }
         </button>;

@@ -95,7 +95,7 @@ export default class ApproveAll extends React.Component<Props> {
             onClick={ this.approveAll }
         >
             { this.renderTitle() }
-            { this.props.batchactions.fetching !== 'approve' ? null :
+            { this.props.batchactions.requestInProgress !== 'approve' ? null :
                 <span className="fa fa-2x fa-sync fa-spin"></span>
             }
         </button>;

@@ -128,7 +128,7 @@ export default class RejectAll extends React.Component<Props, State> {
             onClick={ this.rejectAll }
         >
             { this.renderTitle() }
-            { this.props.batchactions.fetching !== 'reject' ? null :
+            { this.props.batchactions.requestInProgress !== 'reject' ? null :
                 <span className="fa fa-2x fa-sync fa-spin"></span>
             }
         </button>;

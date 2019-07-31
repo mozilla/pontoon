@@ -34,16 +34,16 @@ type Action =
 
 export type BatchActionsState = {|
     +entities: Array<number>,
-    +fetching: ?string,
     +lastCheckedEntity: ?number,
+    +requestInProgress: ?string,
     +response: ?ResponseType,
 |};
 
 
 const initial: BatchActionsState = {
     entities: [],
-    fetching: null,
     lastCheckedEntity: null,
+    requestInProgress: null,
     response: null,
 };
 
@@ -79,13 +79,13 @@ export default function reducer(
         case RECEIVE:
             return {
                 ...state,
-                fetching: null,
+                requestInProgress: null,
                 response: action.response,
             };
         case REQUEST:
             return {
                 ...state,
-                fetching: action.source,
+                requestInProgress: action.source,
             };
         case RESET:
             return {

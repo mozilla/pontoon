@@ -80,7 +80,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     approveAll = () => {
-        if (this.props.batchactions.fetching) {
+        if (this.props.batchactions.requestInProgress) {
             return;
         }
 
@@ -98,7 +98,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     rejectAll = () => {
-        if (this.props.batchactions.fetching) {
+        if (this.props.batchactions.requestInProgress) {
             return;
         }
 
@@ -116,7 +116,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     replaceAll = () => {
-        if (this.props.batchactions.fetching) {
+        if (this.props.batchactions.requestInProgress) {
             return;
         }
 
@@ -160,7 +160,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
-                { this.props.batchactions.fetching === 'select-all' ?
+                { this.props.batchactions.requestInProgress === 'select-all' ?
                     <div className="selecting fa fa-sync fa-spin"></div>
                     :
                     <Localized
