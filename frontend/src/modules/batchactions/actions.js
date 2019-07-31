@@ -125,25 +125,25 @@ export type ResponseType = {
 };
 
 export type ReceiveAction = {|
-    response: ?ResponseType,
     type: typeof RECEIVE,
+    response: ?ResponseType,
 |};
 export function receive(response: ?ResponseType): ReceiveAction {
     return {
-        response,
         type: RECEIVE,
+        response,
     };
 }
 
 
 export type RequestAction = {|
-    source: string,
     type: typeof REQUEST,
+    source: string,
 |};
 export function request(source: string): RequestAction {
     return {
-        source,
         type: REQUEST,
+        source,
     };
 }
 
