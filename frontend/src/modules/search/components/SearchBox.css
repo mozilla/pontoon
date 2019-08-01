@@ -88,6 +88,11 @@
     font-size: 18px;
 }
 
+.search-box .unreviewed.selected .status:before,
+.search-box .unreviewed .status:hover:before {
+  font-size: 16px;
+}
+
 .search-box .untranslated .status:before {
     color: #AAAAAA;
     content: "";
