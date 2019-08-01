@@ -103,9 +103,9 @@ describe('<RejectAll>', () => {
             />
         );
 
-        expect(mockRejectAll.calledOnce).toBeFalsy();
+        expect(mockRejectAll.called).toBeFalsy();
         wrapper.find('.reject-all').simulate('click');
-        expect(mockRejectAll.calledOnce).toBeFalsy();
+        expect(mockRejectAll.called).toBeFalsy();
         expect(wrapper.find('#batchactions-RejectAll--confirmation')).toHaveLength(1);
     });
 
@@ -121,8 +121,8 @@ describe('<RejectAll>', () => {
 
         wrapper.instance().setState({isConfirmationVisible: true});
 
-        expect(mockRejectAll.calledOnce).toBeFalsy();
+        expect(mockRejectAll.called).toBeFalsy();
         wrapper.find('.reject-all').simulate('click');
-        expect(mockRejectAll.calledOnce).toBeTruthy();
+        expect(mockRejectAll.called).toBeTruthy();
     });
 });

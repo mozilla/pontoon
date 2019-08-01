@@ -103,8 +103,8 @@ describe('<ReplaceAll>', () => {
             />
         );
 
-        expect(mockReplaceAll.calledOnce).toBeFalsy();
+        expect(mockReplaceAll.called).toBeFalsy();
         wrapper.find('.replace-all').simulate('click');
-        expect(mockReplaceAll.calledOnce).toBeTruthy();
+        expect(mockReplaceAll.called).toBeTruthy();
     });
 });

@@ -103,8 +103,8 @@ describe('<ApproveAll>', () => {
             />
         );
 
-        expect(mockApproveAll.calledOnce).toBeFalsy();
+        expect(mockApproveAll.called).toBeFalsy();
         wrapper.find('.approve-all').simulate('click');
-        expect(mockApproveAll.calledOnce).toBeTruthy();
+        expect(mockApproveAll.called).toBeTruthy();
     });
 });

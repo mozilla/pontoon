@@ -71,7 +71,7 @@ describe('<BatchActionsBase>', () => {
         );
 
         wrapper.find('.selected-count').simulate('click');
-        expect(actions.resetSelection.calledOnce).toBeTruthy();
+        expect(actions.resetSelection.called).toBeTruthy();
     });
 
     it('selects all entities when the Select All button is clicked', () => {
@@ -84,6 +84,6 @@ describe('<BatchActionsBase>', () => {
         );
 
         wrapper.find('.select-all').simulate('click');
-        expect(actions.selectAll.calledOnce).toBeTruthy();
+        expect(actions.selectAll.called).toBeTruthy();
     });
 });
