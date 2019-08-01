@@ -6,7 +6,7 @@ import { Localized } from 'fluent-react';
 
 import './FiltersPanel.css';
 
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
@@ -109,7 +109,9 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             </div>
             { !this.state.visible ? null : <div className="menu">
                 <ul>
-                    <li className="horizontal-separator">Translation Status</li>
+                    <Localized id="search-FiltersPanel--heading-status">
+                        <li className="horizontal-separator">Translation Status</li>
+                    </Localized>
                     { FILTERS_STATUS.map((status, i) => {
                         const count = status.stat ? stats[status.stat] : stats[status.slug];
                         const selected = statuses[status.slug];
@@ -132,6 +134,30 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
+                        </li>
+                    }) }
+
+                    <Localized id="search-FiltersPanel--heading-extra">
+                        <li className="horizontal-separator">Extra Filters</li>
+                    </Localized>
+                    { FILTERS_EXTRA.map((extra, i) => {
+                        const selected = statuses[extra.slug];
+
+                        let className = extra.slug;
+                        if (selected) {
+                            className += ' selected';
+                        }
+
+                        return <li
+                            className={ className }
+                            key={ i }
+                            onClick={ this.createSetStatus(extra.slug) }
+                        >
+                            <span
+                                className="status fa"
+                                onClick={ this.createSelectStatus(extra.slug) }
+                            ></span>
+                            <span className="title">{ extra.title }</span>
                         </li>
                     }) }
                 </ul>

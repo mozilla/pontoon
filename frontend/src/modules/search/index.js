@@ -43,3 +43,21 @@ export const FILTERS_STATUS = [
         slug: 'unreviewed',
     },
 ];
+
+
+// List of available extra filters.
+// This list controls the creation of the UI.
+export const FILTERS_EXTRA = [
+    {
+        title: 'Untranslated',
+        slug: 'untranslated',
+    },
+    {
+        title: 'Unchanged',
+        slug: 'unchanged',
+    },
+    {
+        title: 'Rejected',
+        slug: 'rejected',
+    },
+];
