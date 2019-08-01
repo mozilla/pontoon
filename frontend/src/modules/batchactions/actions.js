@@ -5,6 +5,7 @@ import api from 'core/api';
 import { actions as entitiesActions } from 'core/entities';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
+import { actions as historyActions } from 'modules/history';
 
 
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
@@ -37,6 +38,7 @@ function _updateUI(
     locale: string,
     project: string,
     resource: string,
+    selectedEntity: number,
     entities: Array<number>,
 ): Function {
     return async dispatch => {
@@ -79,6 +81,16 @@ function _updateUI(
                         translation,
                     )
                 );
+
+                if (entity.pk === selectedEntity) {
+                    dispatch(
+                        historyActions.get(
+                            entity.pk,
+                            locale,
+                            pluralForm,
+                        )
+                    );
+                }
             });
         }
     }
@@ -90,6 +102,7 @@ export function performAction(
     locale: string,
     project: string,
     resource: string,
+    selectedEntity: number,
     entities: Array<number>,
     find: ?string,
     replace: ?string,
@@ -113,7 +126,7 @@ export function performAction(
             response.invalidCount = data.invalid_translation_count;
 
             if (data.count > 0) {
-                dispatch(_updateUI(locale, project, resource, entities));
+                dispatch(_updateUI(locale, project, resource, selectedEntity, entities));
             }
         }
         else {
