@@ -8,10 +8,10 @@ import { FILTERS_STATUS } from '..';
 
 describe('<FiltersPanelBase>', () => {
     it('shows a panel with filters on click', () => {
-        const params = {};
+        const statuses = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase stats={ stats } parameters={ params } />
+            <FiltersPanelBase statuses={ statuses } stats={ stats } />
         );
 
         expect(wrapper.find('div.menu')).toHaveLength(0);
@@ -21,44 +21,175 @@ describe('<FiltersPanelBase>', () => {
 
     it('has the correct icon based on parameters', () => {
         for (let filter of FILTERS_STATUS) {
-            const params = { status: filter.tag };
+            const statuses = {
+                [filter.slug]: true,
+            };
             const stats = {};
 
             const wrapper = shallow(
-                <FiltersPanelBase stats={ stats } parameters={ params } />
+                <FiltersPanelBase statuses={ statuses } stats={ stats } />
             );
 
             expect(
-                wrapper.find('.visibility-switch').hasClass(filter.tag)
+                wrapper.find('.visibility-switch').hasClass(filter.slug)
             ).toBeTruthy();
         }
     });
 
-    it('calls the update function on click on filters', () => {
-        const selectStatusSpy = sinon.spy();
+    it('correctly sets statuses as selected', () => {
+        const statuses = {
+            warnings: true,
+            errors: false,
+            missing: true,
+        };
+        const stats = {};
+        const wrapper = shallow(
+            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+        );
+
+        wrapper.find('.visibility-switch').simulate('click');
 
         for (let filter of FILTERS_STATUS) {
-            const params = {};
+            if (statuses[filter.slug]) {
+                expect(
+                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
+                ).toBeTruthy();
+            }
+            else {
+                expect(
+                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
+                ).toBeFalsy();
+            }
+        }
+    });
+
+    it('sets a single status on click on a status title', () => {
+        let setSingleStatus;
+
+        for (let filter of FILTERS_STATUS) {
+            const statuses = {
+                [filter.slug]: true,
+            };
             const stats = {};
+            setSingleStatus = sinon.spy()
 
             const wrapper = shallow(
                 <FiltersPanelBase
                     stats={ stats }
-                    parameters={ params }
-                    selectStatus= { selectStatusSpy }
+                    statuses={ statuses }
+                    setSingleStatus= { setSingleStatus }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
-            wrapper.find(`.menu .${filter.tag}`).simulate('click');
+            wrapper.find(`.menu .${filter.slug}`).simulate('click');
 
-            if (filter.tag === 'all') {
-                // When the filter is `all`, we pass `null` to remove the param
-                // from the URL.
-                expect(selectStatusSpy.calledWith(null)).toBeTruthy();
+            expect(setSingleStatus.calledWith(filter.slug)).toBeTruthy();
+        }
+    });
+
+    it('selects a status on click on a status icon', () => {
+        let toggleStatus;
+
+        for (let filter of FILTERS_STATUS) {
+            const statuses = {
+                [filter.slug]: false,
+            };
+            const stats = {};
+            toggleStatus = sinon.spy()
+
+            const wrapper = shallow(
+                <FiltersPanelBase
+                    stats={ stats }
+                    statuses={ statuses }
+                    toggleStatus= { toggleStatus }
+                />
+            );
+            wrapper.find('.visibility-switch').simulate('click');
+            wrapper.find(`.menu .${filter.slug} .status`).simulate(
+                'click',
+                { stopPropagation: sinon.fake() }
+            );
+
+            if (filter.slug === 'all') {
+                expect(toggleStatus.called).toBeFalsy();
             }
             else {
-                expect(selectStatusSpy.calledWith(filter.tag)).toBeTruthy();
+                expect(toggleStatus.calledWith(filter.slug)).toBeTruthy();
             }
         }
+    });
+
+    it('hides the toolbar when no filters are selected', () => {
+        const statuses = {
+            warnings: false,
+            errors: false,
+            missing: false,
+        };
+        const stats = {};
+        const wrapper = shallow(
+            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+        );
+
+        wrapper.find('.visibility-switch').simulate('click');
+        expect(wrapper.find('.toolbar')).toHaveLength(0);
+    });
+
+    it('shows the toolbar when some filters are selected', () => {
+        const statuses = {
+            warnings: false,
+            errors: true,
+            missing: true,
+        };
+        const stats = {};
+        const wrapper = shallow(
+            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+        );
+
+        wrapper.find('.visibility-switch').simulate('click');
+        expect(wrapper.find('.toolbar')).toHaveLength(1);
+    });
+
+    it('resets selected filters on click on the Clear button', () => {
+        const resetStatuses = sinon.spy();
+
+        const statuses = {
+            warnings: false,
+            errors: true,
+        };
+        const stats = {};
+        const wrapper = shallow(
+            <FiltersPanelBase
+                statuses={ statuses }
+                stats={ stats }
+                resetStatuses={ resetStatuses }
+            />
+        );
+
+        wrapper.find('.visibility-switch').simulate('click');
+        wrapper.find('.toolbar .clear-selection').simulate('click');
+
+        expect(resetStatuses.called).toBeTruthy();
+    });
+
+    it('applies selected filters on click on the Apply button', () => {
+        const update = sinon.spy();
+
+        const statuses = {
+            warnings: false,
+            errors: true,
+        };
+        const stats = {};
+        const wrapper = shallow(
+            <FiltersPanelBase
+                statuses={ statuses }
+                stats={ stats }
+                update={ update }
+            />
+        );
+
+        wrapper.find('.visibility-switch').simulate('click');
+        wrapper.find('.toolbar .apply-selected').simulate('click');
+
+        expect(update.called).toBeTruthy();
     });
 });

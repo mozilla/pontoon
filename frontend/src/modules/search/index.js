@@ -12,11 +12,34 @@ export const NAME: string = 'search';
 // List of available status filters.
 // This list controls the creation of the UI.
 export const FILTERS_STATUS = [
-    { title: 'All', tag: 'all', stat: 'total' },
-    { title: 'Translated', tag: 'translated', stat: 'approved' },
-    { title: 'Fuzzy', tag: 'fuzzy' },
-    { title: 'Warnings', tag: 'warnings' },
-    { title: 'Errors', tag: 'errors' },
-    { title: 'Missing', tag: 'missing' },
-    { title: 'Unreviewed', tag: 'unreviewed' },
+    {
+        title: 'All',
+        slug: 'all',
+        stat: 'total',
+    },
+    {
+        title: 'Translated',
+        slug: 'translated',
+        stat: 'approved',
+    },
+    {
+        title: 'Fuzzy',
+        slug: 'fuzzy',
+    },
+    {
+        title: 'Warnings',
+        slug: 'warnings',
+    },
+    {
+        title: 'Errors',
+        slug: 'errors',
+    },
+    {
+        title: 'Missing',
+        slug: 'missing',
+    },
+    {
+        title: 'Unreviewed',
+        slug: 'unreviewed',
+    },
 ];
