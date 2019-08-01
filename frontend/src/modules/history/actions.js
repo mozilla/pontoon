@@ -171,9 +171,11 @@ export function updateStatus(
             }
         }
 
-        // Update stats in the filter panel and resource menu if possible.
         if (results.stats) {
+            // Update stats in the progress chart and the filter panel.
             dispatch(statsActions.update(results.stats));
+
+            // Update stats in the resource menu.
             dispatch(
                 resourceActions.update(
                     entity.path,
@@ -183,10 +185,14 @@ export function updateStatus(
             );
         }
 
-        // Refresh the data now that it has changed on the server.
+        // Update entity translation data now that it has changed on the server.
         if (results.translation) {
             dispatch(
-                entitiesActions.updateEntityTranslation(entity.pk, pluralForm, results.translation)
+                entitiesActions.updateEntityTranslation(
+                    entity.pk,
+                    pluralForm,
+                    results.translation,
+                )
             );
         }
     }

@@ -6,6 +6,36 @@ import type { OtherLocaleTranslation } from './types';
 
 
 export default class EntityAPI extends APIBase {
+    async batchEdit(
+        action: string,
+        locale: string,
+        entities: Array<number>,
+        find: ?string,
+        replace: ?string,
+    ) {
+        const payload = new FormData();
+
+        const csrfToken = this.getCSRFToken();
+        payload.append('csrfmiddlewaretoken', csrfToken);
+
+        payload.append('action', action);
+        payload.append('locale', locale);
+        payload.append('entities', entities.join(','));
+
+        if (find) {
+            payload.append('find', find);
+        }
+
+        if (replace) {
+            payload.append('replace', replace);
+        }
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        return await this.fetch('/batch-edit-translations/', 'POST', payload, headers);
+    }
+
     /**
      * Return a list of entities for a project and locale.
      *
@@ -17,10 +47,12 @@ export default class EntityAPI extends APIBase {
         locale: string,
         project: string,
         resource: string,
+        entityIds: ?Array<number>,
         exclude: Array<number>,
         entity: ?string,
         search: ?string,
         status: ?string,
+        pkOnly: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);
@@ -28,6 +60,10 @@ export default class EntityAPI extends APIBase {
 
         if (resource !== 'all-resources') {
             payload.append('paths[]', resource);
+        }
+
+        if (entityIds && entityIds.length) {
+            payload.append('entity_ids', entityIds.join(','));
         }
 
         if (exclude.length) {
@@ -44,6 +80,10 @@ export default class EntityAPI extends APIBase {
 
         if (status) {
             payload.append('status', status);
+        }
+
+        if (pkOnly) {
+            payload.append('pk_only', 'true');
         }
 
         const headers = new Headers();

@@ -45,6 +45,7 @@
     font-size: inherit;
     font-weight: 300;
     margin-right: 6px;
+    text-transform: uppercase;
 }
 
 .history .translation > header .toggle-diff:hover,

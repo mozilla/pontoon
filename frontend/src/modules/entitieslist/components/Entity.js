@@ -11,7 +11,11 @@ import type { Locale } from 'core/locales';
 
 
 type Props = {
+    checkedForBatchEditing: boolean,
+    toggleForBatchEditing: Function,
     entity: EntityType,
+    isReadOnlyEditor: boolean,
+    isTranslator: boolean,
     locale: Locale,
     search: ?string,
     selected: boolean,
@@ -83,21 +87,52 @@ export default class Entity extends React.Component<Props> {
         return 'missing';
     }
 
-    selectEntity = () => {
+    selectEntity = (e: SyntheticMouseEvent<HTMLLIElement>) => {
+        // Flow requires that we use `e.currentTarget` instead of `e.target`.
+        // However in this case, we do want to use that, so I'm ignoring all
+        // errors Flow throws there.
+        // $FLOW_IGNORE
+        if (e.target && e.target.classList.contains('status')) {
+            return null;
+        }
+
         this.props.selectEntity(this.props.entity);
     }
 
+    toggleForBatchEditing = (e: SyntheticMouseEvent<HTMLSpanElement>) => {
+        const { entity, isReadOnlyEditor, isTranslator } = this.props;
+
+        if (isTranslator && !isReadOnlyEditor) {
+            this.props.toggleForBatchEditing(entity.pk, e.shiftKey);
+        }
+    }
+
     render() {
-        const { entity, locale, search, selected } = this.props;
+        const {
+            checkedForBatchEditing,
+            entity,
+            isReadOnlyEditor,
+            isTranslator,
+            locale,
+            search,
+            selected,
+        } = this.props;
 
         const classSelected = selected ? 'selected' : '';
 
+        const classBatchEditable = (isTranslator && !isReadOnlyEditor) ? 'batch-editable' : '';
+
+        const classChecked = checkedForBatchEditing ? 'checked' : '';
+
         return (
             <li
-                className={ `entity ${this.status} ${classSelected}` }
+                className={ `entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}` }
                 onClick={ this.selectEntity }
             >
-                <span className='status fa' />
+                <span
+                    className='status fa'
+                    onClick={ this.toggleForBatchEditing }
+                />
                 <div>
                     <p className='source-string'>
                         <TranslationProxy

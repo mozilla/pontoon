@@ -63,6 +63,7 @@
   font-family: "Ubuntu Regular";
 }
 
+/* Make selection area bigger and fit the entire row for easier use */
 .entity > .status {
     margin: -13px -13px -13px -16px;
     padding: 13px 13px 13px 16px;
@@ -78,6 +79,14 @@
 .entity .status:before {
     color: #4D5967;
     content: "";
+}
+
+.entity.batch-editable .status:hover:before {
+    content: "";
+}
+
+.entity.batch-editable.checked > .status:before {
+    content: "";
 }
 
 .entity.approved .status:before {

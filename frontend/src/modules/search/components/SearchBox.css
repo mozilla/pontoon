@@ -14,9 +14,6 @@
     line-height: 23px;
     padding: 10px 35px 10px 43px;
     width: 100%;
-
-    /* Remove extra padding in Chrome search input */
-    -webkit-appearance: textfield;
 }
 
 /* Remove highlight in Chrome */
@@ -24,9 +21,14 @@
     outline: none;
 }
 
-/* Remove extra padding in Chrome search input */
-.search-box input[type=search]::-webkit-search-decoration {
-    -webkit-appearance: none;
+/* Remove cancel button in Chrome */
+.search-box input[type=search]::-webkit-search-cancel-button {
+    display: none;
+}
+
+/* Style placeholder color in Chrome */
+.search-box input[type=search]::-webkit-input-placeholder {
+    color: #AAAAAA;
 }
 
 .search-box > label {

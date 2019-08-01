@@ -6,6 +6,7 @@ import { shallowUntilTarget } from 'test/utils';
 
 import * as entities from 'core/entities';
 import * as navigation from 'core/navigation';
+import * as batchactions from 'modules/batchactions';
 
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
@@ -18,17 +19,23 @@ const ENTITIES = [
 
 describe('<EntitiesList>', () => {
     beforeAll(() => {
+        sinon.stub(batchactions.actions, 'resetSelection').returns({type: 'whatever'});
+        sinon.stub(batchactions.actions, 'toggleSelection').returns({type: 'whatever'});
         sinon.stub(entities.actions, 'get').returns({type: 'whatever'});
         sinon.stub(navigation.actions, 'updateEntity').returns({type: 'whatever'});
     });
 
     afterEach(() => {
         // Make sure tests do not pollute one another.
+        batchactions.actions.resetSelection.resetHistory();
+        batchactions.actions.toggleSelection.resetHistory();
         entities.actions.get.resetHistory();
         navigation.actions.updateEntity.resetHistory();
     });
 
     afterAll(() => {
+        batchactions.actions.resetSelection.restore();
+        batchactions.actions.toggleSelection.restore();
         entities.actions.get.restore();
         navigation.actions.updateEntity.restore();
     });
@@ -85,8 +92,8 @@ describe('<EntitiesList>', () => {
 
         wrapper.instance().getMoreEntities();
 
-        // Verify the 4th argument of `actions.get` is the list of current entities.
-        expect(entities.actions.get.args[0][3]).toEqual([1, 2]);
+        // Verify the 5th argument of `actions.get` is the list of current entities.
+        expect(entities.actions.get.args[0][4]).toEqual([1, 2]);
     });
 
     it('redirects to the first entity when none is selected', () => {
@@ -96,9 +103,22 @@ describe('<EntitiesList>', () => {
 
         shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
 
+        expect(batchactions.actions.resetSelection.calledOnce).toBeTruthy();
         expect(navigation.actions.updateEntity.calledOnce).toBeTruthy();
 
         const call = navigation.actions.updateEntity.firstCall;
         expect(call.args[1]).toEqual(ENTITIES[0].pk.toString());
+    });
+
+    it('toggles entity for batch editing', () => {
+        const store = createReduxStore();
+
+        store.dispatch(entities.actions.receive(ENTITIES, false));
+
+        const wrapper = shallowUntilTarget(<EntitiesList store={ store } />, EntitiesListBase);
+
+        wrapper.instance().toggleForBatchEditing(ENTITIES[0].pk, false);
+
+        expect(batchactions.actions.toggleSelection.calledOnce).toBeTruthy();
     });
 });
