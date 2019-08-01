@@ -11,6 +11,18 @@ import { FILTERS_STATUS } from '..';
 
 
 describe('<SearchBoxBase>', () => {
+    beforeAll(() => {
+        sinon.stub(actions, 'update').returns({ type: 'whatever'});
+    });
+
+    afterEach(() => {
+        actions.update.reset();
+    });
+
+    afterAll(() => {
+        actions.update.restore();
+    });
+
     it('shows a search input', () => {
         const params = {
             search: '',
@@ -22,7 +34,7 @@ describe('<SearchBoxBase>', () => {
 
     it('has the correct placeholder based on parameters', () => {
         for (let filter of FILTERS_STATUS) {
-            const params = { status: filter.tag };
+            const params = { status: filter.slug };
             const wrapper = shallow(<SearchBoxBase parameters={ params } />);
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
         }
@@ -42,6 +54,92 @@ describe('<SearchBoxBase>', () => {
 
         expect(wrapper.state().search).toEqual('');
     });
+
+    it('returns correct list of selected statuses', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        const selected = wrapper.instance().getSelectedStatuses();
+        expect(selected).toEqual(['warnings', 'errors']);
+    });
+
+    it('toggles a status', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+        wrapper.setState({ statuses: { missing: false } });
+
+        wrapper.instance().toggleStatus('missing');
+
+        expect(wrapper.state('statuses').missing).toBeTruthy();
+    });
+
+    it('sets a single status', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        wrapper.instance().setSingleStatus('missing');
+        expect(wrapper.state('statuses').warnings).toBeFalsy();
+        expect(wrapper.state('statuses').errors).toBeFalsy();
+        expect(wrapper.state('statuses').missing).toBeTruthy();
+    });
+
+    it('resets to initial statuses', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            statuses: {
+                warnings: true,
+                errors: true,
+                missing: false,
+            }
+        });
+
+        wrapper.instance().resetStatuses();
+        expect(wrapper.state('statuses').warnings).toBeFalsy();
+        expect(wrapper.state('statuses').errors).toBeFalsy();
+        expect(wrapper.state('statuses').missing).toBeFalsy();
+    });
+
+    it('sets status to null when "all" is selected', () => {
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            router={ {} }
+            dispatch={ () => {} }
+        />);
+        wrapper.setState({ statuses: { all: true } });
+
+        wrapper.instance()._update();
+        expect(
+            actions.update.calledWith({}, { status: null, search: '' })
+        ).toBeTruthy();
+    });
+
+    it('sets correct status', () => {
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            router={ {} }
+            dispatch={ () => {} }
+        />);
+        wrapper.setState({ statuses: { missing: true, warnings: true } });
+
+        wrapper.instance()._update();
+        expect(
+            actions.update.calledWith({}, { status: 'missing,warnings', search: '' })
+        ).toBeTruthy();
+    });
 });
 
 
@@ -53,7 +151,7 @@ describe('<SearchBox>', () => {
             SearchBoxBase
         );
 
-        const updateSpy = sinon.spy(actions, 'updateSearch');
+        const updateSpy = sinon.spy(actions, 'update');
 
         const event = { currentTarget: { value: 'test' } };
         wrapper.find('input#search').simulate('change', event);

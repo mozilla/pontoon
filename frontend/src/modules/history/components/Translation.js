@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import ReactTimeAgo from 'react-time-ago'
+import ReactTimeAgo from 'react-time-ago';
 import { Localized } from 'fluent-react';
 
 import './Translation.css';

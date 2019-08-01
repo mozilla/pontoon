@@ -274,6 +274,20 @@ resource-ResourceMenu--all-resources = All Resources
 resource-ResourceMenu--all-projects = All Projects
 
 
+## Search
+## The search bar and filters menu.
+
+search-FiltersPanel--clear-selection = <glyph></glyph>Clear
+    .title = Uncheck selected filters
+
+search-FiltersPanel--apply-filters =
+    <glyph></glyph>Apply <stress>{ $count }</stress> { $count ->
+        [one] filter
+       *[other] filters
+    }
+    .title = Apply Selected Filters
+
+
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
