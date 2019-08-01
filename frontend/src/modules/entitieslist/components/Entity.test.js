@@ -157,7 +157,7 @@ describe('<Entity>', () => {
             locale={ DEFAULT_LOCALE }
         />);
         wrapper.find('.status').simulate('click');
-        expect(selectEntityFn.calledOnce).toEqual(false);
+        expect(selectEntityFn.called).toEqual(false);
     });
 
     it('calls the toggleForBatchEditing function on click on .status', () => {
@@ -183,7 +183,7 @@ describe('<Entity>', () => {
             locale={ DEFAULT_LOCALE }
         />);
         wrapper.find('.status').simulate('click');
-        expect(toggleForBatchEditingFn.calledOnce).toEqual(false);
+        expect(toggleForBatchEditingFn.called).toEqual(false);
     });
 
     it('does not call the toggleForBatchEditing function if read-only editor', () => {
@@ -196,6 +196,6 @@ describe('<Entity>', () => {
             locale={ DEFAULT_LOCALE }
         />);
         wrapper.find('.status').simulate('click');
-        expect(toggleForBatchEditingFn.calledOnce).toEqual(false);
+        expect(toggleForBatchEditingFn.called).toEqual(false);
     });
 });

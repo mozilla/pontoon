@@ -49,13 +49,13 @@ const initial: BatchActionsState = {
 
 
 function checkEntities(
-    state_entities: Array<number>,
-    action_entities: Array<number>,
+    stateEntities: Array<number>,
+    actionEntities: Array<number>,
 ) {
     // Union with duplicates removed
-    return state_entities.concat(
-        action_entities.filter(
-            e => state_entities.indexOf(e) < 0
+    return stateEntities.concat(
+        actionEntities.filter(
+            e => stateEntities.indexOf(e) < 0
         )
     );
 }
@@ -77,10 +77,10 @@ function toggleEntity(
 
 
 function uncheckEntities(
-    state_entities: Array<number>,
-    action_entities: Array<number>,
+    stateEntities: Array<number>,
+    actionEntities: Array<number>,
 ) {
-    return state_entities.filter(e => action_entities.indexOf(e) < 0);
+    return stateEntities.filter(e => actionEntities.indexOf(e) < 0);
 }
 
 

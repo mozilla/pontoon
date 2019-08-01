@@ -34,7 +34,7 @@ export function checkSelection(
 }
 
 
-function _updateUI(
+function updateUI(
     locale: string,
     project: string,
     resource: string,
@@ -126,7 +126,7 @@ export function performAction(
             response.invalidCount = data.invalid_translation_count;
 
             if (data.count > 0) {
-                dispatch(_updateUI(locale, project, resource, selectedEntity, entities));
+                dispatch(updateUI(locale, project, resource, selectedEntity, entities));
             }
         }
         else {
