@@ -1,0 +1,136 @@
+.batch-actions {
+    height: 100%;
+    line-height: 22px;
+}
+
+.batch-actions .topbar {
+    background: #4D5967;
+    border-bottom: 1px solid #5E6475;
+    padding: 12px 10px 13px;
+}
+
+.batch-actions .topbar .selecting {
+    color: #CCCCCC;
+    float: left;
+    margin-top: 2px;
+}
+
+.batch-actions .topbar button {
+    background: none;
+    border: none;
+    color: #CCCCCC;
+    font-weight: 300;
+    padding: 0;
+    text-transform: uppercase;
+}
+
+.batch-actions .topbar button:hover {
+    color: #7BC876;
+}
+
+.batch-actions .topbar button.selected-count {
+    float: left;
+}
+
+.batch-actions .topbar button.selected-count .stress {
+    color: #7BC876;
+}
+
+.batch-actions .topbar button.select-all {
+    float: right;
+}
+
+.batch-actions .topbar button .fa {
+    padding-right: 5px;
+}
+
+.batch-actions .topbar .selected-count .fa-times {
+    display: inline;
+}
+
+.batch-actions .main-content {
+    overflow: auto;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.batch-actions .main-content div {
+    margin: 0 auto;
+    min-width: 300px;
+    padding: 20px;
+    width: 50%;
+}
+
+.batch-actions .main-content h2 {
+    color: #CCCCCC;
+    font-size: 14px;
+    font-weight: 300;
+    padding-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.batch-actions .main-content .intro p {
+    color: #AAAAAA;
+    font-style: italic;
+}
+
+.batch-actions .main-content .intro p .stress {
+    color: #F36;
+}
+
+.batch-actions .main-content button,
+.batch-actions .main-content input {
+    display: block;
+    width: 100%;
+}
+
+.batch-actions .main-content button {
+    background: #7BC876;
+    border: none;
+    border-radius: 3px;
+    color: #272A2F;
+    font-weight: 600;
+    margin-top: 10px;
+    padding: 15px 5px;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.batch-actions .main-content button .fa {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    opacity: 0.5;
+}
+
+.batch-actions .main-content button.reject-all {
+    background: #F36;
+}
+
+.batch-actions .main-content input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #5E6475;
+    color: #FFFFFF;
+    float: none;
+    margin-bottom: 10px;
+    padding: 15px 0 5px;
+}
+
+/* Remove highlight in Chrome */
+.batch-actions .main-content input:focus {
+    outline: none;
+}
+
+/* Remove cancel button in Chrome */
+.batch-actions .main-content input::-webkit-search-cancel-button {
+    display: none;
+}
+
+/* Style placeholder color in Chrome */
+.batch-actions .main-content input::-webkit-input-placeholder {
+    color: #AAAAAA;
+}

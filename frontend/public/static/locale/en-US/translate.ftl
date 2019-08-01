@@ -6,6 +6,69 @@
 # keep strings in order of appearance.
 
 
+## ApproveAll
+## Renders Approve All batch action button.
+
+batchactions-ApproveAll--default = Approve all
+batchactions-ApproveAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string approved
+       *[other] { $changedCount } strings approved
+    }
+batchactions-ApproveAll--invalid = { $invalidCount } failed
+batchactions-ApproveAll--error = Oops, something went wrong
+
+
+## BatchActions
+## Renders batch editor, used for performing mass actions on translations.
+
+batchactions-BatchActions--header-selected-count =
+    { $count ->
+        [one] <glyph></glyph> <stress>{ $count }</stress> string selected
+       *[other] <glyph></glyph> <stress>{ $count }</stress> strings selected
+    }
+    .title = Quit Batch Editing (Esc)
+batchactions-BatchActions--header-select-all = <glyph></glyph> Select All
+    .title = Select All Strings (Ctrl + Shift + A)
+
+batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
+
+batchactions-BatchActions--review-heading = Review translations
+
+batchactions-BatchActions--find-replace-heading = Find & Replace in translations
+batchactions-BatchActions--find =
+    .placeholder = Find
+batchactions-BatchActions--replace-with =
+    .placeholder = Replace with
+
+
+## RejectAll
+## Renders Reject All batch action button.
+
+batchactions-RejectAll--default = Reject all
+batchactions-RejectAll--confirmation = Are you sure?
+batchactions-RejectAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string rejected
+       *[other] { $changedCount } strings rejected
+    }
+batchactions-RejectAll--invalid = { $invalidCount } failed
+batchactions-RejectAll--error = Oops, something went wrong
+
+
+## ReplaceAll
+## Renders Replace All batch action button.
+
+batchactions-ReplaceAll--default = Replace all
+batchactions-ReplaceAll--success =
+    { $changedCount ->
+        [one] { $changedCount } string replaced
+       *[other] { $changedCount } strings replaced
+    }
+batchactions-ReplaceAll--invalid = { $invalidCount } failed
+batchactions-ReplaceAll--error = Oops, something went wrong
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 

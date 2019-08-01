@@ -10,11 +10,14 @@ import * as entities from 'core/entities';
 import * as locales from 'core/locales';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
+import * as user from 'core/user';
+import * as batchactions from 'modules/batchactions';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import Entity from './Entity';
 import { CircleLoader } from 'core/loaders'
 
+import type { BatchActionsState } from 'modules/batchactions';
 import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locales';
@@ -23,7 +26,10 @@ import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
+    batchactions: BatchActionsState,
     entities: EntitiesState,
+    isReadOnlyEditor: boolean,
+    isTranslator: boolean,
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
@@ -52,7 +58,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     componentDidMount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.addEventListener('keydown', this.handleShortcuts);
+
         this.selectFirstEntityIfNoneSelected();
+    }
+
+    componentWillUnmount() {
+        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        document.removeEventListener('keydown', this.handleShortcuts);
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -98,6 +112,27 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             )
         ) {
             this.scrollToSelectedElement();
+        }
+    }
+
+    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+        const key = event.keyCode;
+
+        // On Ctrl + Shift + A, select all entities for batch editing.
+        if (key === 65 && !event.altKey && event.ctrlKey && event.shiftKey) {
+            event.preventDefault();
+
+            const { locale, project, resource, search, status } = this.props.parameters;
+
+            this.props.dispatch(
+                batchactions.actions.selectAll(
+                    locale,
+                    project,
+                    resource,
+                    search,
+                    status,
+                )
+            );
         }
     }
 
@@ -159,11 +194,58 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 this.props.unsavedchanges,
                 () => {
                     dispatch(
+                        batchactions.actions.resetSelection()
+                    );
+                    dispatch(
                         navigation.actions.updateEntity(
                             router,
                             entity.pk.toString(),
                         )
                     );
+                }
+            )
+        );
+    }
+
+    toggleForBatchEditing = (entity: number, shiftKeyPressed: boolean) => {
+        const props = this.props;
+        const { dispatch } = props;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                props.unsavedchanges,
+                () => {
+                    // If holding Shift, check all entities in the entity list between the
+                    // lastCheckedEntity and the entity if entity not checked. If entity
+                    // checked, uncheck all entities in-between.
+                    const lastCheckedEntity = props.batchactions.lastCheckedEntity;
+
+                    if (shiftKeyPressed && lastCheckedEntity) {
+                        const entityListIds = props.entities.entities.map(e => e.pk);
+                        const start = entityListIds.indexOf(entity);
+                        const end = entityListIds.indexOf(lastCheckedEntity);
+
+                        const entitySelection = entityListIds.slice(
+                            Math.min(start, end),
+                            Math.max(start, end) + 1
+                        )
+
+                        if (props.batchactions.entities.includes(entity)) {
+                            dispatch(
+                                batchactions.actions.uncheckSelection(entitySelection, entity)
+                            );
+                        }
+                        else {
+                            dispatch(
+                                batchactions.actions.checkSelection(entitySelection, entity)
+                            );
+                        }
+                    }
+                    else {
+                        dispatch(
+                            batchactions.actions.toggleSelection(entity)
+                        );
+                    }
                 }
             )
         );
@@ -181,6 +263,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             return;
         }
 
+        // Do not return a specific list of entities defined by their IDs.
+        const entityIds = null;
+
         // Currently shown entities should be excluded from the next results.
         const currentEntityIds = props.entities.entities.map(entity => entity.pk);
 
@@ -189,6 +274,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 locale,
                 project,
                 resource,
+                entityIds,
                 currentEntityIds,
                 entity.toString(),
                 search,
@@ -206,7 +292,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const hasMore = props.entities.fetching || props.entities.hasMore;
 
         return <div
-            className="entities"
+            className="entities unselectable"
             ref={ this.list }
         >
             <InfiniteScroll
@@ -221,7 +307,11 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 <ul>
                     { props.entities.entities.map((entity, i) => {
                         return <Entity
+                            checkedForBatchEditing={ props.batchactions.entities.includes(entity.pk) }
+                            toggleForBatchEditing={ this.toggleForBatchEditing }
                             entity={ entity }
+                            isReadOnlyEditor={ props.isReadOnlyEditor }
+                            isTranslator={ props.isTranslator }
                             locale={ props.locale }
                             search={ search }
                             selected={ entity.pk === selectedEntity }
@@ -245,7 +335,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        batchactions: state[batchactions.NAME],
         entities: state[entities.NAME],
+        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
+        isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
         locale: locales.selectors.getCurrentLocaleData(state),
         router: state.router,

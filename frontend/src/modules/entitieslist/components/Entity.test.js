@@ -138,7 +138,7 @@ describe('<Entity>', () => {
         expect(wrapper.instance().status).toEqual('partial');
     });
 
-    it('calls the selectEntity function on click', () => {
+    it('calls the selectEntity function on click on li', () => {
         const selectEntityFn = sinon.spy();
         const wrapper = mount(<Entity
             entity={ ENTITY_A }
@@ -147,5 +147,55 @@ describe('<Entity>', () => {
         />);
         wrapper.find('li').simulate('click');
         expect(selectEntityFn.calledOnce).toEqual(true);
+    });
+
+    it('does not call the selectEntity function on click on .status', () => {
+        const selectEntityFn = sinon.spy();
+        const wrapper = mount(<Entity
+            entity={ ENTITY_A }
+            selectEntity={ selectEntityFn }
+            locale={ DEFAULT_LOCALE }
+        />);
+        wrapper.find('.status').simulate('click');
+        expect(selectEntityFn.called).toEqual(false);
+    });
+
+    it('calls the toggleForBatchEditing function on click on .status', () => {
+        const toggleForBatchEditingFn = sinon.spy();
+        const wrapper = mount(<Entity
+            entity={ ENTITY_A }
+            isTranslator={ true }
+            isReadOnlyEditor={ false }
+            toggleForBatchEditing={ toggleForBatchEditingFn }
+            locale={ DEFAULT_LOCALE }
+        />);
+        wrapper.find('.status').simulate('click');
+        expect(toggleForBatchEditingFn.calledOnce).toEqual(true);
+    });
+
+    it('does not call the toggleForBatchEditing function if user not translator', () => {
+        const toggleForBatchEditingFn = sinon.spy();
+        const wrapper = mount(<Entity
+            entity={ ENTITY_A }
+            isTranslator={ false }
+            isReadOnlyEditor={ false }
+            toggleForBatchEditing={ toggleForBatchEditingFn }
+            locale={ DEFAULT_LOCALE }
+        />);
+        wrapper.find('.status').simulate('click');
+        expect(toggleForBatchEditingFn.called).toEqual(false);
+    });
+
+    it('does not call the toggleForBatchEditing function if read-only editor', () => {
+        const toggleForBatchEditingFn = sinon.spy();
+        const wrapper = mount(<Entity
+            entity={ ENTITY_A }
+            isTranslator={ false }
+            isReadOnlyEditor={ true }
+            toggleForBatchEditing={ toggleForBatchEditingFn }
+            locale={ DEFAULT_LOCALE }
+        />);
+        wrapper.find('.status').simulate('click');
+        expect(toggleForBatchEditingFn.called).toEqual(false);
     });
 });

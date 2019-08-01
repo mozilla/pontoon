@@ -14,7 +14,9 @@ import * as notification from 'core/notification';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
+import * as batchactions from 'modules/batchactions';
 import { UserControls } from 'core/user';
+import { BatchActions } from 'modules/batchactions';
 import { EntitiesList } from 'modules/entitieslist';
 import { EntityDetails } from 'modules/entitydetails';
 import { Navigation } from 'modules/navbar';
@@ -22,6 +24,7 @@ import { ProjectInfo } from 'modules/projectinfo';
 import { ResourceProgress } from 'modules/resourceprogress';
 import { SearchBox } from 'modules/search';
 
+import type { BatchActionsState } from 'modules/batchactions';
 import type { L10nState } from 'core/l10n';
 import type { LocalesState } from 'core/locales';
 import type { NavigationParams } from 'core/navigation';
@@ -30,6 +33,7 @@ import type { Stats } from 'core/stats';
 
 
 type Props = {|
+    batchactions: BatchActionsState,
     l10n: L10nState,
     locales: LocalesState,
     notification: notification.NotificationState,
@@ -112,7 +116,11 @@ class App extends React.Component<InternalProps> {
                 <EntitiesList />
             </section>
             <section className="panel-content">
-                <EntityDetails />
+                { state.batchactions.entities.length === 0 ?
+                    <EntityDetails />
+                    :
+                    <BatchActions />
+                }
             </section>
             <Lightbox />
         </div>;
@@ -121,6 +129,7 @@ class App extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        batchactions: state[batchactions.NAME],
         l10n: state[l10n.NAME],
         locales: state[locales.NAME],
         notification: state[notification.NAME],
