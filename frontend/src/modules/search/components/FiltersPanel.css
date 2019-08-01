@@ -137,6 +137,10 @@
     top: 4px;
 }
 
+.filters-panel .menu li:not(.selected):not(.all) .status:hover:before {
+    content: "";
+}
+
 .filters-panel .menu li.selected .status:before {
     content: "";
 }
