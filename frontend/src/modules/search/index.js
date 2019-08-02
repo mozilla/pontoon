@@ -49,10 +49,6 @@ export const FILTERS_STATUS = [
 // This list controls the creation of the UI.
 export const FILTERS_EXTRA = [
     {
-        title: 'Untranslated',
-        slug: 'untranslated',
-    },
-    {
         title: 'Unchanged',
         slug: 'unchanged',
     },

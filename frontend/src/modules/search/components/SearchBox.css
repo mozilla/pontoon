@@ -93,11 +93,6 @@
   font-size: 16px;
 }
 
-.search-box .untranslated .status:before {
-    color: #AAAAAA;
-    content: "";
-}
-
 .search-box .unchanged .status:before {
     color: #AAAAAA;
     content: "";
