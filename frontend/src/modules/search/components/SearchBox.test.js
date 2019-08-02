@@ -107,7 +107,7 @@ describe('<SearchBoxBase>', () => {
             }
         });
 
-        wrapper.instance().resetStatuses();
+        wrapper.instance().resetFilters();
         expect(wrapper.state('statuses').warnings).toBeFalsy();
         expect(wrapper.state('statuses').errors).toBeFalsy();
         expect(wrapper.state('statuses').missing).toBeFalsy();
@@ -123,7 +123,7 @@ describe('<SearchBoxBase>', () => {
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: null, search: '' })
+            actions.update.calledWith({}, { status: null, extra: '', search: '' })
         ).toBeTruthy();
     });
 
@@ -137,7 +137,7 @@ describe('<SearchBoxBase>', () => {
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: 'missing,warnings', search: '' })
+            actions.update.calledWith({}, { status: 'missing,warnings', extra: '', search: '' })
         ).toBeTruthy();
     });
 });

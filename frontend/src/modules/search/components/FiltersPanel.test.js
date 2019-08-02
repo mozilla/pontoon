@@ -9,9 +9,14 @@ import { FILTERS_STATUS } from '..';
 describe('<FiltersPanelBase>', () => {
     it('shows a panel with filters on click', () => {
         const statuses = {};
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         expect(wrapper.find('div.menu')).toHaveLength(0);
@@ -24,10 +29,15 @@ describe('<FiltersPanelBase>', () => {
             const statuses = {
                 [filter.slug]: true,
             };
+            const extras = {};
             const stats = {};
 
             const wrapper = shallow(
-                <FiltersPanelBase statuses={ statuses } stats={ stats } />
+                <FiltersPanelBase
+                    statuses={ statuses }
+                    extras={ extras }
+                    stats={ stats }
+                />
             );
 
             expect(
@@ -42,9 +52,14 @@ describe('<FiltersPanelBase>', () => {
             errors: false,
             missing: true,
         };
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -70,6 +85,7 @@ describe('<FiltersPanelBase>', () => {
             const statuses = {
                 [filter.slug]: true,
             };
+            const extras = {};
             const stats = {};
             setSingleStatus = sinon.spy()
 
@@ -77,6 +93,7 @@ describe('<FiltersPanelBase>', () => {
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
+                    extras={ extras }
                     setSingleStatus= { setSingleStatus }
                 />
             );
@@ -94,6 +111,7 @@ describe('<FiltersPanelBase>', () => {
             const statuses = {
                 [filter.slug]: false,
             };
+            const extras = {};
             const stats = {};
             toggleStatus = sinon.spy()
 
@@ -101,6 +119,7 @@ describe('<FiltersPanelBase>', () => {
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
+                    extras={ extras }
                     toggleStatus= { toggleStatus }
                 />
             );
@@ -125,9 +144,14 @@ describe('<FiltersPanelBase>', () => {
             errors: false,
             missing: false,
         };
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -140,9 +164,14 @@ describe('<FiltersPanelBase>', () => {
             errors: true,
             missing: true,
         };
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -150,25 +179,27 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('resets selected filters on click on the Clear button', () => {
-        const resetStatuses = sinon.spy();
+        const resetFilters = sinon.spy();
 
         const statuses = {
             warnings: false,
             errors: true,
         };
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
+                extras={ extras }
                 stats={ stats }
-                resetStatuses={ resetStatuses }
+                resetFilters={ resetFilters }
             />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
         wrapper.find('.toolbar .clear-selection').simulate('click');
 
-        expect(resetStatuses.called).toBeTruthy();
+        expect(resetFilters.called).toBeTruthy();
     });
 
     it('applies selected filters on click on the Apply button', () => {
@@ -178,10 +209,12 @@ describe('<FiltersPanelBase>', () => {
             warnings: false,
             errors: true,
         };
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
+                extras={ extras }
                 stats={ stats }
                 update={ update }
             />

@@ -10,7 +10,7 @@ import * as navigation from 'core/navigation';
 import { NAME as STATS_NAME } from 'core/stats';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 import FiltersPanel from './FiltersPanel';
 
 import type { NavigationParams } from 'core/navigation';
@@ -33,6 +33,7 @@ type InternalProps = {|
 type State = {|
     search: string,
     statuses: { [string]: boolean },
+    extras: { [string]: boolean },
 |};
 
 
@@ -58,9 +59,17 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
+        const extras = this.getInitialExtras();
+        if (props.parameters.extra) {
+            props.parameters.extra.split(',').forEach(f => {
+                extras[f] = true;
+            });
+        }
+
         this.state = {
             search: search ? search.toString() : '',
             statuses,
+            extras,
         };
 
         this.searchInput = React.createRef();
@@ -94,8 +103,18 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return statuses;
     }
 
+    getInitialExtras() {
+        const extras = {};
+        FILTERS_EXTRA.forEach(e => extras[e.slug] = false);
+        return extras;
+    }
+
     getSelectedStatuses(): Array<string> {
         return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
+    }
+
+    getSelectedExtras(): Array<string> {
+        return Object.keys(this.state.extras).filter(e => this.state.extras[e]);
     }
 
     toggleStatus = (status: string) => {
@@ -109,21 +128,52 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     }
 
+    toggleExtra = (extra: string) => {
+        this.setState(state => {
+            return {
+                extras: {
+                    ...state.extras,
+                    [extra]: !state.extras[extra],
+                },
+            };
+        });
+    }
+
     setSingleStatus = (status: string, callback?: () => void) => {
         const statuses = this.getInitialStatuses();
+        const extras = this.getInitialExtras();
+
         if (status !== 'all') {
             statuses[status] = true;
         }
+
         if (callback) {
-            this.setState({ statuses }, callback);
+            this.setState({ statuses, extras }, callback);
         }
         else {
-            this.setState({ statuses });
+            this.setState({ statuses, extras });
         }
     }
 
-    resetStatuses = () => {
-        this.setState({ statuses: this.getInitialStatuses() });
+    setSingleExtra = (extra: string, callback?: () => void) => {
+        const statuses = this.getInitialStatuses();
+        const extras = this.getInitialExtras();
+
+        extras[extra] = true;
+
+        if (callback) {
+            this.setState({ statuses, extras }, callback);
+        }
+        else {
+            this.setState({ statuses, extras });
+        }
+    }
+
+    resetFilters = () => {
+        this.setState({
+            statuses: this.getInitialStatuses(),
+            extras: this.getInitialExtras(),
+        });
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
@@ -156,12 +206,16 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             status = null;
         }
 
+        const extras = this.getSelectedExtras();
+        const extra = extras.join(',');
+
         this.props.dispatch(
             navigation.actions.update(
                 this.props.router,
                 {
                     search: this.state.search,
                     status,
+                    extra,
                 },
             )
         );
@@ -176,19 +230,31 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         )
     }
 
-    render() {
-        const { stats } = this.props;
-
-        const statuses = this.getSelectedStatuses();
-        let selectedStatuses = FILTERS_STATUS.filter(
-            item => statuses.includes(item.slug)
+    composePlaceholder() {
+        const selectedStatuses = FILTERS_STATUS.filter(
+            f => this.getSelectedStatuses().includes(f.slug)
         );
-        if (!selectedStatuses.length) {
-            selectedStatuses = [{ title: 'All' }];
+
+        const selectedExtras = FILTERS_EXTRA.filter(
+            f => this.getSelectedExtras().includes(f.slug)
+        );
+
+        let selectedFilters = [].concat(
+            selectedStatuses,
+            selectedExtras,
+        );
+
+        if (!selectedFilters.length) {
+            selectedFilters = [{ title: 'All' }];
         }
 
-        const statusesStr = selectedStatuses.map(item => item.title).join(', ');
-        const placeholder = `Search in ${statusesStr}`;
+        const selectedFiltersString = selectedFilters.map(item => item.title).join(', ');
+
+        return `Search in ${selectedFiltersString}`;
+    }
+
+    render() {
+        const { stats } = this.props;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -198,7 +264,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 id="search"
                 ref={ this.searchInput }
                 autoComplete="off"
-                placeholder={ placeholder }
+                placeholder={ this.composePlaceholder() }
                 title="Search Strings (Ctrl + Shift + F)"
                 type="search"
                 value={ this.state.search }
@@ -206,10 +272,13 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
+                extras={ this.state.extras }
                 stats={ stats }
-                resetStatuses={ this.resetStatuses }
+                resetFilters={ this.resetFilters }
                 setSingleStatus={ this.setSingleStatus }
+                setSingleExtra={ this.setSingleExtra }
                 toggleStatus={ this.toggleStatus }
+                toggleExtra={ this.toggleExtra }
                 update={ this.update }
             />
         </div>;
