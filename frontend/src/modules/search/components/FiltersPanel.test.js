@@ -3,7 +3,13 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { FiltersPanelBase } from './FiltersPanel';
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+
+
+const FILTERS = [].concat(
+    FILTERS_STATUS,
+    FILTERS_EXTRA,
+);
 
 
 describe('<FiltersPanelBase>', () => {
@@ -25,12 +31,21 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('has the correct icon based on parameters', () => {
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
+            const stats = {};
+
+            const set = {
                 [filter.slug]: true,
             };
-            const extras = {};
-            const stats = {};
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = set;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = set;
+            }
 
             const wrapper = shallow(
                 <FiltersPanelBase
@@ -46,14 +61,20 @@ describe('<FiltersPanelBase>', () => {
         }
     });
 
-    it('correctly sets statuses as selected', () => {
+    it('correctly sets filter as selected', () => {
         const statuses = {
             warnings: true,
             errors: false,
             missing: true,
         };
-        const extras = {};
+
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
+
         const stats = {};
+
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
@@ -64,29 +85,46 @@ describe('<FiltersPanelBase>', () => {
 
         wrapper.find('.visibility-switch').simulate('click');
 
-        for (let filter of FILTERS_STATUS) {
-            if (statuses[filter.slug]) {
-                expect(
-                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
-                ).toBeTruthy();
+        for (let filter of FILTERS) {
+            let isFilterSelected;
+
+            if (FILTERS_STATUS.includes(filter)) {
+                isFilterSelected = statuses[filter.slug];
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                isFilterSelected = extras[filter.slug];
+            }
+
+            const isClassSet = wrapper.find(`.menu .${filter.slug}`).hasClass('selected');
+
+            if (isFilterSelected) {
+                expect(isClassSet).toBeTruthy();
             }
             else {
-                expect(
-                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
-                ).toBeFalsy();
+                expect(isClassSet).toBeFalsy();
             }
         }
     });
 
-    it('sets a single status on click on a status title', () => {
+    it('applies a single filter on click on a filter title', () => {
         let applySingleFilter;
 
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
+            const stats = {};
+
+            const set = {
                 [filter.slug]: true,
             };
-            const extras = {};
-            const stats = {};
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = set;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = set;
+            }
+
             applySingleFilter = sinon.spy()
 
             const wrapper = shallow(
@@ -104,15 +142,25 @@ describe('<FiltersPanelBase>', () => {
         }
     });
 
-    it('selects a status on click on a status icon', () => {
+    it('toggles a filter on click on a filter status icon', () => {
         let toggleFilter;
 
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
+            const stats = {};
+
+            const set = {
                 [filter.slug]: false,
             };
-            const extras = {};
-            const stats = {};
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = set;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = set;
+            }
+
             toggleFilter = sinon.spy()
 
             const wrapper = shallow(
@@ -144,7 +192,10 @@ describe('<FiltersPanelBase>', () => {
             errors: false,
             missing: false,
         };
-        const extras = {};
+        const extras = {
+            unchanged: false,
+            rejected: false,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
@@ -164,7 +215,10 @@ describe('<FiltersPanelBase>', () => {
             errors: true,
             missing: true,
         };
-        const extras = {};
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
@@ -185,7 +239,10 @@ describe('<FiltersPanelBase>', () => {
             warnings: false,
             errors: true,
         };
-        const extras = {};
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
@@ -209,7 +266,10 @@ describe('<FiltersPanelBase>', () => {
             warnings: false,
             errors: true,
         };
-        const extras = {};
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase

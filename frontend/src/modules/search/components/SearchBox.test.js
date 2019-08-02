@@ -7,7 +7,13 @@ import { shallowUntilTarget, sleep } from 'test/utils';
 
 import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+
+
+const FILTERS = [].concat(
+    FILTERS_STATUS,
+    FILTERS_EXTRA,
+);
 
 
 describe('<SearchBoxBase>', () => {
@@ -33,8 +39,16 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('has the correct placeholder based on parameters', () => {
-        for (let filter of FILTERS_STATUS) {
-            const params = { status: filter.slug };
+        for (let filter of FILTERS) {
+            let params;
+
+            if (FILTERS_STATUS.includes(filter)) {
+                params = { status: filter.slug };
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                params = { extra: filter.slug };
+            }
+
             const wrapper = shallow(<SearchBoxBase parameters={ params } />);
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
         }
@@ -70,25 +84,42 @@ describe('<SearchBoxBase>', () => {
         expect(selected).toEqual(['warnings', 'errors']);
     });
 
-    it('toggles a status', () => {
+    it('returns correct list of selected extras', () => {
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
+
+        wrapper.setState({
+            extras: {
+                unchanged: true,
+                rejected: false,
+            }
+        });
+
+        const selected = wrapper.instance().getSelectedExtras();
+        expect(selected).toEqual(['unchanged']);
+    });
+
+    it('toggles a filter', () => {
         const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
         wrapper.setState({ statuses: { missing: false } });
+        expect(wrapper.state('statuses').missing).toBeFalsy();
 
         wrapper.instance().toggleFilter('missing');
-
         expect(wrapper.state('statuses').missing).toBeTruthy();
     });
 
-    it('sets a single status', () => {
+    it('sets a single filter', () => {
         const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
 
         wrapper.setState({
             statuses: {
                 warnings: true,
-                errors: true,
+                errors: false,
                 missing: false,
             }
         });
+        expect(wrapper.state('statuses').warnings).toBeTruthy();
+        expect(wrapper.state('statuses').errors).toBeFalsy();
+        expect(wrapper.state('statuses').missing).toBeFalsy();
 
         wrapper.instance().applySingleFilter('missing');
         expect(wrapper.state('statuses').warnings).toBeFalsy();
@@ -104,6 +135,10 @@ describe('<SearchBoxBase>', () => {
                 warnings: true,
                 errors: true,
                 missing: false,
+            },
+            extras: {
+                unchanged: false,
+                rejected: true,
             }
         });
 
@@ -111,6 +146,8 @@ describe('<SearchBoxBase>', () => {
         expect(wrapper.state('statuses').warnings).toBeFalsy();
         expect(wrapper.state('statuses').errors).toBeFalsy();
         expect(wrapper.state('statuses').missing).toBeFalsy();
+        expect(wrapper.state('extras').unchanged).toBeFalsy();
+        expect(wrapper.state('extras').rejected).toBeFalsy();
     });
 
     it('sets status to null when "all" is selected', () => {
@@ -133,11 +170,18 @@ describe('<SearchBoxBase>', () => {
             router={ {} }
             dispatch={ () => {} }
         />);
-        wrapper.setState({ statuses: { missing: true, warnings: true } });
+        wrapper.setState({
+            statuses: { missing: true, warnings: true },
+            extras: { unchanged: true }
+        });
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: 'missing,warnings', extra: '', search: '' })
+            actions.update.calledWith({}, {
+                status: 'missing,warnings',
+                extra: 'unchanged',
+                search: '',
+            })
         ).toBeTruthy();
     });
 });

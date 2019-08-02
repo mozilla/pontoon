@@ -92,9 +92,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
         // Otherwise show the approriate status icon.
         if (selectedFiltersCount === 1) {
-            const selectedStatus = FILTERS_STATUS.find(s => s.slug === selectedStatuses[0]);
+            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
             if (selectedStatus) {
                 reducedStatus = selectedStatus;
+            }
+            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
+            if (selectedExtra) {
+                reducedStatus = selectedExtra;
             }
         }
 
