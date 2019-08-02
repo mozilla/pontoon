@@ -117,49 +117,37 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return Object.keys(this.state.extras).filter(e => this.state.extras[e]);
     }
 
-    toggleStatus = (status: string) => {
+    toggleFilter = (filter: string) => {
+        let type;
+        if (filter in this.getInitialStatuses()) {
+            type = 'statuses';
+        }
+        else if (filter in this.getInitialExtras()) {
+            type = 'extras';
+        }
+
         this.setState(state => {
             return {
-                statuses: {
-                    ...state.statuses,
-                    [status]: !state.statuses[status],
+                [type]: {
+                    ...state[type],
+                    [filter]: !state[type][filter],
                 },
             };
         });
     }
 
-    toggleExtra = (extra: string) => {
-        this.setState(state => {
-            return {
-                extras: {
-                    ...state.extras,
-                    [extra]: !state.extras[extra],
-                },
-            };
-        });
-    }
-
-    setSingleStatus = (status: string, callback?: () => void) => {
+    applySingleFilter = (filter: string, callback?: () => void) => {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
 
-        if (status !== 'all') {
-            statuses[status] = true;
+        if (filter !== 'all') {
+            if (filter in statuses) {
+                statuses[filter] = true;
+            }
+            else if (filter in extras) {
+                extras[filter] = true;
+            }
         }
-
-        if (callback) {
-            this.setState({ statuses, extras }, callback);
-        }
-        else {
-            this.setState({ statuses, extras });
-        }
-    }
-
-    setSingleExtra = (extra: string, callback?: () => void) => {
-        const statuses = this.getInitialStatuses();
-        const extras = this.getInitialExtras();
-
-        extras[extra] = true;
 
         if (callback) {
             this.setState({ statuses, extras }, callback);
@@ -274,11 +262,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 stats={ stats }
+                applySingleFilter={ this.applySingleFilter }
                 resetFilters={ this.resetFilters }
-                setSingleStatus={ this.setSingleStatus }
-                setSingleExtra={ this.setSingleExtra }
-                toggleStatus={ this.toggleStatus }
-                toggleExtra={ this.toggleExtra }
+                toggleFilter={ this.toggleFilter }
                 update={ this.update }
             />
         </div>;

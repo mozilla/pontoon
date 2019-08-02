@@ -17,11 +17,9 @@ type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     stats: Stats,
+    applySingleFilter: (filter: ?string, callback?: () => void) => void,
     resetFilters: () => void,
-    setSingleStatus: (status: ?string, callback?: () => void) => void,
-    setSingleExtra: (extra: ?string, callback?: () => void) => void,
-    toggleStatus: (string) => void,
-    toggleExtra: (string) => void,
+    toggleFilter: (string) => void,
     update: () => void,
 |};
 
@@ -56,35 +54,21 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
-    createSelectStatus = (status: string) => {
-        if (status === 'all') {
+    createToggleFilter = (filter: string) => {
+        if (filter === 'all') {
             return null;
         }
 
         return (event: SyntheticInputEvent<>) => {
             event.stopPropagation();
-            this.props.toggleStatus(status);
+            this.props.toggleFilter(filter);
         };
     }
 
-    createSelectExtra = (extra: string) => {
-        return (event: SyntheticInputEvent<>) => {
-            event.stopPropagation();
-            this.props.toggleExtra(extra);
-        };
-    }
-
-    createSetStatus(status: string) {
+    createApplySingleFilter(filter: string) {
         return () => {
             this.toggleVisibility();
-            this.props.setSingleStatus(status, this.props.update);
-        };
-    }
-
-    createSetExtra(extra: string) {
-        return () => {
-            this.toggleVisibility();
-            this.props.setSingleExtra(extra, this.props.update);
+            this.props.applySingleFilter(filter, this.props.update);
         };
     }
 
@@ -139,11 +123,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createSetStatus(status.slug) }
+                            onClick={ this.createApplySingleFilter(status.slug) }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createSelectStatus(status.slug) }
+                                onClick={ this.createToggleFilter(status.slug) }
                             ></span>
                             <span className="title">{ status.title }</span>
                             <span className="count">
@@ -167,11 +151,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createSetExtra(extra.slug) }
+                            onClick={ this.createApplySingleFilter(extra.slug) }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createSelectExtra(extra.slug) }
+                                onClick={ this.createToggleFilter(extra.slug) }
                             ></span>
                             <span className="title">{ extra.title }</span>
                         </li>

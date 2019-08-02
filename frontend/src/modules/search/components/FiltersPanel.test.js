@@ -79,7 +79,7 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('sets a single status on click on a status title', () => {
-        let setSingleStatus;
+        let applySingleFilter;
 
         for (let filter of FILTERS_STATUS) {
             const statuses = {
@@ -87,25 +87,25 @@ describe('<FiltersPanelBase>', () => {
             };
             const extras = {};
             const stats = {};
-            setSingleStatus = sinon.spy()
+            applySingleFilter = sinon.spy()
 
             const wrapper = shallow(
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
-                    setSingleStatus= { setSingleStatus }
+                    applySingleFilter= { applySingleFilter }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
             wrapper.find(`.menu .${filter.slug}`).simulate('click');
 
-            expect(setSingleStatus.calledWith(filter.slug)).toBeTruthy();
+            expect(applySingleFilter.calledWith(filter.slug)).toBeTruthy();
         }
     });
 
     it('selects a status on click on a status icon', () => {
-        let toggleStatus;
+        let toggleFilter;
 
         for (let filter of FILTERS_STATUS) {
             const statuses = {
@@ -113,14 +113,14 @@ describe('<FiltersPanelBase>', () => {
             };
             const extras = {};
             const stats = {};
-            toggleStatus = sinon.spy()
+            toggleFilter = sinon.spy()
 
             const wrapper = shallow(
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
-                    toggleStatus= { toggleStatus }
+                    toggleFilter= { toggleFilter }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
@@ -130,10 +130,10 @@ describe('<FiltersPanelBase>', () => {
             );
 
             if (filter.slug === 'all') {
-                expect(toggleStatus.called).toBeFalsy();
+                expect(toggleFilter.called).toBeFalsy();
             }
             else {
-                expect(toggleStatus.calledWith(filter.slug)).toBeTruthy();
+                expect(toggleFilter.calledWith(filter.slug)).toBeTruthy();
             }
         }
     });

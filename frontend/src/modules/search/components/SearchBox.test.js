@@ -74,7 +74,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase parameters={ {} } />);
         wrapper.setState({ statuses: { missing: false } });
 
-        wrapper.instance().toggleStatus('missing');
+        wrapper.instance().toggleFilter('missing');
 
         expect(wrapper.state('statuses').missing).toBeTruthy();
     });
@@ -90,7 +90,7 @@ describe('<SearchBoxBase>', () => {
             }
         });
 
-        wrapper.instance().setSingleStatus('missing');
+        wrapper.instance().applySingleFilter('missing');
         expect(wrapper.state('statuses').warnings).toBeFalsy();
         expect(wrapper.state('statuses').errors).toBeFalsy();
         expect(wrapper.state('statuses').missing).toBeTruthy();
