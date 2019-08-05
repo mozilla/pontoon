@@ -294,7 +294,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     render() {
-        const { project, stats } = this.props;
+        const { parameters, project, stats } = this.props;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -316,6 +316,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 tags={ this.state.tags }
                 tagsData={ project.tags }
                 stats={ stats }
+                resource={ parameters.resource }
                 applySingleFilter={ this.applySingleFilter }
                 resetFilters={ this.resetFilters }
                 toggleFilter={ this.toggleFilter }

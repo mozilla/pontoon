@@ -20,6 +20,7 @@ type Props = {|
     tags: { [string]: boolean },
     tagsData: Array<Tag>,
     stats: Stats,
+    resource: string,
     applySingleFilter: (filter: ?string, callback?: () => void) => void,
     resetFilters: () => void,
     toggleFilter: (string) => void,
@@ -84,7 +85,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, tagsData, stats } = this.props;
+        const { statuses, extras, tags, tagsData, stats, resource } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
@@ -154,7 +155,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { tagsData.length === 0 ? null : <>
+                    { (tagsData.length === 0 || resource !== 'all-resources') ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
