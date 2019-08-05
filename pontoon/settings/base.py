@@ -1,6 +1,7 @@
 """Django settings for Pontoon."""
 from __future__ import absolute_import
 
+import re
 import os
 import socket
 
@@ -197,7 +198,19 @@ TEMPLATES = [
         ],
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration|account|socialaccount|graphene)/).*\.(html|jinja|js)$',
+            'match_regex': re.compile(r'''
+                ^(?!(
+                    admin|
+                    registration|
+                    account|
+                    socialaccount|
+                    graphene|
+                )/).*\.(
+                    html|
+                    jinja|
+                    js|
+                )$
+            ''', re.VERBOSE),
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',
