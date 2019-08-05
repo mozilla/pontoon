@@ -197,7 +197,7 @@ TEMPLATES = [
         ],
         'OPTIONS': {
             'match_extension': '',
-            'match_regex': r'^(?!(admin|registration|account|socialaccount)/).*\.(html|jinja|js)$',
+            'match_regex': r'^(?!(admin|registration|account|socialaccount|graphene)/).*\.(html|jinja|js)$',
             'context_processors': CONTEXT_PROCESSORS,
             'extensions': [
                 'jinja2.ext.do',

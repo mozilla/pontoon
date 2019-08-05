@@ -102,47 +102,50 @@ futures==3.0.4 \
     --hash=sha256:4e860d18d866ff6c5f2804ebcbb16415f4f29cf57efea919178b809cf99326b6 \
     --hash=sha256:19485d83f7bd2151c0aeaf88fbba3ee50dadfb222ffc3b66a344ef4952b782a3
 
-# >=2.0 graphene-django
-graphene==2.0.1 \
-    --hash=sha256:698543001858c908c5e3526ddf38ae1d13049c6c1313ec3bb0afad02c81bd242 \
-    --hash=sha256:0763563fdccb6817311f15d0f0a4d4fe820a46cbe5de022076f95cd99413fd0f
+# >=2.1.3,<3 graphene-django
+graphene==2.1.7 \
+    --hash=sha256:77d61618132ccd084c343e64c22d806cee18dce73cc86e0f427378dbdeeac287 \
+    --hash=sha256:acf808d50d053b94f7958414d511489a9e490a7f9563b9be80f6875fc5723d2a
 
-# graphene-django
-iso8601==0.1.12 \
-    --hash=sha256:210e0134677cc0d02f6028087fee1df1e1d76d372ee1db0bf30bf66c5c1c89a3 \
-    --hash=sha256:bbbae5fb4a7abfe71d4688fd64bff70b91bbd74ef6a99d964bab18f7fdf286dd \
-    --hash=sha256:49c4b20e1f38aa5cf109ddcd39647ac419f928512c869dc01d5c7098eddede82
-
-# >=3.4.0.3 graphene-django
-singledispatch==3.4.0.3 \
-    --hash=sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8 \
-    --hash=sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
-
-# >=2.0,<3 graphene
-graphql-core==2.0 \
-    --hash=sha256:4830699be53f9154273fa15726fc8b0c90bc22bbb8fc7c932586503b3cb9330e \
-    --hash=sha256:539355351343dede3ecb771e0d273a1b72405cb6d64f45bb8f92ecc4d7109af0
-
-# >=0.4.5,<1 graphene
-graphql-relay==0.4.5 \
-    --hash=sha256:2716b7245d97091af21abf096fabafac576905096d21ba7118fba722596f65db
-
+# >=2.1.0,<3 graphene-django
 # >=2.1,<3 graphene
-promise==2.1 \
-    --hash=sha256:0bca4ed933e3d50e3d18fb54fc1432fa84b0564838cd093e824abcd718ab9304 \
-    --hash=sha256:95506bac89df7a495e0b8c813fd782dd1ae590decb52f95248e316c6659ca49b
+graphql-core==2.2.1 \
+    --hash=sha256:1488f2a5c2272dc9ba66e3042a6d1c30cea0db4c80bd1e911c6791ad6187d91b \
+    --hash=sha256:da64c472d720da4537a2e8de8ba859210b62841bd47a9be65ca35177f62fe0e4
+
+# >=2,<3 graphene
+graphql-relay==2.0.0 \
+    --hash=sha256:0e94201af4089e1f81f07d7bd8f84799768e39d70fa1ea16d1df505b46cc6335 \
+    --hash=sha256:75aa0758971e252964cb94068a4decd472d2a8295229f02189e3cbca1f10dbb5 \
+    --hash=sha256:7fa74661246e826ef939ee92e768f698df167a7617361ab399901eaebf80dce6
+
+# >=3,<=6 graphene
+aniso8601==7.0.0 \
+    --hash=sha256:513d2b6637b7853806ae79ffaca6f3e8754bdd547048f5ccc1420aec4b714f1e \
+    --hash=sha256:d10a4bf949f619f719b227ef5386e31f49a2b6d453004b21f02661ccc8670c7b
 
 # >=1.6.0 graphql-core
 Rx==1.6.0 \
     --hash=sha256:ad793d79843feba2ea25c0c01be245f3163d5d469418279d4019737b93d88c78 \
     --hash=sha256:84ac6e140f2129266fd4c77a3d0903bbff0a761386079ea0cb99c8524695cac1
 
-# promise
+# >=3.4.0.3 graphene-django
+singledispatch==3.4.0.3 \
+    --hash=sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8 \
+    --hash=sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
+
+# >=2.1 graphene-django
+# >=2.2 graphql-relay
+promise==2.2 \
+    --hash=sha256:97d9394113f175df5d792546cd7fa80f479e2de49521e62117412b58343f0a80 \
+    --hash=sha256:ac2b643c4cbb8e74a04fb2620fffb1a031aa612da5bac2b35cebcd664dd1e60b
+
+# >=3.6.4 promise
 # python-binary-memcached
-typing==3.6.2 \
-    --hash=sha256:349b1f9c109c84b53ac79ac1d822eaa68fc91d63b321bd9392df15098f746f53 \
-    --hash=sha256:63a8255fe7c6269916baa440eb9b6a67139b0b97a01af632e7bd2842e1e02f15 \
-    --hash=sha256:d514bd84b284dd3e844f0305ac07511f097e325171f6cc4a20878d11ad771849
+typing==3.6.4 \
+    --hash=sha256:3a887b021a77b292e151afb75323dea88a7bc1b3dfa92176cff8e44c8b68bddf \
+    --hash=sha256:b2c689d54e1144bbcfd191b0832980a21c2dbcf7b5ff7a66248a60c90e951eb8 \
+    --hash=sha256:d400a9344254803a2368533e4533a4200d21eb7b6b729c173bc38201a74db3f2
 
 # jsonschema
 functools32==3.2.3-2 \

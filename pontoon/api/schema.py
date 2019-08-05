@@ -24,6 +24,7 @@ class Stats(object):
 
 class Tag(DjangoObjectType):
     class Meta:
+        convert_choices_to_enum = False
         model = TagModel
         only_fields = (
             'slug',
