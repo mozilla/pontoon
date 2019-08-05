@@ -37,6 +37,7 @@ type State = {|
     search: string,
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
+    tags: { [string]: boolean },
 |};
 
 
@@ -69,10 +70,18 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
+        const tags = this.getInitialTags();
+        if (props.parameters.tag) {
+            props.parameters.tag.split(',').forEach(f => {
+                tags[f] = true;
+            });
+        }
+
         this.state = {
             search: search ? search.toString() : '',
             statuses,
             extras,
+            tags,
         };
 
         this.searchInput = React.createRef();
@@ -112,12 +121,22 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return extras;
     }
 
+    getInitialTags() {
+        const tags = {};
+        this.props.project.tags.forEach(t => tags[t.slug] = false);
+        return tags;
+    }
+
     getSelectedStatuses(): Array<string> {
         return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
     }
 
     getSelectedExtras(): Array<string> {
         return Object.keys(this.state.extras).filter(e => this.state.extras[e]);
+    }
+
+    getSelectedTags(): Array<string> {
+        return Object.keys(this.state.tags).filter(t => this.state.tags[t]);
     }
 
     toggleFilter = (filter: string) => {
@@ -127,6 +146,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
         else if (filter in this.state.extras) {
             type = 'extras';
+        }
+        else if (filter in this.state.tags) {
+            type = 'tags';
         }
 
         this.setState(state => {
@@ -142,6 +164,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     applySingleFilter = (filter: string, callback?: () => void) => {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
+        const tags = this.getInitialTags();
 
         if (filter !== 'all') {
             if (filter in statuses) {
@@ -150,13 +173,24 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             else if (filter in extras) {
                 extras[filter] = true;
             }
+            else if (filter in tags) {
+                tags[filter] = true;
+            }
         }
 
         if (callback) {
-            this.setState({ statuses, extras }, callback);
+            this.setState({
+                statuses,
+                extras,
+                tags,
+            }, callback);
         }
         else {
-            this.setState({ statuses, extras });
+            this.setState({
+                statuses,
+                extras,
+                tags,
+            });
         }
     }
 
@@ -164,6 +198,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.setState({
             statuses: this.getInitialStatuses(),
             extras: this.getInitialExtras(),
+            tags: this.getInitialTags(),
         });
     }
 
@@ -200,6 +235,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const extras = this.getSelectedExtras();
         const extra = extras.join(',');
 
+        const tags = this.getSelectedTags();
+        const tag = tags.join(',');
+
         this.props.dispatch(
             navigation.actions.update(
                 this.props.router,
@@ -207,6 +245,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                     search: this.state.search,
                     status,
                     extra,
+                    tag,
                 },
             )
         );
@@ -232,16 +271,24 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             f => extras.includes(f.slug)
         );
 
+        const tags = this.getSelectedTags();
+        const selectedTags = this.props.project.tags.filter(
+            f => tags.includes(f.slug)
+        );
+
         let selectedFilters = [].concat(
             selectedStatuses,
             selectedExtras,
+            selectedTags,
         );
 
         if (!selectedFilters.length) {
             selectedFilters = [{ title: 'All' }];
         }
 
-        const selectedFiltersString = selectedFilters.map(item => item.title).join(', ');
+        const selectedFiltersString = selectedFilters.map(
+            item => item.title || item.name
+        ).join(', ');
 
         return `Search in ${selectedFiltersString}`;
     }
@@ -266,8 +313,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             <FiltersPanel
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
+                tags={ this.state.tags }
+                tags_data={ project.tags }
                 stats={ stats }
-                tags={ project.tags }
                 applySingleFilter={ this.applySingleFilter }
                 resetFilters={ this.resetFilters }
                 toggleFilter={ this.toggleFilter }

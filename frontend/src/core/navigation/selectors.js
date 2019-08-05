@@ -14,6 +14,7 @@ export type NavigationParams = {|
     search: ?string,
     status: ?string,
     extra: ?string,
+    tag: ?string,
 |};
 
 /**
@@ -40,6 +41,7 @@ export const getNavigationParams: Function = createSelector(
         const search = params.get('search');
         const status = params.get('status');
         const extra = params.get('extra');
+        const tag = params.get('tag');
 
         return {
             locale,
@@ -49,6 +51,7 @@ export const getNavigationParams: Function = createSelector(
             search,
             status,
             extra,
+            tag,
         };
     }
 );

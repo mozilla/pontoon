@@ -17,8 +17,9 @@ import type { Stats } from 'core/stats';
 type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
+    tags: { [string]: boolean },
+    tags_data: Array<Tag>,
     stats: Stats,
-    tags: Array<Tag>,
     applySingleFilter: (filter: ?string, callback?: () => void) => void,
     resetFilters: () => void,
     toggleFilter: (string) => void,
@@ -83,30 +84,41 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, stats, tags } = this.props;
+        const { statuses, extras, tags, tags_data, stats } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
-        const selectedFiltersCount = selectedExtras.length + selectedStatuses.length;
+        const selectedTags = Object.keys(tags).filter(e => tags[e]);
+        const selectedFiltersCount = (
+            selectedExtras.length +
+            selectedStatuses.length +
+            selectedTags.length
+        );
 
         // If there are zero or several selected statuses, show the "All" icon.
-        let reducedStatus = { slug: 'all' };
+        let filterIcon = 'all';
 
         // Otherwise show the approriate status icon.
         if (selectedFiltersCount === 1) {
             const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
             if (selectedStatus) {
-                reducedStatus = selectedStatus;
+                filterIcon = selectedStatus.slug;
             }
+
             const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
             if (selectedExtra) {
-                reducedStatus = selectedExtra;
+                filterIcon = selectedExtra.slug;
+            }
+
+            const selectedTag = tags_data.find(f => f.slug === selectedTags[0]);
+            if (selectedTag) {
+                filterIcon = 'tag';
             }
         }
 
         return <div className="filters-panel">
             <div
-                className={ `visibility-switch ${reducedStatus.slug}` }
+                className={ `visibility-switch ${filterIcon}` }
                 onClick={ this.toggleVisibility }
             >
                 <span className="status fa"></span>
@@ -142,13 +154,18 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { tags.length === 0 ? null : <>
+                    { tags_data.length === 0 ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
 
-                        { tags.map((tag, i) => {
+                        { tags_data.map((tag, i) => {
+                            const selected = tags[tag.slug];
+
                             let className = tag.slug;
+                            if (selected) {
+                                className += ' selected';
+                            }
 
                             return <li
                                 className={ `tag ${className}` }
@@ -161,8 +178,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 ></span>
                                 <span className="title">{ tag.name }</span>
                                 <span className="priority">
-                                    { [...Array(5).keys()].map((index) => {
-                                        console.log();
+                                    { [1, 2, 3, 4, 5].map((index) => {
                                         const active = index < tag.priority ? 'active' : '';
                                         return <span
                                             className={ `fa fa-star ${active}` }

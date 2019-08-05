@@ -98,7 +98,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.resource !== current.resource ||
             previous.search !== current.search ||
             previous.status !== current.status ||
-            previous.extra !== current.extra
+            previous.extra !== current.extra ||
+            previous.tag !== current.tag
         ) {
             this.props.dispatch(entities.actions.reset());
         }
@@ -123,7 +124,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         if (key === 65 && !event.altKey && event.ctrlKey && event.shiftKey) {
             event.preventDefault();
 
-            const { locale, project, resource, search, status, extra } = this.props.parameters;
+            const {
+                locale,
+                project,
+                resource,
+                search,
+                status,
+                extra,
+                tag,
+            } = this.props.parameters;
 
             this.props.dispatch(
                 batchactions.actions.selectAll(
@@ -133,6 +142,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                     search,
                     status,
                     extra,
+                    tag,
                 )
             );
         }
@@ -255,7 +265,16 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getMoreEntities = () => {
         const props = this.props;
-        const { locale, project, resource, entity, search, status, extra } = props.parameters;
+        const {
+            locale,
+            project,
+            resource,
+            entity,
+            search,
+            status,
+            extra,
+            tag,
+        } = props.parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
         // More info at:
@@ -282,6 +301,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 search,
                 status,
                 extra,
+                tag,
             )
         );
     }

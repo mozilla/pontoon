@@ -66,7 +66,15 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     selectAllEntities = () => {
-        const { locale, project, resource, search, status, extra } = this.props.parameters;
+        const {
+            locale,
+            project,
+            resource,
+            search,
+            status,
+            extra,
+            tag,
+        } = this.props.parameters;
 
         this.props.dispatch(
             batchactions.actions.selectAll(
@@ -76,6 +84,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 search,
                 status,
                 extra,
+                tag,
             )
         );
     }
