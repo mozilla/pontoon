@@ -119,10 +119,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
     toggleFilter = (filter: string) => {
         let type;
-        if (filter in this.getInitialStatuses()) {
+        if (filter in this.state.statuses) {
             type = 'statuses';
         }
-        else if (filter in this.getInitialExtras()) {
+        else if (filter in this.state.extras) {
             type = 'extras';
         }
 
@@ -219,12 +219,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     composePlaceholder() {
+        const statuses = this.getSelectedStatuses();
         const selectedStatuses = FILTERS_STATUS.filter(
-            f => this.getSelectedStatuses().includes(f.slug)
+            f => statuses.includes(f.slug)
         );
 
+        const extras = this.getSelectedExtras();
         const selectedExtras = FILTERS_EXTRA.filter(
-            f => this.getSelectedExtras().includes(f.slug)
+            f => extras.includes(f.slug)
         );
 
         let selectedFilters = [].concat(

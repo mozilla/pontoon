@@ -36,15 +36,15 @@ describe('<FiltersPanelBase>', () => {
             let extras = {};
             const stats = {};
 
-            const set = {
+            const value = {
                 [filter.slug]: true,
             };
 
             if (FILTERS_STATUS.includes(filter)) {
-                statuses = set;
+                statuses = value;
             }
             else if (FILTERS_EXTRA.includes(filter)) {
-                extras = set;
+                extras = value;
             }
 
             const wrapper = shallow(
@@ -114,15 +114,15 @@ describe('<FiltersPanelBase>', () => {
             let extras = {};
             const stats = {};
 
-            const set = {
+            const value = {
                 [filter.slug]: true,
             };
 
             if (FILTERS_STATUS.includes(filter)) {
-                statuses = set;
+                statuses = value;
             }
             else if (FILTERS_EXTRA.includes(filter)) {
-                extras = set;
+                extras = value;
             }
 
             applySingleFilter = sinon.spy()
@@ -150,15 +150,15 @@ describe('<FiltersPanelBase>', () => {
             let extras = {};
             const stats = {};
 
-            const set = {
+            const value = {
                 [filter.slug]: false,
             };
 
             if (FILTERS_STATUS.includes(filter)) {
-                statuses = set;
+                statuses = value;
             }
             else if (FILTERS_EXTRA.includes(filter)) {
-                extras = set;
+                extras = value;
             }
 
             toggleFilter = sinon.spy()
