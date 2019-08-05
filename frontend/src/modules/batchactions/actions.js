@@ -199,6 +199,7 @@ export function selectAll(
     resource: string,
     search: ?string,
     status: ?string,
+    extra: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request('select-all'));
@@ -212,6 +213,7 @@ export function selectAll(
             null,
             search,
             status,
+            extra,
             true,
         );
 

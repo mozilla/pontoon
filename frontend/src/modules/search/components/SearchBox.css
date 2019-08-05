@@ -62,10 +62,6 @@
     font-size: 19px;
 }
 
-.search-box .unreviewed .status:before {
-    font-size: 18px;
-}
-
 .search-box .translated .status:before {
     color: #7BC876;
 }
@@ -89,6 +85,22 @@
 .search-box .unreviewed .status:before {
     color: #4FC4F6;
     content: "";
+    font-size: 18px;
+}
+
+.search-box .unreviewed.selected .status:before,
+.search-box .unreviewed .status:hover:before {
+  font-size: 16px;
+}
+
+.search-box .unchanged .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+
+.search-box .rejected .status:before {
+    color: #AAAAAA;
+    content: "";
 }
 
 .search-box .missing:hover .status:before {

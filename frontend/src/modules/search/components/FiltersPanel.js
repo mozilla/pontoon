@@ -6,7 +6,7 @@ import { Localized } from 'fluent-react';
 
 import './FiltersPanel.css';
 
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
@@ -15,10 +15,11 @@ import type { Stats } from 'core/stats';
 
 type Props = {|
     statuses: { [string]: boolean },
+    extras: { [string]: boolean },
     stats: Stats,
-    resetStatuses: () => void,
-    setSingleStatus: (status: ?string, callback?: () => void) => void,
-    toggleStatus: (string) => void,
+    applySingleFilter: (filter: ?string, callback?: () => void) => void,
+    resetFilters: () => void,
+    toggleFilter: (string) => void,
     update: () => void,
 |};
 
@@ -53,25 +54,21 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
-    resetFilters = () => {
-        this.props.resetStatuses();
-    }
-
-    createSelectStatus = (status: string) => {
-        if (status === 'all') {
+    createToggleFilter = (filter: string) => {
+        if (filter === 'all') {
             return null;
         }
 
         return (event: SyntheticInputEvent<>) => {
             event.stopPropagation();
-            this.props.toggleStatus(status);
+            this.props.toggleFilter(filter);
         };
     }
 
-    createSetStatus(status: string) {
+    createApplySingleFilter(filter: string) {
         return () => {
             this.toggleVisibility();
-            this.props.setSingleStatus(status, this.props.update);
+            this.props.applySingleFilter(filter, this.props.update);
         };
     }
 
@@ -84,19 +81,24 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, stats } = this.props;
+        const { statuses, extras, stats } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
-        const selectedStatusesCount = selectedStatuses.length;
+        const selectedExtras = Object.keys(extras).filter(e => extras[e]);
+        const selectedFiltersCount = selectedExtras.length + selectedStatuses.length;
 
         // If there are zero or several selected statuses, show the "All" icon.
         let reducedStatus = { slug: 'all' };
 
         // Otherwise show the approriate status icon.
-        if (selectedStatusesCount === 1) {
-            const selectedStatus = FILTERS_STATUS.find(s => s.slug === selectedStatuses[0]);
+        if (selectedFiltersCount === 1) {
+            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
             if (selectedStatus) {
                 reducedStatus = selectedStatus;
+            }
+            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
+            if (selectedExtra) {
+                reducedStatus = selectedExtra;
             }
         }
 
@@ -109,7 +111,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             </div>
             { !this.state.visible ? null : <div className="menu">
                 <ul>
-                    <li className="horizontal-separator">Translation Status</li>
+                    <Localized id="search-FiltersPanel--heading-status">
+                        <li className="horizontal-separator">Translation Status</li>
+                    </Localized>
+
                     { FILTERS_STATUS.map((status, i) => {
                         const count = status.stat ? stats[status.stat] : stats[status.slug];
                         const selected = statuses[status.slug];
@@ -122,11 +127,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createSetStatus(status.slug) }
+                            onClick={ this.createApplySingleFilter(status.slug) }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createSelectStatus(status.slug) }
+                                onClick={ this.createToggleFilter(status.slug) }
                             ></span>
                             <span className="title">{ status.title }</span>
                             <span className="count">
@@ -134,8 +139,33 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             </span>
                         </li>
                     }) }
+
+                    <Localized id="search-FiltersPanel--heading-extra">
+                        <li className="horizontal-separator">Extra Filters</li>
+                    </Localized>
+
+                    { FILTERS_EXTRA.map((extra, i) => {
+                        const selected = extras[extra.slug];
+
+                        let className = extra.slug;
+                        if (selected) {
+                            className += ' selected';
+                        }
+
+                        return <li
+                            className={ className }
+                            key={ i }
+                            onClick={ this.createApplySingleFilter(extra.slug) }
+                        >
+                            <span
+                                className="status fa"
+                                onClick={ this.createToggleFilter(extra.slug) }
+                            ></span>
+                            <span className="title">{ extra.title }</span>
+                        </li>
+                    }) }
                 </ul>
-                { selectedStatusesCount === 0 ? null :
+                { selectedFiltersCount === 0 ? null :
                 <div className="toolbar clearfix">
                     <Localized
                         id="search-FiltersPanel--clear-selection"
@@ -144,7 +174,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     >
                         <button
                             title="Uncheck selected filters"
-                            onClick={ this.resetFilters }
+                            onClick={ this.props.resetFilters }
                             className="clear-selection"
                         >
                             <i className="fa fa-times fa-lg"></i>
@@ -156,7 +186,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         attrs={ { title: true } }
                         glyph={ <i className="fa fa-check fa-lg"></i> }
                         stress={ <span className="applied-count"></span> }
-                        $count={ selectedStatusesCount }
+                        $count={ selectedFiltersCount }
                     >
                         <button
                             title="Apply Selected Filters"
