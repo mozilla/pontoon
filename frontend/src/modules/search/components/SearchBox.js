@@ -314,7 +314,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 tags={ this.state.tags }
-                tags_data={ project.tags }
+                tagsData={ project.tags }
                 stats={ stats }
                 applySingleFilter={ this.applySingleFilter }
                 resetFilters={ this.resetFilters }

@@ -18,7 +18,7 @@ type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
-    tags_data: Array<Tag>,
+    tagsData: Array<Tag>,
     stats: Stats,
     applySingleFilter: (filter: ?string, callback?: () => void) => void,
     resetFilters: () => void,
@@ -84,7 +84,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, tags_data, stats } = this.props;
+        const { statuses, extras, tags, tagsData, stats } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
@@ -110,7 +110,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 filterIcon = selectedExtra.slug;
             }
 
-            const selectedTag = tags_data.find(f => f.slug === selectedTags[0]);
+            const selectedTag = tagsData.find(f => f.slug === selectedTags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
             }
@@ -154,12 +154,12 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { tags_data.length === 0 ? null : <>
+                    { tagsData.length === 0 ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
 
-                        { tags_data.map((tag, i) => {
+                        { tagsData.map((tag, i) => {
                             const selected = tags[tag.slug];
 
                             let className = tag.slug;

@@ -16,6 +16,11 @@ const FILTERS = [].concat(
 );
 
 
+const PROJECT = {
+    tags: [],
+}
+
+
 describe('<SearchBoxBase>', () => {
     beforeAll(() => {
         sinon.stub(actions, 'update').returns({ type: 'whatever'});
@@ -33,7 +38,7 @@ describe('<SearchBoxBase>', () => {
         const params = {
             search: '',
         };
-        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
 
         expect(wrapper.find('input#search')).toHaveLength(1);
     });
@@ -49,7 +54,7 @@ describe('<SearchBoxBase>', () => {
                 params = { extra: filter.slug };
             }
 
-            const wrapper = shallow(<SearchBoxBase parameters={ params } project={ {} } />);
+            const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
         }
     });
@@ -58,7 +63,7 @@ describe('<SearchBoxBase>', () => {
         const params = {
             search: 'search',
         };
-        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
 
         wrapper.setProps({
             parameters: {
@@ -70,7 +75,7 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('returns correct list of selected statuses', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
 
         wrapper.setState({
             statuses: {
@@ -85,7 +90,7 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('returns correct list of selected extras', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
 
         wrapper.setState({
             extras: {
@@ -99,7 +104,7 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('toggles a filter', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
         wrapper.setState({ statuses: { missing: false } });
         expect(wrapper.state('statuses').missing).toBeFalsy();
 
@@ -108,7 +113,7 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('sets a single filter', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
 
         wrapper.setState({
             statuses: {
@@ -128,7 +133,7 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('resets to initial statuses', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ {} } />);
+        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
 
         wrapper.setState({
             statuses: {
@@ -153,7 +158,7 @@ describe('<SearchBoxBase>', () => {
     it('sets status to null when "all" is selected', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
-            project={ {} }
+            project={ PROJECT }
             router={ {} }
             dispatch={ () => {} }
         />);
@@ -161,20 +166,21 @@ describe('<SearchBoxBase>', () => {
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: null, extra: '', search: '' })
+            actions.update.calledWith({}, { status: null, extra: '', tag: '', search: '' })
         ).toBeTruthy();
     });
 
     it('sets correct status', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
-            project={ {} }
+            project={ PROJECT }
             router={ {} }
             dispatch={ () => {} }
         />);
         wrapper.setState({
             statuses: { missing: true, warnings: true },
-            extras: { unchanged: true }
+            extras: { unchanged: true },
+            tags: { browser: true },
         });
 
         wrapper.instance()._update();
@@ -182,6 +188,7 @@ describe('<SearchBoxBase>', () => {
             actions.update.calledWith({}, {
                 status: 'missing,warnings',
                 extra: 'unchanged',
+                tag: 'browser',
                 search: '',
             })
         ).toBeTruthy();
@@ -225,7 +232,7 @@ describe('<SearchBox>', () => {
         const params = {
             search: '',
         };
-        const wrapper = mount(<SearchBoxBase parameters={ params } project={ {} } />);
+        const wrapper = mount(<SearchBoxBase parameters={ params } project={ PROJECT } />);
         const searchInput = wrapper.instance().searchInput;
 
         const focusMock = sinon.spy(searchInput.current, 'focus');
