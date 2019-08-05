@@ -3,6 +3,7 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
+export type { Tag } from './actions';
 export type { ProjectState } from './reducer';
 
 

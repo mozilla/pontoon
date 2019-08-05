@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce';
 import './SearchBox.css';
 
 import * as navigation from 'core/navigation';
+import * as project from 'core/project';
 import { NAME as STATS_NAME } from 'core/stats';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
@@ -14,12 +15,14 @@ import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 import FiltersPanel from './FiltersPanel';
 
 import type { NavigationParams } from 'core/navigation';
+import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
     parameters: NavigationParams,
+    project: ProjectState,
     stats: Stats,
     router: Object,
     unsavedchanges: UnsavedChangesState,
@@ -244,7 +247,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     render() {
-        const { stats } = this.props;
+        const { project, stats } = this.props;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -264,6 +267,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 stats={ stats }
+                tags={ project.tags }
                 applySingleFilter={ this.applySingleFilter }
                 resetFilters={ this.resetFilters }
                 toggleFilter={ this.toggleFilter }
@@ -277,6 +281,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 const mapStateToProps = (state: Object): Props => {
     return {
         parameters: navigation.selectors.getNavigationParams(state),
+        project: state[project.NAME],
         stats: state[STATS_NAME],
         router: state.router,
         unsavedchanges: state[unsavedchanges.NAME],

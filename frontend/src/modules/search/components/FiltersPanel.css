@@ -121,20 +121,38 @@
     position: relative;
 }
 
+.filters-panel .menu li .count,
+.filters-panel .menu li .priority {
+    margin-left: 5px;
+    padding: 0 5px;
+    position: absolute;
+}
+
+.filters-panel .menu li .count{
+    background: #3F4752;
+    border-radius: 3px;
+    color: #CCCCCC;
+    right: 4px;
+    top: 4px;
+}
+
 .filters-panel .menu li:hover .count {
     background: #4D5967;
     color: #CCCCCC;
 }
 
-.filters-panel .menu li .count {
-    background: #3F4752;
-    border-radius: 3px;
-    color: #CCCCCC;
-    margin-left: 5px;
-    padding: 0 5px;
-    position: absolute;
-    right: 4px;
-    top: 4px;
+.filters-panel .menu li .priority {
+    right: 0;
+    top: 6px;
+}
+
+.filters-panel .menu li .priority .fa-star {
+    color: #637283;
+    float: left;
+}
+
+.filters-panel .menu li .priority .fa-star.active {
+    color: #7BC876;
 }
 
 .filters-panel .menu li:not(.selected):not(.all) .status:hover:before {

@@ -10,6 +10,7 @@ import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
+import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
 
 
@@ -17,6 +18,7 @@ type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     stats: Stats,
+    tags: Array<Tag>,
     applySingleFilter: (filter: ?string, callback?: () => void) => void,
     resetFilters: () => void,
     toggleFilter: (string) => void,
@@ -81,7 +83,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, stats } = this.props;
+        const { statuses, extras, stats, tags } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
@@ -139,6 +141,38 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             </span>
                         </li>
                     }) }
+
+                    { tags.length === 0 ? null : <>
+                        <Localized id="search-FiltersPanel--heading-tags">
+                            <li className="horizontal-separator">Tags</li>
+                        </Localized>
+
+                        { tags.map((tag, i) => {
+                            let className = tag.slug;
+
+                            return <li
+                                className={ `tag ${className}` }
+                                key={ i }
+                                onClick={ this.createApplySingleFilter(tag.slug) }
+                            >
+                                <span
+                                    className="status fa"
+                                    onClick={ this.createToggleFilter(tag.slug) }
+                                ></span>
+                                <span className="title">{ tag.name }</span>
+                                <span className="priority">
+                                    { [...Array(5).keys()].map((index) => {
+                                        console.log();
+                                        const active = index < tag.priority ? 'active' : '';
+                                        return <span
+                                            className={ `fa fa-star ${active}` }
+                                            key={ index }
+                                        ></span>;
+                                    }) }
+                                </span>
+                            </li>
+                        }) }
+                    </>}
 
                     <Localized id="search-FiltersPanel--heading-extra">
                         <li className="horizontal-separator">Extra Filters</li>

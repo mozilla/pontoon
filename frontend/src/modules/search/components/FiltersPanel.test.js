@@ -17,11 +17,13 @@ describe('<FiltersPanelBase>', () => {
         const statuses = {};
         const extras = {};
         const stats = {};
+        const tags = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
             />
         );
 
@@ -35,6 +37,7 @@ describe('<FiltersPanelBase>', () => {
             let statuses = {};
             let extras = {};
             const stats = {};
+            const tags = [];
 
             const value = {
                 [filter.slug]: true,
@@ -52,6 +55,7 @@ describe('<FiltersPanelBase>', () => {
                     statuses={ statuses }
                     extras={ extras }
                     stats={ stats }
+                    tags={ tags }
                 />
             );
 
@@ -74,12 +78,14 @@ describe('<FiltersPanelBase>', () => {
         };
 
         const stats = {};
+        const tags = [];
 
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
             />
         );
 
@@ -113,6 +119,7 @@ describe('<FiltersPanelBase>', () => {
             let statuses = {};
             let extras = {};
             const stats = {};
+            const tags = [];
 
             const value = {
                 [filter.slug]: true,
@@ -129,9 +136,10 @@ describe('<FiltersPanelBase>', () => {
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
+                    stats={ stats }
+                    tags={ tags }
                     applySingleFilter= { applySingleFilter }
                 />
             );
@@ -149,6 +157,7 @@ describe('<FiltersPanelBase>', () => {
             let statuses = {};
             let extras = {};
             const stats = {};
+            const tags = [];
 
             const value = {
                 [filter.slug]: false,
@@ -165,9 +174,10 @@ describe('<FiltersPanelBase>', () => {
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
+                    tags={ tags }
+                    stats={ stats }
                     toggleFilter= { toggleFilter }
                 />
             );
@@ -197,11 +207,13 @@ describe('<FiltersPanelBase>', () => {
             rejected: false,
         };
         const stats = {};
+        const tags = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
             />
         );
 
@@ -220,11 +232,13 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const stats = {};
+        const tags = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
             />
         );
 
@@ -244,11 +258,13 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const stats = {};
+        const tags = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
                 resetFilters={ resetFilters }
             />
         );
@@ -271,11 +287,13 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const stats = {};
+        const tags = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 stats={ stats }
+                tags={ tags }
                 update={ update }
             />
         );
