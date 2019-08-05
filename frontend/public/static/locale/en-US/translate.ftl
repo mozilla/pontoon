@@ -340,6 +340,9 @@ resource-ResourceMenu--all-projects = All Projects
 ## Search
 ## The search bar and filters menu.
 
+search-FiltersPanel--heading-status = Translation Status
+search-FiltersPanel--heading-extra = Extra Filters
+
 search-FiltersPanel--clear-selection = <glyph></glyph>Clear
     .title = Uncheck selected filters
 

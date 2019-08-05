@@ -77,6 +77,7 @@ export function get(
     entity: ?string,
     search: ?string,
     status: ?string,
+    extra: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request());
@@ -90,6 +91,7 @@ export function get(
             entity,
             search,
             status,
+            extra,
         );
         dispatch(receive(content.entities, content.has_next));
         dispatch(stats.actions.update(content.stats));

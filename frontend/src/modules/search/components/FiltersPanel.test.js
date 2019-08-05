@@ -3,15 +3,26 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { FiltersPanelBase } from './FiltersPanel';
-import { FILTERS_STATUS } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+
+
+const FILTERS = [].concat(
+    FILTERS_STATUS,
+    FILTERS_EXTRA,
+);
 
 
 describe('<FiltersPanelBase>', () => {
     it('shows a panel with filters on click', () => {
         const statuses = {};
+        const extras = {};
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         expect(wrapper.find('div.menu')).toHaveLength(0);
@@ -20,14 +31,28 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('has the correct icon based on parameters', () => {
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
-                [filter.slug]: true,
-            };
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
             const stats = {};
 
+            const value = {
+                [filter.slug]: true,
+            };
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = value;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = value;
+            }
+
             const wrapper = shallow(
-                <FiltersPanelBase statuses={ statuses } stats={ stats } />
+                <FiltersPanelBase
+                    statuses={ statuses }
+                    extras={ extras }
+                    stats={ stats }
+                />
             );
 
             expect(
@@ -36,72 +61,114 @@ describe('<FiltersPanelBase>', () => {
         }
     });
 
-    it('correctly sets statuses as selected', () => {
+    it('correctly sets filter as selected', () => {
         const statuses = {
             warnings: true,
             errors: false,
             missing: true,
         };
+
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
+
         const stats = {};
+
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
 
-        for (let filter of FILTERS_STATUS) {
-            if (statuses[filter.slug]) {
-                expect(
-                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
-                ).toBeTruthy();
+        for (let filter of FILTERS) {
+            let isFilterSelected;
+
+            if (FILTERS_STATUS.includes(filter)) {
+                isFilterSelected = statuses[filter.slug];
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                isFilterSelected = extras[filter.slug];
+            }
+
+            const isClassSet = wrapper.find(`.menu .${filter.slug}`).hasClass('selected');
+
+            if (isFilterSelected) {
+                expect(isClassSet).toBeTruthy();
             }
             else {
-                expect(
-                    wrapper.find(`.menu .${filter.slug}`).hasClass('selected')
-                ).toBeFalsy();
+                expect(isClassSet).toBeFalsy();
             }
         }
     });
 
-    it('sets a single status on click on a status title', () => {
-        let setSingleStatus;
+    it('applies a single filter on click on a filter title', () => {
+        let applySingleFilter;
 
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
+            const stats = {};
+
+            const value = {
                 [filter.slug]: true,
             };
-            const stats = {};
-            setSingleStatus = sinon.spy()
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = value;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = value;
+            }
+
+            applySingleFilter = sinon.spy()
 
             const wrapper = shallow(
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
-                    setSingleStatus= { setSingleStatus }
+                    extras={ extras }
+                    applySingleFilter= { applySingleFilter }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
             wrapper.find(`.menu .${filter.slug}`).simulate('click');
 
-            expect(setSingleStatus.calledWith(filter.slug)).toBeTruthy();
+            expect(applySingleFilter.calledWith(filter.slug)).toBeTruthy();
         }
     });
 
-    it('selects a status on click on a status icon', () => {
-        let toggleStatus;
+    it('toggles a filter on click on a filter status icon', () => {
+        let toggleFilter;
 
-        for (let filter of FILTERS_STATUS) {
-            const statuses = {
+        for (let filter of FILTERS) {
+            let statuses = {};
+            let extras = {};
+            const stats = {};
+
+            const value = {
                 [filter.slug]: false,
             };
-            const stats = {};
-            toggleStatus = sinon.spy()
+
+            if (FILTERS_STATUS.includes(filter)) {
+                statuses = value;
+            }
+            else if (FILTERS_EXTRA.includes(filter)) {
+                extras = value;
+            }
+
+            toggleFilter = sinon.spy()
 
             const wrapper = shallow(
                 <FiltersPanelBase
                     stats={ stats }
                     statuses={ statuses }
-                    toggleStatus= { toggleStatus }
+                    extras={ extras }
+                    toggleFilter= { toggleFilter }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
@@ -111,10 +178,10 @@ describe('<FiltersPanelBase>', () => {
             );
 
             if (filter.slug === 'all') {
-                expect(toggleStatus.called).toBeFalsy();
+                expect(toggleFilter.called).toBeFalsy();
             }
             else {
-                expect(toggleStatus.calledWith(filter.slug)).toBeTruthy();
+                expect(toggleFilter.calledWith(filter.slug)).toBeTruthy();
             }
         }
     });
@@ -125,9 +192,17 @@ describe('<FiltersPanelBase>', () => {
             errors: false,
             missing: false,
         };
+        const extras = {
+            unchanged: false,
+            rejected: false,
+        };
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -140,9 +215,17 @@ describe('<FiltersPanelBase>', () => {
             errors: true,
             missing: true,
         };
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
-            <FiltersPanelBase statuses={ statuses } stats={ stats } />
+            <FiltersPanelBase
+                statuses={ statuses }
+                extras={ extras }
+                stats={ stats }
+            />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -150,25 +233,30 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('resets selected filters on click on the Clear button', () => {
-        const resetStatuses = sinon.spy();
+        const resetFilters = sinon.spy();
 
         const statuses = {
             warnings: false,
             errors: true,
         };
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
+                extras={ extras }
                 stats={ stats }
-                resetStatuses={ resetStatuses }
+                resetFilters={ resetFilters }
             />
         );
 
         wrapper.find('.visibility-switch').simulate('click');
         wrapper.find('.toolbar .clear-selection').simulate('click');
 
-        expect(resetStatuses.called).toBeTruthy();
+        expect(resetFilters.called).toBeTruthy();
     });
 
     it('applies selected filters on click on the Apply button', () => {
@@ -178,10 +266,15 @@ describe('<FiltersPanelBase>', () => {
             warnings: false,
             errors: true,
         };
+        const extras = {
+            unchanged: false,
+            rejected: true,
+        };
         const stats = {};
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
+                extras={ extras }
                 stats={ stats }
                 update={ update }
             />
