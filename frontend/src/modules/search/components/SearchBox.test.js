@@ -108,7 +108,7 @@ describe('<SearchBoxBase>', () => {
         wrapper.setState({ statuses: { missing: false } });
         expect(wrapper.state('statuses').missing).toBeFalsy();
 
-        wrapper.instance().toggleFilter('missing');
+        wrapper.instance().toggleFilter('missing', 'statuses');
         expect(wrapper.state('statuses').missing).toBeTruthy();
     });
 
@@ -126,7 +126,7 @@ describe('<SearchBoxBase>', () => {
         expect(wrapper.state('statuses').errors).toBeFalsy();
         expect(wrapper.state('statuses').missing).toBeFalsy();
 
-        wrapper.instance().applySingleFilter('missing');
+        wrapper.instance().applySingleFilter('missing', 'statuses');
         expect(wrapper.state('statuses').warnings).toBeFalsy();
         expect(wrapper.state('statuses').errors).toBeFalsy();
         expect(wrapper.state('statuses').missing).toBeTruthy();

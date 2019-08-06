@@ -139,18 +139,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return Object.keys(this.state.tags).filter(t => this.state.tags[t]);
     }
 
-    toggleFilter = (filter: string) => {
-        let type;
-        if (filter in this.state.statuses) {
-            type = 'statuses';
-        }
-        else if (filter in this.state.extras) {
-            type = 'extras';
-        }
-        else if (filter in this.state.tags) {
-            type = 'tags';
-        }
-
+    toggleFilter = (filter: string, type: string) => {
         this.setState(state => {
             return {
                 [type]: {
@@ -161,20 +150,19 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     }
 
-    applySingleFilter = (filter: string, callback?: () => void) => {
+    applySingleFilter = (filter: string, type: string, callback?: () => void) => {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
         const tags = this.getInitialTags();
 
         if (filter !== 'all') {
-            if (filter in statuses) {
-                statuses[filter] = true;
-            }
-            else if (filter in extras) {
-                extras[filter] = true;
-            }
-            else if (filter in tags) {
-                tags[filter] = true;
+            switch (type) {
+                case 'statuses':
+                    statuses[filter] = true;
+                case 'extras':
+                    extras[filter] = true;
+                case 'tags':
+                    tags[filter] = true;
             }
         }
 

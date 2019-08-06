@@ -21,9 +21,9 @@ type Props = {|
     tagsData: Array<Tag>,
     stats: Stats,
     resource: string,
-    applySingleFilter: (filter: ?string, callback?: () => void) => void,
+    applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
     resetFilters: () => void,
-    toggleFilter: (string) => void,
+    toggleFilter: (string, string) => void,
     update: () => void,
 |};
 
@@ -58,21 +58,21 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
-    createToggleFilter = (filter: string) => {
+    createToggleFilter = (filter: string, type: string) => {
         if (filter === 'all') {
             return null;
         }
 
         return (event: SyntheticInputEvent<>) => {
             event.stopPropagation();
-            this.props.toggleFilter(filter);
+            this.props.toggleFilter(filter, type);
         };
     }
 
-    createApplySingleFilter(filter: string) {
+    createApplySingleFilter(filter: string, type: string) {
         return () => {
             this.toggleVisibility();
-            this.props.applySingleFilter(filter, this.props.update);
+            this.props.applySingleFilter(filter, type, this.props.update);
         };
     }
 
@@ -142,11 +142,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createApplySingleFilter(status.slug) }
+                            onClick={ this.createApplySingleFilter(status.slug, 'statuses') }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createToggleFilter(status.slug) }
+                                onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
                             <span className="title">{ status.title }</span>
                             <span className="count">
@@ -171,11 +171,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             return <li
                                 className={ `tag ${className}` }
                                 key={ i }
-                                onClick={ this.createApplySingleFilter(tag.slug) }
+                                onClick={ this.createApplySingleFilter(tag.slug, 'tags') }
                             >
                                 <span
                                     className="status fa"
-                                    onClick={ this.createToggleFilter(tag.slug) }
+                                    onClick={ this.createToggleFilter(tag.slug, 'tags') }
                                 ></span>
                                 <span className="title">{ tag.name }</span>
                                 <span className="priority">
@@ -206,11 +206,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createApplySingleFilter(extra.slug) }
+                            onClick={ this.createApplySingleFilter(extra.slug, 'extras') }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createToggleFilter(extra.slug) }
+                                onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
                             <span className="title">{ extra.title }</span>
                         </li>
