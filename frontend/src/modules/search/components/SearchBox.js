@@ -165,6 +165,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                     break;
                 case 'tags':
                     tags[filter] = true;
+                    break;
+                default:
+                    break;
             }
         }
 
