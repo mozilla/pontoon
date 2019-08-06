@@ -159,8 +159,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             switch (type) {
                 case 'statuses':
                     statuses[filter] = true;
+                    break;
                 case 'extras':
                     extras[filter] = true;
+                    break;
                 case 'tags':
                     tags[filter] = true;
             }
