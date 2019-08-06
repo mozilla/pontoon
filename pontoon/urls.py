@@ -17,10 +17,6 @@ urlpatterns = [
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
     url(r'^en-US(?P<url>.+)$', RedirectView.as_view(url="%(url)s", permanent=True)),
 
-    # Redirect similar locales
-    url(r'^ga/(?P<url>.*)$', RedirectView.as_view(url="/ga-IE/%(url)s", permanent=True)),
-    url(r'^pt/(?P<url>.*)$', RedirectView.as_view(url="/pt-PT/%(url)s", permanent=True)),
-
     # Redirect legacy Aurora projects
     url(
         r'^projects/firefox-aurora/(?P<url>.*)$',
