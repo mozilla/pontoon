@@ -167,7 +167,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                     tags[filter] = true;
                     break;
                 default:
-                    break;
             }
         }
 
