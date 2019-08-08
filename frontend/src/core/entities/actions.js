@@ -79,6 +79,8 @@ export function get(
     status: ?string,
     extra: ?string,
     tag: ?string,
+    author: ?string,
+    time: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request());
@@ -94,6 +96,8 @@ export function get(
             status,
             extra,
             tag,
+            author,
+            time,
         );
         dispatch(receive(content.entities, content.has_next));
         dispatch(stats.actions.update(content.stats));

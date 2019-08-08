@@ -74,6 +74,8 @@ export class BatchActionsBase extends React.Component<InternalProps> {
             status,
             extra,
             tag,
+            author,
+            time,
         } = this.props.parameters;
 
         this.props.dispatch(
@@ -85,6 +87,8 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 status,
                 extra,
                 tag,
+                author,
+                time,
             )
         );
     }
