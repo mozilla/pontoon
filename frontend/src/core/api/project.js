@@ -9,6 +9,11 @@ export default class ProjectAPI extends APIBase {
             project(slug: "${slug}") {
                 name
                 info
+                tags {
+                    name
+                    slug
+                    priority
+                }
             }
         }`;
         const payload = new URLSearchParams();

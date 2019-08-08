@@ -7,15 +7,30 @@ from graphene_django.debug import DjangoDebug
 from pontoon.api.util import get_fields
 
 from pontoon.base.models import (
-    Project as ProjectModel,
     Locale as LocaleModel,
-    ProjectLocale as ProjectLocaleModel
+    Project as ProjectModel,
+    ProjectLocale as ProjectLocaleModel,
+)
+
+from pontoon.tags.models import (
+    Tag as TagModel,
 )
 
 
 class Stats(object):
     missing_strings = graphene.Int()
     complete = graphene.Boolean()
+
+
+class Tag(DjangoObjectType):
+    class Meta:
+        convert_choices_to_enum = False
+        model = TagModel
+        only_fields = (
+            'slug',
+            'name',
+            'priority',
+        )
 
 
 class ProjectLocale(DjangoObjectType, Stats):
@@ -54,9 +69,13 @@ class Project(DjangoObjectType, Stats):
         )
 
     localizations = graphene.List(ProjectLocale)
+    tags = graphene.List(Tag)
 
     def resolve_localizations(obj, _info):
         return obj.project_locale.all()
+
+    def resolve_tags(obj, _info):
+        return obj.tag_set.all()
 
 
 class Locale(DjangoObjectType, Stats):
@@ -127,6 +146,9 @@ class Query(graphene.ObjectType):
 
         if 'project.localizations' in fields:
             qs = qs.prefetch_related('project_locale__locale')
+
+        if 'project.tags' in fields:
+            qs = qs.prefetch_related('tag_set')
 
         if 'project.localizations.locale.localizations' in fields:
             raise Exception('Cyclic queries are forbidden')

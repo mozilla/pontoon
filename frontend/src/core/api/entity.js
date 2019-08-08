@@ -53,6 +53,7 @@ export default class EntityAPI extends APIBase {
         search: ?string,
         status: ?string,
         extra: ?string,
+        tag: ?string,
         pkOnly: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
@@ -85,6 +86,10 @@ export default class EntityAPI extends APIBase {
 
         if (extra) {
             payload.append('extra', extra);
+        }
+
+        if (tag) {
+            payload.append('tag', tag);
         }
 
         if (pkOnly) {

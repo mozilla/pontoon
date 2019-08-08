@@ -7,9 +7,17 @@ export const RECEIVE: 'project/RECEIVE' = 'project/RECEIVE';
 export const REQUEST: 'project/REQUEST' = 'project/REQUEST';
 
 
+export type Tag = {|
+    +slug: string,
+    +name: string,
+    +priority: number,
+|};
+
+
 type Project = {
     name: string,
     info: string,
+    tags: Array<Tag>,
 };
 
 
@@ -33,12 +41,14 @@ export type ReceiveAction = {
     +type: typeof RECEIVE,
     +name: string,
     +info: string,
+    +tags: Array<Tag>,
 };
 export function receive(project: Project): ReceiveAction {
     return {
         type: RECEIVE,
         name: project.name,
         info: project.info,
+        tags: project.tags,
     };
 }
 

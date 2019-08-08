@@ -16,11 +16,15 @@ describe('<FiltersPanelBase>', () => {
     it('shows a panel with filters on click', () => {
         const statuses = {};
         const extras = {};
+        const tags = {};
         const stats = {};
+        const tagsData = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
             />
         );
@@ -31,10 +35,13 @@ describe('<FiltersPanelBase>', () => {
     });
 
     it('has the correct icon based on parameters', () => {
+        const tags = {};
+        const stats = {};
+        const tagsData = [];
+
         for (let filter of FILTERS) {
             let statuses = {};
             let extras = {};
-            const stats = {};
 
             const value = {
                 [filter.slug]: true,
@@ -51,6 +58,8 @@ describe('<FiltersPanelBase>', () => {
                 <FiltersPanelBase
                     statuses={ statuses }
                     extras={ extras }
+                    tags={ tags }
+                    tagsData={ tagsData }
                     stats={ stats }
                 />
             );
@@ -73,12 +82,16 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
 
+        const tags = {};
         const stats = {};
+        const tagsData = [];
 
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
             />
         );
@@ -108,11 +121,13 @@ describe('<FiltersPanelBase>', () => {
 
     it('applies a single filter on click on a filter title', () => {
         let applySingleFilter;
+        const tags = {};
+        const stats = {};
+        const tagsData = [];
 
         for (let filter of FILTERS) {
             let statuses = {};
             let extras = {};
-            const stats = {};
 
             const value = {
                 [filter.slug]: true,
@@ -129,9 +144,11 @@ describe('<FiltersPanelBase>', () => {
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
+                    tags={ tags }
+                    tagsData={ tagsData }
+                    stats={ stats }
                     applySingleFilter= { applySingleFilter }
                 />
             );
@@ -144,11 +161,13 @@ describe('<FiltersPanelBase>', () => {
 
     it('toggles a filter on click on a filter status icon', () => {
         let toggleFilter;
+        const tags = {};
+        const stats = {};
+        const tagsData = [];
 
         for (let filter of FILTERS) {
             let statuses = {};
             let extras = {};
-            const stats = {};
 
             const value = {
                 [filter.slug]: false,
@@ -165,9 +184,11 @@ describe('<FiltersPanelBase>', () => {
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    stats={ stats }
                     statuses={ statuses }
                     extras={ extras }
+                    tags={ tags }
+                    tagsData={ tagsData }
+                    stats={ stats }
                     toggleFilter= { toggleFilter }
                 />
             );
@@ -196,11 +217,15 @@ describe('<FiltersPanelBase>', () => {
             unchanged: false,
             rejected: false,
         };
+        const tags = {};
         const stats = {};
+        const tagsData = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
             />
         );
@@ -219,11 +244,15 @@ describe('<FiltersPanelBase>', () => {
             unchanged: false,
             rejected: true,
         };
+        const tags = {};
         const stats = {};
+        const tagsData = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
             />
         );
@@ -243,11 +272,15 @@ describe('<FiltersPanelBase>', () => {
             unchanged: false,
             rejected: true,
         };
+        const tags = {};
         const stats = {};
+        const tagsData = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
                 resetFilters={ resetFilters }
             />
@@ -270,11 +303,15 @@ describe('<FiltersPanelBase>', () => {
             unchanged: false,
             rejected: true,
         };
+        const tags = {};
         const stats = {};
+        const tagsData = [];
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
+                tags={ tags }
+                tagsData={ tagsData }
                 stats={ stats }
                 update={ update }
             />
