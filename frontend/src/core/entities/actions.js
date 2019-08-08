@@ -78,6 +78,7 @@ export function get(
     search: ?string,
     status: ?string,
     extra: ?string,
+    tag: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request());
@@ -92,6 +93,7 @@ export function get(
             search,
             status,
             extra,
+            tag,
         );
         dispatch(receive(content.entities, content.has_next));
         dispatch(stats.actions.update(content.stats));

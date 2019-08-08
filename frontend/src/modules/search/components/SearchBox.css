@@ -103,6 +103,11 @@
     content: "";
 }
 
+.search-box .tag .status:before {
+    content: "";
+    color: #aaa;
+}
+
 .search-box .missing:hover .status:before {
     color: #4D5967;
 }

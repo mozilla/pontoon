@@ -2,7 +2,7 @@
 
 import { RECEIVE, REQUEST } from './actions';
 
-import type { ReceiveAction, RequestAction } from './actions';
+import type { ReceiveAction, RequestAction, Tag } from './actions';
 
 
 type Action =
@@ -15,6 +15,7 @@ export type ProjectState = {|
     +fetching: boolean,
     +name: string,
     +info: string,
+    +tags: Array<Tag>,
 |};
 
 
@@ -22,6 +23,7 @@ const initial: ProjectState = {
     fetching: false,
     name: '',
     info: '',
+    tags: [],
 };
 
 export default function reducer(
@@ -40,6 +42,7 @@ export default function reducer(
                 fetching: false,
                 name: action.name,
                 info: action.info,
+                tags: action.tags,
             };
         default:
             return state;

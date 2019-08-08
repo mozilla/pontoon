@@ -10,16 +10,20 @@ import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
+import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
 
 
 type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
+    tags: { [string]: boolean },
+    tagsData: Array<Tag>,
     stats: Stats,
-    applySingleFilter: (filter: ?string, callback?: () => void) => void,
+    resource: string,
+    applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
     resetFilters: () => void,
-    toggleFilter: (string) => void,
+    toggleFilter: (string, string) => void,
     update: () => void,
 |};
 
@@ -54,21 +58,21 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
-    createToggleFilter = (filter: string) => {
+    createToggleFilter = (filter: string, type: string) => {
         if (filter === 'all') {
             return null;
         }
 
         return (event: SyntheticInputEvent<>) => {
             event.stopPropagation();
-            this.props.toggleFilter(filter);
+            this.props.toggleFilter(filter, type);
         };
     }
 
-    createApplySingleFilter(filter: string) {
+    createApplySingleFilter(filter: string, type: string) {
         return () => {
             this.toggleVisibility();
-            this.props.applySingleFilter(filter, this.props.update);
+            this.props.applySingleFilter(filter, type, this.props.update);
         };
     }
 
@@ -81,30 +85,41 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, stats } = this.props;
+        const { statuses, extras, tags, tagsData, stats, resource } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
-        const selectedFiltersCount = selectedExtras.length + selectedStatuses.length;
+        const selectedTags = Object.keys(tags).filter(e => tags[e]);
+        const selectedFiltersCount = (
+            selectedExtras.length +
+            selectedStatuses.length +
+            selectedTags.length
+        );
 
         // If there are zero or several selected statuses, show the "All" icon.
-        let reducedStatus = { slug: 'all' };
+        let filterIcon = 'all';
 
         // Otherwise show the approriate status icon.
         if (selectedFiltersCount === 1) {
             const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
             if (selectedStatus) {
-                reducedStatus = selectedStatus;
+                filterIcon = selectedStatus.slug;
             }
+
             const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
             if (selectedExtra) {
-                reducedStatus = selectedExtra;
+                filterIcon = selectedExtra.slug;
+            }
+
+            const selectedTag = tagsData.find(f => f.slug === selectedTags[0]);
+            if (selectedTag) {
+                filterIcon = 'tag';
             }
         }
 
         return <div className="filters-panel">
             <div
-                className={ `visibility-switch ${reducedStatus.slug}` }
+                className={ `visibility-switch ${filterIcon}` }
                 onClick={ this.toggleVisibility }
             >
                 <span className="status fa"></span>
@@ -127,11 +142,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createApplySingleFilter(status.slug) }
+                            onClick={ this.createApplySingleFilter(status.slug, 'statuses') }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createToggleFilter(status.slug) }
+                                onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
                             <span className="title">{ status.title }</span>
                             <span className="count">
@@ -139,6 +154,42 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             </span>
                         </li>
                     }) }
+
+                    { (tagsData.length === 0 || resource !== 'all-resources') ? null : <>
+                        <Localized id="search-FiltersPanel--heading-tags">
+                            <li className="horizontal-separator">Tags</li>
+                        </Localized>
+
+                        { tagsData.map((tag, i) => {
+                            const selected = tags[tag.slug];
+
+                            let className = tag.slug;
+                            if (selected) {
+                                className += ' selected';
+                            }
+
+                            return <li
+                                className={ `tag ${className}` }
+                                key={ i }
+                                onClick={ this.createApplySingleFilter(tag.slug, 'tags') }
+                            >
+                                <span
+                                    className="status fa"
+                                    onClick={ this.createToggleFilter(tag.slug, 'tags') }
+                                ></span>
+                                <span className="title">{ tag.name }</span>
+                                <span className="priority">
+                                    { [1, 2, 3, 4, 5].map((index) => {
+                                        const active = index < tag.priority ? 'active' : '';
+                                        return <span
+                                            className={ `fa fa-star ${active}` }
+                                            key={ index }
+                                        ></span>;
+                                    }) }
+                                </span>
+                            </li>
+                        }) }
+                    </>}
 
                     <Localized id="search-FiltersPanel--heading-extra">
                         <li className="horizontal-separator">Extra Filters</li>
@@ -155,11 +206,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         return <li
                             className={ className }
                             key={ i }
-                            onClick={ this.createApplySingleFilter(extra.slug) }
+                            onClick={ this.createApplySingleFilter(extra.slug, 'extras') }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createToggleFilter(extra.slug) }
+                                onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
                             <span className="title">{ extra.title }</span>
                         </li>
