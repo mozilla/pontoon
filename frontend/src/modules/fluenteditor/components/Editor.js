@@ -9,6 +9,7 @@ import { fluent } from 'core/utils';
 
 import SourceEditor from './SourceEditor';
 import SimpleEditor from './SimpleEditor';
+import RichEditor from './RichEditor';
 
 import type { EditorProps } from 'core/editor';
 
@@ -17,7 +18,7 @@ type State = {|
     // Force using the source editor.
     forceSource: boolean,
     // The type of form to use to show the translation.
-    syntaxType: 'simple' | 'complex',
+    syntaxType: 'simple' | 'rich' | 'complex',
 |};
 
 
@@ -88,16 +89,18 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     getSyntaxType(message: Object) {
-        let syntaxType = 'complex';
+        if (!fluent.isSupportedMessage(message)) {
+            return 'complex';
+        }
 
         if (
             fluent.isSimpleMessage(message) ||
             fluent.isSimpleSingleAttributeMessage(message)
         ) {
-            syntaxType = 'simple';
+            return 'simple';
         }
 
-        return syntaxType;
+        return 'rich';
     }
 
     /**
@@ -153,8 +156,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     render() {
-        let EditorImplementation = SourceEditor;
-        if (!this.state.forceSource && this.state.syntaxType === 'simple') {
+        let EditorImplementation = RichEditor;
+        if (this.state.forceSource || this.state.syntaxType === 'complex') {
+            EditorImplementation = SourceEditor
+        }
+        else if (this.state.syntaxType === 'simple') {
             EditorImplementation = SimpleEditor;
         }
 
