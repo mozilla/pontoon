@@ -1,6 +1,7 @@
 /* @flow */
 
 import EntityAPI from './entity';
+import FilterAPI from './filter';
 import LocaleAPI from './locale';
 import L10nAPI from './l10n';
 import MachineryAPI from './machinery';
@@ -21,6 +22,7 @@ export type {
 
 export default {
     entity: new EntityAPI(),
+    filter: new FilterAPI(),
     locale: new LocaleAPI(),
     l10n: new L10nAPI(),
     machinery: new MachineryAPI(),

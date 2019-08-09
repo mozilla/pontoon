@@ -9,6 +9,7 @@ import './SearchBox.css';
 import * as navigation from 'core/navigation';
 import * as project from 'core/project';
 import { NAME as STATS_NAME } from 'core/stats';
+import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
@@ -54,8 +55,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     constructor(props: InternalProps) {
         super(props);
 
-        const search = props.parameters.search;
-
         const statuses = this.getInitialStatuses();
         if (props.parameters.status) {
             props.parameters.status.split(',').forEach(f => {
@@ -77,8 +76,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
+        const searchParam = props.parameters.search;
+
         this.state = {
-            search: search ? search.toString() : '',
+            search: searchParam ? searchParam.toString() : '',
             statuses,
             extras,
             tags,
@@ -192,6 +193,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             extras: this.getInitialExtras(),
             tags: this.getInitialTags(),
         });
+    }
+
+    getAuthorsAndTimeRangeData = () => {
+        const { locale, project, resource } = this.props.parameters;
+
+        this.props.dispatch(
+            search.actions.getAuthorsAndTimeRangeData(locale, project, resource)
+        )
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
@@ -308,8 +317,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 tags={ this.state.tags }
                 tagsData={ project.tags }
                 stats={ stats }
-                resource={ parameters.resource }
+                parameters={ parameters }
                 applySingleFilter={ this.applySingleFilter }
+                getAuthorsAndTimeRangeData={ this.getAuthorsAndTimeRangeData }
                 resetFilters={ this.resetFilters }
                 toggleFilter={ this.toggleFilter }
                 update={ this.update }

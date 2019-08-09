@@ -10,6 +10,7 @@ import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
+import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
 
@@ -20,8 +21,9 @@ type Props = {|
     tags: { [string]: boolean },
     tagsData: Array<Tag>,
     stats: Stats,
-    resource: string,
+    parameters: NavigationParams,
     applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
+    getAuthorsAndTimeRangeData: () => void,
     resetFilters: () => void,
     toggleFilter: (string, string) => void,
     update: () => void,
@@ -45,6 +47,16 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.state = {
             visible: false,
         };
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        if (
+            this.state.visible &&
+            !prevState.visible &&
+            this.props.parameters.project !== 'all-projects'
+        ) {
+            this.props.getAuthorsAndTimeRangeData();
+        }
     }
 
     toggleVisibility = () => {
@@ -85,7 +97,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, tagsData, stats, resource } = this.props;
+        const { statuses, extras, tags, tagsData, stats, parameters } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
@@ -155,7 +167,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { (tagsData.length === 0 || resource !== 'all-resources') ? null : <>
+                    { (tagsData.length === 0 || parameters.resource !== 'all-resources') ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
