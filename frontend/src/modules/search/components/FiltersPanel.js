@@ -13,13 +13,16 @@ import { asLocaleString } from 'core/utils';
 import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
+import type { Author } from 'modules/search';
 
 
 type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    authorsData: Array<Author>,
     tagsData: Array<Tag>,
+    timeRangeData: Array<Array<number>>,
     stats: Stats,
     parameters: NavigationParams,
     applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
@@ -97,7 +100,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, tagsData, stats, parameters } = this.props;
+        const { statuses, extras, tags, authorsData, tagsData, stats, parameters } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
@@ -227,6 +230,39 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             <span className="title">{ extra.title }</span>
                         </li>
                     }) }
+
+                    { (authorsData.length === 0 || parameters.project === 'all-projects') ? null : <>
+                        <Localized id="search-FiltersPanel--heading-authors">
+                            <li className="horizontal-separator">Translation Authors</li>
+                        </Localized>
+
+                        { authorsData.map((author, i) => {
+                            let className = author.email;
+
+                            return <li
+                                className={ `author ${className}` }
+                                key={ i }
+                                onClick={ this.createApplySingleFilter(author.id, 'authors') }
+                            >
+                                <figure>
+                                    <span className="sel">
+                                        <span
+                                            className="status fa"
+                                            onClick={ this.createToggleFilter(author.id, 'authors') }
+                                        ></span>
+                                        <img className="rounded" src={ author.gravatar_url } />
+                                    </span>
+                                    <figcaption>
+                                        <p className="name">{ author.display_name }</p>
+                                        <p className="role">{ author.role }</p>
+                                    </figcaption>
+                                    <span className="count">
+                                        { asLocaleString(author.translation_count) }
+                                    </span>
+                                </figure>
+                            </li>
+                        }) }
+                    </>}
                 </ul>
                 { selectedFiltersCount === 0 ? null :
                 <div className="toolbar clearfix">

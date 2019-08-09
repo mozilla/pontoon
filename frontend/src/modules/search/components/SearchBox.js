@@ -18,10 +18,12 @@ import FiltersPanel from './FiltersPanel';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
+import type { AuthorsAndTimeRangeState } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
+    authorsAndTimeRange: AuthorsAndTimeRangeState,
     parameters: NavigationParams,
     project: ProjectState,
     stats: Stats,
@@ -295,7 +297,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     render() {
-        const { parameters, project, stats } = this.props;
+        const { authorsAndTimeRange, parameters, project, stats } = this.props;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -315,7 +317,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 tags={ this.state.tags }
+                authorsData={ authorsAndTimeRange.authors }
                 tagsData={ project.tags }
+                timeRangeData={ authorsAndTimeRange.countsPerMinute }
                 stats={ stats }
                 parameters={ parameters }
                 applySingleFilter={ this.applySingleFilter }
@@ -331,6 +335,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
+        authorsAndTimeRange: state[search.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         stats: state[STATS_NAME],
