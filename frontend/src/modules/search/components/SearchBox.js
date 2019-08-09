@@ -322,16 +322,18 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
 
         if (!selectedFilters.length) {
-            selectedFilters = [{ title: 'All' }];
+            selectedFilters = [{ name: 'All' }];
         }
 
         const selectedFiltersString = selectedFilters.map(
             item => {
+                // Specific case for Translation Authors filters
                 if (item.display_name) {
+                    // $FLOW_IGNORE: I just can't figure out the Flow error here.
                     return item.display_name + "'s translations";
                 }
                 else {
-                    return item.title || item.name;
+                    return item.name;
                 }
             }
         ).join(', ');

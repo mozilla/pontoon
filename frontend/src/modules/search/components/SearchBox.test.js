@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
@@ -70,7 +69,7 @@ describe('<SearchBoxBase>', () => {
                 project={ PROJECT }
                 authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
             />);
-            expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
+            expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.name);
         }
     });
 

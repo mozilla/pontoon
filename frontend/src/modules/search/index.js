@@ -19,33 +19,33 @@ export const NAME: string = 'search';
 // This list controls the creation of the UI.
 export const FILTERS_STATUS = [
     {
-        title: 'All',
+        name: 'All',
         slug: 'all',
         stat: 'total',
     },
     {
-        title: 'Translated',
+        name: 'Translated',
         slug: 'translated',
         stat: 'approved',
     },
     {
-        title: 'Fuzzy',
+        name: 'Fuzzy',
         slug: 'fuzzy',
     },
     {
-        title: 'Warnings',
+        name: 'Warnings',
         slug: 'warnings',
     },
     {
-        title: 'Errors',
+        name: 'Errors',
         slug: 'errors',
     },
     {
-        title: 'Missing',
+        name: 'Missing',
         slug: 'missing',
     },
     {
-        title: 'Unreviewed',
+        name: 'Unreviewed',
         slug: 'unreviewed',
     },
 ];
@@ -55,11 +55,11 @@ export const FILTERS_STATUS = [
 // This list controls the creation of the UI.
 export const FILTERS_EXTRA = [
     {
-        title: 'Unchanged',
+        name: 'Unchanged',
         slug: 'unchanged',
     },
     {
-        title: 'Rejected',
+        name: 'Rejected',
         slug: 'rejected',
     },
 ];

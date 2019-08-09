@@ -180,7 +180,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
-                            <span className="title">{ status.title }</span>
+                            <span className="title">{ status.name }</span>
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
@@ -244,7 +244,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
-                            <span className="title">{ extra.title }</span>
+                            <span className="title">{ extra.name }</span>
                         </li>
                     }) }
 
@@ -256,13 +256,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         { authorsData.map((author, i) => {
                             const selected = authors[author.email];
 
-                            let className = author.email;
+                            let className = 'author';
                             if (selected) {
                                 className += ' selected';
                             }
 
                             return <li
-                                className={ `author ${className}` }
+                                className={ `${className}` }
                                 key={ i }
                                 onClick={ this.createApplySingleFilter(author.email, 'authors') }
                             >
