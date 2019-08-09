@@ -14,6 +14,7 @@ import type {
     ResetFailedChecksAction,
     ResetSelectionAction,
     InitialTranslationAction,
+    Translation,
     UpdateAction,
     UpdateFailedChecksAction,
     UpdateSelectionAction,
@@ -30,11 +31,11 @@ type Action =
 ;
 
 export type EditorState = {|
-    +translation: string,
+    +translation: Translation,
 
     // Used for storing the initial translation in Fluent editor,
     // needed for detecting unsaved changes.
-    +initialTranslation: string,
+    +initialTranslation: Translation,
 
     // Source of the current change. 'internal' or missing if from inside the
     // Editor, 'external' otherwise. This allows the Editor to behave

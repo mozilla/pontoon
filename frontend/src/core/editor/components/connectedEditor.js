@@ -23,6 +23,7 @@ import type { UserState } from 'core/user';
 import type { ChangeOperation } from 'modules/history';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 import type { EditorState } from '../reducer';
+import type { Translation } from '../actions';
 
 
 type Props = {|
@@ -64,7 +65,7 @@ export type EditorProps = {|
     updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
     hideUnsavedChanges: () => void,
     ignoreUnsavedChanges: () => void,
-    updateUnsavedChanges: (string) => void,
+    updateUnsavedChanges: (translation?: Translation, initial?: Translation) => void,
     updateSetting: (string, boolean) => void,
 |};
 
@@ -84,7 +85,7 @@ export default function connectedEditor<Object>(
             this.props.dispatch(actions.resetSelection());
         }
 
-        updateTranslation = (translation: string, fromOutsideEditor?: boolean) => {
+        updateTranslation = (translation: Translation, fromOutsideEditor?: boolean) => {
             const source = fromOutsideEditor ? 'external' : 'internal';
             this.props.dispatch(actions.update(translation, source));
         }
@@ -97,12 +98,17 @@ export default function connectedEditor<Object>(
             this.props.dispatch(unsavedchanges.actions.ignore());
         }
 
-        updateUnsavedChanges = (translation: string) => {
+        updateUnsavedChanges = (translation?: Translation, initial?: Translation) => {
             const props = this.props;
-            let initial = props.activeTranslation;
-            if (props.editor.initialTranslation) {
-                initial = props.editor.initialTranslation;
+
+            if (!translation) {
+                translation = props.editor.translation;
             }
+
+            if (!initial) {
+                initial = props.editor.initialTranslation || props.activeTranslation;
+            }
+
             this.props.dispatch(unsavedchanges.actions.update(translation, initial));
         }
 
@@ -122,7 +128,7 @@ export default function connectedEditor<Object>(
             this.updateTranslation('');
         }
 
-        sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {
+        sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
             const props = this.props;
 
             if (!props.selectedEntity || !props.locale) {
@@ -172,7 +178,7 @@ export default function connectedEditor<Object>(
             ));
         }
 
-        setInitialTranslation = (translation: string) => {
+        setInitialTranslation = (translation: Translation) => {
             this.props.dispatch(actions.setInitialTranslation(translation));
         }
 

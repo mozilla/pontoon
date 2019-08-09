@@ -5,6 +5,16 @@ import sinon from 'sinon';
 import { EditorBase } from './Editor';
 
 
+const NESTED_SELECTORS_STRING = `my-message =
+    { $thing ->
+        *[option] { $stuff ->
+            [foo] FOO
+            *[bar] BAR
+        }
+        [select] WOW
+    }
+`;
+
 const ENTITIES = [
     {
         original: 'my-message = Hello',
@@ -13,9 +23,9 @@ const ENTITIES = [
         }],
     },
     {
-        original: 'my-message = Hello\n    .my-attr = World!',
+        original: NESTED_SELECTORS_STRING,
         translation: [
-            { string: 'my-message = Salut\n    .my-attr = Monde !' },
+            { string: NESTED_SELECTORS_STRING },
         ],
     },
     {
@@ -118,7 +128,7 @@ describe('<Editor>', () => {
         // Force source mode.
         wrapper.instance().toggleForceSource();
 
-        expect(updateTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
-        expect(setInitialTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
+        expect(updateTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
+        expect(setInitialTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
     });
 });

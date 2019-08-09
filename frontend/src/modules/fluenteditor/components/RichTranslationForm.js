@@ -4,8 +4,6 @@ import * as React from 'react';
 
 import './RichTranslationForm.css';
 
-import { fluent } from 'core/utils';
-
 import type { EditorProps } from 'core/editor';
 
 
@@ -13,23 +11,43 @@ import type { EditorProps } from 'core/editor';
  * Render an Rich editor for Fluent string editting.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
-    getMessage() {
-        if (!this.props.editor.translation) {
-            return fluent.getEmptyMessage(
-                fluent.parser.parseEntry(
-                    this.props.entity.original
-                )
-            );
+    componentDidUpdate(prevProps: EditorProps) {
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+
+        // If the translation is a string, that means we're in a translational
+        // state and there's going to be another render with a Fluent AST.
+        if (typeof(editor.translation) === 'string') {
+            return;
         }
 
-        return fluent.parser.parseEntry(this.props.editor.translation);
+        // Close failed checks popup when content of the editor changes,
+        // but only if the errors and warnings did not change
+        // meaning they were already shown in the previous render
+        if (
+            !editor.translation.equals(prevEditor.translation) &&
+            prevEditor.errors === editor.errors &&
+            prevEditor.warnings === editor.warnings &&
+            (editor.errors.length || editor.warnings.length)
+        ) {
+            this.props.resetFailedChecks();
+        }
+
+        // When content of the editor changes
+        //   - close unsaved changes popup if open
+        //   - update unsaved changes status
+        if (!editor.translation.equals(prevEditor.translation)) {
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            this.props.updateUnsavedChanges();
+        }
     }
 
     createHandleChange = (path: Array<string | number>) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
             const value = event.currentTarget.value;
-
-            const message = this.getMessage();
+            const message = this.props.editor.translation;
 
             let dest = message;
             // Walk the path until the next to last item.
@@ -41,7 +59,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             // to the extracted value.
             dest[path[path.length - 1]] = value;
 
-            this.props.updateTranslation(fluent.serializer.serializeEntry(message));
+            this.props.updateTranslation(message);
         }
     }
 
@@ -49,7 +67,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         elements: Array<Object>,
         path: Array<string | number>,
         label: string,
-        noValues: boolean
     ): Array<React.Node> {
         return elements.map((element, index) => {
             if (element.type === 'TextElement') {
@@ -61,7 +78,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                         <textarea
                             id={ `message-value-${index}` }
                             className=""
-                            value={ noValues ? '' : element.value }
+                            value={ element.value }
                             onChange={ this.createHandleChange([].concat(path, [ index, 'value' ])) }
                         />
                     </td>
@@ -73,19 +90,18 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     }
 
     render() {
-        const message = this.getMessage();
-        const noValues = !this.props.editor.translation;
+        const message = this.props.editor.translation;
 
         return <div className="fluent-rich-translation-form">
             <table>
                 <tbody>
                     { (!message.value) ? null :
-                        this.renderElements(message.value.elements, [ 'value', 'elements' ], 'Value', noValues)
+                        this.renderElements(message.value.elements, [ 'value', 'elements' ], 'Value')
                     }
                     { (!message.attributes) ? null :
                         message.attributes.map((attribute, index) => {
                             if (attribute.value) {
-                                return this.renderElements(attribute.value.elements, [ 'attributes', index, 'value', 'elements' ], attribute.id.name, noValues)
+                                return this.renderElements(attribute.value.elements, [ 'attributes', index, 'value', 'elements' ], attribute.id.name)
                             }
                             return null;
                         })

@@ -74,7 +74,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             if (this.props.unsavedchanges.shown) {
                 this.props.hideUnsavedChanges();
             }
-            this.props.updateUnsavedChanges(editor.translation);
+            this.props.updateUnsavedChanges();
         }
 
         if (!this.aceEditor.current) {

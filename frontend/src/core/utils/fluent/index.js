@@ -2,7 +2,7 @@
 
 import areSupportedElements from './areSupportedElements';
 import getEmptyMessage from './getEmptyMessage';
-import getReconstructedSimpleMessage from './getReconstructedSimpleMessage';
+import getReconstructedMessage from './getReconstructedMessage';
 import getSimplePreview from './getSimplePreview';
 import isSimpleElement from './isSimpleElement';
 import isSimpleMessage from './isSimpleMessage';
@@ -16,7 +16,7 @@ import serializer from './serializer';
 export default {
     areSupportedElements,
     getEmptyMessage,
-    getReconstructedSimpleMessage,
+    getReconstructedMessage,
     getSimplePreview,
     isSimpleElement,
     isSimpleMessage,

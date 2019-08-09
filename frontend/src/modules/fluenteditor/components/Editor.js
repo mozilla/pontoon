@@ -76,14 +76,25 @@ export class EditorBase extends React.Component<EditorProps, State> {
         const source = props.activeTranslation || props.entity.original;
         const message = fluent.parser.parseEntry(source);
 
+        // Figure out and set the syntax type.
         const syntaxType = this.getSyntaxType(message);
+        this.setState({ syntaxType });
+
+        // Figure out and set the initial translation content.
         let translationContent = props.activeTranslation;
 
         if (syntaxType === 'simple' && !this.state.forceSource) {
             translationContent = fluent.getSimplePreview(props.activeTranslation);
         }
+        else if (syntaxType === 'rich' && !this.state.forceSource) {
+            if (!props.activeTranslation) {
+                translationContent = fluent.getEmptyMessage(message);
+            }
+            else {
+                translationContent = message;
+            }
+        }
 
-        this.setState({ syntaxType });
         props.setInitialTranslation(translationContent);
         props.updateTranslation(translationContent);
     }
@@ -126,18 +137,22 @@ export class EditorBase extends React.Component<EditorProps, State> {
             }
         }
         else if (fromSyntax === 'simple' && toSyntax === 'complex') {
-            translationContent = fluent.getReconstructedSimpleMessage(
-                props.entity.original,
-                translation,
+            translationContent = fluent.serializer.serializeEntry(
+                fluent.getReconstructedMessage(
+                    props.entity.original,
+                    translation,
+                )
             );
 
             // If there is no active translation (it's an untranslated string)
             // we make the initial translation an empty fluent message to avoid
             // showing unchanged content warnings.
             if (!originalContent) {
-                originalContent = fluent.getReconstructedSimpleMessage(
-                    props.entity.original,
-                    '',
+                originalContent = fluent.serializer.serializeEntry(
+                    fluent.getReconstructedMessage(
+                        props.entity.original,
+                        '',
+                    )
                 );
             }
         }
