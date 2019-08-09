@@ -17,15 +17,22 @@ describe('<FiltersPanelBase>', () => {
         const statuses = {};
         const extras = {};
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
             />
         );
 
@@ -36,8 +43,11 @@ describe('<FiltersPanelBase>', () => {
 
     it('has the correct icon based on parameters', () => {
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
 
         for (let filter of FILTERS) {
             let statuses = {};
@@ -59,8 +69,12 @@ describe('<FiltersPanelBase>', () => {
                     statuses={ statuses }
                     extras={ extras }
                     tags={ tags }
+                    authors={ authors }
+                    authorsData={ tagsData }
                     tagsData={ tagsData }
                     stats={ stats }
+                    parameters={ parameters }
+                    getAuthorsAndTimeRangeData={ sinon.spy() }
                 />
             );
 
@@ -83,16 +97,23 @@ describe('<FiltersPanelBase>', () => {
         };
 
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
 
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
             />
         );
 
@@ -122,8 +143,11 @@ describe('<FiltersPanelBase>', () => {
     it('applies a single filter on click on a filter title', () => {
         let applySingleFilter;
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
 
         for (let filter of FILTERS) {
             let statuses = {};
@@ -147,8 +171,12 @@ describe('<FiltersPanelBase>', () => {
                     statuses={ statuses }
                     extras={ extras }
                     tags={ tags }
+                    authors={ authors }
+                    authorsData={ tagsData }
                     tagsData={ tagsData }
                     stats={ stats }
+                    parameters={ parameters }
+                    getAuthorsAndTimeRangeData={ sinon.spy() }
                     applySingleFilter= { applySingleFilter }
                 />
             );
@@ -162,8 +190,11 @@ describe('<FiltersPanelBase>', () => {
     it('toggles a filter on click on a filter status icon', () => {
         let toggleFilter;
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
 
         for (let filter of FILTERS) {
             let statuses = {};
@@ -187,8 +218,12 @@ describe('<FiltersPanelBase>', () => {
                     statuses={ statuses }
                     extras={ extras }
                     tags={ tags }
+                    authors={ authors }
+                    authorsData={ tagsData }
                     tagsData={ tagsData }
                     stats={ stats }
+                    parameters={ parameters }
+                    getAuthorsAndTimeRangeData={ sinon.spy() }
                     toggleFilter= { toggleFilter }
                 />
             );
@@ -218,15 +253,22 @@ describe('<FiltersPanelBase>', () => {
             rejected: false,
         };
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
             />
         );
 
@@ -245,15 +287,22 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
             />
         );
 
@@ -273,15 +322,22 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
                 resetFilters={ resetFilters }
             />
         );
@@ -304,15 +360,22 @@ describe('<FiltersPanelBase>', () => {
             rejected: true,
         };
         const tags = {};
+        const authors = {};
         const stats = {};
+        const authorsData = [];
         const tagsData = [];
+        const parameters = {}
         const wrapper = shallow(
             <FiltersPanelBase
                 statuses={ statuses }
                 extras={ extras }
                 tags={ tags }
+                authors={ authors }
+                authorsData={ tagsData }
                 tagsData={ tagsData }
                 stats={ stats }
+                parameters={ parameters }
+                getAuthorsAndTimeRangeData={ sinon.spy() }
                 update={ update }
             />
         );

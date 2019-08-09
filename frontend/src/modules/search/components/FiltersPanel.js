@@ -272,7 +272,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                             className="status fa"
                                             onClick={ this.createToggleFilter(author.email, 'authors') }
                                         ></span>
-                                        <img className="rounded" src={ author.gravatar_url } />
+                                        <img
+                                            alt=""
+                                            className="rounded"
+                                            src={ author.gravatar_url }
+                                        />
                                     </span>
                                     <figcaption>
                                         <p className="name">{ author.display_name }</p>
