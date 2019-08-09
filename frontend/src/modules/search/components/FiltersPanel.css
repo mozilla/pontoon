@@ -55,6 +55,10 @@
     position: relative;
 }
 
+.filters-panel.fixed .menu ul {
+    margin-bottom: 54px;
+}
+
 .filters-panel .menu li {
     color: #AAAAAA;
     cursor: pointer;

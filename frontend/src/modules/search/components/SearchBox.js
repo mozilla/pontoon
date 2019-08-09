@@ -41,6 +41,7 @@ type State = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    authors: { [string]: boolean },
 |};
 
 
@@ -78,6 +79,13 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
+        const authors = this.getInitialAuthors();
+        if (props.parameters.author) {
+            props.parameters.author.split(',').forEach(f => {
+                authors[f] = true;
+            });
+        }
+
         const searchParam = props.parameters.search;
 
         this.state = {
@@ -85,6 +93,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             statuses,
             extras,
             tags,
+            authors,
         };
 
         this.searchInput = React.createRef();
@@ -130,6 +139,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return tags;
     }
 
+    getInitialAuthors() {
+        const authors = {};
+        this.props.authorsAndTimeRange.authors.forEach(a => authors[a.email] = false);
+        return authors;
+    }
+
     getSelectedStatuses(): Array<string> {
         return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
     }
@@ -140,6 +155,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
     getSelectedTags(): Array<string> {
         return Object.keys(this.state.tags).filter(t => this.state.tags[t]);
+    }
+
+    getSelectedAuthors(): Array<string> {
+        return Object.keys(this.state.authors).filter(a => this.state.authors[a]);
     }
 
     toggleFilter = (filter: string, type: string) => {
@@ -157,6 +176,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
         const tags = this.getInitialTags();
+        const authors = this.getInitialAuthors();
 
         if (filter !== 'all') {
             switch (type) {
@@ -169,6 +189,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 case 'tags':
                     tags[filter] = true;
                     break;
+                case 'authors':
+                    authors[filter] = true;
+                    break;
                 default:
             }
         }
@@ -178,6 +201,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses,
                 extras,
                 tags,
+                authors,
             }, callback);
         }
         else {
@@ -185,6 +209,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses,
                 extras,
                 tags,
+                authors,
             });
         }
     }
@@ -194,6 +219,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             statuses: this.getInitialStatuses(),
             extras: this.getInitialExtras(),
             tags: this.getInitialTags(),
+            authors: this.getInitialAuthors(),
         });
     }
 
@@ -241,6 +267,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const tags = this.getSelectedTags();
         const tag = tags.join(',');
 
+        const authors = this.getSelectedAuthors();
+        const author = authors.join(',');
+
         this.props.dispatch(
             navigation.actions.update(
                 this.props.router,
@@ -249,6 +278,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                     status,
                     extra,
                     tag,
+                    author,
                 },
             )
         );
@@ -279,10 +309,16 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             f => tags.includes(f.slug)
         );
 
+        const authors = this.getSelectedAuthors();
+        const selectedAuthors = this.props.authorsAndTimeRange.authors.filter(
+            f => authors.includes(f.email)
+        );
+
         let selectedFilters = [].concat(
             selectedStatuses,
             selectedExtras,
             selectedTags,
+            selectedAuthors,
         );
 
         if (!selectedFilters.length) {
@@ -290,7 +326,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
 
         const selectedFiltersString = selectedFilters.map(
-            item => item.title || item.name
+            item => {
+                if (item.display_name) {
+                    return item.display_name + "'s translations";
+                }
+                else {
+                    return item.title || item.name;
+                }
+            }
         ).join(', ');
 
         return `Search in ${selectedFiltersString}`;
@@ -317,6 +360,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 tags={ this.state.tags }
+                authors={ this.state.authors }
                 authorsData={ authorsAndTimeRange.authors }
                 tagsData={ project.tags }
                 timeRangeData={ authorsAndTimeRange.countsPerMinute }

@@ -104,8 +104,13 @@
 }
 
 .search-box .tag .status:before {
+    color: #AAAAAA;
     content: "";
-    color: #aaa;
+}
+
+.search-box .author .status:before {
+    color: #AAAAAA;
+    content: "";
 }
 
 .search-box .missing:hover .status:before {

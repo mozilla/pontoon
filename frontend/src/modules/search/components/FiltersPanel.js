@@ -20,6 +20,7 @@ type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    authors: { [string]: boolean },
     authorsData: Array<Author>,
     tagsData: Array<Tag>,
     timeRangeData: Array<Array<number>>,
@@ -38,8 +39,7 @@ type State = {|
 
 
 /**
- * Shows a list of filters (status, author, extras), used to filter the list
- * of entities.
+ * Shows a list of filters used to filter the list of entities.
  *
  * Changes to the filters will be reflected in the URL.
  */
@@ -100,15 +100,27 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, authorsData, tagsData, stats, parameters } = this.props;
+        const {
+            statuses,
+            extras,
+            tags,
+            authors,
+            authorsData,
+            tagsData,
+            stats,
+            parameters,
+        } = this.props;
 
         const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
         const selectedExtras = Object.keys(extras).filter(e => extras[e]);
-        const selectedTags = Object.keys(tags).filter(e => tags[e]);
+        const selectedTags = Object.keys(tags).filter(t => tags[t]);
+        const selectedAuthors = Object.keys(authors).filter(a => authors[a]);
+
         const selectedFiltersCount = (
             selectedExtras.length +
             selectedStatuses.length +
-            selectedTags.length
+            selectedTags.length +
+            selectedAuthors.length
         );
 
         // If there are zero or several selected statuses, show the "All" icon.
@@ -129,6 +141,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             const selectedTag = tagsData.find(f => f.slug === selectedTags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
+            }
+
+            const selectedAuthor = authorsData.find(f => f.email === selectedAuthors[0]);
+            if (selectedAuthor) {
+                filterIcon = 'author';
             }
         }
 
@@ -237,18 +254,23 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </Localized>
 
                         { authorsData.map((author, i) => {
+                            const selected = authors[author.email];
+
                             let className = author.email;
+                            if (selected) {
+                                className += ' selected';
+                            }
 
                             return <li
                                 className={ `author ${className}` }
                                 key={ i }
-                                onClick={ this.createApplySingleFilter(author.id, 'authors') }
+                                onClick={ this.createApplySingleFilter(author.email, 'authors') }
                             >
                                 <figure>
                                     <span className="sel">
                                         <span
                                             className="status fa"
-                                            onClick={ this.createToggleFilter(author.id, 'authors') }
+                                            onClick={ this.createToggleFilter(author.email, 'authors') }
                                         ></span>
                                         <img className="rounded" src={ author.gravatar_url } />
                                     </span>
