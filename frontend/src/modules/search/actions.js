@@ -3,8 +3,7 @@
 import api from 'core/api';
 
 
-export const RECEIVE: 'search/RECEIVE' = 'search/RECEIVE';
-export const REQUEST: 'search/REQUEST' = 'search/REQUEST';
+export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
 
 
 export type Author = {
@@ -21,24 +20,14 @@ export type ResponseType = {
     counts_per_minute: Array<Array<number>>,
 };
 
-export type ReceiveAction = {|
-    type: typeof RECEIVE,
+export type UpdateAction = {|
+    type: typeof UPDATE,
     response: ResponseType,
 |};
-export function receive(response: ResponseType): ReceiveAction {
+export function update(response: ResponseType): UpdateAction {
     return {
-        type: RECEIVE,
+        type: UPDATE,
         response,
-    };
-}
-
-
-export type RequestAction = {|
-    type: typeof REQUEST,
-|};
-export function request(): RequestAction {
-    return {
-        type: REQUEST,
     };
 }
 
@@ -49,15 +38,13 @@ export function getAuthorsAndTimeRangeData(
     resource: string,
 ): Function {
     return async dispatch => {
-        dispatch(request());
-
         const response = await api.filter.get(
             locale,
             project,
             resource,
         );
 
-        dispatch(receive(response));
+        dispatch(update(response));
     };
 }
 
