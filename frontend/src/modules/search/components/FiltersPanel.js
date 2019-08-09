@@ -100,21 +100,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const {
-            statuses,
-            extras,
-            tags,
-            authors,
-            authorsData,
-            tagsData,
-            stats,
-            parameters,
-        } = this.props;
+        const props = this.props;
+        const { project, resource } = this.props.parameters;
 
-        const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
-        const selectedExtras = Object.keys(extras).filter(e => extras[e]);
-        const selectedTags = Object.keys(tags).filter(t => tags[t]);
-        const selectedAuthors = Object.keys(authors).filter(a => authors[a]);
+        const selectedStatuses = Object.keys(props.statuses).filter(s => props.statuses[s]);
+        const selectedExtras = Object.keys(props.extras).filter(e => props.extras[e]);
+        const selectedTags = Object.keys(props.tags).filter(t => props.tags[t]);
+        const selectedAuthors = Object.keys(props.authors).filter(a => props.authors[a]);
 
         const selectedFiltersCount = (
             selectedExtras.length +
@@ -138,12 +130,12 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 filterIcon = selectedExtra.slug;
             }
 
-            const selectedTag = tagsData.find(f => f.slug === selectedTags[0]);
+            const selectedTag = props.tagsData.find(f => f.slug === selectedTags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
             }
 
-            const selectedAuthor = authorsData.find(f => f.email === selectedAuthors[0]);
+            const selectedAuthor = props.authorsData.find(f => f.email === selectedAuthors[0]);
             if (selectedAuthor) {
                 filterIcon = 'author';
             }
@@ -163,8 +155,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     </Localized>
 
                     { FILTERS_STATUS.map((status, i) => {
-                        const count = status.stat ? stats[status.stat] : stats[status.slug];
-                        const selected = statuses[status.slug];
+                        const count = status.stat ? props.stats[status.stat] : props.stats[status.slug];
+                        const selected = props.statuses[status.slug];
 
                         let className = status.slug;
                         if (selected && status.slug !== 'all') {
@@ -187,13 +179,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { (tagsData.length === 0 || parameters.resource !== 'all-resources') ? null : <>
+                    { (props.tagsData.length === 0 || resource !== 'all-resources') ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
 
-                        { tagsData.map((tag, i) => {
-                            const selected = tags[tag.slug];
+                        { props.tagsData.map((tag, i) => {
+                            const selected = props.tags[tag.slug];
 
                             let className = tag.slug;
                             if (selected) {
@@ -228,7 +220,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     </Localized>
 
                     { FILTERS_EXTRA.map((extra, i) => {
-                        const selected = extras[extra.slug];
+                        const selected = props.extras[extra.slug];
 
                         let className = extra.slug;
                         if (selected) {
@@ -248,13 +240,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
-                    { (authorsData.length === 0 || parameters.project === 'all-projects') ? null : <>
+                    { (props.authorsData.length === 0 || project === 'all-projects') ? null : <>
                         <Localized id="search-FiltersPanel--heading-authors">
                             <li className="horizontal-separator">Translation Authors</li>
                         </Localized>
 
-                        { authorsData.map((author, i) => {
-                            const selected = authors[author.email];
+                        { props.authorsData.map((author, i) => {
+                            const selected = props.authors[author.email];
 
                             let className = 'author';
                             if (selected) {
