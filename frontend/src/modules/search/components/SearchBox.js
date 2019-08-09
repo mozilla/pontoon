@@ -314,29 +314,27 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             f => authors.includes(f.email)
         );
 
-        let selectedFilters = [].concat(
+        const selectedFilters = [].concat(
             selectedStatuses,
             selectedExtras,
             selectedTags,
-            selectedAuthors,
         );
 
-        if (!selectedFilters.length) {
-            selectedFilters = [{ name: 'All' }];
+        let selectedFiltersNames = selectedFilters.map(
+            item => item.name
+        );
+
+        // Specific case for Translation Authors filters
+        if (selectedAuthors.length) {
+            selectedFiltersNames = selectedFiltersNames.concat(selectedAuthors.map(
+                item => item.display_name + "'s translations"
+            ));
         }
 
-        const selectedFiltersString = selectedFilters.map(
-            item => {
-                // Specific case for Translation Authors filters
-                if (item.display_name) {
-                    // $FLOW_IGNORE: I just can't figure out the Flow error here.
-                    return item.display_name + "'s translations";
-                }
-                else {
-                    return item.name;
-                }
-            }
-        ).join(', ');
+        let selectedFiltersString = 'All';
+        if (selectedFiltersNames.length) {
+            selectedFiltersString = selectedFiltersNames.join(', ');
+        }
 
         return `Search in ${selectedFiltersString}`;
     }
