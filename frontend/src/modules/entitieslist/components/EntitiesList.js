@@ -319,7 +319,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     render() {
         const props = this.props;
         const search = props.parameters.search;
-        const selectedEntity = props.parameters.entity;
 
         // InfiniteScroll will display information about loading during the request
         const hasMore = props.entities.fetching || props.entities.hasMore;
@@ -339,6 +338,11 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             { (hasMore || props.entities.entities.length) ?
                 <ul>
                     { props.entities.entities.map((entity, i) => {
+                        const selected = (
+                            !props.batchactions.entities.length &&
+                            entity.pk === props.parameters.entity
+                        );
+
                         return <Entity
                             checkedForBatchEditing={ props.batchactions.entities.includes(entity.pk) }
                             toggleForBatchEditing={ this.toggleForBatchEditing }
@@ -347,7 +351,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                             isTranslator={ props.isTranslator }
                             locale={ props.locale }
                             search={ search }
-                            selected={ entity.pk === selectedEntity }
+                            selected={ selected }
                             selectEntity={ this.selectEntity }
                             key={ i }
                         />;

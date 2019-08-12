@@ -11,6 +11,7 @@
     font-size: 100%;
 }
 
+.entity.checked,
 .entity.selected,
 .entity:hover {
     background-color: #4d5967;
@@ -105,8 +106,10 @@
     color: #FFA10F;
 }
 
+.entity.missing.checked .status:before,
 .entity.missing.selected .status:before,
 .entity.missing:hover .status:before,
+.entity.partial.checked .status:before,
 .entity.partial.selected .status:before,
 .entity.partial:hover .status:before {
     color: #3F4752;
