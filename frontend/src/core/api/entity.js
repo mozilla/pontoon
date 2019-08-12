@@ -54,6 +54,8 @@ export default class EntityAPI extends APIBase {
         status: ?string,
         extra: ?string,
         tag: ?string,
+        author: ?string,
+        time: ?string,
         pkOnly: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
@@ -90,6 +92,14 @@ export default class EntityAPI extends APIBase {
 
         if (tag) {
             payload.append('tag', tag);
+        }
+
+        if (author) {
+            payload.append('author', author);
+        }
+
+        if (time) {
+            payload.append('time', time);
         }
 
         if (pkOnly) {

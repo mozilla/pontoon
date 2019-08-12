@@ -73,7 +73,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         this.selectFirstEntityIfNoneSelected();
 
         // Whenever the route changes, we want to verify that the user didn't
-        // change locale, project or resource. If they did, then we'll have
+        // change locale, project, resource... If they did, then we'll have
         // to reset the current list of entities, in order to start a fresh
         // list and hide the previous entities.
         //
@@ -99,7 +99,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.search !== current.search ||
             previous.status !== current.status ||
             previous.extra !== current.extra ||
-            previous.tag !== current.tag
+            previous.tag !== current.tag ||
+            previous.author !== current.author ||
+            previous.time !== current.time
         ) {
             this.props.dispatch(entities.actions.reset());
         }
@@ -132,6 +134,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 status,
                 extra,
                 tag,
+                author,
+                time,
             } = this.props.parameters;
 
             this.props.dispatch(
@@ -143,6 +147,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                     status,
                     extra,
                     tag,
+                    author,
+                    time,
                 )
             );
         }
@@ -274,6 +280,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             status,
             extra,
             tag,
+            author,
+            time,
         } = props.parameters;
 
         // Temporary fix for the infinite number of requests from InfiniteScroller
@@ -302,6 +310,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 status,
                 extra,
                 tag,
+                author,
+                time,
             )
         );
     }

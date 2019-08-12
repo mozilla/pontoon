@@ -21,6 +21,12 @@ const PROJECT = {
 }
 
 
+const AUTHORS_AND_TIME_RANGE = {
+    authors: [],
+    countsPerMinute: [],
+}
+
+
 describe('<SearchBoxBase>', () => {
     beforeAll(() => {
         sinon.stub(actions, 'update').returns({ type: 'whatever'});
@@ -38,7 +44,11 @@ describe('<SearchBoxBase>', () => {
         const params = {
             search: '',
         };
-        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ params }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         expect(wrapper.find('input#search')).toHaveLength(1);
     });
@@ -54,8 +64,12 @@ describe('<SearchBoxBase>', () => {
                 params = { extra: filter.slug };
             }
 
-            const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
-            expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.title);
+            const wrapper = shallow(<SearchBoxBase
+                parameters={ params }
+                project={ PROJECT }
+                authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            />);
+            expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.name);
         }
     });
 
@@ -63,7 +77,11 @@ describe('<SearchBoxBase>', () => {
         const params = {
             search: 'search',
         };
-        const wrapper = shallow(<SearchBoxBase parameters={ params } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ params }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         wrapper.setProps({
             parameters: {
@@ -75,7 +93,11 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('returns correct list of selected statuses', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         wrapper.setState({
             statuses: {
@@ -90,7 +112,11 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('returns correct list of selected extras', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         wrapper.setState({
             extras: {
@@ -104,7 +130,12 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('toggles a filter', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
+
         wrapper.setState({ statuses: { missing: false } });
         expect(wrapper.state('statuses').missing).toBeFalsy();
 
@@ -113,7 +144,11 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('sets a single filter', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         wrapper.setState({
             statuses: {
@@ -133,7 +168,11 @@ describe('<SearchBoxBase>', () => {
     });
 
     it('resets to initial statuses', () => {
-        const wrapper = shallow(<SearchBoxBase parameters={ {} } project={ PROJECT } />);
+        const wrapper = shallow(<SearchBoxBase
+            parameters={ {} }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
 
         wrapper.setState({
             statuses: {
@@ -159,6 +198,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
             router={ {} }
             dispatch={ () => {} }
         />);
@@ -166,7 +206,7 @@ describe('<SearchBoxBase>', () => {
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: null, extra: '', tag: '', search: '' })
+            actions.update.calledWith({}, { status: null, extra: '', tag: '', author: '', search: '' })
         ).toBeTruthy();
     });
 
@@ -174,6 +214,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
             router={ {} }
             dispatch={ () => {} }
         />);
@@ -181,6 +222,7 @@ describe('<SearchBoxBase>', () => {
             statuses: { missing: true, warnings: true },
             extras: { unchanged: true },
             tags: { browser: true },
+            authors: { 'user@example.com': true },
         });
 
         wrapper.instance()._update();
@@ -189,6 +231,7 @@ describe('<SearchBoxBase>', () => {
                 status: 'missing,warnings',
                 extra: 'unchanged',
                 tag: 'browser',
+                author: 'user@example.com',
                 search: '',
             })
         ).toBeTruthy();
@@ -232,7 +275,11 @@ describe('<SearchBox>', () => {
         const params = {
             search: '',
         };
-        const wrapper = mount(<SearchBoxBase parameters={ params } project={ PROJECT } />);
+        const wrapper = mount(<SearchBoxBase
+            parameters={ params }
+            project={ PROJECT }
+            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+        />);
         const searchInput = wrapper.instance().searchInput;
 
         const focusMock = sinon.spy(searchInput.current, 'focus');

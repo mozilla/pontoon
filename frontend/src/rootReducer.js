@@ -17,6 +17,7 @@ import * as batchactions from 'modules/batchactions';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
+import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
@@ -39,5 +40,6 @@ export default combineReducers({
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
+    [search.NAME]: search.reducer,
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 });

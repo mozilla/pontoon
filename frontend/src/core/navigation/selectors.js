@@ -15,6 +15,8 @@ export type NavigationParams = {|
     status: ?string,
     extra: ?string,
     tag: ?string,
+    author: ?string,
+    time: ?string,
 |};
 
 /**
@@ -42,6 +44,8 @@ export const getNavigationParams: Function = createSelector(
         const status = params.get('status');
         const extra = params.get('extra');
         const tag = params.get('tag');
+        const author = params.get('author');
+        const time = params.get('time');
 
         return {
             locale,
@@ -52,6 +56,8 @@ export const getNavigationParams: Function = createSelector(
             status,
             extra,
             tag,
+            author,
+            time,
         };
     }
 );
