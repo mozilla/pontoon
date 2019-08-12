@@ -10,18 +10,24 @@ import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
 import { asLocaleString } from 'core/utils';
 
+import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
+import type { Author } from 'modules/search';
 
 
 type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    authors: { [string]: boolean },
+    authorsData: Array<Author>,
     tagsData: Array<Tag>,
+    timeRangeData: Array<Array<number>>,
     stats: Stats,
-    resource: string,
+    parameters: NavigationParams,
     applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
+    getAuthorsAndTimeRangeData: () => void,
     resetFilters: () => void,
     toggleFilter: (string, string) => void,
     update: () => void,
@@ -33,8 +39,7 @@ type State = {|
 
 
 /**
- * Shows a list of filters (status, author, extras), used to filter the list
- * of entities.
+ * Shows a list of filters used to filter the list of entities.
  *
  * Changes to the filters will be reflected in the URL.
  */
@@ -45,6 +50,16 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.state = {
             visible: false,
         };
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        if (
+            this.state.visible &&
+            !prevState.visible &&
+            this.props.parameters.project !== 'all-projects'
+        ) {
+            this.props.getAuthorsAndTimeRangeData();
+        }
     }
 
     toggleVisibility = () => {
@@ -85,15 +100,19 @@ export class FiltersPanelBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { statuses, extras, tags, tagsData, stats, resource } = this.props;
+        const props = this.props;
+        const { project, resource } = this.props.parameters;
 
-        const selectedStatuses = Object.keys(statuses).filter(s => statuses[s]);
-        const selectedExtras = Object.keys(extras).filter(e => extras[e]);
-        const selectedTags = Object.keys(tags).filter(e => tags[e]);
+        const selectedStatuses = Object.keys(props.statuses).filter(s => props.statuses[s]);
+        const selectedExtras = Object.keys(props.extras).filter(e => props.extras[e]);
+        const selectedTags = Object.keys(props.tags).filter(t => props.tags[t]);
+        const selectedAuthors = Object.keys(props.authors).filter(a => props.authors[a]);
+
         const selectedFiltersCount = (
             selectedExtras.length +
             selectedStatuses.length +
-            selectedTags.length
+            selectedTags.length +
+            selectedAuthors.length
         );
 
         // If there are zero or several selected statuses, show the "All" icon.
@@ -111,9 +130,14 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 filterIcon = selectedExtra.slug;
             }
 
-            const selectedTag = tagsData.find(f => f.slug === selectedTags[0]);
+            const selectedTag = props.tagsData.find(f => f.slug === selectedTags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
+            }
+
+            const selectedAuthor = props.authorsData.find(f => f.email === selectedAuthors[0]);
+            if (selectedAuthor) {
+                filterIcon = 'author';
             }
         }
 
@@ -131,8 +155,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     </Localized>
 
                     { FILTERS_STATUS.map((status, i) => {
-                        const count = status.stat ? stats[status.stat] : stats[status.slug];
-                        const selected = statuses[status.slug];
+                        const count = status.stat ? props.stats[status.stat] : props.stats[status.slug];
+                        const selected = props.statuses[status.slug];
 
                         let className = status.slug;
                         if (selected && status.slug !== 'all') {
@@ -148,20 +172,20 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
-                            <span className="title">{ status.title }</span>
+                            <span className="title">{ status.name }</span>
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
                         </li>
                     }) }
 
-                    { (tagsData.length === 0 || resource !== 'all-resources') ? null : <>
+                    { (props.tagsData.length === 0 || resource !== 'all-resources') ? null : <>
                         <Localized id="search-FiltersPanel--heading-tags">
                             <li className="horizontal-separator">Tags</li>
                         </Localized>
 
-                        { tagsData.map((tag, i) => {
-                            const selected = tags[tag.slug];
+                        { props.tagsData.map((tag, i) => {
+                            const selected = props.tags[tag.slug];
 
                             let className = tag.slug;
                             if (selected) {
@@ -196,7 +220,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     </Localized>
 
                     { FILTERS_EXTRA.map((extra, i) => {
-                        const selected = extras[extra.slug];
+                        const selected = props.extras[extra.slug];
 
                         let className = extra.slug;
                         if (selected) {
@@ -212,9 +236,51 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
-                            <span className="title">{ extra.title }</span>
+                            <span className="title">{ extra.name }</span>
                         </li>
                     }) }
+
+                    { (props.authorsData.length === 0 || project === 'all-projects') ? null : <>
+                        <Localized id="search-FiltersPanel--heading-authors">
+                            <li className="horizontal-separator">Translation Authors</li>
+                        </Localized>
+
+                        { props.authorsData.map((author, i) => {
+                            const selected = props.authors[author.email];
+
+                            let className = 'author';
+                            if (selected) {
+                                className += ' selected';
+                            }
+
+                            return <li
+                                className={ `${className}` }
+                                key={ i }
+                                onClick={ this.createApplySingleFilter(author.email, 'authors') }
+                            >
+                                <figure>
+                                    <span className="sel">
+                                        <span
+                                            className="status fa"
+                                            onClick={ this.createToggleFilter(author.email, 'authors') }
+                                        ></span>
+                                        <img
+                                            alt=""
+                                            className="rounded"
+                                            src={ author.gravatar_url }
+                                        />
+                                    </span>
+                                    <figcaption>
+                                        <p className="name">{ author.display_name }</p>
+                                        <p className="role">{ author.role }</p>
+                                    </figcaption>
+                                    <span className="count">
+                                        { asLocaleString(author.translation_count) }
+                                    </span>
+                                </figure>
+                            </li>
+                        }) }
+                    </>}
                 </ul>
                 { selectedFiltersCount === 0 ? null :
                 <div className="toolbar clearfix">

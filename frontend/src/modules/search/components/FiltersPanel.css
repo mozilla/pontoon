@@ -55,6 +55,10 @@
     position: relative;
 }
 
+.filters-panel.fixed .menu ul {
+    margin-bottom: 54px;
+}
+
 .filters-panel .menu li {
     color: #AAAAAA;
     cursor: pointer;
@@ -163,16 +167,81 @@
     content: "";
 }
 
+.filters-panel .menu li.author {
+    height: 48px;
+    padding-left: 4px;
+    white-space: nowrap;
+}
+
+.filters-panel .menu li.author figure {
+    height: 100%;
+}
+
+.filters-panel .menu li.author img {
+    border-radius: 100%;
+    border: 2px solid #4d5967;
+    vertical-align: top;
+}
+
+.filters-panel .menu li.author figcaption {
+    display: inline-block;
+    padding: 2px 0 2px 56px;
+}
+
+.filters-panel .menu li.author .name {
+    color: #FFFFFF;
+    font-size: 16px;
+    padding-bottom: 4px;
+}
+
+.filters-panel .menu li.author .role {
+    color: #AAAAAA;
+}
+
+.filters-panel .menu li.author .count {
+    top: 8px;
+}
+
+.filters-panel .menu li.author .sel {
+    position: absolute;
+}
+
+.filters-panel .menu li.author .status {
+    box-sizing: border-box;
+    display: none;
+    height: 100%;
+    left: 0;
+    margin: 0;
+    padding: 16px 0 0;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.filters-panel .menu li.author .status:before {
+    color: #AAAAAA;
+}
+
+
+.filters-panel .menu li.author.selected .status,
+.filters-panel .menu li.author .sel:hover .status {
+    display: block;
+}
+
+.filters-panel .menu li.author.selected img,
+.filters-panel .menu li.author .sel:hover img {
+    opacity: 0.3;
+}
+
 .filters-panel .toolbar {
     background: #111111;
     border-top: 1px solid #5E6475;
+    box-sizing: border-box;
     line-height: 23px;
     padding: 10px 12px;
     text-transform: uppercase;
     width: 100%;
-
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
 .filters-panel .toolbar.fixed {

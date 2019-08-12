@@ -3314,6 +3314,10 @@ var Pontoon = (function (my) {
 
       $('#filter .menu li.author').remove();
 
+      authors.sort(function(a, b) {
+        return a.translation_count - b.translation_count;
+      });
+
       $.each(authors, function() {
         var selected = (selectedAuthors.includes(this.email)) ? ' selected' : '';
         $forAuthors.after('<li class="author' + selected + '" data-type="' + this.email + '">' +

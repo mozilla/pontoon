@@ -201,6 +201,8 @@ export function selectAll(
     status: ?string,
     extra: ?string,
     tag: ?string,
+    author: ?string,
+    time: ?string,
 ): Function {
     return async dispatch => {
         dispatch(request('select-all'));
@@ -216,6 +218,8 @@ export function selectAll(
             status,
             extra,
             tag,
+            author,
+            time,
             true,
         );
 

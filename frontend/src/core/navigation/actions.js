@@ -50,6 +50,19 @@ export function update(router: Object, params: { [string]: ?string }): Function 
 
 
 /**
+ * Update the URL with a new `author` parameter.
+ *
+ * This function removes the `string` parameter from the URL if any, because
+ * it is possible that after the results have changed, the currently selected
+ * entity won't be available anymore.
+ * It keeps all other parameters in the URL the same.
+ */
+export function updateAuthor(router: Object, author: ?string): Function {
+    return update(router, { author });
+}
+
+
+/**
  * Update the URL with a new `string` parameter.
  *
  * This function keeps all other parameters in the URL the same.
@@ -111,11 +124,26 @@ export function updateTag(router: Object, tag: ?string): Function {
 }
 
 
+/**
+ * Update the URL with a new `time` parameter.
+ *
+ * This function removes the `string` parameter from the URL if any, because
+ * it is possible that after the results have changed, the currently selected
+ * entity won't be available anymore.
+ * It keeps all other parameters in the URL the same.
+ */
+export function updateTime(router: Object, time: ?string): Function {
+    return update(router, { time });
+}
+
+
 export default {
     update,
+    updateAuthor,
     updateEntity,
     updateExtra,
     updateSearch,
     updateStatus,
     updateTag,
+    updateTime,
 };
