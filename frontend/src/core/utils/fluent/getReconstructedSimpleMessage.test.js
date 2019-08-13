@@ -6,34 +6,34 @@ describe('getReconstructedSimpleMessage', () => {
         const original = 'title = Marvel Cinematic Universe';
         const translation = 'Univers cinématographique Marvel';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('title = Univers cinématographique Marvel');
+        expect(res).toEqual('title = Univers cinématographique Marvel\n');
     });
 
     it('returns the correct value for a single attribute', () => {
         const original = 'spoilers =\n    .who-dies = Who dies?';
         const translation = 'Qui meurt ?';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('spoilers =\n    .who-dies = Qui meurt ?');
+        expect(res).toEqual('spoilers =\n    .who-dies = Qui meurt ?\n');
     });
 
     it('returns indented content for a multiline simple message', () => {
         const original = 'time-travel = They discovered Time Travel';
         const translation = 'Ils ont inventé le\nvoyage temporel';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('time-travel =\n    Ils ont inventé le\n    voyage temporel');
+        expect(res).toEqual('time-travel =\n    Ils ont inventé le\n    voyage temporel\n');
     });
 
     it('returns indented content for a multiline single attribute', () => {
         const original = 'slow-walks =\n    .title = They walk in slow motion';
         const translation = 'Ils se déplacent\nen mouvement lents';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents');
+        expect(res).toEqual('slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents\n');
     });
 
     it('adds the leading dash to the id of Term messages', () => {
         const original = '-my-term = My Term';
         const translation = 'Mon Terme';
         const res = getReconstructedSimpleMessage(original, translation);
-        expect(res).toEqual('-my-term = Mon Terme');
+        expect(res).toEqual('-my-term = Mon Terme\n');
     });
 });

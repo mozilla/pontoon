@@ -59,6 +59,6 @@ describe('<SimpleEditor>', () => {
         const [wrapper, sendTranslationMock, ] = createSimpleEditor();
         wrapper.instance().sendTranslation(false, 'Coucou');
         expect(sendTranslationMock.calledOnce).toBeTruthy();
-        expect(sendTranslationMock.calledWith(false, 'my-message = Coucou')).toBeTruthy();
+        expect(sendTranslationMock.calledWith(false, 'my-message = Coucou\n')).toBeTruthy();
     });
 });

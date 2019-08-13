@@ -1,4 +1,5 @@
 import parser from './parser';
+import serializer from './serializer';
 
 
 /**
@@ -18,6 +19,7 @@ export default function getReconstructedSimpleMessage(original, translation) {
     const isMultilineTranslation = translation.indexOf('\n') > -1;
 
     let content;
+
     if (message.attributes && message.attributes.length === 1) {
         const attribute = message.attributes[0].id.name;
 
@@ -38,5 +40,8 @@ export default function getReconstructedSimpleMessage(original, translation) {
             content = `${key} = ${translation}`;
         }
     }
-    return content;
+
+    // Ensure strings are serialized with default serializer settings
+    const ast = parser.parseEntry(content);
+    return serializer.serializeEntry(ast);
 }

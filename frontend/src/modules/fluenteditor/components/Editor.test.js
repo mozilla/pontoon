@@ -103,7 +103,7 @@ describe('<Editor>', () => {
         wrapper.instance().toggleForceSource();
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
-        expect(updateTranslationMock.lastCall.calledWith('my-message = Salut')).toBeTruthy();
+        expect(updateTranslationMock.lastCall.calledWith('my-message = Salut\n')).toBeTruthy();
     });
 
     it('sets empty initial translation in source mode when untranslated', () => {
