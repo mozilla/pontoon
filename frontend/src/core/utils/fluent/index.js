@@ -5,8 +5,9 @@ import getSimplePreview from './getSimplePreview';
 import isSimpleElement from './isSimpleElement';
 import isSimpleMessage from './isSimpleMessage';
 import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
-import serialize from './serialize';
 import parser from './parser';
+import serialize from './serialize';
+import serializer from './serializer';
 
 
 export default {
@@ -15,6 +16,7 @@ export default {
     isSimpleElement,
     isSimpleMessage,
     isSimpleSingleAttributeMessage,
-    serialize,
     parser,
+    serialize,
+    serializer,
 };
