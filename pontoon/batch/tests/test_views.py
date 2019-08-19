@@ -91,7 +91,6 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
 
     # No `action` parameter.
     response = batch_action(locale=locale_a.code)
-
     assert response.status_code == 400
     assert 'action' in response.content
 
@@ -104,13 +103,15 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
     assert response.status_code == 400
     assert 'action' in response.content
 
+
+@pytest.mark.django_db
+def test_batch_edit_translations_not_found(batch_action, member, locale_a):
     # Incorrect `locale` parameter.
     response = batch_action(
         action='reject',
         locale='unknown',
     )
     assert response.status_code == 404
-    assert 'action' in response.content
 
 
 @pytest.mark.django_db
