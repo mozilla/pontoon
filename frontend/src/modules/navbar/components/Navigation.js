@@ -45,7 +45,23 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        this.updateTitle();
+        const { parameters } = this.props;
+
+        // Update project and resource data if project changes
+        if (parameters.project !== prevProps.parameters.project) {
+            this.props.dispatch(project.actions.get(parameters.project));
+
+            // Load resources, unless we're in the All Projects view
+            if (parameters.project !== 'all-projects') {
+                this.props.dispatch(
+                    resource.actions.get(parameters.locale, parameters.project)
+                );
+            }
+        }
+
+        if (this.props.project !== prevProps.project) {
+            this.updateTitle();
+        }
     }
 
     updateTitle = () => {
