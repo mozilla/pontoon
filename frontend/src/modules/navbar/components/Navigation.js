@@ -40,6 +40,25 @@ type InternalProps = {|
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
 export class NavigationBase extends React.Component<InternalProps> {
+    componentDidMount() {
+        this.updateTitle();
+    }
+
+    componentDidUpdate(prevProps: InternalProps) {
+        this.updateTitle();
+    }
+
+    updateTitle = () => {
+        const { locale, project } = this.props;
+
+        if (!locale || !project) {
+            return null;
+        }
+
+        const projectName = project.name || 'All Projects';
+        document.title = `${locale.name} (${locale.code}) · ${projectName}`;
+    }
+
     navigateToPath = (path: string) => {
         const { dispatch } = this.props;
 
