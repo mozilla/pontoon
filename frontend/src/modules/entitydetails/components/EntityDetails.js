@@ -79,11 +79,15 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { pluralForm, selectedEntity } = this.props;
+        const { activeTranslation, nextEntity, pluralForm, selectedEntity } = this.props;
 
         if (
             pluralForm !== prevProps.pluralForm ||
-            selectedEntity !== prevProps.selectedEntity
+            selectedEntity !== prevProps.selectedEntity ||
+            (
+                selectedEntity === nextEntity &&
+                activeTranslation !== prevProps.activeTranslation
+            )
         ) {
             this.updateFailedChecks();
             this.fetchHelpersData();
@@ -95,7 +99,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      * Also fetch history data if the pluralForm changes.
      */
     fetchHelpersData() {
-        const { dispatch, locale, parameters, pluralForm, selectedEntity } = this.props;
+        const { dispatch, locale, nextEntity, parameters, pluralForm, selectedEntity } = this.props;
 
         if (!parameters.entity || !selectedEntity || !locale) {
             return;
@@ -103,7 +107,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         if (
             selectedEntity.pk !== this.props.history.entity ||
-            pluralForm !== this.props.history.pluralForm
+            pluralForm !== this.props.history.pluralForm ||
+            selectedEntity === nextEntity
         ) {
             dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         }

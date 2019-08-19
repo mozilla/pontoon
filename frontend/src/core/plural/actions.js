@@ -1,7 +1,6 @@
 /* @flow */
 
 import { actions as navActions } from 'core/navigation';
-import { actions as historyActions } from 'modules/history';
 
 import type { Locale } from 'core/locales';
 
@@ -26,9 +25,6 @@ export function moveToNextTranslation(
     }
     else if (nextEntity !== entity) {
         dispatch(navActions.updateEntity(router, nextEntity.toString()));
-    }
-    else {
-        dispatch(historyActions.get(entity, locale.code, pluralForm));
     }
 }
 
