@@ -37,6 +37,11 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
+        // Unused by Generic Editor - reset to default value.
+        if (this.props.editor.initialTranslation) {
+            return this.props.setInitialTranslation('');
+        }
+
         // Close failed checks popup when content of the editor changes,
         // but only if the errors and warnings did not change
         // meaning they were already shown in the previous render

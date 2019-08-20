@@ -31,9 +31,22 @@ type Action =
 
 export type EditorState = {|
     +translation: string,
+
+    // Used for storing the initial translation in Fluent editor,
+    // needed for detecting unsaved changes.
     +initialTranslation: string,
+
+    // Source of the current change. 'internal' or missing if from inside the
+    // Editor, 'external' otherwise. This allows the Editor to behave
+    // differently depending on the type of change.
     +changeSource: string,
+
+    // Order to replace the currently selected text inside the Editor with
+    // this content. This is reset after that change has been made. Because
+    // we have different Editor implementations, we need to let those components
+    // perform the actual replacement logic.
     +selectionReplacementContent: string,
+
     +errors: Array<string>,
     +warnings: Array<string>,
 
@@ -71,16 +84,7 @@ function extractFailedChecksOfType(
 const initial: EditorState = {
     translation: '',
     initialTranslation: '',
-
-    // Source of the current change. 'internal' or missing if from inside the
-    // Editor, 'external' otherwise. This allows the Editor to behave
-    // differently depending on the type of change.
     changeSource: 'internal',
-
-    // Order to replace the currently selected text inside the Editor with
-    // this content. This is reset after that change has been made. Because
-    // we have different Editor implementations, we need to let those components
-    // perform the actual replacement logic.
     selectionReplacementContent: '',
     errors: [],
     warnings: [],
