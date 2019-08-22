@@ -24,18 +24,23 @@ export default class SimpleEditor extends React.Component<Props> {
         if (
             props.entity &&
             props.editor.translation !== prevProps.editor.translation &&
-            props.editor.changeSource === 'external'
+            props.editor.changeSource === 'external' &&
+            typeof(props.editor.translation) === 'string'
         ) {
-            const message = fluent.parser.parseEntry(props.editor.translation);
-            if (
-                fluent.isSimpleMessage(message) ||
-                fluent.isSimpleSingleAttributeMessage(message)
-            ) {
-                props.updateTranslation(
-                    fluent.getSimplePreview(props.editor.translation),
-                    true,
-                );
-            }
+            this.updateFluentTranslation(props.editor.translation);
+        }
+    }
+
+    updateFluentTranslation(translation: string) {
+        const message = fluent.parser.parseEntry(translation);
+        if (
+            fluent.isSimpleMessage(message) ||
+            fluent.isSimpleSingleAttributeMessage(message)
+        ) {
+            this.props.updateTranslation(
+                fluent.getSimplePreview(translation),
+                true,
+            );
         }
     }
 
@@ -45,12 +50,14 @@ export default class SimpleEditor extends React.Component<Props> {
             return;
         }
 
-        if (!translation) {
-            translation = this.props.editor.translation;
+        const currentTranslation = translation || this.props.editor.translation;
+
+        if (typeof(currentTranslation) !== 'string') {
+            throw new Error('Unexpected data type for translation: ' + typeof(translation));
         }
 
         const content = fluent.serializer.serializeEntry(
-            fluent.getReconstructedMessage(entity.original, translation)
+            fluent.getReconstructedMessage(entity.original, currentTranslation)
         );
         this.props.sendTranslation(ignoreWarnings, content);
     }

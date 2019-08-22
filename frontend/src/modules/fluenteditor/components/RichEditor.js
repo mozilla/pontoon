@@ -22,19 +22,20 @@ type Props = {
 export default class RichEditor extends React.Component<Props> {
     componentDidUpdate(prevProps: Props) {
         const props = this.props;
+        const translation = props.editor.translation;
 
         if (
             props.entity &&
-            props.editor.translation !== prevProps.editor.translation &&
+            translation !== prevProps.editor.translation &&
             props.editor.changeSource === 'external' &&
-            typeof(props.editor.translation) === 'string'
+            typeof(translation) === 'string'
         ) {
-            let message = fluent.parser.parseEntry(props.editor.translation);
+            let message = fluent.parser.parseEntry(translation);
 
             if (message.type === 'Junk') {
                 message = fluent.getReconstructedMessage(
                     props.entity.original,
-                    props.editor.translation,
+                    translation,
                 );
             }
 
@@ -61,12 +62,10 @@ export default class RichEditor extends React.Component<Props> {
     }
 
     sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
-        const props = this.props;
-
-        const message = props.editor.translation;
+        const message = translation || this.props.editor.translation;
         const fluentString = fluent.serializer.serializeEntry(message);
 
-        props.sendTranslation(ignoreWarnings, fluentString);
+        this.props.sendTranslation(ignoreWarnings, fluentString);
     }
 
     updateUnsavedChanges = (translation?: Translation, initial?: Translation) => {
@@ -95,6 +94,7 @@ export default class RichEditor extends React.Component<Props> {
                 clearEditor={ this.clearEditor }
                 copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                 sendTranslation={ this.sendTranslation }
+                updateUnsavedChanges={ this.updateUnsavedChanges }
             />
             <editor.EditorMenu
                 { ...props }

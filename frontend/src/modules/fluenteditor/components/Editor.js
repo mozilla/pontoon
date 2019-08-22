@@ -11,14 +11,16 @@ import SourceEditor from './SourceEditor';
 import SimpleEditor from './SimpleEditor';
 import RichEditor from './RichEditor';
 
-import type { EditorProps } from 'core/editor';
+import type { EditorProps, Translation } from 'core/editor';
 
+
+type SyntaxType = 'simple' | 'rich' | 'complex';
 
 type State = {|
     // Force using the source editor.
     forceSource: boolean,
     // The type of form to use to show the translation.
-    syntaxType: 'simple' | 'rich' | 'complex',
+    syntaxType: SyntaxType,
 |};
 
 
@@ -56,8 +58,8 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.state.forceSource !== prevState.forceSource &&
             this.props.editor.translation === prevProps.editor.translation
         ) {
-            const fromSyntax = this.state.forceSource ? 'simple' : 'complex';
-            const toSyntax = this.state.forceSource ? 'complex' : 'simple';
+            const fromSyntax = this.state.forceSource ? this.state.syntaxType : 'complex';
+            const toSyntax = this.state.forceSource ? 'complex' : this.state.syntaxType;
             this.updateEditorContent(
                 this.props.editor.translation,
                 fromSyntax,
@@ -118,47 +120,19 @@ export class EditorBase extends React.Component<EditorProps, State> {
      * Update the content for the new type of form from the previous one. This
      * allows to keep changes made by the user when switching editing modes.
      */
-    updateEditorContent(translation: string, fromSyntax: string, toSyntax: string) {
+    updateEditorContent(translation: Translation, fromSyntax: SyntaxType, toSyntax: SyntaxType) {
         const props = this.props;
 
-        let translationContent = translation;
-        let originalContent = props.activeTranslation;
+        const [translationContent, initialContent] = fluent.convertSyntax(
+            fromSyntax,
+            toSyntax,
+            translation,
+            props.entity.original,
+            props.activeTranslation,
+        );
 
-        if (fromSyntax === 'complex' && toSyntax === 'simple') {
-            translationContent = fluent.getSimplePreview(translationContent);
-            originalContent = fluent.getSimplePreview(originalContent);
-
-            // If any of the contents are junk, discard them.
-            if (translationContent === translation) {
-                translationContent = '';
-            }
-            if (originalContent === props.activeTranslation) {
-                originalContent = '';
-            }
-        }
-        else if (fromSyntax === 'simple' && toSyntax === 'complex') {
-            translationContent = fluent.serializer.serializeEntry(
-                fluent.getReconstructedMessage(
-                    props.entity.original,
-                    translation,
-                )
-            );
-
-            // If there is no active translation (it's an untranslated string)
-            // we make the initial translation an empty fluent message to avoid
-            // showing unchanged content warnings.
-            if (!originalContent) {
-                originalContent = fluent.serializer.serializeEntry(
-                    fluent.getReconstructedMessage(
-                        props.entity.original,
-                        '',
-                    )
-                );
-            }
-        }
-
-        props.setInitialTranslation(originalContent);
         props.updateTranslation(translationContent);
+        props.setInitialTranslation(initialContent);
     }
 
     toggleForceSource = () => {

@@ -105,6 +105,11 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
     }
 
     render() {
+        if (typeof(this.props.editor.translation) !== 'string') {
+            // This is a transational state.
+            return null;
+        }
+
         const options = {
             animatedScroll: false,
             autoScrollEditorIntoView: false,

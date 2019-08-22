@@ -1,5 +1,6 @@
 import getReconstructedMessage from './getReconstructedMessage';
 import parser from './parser';
+import serializer from './serializer';
 
 
 describe('getReconstructedMessage', () => {
@@ -59,7 +60,14 @@ describe('getReconstructedMessage', () => {
         const res = getReconstructedMessage(original, translation);
 
         expect(res.value.elements[0].value).toEqual('Anthony Stark');
-        expect(res.attributes[0].value.elements[0].value).toEqual('');
-        expect(res.attributes[1].value.elements[0].value).toEqual('');
+        expect(res.attributes).toHaveLength(0);
+    });
+
+    it('does not duplicate terms in content', () => {
+        const original = 'with-term = I am { -term }';
+        const translation = 'Je suis { -term }';
+        const res = getReconstructedMessage(original, translation);
+
+        expect(serializer.serializeEntry(res)).toEqual('with-term = Je suis { -term }\n');
     });
 });

@@ -128,7 +128,7 @@ describe('<Editor>', () => {
         // Force source mode.
         wrapper.instance().toggleForceSource();
 
-        expect(updateTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
+        expect(updateTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
         expect(setInitialTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
     });
 });

@@ -60,11 +60,16 @@ export default class EditorMenu extends React.Component<Props> {
                         updateSetting={ props.updateSetting }
                     />
                     <editor.KeyboardShortcuts />
-                    <editor.TranslationLength
-                        entity={ props.entity }
-                        pluralForm={ props.pluralForm }
-                        translation={ props.editor.translation }
-                    />
+                    { (
+                        props.entity.format === 'ftl' ||
+                        typeof(props.editor.translation) !== 'string'
+                    ) ? null :
+                        <editor.TranslationLength
+                            entity={ props.entity }
+                            pluralForm={ props.pluralForm }
+                            translation={ props.editor.translation }
+                        />
+                    }
                     <div className="actions">
                         <Localized id="editor-EditorMenu--button-copy">
                             <button

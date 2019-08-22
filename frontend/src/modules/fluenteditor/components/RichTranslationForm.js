@@ -5,6 +5,7 @@ import * as React from 'react';
 import './RichTranslationForm.css';
 
 import type { EditorProps } from 'core/editor';
+import type { FluentMessage } from 'core/utils/fluent/types';
 
 
 /**
@@ -12,7 +13,6 @@ import type { EditorProps } from 'core/editor';
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
     componentDidUpdate(prevProps: EditorProps) {
-        const prevEditor = prevProps.editor;
         const editor = this.props.editor;
 
         // If the translation is a string, that means we're in a translational
@@ -21,11 +21,18 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             return;
         }
 
+        this.update(prevProps, editor.translation);
+    }
+
+    update(prevProps: EditorProps, translation: FluentMessage) {
+        const prevEditor = prevProps.editor;
+        const editor = this.props.editor;
+
         // Close failed checks popup when content of the editor changes,
         // but only if the errors and warnings did not change
         // meaning they were already shown in the previous render
         if (
-            !editor.translation.equals(prevEditor.translation) &&
+            !translation.equals(prevEditor.translation) &&
             prevEditor.errors === editor.errors &&
             prevEditor.warnings === editor.warnings &&
             (editor.errors.length || editor.warnings.length)
@@ -36,7 +43,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // When content of the editor changes
         //   - close unsaved changes popup if open
         //   - update unsaved changes status
-        if (!editor.translation.equals(prevEditor.translation)) {
+        if (!translation.equals(prevEditor.translation)) {
             if (this.props.unsavedchanges.shown) {
                 this.props.hideUnsavedChanges();
             }
@@ -49,7 +56,13 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             const value = event.currentTarget.value;
             const message = this.props.editor.translation;
 
-            let dest = message;
+            if (typeof(message) === 'string') {
+                return null;
+            }
+
+            // Never mutate state.
+            const source = message.clone();
+            let dest = source;
             // Walk the path until the next to last item.
             for (let i = 0, ln = path.length; i < ln - 1; i++) {
                 dest = dest[path[i]];
@@ -59,7 +72,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             // to the extracted value.
             dest[path[path.length - 1]] = value;
 
-            this.props.updateTranslation(message);
+            this.props.updateTranslation(source);
         }
     }
 
@@ -91,6 +104,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
     render() {
         const message = this.props.editor.translation;
+
+        if (typeof(message) === 'string') {
+            return null;
+        }
 
         return <div className="fluent-rich-translation-form">
             <table>

@@ -59,9 +59,9 @@ export type EditorProps = {|
     resetFailedChecks: () => void,
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
-    setInitialTranslation: (string) => void,
+    setInitialTranslation: (Translation) => void,
     showNotSupportedMessage: () => void,
-    updateTranslation: (string, fromOutsideEditor?: boolean) => void,
+    updateTranslation: (Translation, fromOutsideEditor?: boolean) => void,
     updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
     hideUnsavedChanges: () => void,
     ignoreUnsavedChanges: () => void,
@@ -128,16 +128,24 @@ export default function connectedEditor<Object>(
             this.updateTranslation('');
         }
 
-        sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
+        sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {
             const props = this.props;
 
             if (!props.selectedEntity || !props.locale) {
                 return;
             }
 
+            const content = translation || props.editor.translation;
+            if (typeof(content) !== 'string') {
+                throw new Error(
+                    'Trying to save an unsupported non-string translation: ' +
+                    typeof(content)
+                );
+            }
+
             this.props.dispatch(actions.sendTranslation(
                 props.selectedEntity,
-                translation || props.editor.translation,
+                content,
                 props.locale,
                 props.pluralForm,
                 props.user.settings.forceSuggestions,

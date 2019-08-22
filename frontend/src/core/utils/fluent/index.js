@@ -1,6 +1,7 @@
 /* @flow */
 
 import areSupportedElements from './areSupportedElements';
+import convertSyntax from './convertSyntax';
 import getEmptyMessage from './getEmptyMessage';
 import getReconstructedMessage from './getReconstructedMessage';
 import getSimplePreview from './getSimplePreview';
@@ -15,6 +16,7 @@ import serializer from './serializer';
 
 export default {
     areSupportedElements,
+    convertSyntax,
     getEmptyMessage,
     getReconstructedMessage,
     getSimplePreview,
