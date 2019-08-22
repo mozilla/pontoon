@@ -85,10 +85,10 @@ export class EditorBase extends React.Component<EditorProps, State> {
         // Figure out and set the initial translation content.
         let translationContent = props.activeTranslation;
 
-        if (syntaxType === 'simple' && !this.state.forceSource) {
+        if (syntaxType === 'simple') {
             translationContent = fluent.getSimplePreview(props.activeTranslation);
         }
-        else if (syntaxType === 'rich' && !this.state.forceSource) {
+        else if (syntaxType === 'rich') {
             if (!props.activeTranslation) {
                 translationContent = fluent.getEmptyMessage(message);
             }
