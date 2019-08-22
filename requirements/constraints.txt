@@ -274,8 +274,9 @@ py==1.4.34 \
     --hash=sha256:0f2d585d22050e90c7d293b6451c83db097df77871974d90efd5a30dc12fcde3
 
 # >=0.10.1 wsgi-sslify
-werkzeug==0.10.1 \
---hash=sha256:9cf783990b1a99173e707a5768610800aa87775e9d86e211d17180d5b6c245ab
+Werkzeug==0.15.5 \
+    --hash=sha256:87ae4e5b5366da2347eb3116c0e6c681a0e939a33b2805e2c0cbd282664932c4 \
+    --hash=sha256:a13b74dd3c45f758d4ebdb224be8f1ab8ef58b3c0ffc1783a8c7d9f4f50227e6
 
 # django-debug-toolbar
 sqlparse==0.1.19 \
