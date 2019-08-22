@@ -78,7 +78,7 @@ export type UpdateAction = {|
     +exist: boolean,
     +type: typeof UPDATE,
 |};
-export function update(editorTranslation: Translation, activeTranslation: Translation): UpdateAction {
+export function update(editorTranslation: Translation, initialTranslation: Translation): UpdateAction {
     return {
         exist: editorTranslation !== initialTranslation,
         type: UPDATE,
