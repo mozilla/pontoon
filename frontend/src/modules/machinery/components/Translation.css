@@ -44,6 +44,12 @@
     color: #7BC876;
 }
 
+.machinery .translation p {
+    min-height: 22px;
+    text-align: start;
+    white-space: pre-wrap;
+}
+
 .machinery .translation p.original {
     color: #AAAAAA;
 }

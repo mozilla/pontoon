@@ -16,8 +16,8 @@ const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {|
     content: string,
-    diffTarget: ?string,
-    search: ?string,
+    diffTarget?: ?string,
+    search?: ?string,
 |};
 
 
