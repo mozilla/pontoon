@@ -8,17 +8,6 @@
     padding: 0;
 }
 
-.machinery p {
-    min-height: 22px;
-}
-
-.machinery > p {
-    border-bottom: 1px solid #5E6475;
-    color: #aaa;
-    font-style: italic;
-    padding: 5px 10px 20px 10px;
-}
-
 .machinery > .search-wrapper {
     border-bottom: 1px solid #5E6475;
     margin: 0 10px 10px;
