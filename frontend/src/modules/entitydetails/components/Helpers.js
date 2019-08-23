@@ -113,7 +113,6 @@ export default class Helpers extends React.Component<Props> {
             </TabPanel>
             <TabPanel>
                 <Machinery
-                    entity={ entity }
                     isReadOnlyEditor={ isReadOnlyEditor }
                     locale={ locale }
                     machinery={ machinery }

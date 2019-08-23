@@ -373,14 +373,6 @@ var Pontoon = (function (my) {
           if (data.source !== 'Caighdean') {
             var originalTextForDiff = originalText;
 
-            // We store TranslationMemoryEntries of FTL Translation objects as source FTL,
-            // so in we need to convert returned original and translation to simple string.
-            // See bug 1455191.
-            if (!customSearch && data.source === 'Translation memory') {
-              originalTextForDiff = self.fluent.getSimplePreview(originalText);
-              translationText = self.fluent.getSimplePreview(translationText);
-            }
-
             originalText = (originalText ? self.diff(original, originalTextForDiff) : '');
           }
           var li = $('<li class="suggestion"' + title + ' data-clipboard-text="' + self.doNotRender(translationText) + '">' +

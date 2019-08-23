@@ -5,14 +5,13 @@ import { Localized } from 'fluent-react';
 
 import './Translation.css';
 
-import { TranslationProxy } from 'core/translation';
+import { GenericTranslation } from 'core/translation';
 
-import type { Entity, MachineryTranslation } from 'core/api';
+import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locales';
 
 
 type Props = {|
-    entity: Entity,
     isReadOnlyEditor: boolean,
     locale: Locale,
     sourceString: string,
@@ -43,7 +42,7 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { entity, locale, sourceString, translation } = this.props;
+        const { locale, sourceString, translation } = this.props;
 
         const types = translation.sources.map(source => source.type);
 
@@ -84,19 +83,17 @@ export default class Translation extends React.Component<Props> {
                 </header>
                 <p className="original">
                     { types.indexOf('Caighdean') === -1 ?
-                        <TranslationProxy
+                        <GenericTranslation
                             content={ sourceString }
                             diffTarget={ translation.original }
-                            format={ entity.format }
                         />
                     :
                         /*
                          * Caighdean takes `gd` translations as input, so we shouldn't
                          * diff it against the `en-US` source string.
                          */
-                         <TranslationProxy
+                         <GenericTranslation
                              content= { translation.original }
-                             format={ entity.format }
                          />
                     }
                 </p>
@@ -106,9 +103,8 @@ export default class Translation extends React.Component<Props> {
                     data-script={ locale.script }
                     lang={ locale.code }
                 >
-                    <TranslationProxy
+                    <GenericTranslation
                         content={ translation.translation }
-                        format={ entity.format }
                     />
                 </p>
             </li>
