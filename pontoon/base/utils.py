@@ -643,7 +643,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         }
     )
     for resource_path, key, source, target, project_name, project_slug in entries:
-        tuid = ':'.join((project_slug, slugify(resource_path), slugify(key)))
+        tuid = ':'.join((project_slug, resource_path, slugify(key)))
         yield (
             u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
             u'\n\t\t\t<tuv xml:lang="en-US">'
