@@ -66,6 +66,7 @@ export default function reducer(
             return {
                 ...state,
                 exist: action.exist,
+                ignored: false,
             };
         default:
             return state;
