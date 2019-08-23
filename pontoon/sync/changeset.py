@@ -434,8 +434,8 @@ class ChangeSet(object):
         )
 
         memory_entries = [TranslationMemoryEntry(
-            source=t.entity.string,
-            target=t.string,
+            source=t.tm_source,
+            target=t.tm_target,
             locale_id=t.locale_id,
             entity_id=t.entity.pk,
             translation_id=t.pk,

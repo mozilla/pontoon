@@ -44,17 +44,18 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.base import utils
+from pontoon.base.templatetags.helpers import as_simple_translation
 from pontoon.checks import DB_FORMATS
+from pontoon.checks.utils import save_failed_checks
+from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
+from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.vcs.repositories import (
     commit_to_vcs,
     get_revision,
     update_from_vcs,
     PullFromRepositoryException,
 )
-from pontoon.base import utils
-from pontoon.checks.utils import save_failed_checks
-from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
-from pontoon.sync import KEY_SEPARATOR
 
 
 log = logging.getLogger(__name__)
@@ -2772,6 +2773,24 @@ class Translation(DirtyFieldsMixin, models.Model):
                 'type': 'submitted',
             }
 
+    @property
+    def tm_source(self):
+        source = self.entity.string
+
+        if self.entity.resource.format == 'ftl':
+            return as_simple_translation(source)
+
+        return source
+
+    @property
+    def tm_target(self):
+        target = self.string
+
+        if self.entity.resource.format == 'ftl':
+            return as_simple_translation(target)
+
+        return target
+
     def __str__(self):
         return self.string
 
@@ -2807,8 +2826,8 @@ class Translation(DirtyFieldsMixin, models.Model):
 
             if not self.memory_entries.exists():
                 TranslationMemoryEntry.objects.create(
-                    source=self.entity.string,
-                    target=self.string,
+                    source=self.tm_source,
+                    target=self.tm_target,
                     entity=self.entity,
                     translation=self,
                     locale=self.locale,
@@ -2884,8 +2903,8 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         if not self.memory_entries.exists():
             TranslationMemoryEntry.objects.create(
-                source=self.entity.string,
-                target=self.string,
+                source=self.tm_source,
+                target=self.tm_target,
                 entity=self.entity,
                 translation=self,
                 locale=self.locale,

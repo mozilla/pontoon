@@ -82,8 +82,8 @@ def update_translation_memory(changed_translation_pks, project, locale):
     """
     memory_entries = [
         TranslationMemoryEntry(
-            source=t.entity.string,
-            target=t.string,
+            source=t.tm_source,
+            target=t.tm_target,
             locale=locale,
             entity=t.entity,
             translation=t,
