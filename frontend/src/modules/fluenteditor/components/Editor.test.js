@@ -42,6 +42,10 @@ const ENTITIES = [
     },
 ];
 
+const USER = {
+    isAuthenticated: true,
+};
+
 
 function createEditorBase({
     entityIndex = 0,
@@ -55,6 +59,7 @@ function createEditorBase({
         translation={ ENTITIES[entityIndex].translation[0].string }
         setInitialTranslation={ setInitialTranslationMock }
         updateTranslation={ updateTranslationMock }
+        user={ USER }
     />);
 
     return [wrapper, updateTranslationMock, setInitialTranslationMock];

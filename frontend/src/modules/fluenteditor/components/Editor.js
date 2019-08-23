@@ -153,22 +153,24 @@ export class EditorBase extends React.Component<EditorProps, State> {
             EditorImplementation = SimpleEditor;
         }
 
-        // If the type of the string is not 'complex', meaning we show an
-        // optimized editor by default, show a button to allow switching to
-        // the source editor.
-        const ftlSwitch = this.state.syntaxType === 'complex' ? <button
-            className='ftl active'
-            title='Advanced FTL mode enabled'
-            onClick={ this.props.showNotSupportedMessage }
-        >
-            FTL
-        </button> : <button
-            className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
-            title='Toggle between simple and advanced FTL mode'
-            onClick={ this.toggleForceSource }
-        >
-            FTL
-        </button>;
+        // Show a button to allow switching to the source editor.
+        let ftlSwitch = null;
+        // But only if the user is logged in and the string is not read-only.
+        if (this.props.user.isAuthenticated && !this.props.isReadOnlyEditor) {
+            ftlSwitch = this.state.syntaxType === 'complex' ? <button
+                className='ftl active'
+                title='Advanced FTL mode enabled'
+                onClick={ this.props.showNotSupportedMessage }
+                >
+                    FTL
+                </button> : <button
+                    className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
+                    title='Toggle between simple and advanced FTL mode'
+                    onClick={ this.toggleForceSource }
+                >
+                    FTL
+                </button>;
+        }
 
         return <EditorImplementation
             { ...this.props }
