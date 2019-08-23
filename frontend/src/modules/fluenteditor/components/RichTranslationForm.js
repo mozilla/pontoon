@@ -4,6 +4,8 @@ import * as React from 'react';
 
 import './RichTranslationForm.css';
 
+import { fluent } from 'core/utils';
+
 import type { EditorProps } from 'core/editor';
 import type { FluentMessage } from 'core/utils/fluent/types';
 
@@ -12,6 +14,21 @@ import type { FluentMessage } from 'core/utils/fluent/types';
  * Render an Rich editor for Fluent string editting.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
+
+    componentDidMount() {
+        const editor = this.props.editor;
+
+        // If the translation is a string, that means we're in a translational
+        // state and there's going to be another render with a Fluent AST.
+        if (typeof(editor.translation) === 'string') {
+            return;
+        }
+
+        // Walks the tree and unify all simple elements into just one.
+        const message = fluent.flattenMessage(editor.translation);
+        this.props.updateTranslation(message);
+    }
+
     componentDidUpdate(prevProps: EditorProps) {
         const editor = this.props.editor;
 
@@ -27,6 +44,12 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     update(prevProps: EditorProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
+
+        if (!translation.equals(prevEditor.translation)) {
+            // Walks the tree and unify all simple elements into just one.
+            const message = fluent.flattenMessage(translation);
+            this.props.updateTranslation(message);
+        }
 
         // Close failed checks popup when content of the editor changes,
         // but only if the errors and warnings did not change
