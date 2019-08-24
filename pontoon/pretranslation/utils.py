@@ -14,6 +14,17 @@ log = logging.getLogger(__name__)
 
 
 def get_translations(entity, locale):
+    """
+    Get pre-translations for the entity-locale pair
+
+    :arg Entity entity: the Entity object
+    :arg Locale locale: the Locale object
+
+    :returns: a list of tuple with:
+        - a pretranslation of the entity
+        - plural form
+        - user - tm_user/gt_user
+    """
     tm_user = base.models.User.objects.get(email="pontoon-tm@mozilla.com")
     gt_user = base.models.User.objects.get(email="pontoon-gt@mozilla.com")
 
@@ -55,8 +66,12 @@ def pretranslate(project, locales=None, entities=None):
     Identifies strings without any translations and any suggestions.
     Engages TheAlgorithm (bug 1552796) to gather pre-translations.
     Stores pre-translations as suggestions (approved=False) to DB.
-    Author should be set to a name like "Pontoon Translator <pontoon@mozilla.com>".
-    Stats and Latest activity should be updated
+
+    :arg Project project: the project to be pre translated
+    :arg Queryset locales: the locales for the project to be pre translated
+    :arg Queryset entites: the entities for the project to be pre translated
+
+    :returns: None
     """
 
     log.info("Fetching pretranslations for project {} started".format(project.name))
@@ -151,7 +166,10 @@ def pretranslate(project, locales=None, entities=None):
 
 
 def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
-    # Store the instances to be updated.
+    """
+    Update the latest activity and stats for changed Locales, ProjectLocales
+    & TranslatedResources
+    """
     locale_list = []
     projectlocale_list = []
     tr_list = []

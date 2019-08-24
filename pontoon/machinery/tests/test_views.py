@@ -106,6 +106,7 @@ def test_view_google_translate(client, google_translate_locale, google_translate
     assert (
         json.loads(response.content) ==
         {
+            'status': True,
             'translation': 'target',
         }
     )
