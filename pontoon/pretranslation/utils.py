@@ -74,7 +74,7 @@ def pretranslate(project, locales=None, entities=None):
     :returns: None
     """
 
-    log.info("Fetching pretranslations for project {} started".format(project.name))
+    log.info('Fetching pretranslations for project {} started'.format(project.name))
 
     if not locales:
         locales = project.locales.filter(
@@ -110,7 +110,7 @@ def pretranslate(project, locales=None, entities=None):
     index = -1
 
     for locale in locales:
-        log.info("Fetching pretranslations for locale {} started".format(locale.code))
+        log.info('Fetching pretranslations for locale {} started'.format(locale.code))
         for entity in entities:
             locale_entity = '{}-{}'.format(locale.id, entity.id)
             if locale_entity not in translated_entities:
@@ -147,7 +147,7 @@ def pretranslate(project, locales=None, entities=None):
                         # Increment number of translations (used to adjust stats)
                         tr_dict[locale_resource][1] += 1
                         locale_dict[locale.code][2] += 1
-        log.info("Fetching pretranslations for locale {} done".format(locale.code))
+        log.info('Fetching pretranslations for locale {} done'.format(locale.code))
 
     if len(translations) == 0:
         return
@@ -162,7 +162,7 @@ def pretranslate(project, locales=None, entities=None):
     # Update latest activity and unreviewed count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
 
-    log.info("Fetching pretranslations for project {} done".format(project.name))
+    log.info('Fetching pretranslations for project {} done'.format(project.name))
 
 
 def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
