@@ -10,6 +10,7 @@ from django.db.models import F
 import pontoon.base as base
 
 log = logging.getLogger(__name__)
+MAX_RESULTS = 5
 
 
 def get_google_translate_data(text, locale_code):
@@ -45,6 +46,7 @@ def get_google_translate_data(text, locale_code):
             }
 
         return {
+            'status': True,
             'translation': root['data']['translations'][0]['translatedText'],
         }
 
@@ -57,8 +59,6 @@ def get_google_translate_data(text, locale_code):
 
 
 def get_translation_memory_data(text, locale, pk=None):
-    max_results = 5
-
     entries = (
         base.models.TranslationMemoryEntry.objects
         .filter(locale=locale)
@@ -80,4 +80,4 @@ def get_translation_memory_data(text, locale, pk=None):
             suggestions[entry['target']].update(entry)
         suggestions[entry['target']]['count'] += 1
 
-    return sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results]
+    return sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:MAX_RESULTS]

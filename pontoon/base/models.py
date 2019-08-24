@@ -56,7 +56,7 @@ from pontoon.sync.vcs.repositories import (
     update_from_vcs,
     PullFromRepositoryException,
 )
-from pontoon.pretranslation.utils import pre_translate
+from pontoon.pretranslation.utils import pretranslate
 
 
 log = logging.getLogger(__name__)

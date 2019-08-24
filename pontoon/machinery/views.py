@@ -146,7 +146,7 @@ def google_translate(request):
 
     data = get_google_translate_data(text, locale_code)
 
-    if 'status' in data.keys():
+    if not data['status']:
         return JsonResponse(data, status=400)
 
     return JsonResponse(data)
