@@ -106,7 +106,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
 
     render() {
         if (typeof(this.props.editor.translation) !== 'string') {
-            // This is a transational state.
+            // This is a transitional state.
             return null;
         }
 

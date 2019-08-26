@@ -14,6 +14,10 @@ import RichEditor from './RichEditor';
 import type { EditorProps, Translation } from 'core/editor';
 
 
+// Type of syntax of the translation to show in the editor.
+// `simple` => SimpleEditor (the message can be simplified to a single text element)
+// `rich` => RichEditor (the message can be displayed in our rich interface)
+// `complex` => SourceEditor (the message is not supported by other editor types)
 type SyntaxType = 'simple' | 'rich' | 'complex';
 
 type State = {|
@@ -161,15 +165,15 @@ export class EditorBase extends React.Component<EditorProps, State> {
                 className='ftl active'
                 title='Advanced FTL mode enabled'
                 onClick={ this.props.showNotSupportedMessage }
-                >
-                    FTL
-                </button> : <button
-                    className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
-                    title='Toggle between simple and advanced FTL mode'
-                    onClick={ this.toggleForceSource }
-                >
-                    FTL
-                </button>;
+            >
+                FTL
+            </button> : <button
+                className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
+                title='Toggle between simple and advanced FTL mode'
+                onClick={ this.toggleForceSource }
+            >
+                FTL
+            </button>;
         }
 
         return <EditorImplementation

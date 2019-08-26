@@ -1,16 +1,25 @@
 /* @flow */
 
+export type FluentElement = {
+    type: string,
+    value: string,
+};
+
+export type FluentValue = {
+    elements: Array<FluentElement>,
+};
+
+export type FluentAttribute = {
+    id: { name: string },
+    value: FluentValue,
+};
+
+export type FluentAttributes = Array<FluentAttribute>;
+
 export type FluentMessage = {
     type: string,
-    value: {
-        elements: Array<{}>,
-    },
-    attributes: ?Array<{
-        id: { name: string },
-        value: {
-            elements: Array<{}>,
-        },
-    }>,
+    value: FluentValue,
+    attributes: ?FluentAttributes,
     clone: () => FluentMessage,
     equals: (any) => boolean,
 };

@@ -7,18 +7,23 @@ import './RichTranslationForm.css';
 import { fluent } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
-import type { FluentMessage } from 'core/utils/fluent/types';
+import type {
+    FluentAttribute,
+    FluentAttributes,
+    FluentElement,
+    FluentMessage,
+    FluentValue,
+} from 'core/utils/fluent/types';
 
 
 /**
- * Render an Rich editor for Fluent string editting.
+ * Render a Rich editor for Fluent string editting.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
-
     componentDidMount() {
         const editor = this.props.editor;
 
-        // If the translation is a string, that means we're in a translational
+        // If the translation is a string, that means we're in a transitional
         // state and there's going to be another render with a Fluent AST.
         if (typeof(editor.translation) === 'string') {
             return;
@@ -100,29 +105,63 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     }
 
     renderElements(
-        elements: Array<Object>,
+        elements: Array<FluentElement>,
         path: Array<string | number>,
         label: string,
-    ): Array<React.Node> {
+    ): React.Node {
         return elements.map((element, index) => {
-            if (element.type === 'TextElement') {
-                return <tr key={ `message-value-${index}` }>
-                    <td>
-                        <label htmlFor={ `message-value-${index}` }>{ label }</label>
-                    </td>
-                    <td>
-                        <textarea
-                            id={ `message-value-${index}` }
-                            className=""
-                            value={ element.value }
-                            onChange={ this.createHandleChange([].concat(path, [ index, 'value' ])) }
-                        />
-                    </td>
-                </tr>;
+            if (element.type !== 'TextElement') {
+                return null;
             }
 
-            return null;
+            return <tr key={ `message-value-${index}` }>
+                <td>
+                    <label htmlFor={ `message-value-${index}` }>{ label }</label>
+                </td>
+                <td>
+                    <textarea
+                        id={ `message-value-${index}` }
+                        className=""
+                        value={ element.value }
+                        onChange={
+                            this.createHandleChange(
+                                [].concat(path, [ index, 'value' ])
+                            )
+                        }
+                    />
+                </td>
+            </tr>;
         })
+    }
+
+    renderValue(value: FluentValue, path: Array<string | number>, label?: string): React.Node {
+        if (!value) {
+            return null;
+        }
+
+        if (!label) {
+            label = 'Value';
+        }
+
+        return this.renderElements(
+            value.elements,
+            [].concat(path, [ 'elements' ]),
+            label,
+        );
+    }
+
+    renderAttributes(attributes: ?FluentAttributes, path: Array<string | number>): React.Node {
+        if (!attributes) {
+            return null;
+        }
+
+        return attributes.map((attribute: FluentAttribute, index: number) => {
+            return this.renderValue(
+                attribute.value,
+                [].concat(path, [ index, 'value' ]),
+                attribute.id.name,
+            );
+        });
     }
 
     render() {
@@ -135,17 +174,8 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return <div className="fluent-rich-translation-form">
             <table>
                 <tbody>
-                    { (!message.value) ? null :
-                        this.renderElements(message.value.elements, [ 'value', 'elements' ], 'Value')
-                    }
-                    { (!message.attributes) ? null :
-                        message.attributes.map((attribute, index) => {
-                            if (attribute.value) {
-                                return this.renderElements(attribute.value.elements, [ 'attributes', index, 'value', 'elements' ], attribute.id.name)
-                            }
-                            return null;
-                        })
-                    }
+                    { this.renderValue(message.value, [ 'value' ]) }
+                    { this.renderAttributes(message.attributes, [ 'attributes' ]) }
                 </tbody>
             </table>
         </div>;

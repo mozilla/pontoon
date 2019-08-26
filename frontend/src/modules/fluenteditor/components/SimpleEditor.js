@@ -53,6 +53,8 @@ export default class SimpleEditor extends React.Component<Props> {
         const currentTranslation = translation || this.props.editor.translation;
 
         if (typeof(currentTranslation) !== 'string') {
+            // This should never happen. If it does, the developers have made a
+            // mistake in the code. We need this check for Flow's sake though.
             throw new Error('Unexpected data type for translation: ' + typeof(translation));
         }
 

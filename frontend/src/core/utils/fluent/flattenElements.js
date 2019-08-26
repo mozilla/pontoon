@@ -2,6 +2,8 @@
 
 import { TextElement, serializeExpression } from 'fluent-syntax';
 
+import type { FluentElement } from './types';
+
 
 /**
  * Return a flattened list of Fluent elements.
@@ -14,7 +16,7 @@ import { TextElement, serializeExpression } from 'fluent-syntax';
  * @returns {Array<TextElement>} An array containing a single TextElement which
  * contains all elements' values serialized.
  */
-export default function flattenElements(elements: Array<any>): Array<{}> {
+export default function flattenElements(elements: Array<FluentElement>): Array<FluentElement> {
     const values = elements.map(element => {
         switch (element.type) {
             case 'TextElement':

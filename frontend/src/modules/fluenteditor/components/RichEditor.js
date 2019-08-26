@@ -17,7 +17,12 @@ type Props = {
 
 
 /**
- * Editor for simple Fluent strings.
+ * Rich Editor for supported Fluent strings.
+ *
+ * This shows the Fluent translation based on its AST, presenting a nicer
+ * interface to the user. The translation is stored as an AST, and changes
+ * are made directly to that AST. That is why lots of Editor methods are
+ * overwritten, to handle the convertion from AST to string and back.
  */
 export default class RichEditor extends React.Component<Props> {
     componentDidUpdate(prevProps: Props) {
