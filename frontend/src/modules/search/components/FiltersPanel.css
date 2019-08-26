@@ -186,6 +186,72 @@
     padding-right: 5px;
 }
 
+.filters-panel .menu li.time-range {
+    padding: 4px 0;
+}
+
+.filters-panel .menu li.time-range.editing {
+    cursor: auto;
+}
+
+.filters-panel .menu li.time-range.editing:hover {
+    background: transparent;
+}
+
+.filters-panel .menu li.time-range label {
+    color: #FFFFFF;
+    float: left;
+    font-size: 13px;
+}
+
+.filters-panel .menu li.time-range label.from {
+    margin-left: 30px;
+}
+
+.filters-panel .menu li.time-range label.to {
+    float: right;
+    margin-right: 4px;
+}
+
+.filters-panel .menu li.time-range input {
+    background: transparent;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    color: #AAAAAA;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 300;
+    height: 17px;
+    margin-left: 5px;
+    outline: none;
+    vertical-align: baseline;
+    width: 109px;
+}
+
+.filters-panel .menu li.time-range.editing input {
+    border-color: #525A65;
+    cursor: auto;
+}
+
+.filters-panel .menu li.time-range input[disabled] {
+    pointer-events: none;
+}
+
+.filters-panel .menu li.time-range input.error {
+    color: #F36;
+}
+
+.filters-panel .menu li.time-range .to input {
+    text-align: right;
+}
+
+.filters-panel .menu li.time-range .chart {
+    height: 120px;
+    margin: 0 auto;
+    width: 306px;
+}
+
 .filters-panel .menu li.author {
     height: 48px;
     padding-left: 4px;

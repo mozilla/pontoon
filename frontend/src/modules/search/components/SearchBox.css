@@ -108,6 +108,11 @@
     content: "";
 }
 
+.search-box .time-range .status:before {
+    color: #AAAAAA;
+    content: "";
+}
+
 .search-box .author .status:before {
     color: #AAAAAA;
     content: "";

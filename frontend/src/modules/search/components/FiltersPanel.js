@@ -4,9 +4,14 @@ import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
 
+import Highcharts from 'highcharts/highstock'
+import highchartsStock from "highcharts/modules/stock";
+import HighchartsReact from 'highcharts-react-official'
+
 import './FiltersPanel.css';
 
 import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import { CHART_OPTIONS } from './chart-options.js';
 
 import { asLocaleString } from 'core/utils';
 
@@ -34,6 +39,7 @@ type Props = {|
 |};
 
 type State = {|
+    chartOptions: Object,
     chartVisible: boolean,
     visible: boolean,
 |};
@@ -49,9 +55,12 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            chartOptions: CHART_OPTIONS,
             chartVisible: false,
             visible: false,
         };
+
+        this.initializeChart();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -62,6 +71,31 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         ) {
             this.props.getAuthorsAndTimeRangeData();
         }
+
+        if (this.props.timeRangeData !== prevProps.timeRangeData) {
+            this.updateChart();
+        }
+    }
+
+    initializeChart = () => {
+        // Initialize the highchartsStock module
+        highchartsStock(Highcharts);
+
+        // Set global options
+        Highcharts.setOptions({
+            lang:{
+                rangeSelectorZoom: '',
+            }
+        });
+    }
+
+    updateChart = () => {
+        let chartOptions = this.state.chartOptions;
+        chartOptions.series[0].data = this.props.timeRangeData;
+
+        this.setState({
+            chartOptions: chartOptions,
+        });
     }
 
     toggleChart = () => {
@@ -147,6 +181,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             if (selectedAuthor) {
                 filterIcon = 'author';
             }
+        }
+
+        let timeRangeClass = 'time-range clearfix';
+        if (this.state.chartVisible) {
+            timeRangeClass += ' editing';
         }
 
         return <div className="filters-panel">
@@ -277,6 +316,32 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                         Save Range
                                     </button>
                                 </Localized>
+                            }
+                        </li>
+
+                        <li
+                            className={ `${timeRangeClass}` }
+                        >
+                            <span
+                                className="status fa"
+                            ></span>
+
+                            <span className="clearfix">
+                                <label className="from">
+                                    From<input type="datetime" disabled={ !this.state.chartVisible } />
+                                </label>
+                                <label className="to">
+                                    To<input type="datetime" disabled={ !this.state.chartVisible } />
+                                </label>
+                            </span>
+
+                            { !this.state.chartVisible ? null :
+                                <HighchartsReact
+                                    highcharts={ Highcharts }
+                                    options={ this.state.chartOptions }
+                                    constructorType = { 'stockChart' }
+                                    containerProps = {{ className: 'chart' }}
+                                />
                             }
                         </li>
                     </>}
