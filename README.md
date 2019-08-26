@@ -28,7 +28,7 @@ Start by [installing Pontoon locally using Docker](https://mozilla-pontoon.readt
 
 Before you start writing code, make sure to read our [contribution docs](https://mozilla-pontoon.readthedocs.io/en/latest/dev/contributing.html). It contains information on how to style code, how to run tests, how to name your commits, etc. All the things you need to know if you want your work to be merged into Pontoon!
 
-Pontoon developers hang around in the #pontoon channel on [Mozilla's IRC server](https://wiki.mozilla.org/IRC). Please [join us there](https://cbe001.chat.mibbit.com/?url=irc:%2F%2Firc.mozilla.org%2Fpontoon) if you want to ask questions!
+Pontoon developers hang around in the `#pontoon` channel on [Mozilla's IRC server](https://wiki.mozilla.org/IRC). Please [join us there](https://cbe001.chat.mibbit.com/?url=irc:%2F%2Firc.mozilla.org%2Fpontoon) if you want to ask questions!
 
 If you want to go further, you can:
 
