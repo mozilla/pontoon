@@ -76,8 +76,8 @@ django-partial-index==0.5.2 \
 django-pipeline==1.5.3 \
     --hash=sha256:48e71c8b1781533adee64561cca20c9f17d40136211c2b32531e70ffe7fb0ced \
     --hash=sha256:752fa35d40cb645e6d3a54ccde01726732e441a2d54d904219c68e402f78e194
-django-cookies-samesite==0.1.2 \
-    --hash=sha256:8ffb0d4703e2cac6a4bff7c0bfb80d4153995497676556442f01804fc9918ec5
+django-cookies-samesite==0.2.0 \
+    --hash=sha256:b393f8e2e1c758af952ea10afe44fe837a68a182119fdfbab2fa00f67deded0e
 django-session-csrf==0.7.1 \
     --hash=sha256:e17177e6e2e6518ec7ce6693ad10a5c747f8571d09f4cfa9082599334421605d \
     --hash=sha256:ff8c10e30d312c77fc6a6db7710e22b9383e28c03b7fe958876ca96f39aa6cf2
@@ -135,8 +135,8 @@ pytz==2017.2 \
     --hash=sha256:39504670abb5dae77f56f8eb63823937ce727d7cdd0088e6909e6dcac0f89043 \
     --hash=sha256:ddc93b6d41cfb81266a27d23a79e13805d4a5521032b512643af8729041a81b4 \
     --hash=sha256:f5c056e8f62d45ba8215e5cb8f50dfccb198b4b9fbea8500674f3443e4689589
-raygun4py==3.1.6 \
-    --hash=sha256:1a68c3d5a5de696167aabf4d2dfa36ac1b14be66da1d07908f5cebfc827e4b08
+raygun4py==4.3.0 \
+    --hash=sha256:9a675da0215df310a929ef8fe4f9f6c7882b3ee44a925d73e5c191fd962d7c4d
 scandir==1.5 \
     --hash=sha256:c2612d1a487d80fb4701b4a91ca1b8f8a695b1ae820570815e85e8c8b23f1283
 six==1.12.0 \
