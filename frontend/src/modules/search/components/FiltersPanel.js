@@ -34,6 +34,7 @@ type Props = {|
 |};
 
 type State = {|
+    chartVisible: boolean,
     visible: boolean,
 |};
 
@@ -48,6 +49,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            chartVisible: false,
             visible: false,
         };
     }
@@ -60,6 +62,12 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         ) {
             this.props.getAuthorsAndTimeRangeData();
         }
+    }
+
+    toggleChart = () => {
+        this.setState(state => {
+            return { chartVisible: !state.chartVisible };
+        });
     }
 
     toggleVisibility = () => {
@@ -240,6 +248,39 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
+                    { (props.timeRangeData.length === 0 || project === 'all-projects') ? null : <>
+                        <li className="horizontal-separator for-time-range">
+                            <Localized id="search-FiltersPanel--heading-time">
+                                <span>Translation Time</span>
+                            </Localized>
+
+                            { !this.state.chartVisible ?
+                                <Localized
+                                    id="search-FiltersPanel--edit-range"
+                                    glyph={ <i className="fa fa-chart-area"></i> }
+                                >
+                                    <button
+                                        onClick={ this.toggleChart }
+                                        className="edit-range"
+                                    >
+                                        { '<glyph></glyph>Edit Range' }
+                                    </button>
+                                </Localized>
+                                :
+                                <Localized
+                                    id="search-FiltersPanel--save-range"
+                                >
+                                    <button
+                                        onClick={ this.toggleChart }
+                                        className="save-range"
+                                    >
+                                        Save Range
+                                    </button>
+                                </Localized>
+                            }
+                        </li>
+                    </>}
+
                     { (props.authorsData.length === 0 || project === 'all-projects') ? null : <>
                         <Localized id="search-FiltersPanel--heading-authors">
                             <li className="horizontal-separator">Translation Authors</li>
@@ -282,6 +323,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         }) }
                     </>}
                 </ul>
+
                 { selectedFiltersCount === 0 ? null :
                 <div className="toolbar clearfix">
                     <Localized
@@ -294,8 +336,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             onClick={ this.props.resetFilters }
                             className="clear-selection"
                         >
-                            <i className="fa fa-times fa-lg"></i>
-                            Clear
+                            { '<glyph></glyph>Clear' }
                         </button>
                     </Localized>
                     <Localized
@@ -310,8 +351,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             onClick={ this.applyFilters }
                             className="apply-selected"
                         >
-                            <i className="fa fa-check fa-lg"></i>
-                            { 'Apply <stress>{ $count }</stress> filters' }
+                            { '<glyph></glyph>Apply <stress>{ $count }</stress> filters' }
                         </button>
                     </Localized>
                 </div> }

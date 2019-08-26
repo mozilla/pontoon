@@ -167,6 +167,25 @@
     content: "";
 }
 
+.filters-panel .menu li.for-time-range button {
+    background: transparent;
+    border: none;
+    color: #AAAAAA;
+    float: right;
+    font-weight: 300;
+    margin: -3px 4px 0 0;
+    padding: 1px 0;
+    text-transform: uppercase;
+}
+
+.filters-panel .menu li.for-time-range button:hover {
+    color: #7BC876;
+}
+
+.filters-panel .menu li.for-time-range button .fa {
+    padding-right: 5px;
+}
+
 .filters-panel .menu li.author {
     height: 48px;
     padding-left: 4px;
