@@ -192,8 +192,9 @@ diff-match-patch==20121119 \
     --hash=sha256:9dba5611fbf27893347349fd51cc1911cb403682a7163373adacc565d11e2e4c
 
 # caighdean
-nltk==3.2.5 \
-    --hash=sha256:2661f9971d983db314bbebd51ba770811a362c6597fd0f303bb1d3beadcb4834
+nltk==3.4.5 \
+    --hash=sha256:a08bdb4b8a1c13de16743068d9eb61c8c71c2e5d642e8e08205c528035843f82 \
+    --hash=sha256:bed45551259aa2101381bbdd5df37d44ca2669c5c3dad72439fa459b29137d94
 
 # caighdean
 requests==2.21.0 \
