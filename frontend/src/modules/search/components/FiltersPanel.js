@@ -3,6 +3,7 @@
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import { Localized } from 'fluent-react';
+import date from 'date-and-time';
 
 import Highcharts from 'highcharts/highstock'
 import highchartsStock from "highcharts/modules/stock";
@@ -15,20 +16,26 @@ import { CHART_OPTIONS } from './chart-options.js';
 
 import { asLocaleString } from 'core/utils';
 
+import type { TimeRangeType } from '..';
 import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
 import type { Author } from 'modules/search';
 
 
+const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
+const URL_FORMAT = 'YYYYMMDDHHmm';
+
+
 type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    timeRange: ?TimeRangeType,
     authors: { [string]: boolean },
-    authorsData: Array<Author>,
     tagsData: Array<Tag>,
     timeRangeData: Array<Array<number>>,
+    authorsData: Array<Author>,
     stats: Stats,
     parameters: NavigationParams,
     applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
@@ -36,11 +43,14 @@ type Props = {|
     resetFilters: () => void,
     toggleFilter: (string, string) => void,
     update: () => void,
+    updateTimeRange: (filter: string) => void,
 |};
 
 type State = {|
+    chartFrom: ?number,
+    chartTo: ?number,
     chartOptions: Object,
-    chartVisible: boolean,
+    isChartVisible: boolean,
     visible: boolean,
 |};
 
@@ -51,29 +61,57 @@ type State = {|
  * Changes to the filters will be reflected in the URL.
  */
 export class FiltersPanelBase extends React.Component<Props, State> {
+    chart: { current: any };
+
     constructor(props: Props) {
         super(props);
 
         this.state = {
+            chartFrom: null,
+            chartTo: null,
             chartOptions: CHART_OPTIONS,
-            chartVisible: false,
+            isChartVisible: false,
             visible: false,
         };
 
         this.initializeChart();
+
+        this.chart = React.createRef();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
+        const props = this.props;
+        const state = this.state;
+
         if (
-            this.state.visible &&
+            state.visible &&
             !prevState.visible &&
-            this.props.parameters.project !== 'all-projects'
+            props.parameters.project !== 'all-projects'
         ) {
-            this.props.getAuthorsAndTimeRangeData();
+            props.getAuthorsAndTimeRangeData();
         }
 
-        if (this.props.timeRangeData !== prevProps.timeRangeData) {
-            this.updateChart();
+        if (props.timeRangeData !== prevProps.timeRangeData) {
+            this.plotChart();
+        }
+
+        if (state.isChartVisible !== prevState.isChartVisible) {
+            this.updateChartExtremes();
+        }
+
+        // When filters are toggled or applied, we update the filters state in the SearchBox
+        // component, so that we can request entities accordingly. But the Time Range filter
+        // state also changes when chartFrom and chartTo values change, so when that happens,
+        // we also need to propagate changes to the SearchBox state.
+        // Without this code, if you have Time Range filter applied and then change range and
+        // click the Apply Filter button, nothing happens. As described in bug 1469611.
+        const { chartFrom, chartTo } = state;
+        if (
+            props.timeRange &&
+            ((chartFrom !== prevState.chartFrom) ||
+            (chartTo !== prevState.chartTo))
+        ) {
+            props.updateTimeRange([chartFrom, chartTo].join('-'));
         }
     }
 
@@ -89,18 +127,94 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         });
     }
 
-    updateChart = () => {
+    updateChartExtremes = (key: ?string, value: ?number) => {
+        const { chartFrom, chartTo } = this.state;
+
+        if (!chartFrom || !chartTo) {
+            return;
+        }
+
+        let extremes = {
+            chartFrom: date.parse(chartFrom.toString(), URL_FORMAT, true).getTime(),
+            chartTo: date.parse(chartTo.toString(), URL_FORMAT, true).getTime(),
+        };
+
+        if (key && value) {
+            extremes[key] = value;
+        }
+
+        if (this.chart.current) {
+            this.chart.current.chart.xAxis[0].setExtremes(
+                extremes.chartFrom,
+                extremes.chartTo,
+            );
+        }
+    }
+
+    plotChart = () => {
+        const { timeRange, timeRangeData } = this.props;
+
+        // Set chart boundaries
+        let chartFrom = this.getTimeForURL(timeRangeData[0][0]);
+        let chartTo = this.getTimeForURL(timeRangeData[timeRangeData.length - 1][0]);
+
+        if (timeRange) {
+            chartFrom = timeRange.from;
+            chartTo = timeRange.to;
+        }
+
+        // Set chart data
         let chartOptions = this.state.chartOptions;
-        chartOptions.series[0].data = this.props.timeRangeData;
+        chartOptions.series[0].data = timeRangeData;
+
+        // Set chart update function
+        const self = this;
+        chartOptions.xAxis[0].events.setExtremes = (event) => {
+            self.setState({
+                chartFrom: self.getTimeForURL(event.min),
+                chartTo: self.getTimeForURL(event.max),
+            });
+        };
 
         this.setState({
-            chartOptions: chartOptions,
+            chartFrom,
+            chartTo,
+            chartOptions,
         });
     }
 
-    toggleChart = () => {
+    getTimeForURL = (unixTime: number) => {
+        const d = new Date(unixTime);
+
+        return parseInt(date.format(d, URL_FORMAT, true));
+    }
+
+    getTimeForInput = (urlTime: ?number) => {
+        if (!urlTime) {
+            return '';
+        }
+
+        const d = date.parse(urlTime.toString(), URL_FORMAT, true);
+
+        if (isNaN(d)) {
+            return urlTime;
+        }
+
+        return date.format(d, INPUT_FORMAT);
+    }
+
+    handleInputChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
+        const d = date.parse(event.target.value, INPUT_FORMAT);
+
+        // If valid date, update chart extremes
+        if (!isNaN(d)) {
+            this.updateChartExtremes(event.target.name, d.getTime());
+        }
+    }
+
+    toggleEditingTimeRange = () => {
         this.setState(state => {
-            return { chartVisible: !state.chartVisible };
+            return { isChartVisible: !state.isChartVisible };
         });
     }
 
@@ -115,6 +229,16 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
+    createToggleTimeRangeFilter() {
+        const { chartFrom, chartTo, isChartVisible } = this.state;
+
+        if (isChartVisible) {
+            return;
+        }
+
+        return this.createToggleFilter([chartFrom, chartTo].join('-'), 'timeRange');
+    }
+
     createToggleFilter = (filter: string, type: string) => {
         if (filter === 'all') {
             return null;
@@ -124,6 +248,16 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             event.stopPropagation();
             this.props.toggleFilter(filter, type);
         };
+    }
+
+    createApplyTimeRangeFilter() {
+        const { chartFrom, chartTo, isChartVisible } = this.state;
+
+        if (isChartVisible) {
+            return;
+        }
+
+        return this.createApplySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
     }
 
     createApplySingleFilter(filter: string, type: string) {
@@ -148,12 +282,14 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         const selectedStatuses = Object.keys(props.statuses).filter(s => props.statuses[s]);
         const selectedExtras = Object.keys(props.extras).filter(e => props.extras[e]);
         const selectedTags = Object.keys(props.tags).filter(t => props.tags[t]);
+        const selectedTimeRangeCount = props.timeRange ? 1 : 0;
         const selectedAuthors = Object.keys(props.authors).filter(a => props.authors[a]);
 
         const selectedFiltersCount = (
             selectedExtras.length +
             selectedStatuses.length +
             selectedTags.length +
+            selectedTimeRangeCount +
             selectedAuthors.length
         );
 
@@ -177,6 +313,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 filterIcon = 'tag';
             }
 
+            if (selectedTimeRangeCount) {
+                filterIcon = 'time-range';
+            }
+
             const selectedAuthor = props.authorsData.find(f => f.email === selectedAuthors[0]);
             if (selectedAuthor) {
                 filterIcon = 'author';
@@ -184,8 +324,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         }
 
         let timeRangeClass = 'time-range clearfix';
-        if (this.state.chartVisible) {
+        if (this.state.isChartVisible) {
             timeRangeClass += ' editing';
+        }
+        if (props.timeRange) {
+            timeRangeClass += ' selected';
         }
 
         return <div className="filters-panel">
@@ -293,13 +436,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 <span>Translation Time</span>
                             </Localized>
 
-                            { !this.state.chartVisible ?
+                            { !this.state.isChartVisible ?
                                 <Localized
                                     id="search-FiltersPanel--edit-range"
                                     glyph={ <i className="fa fa-chart-area"></i> }
                                 >
                                     <button
-                                        onClick={ this.toggleChart }
+                                        onClick={ this.toggleEditingTimeRange }
                                         className="edit-range"
                                     >
                                         { '<glyph></glyph>Edit Range' }
@@ -310,7 +453,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                     id="search-FiltersPanel--save-range"
                                 >
                                     <button
-                                        onClick={ this.toggleChart }
+                                        onClick={ this.toggleEditingTimeRange }
                                         className="save-range"
                                     >
                                         Save Range
@@ -321,26 +464,44 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
                         <li
                             className={ `${timeRangeClass}` }
+                            onClick={ this.createApplyTimeRangeFilter() }
                         >
                             <span
                                 className="status fa"
+                                onClick={ this.createToggleTimeRangeFilter() }
                             ></span>
 
                             <span className="clearfix">
                                 <label className="from">
-                                    From<input type="datetime" disabled={ !this.state.chartVisible } />
+                                    From
+                                    <input
+                                        type="datetime"
+                                        name="chartFrom"
+                                        disabled={ !this.state.isChartVisible }
+                                        onChange={ this.handleInputChange }
+                                        value={ this.getTimeForInput(this.state.chartFrom) }
+                                    />
                                 </label>
                                 <label className="to">
-                                    To<input type="datetime" disabled={ !this.state.chartVisible } />
+                                    To
+                                    <input
+                                        type="datetime"
+                                        name="chartTo"
+                                        disabled={ !this.state.isChartVisible }
+                                        onChange={ this.handleInputChange }
+                                        value={ this.getTimeForInput(this.state.chartTo) }
+                                    />
                                 </label>
                             </span>
 
-                            { !this.state.chartVisible ? null :
+                            { !this.state.isChartVisible ? null :
                                 <HighchartsReact
                                     highcharts={ Highcharts }
                                     options={ this.state.chartOptions }
                                     constructorType = { 'stockChart' }
+                                    allowChartUpdate = { false }
                                     containerProps = {{ className: 'chart' }}
+                                    ref={ this.chart }
                                 />
                             }
                         </li>

@@ -18,6 +18,7 @@ export const CHART_OPTIONS = {
         enabled: false,
     },
     chart: {
+        animation: false,
         backgroundColor: 'transparent',
         marginLeft: 5,
         marginRight: 4,
@@ -27,21 +28,24 @@ export const CHART_OPTIONS = {
             fontFamily: 'inherit',
         },
     },
-    xAxis: {
+    xAxis: [{
         lineWidth: 0,
         tickLength: 0,
         labels: {
             enabled: false,
         },
-    },
-    yAxis: {
+        events: {
+            setExtremes: null,
+        },
+    }],
+    yAxis: [{
         type: 'logarithmic',
         minorTickInterval: 0,
         gridLineWidth: 0,
         labels: {
             enabled: false,
         },
-    },
+    }],
     rangeSelector: {
         selected: 0,
         buttons: [{

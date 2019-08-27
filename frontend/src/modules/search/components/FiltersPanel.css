@@ -159,7 +159,7 @@
     color: #7BC876;
 }
 
-.filters-panel .menu li:not(.selected):not(.all) .status:hover:before {
+.filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before {
     content: "";
 }
 
