@@ -67,6 +67,11 @@ export default class SimpleEditor extends React.Component<Props> {
     render() {
         const { ftlSwitch, ...props } = this.props;
 
+        // Because Flow.
+        if (typeof(props.editor.translation) !== 'string') {
+            return null;
+        }
+
         return <>
             <GenericTranslationForm
                 { ...props }
@@ -76,6 +81,13 @@ export default class SimpleEditor extends React.Component<Props> {
                 { ...props }
                 firstItemHook={ ftlSwitch }
                 sendTranslation={ this.sendTranslation }
+                translationLengthHook={ <editor.TranslationLength
+                    comment={ props.entity.comment }
+                    format={ props.entity.format }
+                    original={ fluent.getSimplePreview(props.entity.original) }
+                    // $FLOW_IGNORE: Flow is dumb.
+                    translation={ fluent.getSimplePreview(props.editor.translation) }
+                /> }
             />
         </>;
     }

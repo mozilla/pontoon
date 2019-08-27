@@ -4,17 +4,16 @@ import * as React from 'react';
 
 import './TranslationLength.css';
 
-import type { Entity } from 'core/api';
-
 
 type Props = {|
-    entity: ?Entity,
-    pluralForm: number,
+    comment: string,
+    format: string,
+    original: string,
     translation: string,
 |};
 
 
-/*
+/**
  * Shows translation length vs. original string length, or countdown.
  *
  * Countdown is currently only supported for LANG strings, which use special
@@ -23,13 +22,13 @@ type Props = {|
  */
 export default class TranslationLength extends React.Component<Props> {
     getLimit() {
-        const entity = this.props.entity;
+        const { comment, format } = this.props;
 
-        if (!entity || entity.format !== 'lang') {
+        if (format !== 'lang') {
             return null;
         }
 
-        const parts = entity.comment.split('\n');
+        const parts = comment.split('\n');
 
         if (parts[0].startsWith('MAX_LENGTH')) {
             try {
@@ -45,11 +44,8 @@ export default class TranslationLength extends React.Component<Props> {
         return null;
     }
 
-    /*
-     * Only used for countdown.
-     *
-     * Source: https://stackoverflow.com/a/47140708
-     */
+    // Only used for countdown.
+    // Source: https://stackoverflow.com/a/47140708
     stripHTML(translation: string) {
         const doc = new DOMParser().parseFromString(translation, 'text/html');
 
@@ -61,17 +57,11 @@ export default class TranslationLength extends React.Component<Props> {
     }
 
     render() {
-        const { entity, pluralForm, translation } = this.props;
-
-        if (!entity) {
-            return null;
-        }
+        const { original, translation } = this.props;
 
         const limit = this.getLimit();
         const translationLength = this.stripHTML(translation).length;
         const countdown = limit !== null ? limit - translationLength : null;
-        const original = (pluralForm === -1 || pluralForm === 0) ?
-            entity.original : entity.original_plural;
 
         return <div className="translation-length">
             { countdown !== null ?
