@@ -1,12 +1,15 @@
+/* @flow */
+
 import parser from './parser';
-import serializer from './serializer';
+
+import type { FluentMessage } from './types';
 
 
 /**
  * Return a reconstructed Fluent message from the original message and some
  * translated content.
  */
-export default function getReconstructedSimpleMessage(original, translation) {
+export default function getReconstructedMessage(original: string, translation: string): FluentMessage {
     const message = parser.parseEntry(original);
     let key = message.id.name;
 
@@ -41,7 +44,5 @@ export default function getReconstructedSimpleMessage(original, translation) {
         }
     }
 
-    // Ensure strings are serialized with default serializer settings
-    const ast = parser.parseEntry(content);
-    return serializer.serializeEntry(ast);
+    return parser.parseEntry(content);
 }

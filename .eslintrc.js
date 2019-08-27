@@ -52,9 +52,10 @@ module.exports = {
         traversalShortcutsHandler: true,
         editorShortcutsHandler: true,
         // Flow specific things
+        SyntheticFocusEvent: false,
         SyntheticInputEvent: false,
-        SyntheticMouseEvent: false,
         SyntheticKeyboardEvent: false,
+        SyntheticMouseEvent: false,
         TimeoutID: false,
         "$Diff": false,
     },

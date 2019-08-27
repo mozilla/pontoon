@@ -15,6 +15,7 @@ import type { EditorProps } from 'core/editor';
 type Props = {
     ...EditorProps,
     firstItemHook?: React.Node,
+    translationLengthHook?: React.Node,
 };
 
 /**
@@ -60,11 +61,7 @@ export default class EditorMenu extends React.Component<Props> {
                         updateSetting={ props.updateSetting }
                     />
                     <editor.KeyboardShortcuts />
-                    <editor.TranslationLength
-                        entity={ props.entity }
-                        pluralForm={ props.pluralForm }
-                        translation={ props.editor.translation }
-                    />
+                    { props.translationLengthHook }
                     <div className="actions">
                         <Localized id="editor-EditorMenu--button-copy">
                             <button

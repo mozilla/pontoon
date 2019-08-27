@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Translation } from 'core/editor';
 import type { UnsavedChangesState } from './reducer';
 
 
@@ -77,9 +78,9 @@ export type UpdateAction = {|
     +exist: boolean,
     +type: typeof UPDATE,
 |};
-export function update(editorTranslation: string, activeTranslation: string): UpdateAction {
+export function update(editorTranslation: Translation, initialTranslation: Translation): UpdateAction {
     return {
-        exist: editorTranslation !== activeTranslation,
+        exist: editorTranslation !== initialTranslation,
         type: UPDATE,
     };
 }

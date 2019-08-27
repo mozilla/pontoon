@@ -11,6 +11,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
+import type { FluentMessage } from 'core/utils/fluent/types';
 
 
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
@@ -21,15 +22,17 @@ export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDAT
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
 
 
+export type Translation = string | FluentMessage;
+
 /**
  * Update the current translation of the selected entity.
  */
 export type UpdateAction = {|
     +type: typeof UPDATE,
-    +translation: string,
+    +translation: Translation,
     +changeSource: string,
 |};
-export function update(translation: string, changeSource?: string): UpdateAction {
+export function update(translation: Translation, changeSource?: string): UpdateAction {
     return {
         type: UPDATE,
         translation,
@@ -60,9 +63,9 @@ export function updateSelection(content: string): UpdateSelectionAction {
  */
 export type InitialTranslationAction = {|
     +type: typeof SET_INITIAL_TRANSLATION,
-    +translation: string,
+    +translation: Translation,
 |};
-export function setInitialTranslation(translation: string): InitialTranslationAction {
+export function setInitialTranslation(translation: Translation): InitialTranslationAction {
     return {
         type: SET_INITIAL_TRANSLATION,
         translation,
