@@ -74,7 +74,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             if (this.props.unsavedchanges.shown) {
                 this.props.hideUnsavedChanges();
             }
-            this.props.updateUnsavedChanges(editor.translation);
+            this.props.updateUnsavedChanges();
         }
 
         if (!this.aceEditor.current) {
@@ -105,6 +105,11 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
     }
 
     render() {
+        if (typeof(this.props.editor.translation) !== 'string') {
+            // This is a transitional state.
+            return null;
+        }
+
         const options = {
             animatedScroll: false,
             autoScrollEditorIntoView: false,

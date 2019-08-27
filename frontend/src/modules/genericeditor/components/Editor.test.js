@@ -24,6 +24,7 @@ const ENTITIES = [
 function createEditorBase() {
     const updateTranslationMock = sinon.stub();
     const wrapper = shallow(<EditorBase
+        editor={ { translation: '' } }
         pluralForm={ -1 }
         entity={ ENTITIES[0] }
         activeTranslation={ ENTITIES[0].translation[0].string }

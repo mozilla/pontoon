@@ -1,17 +1,19 @@
+/* @flow */
+
 import isSimpleElement from './isSimpleElement';
 
 
 /**
- * Return true when AST has no value and a single attribute with only simple
+ * Return true when message has no value and a single attribute with only simple
  * elements.
  */
-export default function isSimpleSingleAttributeMessage(ast) {
+export default function isSimpleSingleAttributeMessage(message: Object) {
     if (
-        ast &&
-        !ast.value &&
-        ast.attributes &&
-        ast.attributes.length === 1 &&
-        ast.attributes[0].value.elements.every(isSimpleElement)
+        message &&
+        !message.value &&
+        message.attributes &&
+        message.attributes.length === 1 &&
+        message.attributes[0].value.elements.every(isSimpleElement)
     ) {
         return true;
     }

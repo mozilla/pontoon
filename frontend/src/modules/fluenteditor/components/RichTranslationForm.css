@@ -1,0 +1,35 @@
+.fluent-rich-translation-form {
+    height: 100%;
+    line-height: 22px;
+    padding: 10px;
+}
+
+.fluent-rich-translation-form table {
+    width: 100%;
+}
+
+.fluent-rich-translation-form table tr > td:first {
+    width: calc(25% - 5px);
+}
+
+.fluent-rich-translation-form table tr > td:last-child {
+    width: 75%;
+}
+
+.fluent-rich-translation-form table tr > td > label {
+    background: transparent;
+    border: 1px solid #5E6475;
+    box-sizing: border-box;
+    color: #AAAAAA;
+    display: block;
+    font-weight: normal;
+    margin: 2px 5px 2px 0;
+    padding: 0 4px;
+}
+
+.fluent-rich-translation-form table tr > td > textarea {
+    min-height: 0;
+    height: 24px;
+    margin: 2px 0;
+    padding: 0 4px;
+}

@@ -5,6 +5,16 @@ import sinon from 'sinon';
 import { EditorBase } from './Editor';
 
 
+const NESTED_SELECTORS_STRING = `my-message =
+    { $thing ->
+        *[option] { $stuff ->
+            [foo] FOO
+            *[bar] BAR
+        }
+        [select] WOW
+    }
+`;
+
 const ENTITIES = [
     {
         original: 'my-message = Hello',
@@ -13,9 +23,9 @@ const ENTITIES = [
         }],
     },
     {
-        original: 'my-message = Hello\n    .my-attr = World!',
+        original: NESTED_SELECTORS_STRING,
         translation: [
-            { string: 'my-message = Salut\n    .my-attr = Monde !' },
+            { string: NESTED_SELECTORS_STRING },
         ],
     },
     {
@@ -32,6 +42,10 @@ const ENTITIES = [
     },
 ];
 
+const USER = {
+    isAuthenticated: true,
+};
+
 
 function createEditorBase({
     entityIndex = 0,
@@ -45,6 +59,7 @@ function createEditorBase({
         translation={ ENTITIES[entityIndex].translation[0].string }
         setInitialTranslation={ setInitialTranslationMock }
         updateTranslation={ updateTranslationMock }
+        user={ USER }
     />);
 
     return [wrapper, updateTranslationMock, setInitialTranslationMock];
@@ -119,6 +134,6 @@ describe('<Editor>', () => {
         wrapper.instance().toggleForceSource();
 
         expect(updateTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
-        expect(setInitialTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
+        expect(setInitialTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
     });
 });

@@ -19,9 +19,10 @@ describe('<TranslationLength>', () => {
 
     it('shows translation length and original string length', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ LENGTH_ENTITY.comment }
+            format={ LENGTH_ENTITY.format }
+            original={ LENGTH_ENTITY.original }
             translation='1234567'
-            pluralForm={ -1 }
-            entity={ LENGTH_ENTITY }
         />);
 
         expect(wrapper.find('.countdown')).toHaveLength(0);
@@ -32,9 +33,10 @@ describe('<TranslationLength>', () => {
 
     it('shows translation length and plural original string length', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ LENGTH_ENTITY.comment }
+            format={ LENGTH_ENTITY.format }
+            original={ LENGTH_ENTITY.original_plural }
             translation='1234567'
-            pluralForm={ 1 }
-            entity={ LENGTH_ENTITY }
         />);
 
         expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual('6');
@@ -42,8 +44,10 @@ describe('<TranslationLength>', () => {
 
     it('shows countdown if MAX_LENGTH provided in LANG entity comment', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ COUNTDOWN_ENTITY.comment }
+            format={ COUNTDOWN_ENTITY.format }
+            original={ COUNTDOWN_ENTITY.original }
             translation='123'
-            entity={ COUNTDOWN_ENTITY }
         />);
 
         expect(wrapper.find('.translation-vs-original')).toHaveLength(0);
@@ -53,8 +57,10 @@ describe('<TranslationLength>', () => {
 
     it('marks countdown overflow', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ COUNTDOWN_ENTITY.comment }
+            format={ COUNTDOWN_ENTITY.format }
+            original={ COUNTDOWN_ENTITY.original }
             translation='123456'
-            entity={ COUNTDOWN_ENTITY }
         />);
 
         expect(wrapper.find('.countdown span.overflow')).toHaveLength(1);
@@ -62,8 +68,10 @@ describe('<TranslationLength>', () => {
 
     it('strips html from translation when calculating countdown', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ COUNTDOWN_ENTITY.comment }
+            format={ COUNTDOWN_ENTITY.format }
+            original={ COUNTDOWN_ENTITY.original }
             translation='12<span>34</span>56'
-            entity={ COUNTDOWN_ENTITY }
         />);
 
         expect(wrapper.find('.countdown span').text()).toEqual('-1');
@@ -71,8 +79,10 @@ describe('<TranslationLength>', () => {
 
     it('does not strips html from translation when calculating length', () => {
         const wrapper = shallow(<TranslationLength
+            comment={ LENGTH_ENTITY.comment }
+            format={ LENGTH_ENTITY.format }
+            original={ LENGTH_ENTITY.original }
             translation='12<span>34</span>56'
-            entity={ LENGTH_ENTITY }
         />);
 
         expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual('19');

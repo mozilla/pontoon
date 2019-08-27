@@ -9,15 +9,22 @@ import { fluent } from 'core/utils';
 
 import SourceEditor from './SourceEditor';
 import SimpleEditor from './SimpleEditor';
+import RichEditor from './RichEditor';
 
-import type { EditorProps } from 'core/editor';
+import type { EditorProps, Translation } from 'core/editor';
 
+
+// Type of syntax of the translation to show in the editor.
+// `simple` => SimpleEditor (the message can be simplified to a single text element)
+// `rich` => RichEditor (the message can be displayed in our rich interface)
+// `complex` => SourceEditor (the message is not supported by other editor types)
+type SyntaxType = 'simple' | 'rich' | 'complex';
 
 type State = {|
     // Force using the source editor.
     forceSource: boolean,
     // The type of form to use to show the translation.
-    syntaxType: 'simple' | 'complex',
+    syntaxType: SyntaxType,
 |};
 
 
@@ -55,8 +62,8 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.state.forceSource !== prevState.forceSource &&
             this.props.editor.translation === prevProps.editor.translation
         ) {
-            const fromSyntax = this.state.forceSource ? 'simple' : 'complex';
-            const toSyntax = this.state.forceSource ? 'complex' : 'simple';
+            const fromSyntax = this.state.forceSource ? this.state.syntaxType : 'complex';
+            const toSyntax = this.state.forceSource ? 'complex' : this.state.syntaxType;
             this.updateEditorContent(
                 this.props.editor.translation,
                 fromSyntax,
@@ -75,72 +82,61 @@ export class EditorBase extends React.Component<EditorProps, State> {
         const source = props.activeTranslation || props.entity.original;
         const message = fluent.parser.parseEntry(source);
 
+        // Figure out and set the syntax type.
         const syntaxType = this.getSyntaxType(message);
+        this.setState({ syntaxType });
+
+        // Figure out and set the initial translation content.
         let translationContent = props.activeTranslation;
 
-        if (syntaxType === 'simple' && !this.state.forceSource) {
+        if (syntaxType === 'simple') {
             translationContent = fluent.getSimplePreview(props.activeTranslation);
         }
+        else if (syntaxType === 'rich') {
+            if (!props.activeTranslation) {
+                translationContent = fluent.getEmptyMessage(message);
+            }
+            else {
+                translationContent = message;
+            }
+        }
 
-        this.setState({ syntaxType });
         props.setInitialTranslation(translationContent);
         props.updateTranslation(translationContent);
     }
 
     getSyntaxType(message: Object) {
-        let syntaxType = 'complex';
+        if (!fluent.isSupportedMessage(message)) {
+            return 'complex';
+        }
 
         if (
             fluent.isSimpleMessage(message) ||
             fluent.isSimpleSingleAttributeMessage(message)
         ) {
-            syntaxType = 'simple';
+            return 'simple';
         }
 
-        return syntaxType;
+        return 'rich';
     }
 
     /**
      * Update the content for the new type of form from the previous one. This
      * allows to keep changes made by the user when switching editing modes.
      */
-    updateEditorContent(translation: string, fromSyntax: string, toSyntax: string) {
+    updateEditorContent(translation: Translation, fromSyntax: SyntaxType, toSyntax: SyntaxType) {
         const props = this.props;
 
-        let translationContent = translation;
-        let originalContent = props.activeTranslation;
+        const [translationContent, initialContent] = fluent.convertSyntax(
+            fromSyntax,
+            toSyntax,
+            translation,
+            props.entity.original,
+            props.activeTranslation,
+        );
 
-        if (fromSyntax === 'complex' && toSyntax === 'simple') {
-            translationContent = fluent.getSimplePreview(translationContent);
-            originalContent = fluent.getSimplePreview(originalContent);
-
-            // If any of the contents are junk, discard them.
-            if (translationContent === translation) {
-                translationContent = '';
-            }
-            if (originalContent === props.activeTranslation) {
-                originalContent = '';
-            }
-        }
-        else if (fromSyntax === 'simple' && toSyntax === 'complex') {
-            translationContent = fluent.getReconstructedSimpleMessage(
-                props.entity.original,
-                translation,
-            );
-
-            // If there is no active translation (it's an untranslated string)
-            // we make the initial translation an empty fluent message to avoid
-            // showing unchanged content warnings.
-            if (!originalContent) {
-                originalContent = fluent.getReconstructedSimpleMessage(
-                    props.entity.original,
-                    '',
-                );
-            }
-        }
-
-        props.setInitialTranslation(originalContent);
         props.updateTranslation(translationContent);
+        props.setInitialTranslation(initialContent);
     }
 
     toggleForceSource = () => {
@@ -153,27 +149,32 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     render() {
-        let EditorImplementation = SourceEditor;
-        if (!this.state.forceSource && this.state.syntaxType === 'simple') {
+        let EditorImplementation = RichEditor;
+        if (this.state.forceSource || this.state.syntaxType === 'complex') {
+            EditorImplementation = SourceEditor
+        }
+        else if (this.state.syntaxType === 'simple') {
             EditorImplementation = SimpleEditor;
         }
 
-        // If the type of the string is not 'complex', meaning we show an
-        // optimized editor by default, show a button to allow switching to
-        // the source editor.
-        const ftlSwitch = this.state.syntaxType === 'complex' ? <button
-            className='ftl active'
-            title='Advanced FTL mode enabled'
-            onClick={ this.props.showNotSupportedMessage }
-        >
-            FTL
-        </button> : <button
-            className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
-            title='Toggle between simple and advanced FTL mode'
-            onClick={ this.toggleForceSource }
-        >
-            FTL
-        </button>;
+        // Show a button to allow switching to the source editor.
+        let ftlSwitch = null;
+        // But only if the user is logged in and the string is not read-only.
+        if (this.props.user.isAuthenticated && !this.props.isReadOnlyEditor) {
+            ftlSwitch = this.state.syntaxType === 'complex' ? <button
+                className='ftl active'
+                title='Advanced FTL mode enabled'
+                onClick={ this.props.showNotSupportedMessage }
+            >
+                FTL
+            </button> : <button
+                className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
+                title='Toggle between simple and advanced FTL mode'
+                onClick={ this.toggleForceSource }
+            >
+                FTL
+            </button>;
+        }
 
         return <EditorImplementation
             { ...this.props }

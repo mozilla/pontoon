@@ -1,10 +1,12 @@
+/* @flow */
+
 /**
  * Is ast element of type that can be presented as a simple string:
  * - TextElement
  * - Placeable with expression type StringLiteral, NumberLiteral,
  *   VariableReference, MessageReference, TermReference, FunctionReference
  */
-export default function isSimpleElement(element) {
+export default function isSimpleElement(element: any): boolean {
     if (element.type === 'TextElement') {
         return true;
     }

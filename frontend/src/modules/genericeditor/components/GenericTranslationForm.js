@@ -59,11 +59,11 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         // When content of the translation changes
         //   - close unsaved changes popup if open
         //   - update unsaved changes status
-        if (prevProps.editor.translation !== this.props.editor.translation) {
+        if (prevEditor.translation !== editor.translation) {
             if (this.props.unsavedchanges.shown) {
                 this.props.hideUnsavedChanges();
             }
-            this.props.updateUnsavedChanges(this.props.editor.translation);
+            this.props.updateUnsavedChanges();
         }
 
         // If there is content to add to the editor, do so, then remove
@@ -72,9 +72,9 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         // the content differently for each Editor type. Thus each Editor
         // implements an `updateTranslationSelectionWith` method and that is
         // used to update the translation.
-        if (this.props.editor.selectionReplacementContent) {
+        if (editor.selectionReplacementContent) {
             this.updateTranslationSelectionWith(
-                this.props.editor.selectionReplacementContent
+                editor.selectionReplacementContent
             );
             this.props.resetSelectionContent();
         }
@@ -83,7 +83,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             this.textarea.current.focus();
         }
 
-        if (this.props.editor.changeSource === 'external') {
+        if (editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);
         }
     }
