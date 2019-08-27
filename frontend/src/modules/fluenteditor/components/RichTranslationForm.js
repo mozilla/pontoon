@@ -49,7 +49,7 @@ function getUpdatedTranslation(
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
     // A React ref to the currently focused input, if any.
-    focusedElement = null;
+    focusedElementId: ?string = null;
 
     tableBodyRef: { current: any } = React.createRef();
 
@@ -70,6 +70,16 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     componentDidUpdate(prevProps: EditorProps) {
         const editor = this.props.editor;
 
+        // Reset the currently focused element when the entity changes or when
+        // the translation changes from an external source (when that happens,
+        // it happens to be passed as a string and not a Fluent AST).
+        if (
+            this.props.entity !== prevProps.entity ||
+            typeof(editor.translation) === 'string'
+        ) {
+            this.focusedElementId = null;
+        }
+
         // If the translation is a string, that means we're in a translational
         // state and there's going to be another render with a Fluent AST.
         if (typeof(editor.translation) === 'string') {
@@ -86,11 +96,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     update(prevProps: EditorProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
-
-        // Reset the currently focused element when the entity changes.
-        if (this.props.entity !== prevProps.entity) {
-            this.focusedElement = null;
-        }
 
         if (!translation.equals(prevEditor.translation)) {
             // Walks the tree and unify all simple elements into just one.
@@ -142,8 +147,15 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return null;
     }
 
+    getFocusedElement() {
+        if (this.focusedElementId && this.tableBodyRef.current) {
+            return this.tableBodyRef.current.querySelector('textarea#' + this.focusedElementId);
+        }
+        return null;
+    }
+
     updateTranslationSelectionWith(content: string, translation: FluentMessage) {
-        let target = this.focusedElement;
+        let target = this.getFocusedElement();
 
         // If there is no explicitely focused element, find the first input.
         if (!target) {
@@ -194,12 +206,13 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     }
 
     setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
-        this.focusedElement = event.currentTarget;
+        this.focusedElementId = event.currentTarget.id;
     }
 
     renderInput(value: string, index: number, path: MessagePath) {
         return <textarea
             id={ `${path.join('-')}` }
+            key={ `${path.join('-')}` }
             value={ value }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
