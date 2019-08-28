@@ -99,8 +99,11 @@ export function get(
             author,
             time,
         );
-        dispatch(receive(content.entities, content.has_next));
-        dispatch(stats.actions.update(content.stats));
+
+        if (content.entities) {
+            dispatch(receive(content.entities, content.has_next));
+            dispatch(stats.actions.update(content.stats));
+        }
     };
 }
 

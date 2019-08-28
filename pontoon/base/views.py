@@ -309,7 +309,13 @@ def entities(request):
     )
     form_data = {k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data}
 
-    entities = Entity.for_project_locale(project, locale, **form_data)
+    try:
+        entities = Entity.for_project_locale(project, locale, **form_data)
+    except ValueError as error:
+        return JsonResponse({
+            'status': False,
+            'message': '{error}'.format(error=error),
+        }, status=500)
 
     # Only return a list of entity PKs (batch editing: select all)
     if form.cleaned_data['pk_only']:
