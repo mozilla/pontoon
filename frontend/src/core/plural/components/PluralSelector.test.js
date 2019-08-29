@@ -70,7 +70,7 @@ describe('<PluralSelector>', () => {
             plural: {
                 pluralForm: 1,
             },
-            locales: {
+            locale: {
                 code: 'kg',
                 cldrPlurals: [1, 5],
             },

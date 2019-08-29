@@ -7,7 +7,7 @@ import './Entity.css';
 import { TranslationProxy } from 'core/translation';
 
 import type { Entity as EntityType } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 type Props = {

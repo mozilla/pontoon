@@ -6,14 +6,14 @@ import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
@@ -139,7 +139,7 @@ export class NavigationBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locale: state[locales.NAME],
+        locale: state[locale.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         resources: state[resource.NAME],

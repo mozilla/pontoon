@@ -10,13 +10,13 @@ type Action =
     | RequestAction
 ;
 
-export type LocalesState = {|
+export type LocaleState = {|
     ...Locale,
     +fetching: boolean,
 |};
 
 
-const initial: LocalesState = {
+const initial: LocaleState = {
     code: '',
     name: '',
     cldrPlurals: [],
@@ -31,9 +31,9 @@ const initial: LocalesState = {
 };
 
 export default function reducer(
-    state: LocalesState = initial,
+    state: LocaleState = initial,
     action: Action,
-): LocalesState {
+): LocaleState {
     switch (action.type) {
         case RECEIVE:
             return {

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import './connectedEditor.css';
 
 import * as entities from 'core/entities';
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as plural from 'core/plural';
@@ -17,7 +17,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import { NAME, actions } from '..';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from 'modules/history';
@@ -240,7 +240,7 @@ export default function connectedEditor<Object>(
             activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
             editor: state[NAME],
             isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
-            locale: state[locales.NAME],
+            locale: state[locale.NAME],
             nextEntity: entities.selectors.getNextEntity(state),
             parameters: navigation.selectors.getNavigationParams(state),
             pluralForm: plural.selectors.getPluralForm(state),

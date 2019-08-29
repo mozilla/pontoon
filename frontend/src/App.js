@@ -8,7 +8,7 @@ import './App.css';
 import * as l10n from 'core/l10n';
 import { Lightbox } from 'core/lightbox';
 import { WaveLoader } from 'core/loaders';
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as project from 'core/project';
@@ -26,7 +26,7 @@ import { SearchBox } from 'modules/search';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { L10nState } from 'core/l10n';
-import type { LocalesState } from 'core/locales';
+import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
@@ -35,7 +35,7 @@ import type { Stats } from 'core/stats';
 type Props = {|
     batchactions: BatchActionsState,
     l10n: L10nState,
-    locales: LocalesState,
+    locale: LocaleState,
     notification: notification.NotificationState,
     parameters: NavigationParams,
     project: ProjectState,
@@ -55,7 +55,7 @@ class App extends React.Component<InternalProps> {
     componentDidMount() {
         const { parameters } = this.props;
 
-        this.props.dispatch(locales.actions.get(parameters.locale));
+        this.props.dispatch(locale.actions.get(parameters.locale));
         this.props.dispatch(project.actions.get(parameters.project));
 
         // Load resources, unless we're in the All Projects view
@@ -72,9 +72,9 @@ class App extends React.Component<InternalProps> {
         // been rendered, to make sure users do see it.
         if (
             !this.props.l10n.fetching &&
-            !this.props.locales.fetching &&
+            !this.props.locale.fetching &&
             (prevProps.l10n.fetching ||
-            prevProps.locales.fetching)
+            prevProps.locale.fetching)
         ) {
             let notifications = [];
             const rootElt = document.getElementById('root');
@@ -94,7 +94,7 @@ class App extends React.Component<InternalProps> {
     render() {
         const state = this.props;
 
-        if (state.l10n.fetching || state.locales.fetching) {
+        if (state.l10n.fetching || state.locale.fetching) {
             return <WaveLoader />;
         }
 
@@ -131,7 +131,7 @@ const mapStateToProps = (state: Object): Props => {
     return {
         batchactions: state[batchactions.NAME],
         l10n: state[l10n.NAME],
-        locales: state[locales.NAME],
+        locale: state[locale.NAME],
         notification: state[notification.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],

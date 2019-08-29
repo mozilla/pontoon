@@ -9,7 +9,7 @@ import './EntityDetails.css';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
@@ -27,7 +27,7 @@ import Helpers from './Helpers';
 
 import type { Entity, OtherLocaleTranslation } from 'core/api';
 import type { EditorState } from 'core/editor';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from 'modules/history';
@@ -314,7 +314,7 @@ const mapStateToProps = (state: Object): Props => {
         history: state[history.NAME],
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
-        locale: state[locales.NAME],
+        locale: state[locale.NAME],
         machinery: state[machinery.NAME],
         nextEntity: entities.selectors.getNextEntity(state),
         previousEntity: entities.selectors.getPreviousEntity(state),

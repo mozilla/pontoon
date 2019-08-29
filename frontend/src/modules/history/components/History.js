@@ -8,7 +8,7 @@ import './History.css';
 import Translation from './Translation';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from '..';
 

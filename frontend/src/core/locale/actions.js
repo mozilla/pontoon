@@ -3,8 +3,8 @@
 import api from 'core/api';
 
 
-export const RECEIVE: 'locales/RECEIVE' = 'locales/RECEIVE';
-export const REQUEST: 'locales/REQUEST' = 'locales/REQUEST';
+export const RECEIVE: 'locale/RECEIVE' = 'locale/RECEIVE';
+export const REQUEST: 'locale/REQUEST' = 'locale/REQUEST';
 
 export type Locale = {|
     +code: string,
