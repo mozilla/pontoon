@@ -42,19 +42,20 @@ export function receive(locales: { [string]: Locale }) {
 }
 
 
-export function get(): Function {
+export function get(code: string): Function {
     return async dispatch => {
         dispatch(request());
 
-        const results = await api.locale.getAll();
-        const locales = {};
-        results.data.locales.forEach(locale => {
-            locales[locale.code] = {
+        const results = await api.locale.get(code);
+        const locale = results.data.locale;
+
+        const locales = {
+            [locale.code]: {
                 ...locale,
                 direction: locale.direction.toLowerCase(),
                 cldrPlurals: locale.cldrPlurals.split(',').map(i => parseInt(i, 10)),
-            };
-        });
+            }
+        };
 
         dispatch(receive(locales));
     }

@@ -4,9 +4,9 @@ import APIBase from './base';
 
 
 export default class LocaleAPI extends APIBase {
-    async getAll() {
+    async get(code: string) {
         const query = `{
-            locales {
+            locale(code: "${code}") {
                 code
                 name
                 cldrPlurals
@@ -19,6 +19,7 @@ export default class LocaleAPI extends APIBase {
                 transvision
             }
         }`;
+
         const payload = new URLSearchParams();
         payload.append('query', query);
 

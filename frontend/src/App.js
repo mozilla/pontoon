@@ -55,7 +55,7 @@ class App extends React.Component<InternalProps> {
     componentDidMount() {
         const { parameters } = this.props;
 
-        this.props.dispatch(locales.actions.get());
+        this.props.dispatch(locales.actions.get(parameters.locale));
         this.props.dispatch(project.actions.get(parameters.project));
 
         // Load resources, unless we're in the All Projects view

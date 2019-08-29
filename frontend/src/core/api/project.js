@@ -16,6 +16,7 @@ export default class ProjectAPI extends APIBase {
                 }
             }
         }`;
+
         const payload = new URLSearchParams();
         payload.append('query', query);
 
