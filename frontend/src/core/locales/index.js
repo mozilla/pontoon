@@ -2,7 +2,6 @@
 
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
-export { default as selectors } from './selectors';
 
 export type { Locale } from './actions';
 export type { LocalesState } from './reducer';

@@ -109,7 +109,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locales.NAME],
         pluralForm: selectors.getPluralForm(state),
         unsavedchanges: state[unsavedchanges.NAME],
     };

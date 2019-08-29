@@ -240,7 +240,7 @@ export default function connectedEditor<Object>(
             activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
             editor: state[NAME],
             isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
-            locale: locales.selectors.getCurrentLocaleData(state),
+            locale: state[locales.NAME],
             nextEntity: entities.selectors.getNextEntity(state),
             parameters: navigation.selectors.getNavigationParams(state),
             pluralForm: plural.selectors.getPluralForm(state),

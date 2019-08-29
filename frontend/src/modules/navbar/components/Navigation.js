@@ -139,7 +139,7 @@ export class NavigationBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locales.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         resources: state[resource.NAME],

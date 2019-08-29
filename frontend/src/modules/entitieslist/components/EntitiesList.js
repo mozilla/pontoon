@@ -377,7 +377,7 @@ const mapStateToProps = (state: Object): Props => {
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locales.NAME],
         router: state.router,
         unsavedchanges: state[unsavedchanges.NAME],
     };

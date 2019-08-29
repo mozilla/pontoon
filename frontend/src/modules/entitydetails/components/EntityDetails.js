@@ -314,7 +314,7 @@ const mapStateToProps = (state: Object): Props => {
         history: state[history.NAME],
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locales.NAME],
         machinery: state[machinery.NAME],
         nextEntity: entities.selectors.getNextEntity(state),
         previousEntity: entities.selectors.getPreviousEntity(state),
