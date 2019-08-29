@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 
-import { WithPlaceablesForFluent } from 'core/placeable';
 import { fluent } from 'core/utils';
 
 import RichString from './RichString';
 import SimpleString from './SimpleString';
+import SourceString from './SourceString';
 
 import type { Entity } from 'core/api';
 
@@ -42,9 +42,8 @@ export default function FluentOriginalString(props: Props) {
     }
 
     // Complex, unsupported strings.
-    return <p className="original" onClick={ props.handleClickOnPlaceable }>
-        <WithPlaceablesForFluent>
-            { props.entity.original }
-        </WithPlaceablesForFluent>
-    </p>;
+    return <SourceString
+        entity={ props.entity }
+        handleClickOnPlaceable={ props.handleClickOnPlaceable }
+    />
 }

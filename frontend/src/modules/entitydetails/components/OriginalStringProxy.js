@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { FluentOriginalString } from 'modules/fluentoriginal';
 
-import OriginalString from './OriginalString';
+import GenericOriginalString from './GenericOriginalString';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locales';
@@ -22,7 +22,7 @@ type Props = {|
  * Proxy for an OriginalString component based on the format of the entity.
  *
  * For Fluent strings ('ftl'), returns a Fluent-specific OriginalString
- * component. For everything else, return the basic OriginalString component.
+ * component. For everything else, return a generic OriginalString component.
  */
 export default function OriginalStringProxy(props: Props) {
     if (props.entity.format === 'ftl') {
@@ -32,7 +32,7 @@ export default function OriginalStringProxy(props: Props) {
         />;
     }
 
-    return <OriginalString
+    return <GenericOriginalString
         entity={ props.entity }
         locale={ props.locale }
         pluralForm={ props.pluralForm }
