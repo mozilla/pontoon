@@ -6,8 +6,6 @@ import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 
-import { WithPlaceables } from 'core/placeable';
-
 import OriginalStringProxy from './OriginalStringProxy';
 import Screenshots from './Screenshots';
 
