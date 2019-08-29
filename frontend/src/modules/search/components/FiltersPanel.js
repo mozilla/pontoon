@@ -62,6 +62,7 @@ type State = {|
  */
 export class FiltersPanelBase extends React.Component<Props, State> {
     chart: { current: any };
+    menu: { current: ?HTMLDivElement };
 
     constructor(props: Props) {
         super(props);
@@ -77,6 +78,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.initializeChart();
 
         this.chart = React.createRef();
+        this.menu = React.createRef();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -331,14 +333,25 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             timeRangeClass += ' selected';
         }
 
-        return <div className="filters-panel">
+        const menu = this.menu.current;
+        let isScrollbarVisible = false;
+        if (menu) {
+            isScrollbarVisible = menu.scrollHeight > menu.clientHeight;
+        }
+
+        let isFixed = '';
+        if (selectedFiltersCount > 0 && isScrollbarVisible) {
+            isFixed = 'fixed';
+        }
+
+         return <div className={ `filters-panel ${isFixed}` }>
             <div
                 className={ `visibility-switch ${filterIcon}` }
                 onClick={ this.toggleVisibility }
             >
                 <span className="status fa"></span>
             </div>
-            { !this.state.visible ? null : <div className="menu">
+            { !this.state.visible ? null : <div className="menu" ref={ this.menu }>
                 <ul>
                     <Localized id="search-FiltersPanel--heading-status">
                         <li className="horizontal-separator">Translation Status</li>

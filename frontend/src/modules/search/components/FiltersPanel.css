@@ -329,7 +329,7 @@
     width: 100%;
 }
 
-.filters-panel .toolbar.fixed {
+.filters-panel.fixed .toolbar {
     position: fixed;
     bottom: 0;
     width: 350px;
