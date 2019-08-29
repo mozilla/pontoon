@@ -8,6 +8,7 @@ import './Metadata.css';
 
 import { WithPlaceables } from 'core/placeable';
 
+import OriginalString from './OriginalString';
 import Screenshots from './Screenshots';
 
 import type { Entity } from 'core/api';
@@ -87,46 +88,6 @@ export default class Metadata extends React.Component<Props> {
                 this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
             }
         }
-    }
-
-    getOriginalContent(entity: Entity) {
-        const { pluralForm, locale } = this.props;
-
-        if (pluralForm === -1) {
-            return {
-                title: null,
-                original: entity.original,
-            };
-        }
-
-        if (locale.cldrPlurals[pluralForm] === 1) {
-            return {
-                title: <Localized id='entitydetails-Metadata--singular'>
-                    <h2>Singular</h2>
-                </Localized>,
-                original: entity.original,
-            };
-        }
-
-        return {
-            title: <Localized id='entitydetails-Metadata--plural'>
-                <h2>Plural</h2>
-            </Localized>,
-            original: entity.original_plural,
-        };
-    }
-
-    renderOriginal(entity: Entity): React.Node {
-        const { title, original } = this.getOriginalContent(entity);
-
-        return <React.Fragment>
-            { title }
-            <p className="original" onClick={ this.handleClickOnPlaceable }>
-                <WithPlaceables>
-                    { original }
-                </WithPlaceables>
-            </p>
-        </React.Fragment>;
     }
 
     renderComment(entity: Entity): React.Node {
@@ -215,7 +176,7 @@ export default class Metadata extends React.Component<Props> {
     }
 
     render(): React.Node {
-        const { entity, locale, openLightbox } = this.props;
+        const { entity, locale, openLightbox, pluralForm } = this.props;
 
         return <div className="metadata">
             <Screenshots
@@ -223,7 +184,12 @@ export default class Metadata extends React.Component<Props> {
                 locale={ locale.code }
                 openLightbox={ openLightbox }
             />
-            { this.renderOriginal(entity) }
+            <OriginalString
+                entity={ entity }
+                locale={ locale }
+                pluralForm={ pluralForm }
+                handleClickOnPlaceable={ this.handleClickOnPlaceable }
+            />
             { this.renderComment(entity) }
             { this.renderContext(entity) }
             { this.renderSources(entity) }
