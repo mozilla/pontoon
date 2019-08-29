@@ -16,6 +16,7 @@ describe('reducer', () => {
             msTranslatorCode: '',
             msTerminologyCode: '',
             transvision: false,
+            localizations: [],
             fetching: false,
         }
         expect(res).toEqual(expected);

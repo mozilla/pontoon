@@ -17,6 +17,15 @@ export default class LocaleAPI extends APIBase {
                 msTranslatorCode
                 msTerminologyCode
                 transvision
+                localizations {
+                    totalStrings
+                    approvedStrings
+                    stringsWithWarnings
+                    project {
+                        slug
+                        name
+                    }
+                }
             }
         }`;
 

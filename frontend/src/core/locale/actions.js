@@ -6,6 +6,16 @@ import api from 'core/api';
 export const RECEIVE: 'locale/RECEIVE' = 'locale/RECEIVE';
 export const REQUEST: 'locale/REQUEST' = 'locale/REQUEST';
 
+type Localization = {|
+    +totalStrings: number,
+    +approvedStrings: number,
+    +stringsWithWarnings: number,
+    +project: {|
+        +slug: string,
+        +name: string,
+    |},
+|};
+
 export type Locale = {|
     +code: string,
     +name: string,
@@ -17,6 +27,7 @@ export type Locale = {|
     +msTranslatorCode: string,
     +msTerminologyCode: string,
     +transvision: boolean,
+    +localizations: Array<Localization>,
 |};
 
 
