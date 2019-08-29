@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { FluentOriginalString } from 'modules/fluentoriginal';
+
 import OriginalString from './OriginalString';
 
 import type { Entity } from 'core/api';
@@ -21,7 +23,10 @@ export default class OriginalStringProxy extends React.Component<Props> {
         const props = this.props;
 
         if (props.entity.format === 'ftl') {
-            return null;
+            return <FluentOriginalString
+                entity={ props.entity }
+                handleClickOnPlaceable={ props.handleClickOnPlaceable }
+            />;
         }
 
         return <OriginalString
