@@ -8,7 +8,7 @@ import './Metadata.css';
 
 import { WithPlaceables } from 'core/placeable';
 
-import OriginalString from './OriginalString';
+import OriginalStringProxy from './OriginalStringProxy';
 import Screenshots from './Screenshots';
 
 import type { Entity } from 'core/api';
@@ -184,7 +184,7 @@ export default class Metadata extends React.Component<Props> {
                 locale={ locale.code }
                 openLightbox={ openLightbox }
             />
-            <OriginalString
+            <OriginalStringProxy
                 entity={ entity }
                 locale={ locale }
                 pluralForm={ pluralForm }
