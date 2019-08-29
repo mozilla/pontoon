@@ -11,14 +11,23 @@ type Action =
 ;
 
 export type LocalesState = {|
+    ...Locale,
     +fetching: boolean,
-    +locales: { [string]: Locale },
 |};
 
 
 const initial: LocalesState = {
+    code: '',
+    name: '',
+    cldrPlurals: [],
+    pluralRule: '',
+    direction: '',
+    script: '',
+    googleTranslateCode: '',
+    msTranslatorCode: '',
+    msTerminologyCode: '',
+    transvision: false,
     fetching: false,
-    locales: {},
 };
 
 export default function reducer(
@@ -29,8 +38,8 @@ export default function reducer(
         case RECEIVE:
             return {
                 ...state,
+                ...action.locale,
                 fetching: false,
-                locales: action.locales,
             };
         case REQUEST:
             return {

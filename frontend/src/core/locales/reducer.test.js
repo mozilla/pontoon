@@ -6,8 +6,17 @@ describe('reducer', () => {
     it('returns the initial state', () => {
         const res = reducer(undefined, {});
         const expected = {
+            code: '',
+            name: '',
+            cldrPlurals: [],
+            pluralRule: '',
+            direction: '',
+            script: '',
+            googleTranslateCode: '',
+            msTranslatorCode: '',
+            msTerminologyCode: '',
+            transvision: false,
             fetching: false,
-            locales: {},
         }
         expect(res).toEqual(expected);
     });
@@ -18,11 +27,11 @@ describe('reducer', () => {
     });
 
     it('handles the RECEIVE action', () => {
-        const LOCALES = { 'kg': { code: 'kg' } };
-        const res = reducer({}, { type: RECEIVE, locales: LOCALES });
+        const LOCALE = { code: 'kg' };
+        const res = reducer({}, { type: RECEIVE, locale: LOCALE });
         const expected = {
+            ...LOCALE,
             fetching: false,
-            locales: LOCALES,
         };
         expect(res).toEqual(expected);
     });

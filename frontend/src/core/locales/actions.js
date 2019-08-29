@@ -8,10 +8,10 @@ export const REQUEST: 'locales/REQUEST' = 'locales/REQUEST';
 
 export type Locale = {|
     +code: string,
+    +name: string,
     +cldrPlurals: Array<number>,
     +pluralRule: string,
     +direction: string,
-    +name: string,
     +script: string,
     +googleTranslateCode: string,
     +msTranslatorCode: string,
@@ -32,12 +32,12 @@ export function request() {
 
 export type ReceiveAction = {|
     type: typeof RECEIVE,
-    locales: { [string]: Locale },
+    locale: Locale,
 |};
-export function receive(locales: { [string]: Locale }) {
+export function receive(locale: Locale) {
     return {
         type: RECEIVE,
-        locales,
+        locale,
     };
 }
 
@@ -47,17 +47,14 @@ export function get(code: string): Function {
         dispatch(request());
 
         const results = await api.locale.get(code);
-        const locale = results.data.locale;
+        const data = results.data.locale;
+        const locale = {
+            ...data,
+            direction: data.direction.toLowerCase(),
+            cldrPlurals: data.cldrPlurals.split(',').map(i => parseInt(i, 10)),
+        }
 
-        const locales = {
-            [locale.code]: {
-                ...locale,
-                direction: locale.direction.toLowerCase(),
-                cldrPlurals: locale.cldrPlurals.split(',').map(i => parseInt(i, 10)),
-            }
-        };
-
-        dispatch(receive(locales));
+        dispatch(receive(locale));
     }
 }
 
