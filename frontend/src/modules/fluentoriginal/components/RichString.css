@@ -1,0 +1,31 @@
+.fluent-rich-string {
+    line-height: 22px;
+    padding: 10px;
+    margin-bottom: 6px;
+    width: 100%;
+}
+
+.fluent-rich-string tr > td:first {
+    width: calc(25% - 5px);
+}
+
+.fluent-rich-string tr > td:last-child {
+    width: 75%;
+}
+
+.fluent-rich-string tr > td > label {
+    background: transparent;
+    border: 1px solid #5E6475;
+    box-sizing: border-box;
+    color: #AAAAAA;
+    display: block;
+    font-weight: normal;
+    margin: 2px 5px 2px 0;
+    padding: 0 4px;
+}
+
+.fluent-rich-string tr > td > span {
+    box-sizing: border-box;
+    line-height: 24px;
+    margin: 2px 0;
+}

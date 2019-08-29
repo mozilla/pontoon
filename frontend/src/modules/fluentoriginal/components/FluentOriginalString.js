@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 
-import { WithPlaceables } from 'core/placeable';
+import { WithPlaceablesForFluent } from 'core/placeable';
 import { fluent } from 'core/utils';
 
+import RichString from './RichString';
 import SimpleString from './SimpleString';
 
 import type { Entity } from 'core/api';
@@ -27,9 +28,16 @@ export default function FluentOriginalString(props: Props) {
         />;
     }
 
+    if (syntax === 'rich') {
+        return <RichString
+            entity={ props.entity }
+            handleClickOnPlaceable={ props.handleClickOnPlaceable }
+        />;
+    }
+
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
-        <WithPlaceables>
+        <WithPlaceablesForFluent>
             { props.entity.original }
-        </WithPlaceables>
+        </WithPlaceablesForFluent>
     </p>;
 }

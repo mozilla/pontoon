@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { WithPlaceables } from 'core/placeable';
+import { WithPlaceablesForFluent } from 'core/placeable';
 import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -18,8 +18,8 @@ export default function SimpleString(props: Props) {
     const original = fluent.getSimplePreview(props.entity.original);
 
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
-        <WithPlaceables>
+        <WithPlaceablesForFluent>
             { original }
-        </WithPlaceables>
+        </WithPlaceablesForFluent>
     </p>;
 }
