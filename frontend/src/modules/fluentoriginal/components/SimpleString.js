@@ -14,6 +14,9 @@ type Props = {|
 |};
 
 
+/**
+ * Show the original string of a Fluent entity as a simple preview.
+ */
 export default function SimpleString(props: Props) {
     const original = fluent.getSimplePreview(props.entity.original);
 

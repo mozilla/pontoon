@@ -77,6 +77,9 @@ function renderAttributes(attributes: ?FluentAttributes): React.Node {
 }
 
 
+/**
+ * Show the original string of a Fluent entity in a rich interface.
+ */
 export default function RichString(props: Props) {
     const message = fluent.parser.parseEntry(props.entity.original);
 

@@ -17,44 +17,49 @@ type Props = {|
 |};
 
 
-export default class OriginalString extends React.Component<Props> {
-    getOriginalContent() {
-        const { entity, locale, pluralForm } = this.props;
+function getOriginalContent(props: Props) {
+    const { entity, locale, pluralForm } = props;
 
-        if (pluralForm === -1) {
-            return {
-                title: null,
-                original: entity.original,
-            };
-        }
-
-        if (locale.cldrPlurals[pluralForm] === 1) {
-            return {
-                title: <Localized id='entitydetails-OriginalString--singular'>
-                    <h2>Singular</h2>
-                </Localized>,
-                original: entity.original,
-            };
-        }
-
+    if (pluralForm === -1) {
         return {
-            title: <Localized id='entitydetails-OriginalString--plural'>
-                <h2>Plural</h2>
-            </Localized>,
-            original: entity.original_plural,
+            title: null,
+            original: entity.original,
         };
     }
 
-    render() {
-        const { title, original } = this.getOriginalContent();
-
-        return <>
-            { title }
-            <p className="original" onClick={ this.props.handleClickOnPlaceable }>
-                <WithPlaceables>
-                    { original }
-                </WithPlaceables>
-            </p>
-        </>;
+    if (locale.cldrPlurals[pluralForm] === 1) {
+        return {
+            title: <Localized id='entitydetails-OriginalString--singular'>
+                <h2>Singular</h2>
+            </Localized>,
+            original: entity.original,
+        };
     }
+
+    return {
+        title: <Localized id='entitydetails-OriginalString--plural'>
+            <h2>Plural</h2>
+        </Localized>,
+        original: entity.original_plural,
+    };
+}
+
+
+/**
+ * Show the original string of an entity.
+ *
+ * Based on the plural form, show either the singular or plural version of the
+ * string, and also display which form is being rendered.
+ */
+export default function OriginalString(props: Props) {
+    const { title, original } = getOriginalContent(props);
+
+    return <>
+        { title }
+        <p className="original" onClick={ props.handleClickOnPlaceable }>
+            <WithPlaceables>
+                { original }
+            </WithPlaceables>
+        </p>
+    </>;
 }

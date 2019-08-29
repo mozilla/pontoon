@@ -17,6 +17,12 @@ type Props = {|
 |};
 
 
+/**
+ * Show the original string of a Fluent entity.
+ *
+ * Based on the syntax type of the string, render it as a simple string preview,
+ * as a rich UI or as the original, untouched string.
+ */
 export default function FluentOriginalString(props: Props) {
     const message = fluent.parser.parseEntry(props.entity.original);
     const syntax = fluent.getSyntaxType(message);
@@ -35,6 +41,7 @@ export default function FluentOriginalString(props: Props) {
         />;
     }
 
+    // Complex, unsupported strings.
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
         <WithPlaceablesForFluent>
             { props.entity.original }
