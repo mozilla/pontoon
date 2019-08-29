@@ -7,6 +7,7 @@ import flattenMessage from './flattenMessage';
 import getEmptyMessage from './getEmptyMessage';
 import getReconstructedMessage from './getReconstructedMessage';
 import getSimplePreview from './getSimplePreview';
+import getSyntaxType from './getSyntaxType';
 import isSimpleElement from './isSimpleElement';
 import isSimpleMessage from './isSimpleMessage';
 import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
@@ -24,6 +25,7 @@ export default {
     getEmptyMessage,
     getReconstructedMessage,
     getSimplePreview,
+    getSyntaxType,
     isSimpleElement,
     isSimpleMessage,
     isSimpleSingleAttributeMessage,
