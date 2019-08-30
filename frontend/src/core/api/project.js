@@ -7,6 +7,7 @@ export default class ProjectAPI extends APIBase {
     async get(slug: string) {
         const query = `{
             project(slug: "${slug}") {
+                slug
                 name
                 info
                 tags {

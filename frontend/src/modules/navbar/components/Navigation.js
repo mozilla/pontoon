@@ -87,20 +87,10 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { locale, parameters, project, resources } = this.props;
+        const { locale, parameters, resources } = this.props;
 
         if (!locale) {
             return null;
-        }
-
-        const localeDashboardURL = `/${locale.code}/`;
-        let projectDashboardURL = `/${locale.code}/${parameters.project}/`;
-        let projectName = project.name;
-
-        // For all-projects, we have some special cases.
-        if (parameters.project === 'all-projects') {
-            projectDashboardURL = localeDashboardURL;
-            projectName = 'All Projects';
         }
 
         return <nav className="navigation">
@@ -116,20 +106,21 @@ export class NavigationBase extends React.Component<InternalProps> {
                     </a>
                 </li>
                 <li>
-                    <a href={ localeDashboardURL }>
+                    <a href={ `/${locale.code}/` }>
                         { locale.name }
                         <span className="locale-code">{ locale.code }</span>
                     </a>
                 </li>
-                <li>
-                    <a href={ projectDashboardURL }>
-                        { projectName }
-                    </a>
-                </li>
-                <resource.ResourceMenu
+                <project.ProjectMenu
+                    locale={ locale }
+                    parameters={ parameters }
+                    project={ this.props.project }
                     navigateToPath={ this.navigateToPath }
+                />
+                <resource.ResourceMenu
                     parameters={ parameters }
                     resources={ resources }
+                    navigateToPath={ this.navigateToPath }
                 />
             </ul>
         </nav>;
