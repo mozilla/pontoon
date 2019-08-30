@@ -125,11 +125,11 @@ entitydetails-Metadata--project =
     .title = Projet
 
 
-## Entity Details OriginalString
+## Entity Details GenericOriginalString
 ## Shows the original string of an entity
 
-entitydetails-OriginalString--plural = Pluriel
-entitydetails-OriginalString--singular = Singulier
+entitydetails-GenericOriginalString--plural = Pluriel
+entitydetails-GenericOriginalString--singular = Singulier
 
 
 ## History

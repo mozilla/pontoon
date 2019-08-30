@@ -29,7 +29,7 @@ function getOriginalContent(props: Props) {
 
     if (locale.cldrPlurals[pluralForm] === 1) {
         return {
-            title: <Localized id='entitydetails-OriginalString--singular'>
+            title: <Localized id='entitydetails-GenericOriginalString--singular'>
                 <h2>Singular</h2>
             </Localized>,
             original: entity.original,
@@ -37,7 +37,7 @@ function getOriginalContent(props: Props) {
     }
 
     return {
-        title: <Localized id='entitydetails-OriginalString--plural'>
+        title: <Localized id='entitydetails-GenericOriginalString--plural'>
             <h2>Plural</h2>
         </Localized>,
         original: entity.original_plural,
