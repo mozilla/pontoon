@@ -41,9 +41,6 @@ describe('<Metadata>', () => {
     it('renders correctly', () => {
         const wrapper = createShallowMetadata();
 
-        const originalContent = wrapper.find('ContentMarker').props().children;
-        expect(originalContent).toContain(ENTITY.original);
-
         expect(wrapper.text()).toContain(ENTITY.source[0][0]);
 
         // Comments are hidden in a Linkify component.
@@ -53,29 +50,8 @@ describe('<Metadata>', () => {
         expect(wrapper.find('#entitydetails-Metadata--resource a').text()).toContain(ENTITY.path);
     });
 
-    it('renders the selected plural form as original string', () => {
-        const wrapper = createShallowMetadata(ENTITY, 2);
-
-        expect(wrapper.find('#entitydetails-Metadata--plural')).toHaveLength(1);
-
-        const originalContent = wrapper.find('ContentMarker').props().children;
-        expect(originalContent).toContain(ENTITY.original_plural);
-    });
-
-    it('renders the selected singular form as original string', () => {
-        const wrapper = createShallowMetadata(ENTITY, 0);
-
-        expect(wrapper.find('#entitydetails-Metadata--singular')).toHaveLength(1);
-
-        const originalContent = wrapper.find('ContentMarker').props().children;
-        expect(originalContent).toContain(ENTITY.original);
-    });
-
     it('does not require a comment', () => {
         const wrapper = createShallowMetadata({ ...ENTITY, ...{ comment: '' } });
-
-        const originalContent = wrapper.find('ContentMarker').props().children;
-        expect(originalContent).toContain(ENTITY.original);
 
         expect(wrapper.text()).toContain(ENTITY.source[0][0]);
 
@@ -86,9 +62,6 @@ describe('<Metadata>', () => {
 
     it('does not require a source', () => {
         const wrapper = createShallowMetadata({ ...ENTITY, ...{ source: [] } });
-
-        const originalContent = wrapper.find('ContentMarker').props().children;
-        expect(originalContent).toContain(ENTITY.original);
 
         expect(wrapper.text()).not.toContain(ENTITY.source[0][0]);
 
