@@ -109,9 +109,6 @@ entitydetails-Helpers--locales = Langues
 ## Entity Details Metadata
 ## Shows metadata about an entity (original string)
 
-entitydetails-Metadata--plural = Pluriel
-entitydetails-Metadata--singular = Singulier
-
 entitydetails-Metadata--comment =
     .title = Commentaire
 
@@ -126,6 +123,13 @@ entitydetails-Metadata--resource =
 
 entitydetails-Metadata--project =
     .title = Projet
+
+
+## Entity Details GenericOriginalString
+## Shows the original string of an entity
+
+entitydetails-GenericOriginalString--plural = Pluriel
+entitydetails-GenericOriginalString--singular = Singulier
 
 
 ## History

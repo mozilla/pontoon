@@ -12,13 +12,8 @@ import SimpleEditor from './SimpleEditor';
 import RichEditor from './RichEditor';
 
 import type { EditorProps, Translation } from 'core/editor';
+import type { SyntaxType } from 'core/utils/fluent/types';
 
-
-// Type of syntax of the translation to show in the editor.
-// `simple` => SimpleEditor (the message can be simplified to a single text element)
-// `rich` => RichEditor (the message can be displayed in our rich interface)
-// `complex` => SourceEditor (the message is not supported by other editor types)
-type SyntaxType = 'simple' | 'rich' | 'complex';
 
 type State = {|
     // Force using the source editor.
@@ -83,7 +78,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
         const message = fluent.parser.parseEntry(source);
 
         // Figure out and set the syntax type.
-        const syntaxType = this.getSyntaxType(message);
+        const syntaxType = fluent.getSyntaxType(message);
         this.setState({ syntaxType });
 
         // Figure out and set the initial translation content.
@@ -103,21 +98,6 @@ export class EditorBase extends React.Component<EditorProps, State> {
 
         props.setInitialTranslation(translationContent);
         props.updateTranslation(translationContent);
-    }
-
-    getSyntaxType(message: Object) {
-        if (!fluent.isSupportedMessage(message)) {
-            return 'complex';
-        }
-
-        if (
-            fluent.isSimpleMessage(message) ||
-            fluent.isSimpleSingleAttributeMessage(message)
-        ) {
-            return 'simple';
-        }
-
-        return 'rich';
     }
 
     /**
