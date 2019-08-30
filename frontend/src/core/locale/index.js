@@ -3,7 +3,7 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-export type { Locale } from './actions';
+export type { Locale, Localization } from './actions';
 export type { LocaleState } from './reducer';
 
 

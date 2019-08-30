@@ -4,6 +4,10 @@ import * as React from 'react';
 import { Localized } from 'fluent-react';
 import onClickOutside from 'react-onclickoutside';
 
+import './ProjectMenu.css';
+
+import ProjectItem from './ProjectItem.js';
+
 import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
@@ -79,13 +83,61 @@ export class ProjectMenuBase extends React.Component<Props, State> {
     }
 
     renderMenu() {
-        const { locale } = this.props;
+        const { locale, parameters } = this.props;
 
-        return <li>
-            <a href={ `/${locale.code}/` }>
-                { 'All Projects' }
-            </a>
-        </li>
+        let className = 'project-menu';
+        if (!this.state.visible) {
+            className += ' closed';
+        }
+
+        // Search projects
+        const search = this.state.search;
+        const localizationElements = locale.localizations.filter(localization =>
+            localization.project.name.toLowerCase().indexOf(search.toLowerCase()) > -1
+        );
+
+        return <li className={ className }>
+            <div
+                className="selector unselectable"
+                onClick={ this.toggleVisibility }
+            >
+                <span>{ 'All Projects' }</span>
+                <span className="icon fa fa-caret-down"></span>
+            </div>
+
+            { !this.state.visible ? null :
+            <div className="menu">
+                <div className="search-wrapper">
+                    <div className="icon fa fa-search"></div>
+                    <input
+                        type="search"
+                        autoComplete="off"
+                        autoFocus
+                        value={ this.state.search }
+                        onChange={ this.updateProjectList }
+                    />
+                </div>
+
+                <ul>
+                    { localizationElements.length ?
+                        localizationElements.map((localization, index) => {
+                            return <ProjectItem
+                                parameters={ parameters }
+                                localization={ localization }
+                                navigateToPath={ this.navigateToPath }
+                                key={ index }
+                            />;
+                        })
+                        :
+                        // No projects found
+                        <Localized id='resource-ResourceMenu--no-results'>
+                            <li className="no-results">No results</li>
+                        </Localized>
+                    }
+                </ul>
+            </div>
+            }
+        </li>;
     }
 
     render() {

@@ -6,7 +6,7 @@ import api from 'core/api';
 export const RECEIVE: 'locale/RECEIVE' = 'locale/RECEIVE';
 export const REQUEST: 'locale/REQUEST' = 'locale/REQUEST';
 
-type Localization = {|
+export type Localization = {|
     +totalStrings: number,
     +approvedStrings: number,
     +stringsWithWarnings: number,
