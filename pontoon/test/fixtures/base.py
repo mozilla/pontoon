@@ -82,6 +82,13 @@ def project_b():
 
 
 @pytest.fixture
+def system_project_a():
+    return factories.ProjectFactory(
+        slug="system_project_a", name="System Project A", repositories=[], system_project=True,
+    )
+
+
+@pytest.fixture
 def resource_a(project_a):
     return factories.ResourceFactory(
         project=project_a, path="resource_a.po", format="po"

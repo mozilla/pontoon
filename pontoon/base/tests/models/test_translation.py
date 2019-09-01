@@ -99,6 +99,44 @@ def test_translation_save_latest_update(locale_a, project_a):
 
 
 @pytest.mark.django_db
+def test_translation_save_latest_update_for_system_project(locale_a, system_project_a):
+    """
+    When a translation is saved, update the latest_translation
+    attribute on the project, translatedresource and project_locale objects,
+    but not on the locale object.
+    """
+    project_locale = ProjectLocaleFactory.create(
+        project=system_project_a, locale=locale_a,
+    )
+    resource = ResourceFactory.create(
+        project=system_project_a,
+        path="resource.po",
+        format="po",
+    )
+    tr = TranslatedResourceFactory.create(locale=locale_a, resource=resource)
+    entity = EntityFactory.create(resource=resource, string="Entity X")
+
+    assert locale_a.latest_translation is None
+    assert system_project_a.latest_translation is None
+    assert tr.latest_translation is None
+    assert project_locale.latest_translation is None
+
+    translation = TranslationFactory.create(
+        locale=locale_a,
+        entity=entity,
+        date=aware_datetime(1970, 1, 1),
+    )
+    locale_a.refresh_from_db()
+    system_project_a.refresh_from_db()
+    tr.refresh_from_db()
+    project_locale.refresh_from_db()
+    assert locale_a.latest_translation is None
+    assert system_project_a.latest_translation == translation
+    assert tr.latest_translation == translation
+    assert project_locale.latest_translation == translation
+
+
+@pytest.mark.django_db
 def test_translation_save_latest_missing_project_locale(locale_a, project_a):
     """
     If a translation is saved for a locale that isn't active on the
