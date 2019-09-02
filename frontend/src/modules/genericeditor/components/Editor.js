@@ -34,6 +34,11 @@ export class EditorBase extends React.Component<EditorProps> {
             return null;
         }
 
+        // Transitional state when switching view despite unsaved changes.
+        if (!props.entity) {
+            return null;
+        }
+
         const original = (props.pluralForm <= 0) ? props.entity.original : props.entity.original_plural;
 
         return <>
