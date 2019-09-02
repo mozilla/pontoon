@@ -67,7 +67,11 @@ export class NavigationBase extends React.Component<InternalProps> {
     updateTitle = () => {
         const { locale, project } = this.props;
 
-        if (!locale || !project) {
+        if (!locale || !locale.name) {
+            return null;
+        }
+
+        if (!project || !project.name) {
             return null;
         }
 
