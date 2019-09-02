@@ -2,8 +2,10 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
-import { Localized } from 'fluent-react';
+
 import date from 'date-and-time';
+import { Localized } from 'fluent-react';
+import cloneDeep from 'lodash.clonedeep';
 
 import Highcharts from 'highcharts/highstock'
 import highchartsStock from "highcharts/modules/stock";
@@ -177,7 +179,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         }
 
         // Set chart data
-        const chartOptions = this.state.chartOptions;
+        const chartOptions = cloneDeep(this.state.chartOptions);
         chartOptions.series[0].data = timeRangeData;
 
         // Set chart update function
