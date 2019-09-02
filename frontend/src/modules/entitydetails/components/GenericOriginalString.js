@@ -6,7 +6,7 @@ import { Localized } from 'fluent-react';
 import { WithPlaceables } from 'core/placeable';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 type Props = {|

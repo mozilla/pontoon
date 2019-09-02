@@ -72,6 +72,11 @@ export default class SimpleEditor extends React.Component<Props> {
             return null;
         }
 
+        // Transitional state when switching view despite unsaved changes.
+        if (!props.entity) {
+            return null;
+        }
+
         return <>
             <GenericTranslationForm
                 { ...props }

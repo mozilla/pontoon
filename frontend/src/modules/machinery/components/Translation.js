@@ -8,7 +8,7 @@ import './Translation.css';
 import { GenericTranslation } from 'core/translation';
 
 import type { MachineryTranslation } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 type Props = {|

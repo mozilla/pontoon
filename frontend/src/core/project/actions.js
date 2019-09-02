@@ -15,6 +15,7 @@ export type Tag = {|
 
 
 type Project = {
+    slug: string,
     name: string,
     info: string,
     tags: Array<Tag>,
@@ -39,6 +40,7 @@ export function request(): RequestAction {
  */
 export type ReceiveAction = {
     +type: typeof RECEIVE,
+    +slug: string,
     +name: string,
     +info: string,
     +tags: Array<Tag>,
@@ -46,6 +48,7 @@ export type ReceiveAction = {
 export function receive(project: Project): ReceiveAction {
     return {
         type: RECEIVE,
+        slug: project.slug,
         name: project.name,
         info: project.info,
         tags: project.tags,

@@ -70,12 +70,9 @@ describe('<PluralSelector>', () => {
             plural: {
                 pluralForm: 1,
             },
-            locales: {
-                locales: {
-                    'kg': {
-                        cldrPlurals: [1, 5],
-                    }
-                },
+            locale: {
+                code: 'kg',
+                cldrPlurals: [1, 5],
             },
             router: {
                 location: {

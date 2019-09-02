@@ -4,9 +4,9 @@ import APIBase from './base';
 
 
 export default class LocaleAPI extends APIBase {
-    async getAll() {
+    async get(code: string) {
         const query = `{
-            locales {
+            locale(code: "${code}") {
                 code
                 name
                 cldrPlurals
@@ -17,8 +17,18 @@ export default class LocaleAPI extends APIBase {
                 msTranslatorCode
                 msTerminologyCode
                 transvision
+                localizations {
+                    totalStrings
+                    approvedStrings
+                    stringsWithWarnings
+                    project {
+                        slug
+                        name
+                    }
+                }
             }
         }`;
+
         const payload = new URLSearchParams();
         payload.append('query', query);
 

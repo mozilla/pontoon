@@ -10,7 +10,7 @@ import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';

@@ -3,7 +3,7 @@
 import api from 'core/api';
 
 import type { MachineryTranslation } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' = 'machinery/ADD_TRANSLATIONS';

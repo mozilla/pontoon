@@ -85,12 +85,8 @@ function createEntityDetailsWithStore() {
                 search: '?string=' + ENTITIES[0].pk,
             },
         },
-        locales: {
-            locales: {
-                'kg': {
-                    code: 'kg',
-                },
-            },
+        locale: {
+            code: 'kg',
         },
     };
     const store = createReduxStore(initialState);

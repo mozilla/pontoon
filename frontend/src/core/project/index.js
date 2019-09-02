@@ -3,6 +3,8 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
+export { default as ProjectMenu } from './components/ProjectMenu';
+
 export type { Tag } from './actions';
 export type { ProjectState } from './reducer';
 

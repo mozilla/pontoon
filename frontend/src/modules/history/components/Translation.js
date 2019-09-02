@@ -10,7 +10,7 @@ import { TranslationProxy } from 'core/translation';
 import * as utils from 'core/utils';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from '..';
 import type { DBTranslation } from '../reducer';

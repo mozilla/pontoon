@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import './EntitiesList.css';
 
 import * as entities from 'core/entities';
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as notification from 'core/notification';
 import * as user from 'core/user';
@@ -20,7 +20,7 @@ import { CircleLoader } from 'core/loaders'
 import type { BatchActionsState } from 'modules/batchactions';
 import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
@@ -377,7 +377,7 @@ const mapStateToProps = (state: Object): Props => {
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locale.NAME],
         router: state.router,
         unsavedchanges: state[unsavedchanges.NAME],
     };
