@@ -223,6 +223,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         // If valid date, update chart extremes
         if (!isNaN(d)) {
             this.updateChartExtremes(event.target.name, d.getTime());
+            event.target.classList.remove('error');
+        }
+        else {
+            event.target.classList.add('error');
         }
     }
 
