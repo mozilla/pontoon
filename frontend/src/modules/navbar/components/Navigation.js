@@ -6,14 +6,14 @@ import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
@@ -87,20 +87,10 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 
     render() {
-        const { locale, parameters, project, resources } = this.props;
+        const { locale, parameters, resources } = this.props;
 
         if (!locale) {
             return null;
-        }
-
-        const localeDashboardURL = `/${locale.code}/`;
-        let projectDashboardURL = `/${locale.code}/${parameters.project}/`;
-        let projectName = project.name;
-
-        // For all-projects, we have some special cases.
-        if (parameters.project === 'all-projects') {
-            projectDashboardURL = localeDashboardURL;
-            projectName = 'All Projects';
         }
 
         return <nav className="navigation">
@@ -116,20 +106,21 @@ export class NavigationBase extends React.Component<InternalProps> {
                     </a>
                 </li>
                 <li>
-                    <a href={ localeDashboardURL }>
+                    <a href={ `/${locale.code}/` }>
                         { locale.name }
                         <span className="locale-code">{ locale.code }</span>
                     </a>
                 </li>
-                <li>
-                    <a href={ projectDashboardURL }>
-                        { projectName }
-                    </a>
-                </li>
-                <resource.ResourceMenu
+                <project.ProjectMenu
+                    locale={ locale }
+                    parameters={ parameters }
+                    project={ this.props.project }
                     navigateToPath={ this.navigateToPath }
+                />
+                <resource.ResourceMenu
                     parameters={ parameters }
                     resources={ resources }
+                    navigateToPath={ this.navigateToPath }
                 />
             </ul>
         </nav>;
@@ -139,7 +130,7 @@ export class NavigationBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locale.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         resources: state[resource.NAME],

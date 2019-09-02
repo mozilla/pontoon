@@ -2,7 +2,7 @@
 
 import { actions as navActions } from 'core/navigation';
 
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 export const RESET: 'plural/RESET' = 'plural/RESET';

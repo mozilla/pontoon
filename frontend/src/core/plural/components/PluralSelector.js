@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 
 import './PluralSelector.css';
 
-import * as locales from 'core/locales';
+import * as locale from 'core/locale';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, selectors } from '..';
 
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
@@ -109,7 +109,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        locale: locales.selectors.getCurrentLocaleData(state),
+        locale: state[locale.NAME],
         pluralForm: selectors.getPluralForm(state),
         unsavedchanges: state[unsavedchanges.NAME],
     };

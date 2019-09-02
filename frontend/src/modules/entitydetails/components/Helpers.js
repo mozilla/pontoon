@@ -11,7 +11,7 @@ import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Entity, OtherLocaleTranslation } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from 'modules/history';

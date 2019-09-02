@@ -7,7 +7,7 @@ import { FluentOriginalString } from 'modules/fluentoriginal';
 import GenericOriginalString from './GenericOriginalString';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 type Props = {|

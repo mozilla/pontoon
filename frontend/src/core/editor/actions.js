@@ -10,7 +10,7 @@ import { actions as statsActions } from 'core/stats';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { FluentMessage } from 'core/utils/fluent/types';
 
 

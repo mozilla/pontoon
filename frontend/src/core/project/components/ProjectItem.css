@@ -1,0 +1,10 @@
+.project-menu .menu li.no-results,
+.project-menu .menu li a {
+    display: block;
+    padding: 2px 4px;
+}
+
+.project-menu .menu li a:hover {
+    background: #3F4752;
+    color: #fff;
+}

@@ -2,7 +2,7 @@
 
 import APIBase from './base';
 
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
 
 

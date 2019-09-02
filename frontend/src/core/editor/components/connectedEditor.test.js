@@ -62,10 +62,8 @@ function createEditorBase({
                 search: '?string=' + ENTITIES[0].pk,
             },
         },
-        locales: {
-            locales: {
-                'kg': { code: 'kg' },
-            },
+        locale: {
+            code: 'kg',
         },
         plural: {
             pluralForm,

@@ -13,6 +13,7 @@ type Action =
 
 export type ProjectState = {|
     +fetching: boolean,
+    +slug: string,
     +name: string,
     +info: string,
     +tags: Array<Tag>,
@@ -21,6 +22,7 @@ export type ProjectState = {|
 
 const initial: ProjectState = {
     fetching: false,
+    slug: '',
     name: '',
     info: '',
     tags: [],
@@ -40,6 +42,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: false,
+                slug: action.slug,
                 name: action.name,
                 info: action.info,
                 tags: action.tags,

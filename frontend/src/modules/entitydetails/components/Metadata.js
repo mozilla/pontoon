@@ -10,7 +10,7 @@ import OriginalStringProxy from './OriginalStringProxy';
 import Screenshots from './Screenshots';
 
 import type { Entity } from 'core/api';
-import type { Locale } from 'core/locales';
+import type { Locale } from 'core/locale';
 
 
 type PropertyProps = {|

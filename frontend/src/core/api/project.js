@@ -7,6 +7,7 @@ export default class ProjectAPI extends APIBase {
     async get(slug: string) {
         const query = `{
             project(slug: "${slug}") {
+                slug
                 name
                 info
                 tags {
@@ -16,6 +17,7 @@ export default class ProjectAPI extends APIBase {
                 }
             }
         }`;
+
         const payload = new URLSearchParams();
         payload.append('query', query);
 
