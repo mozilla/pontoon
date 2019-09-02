@@ -59,7 +59,7 @@ def translation_memory(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    max_results = 5
+    MAX_RESULTS = 5
 
     try:
         locale = Locale.objects.get(code=locale)
@@ -75,23 +75,31 @@ def translation_memory(request):
         .minimum_levenshtein_ratio(text)
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
+
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
 
-    entries = entries.values('source', 'target', 'quality').order_by('-quality')
-    suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
+    entries = entries.values('source', 'target', 'quality')
+    entries_merged = defaultdict(lambda: {'count': 0, 'quality': 0})
 
+    # Group entries with the same target and count them
     for entry in entries:
         if (
-            entry['target'] not in suggestions or
-            entry['quality'] > suggestions[entry['target']]['quality']
+            entry['target'] not in entries_merged or
+            entry['quality'] > entries_merged[entry['target']]['quality']
         ):
-            suggestions[entry['target']].update(entry)
-        suggestions[entry['target']]['count'] += 1
+            entries_merged[entry['target']].update(entry)
+        entries_merged[entry['target']]['count'] += 1
 
+    # Sort entries in descending order by quality and then count
+    # Limit entries count by `MAX_RESULTS`
     return JsonResponse(
-        sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
+        sorted(
+            entries_merged.values(),
+            key=lambda e: (e['quality'], e['count']),
+            reverse=True,
+        )[:MAX_RESULTS],
         safe=False
     )
 
