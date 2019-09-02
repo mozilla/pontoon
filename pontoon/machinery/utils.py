@@ -69,15 +69,21 @@ def get_translation_memory_data(text, locale, pk=None):
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
-    entries = entries.values('source', 'target', 'quality', 'plural_form').order_by('-quality')
-    suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
+    entries = entries.values('source', 'target', 'quality')
+    entries_merged = defaultdict(lambda: {'count': 0, 'quality': 0})
+
+    # Group entries with the same target and count them
     for entry in entries:
         if (
-            entry['target'] not in suggestions or
-            entry['quality'] > suggestions[entry['target']]['quality']
+            entry['target'] not in entries_merged or
+            entry['quality'] > entries_merged[entry['target']]['quality']
         ):
-            suggestions[entry['target']].update(entry)
-        suggestions[entry['target']]['count'] += 1
+            entries_merged[entry['target']].update(entry)
+        entries_merged[entry['target']]['count'] += 1
 
-    return sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:MAX_RESULTS]
+    return sorted(
+        entries_merged.values(),
+        key=lambda e: (e['quality'], e['count']),
+        reverse=True,
+    )[:MAX_RESULTS]

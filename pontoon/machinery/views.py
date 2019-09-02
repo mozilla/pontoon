@@ -58,6 +58,14 @@ def translation_memory(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        return JsonResponse({
+            'status': False,
+            'message': 'Not Found: {error}'.format(error=e),
+        }, status=404)
+
     data = get_translation_memory_data(text, locale, pk)
     return JsonResponse(data, safe=False)
 
