@@ -49,7 +49,16 @@ type Props = {|
 type State = {|
     chartFrom: ?number,
     chartTo: ?number,
-    chartOptions: Object,
+    chartOptions: {
+        series: Array<{
+            data: Array<any>,
+        }>,
+        xAxis: Array<{
+            events: {
+                setExtremes: ?({min: number, max: number}) => void,
+            },
+        }>,
+    },
     isChartVisible: boolean,
     visible: boolean,
 |};
@@ -136,6 +145,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             return;
         }
 
+        if (!this.chart.current) {
+            return;
+        }
+
         let extremes = {
             chartFrom: date.parse(chartFrom.toString(), URL_FORMAT, true).getTime(),
             chartTo: date.parse(chartTo.toString(), URL_FORMAT, true).getTime(),
@@ -145,12 +158,10 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             extremes[key] = value;
         }
 
-        if (this.chart.current) {
-            this.chart.current.chart.xAxis[0].setExtremes(
-                extremes.chartFrom,
-                extremes.chartTo,
-            );
-        }
+        this.chart.current.chart.xAxis[0].setExtremes(
+            extremes.chartFrom,
+            extremes.chartTo,
+        );
     }
 
     plotChart = () => {
@@ -166,15 +177,14 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         }
 
         // Set chart data
-        let chartOptions = this.state.chartOptions;
+        const chartOptions = this.state.chartOptions;
         chartOptions.series[0].data = timeRangeData;
 
         // Set chart update function
-        const self = this;
-        chartOptions.xAxis[0].events.setExtremes = (event) => {
-            self.setState({
-                chartFrom: self.getTimeForURL(event.min),
-                chartTo: self.getTimeForURL(event.max),
+        chartOptions.xAxis[0].events.setExtremes = event => {
+            this.setState({
+                chartFrom: this.getTimeForURL(event.min),
+                chartTo: this.getTimeForURL(event.max),
             });
         };
 
@@ -231,14 +241,14 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     }
 
-    createToggleTimeRangeFilter() {
+    toggleTimeRangeFilter = (event: SyntheticMouseEvent<>) => {
         const { chartFrom, chartTo, isChartVisible } = this.state;
 
         if (isChartVisible) {
             return;
         }
 
-        return this.createToggleFilter([chartFrom, chartTo].join('-'), 'timeRange');
+        this.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
     }
 
     createToggleFilter = (filter: string, type: string) => {
@@ -246,27 +256,36 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             return null;
         }
 
-        return (event: SyntheticInputEvent<>) => {
+        return (event: SyntheticMouseEvent<>) => {
             event.stopPropagation();
-            this.props.toggleFilter(filter, type);
+            this.toggleFilter(filter, type, event);
         };
     }
 
-    createApplyTimeRangeFilter() {
+    toggleFilter(filter: string, type: string, event: SyntheticMouseEvent<>) {
+        event.stopPropagation();
+        this.props.toggleFilter(filter, type);
+    }
+
+    applyTimeRangeFilter = () => {
         const { chartFrom, chartTo, isChartVisible } = this.state;
 
         if (isChartVisible) {
             return;
         }
 
-        return this.createApplySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
+        this.applySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
     }
 
     createApplySingleFilter(filter: string, type: string) {
         return () => {
-            this.toggleVisibility();
-            this.props.applySingleFilter(filter, type, this.props.update);
+            this.applySingleFilter(filter, type);
         };
+    }
+
+    applySingleFilter(filter: string, type: string) {
+        this.toggleVisibility();
+        this.props.applySingleFilter(filter, type, this.props.update);
     }
 
     // This method is called by the Higher-Order Component `onClickOutside`
@@ -477,11 +496,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
                         <li
                             className={ `${timeRangeClass}` }
-                            onClick={ this.createApplyTimeRangeFilter() }
+                            onClick={ this.applyTimeRangeFilter }
                         >
                             <span
                                 className="status fa"
-                                onClick={ this.createToggleTimeRangeFilter() }
+                                onClick={ this.toggleTimeRangeFilter }
                             ></span>
 
                             <span className="clearfix">

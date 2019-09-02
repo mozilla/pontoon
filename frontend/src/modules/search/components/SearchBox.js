@@ -86,7 +86,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
-        let timeRange = this.getInitialTimeRange();
+        let timeRange = null;
         if (props.parameters.time) {
             timeRange = this.getTimeRangeFromURLParameter(props.parameters.time);
         }
@@ -161,10 +161,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return tags;
     }
 
-    getInitialTimeRange() {
-        return null;
-    }
-
     getInitialAuthors() {
         const authors = {};
         this.props.authorsAndTimeRange.authors.forEach(a => authors[a.email] = false);
@@ -224,7 +220,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
         const tags = this.getInitialTags();
-        let timeRange = this.getInitialTimeRange();
+        let timeRange = null;
         const authors = this.getInitialAuthors();
 
         if (filter !== 'all') {
@@ -273,7 +269,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             statuses: this.getInitialStatuses(),
             extras: this.getInitialExtras(),
             tags: this.getInitialTags(),
-            timeRange: this.getInitialTimeRange(),
+            timeRange: null,
             authors: this.getInitialAuthors(),
         });
     }
