@@ -79,7 +79,7 @@ def translation_memory(request):
     if pk:
         entries = entries.exclude(entity__pk=pk)
 
-    entries = entries.values('source', 'target', 'quality').order_by('-quality')
+    entries = entries.values('source', 'target', 'quality')
     suggestions = defaultdict(lambda: {'count': 0, 'quality': 0})
 
     for entry in entries:
@@ -91,7 +91,7 @@ def translation_memory(request):
         suggestions[entry['target']]['count'] += 1
 
     return JsonResponse(
-        sorted(suggestions.values(), key=lambda e: e['count'], reverse=True)[:max_results],
+        sorted(suggestions.values(), key=lambda e: (e['quality'], e['count']), reverse=True)[:max_results],
         safe=False
     )
 
