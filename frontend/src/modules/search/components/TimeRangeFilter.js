@@ -220,7 +220,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         }
 
         this.setState({
-            ['input' + name]: this.getTimeForInput(value),
+            ['input' + name]: value,
         });
     }
 
