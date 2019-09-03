@@ -347,11 +347,7 @@ resource-ResourceMenu--all-projects = All Projects
 search-FiltersPanel--heading-status = Translation Status
 search-FiltersPanel--heading-tags = Tags
 search-FiltersPanel--heading-extra = Extra Filters
-search-FiltersPanel--heading-time = Translation Time
 search-FiltersPanel--heading-authors = Translation Authors
-
-search-FiltersPanel--edit-range = <glyph></glyph>Edit Range
-search-FiltersPanel--save-range = Save Range
 
 search-FiltersPanel--clear-selection = <glyph></glyph>Clear
     .title = Uncheck selected filters
@@ -362,6 +358,14 @@ search-FiltersPanel--apply-filters =
        *[other] filters
     }
     .title = Apply Selected Filters
+
+
+## Time Range Filter
+## Time Range filter title, input fields and chart.
+
+search-TimeRangeFilter--heading-time = Translation Time
+search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
+search-TimeRangeFilter--save-range = Save Range
 
 
 ## User Menu
