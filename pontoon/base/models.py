@@ -1446,9 +1446,9 @@ class ProjectLocale(AggregatedStats):
         or combination of both.
 
         :param self: object to get data for,
-            instance of Projet or Locale
+            instance of Project or Locale
         :param extra: extra filter to be used,
-            instance of Projet or Locale
+            instance of Project or Locale
         """
         latest_translation = None
 
@@ -1477,9 +1477,9 @@ class ProjectLocale(AggregatedStats):
         Get chart for project, locale or combination of both.
 
         :param self: object to get data for,
-            instance of Projet or Locale
+            instance of Project or Locale
         :param extra: extra filter to be used,
-            instance of Projet or Locale
+            instance of Project or Locale
         """
         chart = None
 
