@@ -360,6 +360,14 @@ search-FiltersPanel--apply-filters =
     .title = Apply Selected Filters
 
 
+## Time Range Filter
+## Time Range filter title, input fields and chart.
+
+search-TimeRangeFilter--heading-time = Translation Time
+search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
+search-TimeRangeFilter--save-range = Save Range
+
+
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
