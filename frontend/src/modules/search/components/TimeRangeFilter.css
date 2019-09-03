@@ -10,6 +10,10 @@
     text-transform: uppercase;
 }
 
+.filters-panel .menu .for-time-range button.save-range {
+    color: #7BC876;
+}
+
 .filters-panel .menu li.for-time-range button:hover {
     color: #7BC876;
 }

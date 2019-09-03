@@ -198,7 +198,14 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         }
     }
 
-    toggleEditingTimeRange = () => {
+    toggleEditingTimeRange = (event: SyntheticMouseEvent<>) => {
+        const { chartFrom, chartTo, visible } = this.state;
+
+        // When Save Range is clicked, make sure Time Range filter is selected
+        if (visible && !this.props.timeRange) {
+            this.props.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
+        }
+
         this.setState(state => {
             return { visible: !state.visible };
         });
