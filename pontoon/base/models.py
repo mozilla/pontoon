@@ -2868,22 +2868,25 @@ class Translation(DirtyFieldsMixin, models.Model):
         resource = self.entity.resource
         project = resource.project
         locale = self.locale
-        translatedresource = TranslatedResource.objects.get(resource=resource, locale=locale)
 
-        instances = [translatedresource, project]
+        to_update = [
+            (TranslatedResource, Q(Q(resource=resource) & Q(locale=locale))),
+            (ProjectLocale, Q(Q(project=project) & Q(locale=locale))),
+            (Project, Q(pk=project.pk)),
+        ]
 
         if not project.system_project:
-            instances.append(locale)
+            to_update.append((Locale, Q(pk=locale.pk)))
 
-        project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
-        if project_locale:
-            instances.append(project_locale)
-
-        for instance in instances:
-            latest = instance.latest_translation
-            if latest is None or self.latest_activity['date'] > latest.latest_activity['date']:
-                instance.latest_translation = self
-                instance.save(update_fields=['latest_translation'])
+        for model, query in to_update:
+            model.objects.filter(
+                Q(
+                    query & Q(
+                        Q(latest_translation=None)
+                        | Q(latest_translation__date__lt=self.latest_activity['date'])
+                    )
+                )
+            ).update(latest_translation=self)
 
     def approve(self, user):
         """
