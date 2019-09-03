@@ -16,7 +16,9 @@ from pontoon.base.utils import aware_datetime
 
 
 @pytest.mark.django_db
-def test_translation_save_latest_update_first_translation(locale_a, project_a, project_locale_a, resource_a, entity_a):
+def test_translation_save_latest_update_first_translation(
+        locale_a, project_a, project_locale_a, resource_a, entity_a
+):
     """
     When a translation is saved, update the latest_translation
     attribute on the related project, locale, translatedresource,
@@ -43,7 +45,9 @@ def test_translation_save_latest_update_first_translation(locale_a, project_a, p
 
 
 @pytest.mark.django_db
-def test_translation_save_latest_update_newer_translation(locale_a, project_a, project_locale_a, resource_a, entity_a):
+def test_translation_save_latest_update_newer_translation(
+        locale_a, project_a, project_locale_a, resource_a, entity_a
+):
     """
     When a newer translation is saved, update the latest_translation
     attribute on the related project, locale, translatedresource,
@@ -77,7 +81,9 @@ def test_translation_save_latest_update_newer_translation(locale_a, project_a, p
 
 
 @pytest.mark.django_db
-def test_translation_save_latest_update_older_translation(locale_a, project_a, project_locale_a, resource_a, entity_a):
+def test_translation_save_latest_update_older_translation(
+        locale_a, project_a, project_locale_a, resource_a, entity_a
+):
     """
     When an older translation is saved, do not update the latest_translation
     attribute on the related project, locale, translatedresource,
@@ -97,7 +103,8 @@ def test_translation_save_latest_update_older_translation(locale_a, project_a, p
     assert tr.latest_translation == translation
     assert project_locale_a.latest_translation == translation
 
-    older_translation = TranslationFactory.create(
+    # older translation
+    TranslationFactory.create(
         locale=locale_a,
         entity=entity_a,
         date=aware_datetime(1970, 1, 1),
@@ -111,7 +118,9 @@ def test_translation_save_latest_update_older_translation(locale_a, project_a, p
 
 
 @pytest.mark.django_db
-def test_translation_save_latest_update_approved_translation(locale_a, project_a, project_locale_a, resource_a, entity_a):
+def test_translation_save_latest_update_approved_translation(
+        locale_a, project_a, project_locale_a, resource_a, entity_a
+):
     """
     When a translation is approved, update the latest_translation
     attribute on the related project, locale, translatedresource,
