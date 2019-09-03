@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
+import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
@@ -21,6 +22,11 @@ import type { Stats } from 'core/stats';
 import type { AuthorsAndTimeRangeState } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
+
+export type TimeRangeType = {|
+    from: number,
+    to: number,
+|};
 
 type Props = {|
     authorsAndTimeRange: AuthorsAndTimeRangeState,
@@ -41,6 +47,7 @@ type State = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    timeRange: ?TimeRangeType,
     authors: { [string]: boolean },
 |};
 
@@ -79,6 +86,11 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
+        let timeRange = null;
+        if (props.parameters.time) {
+            timeRange = this.getTimeRangeFromURLParameter(props.parameters.time);
+        }
+
         const authors = this.getInitialAuthors();
         if (props.parameters.author) {
             props.parameters.author.split(',').forEach(f => {
@@ -93,6 +105,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             statuses,
             extras,
             tags,
+            timeRange,
             authors,
         };
 
@@ -119,6 +132,15 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     componentWillUnmount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
+    }
+
+    getTimeRangeFromURLParameter(timeParameter: string) {
+        const boundaries = timeParameter.split('-');
+
+        return {
+            from: parseInt(boundaries[0]),
+            to: parseInt(boundaries[1]),
+        }
     }
 
     getInitialStatuses() {
@@ -157,11 +179,33 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return Object.keys(this.state.tags).filter(t => this.state.tags[t]);
     }
 
+    getSelectedTimeRange(): ?TimeRangeType {
+        return this.state.timeRange;
+    }
+
     getSelectedAuthors(): Array<string> {
         return Object.keys(this.state.authors).filter(a => this.state.authors[a]);
     }
 
+    updateTimeRange = (filter: string) => {
+        let timeRange = this.getTimeRangeFromURLParameter(filter);
+
+        this.setState({
+            timeRange,
+        });
+    }
+
     toggleFilter = (filter: string, type: string) => {
+        if (type === 'timeRange') {
+            let timeRange = this.getTimeRangeFromURLParameter(filter);
+
+            if (isEqual(timeRange, this.state.timeRange)) {
+                timeRange = null;
+            }
+
+            return this.setState({ timeRange });
+        }
+
         this.setState(state => {
             return {
                 [type]: {
@@ -176,6 +220,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const statuses = this.getInitialStatuses();
         const extras = this.getInitialExtras();
         const tags = this.getInitialTags();
+        let timeRange = null;
         const authors = this.getInitialAuthors();
 
         if (filter !== 'all') {
@@ -189,6 +234,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 case 'tags':
                     tags[filter] = true;
                     break;
+                case 'timeRange':
+                    timeRange = this.getTimeRangeFromURLParameter(filter);
+                    break;
                 case 'authors':
                     authors[filter] = true;
                     break;
@@ -201,6 +249,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses,
                 extras,
                 tags,
+                timeRange,
                 authors,
             }, callback);
         }
@@ -209,6 +258,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses,
                 extras,
                 tags,
+                timeRange,
                 authors,
             });
         }
@@ -219,6 +269,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             statuses: this.getInitialStatuses(),
             extras: this.getInitialExtras(),
             tags: this.getInitialTags(),
+            timeRange: null,
             authors: this.getInitialAuthors(),
         });
     }
@@ -267,6 +318,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const tags = this.getSelectedTags();
         const tag = tags.join(',');
 
+        const timeRange = this.getSelectedTimeRange();
+        const time = timeRange ? [timeRange.from, timeRange.to].join('-') : '';
+
         const authors = this.getSelectedAuthors();
         const author = authors.join(',');
 
@@ -278,6 +332,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                     status,
                     extra,
                     tag,
+                    time,
                     author,
                 },
             )
@@ -324,7 +379,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             item => item.name
         );
 
-        // Specific case for Translation Authors filters
+        // Special case for Translation Time filter
+        if (this.getSelectedTimeRange()) {
+            selectedFiltersNames = selectedFiltersNames.concat(['Time Range']);
+        }
+
+        // Special case for Translation Authors filters
         if (selectedAuthors.length) {
             selectedFiltersNames = selectedFiltersNames.concat(selectedAuthors.map(
                 item => item.display_name + "'s translations"
@@ -360,10 +420,11 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 statuses={ this.state.statuses }
                 extras={ this.state.extras }
                 tags={ this.state.tags }
+                timeRange={ this.state.timeRange }
                 authors={ this.state.authors }
-                authorsData={ authorsAndTimeRange.authors }
                 tagsData={ project.tags }
                 timeRangeData={ authorsAndTimeRange.countsPerMinute }
+                authorsData={ authorsAndTimeRange.authors }
                 stats={ stats }
                 parameters={ parameters }
                 applySingleFilter={ this.applySingleFilter }
@@ -371,6 +432,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 resetFilters={ this.resetFilters }
                 toggleFilter={ this.toggleFilter }
                 update={ this.update }
+                updateTimeRange={ this.updateTimeRange }
             />
         </div>;
     }

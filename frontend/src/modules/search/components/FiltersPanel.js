@@ -2,14 +2,17 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
+
 import { Localized } from 'fluent-react';
 
 import './FiltersPanel.css';
 
 import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import TimeRangeFilter from './TimeRangeFilter';
 
 import { asLocaleString } from 'core/utils';
 
+import type { TimeRangeType } from '..';
 import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
@@ -20,10 +23,11 @@ type Props = {|
     statuses: { [string]: boolean },
     extras: { [string]: boolean },
     tags: { [string]: boolean },
+    timeRange: ?TimeRangeType,
     authors: { [string]: boolean },
-    authorsData: Array<Author>,
     tagsData: Array<Tag>,
     timeRangeData: Array<Array<number>>,
+    authorsData: Array<Author>,
     stats: Stats,
     parameters: NavigationParams,
     applySingleFilter: (filter: string, type: string, callback?: () => void) => void,
@@ -31,6 +35,7 @@ type Props = {|
     resetFilters: () => void,
     toggleFilter: (string, string) => void,
     update: () => void,
+    updateTimeRange: (filter: string) => void,
 |};
 
 type State = {|
@@ -44,27 +49,42 @@ type State = {|
  * Changes to the filters will be reflected in the URL.
  */
 export class FiltersPanelBase extends React.Component<Props, State> {
+    menu: { current: ?HTMLDivElement };
+
     constructor(props: Props) {
         super(props);
 
         this.state = {
             visible: false,
         };
+
+        this.menu = React.createRef();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
+        const props = this.props;
+        const state = this.state;
+
         if (
-            this.state.visible &&
+            state.visible &&
             !prevState.visible &&
-            this.props.parameters.project !== 'all-projects'
+            props.parameters.project !== 'all-projects'
         ) {
-            this.props.getAuthorsAndTimeRangeData();
+            props.getAuthorsAndTimeRangeData();
         }
     }
 
     toggleVisibility = () => {
         this.setState(state => {
             return { visible: !state.visible };
+        });
+    }
+
+    // This method is called by the Higher-Order Component `onClickOutside`
+    // when a user clicks outside the search panel.
+    handleClickOutside = () => {
+        this.setState({
+            visible: false,
         });
     }
 
@@ -78,77 +98,128 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             return null;
         }
 
-        return (event: SyntheticInputEvent<>) => {
-            event.stopPropagation();
-            this.props.toggleFilter(filter, type);
+        return (event: SyntheticMouseEvent<>) => {
+            this.toggleFilter(filter, type, event);
         };
+    }
+
+    toggleFilter = (filter: string, type: string, event: SyntheticMouseEvent<>) => {
+        event.stopPropagation();
+        this.props.toggleFilter(filter, type);
     }
 
     createApplySingleFilter(filter: string, type: string) {
         return () => {
-            this.toggleVisibility();
-            this.props.applySingleFilter(filter, type, this.props.update);
+            this.applySingleFilter(filter, type);
         };
     }
 
-    // This method is called by the Higher-Order Component `onClickOutside`
-    // when a user clicks outside the search panel.
-    handleClickOutside = () => {
-        this.setState({
-            visible: false,
-        });
+    applySingleFilter = (filter: string, type: string) => {
+        this.toggleVisibility();
+        this.props.applySingleFilter(filter, type, this.props.update);
     }
 
-    render() {
-        const props = this.props;
-        const { project, resource } = this.props.parameters;
+    getSelectedFilters(): {
+        statuses: Array<string>,
+        extras: Array<string>,
+        tags: Array<string>,
+        timeRange: ?TimeRangeType,
+        authors: Array<string>,
+    } {
+        const { statuses, extras, tags, timeRange, authors } = this.props;
 
-        const selectedStatuses = Object.keys(props.statuses).filter(s => props.statuses[s]);
-        const selectedExtras = Object.keys(props.extras).filter(e => props.extras[e]);
-        const selectedTags = Object.keys(props.tags).filter(t => props.tags[t]);
-        const selectedAuthors = Object.keys(props.authors).filter(a => props.authors[a]);
+        return {
+            statuses: Object.keys(statuses).filter(s => statuses[s]),
+            extras: Object.keys(extras).filter(e => extras[e]),
+            tags: Object.keys(tags).filter(t => tags[t]),
+            timeRange,
+            authors: Object.keys(authors).filter(a => authors[a]),
+        }
+    }
 
-        const selectedFiltersCount = (
-            selectedExtras.length +
-            selectedStatuses.length +
-            selectedTags.length +
-            selectedAuthors.length
+    getSelectedFiltersCount = () => {
+        const selected = this.getSelectedFilters();
+
+        return (
+            selected.statuses.length +
+            selected.extras.length +
+            selected.tags.length +
+            (selected.timeRange ? 1 : 0) +
+            selected.authors.length
         );
+    }
+
+    getFilterIcon = () => {
+        const { authorsData, tagsData, timeRange } = this.props;
+        const selected = this.getSelectedFilters();
+        const selectedFiltersCount = this.getSelectedFiltersCount();
 
         // If there are zero or several selected statuses, show the "All" icon.
         let filterIcon = 'all';
 
         // Otherwise show the approriate status icon.
         if (selectedFiltersCount === 1) {
-            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
+            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selected.statuses[0]);
             if (selectedStatus) {
                 filterIcon = selectedStatus.slug;
             }
 
-            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
+            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selected.extras[0]);
             if (selectedExtra) {
                 filterIcon = selectedExtra.slug;
             }
 
-            const selectedTag = props.tagsData.find(f => f.slug === selectedTags[0]);
+            const selectedTag = tagsData.find(f => f.slug === selected.tags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
             }
 
-            const selectedAuthor = props.authorsData.find(f => f.email === selectedAuthors[0]);
+            if (timeRange) {
+                filterIcon = 'time-range';
+            }
+
+            const selectedAuthor = authorsData.find(f => f.email === selected.authors[0]);
             if (selectedAuthor) {
                 filterIcon = 'author';
             }
         }
 
-        return <div className="filters-panel">
+        return filterIcon;
+    }
+
+    // Check if the filter toolbar is hidden
+    isToolbarHidden = () => {
+        const menu = this.menu.current;
+        const selectedFiltersCount = this.getSelectedFiltersCount();
+
+        let isScrollbarVisible = false;
+        if (menu) {
+            isScrollbarVisible = menu.scrollHeight > menu.clientHeight;
+        }
+
+        if (selectedFiltersCount > 0 && isScrollbarVisible) {
+            return true;
+        }
+
+        return false;
+    }
+
+    render() {
+        const props = this.props;
+        const { project, resource } = this.props.parameters;
+
+        const selectedFiltersCount = this.getSelectedFiltersCount();
+        const filterIcon = this.getFilterIcon();
+        const fixedClass = this.isToolbarHidden() ? 'fixed' : '';
+
+        return <div className={ `filters-panel ${fixedClass}` }>
             <div
                 className={ `visibility-switch ${filterIcon}` }
                 onClick={ this.toggleVisibility }
             >
                 <span className="status fa"></span>
             </div>
-            { !this.state.visible ? null : <div className="menu">
+            { !this.state.visible ? null : <div className="menu" ref={ this.menu }>
                 <ul>
                     <Localized id="search-FiltersPanel--heading-status">
                         <li className="horizontal-separator">Translation Status</li>
@@ -240,6 +311,15 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         </li>
                     }) }
 
+                    <TimeRangeFilter
+                        project={ project }
+                        timeRange={ props.timeRange }
+                        timeRangeData={ props.timeRangeData }
+                        applySingleFilter={ this.applySingleFilter }
+                        toggleFilter={ this.toggleFilter }
+                        updateTimeRange={ props.updateTimeRange }
+                    />
+
                     { (props.authorsData.length === 0 || project === 'all-projects') ? null : <>
                         <Localized id="search-FiltersPanel--heading-authors">
                             <li className="horizontal-separator">Translation Authors</li>
@@ -282,6 +362,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         }) }
                     </>}
                 </ul>
+
                 { selectedFiltersCount === 0 ? null :
                 <div className="toolbar clearfix">
                     <Localized
@@ -294,8 +375,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             onClick={ this.props.resetFilters }
                             className="clear-selection"
                         >
-                            <i className="fa fa-times fa-lg"></i>
-                            Clear
+                            { '<glyph></glyph>Clear' }
                         </button>
                     </Localized>
                     <Localized
@@ -310,8 +390,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                             onClick={ this.applyFilters }
                             className="apply-selected"
                         >
-                            <i className="fa fa-check fa-lg"></i>
-                            { 'Apply <stress>{ $count }</stress> filters' }
+                            { '<glyph></glyph>Apply <stress>{ $count }</stress> filters' }
                         </button>
                     </Localized>
                 </div> }

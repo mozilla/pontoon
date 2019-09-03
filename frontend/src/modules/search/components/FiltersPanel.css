@@ -159,7 +159,7 @@
     color: #7BC876;
 }
 
-.filters-panel .menu li:not(.selected):not(.all) .status:hover:before {
+.filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before {
     content: "";
 }
 
@@ -244,7 +244,7 @@
     width: 100%;
 }
 
-.filters-panel .toolbar.fixed {
+.filters-panel.fixed .toolbar {
     position: fixed;
     bottom: 0;
     width: 350px;

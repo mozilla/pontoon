@@ -206,7 +206,14 @@ describe('<SearchBoxBase>', () => {
 
         wrapper.instance()._update();
         expect(
-            actions.update.calledWith({}, { status: null, extra: '', tag: '', author: '', search: '' })
+            actions.update.calledWith({}, {
+                status: null,
+                extra: '',
+                tag: '',
+                time: '',
+                author: '',
+                search: '',
+            })
         ).toBeTruthy();
     });
 
@@ -222,6 +229,7 @@ describe('<SearchBoxBase>', () => {
             statuses: { missing: true, warnings: true },
             extras: { unchanged: true },
             tags: { browser: true },
+            timeRange: { from: '111111111111', to: '111111111111' },
             authors: { 'user@example.com': true },
         });
 
@@ -231,6 +239,7 @@ describe('<SearchBoxBase>', () => {
                 status: 'missing,warnings',
                 extra: 'unchanged',
                 tag: 'browser',
+                time: '111111111111-111111111111',
                 author: 'user@example.com',
                 search: '',
             })
