@@ -43,6 +43,8 @@ type State = {|
             },
         }>,
     },
+    inputFrom: string,
+    inputTo: string,
     visible: boolean,
 |};
 
@@ -60,6 +62,8 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
             chartFrom: null,
             chartTo: null,
             chartOptions: CHART_OPTIONS,
+            inputFrom: '',
+            inputTo: '',
             visible: false,
         };
 
@@ -137,10 +141,11 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
     plotChart = () => {
         const { timeRange, timeRangeData } = this.props;
 
-        // Set chart boundaries
+        // Set default chart boundaries (full chart)
         let chartFrom = this.getTimeForURL(timeRangeData[0][0]);
         let chartTo = this.getTimeForURL(timeRangeData[timeRangeData.length - 1][0]);
 
+        // Set chart boundaries from the URL parameter if given
         if (timeRange) {
             chartFrom = timeRange.from;
             chartTo = timeRange.to;
@@ -150,11 +155,17 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         const chartOptions = cloneDeep(this.state.chartOptions);
         chartOptions.series[0].data = timeRangeData;
 
-        // Set chart update function
+        // Set the callback function that fires when the minimum and maximum is set for the axis,
+        // either by calling the .setExtremes() method or by selecting an area in the chart.
         chartOptions.xAxis[0].events.setExtremes = event => {
+            const chartFrom = this.getTimeForURL(event.min);
+            const chartTo = this.getTimeForURL(event.max);
+
             this.setState({
-                chartFrom: this.getTimeForURL(event.min),
-                chartTo: this.getTimeForURL(event.max),
+                chartFrom,
+                chartTo,
+                inputFrom: this.getTimeForInput(chartFrom),
+                inputTo: this.getTimeForInput(chartTo),
             });
         };
 
@@ -162,6 +173,8 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
             chartFrom,
             chartTo,
             chartOptions,
+            inputFrom: this.getTimeForInput(chartFrom),
+            inputTo: this.getTimeForInput(chartTo),
         });
     }
 
@@ -179,31 +192,55 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         const d = date.parse(urlTime.toString(), URL_FORMAT, true);
 
         if (isNaN(d)) {
-            return urlTime;
+            return urlTime.toString();
         }
 
         return date.format(d, INPUT_FORMAT);
     }
 
-    handleInputChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
-        const d = date.parse(event.target.value, INPUT_FORMAT);
+    isValidInput = (value: string) => {
+        const d = date.parse(value, INPUT_FORMAT);
+        const re = /^([012][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d\d\d\d (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/g;
 
-        // If valid date, update chart extremes
-        if (!isNaN(d)) {
-            this.updateChartExtremes(event.target.name, d.getTime());
-            event.target.classList.remove('error');
+        // Additional format check, see: https://github.com/knowledgecode/date-and-time/issues/28
+        if (!isNaN(d) && re.test(value)) {
+            return true;
         }
-        else {
-            event.target.classList.add('error');
+
+        return false;
+    }
+
+    handleInputChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
+        if (this.isValidInput(value)) {
+            const d = date.parse(value, INPUT_FORMAT);
+            this.updateChartExtremes('chart' + name, d.getTime());
         }
+
+        this.setState({
+            ['input' + name]: value,
+        });
     }
 
     toggleEditingTimeRange = (event: SyntheticMouseEvent<>) => {
         const { chartFrom, chartTo, visible } = this.state;
 
-        // When Save Range is clicked, make sure Time Range filter is selected
-        if (visible && !this.props.timeRange) {
-            this.props.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
+        // After Save Range is clicked...
+        if (visible) {
+            // Make sure Time Range filter is selected
+            if (!this.props.timeRange) {
+                this.props.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
+            }
+
+            // Make sure inputs are in sync with chart
+            this.setState(state => {
+                return {
+                    inputFrom: this.getTimeForInput(state.chartFrom),
+                    inputTo: this.getTimeForInput(state.chartTo),
+                };
+            });
         }
 
         this.setState(state => {
@@ -292,20 +329,22 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
                         From
                         <input
                             type="datetime"
-                            name="chartFrom"
+                            name="From"
+                            className={ this.isValidInput(this.state.inputFrom) ? '' : 'error' }
                             disabled={ !this.state.visible }
                             onChange={ this.handleInputChange }
-                            value={ this.getTimeForInput(this.state.chartFrom) }
+                            value={ this.state.inputFrom }
                         />
                     </label>
                     <label className="to">
                         To
                         <input
                             type="datetime"
-                            name="chartTo"
+                            name="To"
+                            className={ this.isValidInput(this.state.inputTo) ? '' : 'error' }
                             disabled={ !this.state.visible }
                             onChange={ this.handleInputChange }
-                            value={ this.getTimeForInput(this.state.chartTo) }
+                            value={ this.state.inputTo }
                         />
                     </label>
                 </span>
