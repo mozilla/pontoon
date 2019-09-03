@@ -80,6 +80,14 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         });
     }
 
+    // This method is called by the Higher-Order Component `onClickOutside`
+    // when a user clicks outside the search panel.
+    handleClickOutside = () => {
+        this.setState({
+            visible: false,
+        });
+    }
+
     applyFilters = () => {
         this.toggleVisibility();
         return this.props.update();
@@ -111,74 +119,100 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.props.applySingleFilter(filter, type, this.props.update);
     }
 
-    // This method is called by the Higher-Order Component `onClickOutside`
-    // when a user clicks outside the search panel.
-    handleClickOutside = () => {
-        this.setState({
-            visible: false,
-        });
+    getSelectedFilters(): {
+        statuses: Array<string>,
+        extras: Array<string>,
+        tags: Array<string>,
+        timeRange: ?TimeRangeType,
+        authors: Array<string>,
+    } {
+        const { statuses, extras, tags, timeRange, authors } = this.props;
+
+        return {
+            statuses: Object.keys(statuses).filter(s => statuses[s]),
+            extras: Object.keys(extras).filter(e => extras[e]),
+            tags: Object.keys(tags).filter(t => tags[t]),
+            timeRange,
+            authors: Object.keys(authors).filter(a => authors[a]),
+        }
     }
 
-    render() {
-        const props = this.props;
-        const { project, resource } = this.props.parameters;
+    getSelectedFiltersCount = () => {
+        const selected = this.getSelectedFilters();
 
-        const selectedStatuses = Object.keys(props.statuses).filter(s => props.statuses[s]);
-        const selectedExtras = Object.keys(props.extras).filter(e => props.extras[e]);
-        const selectedTags = Object.keys(props.tags).filter(t => props.tags[t]);
-        const selectedTimeRangeCount = props.timeRange ? 1 : 0;
-        const selectedAuthors = Object.keys(props.authors).filter(a => props.authors[a]);
-
-        const selectedFiltersCount = (
-            selectedExtras.length +
-            selectedStatuses.length +
-            selectedTags.length +
-            selectedTimeRangeCount +
-            selectedAuthors.length
+        return (
+            selected.statuses.length +
+            selected.extras.length +
+            selected.tags.length +
+            (selected.timeRange ? 1 : 0) +
+            selected.authors.length
         );
+    }
+
+    getFilterIcon = () => {
+        const { authorsData, tagsData, timeRange } = this.props;
+        const selected = this.getSelectedFilters();
+        const selectedFiltersCount = this.getSelectedFiltersCount();
 
         // If there are zero or several selected statuses, show the "All" icon.
         let filterIcon = 'all';
 
         // Otherwise show the approriate status icon.
         if (selectedFiltersCount === 1) {
-            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selectedStatuses[0]);
+            const selectedStatus = FILTERS_STATUS.find(f => f.slug === selected.statuses[0]);
             if (selectedStatus) {
                 filterIcon = selectedStatus.slug;
             }
 
-            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selectedExtras[0]);
+            const selectedExtra = FILTERS_EXTRA.find(f => f.slug === selected.extras[0]);
             if (selectedExtra) {
                 filterIcon = selectedExtra.slug;
             }
 
-            const selectedTag = props.tagsData.find(f => f.slug === selectedTags[0]);
+            const selectedTag = tagsData.find(f => f.slug === selected.tags[0]);
             if (selectedTag) {
                 filterIcon = 'tag';
             }
 
-            if (selectedTimeRangeCount) {
+            if (timeRange) {
                 filterIcon = 'time-range';
             }
 
-            const selectedAuthor = props.authorsData.find(f => f.email === selectedAuthors[0]);
+            const selectedAuthor = authorsData.find(f => f.email === selected.authors[0]);
             if (selectedAuthor) {
                 filterIcon = 'author';
             }
         }
 
+        return filterIcon;
+    }
+
+    // Check if the filter toolbar is hidden
+    isToolbarHidden = () => {
         const menu = this.menu.current;
+        const selectedFiltersCount = this.getSelectedFiltersCount();
+
         let isScrollbarVisible = false;
         if (menu) {
             isScrollbarVisible = menu.scrollHeight > menu.clientHeight;
         }
 
-        let isFixed = '';
         if (selectedFiltersCount > 0 && isScrollbarVisible) {
-            isFixed = 'fixed';
+            return true;
         }
 
-        return <div className={ `filters-panel ${isFixed}` }>
+        return false;
+    }
+
+    render() {
+        const props = this.props;
+        const { project, resource } = this.props.parameters;
+
+        const selectedFiltersCount = this.getSelectedFiltersCount();
+        const filterIcon = this.getFilterIcon();
+        const fixedClass = this.isToolbarHidden() ? 'fixed' : '';
+
+        return <div className={ `filters-panel ${fixedClass}` }>
             <div
                 className={ `visibility-switch ${filterIcon}` }
                 onClick={ this.toggleVisibility }
