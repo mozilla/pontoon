@@ -2872,7 +2872,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         instances = [translatedresource, project]
 
-        if Project.objects.visible().filter(pk=project.pk).first():
+        if not project.system_project:
             instances.append(locale)
 
         project_locale = utils.get_object_or_none(ProjectLocale, project=project, locale=locale)
