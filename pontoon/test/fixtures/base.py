@@ -82,6 +82,13 @@ def project_b():
 
 
 @pytest.fixture
+def system_project_a():
+    return factories.ProjectFactory(
+        slug="system_project_a", name="System Project A", repositories=[], system_project=True,
+    )
+
+
+@pytest.fixture
 def resource_a(project_a):
     return factories.ResourceFactory(
         project=project_a, path="resource_a.po", format="po"
@@ -119,18 +126,20 @@ def project_locale_a(project_a, locale_a):
 
 @pytest.fixture
 def translation_a(locale_a, project_locale_a, entity_a, user_a):
-    '''Return a translation.
+    """Return a translation.
 
     Note that we require the `project_locale_a` fixture because a
     valid ProjectLocale is needed in order to query Translations.
-
-    '''
-    return factories.TranslationFactory(
+    """
+    translation_a = factories.TranslationFactory(
         entity=entity_a,
         locale=locale_a,
         user=user_a,
         string='Translation for entity_a',
     )
+    translation_a.locale.refresh_from_db()
+    translation_a.entity.resource.project.refresh_from_db()
+    return translation_a
 
 
 @pytest.fixture
