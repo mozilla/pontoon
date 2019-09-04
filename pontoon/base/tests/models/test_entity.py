@@ -72,12 +72,14 @@ def translation_b(translation_a):
     This fixture provides a secondary translation
     for translation_a's entity.
     """
-
-    return TranslationFactory(
+    translation_b = TranslationFactory(
         entity=translation_a.entity,
         locale=translation_a.locale,
         string="Translation B for entity_a",
     )
+    translation_b.locale.refresh_from_db()
+    translation_b.entity.resource.project.refresh_from_db()
+    return translation_b
 
 
 @pytest.mark.django_db
