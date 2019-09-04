@@ -2882,8 +2882,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             model.objects.filter(
                 Q(
                     query & Q(
-                        Q(latest_translation=None)
-                        | Q(latest_translation__date__lt=self.latest_activity['date'])
+                        Q(latest_translation=None) |
+                        Q(latest_translation__date__lt=self.latest_activity['date'])
                     )
                 )
             ).update(latest_translation=self)
