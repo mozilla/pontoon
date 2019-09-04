@@ -21,6 +21,17 @@ const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
 const URL_FORMAT = 'YYYYMMDDHHmm';
 
 
+// Workaround to force a 4-digit YYYY until #28 is fixed:
+// https://github.com/knowledgecode/date-and-time/issues/28
+date.extend({
+    parser: {
+        YYYY: function (str) {
+            return this.exec(/^\d{4}/, str);
+        }
+    }
+});
+
+
 type Props = {|
     project: string,
     timeRange: ?TimeRangeType,
@@ -199,15 +210,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
     }
 
     isValidInput = (value: string) => {
-        const d = date.parse(value, INPUT_FORMAT);
-        const re = /^([012][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d\d\d\d (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/g;
-
-        // Additional format check, see: https://github.com/knowledgecode/date-and-time/issues/28
-        if (!isNaN(d) && re.test(value)) {
-            return true;
-        }
-
-        return false;
+        return date.isValid(value, INPUT_FORMAT);
     }
 
     handleInputChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
