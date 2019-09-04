@@ -136,7 +136,6 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             mode='fluent'
             theme='fluent'
             width='100%'
-            focus={ true }
             wrapEnabled={ true }
             setOptions={ options }
             value={ this.props.editor.translation }
