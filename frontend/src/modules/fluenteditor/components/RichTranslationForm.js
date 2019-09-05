@@ -66,7 +66,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const message = fluent.flattenMessage(editor.translation);
         this.props.updateTranslation(message);
 
-        this.focusInput(true);
+        this.focusInput();
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -82,7 +82,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.focusedElementId = null;
         }
 
-        // If the translation is a string, that means we're in a translational
+        // If the translation is a string, that means we're in a transitional
         // state and there's going to be another render with a Fluent AST.
         if (typeof(editor.translation) === 'string') {
             return;
@@ -141,10 +141,12 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        this.focusInput(editor.changeSource === 'external');
+        if (editor.changeSource === 'external') {
+            this.focusInput();
+        }
     }
 
-    focusInput(putCursorToStart: boolean) {
+    focusInput() {
         const input = this.getFirstInput();
 
         if (!input) {
@@ -156,10 +158,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         }
 
         input.focus();
-
-        if (putCursorToStart) {
-            input.setSelectionRange(0, 0);
-        }
+        input.setSelectionRange(0, 0);
     }
 
     getFirstInput() {
