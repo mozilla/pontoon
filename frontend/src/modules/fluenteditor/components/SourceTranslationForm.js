@@ -44,19 +44,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
     }
 
     componentDidMount() {
-        if (!this.aceEditor.current) {
-            return;
-        }
-
-        if (this.props.searchInputFocused) {
-            return;
-        }
-
-        this.aceEditor.current.editor.focus();
-
-        // After mounting, put the cursor at the beginning of the content.
-        this.aceEditor.current.editor.moveCursorTo(0, 0);
-        this.aceEditor.current.editor.clearSelection();
+        this.focusInput(true);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -101,11 +89,26 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             this.props.resetSelectionContent();
         }
 
+        this.focusInput(false);
+    }
+
+    focusInput(putCursorToStart: boolean) {
+        const input = this.aceEditor.current;
+
+        if (!input) {
+            return;
+        }
+
         if (this.props.searchInputFocused) {
             return;
         }
 
-        this.aceEditor.current.editor.focus();
+        input.editor.focus();
+
+        if (putCursorToStart) {
+            input.editor.moveCursorTo(0, 0);
+            input.editor.clearSelection();
+        }
     }
 
     updateTranslationSelectionWith(content: string) {

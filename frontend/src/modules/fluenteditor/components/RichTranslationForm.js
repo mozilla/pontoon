@@ -66,20 +66,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const message = fluent.flattenMessage(editor.translation);
         this.props.updateTranslation(message);
 
-        const firstInput = this.getFirstInput();
-
-        if (!firstInput) {
-            return;
-        }
-
-        if (this.props.searchInputFocused) {
-            return;
-        }
-
-        firstInput.focus();
-
-        // After mounting, put the cursor at the beginning of the content.
-        firstInput.setSelectionRange(0, 0);
+        this.focusInput(true);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -154,9 +141,13 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        const firstInput = this.getFirstInput();
+        this.focusInput(editor.changeSource === 'external');
+    }
 
-        if (!firstInput) {
+    focusInput(putCursorToStart: boolean) {
+        const input = this.getFirstInput();
+
+        if (!input) {
             return;
         }
 
@@ -164,10 +155,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             return;
         }
 
-        firstInput.focus();
+        input.focus();
 
-        if (editor.changeSource === 'external') {
-            firstInput.setSelectionRange(0, 0);
+        if (putCursorToStart) {
+            input.setSelectionRange(0, 0);
         }
     }
 
