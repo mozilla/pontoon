@@ -155,7 +155,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             value={ this.props.editor.translation }
             annotations={ annotate(this.props.editor.translation) }
             onChange={ this.props.updateTranslation }
-            debounceChangePeriod={200}
+            debounceChangePeriod={ 200 }
         />;
     }
 }
