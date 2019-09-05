@@ -34,8 +34,35 @@ def test_translate_template(client):
 
     with override_flag('translate_next', active=True):
         response = client.get(url)
-        assert response.status_code == 200
         assert 'Pontoon' in response.content
+
+
+@pytest.mark.django_db
+def test_translate_validate_parameters(client, project_locale_a, resource_a):
+    url_invalid = reverse(
+        'pontoon.translate.next',
+        kwargs={
+            'locale': 'locale',
+            'project': 'project',
+            'resource': 'resource',
+        }
+    )
+
+    url_valid = reverse(
+        'pontoon.translate.next',
+        kwargs={
+            'locale': project_locale_a.locale.code,
+            'project': project_locale_a.project.slug,
+            'resource': 'resource',
+        }
+    )
+
+    with override_flag('translate_next', active=True):
+        response = client.get(url_invalid)
+        assert response.status_code == 404
+
+        response = client.get(url_valid)
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
