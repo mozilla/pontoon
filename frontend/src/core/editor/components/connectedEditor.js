@@ -22,7 +22,7 @@ import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from 'modules/history';
-import type { AuthorsAndTimeRangeState } from 'modules/search';
+import type { SearchAndFilters } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 import type { EditorState } from '../reducer';
 import type { Translation } from '../actions';
@@ -37,7 +37,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
-    searchAndFilters: AuthorsAndTimeRangeState,
+    searchAndFilters: SearchAndFilters,
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,

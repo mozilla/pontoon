@@ -7,7 +7,7 @@ export { default as SearchBox } from './components/SearchBox';
 export { default as withSearch } from './withSearch';
 
 export type { Author } from './actions';
-export type { AuthorsAndTimeRangeState } from './reducer';
+export type { SearchAndFilters } from './reducer';
 export type { TimeRangeType } from './components/SearchBox';
 
 

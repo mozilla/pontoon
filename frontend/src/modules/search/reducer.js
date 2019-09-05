@@ -9,23 +9,23 @@ type Action =
     | UpdateAction
 ;
 
-export type AuthorsAndTimeRangeState = {|
+export type SearchAndFilters = {|
     +authors: Array<Author>,
     +countsPerMinute: Array<Array<number>>,
     +searchInputFocused: boolean,
 |};
 
 
-const initial: AuthorsAndTimeRangeState = {
+const initial: SearchAndFilters = {
     authors: [],
     countsPerMinute: [],
     searchInputFocused: false,
 };
 
 export default function reducer(
-    state: AuthorsAndTimeRangeState = initial,
+    state: SearchAndFilters = initial,
     action: Action,
-): AuthorsAndTimeRangeState {
+): SearchAndFilters {
     switch (action.type) {
         case UPDATE:
             return {
