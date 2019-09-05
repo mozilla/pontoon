@@ -9,10 +9,22 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.staticfiles.views import serve
 from django.http import Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+)
 from django.template import engines
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import (
+    csrf_exempt,
+    ensure_csrf_cookie,
+)
+
+from pontoon.base.models import (
+    Locale,
+    Project,
+)
 
 from . import URL_BASE
 
@@ -122,6 +134,20 @@ def translate(request, locale=None, project=None, resource=None):
             url += '?' + query
 
         return redirect(url)
+
+    # We make parameters optional to simplify testing
+    if locale and project:
+
+        # Validate Locale
+        locale = get_object_or_404(Locale, code=locale)
+
+        # Validate Project
+        if project.lower() != 'all-projects':
+            project = get_object_or_404(Project.objects.available(), slug=project)
+
+            # Validate ProjectLocale
+            if locale not in project.locales.all():
+                raise Http404
 
     context = {
         'locale': get_preferred_locale(request),
