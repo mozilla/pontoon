@@ -12,6 +12,7 @@ import * as notification from 'core/notification';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as history from 'modules/history';
+import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { NAME, actions } from '..';
@@ -21,6 +22,7 @@ import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from 'modules/history';
+import type { AuthorsAndTimeRangeState } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 import type { EditorState } from '../reducer';
 import type { Translation } from '../actions';
@@ -35,6 +37,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
+    searchAndFilters: AuthorsAndTimeRangeState,
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
@@ -52,6 +55,7 @@ export type EditorProps = {|
     isReadOnlyEditor: boolean,
     locale: Locale,
     pluralForm: number,
+    searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
     clearEditor: () => void,
@@ -215,6 +219,7 @@ export default function connectedEditor<Object>(
                     editor={ this.props.editor }
                     locale={ this.props.locale }
                     pluralForm={ this.props.pluralForm }
+                    searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
                     clearEditor={ this.clearEditor }
@@ -245,6 +250,7 @@ export default function connectedEditor<Object>(
             parameters: navigation.selectors.getNavigationParams(state),
             pluralForm: plural.selectors.getPluralForm(state),
             router: state.router,
+            searchAndFilters: state[search.NAME],
             selectedEntity: entities.selectors.getSelectedEntity(state),
             unsavedchanges: state[unsavedchanges.NAME],
             user: state[user.NAME],

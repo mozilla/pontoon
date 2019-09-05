@@ -47,7 +47,14 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
         if (!this.aceEditor.current) {
             return;
         }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
         this.aceEditor.current.editor.focus();
+
+        // After mounting, put the cursor at the beginning of the content.
         this.aceEditor.current.editor.moveCursorTo(0, 0);
         this.aceEditor.current.editor.clearSelection();
     }
@@ -92,6 +99,10 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
                 this.props.editor.selectionReplacementContent
             );
             this.props.resetSelectionContent();
+        }
+
+        if (this.props.searchInputFocused) {
+            return;
         }
 
         this.aceEditor.current.editor.focus();

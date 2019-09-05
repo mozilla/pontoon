@@ -1,6 +1,6 @@
 /* @flow */
 
-import { UPDATE } from './actions';
+import { UPDATE, SET_FOCUS } from './actions';
 
 import type { Author, UpdateAction } from './actions';
 
@@ -12,12 +12,14 @@ type Action =
 export type AuthorsAndTimeRangeState = {|
     +authors: Array<Author>,
     +countsPerMinute: Array<Array<number>>,
+    +searchInputFocused: boolean,
 |};
 
 
 const initial: AuthorsAndTimeRangeState = {
     authors: [],
     countsPerMinute: [],
+    searchInputFocused: false,
 };
 
 export default function reducer(
@@ -30,6 +32,11 @@ export default function reducer(
                 ...state,
                 authors: action.response.authors,
                 countsPerMinute: action.response.counts_per_minute,
+            };
+        case SET_FOCUS:
+            return {
+                ...state,
+                searchInputFocused: action.searchInputFocused,
             };
         default:
             return state;

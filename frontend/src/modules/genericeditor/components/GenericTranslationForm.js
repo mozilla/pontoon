@@ -31,7 +31,12 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             return;
         }
 
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
         this.textarea.current.focus();
+
         // After mounting, put the cursor at the beginning of the content.
         this.textarea.current.setSelectionRange(0, 0);
     }
@@ -79,9 +84,15 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             this.props.resetSelectionContent();
         }
 
-        if (this.textarea.current) {
-            this.textarea.current.focus();
+        if (!this.textarea.current) {
+            return;
         }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        this.textarea.current.focus();
 
         if (editor.changeSource === 'external') {
             this.textarea.current.setSelectionRange(0, 0);

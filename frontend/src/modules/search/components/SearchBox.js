@@ -294,6 +294,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     }
 
+    unsetFocus = () => {
+        this.props.dispatch(search.actions.setFocus(false));
+    }
+
+    setFocus = () => {
+        this.props.dispatch(search.actions.setFocus(true));
+    }
+
     updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
@@ -414,7 +422,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 title="Search Strings (Ctrl + Shift + F)"
                 type="search"
                 value={ this.state.search }
+                onBlur={ this.unsetFocus }
                 onChange={ this.updateSearchInput }
+                onFocus={ this.setFocus }
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
