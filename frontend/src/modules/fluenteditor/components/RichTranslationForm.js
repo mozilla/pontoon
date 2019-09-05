@@ -65,6 +65,21 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // Walks the tree and unify all simple elements into just one.
         const message = fluent.flattenMessage(editor.translation);
         this.props.updateTranslation(message);
+
+        const firstInput = this.getFirstInput();
+
+        if (!firstInput) {
+            return;
+        }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        firstInput.focus();
+
+        // After mounting, put the cursor at the beginning of the content.
+        firstInput.setSelectionRange(0, 0);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -137,6 +152,22 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 translation,
             );
             this.props.resetSelectionContent();
+        }
+
+        const firstInput = this.getFirstInput();
+
+        if (!firstInput) {
+            return;
+        }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        firstInput.focus();
+
+        if (editor.changeSource === 'external') {
+            firstInput.setSelectionRange(0, 0);
         }
     }
 
