@@ -26,12 +26,12 @@ function renderElements(
     elements: Array<FluentElement>,
     label: string,
 ): React.Node {
-    return elements.map((element) => {
+    return elements.map((element, i) => {
         if (element.type !== 'TextElement') {
             return null;
         }
 
-        return <tr>
+        return <tr key={ i }>
             <td>
                 <label>{ label }</label>
             </td>
