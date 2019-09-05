@@ -129,7 +129,7 @@ export default function connectedEditor<Object>(
         }
 
         clearEditor = () => {
-            this.updateTranslation('');
+            this.updateTranslation('', true);
         }
 
         sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {

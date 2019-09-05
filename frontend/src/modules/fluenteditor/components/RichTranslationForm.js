@@ -64,7 +64,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
         // Walks the tree and unify all simple elements into just one.
         const message = fluent.flattenMessage(editor.translation);
-        this.props.updateTranslation(message);
+        this.props.updateTranslation(message, true);
 
         this.focusInput();
     }
@@ -102,7 +102,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         if (!translation.equals(prevEditor.translation)) {
             // Walks the tree and unify all simple elements into just one.
             const message = fluent.flattenMessage(translation);
-            this.props.updateTranslation(message);
+            this.props.updateTranslation(message, editor.changeSource !== 'internal');
         }
 
         // Close failed checks popup when content of the editor changes,

@@ -181,7 +181,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         // On Ctrl + Shift + Backspace, clear the content.
         if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
             handledEvent = true;
-            this.props.updateTranslation('');
+            this.props.updateTranslation('', true);
         }
 
         // On Tab, walk through current helper tab content and copy it.
