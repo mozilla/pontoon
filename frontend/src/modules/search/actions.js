@@ -4,6 +4,7 @@ import api from 'core/api';
 
 
 export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
+export const SET_FOCUS: 'search/SET_FOCUS' = 'search/SET_FOCUS';
 
 
 export type Author = {
@@ -49,6 +50,19 @@ export function getAuthorsAndTimeRangeData(
 }
 
 
+export type SetFocusAction = {|
+    type: typeof SET_FOCUS,
+    searchInputFocused: boolean,
+|};
+export function setFocus(searchInputFocused: boolean): SetFocusAction {
+    return {
+        type: SET_FOCUS,
+        searchInputFocused,
+    };
+}
+
+
 export default {
     getAuthorsAndTimeRangeData,
+    setFocus,
 };

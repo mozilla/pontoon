@@ -21,7 +21,7 @@ const PROJECT = {
 }
 
 
-const AUTHORS_AND_TIME_RANGE = {
+const SEARCH_AND_FILTERS = {
     authors: [],
     countsPerMinute: [],
 }
@@ -47,7 +47,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ params }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         expect(wrapper.find('input#search')).toHaveLength(1);
@@ -67,7 +67,7 @@ describe('<SearchBoxBase>', () => {
             const wrapper = shallow(<SearchBoxBase
                 parameters={ params }
                 project={ PROJECT }
-                authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+                searchAndFilters={ SEARCH_AND_FILTERS }
             />);
             expect(wrapper.find('input#search').prop('placeholder')).toContain(filter.name);
         }
@@ -80,7 +80,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ params }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setProps({
@@ -96,7 +96,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setState({
@@ -115,7 +115,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setState({
@@ -133,7 +133,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setState({ statuses: { missing: false } });
@@ -147,7 +147,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setState({
@@ -171,7 +171,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
 
         wrapper.setState({
@@ -198,7 +198,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
             router={ {} }
             dispatch={ () => {} }
         />);
@@ -221,7 +221,7 @@ describe('<SearchBoxBase>', () => {
         const wrapper = shallow(<SearchBoxBase
             parameters={ {} }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
             router={ {} }
             dispatch={ () => {} }
         />);
@@ -287,7 +287,7 @@ describe('<SearchBox>', () => {
         const wrapper = mount(<SearchBoxBase
             parameters={ params }
             project={ PROJECT }
-            authorsAndTimeRange={ AUTHORS_AND_TIME_RANGE }
+            searchAndFilters={ SEARCH_AND_FILTERS }
         />);
         const searchInput = wrapper.instance().searchInput;
 

@@ -19,7 +19,7 @@ import FiltersPanel from './FiltersPanel';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
-import type { AuthorsAndTimeRangeState } from 'modules/search';
+import type { SearchAndFilters } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
@@ -29,7 +29,7 @@ export type TimeRangeType = {|
 |};
 
 type Props = {|
-    authorsAndTimeRange: AuthorsAndTimeRangeState,
+    searchAndFilters: SearchAndFilters,
     parameters: NavigationParams,
     project: ProjectState,
     stats: Stats,
@@ -163,7 +163,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
     getInitialAuthors() {
         const authors = {};
-        this.props.authorsAndTimeRange.authors.forEach(a => authors[a.email] = false);
+        this.props.searchAndFilters.authors.forEach(a => authors[a.email] = false);
         return authors;
     }
 
@@ -294,6 +294,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     }
 
+    unsetFocus = () => {
+        this.props.dispatch(search.actions.setFocus(false));
+    }
+
+    setFocus = () => {
+        this.props.dispatch(search.actions.setFocus(true));
+    }
+
     updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
@@ -365,7 +373,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
 
         const authors = this.getSelectedAuthors();
-        const selectedAuthors = this.props.authorsAndTimeRange.authors.filter(
+        const selectedAuthors = this.props.searchAndFilters.authors.filter(
             f => authors.includes(f.email)
         );
 
@@ -400,7 +408,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     render() {
-        const { authorsAndTimeRange, parameters, project, stats } = this.props;
+        const { searchAndFilters, parameters, project, stats } = this.props;
 
         return <div className="search-box clearfix">
             <label htmlFor="search">
@@ -414,7 +422,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 title="Search Strings (Ctrl + Shift + F)"
                 type="search"
                 value={ this.state.search }
+                onBlur={ this.unsetFocus }
                 onChange={ this.updateSearchInput }
+                onFocus={ this.setFocus }
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
@@ -423,8 +433,8 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 timeRange={ this.state.timeRange }
                 authors={ this.state.authors }
                 tagsData={ project.tags }
-                timeRangeData={ authorsAndTimeRange.countsPerMinute }
-                authorsData={ authorsAndTimeRange.authors }
+                timeRangeData={ searchAndFilters.countsPerMinute }
+                authorsData={ searchAndFilters.authors }
                 stats={ stats }
                 parameters={ parameters }
                 applySingleFilter={ this.applySingleFilter }
@@ -441,7 +451,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        authorsAndTimeRange: state[search.NAME],
+        searchAndFilters: state[search.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         stats: state[STATS_NAME],

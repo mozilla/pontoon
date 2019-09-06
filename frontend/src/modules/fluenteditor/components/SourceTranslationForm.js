@@ -44,12 +44,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
     }
 
     componentDidMount() {
-        if (!this.aceEditor.current) {
-            return;
-        }
-        this.aceEditor.current.editor.focus();
-        this.aceEditor.current.editor.moveCursorTo(0, 0);
-        this.aceEditor.current.editor.clearSelection();
+        this.focusInput(true);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -94,7 +89,26 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             this.props.resetSelectionContent();
         }
 
-        this.aceEditor.current.editor.focus();
+        this.focusInput(false);
+    }
+
+    focusInput(putCursorToStart: boolean) {
+        const input = this.aceEditor.current;
+
+        if (!input) {
+            return;
+        }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        input.editor.focus();
+
+        if (putCursorToStart) {
+            input.editor.moveCursorTo(0, 0);
+            input.editor.clearSelection();
+        }
     }
 
     updateTranslationSelectionWith(content: string) {
@@ -136,13 +150,12 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             mode='fluent'
             theme='fluent'
             width='100%'
-            focus={ true }
             wrapEnabled={ true }
             setOptions={ options }
             value={ this.props.editor.translation }
             annotations={ annotate(this.props.editor.translation) }
             onChange={ this.props.updateTranslation }
-            debounceChangePeriod={200}
+            debounceChangePeriod={ 200 }
         />;
     }
 }

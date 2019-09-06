@@ -27,13 +27,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
     }
 
     componentDidMount() {
-        if (!this.textarea.current) {
-            return;
-        }
-
-        this.textarea.current.focus();
-        // After mounting, put the cursor at the beginning of the content.
-        this.textarea.current.setSelectionRange(0, 0);
+        this.focusInput(true);
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -79,12 +73,24 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             this.props.resetSelectionContent();
         }
 
-        if (this.textarea.current) {
-            this.textarea.current.focus();
+        this.focusInput(editor.changeSource === 'external');
+    }
+
+    focusInput(putCursorToStart: boolean) {
+        const input = this.textarea.current;
+
+        if (!input) {
+            return;
         }
 
-        if (editor.changeSource === 'external') {
-            this.textarea.current.setSelectionRange(0, 0);
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        input.focus();
+
+        if (putCursorToStart) {
+            input.setSelectionRange(0, 0);
         }
     }
 
@@ -175,7 +181,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         // On Ctrl + Shift + Backspace, clear the content.
         if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
             handledEvent = true;
-            this.props.updateTranslation('');
+            this.props.updateTranslation('', true);
         }
 
         // On Tab, walk through current helper tab content and copy it.
