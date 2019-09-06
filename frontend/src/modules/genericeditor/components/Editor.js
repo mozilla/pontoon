@@ -12,7 +12,7 @@ import type { EditorProps } from 'core/editor';
 
 export class EditorBase extends React.Component<EditorProps> {
     componentDidMount() {
-        this.props.updateTranslation(this.props.activeTranslation);
+        this.props.updateTranslation(this.props.activeTranslation, true);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -22,7 +22,7 @@ export class EditorBase extends React.Component<EditorProps> {
             pluralForm !== prevProps.pluralForm ||
             entity !== prevProps.entity
         ) {
-            this.props.updateTranslation(activeTranslation);
+            this.props.updateTranslation(activeTranslation, true);
         }
     }
 

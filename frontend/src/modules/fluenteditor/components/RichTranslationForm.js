@@ -64,7 +64,9 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
         // Walks the tree and unify all simple elements into just one.
         const message = fluent.flattenMessage(editor.translation);
-        this.props.updateTranslation(message);
+        this.props.updateTranslation(message, true);
+
+        this.focusInput();
     }
 
     componentDidUpdate(prevProps: EditorProps) {
@@ -80,7 +82,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.focusedElementId = null;
         }
 
-        // If the translation is a string, that means we're in a translational
+        // If the translation is a string, that means we're in a transitional
         // state and there's going to be another render with a Fluent AST.
         if (typeof(editor.translation) === 'string') {
             return;
@@ -100,7 +102,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         if (!translation.equals(prevEditor.translation)) {
             // Walks the tree and unify all simple elements into just one.
             const message = fluent.flattenMessage(translation);
-            this.props.updateTranslation(message);
+            this.props.updateTranslation(message, editor.changeSource !== 'internal');
         }
 
         // Close failed checks popup when content of the editor changes,
@@ -138,6 +140,25 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             );
             this.props.resetSelectionContent();
         }
+
+        if (editor.changeSource === 'external') {
+            this.focusInput();
+        }
+    }
+
+    focusInput() {
+        const input = this.getFirstInput();
+
+        if (!input) {
+            return;
+        }
+
+        if (this.props.searchInputFocused) {
+            return;
+        }
+
+        input.focus();
+        input.setSelectionRange(0, 0);
     }
 
     getFirstInput() {

@@ -44,7 +44,7 @@ export default class RichEditor extends React.Component<Props> {
                 );
             }
 
-            props.updateTranslation(message);
+            props.updateTranslation(message, true);
         }
     }
 
@@ -54,7 +54,8 @@ export default class RichEditor extends React.Component<Props> {
             this.props.updateTranslation(
                 fluent.getEmptyMessage(
                     fluent.parser.parseEntry(entity.original)
-                )
+                ),
+                true,
             );
         }
     }

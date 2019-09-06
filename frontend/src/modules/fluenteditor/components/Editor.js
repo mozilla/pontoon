@@ -97,7 +97,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
         }
 
         props.setInitialTranslation(translationContent);
-        props.updateTranslation(translationContent);
+        props.updateTranslation(translationContent, true);
     }
 
     /**
@@ -115,7 +115,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             props.activeTranslation,
         );
 
-        props.updateTranslation(translationContent);
+        props.updateTranslation(translationContent, true);
         props.setInitialTranslation(initialContent);
     }
 
