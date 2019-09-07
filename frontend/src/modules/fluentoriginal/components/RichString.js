@@ -81,7 +81,9 @@ function renderAttributes(attributes: ?FluentAttributes): React.Node {
  * Show the original string of a Fluent entity in a rich interface.
  */
 export default function RichString(props: Props) {
-    const message = fluent.parser.parseEntry(props.entity.original);
+    const message = fluent.flattenMessage(
+        fluent.parser.parseEntry(props.entity.original)
+    );
 
     return <table className="original fluent-rich-string" onClick={ props.handleClickOnPlaceable }>
         <tbody>
