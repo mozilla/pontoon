@@ -30,6 +30,7 @@
 
 .editor textarea[readonly] {
     background: #C7CACF;
+    cursor: default;
 }
 
 .editor textarea[data-script="Arabic"] {
