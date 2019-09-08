@@ -234,6 +234,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
+            readOnly={ this.props.isReadOnlyEditor }
             value={ value }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
