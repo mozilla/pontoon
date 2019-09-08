@@ -237,6 +237,9 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             value={ value }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
+            dir={ this.props.locale.direction }
+            lang={ this.props.locale.code }
+            data-script={ this.props.locale.script }
         />;
     }
 
