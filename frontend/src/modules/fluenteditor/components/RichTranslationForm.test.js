@@ -26,12 +26,10 @@ const EDITOR = {
 
 describe('<RichTranslationForm>', () => {
     it('renders textarea for a value and each attribute', () => {
-        const updateMock = sinon.stub();
-
         const wrapper = shallow(<RichTranslationForm
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
-            updateTranslation={ updateMock }
+            updateTranslation={ sinon.stub() }
         />);
 
         expect(wrapper.find('textarea')).toHaveLength(3);
@@ -52,5 +50,24 @@ describe('<RichTranslationForm>', () => {
         expect(updateMock.calledOnce).toBeTruthy();
         wrapper.find('textarea').at(0).simulate('change', { currentTarget: { value: 'good bye' } });
         expect(updateMock.calledTwice).toBeTruthy();
+    });
+
+    it('updates the translation when selectionReplacementContent is passed', () => {
+        const resetMock = sinon.stub();
+        const updateMock = sinon.stub();
+
+        const wrapper = mount(<RichTranslationForm
+            editor={ EDITOR }
+            locale={ DEFAULT_LOCALE }
+            unsavedchanges={ { shown: false } }
+            resetSelectionContent={ resetMock }
+            updateTranslation={ updateMock }
+            updateUnsavedChanges={ sinon.stub() }
+        />);
+
+        wrapper.setProps({ editor: { ...EDITOR, selectionReplacementContent: 'hello ' } });
+
+        expect(updateMock.calledTwice).toBeTruthy();
+        expect(resetMock.calledOnce).toBeTruthy();
     });
 });
