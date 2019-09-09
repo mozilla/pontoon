@@ -1,8 +1,19 @@
 /* @flow */
 
+export type FluentExpressionVariant = {
+    key: string,
+    value: FluentValue,
+};
+
+export type FluentExpression = {
+    type: string,
+    variants: Array<FluentExpressionVariant>,
+};
+
 export type FluentElement = {
     type: string,
     value: string,
+    expression: FluentExpression,
 };
 
 export type FluentValue = {

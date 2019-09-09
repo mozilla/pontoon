@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichTranslationForm.css';
 
@@ -327,26 +328,38 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderElements(
-        elements: Array<FluentElement>,
-        path: MessagePath,
-        label: string,
-    ): React.Node {
+    renderItem(value: string, path: MessagePath, label: string) {
+        return <tr key={ `${path.join('-')}` }>
+            <td>
+                <label htmlFor={ `${path.join('-')}` }>{ label }</label>
+            </td>
+            <td>
+                { this.renderInput(value, path) }
+            </td>
+        </tr>;
+    }
+
+    renderElements(elements: Array<FluentElement>, path: MessagePath, label: string): React.Node {
         return elements.map((element, index) => {
-            if (element.type !== 'TextElement') {
-                return null;
+            if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
+                return element.expression.variants.map((variant, i) => {
+                    return this.renderItem(
+                        variant.value.elements[0].value,
+                        [].concat(
+                            path,
+                            [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
+                        ),
+                        serializeVariantKey(variant.key),
+                    );
+                });
             }
-
-            const eltPath = [].concat(path, [ index, 'value' ]);
-
-            return <tr key={ `${eltPath.join('-')}` }>
-                <td>
-                    <label htmlFor={ `${eltPath.join('-')}` }>{ label }</label>
-                </td>
-                <td>
-                    { this.renderInput(element.value, eltPath) }
-                </td>
-            </tr>;
+            else {
+                return this.renderItem(
+                    element.value,
+                    [].concat(path, [ index, 'value' ]),
+                    label,
+                );
+            }
         });
     }
 
