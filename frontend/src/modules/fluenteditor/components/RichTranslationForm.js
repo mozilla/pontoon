@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import './RichTranslationForm.css';
 
-import { fluent } from 'core/utils';
+import { fluent, withActionsDisabled } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
 import type {
@@ -17,6 +17,13 @@ import type {
 
 
 type MessagePath = Array<string | number>;
+
+
+type InternalProps = {|
+    ...EditorProps,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
 
 
 /**
@@ -47,7 +54,7 @@ function getUpdatedTranslation(
 /**
  * Render a Rich editor for Fluent string editting.
  */
-export default class RichTranslationForm extends React.Component<EditorProps> {
+export class RichTranslationFormBase extends React.Component<InternalProps> {
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
@@ -66,10 +73,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const message = fluent.flattenMessage(editor.translation);
         this.props.updateTranslation(message, true);
 
-        this.focusInput();
+        this.focusInput(true);
     }
 
-    componentDidUpdate(prevProps: EditorProps) {
+    componentDidUpdate(prevProps: InternalProps) {
         const editor = this.props.editor;
 
         // Reset the currently focused element when the entity changes or when
@@ -95,7 +102,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.update(prevProps, editor.translation);
     }
 
-    update(prevProps: EditorProps, translation: FluentMessage) {
+    update(prevProps: InternalProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
 
@@ -141,13 +148,11 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        if (editor.changeSource === 'external') {
-            this.focusInput();
-        }
+        this.focusInput(editor.changeSource === 'external');
     }
 
-    focusInput() {
-        const input = this.getFirstInput();
+    focusInput(putCursorToStart: boolean) {
+        const input = this.getFocusedElement() || this.getFirstInput();
 
         if (!input) {
             return;
@@ -158,7 +163,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         }
 
         input.focus();
-        input.setSelectionRange(0, 0);
+
+        if (putCursorToStart) {
+            input.setSelectionRange(0, 0);
+        }
     }
 
     getFirstInput() {
@@ -212,6 +220,80 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.props.updateTranslation(source);
     }
 
+    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+        const key = event.keyCode;
+
+        let handledEvent = false;
+
+        // On Enter:
+        //   - If unsaved changes popup is shown, leave anyway.
+        //   - If failed checks popup is shown after approving a translation, approve it anyway.
+        //   - In other cases, send current translation.
+        if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            if (this.props.isActionDisabled) {
+                event.preventDefault();
+                return;
+            }
+            this.props.disableAction();
+
+            handledEvent = true;
+
+            const errors = this.props.editor.errors;
+            const warnings = this.props.editor.warnings;
+            const source = this.props.editor.source;
+            const ignoreWarnings = !!(errors.length || warnings.length);
+
+            // Leave anyway
+            if (this.props.unsavedchanges.shown) {
+                this.props.ignoreUnsavedChanges();
+            }
+            // Approve anyway
+            else if (typeof(source) === 'number') {
+                this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
+            }
+            // Send translation
+            else {
+                this.props.sendTranslation(ignoreWarnings);
+            }
+        }
+
+        // On Esc, close unsaved changes and failed checks popups if open.
+        if (key === 27) {
+            handledEvent = true;
+
+            const errors = this.props.editor.errors;
+            const warnings = this.props.editor.warnings;
+
+            // Close unsaved changes popup
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            // Close failed checks popup
+            else if (errors.length || warnings.length) {
+                this.props.resetFailedChecks();
+            }
+        }
+
+        // On Ctrl + Shift + C, copy the original translation.
+        if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.copyOriginalIntoEditor();
+        }
+
+        // On Ctrl + Shift + Backspace, clear the content.
+        if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.clearEditor();
+        }
+
+        // On Tab, walk through current helper tab content and copy it.
+        // TODO
+
+        if (handledEvent) {
+            event.preventDefault();
+        }
+    }
+
     createHandleChange = (path: MessagePath) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
             const value = event.currentTarget.value;
@@ -238,6 +320,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             value={ value }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
+            onKeyDown={ this.handleShortcuts }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }
             data-script={ this.props.locale.script }
@@ -314,3 +397,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         </div>;
     }
 }
+
+
+export default withActionsDisabled(RichTranslationFormBase);
