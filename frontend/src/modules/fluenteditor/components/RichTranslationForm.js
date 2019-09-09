@@ -73,7 +73,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         const message = fluent.flattenMessage(editor.translation);
         this.props.updateTranslation(message, true);
 
-        this.focusInput();
+        this.focusInput(true);
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -148,13 +148,11 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             this.props.resetSelectionContent();
         }
 
-        if (editor.changeSource === 'external') {
-            this.focusInput();
-        }
+        this.focusInput(editor.changeSource === 'external');
     }
 
-    focusInput() {
-        const input = this.getFirstInput();
+    focusInput(putCursorToStart: boolean) {
+        const input = this.getFocusedElement() || this.getFirstInput();
 
         if (!input) {
             return;
@@ -165,7 +163,10 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         }
 
         input.focus();
-        input.setSelectionRange(0, 0);
+
+        if (putCursorToStart) {
+            input.setSelectionRange(0, 0);
+        }
     }
 
     getFirstInput() {
