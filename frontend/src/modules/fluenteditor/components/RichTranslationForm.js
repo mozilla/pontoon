@@ -312,7 +312,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         this.focusedElementId = event.currentTarget.id;
     }
 
-    renderInput(value: string, index: number, path: MessagePath) {
+    renderInput(value: string, path: MessagePath) {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
@@ -344,7 +344,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                     <label htmlFor={ `${eltPath.join('-')}` }>{ label }</label>
                 </td>
                 <td>
-                    { this.renderInput(element.value, index, eltPath) }
+                    { this.renderInput(element.value, eltPath) }
                 </td>
             </tr>;
         });
