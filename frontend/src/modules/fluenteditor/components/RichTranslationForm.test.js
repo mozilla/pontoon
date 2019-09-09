@@ -67,7 +67,12 @@ describe('<RichTranslationFormBase>', () => {
 
         wrapper.setProps({ editor: { ...EDITOR, selectionReplacementContent: 'hello ' } });
 
+        const updatedTranslation = fluent.parser.parseEntry(
+            'message = hello Value\n    .attr-1 = And\n    .attr-2 = Attributes'
+        )
+
         expect(updateMock.calledTwice).toBeTruthy();
+        expect(updateMock.calledWith(updatedTranslation)).toBeTruthy();
         expect(resetMock.calledOnce).toBeTruthy();
     });
 });
