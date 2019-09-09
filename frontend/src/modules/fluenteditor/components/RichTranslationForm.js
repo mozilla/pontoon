@@ -220,6 +220,80 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         this.props.updateTranslation(source);
     }
 
+    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+        const key = event.keyCode;
+
+        let handledEvent = false;
+
+        // On Enter:
+        //   - If unsaved changes popup is shown, leave anyway.
+        //   - If failed checks popup is shown after approving a translation, approve it anyway.
+        //   - In other cases, send current translation.
+        if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            if (this.props.isActionDisabled) {
+                event.preventDefault();
+                return;
+            }
+            this.props.disableAction();
+
+            handledEvent = true;
+
+            const errors = this.props.editor.errors;
+            const warnings = this.props.editor.warnings;
+            const source = this.props.editor.source;
+            const ignoreWarnings = !!(errors.length || warnings.length);
+
+            // Leave anyway
+            if (this.props.unsavedchanges.shown) {
+                this.props.ignoreUnsavedChanges();
+            }
+            // Approve anyway
+            else if (typeof(source) === 'number') {
+                this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
+            }
+            // Send translation
+            else {
+                this.props.sendTranslation(ignoreWarnings);
+            }
+        }
+
+        // On Esc, close unsaved changes and failed checks popups if open.
+        if (key === 27) {
+            handledEvent = true;
+
+            const errors = this.props.editor.errors;
+            const warnings = this.props.editor.warnings;
+
+            // Close unsaved changes popup
+            if (this.props.unsavedchanges.shown) {
+                this.props.hideUnsavedChanges();
+            }
+            // Close failed checks popup
+            else if (errors.length || warnings.length) {
+                this.props.resetFailedChecks();
+            }
+        }
+
+        // On Ctrl + Shift + C, copy the original translation.
+        if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.copyOriginalIntoEditor();
+        }
+
+        // On Ctrl + Shift + Backspace, clear the content.
+        if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
+            handledEvent = true;
+            this.props.clearEditor();
+        }
+
+        // On Tab, walk through current helper tab content and copy it.
+        // TODO
+
+        if (handledEvent) {
+            event.preventDefault();
+        }
+    }
+
     createHandleChange = (path: MessagePath) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
             const value = event.currentTarget.value;
@@ -246,6 +320,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             value={ value }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
+            onKeyDown={ this.handleShortcuts }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }
             data-script={ this.props.locale.script }
