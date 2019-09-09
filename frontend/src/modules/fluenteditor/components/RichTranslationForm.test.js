@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { fluent } from 'core/utils';
 
-import RichTranslationForm from './RichTranslationForm';
+import { RichTranslationFormBase } from './RichTranslationForm';
 
 
 const DEFAULT_LOCALE = {
@@ -24,9 +24,9 @@ const EDITOR = {
 };
 
 
-describe('<RichTranslationForm>', () => {
+describe('<RichTranslationFormBase>', () => {
     it('renders textarea for a value and each attribute', () => {
-        const wrapper = shallow(<RichTranslationForm
+        const wrapper = shallow(<RichTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ sinon.stub() }
@@ -41,7 +41,7 @@ describe('<RichTranslationForm>', () => {
     it('calls the updateTranslation function on mount and change', () => {
         const updateMock = sinon.spy();
 
-        const wrapper = shallow(<RichTranslationForm
+        const wrapper = shallow(<RichTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             updateTranslation={ updateMock }
@@ -56,7 +56,7 @@ describe('<RichTranslationForm>', () => {
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<RichTranslationForm
+        const wrapper = mount(<RichTranslationFormBase
             editor={ EDITOR }
             locale={ DEFAULT_LOCALE }
             unsavedchanges={ { shown: false } }

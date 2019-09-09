@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import './RichTranslationForm.css';
 
-import { fluent } from 'core/utils';
+import { fluent, withActionsDisabled } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
 import type {
@@ -17,6 +17,13 @@ import type {
 
 
 type MessagePath = Array<string | number>;
+
+
+type InternalProps = {|
+    ...EditorProps,
+    isActionDisabled: boolean,
+    disableAction: () => void,
+|};
 
 
 /**
@@ -47,7 +54,7 @@ function getUpdatedTranslation(
 /**
  * Render a Rich editor for Fluent string editting.
  */
-export default class RichTranslationForm extends React.Component<EditorProps> {
+export class RichTranslationFormBase extends React.Component<InternalProps> {
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
@@ -69,7 +76,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.focusInput();
     }
 
-    componentDidUpdate(prevProps: EditorProps) {
+    componentDidUpdate(prevProps: InternalProps) {
         const editor = this.props.editor;
 
         // Reset the currently focused element when the entity changes or when
@@ -95,7 +102,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.update(prevProps, editor.translation);
     }
 
-    update(prevProps: EditorProps, translation: FluentMessage) {
+    update(prevProps: InternalProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
 
@@ -314,3 +321,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         </div>;
     }
 }
+
+
+export default withActionsDisabled(RichTranslationFormBase);
