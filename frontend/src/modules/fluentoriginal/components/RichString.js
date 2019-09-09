@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichString.css';
 
@@ -22,27 +23,47 @@ type Props = {|
 |};
 
 
+function renderItem(
+    value: string,
+    label: string,
+    key: string,
+): React.Node {
+    return <tr key={ key }>
+        <td>
+            <label>{ label }</label>
+        </td>
+        <td>
+            <span>
+                <WithPlaceablesForFluent>
+                    { value }
+                </WithPlaceablesForFluent>
+            </span>
+        </td>
+    </tr>;
+}
+
+
 function renderElements(
     elements: Array<FluentElement>,
     label: string,
 ): React.Node {
-    return elements.map((element, i) => {
-        if (element.type !== 'TextElement') {
-            return null;
+    return elements.map((element, index) => {
+        if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
+            return element.expression.variants.map((variant, i) => {
+                return renderItem(
+                    variant.value.elements[0].value,
+                    serializeVariantKey(variant.key),
+                    [index, i].join('-'),
+                );
+            });
         }
-
-        return <tr key={ i }>
-            <td>
-                <label>{ label }</label>
-            </td>
-            <td>
-                <span>
-                    <WithPlaceablesForFluent>
-                        { element.value }
-                    </WithPlaceablesForFluent>
-                </span>
-            </td>
-        </tr>;
+        else {
+            return renderItem(
+                element.value,
+                label,
+                index.toString(),
+            );
+        }
     });
 }
 
