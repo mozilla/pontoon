@@ -6,39 +6,13 @@ import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 
+import FluentAttribute from './FluentAttribute';
 import OriginalStringProxy from './OriginalStringProxy';
+import Property from './Property';
 import Screenshots from './Screenshots';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
-
-
-type PropertyProps = {|
-    +title: string,
-    +className: string,
-    +children: React.Node,
-|};
-
-
-/**
- * Component to dislay a property of an entity.
- *
- * Only used by Metadata.
- */
-class Property extends React.Component<PropertyProps> {
-    render(): React.Node {
-        const { children, className, title } = this.props;
-        return <p className={ className }>
-            <span className="title">{ title }</span>
-            {
-                /* Extra space between <span> elements prevents cross
-                   element selection on double click (bug 1228873) */
-            }
-            { ' ' }
-            <span className="content">{ children }</span>
-        </p>;
-    }
-}
 
 
 type Props = {|
@@ -189,6 +163,7 @@ export default class Metadata extends React.Component<Props> {
                 handleClickOnPlaceable={ this.handleClickOnPlaceable }
             />
             { this.renderComment(entity) }
+            <FluentAttribute entity={ entity } />
             { this.renderContext(entity) }
             { this.renderSources(entity) }
             <Localized id='entitydetails-Metadata--resource' attrs={ { title: true } }>
