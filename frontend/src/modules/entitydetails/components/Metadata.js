@@ -6,6 +6,7 @@ import { Localized } from 'fluent-react';
 
 import './Metadata.css';
 
+import FluentAttribute from './FluentAttribute';
 import OriginalStringProxy from './OriginalStringProxy';
 import Property from './Property';
 import Screenshots from './Screenshots';
@@ -162,6 +163,7 @@ export default class Metadata extends React.Component<Props> {
                 handleClickOnPlaceable={ this.handleClickOnPlaceable }
             />
             { this.renderComment(entity) }
+            <FluentAttribute entity={ entity } />
             { this.renderContext(entity) }
             { this.renderSources(entity) }
             <Localized id='entitydetails-Metadata--resource' attrs={ { title: true } }>
