@@ -328,8 +328,8 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderItem(value: string, path: MessagePath, label: string) {
-        return <tr key={ `${path.join('-')}` }>
+    renderItem(value: string, path: MessagePath, label: string, className: ?string) {
+        return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>{ label }</label>
             </td>
@@ -340,9 +340,11 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
     }
 
     renderElements(elements: Array<FluentElement>, path: MessagePath, label: string): React.Node {
+        let indent = false;
+
         return elements.map((element, index) => {
             if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
-                return element.expression.variants.map((variant, i) => {
+                const variantItems = element.expression.variants.map((variant, i) => {
                     return this.renderItem(
                         variant.value.elements[0].value,
                         [].concat(
@@ -350,10 +352,14 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                             [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
                         ),
                         serializeVariantKey(variant.key),
+                        indent ? 'indented' : null,
                     );
                 });
+                indent = false;
+                return variantItems;
             }
             else {
+                indent = true;
                 return this.renderItem(
                     element.value,
                     [].concat(path, [ index, 'value' ]),

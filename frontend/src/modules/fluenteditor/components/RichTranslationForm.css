@@ -28,6 +28,10 @@
     padding: 0 4px;
 }
 
+.fluent-rich-translation-form table tr.indented > td > label {
+    margin-left: 10px;
+}
+
 .fluent-rich-translation-form table tr > td > textarea {
     min-height: 0;
     height: 24px;

@@ -27,8 +27,9 @@ function renderItem(
     value: string,
     label: string,
     key: string,
+    className: ?string,
 ): React.Node {
-    return <tr key={ key }>
+    return <tr key={ key } className={ className }>
         <td>
             <label>{ label }</label>
         </td>
@@ -47,17 +48,22 @@ function renderElements(
     elements: Array<FluentElement>,
     label: string,
 ): React.Node {
+    let indent = false;
     return elements.map((element, index) => {
         if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
-            return element.expression.variants.map((variant, i) => {
+            const variantItems = element.expression.variants.map((variant, i) => {
                 return renderItem(
                     variant.value.elements[0].value,
                     serializeVariantKey(variant.key),
                     [index, i].join('-'),
+                    indent ? 'indented' : null,
                 );
             });
+            indent = false;
+            return variantItems;
         }
         else {
+            indent = true;
             return renderItem(
                 element.value,
                 label,
