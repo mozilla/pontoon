@@ -2,6 +2,8 @@
 
 import { Transformer } from 'fluent-syntax';
 
+import flattenMessage from './flattenMessage';
+
 import type { FluentMessage } from './types';
 
 
@@ -26,6 +28,12 @@ export default function getEmptyMessage(source: FluentMessage): FluentMessage {
     }
 
     const message = source.clone();
+
+    // Convert all simple elements to TextElements
+    const flatMessage = flattenMessage(message);
+
+    // Empty TextElements
     const transformer = new EmptyTransformer();
-    return transformer.visit(message);
+
+    return transformer.visit(flatMessage);
 }
