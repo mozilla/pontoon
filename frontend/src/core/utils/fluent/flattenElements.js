@@ -16,14 +16,14 @@ import type { FluentElement } from './types';
  */
 export default function flattenElements(elements: Array<FluentElement>): Array<FluentElement> {
     const flatElements = [];
-    let simpleElements = [];
+    let textFragments = [];
 
     elements.forEach((element, index) => {
         if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
-            // Before adding SelectExpression merge collected simple elements into a TextElement
-            if (simpleElements.length) {
-                flatElements.push(new TextElement(simpleElements.join('')));
-                simpleElements = [];
+            // Before adding SelectExpression merge collected text fragments into a TextElement
+            if (textFragments.length) {
+                flatElements.push(new TextElement(textFragments.join('')));
+                textFragments = [];
             }
 
             // Flatten SelectExpression variant elements
@@ -35,15 +35,15 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
         }
         else {
             if (element.type === 'TextElement') {
-                simpleElements.push(element.value);
+                textFragments.push(element.value);
             }
             else {
-                simpleElements.push(serializeExpression(element));
+                textFragments.push(serializeExpression(element));
             }
 
-            // Before the end of loop merge collected simple elements into a TextElement
+            // Before the end of loop merge collected text fragments into a TextElement
             if (index === elements.length - 1) {
-                flatElements.push(new TextElement(simpleElements.join('')));
+                flatElements.push(new TextElement(textFragments.join('')));
             }
         }
     });
