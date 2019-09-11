@@ -20,7 +20,7 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
 
     elements.forEach((element, index) => {
         if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
-            // Before adding SelectExpression merge collected text fragments into a TextElement
+            // Before adding SelectExpression merge any collected text fragments into a TextElement
             if (textFragments.length) {
                 flatElements.push(new TextElement(textFragments.join('')));
                 textFragments = [];
@@ -40,13 +40,13 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
             else {
                 textFragments.push(serializeExpression(element));
             }
-
-            // Before the end of loop merge collected text fragments into a TextElement
-            if (index === elements.length - 1) {
-                flatElements.push(new TextElement(textFragments.join('')));
-            }
         }
     });
+
+    // Merge any remaining collected text fragments into a TextElement
+    if (textFragments.length) {
+        flatElements.push(new TextElement(textFragments.join('')));
+    }
 
     return flatElements;
 }
