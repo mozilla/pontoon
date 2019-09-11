@@ -18,7 +18,7 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
     const flatElements = [];
     let textFragments = [];
 
-    elements.forEach((element, index) => {
+    elements.forEach(element => {
         if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
             // Before adding SelectExpression merge any collected text fragments into a TextElement
             if (textFragments.length) {
