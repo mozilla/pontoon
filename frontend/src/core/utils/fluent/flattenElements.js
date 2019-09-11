@@ -19,7 +19,10 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
     let textFragments = [];
 
     elements.forEach(element => {
-        if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
+        if (
+            element.type === 'Placeable' &&
+            element.expression && element.expression.type === 'SelectExpression'
+        ) {
             // Before adding SelectExpression merge any collected text fragments into a TextElement
             if (textFragments.length) {
                 flatElements.push(new TextElement(textFragments.join('')));
@@ -34,7 +37,7 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
             flatElements.push(element);
         }
         else {
-            if (element.type === 'TextElement') {
+            if (element.type === 'TextElement' && typeof(element.value) === 'string') {
                 textFragments.push(element.value);
             }
             else {

@@ -50,8 +50,15 @@ function renderElements(
 ): React.Node {
     let indent = false;
     return elements.map((element, index) => {
-        if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
+        if (
+            element.type === 'Placeable' &&
+            element.expression && element.expression.type === 'SelectExpression'
+        ) {
             const variantItems = element.expression.variants.map((variant, i) => {
+                if (typeof(variant.value.elements[0].value) !== 'string') {
+                    return null;
+                }
+
                 return renderItem(
                     variant.value.elements[0].value,
                     serializeVariantKey(variant.key),
@@ -63,6 +70,10 @@ function renderElements(
             return variantItems;
         }
         else {
+            if (typeof(element.value) !== 'string') {
+                return null;
+            }
+
             indent = true;
             return renderItem(
                 element.value,

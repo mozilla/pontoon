@@ -343,8 +343,15 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         let indent = false;
 
         return elements.map((element, index) => {
-            if (element.type === 'Placeable' && element.expression.type === 'SelectExpression') {
+            if (
+                element.type === 'Placeable' &&
+                element.expression && element.expression.type === 'SelectExpression'
+            ) {
                 const variantItems = element.expression.variants.map((variant, i) => {
+                    if (typeof(variant.value.elements[0].value) !== 'string') {
+                        return null;
+                    }
+
                     return this.renderItem(
                         variant.value.elements[0].value,
                         [].concat(
@@ -360,6 +367,10 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             }
             else {
                 indent = true;
+                if (typeof(element.value) !== 'string') {
+                    return null;
+                }
+
                 return this.renderItem(
                     element.value,
                     [].concat(path, [ index, 'value' ]),
