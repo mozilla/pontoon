@@ -163,8 +163,8 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 resource,
                 entity,
                 this.props.batchactions.entities,
-                find.value,
-                replace.value,
+                encodeURIComponent(find.value),
+                encodeURIComponent(replace.value),
             )
         );
     }
