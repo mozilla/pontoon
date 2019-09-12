@@ -1,8 +1,13 @@
 /* @flow */
 
+export type Identifier = {
+    type: string,
+    name: string,
+};
+
 export type Variant = {
     default: boolean,
-    key: string,
+    key: Identifier,
     value: Pattern,
 };
 
