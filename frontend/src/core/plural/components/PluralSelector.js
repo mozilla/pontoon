@@ -8,7 +8,7 @@ import './PluralSelector.css';
 import * as locale from 'core/locale';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { actions, selectors } from '..';
+import { actions, CLDR_PLURALS, selectors } from '..';
 
 import type { Locale } from 'core/locale';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
@@ -24,16 +24,6 @@ type InternalProps = {|
     ...Props,
     dispatch: Function,
 |};
-
-
-const CLDR_PLURALS: Array<string> = [
-    'zero',
-    'one',
-    'two',
-    'few',
-    'many',
-    'other',
-];
 
 
 /**

@@ -5,11 +5,10 @@ import { Transformer } from 'fluent-syntax';
 import flattenMessage from './flattenMessage';
 import isPluralElement from './isPluralElement';
 
+import { CLDR_PLURALS } from 'core/plural';
+
 import type { FluentMessage } from './types';
 import type { Locale } from 'core/locale';
-
-
-const CLDR_PLURALS = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
 
 /**

@@ -1,5 +1,7 @@
 /* @flow */
 
+import { CLDR_PLURALS } from 'core/plural';
+
 import type { PatternElement } from './types';
 
 
@@ -17,8 +19,6 @@ export default function isPluralElement(element: PatternElement): boolean {
     ) {
         return false;
     }
-
-    const CLDR_PLURALS = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
     return element.expression.variants.every(variant => {
         return (
