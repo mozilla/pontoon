@@ -11,7 +11,7 @@ import type { EditorProps } from 'core/editor';
 import type {
     FluentAttribute,
     FluentAttributes,
-    FluentElement,
+    PatternElement,
     FluentMessage,
     FluentValue,
 } from 'core/utils/fluent/types';
@@ -339,7 +339,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         </tr>;
     }
 
-    renderElements(elements: Array<FluentElement>, path: MessagePath, label: string): React.Node {
+    renderElements(elements: Array<PatternElement>, path: MessagePath, label: string): React.Node {
         let indent = false;
 
         return elements.map((element, index) => {

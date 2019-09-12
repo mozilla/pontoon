@@ -16,13 +16,13 @@ export type Placeable = {
     expression: SelectExpression,
 }
 
-export type FluentElement = {|
+export type PatternElement = {|
     type: string,
     value: string,
 |} | Placeable;
 
 export type FluentValue = {
-    elements: Array<FluentElement>,
+    elements: Array<PatternElement>,
 };
 
 export type FluentAttribute = {

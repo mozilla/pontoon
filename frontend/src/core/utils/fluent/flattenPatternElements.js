@@ -2,7 +2,7 @@
 
 import { TextElement, serializeExpression } from 'fluent-syntax';
 
-import type { FluentElement } from './types';
+import type { PatternElement } from './types';
 
 
 /**
@@ -15,8 +15,8 @@ import type { FluentElement } from './types';
  * Placeable (representing select expressions).
  */
 export default function flattenPatternElements(
-    elements: Array<FluentElement>,
-): Array<FluentElement> {
+    elements: Array<PatternElement>,
+): Array<PatternElement> {
     const flatElements = [];
     let textFragments = [];
 
