@@ -2,7 +2,7 @@
 
 import areSupportedElements from './areSupportedElements';
 import convertSyntax from './convertSyntax';
-import flattenElements from './flattenElements';
+import flattenPatternElements from './flattenPatternElements';
 import flattenMessage from './flattenMessage';
 import getEmptyMessage from './getEmptyMessage';
 import getReconstructedMessage from './getReconstructedMessage';
@@ -20,7 +20,7 @@ import serializer from './serializer';
 export default {
     areSupportedElements,
     convertSyntax,
-    flattenElements,
+    flattenPatternElements,
     flattenMessage,
     getEmptyMessage,
     getReconstructedMessage,

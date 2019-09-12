@@ -14,7 +14,9 @@ import type { FluentElement } from './types';
  * TextElement (merging serialized values of neighbour simple elements) and
  * Placeable (representing select expressions).
  */
-export default function flattenElements(elements: Array<FluentElement>): Array<FluentElement> {
+export default function flattenPatternElements(
+    elements: Array<FluentElement>,
+): Array<FluentElement> {
     const flatElements = [];
     let textFragments = [];
 
@@ -31,7 +33,7 @@ export default function flattenElements(elements: Array<FluentElement>): Array<F
 
             // Flatten SelectExpression variant elements
             element.expression.variants.forEach(variant => {
-                variant.value.elements = flattenElements(variant.value.elements);
+                variant.value.elements = flattenPatternElements(variant.value.elements);
             });
 
             flatElements.push(element);
