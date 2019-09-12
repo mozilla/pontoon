@@ -12,8 +12,8 @@ import type { Entity } from 'core/api';
 import type {
     FluentAttribute,
     FluentAttributes,
-    FluentElement,
-    FluentValue,
+    PatternElement,
+    Pattern,
 } from 'core/utils/fluent/types';
 
 
@@ -45,7 +45,7 @@ function renderItem(
 
 
 function renderElements(
-    elements: Array<FluentElement>,
+    elements: Array<PatternElement>,
     label: string,
 ): React.Node {
     let indent = false;
@@ -85,7 +85,7 @@ function renderElements(
 }
 
 
-function renderValue(value: FluentValue, label?: string): React.Node {
+function renderValue(value: Pattern, label?: string): React.Node {
     if (!value) {
         return null;
     }
