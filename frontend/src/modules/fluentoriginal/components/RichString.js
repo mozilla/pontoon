@@ -13,7 +13,7 @@ import type {
     FluentAttribute,
     FluentAttributes,
     PatternElement,
-    FluentValue,
+    Pattern,
 } from 'core/utils/fluent/types';
 
 
@@ -85,7 +85,7 @@ function renderElements(
 }
 
 
-function renderValue(value: FluentValue, label?: string): React.Node {
+function renderValue(value: Pattern, label?: string): React.Node {
     if (!value) {
         return null;
     }

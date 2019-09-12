@@ -3,7 +3,7 @@
 export type Variant = {
     default: boolean,
     key: string,
-    value: FluentValue,
+    value: Pattern,
 };
 
 export type SelectExpression = {
@@ -21,20 +21,20 @@ export type PatternElement = {|
     value: string,
 |} | Placeable;
 
-export type FluentValue = {
+export type Pattern = {
     elements: Array<PatternElement>,
 };
 
 export type FluentAttribute = {
     id: { name: string },
-    value: FluentValue,
+    value: Pattern,
 };
 
 export type FluentAttributes = Array<FluentAttribute>;
 
 export type FluentMessage = {
     type: string,
-    value: FluentValue,
+    value: Pattern,
     attributes: ?FluentAttributes,
     clone: () => FluentMessage,
     equals: (any) => boolean,

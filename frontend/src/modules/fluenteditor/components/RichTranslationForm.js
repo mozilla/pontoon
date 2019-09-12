@@ -13,7 +13,7 @@ import type {
     FluentAttributes,
     PatternElement,
     FluentMessage,
-    FluentValue,
+    Pattern,
 } from 'core/utils/fluent/types';
 
 
@@ -380,7 +380,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         });
     }
 
-    renderValue(value: FluentValue, path: MessagePath, label?: string): React.Node {
+    renderValue(value: Pattern, path: MessagePath, label?: string): React.Node {
         if (!value) {
             return null;
         }
