@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichString.css';
 
@@ -22,27 +23,64 @@ type Props = {|
 |};
 
 
+function renderItem(
+    value: string,
+    label: string,
+    key: string,
+    className: ?string,
+): React.Node {
+    return <tr key={ key } className={ className }>
+        <td>
+            <label>{ label }</label>
+        </td>
+        <td>
+            <span>
+                <WithPlaceablesForFluent>
+                    { value }
+                </WithPlaceablesForFluent>
+            </span>
+        </td>
+    </tr>;
+}
+
+
 function renderElements(
     elements: Array<FluentElement>,
     label: string,
 ): React.Node {
-    return elements.map((element, i) => {
-        if (element.type !== 'TextElement') {
-            return null;
-        }
+    let indent = false;
+    return elements.map((element, index) => {
+        if (
+            element.type === 'Placeable' &&
+            element.expression && element.expression.type === 'SelectExpression'
+        ) {
+            const variantItems = element.expression.variants.map((variant, i) => {
+                if (typeof(variant.value.elements[0].value) !== 'string') {
+                    return null;
+                }
 
-        return <tr key={ i }>
-            <td>
-                <label>{ label }</label>
-            </td>
-            <td>
-                <span>
-                    <WithPlaceablesForFluent>
-                        { element.value }
-                    </WithPlaceablesForFluent>
-                </span>
-            </td>
-        </tr>;
+                return renderItem(
+                    variant.value.elements[0].value,
+                    serializeVariantKey(variant.key),
+                    [index, i].join('-'),
+                    indent ? 'indented' : null,
+                );
+            });
+            indent = false;
+            return variantItems;
+        }
+        else {
+            if (typeof(element.value) !== 'string') {
+                return null;
+            }
+
+            indent = true;
+            return renderItem(
+                element.value,
+                label,
+                index.toString(),
+            );
+        }
     });
 }
 

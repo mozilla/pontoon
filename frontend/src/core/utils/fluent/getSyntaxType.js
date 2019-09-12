@@ -13,9 +13,9 @@ import type { FluentMessage, SyntaxType } from './types';
  * @param {FluentMessage} message A Fluent message (AST) to analyze.
  *
  * @returns {string} The syntax type of the Fluent message. Can be one of:
- *      - "simple": can be previewed as a simple string;
- *      - "rich": can be shown in a rich UI;
- *      - "complex": isn't supported by our system yet.
+ *      - "simple": can be shown as a simple string in generic editor;
+ *      - "rich": can be shown in a rich editor;
+ *      - "complex": can only be shown in a source editor.
  */
 export default function getSyntaxType(message: FluentMessage): SyntaxType {
     if (!isSupportedMessage(message)) {

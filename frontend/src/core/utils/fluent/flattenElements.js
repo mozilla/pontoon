@@ -8,25 +8,48 @@ import type { FluentElement } from './types';
 /**
  * Return a flattened list of Fluent elements.
  *
- * Takes a list of Fluent SyntaxNode elements, extracts a serialized value for
- * each and returns an array with a single TextElement containing those values.
+ * @param {Array<SyntaxNode>} elements A list of Fluent SyntaxNode elements to flatten.
  *
- * @param {Array<SyntaxNode>} elements A list of Fluent SyntaxNode lements to flatten.
- *
- * @returns {Array<TextElement>} An array containing a single TextElement which
- * contains all elements' values serialized.
+ * @returns {Array<TextElement|Placeable>} An array containing elements of type
+ * TextElement (merging serialized values of neighbour simple elements) and
+ * Placeable (representing select expressions).
  */
 export default function flattenElements(elements: Array<FluentElement>): Array<FluentElement> {
-    const values = elements.map(element => {
-        switch (element.type) {
-            case 'TextElement':
-                return element.value;
-            default:
-                return serializeExpression(element);
+    const flatElements = [];
+    let textFragments = [];
+
+    elements.forEach(element => {
+        if (
+            element.type === 'Placeable' &&
+            element.expression && element.expression.type === 'SelectExpression'
+        ) {
+            // Before adding SelectExpression merge any collected text fragments into a TextElement
+            if (textFragments.length) {
+                flatElements.push(new TextElement(textFragments.join('')));
+                textFragments = [];
+            }
+
+            // Flatten SelectExpression variant elements
+            element.expression.variants.forEach(variant => {
+                variant.value.elements = flattenElements(variant.value.elements);
+            });
+
+            flatElements.push(element);
+        }
+        else {
+            if (element.type === 'TextElement' && typeof(element.value) === 'string') {
+                textFragments.push(element.value);
+            }
+            else {
+                textFragments.push(serializeExpression(element));
+            }
         }
     });
 
-    return [
-        new TextElement(values.join('')),
-    ];
+    // Merge any remaining collected text fragments into a TextElement
+    if (textFragments.length) {
+        flatElements.push(new TextElement(textFragments.join('')));
+    }
+
+    return flatElements;
 }
