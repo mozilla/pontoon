@@ -12,7 +12,7 @@ import type {
     FluentAttribute,
     FluentAttributes,
     PatternElement,
-    Entry,
+    FluentMessage,
     Pattern,
 } from 'core/utils/fluent/types';
 
@@ -32,7 +32,7 @@ type InternalProps = {|
  * value.
  */
 function getUpdatedTranslation(
-    translation: Entry,
+    translation: FluentMessage,
     value: string,
     path: MessagePath,
 ) {
@@ -97,13 +97,13 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         }
 
         // Because of a bug in Flow, we create a new `update` function to
-        // which we explicitely pass the translation as a Entry. This
+        // which we explicitely pass the translation as a FluentMessage. This
         // avoids having Flow complain about `translation` possibly being a
         // string even if we checked that on the previous lines.
         this.update(prevProps, editor.translation);
     }
 
-    update(prevProps: InternalProps, translation: Entry) {
+    update(prevProps: InternalProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
 
@@ -184,7 +184,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         return null;
     }
 
-    updateTranslationSelectionWith(content: string, translation: Entry) {
+    updateTranslationSelectionWith(content: string, translation: FluentMessage) {
         let target = this.getFocusedElement();
 
         // If there is no explicitely focused element, find the first input.

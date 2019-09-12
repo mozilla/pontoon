@@ -2,7 +2,7 @@
 
 import flattenPatternElements from './flattenPatternElements';
 
-import type { Entry } from './types';
+import type { FluentMessage } from './types';
 
 
 /**
@@ -11,12 +11,12 @@ import type { Entry } from './types';
  * Takes a Fluent message and returns a copy with flattened value and
  * attributes elements.
  *
- * @param {Entry} message A Fluent message to flatten.
+ * @param {FluentMessage} message A Fluent message to flatten.
  *
- * @returns {Entry} A copy of the given Fluent message with flattened
+ * @returns {FluentMessage} A copy of the given Fluent message with flattened
  * value and attributes elements.
  */
-export default function flattenMessage(message: Entry): Entry {
+export default function flattenMessage(message: FluentMessage): FluentMessage {
     const flatMessage = message.clone();
 
     if (flatMessage.value && flatMessage.value.elements.length > 0) {

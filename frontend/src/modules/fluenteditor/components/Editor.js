@@ -38,7 +38,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     componentDidMount() {
-        this.analyzeEntry();
+        this.analyzeFluentMessage();
     }
 
     componentDidUpdate(prevProps: EditorProps, prevState: State) {
@@ -48,7 +48,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.props.entity !== prevProps.entity
         ) {
             this.setState({ forceSource: false });
-            this.analyzeEntry();
+            this.analyzeFluentMessage();
         }
         // Otherwise if the user switched the editor mode, update the editor
         // content to match the form type.
@@ -71,7 +71,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
      * Analyze the translation to determine the best form to use. Update the
      * content to match that type if needed.
      */
-    analyzeEntry() {
+    analyzeFluentMessage() {
         const props = this.props;
 
         const source = props.activeTranslation || props.entity.original;
