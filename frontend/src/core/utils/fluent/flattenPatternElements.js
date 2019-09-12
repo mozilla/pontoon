@@ -6,11 +6,11 @@ import type { PatternElement } from './types';
 
 
 /**
- * Return a flattened list of Fluent elements.
+ * Return a flattened list of Pattern elements.
  *
- * @param {Array<SyntaxNode>} elements A list of Fluent SyntaxNode elements to flatten.
+ * @param {Array<PatternElement>} elements A list of Pattern elements to flatten.
  *
- * @returns {Array<TextElement|Placeable>} An array containing elements of type
+ * @returns {Array<PatternElement>} An array containing elements of type
  * TextElement (merging serialized values of neighbour simple elements) and
  * Placeable (representing select expressions).
  */
