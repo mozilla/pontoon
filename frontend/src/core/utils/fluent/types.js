@@ -32,11 +32,11 @@ export type FluentAttribute = {
 
 export type FluentAttributes = Array<FluentAttribute>;
 
-export type FluentMessage = {
+export type Entry = {
     type: string,
     value: Pattern,
     attributes: ?FluentAttributes,
-    clone: () => FluentMessage,
+    clone: () => Entry,
     equals: (any) => boolean,
 };
 

@@ -2,14 +2,14 @@
 
 import parser from './parser';
 
-import type { FluentMessage } from './types';
+import type { Entry } from './types';
 
 
 /**
  * Return a reconstructed Fluent message from the original message and some
  * translated content.
  */
-export default function getReconstructedMessage(original: string, translation: string): FluentMessage {
+export default function getReconstructedMessage(original: string, translation: string): Entry {
     const message = parser.parseEntry(original);
     let key = message.id.name;
 

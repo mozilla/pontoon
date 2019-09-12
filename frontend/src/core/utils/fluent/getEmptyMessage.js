@@ -4,7 +4,7 @@ import { Transformer } from 'fluent-syntax';
 
 import flattenMessage from './flattenMessage';
 
-import type { FluentMessage } from './types';
+import type { Entry } from './types';
 
 
 /**
@@ -16,10 +16,10 @@ import type { FluentMessage } from './types';
  * Note that this produces "junk" Fluent messages. Serializing the AST works,
  * but parsing it afterwards will result in a Junk message.
  *
- * @param {FluentMessage} source A Fluent AST to empty.
- * @returns {FluentMessage} An emptied copy of the source.
+ * @param {Entry} source A Fluent AST to empty.
+ * @returns {Entry} An emptied copy of the source.
  */
-export default function getEmptyMessage(source: FluentMessage): FluentMessage {
+export default function getEmptyMessage(source: Entry): Entry {
     class EmptyTransformer extends Transformer {
         visitTextElement(node) {
             node.value = '';
