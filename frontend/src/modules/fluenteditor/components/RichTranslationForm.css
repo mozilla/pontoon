@@ -2,6 +2,7 @@
     height: 100%;
     line-height: 22px;
     padding: 10px;
+    overflow: auto;
 }
 
 .fluent-rich-translation-form table {
@@ -25,6 +26,10 @@
     font-weight: normal;
     margin: 2px 5px 2px 0;
     padding: 0 4px;
+}
+
+.fluent-rich-translation-form table tr.indented > td > label {
+    margin-left: 10px;
 }
 
 .fluent-rich-translation-form table tr > td > textarea {

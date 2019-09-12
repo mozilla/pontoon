@@ -1,9 +1,25 @@
 /* @flow */
 
-export type FluentElement = {
+export type Variant = {
+    default: boolean,
+    key: string,
+    value: FluentValue,
+};
+
+export type SelectExpression = {
+    type: string,
+    variants: Array<Variant>,
+};
+
+export type Placeable = {
+    type: string,
+    expression: SelectExpression,
+}
+
+export type FluentElement = {|
     type: string,
     value: string,
-};
+|} | Placeable;
 
 export type FluentValue = {
     elements: Array<FluentElement>,

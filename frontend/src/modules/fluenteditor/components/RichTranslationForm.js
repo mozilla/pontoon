@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichTranslationForm.css';
 
@@ -312,7 +313,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         this.focusedElementId = event.currentTarget.id;
     }
 
-    renderInput(value: string, index: number, path: MessagePath) {
+    renderInput(value: string, path: MessagePath) {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
@@ -327,26 +328,55 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderElements(
-        elements: Array<FluentElement>,
-        path: MessagePath,
-        label: string,
-    ): React.Node {
+    renderItem(value: string, path: MessagePath, label: string, className: ?string) {
+        return <tr key={ `${path.join('-')}` } className={ className }>
+            <td>
+                <label htmlFor={ `${path.join('-')}` }>{ label }</label>
+            </td>
+            <td>
+                { this.renderInput(value, path) }
+            </td>
+        </tr>;
+    }
+
+    renderElements(elements: Array<FluentElement>, path: MessagePath, label: string): React.Node {
+        let indent = false;
+
         return elements.map((element, index) => {
-            if (element.type !== 'TextElement') {
-                return null;
+            if (
+                element.type === 'Placeable' &&
+                element.expression && element.expression.type === 'SelectExpression'
+            ) {
+                const variantItems = element.expression.variants.map((variant, i) => {
+                    if (typeof(variant.value.elements[0].value) !== 'string') {
+                        return null;
+                    }
+
+                    return this.renderItem(
+                        variant.value.elements[0].value,
+                        [].concat(
+                            path,
+                            [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
+                        ),
+                        serializeVariantKey(variant.key),
+                        indent ? 'indented' : null,
+                    );
+                });
+                indent = false;
+                return variantItems;
             }
+            else {
+                indent = true;
+                if (typeof(element.value) !== 'string') {
+                    return null;
+                }
 
-            const eltPath = [].concat(path, [ index, 'value' ]);
-
-            return <tr key={ `${eltPath.join('-')}` }>
-                <td>
-                    <label htmlFor={ `${eltPath.join('-')}` }>{ label }</label>
-                </td>
-                <td>
-                    { this.renderInput(element.value, index, eltPath) }
-                </td>
-            </tr>;
+                return this.renderItem(
+                    element.value,
+                    [].concat(path, [ index, 'value' ]),
+                    label,
+                );
+            }
         });
     }
 

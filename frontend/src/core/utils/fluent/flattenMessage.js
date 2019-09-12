@@ -19,13 +19,13 @@ import type { FluentMessage } from './types';
 export default function flattenMessage(message: FluentMessage): FluentMessage {
     const flatMessage = message.clone();
 
-    if (flatMessage.value && flatMessage.value.elements.length > 1) {
+    if (flatMessage.value && flatMessage.value.elements.length > 0) {
         flatMessage.value.elements = flattenElements(flatMessage.value.elements);
     }
 
     if (flatMessage.attributes) {
         flatMessage.attributes.forEach(attribute => {
-            if (attribute.value && attribute.value.elements.length > 1) {
+            if (attribute.value && attribute.value.elements.length > 0) {
                 attribute.value.elements = flattenElements(attribute.value.elements);
             }
         });
