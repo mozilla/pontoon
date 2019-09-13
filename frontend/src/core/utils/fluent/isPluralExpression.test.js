@@ -1,14 +1,14 @@
-import isPluralElement from './isPluralElement';
+import isPluralExpression from './isPluralExpression';
 import parser from './parser';
 
 
-describe('isPluralElement', () => {
+describe('isPluralExpression', () => {
     it('returns false for elements that are not select expressions', () => {
         const input = 'my-entry = Hello!';
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeFalsy();
+        expect(isPluralExpression(element.expression)).toBeFalsy();
     });
 
     it('returns true if all variant keys are CLDR plurals', () => {
@@ -21,7 +21,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeTruthy();
+        expect(isPluralExpression(element.expression)).toBeTruthy();
     });
 
     it('returns true if all variant keys are numbers', () => {
@@ -34,7 +34,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeTruthy();
+        expect(isPluralExpression(element.expression)).toBeTruthy();
     });
 
     it('returns true if one variant key is a CLDR plural and the other is a number', () => {
@@ -47,7 +47,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeTruthy();
+        expect(isPluralExpression(element.expression)).toBeTruthy();
     });
 
     it('returns false if one variant key is a CLDR plural and the other is neither a CLDR plural nor a number', () => {
@@ -60,7 +60,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeFalsy();
+        expect(isPluralExpression(element.expression)).toBeFalsy();
     });
 
     it('returns false if at least one variant key is neither a CLDR plural nor a number', () => {
@@ -73,6 +73,6 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toBeFalsy();
+        expect(isPluralExpression(element.expression)).toBeFalsy();
     });
 });

@@ -2,7 +2,7 @@
 
 import { CLDR_PLURALS } from 'core/plural';
 
-import type { PatternElement } from './types';
+import type { SelectExpression } from './types';
 
 
 /**
@@ -10,17 +10,12 @@ import type { PatternElement } from './types';
  *
  * Keys of all variants of such elements are either CLDR plurals or numbers.
  */
-export default function isPluralElement(element: PatternElement): boolean {
-    if (
-        !(
-            element.type === 'Placeable' &&
-            element.expression && element.expression.type === 'SelectExpression'
-        )
-    ) {
+export default function isPluralExpression(expression: SelectExpression): boolean {
+    if (!expression || expression.type !== 'SelectExpression') {
         return false;
     }
 
-    return element.expression.variants.every(variant => {
+    return expression.variants.every(variant => {
         return (
             variant.key.type === 'NumberLiteral' ||
             (variant.key.name && CLDR_PLURALS.indexOf(variant.key.name) !== -1)

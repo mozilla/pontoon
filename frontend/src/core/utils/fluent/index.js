@@ -8,7 +8,7 @@ import getEmptyMessage from './getEmptyMessage';
 import getReconstructedMessage from './getReconstructedMessage';
 import getSimplePreview from './getSimplePreview';
 import getSyntaxType from './getSyntaxType';
-import isPluralElement from './isPluralElement';
+import isPluralExpression from './isPluralExpression';
 import isSimpleElement from './isSimpleElement';
 import isSimpleMessage from './isSimpleMessage';
 import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
@@ -27,7 +27,7 @@ export default {
     getReconstructedMessage,
     getSimplePreview,
     getSyntaxType,
-    isPluralElement,
+    isPluralExpression,
     isSimpleElement,
     isSimpleMessage,
     isSimpleSingleAttributeMessage,

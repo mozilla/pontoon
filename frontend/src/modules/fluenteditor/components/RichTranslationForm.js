@@ -421,7 +421,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                         indent,
                         eIndex,
                         vIndex,
-                        fluent.isPluralElement(element),
+                        fluent.isPluralExpression(element.expression),
                         pluralExamples,
                     );
                 });

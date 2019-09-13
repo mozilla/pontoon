@@ -3,7 +3,7 @@
 import { Transformer } from 'fluent-syntax';
 
 import flattenMessage from './flattenMessage';
-import isPluralElement from './isPluralElement';
+import isPluralExpression from './isPluralExpression';
 
 import { CLDR_PLURALS } from 'core/plural';
 
@@ -80,15 +80,15 @@ export default function getEmptyMessage(
     }
 
     class PluralsTransformer extends Transformer {
-        visitPlaceable(node) {
-            if (isPluralElement(node)) {
-                const variants = node.expression.variants;
+        visitSelectExpression(node) {
+            if (isPluralExpression(node)) {
+                const variants = node.variants;
                 const numericVariants = getNumericVariants(variants);
 
                 const template = getCldrTemplateVariant(variants);
                 const localeVariants = template ? getLocaleVariants(locale, template) : [];
 
-                node.expression.variants = withDefaultVariant(
+                node.variants = withDefaultVariant(
                     numericVariants.concat(localeVariants)
                 );
             }
