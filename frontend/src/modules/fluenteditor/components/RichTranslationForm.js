@@ -14,9 +14,10 @@ import type { EditorProps } from 'core/editor';
 import type {
     FluentAttribute,
     FluentAttributes,
-    PatternElement,
     FluentMessage,
     Pattern,
+    PatternElement,
+    Variant,
 } from 'core/utils/fluent/types';
 
 
@@ -366,46 +367,63 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         </tr>;
     }
 
+    renderVariant(
+        variant: Variant,
+        ePath: MessagePath,
+        indent: boolean,
+        isPluralElement: boolean,
+        eIndex: number,
+        vIndex: number,
+    ): React.Node {
+        const element = variant.value.elements[0];
+        if (element.value === null) {
+            return null;
+        }
+
+        const value = element.value;
+        if (typeof(value) !== 'string') {
+            return null;
+        }
+
+        const label = serializeVariantKey(variant.key);
+        let pluralForm = CLDR_PLURALS.indexOf(label);
+
+        if (!isPluralElement || pluralForm === -1) {
+            pluralForm = null;
+        }
+
+        const vPath = [eIndex, 'expression', 'variants', vIndex, 'value', 'elements', 0, 'value'];
+
+        return this.renderItem(
+            value,
+            [].concat(ePath, vPath),
+            label,
+            indent ? 'indented' : null,
+            pluralForm,
+        );
+    }
+
     renderElements(elements: Array<PatternElement>, path: MessagePath, label: string): React.Node {
         let indent = false;
 
-        return elements.map((element, index) => {
+        return elements.map((element, eIndex) => {
             if (
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
-                const isPluralElement = fluent.isPluralElement(element);
-                const variantItems = element.expression.variants.map((variant, i) => {
-                    if (variant.value.elements[0].value === null) {
-                        return null;
-                    }
-
-                    const value = variant.value.elements[0].value;
-
-                    if (typeof(value) !== 'string') {
-                        return null;
-                    }
-
-                    const label = serializeVariantKey(variant.key);
-                    let pluralForm = CLDR_PLURALS.indexOf(label);
-
-                    if (!isPluralElement || pluralForm === -1) {
-                        pluralForm = null;
-                    }
-
-                    return this.renderItem(
-                        value,
-                        [].concat(
-                            path,
-                            [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
-                        ),
-                        label,
-                        indent ? 'indented' : null,
-                        pluralForm,
+                const variants = element.expression.variants.map((variant, vIndex) => {
+                    return this.renderVariant(
+                        variant,
+                        path,
+                        indent,
+                        fluent.isPluralElement(element),
+                        eIndex,
+                        vIndex,
                     );
                 });
+
                 indent = false;
-                return variantItems;
+                return variants;
             }
             else {
                 indent = true;
@@ -415,7 +433,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
 
                 return this.renderItem(
                     element.value,
-                    [].concat(path, [ index, 'value' ]),
+                    [].concat(path, [ eIndex, 'value' ]),
                     label,
                 );
             }
