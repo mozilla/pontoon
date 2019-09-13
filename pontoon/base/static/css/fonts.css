@@ -44,3 +44,17 @@
   font-weight: 400;
   src: url('../fonts/Ubuntu-RI.ttf')
 }
+
+@font-face {
+  font-family: 'Noto Sans Gurmukhi';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/NotoSansGurmukhi-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'Noto Sans Gurmukhi';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/NotoSansGurmukhi-Bold.ttf')
+}

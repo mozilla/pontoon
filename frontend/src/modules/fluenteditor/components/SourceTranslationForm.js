@@ -131,6 +131,7 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
             cursorStyle: 'ace',
             displayIndentGuides: false,
             fadeFoldWidgets: false,
+            fontFamily: "'Noto Sans Gurmukhi', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace",
             fontSize: 14,
             highlightActiveLine: false,
             highlightSelectedWord: false,
