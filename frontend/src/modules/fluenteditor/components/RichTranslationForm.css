@@ -32,11 +32,7 @@
     margin-left: 10px;
 }
 
-.fluent-rich-translation-form table tr > td > label .example {
-    padding-left: 3px;
-}
-
-.fluent-rich-translation-form table tr > td > label .example .stress {
+.fluent-rich-translation-form table tr > td > label .stress {
     color: #7BC876;
 }
 

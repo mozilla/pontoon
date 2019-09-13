@@ -198,7 +198,7 @@ entitydetails-GenericOriginalString--singular = Singular
 ## Rich editor
 ## Renders a Rich editor for Fluent string editing
 
-fluenteditor-RichTranslationForm--plural-example = (e.g. <stress>{ $example }<stress>)
+fluenteditor-RichTranslationForm--plural-example = <plural>{ $plural }</plural> <example>(e.g. <stress>{ $example }</stress>)</example>
 
 
 ## History
