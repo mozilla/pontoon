@@ -22,8 +22,8 @@ export default function isPluralElement(element: PatternElement): boolean {
 
     return element.expression.variants.every(variant => {
         return (
-            CLDR_PLURALS.indexOf(variant.key.name) !== -1 ||
-            variant.key.type === 'NumberLiteral'
+            variant.key.type === 'NumberLiteral' ||
+            (variant.key.name && CLDR_PLURALS.indexOf(variant.key.name) !== -1)
         );
     });
 }

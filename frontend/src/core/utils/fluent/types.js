@@ -5,9 +5,14 @@ export type Identifier = {
     name: string,
 };
 
+export type NumberLiteral = {
+    type: string,
+    value: string,
+};
+
 export type Variant = {
     default: boolean,
-    key: Identifier,
+    key: NumberLiteral | Identifier,
     value: Pattern,
 };
 
