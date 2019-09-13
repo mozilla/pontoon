@@ -8,7 +8,7 @@ describe('isPluralElement', () => {
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toEqual(false);
+        expect(isPluralElement(element)).toBeFalsy();
     });
 
     it('returns true if all variant keys are CLDR plurals', () => {
@@ -21,7 +21,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toEqual(true);
+        expect(isPluralElement(element)).toBeTruthy();
     });
 
     it('returns true if all variant keys are numbers', () => {
@@ -34,7 +34,7 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toEqual(true);
+        expect(isPluralElement(element)).toBeTruthy();
     });
 
     it('returns true if one variant key is a CLDR plural and the other is a number', () => {
@@ -47,10 +47,23 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toEqual(true);
+        expect(isPluralElement(element)).toBeTruthy();
     });
 
-    it('returns false for if at least one variant key is neither a CLDR plural nor a number', () => {
+    it('returns false if one variant key is a CLDR plural and the other is neither a CLDR plural nor a number', () => {
+        const input = `
+my-entry =
+    { $num ->
+        [one] Hello!
+       *[variant] World!
+    }`;
+        const message = parser.parseEntry(input);
+        const element = message.value.elements[0];
+
+        expect(isPluralElement(element)).toBeFalsy();
+    });
+
+    it('returns false if at least one variant key is neither a CLDR plural nor a number', () => {
         const input = `
 my-entry =
     { $num ->
@@ -60,6 +73,6 @@ my-entry =
         const message = parser.parseEntry(input);
         const element = message.value.elements[0];
 
-        expect(isPluralElement(element)).toEqual(false);
+        expect(isPluralElement(element)).toBeFalsy();
     });
 });
