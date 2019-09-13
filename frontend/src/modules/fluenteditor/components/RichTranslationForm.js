@@ -332,10 +332,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderPluralExample(label: string, pluralForm: number) {
-        const examples = locale.getPluralExamples(this.props.locale);
-        const example = examples[pluralForm];
-
+    renderPluralExample(label: string, example: ?string) {
         return <Localized
             id="fluenteditor-RichTranslationForm--plural-example"
             $plural={ label }
@@ -353,13 +350,13 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         path: MessagePath,
         label: string,
         className: ?string,
-        pluralForm: ?number,
+        example: ?string,
     ) {
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
-                    { pluralForm ?
-                        this.renderPluralExample(label, pluralForm)
+                    { example !== null ?
+                        this.renderPluralExample(label, example)
                         :
                         <span>{ label }</span>
                     }
@@ -375,9 +372,10 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         variant: Variant,
         ePath: MessagePath,
         indent: boolean,
-        isPluralElement: boolean,
         eIndex: number,
         vIndex: number,
+        isPluralElement: boolean,
+        pluralExamples: any,
     ): React.Node {
         const element = variant.value.elements[0];
         if (element.value === null) {
@@ -403,7 +401,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             [].concat(ePath, vPath),
             label,
             indent ? 'indented' : null,
-            pluralForm,
+            pluralExamples[pluralForm],
         );
     }
 
@@ -415,14 +413,16 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
+                const pluralExamples = locale.getPluralExamples(this.props.locale);
                 const variants = element.expression.variants.map((variant, vIndex) => {
                     return this.renderVariant(
                         variant,
                         path,
                         indent,
-                        fluent.isPluralElement(element),
                         eIndex,
                         vIndex,
+                        fluent.isPluralElement(element),
+                        pluralExamples,
                     );
                 });
 
