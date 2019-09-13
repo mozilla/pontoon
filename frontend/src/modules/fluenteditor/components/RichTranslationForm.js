@@ -1,10 +1,13 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichTranslationForm.css';
 
+import * as locale from 'core/locale';
+import { CLDR_PLURALS } from 'core/plural';
 import { fluent, withActionsDisabled } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
@@ -53,7 +56,7 @@ function getUpdatedTranslation(
 
 
 /**
- * Render a Rich editor for Fluent string editting.
+ * Render a Rich editor for Fluent string editing.
  */
 export class RichTranslationFormBase extends React.Component<InternalProps> {
     // A React ref to the currently focused input, if any.
@@ -328,10 +331,34 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderItem(value: string, path: MessagePath, label: string, className: ?string) {
+    renderPluralExample(pluralForm: number) {
+        const examples = locale.getPluralExamples(this.props.locale);
+        const example = examples[pluralForm];
+
+        return <Localized
+            id="fluenteditor-RichTranslationForm--plural-example"
+            $example={ example }
+            stress={ <span className="stress" /> }
+        >
+            <span className="example">
+                { '(e.g. <stress>{ $example }</stress>)' }
+            </span>
+        </Localized>
+    }
+
+    renderItem(
+        value: string,
+        path: MessagePath,
+        label: string,
+        className: ?string,
+        pluralForm: ?number,
+    ) {
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
-                <label htmlFor={ `${path.join('-')}` }>{ label }</label>
+                <label htmlFor={ `${path.join('-')}` }>
+                    <span>{ label }</span>
+                    { pluralForm ? this.renderPluralExample(pluralForm) : null }
+                </label>
             </td>
             <td>
                 { this.renderInput(value, path) }
@@ -347,19 +374,34 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
+                const isPluralElement = fluent.isPluralElement(element);
                 const variantItems = element.expression.variants.map((variant, i) => {
-                    if (typeof(variant.value.elements[0].value) !== 'string') {
+                    if (variant.value.elements[0].value === null) {
                         return null;
                     }
 
+                    const value = variant.value.elements[0].value;
+
+                    if (typeof(value) !== 'string') {
+                        return null;
+                    }
+
+                    const label = serializeVariantKey(variant.key);
+                    let pluralForm = CLDR_PLURALS.indexOf(label);
+
+                    if (!isPluralElement || pluralForm === -1) {
+                        pluralForm = null;
+                    }
+
                     return this.renderItem(
-                        variant.value.elements[0].value,
+                        value,
                         [].concat(
                             path,
                             [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
                         ),
-                        serializeVariantKey(variant.key),
+                        label,
                         indent ? 'indented' : null,
+                        pluralForm,
                     );
                 });
                 indent = false;

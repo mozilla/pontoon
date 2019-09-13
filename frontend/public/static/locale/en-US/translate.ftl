@@ -195,6 +195,12 @@ entitydetails-GenericOriginalString--plural = Plural
 entitydetails-GenericOriginalString--singular = Singular
 
 
+## Rich editor
+## Renders a Rich editor for Fluent string editing
+
+fluenteditor-RichTranslationForm--plural-example = (e.g. <stress>{ $example }<stress>)
+
+
 ## History
 ## Shows a list of translations for a specific entity
 
