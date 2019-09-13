@@ -332,16 +332,16 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderPluralExample(label: string, example: ?string) {
+    renderPluralExample(label: string, example: ?number) {
         return <Localized
             id="fluenteditor-RichTranslationForm--plural-example"
-            $plural={ label }
             $example={ example }
-            plural={ <span /> }
-            example={ <span /> }
+            $plural={ label }
             stress={ <span className="stress" /> }
         >
-            { '<plural>{ $plural }</plural> <example>(e.g. <stress>{ $example }</stress>)</example>' }
+            <span className="example">
+                { '{ $plural } (e.g. <stress>{ $example }</stress>)' }
+            </span>
         </Localized>
     }
 
@@ -350,12 +350,12 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         path: MessagePath,
         label: string,
         className: ?string,
-        example: ?string,
+        example: ?number,
     ) {
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
-                    { example !== null ?
+                    { typeof(example) === 'number' ?
                         this.renderPluralExample(label, example)
                         :
                         <span>{ label }</span>
