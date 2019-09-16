@@ -374,8 +374,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         indent: boolean,
         eIndex: number,
         vIndex: number,
-        isPluralElement: boolean,
-        pluralExamples: any,
+        isPluralExpression: boolean,
     ): React.Node {
         const element = variant.value.elements[0];
         if (element.value === null) {
@@ -390,8 +389,14 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         const label = serializeVariantKey(variant.key);
         let pluralForm = CLDR_PLURALS.indexOf(label);
 
-        if (!isPluralElement || pluralForm === -1) {
+        if (!isPluralExpression || pluralForm === -1) {
             pluralForm = null;
+        }
+
+        let example = null;
+        if (isPluralExpression && pluralForm !== null) {
+            const pluralExamples = locale.getPluralExamples(this.props.locale);
+            example = pluralExamples[pluralForm];
         }
 
         const vPath = [eIndex, 'expression', 'variants', vIndex, 'value', 'elements', 0, 'value'];
@@ -401,7 +406,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             [].concat(ePath, vPath),
             label,
             indent ? 'indented' : null,
-            pluralExamples[pluralForm],
+            example,
         );
     }
 
@@ -413,7 +418,6 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
-                const pluralExamples = locale.getPluralExamples(this.props.locale);
                 const variants = element.expression.variants.map((variant, vIndex) => {
                     return this.renderVariant(
                         variant,
@@ -422,7 +426,6 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                         eIndex,
                         vIndex,
                         fluent.isPluralExpression(element.expression),
-                        pluralExamples,
                     );
                 });
 
