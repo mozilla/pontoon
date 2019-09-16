@@ -77,9 +77,8 @@ export default function getEmptyMessage(
             node.value = '';
             return node;
         }
-    }
 
-    class PluralsTransformer extends Transformer {
+        // Create default locale plural variants
         visitSelectExpression(node) {
             if (isPluralExpression(node)) {
                 const variants = node.variants;
@@ -93,7 +92,7 @@ export default function getEmptyMessage(
                 );
             }
 
-            return node;
+            return this.genericVisit(node);
         }
     }
 
@@ -103,10 +102,6 @@ export default function getEmptyMessage(
     const flatMessage = flattenMessage(message);
 
     // Empty TextElements
-    const empty = new EmptyTransformer();
-    const emptyMessage = empty.visit(flatMessage);
-
-    // Create default locale plural variants
-    const plurals = new PluralsTransformer();
-    return plurals.visit(emptyMessage);
+    const transformer = new EmptyTransformer();
+    return transformer.visit(flatMessage);
 }
