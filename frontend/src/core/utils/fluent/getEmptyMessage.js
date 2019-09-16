@@ -57,10 +57,13 @@ function withDefaultVariant(variants) {
 }
 
 /**
- * Return a copy of a given Fluent AST with all its text elements empty.
+ * Return a copy of a given Fluent AST with all its simple elements empty and
+ * plural variant keys set to given locale's CLDR plural categories. Such
+ * messages are used to render the Rich Editor for untranslated strings.
  *
- * This makes a copy of the given Fluent message, then walks the copy and
- * replaces the content of each TextElement it finds with an empty string.
+ * The algorithm makes a copy of the given Fluent message, flattens it, and
+ * then walks it to make the required changes. The default variants are not
+ * preserved.
  *
  * Note that this produces "junk" Fluent messages. Serializing the AST works,
  * but parsing it afterwards will result in a Junk message.
@@ -73,12 +76,13 @@ export default function getEmptyMessage(
     locale: Locale,
 ): FluentMessage {
     class EmptyTransformer extends Transformer {
+        // Empty Text Elements
         visitTextElement(node) {
             node.value = '';
             return node;
         }
 
-        // Create default locale plural variants
+        // Create empty locale plural variants
         visitSelectExpression(node) {
             if (isPluralExpression(node)) {
                 const variants = node.variants;
