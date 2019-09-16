@@ -3,6 +3,20 @@
 import type { Locale } from './actions';
 
 
+/**
+ * Return a map of given locale's cldrPlurals and their plural examples.
+ *
+ * For example, for Slovenian (sl) the function returns the following:
+ *     {
+ *          1: 1,
+ *          2: 2,
+ *          3: 3,
+ *          5: 0,
+ *     }
+ *
+ * @param {Locale} locale A Locale object.
+ * @returns {Object} A map of locale's cldrPlurals and their plural examples.
+ */
 export default function getPluralExamples(locale: Locale) {
     const pluralsCount = locale.cldrPlurals.length;
     const examples = {};
