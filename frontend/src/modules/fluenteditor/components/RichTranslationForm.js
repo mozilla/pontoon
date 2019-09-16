@@ -332,7 +332,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderPluralExample(label: string, example: ?number) {
+    renderLabel(label: string, example: number) {
         return <Localized
             id="fluenteditor-RichTranslationForm--plural-example"
             $example={ example }
@@ -356,7 +356,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
                     { typeof(example) === 'number' ?
-                        this.renderPluralExample(label, example)
+                        this.renderLabel(label, example)
                         :
                         <span>{ label }</span>
                     }
