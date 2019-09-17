@@ -413,9 +413,10 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
-                const pluralExamples = fluent.isPluralExpression(element.expression) ?
-                    locale.getPluralExamples(this.props.locale) :
-                    null;
+                let pluralExamples = null;
+                if (fluent.isPluralExpression(element.expression)) {
+                    pluralExamples = locale.getPluralExamples(this.props.locale);
+                }
                 const variants = element.expression.variants.map((variant, vIndex) => {
                     return this.renderVariant(
                         variant,
