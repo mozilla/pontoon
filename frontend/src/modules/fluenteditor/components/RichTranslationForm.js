@@ -390,7 +390,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         let example = null;
         const pluralForm = CLDR_PLURALS.indexOf(label);
 
-        if (pluralExamples || pluralForm >= 0) {
+        if (pluralExamples && pluralForm >= 0) {
             example = pluralExamples[pluralForm];
         }
 
