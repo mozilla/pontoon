@@ -2,25 +2,16 @@
 
 import * as React from 'react';
 
-import { withActionsDisabled } from 'core/utils';
-
 import type { EditorProps } from 'core/editor';
-
-
-type InternalProps = {|
-    ...EditorProps,
-    isActionDisabled: boolean,
-    disableAction: () => void,
-|};
 
 
 /*
  * Render a simple textarea to edit a translation.
  */
-export class GenericTranslationFormBase extends React.Component<InternalProps> {
+export default class GenericTranslationForm extends React.Component<EditorProps> {
     textarea: { current: any };
 
-    constructor(props: InternalProps) {
+    constructor(props: EditorProps) {
         super(props);
 
         this.textarea = React.createRef();
@@ -30,7 +21,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         this.focusInput(true);
     }
 
-    componentDidUpdate(prevProps: InternalProps) {
+    componentDidUpdate(prevProps: EditorProps) {
         // Unused by Generic Editor - reset to default value.
         if (this.props.editor.initialTranslation) {
             return this.props.setInitialTranslation('');
@@ -118,80 +109,6 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         this.props.updateTranslation(event.currentTarget.value);
     }
 
-    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        const key = event.keyCode;
-
-        let handledEvent = false;
-
-        // On Enter:
-        //   - If unsaved changes popup is shown, leave anyway.
-        //   - If failed checks popup is shown after approving a translation, approve it anyway.
-        //   - In other cases, send current translation.
-        if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-            if (this.props.isActionDisabled) {
-                event.preventDefault();
-                return;
-            }
-            this.props.disableAction();
-
-            handledEvent = true;
-
-            const errors = this.props.editor.errors;
-            const warnings = this.props.editor.warnings;
-            const source = this.props.editor.source;
-            const ignoreWarnings = !!(errors.length || warnings.length);
-
-            // Leave anyway
-            if (this.props.unsavedchanges.shown) {
-                this.props.ignoreUnsavedChanges();
-            }
-            // Approve anyway
-            else if (typeof(source) === 'number') {
-                this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
-            }
-            // Send translation
-            else {
-                this.props.sendTranslation(ignoreWarnings);
-            }
-        }
-
-        // On Esc, close unsaved changes and failed checks popups if open.
-        if (key === 27) {
-            handledEvent = true;
-
-            const errors = this.props.editor.errors;
-            const warnings = this.props.editor.warnings;
-
-            // Close unsaved changes popup
-            if (this.props.unsavedchanges.shown) {
-                this.props.hideUnsavedChanges();
-            }
-            // Close failed checks popup
-            else if (errors.length || warnings.length) {
-                this.props.resetFailedChecks();
-            }
-        }
-
-        // On Ctrl + Shift + C, copy the original translation.
-        if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
-            this.props.copyOriginalIntoEditor();
-        }
-
-        // On Ctrl + Shift + Backspace, clear the content.
-        if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
-            this.props.updateTranslation('', true);
-        }
-
-        // On Tab, walk through current helper tab content and copy it.
-        // TODO
-
-        if (handledEvent) {
-            event.preventDefault();
-        }
-    }
-
     render() {
         return <textarea
             placeholder={
@@ -201,7 +118,7 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.editor.translation }
-            onKeyDown={ this.handleShortcuts }
+            onKeyDown={ this.props.handleShortcuts }
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }
@@ -209,6 +126,3 @@ export class GenericTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 }
-
-
-export default withActionsDisabled(GenericTranslationFormBase);

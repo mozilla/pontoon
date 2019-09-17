@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import { createReduxStore } from 'test/store';
 
 import * as user from 'core/user';
+import * as history from 'modules/history';
+import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions } from '..';
 
@@ -37,6 +39,7 @@ class FakeEditor extends React.Component {
     render() {
         return <div>
             <p>Hello</p>
+            <textarea onKeyDown={ this.props.handleShortcuts } />
             <button className='clear' onClick={ this.props.clearEditor } />
             <button className='copy' onClick={ this.props.copyOriginalIntoEditor } />
             <button className='save' onClick={ this.props.sendTranslation } />
@@ -51,8 +54,18 @@ const FakeConnectedEditor = connectedEditor(FakeEditor);
 
 function createEditorBase({
     pluralForm = -1,
+    errors = [],
+    warnings = [],
+    source = '',
+    unsavedchanges = { shown: false },
 } = {}) {
     const initialState = {
+        editor: {
+            errors,
+            warnings,
+            source,
+            translation: '',
+        },
         entities: {
             entities: ENTITIES,
         },
@@ -68,6 +81,7 @@ function createEditorBase({
         plural: {
             pluralForm,
         },
+        unsavedchanges,
     };
     const store = createReduxStore(initialState);
     return mount(<FakeConnectedEditor
@@ -78,21 +92,33 @@ function createEditorBase({
 
 describe('connectedEditor', () => {
     beforeAll(() => {
+        sinon.stub(actions, 'resetFailedChecks').returns({ type: 'whatever' });
         sinon.stub(actions, 'sendTranslation').returns({ type: 'whatever' });
         sinon.spy(actions, 'update');
         sinon.stub(user.actions, 'saveSetting').returns({ type: 'whatever' });
+        sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever' });
+        sinon.stub(unsavedchanges.actions, 'hide').returns({ type: 'whatever' });
+        sinon.stub(unsavedchanges.actions, 'ignore').returns({ type: 'whatever' });
     });
 
     afterEach(() => {
+        actions.resetFailedChecks.resetHistory();
         actions.sendTranslation.resetHistory();
         actions.update.resetHistory();
         user.actions.saveSetting.resetHistory();
+        history.actions.updateStatus.resetHistory();
+        unsavedchanges.actions.hide.resetHistory();
+        unsavedchanges.actions.ignore.resetHistory();
     });
 
     afterAll(() => {
+        actions.resetFailedChecks.restore();
         actions.sendTranslation.restore();
         actions.update.restore();
         user.actions.saveSetting.restore();
+        history.actions.updateStatus.restore();
+        unsavedchanges.actions.hide.restore();
+        unsavedchanges.actions.ignore.restore();
     });
 
     it('renders correctly', () => {
@@ -136,5 +162,124 @@ describe('connectedEditor', () => {
 
         wrapper.find('.settings').simulate('click');
         expect(user.actions.saveSetting.calledOnce).toBeTruthy();
+    });
+
+    it('sends the translation on Enter', () => {
+        const wrapper = createEditorBase();
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(actions.sendTranslation.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(actions.sendTranslation.called).toBeTruthy();
+    });
+
+    it('approves the translation on Enter if failed checks triggered by approval', () => {
+        const wrapper = createEditorBase({
+            errors: ['error1'],
+            warnings: ['warning1'],
+            source: 1,
+        });
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(history.actions.updateStatus.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(history.actions.updateStatus.called).toBeTruthy();
+    });
+
+    it('ignores unsaved changes on Enter if unsaved changes popup is shown', () => {
+        const wrapper = createEditorBase({
+            unsavedchanges: { shown: true },
+        });
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(unsavedchanges.actions.ignore.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(unsavedchanges.actions.ignore.called).toBeTruthy();
+    });
+
+    it('closes unsaved changes popup if open on Esc', () => {
+        const wrapper = createEditorBase({
+            unsavedchanges: { shown: true },
+        });
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 27,  // Esc
+        };
+
+        expect(unsavedchanges.actions.hide.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(unsavedchanges.actions.hide.called).toBeTruthy();
+    });
+
+    it('closes failed checks popup if open on Esc', () => {
+        const wrapper = createEditorBase({
+            errors: ['error1'],
+            warnings: ['warning1'],
+        });
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 27,  // Esc
+        };
+
+        expect(actions.resetFailedChecks.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(actions.resetFailedChecks.called).toBeTruthy();
+    });
+
+    it('copies the original into the Editor on Ctrl + Shift + C', () => {
+        const wrapper = createEditorBase();
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 67,  // C
+            altKey: false,
+            ctrlKey: true,
+            shiftKey: true,
+        };
+
+        expect(actions.update.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(actions.update.called).toBeTruthy();
+        expect(actions.update.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
+    });
+
+    it('clears the translation on Ctrl + Shift + Backspace', () => {
+        const wrapper = createEditorBase();
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 8,  // Backspace
+            altKey: false,
+            ctrlKey: true,
+            shiftKey: true,
+        };
+
+        expect(actions.update.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(actions.update.called).toBeTruthy();
+        expect(actions.update.calledWith('')).toBeTruthy();
     });
 });

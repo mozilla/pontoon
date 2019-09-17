@@ -45,6 +45,11 @@ export default class SourceTranslationForm extends React.Component<EditorProps> 
 
     componentDidMount() {
         this.focusInput(true);
+
+        if (this.aceEditor.current) {
+            const textInput = this.aceEditor.current.editor.textInput.getElement();
+            textInput.onkeydown = this.props.handleShortcuts;
+        }
     }
 
     componentDidUpdate(prevProps: EditorProps) {
