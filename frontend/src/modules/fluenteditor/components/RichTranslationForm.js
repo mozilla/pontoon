@@ -374,7 +374,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         indent: boolean,
         eIndex: number,
         vIndex: number,
-        isPluralExpression: boolean,
+        pluralExamples: any,
     ): React.Node {
         const element = variant.value.elements[0];
         if (element.value === null) {
@@ -387,15 +387,10 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         }
 
         const label = serializeVariantKey(variant.key);
-        let pluralForm = CLDR_PLURALS.indexOf(label);
-
-        if (!isPluralExpression || pluralForm === -1) {
-            pluralForm = null;
-        }
-
         let example = null;
-        if (isPluralExpression && pluralForm !== null) {
-            const pluralExamples = locale.getPluralExamples(this.props.locale);
+        let pluralForm;
+
+        if (pluralExamples || (pluralForm = CLDR_PLURALS.indexOf(label)) >= 0) {
             example = pluralExamples[pluralForm];
         }
 
@@ -418,6 +413,9 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
+                const pluralExamples = fluent.isPluralExpression(element.expression) ?
+                    locale.getPluralExamples(this.props.locale) :
+                    null;
                 const variants = element.expression.variants.map((variant, vIndex) => {
                     return this.renderVariant(
                         variant,
@@ -425,7 +423,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
                         indent,
                         eIndex,
                         vIndex,
-                        fluent.isPluralExpression(element.expression),
+                        pluralExamples,
                     );
                 });
 
