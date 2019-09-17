@@ -17,6 +17,8 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { NAME, actions } from '..';
 
+import { withActionsDisabled } from 'core/utils';
+
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -46,6 +48,8 @@ type Props = {|
 type InternalProps = {|
     ...Props,
     dispatch: Function,
+    isActionDisabled: boolean,
+    disableAction: () => void,
 |};
 
 export type EditorProps = {|
@@ -60,6 +64,7 @@ export type EditorProps = {|
     user: UserState,
     clearEditor: () => void,
     copyOriginalIntoEditor: () => void,
+    handleShortcuts: (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => void,
     resetFailedChecks: () => void,
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
@@ -114,6 +119,80 @@ export default function connectedEditor<Object>(
             }
 
             this.props.dispatch(unsavedchanges.actions.update(translation, initial));
+        }
+
+        handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+            const key = event.keyCode;
+
+            let handledEvent = false;
+
+            // On Enter:
+            //   - If unsaved changes popup is shown, leave anyway.
+            //   - If failed checks popup is shown after approving a translation, approve it anyway.
+            //   - In other cases, send current translation.
+            if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                if (this.props.isActionDisabled) {
+                    event.preventDefault();
+                    return;
+                }
+                this.props.disableAction();
+
+                handledEvent = true;
+
+                const errors = this.props.editor.errors;
+                const warnings = this.props.editor.warnings;
+                const source = this.props.editor.source;
+                const ignoreWarnings = !!(errors.length || warnings.length);
+
+                // Leave anyway
+                if (this.props.unsavedchanges.shown) {
+                    this.ignoreUnsavedChanges();
+                }
+                // Approve anyway
+                else if (typeof(source) === 'number') {
+                    this.updateTranslationStatus(source, 'approve', ignoreWarnings);
+                }
+                // Send translation
+                else {
+                    this.sendTranslation(ignoreWarnings);
+                }
+            }
+
+            // On Esc, close unsaved changes and failed checks popups if open.
+            if (key === 27) {
+                handledEvent = true;
+
+                const errors = this.props.editor.errors;
+                const warnings = this.props.editor.warnings;
+
+                // Close unsaved changes popup
+                if (this.props.unsavedchanges.shown) {
+                    this.hideUnsavedChanges();
+                }
+                // Close failed checks popup
+                else if (errors.length || warnings.length) {
+                    this.resetFailedChecks();
+                }
+            }
+
+            // On Ctrl + Shift + C, copy the original translation.
+            if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
+                handledEvent = true;
+                this.copyOriginalIntoEditor();
+            }
+
+            // On Ctrl + Shift + Backspace, clear the content.
+            if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
+                handledEvent = true;
+                this.clearEditor();
+            }
+
+            // On Tab, walk through current helper tab content and copy it.
+            // TODO
+
+            if (handledEvent) {
+                event.preventDefault();
+            }
         }
 
         copyOriginalIntoEditor = () => {
@@ -224,6 +303,7 @@ export default function connectedEditor<Object>(
                     user={ this.props.user }
                     clearEditor={ this.clearEditor }
                     copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
+                    handleShortcuts={ this.handleShortcuts }
                     resetFailedChecks={ this.resetFailedChecks }
                     resetSelectionContent={ this.resetSelectionContent }
                     sendTranslation={ this.sendTranslation }
@@ -257,5 +337,5 @@ export default function connectedEditor<Object>(
         };
     };
 
-    return connect(mapStateToProps)(EditorBase);
+    return withActionsDisabled(connect(mapStateToProps)(EditorBase));
 }
