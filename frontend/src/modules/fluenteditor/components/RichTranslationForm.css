@@ -32,6 +32,10 @@
     margin-left: 10px;
 }
 
+.fluent-rich-translation-form table tr > td > label .stress {
+    color: #7BC876;
+}
+
 .fluent-rich-translation-form table tr > td > textarea {
     min-height: 0;
     height: 24px;

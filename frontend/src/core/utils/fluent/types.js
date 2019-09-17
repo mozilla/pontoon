@@ -1,8 +1,18 @@
 /* @flow */
 
+export type Identifier = {
+    type: string,
+    name: string,
+};
+
+export type NumberLiteral = {
+    type: string,
+    value: string,
+};
+
 export type Variant = {
     default: boolean,
-    key: string,
+    key: NumberLiteral | Identifier,
     value: Pattern,
 };
 

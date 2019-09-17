@@ -89,7 +89,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
         }
         else if (syntaxType === 'rich') {
             if (!props.activeTranslation) {
-                translationContent = fluent.getEmptyMessage(message);
+                translationContent = fluent.getEmptyMessage(message, props.locale);
             }
             else {
                 translationContent = message;
@@ -113,6 +113,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             translation,
             props.entity.original,
             props.activeTranslation,
+            props.locale,
         );
 
         props.updateTranslation(translationContent, true);
