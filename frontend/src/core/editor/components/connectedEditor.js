@@ -64,7 +64,12 @@ export type EditorProps = {|
     user: UserState,
     clearEditor: () => void,
     copyOriginalIntoEditor: () => void,
-    handleShortcuts: (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => void,
+    handleShortcuts: (
+        event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
+        sendTranslation: ?(ignoreWarnings?: boolean, translation?: string) => void,
+        clearEditor: ?() => void,
+        copyOriginalIntoEditor: ?() => void,
+    ) => void,
     resetFailedChecks: () => void,
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
@@ -121,7 +126,16 @@ export default function connectedEditor<Object>(
             this.props.dispatch(unsavedchanges.actions.update(translation, initial));
         }
 
-        handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+        handleShortcuts = (
+            event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
+            sendTranslation: ?(ignoreWarnings?: boolean, translation?: string) => void,
+            clearEditor: ?() => void,
+            copyOriginalIntoEditor: ?() => void,
+        ) => {
+            sendTranslation = sendTranslation || this.sendTranslation;
+            clearEditor = clearEditor || this.clearEditor;
+            copyOriginalIntoEditor = copyOriginalIntoEditor || this.copyOriginalIntoEditor;
+
             const key = event.keyCode;
 
             let handledEvent = false;
@@ -154,7 +168,7 @@ export default function connectedEditor<Object>(
                 }
                 // Send translation
                 else {
-                    this.sendTranslation(ignoreWarnings);
+                    sendTranslation(ignoreWarnings);
                 }
             }
 
@@ -178,13 +192,13 @@ export default function connectedEditor<Object>(
             // On Ctrl + Shift + C, copy the original translation.
             if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
                 handledEvent = true;
-                this.copyOriginalIntoEditor();
+                copyOriginalIntoEditor();
             }
 
             // On Ctrl + Shift + Backspace, clear the content.
             if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
                 handledEvent = true;
-                this.clearEditor();
+                clearEditor();
             }
 
             // On Tab, walk through current helper tab content and copy it.
