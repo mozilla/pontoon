@@ -23,7 +23,6 @@
     "lodash.flattendeep": "4.4.0",
     "lodash.isequal": "4.5.0",
     "react": "16.8.6",
-    "react-ace": "6.4.0",
     "react-content-marker": "1.1.0",
     "react-dom": "16.8.6",
     "react-infinite-scroller": "1.2.4",

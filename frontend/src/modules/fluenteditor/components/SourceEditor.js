@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import * as editor from 'core/editor';
 
-import SourceTranslationForm from './SourceTranslationForm';
+import { GenericTranslationForm } from 'modules/genericeditor';
 
 import type { EditorProps } from 'core/editor';
 
@@ -26,7 +26,7 @@ export default class SourceEditor extends React.Component<Props> {
         const { ftlSwitch, ...props } = this.props;
 
         return <>
-            <SourceTranslationForm { ...props } />
+            <GenericTranslationForm { ...props } />
             <editor.EditorMenu
                 { ...props }
                 firstItemHook={ ftlSwitch }
