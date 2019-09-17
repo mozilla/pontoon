@@ -49,11 +49,12 @@ export default class RichEditor extends React.Component<Props> {
     }
 
     clearEditor = () => {
-        const { entity } = this.props;
+        const { entity, locale } = this.props;
         if (entity) {
             this.props.updateTranslation(
                 fluent.getEmptyMessage(
-                    fluent.parser.parseEntry(entity.original)
+                    fluent.parser.parseEntry(entity.original),
+                    locale,
                 ),
                 true,
             );

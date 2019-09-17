@@ -11,6 +11,7 @@ const DEFAULT_LOCALE = {
     direction: 'ltr',
     code: 'kg',
     script: 'Latin',
+    cldrPlurals: [1, 5],
 };
 
 const TRANSLATION = fluent.parser.parseEntry(
@@ -36,6 +37,60 @@ describe('<RichTranslationFormBase>', () => {
         expect(wrapper.find('textarea').at(0).html()).toContain('Value');
         expect(wrapper.find('textarea').at(1).html()).toContain('And');
         expect(wrapper.find('textarea').at(2).html()).toContain('Attributes');
+    });
+
+    it('renders select expression properly', () => {
+        const input = `
+my-entry =
+    { PLATFORM() ->
+        [variant] Hello!
+       *[another-variant] World!
+    }`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationFormBase
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('textarea')).toHaveLength(2);
+        expect(wrapper.find('label').at(0).html()).toContain('variant');
+        expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
+        expect(wrapper.find('label').at(1).html()).toContain('another-variant');
+        expect(wrapper.find('textarea').at(1).html()).toContain('World!');
+    });
+
+    it('renders plural string properly', () => {
+        const input = `
+my-entry =
+    { $num ->
+        [one] Hello!
+       *[other] World!
+    }`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationFormBase
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('textarea')).toHaveLength(2);
+        expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
+        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$plural')).toEqual('one');
+        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$example')).toEqual(1);
+        expect(wrapper.find('textarea').at(1).html()).toContain('World!');
+        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$plural')).toEqual('other');
+        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$example')).toEqual(2);
     });
 
     it('calls the updateTranslation function on mount and change', () => {

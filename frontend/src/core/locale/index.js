@@ -1,6 +1,7 @@
 /* @flow */
 
 export { default as actions } from './actions';
+export { default as getPluralExamples } from './getPluralExamples';
 export { default as reducer } from './reducer';
 
 export type { Locale, Localization } from './actions';

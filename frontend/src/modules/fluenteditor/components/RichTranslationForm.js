@@ -1,19 +1,23 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 import { serializeVariantKey } from 'fluent-syntax';
 
 import './RichTranslationForm.css';
 
+import * as locale from 'core/locale';
+import { CLDR_PLURALS } from 'core/plural';
 import { fluent, withActionsDisabled } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
 import type {
     FluentAttribute,
     FluentAttributes,
-    PatternElement,
     FluentMessage,
     Pattern,
+    PatternElement,
+    Variant,
 } from 'core/utils/fluent/types';
 
 
@@ -53,7 +57,7 @@ function getUpdatedTranslation(
 
 
 /**
- * Render a Rich editor for Fluent string editting.
+ * Render a Rich editor for Fluent string editing.
  */
 export class RichTranslationFormBase extends React.Component<InternalProps> {
     // A React ref to the currently focused input, if any.
@@ -328,10 +332,35 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         />;
     }
 
-    renderItem(value: string, path: MessagePath, label: string, className: ?string) {
+    renderLabel(label: string, example: number) {
+        return <Localized
+            id="fluenteditor-RichTranslationForm--plural-example"
+            $example={ example }
+            $plural={ label }
+            stress={ <span className="stress" /> }
+        >
+            <span className="example">
+                { '{ $plural } (e.g. <stress>{ $example }</stress>)' }
+            </span>
+        </Localized>
+    }
+
+    renderItem(
+        value: string,
+        path: MessagePath,
+        label: string,
+        className: ?string,
+        example: ?number,
+    ) {
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
-                <label htmlFor={ `${path.join('-')}` }>{ label }</label>
+                <label htmlFor={ `${path.join('-')}` }>
+                    { typeof(example) === 'number' ?
+                        this.renderLabel(label, example)
+                        :
+                        <span>{ label }</span>
+                    }
+                </label>
             </td>
             <td>
                 { this.renderInput(value, path) }
@@ -339,31 +368,68 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         </tr>;
     }
 
+    renderVariant(
+        variant: Variant,
+        ePath: MessagePath,
+        indent: boolean,
+        eIndex: number,
+        vIndex: number,
+        pluralExamples: any,
+    ): React.Node {
+        const element = variant.value.elements[0];
+        if (element.value === null) {
+            return null;
+        }
+
+        const value = element.value;
+        if (typeof(value) !== 'string') {
+            return null;
+        }
+
+        const label = serializeVariantKey(variant.key);
+        let example = null;
+        const pluralForm = CLDR_PLURALS.indexOf(label);
+
+        if (pluralExamples && pluralForm >= 0) {
+            example = pluralExamples[pluralForm];
+        }
+
+        const vPath = [eIndex, 'expression', 'variants', vIndex, 'value', 'elements', 0, 'value'];
+
+        return this.renderItem(
+            value,
+            [].concat(ePath, vPath),
+            label,
+            indent ? 'indented' : null,
+            example,
+        );
+    }
+
     renderElements(elements: Array<PatternElement>, path: MessagePath, label: string): React.Node {
         let indent = false;
 
-        return elements.map((element, index) => {
+        return elements.map((element, eIndex) => {
             if (
                 element.type === 'Placeable' &&
                 element.expression && element.expression.type === 'SelectExpression'
             ) {
-                const variantItems = element.expression.variants.map((variant, i) => {
-                    if (typeof(variant.value.elements[0].value) !== 'string') {
-                        return null;
-                    }
-
-                    return this.renderItem(
-                        variant.value.elements[0].value,
-                        [].concat(
-                            path,
-                            [ index, 'expression', 'variants', i, 'value', 'elements', 0, 'value' ]
-                        ),
-                        serializeVariantKey(variant.key),
-                        indent ? 'indented' : null,
+                let pluralExamples = null;
+                if (fluent.isPluralExpression(element.expression)) {
+                    pluralExamples = locale.getPluralExamples(this.props.locale);
+                }
+                const variants = element.expression.variants.map((variant, vIndex) => {
+                    return this.renderVariant(
+                        variant,
+                        path,
+                        indent,
+                        eIndex,
+                        vIndex,
+                        pluralExamples,
                     );
                 });
+
                 indent = false;
-                return variantItems;
+                return variants;
             }
             else {
                 indent = true;
@@ -373,7 +439,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
 
                 return this.renderItem(
                     element.value,
-                    [].concat(path, [ index, 'value' ]),
+                    [].concat(path, [ eIndex, 'value' ]),
                     label,
                 );
             }
