@@ -388,9 +388,9 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
 
         const label = serializeVariantKey(variant.key);
         let example = null;
-        let pluralForm;
+        const pluralForm = CLDR_PLURALS.indexOf(label);
 
-        if (pluralExamples || (pluralForm = CLDR_PLURALS.indexOf(label)) >= 0) {
+        if (pluralExamples || pluralForm >= 0) {
             example = pluralExamples[pluralForm];
         }
 
