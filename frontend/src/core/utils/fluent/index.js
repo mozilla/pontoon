@@ -2,6 +2,7 @@
 
 import areSupportedElements from './areSupportedElements';
 import convertSyntax from './convertSyntax';
+import extractAccessKeyCandidates from './extractAccessKeyCandidates';
 import flattenPatternElements from './flattenPatternElements';
 import flattenMessage from './flattenMessage';
 import getEmptyMessage from './getEmptyMessage';
@@ -21,6 +22,7 @@ import serializer from './serializer';
 export default {
     areSupportedElements,
     convertSyntax,
+    extractAccessKeyCandidates,
     flattenPatternElements,
     flattenMessage,
     getEmptyMessage,

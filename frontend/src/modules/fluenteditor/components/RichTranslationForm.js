@@ -261,8 +261,20 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         />;
     }
 
-    renderAccessKeys(keys: Array<string>) {
-        return <div class="accesskeys">
+    renderAccessKeys() {
+        const message = this.props.editor.translation;
+
+        if (typeof(message) === 'string') {
+            return null;
+        }
+
+        const keys = fluent.extractAccessKeyCandidates(message);
+
+        if (!keys) {
+            return null;
+        }
+
+        return <div className="accesskeys">
             { keys.map((key, i) => <div key={ i } className="key">{ key }</div>) }
         </div>;
     }
@@ -301,9 +313,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 </label>
             </td>
             <td>
-                { !isAccessKey ? null :
-                    this.renderAccessKeys(['k', 'e', 'y', 's'])
-                }
+                { isAccessKey ? this.renderAccessKeys() : null }
                 { this.renderInput(value, path, maxlength) }
             </td>
         </tr>;
