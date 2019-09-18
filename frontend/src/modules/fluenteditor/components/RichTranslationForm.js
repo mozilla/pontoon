@@ -8,7 +8,7 @@ import './RichTranslationForm.css';
 
 import * as locale from 'core/locale';
 import { CLDR_PLURALS } from 'core/plural';
-import { fluent, withActionsDisabled } from 'core/utils';
+import { fluent } from 'core/utils';
 
 import type { EditorProps } from 'core/editor';
 import type {
@@ -22,13 +22,6 @@ import type {
 
 
 type MessagePath = Array<string | number>;
-
-
-type InternalProps = {|
-    ...EditorProps,
-    isActionDisabled: boolean,
-    disableAction: () => void,
-|};
 
 
 /**
@@ -59,7 +52,7 @@ function getUpdatedTranslation(
 /**
  * Render a Rich editor for Fluent string editing.
  */
-export class RichTranslationFormBase extends React.Component<InternalProps> {
+export default class RichTranslationForm extends React.Component<EditorProps> {
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
@@ -81,7 +74,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         this.focusInput(true);
     }
 
-    componentDidUpdate(prevProps: InternalProps) {
+    componentDidUpdate(prevProps: EditorProps) {
         const editor = this.props.editor;
 
         // Reset the currently focused element when the entity changes or when
@@ -107,7 +100,7 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         this.update(prevProps, editor.translation);
     }
 
-    update(prevProps: InternalProps, translation: FluentMessage) {
+    update(prevProps: EditorProps, translation: FluentMessage) {
         const prevEditor = prevProps.editor;
         const editor = this.props.editor;
 
@@ -226,77 +219,12 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        const key = event.keyCode;
-
-        let handledEvent = false;
-
-        // On Enter:
-        //   - If unsaved changes popup is shown, leave anyway.
-        //   - If failed checks popup is shown after approving a translation, approve it anyway.
-        //   - In other cases, send current translation.
-        if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-            if (this.props.isActionDisabled) {
-                event.preventDefault();
-                return;
-            }
-            this.props.disableAction();
-
-            handledEvent = true;
-
-            const errors = this.props.editor.errors;
-            const warnings = this.props.editor.warnings;
-            const source = this.props.editor.source;
-            const ignoreWarnings = !!(errors.length || warnings.length);
-
-            // Leave anyway
-            if (this.props.unsavedchanges.shown) {
-                this.props.ignoreUnsavedChanges();
-            }
-            // Approve anyway
-            else if (typeof(source) === 'number') {
-                this.props.updateTranslationStatus(source, 'approve', ignoreWarnings);
-            }
-            // Send translation
-            else {
-                this.props.sendTranslation(ignoreWarnings);
-            }
-        }
-
-        // On Esc, close unsaved changes and failed checks popups if open.
-        if (key === 27) {
-            handledEvent = true;
-
-            const errors = this.props.editor.errors;
-            const warnings = this.props.editor.warnings;
-
-            // Close unsaved changes popup
-            if (this.props.unsavedchanges.shown) {
-                this.props.hideUnsavedChanges();
-            }
-            // Close failed checks popup
-            else if (errors.length || warnings.length) {
-                this.props.resetFailedChecks();
-            }
-        }
-
-        // On Ctrl + Shift + C, copy the original translation.
-        if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
-            this.props.copyOriginalIntoEditor();
-        }
-
-        // On Ctrl + Shift + Backspace, clear the content.
-        if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
-            this.props.clearEditor();
-        }
-
-        // On Tab, walk through current helper tab content and copy it.
-        // TODO
-
-        if (handledEvent) {
-            event.preventDefault();
-        }
+        this.props.handleShortcuts(
+            event,
+            this.props.sendTranslation,
+            this.props.clearEditor,
+            this.props.copyOriginalIntoEditor,
+        );
     }
 
     createHandleChange = (path: MessagePath) => {
@@ -493,6 +421,3 @@ export class RichTranslationFormBase extends React.Component<InternalProps> {
         </div>;
     }
 }
-
-
-export default withActionsDisabled(RichTranslationFormBase);
