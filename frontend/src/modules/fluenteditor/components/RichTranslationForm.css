@@ -42,3 +42,10 @@
     margin: 2px 0;
     padding: 0 4px;
 }
+
+.fluent-rich-translation-form table tr > td > textarea[maxlength="1"] {
+    margin-right: 3px;
+    resize: none;
+    text-align: center;
+    width: 24px;
+}

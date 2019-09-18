@@ -245,12 +245,13 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.focusedElementId = event.currentTarget.id;
     }
 
-    renderInput(value: string, path: MessagePath) {
+    renderInput(value: string, path: MessagePath, maxlength: ?number) {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
             readOnly={ this.props.isReadOnlyEditor }
             value={ value }
+            maxLength={ maxlength }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
             onKeyDown={ this.handleShortcuts }
@@ -280,6 +281,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         className: ?string,
         example: ?number,
     ) {
+        const maxlength = (label === 'accesskey') ? 1 : null;
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
@@ -291,7 +293,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 </label>
             </td>
             <td>
-                { this.renderInput(value, path) }
+                { this.renderInput(value, path, maxlength) }
             </td>
         </tr>;
     }
