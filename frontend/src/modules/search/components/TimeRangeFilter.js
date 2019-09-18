@@ -21,17 +21,6 @@ const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
 const URL_FORMAT = 'YYYYMMDDHHmm';
 
 
-// Workaround to force a 4-digit YYYY until #28 is fixed:
-// https://github.com/knowledgecode/date-and-time/issues/28
-date.extend({
-    parser: {
-        YYYY: function (str) {
-            return this.exec(/^\d{4}/, str);
-        }
-    }
-});
-
-
 type Props = {|
     project: string,
     timeRange: ?TimeRangeType,
