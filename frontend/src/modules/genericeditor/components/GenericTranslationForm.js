@@ -105,6 +105,13 @@ export default class GenericTranslationForm extends React.Component<EditorProps>
         this.props.updateTranslation(this.textarea.current.value);
     }
 
+    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+        this.props.handleShortcuts(
+            event,
+            this.props.sendTranslation,
+        );
+    }
+
     handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
         this.props.updateTranslation(event.currentTarget.value);
     }
@@ -118,7 +125,7 @@ export default class GenericTranslationForm extends React.Component<EditorProps>
             readOnly={ this.props.isReadOnlyEditor }
             ref={ this.textarea }
             value={ this.props.editor.translation }
-            onKeyDown={ this.props.handleShortcuts }
+            onKeyDown={ this.handleShortcuts }
             onChange={ this.handleChange }
             dir={ this.props.locale.direction }
             lang={ this.props.locale.code }
