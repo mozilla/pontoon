@@ -49,3 +49,24 @@
     text-align: center;
     width: 24px;
 }
+
+.fluent-rich-translation-form table tr > td > .accesskeys {
+    float: right;
+    margin: 2px 0;
+    width: calc(100% - 27px);
+}
+
+.fluent-rich-translation-form table tr > td > .accesskeys .key {
+    border: 1px solid #5E6475;
+    background: #4D5967;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 3px;
+    text-align: center;
+    width: 20px;
+}
+
+.fluent-rich-translation-form table tr > td > .accesskeys .key.active,
+.fluent-rich-translation-form table tr > td > .accesskeys .key:hover {
+    border-color: #7BC876;
+}
