@@ -53,6 +53,9 @@ function getUpdatedTranslation(
  * Render a Rich editor for Fluent string editing.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
+    // A React ref to the access key input, if any.
+    accessKeyElementId: ?string = null;
+
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
@@ -139,10 +142,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // implements an `updateTranslationSelectionWith` method and that is
         // used to update the translation.
         if (this.props.editor.selectionReplacementContent) {
-            this.updateTranslationSelectionWith(
-                this.props.editor.selectionReplacementContent,
-                translation,
-            );
+            this.updateTranslationSelectionWith(this.props.editor.selectionReplacementContent);
             this.props.resetSelectionContent();
         }
 
@@ -181,7 +181,11 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return null;
     }
 
-    updateTranslationSelectionWith(content: string, translation: FluentMessage) {
+    setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
+        this.focusedElementId = event.currentTarget.id;
+    }
+
+    updateTranslationSelectionWith(content: string) {
         let target = this.getFocusedElement();
 
         // If there is no explicitely focused element, find the first input.
@@ -196,7 +200,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const newSelectionPos = target.selectionStart + content.length;
 
         // Update content in the textarea.
-        // $FLOW_IGNORE: Flow doesn't know about this method, but it does exist.
         target.setRangeText(content);
 
         // Put the cursor right after the newly inserted content.
@@ -206,16 +209,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
 
         // Update the state to show the new content in the Editor.
-        const value = target.value;
-        const path = target.id.split('-');
-
-        const source = getUpdatedTranslation(
-            translation,
-            value,
-            // $FLOW_IGNORE: Bug in Flow, again.
-            path
-        );
-        this.props.updateTranslation(source);
+        this.updateTranslation(target.value, target.id.split('-'));
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
@@ -227,30 +221,42 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
     }
 
+    updateTranslation = (value: string, path: MessagePath) => {
+        const translation = this.props.editor.translation;
+
+        if (typeof(translation) === 'string') {
+            return null;
+        }
+
+        const source = getUpdatedTranslation(translation, value, path);
+        this.props.updateTranslation(source);
+    }
+
     createHandleChange = (path: MessagePath) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
-            const value = event.currentTarget.value;
-            const translation = this.props.editor.translation;
-
-            if (typeof(translation) === 'string') {
-                return null;
-            }
-
-            const source = getUpdatedTranslation(translation, value, path);
-            this.props.updateTranslation(source);
+            this.updateTranslation(event.currentTarget.value, path);
         }
     }
 
-    setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
-        this.focusedElementId = event.currentTarget.id;
+    handleAccessKeyClick = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        if (this.props.isReadOnlyEditor) {
+            return null;
+        }
+
+        this.updateTranslation(
+            event.currentTarget.textContent,
+            // $FLOW_IGNORE: Bug in Flow, again.
+            this.accessKeyElementId.split('-'),
+        );
     }
 
-    renderInput(value: string, path: MessagePath) {
+    renderInput(value: string, path: MessagePath, maxlength: ?number) {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
             readOnly={ this.props.isReadOnlyEditor }
             value={ value }
+            maxLength={ maxlength }
             onChange={ this.createHandleChange(path) }
             onFocus={ this.setFocusedInput }
             onKeyDown={ this.handleShortcuts }
@@ -258,6 +264,38 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             lang={ this.props.locale.code }
             data-script={ this.props.locale.script }
         />;
+    }
+
+    renderAccessKeys() {
+        const message = this.props.editor.translation;
+
+        if (typeof(message) === 'string') {
+            return null;
+        }
+
+        const keys = fluent.extractAccessKeyCandidates(message);
+
+        if (!keys) {
+            return null;
+        }
+
+        // Get selected access key
+        const id = this.accessKeyElementId;
+        let accessKey = null;
+        if (id && this.tableBodyRef.current) {
+            const accessKeyElement = this.tableBodyRef.current.querySelector('textarea#' + id);
+            if (accessKeyElement) {
+                accessKey = accessKeyElement.value;
+            }
+        }
+
+        return <div className="accesskeys">
+            { keys.map((key, i) => <button
+                className={ `key ${ key === accessKey ? 'active' : '' }` }
+                key={ i }
+                onClick={ this.handleAccessKeyClick }
+            >{ key }</button>) }
+        </div>;
     }
 
     renderLabel(label: string, example: number) {
@@ -280,6 +318,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         className: ?string,
         example: ?number,
     ) {
+        const isAccessKey = label === 'accesskey';
+        const maxlength = isAccessKey ? 1 : null;
+        this.accessKeyElementId = isAccessKey ? path.join('-') : null;
+
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
@@ -291,7 +333,8 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 </label>
             </td>
             <td>
-                { this.renderInput(value, path) }
+                { isAccessKey ? this.renderAccessKeys() : null }
+                { this.renderInput(value, path, maxlength) }
             </td>
         </tr>;
     }
