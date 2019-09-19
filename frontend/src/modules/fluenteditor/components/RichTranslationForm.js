@@ -53,6 +53,8 @@ function getUpdatedTranslation(
  * Render a Rich editor for Fluent string editing.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
+    accessKeyElementId: ?string = null;
+
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
@@ -245,6 +247,15 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.focusedElementId = event.currentTarget.id;
     }
 
+    handleAccessKey = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        const id = this.accessKeyElementId;
+        const value = event.currentTarget.textContent;
+
+        if (id && this.tableBodyRef.current) {
+            this.tableBodyRef.current.querySelector('textarea#' + id).value = value;
+        }
+    }
+
     renderInput(value: string, path: MessagePath, maxlength: ?number) {
         return <textarea
             id={ `${path.join('-')}` }
@@ -275,7 +286,11 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         }
 
         return <div className="accesskeys">
-            { keys.map((key, i) => <div key={ i } className="key">{ key }</div>) }
+            { keys.map((key, i) => <button
+                className="key"
+                key={ i }
+                onClick={ this.handleAccessKey }
+            >{ key }</button>) }
         </div>;
     }
 
@@ -301,6 +316,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     ) {
         const isAccessKey = label === 'accesskey';
         const maxlength = isAccessKey ? 1 : null;
+        this.accessKeyElementId = isAccessKey ? path.join('-') : null;
 
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>

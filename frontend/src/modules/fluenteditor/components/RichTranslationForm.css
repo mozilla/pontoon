@@ -59,11 +59,15 @@
 .fluent-rich-translation-form table tr > td > .accesskeys .key {
     border: 1px solid #5E6475;
     background: #4D5967;
+    color: #EBEBEB;
     cursor: pointer;
     display: inline-block;
+    line-height: 22px;
     margin-right: 3px;
+    padding: 0;
     text-align: center;
-    width: 20px;
+    vertical-align: top;
+    width: 24px;
 }
 
 .fluent-rich-translation-form table tr > td > .accesskeys .key.active,
