@@ -333,8 +333,8 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 </label>
             </td>
             <td>
-                { isAccessKey ? this.renderAccessKeys() : null }
                 { this.renderInput(value, path, maxlength) }
+                { isAccessKey ? this.renderAccessKeys() : null }
             </td>
         </tr>;
     }
