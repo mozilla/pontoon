@@ -142,10 +142,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // implements an `updateTranslationSelectionWith` method and that is
         // used to update the translation.
         if (this.props.editor.selectionReplacementContent) {
-            this.updateTranslationSelectionWith(
-                this.props.editor.selectionReplacementContent,
-                translation,
-            );
+            this.updateTranslationSelectionWith(this.props.editor.selectionReplacementContent);
             this.props.resetSelectionContent();
         }
 
@@ -188,7 +185,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         this.focusedElementId = event.currentTarget.id;
     }
 
-    updateTranslationSelectionWith(content: string, translation: FluentMessage) {
+    updateTranslationSelectionWith(content: string) {
         let target = this.getFocusedElement();
 
         // If there is no explicitely focused element, find the first input.
@@ -203,7 +200,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const newSelectionPos = target.selectionStart + content.length;
 
         // Update content in the textarea.
-        // $FLOW_IGNORE: Flow doesn't know about this method, but it does exist.
         target.setRangeText(content);
 
         // Put the cursor right after the newly inserted content.
@@ -213,10 +209,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
 
         // Update the state to show the new content in the Editor.
-        this.updateTranslation(
-            target.value,
-            target.id.split('-'),
-        );
+        this.updateTranslation(target.value, target.id.split('-'));
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
