@@ -246,6 +246,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     }
 
     handleAccessKeyClick = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        if (this.props.isReadOnlyEditor) {
+            return null;
+        }
+
         this.updateTranslation(
             event.currentTarget.textContent,
             // $FLOW_IGNORE: Bug in Flow, again.
