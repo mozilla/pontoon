@@ -53,6 +53,7 @@ function getUpdatedTranslation(
  * Render a Rich editor for Fluent string editing.
  */
 export default class RichTranslationForm extends React.Component<EditorProps> {
+    // A React ref to the access key input, if any.
     accessKeyElementId: ?string = null;
 
     // A React ref to the currently focused input, if any.
@@ -183,6 +184,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return null;
     }
 
+    setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
+        this.focusedElementId = event.currentTarget.id;
+    }
+
     updateTranslationSelectionWith(content: string, translation: FluentMessage) {
         let target = this.getFocusedElement();
 
@@ -208,16 +213,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
 
         // Update the state to show the new content in the Editor.
-        const value = target.value;
-        const path = target.id.split('-');
-
-        const source = getUpdatedTranslation(
-            translation,
-            value,
-            // $FLOW_IGNORE: Bug in Flow, again.
-            path
+        this.updateTranslation(
+            target.value,
+            target.id.split('-'),
         );
-        this.props.updateTranslation(source);
     }
 
     handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
@@ -229,31 +228,29 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
     }
 
+    updateTranslation = (value: string, path: MessagePath) => {
+        const translation = this.props.editor.translation;
+
+        if (typeof(translation) === 'string') {
+            return null;
+        }
+
+        const source = getUpdatedTranslation(translation, value, path);
+        this.props.updateTranslation(source);
+    }
+
     createHandleChange = (path: MessagePath) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
-            const value = event.currentTarget.value;
-            const translation = this.props.editor.translation;
-
-            if (typeof(translation) === 'string') {
-                return null;
-            }
-
-            const source = getUpdatedTranslation(translation, value, path);
-            this.props.updateTranslation(source);
+            this.updateTranslation(event.currentTarget.value, path);
         }
     }
 
-    setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
-        this.focusedElementId = event.currentTarget.id;
-    }
-
-    handleAccessKey = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
-        const id = this.accessKeyElementId;
-        const value = event.currentTarget.textContent;
-
-        if (id && this.tableBodyRef.current) {
-            this.tableBodyRef.current.querySelector('textarea#' + id).value = value;
-        }
+    handleAccessKeyClick = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        this.updateTranslation(
+            event.currentTarget.textContent,
+            // $FLOW_IGNORE: Bug in Flow, again.
+            this.accessKeyElementId.split('-'),
+        );
     }
 
     renderInput(value: string, path: MessagePath, maxlength: ?number) {
@@ -285,11 +282,21 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             return null;
         }
 
+        // Get selected access key
+        const id = this.accessKeyElementId;
+        let accessKey = null;
+        if (id && this.tableBodyRef.current) {
+            const accessKeyElement = this.tableBodyRef.current.querySelector('textarea#' + id);
+            if (accessKeyElement) {
+                accessKey = accessKeyElement.value;
+            }
+        }
+
         return <div className="accesskeys">
             { keys.map((key, i) => <button
-                className="key"
+                className={ `key ${ key === accessKey ? 'active' : '' }` }
                 key={ i }
-                onClick={ this.handleAccessKey }
+                onClick={ this.handleAccessKeyClick }
             >{ key }</button>) }
         </div>;
     }
