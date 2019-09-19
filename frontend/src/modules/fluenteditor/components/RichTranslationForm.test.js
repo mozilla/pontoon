@@ -59,8 +59,10 @@ my-entry =
         />);
 
         expect(wrapper.find('textarea')).toHaveLength(2);
+
         expect(wrapper.find('label').at(0).html()).toContain('variant');
         expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
+
         expect(wrapper.find('label').at(1).html()).toContain('another-variant');
         expect(wrapper.find('textarea').at(1).html()).toContain('World!');
     });
@@ -85,12 +87,52 @@ my-entry =
         />);
 
         expect(wrapper.find('textarea')).toHaveLength(2);
+
         expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
         expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$plural')).toEqual('one');
         expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$example')).toEqual(1);
+
         expect(wrapper.find('textarea').at(1).html()).toContain('World!');
         expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$plural')).toEqual('other');
         expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$example')).toEqual(2);
+    });
+
+    it('renders access keys properly', () => {
+        const input = `
+title = Title
+    .label = Candidates
+    .accesskey = C`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationForm
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('textarea')).toHaveLength(3);
+
+        expect(wrapper.find('label').at(1).html()).toContain('label');
+        expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Candidates');
+
+        expect(wrapper.find('label').at(2).html()).toContain('accesskey');
+        expect(wrapper.find('textarea').at(2).prop('value')).toEqual('C');
+        expect(wrapper.find('textarea').at(2).prop('maxLength')).toEqual(1);
+
+        expect(wrapper.find('.accesskeys')).toHaveLength(1);
+        expect(wrapper.find('.accesskeys button')).toHaveLength(8);
+        expect(wrapper.find('.accesskeys button').at(0).text()).toEqual('C');
+        expect(wrapper.find('.accesskeys button').at(1).text()).toEqual('a');
+        expect(wrapper.find('.accesskeys button').at(2).text()).toEqual('n');
+        expect(wrapper.find('.accesskeys button').at(3).text()).toEqual('d');
+        expect(wrapper.find('.accesskeys button').at(4).text()).toEqual('i');
+        expect(wrapper.find('.accesskeys button').at(5).text()).toEqual('t');
+        expect(wrapper.find('.accesskeys button').at(6).text()).toEqual('e');
+        expect(wrapper.find('.accesskeys button').at(7).text()).toEqual('s');
     });
 
     it('calls the updateTranslation function on mount and change', () => {
