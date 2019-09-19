@@ -22,6 +22,7 @@
     "lodash.debounce": "4.0.8",
     "lodash.flattendeep": "4.4.0",
     "lodash.isequal": "4.5.0",
+    "nprogress": "0.2.0",
     "react": "16.8.6",
     "react-content-marker": "1.1.0",
     "react-dom": "16.8.6",
