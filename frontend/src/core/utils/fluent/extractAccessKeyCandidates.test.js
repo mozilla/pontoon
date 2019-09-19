@@ -57,4 +57,18 @@ describe('extractAccessKeyCandidates', () => {
 
         expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
     });
+
+    it('returns a list of access keys from all label attribute variants', () => {
+        const input = 'title = Title' +
+            '\n    .label =' +
+            '\n        { PLATFORM() ->' +
+            '\n            [windows] Ctrl' +
+            '\n           *[other] Cmd' +
+            '\n        }' +
+            '\n    .accesskey = C';
+        const message = parser.parseEntry(input);
+        const res = extractAccessKeyCandidates(message);
+
+        expect(res).toEqual(['C', 't', 'r', 'l', 'm', 'd']);
+    });
 });

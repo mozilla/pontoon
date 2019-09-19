@@ -1,10 +1,36 @@
 /* @flow */
 
+import flattenDeep from 'lodash.flattendeep';
+
 import parser from './parser';
 import serializer from './serializer';
 
-import type { FluentMessage } from './types';
+import type { FluentMessage, PatternElement } from './types';
 
+
+/**
+ * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
+ */
+function getTextElementsRecursivelly(elements: Array<PatternElement>) {
+    const textElements = elements.map(element => {
+        if (element.type === 'TextElement') {
+            return element;
+        }
+
+        if (
+            element.type === 'Placeable' &&
+            element.expression && element.expression.type === 'SelectExpression'
+        ) {
+            return element.expression.variants.map(variant => {
+                return getTextElementsRecursivelly(variant.value.elements);
+            });
+        }
+
+        return null;
+    });
+
+    return flattenDeep(textElements);
+}
 
 /**
  * Return a list of potential access key candidates.
@@ -52,12 +78,12 @@ export default function extractAccessKeyCandidates(translation: FluentMessage): 
     }
 
     // Only take TextElements, see bug 1447103 for detals (that's why flat Message is no good)
-    const textElements = source.value.elements.filter(element => element.type === 'TextElement');
+    const textElements = getTextElementsRecursivelly(source.value.elements);
 
     // Collect values of TextElements
     const values = textElements.map(element => {
         let value = '';
-        if (typeof(element.value) === 'string') {
+        if (element && typeof(element.value) === 'string') {
             value = element.value.replace(/\s/g, '') // Also: Remove whitespace
         }
         return value;
