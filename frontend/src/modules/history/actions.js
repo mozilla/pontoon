@@ -1,5 +1,7 @@
 /* @flow */
 
+import NProgress from 'nprogress';
+
 import api from 'core/api';
 
 import { actions as editorActions } from 'core/editor';
@@ -141,6 +143,8 @@ export function updateStatus(
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
+        NProgress.start();
+
         const results = await updateStatusOnServer(
             change, translation, resource, ignoreWarnings
         );
@@ -195,6 +199,8 @@ export function updateStatus(
                 )
             );
         }
+
+        NProgress.done();
     }
 }
 
@@ -206,11 +212,14 @@ export function deleteTranslation(
     translation: number,
 ): Function {
     return async dispatch => {
+        NProgress.start();
+
         await api.translation.delete(translation);
-        dispatch(
-            notification.actions.add(notification.messages.TRANSLATION_DELETED)
-        );
+
+        dispatch(notification.actions.add(notification.messages.TRANSLATION_DELETED));
         dispatch(get(entity, locale, pluralForm));
+
+        NProgress.done();
     }
 }
 
