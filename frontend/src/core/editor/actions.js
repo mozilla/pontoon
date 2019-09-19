@@ -1,5 +1,7 @@
 /* @flow */
 
+import NProgress from 'nprogress';
+
 import api from 'core/api';
 
 import { actions as entitiesActions } from 'core/entities';
@@ -155,6 +157,8 @@ export function sendTranslation(
     ignoreWarnings: ?boolean,
 ): Function {
     return async dispatch => {
+        NProgress.start();
+
         const content = await api.translation.updateTranslation(
             entity.pk,
             translation,
@@ -172,11 +176,7 @@ export function sendTranslation(
         else if (content.same) {
             // The translation that was provided is the same as an existing
             // translation for that entity.
-            dispatch(
-                notification.actions.add(
-                    notification.messages.SAME_TRANSLATION
-                )
-            );
+            dispatch(notification.actions.add(notification.messages.SAME_TRANSLATION));
         }
         else if (
             content.type === 'added' ||
@@ -222,6 +222,8 @@ export function sendTranslation(
                 );
             }
         }
+
+        NProgress.done();
     }
 }
 
