@@ -1,9 +1,6 @@
 from __future__ import absolute_import
 
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-)
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
 from pontoon.base.utils import require_AJAX
@@ -20,8 +17,13 @@ def update_tour_status(request):
     )
 
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors.as_json())
+        return JsonResponse({
+            'status': False,
+            'message': 'Bad Request: {error}'.format(error=form.errors),
+        }, status=400)
 
     form.save()
 
-    return HttpResponse('ok')
+    return JsonResponse({
+        'status': True,
+    })

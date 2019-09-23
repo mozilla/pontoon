@@ -24,6 +24,12 @@ type Props = {|
 |};
 
 
+type InternalProps = {
+    ...Props,
+    dispatch: Function,
+};
+
+
 type State = {|
     isOpen: boolean,
 |};
@@ -33,13 +39,24 @@ type State = {|
  * Interactive Tour to be displayed on the "Tutorial" project
  * introducing the translate page of Pontoon.
  */
-export class InteractiveTourBase extends React.Component<Props, State> {
-    constructor(props: Props) {
+export class InteractiveTourBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps) {
         super(props);
 
         this.state = {
             isOpen: true,
         };
+    }
+
+    createUpdateTourStatus = (totalSteps: number) => {
+        if (!this.props.user.isAuthenticated) {
+            return null;
+        }
+
+        return (currentStep: number) => {
+            const step = (currentStep === totalSteps - 1) ? -1 : currentStep + 1;
+            this.props.dispatch(user.actions.updateTourStatus(step));
+        }
     }
 
     close = () => {
@@ -246,6 +263,7 @@ export class InteractiveTourBase extends React.Component<Props, State> {
             accentColor={ '#F36' }
             className={ 'interactive-tour' }
             closeWithMask={ false }
+            getCurrentStep={ this.createUpdateTourStatus(steps.length) }
             isOpen={ this.state.isOpen }
             onRequestClose={ this.close }
             maskSpace={ 0 }
