@@ -1259,11 +1259,16 @@ body > form,
     font-weight: 300;
 }
 
-#standalone-sign-in input {
+#standalone-sign-in input[type=text],
+#standalone-sign-in input[type=password] {
     float: none;
     background-color: white;
     padding: 10px;
     margin: 10px;
+}
+
+#standalone-sign-in .controls .button {
+  font-size: 14px;
 }
 
 .controls {
