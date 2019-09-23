@@ -136,7 +136,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 },
             },
             {
-                selector: '#app > .panel-list .filters-panel .menu',
+                selector: '#app > .panel-list',
                 content: <div>
                     <Localized id="interactivetour-InteractiveTour--filters-title">
                         <h3>Filters</h3>
@@ -147,6 +147,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         as checkboxes, which allows you to filter by multiple criteria.</p>
                     </Localized>
                 </div>,
+                action: node => {
+                    node.querySelector('.filters-panel .visibility-switch').click();
+                },
             },
             {
                 selector: '#app > .panel-content',
@@ -163,7 +166,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 </div>,
             },
             {
-                selector: '#app > .panel-content',
+                selector: '#app > .panel-content .editor',
                 content: <div>
                     <Localized id="interactivetour-InteractiveTour--submit-title">
                         <h3>Submit a Translation</h3>
@@ -204,6 +207,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         Unreviewed).</p>
                     </Localized>
                 </div>,
+                action: node => {
+                    node.querySelector('#react-tabs-0').click();
+                },
             },
             {
                 selector: '#app > .panel-content .entity-details .react-tabs',
@@ -217,6 +223,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         Clicking on an entry copies it to the translation input.</p>
                     </Localized>
                 </div>,
+                action: node => {
+                    node.querySelector('#react-tabs-2').click();
+                },
             },
             {
                 selector: '#app > .panel-content .entity-details .react-tabs',
@@ -230,6 +239,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         string to other languages are available in the Locales tab.</p>
                     </Localized>
                 </div>,
+                action: node => {
+                    node.querySelector('#react-tabs-4').click();
+                },
             },
             {
                 selector: '',
