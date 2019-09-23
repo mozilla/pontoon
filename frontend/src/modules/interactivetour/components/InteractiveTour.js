@@ -44,11 +44,18 @@ export class InteractiveTourBase extends React.Component<Props, State> {
 
     close = () => {
         this.setState({ isOpen: false });
-    };
+    }
 
     render() {
         // Run the tour only on project with slug 'tutorial'
         if (this.props.project.slug !== 'tutorial') {
+            return null;
+        }
+
+        const tourStatus = this.props.user.tourStatus || 0;
+
+        // Run the tour only if the user hasn't completed it yet
+        if (tourStatus === -1) {
             return null;
         }
 
@@ -242,6 +249,7 @@ export class InteractiveTourBase extends React.Component<Props, State> {
             isOpen={ this.state.isOpen }
             onRequestClose={ this.close }
             maskSpace={ 0 }
+            startAt={ tourStatus }
             steps={ steps }
         />;
     }
