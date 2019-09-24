@@ -48,6 +48,7 @@ module.exports = {
         DIFF_EQUAL: false,
         DIFF_DELETE: false,
         ga: false,
+        process: false,
         generalShortcutsHandler: true,
         traversalShortcutsHandler: true,
         editorShortcutsHandler: true,
