@@ -1,0 +1,20 @@
+.interactive-tour {
+    color: #2d2323;
+    margin: -15px;
+}
+
+.interactive-tour h3 {
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1.3em;
+}
+
+.interactive-tour p {
+    font-size: 15px;
+    line-height: 1.4em;
+    padding: 10px 0 0 0;
+}
+
+.interactive-tour p a {
+    color: #F36;
+}

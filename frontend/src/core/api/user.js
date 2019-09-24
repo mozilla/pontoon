@@ -58,4 +58,21 @@ export default class UserAPI extends APIBase {
 
         return await this.fetch(`/api/v1/user/${username}/`, 'POST', payload, headers);
     }
+
+    /**
+     * Update Interactive Tour status to a given step.
+     */
+    async updateTourStatus(step: number): Promise<Object> {
+        const csrfToken = this.getCSRFToken();
+
+        const payload = new URLSearchParams();
+        payload.append('tour_status', step.toString());
+        payload.append('csrfmiddlewaretoken', csrfToken);
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+        headers.append('X-CSRFToken', csrfToken);
+
+        return await this.fetch('/update-tour-status/', 'POST', payload, headers);
+    }
 }

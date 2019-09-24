@@ -1022,6 +1022,7 @@ def user_data(request):
             'force_suggestions': user.profile.force_suggestions,
         },
         'preferred_locales': user.profile.sorted_locales_codes,
+        'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
         'gravatar_url_small': user.gravatar_url(44),
         'gravatar_url_big': user.gravatar_url(88),

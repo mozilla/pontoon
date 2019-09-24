@@ -23,6 +23,7 @@ import { Navigation } from 'modules/navbar';
 import { ProjectInfo } from 'modules/projectinfo';
 import { ResourceProgress } from 'modules/resourceprogress';
 import { SearchBox } from 'modules/search';
+import { InteractiveTour } from 'modules/interactivetour';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { L10nState } from 'core/l10n';
@@ -123,6 +124,7 @@ class App extends React.Component<InternalProps> {
                 }
             </section>
             <Lightbox />
+            <InteractiveTour />
         </div>;
     }
 }

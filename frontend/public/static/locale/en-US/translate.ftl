@@ -234,6 +234,96 @@ history-Translation--button-unreject =
     .title = Unreject
 
 
+## Interactive Tour
+## Shows an interactive Tour on the "Tutorial" project,
+## introducing the translate page of Pontoon.
+
+interactivetour-InteractiveTour--intro-title = Hey there!
+interactivetour-InteractiveTour--intro-content =
+    Pontoon is a localization platform by Mozilla, used to localize
+    Firefox and various other projects at Mozilla and other organizations.
+interactivetour-InteractiveTour--intro-footer = Follow this guide to learn how to use it.
+
+interactivetour-InteractiveTour--main-toolbar-title = Main toolbar
+interactivetour-InteractiveTour--main-toolbar-content =
+    The main toolbar located on top of the screen shows the language,
+    project and resource currently being localized. You can also
+    see the progress of your current localization and additional
+    project information.
+interactivetour-InteractiveTour--main-toolbar-footer =
+    On the right hand side, logged in users can access notifications
+    and settings.
+
+interactivetour-InteractiveTour--string-list-title = String List
+interactivetour-InteractiveTour--string-list-content =
+    The sidebar displays a list of strings in the current
+    localization. Status of each string (e.g. Translated or Missing)
+    is indicated by a different color of the square on the left. The
+    square also acts as a checkbox for selecting strings to perform
+    mass actions on.
+interactivetour-InteractiveTour--string-list-footer =
+    On top of the list is a search box, which allows you to
+    search source strings, translations, comments and string IDs.
+
+interactivetour-InteractiveTour--filters-title = Filters
+interactivetour-InteractiveTour--filters-content =
+    Strings can also be filtered by their status, translation time,
+    translation authors and other criteria. Note that filter icons act
+    as checkboxes, which allows you to filter by multiple criteria.
+
+interactivetour-InteractiveTour--editor-title = Editor
+interactivetour-InteractiveTour--editor-content =
+    Clicking a string in the list opens it in the editor. On top of
+    it, you can see the source string with its context. Right under
+    that is the translation input to type translation in, followed
+    by the translation toolbar.
+
+interactivetour-InteractiveTour--submit-title = Submit a Translation
+interactivetour-InteractiveTour--submit-content-unauthenticated =
+    A user needs to be logged in to be able to submit translations.
+    Non-authenticated users will see a link to Sign in instead of the
+    translation toolbar with a button to save translations.
+interactivetour-InteractiveTour--submit-content-contributor =
+    When a translator is in Suggest Mode, or doesn’t have permission
+    to submit translations directly, a blue SUGGEST button will appear
+    in the translation toolbar. To make a suggestion, type it in the
+    translation input and click SUGGEST.
+interactivetour-InteractiveTour--submit-content-translator =
+    If a translator has permission to add translations directly,
+    the green SAVE button will appear in the translation toolbar.
+    To submit a translation, type it in the translation input and
+    click SAVE.
+
+interactivetour-InteractiveTour--history-title = History
+interactivetour-InteractiveTour--history-content =
+    All suggestions and translations submitted for the current
+    string can be found in the History Tab. Icons to the right of
+    each entry indicate its review status (Approved, Rejected or
+    Unreviewed).
+
+interactivetour-InteractiveTour--machinery-title = Machinery
+interactivetour-InteractiveTour--machinery-content =
+    The Machinery tab shows automated translation suggestions from
+    Machine Translation, Translation Memory and Terminology services.
+    Clicking on an entry copies it to the translation input.
+
+interactivetour-InteractiveTour--locales-title = Locales
+interactivetour-InteractiveTour--locales-content =
+    Sometimes it’s useful to see general style choices by other
+    localization communities. Approved translations of the current
+    string to other languages are available in the Locales tab.
+
+interactivetour-InteractiveTour--end-title = That’s (not) all, folks!
+interactivetour-InteractiveTour--end-content =
+    There’s a wide variety of tools to help you with translations,
+    some of which we didn’t mention in this tutorial. For more
+    topics of interest for localizers at Mozilla, please have a look
+    at the <a>Localizer Documentation</a>.
+interactivetour-InteractiveTour--end-footer =
+    Next, feel free to explore this tutorial project or move straight
+    to <a>translating live projects</a>.
+
+
 ## Machinery
 ## Shows a list of translations from machines.
 

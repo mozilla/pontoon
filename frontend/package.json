@@ -35,11 +35,13 @@
     "react-scripts": "3.0.1",
     "react-tabs": "3.0.0",
     "react-time-ago": "5.0.4",
+    "reactour": "1.15.1",
     "redux": "4.0.1",
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "shortid": "2.2.14",
+    "styled-components": "4.3.2",
     "tlds": "1.203.1"
   },
   "scripts": {
