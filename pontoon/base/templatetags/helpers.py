@@ -255,7 +255,7 @@ def nospam(self):
 
 
 @library.global_function
-def provider_login_url(request, provider_id='fxa', **query):
+def provider_login_url(request, provider_id='google', **query):
     """
     This function adapts the django-allauth templatetags that don't support jinja2.
     @TODO: land support for the jinja2 tags in the django-allauth.
@@ -263,7 +263,6 @@ def provider_login_url(request, provider_id='fxa', **query):
     provider = providers.registry.by_id(provider_id)
 
     auth_params = query.get('auth_params', None)
-    query['scope'] = 'profile:uid profile:email profile:display_name'
     process = query.get('process', None)
 
     if auth_params == '':

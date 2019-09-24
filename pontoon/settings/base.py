@@ -149,7 +149,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.fxa',
+    'allauth.socialaccount.providers.google',
     'notifications',
     'graphene_django',
     'webpack_loader',
@@ -837,21 +837,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_DISPLAY = account_username
 
-# Firefox Accounts
-FXA_CLIENT_ID = os.environ.get('FXA_CLIENT_ID', '')
-FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
-FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
-FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
-FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
-
-# All settings related to the AllAuth
-SOCIALACCOUNT_PROVIDERS = {
-    'fxa': {
-        'SCOPE': FXA_SCOPE,
-        'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
-        'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
-    }
-}
+# Google Accounts
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY', '')
 
 # Defined all trusted origins that will be returned in pontoon.js file.
 if os.environ.get('JS_TRUSTED_ORIGINS'):
