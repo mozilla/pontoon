@@ -11,10 +11,12 @@ from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.fxa.provider import FirefoxAccountsProvider
 from allauth.socialaccount.providers.github.provider import GitHubProvider
+from allauth.socialaccount.providers.google.provider import GoogleProvider
 
 
 FXA_PROVIDER_ID = FirefoxAccountsProvider.id
 GITHUB_PROVIDER_ID = GitHubProvider.id
+GOOGLE_PROVIDER_ID = GoogleProvider.id
 
 
 class Command(BaseCommand):
@@ -63,3 +65,13 @@ class Command(BaseCommand):
             )
 
             self.update_provider(github_data)
+
+        if settings.GOOGLE_CLIENT_ID is not None or settings.GOOGLE_SECRET_KEY is not None:
+            google_data = dict(
+                name='Google',
+                provider=GOOGLE_PROVIDER_ID,
+                client_id=settings.GOOGLE_CLIENT_ID,
+                secret=settings.GOOGLE_SECRET_KEY
+            )
+
+            self.update_provider(google_data)
