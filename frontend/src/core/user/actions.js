@@ -11,7 +11,7 @@ export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
  * Update Interactive Tour status to a given step.
  */
 export function updateTourStatus(step: number): Function {
-    return async dispatch => {
+    return async () => {
         await api.user.updateTourStatus(step);
     }
 }

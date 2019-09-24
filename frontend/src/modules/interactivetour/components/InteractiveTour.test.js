@@ -1,7 +1,6 @@
 import React from 'react';
 import Tour from 'reactour'
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
 import { InteractiveTourBase } from './InteractiveTour';
 
