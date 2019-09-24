@@ -7,16 +7,21 @@ import history from './history';
 import rootReducer from './rootReducer';
 
 
-const loggerMiddleware = createLogger();
+const middlewares = [
+    routerMiddleware(history),
+    thunkMiddleware,
+];
+
+// Log actions only in development.
+if (process.env.NODE_ENV === 'development') {
+    const loggerMiddleware = createLogger();
+    middlewares.push(loggerMiddleware);
+}
 
 export default createStore(
     connectRouter(history)(rootReducer),
     {}, // initial state
     compose(
-        applyMiddleware(
-            routerMiddleware(history),
-            thunkMiddleware,
-            loggerMiddleware,
-        )
+        applyMiddleware(...middlewares)
     )
 );
