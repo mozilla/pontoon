@@ -792,7 +792,7 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
-# Supported values: 'django', 'fxa', 'github'
+# Supported values: 'django', 'fxa', 'github', 'google'
 AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
 
 
@@ -829,6 +829,10 @@ SOCIALACCOUNT_PROVIDERS = {
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
     }
 }
+
+# Google Accounts
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY', '')
 
 # Defined all trusted origins that will be returned in pontoon.js file.
 if os.environ.get('JS_TRUSTED_ORIGINS'):

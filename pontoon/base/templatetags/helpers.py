@@ -263,6 +263,8 @@ def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **qu
     provider = providers.registry.by_id(provider_id)
 
     auth_params = query.get('auth_params', None)
+    if provider_id != 'google':
+        query['scope'] = 'profile:uid profile:email profile:display_name'
     process = query.get('process', None)
 
     if auth_params == '':
