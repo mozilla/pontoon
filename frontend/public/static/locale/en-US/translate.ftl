@@ -75,9 +75,13 @@ batchactions-ReplaceAll--error = Oops, something went wrong
 editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
 editor-EditorMenu--read-only-localization = This is a read-only localization.
 editor-EditorMenu--button-copy = Copy
+    .title = Copy From Source (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = Clear
+    .title = Clear Translation (Ctrl + Shift + Backspace)
 editor-EditorMenu--button-save = Save
+    .title = Save Translation (Enter)
 editor-EditorMenu--button-suggest = Suggest
+    .title = Suggest Translation (Enter)
 
 
 ## Editor Settings
