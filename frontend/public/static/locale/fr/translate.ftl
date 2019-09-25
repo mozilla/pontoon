@@ -139,7 +139,7 @@ history-History--no-translations = Pas de traduction disponible.
 ## Shows a specific translation for an entity, and actions around it
 
 history-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 history-Translation--hide-diff = Cacher diff
     .title = Cacher la différence avec la traduction active
@@ -173,7 +173,7 @@ machinery-Machinery--search-placeholder =
 ## Shows a specific translation from machinery
 
 machinery-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 machinery-Translation--number-occurrences =
     .title = Nombre d'occurrences de la traduction
@@ -206,7 +206,7 @@ notification--entity-not-found = Impossible de charger la chaîne spécifiée
 ## Shows a specific translation from a different locale
 
 otherlocales-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 
 ## Placeable parsers
