@@ -138,9 +138,6 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Sh
 editor-KeyboardShortcuts--select-all-strings = Select All Strings
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
-editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
-editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
-
 
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup

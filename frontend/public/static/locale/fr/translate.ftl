@@ -75,9 +75,6 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Ma
 editor-KeyboardShortcuts--select-all-strings = Sélectionner toutes les chaînes
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>A</accel>
 
-editor-KeyboardShortcuts--copy-from-helpers = Copier depuis les utilitaires
-editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
-
 
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
