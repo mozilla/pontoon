@@ -201,9 +201,6 @@ export default function connectedEditor<Object>(
                 clearEditor();
             }
 
-            // On Tab, walk through current helper tab content and copy it.
-            // TODO
-
             if (handledEvent) {
                 event.preventDefault();
             }

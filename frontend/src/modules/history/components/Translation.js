@@ -222,7 +222,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         return <Localized id='history-Translation--copy' attrs={{ title: true }}>
             <li
                 className={ className }
-                title='Copy Into Translation (Tab)'
+                title='Copy Into Translation'
                 onClick={ this.copyTranslationIntoEditor }
             >
                 <header className='clearfix'>

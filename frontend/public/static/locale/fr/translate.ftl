@@ -75,9 +75,6 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Ma
 editor-KeyboardShortcuts--select-all-strings = Sélectionner toutes les chaînes
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Maj</mod2> + <accel>A</accel>
 
-editor-KeyboardShortcuts--copy-from-helpers = Copier depuis les utilitaires
-editor-KeyboardShortcuts--copy-from-helpers-shortcut = <accel>Tab</accel>
-
 
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
@@ -142,7 +139,7 @@ history-History--no-translations = Pas de traduction disponible.
 ## Shows a specific translation for an entity, and actions around it
 
 history-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 history-Translation--hide-diff = Cacher diff
     .title = Cacher la différence avec la traduction active
@@ -176,7 +173,7 @@ machinery-Machinery--search-placeholder =
 ## Shows a specific translation from machinery
 
 machinery-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 machinery-Translation--number-occurrences =
     .title = Nombre d'occurrences de la traduction
@@ -209,7 +206,7 @@ notification--entity-not-found = Impossible de charger la chaîne spécifiée
 ## Shows a specific translation from a different locale
 
 otherlocales-Translation--copy =
-    .title = Copier la traduction (Tab)
+    .title = Copier la traduction
 
 
 ## Placeable parsers
