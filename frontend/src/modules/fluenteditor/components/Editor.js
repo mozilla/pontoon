@@ -82,7 +82,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
      * Analyze the translation to determine the best form to use. Update the
      * content to match that type if needed.
      */
-    analyzeFluentMessage(translation: ?Translation) {
+    analyzeFluentMessage(translation: ?string) {
         const props = this.props;
 
         const source = translation || props.activeTranslation || props.entity.original;
