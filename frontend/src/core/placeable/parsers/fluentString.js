@@ -15,7 +15,7 @@ import { Localized } from 'fluent-react';
  *   { "Hello, World" }
  */
 const fluentString = {
-    rule: /({ ?".*" ?})/,
+    rule: /({ ?"[^}]*" ?})/,
     tag: (x: string) => {
         return <Localized
             id='placeable-parser-fluentString'
