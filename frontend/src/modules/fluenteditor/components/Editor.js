@@ -50,7 +50,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.setState({ forceSource: false });
             this.analyzeFluentMessage();
         }
-        // Otherwise if the user switched the editor mode, update the editor
+        // If the user switched the editor mode, update the editor
         // content to match the form type.
         else if (
             this.props.entity &&
@@ -65,30 +65,46 @@ export class EditorBase extends React.Component<EditorProps, State> {
                 toSyntax,
             );
         }
+        // If translation changes from external source (e.g. copied from helpers),
+        // re-analyze the translation.
+        else if (
+            this.props.entity &&
+            !this.state.forceSource &&
+            this.props.editor.translation !== prevProps.editor.translation &&
+            this.props.editor.changeSource === 'external' &&
+            typeof(this.props.editor.translation) === 'string'
+        ) {
+            this.analyzeFluentMessage(this.props.editor.translation);
+        }
     }
 
     /**
      * Analyze the translation to determine the best form to use. Update the
      * content to match that type if needed.
      */
-    analyzeFluentMessage() {
+    analyzeFluentMessage(translation: ?string) {
         const props = this.props;
 
-        const source = props.activeTranslation || props.entity.original;
+        const source = translation || props.activeTranslation || props.entity.original;
         const message = fluent.parser.parseEntry(source);
+
+        // In case simple message gets analyzed again
+        if (message.type === 'Junk') {
+            return;
+        }
 
         // Figure out and set the syntax type.
         const syntaxType = fluent.getSyntaxType(message);
         this.setState({ syntaxType });
 
         // Figure out and set the initial translation content.
-        let translationContent = props.activeTranslation;
+        let translationContent = translation || props.activeTranslation;
 
         if (syntaxType === 'simple') {
-            translationContent = fluent.getSimplePreview(props.activeTranslation);
+            translationContent = fluent.getSimplePreview(translationContent);
         }
         else if (syntaxType === 'rich') {
-            if (!props.activeTranslation) {
+            if (!translationContent) {
                 translationContent = fluent.getEmptyMessage(message, props.locale);
             }
             else {
