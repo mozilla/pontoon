@@ -63,38 +63,54 @@ export default class EditorMenu extends React.Component<Props> {
                     <editor.KeyboardShortcuts />
                     { props.translationLengthHook }
                     <div className="actions">
-                        <Localized id="editor-EditorMenu--button-copy">
+                        <Localized
+                            id="editor-EditorMenu--button-copy"
+                            attrs={{ title: true }}
+                        >
                             <button
                                 className="action-copy"
                                 onClick={ props.copyOriginalIntoEditor }
+                                title="Copy From Source (Ctrl + Shift + C)"
                             >
                                 Copy
                             </button>
                         </Localized>
-                        <Localized id="editor-EditorMenu--button-clear">
+                        <Localized
+                            id="editor-EditorMenu--button-clear"
+                            attrs={{ title: true }}
+                        >
                             <button
                                 className="action-clear"
                                 onClick={ props.clearEditor }
+                                title="Clear Translation (Ctrl + Shift + Backspace)"
                             >
                                 Clear
                             </button>
                         </Localized>
                         { props.user.settings.forceSuggestions ?
                         // Suggest button, will send an unreviewed translation.
-                        <Localized id="editor-EditorMenu--button-suggest">
+                        <Localized
+                            id="editor-EditorMenu--button-suggest"
+                            attrs={{ title: true }}
+                        >
                             <button
                                 className="action-suggest"
                                 onClick={ props.sendTranslation }
+                                title="Suggest Translation (Enter)"
                             >
                                 Suggest
                             </button>
                         </Localized>
                         :
                         // Save button, will send an approved translation.
-                        <Localized id="editor-EditorMenu--button-save">
+                        <Localized
+                            id="editor-EditorMenu--button-save"
+                            attrs={{ title: true }}
+                        >
                             <button
                                 className="action-save"
                                 onClick={ props.sendTranslation }
+                                title="Save Translation (Enter)"
                             >
                                 Save
                             </button>
