@@ -57,8 +57,18 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.state.forceSource !== prevState.forceSource &&
             this.props.editor.translation === prevProps.editor.translation
         ) {
-            const fromSyntax = this.state.forceSource ? this.state.syntaxType : 'complex';
-            const toSyntax = this.state.forceSource ? 'complex' : this.state.syntaxType;
+            // Syntax type might have changed in the source editor, make sure it's set correctly
+            let syntaxType = this.state.syntaxType;
+            if (prevState.forceSource) {
+                const message = fluent.parser.parseEntry(this.props.editor.translation);
+                if (message.type !== 'Junk') {
+                    syntaxType = fluent.getSyntaxType(message);
+                    this.setState({ syntaxType });
+                }
+            }
+
+            const fromSyntax = this.state.forceSource ? syntaxType : 'complex';
+            const toSyntax = this.state.forceSource ? 'complex' : syntaxType;
             this.updateEditorContent(
                 this.props.editor.translation,
                 fromSyntax,
