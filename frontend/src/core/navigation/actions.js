@@ -1,6 +1,6 @@
 /* @flow */
 
-import { push } from 'connected-react-router';
+import { push, replace } from 'connected-react-router';
 
 
 /**
@@ -10,8 +10,12 @@ import { push } from 'connected-react-router';
  * it is possible that after the results have changed, the currently selected
  * entity won't be available anymore.
  * It keeps all other unaffected parameters in the URL the same.
+ *
+ * @param {Object} router The router data object from connected-react-router.
+ * @param {Object} params A list of parameters to update in the current URL.
+ * @param {boolean} replaceHistory Whether or not to push a new URL or replace the current one in the browser history.
  */
-export function update(router: Object, params: { [string]: ?string }): Function {
+export function update(router: Object, params: { [string]: ?string }, replaceHistory?: boolean): Function {
     return dispatch => {
         const queryString = router.location.search;
         const currentParams = new URLSearchParams(queryString);
@@ -44,7 +48,12 @@ export function update(router: Object, params: { [string]: ?string }): Function 
             currentParams.delete('string');
         }
 
-        dispatch(push('?' + currentParams.toString()));
+        let updateMethod = push;
+        if (replaceHistory) {
+            updateMethod = replace;
+        }
+
+        dispatch(updateMethod('?' + currentParams.toString()));
     }
 }
 
@@ -67,8 +76,8 @@ export function updateAuthor(router: Object, author: ?string): Function {
  *
  * This function keeps all other parameters in the URL the same.
  */
-export function updateEntity(router: Object, entity: string): Function {
-    return update(router, { string: entity });
+export function updateEntity(router: Object, entity: string, replaceHistory?: boolean): Function {
+    return update(router, { string: entity }, replaceHistory);
 }
 
 
