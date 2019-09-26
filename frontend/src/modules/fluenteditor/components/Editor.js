@@ -67,6 +67,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
                 }
             }
 
+            // Complex strings can only be displayed in the source editor, so no need to update
+            if (syntaxType === 'complex') {
+                return;
+            }
+
             const fromSyntax = this.state.forceSource ? syntaxType : 'complex';
             const toSyntax = this.state.forceSource ? 'complex' : syntaxType;
             this.updateEditorContent(
