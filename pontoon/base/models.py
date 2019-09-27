@@ -56,7 +56,7 @@ from pontoon.sync.vcs.repositories import (
     update_from_vcs,
     PullFromRepositoryException,
 )
-from pontoon.pretranslation.utils import pretranslate
+from pontoon.pretranslation.tasks import pretranslate
 
 
 log = logging.getLogger(__name__)
@@ -1148,7 +1148,7 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
-    pre_translation_enabled = models.BooleanField(default=False)
+    pretranslation_enabled = models.BooleanField(default=False)
 
     objects = ProjectQuerySet.as_manager()
 
@@ -1178,7 +1178,7 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
-        pre_translation_status_changed = False
+        pretranslation_status_changed = False
 
         if self.pk is not None:
             try:
@@ -1189,8 +1189,8 @@ class Project(AggregatedStats):
                         self.date_disabled = timezone.now()
                     else:
                         self.date_disabled = None
-                if self.pre_translation_enabled != original.pre_translation_enabled:
-                    pre_translation_status_changed = True
+                if self.pretranslation_enabled != original.pretranslation_enabled:
+                    pretranslation_status_changed = True
             except Project.DoesNotExist:
                 pass
 
@@ -1200,7 +1200,7 @@ class Project(AggregatedStats):
             for locale in self.locales.all():
                 locale.aggregate_stats()
 
-        if pre_translation_status_changed and self.pre_translation_enabled:
+        if pretranslation_status_changed and self.pretranslation_enabled:
             pretranslate(self)
 
     def changed_resources(self, now):

@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='project',
-            name='pre_translation_enabled',
+            name='pretranslation_enabled',
             field=models.BooleanField(default=False),
         ),
     ]
