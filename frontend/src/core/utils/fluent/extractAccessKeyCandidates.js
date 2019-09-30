@@ -2,9 +2,6 @@
 
 import flattenDeep from 'lodash.flattendeep';
 
-import parser from './parser';
-import serializer from './serializer';
-
 import type { FluentMessage, PatternElement } from './types';
 
 
@@ -39,19 +36,10 @@ function getTextElementsRecursivelly(elements: Array<PatternElement>) {
  * and then generates a list of unique characters from either the attribute with an ID
  * 'label' or the message value.
  *
- * @param {FluentMessage} translation A Fluent message to extract access key candidates from.
+ * @param {FluentMessage} message A (flat) Fluent message to extract access key candidates from.
  * @returns {?Array<string>} A list of access key candidates.
  */
-export default function extractAccessKeyCandidates(translation: FluentMessage): ?Array<string> {
-    // The input message is flat, so we must re-parse it to be able to remove non-TextElements
-    let message = parser.parseEntry(serializer.serializeEntry(translation));
-
-    // Unless it's Junk, which often happens while typing:
-    // then it's better to still show some candidates then to show nothing
-    if (message.type === 'Junk') {
-        message = translation;
-    }
-
+export default function extractAccessKeyCandidates(message: FluentMessage): ?Array<string> {
     // If message has no attributes, return null
     if (!message.attributes) {
         return null;
@@ -77,14 +65,20 @@ export default function extractAccessKeyCandidates(translation: FluentMessage): 
         return null;
     }
 
-    // Only take TextElements, see bug 1447103 for detals (that's why flat Message is no good)
+    // Only take TextElements
     const textElements = getTextElementsRecursivelly(source.value.elements);
 
     // Collect values of TextElements
     const values = textElements.map(element => {
         let value = '';
         if (element && typeof(element.value) === 'string') {
-            value = element.value.replace(/\s/g, '') // Also: Remove whitespace
+            value = (
+                element.value
+                // Exclude placeables (message is flat). See bug 1447103 for details.
+                .replace(/{[^}]*}/g, '')
+                // Exclude whitespace
+                .replace(/\s/g, '')
+            )
         }
         return value;
     });
