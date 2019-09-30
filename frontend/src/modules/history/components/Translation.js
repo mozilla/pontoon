@@ -26,7 +26,7 @@ type Props = {|
     user: UserState,
     index: number,
     deleteTranslation: (number) => void,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
@@ -93,7 +93,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             return;
         }
 
-        this.props.updateEditorTranslation(this.props.translation.string);
+        this.props.updateEditorTranslation(this.props.translation.string, 'history');
     }
 
     getStatus() {

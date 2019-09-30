@@ -21,7 +21,7 @@ type Props = {|
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
 |};
 
 
