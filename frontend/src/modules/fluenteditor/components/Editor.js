@@ -89,7 +89,15 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.props.editor.changeSource !== 'internal' &&
             typeof(this.props.editor.translation) === 'string'
         ) {
-            this.analyzeFluentMessage(this.props.editor.translation);
+            if (this.props.editor.changeSource === 'machinery') {
+                this.props.updateTranslation(prevProps.editor.translation, true);
+                if (typeof(this.props.editor.translation) === 'string') {
+                    this.props.addTextToEditorTranslation(this.props.editor.translation);
+                }
+            }
+            else {
+                this.analyzeFluentMessage(this.props.editor.translation);
+            }
         }
     }
 
