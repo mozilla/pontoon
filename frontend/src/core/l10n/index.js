@@ -15,4 +15,4 @@ export const NAME: string = 'l10n';
 
 // List of available locales for the UI.
 // Use to choose which locale files to download.
-export const AVAILABLE_LOCALES: Array<string> = ['fr', 'es', 'en-US'];
+export const AVAILABLE_LOCALES: Array<string> = ['en-US'];
