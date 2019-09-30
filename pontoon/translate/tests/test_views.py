@@ -21,7 +21,7 @@ def test_translate_behind_flag(client):
     url = reverse('pontoon.translate.next')
 
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 302
 
     with override_flag('translate_next', active=True):
         response = client.get(url)
