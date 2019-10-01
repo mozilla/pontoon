@@ -341,13 +341,6 @@ class UserProfile(models.Model):
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)
 
-    # If this is True, the user will automatically be redirected to the
-    # Translate.Next app when going to the translate page. If it is False,
-    # the user will instead be redirected to the translate page when trying
-    # to reach Translate.Next.
-    # To be removed as part of bug 1527853.
-    use_translate_next = models.BooleanField(default=False)
-
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
         models.PositiveIntegerField(),

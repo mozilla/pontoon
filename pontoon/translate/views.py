@@ -116,13 +116,7 @@ def get_preferred_locale(request):
 def translate(request, locale=None, project=None, resource=None):
     # Redirect the user to the old Translate page if needed.
     # To be removed as part of bug 1527853.
-    if (
-        not waffle.flag_is_active(request, 'translate_next')
-        or (
-            request.user.is_authenticated
-            and not request.user.profile.use_translate_next
-        )
-    ):
+    if not waffle.flag_is_active(request, 'translate_next'):
         url = reverse(
             'pontoon.translate',
             kwargs={

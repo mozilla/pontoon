@@ -58,12 +58,7 @@ def translate(request, locale, slug, part):
     """Translate view."""
     # Redirect the user to the Translate.Next app if needed.
     # To be removed as part of bug 1527853.
-    user = request.user
-    if (
-        waffle.flag_is_active(request, 'translate_next') and
-        user.is_authenticated and
-        user.profile.use_translate_next
-    ):
+    if waffle.flag_is_active(request, 'translate_next'):
         url = reverse(
             'pontoon.translate.next',
             kwargs={
@@ -1028,21 +1023,6 @@ def user_data(request):
         'gravatar_url_big': user.gravatar_url(88),
         'notifications': user.serialized_notifications,
     })
-
-
-# To be removed as part of bug 1527853.
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def toggle_use_translate_next(request):
-    profile = request.user.profile
-    profile.use_translate_next = not profile.use_translate_next
-    profile.save()
-
-    next = request.GET.get('next')
-    if next:
-        return redirect(next)
-
-    return redirect(reverse('pontoon.homepage'))
 
 
 class AjaxFormView(FormView):

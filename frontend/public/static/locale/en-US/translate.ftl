@@ -468,7 +468,6 @@ search-TimeRangeFilter--save-range = Save Range
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
-user-AppSwitcher--leave-translate-next = Leave Translate.Next
 user-SignIn--sign-in = Sign in
 user-SignOut--sign-out = <glyph></glyph>Sign out
 
