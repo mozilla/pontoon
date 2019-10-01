@@ -93,7 +93,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             if (this.props.editor.changeSource === 'machinery') {
                 this.props.updateTranslation(prevProps.editor.translation, true);
                 if (typeof(this.props.editor.translation) === 'string') {
-                    this.props.addTextToEditorTranslation(this.props.editor.translation);
+                    this.props.updateFocusedOrFirstField(this.props.editor.translation);
                 }
             }
             // If translation changes from external source (e.g. copied from helpers),

@@ -62,7 +62,7 @@ export type EditorProps = {|
     searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
-    addTextToEditorTranslation: (content: string) => void,
+    updateFocusedOrFirstField: (content: string) => void,
     clearEditor: () => void,
     copyOriginalIntoEditor: () => void,
     handleShortcuts: (
@@ -72,6 +72,7 @@ export type EditorProps = {|
         copyOriginalIntoEditor: ?() => void,
     ) => void,
     resetFailedChecks: () => void,
+    resetFocusedOrFirstFieldContent: () => void,
     resetSelectionContent: () => void,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
     setInitialTranslation: (Translation) => void,
@@ -105,8 +106,12 @@ export default function connectedEditor<Object>(
             this.props.dispatch(actions.update(translation, source));
         }
 
-        addTextToEditorTranslation = (content: string) => {
-            this.props.dispatch(actions.updateSelection(content));
+        updateFocusedOrFirstField = (content: string) => {
+            this.props.dispatch(actions.updateFocusedOrFirstField(content));
+        }
+
+        resetFocusedOrFirstFieldContent = () => {
+            this.props.dispatch(actions.resetFocusedOrFirstField());
         }
 
         hideUnsavedChanges = () => {
@@ -317,11 +322,12 @@ export default function connectedEditor<Object>(
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
-                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                    updateFocusedOrFirstField={ this.updateFocusedOrFirstField }
                     clearEditor={ this.clearEditor }
                     copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                     handleShortcuts={ this.handleShortcuts }
                     resetFailedChecks={ this.resetFailedChecks }
+                    resetFocusedOrFirstFieldContent={ this.resetFocusedOrFirstFieldContent }
                     resetSelectionContent={ this.resetSelectionContent }
                     sendTranslation={ this.sendTranslation }
                     setInitialTranslation={ this.setInitialTranslation }
