@@ -33,6 +33,7 @@ export default class RichEditor extends React.Component<Props> {
             props.entity &&
             translation !== prevProps.editor.translation &&
             props.editor.changeSource !== 'internal' &&
+            this.props.editor.changeSource !== 'machinery' &&
             typeof(translation) === 'string'
         ) {
             let message = fluent.parser.parseEntry(translation);
