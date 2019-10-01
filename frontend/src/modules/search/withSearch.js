@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import shortid from 'shortid';
+import escapeRegExp from 'lodash.escaperegexp';
 import { mark } from 'react-content-marker';
 
 
@@ -25,7 +26,7 @@ export function markSearchTerms(base: string, search: string){
         });
 
         for (let searchTerm of searchTerms) {
-            const rule = new RegExp(searchTerm, 'i');
+            const rule = new RegExp(escapeRegExp(searchTerm), 'i');
             const tag = (x: string) =>
                 <mark className='search' key={ shortid.generate() }>{ x }</mark>;
 
