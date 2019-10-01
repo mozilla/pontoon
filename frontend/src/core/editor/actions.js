@@ -17,12 +17,10 @@ import type { FluentMessage } from 'core/utils/fluent/types';
 
 
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
-export const RESET_FOCUSED_OR_FIRST_FIELD: 'editor/RESET_FOCUSED_OR_FIRST_FIELD' = 'editor/RESET_FOCUSED_OR_FIRST_FIELD';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' = 'editor/SET_INITIAL_TRANSLATION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
-export const UPDATE_FOCUSED_OR_FIRST_FIELD: 'editor/UPDATE_FOCUSED_OR_FIRST_FIELD' = 'editor/UPDATE_FOCUSED_OR_FIRST_FIELD';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
 
 
@@ -41,22 +39,6 @@ export function update(translation: Translation, changeSource?: string): UpdateA
         type: UPDATE,
         translation,
         changeSource: changeSource || 'internal',
-    };
-}
-
-
-/**
- * Update the content that should replace the text in the focused or first field
- * in the active editor.
- */
-export type UpdateFocusedOrFirstFieldAction = {|
-    +type: typeof UPDATE_FOCUSED_OR_FIRST_FIELD,
-    +content: string,
-|};
-export function updateFocusedOrFirstField(content: string): UpdateFocusedOrFirstFieldAction {
-    return {
-        type: UPDATE_FOCUSED_OR_FIRST_FIELD,
-        content,
     };
 }
 
@@ -116,19 +98,6 @@ export function updateFailedChecks(
         type: UPDATE_FAILED_CHECKS,
         failedChecks,
         source,
-    };
-}
-
-
-/**
- * Reset content to default value.
- */
-export type ResetFocusedOrFirstFieldAction = {|
-    +type: typeof RESET_FOCUSED_OR_FIRST_FIELD,
-|};
-export function resetFocusedOrFirstField(): ResetFocusedOrFirstFieldAction {
-    return {
-        type: RESET_FOCUSED_OR_FIRST_FIELD,
     };
 }
 
@@ -261,12 +230,10 @@ export function sendTranslation(
 
 export default {
     resetFailedChecks,
-    resetFocusedOrFirstField,
     resetSelection,
     sendTranslation,
     setInitialTranslation,
     update,
     updateFailedChecks,
-    updateFocusedOrFirstField,
     updateSelection,
 };

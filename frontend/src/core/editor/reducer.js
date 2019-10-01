@@ -2,24 +2,20 @@
 
 import {
     RESET_FAILED_CHECKS,
-    RESET_FOCUSED_OR_FIRST_FIELD,
     RESET_SELECTION,
     SET_INITIAL_TRANSLATION,
     UPDATE,
     UPDATE_FAILED_CHECKS,
-    UPDATE_FOCUSED_OR_FIRST_FIELD,
     UPDATE_SELECTION,
 } from './actions';
 
 import type {
     FailedChecks,
     ResetFailedChecksAction,
-    ResetFocusedOrFirstFieldAction,
     ResetSelectionAction,
     InitialTranslationAction,
     Translation,
     UpdateAction,
-    UpdateFocusedOrFirstFieldAction,
     UpdateFailedChecksAction,
     UpdateSelectionAction,
 } from './actions';
@@ -27,11 +23,9 @@ import type {
 
 type Action =
     | ResetFailedChecksAction
-    | ResetFocusedOrFirstFieldAction
     | ResetSelectionAction
     | InitialTranslationAction
     | UpdateAction
-    | UpdateFocusedOrFirstFieldAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
 ;
@@ -48,12 +42,6 @@ export type EditorState = {|
     // Helper tab, 'external' otherwise. This allows the Editor to behave
     // differently depending on the type of change.
     +changeSource: string,
-
-    // Order to replace the text in the focused or first field of the Rich Editor
-    // with this content. This is reset after that change has been made. Because
-    // we have different Editor implementations, we need to let those components
-    // perform the actual replacement logic.
-    +focusedOrFirstFieldContent: string,
 
     // Order to replace the currently selected text inside the Editor with
     // this content. This is reset after that change has been made. Because
@@ -99,7 +87,6 @@ const initial: EditorState = {
     translation: '',
     initialTranslation: '',
     changeSource: 'internal',
-    focusedOrFirstFieldContent: '',
     selectionReplacementContent: '',
     errors: [],
     warnings: [],
@@ -124,12 +111,6 @@ export default function reducer(
                 warnings: extractFailedChecksOfType(action.failedChecks, 'Warnings'),
                 source: action.source,
             };
-        case UPDATE_FOCUSED_OR_FIRST_FIELD:
-            return {
-                ...state,
-                focusedOrFirstFieldContent: action.content,
-                changeSource: 'internal',
-            };
         case UPDATE_SELECTION:
             return {
                 ...state,
@@ -146,11 +127,6 @@ export default function reducer(
                 ...state,
                 errors: [],
                 warnings: [],
-            };
-        case RESET_FOCUSED_OR_FIRST_FIELD:
-            return {
-                ...state,
-                focusedOrFirstFieldContent: '',
             };
         case RESET_SELECTION:
             return {

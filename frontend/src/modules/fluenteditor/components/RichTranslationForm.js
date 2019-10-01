@@ -146,11 +146,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        if (this.props.editor.focusedOrFirstFieldContent) {
-            this.updateFocusedOrFirstField(this.props.editor.focusedOrFirstFieldContent);
-            this.props.resetFocusedOrFirstFieldContent();
-        }
-
         this.focusInput(editor.changeSource !== 'internal');
     }
 
@@ -188,29 +183,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
     setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
         this.focusedElementId = event.currentTarget.id;
-    }
-
-    updateFocusedOrFirstField(content: string) {
-        let target = this.getFocusedElement();
-
-        // If there is no explicitely focused element, find the first input.
-        if (!target) {
-            target = this.getFirstInput();
-        }
-
-        if (!target) {
-            return null;
-        }
-
-        const newSelectionPos = target.selectionStart + content.length;
-
-        // Update content in the textarea.
-        target.value = content;
-
-        target.focus();
-
-        // Update the state to show the new content in the Editor.
-        this.updateTranslation(target.value, target.id.split('-'));
     }
 
     updateTranslationSelectionWith(content: string) {
