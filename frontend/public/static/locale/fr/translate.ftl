@@ -292,7 +292,6 @@ search-FiltersPanel--apply-filters =
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
-user-AppSwitcher--leave-translate-next = Quitter Translate.Next
 user-SignIn--sign-in = Connectez-vous
 user-SignOut--sign-out = <glyph></glyph>Se déconnecter
 

@@ -57,13 +57,6 @@ urlpatterns = [
         views.download_translation_memory,
         name='pontoon.download_tmx'),
 
-    # To be removed as part of bug 1527853.
-    url(
-        r'toggle-use-translate-next/',
-        views.toggle_use_translate_next,
-        name='pontoon.user.toggle_use_translate_next'
-    ),
-
     # AJAX
     url(r'^get-entities/', views.entities,
         name='pontoon.entities'),
