@@ -80,8 +80,6 @@ export class EditorBase extends React.Component<EditorProps, State> {
                 toSyntax,
             );
         }
-        // If translation changes from external source (e.g. copied from helpers),
-        // re-analyze the translation.
         else if (
             this.props.entity &&
             !this.state.forceSource &&
@@ -89,12 +87,17 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.props.editor.changeSource !== 'internal' &&
             typeof(this.props.editor.translation) === 'string'
         ) {
+            // On click on the Machinery Translation, we replace editor translation with its
+            // content. So we have to revert translation to the previous one first and then
+            // replace content of the focused or first text element with Machinery Translation.
             if (this.props.editor.changeSource === 'machinery') {
                 this.props.updateTranslation(prevProps.editor.translation, true);
                 if (typeof(this.props.editor.translation) === 'string') {
                     this.props.addTextToEditorTranslation(this.props.editor.translation);
                 }
             }
+            // If translation changes from external source (e.g. copied from helpers),
+            // re-analyze the translation.
             else {
                 this.analyzeFluentMessage(this.props.editor.translation);
             }
