@@ -37,8 +37,9 @@ export type EditorState = {|
     // needed for detecting unsaved changes.
     +initialTranslation: Translation,
 
-    // Source of the current change. 'internal' or missing if from inside the
-    // Editor, 'external' otherwise. This allows the Editor to behave
+    // Source of the current change: 'internal' if from inside the Editor,
+    // 'history', 'machinery', 'otherlocales' if copied from corresponding
+    // Helper tab, 'external' otherwise. This allows the Editor to behave
     // differently depending on the type of change.
     +changeSource: string,
 

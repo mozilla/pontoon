@@ -16,7 +16,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     translation: Object,
     parameters: NavigationParams,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     lastPreferred: boolean,
 |};
 
@@ -38,7 +38,7 @@ export default class Translation extends React.Component<Props> {
             return;
         }
 
-        this.props.updateEditorTranslation(this.props.translation.translation);
+        this.props.updateEditorTranslation(this.props.translation.translation, 'otherlocales');
     }
 
     render() {

@@ -56,7 +56,6 @@ export default class Metadata extends React.Component<Props> {
             }
             // $FLOW_IGNORE
             else if (e.target.childNodes.length) {
-                // $FLOW_IGNORE
                 this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
             }
         }

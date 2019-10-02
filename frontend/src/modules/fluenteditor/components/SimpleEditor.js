@@ -24,7 +24,7 @@ export default class SimpleEditor extends React.Component<Props> {
         if (
             props.entity &&
             props.editor.translation !== prevProps.editor.translation &&
-            props.editor.changeSource === 'external' &&
+            props.editor.changeSource !== 'internal' &&
             typeof(props.editor.translation) === 'string'
         ) {
             this.updateFluentTranslation(props.editor.translation);

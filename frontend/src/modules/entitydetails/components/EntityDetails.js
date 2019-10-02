@@ -219,8 +219,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(lightbox.actions.open(image));
     }
 
-    updateEditorTranslation = (translation: string) => {
-        this.props.dispatch(editor.actions.update(translation, 'external'));
+    updateEditorTranslation = (translation: string, changeSource: string) => {
+        this.props.dispatch(editor.actions.update(translation, changeSource));
     }
 
     addTextToEditorTranslation = (content: string) => {
