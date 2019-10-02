@@ -59,6 +59,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     // A React ref to the currently focused input, if any.
     focusedElementId: ?string = null;
 
+    // Elements needed to copy Machinery suggestions to the focused element
+    machineryElementId: ?string = null;
+    machineryText: ?string = null;
+
     tableBodyRef: { current: any } = React.createRef();
 
     componentDidMount() {
@@ -79,6 +83,23 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
     componentDidUpdate(prevProps: EditorProps) {
         const editor = this.props.editor;
+
+        // On click on the Machinery suggestion, we replace editor translation with its
+        // content. So we have to revert translation to the previous one first and then only
+        // replace content of the focused or first text element with Machinery suggestion.
+        if (
+            typeof(editor.translation) === 'string' &&
+            editor.translation !== prevProps.editor.translation &&
+            editor.changeSource === 'machinery'
+        ) {
+            this.props.updateTranslation(prevProps.editor.translation, true);
+            if (typeof(editor.translation) === 'string') {
+                this.machineryElementId = this.focusedElementId;
+                this.machineryText = editor.translation;
+                this.props.addTextToEditorTranslation(editor.translation);
+            }
+            return;
+        }
 
         // Reset the currently focused element when the entity changes or when
         // the translation changes from an external source (when that happens,
@@ -142,11 +163,28 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // implements an `updateTranslationSelectionWith` method and that is
         // used to update the translation.
         if (this.props.editor.selectionReplacementContent) {
-            this.updateTranslationSelectionWith(this.props.editor.selectionReplacementContent);
+            // Special case: we also use updateTranslationSelectionWith to copy
+            // Machinery suggestions to focused element in the editor. We first
+            // select all text in the element to make sure its content gets
+            // replaced instead of extended with the Machinery text.
+            if (this.machineryText && this.machineryElementId) {
+                const element = 'textarea#' + this.machineryElementId;
+                this.tableBodyRef.current.querySelector(element).select();
+
+                if (typeof(this.machineryText) === 'string') {
+                    this.updateTranslationSelectionWith(this.machineryText);
+                }
+
+                this.machineryElementId = null;
+                this.machineryText = null;
+            }
+            else {
+                this.updateTranslationSelectionWith(this.props.editor.selectionReplacementContent);
+            }
             this.props.resetSelectionContent();
         }
 
-        this.focusInput(editor.changeSource === 'external');
+        this.focusInput(editor.changeSource !== 'internal');
     }
 
     focusInput(putCursorToStart: boolean) {

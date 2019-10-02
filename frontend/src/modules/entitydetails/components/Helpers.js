@@ -32,7 +32,7 @@ type Props = {|
     parameters: NavigationParams,
     user: UserState,
     deleteTranslation: (number) => void,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
     searchMachinery: (string) => void,
 |};

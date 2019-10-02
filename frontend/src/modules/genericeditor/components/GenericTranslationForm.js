@@ -64,7 +64,7 @@ export default class GenericTranslationForm extends React.Component<EditorProps>
             this.props.resetSelectionContent();
         }
 
-        this.focusInput(editor.changeSource === 'external');
+        this.focusInput(editor.changeSource !== 'internal');
     }
 
     focusInput(putCursorToStart: boolean) {

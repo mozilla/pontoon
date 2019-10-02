@@ -15,7 +15,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
 |};
 

@@ -62,6 +62,7 @@ export type EditorProps = {|
     searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
+    addTextToEditorTranslation: (content: string) => void,
     clearEditor: () => void,
     copyOriginalIntoEditor: () => void,
     handleShortcuts: (
@@ -102,6 +103,10 @@ export default function connectedEditor<Object>(
         updateTranslation = (translation: Translation, fromOutsideEditor?: boolean) => {
             const source = fromOutsideEditor ? 'external' : 'internal';
             this.props.dispatch(actions.update(translation, source));
+        }
+
+        addTextToEditorTranslation = (content: string) => {
+            this.props.dispatch(actions.updateSelection(content));
         }
 
         hideUnsavedChanges = () => {
@@ -312,6 +317,7 @@ export default function connectedEditor<Object>(
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
+                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     clearEditor={ this.clearEditor }
                     copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                     handleShortcuts={ this.handleShortcuts }
