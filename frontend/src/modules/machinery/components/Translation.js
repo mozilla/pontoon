@@ -41,7 +41,7 @@ export default class Translation extends React.Component<Props> {
         }
 
         this.props.updateEditorTranslation(this.props.translation.translation, 'machinery');
-    };
+    }
 
     render() {
         const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
