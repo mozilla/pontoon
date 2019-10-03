@@ -88,7 +88,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 { !user.isAuthenticated ? null :
                 <React.Fragment>
                     <li className="details">
-                        <a href={ `/contributors/${user.username}` }/>
+                        <a href={ `/contributors/${user.username}/` }>
                             <img src={ user.gravatarURLBig } alt="User avatar" />
                             <p className="name">{ user.nameOrEmail }</p>
                             <p className="email">{ user.email }</p>
