@@ -142,6 +142,18 @@ class ContributorProfileViewTests(UserTestCase):
 
         assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
 
+    def test_logged_user_profile(self):
+        """Logged user should be able to re"""
+        self.client.get('/profile/')
+
+        assert_equal(self.mock_render.call_args[0][2]['contributor'], self.user)
+
+    def test_unlogged_user_profile(self):
+        """Unlogged users shouldn't have access to edit any profile."""
+        self.client.logout()
+
+        assert_equal(self.client.get('/profile/')['Location'], '/403')
+
 
 class ContributorTimelineViewTests(UserTestCase):
     """User timeline is a list of events created by a certain contributor."""

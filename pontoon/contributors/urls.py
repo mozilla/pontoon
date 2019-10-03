@@ -30,6 +30,11 @@ urlpatterns = [
         views.contributor_username,
         name='pontoon.contributors.contributor.username'),
 
+    # Current user's profile
+    url(r'^profile/$',
+        views.profile,
+        name='pontoon.contributors.profile'),
+
     # Current user's settings
     url(r'^settings/$', views.settings,
         name='pontoon.contributors.settings'),
