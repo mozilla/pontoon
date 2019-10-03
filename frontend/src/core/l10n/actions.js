@@ -5,7 +5,8 @@ import { negotiateLanguages } from '@fluent/langneg';
 
 import api from 'core/api';
 
-import { AVAILABLE_LOCALES } from '.';
+import { AVAILABLE_LOCALES, USE_PSEUDO_LOCALIZATION } from '.';
+import pseudoLocalizeResource from './pseudoLocalizeResource';
 
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
@@ -50,19 +51,39 @@ export function get(locales: Array<string>): Function {
     return async dispatch => {
         dispatch(request());
 
+        // Pseudo localization shows a weirdly translated UI, based on English.
+        // This is a development only tool that helps verifying that our UI
+        // is properly localized.
+        const usePseudoLocalization = (
+            process.env.NODE_ENV === 'development'
+            && USE_PSEUDO_LOCALIZATION
+        );
+
         // Setting defaultLocale to `en-US` means that it will always be the
         // last fallback locale, thus making sure the UI is always working.
-        const languages = negotiateLanguages(
+        let languages = negotiateLanguages(
             locales,
             AVAILABLE_LOCALES,
             { defaultLocale: 'en-US' },
         );
 
+        // For pseudo localization, we only want to serve English.
+        if (usePseudoLocalization) {
+            languages = ['en-US'];
+        }
+
         const bundles = await Promise.all(languages.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
                 const bundle = new FluentBundle(locale);
-                const resource = new FluentResource(content);
+
+                // We know this is English, let's make it weird before bundling it.
+                if (usePseudoLocalization) {
+                    content = pseudoLocalizeResource(content);
+                }
+
+                let resource = new FluentResource(content);
+
                 bundle.addResource(resource);
                 return bundle;
             });
