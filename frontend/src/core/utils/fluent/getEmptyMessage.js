@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Transformer } from 'fluent-syntax';
+import { Transformer } from '@fluent/syntax';
 
 import flattenMessage from './flattenMessage';
 import isPluralExpression from './isPluralExpression';

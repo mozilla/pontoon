@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { LocalizationProvider } from 'fluent-react';
+import { LocalizationProvider } from '@fluent/react';
 import 'intl-pluralrules';
 
 import * as l10n from 'core/l10n';

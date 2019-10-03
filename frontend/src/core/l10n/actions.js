@@ -1,7 +1,7 @@
 /* @flow */
 
-import { FluentBundle } from 'fluent';
-import { negotiateLanguages } from 'fluent-langneg';
+import { FluentBundle, FluentResource } from '@fluent/bundle';
+import { negotiateLanguages } from '@fluent/langneg';
 
 import api from 'core/api';
 
@@ -62,7 +62,8 @@ export function get(locales: Array<string>): Function {
             return api.l10n.get(locale)
             .then(content => {
                 const bundle = new FluentBundle(locale);
-                bundle.addMessages(content);
+                const resource = new FluentResource(content);
+                bundle.addResource(resource);
                 return bundle;
             });
         }));
