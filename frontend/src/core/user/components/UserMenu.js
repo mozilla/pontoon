@@ -95,12 +95,16 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <React.Fragment>
                     <li className="details">
                         <a href={ `/contributors/${user.username}/` }>
+<<<<<<< HEAD
                             <img
                                 src={ user.gravatarURLBig }
                                 alt=""
                                 height="88"
                                 width="88"
                             />
+=======
+                            <img src={ user.gravatarURLBig } alt="User avatar" />
+>>>>>>> Fix bug 1564837: Make contributor's own public profle link more discoverable (#1405)
                             <p className="name">{ user.nameOrEmail }</p>
                             <p className="email">{ user.email }</p>
                         </a>
