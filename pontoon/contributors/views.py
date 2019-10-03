@@ -31,7 +31,6 @@ from pontoon.contributors.utils import (
 )
 
 
-@login_required(redirect_field_name='', login_url='/403')
 def contributor_email(request, email):
     user = get_object_or_404(User, email=email)
     return contributor(request, user)

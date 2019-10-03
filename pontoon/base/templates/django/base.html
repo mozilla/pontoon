@@ -64,7 +64,7 @@
               <div class="menu">
                 <ul>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'pontoon.contributors.contributor.username', username=user %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
+                  <li><a href="{% url 'pontoon.contributors.contributor.username' username=user %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
                   <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
                   <li class="horizontal-separator"></li>
                   {% endif %}
