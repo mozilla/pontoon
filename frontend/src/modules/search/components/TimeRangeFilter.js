@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import date from 'date-and-time';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 import cloneDeep from 'lodash.clonedeep';
 
 import Highcharts from 'highcharts/highstock'

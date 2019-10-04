@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 

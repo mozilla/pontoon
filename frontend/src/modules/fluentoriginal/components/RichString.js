@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { serializeVariantKey } from 'fluent-syntax';
+import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichString.css';
 

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { FluentSerializer } from 'fluent-syntax';
+import { FluentSerializer } from '@fluent/syntax';
 
 
 const fluentSerializer = new FluentSerializer();
