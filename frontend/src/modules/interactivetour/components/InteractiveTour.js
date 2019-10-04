@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import Tour from 'reactour'
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './InteractiveTour.css';
 

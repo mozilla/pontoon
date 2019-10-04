@@ -1,6 +1,6 @@
 /* @flow */
 
-import { FluentBundle } from 'fluent';
+import { FluentBundle } from '@fluent/bundle';
 
 import { RECEIVE, REQUEST } from './actions';
 
