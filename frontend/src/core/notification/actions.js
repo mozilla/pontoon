@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 import shortid from 'shortid';
 
 
