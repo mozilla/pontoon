@@ -90,6 +90,7 @@
           icon = 'users',
         )
       }}
+      {% if settings.MAINTAINER %}
       {{ Menu.item(
           'Bugs',
           url('pontoon.teams.bugs', locale.code),
@@ -98,6 +99,7 @@
           icon = 'bug',
         )
       }}
+      {% endif %}
       {{ Menu.item(
           'Info',
           url('pontoon.teams.info', locale.code),

@@ -28,11 +28,13 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # Is this a dev instance?
 DEV = os.environ.get('DJANGO_DEV', 'False') != 'False'
 
+MAINTAINER = os.environ.get('MAINTAINER', 'False') != 'False'
+
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
+DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'True') != 'False' or HEROKU_DEMO
 
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
