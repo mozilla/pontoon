@@ -90,7 +90,7 @@
           icon = 'users',
         )
       }}
-      {% if settings.MAINTAINER %}
+      {% if settings.ENABLE_BUGS_TAB %}
       {{ Menu.item(
           'Bugs',
           url('pontoon.teams.bugs', locale.code),

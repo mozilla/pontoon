@@ -28,13 +28,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # Is this a dev instance?
 DEV = os.environ.get('DJANGO_DEV', 'False') != 'False'
 
-MAINTAINER = os.environ.get('MAINTAINER', 'False') != 'False'
-
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'True') != 'False' or HEROKU_DEMO
+DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
 
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
@@ -783,6 +781,10 @@ USE_I18N = False
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = False
+
+#Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
+#See bug 1567402 for details. A Mozilla-specific variable.
+ENABLE_BUGS_TAB = os.environ.get('ENABLE_BUGS_TAB', 'False') != 'False'
 
 # Bleach tags and attributes
 ALLOWED_TAGS = [
