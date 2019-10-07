@@ -782,6 +782,10 @@ USE_I18N = False
 # calendars according to the current locale
 USE_L10N = False
 
+# Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
+# See bug 1567402 for details. A Mozilla-specific variable.
+ENABLE_BUGS_TAB = os.environ.get('ENABLE_BUGS_TAB', 'False') != 'False'
+
 # Bleach tags and attributes
 ALLOWED_TAGS = [
     'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code', 'em', 'i',
