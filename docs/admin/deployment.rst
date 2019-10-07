@@ -83,6 +83,10 @@ you create:
    login. Set to True if you want to use the default Django login instead. This will
    allow you to log in via accounts created using `manage.py shell`.
 
+``ENABLE_BUGS_TAB``
+   Optional. Enables Bugs tab on team pages, which pulls team data from
+   bugzilla.mozilla.org. Specific for Mozilla deployments.
+
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters
    a system error. See `Heroku Reference`_ for more information.
