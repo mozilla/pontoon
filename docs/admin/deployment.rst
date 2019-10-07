@@ -102,6 +102,10 @@ you create:
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
 
+``ENABLE_BUGS_TAB``
+   Optional. Enables Bugs tab on team pages, which pulls team data from
+   bugzilla.mozilla.org. Specific for Mozilla deployments.
+
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters
    a system error. See `Heroku Reference`_ for more information.
