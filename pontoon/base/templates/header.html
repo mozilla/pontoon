@@ -39,8 +39,10 @@
             <ul>
               {{ Profile.top_menu() }}
 
-              <li><a href="{{ url('pontoon.terms') }}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
-              <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+              <li><a href="{{ url('pontoon.terms') }}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
+              <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fab-gh"></i>Hack it on GitHub</a></li>
+              <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>Give Feedback</a></li>
+              <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
               {% if user.is_authenticated() %}
               <li class="horizontal-separator"></li>
