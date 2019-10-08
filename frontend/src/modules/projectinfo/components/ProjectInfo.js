@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from 'fluent-react';
 import onClickOutside from 'react-onclickoutside';
 
 import './ProjectInfo.css';
@@ -54,11 +55,21 @@ export class ProjectInfoBase extends React.Component<Props, State> {
 
         return <div className="project-info">
             <div className="button" onClick={ this.toggleVisibility }>
-                <span className="fa fa-info"></span>
+              <Localized
+                  id="projectinfo-ProjectInfo--project-info"
+                  glyph={
+                      <span className="fa fa-info"></span>
+                  }
+              >
+              </Localized>
             </div>
             { !this.state.visible ? null :
             <aside className="panel">
-                <h2>Project Info</h2>
+              <Localized
+                  id="projectinfo-ProjectInfo--project-info-title"
+              >
+                  <h2>Project Info</h2>
+              </Localized>
                 {/* We can safely use project.info because it is validated by
                     bleach before being saved into the database. */}
                 <p dangerouslySetInnerHTML={ { __html: this.props.project.info } } />

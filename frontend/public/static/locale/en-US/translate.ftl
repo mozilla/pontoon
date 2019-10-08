@@ -492,3 +492,10 @@ user-UserMenu--settings = <glyph></glyph>Settings
 user-UserNotificationsMenu--no-notifications-title = No new notifications.
 user-UserNotificationsMenu--no-notifications-description = Here you’ll see updates for localizations you contribute to.
 user-UserNotificationsMenu--see-all-notifications = See all Notifications
+
+
+## Project Info
+## Shows information of all projects
+
+projectinfo-ProjectInfo--project-info = <glyph></glyph>Info
+projectinfo-ProjectInfo--project-info-title = Project Info
