@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0143_migrate_tm_ftl_comments'),
+        ('base', '0144_remove_userprofile_use_translate_next'),
     ]
 
     operations = [

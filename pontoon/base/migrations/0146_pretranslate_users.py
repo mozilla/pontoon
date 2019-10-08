@@ -40,7 +40,7 @@ def remove_pretranslation_users(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0144_project_pretranslate'),
+        ('base', '0145_project_pretranslate'),
     ]
 
     operations = [
