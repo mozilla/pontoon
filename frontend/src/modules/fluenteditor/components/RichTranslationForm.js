@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
-import { Localized } from 'fluent-react';
-import { serializeVariantKey } from 'fluent-syntax';
+import { Localized } from '@fluent/react';
+import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichTranslationForm.css';
 

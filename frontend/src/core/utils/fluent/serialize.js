@@ -1,6 +1,6 @@
 /* @flow */
 
-import { serializeExpression } from 'fluent-syntax';
+import { serializeExpression } from '@fluent/syntax';
 
 
 /**

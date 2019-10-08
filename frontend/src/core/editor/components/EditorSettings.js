@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './EditorSettings.css';
 

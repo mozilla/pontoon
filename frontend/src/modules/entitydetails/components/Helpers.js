@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
