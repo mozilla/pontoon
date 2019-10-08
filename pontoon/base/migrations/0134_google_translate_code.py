@@ -145,7 +145,7 @@ def populate_google_translate_code(apps, schema_editor):
         if pontoon_code in locale_map:
             locale_map[pontoon_code].google_translate_code = google_translate_code
 
-    bulk_update(locale_map.values(), update_fields=['google_translate_code'])
+    bulk_update(list(locale_map.values()), update_fields=['google_translate_code'])
 
 
 class Migration(migrations.Migration):
