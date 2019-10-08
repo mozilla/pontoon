@@ -13,7 +13,6 @@ MAX_RESULTS = 5
 
 
 def get_google_translate_data(text, locale_code):
-
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -64,6 +63,7 @@ def get_translation_memory_data(text, locale, pk=None):
         .minimum_levenshtein_ratio(text)
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
+
     # Exclude existing entity
     if pk:
         entries = entries.exclude(entity__pk=pk)
