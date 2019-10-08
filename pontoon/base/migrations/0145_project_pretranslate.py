@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='pretranslation_enabled',
-            field=models.BooleanField(default=False),
+            field=models.BooleanField(default=False, help_text='\n        Pretranslate project strings using automated sources\n        like translation memory and machine translation.\n        '),
         ),
     ]

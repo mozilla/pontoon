@@ -1148,7 +1148,13 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
-    pretranslation_enabled = models.BooleanField(default=False)
+    pretranslation_enabled = models.BooleanField(
+        default=False,
+        help_text="""
+        Pretranslate project strings using automated sources
+        like translation memory and machine translation.
+        """
+    )
 
     objects = ProjectQuerySet.as_manager()
 
