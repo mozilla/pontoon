@@ -6,7 +6,7 @@ import { negotiateLanguages } from '@fluent/langneg';
 import api from 'core/api';
 
 import { AVAILABLE_LOCALES, USE_PSEUDO_LOCALIZATION } from '.';
-import pseudoLocalizeResource from './pseudoLocalizeResource';
+import PSEUDO_STRATEGIES from './pseudolocalization';
 
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
@@ -75,15 +75,17 @@ export function get(locales: Array<string>): Function {
         const bundles = await Promise.all(languages.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
-                const bundle = new FluentBundle(locale);
+                let bundleOptions = {};
 
                 // We know this is English, let's make it weird before bundling it.
                 if (usePseudoLocalization) {
-                    content = pseudoLocalizeResource(content);
+                    bundleOptions = {
+                        transform: PSEUDO_STRATEGIES['accented'],
+                    }
                 }
 
+                const bundle = new FluentBundle(locale, bundleOptions);
                 let resource = new FluentResource(content);
-
                 bundle.addResource(resource);
                 return bundle;
             });

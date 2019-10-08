@@ -23,4 +23,4 @@ export const AVAILABLE_LOCALES: Array<string> = ['en-US'];
 // to see what is actually localized in the site, and to test strings against
 // constraints different from those of English.
 // Development feature only.
-export const USE_PSEUDO_LOCALIZATION: boolean = false;
+export const USE_PSEUDO_LOCALIZATION: boolean = true;
