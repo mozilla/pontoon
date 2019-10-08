@@ -1,6 +1,5 @@
 import logging
 
-from django.utils import timezone
 from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 
@@ -37,6 +36,14 @@ def pretranslate(project, locales=None, entities=None):
             obsolete=False,
         ).prefetch_related('resource')
 
+    # get available TranslatedResource pairs
+    tr_pairs = base.models.TranslatedResource.objects.filter(
+        resource__project=project,
+        locale__in=locales,
+    ).annotate(
+        locale_resource=Concat('locale_id', V('-'), 'resource_id', output_field=CharField())
+    ).values_list('locale_resource', flat=True).distinct()
+
     # Fetch all distinct locale-entity pairs for which translation exists
     translated_entities = base.models.Translation.objects.filter(
         locale__in=locales,
@@ -46,8 +53,6 @@ def pretranslate(project, locales=None, entities=None):
     ).values_list('locale_entity', flat=True).distinct()
 
     translated_entities = list(translated_entities)
-
-    now = timezone.now()
 
     translations = []
 
@@ -63,40 +68,44 @@ def pretranslate(project, locales=None, entities=None):
         log.info('Fetching pretranslations for locale {} started'.format(locale.code))
         for entity in entities:
             locale_entity = '{}-{}'.format(locale.id, entity.id)
-            if locale_entity not in translated_entities:
-                strings = get_translations(entity, locale)
-                if strings:
-                    for string, plural_form, user in strings:
-                        t = base.models.Translation(
-                            entity=entity,
-                            locale=locale,
-                            string=string,
-                            user=user,
-                            date=now,
-                            approved=False,
-                            active=True,
-                            plural_form=plural_form,
-                        )
+            locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
+            if locale_entity in translated_entities or locale_resource not in tr_pairs:
+                continue
 
-                        translations.append(t)
+            strings = get_translations(entity, locale)
 
-                        index += 1
+            if not strings:
+                continue
 
-                        locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
-                        if locale_resource not in tr_dict:
-                            tr_dict[locale_resource] = [index, 0]
-                            # Add query for fetching respective TranslatedResource.
-                            tr_filter.append(
-                                Q(locale__id=locale.id)
-                                & Q(resource__id=entity.resource.id)
-                            )
+            for string, plural_form, user in strings:
+                t = base.models.Translation(
+                    entity=entity,
+                    locale=locale,
+                    string=string,
+                    user=user,
+                    approved=False,
+                    active=True,
+                    plural_form=plural_form,
+                )
 
-                        if locale.code not in locale_dict:
-                            locale_dict[locale.code] = [locale, index, 0]
+                translations.append(t)
 
-                        # Increment number of translations (used to adjust stats)
-                        tr_dict[locale_resource][1] += 1
-                        locale_dict[locale.code][2] += 1
+                index += 1
+
+                if locale_resource not in tr_dict:
+                    tr_dict[locale_resource] = [index, 0]
+                    # Add query for fetching respective TranslatedResource.
+                    tr_filter.append(
+                        Q(locale__id=locale.id)
+                        & Q(resource__id=entity.resource.id)
+                    )
+
+                if locale.code not in locale_dict:
+                    locale_dict[locale.code] = [locale, index, 0]
+
+                # Increment number of translations (used to adjust stats)
+                tr_dict[locale_resource][1] += 1
+                locale_dict[locale.code][2] += 1
         log.info('Fetching pretranslations for locale {} done'.format(locale.code))
 
     if len(translations) == 0:
