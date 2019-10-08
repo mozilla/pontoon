@@ -497,5 +497,4 @@ user-UserNotificationsMenu--see-all-notifications = See all Notifications
 ## Project Info
 ## Shows information of all projects
 
-projectinfo-ProjectInfo--project-info = <glyph></glyph>Info
 projectinfo-ProjectInfo--project-info-title = Project Info
