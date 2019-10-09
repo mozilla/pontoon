@@ -20,6 +20,7 @@ import * as otherlocales from 'modules/otherlocales';
 import * as genericeditor from 'modules/genericeditor';
 import * as fluenteditor from 'modules/fluenteditor';
 import * as unsavedchanges from 'modules/unsavedchanges';
+import * as notification from 'core/notification';
 
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
@@ -170,10 +171,12 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     copyLinkToClipboard = () => {
         const { locale, project, resource, entity } = this.props.parameters;
-        
+
         let string_link = `/${locale}/${project}/${resource}/?string=${entity}`
-        navigator.clipboard.writeText(string_link).then(function() {
-            //TODO  Add success message and error handling
+        navigator.clipboard.writeText(string_link).then(() => {
+            // Notify the user of the change that happened.
+            const notif = notification.messages.STRING_LINK_COPIED;
+            this.props.dispatch(notification.actions.add(notif));
         });
     }
 

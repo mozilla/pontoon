@@ -154,8 +154,10 @@ editor-UnsavedChanges--leave-anyway = Leave anyway
 
 
 ## Entity Details Navigation
-## Shows next/previous buttons.
+## Copies string link - Shows next/previous buttons.
 
+entitydetails-EntityNavigation--link = <glyph></glyph>Copy Link
+    .title = Copy Link to String
 entitydetails-EntityNavigation--next = <glyph></glyph>Next
     .title = Go To Next String (Alt + Down)
 entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
