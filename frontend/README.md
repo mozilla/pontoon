@@ -224,9 +224,9 @@ In Fluent, the developer is not to be bothered with inner logic and complexity t
 
 ### Pseudo-localization
 
-In order to easily verify that a string is effectively localized, you can turn on pseudo-localization. To do that, set `USE_PSEUDO_LOCALIZATION` to `true` in `core/l10n/index.js`, then refresh the page.
+In order to easily verify that a string is effectively localized, you can turn on pseudo-localization. To do that, add `pseudolocalization=accented` or `pseudolocalization=bidi` to the URL, then refresh the page.
 
-Pseudo-localization turns every supported string into a weird, accented version of itself. For example, the string "Accented English" becomes "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ". Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are *not* properly localized in the interface.
+Pseudo-localization turns every supported string into a different version of itself. We support two modes: "accented" (transforms "Accented English" into "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ") and "bidi" (transforms "Reversed English" into "‮ᴚǝʌǝɹsǝp Ǝuƃʅısɥ‬"). Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are *not* properly localized in the interface.
 
 You can read [more about pseudo-localization on Wikipédia](https://en.wikipedia.org/wiki/Pseudolocalization).
 

@@ -5,7 +5,7 @@ import { negotiateLanguages } from '@fluent/langneg';
 
 import api from 'core/api';
 
-import { AVAILABLE_LOCALES, USE_PSEUDO_LOCALIZATION } from '.';
+import { AVAILABLE_LOCALES } from '.';
 import PSEUDO_STRATEGIES from './pseudolocalization';
 
 
@@ -54,9 +54,14 @@ export function get(locales: Array<string>): Function {
         // Pseudo localization shows a weirdly translated UI, based on English.
         // This is a development only tool that helps verifying that our UI
         // is properly localized.
+        const urlParams = new URLSearchParams(window.location.search);
         const usePseudoLocalization = (
             process.env.NODE_ENV === 'development'
-            && USE_PSEUDO_LOCALIZATION
+            && urlParams.has('pseudolocalization')
+            && (
+                urlParams.get('pseudolocalization') === 'accented'
+                || urlParams.get('pseudolocalization') === 'bidi'
+            )
         );
 
         // Setting defaultLocale to `en-US` means that it will always be the
@@ -80,7 +85,7 @@ export function get(locales: Array<string>): Function {
                 // We know this is English, let's make it weird before bundling it.
                 if (usePseudoLocalization) {
                     bundleOptions = {
-                        transform: PSEUDO_STRATEGIES['accented'],
+                        transform: PSEUDO_STRATEGIES[urlParams.get('pseudolocalization')],
                     }
                 }
 
