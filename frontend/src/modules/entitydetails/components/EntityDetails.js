@@ -168,6 +168,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(machinery.actions.get(source, locale, pk));
     }
 
+    copyLinkToClipboard = () => {
+        console.log("hello");
+    }
+
     goToNextEntity = () => {
         const { dispatch, nextEntity, router } = this.props;
 
@@ -269,6 +273,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         return <section className="entity-details">
             <EntityNavigation
+                copyLinkToClipboard={ this.copyLinkToClipboard }
                 goToNextEntity={ this.goToNextEntity }
                 goToPreviousEntity={ this.goToPreviousEntity }
             />

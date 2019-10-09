@@ -7,6 +7,7 @@ import './EntityNavigation.css';
 
 
 type Props = {|
+    +copyLinkToClipboard: () => void,
     +goToNextEntity: () => void,
     +goToPreviousEntity: () => void,
 |};
@@ -26,6 +27,10 @@ export default class EntityNavigation extends React.Component<Props> {
     componentWillUnmount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
+    }
+
+    copyLinkToClipboard = () => {
+        this.props.copyLinkToClipboard();
     }
 
     goToNextEntity = () => {
@@ -60,6 +65,21 @@ export default class EntityNavigation extends React.Component<Props> {
 
     render(): React.Node {
         return <div className='entity-navigation clearfix'>
+            <Localized
+                id="entitydetails-EntityNavigation--link"
+                attrs={{ title: true }}
+                glyph={
+                    <i className="fa fa-link fa-lg"></i>
+                }
+            >
+                <button
+                    className="link"
+                    title="Copy Link to String"
+                    onClick={ this.copyLinkToClipboard }
+                >
+                    { '<glyph></glyph>Copy Link' }
+                </button>
+            </Localized>
             <Localized
                 id="entitydetails-EntityNavigation--next"
                 attrs={{ title: true }}
