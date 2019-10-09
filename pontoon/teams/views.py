@@ -31,7 +31,7 @@ from pontoon.teams.forms import LocaleRequestForm
 def teams(request):
     """List all active localization teams."""
     locales = (
-        Locale.objects.visible()
+        Locale.objects.available()
         .prefetch_related('latest_translation__user')
     )
 
@@ -52,13 +52,14 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
-    count = locale.project_set.visible().count()
+    available_count = locale.project_set.available().count()
+    visible_count = locale.project_set.visible().count()
 
-    if not count:
+    if not available_count:
         raise Http404
 
     return render(request, 'teams/team.html', {
-        'count': count,
+        'count': visible_count,
         'locale': locale,
     })
 
