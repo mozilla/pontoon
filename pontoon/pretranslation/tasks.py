@@ -103,6 +103,10 @@ def pretranslate(project, locales=None, entities=None):
                 if locale.code not in locale_dict:
                     locale_dict[locale.code] = [locale, index, 0]
 
+                # Update the latest translation index
+                tr_dict[locale_resource][0] = index
+                locale_dict[locale.code][1] = index
+
                 # Increment number of translations (used to adjust stats)
                 tr_dict[locale_resource][1] += 1
                 locale_dict[locale.code][2] += 1
@@ -114,7 +118,7 @@ def pretranslate(project, locales=None, entities=None):
     translations = base.models.Translation.objects.bulk_create(translations)
 
     # Update latest activity and unreviewed count for the project.
-    project.latest_translation = translations[0]
+    project.latest_translation = translations[-1]
     project.unreviewed_strings += len(translations)
     project.save(update_fields=['latest_translation', 'unreviewed_strings'])
 
