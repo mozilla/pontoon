@@ -7,7 +7,7 @@ import './EntityNavigation.css';
 
 
 type Props = {|
-    +copyLinkToClipboard: () => void,
+    copyLinkToClipboard: () => void,
     +goToNextEntity: () => void,
     +goToPreviousEntity: () => void,
 |};

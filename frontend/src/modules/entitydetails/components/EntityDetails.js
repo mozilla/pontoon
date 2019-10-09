@@ -169,7 +169,12 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     copyLinkToClipboard = () => {
-        console.log("hello");
+        const { locale, project, resource, entity } = this.props.parameters;
+        
+        let string_link = `/${locale}/${project}/${resource}/?string=${entity}`
+        navigator.clipboard.writeText(string_link).then(function() {
+            //TODO  Add success message and error handling
+        });
     }
 
     goToNextEntity = () => {
