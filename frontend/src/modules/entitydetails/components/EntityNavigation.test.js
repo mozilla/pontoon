@@ -28,7 +28,7 @@ describe('<EntityNavigation>', () => {
         const { wrapper, copyMock } = getEntityNav();
 
         expect(copyMock.calledOnce).toBeFalsy();
-        wrapper.find('button.next').simulate('click');
+        wrapper.find('button.link').simulate('click');
         expect(copyMock.calledOnce).toBeTruthy();
     })
 
