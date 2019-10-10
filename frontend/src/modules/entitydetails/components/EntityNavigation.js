@@ -16,7 +16,7 @@ type Props = {|
 /**
  * Component showing entity navigation toolbar.
  *
- * Shows next/previous buttons.
+ * Shows copy link and next/previous buttons.
  */
 export default class EntityNavigation extends React.Component<Props> {
     componentDidMount() {
@@ -37,13 +37,13 @@ export default class EntityNavigation extends React.Component<Props> {
         // On Alt + Up, move to the previous entity.
         if (key === 38 && event.altKey && !event.ctrlKey && !event.shiftKey) {
             handledEvent = true;
-            this.goToPreviousEntity();
+            this.props.goToPreviousEntity();
         }
 
         // On Alt + Down, move to the next entity.
         if (key === 40 && event.altKey && !event.ctrlKey && !event.shiftKey) {
             handledEvent = true;
-            this.goToNextEntity();
+            this.props.goToNextEntity();
         }
 
         if (handledEvent) {
