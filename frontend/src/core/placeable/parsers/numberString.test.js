@@ -22,4 +22,13 @@ describe('numberString', () => {
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });
+
+    each([
+        ['3D game'],
+    ])
+    .it('does not mark anything in `%s`', (content) => {
+        const Marker = createMarker([numberString]);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
+        expect(wrapper.find('mark')).toHaveLength(0);
+    });
 });
