@@ -11,7 +11,7 @@ describe('<EntityNavigation>', () => {
         const nextMock = sinon.stub();
         const prevMock = sinon.stub();
         const wrapper = create(<EntityNavigation
-            copyToClipboard={ copyMock }
+            copyLinkToClipboard={ copyMock }
             goToNextEntity={ nextMock }
             goToPreviousEntity={ prevMock }
         />);

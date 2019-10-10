@@ -172,7 +172,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     copyLinkToClipboard = () => {
         const { locale, project, resource, entity } = this.props.parameters;
 
-        let string_link = `${window.location.host}/${locale}/${project}/${resource}/?string=${entity}`
+        const string_link = `${location.protocol}//${location.host}/${locale}/${project}/${resource}/?string=${entity}`
         navigator.clipboard.writeText(string_link).then(() => {
             // Notify the user of the change that happened.
             const notif = notification.messages.STRING_LINK_COPIED;
