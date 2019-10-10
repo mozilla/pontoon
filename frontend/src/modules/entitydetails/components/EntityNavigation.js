@@ -29,18 +29,6 @@ export default class EntityNavigation extends React.Component<Props> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    copyLinkToClipboard = () => {
-        this.props.copyLinkToClipboard();
-    }
-
-    goToNextEntity = () => {
-        this.props.goToNextEntity();
-    }
-
-    goToPreviousEntity = () => {
-        this.props.goToPreviousEntity();
-    }
-
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
@@ -75,7 +63,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="link"
                     title="Copy Link to String"
-                    onClick={ this.copyLinkToClipboard }
+                    onClick={ this.props.copyLinkToClipboard }
                 >
                     { '<glyph></glyph>Copy Link' }
                 </button>
@@ -90,7 +78,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="next"
                     title="Go To Next String (Alt + Down)"
-                    onClick={ this.goToNextEntity }
+                    onClick={ this.props.goToNextEntity }
                 >
                     { '<glyph></glyph>Next' }
                 </button>
@@ -105,7 +93,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="previous"
                     title="Go To Previous String (Alt + Up)"
-                    onClick={ this.goToPreviousEntity }
+                    onClick={ this.props.goToPreviousEntity }
                 >
                     { '<glyph></glyph>Previous' }
                 </button>
