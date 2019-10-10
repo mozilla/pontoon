@@ -18,6 +18,7 @@ import narrowNonBreakingSpace from '../parsers/narrowNonBreakingSpace';
 import newlineCharacter from '../parsers/newlineCharacter';
 import newlineEscape from '../parsers/newlineEscape';
 import nonBreakingSpace from '../parsers/nonBreakingSpace';
+import nsisVariable from '../parsers/nsisVariable';
 import numberString from '../parsers/numberString';
 import optionPattern from '../parsers/optionPattern';
 import punctuation from '../parsers/punctuation';
@@ -62,6 +63,7 @@ export const rules = [
     pythonFormattingVariable,
     javaFormattingVariable,
     stringFormattingVariable,
+    nsisVariable,
 
     jsonPlaceholder,
 
