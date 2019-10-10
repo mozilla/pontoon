@@ -17,10 +17,10 @@ import { Localized } from '@fluent/react';
  *   %(number)3.1d
  *
  * Source:
- * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L317
+ * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L115
  */
 const pythonFormattingVariable = {
-    rule: /(%(%|(\([^)]+\)){0,1}[-+0\s#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))/,
+    rule: /(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))/,
     matchIndex: 0,
     tag: (x: string) => {
         return <Localized
