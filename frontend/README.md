@@ -73,7 +73,7 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 ## Running and deploying
 
-### This feature is behind a Switch
+### This feature is behind a Flag
 
 While this is under development, the feature is hidden behing a feature flag, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_flag translate_next --everyone --create`, then restart your web server. To turn it off, run `./manage.py waffle_flag translate_next --deactivate`.
 
@@ -221,6 +221,14 @@ An important part of the contract is that the developer commits to treat the loc
 In return, localizers enter the social contract by promising to provide an accurate and clean translation of the messages that match the request.
 
 In Fluent, the developer is not to be bothered with inner logic and complexity that the localization will use to construct the response. Whether declensions or other variant selection techniques are used is up to a localizer and their particular translation. From the developer perspective, Fluent returns a final string to be presented to the user, with no l10n logic required in the running code.
+
+### Pseudo-localization
+
+In order to easily verify that a string is effectively localized, you can turn on pseudo-localization. To do that, add `pseudolocalization=accented` or `pseudolocalization=bidi` to the URL, then refresh the page.
+
+Pseudo-localization turns every supported string into a different version of itself. We support two modes: "accented" (transforms "Accented English" into "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ") and "bidi" (transforms "Reversed English" into "‮ᴚǝʌǝɹsǝp Ǝuƃʅısɥ‬"). Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are *not* properly localized in the interface.
+
+You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.org/wiki/Pseudolocalization).
 
 
 ## Development resources
