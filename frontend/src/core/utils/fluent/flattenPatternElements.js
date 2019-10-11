@@ -1,6 +1,6 @@
 /* @flow */
 
-import { TextElement, serializeExpression } from 'fluent-syntax';
+import { TextElement, serializeExpression } from '@fluent/syntax';
 
 import type { PatternElement } from './types';
 

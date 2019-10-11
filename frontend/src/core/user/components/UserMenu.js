@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './UserMenu.css';
 import FileUpload from './FileUpload';
@@ -88,7 +88,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 { !user.isAuthenticated ? null :
                 <React.Fragment>
                     <li className="details">
-                        <a href="/profile/">
+                        <a href={ `/contributors/${user.username}/` }>
                             <img src={ user.gravatarURLBig } alt="User avatar" />
                             <p className="name">{ user.nameOrEmail }</p>
                             <p className="email">{ user.email }</p>
