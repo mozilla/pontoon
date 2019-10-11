@@ -3,7 +3,7 @@ import logging
 from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 
-import pontoon.base as base
+from pontoon.base.models import Entity, TranslatedResource, Translation
 from pontoon.pretranslation.pretranslate import get_translations, update_changed_instances
 
 
@@ -31,13 +31,13 @@ def pretranslate(project, locales=None, entities=None):
         ).prefetch_project_locale(project)
 
     if not entities:
-        entities = base.models.Entity.objects.filter(
+        entities = Entity.objects.filter(
             resource__project=project,
             obsolete=False,
         ).prefetch_related('resource')
 
     # get available TranslatedResource pairs
-    tr_pairs = base.models.TranslatedResource.objects.filter(
+    tr_pairs = TranslatedResource.objects.filter(
         resource__project=project,
         locale__in=locales,
     ).annotate(
@@ -45,7 +45,7 @@ def pretranslate(project, locales=None, entities=None):
     ).values_list('locale_resource', flat=True).distinct()
 
     # Fetch all distinct locale-entity pairs for which translation exists
-    translated_entities = base.models.Translation.objects.filter(
+    translated_entities = Translation.objects.filter(
         locale__in=locales,
         entity__in=entities,
     ).annotate(
@@ -78,7 +78,7 @@ def pretranslate(project, locales=None, entities=None):
                 continue
 
             for string, plural_form, user in strings:
-                t = base.models.Translation(
+                t = Translation(
                     entity=entity,
                     locale=locale,
                     string=string,
@@ -115,7 +115,7 @@ def pretranslate(project, locales=None, entities=None):
     if len(translations) == 0:
         return
 
-    translations = base.models.Translation.objects.bulk_create(translations)
+    translations = Translation.objects.bulk_create(translations)
 
     # Update latest activity and unreviewed count for the project.
     project.latest_translation = translations[-1]

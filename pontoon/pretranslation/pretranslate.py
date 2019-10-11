@@ -5,7 +5,7 @@ from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 from bulk_update.helper import bulk_update
 
-import pontoon.base as base
+from pontoon.base.models import User, TranslatedResource
 from pontoon.machinery.utils import get_google_translate_data, get_translation_memory_data
 
 
@@ -21,8 +21,8 @@ def get_translations(entity, locale):
         - plural form
         - user - tm_user/gt_user
     """
-    tm_user = base.models.User.objects.get(email="pontoon-tm@mozilla.com")
-    gt_user = base.models.User.objects.get(email="pontoon-gt@mozilla.com")
+    tm_user = User.objects.get(email="pontoon-tm@mozilla.com")
+    gt_user = User.objects.get(email="pontoon-gt@mozilla.com")
 
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
@@ -73,7 +73,7 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
     # when used between django ORM query objects.
     tr_query = reduce(operator.ior, tr_filter)
 
-    translatedresources = base.models.TranslatedResource.objects.filter(
+    translatedresources = TranslatedResource.objects.filter(
         tr_query
     ).annotate(
         locale_resource=Concat('locale_id', V('-'), 'resource_id', output_field=CharField())
