@@ -14,7 +14,6 @@ describe('stringFormattingVariable', () => {
         [['%d', '%s'], 'There were %d %s', 2],
         [['%1$s', '%2$s'], '%1$s was kicked by %2$s', 2],
         ['%Id', 'There were %Id cows', 1],
-        ['% d', 'There were % d cows', 1],
         ["%'f", "There were %'f cows", 1],
         ["%#x", "There were %#x cows", 1],
         ['%3d', 'There were %3d cows', 1],
@@ -35,5 +34,18 @@ describe('stringFormattingVariable', () => {
                 expect(wrapper.find('mark').at(i).text()).toEqual(mark[i]);
             }
         }
+    });
+
+    each([
+        ['10 % complete'],
+        // We used to match '% d' here, but don't anymore to avoid
+        // false positives.
+        // See https://bugzilla.mozilla.org/show_bug.cgi?id=1251186
+        ['There were % d cows'],
+    ])
+    .it('does not mark anything in `%s`', (content) => {
+        const Marker = createMarker([stringFormattingVariable]);
+        const wrapper = shallow(<Marker>{ content }</Marker>);
+        expect(wrapper.find('mark')).toHaveLength(0);
     });
 });
