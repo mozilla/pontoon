@@ -19,7 +19,7 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False) %}
+{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False, for_teams_page=False) %}
   <tr class="{{ class }}">
     <td class="name" data-slug="{{ locale.code }}">
       <h4>
@@ -38,8 +38,10 @@
     <td class="progress" colspan="2">
       {% if chart.total_strings %}
         {{ ProgressChart.span(chart, chart_link, link_parameter, has_param) }}
-      {% else %}
+      {% elif for_teams_page %}
         <span class="not-ready">No projects enabled yet</span>
+      {% else %}
+        <span class="not-ready">Not synced yet</span>
       {% endif %}
     </td>
     {% if request %}

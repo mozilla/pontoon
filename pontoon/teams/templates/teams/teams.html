@@ -86,7 +86,7 @@
       {% set latest_activity = locale.get_latest_activity() %}
       {% set chart = locale.get_chart() %}
 
-      {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True) }}
+      {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True, for_teams_page=True) }}
     {% endfor %}
 
     {{ TeamList.footer(request=True, form=form) }}
