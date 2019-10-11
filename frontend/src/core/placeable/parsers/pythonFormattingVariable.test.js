@@ -32,6 +32,7 @@ describe('pythonFormattingVariable', () => {
         ['10 % complete'],
         // We used to match '%(number) 3d' here, but don't anymore to avoid
         // false positives.
+        // See https://bugzilla.mozilla.org/show_bug.cgi?id=1251186
         ['There were %(number) 3d cows'],
     ])
     .it('does not mark anything in `%s`', (content) => {

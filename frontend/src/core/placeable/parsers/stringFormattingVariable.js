@@ -19,7 +19,7 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L154
  */
 const stringFormattingVariable = {
-    rule: /(%(\d+\$)?[-+0 #'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/,
+    rule: /(%(\d+\$)?[-+0#'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/,
     matchIndex: 0,
     tag: (x: string) => {
         return <Localized
