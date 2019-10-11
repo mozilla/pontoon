@@ -69,6 +69,18 @@ batchactions-ReplaceAll--invalid = { $invalidCount } failed
 batchactions-ReplaceAll--error = Oops, something went wrong
 
 
+## ResourceProgress
+##  Show a panel with progress chart and stats for the current resource.
+
+resourceprogress-ResourceProgress--all-strings = All strings
+resourceprogress-ResourceProgress--unreviewed = Unreviewed
+resourceprogress-ResourceProgress--translated = Translated
+resourceprogress-ResourceProgress--fuzzy = Fuzzy
+resourceprogress-ResourceProgress--warnings = Warnings
+resourceprogress-ResourceProgress--errors = Errors
+resourceprogress-ResourceProgress--missing = Missing
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
