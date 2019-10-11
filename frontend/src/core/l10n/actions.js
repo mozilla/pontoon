@@ -56,8 +56,7 @@ export function get(locales: Array<string>): Function {
         // is properly localized.
         const urlParams = new URLSearchParams(window.location.search);
         const usePseudoLocalization = (
-            process.env.NODE_ENV === 'development'
-            && urlParams.has('pseudolocalization')
+            urlParams.has('pseudolocalization')
             && (
                 urlParams.get('pseudolocalization') === 'accented'
                 || urlParams.get('pseudolocalization') === 'bidi'
