@@ -22,6 +22,8 @@ type Props = {|
 type State = {|
     search: string,
     visible: boolean,
+    sortActive: boolean,
+    sortAsc: boolean,
 |};
 
 
