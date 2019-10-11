@@ -7,8 +7,6 @@ import xml.etree.ElementTree as ET
 from uuid import uuid4
 from six.moves.urllib.parse import quote
 
-from collections import defaultdict
-
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -17,7 +15,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import escape
 
 from pontoon.base import utils
-from pontoon.base.models import Entity, Locale, Translation, TranslationMemoryEntry
+from pontoon.base.models import Entity, Locale, Translation
+from pontoon.machinery.utils import get_google_translate_data, get_translation_memory_data
 
 # caighdean depends on nltk which tries to download files when it is imported.
 # This is doomed to fail when you start Pontoon while offline. To let
@@ -59,8 +58,6 @@ def translation_memory(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    MAX_RESULTS = 5
-
     try:
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
@@ -69,39 +66,8 @@ def translation_memory(request):
             'message': 'Not Found: {error}'.format(error=e),
         }, status=404)
 
-    entries = (
-        TranslationMemoryEntry.objects
-        .filter(locale=locale)
-        .minimum_levenshtein_ratio(text)
-        .exclude(translation__approved=False, translation__fuzzy=False)
-    )
-
-    # Exclude existing entity
-    if pk:
-        entries = entries.exclude(entity__pk=pk)
-
-    entries = entries.values('source', 'target', 'quality')
-    entries_merged = defaultdict(lambda: {'count': 0, 'quality': 0})
-
-    # Group entries with the same target and count them
-    for entry in entries:
-        if (
-            entry['target'] not in entries_merged or
-            entry['quality'] > entries_merged[entry['target']]['quality']
-        ):
-            entries_merged[entry['target']].update(entry)
-        entries_merged[entry['target']]['count'] += 1
-
-    # Sort entries in descending order by quality and then count
-    # Limit entries count by `MAX_RESULTS`
-    return JsonResponse(
-        sorted(
-            entries_merged.values(),
-            key=lambda e: (e['quality'], e['count']),
-            reverse=True,
-        )[:MAX_RESULTS],
-        safe=False
-    )
+    data = get_translation_memory_data(text, locale, pk)
+    return JsonResponse(data, safe=False)
 
 
 def microsoft_translator(request):
@@ -179,15 +145,6 @@ def google_translate(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    api_key = settings.GOOGLE_TRANSLATE_API_KEY
-
-    if not api_key:
-        log.error('GOOGLE_TRANSLATE_API_KEY not set')
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: Missing api key.',
-        }, status=400)
-
     # Validate if locale exists in the database to avoid any potential XSS attacks.
     if not Locale.objects.filter(google_translate_code=locale_code).exists():
         return JsonResponse({
@@ -195,36 +152,12 @@ def google_translate(request):
             'message': 'Not Found: {error}'.format(error=locale_code),
         }, status=404)
 
-    url = 'https://translation.googleapis.com/language/translate/v2'
+    data = get_google_translate_data(text, locale_code)
 
-    payload = {
-        'q': text,
-        'source': 'en',
-        'target': locale_code,
-        'format': 'text',
-        'key': api_key,
-    }
+    if not data['status']:
+        return JsonResponse(data, status=400)
 
-    try:
-        r = requests.post(url, params=payload)
-        root = json.loads(r.content)
-
-        if 'data' not in root:
-            log.error('Google Translate error: {error}'.format(error=root))
-            return JsonResponse({
-                'status': False,
-                'message': 'Bad Request: {error}'.format(error=root),
-            }, status=400)
-
-        return JsonResponse({
-            'translation': root['data']['translations'][0]['translatedText'],
-        })
-
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+    return JsonResponse(data)
 
 
 def caighdean(request):

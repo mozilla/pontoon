@@ -1147,6 +1147,14 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
+    pretranslation_enabled = models.BooleanField(
+        default=False,
+        help_text="""
+        Pretranslate project strings using automated sources
+        like translation memory and machine translation.
+        """
+    )
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
@@ -1175,6 +1183,7 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
+
         if self.pk is not None:
             try:
                 original = Project.objects.get(pk=self.pk)
