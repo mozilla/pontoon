@@ -5,24 +5,26 @@ import { Localized } from '@fluent/react';
 
 
 /**
- * Marks spaces at the beginning of a string.
+ * Marks NSIS variables.
  *
  * Example matches:
  *
- *   " Hello, world"
+ *   $Brand
+ *   $BrandShortName
  */
-const leadingSpace = {
-    rule: /(^ +)/,
+const nsisVariable = {
+    rule: /(^|\s)(\$[a-zA-Z][\w]*)/,
+    matchIndex: 2,
     tag: (x: string) => {
         return <Localized
-            id='placeable-parser-leadingSpace'
+            id='placeable-parser-nsisVariable'
             attrs={{ title: true }}
         >
-            <mark className='placeable' title='Leading space'>
+            <mark className='placeable' title='NSIS variable'>
                 { x }
             </mark>
         </Localized>;
     },
 };
 
-export default leadingSpace;
+export default nsisVariable;

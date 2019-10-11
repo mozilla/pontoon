@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='translation',
-            index=partial_index.PartialIndex(fields=['entity', 'locale', 'active'], name='base_transl_entity__ed9592_partial', unique=True, where=partial_index.PQ((b'active', True), (b'plural_form__isnull', True))),
+            index=partial_index.PartialIndex(fields=['entity', 'locale', 'active'], name='base_transl_entity__ed9592_partial', unique=True, where=partial_index.PQ(('active', True), ('plural_form__isnull', True))),
         ),
     ]

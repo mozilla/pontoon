@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Linkify from 'react-linkify';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './Metadata.css';
 

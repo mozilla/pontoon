@@ -4,30 +4,28 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import numberString from './numberString';
+import shortCapitalNumberString from './shortCapitalNumberString';
 
 
-describe('numberString', () => {
+describe('shortCapitalNumberString', () => {
     each([
-        ['25', 'Here is a 25 number'],
-        ['-25', 'Here is a -25 number'],
-        ['+25', 'Here is a +25 number'],
-        ['25.00', 'Here is a 25.00 number'],
-        ['2,500.00', 'Here is a 2,500.00 number'],
-        ['1\u00A0000,99', 'Here is a 1\u00A0000,99 number'],
+        ['3D', '3D'],
+        ['A4', 'Use the A4 paper'],
     ])
     .it('marks `%s` in `%s`', (mark, content) => {
-        const Marker = createMarker([numberString]);
+        const Marker = createMarker([shortCapitalNumberString]);
         const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });
 
     each([
-        ['3D game'],
+        ['I am'],
+        ['3d'],
+        ['3DS'],
     ])
     .it('does not mark anything in `%s`', (content) => {
-        const Marker = createMarker([numberString]);
+        const Marker = createMarker([shortCapitalNumberString]);
         const wrapper = shallow(<Marker>{ content }</Marker>);
         expect(wrapper.find('mark')).toHaveLength(0);
     });

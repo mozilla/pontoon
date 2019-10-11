@@ -11,7 +11,7 @@
 {% macro top_menu() %}
 {% if user.is_authenticated() %}
   <li class="details">
-    <a href="{{ url('pontoon.contributors.profile') }}">
+    <a href="{{ url('pontoon.contributors.contributor.username', username=user) }}">
       <img class="rounded" src="{{ user.gravatar_url(88) }}">
       <p class="name">{{ user.name_or_email|nospam }}</p>
       <p class="email">{{ user.email|nospam }}</p>

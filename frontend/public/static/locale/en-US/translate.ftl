@@ -69,6 +69,18 @@ batchactions-ReplaceAll--invalid = { $invalidCount } failed
 batchactions-ReplaceAll--error = Oops, something went wrong
 
 
+## ResourceProgress
+##  Show a panel with progress chart and stats for the current resource.
+
+resourceprogress-ResourceProgress--all-strings = All strings
+resourceprogress-ResourceProgress--unreviewed = Unreviewed
+resourceprogress-ResourceProgress--translated = Translated
+resourceprogress-ResourceProgress--fuzzy = Fuzzy
+resourceprogress-ResourceProgress--warnings = Warnings
+resourceprogress-ResourceProgress--errors = Errors
+resourceprogress-ResourceProgress--missing = Missing
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
@@ -401,6 +413,8 @@ placeable-parser-newlineEscape =
     .title = Escaped newline
 placeable-parser-nonBreakingSpace =
     .title = Non-breaking space
+placeable-parser-nsisVariable =
+    .title = NSIS Variable
 placeable-parser-numberString =
     .title = Number
 placeable-parser-optionPattern =
@@ -417,6 +431,8 @@ placeable-parser-qtFormatting =
     .title = Qt string formatting variable
 placeable-parser-stringFormattingVariable =
     .title = String formatting variable
+placeable-parser-shortCapitalNumberString =
+    .title = Short capital letter and number string
 placeable-parser-tabCharacter =
     .title = Tab character
 placeable-parser-thinSpace =
@@ -492,3 +508,9 @@ user-UserMenu--settings = <glyph></glyph>Settings
 user-UserNotificationsMenu--no-notifications-title = No new notifications.
 user-UserNotificationsMenu--no-notifications-description = Here you’ll see updates for localizations you contribute to.
 user-UserNotificationsMenu--see-all-notifications = See all Notifications
+
+
+## Project Info
+## Shows information of all projects
+
+projectinfo-ProjectInfo--project-info-title = Project Info

@@ -1,11 +1,12 @@
 /* @flow */
 
-import { FluentBundle } from 'fluent';
-import { negotiateLanguages } from 'fluent-langneg';
+import { FluentBundle, FluentResource } from '@fluent/bundle';
+import { negotiateLanguages } from '@fluent/langneg';
 
 import api from 'core/api';
 
 import { AVAILABLE_LOCALES } from '.';
+import PSEUDO_STRATEGIES from './pseudolocalization';
 
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
@@ -50,19 +51,46 @@ export function get(locales: Array<string>): Function {
     return async dispatch => {
         dispatch(request());
 
+        // Pseudo localization shows a weirdly translated UI, based on English.
+        // This is a development only tool that helps verifying that our UI
+        // is properly localized.
+        const urlParams = new URLSearchParams(window.location.search);
+        const usePseudoLocalization = (
+            urlParams.has('pseudolocalization')
+            && (
+                urlParams.get('pseudolocalization') === 'accented'
+                || urlParams.get('pseudolocalization') === 'bidi'
+            )
+        );
+
         // Setting defaultLocale to `en-US` means that it will always be the
         // last fallback locale, thus making sure the UI is always working.
-        const languages = negotiateLanguages(
+        let languages = negotiateLanguages(
             locales,
             AVAILABLE_LOCALES,
             { defaultLocale: 'en-US' },
         );
 
+        // For pseudo localization, we only want to serve English.
+        if (usePseudoLocalization) {
+            languages = ['en-US'];
+        }
+
         const bundles = await Promise.all(languages.map(locale => {
             return api.l10n.get(locale)
             .then(content => {
-                const bundle = new FluentBundle(locale);
-                bundle.addMessages(content);
+                let bundleOptions = {};
+
+                // We know this is English, let's make it weird before bundling it.
+                if (usePseudoLocalization) {
+                    bundleOptions = {
+                        transform: PSEUDO_STRATEGIES[urlParams.get('pseudolocalization')],
+                    }
+                }
+
+                const bundle = new FluentBundle(locale, bundleOptions);
+                let resource = new FluentResource(content);
+                bundle.addResource(resource);
                 return bundle;
             });
         }));
