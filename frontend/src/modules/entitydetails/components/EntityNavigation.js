@@ -7,6 +7,7 @@ import './EntityNavigation.css';
 
 
 type Props = {|
+    +copyLinkToClipboard: () => void,
     +goToNextEntity: () => void,
     +goToPreviousEntity: () => void,
 |};
@@ -15,7 +16,7 @@ type Props = {|
 /**
  * Component showing entity navigation toolbar.
  *
- * Shows next/previous buttons.
+ * Shows copy link and next/previous buttons.
  */
 export default class EntityNavigation extends React.Component<Props> {
     componentDidMount() {
@@ -28,14 +29,6 @@ export default class EntityNavigation extends React.Component<Props> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    goToNextEntity = () => {
-        this.props.goToNextEntity();
-    }
-
-    goToPreviousEntity = () => {
-        this.props.goToPreviousEntity();
-    }
-
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
@@ -44,13 +37,13 @@ export default class EntityNavigation extends React.Component<Props> {
         // On Alt + Up, move to the previous entity.
         if (key === 38 && event.altKey && !event.ctrlKey && !event.shiftKey) {
             handledEvent = true;
-            this.goToPreviousEntity();
+            this.props.goToPreviousEntity();
         }
 
         // On Alt + Down, move to the next entity.
         if (key === 40 && event.altKey && !event.ctrlKey && !event.shiftKey) {
             handledEvent = true;
-            this.goToNextEntity();
+            this.props.goToNextEntity();
         }
 
         if (handledEvent) {
@@ -61,6 +54,21 @@ export default class EntityNavigation extends React.Component<Props> {
     render(): React.Node {
         return <div className='entity-navigation clearfix'>
             <Localized
+                id="entitydetails-EntityNavigation--link"
+                attrs={{ title: true }}
+                glyph={
+                    <i className="fa fa-link fa-lg"></i>
+                }
+            >
+                <button
+                    className="link"
+                    title="Copy Link to String"
+                    onClick={ this.props.copyLinkToClipboard }
+                >
+                    { '<glyph></glyph>Copy Link' }
+                </button>
+            </Localized>
+            <Localized
                 id="entitydetails-EntityNavigation--next"
                 attrs={{ title: true }}
                 glyph={
@@ -70,7 +78,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="next"
                     title="Go To Next String (Alt + Down)"
-                    onClick={ this.goToNextEntity }
+                    onClick={ this.props.goToNextEntity }
                 >
                     { '<glyph></glyph>Next' }
                 </button>
@@ -85,7 +93,7 @@ export default class EntityNavigation extends React.Component<Props> {
                 <button
                     className="previous"
                     title="Go To Previous String (Alt + Up)"
-                    onClick={ this.goToPreviousEntity }
+                    onClick={ this.props.goToPreviousEntity }
                 >
                     { '<glyph></glyph>Previous' }
                 </button>

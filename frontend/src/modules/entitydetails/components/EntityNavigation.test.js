@@ -7,19 +7,30 @@ import EntityNavigation from './EntityNavigation';
 
 describe('<EntityNavigation>', () => {
     function getEntityNav({ create = shallow } = {}) {
+        const copyMock = sinon.stub();
         const nextMock = sinon.stub();
         const prevMock = sinon.stub();
         const wrapper = create(<EntityNavigation
+            copyLinkToClipboard={ copyMock }
             goToNextEntity={ nextMock }
             goToPreviousEntity={ prevMock }
         />);
 
         return {
             wrapper,
+            copyMock,
             nextMock,
             prevMock,
         };
     }
+
+    it('puts a copy of string link on clipboard', () => {
+        const { wrapper, copyMock } = getEntityNav();
+
+        expect(copyMock.calledOnce).toBeFalsy();
+        wrapper.find('button.link').simulate('click');
+        expect(copyMock.calledOnce).toBeTruthy();
+    })
 
     it('goes to the next entity on click on the Next button', () => {
         const { wrapper, nextMock } = getEntityNav();

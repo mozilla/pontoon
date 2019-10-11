@@ -117,4 +117,10 @@ export default {
         </Localized>,
         type: 'error',
     },
+    'STRING_LINK_COPIED': {
+        content: <Localized id='notification--string-link-copied'>
+            Link copied to clipboard
+        </Localized>,
+        type: 'info',
+    },
 };
