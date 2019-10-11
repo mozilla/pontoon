@@ -2097,6 +2097,23 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def empty-string(self, locale):
+        """Return a filter to be used to check if an empty string was passed.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(null=True),
+                lambda x: x.empty-string,
+                match_all=False,
+            )
+        )
+
     def unchanged(self, locale):
         """Return a filter to be used to select entities that have unchanged translations.
 
