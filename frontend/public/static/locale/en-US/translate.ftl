@@ -166,8 +166,10 @@ editor-UnsavedChanges--leave-anyway = Leave anyway
 
 
 ## Entity Details Navigation
-## Shows next/previous buttons.
+## Shows Copy Link and Next/Previous buttons.
 
+entitydetails-EntityNavigation--link = <glyph></glyph>Copy Link
+    .title = Copy Link to String
 entitydetails-EntityNavigation--next = <glyph></glyph>Next
     .title = Go To Next String (Alt + Down)
 entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
@@ -375,6 +377,7 @@ notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
 notification--entity-not-found = Can’t load specified string
+notification--string-link-copied = Link copied to clipboard
 
 
 ## OtherLocales Translation
