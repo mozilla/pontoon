@@ -14,7 +14,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Translation,
-    TranslationMemoryEntry
+    TranslationMemoryEntry,
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
