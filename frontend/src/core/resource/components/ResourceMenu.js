@@ -36,12 +36,31 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.state = {
             search: '',
             visible: false,
+            sortActive: false,
+            sortAsc: false,
         };
     }
 
     toggleVisibility = () => {
         this.setState((state) => {
             return { visible: !state.visible };
+        });
+    }
+
+    toggleSort = () => {
+        this.setState(() => {
+            return {
+                sortActive: false,
+            };
+        });
+    }
+
+    handleSort = () => {
+        this.setState((state) => {
+            return {
+                sortActive: true,
+                sortAsc: !state.sortAsc
+            };
         });
     }
 
@@ -93,6 +112,17 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
+        function getPercentCompletion(el){
+            let approvedStrings = el.approvedStrings,
+                stringsWithWarnings = el.stringsWithWarnings,
+                totalStrings = el.totalStrings;
+
+            const completeStrings = approvedStrings + stringsWithWarnings;
+
+            const percent = Math.floor(completeStrings / totalStrings * 100);
+            return percent;
+        }
+
         return <li className={ className }>
             <div
                 className="selector unselectable"
@@ -116,16 +146,41 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                     />
                 </div>
 
+                <div className="resources-list-header">
+                    <span className="resource" onClick={ this.toggleSort }> RESOURCE </span>
+                    <span className="completion" onClick={ this.handleSort } >% COMPLETION </span>
+                    <span className={"completion icon " + (this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "")}
+                          onClick={ this.handleSort }
+                    />
+                </div>
+
                 <ul>
-                    { resourceElements.length ?
-                        resourceElements.map((resource, index) => {
+                    { resourceElements.length ? (
+                            (this.state.sortActive
+                                ? resourceElements.sort( (a,b) => {
+                                    let percentA = getPercentCompletion(a),
+                                        percentB = getPercentCompletion(b);
+
+                                    let result = 0;
+
+                                    if (percentA < percentB ) {
+                                        result = -1;
+                                    }
+                                    if (percentA > percentB) {
+                                        result = 1;
+                                    }
+                                    return this.state.sortAsc ? result :  result * -1;
+
+                                })
+                                : resourceElements)
+                                .map((resource, index) => {
                             return <ResourceItem
                                 parameters={ parameters }
                                 resource={ resource }
                                 navigateToPath={ this.navigateToPath }
                                 key={ index }
                             />;
-                        })
+                        }))
                         :
                         // No resources found
                         <Localized id='resource-ResourceMenu--no-results'>
