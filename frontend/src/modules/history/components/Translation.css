@@ -3,10 +3,15 @@
     cursor: pointer;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
+    pointer-events: auto;
 }
 
 .history .translation:hover {
     background: #4D5967;
+}
+
+.history .translation.can-not-copy {
+    pointer-events: none;
 }
 
 .history .translation > header {
