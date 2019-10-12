@@ -2,7 +2,7 @@
 
 <div class="projects items">
   <menu class="controls">
-    <div class="search-wrapper small clearfix">
+    <div class="search-wrapper small clearfix" style="display:none">
       <div class="icon fa fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
@@ -14,7 +14,8 @@
     {% endif %}
   </menu>
 
-  {{ ProjectList.header(request=True) }}
+  
+  {{ ProjectList.header(request=True, visible=False) }}
 
   {% set locale_projects = locale.available_projects_list() %}
 
@@ -36,4 +37,7 @@
   {% endfor %}
 
   {{ ProjectList.footer(request=True) }}
+<p class="no-results no-contributors">No contributors found.</p>
 </div>
+
+

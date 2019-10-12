@@ -3,8 +3,12 @@
 {% import 'widgets/deadline.html' as Deadline %}
 {% import 'widgets/priority.html' as Priority %}
 
-{% macro header(request=False) %}
+{% macro header(request=False, visible=True) %}
+  {% if visible %}
   <table class="table table-sort project-list item-list">
+  {% else %}
+  <table class="table table-sort project-list item-list" style="display:none">
+  {% endif %}
     <thead>
       <tr>
         <th class="name asc">Project<i class="fa"></i></th>

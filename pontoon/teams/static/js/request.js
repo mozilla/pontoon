@@ -24,6 +24,9 @@ var Pontoon = (function (my) {
               .toggleClass('limited', !show)
               .toggle(!show);
 
+          $('.project-list').toggle(!show);
+          $('.search-wrapper').toggle(!show);
+
           // Show requested projects
           $(localeProjects).each(function() {
             $('.items')
