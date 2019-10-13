@@ -86,7 +86,7 @@
       {% set latest_activity = locale.get_latest_activity() %}
       {% set chart = locale.get_chart() %}
 
-      {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True, not_ready_message = 'No projects enabled yet') }}
+      {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True, not_ready_message='No projects enabled yet') }}
     {% endfor %}
 
     {{ TeamList.footer(request=True, form=form) }}
