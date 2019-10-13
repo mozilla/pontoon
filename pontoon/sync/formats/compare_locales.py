@@ -60,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
                     entity.key,
                     None,
                     None,
-                    None,
+                    0,
                 )
 
         try:
@@ -109,11 +109,14 @@ class CompareLocalesResource(ParsedResource):
         with open(self.path, 'w') as output_file:
             log.debug('Saving file: %s', self.path)
             output_file.write(
-                serializer.serialize(
-                    self.path,
-                    self.source_resource.parsed_objects,
-                    self.parsed_objects,
-                    new_l10n,
+                str(
+                    serializer.serialize(
+                        self.path,
+                        self.source_resource.parsed_objects,
+                        self.parsed_objects,
+                        new_l10n,
+                    ),
+                    'utf-8',
                 )
             )
 

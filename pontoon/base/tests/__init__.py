@@ -297,7 +297,7 @@ def create_named_tempfile(contents, prefix=None, suffix=None, directory=None):
         dir=directory,
         delete=False,
     ) as temp:
-        temp.write(contents)
+        temp.write(bytes(contents, 'utf-8'))
         temp.flush()
 
     return temp.name

@@ -46,7 +46,7 @@ class CompareLocalesResourceTests(TestCase):
         """)
 
         source_path = create_named_tempfile(
-            contents,
+            bytes(contents, 'utf-8'),
             prefix='strings',
             suffix='.xml',
             directory=self.tempdir,
