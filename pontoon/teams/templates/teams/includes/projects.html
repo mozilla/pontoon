@@ -1,8 +1,17 @@
 {% import 'projects/widgets/project_list.html' as ProjectList with context %}
 
+{% set hide_table = (locale.project_set.visible().count() == 0) %}
+
 <div class="projects items">
+  
+  {% if hide_table %}
+  <menu class="controls no-projects">
+    <div class="search-wrapper small clearfix" style="display:none">
+  {% else %}
   <menu class="controls">
     <div class="search-wrapper small clearfix">
+  {% endif %}
+
       <div class="icon fa fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
@@ -14,7 +23,8 @@
     {% endif %}
   </menu>
 
-  {{ ProjectList.header(request=True) }}
+  
+  {{ ProjectList.header(request=True, visible=not hide_table) }}
 
   {% set locale_projects = locale.available_projects_list() %}
 
@@ -36,4 +46,9 @@
   {% endfor %}
 
   {{ ProjectList.footer(request=True) }}
+
 </div>
+
+{% if hide_table %}
+<p class="no-results">There are no projects enabled for the team yet.</p>
+{% endif %}

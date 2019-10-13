@@ -1276,6 +1276,10 @@ body > form,
   position: relative;
 }
 
+.controls.no-projects{
+  height: 28px;
+}
+
 .controls .button {
   background: #333941;
   border: none;

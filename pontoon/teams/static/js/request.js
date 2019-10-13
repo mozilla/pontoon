@@ -17,6 +17,12 @@ var Pontoon = (function (my) {
         if (type === 'locale-projects') {
           var localeProjects = $('#server').data('locale-projects');
 
+          //Show table and search box, hide no-result message
+            $('.search-wrapper:hidden').toggle();
+            $('.controls.no-projects').toggleClass('no-projects');
+            $('.project-list:hidden').toggle();
+            $('.no-results').toggle(false);
+
           // Hide all projects
           $('.items')
             .toggleClass('request', !show)
@@ -32,6 +38,14 @@ var Pontoon = (function (my) {
                 .toggleClass('limited', show)
                 .toggle(show);
           });
+
+          //Hide search box and table, show no result message if no project displayed
+          if ($('tr.limited').length === 0 && show) {
+            $('.search-wrapper').toggle(!show);
+            $('.project-list').toggle(!show);
+            $('menu.controls').toggleClass('no-projects');
+            $('.no-results').toggle(show);
+          }
 
           Pontoon.requestItem.toggleButton(!show, 'locale-projects');
         }
@@ -63,6 +77,7 @@ var Pontoon = (function (my) {
 
         $('#request-item-note').toggle(show);
         $('#request-item').toggle(show);
+        a = $('tr.limited').length;
       },
 
       requestProjects: function(locale, projects, type) {
