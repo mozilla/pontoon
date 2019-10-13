@@ -77,7 +77,6 @@ var Pontoon = (function (my) {
 
         $('#request-item-note').toggle(show);
         $('#request-item').toggle(show);
-        a = $('tr.limited').length;
       },
 
       requestProjects: function(locale, projects, type) {
