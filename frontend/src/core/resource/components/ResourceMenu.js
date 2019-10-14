@@ -149,11 +149,15 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                 </div>
 
                 <div className="resources-list-header">
-                    <span className="resource" onClick={ this.toggleSort }> RESOURCE </span>
-                    <span className="completion" onClick={ this.handleSort } >% COMPLETION </span>
-                    <span className={"completion icon " + (this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "")}
+                    <Localized id='resource-ResourceMenu--resource'>
+                        <span className="resource" onClick={ this.toggleSort }>Resource</span>
+                    </Localized>
+                    <Localized id='resource-ResourceMenu--progress'>
+                        <span className="progress" onClick={ this.handleSort }>Progress</span>
+                    </Localized>
+                        <span className={"progress icon " + (this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "")}
                           onClick={ this.handleSort }
-                    />
+                        />
                 </div>
 
                 <ul>

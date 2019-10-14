@@ -101,9 +101,11 @@
 
 .resource-menu .menu .resources-list-header .resource {
     float: left;
+    text-transform: uppercase;
 }
-.resource-menu .menu .resources-list-header .completion {
+.resource-menu .menu .resources-list-header .progress {
     float: right;
+    text-transform: uppercase;
 }
 
 .resource-menu .menu .resources-list-header .icon {
