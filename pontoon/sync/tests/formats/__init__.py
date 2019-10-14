@@ -363,6 +363,7 @@ class FormatTestsMixin(object):
             MissingString=Translated Missing String
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
+
         missing_translation = match_attr(resource.translations, key=self.key('Missing String'))
         missing_translation.strings = {None: expected_translation or 'Translated Missing String'}
         resource.save(self.locale)
