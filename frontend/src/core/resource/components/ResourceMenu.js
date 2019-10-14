@@ -22,7 +22,7 @@ type Props = {|
 type State = {|
     search: string,
     visible: boolean,
-    sortActive: boolean,
+    sortActive: 'resource'|'progress',
     sortAsc: boolean,
 |};
 
@@ -38,8 +38,8 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.state = {
             search: '',
             visible: false,
-            sortActive: false,
-            sortAsc: false,
+            sortActive: 'resource',
+            sortAsc: true,
         };
     }
 
@@ -49,18 +49,19 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         });
     }
 
-    toggleSort = () => {
-        this.setState(() => {
+    toggleResource = () => {
+        this.setState((state) => {
             return {
-                sortActive: false,
+                sortActive: 'resource',
+                sortAsc: !state.sortAsc
             };
         });
     }
 
-    handleSort = () => {
+    toggleProgress = () => {
         this.setState((state) => {
             return {
-                sortActive: true,
+                sortActive: 'progress',
                 sortAsc: !state.sortAsc
             };
         });
@@ -94,8 +95,6 @@ export class ResourceMenuBase extends React.Component<Props, State> {
     render() {
         const { parameters, resources } = this.props;
 
-        const sort = this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "";
-
         if (parameters.project === 'all-projects') {
             return null;
         }
@@ -116,7 +115,13 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
-        function getPercentCompletion(el){
+        const sort = this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down";
+
+        const sortResource = this.state.sortActive === 'resource' ? sort : ""
+
+        const sortProgress = this.state.sortActive === 'progress' ? sort : "";
+
+        function getProgress(el){
             let approvedStrings = el.approvedStrings,
                 stringsWithWarnings = el.stringsWithWarnings,
                 totalStrings = el.totalStrings;
@@ -125,6 +130,12 @@ export class ResourceMenuBase extends React.Component<Props, State> {
 
             const percent = Math.floor(completeStrings / totalStrings * 100);
             return percent;
+        }
+
+        function getResource(res){
+            let resources = res.path
+
+            return resources
         }
 
         return <li className={ className }>
@@ -152,35 +163,52 @@ export class ResourceMenuBase extends React.Component<Props, State> {
 
                 <div className="resources-list-header">
                     <Localized id='resource-ResourceMenu--resource'>
-                        <span className="resource" onClick={ this.toggleSort }>Resource</span>
+                        <span className="resource" onClick={ this.toggleResource }>Resource</span>
                     </Localized>
+                    <span className={"resource icon " + sortResource}
+                          onClick={ this.toggleResource }
+                    />
                     <Localized id='resource-ResourceMenu--progress'>
-                        <span className="progress" onClick={ this.handleSort }>Progress</span>
+                        <span className="progress" onClick={ this.toggleProgress }>Progress</span>
                     </Localized>
-                        <span className={"progress icon " + sort}
-                          onClick={ this.handleSort }
-                        />
+                    <span className={"progress icon " + sortProgress}
+                          onClick={ this.toggleProgress }
+                    />
                 </div>
 
                 <ul>
                     { resourceElements.length ? (
-                            (this.state.sortActive
+                            (this.state.sortActive === 'resource'
                                 ? resourceElements.sort( (a,b) => {
-                                    let percentA = getPercentCompletion(a),
-                                        percentB = getPercentCompletion(b);
+                                    let resourceA = getResource(a),
+                                        resourceB = getResource(b);
+
+                                    let result = 0;
+
+                                    if (resourceA < resourceB) {
+                                        result = -1;
+                                    }
+                                    if (resourceA > resourceB) {
+                                        result = 1;
+                                    }
+                                    return this.state.sortAsc ? result :  result * -1;
+
+                                })
+                                : resourceElements.sort( (a,b) => {
+                                    let percentA = getProgress(a),
+                                        percentB = getProgress(b);
 
                                     let result = 0;
 
                                     if (percentA < percentB ) {
                                         result = -1;
                                     }
-                                    if (percentA > percentB) {
+                                    if (percentA > percentB ) {
                                         result = 1;
                                     }
                                     return this.state.sortAsc ? result :  result * -1;
 
-                                })
-                                : resourceElements)
+                                }))
                                 .map((resource, index) => {
                             return <ResourceItem
                                 parameters={ parameters }

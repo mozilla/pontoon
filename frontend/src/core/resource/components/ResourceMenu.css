@@ -108,6 +108,5 @@
 }
 
 .resource-menu .menu .resources-list-header .icon {
-    margin-top: 1px;
-    margin-right: 5px;
+    margin: 1px 5px;
 }
