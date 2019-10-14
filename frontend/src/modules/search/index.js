@@ -61,7 +61,7 @@ export const FILTERS_EXTRA = [
     },
     {
         name: 'Empty String',
-        slug: 'empty-string',
+        slug: 'empty_string',
     },
     {
         name: 'Rejected',

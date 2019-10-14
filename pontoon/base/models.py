@@ -2097,7 +2097,7 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def empty-string(self, locale):
+    def empty_string(self, locale):
         """Return a filter to be used to check if an empty string was passed.
 
         :arg Locale locale: a Locale object to get translations for
@@ -2108,8 +2108,8 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(null=True),
-                lambda x: x.empty-string,
+                Q(string=''),
+                lambda x: x.string,
                 match_all=False,
             )
         )
@@ -2469,7 +2469,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ('rejected', 'unchanged')
+            extra_filter_choices = ('rejected', 'unchanged', 'empty_string')
             post_filters.append(
                 combine_entity_filters(
                     entities,
