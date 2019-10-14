@@ -17,11 +17,11 @@ var Pontoon = (function (my) {
         if (type === 'locale-projects') {
           var localeProjects = $('#server').data('locale-projects');
 
-          //Show table and search box, hide no-result message
+          //Show table and search box, hide no-result message, remove no=projects style
             $('.search-wrapper:hidden').toggle();
             $('.controls.no-projects').toggleClass('no-projects');
             $('.project-list:hidden').toggle();
-            $('.no-results').toggle(false);
+            $('.no-results:visible').toggle();
 
           // Hide all projects
           $('.items')
