@@ -242,12 +242,19 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     deleteTranslation = (translationId: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
-        dispatch(history.actions.deleteTranslation(
-            parameters.entity,
-            parameters.locale,
-            pluralForm,
-            translationId,
-        ));
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(history.actions.deleteTranslation(
+                        parameters.entity,
+                        parameters.locale,
+                        pluralForm,
+                        translationId,
+                    ));
+                }
+            )
+        );
     }
 
     /*
@@ -257,16 +264,23 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
         const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
-        dispatch(history.actions.updateStatus(
-            change,
-            selectedEntity,
-            locale,
-            parameters.resource,
-            pluralForm,
-            translationId,
-            nextEntity,
-            router,
-        ));
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(history.actions.updateStatus(
+                        change,
+                        selectedEntity,
+                        locale,
+                        parameters.resource,
+                        pluralForm,
+                        translationId,
+                        nextEntity,
+                        router,
+                    ));
+                }
+            )
+        );
     }
 
     render() {
