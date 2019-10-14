@@ -94,6 +94,8 @@ export class ResourceMenuBase extends React.Component<Props, State> {
     render() {
         const { parameters, resources } = this.props;
 
+        const sort = this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "";
+
         if (parameters.project === 'all-projects') {
             return null;
         }
@@ -155,7 +157,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                     <Localized id='resource-ResourceMenu--progress'>
                         <span className="progress" onClick={ this.handleSort }>Progress</span>
                     </Localized>
-                        <span className={"progress icon " + (this.state.sortActive ? (this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down") : "")}
+                        <span className={"progress icon " + sort}
                           onClick={ this.handleSort }
                         />
                 </div>
