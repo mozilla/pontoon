@@ -83,6 +83,9 @@ flow:
 lint-frontend:
 	${DC} run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
 
+pytest:
+	${DC} run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+
 shell:
 	${DC} run --rm webapp /bin/bash
 

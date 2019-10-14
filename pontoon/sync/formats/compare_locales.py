@@ -114,7 +114,7 @@ class CompareLocalesResource(ParsedResource):
                     self.source_resource.parsed_objects,
                     self.parsed_objects,
                     new_l10n,
-                )
+                ).decode('utf-8'),
             )
 
 
