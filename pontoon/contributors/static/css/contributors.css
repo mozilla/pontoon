@@ -23,16 +23,6 @@ body.top-contributors #heading .legend li .status.fa {
   text-align: right;
 }
 
-.rank {
-  text-align: center;
-}
-
-td.rank {
-  color: #EBEBEB;
-  font-size: 36px;
-  width: 41px;
-}
-
 .contributor {
   display: inline-block;
   position: relative;

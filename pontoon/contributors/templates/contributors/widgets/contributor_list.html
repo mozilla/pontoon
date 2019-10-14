@@ -16,7 +16,6 @@
   <table class="striped">
     <thead>
       <tr>
-        <th class="rank">Rank</th>
         <th>Contributor</th>
         <th>Translations</th>
       </tr>
@@ -24,7 +23,6 @@
     <tbody>
     {% for contributor in contributors %}
       <tr>
-        <td class="rank">{{ loop.index }}</td>
         <td class="contributor">
           <a href="{{ url('pontoon.contributors.contributor.username', contributor.username) }}">
             <img class="rounded" src="{{ contributor.gravatar_url(44) }}">
