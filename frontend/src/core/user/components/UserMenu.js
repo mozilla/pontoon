@@ -175,6 +175,32 @@ export class UserMenuBase extends React.Component<Props, State> {
 
                 <li>
                     <Localized
+                        id="user-UserMenu--github"
+                        glyph={
+                            <i className="fab fa-github fa-fw"></i>
+                        }
+                    >
+                        <a href="https://github.com/mozilla/pontoon/">
+                            { '<glyph></glyph>Hack it on GitHub' }
+                        </a>
+                    </Localized>
+                </li>
+
+                <li>
+                    <Localized
+                        id="user-UserMenu--feedback"
+                        glyph={
+                            <i className="fa fa-comment-dots fa-fw"></i>
+                        }
+                    >
+                        <a href="https://discourse.mozilla.org/c/pontoon">
+                            { '<glyph></glyph>Give Feedback' }
+                        </a>
+                    </Localized>
+                </li>
+
+                <li>
+                    <Localized
                         id="user-UserMenu--help"
                         glyph={
                             <i className="fa fa-life-ring fa-fw"></i>
