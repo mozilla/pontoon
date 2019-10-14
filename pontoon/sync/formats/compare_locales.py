@@ -60,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
                     entity.key,
                     None,
                     None,
-                    None,
+                    0,
                 )
 
         try:
@@ -114,7 +114,7 @@ class CompareLocalesResource(ParsedResource):
                     self.source_resource.parsed_objects,
                     self.parsed_objects,
                     new_l10n,
-                )
+                ).decode('utf-8'),
             )
 
 
