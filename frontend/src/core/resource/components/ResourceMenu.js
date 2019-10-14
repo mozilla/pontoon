@@ -53,7 +53,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return {
                 sortActive: 'resource',
-                sortAsc: !state.sortAsc
+                sortAsc: state.sortActive !== 'resource' || !state.sortAsc
             };
         });
     }
@@ -62,7 +62,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return {
                 sortActive: 'progress',
-                sortAsc: !state.sortAsc
+                sortAsc: state.sortActive !== 'progress' || !state.sortAsc
             };
         });
     }
@@ -158,6 +158,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                         autoFocus
                         value={ this.state.search }
                         onChange={ this.updateResourceList }
+                        placeholder="Filter resources"
                     />
                 </div>
 

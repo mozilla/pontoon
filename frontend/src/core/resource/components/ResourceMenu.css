@@ -44,9 +44,14 @@
 }
 
 .resource-menu .menu .search-wrapper {
-    border-bottom: 1px solid #5E6475;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
     position: relative;
+    background: #333941;
+    border: 1px solid #4d5967;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 300;
+    height: 28px;
 }
 
 .resource-menu .menu .search-wrapper .icon {
@@ -94,6 +99,7 @@
     border-bottom: 1px solid #5E6475;
     padding: 5px 4px;
     overflow: auto;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
 }
