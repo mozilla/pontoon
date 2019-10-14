@@ -20,6 +20,7 @@ import * as otherlocales from 'modules/otherlocales';
 import * as genericeditor from 'modules/genericeditor';
 import * as fluenteditor from 'modules/fluenteditor';
 import * as unsavedchanges from 'modules/unsavedchanges';
+import * as notification from 'core/notification';
 
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
@@ -168,6 +169,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(machinery.actions.get(source, locale, pk));
     }
 
+    copyLinkToClipboard = () => {
+        const { locale, project, resource, entity } = this.props.parameters;
+        const { protocol, host } = window.location;
+
+        const string_link = `${protocol}//${host}/${locale}/${project}/${resource}/?string=${entity}`;
+        navigator.clipboard.writeText(string_link).then(() => {
+            // Notify the user of the change that happened.
+            const notif = notification.messages.STRING_LINK_COPIED;
+            this.props.dispatch(notification.actions.add(notif));
+        });
+    }
+
     goToNextEntity = () => {
         const { dispatch, nextEntity, router } = this.props;
 
@@ -269,6 +282,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         return <section className="entity-details">
             <EntityNavigation
+                copyLinkToClipboard={ this.copyLinkToClipboard }
                 goToNextEntity={ this.goToNextEntity }
                 goToPreviousEntity={ this.goToPreviousEntity }
             />
