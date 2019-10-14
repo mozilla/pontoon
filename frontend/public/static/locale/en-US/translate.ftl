@@ -248,6 +248,18 @@ history-Translation--button-reject =
 history-Translation--button-unreject =
     .title = Unreject
 
+history-Translation--button-notapproved =
+    .title = Not approved
+
+history-Translation--button-approved =
+    .title = Approved
+
+history-Translation--button-notrejected =
+    .title = Not rejected
+
+history-Translation--button-rejected =
+    .title = Rejected
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
