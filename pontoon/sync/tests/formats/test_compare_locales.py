@@ -144,14 +144,14 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
     ):
         """Android XML files must contain the word 'strings'."""
         path = create_named_tempfile(
-            string.encode('utf-8'),
+            string,
             prefix='strings',
             suffix='.xml',
             directory=self.tempdir,
         )
         if source_string is not None:
             source_path = create_named_tempfile(
-                source_string.encode('utf-8'),
+                source_string,
                 prefix='strings',
                 suffix='.xml',
                 directory=self.tempdir,

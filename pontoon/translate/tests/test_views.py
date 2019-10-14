@@ -34,7 +34,7 @@ def test_translate_template(client):
 
     with override_flag('translate_next', active=True):
         response = client.get(url)
-        assert b'Pontoon' in response.content
+        assert 'Pontoon' in response.content
 
 
 @pytest.mark.django_db
