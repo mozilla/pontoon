@@ -60,7 +60,7 @@ class ChangeSet(object):
     @property
     def changed_translations(self):
         """A list of Translation objects that have been created or updated."""
-        return self.translations_to_create + list(self.translations_to_update.values())
+        return self.translations_to_create + self.translations_to_update.values()
 
     def update_vcs_entity(self, locale, db_entity, vcs_entity):
         """
