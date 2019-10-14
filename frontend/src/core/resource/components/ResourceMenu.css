@@ -91,9 +91,8 @@
 }
 
 .resource-menu .menu .resources-list-header {
-    /*border-bottom: 1px solid #5E6475;*/
-    padding-top: 5px;
-    padding-bottom: 5px;
+    border-bottom: 1px solid #5E6475;
+    padding: 5px 4px;
     overflow: auto;
     font-weight: bold;
     cursor: pointer;
@@ -109,6 +108,6 @@
 }
 
 .resource-menu .menu .resources-list-header .icon {
-    color: #7BC876;
+    margin-top: 1px;
     margin-right: 5px;
 }
