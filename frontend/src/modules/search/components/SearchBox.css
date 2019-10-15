@@ -90,12 +90,23 @@
 
 .search-box .unreviewed.selected .status:before,
 .search-box .unreviewed .status:hover:before {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 .search-box .unchanged .status:before {
     color: #AAAAAA;
     content: "";
+}
+
+.search-box .empty .status:before {
+    color: #AAAAAA;
+    content: "\f111";
+    font-weight: 100;
+}
+
+.search-box .menu .empty.selected .status:before,
+.search-box .menu .empty .status:hover:before {
+    font-weight: 900;
 }
 
 .search-box .rejected .status:before {
