@@ -38,7 +38,7 @@ body.top-contributors #heading .legend li .status.fa {
   padding-left: 2px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 440px;
+  max-width: 520px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
