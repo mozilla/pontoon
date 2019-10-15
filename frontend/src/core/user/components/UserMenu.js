@@ -141,9 +141,11 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-gavel fa-fw"></i>
                         }
                     >
-                        <a href="/terms/"
-                        rel="noopener noreferrer"
-                        target="_blank">
+                        <a
+                            href="/terms/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Terms of Use' }
                         </a>
                     </Localized>
@@ -156,9 +158,11 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fab fa-github fa-fw"></i>
                         }
                     >
-                        <a href="https://github.com/mozilla/pontoon/"
-                        rel="noopener noreferrer"
-                        target="_blank">
+                        <a
+                            href="https://github.com/mozilla/pontoon/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Hack it on GitHub' }
                         </a>
                     </Localized>
@@ -171,9 +175,11 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-comment-dots fa-fw"></i>
                         }
                     >
-                        <a href="https://discourse.mozilla.org/c/pontoon"
-                        rel="noopener noreferrer"
-                        target="_blank">
+                        <a
+                            href="https://discourse.mozilla.org/c/pontoon"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Give Feedback' }
                         </a>
                     </Localized>
@@ -186,9 +192,11 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-life-ring fa-fw"></i>
                         }
                     >
-                        <a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
-                        rel="noopener noreferrer"
-                        target="_blank">
+                        <a
+                            href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Help' }
                         </a>
                     </Localized>
