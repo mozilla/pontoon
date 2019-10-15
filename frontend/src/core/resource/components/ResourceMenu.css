@@ -44,30 +44,31 @@
 }
 
 .resource-menu .menu .search-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     position: relative;
-    background: #333941;
-    border: 1px solid #4d5967;
-    border-radius: 3px;
     font-size: 13px;
-    font-weight: 300;
-    height: 28px;
 }
 
 .resource-menu .menu .search-wrapper .icon {
+    color: #AAAAAA;
     font-size: 1.2em;
     position: absolute;
-    left: 3px;
-    top: 5px;
+    left: 6px;
+    top: 6px;
+    z-index: 20;
 }
 
 .resource-menu .menu .search-wrapper input[type="search"] {
-    background: transparent;
-    border: none;
     color: #FFFFFF;
+    padding: 4px 3px 3px 25px;
+    background: #333941;
+    border: 1px solid #4D5967;
+    border-radius: 3px;
     font-weight: 300;
-    padding: 4px 0 3px 25px;
+    height: 28px;
+    position: relative;
     width: 100%;
+    z-index: 10;
 }
 
 /* Remove highlight in Chrome */
@@ -102,12 +103,14 @@
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
+    margin-bottom: 5px;
 }
 
 .resource-menu .menu .resources-list-header .resource {
     float: left;
     text-transform: uppercase;
 }
+
 .resource-menu .menu .resources-list-header .progress {
     float: right;
     text-transform: uppercase;
