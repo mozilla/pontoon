@@ -98,6 +98,11 @@
     content: "";
 }
 
+.search-box .empty .status:before {
+    color: #AAAAAA;
+    content: "\f111";
+}
+
 .search-box .rejected .status:before {
     color: #AAAAAA;
     content: "";

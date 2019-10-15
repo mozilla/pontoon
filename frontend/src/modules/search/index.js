@@ -60,8 +60,8 @@ export const FILTERS_EXTRA = [
         slug: 'unchanged',
     },
     {
-        name: 'Empty String',
-        slug: 'empty_string',
+        name: 'Empty',
+        slug: 'empty',
     },
     {
         name: 'Rejected',
