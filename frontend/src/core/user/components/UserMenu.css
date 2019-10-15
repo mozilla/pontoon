@@ -84,7 +84,8 @@
     width: 100%;
 }
 
-.user-menu .menu li i.fa {
+.user-menu .menu li i.fa,
+.user-menu .menu li i.fab {
     margin: 0 8px 0 -2px;
 }
 
