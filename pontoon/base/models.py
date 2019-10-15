@@ -2106,6 +2106,23 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def empty(self, locale):
+        """Return a filter to be used to select empty translations.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(string=''),
+                lambda x: x.string == '',
+                match_all=False,
+            )
+        )
+
     def unchanged(self, locale):
         """Return a filter to be used to select entities that have unchanged translations.
 
@@ -2461,7 +2478,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ('rejected', 'unchanged')
+            extra_filter_choices = ('rejected', 'unchanged', 'empty')
             post_filters.append(
                 combine_entity_filters(
                     entities,
