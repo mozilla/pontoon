@@ -10,7 +10,7 @@
     background: #4D5967;
 }
 
-.history .translation.can-not-copy {
+.history .translation.cannot-copy {
     pointer-events: none;
 }
 
@@ -72,6 +72,7 @@
     font-size: 1.8em;
     height: 22px;
     opacity: 0.5;
+    pointer-events: auto;
     vertical-align: bottom;
     width: 22px;
 }

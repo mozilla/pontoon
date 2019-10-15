@@ -207,9 +207,9 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let className = 'translation ' + this.getStatus();
 
-        if(!user.isAuthenticated || isReadOnlyEditor) {
-            // This user can not copy translate
-            className += ' can-not-copy';
+        if(!user || !user.isAuthenticated || isReadOnlyEditor) {
+            // This user can not copy into translate
+            className += ' cannot-copy';
         }
 
         if (canReview && !isReadOnlyEditor) {
@@ -279,7 +279,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='approve fa'
+                                    className='unapprove fa'
                                     title='Approved'
                                     name='approved'
                                 />
@@ -306,7 +306,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='unapprove fa'
+                                    className='approve fa'
                                     title='Not Approved'
                                     name='notapproved'
                                 />
@@ -333,7 +333,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='reject fa'
+                                    className='unreject fa'
                                     title='Rejected'
                                     name='rejected'
                                 />
@@ -359,7 +359,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 attrs={{ title: true }}
                             >
                                 <button
-                                    className='unreject fa'
+                                    className='reject fa'
                                     title='Not Rejected'
                                     name='notrejected'
                                 />
