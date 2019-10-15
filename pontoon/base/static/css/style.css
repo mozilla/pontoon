@@ -948,7 +948,8 @@ header .right .select .menu {
   line-height: 22px;
 }
 
-#profile .menu li i.fa {
+#profile .menu li i.fa,
+#profile .menu li i.fab {
   margin: 0 8px 0 -2px;
 }
 

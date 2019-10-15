@@ -494,9 +494,9 @@ user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
 user-UserMenu--download-translations = <glyph></glyph>Download Translations
 user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
 
-user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
-user-UserMenu--machinery = <glyph></glyph>Machinery
 user-UserMenu--terms = <glyph></glyph>Terms of Use
+user-UserMenu--github = <glyph></glyph>Hack it on GitHub
+user-UserMenu--feedback = <glyph></glyph>Give Feedback
 user-UserMenu--help = <glyph></glyph>Help
 
 user-UserMenu--admin = <glyph></glyph>Admin
