@@ -23,20 +23,10 @@ body.top-contributors #heading .legend li .status.fa {
   text-align: right;
 }
 
-.rank {
-  text-align: center;
-}
-
-td.rank {
-  color: #EBEBEB;
-  font-size: 36px;
-  width: 41px;
-}
-
 .contributor {
   display: inline-block;
   position: relative;
-  width: 498px;
+  width: 580px;
 }
 
 .contributor img {
@@ -48,7 +38,7 @@ td.rank {
   padding-left: 2px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 440px;
+  max-width: 520px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
