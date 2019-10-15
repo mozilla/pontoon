@@ -242,19 +242,12 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     deleteTranslation = (translationId: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
-        dispatch(
-            unsavedchanges.actions.check(
-                this.props.unsavedchanges,
-                () => {
-                    dispatch(history.actions.deleteTranslation(
-                        parameters.entity,
-                        parameters.locale,
-                        pluralForm,
-                        translationId,
-                    ));
-                }
-            )
-        );
+        dispatch(history.actions.deleteTranslation(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+            translationId,
+        ));
     }
 
     /*
@@ -264,6 +257,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
         const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
+        // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
+        // because it cannot be triggered for the use case of bug 1508474.
         dispatch(
             unsavedchanges.actions.check(
                 this.props.unsavedchanges,
