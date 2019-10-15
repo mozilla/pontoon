@@ -141,6 +141,11 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
     plotChart = () => {
         const { timeRange, timeRangeData } = this.props;
 
+        // In case of no translations
+        if (timeRangeData.length === 0) {
+            return null;
+        }
+
         // Set default chart boundaries (full chart)
         let chartFrom = this.getTimeForURL(timeRangeData[0][0]);
         let chartTo = this.getTimeForURL(timeRangeData[timeRangeData.length - 1][0]);
