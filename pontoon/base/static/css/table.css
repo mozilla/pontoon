@@ -130,9 +130,8 @@ table.table {
   color: #F36;
 }
 
-.table td.code div{
+.table td.code div {
   width: 70px;
-  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
