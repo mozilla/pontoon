@@ -299,8 +299,6 @@ user-UserMenu--download-tm = <glyph></glyph>Télécharger la Mémoire de traduct
 user-UserMenu--download-translations = <glyph></glyph>Télécharger les traductions
 user-UserMenu--upload-translations = <glyph></glyph>Envoyer des traductions
 
-user-UserMenu--top-contributors = <glyph></glyph>Contributeurs et contributrices remarquables
-user-UserMenu--machinery = <glyph></glyph>Machinerie
 user-UserMenu--terms = <glyph></glyph>Conditions d’utilisation
 user-UserMenu--help = <glyph></glyph>Aide
 
