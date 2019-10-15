@@ -257,16 +257,25 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
         const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
-        dispatch(history.actions.updateStatus(
-            change,
-            selectedEntity,
-            locale,
-            parameters.resource,
-            pluralForm,
-            translationId,
-            nextEntity,
-            router,
-        ));
+        // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
+        // because it cannot be triggered for the use case of bug 1508474.
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(history.actions.updateStatus(
+                        change,
+                        selectedEntity,
+                        locale,
+                        parameters.resource,
+                        pluralForm,
+                        translationId,
+                        nextEntity,
+                        router,
+                    ));
+                }
+            )
+        );
     }
 
     render() {
