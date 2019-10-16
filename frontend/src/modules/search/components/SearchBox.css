@@ -38,19 +38,19 @@
     font-size: 17px;
     left: auto;
     position: absolute;
-    right: 17px;
-    top: 21px;
+    right: 16px;
+    top: 19px;
 }
 
 .search-box .status.fa {
     position: absolute;
-    left: 18px;
+    left: 16px;
     top: 12px;
 }
 
 .search-box .all .status {
     left: 17px;
-    top: 12px;
+    top: 11px;
 }
 
 .search-box .status.fa::before {

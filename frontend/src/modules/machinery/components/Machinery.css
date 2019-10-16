@@ -1,5 +1,6 @@
 .machinery {
     line-height: 22px;
+    border-bottom: 2px solid #4D5967;
 }
 
 .machinery ul {
@@ -32,7 +33,7 @@
     font-size: 13px;
     font-weight: 300;
     line-height: 23px;
-    padding: 7px 33px 8px 13px;
+    padding: 7px 33px 8px 10px;
     width: 100%;
 }
 
