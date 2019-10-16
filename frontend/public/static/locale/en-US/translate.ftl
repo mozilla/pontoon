@@ -450,6 +450,15 @@ placeable-parser-xmlTag =
     .title = XML tag
 
 
+## Project menu
+## Used in the project menu in the main navigation bar.
+project-ProjectMenu--no-results = No results
+project-ProjectMenu--project = Project
+project-ProjectMenu--progress = Progress
+project-ProjectMenu--search-placeholder =
+    .placeholder = Filter projects
+
+
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
 resource-ResourceMenu--no-results = No results
