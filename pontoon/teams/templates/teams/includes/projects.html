@@ -1,6 +1,10 @@
 {% import 'projects/widgets/project_list.html' as ProjectList with context %}
 
+{% set locale_projects = locale.available_projects_list() %}
+{# Hide if team has any projects #}
 {% set hide_table = (locale.project_set.visible().count() == 0) %}
+{# Hide if there are any projects available for request #}
+{% set hide_request_toggle = projects.exclude(slug__in=locale_projects).count() == 0 %}
 
 <div class="projects items">
   
@@ -11,12 +15,11 @@
   <menu class="controls">
     <div class="search-wrapper small clearfix">
   {% endif %}
-
       <div class="icon fa fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
 
-    {% if user.is_authenticated() %}
+    {% if user.is_authenticated() and not hide_request_toggle %}
     <button class="request-toggle button small request-projects">
       <span class="fa fa-chevron-right"></span>
     </button>
@@ -25,8 +28,6 @@
 
   
   {{ ProjectList.header(request=True, visible=not hide_table) }}
-
-  {% set locale_projects = locale.available_projects_list() %}
 
   {% for project in projects %}
     {% set main_link = url('pontoon.projects.project', project.slug) %}
