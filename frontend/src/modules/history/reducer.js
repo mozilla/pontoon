@@ -25,6 +25,7 @@ export type DBTranslation = {|
     +unapproved_user: string,
     +user: string,
     +username: string,
+    +user_gravatar_url_small: string,
 |};
 
 export type HistoryState = {|
