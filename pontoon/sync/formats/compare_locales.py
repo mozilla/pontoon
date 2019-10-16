@@ -106,7 +106,7 @@ class CompareLocalesResource(ParsedResource):
         # Create parent folders if necessary
         create_parent_directory(self.path)
 
-        with open(self.path, 'w') as output_file:
+        with open(self.path, 'wb') as output_file:
             log.debug('Saving file: %s', self.path)
             output_file.write(
                 serializer.serialize(
@@ -114,7 +114,7 @@ class CompareLocalesResource(ParsedResource):
                     self.source_resource.parsed_objects,
                     self.parsed_objects,
                     new_l10n,
-                ).decode('utf-8'),
+                )
             )
 
 

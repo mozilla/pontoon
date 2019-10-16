@@ -1924,11 +1924,12 @@ class EntityQuerySet(models.QuerySet):
             for candidate in plural_candidates:
                 count = 0
                 for i in range(locale.nplurals):
-                    candidate_translations = filter(
-                        lambda x: x.plural_form == i,
-                        candidate.fetched_translations
-                    )
-                    if len(list(candidate_translations)) and rule(candidate_translations[0]):
+                    candidate_translations = [
+                        translation
+                        for translation in candidate.fetched_translations
+                        if translation.plural_form == i
+                    ]
+                    if len(candidate_translations) and rule(candidate_translations[0]):
                         count += 1
 
                         # No point going on if we don't care about matching all.
