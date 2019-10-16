@@ -86,11 +86,11 @@
 .search-box .unreviewed .status:before {
     color: #4FC4F6;
     content: "";
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .search-box .unreviewed.selected .status:before,
-.search-box .unreviewed .status:hover:before {
+.search-box .unreviewed:not(.visibility-switch) .status:hover:before {
     font-size: 16px;
 }
 

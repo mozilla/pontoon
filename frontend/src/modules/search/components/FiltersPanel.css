@@ -25,6 +25,10 @@
     font-size: 16px;
 }
 
+.filters-panel .visibility-switch.unreviewed .status.fa {
+    top: 7px;
+}
+
 .filters-panel .visibility-switch:hover .status:before {
     color: #FFFFFF;
 }
@@ -71,11 +75,6 @@
     background-color: #3F4752;
 }
 
-.filters-panel .menu li.all .status {
-    left: 2px;
-    top: 2px;
-}
-
 .filters-panel .menu li:not(.horizontal-separator) {
     padding: 4px 0 4px 30px;
     position: relative;
@@ -90,12 +89,12 @@
 }
 
 .filters-panel .menu li.all .status {
-    left: 2px;
-    top: 2px;
+    left: 3px;
+    top: 5px;
 }
 
 .filters-panel .menu li.unchanged:not(.selected) .status {
-    left: 3px;
+    left: 5px;
 }
 
 .filters-panel .menu li.unreviewed:not(.selected) .status:hover,
