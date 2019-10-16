@@ -714,7 +714,7 @@ class VCSTranslation(object):
     translation for that plural form.
     """
     def __init__(
-        self, key, strings, comments, fuzzy,
+        self, key, strings, comments, group_comments, file_comments, fuzzy,
         source_string='',
         source_string_plural='',
         order=0,
@@ -727,6 +727,8 @@ class VCSTranslation(object):
         self.source_string_plural = source_string_plural
         self.strings = strings
         self.comments = comments
+        self.group_comments = group_comments
+        self.file_comments = file_comments
         self.fuzzy = fuzzy
         self.order = order
         self.source = source or []

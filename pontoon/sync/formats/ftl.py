@@ -28,7 +28,8 @@ class FTLEntity(VCSTranslation):
     Represents entities in FTL (without its attributes).
     """
     def __init__(
-        self, key, source_string, source_string_plural, strings, comments=None, order=None
+        self, key, source_string, source_string_plural, strings, comments=None,
+        group_comments=None, file_comments=None, order=None
     ):
         super(FTLEntity, self).__init__(
             key=key,
@@ -36,6 +37,8 @@ class FTLEntity(VCSTranslation):
             source_string_plural=source_string_plural,
             strings=strings,
             comments=comments or [],
+            group_comments=group_comments or [],
+            file_comments=file_comments or [],
             fuzzy=False,
             order=order,
         )
@@ -61,6 +64,8 @@ class FTLResource(ParsedResource):
                     '',
                     {},
                     copy.copy(entity.comments),
+                    copy.copy(entity.group_comments),
+                    copy.copy(entity.file_comments),
                     entity.order
                 )
 

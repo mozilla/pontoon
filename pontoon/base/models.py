@@ -2237,6 +2237,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
+    group_comment = models.TextField(blank=True)
+    file_comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
@@ -2523,6 +2525,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q(string__icontains=search)
                 | Q(string_plural__icontains=search)
                 | Q(comment__icontains=search)
+                | Q(group_comment__icontains=search)
+                | Q(file_comment__icontains=search)
                 | Q(key__icontains=search)
                 for search in search_list)
 
@@ -2588,6 +2592,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'project': entity.resource.project.serialize(),
                 'format': entity.resource.format,
                 'comment': entity.comment,
+                'group_comment': entity.group_comment,
+                'file_comment': entity.file_comment,
                 'order': entity.order,
                 'source': entity.source,
                 'obsolete': entity.obsolete,
