@@ -82,8 +82,6 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 editor-UnsavedChanges--close = ×
     .aria-label = Cacher les changements non-sauvegardés
 editor-UnsavedChanges--title = Vous avez des changements non-sauvegardés
-editor-UnsavedChanges--body = Voulez-vous vraiment continuer?
-editor-UnsavedChanges--leave-anyway = Procéder
 
 
 ## Entity Navigation

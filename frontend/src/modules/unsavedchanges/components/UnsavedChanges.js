@@ -69,9 +69,9 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
                 <p className="body">Are you sure you want to proceed?</p>
             </Localized>
 
-            <Localized id="editor-UnsavedChanges--leave-anyway">
+            <Localized id="editor-UnsavedChanges--proceed">
                 <button
-                    className="leave anyway"
+                    className="proceed anyway"
                     onClick={ this.ignoreUnsavedChanges }
                 >
                     Proceed

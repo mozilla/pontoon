@@ -162,7 +162,7 @@ editor-UnsavedChanges--close = ×
     .aria-label = Close unsaved changes popup
 editor-UnsavedChanges--title = You have unsaved changes
 editor-UnsavedChanges--body = Are you sure you want to proceed?
-editor-UnsavedChanges--leave-anyway = Proceed
+editor-UnsavedChanges--proceed = Proceed
 
 
 ## Entity Details Navigation
