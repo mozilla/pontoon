@@ -12,7 +12,7 @@
 .user-menu .selector .menu-icon,
 .user-menu .menu li.details img {
     border: 2px solid #4d5967;
-    border-radius: 100%;
+    border-radius: 6px;
 }
 
 .user-menu .selector img {
