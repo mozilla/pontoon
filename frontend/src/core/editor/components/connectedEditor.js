@@ -146,7 +146,7 @@ export default function connectedEditor<Object>(
             let handledEvent = false;
 
             // On Enter:
-            //   - If unsaved changes popup is shown, leave anyway.
+            //   - If unsaved changes popup is shown, proceed.
             //   - If failed checks popup is shown after approving a translation, approve it anyway.
             //   - In other cases, send current translation.
             if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
@@ -163,7 +163,7 @@ export default function connectedEditor<Object>(
                 const source = this.props.editor.source;
                 const ignoreWarnings = !!(errors.length || warnings.length);
 
-                // Leave anyway
+                // Proceed
                 if (this.props.unsavedchanges.shown) {
                     this.ignoreUnsavedChanges();
                 }
