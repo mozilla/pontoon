@@ -210,6 +210,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         if(!user || !user.isAuthenticated || isReadOnlyEditor) {
             // This user can not copy into translate
             className += ' cannot-copy';
+        } else {
+            className += ' can-copy';
         }
 
         if (canReview && !isReadOnlyEditor) {
