@@ -18,7 +18,7 @@
 
 .history .translation .avatar img {
     border-radius: 6px;
-    border: 1px solid #5E6475;
+    border: 2px solid #5E6475;
 }
 
 .history .translation:hover .avatar img {
