@@ -161,8 +161,8 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 editor-UnsavedChanges--close = ×
     .aria-label = Close unsaved changes popup
 editor-UnsavedChanges--title = You have unsaved changes
-editor-UnsavedChanges--body = Sure you want to leave?
-editor-UnsavedChanges--leave-anyway = Leave anyway
+editor-UnsavedChanges--body = Are you sure you want to proceed?
+editor-UnsavedChanges--leave-anyway = Proceed
 
 
 ## Entity Details Navigation
