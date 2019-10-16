@@ -1,6 +1,5 @@
 .machinery {
     line-height: 22px;
-    border-bottom: 2px solid #4D5967;
 }
 
 .machinery ul {
@@ -21,19 +20,20 @@
     left: auto;
     position: absolute;
     right: 12px;
-    top: 10px;
+    top: 11px;
 }
 
 .machinery > .search-wrapper input[type=search] {
     background: #4D5967;
     border: none;
+    border: 1px solid #4D5967;
     border-radius: 20px;
     box-sizing: border-box;
     color: #FFFFFF;
     font-size: 13px;
     font-weight: 300;
     line-height: 23px;
-    padding: 7px 33px 8px 10px;
+    padding: 7px 33px 8px 12px;
     width: 100%;
 }
 

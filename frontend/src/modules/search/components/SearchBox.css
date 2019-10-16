@@ -45,7 +45,7 @@
 .search-box .status.fa {
     position: absolute;
     left: 16px;
-    top: 12px;
+    top: 11px;
 }
 
 .search-box .all .status {
@@ -87,7 +87,7 @@
 .search-box .unreviewed .status:before {
     color: #4FC4F6;
     content: "";
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .search-box .unreviewed.selected .status:before,
