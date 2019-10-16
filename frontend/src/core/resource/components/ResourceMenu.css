@@ -96,7 +96,7 @@
     color: #7BC876;
 }
 
-.resource-menu .menu .resources-list-header {
+.resource-menu .menu .header {
     border-bottom: 1px solid #5E6475;
     padding: 5px 4px;
     overflow: auto;
@@ -106,16 +106,16 @@
     margin-bottom: 5px;
 }
 
-.resource-menu .menu .resources-list-header .resource {
+.resource-menu .menu .header .resource {
     float: left;
     text-transform: uppercase;
 }
 
-.resource-menu .menu .resources-list-header .progress {
+.resource-menu .menu .header .progress {
     float: right;
     text-transform: uppercase;
 }
 
-.resource-menu .menu .resources-list-header .icon {
+.resource-menu .menu .header .icon {
     margin: 1px 5px;
 }

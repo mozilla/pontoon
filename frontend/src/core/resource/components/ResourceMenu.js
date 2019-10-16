@@ -54,7 +54,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return {
                 sortActive: 'resource',
-                sortAsc: state.sortActive !== 'resource' || !state.sortAsc
+                sortAsc: state.sortActive !== 'resource' || !state.sortAsc,
             };
         });
     }
@@ -63,7 +63,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return {
                 sortActive: 'progress',
-                sortAsc: state.sortActive !== 'progress' || !state.sortAsc
+                sortAsc: state.sortActive !== 'progress' || !state.sortAsc,
             };
         });
     }
@@ -93,9 +93,9 @@ export class ResourceMenuBase extends React.Component<Props, State> {
         });
     }
 
-    getProgress(el: Resource) {
-        const completeStrings = el.approvedStrings + el.stringsWithWarnings;
-        const percent = Math.floor(completeStrings / el.totalStrings * 100);
+    getProgress(res: Resource) {
+        const completeStrings = res.approvedStrings + res.stringsWithWarnings;
+        const percent = Math.floor(completeStrings / res.totalStrings * 100);
         return percent;
     }
 
@@ -126,7 +126,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1
         );
 
-        const sort = this.state.sortAsc ? "fa fa-caret-up" : "fa fa-caret-down";
+        const sort = this.state.sortAsc ? 'fa fa-caret-up' : 'fa fa-caret-down';
         const resourceClass = this.state.sortActive === 'resource' ? sort : '';
         const progressClass = this.state.sortActive === 'progress' ? sort : '';
 
@@ -144,29 +144,41 @@ export class ResourceMenuBase extends React.Component<Props, State> {
             <div className="menu">
                 <div className="search-wrapper">
                     <div className="icon fa fa-search"></div>
-                    <input
-                        type="search"
-                        autoComplete="off"
-                        autoFocus
-                        value={ this.state.search }
-                        onChange={ this.updateResourceList }
-                        placeholder="Filter resources"
-                    />
+                    <Localized id="resource-ResourceMenu--search-placeholder" attrs={{ placeholder: true }}>
+                        <input
+                            type="search"
+                            autoComplete="off"
+                            autoFocus
+                            value={ this.state.search }
+                            onChange={ this.updateResourceList }
+                            placeholder="Filter resources"
+                        />
+                    </Localized>
                 </div>
 
-                <div className="resources-list-header">
-                    <Localized id="resource-ResourceMenu--resource">
-                        <span className="resource"
-                            onClick={ this.sortByResource }>Resource</span>
+                <div className="header">
+                    <Localized id="resource-ResourceMenu-resource">
+                        <span
+                            className="resource"
+                            onClick={ this.sortByResource }
+                        >
+                            Resource
+                        </span>
                     </Localized>
-                    <span className={"resource icon " + resourceClass}
+                    <span
+                        className={"resource icon " + resourceClass}
                         onClick={ this.sortByResource }
                     />
-                    <Localized id="resource-ResourceMenu--progress">
-                        <span className="progress"
-                            onClick={ this.sortByProgress }>Progress</span>
+                    <Localized id="resource-ResourceMenu-progress">
+                        <span
+                            className="progress"
+                            onClick={ this.sortByProgress }
+                        >
+                            Progress
+                        </span>
                     </Localized>
-                    <span className={"progress icon " + progressClass}
+                    <span
+                        className={"progress icon " + progressClass}
                         onClick={ this.sortByProgress }
                     />
                 </div>
@@ -186,7 +198,8 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                 if (resourceA > resourceB) {
                                     result = 1;
                                 }
-                                return this.state.sortAsc ? result :  result * -1;
+
+                                return this.state.sortAsc ? result : result * -1;
                             })
                             :
                             resourceElements.sort((a, b) => {
@@ -201,7 +214,8 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                 if (percentA > percentB ) {
                                     result = 1;
                                 }
-                                return this.state.sortAsc ? result :  result * -1;
+
+                                return this.state.sortAsc ? result : result * -1;
                             }))
                             .map((resource, index) => {
                                 return <ResourceItem
