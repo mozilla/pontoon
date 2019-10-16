@@ -464,6 +464,16 @@ search-FiltersPanel--heading-status = Translation Status
 search-FiltersPanel--heading-tags = Tags
 search-FiltersPanel--heading-extra = Extra Filters
 search-FiltersPanel--heading-authors = Translation Authors
+search-FiltersPanel--status-name-all = All
+search-FiltersPanel--status-name-translated = Translated
+search-FiltersPanel--status-name-fuzzy = Fuzzy
+search-FiltersPanel--status-name-warnings = Warnings
+search-FiltersPanel--status-name-errors = Errors
+search-FiltersPanel--status-name-missing = Missing
+search-FiltersPanel--status-name-unreviewed = Unreviewed
+search-FiltersPanel--extra-name-unchanged = Unchanged
+search-FiltersPanel--extra-name-empty = Empty
+search-FiltersPanel--extra-name-rejected = Rejected
 
 search-FiltersPanel--clear-selection = <glyph></glyph>Clear
     .title = Uncheck selected filters
