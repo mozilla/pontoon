@@ -1,18 +1,20 @@
 .search-box {
-    border-bottom: 1px solid #5e6475;
+    border: none;
+    margin: 10px 5px;
     position: static;
 }
 
 .search-box input[type="search"] {
-    background: #4d5967;
-    border: 0;
+    background: #272A2F;
+    border: 1px solid #4D5967;
+    border-radius: 20px;
     box-sizing: border-box;
     color: #fff;
     float: left;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 300;
     line-height: 23px;
-    padding: 10px 35px 10px 43px;
+    padding: 7px 33px 8px 37px;
     width: 100%;
 }
 
@@ -33,22 +35,22 @@
 
 .search-box > label {
     color: #aaa;
-    font-size: 19px;
+    font-size: 17px;
     left: auto;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 17px;
+    top: 21px;
 }
 
 .search-box .status.fa {
     position: absolute;
-    left: 16px;
-    top: 13px;
+    left: 18px;
+    top: 12px;
 }
 
 .search-box .all .status {
-    left: 14px;
-    top: 11px;
+    left: 17px;
+    top: 12px;
 }
 
 .search-box .status.fa::before {

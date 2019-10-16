@@ -35,14 +35,14 @@
     box-sizing: border-box;
     color: #AAAAAA;
     display: block;
-    left: 0;
+    left: 2px;
     list-style: none;
     margin-left: 0;
     max-height: calc(100% - 44px);
     overflow-y: auto;
     padding: 0;
     position: absolute;
-    top: 44px;
+    top: 52px;
     width: 350px;
     z-index: 20;
 }
