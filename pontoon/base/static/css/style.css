@@ -1276,7 +1276,7 @@ body > form,
   position: relative;
 }
 
-.controls.no-projects{
+.controls.no-projects {
   height: 28px;
 }
 
@@ -1335,6 +1335,10 @@ body > form,
 
 .controls > .search-wrapper.big {
   width: 714px;
+}
+
+.controls > .search-wrapper.hidden {
+  display: none;
 }
 
 .controls > .search-wrapper .icon {

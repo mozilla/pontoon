@@ -2,6 +2,10 @@ table.table {
   text-align: center;
 }
 
+table.table.hidden {
+  display: none;
+}
+
 .table td {
   padding: 0 10px;
   vertical-align: middle;

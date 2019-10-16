@@ -67,11 +67,6 @@ td.rank {
   top: 42px;
 }
 
-.no-contributors {
-  padding: 10px;
-  margin-top: 20px;
-}
-
 th:last-child,
 .stats .details {
   text-align: center;
