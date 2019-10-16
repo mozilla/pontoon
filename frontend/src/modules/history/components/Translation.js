@@ -127,7 +127,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const { translation } = this.props;
 
         if (!translation.uid) {
-            return <img src={ translation.user_gravatar_url_small } alt="User avatar" />;
+            return <img src='/static/img/anon.jpg' alt="User avatar" />;
         }
 
         return <a
@@ -137,7 +137,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             rel='noopener noreferrer'
             onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
         >
-            <img src={ translation.user_gravatar_url_small } alt="User avatar" />
+            <img src={ translation.user_gravatar_url_small } alt='User avatar' />
         </a>
     }
 
