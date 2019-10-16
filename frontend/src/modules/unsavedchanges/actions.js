@@ -44,7 +44,7 @@ export function hide(): HideAction {
 
 
 /**
- * Ignore unsaved changes notice ("Leave anyway").
+ * Ignore unsaved changes notice ("Proceed").
  */
 export type IgnoreAction = {|
     +type: typeof IGNORE,
