@@ -60,7 +60,7 @@ export default class Machinery extends React.Component<Props> {
                         <input
                             type="search"
                             autoComplete="off"
-                            placeholder="Type to search machinery"
+                            placeholder="Search in Machinery"
                             ref={ this.searchInput }
                         />
                     </Localized>

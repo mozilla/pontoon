@@ -5,8 +5,8 @@
 }
 
 .search-box input[type="search"] {
-    background: #272A2F;
-    border: 1px solid #4D5967;
+    background: #4D5967;
+    border: none;
     border-radius: 20px;
     box-sizing: border-box;
     color: #fff;
@@ -61,7 +61,7 @@
 .search-box .all .status::before {
     color: #AAAAAA;
     content: "";
-    font-size: 19px;
+    font-size: 16px;
 }
 
 .search-box .translated .status:before {

@@ -19,13 +19,13 @@
     font-size: 17px;
     left: auto;
     position: absolute;
-    right: 17px;
-    top: 12px;
+    right: 12px;
+    top: 10px;
 }
 
 .machinery > .search-wrapper input[type=search] {
-    background: #272A2F;
-    border: 1px solid #4D5967;
+    background: #4D5967;
+    border: none;
     border-radius: 20px;
     box-sizing: border-box;
     color: #FFFFFF;
