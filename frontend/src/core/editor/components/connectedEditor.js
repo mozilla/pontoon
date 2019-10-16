@@ -163,7 +163,7 @@ export default function connectedEditor<Object>(
                 const source = this.props.editor.source;
                 const ignoreWarnings = !!(errors.length || warnings.length);
 
-                // Leave anyway or proceed
+                // Proceed
                 if (this.props.unsavedchanges.shown) {
                     this.ignoreUnsavedChanges();
                 }
