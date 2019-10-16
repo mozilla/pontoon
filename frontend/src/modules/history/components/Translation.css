@@ -3,13 +3,29 @@
     cursor: pointer;
     padding: 5px 10px 20px 10px;
     transition: all 0.1s ease-out;
+    display: flex;
 }
 
 .history .translation:hover {
     background: #4D5967;
 }
 
-.history .translation > header {
+.history .translation .avatar {
+    padding-right: 8px;
+    position: relative;
+    top: 3px;
+}
+
+.history .translation .avatar img {
+    border-radius: 4px;
+    border: 1px solid #4D5967;
+}
+
+.history .translation .content {
+    flex-grow: 1;
+}
+
+.history .translation .content > header {
     color: #AAAAAA;
     display: block;
     font-size: 11px;
@@ -18,42 +34,42 @@
     text-transform: uppercase;
 }
 
-.history .translation > header .info {
+.history .translation .content > header .info {
     float: left;
 }
 
-.history .translation > header .toolbar {
+.history .translation .content > header .toolbar {
     display: block;
     float: right;
 }
 
-.history .translation > header + p {
+.history .translation .content > header + p {
     clear: both;
     text-align: start;
     white-space: pre-wrap;
 }
 
-.history .translation > header .info time {
+.history .translation .content > header .info time {
     color: #7BC876;
     padding-left: 3px;
 }
-.history .translation > header .info a {
+.history .translation .content > header .info a {
     text-transform: none;
 }
 
-.history .translation > header .toggle-diff {
+.history .translation .content > header .toggle-diff {
     font-size: inherit;
     font-weight: 300;
     margin-right: 6px;
     text-transform: uppercase;
 }
 
-.history .translation > header .toggle-diff:hover,
-.history .translation > header .toggle-diff.active {
+.history .translation .content > header .toggle-diff:hover,
+.history .translation .content > header .toggle-diff.active {
     color: #7BC876;
 }
 
-.history .translation > header button {
+.history .translation .content > header button {
     background: no-repeat transparent;
     border: none;
     color: #AAAAAA;
@@ -62,8 +78,8 @@
     outline: none;
 }
 
-.history .translation > header button.fa,
-.history .translation > header button.far {
+.history .translation .content > header button.fa,
+.history .translation .content > header button.far {
     font-size: 1.8em;
     height: 22px;
     opacity: 0.5;
@@ -93,48 +109,48 @@
     color: #FED271;
 }
 
-.history .translation > header button.approve:before,
-.history .translation > header button.unapprove:before {
+.history .translation .content > header button.approve:before,
+.history .translation .content > header button.unapprove:before {
     content: "";
 }
 
-.history .translation > header button.approve:hover:before,
-.history .translation > header button.unapprove:before {
+.history .translation .content > header button.approve:hover:before,
+.history .translation .content > header button.unapprove:before {
     color: #7BC876;
 }
 
-.history .translation > header button.approve:not(:hover):before,
-.history .translation > header button.unapprove:hover:before {
+.history .translation .content > header button.approve:not(:hover):before,
+.history .translation .content > header button.unapprove:hover:before {
     font-weight: 400;
 }
 
-.history .translation > header button.reject:before,
-.history .translation > header button.unreject:before {
+.history .translation .content > header button.reject:before,
+.history .translation .content > header button.unreject:before {
     content: "";
     margin-left: 5px;
 }
 
-.history .translation > header button.reject:hover:before,
-.history .translation > header button.unreject:before {
+.history .translation .content > header button.reject:hover:before,
+.history .translation .content > header button.unreject:before {
     color: #F36;
 }
 
-.history .translation > header button.reject:not(:hover):before,
-.history .translation > header button.unreject:hover:before {
+.history .translation .content > header button.reject:not(:hover):before,
+.history .translation .content > header button.unreject:hover:before {
     font-weight: 400;
 }
 
-.translation > header button.delete {
+.translation .content > header button.delete {
     margin-right: 1px;
 }
 
-.translation > header button.delete:before {
+.translation .content > header button.delete:before {
     content: "";
     float: left;
     font-size: 19px;
     margin-top: -1px;
 }
 
-.translation > header button.delete:hover:before {
+.translation .content > header button.delete:hover:before {
     color: #F36;
 }
