@@ -127,7 +127,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const { translation } = this.props;
 
         if (!translation.uid) {
-            return <img src='/static/img/anon.jpg' alt="User avatar" />;
+            return <img src='/static/img/anon.jpg' alt='User avatar' />;
         }
 
         return <a

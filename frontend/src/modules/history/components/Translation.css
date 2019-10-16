@@ -21,7 +21,7 @@
     border: 1px solid #5E6475;
 }
 
-.history .translation .avatar img:hover {
+.history .translation:hover .avatar img {
     border-color: #637283;
 }
 
