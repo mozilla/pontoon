@@ -141,9 +141,9 @@ describe('<TranslationBase>', () => {
             />);
 
             const link = wrapper.find('a');
-            expect(link).toHaveLength(1);
-            expect(link.props().children).toEqual('Sarevok');
-            expect(link.props().href).toEqual('/contributors/id_Sarevok');
+            expect(link).toHaveLength(2);
+            expect(link.at(1).props().children).toEqual('Sarevok');
+            expect(link.at(1).props().href).toEqual('/contributors/id_Sarevok');
         });
 
         it('returns no link when the author is not known', () => {

@@ -605,7 +605,7 @@ tfoot td a {
 }
 
 img.rounded {
-  border-radius: 100%;
+  border-radius: 6px;
   border: 2px solid #4D5967;
 }
 
