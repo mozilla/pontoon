@@ -453,8 +453,8 @@ placeable-parser-xmlTag =
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
 resource-ResourceMenu--no-results = No results
-resource-ResourceMenu-resource = Resource
-resource-ResourceMenu-progress = Progress
+resource-ResourceMenu--resource = Resource
+resource-ResourceMenu--progress = Progress
 resource-ResourceMenu--all-resources = All Resources
 resource-ResourceMenu--all-projects = All Projects
 resource-ResourceMenu--search-placeholder =
