@@ -54,10 +54,13 @@ export default class Machinery extends React.Component<Props> {
 
         return <section className="machinery">
             <div className="search-wrapper clearfix">
-                <div className="icon fa fa-search"></div>
+                <label htmlFor="machinery-search">
+                    <div className="fa fa-search"></div>
+                </label>
                 <form onSubmit={ this.submitForm }>
                     <Localized id="machinery-Machinery--search-placeholder" attrs={{ placeholder: true }}>
                         <input
+                            id="machinery-search"
                             type="search"
                             autoComplete="off"
                             placeholder="Search in Machinery"

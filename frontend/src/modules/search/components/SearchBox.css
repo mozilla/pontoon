@@ -1,6 +1,5 @@
 .search-box {
-    border: none;
-    margin: 10px 5px;
+    margin: 10px 5px 11px;
     position: static;
 }
 
@@ -14,7 +13,7 @@
     font-size: 13px;
     font-weight: 300;
     line-height: 23px;
-    padding: 7px 33px 8px 37px;
+    padding: 5px 33px 5px 37px;
     width: 100%;
 }
 
@@ -34,23 +33,23 @@
 }
 
 .search-box > label {
-    color: #aaa;
+    color: #AAAAAA;
     font-size: 17px;
     left: auto;
     position: absolute;
     right: 16px;
-    top: 19px;
+    top: 16px;
 }
 
 .search-box .status.fa {
     position: absolute;
     left: 16px;
-    top: 11px;
+    top: 9px;
 }
 
 .search-box .all .status {
-    left: 17px;
-    top: 11px;
+    left: 15px;
+    top: 9px;
 }
 
 .search-box .status.fa::before {
