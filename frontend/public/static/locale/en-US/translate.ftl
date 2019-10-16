@@ -472,6 +472,7 @@ search-FiltersPanel--status-name-errors = Errors
 search-FiltersPanel--status-name-missing = Missing
 search-FiltersPanel--status-name-unreviewed = Unreviewed
 search-FiltersPanel--extra-name-unchanged = Unchanged
+search-FiltersPanel--extra-name-empty = Empty
 search-FiltersPanel--extra-name-rejected = Rejected
 
 search-FiltersPanel--clear-selection = <glyph></glyph>Clear
