@@ -243,7 +243,9 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
-                            <span className="title">{ status.name }</span>
+                            <Localized id={ `search-FiltersPanel--status-name-${status.slug}` }>
+                                <span className="title">{ status.name }</span>
+                            </Localized>
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
@@ -307,7 +309,9 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
-                            <span className="title">{ extra.name }</span>
+                            <Localized id={ `search-FiltersPanel--extra-name-${extra.slug}` }>
+                                <span className="title">{ extra.name }</span>
+                            </Localized>
                         </li>
                     }) }
 
