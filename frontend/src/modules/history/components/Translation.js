@@ -244,6 +244,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         }
 
         let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
+        let canReject = (canReview || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
 
         return <Localized id='history-Translation--copy' attrs={{ title: true }}>
             <li
@@ -311,7 +312,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             :
                             // Approve Button
-                            ( canReview || ( ownTranslation && !translation.approved )) ?
+                            ( canReview && !isReadOnlyEditor ) ?
                                 <Localized
                                     id='history-Translation--button-approve'
                                     attrs={{ title: true }}
@@ -338,7 +339,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         }
                         { translation.rejected ?
                             // Unreject Button
-                            canReview ?
+                            canReject ?
                                 <Localized
                                     id='history-Translation--button-unreject'
                                     attrs={{ title: true }}
@@ -364,7 +365,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 </Localized>
                             :
                             // Reject Button
-                            canReview ?
+                            canReject ?
                                 <Localized
                                     id='history-Translation--button-reject'
                                     attrs={{ title: true }}
