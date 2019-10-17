@@ -188,7 +188,7 @@ The user interface is localized using [Fluent](https://projectfluent.org/) and t
 
 ### Adding localized content
 
-Every time you add a piece of UI that contains some content, there are 2 things you need to do. First, make sure you put it inside a `<Localized>` element, and give it an id. String identifiers should follow this form: `${module}-${component}-${contentDescription}`. For example, if you were to add a new button (`<button>Update</button>`) to the `Editor` component in the `entitydetails` module, the id for that button might be `entitydetails-editor-button-update`.
+Every time you add a piece of UI that contains some content, there are 2 things you need to do. First, make sure you put it inside a `<Localized>` element, and give it an id. String identifiers should follow this form: `${module}-${ComponentName}--${string-description}`. For example, if you were to add a new button (`<button>Update</button>`) to the `Editor` component in the `entitydetails` module, the id for that button might be `entitydetails-Editor--button-update`.
 
 That would give:
 
@@ -196,7 +196,7 @@ That would give:
 class Editor extends React.Component {
     render() {
         return <div>
-            <Localized id="entitydetails-editor-button-update">
+            <Localized id="entitydetails-Editor--button-update">
                 <button>Update</button>
             </Localized>
         </div>;
