@@ -128,7 +128,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         if (!translation.uid) {
             return <img
-                src='/static/img/logo.svg'
+                src='/static/img/anon.jpg'
                 alt=''
                 height='44'
                 width='44'
