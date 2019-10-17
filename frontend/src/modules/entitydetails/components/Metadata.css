@@ -49,3 +49,13 @@
     margin: 0;
     padding: 0;
 }
+
+.truncate {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.truncate:hover {
+    white-space: normal;
+}

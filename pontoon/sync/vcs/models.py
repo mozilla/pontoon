@@ -623,6 +623,10 @@ class VCSResource(object):
                 string=translation.source_string,
                 string_plural=translation.source_string_plural,
                 comments=translation.comments,
+                group_comments=translation.group_comments if hasattr(
+                    translation, 'group_comments') else None,
+                resource_comments=translation.resource_comments if hasattr(
+                    translation, 'resource_comments') else None,
                 source=translation.source,
                 order=translation.order or index
             )
@@ -688,13 +692,15 @@ class VCSEntity(object):
     stores the translations for an entity from several locales.
     """
     def __init__(self, resource, key, string, comments, source, string_plural='',
-                 order=0):
+                 order=0, group_comments=None, resource_comments=None):
         self.resource = resource
         self.key = key
         self.string = string
         self.string_plural = string_plural
         self.translations = {}
         self.comments = comments
+        self.group_comments = group_comments
+        self.resource_comments = resource_comments
         self.source = source
         self.order = order
 

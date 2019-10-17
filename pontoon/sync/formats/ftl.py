@@ -107,7 +107,7 @@ class FTLResource(ParsedResource):
                 group_comment = [obj.content]
 
             elif isinstance(obj, ast.ResourceComment):
-                resource_comment = [obj.content]
+                resource_comment += [obj.content]
 
     @property
     def translations(self):

@@ -84,6 +84,51 @@ export default class Metadata extends React.Component<Props> {
         </Localized>;
     }
 
+    renderGroupComment(entity: Entity): React.Node {
+        if (!entity.group_comment) {
+            return null;
+        }
+
+        let comment = entity.group_comment;
+
+        const parts = entity.comment.split('\n');
+        if (parts[0].startsWith('MAX_LENGTH')) {
+            // This comment contains a max length instruction. Remove that part.
+            parts.shift();
+            comment = parts.join('\n');
+        }
+
+        return <Localized id='entitydetails-Metadata--group_comment' attrs={ { title: true } }>
+            <Property title='Group Comment' className='comment'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment }
+                </Linkify>
+            </Property>
+        </Localized>;
+    }
+    renderResourceComment(entity: Entity): React.Node {
+        if (!entity.resource_comment) {
+            return null;
+        }
+
+        let comment = entity.resource_comment;
+
+        const parts = entity.comment.split('\n');
+        if (parts[0].startsWith('MAX_LENGTH')) {
+            // This comment contains a max length instruction. Remove that part.
+            parts.shift();
+            comment = parts.join('\n');
+        }
+
+        return <Localized id='entitydetails-Metadata--resource_comment' attrs={ { title: true } }>
+            <Property title='Resource Comment' className='comment truncate'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment }
+                </Linkify>
+            </Property>
+        </Localized>;
+    }
+
     renderContext(entity: Entity): React.Node {
         if (!entity.key) {
             return null;
@@ -162,6 +207,8 @@ export default class Metadata extends React.Component<Props> {
                 handleClickOnPlaceable={ this.handleClickOnPlaceable }
             />
             { this.renderComment(entity) }
+            { this.renderGroupComment(entity) }
+            { this.renderResourceComment(entity) }
             <FluentAttribute entity={ entity } />
             { this.renderContext(entity) }
             { this.renderSources(entity) }
