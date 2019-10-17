@@ -35,7 +35,6 @@
     font-size: 11px;
     font-weight: 300;
     padding: 1px 0 5px;
-    text-transform: uppercase;
 }
 
 .history .translation .content > header .info {
@@ -54,11 +53,16 @@
 }
 
 .history .translation .content > header .info time {
-    color: #7BC876;
     padding-left: 3px;
 }
+
+.history .translation .content > header .info time::before {
+    content: "•";
+    padding-right: 3px;
+}
+
 .history .translation .content > header .info a {
-    text-transform: none;
+    color: #7BC876;
 }
 
 .history .translation .content > header .toggle-diff {
