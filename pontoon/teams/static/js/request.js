@@ -18,10 +18,10 @@ var Pontoon = (function (my) {
           var localeProjects = $('#server').data('locale-projects');
 
           // Show table and search box, hide no-result message, remove no=projects style
-          $('.search-wrapper:hidden').toggle();
-          $('.controls.no-projects').toggleClass('no-projects');
-          $('.project-list:hidden').toggle();
-          $('.no-results:visible').toggle();
+          //$('.search-wrapper:hidden').toggleClass('hidden');
+          //$('.controls.no-projects').toggleClass('no-projects');
+          //$('.project-list:hidden').toggleClass('hidden');
+          //$('.no-results:visible').toggle();
 
           // Hide all projects
           $('.items')
@@ -40,11 +40,17 @@ var Pontoon = (function (my) {
           });
 
           // Hide search box and table, show no result message if no project displayed
-          if ($('tr.limited').length === 0 && show) {
-            $('.search-wrapper').toggle(!show);
-            $('.project-list').toggle(!show);
-            $('menu.controls').toggleClass('no-projects');
-            $('.no-results').toggle(show);
+          if ($('tr.limited').length === 0) {
+            $('.search-wrapper').toggleClass('hidden', show);
+            $('.project-list').toggleClass('hidden', show);
+            $('menu.controls').toggleClass('no-projects', show);
+            $('.no-results:hidden').toggle();
+          }
+          else {
+            $('.search-wrapper.hidden').toggleClass('hidden');
+            $('.project-list.hidden').toggleClass('hidden');
+            $('menu.controls.no-projects').toggleClass('no-projects');
+            $('.no-results:visible').toggle();
           }
 
           Pontoon.requestItem.toggleButton(!show, 'locale-projects');
