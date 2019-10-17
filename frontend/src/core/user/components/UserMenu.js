@@ -78,8 +78,14 @@ export class UserMenuBase extends React.Component<Props, State> {
                 onClick={ this.toggleVisibility }
             >
                 { user.isAuthenticated ?
-                <img src={ user.gravatarURLSmall } alt="User avatar" /> :
-                <div className="menu-icon fa fa-bars" />
+                    <img
+                        src={ user.gravatarURLSmall }
+                        alt=""
+                        height="44"
+                        width="44"
+                    />
+                    :
+                    <div className="menu-icon fa fa-bars" />
                 }
             </div>
 
@@ -89,7 +95,12 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <React.Fragment>
                     <li className="details">
                         <a href={ `/contributors/${user.username}/` }>
-                            <img src={ user.gravatarURLBig } alt="User avatar" />
+                            <img
+                                src={ user.gravatarURLBig }
+                                alt=""
+                                height="88"
+                                width="88"
+                            />
                             <p className="name">{ user.nameOrEmail }</p>
                             <p className="email">{ user.email }</p>
                         </a>
