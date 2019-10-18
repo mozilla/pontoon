@@ -2640,7 +2640,7 @@ class TranslationQuerySet(models.QuerySet):
             {'email': user.email,
              'display_name': user.name_or_email,
              'id': user.id,
-             'gravatar_url': user.gravatar_url(44),
+             'gravatar_url': user.gravatar_url(88),
              'translation_count': user.translations_count,
              'role': user.user_role}
             for user in users_with_translations_counts(None, Q(id__in=self), limit=100)
