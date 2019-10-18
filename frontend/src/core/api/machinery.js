@@ -1,9 +1,11 @@
 /* @flow */
 
 import APIBase from './base';
+import * as React from 'react';
 
 import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
+import { Localized } from '@fluent/react';
 
 
 type Translations = Array<MachineryTranslation>;
@@ -42,9 +44,14 @@ export default class MachineryAPI extends APIBase {
         return results.map(item => {
             return {
                 sources: [{
-                    type: 'Translation memory',
+                    type: <Localized id='api--translation-memory'>
+                        Translation memory
+                    </Localized>,
                     url: '/',
-                    title: 'Pontoon Homepage',
+                    title: {
+                        string: 'Pontoon Homepage',
+                        id: 'api--pontoon-homepage'
+                    },
                     count: item.count,
                 }],
                 original: item.source,
@@ -74,7 +81,10 @@ export default class MachineryAPI extends APIBase {
             sources: [{
                 type: 'Google Translate',
                 url: 'https://translate.google.com/',
-                title: 'Visit Google Translate',
+                title: {
+                    string: 'Visit Google Translate',
+                    id: 'api--visit-google'
+                },
             }],
             original: source,
             translation: result.translation,
@@ -101,7 +111,10 @@ export default class MachineryAPI extends APIBase {
             sources: [{
                 type: 'Microsoft Translator',
                 url: 'https://www.bing.com/translator',
-                title: 'Visit Bing Translator',
+                title: {
+                    string: 'Visit Bing Translate',
+                    id: 'api--visit-bing'
+                },
             }],
             original: source,
             translation: result.translation,
@@ -130,8 +143,11 @@ export default class MachineryAPI extends APIBase {
                     type: 'Microsoft',
                     url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
                         item.source + '&langID=' + locale.msTerminologyCode,
-                    title: 'Visit Microsoft Terminology Service API.\n' +
-                        '© 2018 Microsoft Corporation. All rights reserved.',
+                    title: {
+                        string: 'Visit Microsoft Terminology Service API.\n' +
+                            '© 2018 Microsoft Corporation. All rights reserved.',
+                        id: 'api--visit-microsoft'
+                    },
                 }],
                 original: item.source,
                 translation: item.target,
@@ -159,7 +175,10 @@ export default class MachineryAPI extends APIBase {
                     url: 'https://transvision.mozfr.org/?repo=global' +
                         '&recherche=' + encodeURIComponent(source) +
                         '&locale=' + locale.code,
-                    title: 'Visit Transvision',
+                    title: {
+                        string: 'Visit Transvision',
+                        id: 'api--visit-transvision'
+                    },
                 }],
                 original: item.source,
                 translation: item.target,
@@ -190,7 +209,10 @@ export default class MachineryAPI extends APIBase {
             sources: [{
                 type: 'Caighdean',
                 url: 'https://github.com/kscanne/caighdean',
-                title: 'Visit Caighdean Machine Translation',
+                title: {
+                    string: 'Visit Caighdean Machine Translation',
+                    id: 'api--visit-caighdean'
+                },
             }],
             original: result.original,
             translation: result.translation,

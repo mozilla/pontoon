@@ -58,26 +58,31 @@ export default class Translation extends React.Component<Props> {
                     }
                     <ul className="sources">
                         { translation.sources.map((source, i) => <li key={ i }>
-                            <a
-                                className="translation-source"
-                                href={ source.url }
-                                title={ source.title }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                            <Localized
+                                id={ source.title.id }
+                                attrs={{ title: true }}
                             >
-                                <span>{ source.type }</span>
-                                { !source.count ? null :
-                                    <Localized
-                                        id="machinery-Translation--number-occurrences"
-                                        attrs={{ title: true }}
-                                    >
-                                        <sup title="Number of translation occurrences">
-                                            { source.count }
-                                        </sup>
-                                    </Localized>
-                                }
-                            </a>
+                                <a
+                                    className="translation-source"
+                                    href={ source.url }
+                                    title={ source.title.string }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                                >
+                                    <span>{ source.type }</span>
+                                    { !source.count ? null :
+                                        <Localized
+                                            id="machinery-Translation--number-occurrences"
+                                            attrs={{ title: true }}
+                                        >
+                                            <sup title="Number of translation occurrences">
+                                                { source.count }
+                                            </sup>
+                                        </Localized>
+                                    }
+                                </a>
+                            </Localized>
                         </li>) }
                     </ul>
                 </header>

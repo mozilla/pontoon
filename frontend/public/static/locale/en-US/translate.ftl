@@ -346,8 +346,27 @@ machinery-Machinery--search-placeholder =
     .placeholder = Type to search machinery
 
 
+## Machinery Sources
+## Shows sources of translation from machinery.
+
+api--translation-memory = Translation memory
+api--pontoon-homepage =
+    .title = Pontoon Homepage
+api--visit-google =
+    .title = Visit Google Translate
+api--visit-bing =
+    .title = Visit Bing Translate
+api--visit-microsoft =
+    .title = Visit Microsoft Terminology Service API.
+    © 2018 Microsoft Corporation. All rights reserved.
+api--visit-transvision =
+    .title = Visit Transvision
+api--visit-caighdean =
+    .title = Visit Caighdean Machine Translation
+
+
 ## Machinery Translation
-## Shows a specific translation from machinery
+## Shows a specific translation from machinery.
 
 machinery-Translation--copy =
     .title = Copy Into Translation

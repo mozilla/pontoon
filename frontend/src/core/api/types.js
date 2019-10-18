@@ -59,7 +59,10 @@ export type MachineryTranslation = {|
     sources: Array<{|
         type: string,
         url: string,
-        title: string,
+        title: {
+            string: string,
+            id: string,
+        },
         count?: number,
     |}>,
     original: string,
