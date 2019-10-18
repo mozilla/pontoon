@@ -352,6 +352,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                             alt=""
                                             className="rounded"
                                             src={ author.gravatar_url }
+                                            width="44"
+                                            height="44"
                                         />
                                     </span>
                                     <figcaption>
