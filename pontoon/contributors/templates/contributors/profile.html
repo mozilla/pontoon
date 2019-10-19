@@ -32,7 +32,7 @@
       {% if user.is_authenticated() %}
       <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
       {% else %}
-      {% if settings.DJANGO_LOGIN %}
+      {% if settings.AUTHENTICATION_METHOD == 'django' or settings.HEROKU_DEMO %}
         {% set login_url = url('standalone_login') %}
       {% else %}
         {% set login_url = provider_login_url(request) %}

@@ -182,8 +182,10 @@ The following extra settings can be added to your ``.env`` file.
    Set your `Google Analytics key`_ to use Google Analytics.
 ``MANUAL_SYNC``
    Enable Sync button in project Admin.
-``DJANGO_LOGIN``
-   Set to True if you want to use the default Django login instead of Firefox Accounts. This will allow you to log in via accounts created using `manage.py shell`.
+``AUTHENTICATION_METHOD``
+   Set to 'django' if you want to use the default Django login instead of Firefox Accounts. This will allow you to log in via accounts created using `manage.py shell`.
+   Set to 'fxa' if you want to use the Firefox Accounts.
+   Set to 'github' if you want to use GitHub Account.
 
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/
