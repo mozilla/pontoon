@@ -103,7 +103,7 @@ def user_gravatar_url(self, size):
     data = {'s': str(size)}
 
     if not settings.DEBUG:
-        append = '_big' if size > 44 else ''
+        append = '_big' if size > 88 else ''
         data['d'] = settings.SITE_URL + static('img/anon' + append + '.jpg')
 
     return '//www.gravatar.com/avatar/{email}?{data}'.format(

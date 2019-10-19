@@ -5,7 +5,7 @@
       {% set action = latest_activity.type + ' by' %}
       {% set user = latest_activity.user.name_or_email %}
       {% set link = url('pontoon.contributors.contributor.username', latest_activity.user.username) %}
-      {% set avatar = latest_activity.user.gravatar_url(44) %}
+      {% set avatar = latest_activity.user.gravatar_url(88) %}
     {% else %}
       {% set action = 'imported' %}
       {% set user = '' %}
