@@ -50,7 +50,7 @@ export default class MachineryAPI extends APIBase {
                     url: '/',
                     title: {
                         string: 'Pontoon Homepage',
-                        id: 'api--pontoon-homepage'
+                        id: 'api--pontoon-homepage',
                     },
                     count: item.count,
                 }],
@@ -83,7 +83,7 @@ export default class MachineryAPI extends APIBase {
                 url: 'https://translate.google.com/',
                 title: {
                     string: 'Visit Google Translate',
-                    id: 'api--visit-google'
+                    id: 'api--visit-google',
                 },
             }],
             original: source,
@@ -113,7 +113,7 @@ export default class MachineryAPI extends APIBase {
                 url: 'https://www.bing.com/translator',
                 title: {
                     string: 'Visit Bing Translate',
-                    id: 'api--visit-bing'
+                    id: 'api--visit-bing',
                 },
             }],
             original: source,
@@ -146,7 +146,7 @@ export default class MachineryAPI extends APIBase {
                     title: {
                         string: 'Visit Microsoft Terminology Service API.\n' +
                             '© 2018 Microsoft Corporation. All rights reserved.',
-                        id: 'api--visit-microsoft'
+                        id: 'api--visit-microsoft',
                     },
                 }],
                 original: item.source,
@@ -177,7 +177,7 @@ export default class MachineryAPI extends APIBase {
                         '&locale=' + locale.code,
                     title: {
                         string: 'Visit Transvision',
-                        id: 'api--visit-transvision'
+                        id: 'api--visit-transvision',
                     },
                 }],
                 original: item.source,
@@ -211,7 +211,7 @@ export default class MachineryAPI extends APIBase {
                 url: 'https://github.com/kscanne/caighdean',
                 title: {
                     string: 'Visit Caighdean Machine Translation',
-                    id: 'api--visit-caighdean'
+                    id: 'api--visit-caighdean',
                 },
             }],
             original: result.original,

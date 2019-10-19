@@ -11,7 +11,10 @@ describe('<Translation>', () => {
             {
                 type: 'Translation memory',
                 url: 'http://pontoon.mozilla.org',
-                title: 'Pontoon',
+                title: {
+                    string: 'Pontoon Homepage',
+                    id: 'api--pontoon-homepage',
+                },
             },
         ],
         original: ORIGINAL,
@@ -72,7 +75,10 @@ describe('<Translation>', () => {
                 {
                     type: 'Transvision',
                     url: '',
-                    title: 'Transvision memory',
+                    title: {
+                        string: 'Transvision Memory',
+                        id: 'api--transvision-memory',
+                    },
                     count: 24,
                 },
             ],
@@ -83,8 +89,8 @@ describe('<Translation>', () => {
             entity={ DEFAULT_ENTITY }
         />);
 
-        expect(wrapper.find('ul').text()).toContain('Translation memory');
-        expect(wrapper.find('ul').text()).toContain('Transvision');
+        expect(wrapper.find('ul li Localized').at(0).children().text()).toContain('Translation memory');
+        expect(wrapper.find('ul li Localized').at(1).children().text()).toContain('Transvision');
 
         expect(wrapper.find('ul li sup')).toHaveLength(1);
         expect(wrapper.find('ul li sup').text()).toEqual('24');
