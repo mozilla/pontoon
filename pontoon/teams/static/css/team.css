@@ -23,6 +23,14 @@
   color: #7BC876;
 }
 
+.controls.no-projects {
+  height: 28px;
+}
+
+.controls.no-projects > .search-wrapper {
+  display: none;
+}
+
 #permissions-form .selector-wrapper {
   white-space: nowrap;
 }

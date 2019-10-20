@@ -4,11 +4,7 @@
 {% import 'widgets/priority.html' as Priority %}
 
 {% macro header(request=False, visible=True) %}
-  {% if visible %}
-  <table class="table table-sort project-list item-list">
-  {% else %}
-  <table class="table table-sort project-list item-list hidden">
-  {% endif %}
+  <table class="table table-sort project-list item-list {% if not visible %}hidden{% endif %}">
     <thead>
       <tr>
         <th class="name asc">Project<i class="fa"></i></th>

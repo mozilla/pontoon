@@ -77,12 +77,21 @@ def ajax_projects(request, locale):
         .annotate(enabled_locales=Count('project_locale', distinct=True))
     )
 
+    no_visible_projects = (locale.project_set.visible().count() == 0)
+
+    no_projects_to_request = (
+        Project.objects.visible().exclude(Q(locales=locale)).count() == 0
+    )
+
     if not projects:
         raise Http404
 
     return render(request, 'teams/includes/projects.html', {
         'locale': locale,
         'projects': projects,
+        'locale_projects': locale.available_projects_list(),
+        'no_visible_projects': no_visible_projects,
+        'no_projects_to_request': no_projects_to_request,
     })
 
 

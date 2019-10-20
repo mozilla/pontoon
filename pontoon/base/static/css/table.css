@@ -2,7 +2,7 @@ table.table {
   text-align: center;
 }
 
-table.table.hidden {
+table.table.project-list.hidden {
   display: none;
 }
 

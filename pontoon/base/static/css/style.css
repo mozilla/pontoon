@@ -1276,10 +1276,6 @@ body > form,
   position: relative;
 }
 
-.controls.no-projects {
-  height: 28px;
-}
-
 .controls .button {
   background: #333941;
   border: none;
@@ -1335,10 +1331,6 @@ body > form,
 
 .controls > .search-wrapper.big {
   width: 714px;
-}
-
-.controls > .search-wrapper.hidden {
-  display: none;
 }
 
 .controls > .search-wrapper .icon {
