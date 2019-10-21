@@ -33,10 +33,9 @@
 .entity .source-string,
 .entity .translation-string {
     display: inline-block;
-    height: 22px;
+    height: fit-content;
     line-height: 22px;
     margin: 0;
-    white-space: nowrap;
     width: 49%;
 }
 
