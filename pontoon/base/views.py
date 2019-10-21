@@ -391,11 +391,7 @@ def get_translation_history(request):
             "user": "Imported" if u is None else u.name_or_email,
             "uid": "" if u is None else u.id,
             "username": "" if u is None else u.username,
-<<<<<<< HEAD
             "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
-=======
-            "user_gravatar_url_small": "" if u is None else u.gravatar_url(44),
->>>>>>> Fix bug 1586829: Show avatars in translations (#1429)
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat(),
             "approved_user": User.display_name_or_blank(t.approved_user),
