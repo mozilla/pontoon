@@ -225,10 +225,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let className = 'translation ' + this.getStatus();
 
-        if(!user || !user.isAuthenticated || isReadOnlyEditor) {
+        if (!user || !user.isAuthenticated || isReadOnlyEditor) {
             // This user can not copy into translate
             className += ' cannot-copy';
-        } else {
+        }
+        else {
             className += ' can-copy';
         }
 
@@ -306,7 +307,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                     <button
                                         className='unapprove fa'
                                         title='Approved'
-                                        name='approved'
+                                        disabled
                                     />
                                 </Localized>
 
@@ -327,13 +328,13 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 </Localized>
                                 :
                                 <Localized
-                                    id='history-Translation--button-notapproved'
+                                    id='history-Translation--button-not-approved'
                                     attrs={{ title: true }}
                                 >
                                     <button
                                         className='approve fa'
-                                        title='Not Approved'
-                                        name='notapproved'
+                                        title='Not approved'
+                                        disabled
                                     />
                                 </Localized>
                         }
@@ -360,7 +361,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                     <button
                                         className='unreject fa'
                                         title='Rejected'
-                                        name='rejected'
+                                        disabled
                                     />
                                 </Localized>
                             :
@@ -380,13 +381,13 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 </Localized>
                                 :
                                 <Localized
-                                    id='history-Translation--button-notrejected'
+                                    id='history-Translation--button-not-rejected'
                                     attrs={{ title: true }}
                                 >
                                     <button
                                         className='reject fa'
-                                        title='Not Rejected'
-                                        name='notrejected'
+                                        title='Not rejected'
+                                        disabled
                                     />
                                 </Localized>
                         }

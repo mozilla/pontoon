@@ -248,13 +248,13 @@ history-Translation--button-reject =
 history-Translation--button-unreject =
     .title = Unreject
 
-history-Translation--button-notapproved =
+history-Translation--button-not-approved =
     .title = Not approved
 
 history-Translation--button-approved =
     .title = Approved
 
-history-Translation--button-notrejected =
+history-Translation--button-not-rejected =
     .title = Not rejected
 
 history-Translation--button-rejected =
