@@ -173,7 +173,7 @@ export default class Metadata extends React.Component<Props> {
                     <a
                         href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
                         onClick={ this.navigateToPath }
-                        className='project'
+                        className='resource-path'
                     >
                         { entity.path }
                     </a>  

@@ -50,11 +50,11 @@
     padding: 0;
 }
 
-.metadata .resource a.project::before {
+.metadata .resource a.resource-path::before {
     padding-left: 3px;
 }
 
-.metadata .resource a.project::before {
+.metadata .resource a.resource-path::before {
     content: "\00b7";
     color: #AAAAAA;
     padding-right: 3px;
