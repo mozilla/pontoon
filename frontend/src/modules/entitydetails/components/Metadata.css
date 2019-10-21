@@ -49,3 +49,13 @@
     margin: 0;
     padding: 0;
 }
+
+.metadata .resource a:nth-child(2)::before {
+    padding-left: 3px;
+}
+
+.metadata .resource a:nth-child(2)::before {
+    content: "•";
+    color: #AAAAAA;
+    padding-right: 3px;
+}
