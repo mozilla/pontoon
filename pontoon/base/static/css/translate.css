@@ -1168,8 +1168,6 @@ body > header aside p {
 
 #entitylist > .wrapper > ul > li p span {
   display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
 }
