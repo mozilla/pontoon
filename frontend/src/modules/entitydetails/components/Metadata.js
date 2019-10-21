@@ -167,17 +167,16 @@ export default class Metadata extends React.Component<Props> {
             { this.renderSources(entity) }
             <Localized id='entitydetails-Metadata--resource' attrs={ { title: true } }>
                 <Property title='Resource' className='resource'>
-                    <span>
-                        <a href={ `/${locale.code}/${entity.project.slug}/` }>
-                            { entity.project.name }
-                        </a>
-                        <a
-                            href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
-                            onClick={ this.navigateToPath }
-                        >
-                            { entity.path }
-                        </a>
-                    </span>   
+                    <a href={ `/${locale.code}/${entity.project.slug}/` }>
+                        { entity.project.name }
+                    </a>
+                    <a
+                        href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
+                        onClick={ this.navigateToPath }
+                        className='project'
+                    >
+                        { entity.path }
+                    </a>  
                 </Property>
             </Localized>
         </div>;

@@ -50,12 +50,12 @@
     padding: 0;
 }
 
-.metadata .resource a:nth-child(2)::before {
+.metadata .resource a.project::before {
     padding-left: 3px;
 }
 
-.metadata .resource a:nth-child(2)::before {
-    content: "•";
+.metadata .resource a.project::before {
+    content: "\00b7";
     color: #AAAAAA;
     padding-right: 3px;
 }
