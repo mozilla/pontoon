@@ -33,17 +33,11 @@ var Pontoon = (function (my) {
                 .toggle(show);
           });
 
-          // Hide search box and table, show no result message if no project displayed
-          if ($('tr.limited').length === 0) {
-            $('.project-list').toggleClass('hidden', show);
-            $('menu.controls').toggleClass('no-projects', show);
-            $('.no-results:hidden').toggle();
-          }
-          else {
-            $('.project-list.hidden').toggleClass('hidden');
-            $('menu.controls.no-projects').toggleClass('no-projects');
-            $('.no-results:visible').toggle();
-          }
+          // Toggle table & search box, show no results message based on project visibility
+          var noProject = $('.project-list tr.limited').length === 0; 
+            $('.project-list').toggleClass('hidden', noProject);
+            $('menu.controls').toggleClass('no-projects', noProject);
+            $('.no-results').toggle();
 
           Pontoon.requestItem.toggleButton(!show, 'locale-projects');
         }

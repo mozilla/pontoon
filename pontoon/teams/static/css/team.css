@@ -24,7 +24,11 @@
 }
 
 .controls.no-projects {
-  height: 28px;
+  text-align: right;
+}
+
+.controls.no-projects > .request-toggle.button {
+  float: none;
 }
 
 .controls.no-projects > .search-wrapper {

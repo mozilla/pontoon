@@ -1,14 +1,13 @@
 {% import 'projects/widgets/project_list.html' as ProjectList with context %}
 
 <div class="projects items">
-  
   <menu class="controls {% if no_visible_projects %}no-projects{% endif %}">
     <div class="search-wrapper small clearfix">
       <div class="icon fa fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
 
-    {% if user.is_authenticated() and not no_projects_to_request %}
+    {% if user.is_authenticated() and has_projects_to_request %}
     <button class="request-toggle button small request-projects">
       <span class="fa fa-chevron-right"></span>
     </button>
