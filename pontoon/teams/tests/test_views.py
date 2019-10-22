@@ -136,14 +136,14 @@ def test_users_permissions_for_ajax_permissions_view(
         locale=locale_a.code
     ))
     assert response.status_code == 403
-    assert '<title>Forbidden page</title>' in response.content
+    assert b'<title>Forbidden page</title>' in response.content
 
     # Check if users without permissions for the locale can get this tab.
     response = member.client.get('/{locale}/ajax/permissions/'.format(
         locale=locale_a.code
     ))
     assert response.status_code == 403
-    assert '<title>Forbidden page</title>' in response.content
+    assert b'<title>Forbidden page</title>' in response.content
 
     locale_a.managers_group.user_set.add(member.user)
 
@@ -152,7 +152,7 @@ def test_users_permissions_for_ajax_permissions_view(
         locale=locale_a.code
     ))
     assert response.status_code == 200
-    assert '<title>Forbidden page</title>' not in response.content
+    assert b'<title>Forbidden page</title>' not in response.content
 
     # Remove permissions for user0 and check if the view is not accessible.
     locale_a.managers_group.user_set.clear()
@@ -161,7 +161,7 @@ def test_users_permissions_for_ajax_permissions_view(
         locale=locale_a.code
     ))
     assert response.status_code == 403
-    assert '<title>Forbidden page</title>' in response.content
+    assert b'<title>Forbidden page</title>' in response.content
 
     # All unauthorized attempts to POST data should be blocked
     response = member.client.post(
@@ -171,7 +171,7 @@ def test_users_permissions_for_ajax_permissions_view(
         data={'smth': 'smth'}
     )
     assert response.status_code == 403
-    assert '<title>Forbidden page</title>' in response.content
+    assert b'<title>Forbidden page</title>' in response.content
 
     response = client.post(
         '/{locale}/ajax/permissions/'.format(
@@ -180,7 +180,7 @@ def test_users_permissions_for_ajax_permissions_view(
         data={'smth': 'smth'}
     )
     assert response.status_code == 403
-    assert '<title>Forbidden page</title>' in response.content
+    assert b'<title>Forbidden page</title>' in response.content
 
 
 @pytest.mark.django_db

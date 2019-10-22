@@ -731,7 +731,7 @@ class Locale(AggregatedStats):
         if self.cldr_plurals == '':
             return [1]
         else:
-            return map(int, self.cldr_plurals.split(','))
+            return [int(p) for p in self.cldr_plurals.split(',')]
 
     def cldr_plurals_list(self):
         return ', '.join(
@@ -1933,10 +1933,11 @@ class EntityQuerySet(models.QuerySet):
             for candidate in plural_candidates:
                 count = 0
                 for i in range(locale.nplurals):
-                    candidate_translations = filter(
-                        lambda x: x.plural_form == i,
-                        candidate.fetched_translations
-                    )
+                    candidate_translations = [
+                        translation
+                        for translation in candidate.fetched_translations
+                        if translation.plural_form == i
+                    ]
                     if len(candidate_translations) and rule(candidate_translations[0]):
                         count += 1
 
