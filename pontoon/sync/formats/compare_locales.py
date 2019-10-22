@@ -60,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
                     entity.key,
                     None,
                     None,
-                    None,
+                    0,
                 )
 
         try:
@@ -106,7 +106,7 @@ class CompareLocalesResource(ParsedResource):
         # Create parent folders if necessary
         create_parent_directory(self.path)
 
-        with open(self.path, 'w') as output_file:
+        with open(self.path, 'wb') as output_file:
             log.debug('Saving file: %s', self.path)
             output_file.write(
                 serializer.serialize(
