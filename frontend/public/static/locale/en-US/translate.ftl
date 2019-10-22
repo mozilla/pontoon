@@ -199,9 +199,6 @@ entitydetails-Metadata--placeholder =
 entitydetails-Metadata--resource =
     .title = Resource
 
-entitydetails-Metadata--project =
-    .title = Project
-
 
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity
