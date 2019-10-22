@@ -57,12 +57,6 @@ body.top-contributors #heading .legend li .status.fa {
   top: 42px;
 }
 
-.no-contributors {
-  padding: 10px;
-  border-bottom: 1px solid #4D5967;
-  margin-top: 20px;
-}
-
 th:last-child,
 .stats .details {
   text-align: center;
