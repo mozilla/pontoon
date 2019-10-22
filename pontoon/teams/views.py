@@ -81,7 +81,7 @@ def ajax_projects(request, locale):
 
     no_visible_projects = locale.project_set.visible().count() == 0
 
-    has_projects_to_request = projects.visible().exclude(locales=locale).count() > 0
+    has_projects_to_request = projects.exclude(locales=locale).count() > 0
 
     if not projects:
         raise Http404
