@@ -49,10 +49,3 @@
     margin: 0;
     padding: 0;
 }
-
-.metadata .resource a.resource-path::before {
-    content: "\00b7";
-    color: #AAAAAA;
-    padding-right: 3px;
-    padding-left: 3px;
-}
