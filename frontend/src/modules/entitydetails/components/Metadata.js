@@ -107,7 +107,7 @@ export default class Metadata extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            seeMore: false,
+            seeMore: false
         };
     }
 
@@ -132,10 +132,10 @@ export default class Metadata extends React.Component<Props, State> {
                 </Linkify>
                 <Localized id='entitydetails-Metadata--see-more'>
                     <button
-                        //className={ (this.state.seeMore) ? 'hide' : '' }
+                        className={ (this.state.seeMore) ? 'hide' : '' }
                         onClick={ this.handleClick }
                     >
-                        { this.state.seeMore ? 'See Less' : 'See More' }
+                        { 'See More' }
                     </button>
                 </Localized>
             </Property>
