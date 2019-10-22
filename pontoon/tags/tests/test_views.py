@@ -232,5 +232,5 @@ def test_view_project_tag_ajax(client, project_a, tag_a):
     # response returns html
     with pytest.raises(ValueError):
         response.json()
-    assert tag_a.name in response.content
-    assert tag_a.slug in response.content
+    assert tag_a.name.encode('utf-8') in response.content
+    assert tag_a.slug.encode('utf-8') in response.content

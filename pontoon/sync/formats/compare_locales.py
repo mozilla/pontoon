@@ -60,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
                     entity.key,
                     None,
                     None,
-                    None,
+                    0,
                 )
 
         try:

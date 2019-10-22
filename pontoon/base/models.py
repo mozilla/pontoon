@@ -706,7 +706,7 @@ class Locale(AggregatedStats):
         if self.cldr_plurals == '':
             return [1]
         else:
-            return map(int, self.cldr_plurals.split(','))
+            return [int(p) for p in self.cldr_plurals.split(',')]
 
     def cldr_plurals_list(self):
         return ', '.join(
