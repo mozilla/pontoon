@@ -703,7 +703,7 @@ class VCSEntity(object):
         self.string_plural = string_plural
         self.translations = {}
         self.comments = comments
-        self.group_comments = group_comments
+        self.group_comments = group_comments or []
         self.resource_comments = resource_comments or []
         self.source = source
         self.order = order

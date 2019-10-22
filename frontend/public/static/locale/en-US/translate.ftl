@@ -190,14 +190,13 @@ entitydetails-Helpers--locales = Locales
 entitydetails-Metadata--comment =
     .title = Comment
 
-entitydetails-Metadata--group_commment =
+entitydetails-Metadata--group-comment =
     .title = Group Comment
 
-entitydetails-Metadata--resource_commment =
+entitydetails-Metadata--resource-comment =
     .title = Resource Comment
 
-entitydetails-Metadata--see-more
-    .title = See More
+entitydetails-Metadata--see-more = See More
 
 entitydetails-Metadata--context =
     .title = Context

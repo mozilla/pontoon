@@ -25,6 +25,10 @@ type Props = {|
     +navigateToPath: (string) => void,
 |};
 
+type State = {|
+    seeMore: boolean
+|};
+
 
 /**
  * Component showing metadata of an entity.
@@ -39,7 +43,7 @@ type Props = {|
  *  - a link to the resource
  *  - a link to the project
  */
-export default class Metadata extends React.Component<Props> {
+export default class Metadata extends React.Component<Props, State> {
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         if (this.props.isReadOnlyEditor) {
             return;
@@ -91,21 +95,26 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        let comment = entity.group_comment;
-
-        return <Localized id='entitydetails-Metadata--group_comment' attrs={ { title: true } }>
+        return <Localized id='entitydetails-Metadata--group-comment' attrs={ { title: true } }>
             <Property title='Group Comment' className='comment'>
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { comment }
+                    { entity.group_comment }
                 </Linkify>
             </Property>
         </Localized>;
     }
 
-    state = { seeMore: false }
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            seeMore: false,
+        };
+    }
 
     handleClick = () => {
-        this.setState({ seeMore: true });
+        this.setState((state) => {
+            return { seeMore: !state.seeMore };
+        });
     };
 
     renderResourceComment(entity: Entity): React.Node {
@@ -113,24 +122,22 @@ export default class Metadata extends React.Component<Props> {
             return null;
         }
 
-        let comment = entity.resource_comment;
-
-        return <Localized id='entitydetails-Metadata--resource_comment' attrs={ { title: true } }>
+        return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
             <Property
                 title='Resource Comment'
-                className={(this.state.seeMore) ? 'comment' : 'comment truncate'}
+                className={ (this.state.seeMore) ? 'comment' : 'comment truncate' }
             >
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { comment }
+                    { entity.resource_comment }
                 </Linkify>
-                <button
-                    id='entitydetails-Metadata--see-more'
-                    className={(this.state.seeMore) ? 'hide' : ''}
-                    title="See More"
-                    onClick={ this.handleClick }
-                >
-                    { 'See More' }
-                </button>
+                <Localized id='entitydetails-Metadata--see-more'>
+                    <button
+                        //className={ (this.state.seeMore) ? 'hide' : '' }
+                        onClick={ this.handleClick }
+                    >
+                        { this.state.seeMore ? 'See Less' : 'See More' }
+                    </button>
+                </Localized>
             </Property>
         </Localized>;
     }
