@@ -21,9 +21,15 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
 # In development, we want to remove the WhiteNoise middleware, because we need
 # precise control of static files loading in order to properly load frontend
 # resources. See the `pontoon.translate` module.
+<<<<<<< HEAD
 MIDDLEWARE_CLASSES = tuple(
     middleware for middleware in base.MIDDLEWARE_CLASSES
     if middleware != 'whitenoise.middleware.WhiteNoiseMiddleware'
+=======
+MIDDLEWARE_CLASSES = filter(
+    lambda x: x != 'whitenoise.middleware.WhiteNoiseMiddleware',
+    base.MIDDLEWARE_CLASSES
+>>>>>>> Fix bug 1589137 - Autoreload django static files in dev. (#1445)
 ) + (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
