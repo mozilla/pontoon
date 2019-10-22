@@ -32,7 +32,7 @@ from . import URL_BASE
 UPSTREAM = 'http://localhost:3000'
 
 
-def static_serve_dev(request, path, insecure=False, **kwargs):
+def static_serve_dev(request, path):
     """Proxy missing static files to the webpack server.
 
     This view replaces django's static files serve view. When a file is
@@ -47,7 +47,7 @@ def static_serve_dev(request, path, insecure=False, **kwargs):
     """
     try:
         # First try to load the file with django's regular serve view.
-        return serve(request, path, insecure=False, **kwargs)
+        return serve(request, path, insecure=True)
     except Http404:
         # If the file couldn't be found in django's static files, then we
         # try to proxy it to the webpack server.
