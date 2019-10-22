@@ -78,12 +78,10 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
-``AUTHENTICATION_METHOD`
-   Required for non-Mozilla deployments, which cannot use `Firefox Accounts`_ for
-   login. Set to 'django' if you want to use the default Django login instead. This will
-   allow you to log in via accounts created using `manage.py shell`.
+``AUTHENTICATION_METHOD``
+   The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
    Set to 'fxa' if you want to use 'Firefox Accounts'.
-   Set to 'github' if you want to use 'GitHub Account'.
+   Set to 'github' if you want to use 'GitHub'.
 
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from

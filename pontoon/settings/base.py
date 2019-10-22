@@ -32,8 +32,6 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
-
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
 AUTO_LOGIN = os.environ.get('AUTO_LOGIN', 'False') != 'False'
@@ -832,11 +830,14 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
+# Supported values: 'django', 'fxa', 'github'
+AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'github')
 
 def account_username(user):
     return user.name_or_email
 
 
+# django-allauth settings
 ACCOUNT_AUTHENTICATED_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
