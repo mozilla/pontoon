@@ -36,6 +36,7 @@ type Props = {|
     toggleFilter: (string, string) => void,
     update: () => void,
     updateTimeRange: (filter: string) => void,
+    updateFiltersFromURLParams: () => void,
 |};
 
 type State = {|
@@ -78,6 +79,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.setState(state => {
             return { visible: !state.visible };
         });
+        this.props.updateFiltersFromURLParams();
     }
 
     // This method is called by the Higher-Order Component `onClickOutside`
@@ -86,10 +88,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.setState({
             visible: false,
         });
+        this.props.updateFiltersFromURLParams();
     }
 
     applyFilters = () => {
-        this.toggleVisibility();
+        this.setState({
+            visible: false,
+        });
         return this.props.update();
     }
 
@@ -352,6 +357,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                             alt=""
                                             className="rounded"
                                             src={ author.gravatar_url }
+                                            width="44"
+                                            height="44"
                                         />
                                     </span>
                                     <figcaption>

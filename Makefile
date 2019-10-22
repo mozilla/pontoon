@@ -48,6 +48,9 @@ test-py3: test
 shell-py3: override PYTHON_VERSION=3.7.3
 shell-py3: shell
 
+pytest-py3: override PYTHON_VERSION=3.7.3
+pytest-py3: pytest
+
 
 setup: .docker-build
 	${DC} run webapp /app/docker/set_up_webapp.sh
@@ -69,6 +72,9 @@ flow:
 
 lint-frontend:
 	${DC} run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
+
+pytest:
+	${DC} run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
 shell:
 	${DC} run --rm webapp /bin/bash

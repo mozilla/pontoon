@@ -385,7 +385,7 @@ def get_translation_history(request):
             "user": "Imported" if u is None else u.name_or_email,
             "uid": "" if u is None else u.id,
             "username": "" if u is None else u.username,
-            "user_gravatar_url_small": "" if u is None else u.gravatar_url(44),
+            "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat(),
             "approved_user": User.display_name_or_blank(t.approved_user),
@@ -1020,8 +1020,8 @@ def user_data(request):
         'preferred_locales': user.profile.sorted_locales_codes,
         'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
-        'gravatar_url_small': user.gravatar_url(44),
-        'gravatar_url_big': user.gravatar_url(88),
+        'gravatar_url_small': user.gravatar_url(88),
+        'gravatar_url_big': user.gravatar_url(176),
         'notifications': user.serialized_notifications,
     })
 

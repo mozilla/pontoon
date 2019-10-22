@@ -45,7 +45,7 @@ batchactions-BatchActions--replace-with =
 ## RejectAll
 ## Renders Reject All batch action button.
 
-batchactions-RejectAll--default = Reject all
+batchactions-RejectAll--default = Reject all suggestions
 batchactions-RejectAll--confirmation = Are you sure?
 batchactions-RejectAll--success =
     { $changedCount ->
@@ -198,9 +198,6 @@ entitydetails-Metadata--placeholder =
 
 entitydetails-Metadata--resource =
     .title = Resource
-
-entitydetails-Metadata--project =
-    .title = Project
 
 
 ## Entity Details GenericOriginalString

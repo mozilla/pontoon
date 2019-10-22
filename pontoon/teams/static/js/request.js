@@ -33,6 +33,12 @@ var Pontoon = (function (my) {
                 .toggle(show);
           });
 
+          // Toggle table & search box, show no results message based on project visibility
+          var noProject = $('.project-list tr.limited').length === 0; 
+          $('.project-list').toggleClass('hidden', noProject);
+          $('menu.controls').toggleClass('no-projects', noProject);
+          $('.no-results').toggle();
+
           Pontoon.requestItem.toggleButton(!show, 'locale-projects');
         }
         else if (type === 'team') {

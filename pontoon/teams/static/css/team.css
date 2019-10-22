@@ -23,6 +23,18 @@
   color: #7BC876;
 }
 
+.controls.no-projects {
+  text-align: right;
+}
+
+.controls.no-projects > .request-toggle.button {
+  float: none;
+}
+
+.controls.no-projects > .search-wrapper {
+  display: none;
+}
+
 #permissions-form .selector-wrapper {
   white-space: nowrap;
 }

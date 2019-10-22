@@ -292,6 +292,7 @@ def create_named_tempfile(contents, prefix=None, suffix=None, directory=None):
     directory, and return the path to the created file.
     """
     with tempfile.NamedTemporaryFile(
+        mode='w',
         prefix=prefix,
         suffix=suffix,
         dir=directory,

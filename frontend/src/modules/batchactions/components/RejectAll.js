@@ -54,7 +54,7 @@ export default class RejectAll extends React.Component<Props, State> {
         return <Localized
             id="batchactions-RejectAll--default"
         >
-            { 'Reject all' }
+            { 'Reject all suggestions' }
         </Localized>;
     }
 

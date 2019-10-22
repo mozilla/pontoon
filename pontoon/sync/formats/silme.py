@@ -128,7 +128,7 @@ class SilmeResource(ParsedResource):
 
     @property
     def translations(self):
-        return self.entities.values()
+        return list(self.entities.values())
 
     def save(self, locale):
         """
