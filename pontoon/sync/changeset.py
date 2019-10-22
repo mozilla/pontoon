@@ -183,8 +183,7 @@ class ChangeSet(object):
             'comment': '\n'.join(vcs_entity.comments),
             'group_comment': '\n'.join(
                 vcs_entity.group_comments) if vcs_entity.group_comments is not None else '',
-            'resource_comment': '\n'.join(
-                vcs_entity.resource_comments) if vcs_entity.resource_comments is not None else '',
+            'resource_comment': '\n'.join(vcs_entity.resource_comments),
             # one timestamp per import, unlike timezone.now()
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,

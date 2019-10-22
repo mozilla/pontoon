@@ -196,6 +196,9 @@ entitydetails-Metadata--group_commment =
 entitydetails-Metadata--resource_commment =
     .title = Resource Comment
 
+entitydetails-Metadata--see-more
+    .title = See More
+
 entitydetails-Metadata--context =
     .title = Context
 

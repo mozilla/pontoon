@@ -56,6 +56,11 @@
     white-space: nowrap;
 }
 
-.truncate:hover {
-    white-space: normal;
+button {
+    background: none;
+    border: none;
+    color: #CCCCCC;
+    float: right;
+    font-weight: 300;
+    padding: 0;
 }

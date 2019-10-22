@@ -32,6 +32,8 @@ type Props = {|
  * Shows:
  *  - the original string
  *  - a comment (if any)
+ *  - a group comment (if any)
+ *  - a resource comment (if any)
  *  - a context (if any)
  *  - a list of source files (if any)
  *  - a link to the resource
@@ -91,13 +93,6 @@ export default class Metadata extends React.Component<Props> {
 
         let comment = entity.group_comment;
 
-        const parts = entity.comment.split('\n');
-        if (parts[0].startsWith('MAX_LENGTH')) {
-            // This comment contains a max length instruction. Remove that part.
-            parts.shift();
-            comment = parts.join('\n');
-        }
-
         return <Localized id='entitydetails-Metadata--group_comment' attrs={ { title: true } }>
             <Property title='Group Comment' className='comment'>
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
@@ -106,6 +101,13 @@ export default class Metadata extends React.Component<Props> {
             </Property>
         </Localized>;
     }
+
+    state = { seeMore: false }
+
+    handleClick = () => {
+        this.setState({ seeMore: true });
+    };
+
     renderResourceComment(entity: Entity): React.Node {
         if (!entity.resource_comment) {
             return null;
@@ -113,18 +115,21 @@ export default class Metadata extends React.Component<Props> {
 
         let comment = entity.resource_comment;
 
-        const parts = entity.comment.split('\n');
-        if (parts[0].startsWith('MAX_LENGTH')) {
-            // This comment contains a max length instruction. Remove that part.
-            parts.shift();
-            comment = parts.join('\n');
-        }
-
         return <Localized id='entitydetails-Metadata--resource_comment' attrs={ { title: true } }>
-            <Property title='Resource Comment' className='comment truncate'>
+            <Property
+                title='Resource Comment'
+                className={(this.state.seeMore) ? 'comment' : 'comment truncate'}
+            >
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { comment }
                 </Linkify>
+                <button
+                    id='entitydetails-Metadata--see-more'
+                    title="See More"
+                    onClick={ this.handleClick }
+                >
+                    { 'See More' }
+                </button>
             </Property>
         </Localized>;
     }
