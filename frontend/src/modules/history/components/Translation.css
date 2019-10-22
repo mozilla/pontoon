@@ -121,13 +121,13 @@
     content: "";
 }
 
-.history .translation .content > header button.approve:hover:before,
+.history .translation.can-approve .content > header button.approve:hover:before,
 .history .translation .content > header button.unapprove:before {
     color: #7BC876;
 }
 
-.history .translation .content > header button.approve:not(:hover):before,
-.history .translation .content > header button.unapprove:hover:before {
+.history .translation.can-approve .content > header button.approve:not(:hover):before,
+.history .translation.can-approve .content > header button.unapprove:hover:before {
     font-weight: 400;
 }
 
@@ -137,13 +137,13 @@
     margin-left: 5px;
 }
 
-.history .translation .content > header button.reject:hover:before,
+.history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
     color: #F36;
 }
 
-.history .translation .content > header button.reject:not(:hover):before,
-.history .translation .content > header button.unreject:hover:before {
+.history .translation.can-reject .content > header button.reject:not(:hover):before,
+.history .translation.can-reject .content > header button.unreject:hover:before {
     font-weight: 400;
 }
 
