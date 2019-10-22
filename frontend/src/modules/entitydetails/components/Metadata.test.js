@@ -47,7 +47,7 @@ describe('<Metadata>', () => {
         const content = wrapper.find('Linkify').map(item => item.props().children);
         expect(content).toContain(ENTITY.comment);
 
-        expect(wrapper.find('#entitydetails-Metadata--resource a').text()).toContain(ENTITY.path);
+        expect(wrapper.find('#entitydetails-Metadata--resource a.resource-path').text()).toContain(ENTITY.path);
     });
 
     it('does not require a comment', () => {
