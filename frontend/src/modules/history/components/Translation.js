@@ -229,9 +229,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             // This user can not copy into translate
             className += ' cannot-copy';
         }
-        else {
-            className += ' can-copy';
-        }
 
         if (canReview && !isReadOnlyEditor) {
             // This user is a translator for the current locale, they can

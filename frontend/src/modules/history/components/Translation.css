@@ -10,7 +10,7 @@
     pointer-events: none;
 }
 
-.history .translation.can-copy:hover {
+.history .translation:hover {
     background: #4D5967;
 }
 
@@ -128,6 +128,7 @@
     color: #7BC876;
 }
 
+.history .translation:not(.can-approve) .content > header button.approve:before,
 .history .translation.can-approve .content > header button.approve:not(:hover):before,
 .history .translation.can-approve .content > header button.unapprove:hover:before {
     font-weight: 400;
@@ -144,6 +145,7 @@
     color: #F36;
 }
 
+.history .translation:not(.can-reject) .content > header button.reject:before,
 .history .translation.can-reject .content > header button.reject:not(:hover):before,
 .history .translation.can-reject .content > header button.unreject:hover:before {
     font-weight: 400;
