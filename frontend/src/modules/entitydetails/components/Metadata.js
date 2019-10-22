@@ -125,6 +125,7 @@ export default class Metadata extends React.Component<Props> {
                 </Linkify>
                 <button
                     id='entitydetails-Metadata--see-more'
+                    className={(this.state.seeMore) ? 'hide' : ''}
                     title="See More"
                     onClick={ this.handleClick }
                 >
