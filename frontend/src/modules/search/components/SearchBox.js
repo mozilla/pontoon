@@ -73,7 +73,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             timeRange: null,
             authors: {},
         };
-
         this.searchInput = React.createRef();
     }
 
