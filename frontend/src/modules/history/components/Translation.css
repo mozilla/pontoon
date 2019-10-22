@@ -92,6 +92,7 @@
     height: 22px;
     opacity: 0.5;
     pointer-events: auto;
+    cursor: default;
     vertical-align: bottom;
     width: 22px;
 }
@@ -102,6 +103,7 @@
 .history .translation.can-reject header button.reject,
 .history .translation.can-reject header button.unreject {
     opacity: 1;
+    cursor: pointer;
 }
 
 .history .translation.rejected {
