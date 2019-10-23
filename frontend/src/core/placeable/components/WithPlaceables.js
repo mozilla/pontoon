@@ -4,7 +4,6 @@ import createMarker from 'react-content-marker';
 
 import './WithPlaceables.css';
 
-import allCapitalsString from '../parsers/allCapitalsString';
 import altAttribute from '../parsers/altAttribute';
 import camelCaseString from '../parsers/camelCaseString';
 import emailPattern from '../parsers/emailPattern';
@@ -75,7 +74,6 @@ export const rules = [
     uriPattern,
     filePattern,
     emailPattern,
-    allCapitalsString,
     shortCapitalNumberString,
     camelCaseString,
     optionPattern,
