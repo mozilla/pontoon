@@ -18,7 +18,6 @@
 }
 
 .entity > div {
-    height: 22px;
     line-height: 22px;
 }
 
@@ -33,13 +32,10 @@
 .entity .source-string,
 .entity .translation-string {
     display: inline-block;
-    height: 22px;
     line-height: 22px;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     width: 49%;
+    vertical-align: top;
 }
 
 .entity .translation-string {
