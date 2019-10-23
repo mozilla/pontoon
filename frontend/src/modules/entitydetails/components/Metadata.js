@@ -106,9 +106,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            seeMore: false
-        };
+        this.state = { seeMore: false };
     }
 
     handleClick = () => {
