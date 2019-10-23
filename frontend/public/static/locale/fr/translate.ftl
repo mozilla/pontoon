@@ -207,8 +207,6 @@ otherlocales-Translation--copy =
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-allCapitalsString =
-    .title = Chaîne longue en majuscules
 placeable-parser-altAttribute =
     .title = Attribut 'alt' dans une balise XML
 placeable-parser-camelCaseString =
