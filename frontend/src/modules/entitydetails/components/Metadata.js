@@ -109,10 +109,16 @@ export default class Metadata extends React.Component<Props, State> {
         this.state = { seeMore: false };
     }
 
-    handleClick = () => {
-        this.setState((state) => {
-            return { seeMore: !state.seeMore };
-        });
+    componentDidUpdate(prevProps: MetadataProps, prevState: State) {
+        if (
+            this.state.seeMore !== prevState.seeMore
+        ) {
+            this.setState({ seeMore: false });
+        }
+    }
+
+    handleClickOnSeeMore = () => {
+        this.setState({ seeMore: true });
     };
 
     renderResourceComment(entity: Entity): React.Node {
@@ -123,19 +129,18 @@ export default class Metadata extends React.Component<Props, State> {
         return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
             <Property
                 title='Resource Comment'
-                className={ (this.state.seeMore) ? 'comment' : 'comment truncate' }
+                className={ this.state.seeMore ? 'comment' : 'comment truncate' }
             >
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { entity.resource_comment }
                 </Linkify>
-                <Localized id='entitydetails-Metadata--see-more'>
-                    <button
-                        className={ (this.state.seeMore) ? 'hide' : '' }
-                        onClick={ this.handleClick }
-                    >
-                        { 'See More' }
-                    </button>
-                </Localized>
+                { this.state.seeMore  ? null :
+                    <Localized id='entitydetails-Metadata--see-more'>
+                        <button onClick={ this.handleClickOnSeeMore }>
+                            { 'See More' }
+                        </button>
+                    </Localized>
+                }
             </Property>
         </Localized>;
     }
