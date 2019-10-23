@@ -22,62 +22,46 @@ GITHUB_PROVIDER_ID = GithubProvider.id
 class Command(BaseCommand):
     help = ('Ensures an allauth application exists and has credentials that match settings')
 
-    if FXA_PROVIDER_ID:
-        def handle(self, *args, **options):
+    def handle(self, *args, **options):
+        if `FXA`:
             # Check if FXA_* settings are configured, bail if not.
             if settings.FXA_CLIENT_ID is None or settings.FXA_SECRET_KEY is None:
                 self.stdout.write("FXA_* settings unavailable; "
-                                  "skipping provider config.")
+                                    "skipping provider config.")
                 return
 
             # Grab the credentials from settings
-            data = dict(
+            fxa_data = dict(
                 name='FxA',
                 provider=FXA_PROVIDER_ID,
                 client_id=settings.FXA_CLIENT_ID,
                 secret=settings.FXA_SECRET_KEY
             )
 
-            try:
-                # Update the existing provider with current settings.
-                app = SocialApp.objects.get(provider=FXA_PROVIDER_ID)
-                self.stdout.write("Updating existing Firefox Accounts provider "
-                                  "(pk=%s)" % app.pk)
-                for k, v in data.items():
-                    setattr(app, k, v)
-                app.save()
-            except ObjectDoesNotExist:
-                # Create the provider if necessary.
-                app = SocialApp(**data)
-                app.save()
-                self.stdout.write("Created new Firefox Accounts provider (pk=%s)" %
-                                  app.pk)
+            update_provider(fxa_data)
 
-            # Ensure the provider applies to the current default site.
-            sites_count = app.sites.count()
-            if sites_count == 0:
-                default_site = Site.objects.get(pk=settings.SITE_ID)
-                app.sites.add(default_site)
-
-    elif GITHUB_PROVIDER_ID:
-        def handle(self, *args, **options):
-            # Check if Github_* settings are configured, bail if not
+        if `GITHUB`:
+            # Check if GitHub_* settings are configured, bail if not
             if settings.GITHUB_CLIENT_ID is None or settings.GITHUB_SECRET_KEY is None:
                 self.stdout.write("Github_* settings unavailable; "
                                   "skipping provider config.")
                 return
 
-            data = dict(
-                name='Github',
+            github_data = dict(
+                name='GitHub',
                 provider=GITHUB_PROVIDER_ID,
                 client_id=settings.GITHUB_CLIENT_ID,
                 secret=settings.GITHUB_SECRET_KEY
             )
 
+            update_provider(github_data)
+
+        def update_provider(data):
             try:
                 # Update the existing provider with current settings.
-                app = SocialApp.objects.get(provider=GITHUB_PROVIDER_ID)
-                self.stdout.write("Updating existing Github provider (pk=%s)" % app.pk)
+                app = SocialApp.objects.get(provider=data['provider'])
+                self.stdout.write("Updating existing authentication provider "
+                                    "(pk=%s)" % app.pk)
                 for k, v in data.items():
                     setattr(app, k, v)
                 app.save()
@@ -85,7 +69,8 @@ class Command(BaseCommand):
                 # Create the provider if necessary.
                 app = SocialApp(**data)
                 app.save()
-                self.stdout.write("Created new Github provider (pk=%s)" % app.pk)
+                self.stdout.write("Created new authentication provider (pk=%s)" %
+                                    app.pk)
 
             # Ensure the provider applies to the current default site.
             sites_count = app.sites.count()

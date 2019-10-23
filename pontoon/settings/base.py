@@ -861,6 +861,13 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': FXA_SCOPE,
         'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
+    },
+    'github': {
+        'SCOPE': [
+            'user',
+            'repo',
+            'read:org',
+        ],
     }
 }
 
