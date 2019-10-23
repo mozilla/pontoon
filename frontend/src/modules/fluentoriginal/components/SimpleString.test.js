@@ -34,5 +34,4 @@ describe('<SimpleString>', () => {
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);
     });
-
 });

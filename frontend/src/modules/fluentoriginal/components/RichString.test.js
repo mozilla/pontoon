@@ -7,8 +7,8 @@ import RichString from './RichString';
 
 const ORIGINAL = `
 song-title = Hello
-.genre = Pop
-.album = Hello and Good Bye`;
+    .genre = Pop
+    .album = Hello and Good Bye`;
 
 const ENTITY = {
     original: ORIGINAL,
@@ -67,5 +67,4 @@ user-entry =
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);
     });
-
 });
