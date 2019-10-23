@@ -387,8 +387,6 @@ otherlocales-Translation--copy =
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-allCapitalsString =
-    .title = Long all-caps string
 placeable-parser-altAttribute =
     .title = 'alt' attribute inside XML tag
 placeable-parser-camelCaseString =
