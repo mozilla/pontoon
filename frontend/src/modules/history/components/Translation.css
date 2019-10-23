@@ -10,7 +10,7 @@
     pointer-events: none;
 }
 
-.history .translation:hover {
+.history .translation:not(.cannot-copy):hover {
     background: #4D5967;
 }
 

@@ -44,7 +44,11 @@ export default class Translation extends React.Component<Props> {
     render() {
         const { entity, translation, parameters, lastPreferred } = this.props;
 
-        const className = lastPreferred ? 'translation last-preferred' : 'translation';
+        let className = lastPreferred ? 'translation last-preferred' : 'translation';
+
+        if (this.props.isReadOnlyEditor) {
+            className += ' cannot-copy'
+        }
 
         return <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
             <li

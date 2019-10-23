@@ -5,7 +5,11 @@
     transition: all 0.1s ease-out;
 }
 
-.machinery .translation:hover {
+.machinery .translation.cannot-copy {
+    pointer-events: none;
+}
+
+.machinery .translation:not(.cannot-copy):hover {
     background: #4D5967;
 }
 

@@ -46,9 +46,15 @@ export default class Translation extends React.Component<Props> {
 
         const types = translation.sources.map(source => source.type);
 
+        let className = 'translation';
+
+        if (this.props.isReadOnlyEditor) {
+            className += ' cannot-copy';
+        }
+
         return <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
             <li
-                className="translation"
+                className={ className }
                 title="Copy Into Translation"
                 onClick={ this.copyTranslationIntoEditor }
             >
