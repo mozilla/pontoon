@@ -5,23 +5,30 @@ import sinon from 'sinon';
 import RichString from './RichString';
 
 
-const ORIGINAL = 'song-title = Hello\n    .genre = Pop\n    .album = Hello and Good Bye';
+const ORIGINAL = `
+song-title = Hello
+.genre = Pop
+.album = Hello and Good Bye`;
 
 const ENTITY = {
     original: ORIGINAL,
 };
 
 describe('<RichString>', () => {
-    it('renders correct value and each attribute of original input', () => {
+    it('renders value and each attribute correctly', () => {
         const wrapper = shallow(<RichString
             entity = { ENTITY }
         />);
 
-        expect(wrapper.find('RichString')).toBeDefined();
-
         expect(wrapper.find('ContentMarker')).toHaveLength(3);
+
+        expect(wrapper.find('label').at(0).html()).toContain('Value');
         expect(wrapper.find('ContentMarker').at(0).html()).toContain('Hello');
+
+        expect(wrapper.find('label').at(1).html()).toContain('genre');
         expect(wrapper.find('ContentMarker').at(1).html()).toContain('Pop');
+
+        expect(wrapper.find('label').at(2).html()).toContain('album');
         expect(wrapper.find('ContentMarker').at(2).html()).toContain('Hello and Good Bye');
     });
 
@@ -60,4 +67,5 @@ user-entry =
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);
     });
+
 });

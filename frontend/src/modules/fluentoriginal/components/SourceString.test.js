@@ -17,8 +17,6 @@ describe('<SourceString>', () => {
             entity = { ENTITY }
         />);
 
-        expect(wrapper.find('SourceString')).toBeDefined();
-
         expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
         expect(wrapper.find('.original ContentMarker').children().text()).toEqual('title = Hello From The Other Side');
     });
@@ -33,4 +31,5 @@ describe('<SourceString>', () => {
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);
     });
+
 });

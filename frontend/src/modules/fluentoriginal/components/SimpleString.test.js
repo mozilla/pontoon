@@ -20,8 +20,6 @@ describe('<SimpleString>', () => {
             entity = { ENTITY }
         />);
 
-        expect(wrapper.find('SimpleString')).toBeDefined();
-
         expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
         expect(wrapper.find('.original ContentMarker').children().text()).toEqual('Hello\nSimple\nString');
     });
@@ -36,4 +34,5 @@ describe('<SimpleString>', () => {
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);
     });
+
 });
