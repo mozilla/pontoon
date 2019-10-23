@@ -70,7 +70,11 @@ export default class Translation extends React.Component<Props> {
                                     rel="noopener noreferrer"
                                     onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
                                 >
-                                    <span>{ source.type }</span>
+                                    { !source.type.id ?
+                                        <span>{ source.type.string }</span>
+                                        :
+                                        <Localized id={ source.type.id } />
+                                    }
                                     { !source.count ? null :
                                         <Localized
                                             id="machinery-Translation--number-occurrences"

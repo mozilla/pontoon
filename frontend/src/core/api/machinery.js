@@ -1,11 +1,9 @@
 /* @flow */
 
 import APIBase from './base';
-import * as React from 'react';
 
 import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
-import { Localized } from '@fluent/react';
 
 
 type Translations = Array<MachineryTranslation>;
@@ -44,9 +42,10 @@ export default class MachineryAPI extends APIBase {
         return results.map(item => {
             return {
                 sources: [{
-                    type: <Localized id='api--translation-memory'>
-                        Translation memory
-                    </Localized>,
+                    type: {
+                        string: 'Translation memory',
+                        id: 'api--translation-memory',
+                    },
                     url: '/',
                     title: {
                         string: 'Pontoon Homepage',
@@ -79,7 +78,9 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: 'Google Translate',
+                type: {
+                    string: 'Google Translate',
+                },
                 url: 'https://translate.google.com/',
                 title: {
                     string: 'Visit Google Translate',
@@ -109,7 +110,9 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: 'Microsoft Translator',
+                type: {
+                    string: 'Microsoft Translator',
+                },
                 url: 'https://www.bing.com/translator',
                 title: {
                     string: 'Visit Bing Translate',
@@ -140,7 +143,9 @@ export default class MachineryAPI extends APIBase {
         return results.translations.map(item => {
             return {
                 sources: [{
-                    type: 'Microsoft',
+                    type: {
+                        string: 'Microsoft',
+                    },
                     url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
                         item.source + '&langID=' + locale.msTerminologyCode,
                     title: {
@@ -171,7 +176,9 @@ export default class MachineryAPI extends APIBase {
         return results.map(item => {
             return {
                 sources: [{
-                    type: 'Mozilla',
+                    type: {
+                        string: 'Mozilla',
+                    },
                     url: 'https://transvision.mozfr.org/?repo=global' +
                         '&recherche=' + encodeURIComponent(source) +
                         '&locale=' + locale.code,
@@ -207,7 +214,9 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: 'Caighdean',
+                type: {
+                    string: 'Caighdean',
+                },
                 url: 'https://github.com/kscanne/caighdean',
                 title: {
                     string: 'Visit Caighdean Machine Translation',

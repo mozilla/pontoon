@@ -57,7 +57,10 @@ export type OtherLocaleTranslation = {|
  */
 export type MachineryTranslation = {|
     sources: Array<{|
-        type: string,
+        type: {
+            string: string,
+            id?: string,
+        },
         url: string,
         title: {
             string: string,
