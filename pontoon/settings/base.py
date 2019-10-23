@@ -833,6 +833,7 @@ SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 # Supported values: 'django', 'fxa', 'github'
 AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
 
+
 def account_username(user):
     return user.name_or_email
 
@@ -849,6 +850,10 @@ FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
 FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
 FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
 FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
+
+# Github
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
+GITHUB_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
