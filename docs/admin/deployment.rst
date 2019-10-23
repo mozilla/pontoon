@@ -51,6 +51,11 @@ you create:
 ``ADMIN_NAME``
    Optional. Name for the ``ADMINS`` setting.
 
+``AUTHENTICATION_METHOD``
+   The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
+   Set to 'fxa' if you want to use 'Firefox Accounts' (corresponding FXA_* settings must be set).
+   Set to 'github' if you want to use 'GitHub' (corresponding GITHUB_* settings must be set).
+
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to
    Celery or executed immediately and synchronously. Set this to ``False`` on
@@ -77,11 +82,6 @@ you create:
    Signifies whether this is a development server or not. Should be `False` in
    production.
    Adds some additional django apps that can be helpful during day to day development.
-
-``AUTHENTICATION_METHOD``
-   The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
-   Set to 'fxa' if you want to use 'Firefox Accounts'.
-   Set to 'github' if you want to use 'GitHub'.
 
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from

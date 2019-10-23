@@ -137,9 +137,9 @@ Installation
 
       python manage.py sync_projects --projects=pontoon-intro --no-commit
 
-9. After you've provided credentials to Firefox Accounts or Github, you have to update them in database,
+9. After you've provided credentials for your django-allauth provider, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
-   FXA or Github settings (e.g. client key):
+   django-allauth settings (e.g. client key):
 
    .. code-block:: bash
 

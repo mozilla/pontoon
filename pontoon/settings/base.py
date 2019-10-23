@@ -853,7 +853,7 @@ FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
 
 # Github
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
-GITHUB_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
+GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
