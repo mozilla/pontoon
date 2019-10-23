@@ -57,15 +57,23 @@ export default class Translation extends React.Component<Props> {
                 onClick={ this.copyTranslationIntoEditor }
             >
                 <header>
-                    <a
-                        href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                    <Localized
+                        id='otherlocales-Translation--header-link'
+                        attrs={{ title: true }}
+                        $locale={ translation.locale }
+                        $code={ translation.code }
                     >
-                        { translation.locale }
-                        <span>{ translation.code }</span>
-                    </a>
+                        <a
+                            href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            title={ 'Visit string in { $locale } ({ $code })' }
+                            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                        >
+                            { translation.locale }
+                            <span>{ translation.code }</span>
+                        </a>
+                    </Localized>
                 </header>
                 <p
                     lang={ translation.code }

@@ -206,6 +206,9 @@ notification--entity-not-found = Impossible de charger la chaîne spécifiée
 otherlocales-Translation--copy =
     .title = Copier la traduction
 
+otherlocales-Translation--header-link = 
+    .title = Visit string in { $locale } ({ $code })
+
 
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.

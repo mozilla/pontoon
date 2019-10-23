@@ -32,6 +32,10 @@
     padding-left: 3px;
 }
 
+.machinery .translation > header a{
+    pointer-events: auto;
+}
+
 .machinery .translation > header ul li:not(:first-child)::before {
     content: "•";
     padding-right: 3px;

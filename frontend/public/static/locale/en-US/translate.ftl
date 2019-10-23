@@ -398,6 +398,9 @@ notification--string-link-copied = Link copied to clipboard
 otherlocales-Translation--copy =
     .title = Copy Into Translation
 
+otherlocales-Translation--header-link = 
+    .title = Visit string in { $locale } ({ $code })
+
 
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.

@@ -38,3 +38,7 @@
     text-align: start;
     white-space: pre-wrap;
 }
+
+.other-locales .translation > header a {
+    pointer-events: auto;
+}
