@@ -44,6 +44,21 @@ type State = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = { seeMore: false };
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (this.props.entity !== prevProps.entity) {
+            this.setState({ seeMore: false });
+        }
+    }
+
+    handleClickOnSeeMore = () => {
+        this.setState({ seeMore: true });
+    };
+    
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         if (this.props.isReadOnlyEditor) {
             return;
@@ -104,21 +119,6 @@ export default class Metadata extends React.Component<Props, State> {
         </Localized>;
     }
 
-    constructor(props: Props) {
-        super(props);
-        this.state = { seeMore: false };
-    }
-
-    componentDidUpdate(prevProps: Props) {
-        if (this.props.entity !== prevProps.entity) {
-            this.setState({ seeMore: false });
-        }
-    }
-
-    handleClickOnSeeMore = () => {
-        this.setState({ seeMore: true });
-    };
-
     renderResourceComment(entity: Entity): React.Node {
         if (!entity.resource_comment) {
             return null;
@@ -132,7 +132,7 @@ export default class Metadata extends React.Component<Props, State> {
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { entity.resource_comment }
                 </Linkify>
-                { this.state.seeMore  ? null :
+                { this.state.seeMore ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
