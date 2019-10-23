@@ -109,7 +109,7 @@ export default class Metadata extends React.Component<Props, State> {
         this.state = { seeMore: false };
     }
 
-    componentDidUpdate(prevProps: MetadataProps, prevState: State) {
+    componentDidUpdate(prevProps: Props) {
         if (this.props.entity !== prevProps.entity) {
             this.setState({ seeMore: false });
         }
