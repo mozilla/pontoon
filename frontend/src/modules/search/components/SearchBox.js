@@ -73,13 +73,13 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             timeRange: null,
             authors: {},
         };
-        
+
         this.searchInput = React.createRef();
     }
 
     updateFiltersFromURLParams = () => {
-        const { props } = this;
-        
+        const props = this.props;
+
         const statuses = this.getInitialStatuses();
         if (props.parameters.status) {
             props.parameters.status.split(',').forEach(f => {
