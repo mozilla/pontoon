@@ -22,7 +22,7 @@ GITHUB_PROVIDER_ID = GithubProvider.id
 class Command(BaseCommand):
     help = ('Ensures an allauth application exists and has credentials that match settings')
 
-    def update_provider(data):
+    def update_provider(self, data):
         try:
             # Update the existing provider with current settings.
             app = SocialApp.objects.get(provider=data['provider'])
@@ -37,37 +37,38 @@ class Command(BaseCommand):
             self.stdout.write("Created new authentication provider (pk=%s)" % app.pk)
 
     def handle(self, *args, **options):
-        # Check if FXA_* settings are configured, bail if not.
-        if settings.FXA_CLIENT_ID is None or settings.FXA_SECRET_KEY is None:
-            self.stdout.write("FXA_* settings unavailable; skipping provider config.")
+        # Check if FXA_* settings are configured
+        if settings.FXA_CLIENT_ID is not None or settings.FXA_SECRET_KEY is not None:
+
+            # Grab the credentials from settings
+            fxa_data = dict(
+                name='FxA',
+                provider=FXA_PROVIDER_ID,
+                client_id=settings.FXA_CLIENT_ID,
+                secret=settings.FXA_SECRET_KEY
+            )
+
+            return self.update_provider(fxa_data)
+
+        # Check if GitHub_* settings are configured
+        elif settings.GITHUB_CLIENT_ID is not None or settings.GITHUB_SECRET_KEY is not None:
+
+            github_data = dict(
+                name='GitHub',
+                provider=GITHUB_PROVIDER_ID,
+                client_id=settings.GITHUB_CLIENT_ID,
+                secret=settings.GITHUB_SECRET_KEY
+            )
+
+            return self.update_provider(github_data)
+
+        # Bail if neither FXA_* or GitHub_* settings are configured
+        else:
+            self.stdout.write("Authentication settings unavailable; skipping provider config.")
             return
-
-        # Grab the credentials from settings
-        fxa_data = dict(
-            name='FxA',
-            provider=FXA_PROVIDER_ID,
-            client_id=settings.FXA_CLIENT_ID,
-            secret=settings.FXA_SECRET_KEY
-        )
-
-        return self.update_provider(fxa_data)
-
-        # Check if GitHub_* settings are configured, bail if not
-        if settings.GITHUB_CLIENT_ID is None or settings.GITHUB_SECRET_KEY is None:
-            self.stdout.write("GitHub_* settings unavailable; skipping provider config.")
-            return
-
-        github_data = dict(
-            name='GitHub',
-            provider=GITHUB_PROVIDER_ID,
-            client_id=settings.GITHUB_CLIENT_ID,
-            secret=settings.GITHUB_SECRET_KEY
-        )
-
-        return self.update_provider(github_data)
 
         # Ensure the provider applies to the current default site.
-        sites_count = app.sites.count()
+        sites_count = self.app.sites.count()
         if sites_count == 0:
             default_site = Site.objects.get(pk=settings.SITE_ID)
-            app.sites.add(default_site)
+            self.app.sites.add(default_site)
