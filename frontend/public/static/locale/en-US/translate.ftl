@@ -399,7 +399,7 @@ otherlocales-Translation--copy =
     .title = Copy Into Translation
 
 otherlocales-Translation--header-link = 
-    .title = Visit string in { $locale } ({ $code })
+    .title = Open string in { $locale } ({ $code })
 
 
 ## Placeable parsers
