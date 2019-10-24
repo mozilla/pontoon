@@ -169,14 +169,14 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                         className={"resource icon " + resourceClass}
                         onClick={ this.sortByResource }
                     />
-                    {/* <Localized id="resource-ResourceMenu--progress"> */}
-                    <span
-                        className="progress"
-                        onClick={ this.sortByProgress }
-                    >
-                        Progress
-                    </span>
-                    {/* </Localized> */}
+                    <Localized id="resource-ResourceMenu--progress">
+                        <span
+                            className="progress"
+                            onClick={ this.sortByProgress }
+                        >
+                            Progress
+                        </span>
+                    </Localized>
                     <span
                         className={"progress icon " + progressClass}
                         onClick={ this.sortByProgress }
