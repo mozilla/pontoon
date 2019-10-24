@@ -1,3 +1,7 @@
+.react-tabs__tab-panel > section.machinery {
+    padding-top: 0;
+}
+
 .machinery {
     line-height: 22px;
 }
@@ -9,29 +13,29 @@
 }
 
 .machinery > .search-wrapper {
-    border-bottom: 1px solid #5E6475;
-    margin: 0 10px 10px;
+    padding: 10px 5px;
     position: relative;
 }
 
-.machinery > .search-wrapper .icon {
+.machinery > .search-wrapper > label {
     color: #AAAAAA;
-    font-size: 19px;
-    left: 2px;
+    font-size: 17px;
+    left: auto;
     position: absolute;
-    right: auto;
-    top: 12px;
+    right: 16px;
+    top: 16px;
 }
 
 .machinery > .search-wrapper input[type=search] {
-    background: transparent;
+    background: #4D5967;
     border: none;
+    border-radius: 20px;
     box-sizing: border-box;
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
     line-height: 23px;
-    padding: 10px 10px 5px 25px;
+    padding: 5px 33px 5px 12px;
     width: 100%;
 }
 
