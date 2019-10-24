@@ -45,8 +45,18 @@ export default class Translation extends React.Component<Props> {
 
     render() {
         const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
+<<<<<<< HEAD
 
         const types = translation.sources;
+=======
+>>>>>>> Fix bug 1545964 - Confusing Copy Into Translate tooltip (#1417)
+
+        let className = 'translation';
+
+        if (isReadOnlyEditor) {
+            // Copying into the editor is not allowed
+            className += ' cannot-copy';
+        }
 
         let className = 'translation';
 
