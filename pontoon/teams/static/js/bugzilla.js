@@ -22,7 +22,7 @@ var Pontoon = (function (my) {
             'type0-0-1': 'regexp',
             'value0-0-1': '^' + locale + ' / ',
             'resolution': '---',
-            'include_fields': 'id,summary,creation_time,last_change_time,assigned_to'
+            'include_fields': 'id,summary,last_change_time,assigned_to'
           },
           success: function(data) {
             if (data.bugs.length) {
@@ -61,14 +61,10 @@ var Pontoon = (function (my) {
                 }).appendTo(tr);
 
                 $('<td>', {
-                  class: 'date-created',
-                  html: formatter.format(new Date(bug.creation_time))
-                }).appendTo(tr);
-
-                $('<td>', {
-                  class: 'person-assigned-to',
+                  class: 'assigned-to',
                   html: bug.assigned_to
                 }).appendTo(tr);
+
 
                 tbody.append(tr);
               });
@@ -80,8 +76,7 @@ var Pontoon = (function (my) {
                     '<th class="id">ID</th>' +
                     '<th class="summary">Summary</th>' +
                     '<th class="last-changed">Last Changed</th>' +
-                    '<th class="date-created">Date Created</th>' +
-                    '<th class="person-assigned-to">Assignee</th>' +
+                    '<th class="assigned-to">Assigned To</th>' +
                   '</tr>' +
                 '</thead>'
               }).append(tbody);
@@ -106,3 +101,4 @@ var Pontoon = (function (my) {
     }
   });
 }(Pontoon || {}));
+
