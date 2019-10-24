@@ -225,8 +225,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let className = 'translation ' + this.getStatus();
 
-        if (!user || !user.isAuthenticated || isReadOnlyEditor) {
-            // This user can not copy into translate
+        if (isReadOnlyEditor) {
+            // Copying into the editor is not allowed
             className += ' cannot-copy';
         }
 

@@ -207,7 +207,7 @@ otherlocales-Translation--copy =
     .title = Copier la traduction
 
 otherlocales-Translation--header-link = 
-    .title = Open string in { $locale } ({ $code })
+    .title = Chaîne ouvre en { $locale } ({ $code })
 
 
 ## Placeable parsers

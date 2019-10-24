@@ -42,11 +42,12 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { entity, translation, parameters, lastPreferred } = this.props;
+        const { entity, translation, parameters, lastPreferred, isReadOnlyEditor } = this.props;
 
         let className = lastPreferred ? 'translation last-preferred' : 'translation';
 
-        if (this.props.isReadOnlyEditor) {
+        if (isReadOnlyEditor) {
+            // Copying into the editor is not allowed
             className += ' cannot-copy'
         }
 
@@ -67,7 +68,7 @@ export default class Translation extends React.Component<Props> {
                             href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
                             target='_blank'
                             rel='noopener noreferrer'
-                            title={ 'Open string in { $locale } ({ $code })' }
+                            title='Open string in { $locale } ({ $code })'
                             onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
                         >
                             { translation.locale }
