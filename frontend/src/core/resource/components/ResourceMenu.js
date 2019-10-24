@@ -117,7 +117,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
 
         let resourceName = parameters.resource.split('/').slice(-1)[0];
         if (parameters.resource === 'all-resources') {
-            resourceName = 'All Resources';
+            resourceName = <Localized id= 'resource-ResourceMenu--all-resources'>All Resources</Localized>;
         }
 
         // Search resources
@@ -169,14 +169,14 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                         className={"resource icon " + resourceClass}
                         onClick={ this.sortByResource }
                     />
-                    <Localized id="resource-ResourceMenu--progress">
-                        <span
-                            className="progress"
-                            onClick={ this.sortByProgress }
-                        >
-                            Progress
-                        </span>
-                    </Localized>
+                    {/* <Localized id="resource-ResourceMenu--progress"> */}
+                    <span
+                        className="progress"
+                        onClick={ this.sortByProgress }
+                    >
+                        Progress
+                    </span>
+                    {/* </Localized> */}
                     <span
                         className={"progress icon " + progressClass}
                         onClick={ this.sortByProgress }
