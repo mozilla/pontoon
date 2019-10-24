@@ -46,7 +46,7 @@ class Command(BaseCommand):
             )
 
             provider_configured = True
-            return self.update_provider(fxa_data)
+            self.update_provider(fxa_data)
 
         # Check if GitHub_* settings are configured
         if settings.GITHUB_CLIENT_ID is not None or settings.GITHUB_SECRET_KEY is not None:
@@ -58,9 +58,8 @@ class Command(BaseCommand):
             )
 
             provider_configured = True
-            return self.update_provider(github_data)
+            self.update_provider(github_data)
 
-        # Bail if neither django-allauth provider configured
         if provider_configured:
             # Ensure the provider applies to the current default site.
             sites_count = self.app.sites.count()
