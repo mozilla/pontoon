@@ -14,13 +14,13 @@
   white-space: nowrap;
 }
 
-.buglist .last-changed{
+.buglist .last-changed {
   text-align: left;
   width: 130px;
 }
 
 .buglist .assigned-to {
-  width: 400px;
+  width: 260px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
