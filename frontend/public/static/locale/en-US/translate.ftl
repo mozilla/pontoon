@@ -340,7 +340,7 @@ interactivetour-InteractiveTour--end-footer =
 ## Shows a list of translations from machines.
 
 machinery-Machinery--search-placeholder =
-    .placeholder = Type to search machinery
+    .placeholder = Search in Machinery
 
 
 ## Machinery Translation
