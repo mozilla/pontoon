@@ -101,4 +101,3 @@ var Pontoon = (function (my) {
     }
   });
 }(Pontoon || {}));
-
