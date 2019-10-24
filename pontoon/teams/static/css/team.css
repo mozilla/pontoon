@@ -8,15 +8,23 @@
 }
 
 .buglist .summary {
-  width: 560px;
+  width: 430px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.buglist .last-changed, .buglist .date-created {
+.buglist .last-changed{
   text-align: left;
   width: 130px;
+}
+
+.buglist .assigned-to {
+  width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }
 
 .buglist tbody .id a {
