@@ -245,6 +245,18 @@ history-Translation--button-reject =
 history-Translation--button-unreject =
     .title = Unreject
 
+history-Translation--button-not-approved =
+    .title = Not approved
+
+history-Translation--button-approved =
+    .title = Approved
+
+history-Translation--button-not-rejected =
+    .title = Not rejected
+
+history-Translation--button-rejected =
+    .title = Rejected
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
@@ -382,6 +394,9 @@ notification--string-link-copied = Link copied to clipboard
 
 otherlocales-Translation--copy =
     .title = Copy Into Translation
+
+otherlocales-Translation--header-link = 
+    .title = Open string in { $locale } ({ $code })
 
 
 ## Placeable parsers
