@@ -450,6 +450,7 @@ placeable-parser-xmlTag =
 project-ProjectMenu--no-results = No results
 project-ProjectMenu--project = Project
 project-ProjectMenu--progress = Progress
+project-ProjectMenu--all-projects = All Projects
 project-ProjectMenu--search-placeholder =
     .placeholder = Filter projects
 
