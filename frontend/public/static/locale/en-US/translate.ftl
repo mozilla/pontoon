@@ -343,33 +343,55 @@ machinery-Machinery--search-placeholder =
     .placeholder = Type to search machinery
 
 
-## Machinery Sources
-## Shows sources of translation from machinery.
-
-api--translation-memory = Translation memory
-api--pontoon-homepage =
-    .title = Pontoon Homepage
-api--visit-google =
-    .title = Visit Google Translate
-api--visit-bing =
-    .title = Visit Bing Translate
-api--visit-microsoft =
-    .title = Visit Microsoft Terminology Service API.
-    © 2018 Microsoft Corporation. All rights reserved.
-api--visit-transvision =
-    .title = Visit Transvision
-api--visit-caighdean =
-    .title = Visit Caighdean Machine Translation
-
-
 ## Machinery Translation
 ## Shows a specific translation from machinery.
 
 machinery-Translation--copy =
     .title = Copy Into Translation
 
-machinery-Translation--number-occurrences =
+
+## Machinery Translation Memory
+## Shows the translation source from Pontoon's memory.
+
+machinery-TranslationMemory--pontoon-homepage =
+    .title = Pontoon Homepage
+machinery-TranslationMemory--translation-memory = Translation memory
+machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
+
+
+## Machinery Google Translation
+## Shows the translation source from Google Translate.
+
+machinery-GoogleTranslation--visit-google =
+    .title = Visit Google Translate
+
+
+## Machinery Microsoft Translation
+## Shows the translation source from Microsoft Translation.
+machinery-MicrosoftTranslation--visit-bing =
+    .title = Visit Bing Translate
+
+
+## Machinery Microsoft Terminology
+## Shows the translation source from Microsoft Terminology.
+machinery-MicrosoftTerminology--visit-microsoft =
+    .title = Visit Microsoft Terminology Service API.
+    © 2018 Microsoft Corporation. All rights reserved.
+
+
+## Machinery Transvision Memory
+## Shows the translation source from Transvision.
+
+machinery-TransvisionMemory--visit-transvision =
+    .title = Visit Transvision
+
+
+## Machinery Caighdean Translation
+## Shows the translation source from Caighdean Machine Translation.
+
+machinery-CaighdeanTranslation--visit-caighdean =
+    .title = Visit Caighdean Machine Translation
 
 
 ## Notification Messages

@@ -42,15 +42,8 @@ export default class MachineryAPI extends APIBase {
         return results.map(item => {
             return {
                 sources: [{
-                    type: {
-                        string: 'Translation memory',
-                        id: 'api--translation-memory',
-                    },
+                    type: 'translation-memory',
                     url: '/',
-                    title: {
-                        string: 'Pontoon Homepage',
-                        id: 'api--pontoon-homepage',
-                    },
                     count: item.count,
                 }],
                 original: item.source,
@@ -78,14 +71,8 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: {
-                    string: 'Google Translate',
-                },
+                type: 'google-translate',
                 url: 'https://translate.google.com/',
-                title: {
-                    string: 'Visit Google Translate',
-                    id: 'api--visit-google',
-                },
             }],
             original: source,
             translation: result.translation,
@@ -110,14 +97,8 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: {
-                    string: 'Microsoft Translator',
-                },
+                type: 'microsoft-translator',
                 url: 'https://www.bing.com/translator',
-                title: {
-                    string: 'Visit Bing Translate',
-                    id: 'api--visit-bing',
-                },
             }],
             original: source,
             translation: result.translation,
@@ -143,16 +124,9 @@ export default class MachineryAPI extends APIBase {
         return results.translations.map(item => {
             return {
                 sources: [{
-                    type: {
-                        string: 'Microsoft',
-                    },
+                    type: 'microsoft-terminology',
                     url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
                         item.source + '&langID=' + locale.msTerminologyCode,
-                    title: {
-                        string: 'Visit Microsoft Terminology Service API.\n' +
-                            '© 2018 Microsoft Corporation. All rights reserved.',
-                        id: 'api--visit-microsoft',
-                    },
                 }],
                 original: item.source,
                 translation: item.target,
@@ -176,16 +150,10 @@ export default class MachineryAPI extends APIBase {
         return results.map(item => {
             return {
                 sources: [{
-                    type: {
-                        string: 'Mozilla',
-                    },
+                    type: 'transvision',
                     url: 'https://transvision.mozfr.org/?repo=global' +
                         '&recherche=' + encodeURIComponent(source) +
                         '&locale=' + locale.code,
-                    title: {
-                        string: 'Visit Transvision',
-                        id: 'api--visit-transvision',
-                    },
                 }],
                 original: item.source,
                 translation: item.target,
@@ -214,14 +182,8 @@ export default class MachineryAPI extends APIBase {
 
         return [{
             sources: [{
-                type: {
-                    string: 'Caighdean',
-                },
+                type: 'caighdean',
                 url: 'https://github.com/kscanne/caighdean',
-                title: {
-                    string: 'Visit Caighdean Machine Translation',
-                    id: 'api--visit-caighdean',
-                },
             }],
             original: result.original,
             translation: result.translation,

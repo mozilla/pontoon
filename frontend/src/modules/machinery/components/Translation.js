@@ -10,6 +10,13 @@ import { GenericTranslation } from 'core/translation';
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 
+import GoogleTranslation from './GoogleTranslation';
+import MicrosoftTranslation from './MicrosoftTranslation';
+import MicrosoftTerminology from './MicrosoftTerminology';
+import TransvisionMemory from './TransvisionMemory';
+import CaighdeanTranslation from './CaighdeanTranslation';
+import TranslationMemory from './TranslationMemory';
+
 
 type Props = {|
     isReadOnlyEditor: boolean,
@@ -46,6 +53,26 @@ export default class Translation extends React.Component<Props> {
 
         const types = translation.sources.map(source => source.type);
 
+        const translationSource =
+            translation.sources.map((source, index) => {
+                switch (source.type) {
+                    case 'translation-memory':
+                        return <TranslationMemory source={ source } index={ index }/>;
+                    case 'google-translate':
+                        return <GoogleTranslation source={ source } index={ index }/>;
+                    case 'microsoft-translator':
+                        return <MicrosoftTranslation source={ source } index={ index }/>;
+                    case 'microsoft-terminology':
+                        return <MicrosoftTerminology source={ source } index={ index }/>;
+                    case 'transvision':
+                        return <TransvisionMemory source={ source } index={ index }/>;
+                    case 'caighdean':
+                        return <CaighdeanTranslation source={ source } index={ index }/>;
+                    default:
+                        return null;
+                }
+            });
+
         return <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
             <li
                 className="translation"
@@ -56,42 +83,10 @@ export default class Translation extends React.Component<Props> {
                     { !translation.quality ? null :
                         <span className="quality">{ translation.quality + '%' }</span>
                     }
-                    <ul className="sources">
-                        { translation.sources.map((source, i) => <li key={ i }>
-                            <Localized
-                                id={ source.title.id }
-                                attrs={{ title: true }}
-                            >
-                                <a
-                                    className="translation-source"
-                                    href={ source.url }
-                                    title={ source.title.string }
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-                                >
-                                    { !source.type.id ?
-                                        <span>{ source.type.string }</span>
-                                        :
-                                        <Localized id={ source.type.id } />
-                                    }
-                                    { !source.count ? null :
-                                        <Localized
-                                            id="machinery-Translation--number-occurrences"
-                                            attrs={{ title: true }}
-                                        >
-                                            <sup title="Number of translation occurrences">
-                                                { source.count }
-                                            </sup>
-                                        </Localized>
-                                    }
-                                </a>
-                            </Localized>
-                        </li>) }
-                    </ul>
+                    { translationSource }
                 </header>
                 <p className="original">
-                    { types.indexOf('Caighdean') === -1 ?
+                    { types.indexOf('caighdean') === -1 ?
                         <GenericTranslation
                             content={ sourceString }
                             diffTarget={ translation.original }
