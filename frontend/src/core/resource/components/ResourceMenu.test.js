@@ -5,8 +5,6 @@ import ResourceItem from './ResourceItem.js';
 
 import { ResourceMenuBase } from './ResourceMenu';
 
-import { findLocalizedById } from 'test/utils';
-
 
 function createShallowResourceMenu({
     project = 'project',
@@ -60,7 +58,7 @@ describe('<ResourceMenuBase>', () => {
     it('sets a localized resource name correctly for all-resources', () => {
         const wrapper = createShallowResourceMenu({ resource: 'all-resources' });
 
-        expect(findLocalizedById(wrapper, 'resource-ResourceMenu--all-resources')).toHaveLength(1);
+        expect(wrapper.find('#resource-ResourceMenu--all-resources')).toHaveLength(1);
     });
 
     it('renders resource menu correctly', () => {

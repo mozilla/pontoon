@@ -139,7 +139,13 @@ export class ProjectMenuBase extends React.Component<Props, State> {
                 className="selector unselectable"
                 onClick={ this.toggleVisibility }
             >
-                <span>{ <Localized id= 'resource-ResourceMenu--all-projects'>All Projects</Localized> }</span>
+                <span>
+                    {
+                        <Localized id='resource-ResourceMenu--all-projects'>
+                            <span>All Projects</span>
+                        </Localized>
+                    }
+                </span>
                 <span className="icon fa fa-caret-down"></span>
             </div>
 
