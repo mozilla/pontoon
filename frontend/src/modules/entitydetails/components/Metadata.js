@@ -55,7 +55,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     componentDidMount() {
         this.setState({
-            isTruncated: this.isEllispsisActive()
+            isTruncated: this.isEllispsisActivated()
             });
         }
 
@@ -65,7 +65,7 @@ export default class Metadata extends React.Component<Props, State> {
         }
     }
 
-    isEllispsisActive = () => {
+    isEllispsisActivated = () => {
         const span = this.span.current;
         const element = span.querySelector('span.target')
 
