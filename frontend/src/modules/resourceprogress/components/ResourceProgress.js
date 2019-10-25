@@ -47,6 +47,14 @@ export class ResourceProgressBase extends React.Component<Props, State> {
         });
     }
 
+    // This method is called when a user clicks on the status numbers in progress menu.
+    handleClickStatusNumbers = (statusValue) => {
+        const url = window.location.pathname;
+        const params = new URLSearchParams({'status' : statusValue});
+        const newUrl = url + '?' + params.toString(); 
+        return newUrl;
+    }
+
     render() {
         const { approved, fuzzy, warnings, errors, missing, unreviewed, total } = this.props.stats;
         const complete = approved + warnings;
@@ -92,7 +100,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Translated
                             </Localized>
                         </span>
-                        <p className="value">{ asLocaleString(approved) }</p>
+                        <p className="value"><a href={ this.handleClickStatusNumbers('translated') } >{ asLocaleString(approved) }</a></p>
                     </div>
                     <div className="fuzzy">
                         <span className="title">
@@ -100,7 +108,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Fuzzy
                             </Localized>
                         </span>
-                        <p className="value">{ asLocaleString(fuzzy) }</p>
+                        <p className="value"><a href={ this.handleClickStatusNumbers('fuzzy') } >{ asLocaleString(fuzzy) }</a></p>
                     </div>
                     <div className="warnings">
                         <span className="title">
@@ -108,7 +116,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Warnings
                             </Localized>
                         </span>
-                        <p className="value">{ asLocaleString(warnings) }</p>
+                        <p className="value"><a href={ this.handleClickStatusNumbers('warnings') } >{ asLocaleString(warnings) }</a></p>
                     </div>
                     <div className="errors">
                         <span className="title">
@@ -116,7 +124,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Errors
                             </Localized>
                         </span>
-                        <p className="value">{ asLocaleString(errors) }</p>
+                        <p className="value"><a href={ this.handleClickStatusNumbers('errors') } >{ asLocaleString(errors) }</a></p>
                     </div>
                     <div className="missing">
                         <span className="title">
@@ -124,7 +132,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Missing
                             </Localized>
                         </span>
-                        <p className="value">{ asLocaleString(missing) }</p>
+                        <p className="value"><a href={ this.handleClickStatusNumbers('missing') } >{ asLocaleString(missing) }</a></p>
                     </div>
                 </div>
             </aside>
