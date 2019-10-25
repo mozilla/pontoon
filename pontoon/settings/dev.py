@@ -20,9 +20,9 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
 # In development, we want to remove the WhiteNoise middleware, because we need
 # precise control of static files loading in order to properly load frontend
 # resources. See the `pontoon.translate` module.
-MIDDLEWARE_CLASSES = filter(
-    lambda x: x != 'whitenoise.middleware.WhiteNoiseMiddleware',
-    base.MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES = tuple(
+    middleware for middleware in base.MIDDLEWARE_CLASSES
+    if middleware != 'whitenoise.middleware.WhiteNoiseMiddleware'
 ) + (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
