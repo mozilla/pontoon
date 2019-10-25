@@ -46,14 +46,31 @@ type State = {|
 export default class Metadata extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = { seeMore: false };
+        this.state = {
+            seeMore: false,
+            isTruncated: false
+        };
+        this.span = React.createRef();
     }
+
+    componentDidMount() {
+        this.setState({
+            isTruncated: this.isEllispsisActive()
+            });
+        }
 
     componentDidUpdate(prevProps: Props) {
         if (this.props.entity !== prevProps.entity) {
             this.setState({ seeMore: false });
         }
     }
+
+    isEllispsisActive = () => {
+        const span = this.span.current;
+        const element = span.querySelector('span.target')
+
+        return element.offsetWidth < element.scrollWidth
+    };
 
     handleClickOnSeeMore = () => {
         this.setState({ seeMore: true });
@@ -128,11 +145,15 @@ export default class Metadata extends React.Component<Props, State> {
             <Property
                 title='Resource Comment'
                 className={ this.state.seeMore ? 'comment' : 'comment truncate' }
+                ref={ this.span }
             >
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                <Linkify
+                    properties={ { target: '_blank', rel: 'noopener noreferrer' } }
+                    className='target'
+                >
                     { entity.resource_comment }
                 </Linkify>
-                { this.state.seeMore ? null :
+                { this.state.isTruncated ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
