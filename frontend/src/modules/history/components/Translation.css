@@ -6,7 +6,11 @@
     display: flex;
 }
 
-.history .translation:hover {
+.history .translation.cannot-copy {
+    pointer-events: none;
+}
+
+.history .translation:not(.cannot-copy):hover {
     background: #4D5967;
 }
 
@@ -91,7 +95,8 @@
     font-size: 1.8em;
     height: 22px;
     opacity: 0.5;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: default;
     vertical-align: bottom;
     width: 22px;
 }
@@ -101,8 +106,8 @@
 .history .translation.can-approve header button.unapprove,
 .history .translation.can-reject header button.reject,
 .history .translation.can-reject header button.unreject {
-    pointer-events: auto;
     opacity: 1;
+    cursor: pointer;
 }
 
 .history .translation.rejected {
@@ -122,13 +127,14 @@
     content: "";
 }
 
-.history .translation .content > header button.approve:hover:before,
+.history .translation.can-approve .content > header button.approve:hover:before,
 .history .translation .content > header button.unapprove:before {
     color: #7BC876;
 }
 
-.history .translation .content > header button.approve:not(:hover):before,
-.history .translation .content > header button.unapprove:hover:before {
+.history .translation:not(.can-approve) .content > header button.approve:before,
+.history .translation.can-approve .content > header button.approve:not(:hover):before,
+.history .translation.can-approve .content > header button.unapprove:hover:before {
     font-weight: 400;
 }
 
@@ -138,13 +144,14 @@
     margin-left: 5px;
 }
 
-.history .translation .content > header button.reject:hover:before,
+.history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
     color: #F36;
 }
 
-.history .translation .content > header button.reject:not(:hover):before,
-.history .translation .content > header button.unreject:hover:before {
+.history .translation:not(.can-reject) .content > header button.reject:before,
+.history .translation.can-reject .content > header button.reject:not(:hover):before,
+.history .translation.can-reject .content > header button.unreject:hover:before {
     font-weight: 400;
 }
 

@@ -245,6 +245,18 @@ history-Translation--button-reject =
 history-Translation--button-unreject =
     .title = Unreject
 
+history-Translation--button-not-approved =
+    .title = Not approved
+
+history-Translation--button-approved =
+    .title = Approved
+
+history-Translation--button-not-rejected =
+    .title = Not rejected
+
+history-Translation--button-rejected =
+    .title = Rejected
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
@@ -340,7 +352,7 @@ interactivetour-InteractiveTour--end-footer =
 ## Shows a list of translations from machines.
 
 machinery-Machinery--search-placeholder =
-    .placeholder = Type to search machinery
+    .placeholder = Search in Machinery
 
 
 ## Machinery Translation
@@ -424,6 +436,9 @@ notification--string-link-copied = Link copied to clipboard
 otherlocales-Translation--copy =
     .title = Copy Into Translation
 
+otherlocales-Translation--header-link = 
+    .title = Open string in { $locale } ({ $code })
+
 
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.
@@ -491,6 +506,7 @@ placeable-parser-xmlTag =
 project-ProjectMenu--no-results = No results
 project-ProjectMenu--project = Project
 project-ProjectMenu--progress = Progress
+project-ProjectMenu--all-projects = All Projects
 project-ProjectMenu--search-placeholder =
     .placeholder = Filter projects
 

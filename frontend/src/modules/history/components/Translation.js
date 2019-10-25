@@ -234,6 +234,12 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         );
 
         let className = 'translation ' + this.getStatus();
+
+        if (isReadOnlyEditor) {
+            // Copying into the editor is not allowed
+            className += ' cannot-copy';
+        }
+
         if (canReview && !isReadOnlyEditor) {
             // This user is a translator for the current locale, they can
             // perform all review actions.
@@ -246,6 +252,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         }
 
         let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
+        let canReject = (canReview || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
 
         return <Localized id='history-Translation--copy' attrs={{ title: true }}>
             <li
@@ -286,61 +293,110 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         }
                         { translation.approved ?
                             // Unapprove Button
-                            <Localized
-                                id='history-Translation--button-unapprove'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='unapprove fa'
-                                    title='Unapprove'
-                                    name='unapprove'
-                                    onClick={ this.handleStatusChange }
-                                    disabled={ this.props.isActionDisabled }
-                                />
-                            </Localized>
+                            ( canReview && !isReadOnlyEditor ) ?
+                                <Localized
+                                    id='history-Translation--button-unapprove'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='unapprove fa'
+                                        title='Unapprove'
+                                        name='unapprove'
+                                        onClick={ this.handleStatusChange }
+                                        disabled={ this.props.isActionDisabled }
+                                    />
+                                </Localized>
+                                :
+                                <Localized
+                                    id='history-Translation--button-approved'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='unapprove fa'
+                                        title='Approved'
+                                        disabled
+                                    />
+                                </Localized>
+
                             :
                             // Approve Button
-                            <Localized
-                                id='history-Translation--button-approve'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='approve fa'
-                                    title='Approve'
-                                    name='approve'
-                                    onClick={ this.handleStatusChange }
-                                    disabled={ this.props.isActionDisabled }
-                                />
-                            </Localized>
+                            ( canReview && !isReadOnlyEditor ) ?
+                                <Localized
+                                    id='history-Translation--button-approve'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='approve fa'
+                                        title='Approve'
+                                        name='approve'
+                                        onClick={ this.handleStatusChange }
+                                        disabled={ this.props.isActionDisabled }
+                                    />
+                                </Localized>
+                                :
+                                <Localized
+                                    id='history-Translation--button-not-approved'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='approve fa'
+                                        title='Not approved'
+                                        disabled
+                                    />
+                                </Localized>
                         }
                         { translation.rejected ?
                             // Unreject Button
-                            <Localized
-                                id='history-Translation--button-unreject'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='unreject fa'
-                                    title='Unreject'
-                                    name='unreject'
-                                    onClick={ this.handleStatusChange }
-                                    disabled={ this.props.isActionDisabled }
-                                />
-                            </Localized>
+                            canReject ?
+                                <Localized
+                                    id='history-Translation--button-unreject'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='unreject fa'
+                                        title='Unreject'
+                                        name='unreject'
+                                        onClick={ this.handleStatusChange }
+                                        disabled={ this.props.isActionDisabled }
+                                    />
+                                </Localized>
+                                :
+                                <Localized
+                                    id='history-Translation--button-rejected'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='unreject fa'
+                                        title='Rejected'
+                                        disabled
+                                    />
+                                </Localized>
                             :
                             // Reject Button
-                            <Localized
-                                id='history-Translation--button-reject'
-                                attrs={{ title: true }}
-                            >
-                                <button
-                                    className='reject fa'
-                                    title='Reject'
-                                    name='reject'
-                                    onClick={ this.handleStatusChange }
-                                    disabled={ this.props.isActionDisabled }
-                                />
-                            </Localized>
+                            canReject ?
+                                <Localized
+                                    id='history-Translation--button-reject'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='reject fa'
+                                        title='Reject'
+                                        name='reject'
+                                        onClick={ this.handleStatusChange }
+                                        disabled={ this.props.isActionDisabled }
+                                    />
+                                </Localized>
+                                :
+                                <Localized
+                                    id='history-Translation--button-not-rejected'
+                                    attrs={{ title: true }}
+                                >
+                                    <button
+                                        className='reject fa'
+                                        title='Not rejected'
+                                        disabled
+                                    />
+                                </Localized>
                         }
                         </menu>
                     </header>

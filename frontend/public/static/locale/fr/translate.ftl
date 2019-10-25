@@ -157,13 +157,6 @@ history-Translation--button-unreject =
     .title = Dérejeter
 
 
-## Machinery
-## Shows a list of translations from machines.
-
-machinery-Machinery--search-placeholder =
-    .placeholder = Saisir pour rechercher la machinerie
-
-
 ## Machinery Translation
 ## Shows a specific translation from machinery
 

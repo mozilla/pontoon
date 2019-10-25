@@ -58,7 +58,7 @@ describe('<ProjectMenu>', () => {
         const wrapper = createShallowProjectMenu({ project: ALL_PROJECTS });
 
         expect(wrapper.find('.project-menu .selector')).toHaveLength(1);
-        expect(wrapper.find('.project-menu .selector span:first-child').text()).toEqual('All Projects');
+        expect(wrapper.find('#project-ProjectMenu--all-projects')).toHaveLength(1);
         expect(wrapper.find('.project-menu .selector .icon')).toHaveLength(1);
     });
 
