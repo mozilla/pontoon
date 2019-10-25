@@ -117,7 +117,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
 
         let resourceName = parameters.resource.split('/').slice(-1)[0];
         if (parameters.resource === 'all-resources') {
-            resourceName = 'All Resources';
+            resourceName = <Localized id='resource-ResourceMenu--all-resources'>All Resources</Localized>;
         }
 
         // Search resources
