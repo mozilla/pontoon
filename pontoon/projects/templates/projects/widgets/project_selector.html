@@ -14,7 +14,7 @@
       {% for p in projects %}
         <li class="clearfix{% if p.slug in locale_projects %} limited{% endif %}">
           <span class="name"
-            {% for key, value in p.serialize().iteritems() %}
+            {% for key, value in p.serialize().items() %}
               data-{{ key }}="{{ value }}"
             {% endfor %}
 
