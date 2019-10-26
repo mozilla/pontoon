@@ -26,7 +26,8 @@ type Props = {|
 |};
 
 type State = {|
-    seeMore: boolean
+    seeMore: boolean,
+    isTruncated: boolean
 |};
 
 
@@ -69,7 +70,7 @@ export default class Metadata extends React.Component<Props, State> {
         const span = this.span.current;
         const element = span.querySelector('span.target')
 
-        return element.offsetWidth < element.scrollWidth
+        return  element.getBoundingClientRect().width < element.scrollWidth
     };
 
     handleClickOnSeeMore = () => {
@@ -145,7 +146,6 @@ export default class Metadata extends React.Component<Props, State> {
             <Property
                 title='Resource Comment'
                 className={ this.state.seeMore ? 'comment' : 'comment truncate' }
-                ref={ this.span }
             >
                 <Linkify
                     properties={ { target: '_blank', rel: 'noopener noreferrer' } }
@@ -229,7 +229,7 @@ export default class Metadata extends React.Component<Props, State> {
     render(): React.Node {
         const { entity, locale, openLightbox, pluralForm } = this.props;
 
-        return <div className="metadata">
+        return <div className="metadata" ref={ this.span }>
             <Screenshots
                 source={ entity.comment }
                 locale={ locale.code }
