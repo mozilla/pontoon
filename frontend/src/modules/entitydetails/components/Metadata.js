@@ -138,6 +138,8 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     renderResourceComment(entity: Entity): React.Node {
+        const { seeMore, isTruncated } = this.state;
+
         if (!entity.resource_comment) {
             return null;
         }
@@ -145,7 +147,7 @@ export default class Metadata extends React.Component<Props, State> {
         return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
             <Property
                 title='Resource Comment'
-                className={ this.state.seeMore ? 'comment' : 'comment truncate' }
+                className={ seeMore ? 'comment' : 'comment truncate' }
             >
                 <Linkify
                     properties={ { target: '_blank', rel: 'noopener noreferrer' } }
@@ -153,7 +155,7 @@ export default class Metadata extends React.Component<Props, State> {
                 >
                     { entity.resource_comment }
                 </Linkify>
-                { this.state.isTruncated ? null :
+                { isTruncated || seeMore ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
