@@ -27,7 +27,7 @@ type Props = {|
 
 type State = {|
     seeMore: boolean,
-    isTruncated: boolean
+    isNotTruncated: boolean
 |};
 
 
@@ -49,14 +49,14 @@ export default class Metadata extends React.Component<Props, State> {
         super(props);
         this.state = {
             seeMore: false,
-            isTruncated: false
+            isNotTruncated: false
         };
         this.span = React.createRef();
     }
 
     componentDidMount() {
         this.setState({
-            isTruncated: this.isEllispsisActivated()
+            isNotTruncated: this.isEllispsisActivated()
             });
         }
 
@@ -138,7 +138,7 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     renderResourceComment(entity: Entity): React.Node {
-        const { seeMore, isTruncated } = this.state;
+        const { seeMore, isNotTruncated } = this.state;
 
         if (!entity.resource_comment) {
             return null;
@@ -155,7 +155,7 @@ export default class Metadata extends React.Component<Props, State> {
                 >
                     { entity.resource_comment }
                 </Linkify>
-                { isTruncated || seeMore ? null :
+                { isNotTruncated || seeMore ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
