@@ -68,7 +68,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     isEllispsisActivated = () => {
         const span = this.span.current;
-        const element = span.querySelector('span.target')
+        const element = span.querySelector('span.resource')
 
         return  element.getBoundingClientRect().width < element.scrollWidth
     };
@@ -151,7 +151,7 @@ export default class Metadata extends React.Component<Props, State> {
             >
                 <Linkify
                     properties={ { target: '_blank', rel: 'noopener noreferrer' } }
-                    className='target'
+                    className='resource'
                 >
                     { entity.resource_comment }
                 </Linkify>
