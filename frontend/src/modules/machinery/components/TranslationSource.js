@@ -44,4 +44,4 @@ export default function TranslationSource(props: Props) {
             });
 
         return <div>{ translationSource }</div>
-};
+}
