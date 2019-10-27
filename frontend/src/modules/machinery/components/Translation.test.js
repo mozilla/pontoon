@@ -9,21 +9,13 @@ describe('<Translation>', () => {
     const DEFAULT_TRANSLATION = {
         sources: [
             {
-                type: {
-                    string: 'Translation Memory',
-                    id: 'api--translation-memory',
-                },
+                type: 'translation-memory',
                 url: 'http://pontoon.mozilla.org',
-                title: {
-                    string: 'Pontoon Homepage',
-                    id: 'api--pontoon-homepage',
-                },
             },
         ],
         original: ORIGINAL,
         translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
     };
-
     const DEFAULT_LOCALE = {
         direction: 'ltr',
         code: 'kg',
@@ -46,9 +38,6 @@ describe('<Translation>', () => {
             wrapper.find('.suggestion').find('GenericTranslation').props().content
         ).toContain('Un cheval, un cheval !');
 
-        // expect(wrapper.find('ul li')).toHaveLength(1);
-        // expect(wrapper.find('ul li a Localized').props().id).toEqual('api--translation-memory');
-
         // No count.
         expect(wrapper.find('ul li sup')).toHaveLength(0);
         // No quality.
@@ -68,36 +57,5 @@ describe('<Translation>', () => {
 
         expect(wrapper.find('.quality')).toHaveLength(1);
         expect(wrapper.find('.quality').text()).toEqual('100%');
-    });
-
-    it('shows several sources', () => {
-        const translation = {
-            ...DEFAULT_TRANSLATION,
-            sources: [
-                ...DEFAULT_TRANSLATION.sources,
-                {
-                    type: {
-                        string: 'Transvision',
-                    },
-                    url: '',
-                    title: {
-                        string: 'Transvision Memory',
-                        id: 'api--transvision-memory',
-                    },
-                    count: 24,
-                },
-            ],
-        };
-        const wrapper = shallow(<Translation
-            translation={ translation }
-            locale={ DEFAULT_LOCALE }
-            entity={ DEFAULT_ENTITY }
-        />);
-
-        // expect(wrapper.find('ul li a Localized').at(0).props().id).toEqual('api--translation-memory');
-        // expect(wrapper.find('ul li a span').children().text()).toEqual('Transvision');
-
-        // expect(wrapper.find('ul li sup')).toHaveLength(1);
-        // expect(wrapper.find('ul li sup').text()).toEqual('24');
     });
 });

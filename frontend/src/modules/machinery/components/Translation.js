@@ -10,12 +10,7 @@ import { GenericTranslation } from 'core/translation';
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 
-import GoogleTranslation from './GoogleTranslation';
-import MicrosoftTranslation from './MicrosoftTranslation';
-import MicrosoftTerminology from './MicrosoftTerminology';
-import TransvisionMemory from './TransvisionMemory';
-import CaighdeanTranslation from './CaighdeanTranslation';
-import TranslationMemory from './TranslationMemory';
+import TranslationSource from './TranslationSource';
 
 
 type Props = {|
@@ -60,26 +55,6 @@ export default class Translation extends React.Component<Props> {
             className += ' cannot-copy';
         }
 
-        const translationSource =
-            translation.sources.map((source, index) => {
-                switch (source.type) {
-                    case 'translation-memory':
-                        return <TranslationMemory source={ source } index={ index }/>;
-                    case 'google-translate':
-                        return <GoogleTranslation source={ source } index={ index }/>;
-                    case 'microsoft-translator':
-                        return <MicrosoftTranslation source={ source } index={ index }/>;
-                    case 'microsoft-terminology':
-                        return <MicrosoftTerminology source={ source } index={ index }/>;
-                    case 'transvision':
-                        return <TransvisionMemory source={ source } index={ index }/>;
-                    case 'caighdean':
-                        return <CaighdeanTranslation source={ source } index={ index }/>;
-                    default:
-                        return null;
-                }
-            });
-
         return <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
             <li
                 className={ className }
@@ -90,7 +65,9 @@ export default class Translation extends React.Component<Props> {
                     { !translation.quality ? null :
                         <span className="quality">{ translation.quality + '%' }</span>
                     }
-                    { translationSource }
+                    <ul className="sources">
+                        <TranslationSource translation={ translation }/>
+                    </ul>
                 </header>
                 <p className="original">
                     { types.indexOf('caighdean') === -1 ?
@@ -119,6 +96,6 @@ export default class Translation extends React.Component<Props> {
                     />
                 </p>
             </li>
-        </Localized>;
+        </Localized>
     }
 }
