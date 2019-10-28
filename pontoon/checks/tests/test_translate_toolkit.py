@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 import pytest
-from mock import MagicMock
 
 from pontoon.checks.libraries.translate_toolkit import run_checks
 
@@ -8,9 +7,7 @@ from pontoon.checks.libraries.translate_toolkit import run_checks
 @pytest.yield_fixture()
 def mock_locale():
     """Small mock of Locale object to make faster unit-tests."""
-    mock = MagicMock()
-    mock.code = 'en-US'
-    yield mock
+    yield 'en-US'
 
 
 def test_tt_invalid_translation(mock_locale):
