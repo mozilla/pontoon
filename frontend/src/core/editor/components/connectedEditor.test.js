@@ -81,6 +81,13 @@ function createEditorBase({
         plural: {
             pluralForm,
         },
+        user: {
+            username: "michael_umanah",
+            isAuthenticated: true,
+            settings: {
+                forceSuggestions: false
+            },
+        },
         unsavedchanges,
     };
     const store = createReduxStore(initialState);
