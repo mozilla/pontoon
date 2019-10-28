@@ -90,14 +90,78 @@ var Pontoon = (function (my) {
               errorCallback('Zarro Boogs Found.');
             }
           },
+           
           error: function(error) {
             if (error.status === 0 && error.statusText !== 'abort') {
               errorCallback('Oops, something went wrong. We were unable to load the bugs. Please try again later.');
             }
           }
         });
-      }
+      }(),
+      
+       /*
+       * Sort table
+       */
+      sort: function() {
+        $('body').on('click', 'table.buglist tabel.striped th', function () { 
+          function getID(el) {
+            return $(el).find('.id').length;
+          }
 
+          function getSummary(el) {
+            return $(el).find('.summary').length;
+          }
+
+          function getLastChanged(el) {
+            return $(el).find('.last-changed"').length;
+          }
+
+          function getAssignedTo(el) {
+            return $(el).find('.assigned-to"').length;
+          }
+
+          function getString(el) {
+            return $(el).find('td:eq(' + index + ')').text();
+          }
+
+        var node = $(this),
+        index = node.index(),
+        table = node.parents('.table.buglist tabel.striped'),
+        list = table.find('tbody'),
+        items = list.find('tr'),
+        dir = node.hasClass('asc') ? -1 : 1,
+        cls = node.hasClass('asc') ? 'desc' : 'asc';
+
+        $(table).find('th').removeClass('asc desc');
+        node.addClass(cls);
+
+        items.sort(function(a, b) {
+          
+          // Sort by assigned-to
+          if (node.is('.assigned-to')) {
+            return (getAssignedTo(a) - getAssignedTo(b)) * dir;
+           
+           // Sort by last-changed
+          } else  if (node.is('.last-changed')) {
+            return (getLastChanged(a) - getLastChanged(b)) * dir;
+
+          // Sort by summary
+          } else if (node.is('.summary')) {
+            return (getSummary(a) - getSummary(b)) * dir;
+
+            // Sort by id
+          } else if (node.is('.id')) {
+            return (getID(a) - getID(b)) * dir;
+
+          // Sort by alphabetical order
+          } else {
+            return getString(a).localeCompare(getString(b)) * dir;
+          }
+        });
+
+        list.append(items);
+        });
+      }()
     }
   });
 }(Pontoon || {}));
