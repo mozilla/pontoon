@@ -111,6 +111,11 @@ def user_gravatar_url(self, size):
 
 
 @property
+def user_gravatar_url_small(self):
+    return user_gravatar_url(self, 88)
+
+
+@property
 def user_name_or_email(self):
     return self.first_name or self.email
 
@@ -311,6 +316,7 @@ def serialized_notifications(self):
 
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
+User.add_to_class('gravatar_url_small', user_gravatar_url_small)
 User.add_to_class('name_or_email', user_name_or_email)
 User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
