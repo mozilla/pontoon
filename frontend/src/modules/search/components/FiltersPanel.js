@@ -282,7 +282,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 <span className="title">{ tag.name }</span>
                                 <span className="priority">
                                     { [1, 2, 3, 4, 5].map((index) => {
-                                        const active = index < tag.priority ? 'active' : '';
+                                        const active = index <= tag.priority ? 'active' : '';
                                         return <span
                                             className={ `fa fa-star ${active}` }
                                             key={ index }
