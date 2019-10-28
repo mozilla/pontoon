@@ -355,7 +355,7 @@ class VCSProject(object):
                 locales = []
 
             locales = set([l for l in locales if l in self.locales])
-            map(self.synced_locales.add, locales)
+            self.synced_locales.update(locales)
 
             log.debug(
                 'Detected resource file {} for {}'.format(

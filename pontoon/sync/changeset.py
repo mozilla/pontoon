@@ -396,7 +396,7 @@ class ChangeSet(object):
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
-            bulk_update(self.translations_to_update.values(), update_fields=[
+            bulk_update(list(self.translations_to_update.values()), update_fields=[
                 'entity',
                 'locale',
                 'string',

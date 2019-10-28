@@ -189,10 +189,10 @@ class DTDTests(FormatTestsMixin, TestCase):
         input_strings = dedent("""
             <!ENTITY SingleQuote "\'">
             <!ENTITY SingleQuoteHTMLEntity "\\&apos;">
-            <!ENTITY SingleQuoteUnicode "\u0027">
-            <!ENTITY DoubleQuote '\"'>
+            <!ENTITY SingleQuoteUnicode "\\u0027">
+            <!ENTITY DoubleQuote '\\"'>
             <!ENTITY DoubleQuoteHTMLEntity "\\&quot;">
-            <!ENTITY DoubleQuoteUnicode "\u0022">
+            <!ENTITY DoubleQuoteUnicode "\\u0022">
         """)
 
         # Make sure path contains 'mobile/android/base'

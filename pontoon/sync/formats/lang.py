@@ -203,6 +203,6 @@ def parse(path, source_path=None, locale=None):
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
         wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
-        reraise(wrapped, None, sys.exc_info()[2])  # NOQA
+        reraise(ParseError, wrapped, sys.exc_info()[2])  # NOQA
 
     return LangResource(path, children)
