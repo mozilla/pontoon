@@ -48,7 +48,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
     }
 
     // This method is called when a user clicks on the status numbers in progress menu.
-    handleClickStatusNumbers = (statusValue) => {
+    handleClickStatusNumbers = (statusValue: string) => {
         const url = window.location.pathname;
         const params = new URLSearchParams({'status' : statusValue});
         const newUrl = url + '?' + params.toString(); 
