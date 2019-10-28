@@ -321,7 +321,7 @@ def po_file(**entries):
     po_contents = '\n'.join(
         'msgid "{}"\nmsgstr "{}"'.format(key, val) for key, val in entries.items()
     )
-    with tempfile.NamedTemporaryFile('rw+', suffix='.po') as fp:
+    with tempfile.NamedTemporaryFile('w+', suffix='.po') as fp:
         fp.write(po_contents)
         fp.flush()
 
