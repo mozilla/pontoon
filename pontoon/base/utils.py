@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import codecs
-import fnmatch
 import functools
 import os
 import pytz
@@ -10,6 +9,13 @@ import requests
 import tempfile
 import time
 import zipfile
+
+from compare_locales.paths.matcher import (
+    PatternParser,
+    Star,
+    Starstar,
+    Variable,
+)
 
 from datetime import datetime, timedelta
 
@@ -667,18 +673,24 @@ def build_translation_memory_file(creation_date, locale_code, entries):
 
 
 def glob_to_regex(glob):
-    """This util uses python's fnmatch to convert a glob to a regex in a way
-    that can then be used with django's `__regex` queryset selector.
-
-    It prefixes the regex with `^`, and replaces the more complex match ending
-    provided by fnmatch, with the simpler `$`
-
     """
-    regex = "^%s" % fnmatch.translate(glob)
-    return (
-        "%s$" % regex[:-7]
-        if regex[-7:] == "\\Z(?ms)"
-        else regex)
+    This util uses PatternParser from compare_locales to convert a glob to a regex in a way
+    that can then be used with django's `__regex` queryset selector.
+    """
+    pattern = PatternParser().parse(glob)
+    regex = r""
+    for part in pattern:
+        if isinstance(part, Starstar):
+            regex += r"([\w/]*)"
+        elif isinstance(part, Star):
+            regex += r"([\w]*)"
+        elif isinstance(part, Variable):
+            # Variables arent't supported.
+            pass
+        else:
+            regex += part
+
+    return '^{}$'.format(regex)
 
 
 def get_m2m_changes(current_qs, new_qs):
