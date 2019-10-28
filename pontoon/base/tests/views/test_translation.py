@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import pytest
 
@@ -44,7 +44,7 @@ def test_approve_translation_basic(translation_a, client_superuser):
 
     response = client_superuser.post(url, params)
     assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
+    assert response.content == b'Bad Request: Request must be AJAX'
 
     response = client_superuser.post(
         url, params,
@@ -100,7 +100,7 @@ def test_view_translation_unapprove(approved_translation, member):
 
     response = member.client.post(url, params)
     assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
+    assert response.content == b'Bad Request: Request must be AJAX'
 
     response = member.client.post(
         url,
@@ -124,7 +124,7 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
 
     response = member.client.post(url, params)
     assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
+    assert response.content == b'Bad Request: Request must be AJAX'
 
     # Rejected translation gets deleted
     response = member.client.post(
