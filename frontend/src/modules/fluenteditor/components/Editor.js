@@ -92,6 +92,24 @@ export class EditorBase extends React.Component<EditorProps, State> {
         ) {
             this.analyzeFluentMessage(this.props.editor.translation);
         }
+        // If translation changes from machinery tab,
+        // check if it's valid and convert syntax to comlex if no.
+        else if (
+            this.props.entity &&
+            this.state.forceSource &&
+            this.props.editor.translation !== prevProps.editor.translation &&
+            this.props.editor.changeSource === 'machinery' &&
+            typeof(this.props.editor.translation) === 'string'
+        ) {
+            const message = fluent.parser.parseEntry(this.props.editor.translation);
+            if (message.type === 'Junk') {
+                this.updateEditorContent(
+                    this.props.editor.translation,
+                    'simple',
+                    'complex',
+                );
+            }
+        }
     }
 
     /**
