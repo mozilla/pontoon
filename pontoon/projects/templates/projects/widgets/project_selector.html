@@ -1,0 +1,52 @@
+<!-- Project selector -->
+<div class="project select">
+  <div class="button breadcrumbs selector">
+    <span class="title noselect" data-slug="{{ project.slug }}">{{ project.name }}</span>
+  </div>
+
+  <div class="menu">
+    <div class="search-wrapper clearfix">
+      <div class="icon fa fa-search"></div>
+      <input type="search" autocomplete="off" autofocus>
+    </div>
+
+    <ul>
+      {% for p in projects %}
+        <li class="clearfix{% if p.slug in locale_projects %} limited{% endif %}">
+          <span class="name"
+            {% for key, value in p.serialize().items() %}
+              data-{{ key }}="{{ value }}"
+            {% endfor %}
+
+            data-tags="{{ p.tag_set.all().serialize()|to_json }}"
+
+            {% if project == p %}
+              data-parts="{{ {locale.code: locale.parts_stats(p)}|to_json }}"
+            {% endif %}
+          >
+            {{ p.name }}
+          </span>
+        </li>
+      {% endfor %}
+      <li class="no-match">No results</li>
+    </ul>
+
+    <div class="static-links">
+      <section class="internal">
+        <div class="all-projects">
+          <span class="name title" data-name="All Projects" data-slug="all-projects" {% if project.slug == 'all-projects' %}data-parts="{{ {locale.code: locale.stats()}|to_json }}"{% endif %}>All Projects</span>
+        </div>
+      </section>
+      <a href="{{ url('pontoon.projects') }}">
+        <div>
+          <span class="title">Projects Dashboard</span>
+        </div>
+      </a>
+      <a href="{{ url('pontoon.projects.project', project.slug) }}">
+        <div class="current-project">
+          <span class="title">Current Project Dashboard</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
