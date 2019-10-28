@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os
 from datetime import datetime
@@ -39,7 +39,7 @@ def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
     )
     assert response.status_code == 200
     _check_xml(
-        ''.join(response.streaming_content).encode('utf-8')
+        b''.join(response.streaming_content)
     )
 
 

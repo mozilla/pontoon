@@ -40,8 +40,7 @@ from translate.storage.placeables.interfaces import BasePlaceable
 
 def split_ints(s):
     """Splits string by comma and maps items to the integer."""
-    integers = filter(None, (s or '').split(','))
-    return map(int, integers)
+    return [int(part) for part in (s or '').split(',') if part]
 
 
 def get_project_locale_from_request(request, locales):
