@@ -71,18 +71,6 @@ export class UserControlsBase extends React.Component<InternalProps> {
             { user.isAuthenticated ? null :
             <SignIn url={ user.signInURL } />
             }
-
-            {/* To be removed as part of bug 1527853. */}
-            <p className='translate-next-notice'>
-                You are on Translate.Next.<br />
-                <a
-                    href="https://blog.mozilla.org/l10n/2019/09/30/here-comes-pontoons-new-translate-application/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Find out more on our blog!
-                </a>
-            </p>
         </div>;
     }
 }
