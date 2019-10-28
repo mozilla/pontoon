@@ -145,6 +145,11 @@ export default function connectedEditor<Object>(
 
             let handledEvent = false;
 
+            // Disable keyboard shortcuts when editor is in read only.
+            if (this.props.isReadOnlyEditor) {
+                return;
+            }
+
             // On Enter:
             //   - If unsaved changes popup is shown, proceed.
             //   - If failed checks popup is shown after approving a translation, approve it anyway.
