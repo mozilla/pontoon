@@ -166,6 +166,10 @@
     content: "";
 }
 
+.filters-panel .menu li:not(.selected):hover .status:before {
+    content: "";
+}
+
 .filters-panel .menu li.author {
     height: 48px;
     padding-left: 4px;
