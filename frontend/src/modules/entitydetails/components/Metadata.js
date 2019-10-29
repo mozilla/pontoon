@@ -30,6 +30,9 @@ type State = {|
     isNotTruncated: boolean,
 |};
 
+type RefObject = {|
+    current: any,
+  |};
 
 /**
  * Component showing metadata of an entity.
