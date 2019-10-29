@@ -27,7 +27,7 @@ type Props = {|
 
 type State = {|
     seeMore: boolean,
-    isNotTruncated: boolean
+    isNotTruncated: boolean,
 |};
 
 
@@ -49,28 +49,31 @@ export default class Metadata extends React.Component<Props, State> {
         super(props);
         this.state = {
             seeMore: false,
-            isNotTruncated: false
+            isNotTruncated: false,
         };
-        this.span = React.createRef();
+        this.div = React.createRef();
     }
 
     componentDidMount() {
-        this.setState({
-            isNotTruncated: this.isEllispsisActivated()
-            });
-        }
+        this.setState({ isNotTruncated: this.isEllispsisActivated() });
+    }
 
     componentDidUpdate(prevProps: Props) {
         if (this.props.entity !== prevProps.entity) {
-            this.setState({ seeMore: false });
+            this.setState({
+                seeMore: false,
+                isNotTruncated: this.isEllispsisActivated(),
+             });
         }
     }
 
     isEllispsisActivated = () => {
-        const span = this.span.current;
-        const element = span.querySelector('span.resource')
-
-        return  element.getBoundingClientRect().width < element.scrollWidth
+        if(this.div.current) {
+            const div = this.div.current;
+            const element = div.querySelector('span.resource')
+            return  element.getBoundingClientRect().width < element.scrollWidth
+        }
+        return true;
     };
 
     handleClickOnSeeMore = () => {
@@ -231,7 +234,7 @@ export default class Metadata extends React.Component<Props, State> {
     render(): React.Node {
         const { entity, locale, openLightbox, pluralForm } = this.props;
 
-        return <div className="metadata" ref={ this.span }>
+        return <div className="metadata" ref={ this.div }>
             <Screenshots
                 source={ entity.comment }
                 locale={ locale.code }
