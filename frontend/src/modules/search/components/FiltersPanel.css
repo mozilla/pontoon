@@ -97,11 +97,6 @@
     left: 5px;
 }
 
-.filters-panel .menu li.unreviewed:not(.selected) .status:hover,
-.filters-panel .menu li.unchanged:not(.selected) .status:hover {
-    left: 4px;
-}
-
 .filters-panel .menu li.horizontal-separator {
     background: transparent;
     border-top: none;
@@ -160,6 +155,7 @@
 
 .filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before {
     content: "";
+    font-weight: bold;
 }
 
 .filters-panel .menu li.selected .status:before {
@@ -168,6 +164,10 @@
 
 .filters-panel .menu li:not(.selected):hover .status:before {
     content: "";
+    font-weight: 100;
+    font-size: 16px;
+    left: 4px;
+    top: 4px;
 }
 
 .filters-panel .menu li.author {
