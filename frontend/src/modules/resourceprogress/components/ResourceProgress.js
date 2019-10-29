@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
+import { Link } from 'react-router-dom';
 import onClickOutside from 'react-onclickoutside';
 
 import './ResourceProgress.css';
@@ -45,14 +46,6 @@ export class ResourceProgressBase extends React.Component<Props, State> {
         this.setState({
             visible: false,
         });
-    }
-
-    // This method is called when a user clicks on the status numbers in progress menu.
-    handleClickStatusNumbers = (statusValue: string) => {
-        const url = window.location.pathname;
-        const params = new URLSearchParams({'status' : statusValue});
-        const newUrl = url + '?' + params.toString(); 
-        return newUrl;
     }
 
     render() {
@@ -100,7 +93,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Translated
                             </Localized>
                         </span>
-                        <p className="value"><a href={ this.handleClickStatusNumbers('translated') } >{ asLocaleString(approved) }</a></p>
+                        <p className="value"><Link to={{ search:"?status=translated" }}>{ asLocaleString(approved) }</Link></p>
                     </div>
                     <div className="fuzzy">
                         <span className="title">
@@ -108,7 +101,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Fuzzy
                             </Localized>
                         </span>
-                        <p className="value"><a href={ this.handleClickStatusNumbers('fuzzy') } >{ asLocaleString(fuzzy) }</a></p>
+                        <p className="value"><Link to={{ search:"?status=fuzzy" }}>{ asLocaleString(fuzzy) }</Link></p>
                     </div>
                     <div className="warnings">
                         <span className="title">
@@ -116,7 +109,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Warnings
                             </Localized>
                         </span>
-                        <p className="value"><a href={ this.handleClickStatusNumbers('warnings') } >{ asLocaleString(warnings) }</a></p>
+                        <p className="value"><Link to={{ search:"?status=warnings" }}>{ asLocaleString(warnings) }</Link></p>
                     </div>
                     <div className="errors">
                         <span className="title">
@@ -124,7 +117,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Errors
                             </Localized>
                         </span>
-                        <p className="value"><a href={ this.handleClickStatusNumbers('errors') } >{ asLocaleString(errors) }</a></p>
+                        <p className="value"><Link to={{ search:"?status=errors" }}>{ asLocaleString(errors) }</Link></p>
                     </div>
                     <div className="missing">
                         <span className="title">
@@ -132,7 +125,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Missing
                             </Localized>
                         </span>
-                        <p className="value"><a href={ this.handleClickStatusNumbers('missing') } >{ asLocaleString(missing) }</a></p>
+                        <p className="value"><Link to={{search:"?status=missing" }}>{ asLocaleString(missing) }</Link></p>
                     </div>
                 </div>
             </aside>
