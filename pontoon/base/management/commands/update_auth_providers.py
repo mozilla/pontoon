@@ -26,8 +26,8 @@ class Command(BaseCommand):
             app = SocialApp.objects.get(provider=data['provider'])
             for k, v in data.items():
                 setattr(app, k, v)
-            self.stdout.write("Updating existing authentication provider (pk=%s)" % app.pk)
             app.save()
+            self.stdout.write("Updated existing authentication provider (pk=%s)" % app.pk)
 
         # Create the provider if necessary.
         except ObjectDoesNotExist:
