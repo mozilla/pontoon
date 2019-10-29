@@ -681,14 +681,14 @@ def glob_to_regex(glob):
     regex = r""
     for part in pattern:
         if isinstance(part, Starstar):
-            regex += r"([\w/]*)"
+            regex += r"([^/]*)"
         elif isinstance(part, Star):
-            regex += r"([\w]*)"
+            regex += r"(.*)"
         elif isinstance(part, Variable):
             # Variables arent't supported.
             pass
         else:
-            regex += part
+            regex += part.regex_pattern(None)
 
     return '^{}$'.format(regex)
 
