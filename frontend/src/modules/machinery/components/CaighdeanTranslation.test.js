@@ -5,23 +5,13 @@ import CaighdeanTranslation from './CaighdeanTranslation';
 
 
 describe('<CaighdeanTranslation>', () => {
-    it('renders the component properly', () => {
-        const source = {
-            type: 'caighdean',
-            url: 'https://github.com/kscanne/caighdean',
-            id: 'machinery-CaighdeanTranslation--visit-caighdean',
-            string: 'Caighdean',
-            title: 'Visit Caighdean Machine Translation',
-        };
-
-        const wrapper = shallow(<CaighdeanTranslation
-            source={ source }
-        />);
+    it('renders the CaighdeanTranslation component properly', () => {
+        const wrapper = shallow(<CaighdeanTranslation/>);
 
         expect(wrapper.find('li')).toHaveLength(1);
-        expect(wrapper.find('Localized').props().id).toEqual(source.id);
-        expect(wrapper.find('li a').props().href).toEqual(source.url);
-        expect(wrapper.find('li a').props().title).toEqual(source.title);
-        expect(wrapper.find('li a span').text()).toEqual(source.string);
+        expect(wrapper.find('Localized').props().id).toEqual('machinery-CaighdeanTranslation--visit-caighdean');
+        expect(wrapper.find('li a').props().href).toEqual('https://github.com/kscanne/caighdean');
+        expect(wrapper.find('li a').props().title).toEqual('Visit Caighdean Machine Translation');
+        expect(wrapper.find('li a span').text()).toEqual('Caighdean');
     });
 });

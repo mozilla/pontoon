@@ -4,20 +4,16 @@ import { shallow } from 'enzyme';
 import TranslationMemory from './TranslationMemory';
 
 
+const PROPS = {
+    itemCount: 2,
+};
+
 describe('<TranslationMemory>', () => {
 
-    it('renders the component without number of occurance properly', () => {
-        const source = {
-            type: 'translation-memory',
-            url: 'http://pontoon.mozilla.org',
-        };
-
-        const wrapper = shallow(<TranslationMemory
-            source={ source }
-        />);
+    it('renders the component without number of occurrences properly', () => {
+        const wrapper = shallow(<TranslationMemory/>);
 
         expect(wrapper.find('li')).toHaveLength(1);
-        expect(wrapper.find('li a').props().href).toContain(source.url);
         expect(wrapper.find('Localized').at(0).props().id).toEqual('machinery-TranslationMemory--pontoon-homepage');
         expect(wrapper.find('li a').props().title).toContain('Pontoon Homepage');
 
@@ -27,15 +23,9 @@ describe('<TranslationMemory>', () => {
         expect(wrapper.find('Localized')).toHaveLength(2);
     });
 
-    it('renders the component with number of occurance properly', () => {
-        const source = {
-            type: 'translation-memory',
-            url: '/',
-            count: 2,
-        };
-
+    it('renders the component with number of occurrences properly', () => {
         const wrapper = shallow(<TranslationMemory
-            source={ source }
+            itemCount={ PROPS.itemCount }
         />);
 
         expect(wrapper.find('li')).toHaveLength(1);
@@ -43,6 +33,6 @@ describe('<TranslationMemory>', () => {
 
         expect(wrapper.find('Localized').at(2).props().id).toEqual('machinery-TranslationMemory--number-occurrences');
         expect(wrapper.find('sup').props().title).toEqual('Number of translation occurrences');
-        expect(wrapper.find('sup').text()).toContain(source.count);
+        expect(wrapper.find('sup').text()).toContain(PROPS.itemCount);
     });
 });

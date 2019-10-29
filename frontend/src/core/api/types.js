@@ -56,11 +56,24 @@ export type OtherLocaleTranslation = {|
  * Translation Memory... ).
  */
 export type MachineryTranslation = {|
-    sources: Array<{|
-        type: string,
-        url: string,
-        count?: number,
-    |}>,
+    sources: Array<{
+    type: 'translation-memory',
+        itemCount: number,
+    }|{
+        type: 'google-translate',
+    }|{
+        type: 'microsoft-translator',
+    }|{
+        type: 'microsoft-terminology',
+        sourceString: string,
+        localeCode: string,
+    }|{
+    type: 'transvision',
+        sourceString: string,
+        localeCode: string,
+    }|{
+        type: 'caighdean'
+    }>,
     original: string,
     translation: string,
     quality?: number,

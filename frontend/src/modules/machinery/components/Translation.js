@@ -65,9 +65,8 @@ export default class Translation extends React.Component<Props> {
                     { !translation.quality ? null :
                         <span className="quality">{ translation.quality + '%' }</span>
                     }
-                    <ul className="sources">
-                        <TranslationSource translation={ translation }/>
-                    </ul>
+                    <TranslationSource
+                        translation={ translation }/>
                 </header>
                 <p className="original">
                     { types.indexOf('caighdean') === -1 ?
@@ -96,6 +95,6 @@ export default class Translation extends React.Component<Props> {
                     />
                 </p>
             </li>
-        </Localized>
+        </Localized>;
     }
 }

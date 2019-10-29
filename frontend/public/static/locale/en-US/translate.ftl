@@ -388,8 +388,9 @@ machinery-MicrosoftTranslation--visit-bing =
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 machinery-MicrosoftTerminology--visit-microsoft =
-    .title = Visit Microsoft Terminology Service API.
-    © 2018 Microsoft Corporation. All rights reserved.
+    .title =
+        Visit Microsoft Terminology Service API.
+        © 2018 Microsoft Corporation. All rights reserved.
 
 
 ## Machinery Transvision Memory

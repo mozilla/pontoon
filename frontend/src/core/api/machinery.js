@@ -39,12 +39,11 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return results.map(item => {
+        return results.map((item): MachineryTranslation => {
             return {
                 sources: [{
                     type: 'translation-memory',
-                    url: '/',
-                    count: item.count,
+                    itemCount: item.count,
                 }],
                 original: item.source,
                 translation: item.target,
@@ -72,7 +71,6 @@ export default class MachineryAPI extends APIBase {
         return [{
             sources: [{
                 type: 'google-translate',
-                url: 'https://translate.google.com/',
             }],
             original: source,
             translation: result.translation,
@@ -98,7 +96,6 @@ export default class MachineryAPI extends APIBase {
         return [{
             sources: [{
                 type: 'microsoft-translator',
-                url: 'https://www.bing.com/translator',
             }],
             original: source,
             translation: result.translation,
@@ -121,12 +118,12 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return results.translations.map(item => {
+        return results.translations.map((item): MachineryTranslation => {
             return {
                 sources: [{
                     type: 'microsoft-terminology',
-                    url: 'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-                        item.source + '&langID=' + locale.msTerminologyCode,
+                    sourceString: item.source,
+                    localeCode: locale.msTerminologyCode,
                 }],
                 original: item.source,
                 translation: item.target,
@@ -147,13 +144,12 @@ export default class MachineryAPI extends APIBase {
 
         const results = await this._get(url, params);
 
-        return results.map(item => {
+        return results.map((item): MachineryTranslation => {
             return {
                 sources: [{
                     type: 'transvision',
-                    url: 'https://transvision.mozfr.org/?repo=global' +
-                        '&recherche=' + encodeURIComponent(source) +
-                        '&locale=' + locale.code,
+                    sourceString: source,
+                    localeCode: locale.code,
                 }],
                 original: item.source,
                 translation: item.target,
@@ -183,7 +179,6 @@ export default class MachineryAPI extends APIBase {
         return [{
             sources: [{
                 type: 'caighdean',
-                url: 'https://github.com/kscanne/caighdean',
             }],
             original: result.original,
             translation: result.translation,

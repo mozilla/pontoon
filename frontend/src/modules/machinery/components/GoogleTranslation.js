@@ -4,20 +4,10 @@ import React from 'react';
 import { Localized } from '@fluent/react';
 
 
-type Props = {|
-    source: {
-        type: string,
-        url: string,
-    },
-|};
-
-
 /**
  * Show the translation source from Google Translate.
  */
-export default function GoogleTranslation(props: Props) {
-    const { source } = props;
-
+export default function GoogleTranslation() {
     return <li>
         <Localized
             id= "machinery-GoogleTranslation--visit-google"
@@ -25,7 +15,7 @@ export default function GoogleTranslation(props: Props) {
         >
             <a
                 className="translation-source"
-                href={ source.url }
+                href="https://translate.google.com/"
                 title="Visit Google Translate"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -34,5 +24,5 @@ export default function GoogleTranslation(props: Props) {
                 <span>Google Translate</span>
             </a>
         </Localized>
-    </li>
+    </li>;
 }

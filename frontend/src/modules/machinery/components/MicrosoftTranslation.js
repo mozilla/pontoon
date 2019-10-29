@@ -4,20 +4,10 @@ import React from 'react';
 import { Localized } from '@fluent/react';
 
 
-type Props = {|
-    source: {
-        type: string,
-        url: string,
-    },
-|};
-
-
 /**
  * Show the translation source from Microsoft Translation.
  */
-export default function MicrosoftTranslation(props: Props)  {
-    const { source } = props;
-
+export default function MicrosoftTranslation() {
     return <li>
         <Localized
             id= "machinery-MicrosoftTranslation--visit-bing"
@@ -25,7 +15,7 @@ export default function MicrosoftTranslation(props: Props)  {
         >
             <a
                 className="translation-source"
-                href={ source.url }
+                href="https://www.bing.com/translator"
                 title="Visit Bing Translate"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -34,5 +24,5 @@ export default function MicrosoftTranslation(props: Props)  {
                 <span>Microsoft Translator</span>
             </a>
         </Localized>
-    </li>
+    </li>;
 }

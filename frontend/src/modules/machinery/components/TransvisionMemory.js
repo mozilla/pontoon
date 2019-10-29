@@ -5,10 +5,8 @@ import { Localized } from '@fluent/react';
 
 
 type Props = {|
-    source: {
-        type: string,
-        url: string,
-    },
+    sourceString: string,
+    localeCode: string,
 |};
 
 
@@ -16,8 +14,6 @@ type Props = {|
  * Show the translation source from Transvision.
  */
 export default function TransvisionMemory(props: Props) {
-    const { source} = props;
-
     return <li>
         <Localized
             id= "machinery-TransvisionMemory--visit-transvision"
@@ -25,7 +21,9 @@ export default function TransvisionMemory(props: Props) {
         >
             <a
                 className="translation-source"
-                href={ source.url }
+                href={ "https://transvision.mozfr.org/?repo=global" +
+                        "&recherche=" + encodeURIComponent(props.sourceString) +
+                        "&locale=" + props.localeCode }
                 title="Visit Transvision"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -34,5 +32,5 @@ export default function TransvisionMemory(props: Props) {
                 <span>Mozilla</span>
             </a>
         </Localized>
-    </li>
+    </li>;
 }

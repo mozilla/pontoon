@@ -21,27 +21,46 @@ type Props = {|
  * Shows a list of translation sources.
  */
 export default function TranslationSource(props: Props) {
-        const {translation} = props;
+        const { translation } = props;
 
         const translationSource =
             translation.sources.map((source, index) => {
                 switch (source.type) {
                     case 'translation-memory':
-                        return <TranslationMemory source={ source } key={ index }/>;
+                        return <TranslationMemory
+                            itemCount={ source.itemCount }
+                            key={ index }
+                        />;
                     case 'google-translate':
-                        return <GoogleTranslation source={ source } key={ index }/>;
+                        return <GoogleTranslation
+                            key={ index }
+                        />;
                     case 'microsoft-translator':
-                        return <MicrosoftTranslation source={ source } key={ index }/>;
+                        return <MicrosoftTranslation
+                            key={ index }
+                        />;
                     case 'microsoft-terminology':
-                        return <MicrosoftTerminology source={ source } key={ index }/>;
+                        return <MicrosoftTerminology
+                            sourceString={ source.sourceString }
+                            localeCode={ source.localeCode }
+                            key={ index }
+                        />;
                     case 'transvision':
-                        return <TransvisionMemory source={ source } key={ index }/>;
+                        return <TransvisionMemory
+                            sourceString={ source.sourceString }
+                            localeCode={ source.localeCode }
+                            key={ index }
+                        />;
                     case 'caighdean':
-                        return <CaighdeanTranslation source={ source } key={ index }/>;
+                        return <CaighdeanTranslation
+                            key={ index }
+                        />;
                     default:
                         return null;
                 }
             });
 
-        return <div>{ translationSource }</div>
+        return  <ul className="sources">
+            { translationSource }
+        </ul>;
 }
