@@ -69,7 +69,7 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     isEllispsisActivated = () => {
-        if(this.div.current) {
+        if (this.div.current) {
             const div = this.div.current;
             const element = div.querySelector('span.resource')
             return  element.getBoundingClientRect().width < element.scrollWidth
