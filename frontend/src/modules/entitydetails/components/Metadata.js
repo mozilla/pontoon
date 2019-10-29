@@ -30,10 +30,6 @@ type State = {|
     isNotTruncated: boolean,
 |};
 
-type RefObject = {|
-    current: any,
-  |};
-
 /**
  * Component showing metadata of an entity.
  *
@@ -48,6 +44,8 @@ type RefObject = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props, State> {
+    div: { current: any };
+
     constructor(props: Props) {
         super(props);
         this.state = {
