@@ -55,8 +55,7 @@
             <div id="profile" class="select">
               <div class="button selector">
                 {% if user.is_authenticated %}
-                  <span class="title noselect">{{ user.name_or_email|nospam }}</span>
-                  <img class="rounded" src="{{ request.user.gravatar_url(88) }}" width="44" height="44">
+                  <img class="rounded" src="{{ request.user.gravatar_url_small }}" width="44" height="44">
                 {% else %}
                   <div class="menu-icon fa fa-bars"></div>
                 {% endif %}
