@@ -72,7 +72,7 @@ export default class Metadata extends React.Component<Props, State> {
         if (this.div.current) {
             const div = this.div.current;
             const element = div.querySelector('span.resource')
-            return  element.getBoundingClientRect().width < element.scrollWidth
+            return element.getBoundingClientRect().width < element.scrollWidth
         }
         return true;
     };
