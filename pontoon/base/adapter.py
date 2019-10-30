@@ -6,7 +6,6 @@ import hashlib
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from django.contrib.auth.models import User
-from django.contrib import messages
 from django.utils.encoding import smart_bytes
 
 
@@ -38,12 +37,6 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return
-
-        if 'fxa' not in [sa.provider for sa in user.socialaccount_set.all()]:
-            messages.success(
-                request,
-                'Your Persona account and Firefox Account have been connected.'
-            )
 
         sociallogin.account.user = user
         sociallogin.account.save()
