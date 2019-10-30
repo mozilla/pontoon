@@ -173,6 +173,13 @@
     top: 4px;
 }
 
+.filters-panel .menu li:not(.selected).unchanged:hover .status,
+.filters-panel .menu li:not(.selected).empty:hover .status,
+.filters-panel .menu li:not(.selected).rejected:hover .status,
+.filters-panel .menu li:not(.selected).time-range:hover .status {
+    left: 5px;
+}
+
 .filters-panel .menu li.author {
     height: 48px;
     padding-left: 4px;
