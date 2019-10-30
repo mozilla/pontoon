@@ -32,8 +32,6 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
-
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
 AUTO_LOGIN = os.environ.get('AUTO_LOGIN', 'False') != 'False'
@@ -151,6 +149,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.fxa',
+    'allauth.socialaccount.providers.github',
     'notifications',
     'graphene_django',
     'webpack_loader',
@@ -832,11 +831,15 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
+# Supported values: 'django', 'fxa', 'github'
+AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
+
 
 def account_username(user):
     return user.name_or_email
 
 
+# django-allauth settings
 ACCOUNT_AUTHENTICATED_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -848,6 +851,10 @@ FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
 FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
 FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
 FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
+
+# Github
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
+GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
