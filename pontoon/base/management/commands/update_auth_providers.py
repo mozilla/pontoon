@@ -11,12 +11,18 @@ from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.fxa.provider import FirefoxAccountsProvider
 from allauth.socialaccount.providers.github.provider import GitHubProvider
+<<<<<<< HEAD
 from allauth.socialaccount.providers.google.provider import GoogleProvider
+=======
+>>>>>>> Fix bug 1558484 - Add ability to log users in using GitHub (#1442)
 
 
 FXA_PROVIDER_ID = FirefoxAccountsProvider.id
 GITHUB_PROVIDER_ID = GitHubProvider.id
+<<<<<<< HEAD
 GOOGLE_PROVIDER_ID = GoogleProvider.id
+=======
+>>>>>>> Fix bug 1558484 - Add ability to log users in using GitHub (#1442)
 
 
 class Command(BaseCommand):
@@ -65,6 +71,7 @@ class Command(BaseCommand):
             )
 
             self.update_provider(github_data)
+<<<<<<< HEAD
 
         if settings.GOOGLE_CLIENT_ID is not None or settings.GOOGLE_SECRET_KEY is not None:
             google_data = dict(
@@ -75,3 +82,5 @@ class Command(BaseCommand):
             )
 
             self.update_provider(google_data)
+=======
+>>>>>>> Fix bug 1558484 - Add ability to log users in using GitHub (#1442)
