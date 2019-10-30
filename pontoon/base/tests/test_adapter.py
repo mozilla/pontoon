@@ -10,7 +10,7 @@ from pontoon.base.adapter import PontoonSocialAdapter
 
 
 # We have to support customized adapter during the transition of accounts
-# between fxa and persona.
+# between providers
 
 def _get_sociallogin(user, provider):
     """
