@@ -1,4 +1,5 @@
-FROM python:2.7.17-stretch
+ARG python_version
+FROM python:${python_version}-stretch
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HGPYTHON3=1
@@ -50,6 +51,7 @@ USER pontoon
 
 # Install node requirements
 COPY package.json .
+COPY package-lock.json .
 RUN npm install
 
 RUN mkdir frontend
@@ -59,12 +61,12 @@ COPY frontend/yarn.lock .
 RUN yarn install
 
 WORKDIR /app
-COPY --chown=pontoon:pontoon ./docker/config/webapp.env .env
+COPY ./docker/config/webapp.env .env
 COPY --chown=pontoon:pontoon . /app/
 
-# Run webpack to compile JS files
 # Create the folder for front-end assets
 RUN mkdir -p assets
+# Run webpack to compile JS files
 RUN $WEBPACK_BINARY
 
 # Build Translate.Next frontend resources

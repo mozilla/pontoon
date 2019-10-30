@@ -8,7 +8,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    image: local/pontoon
+      args:
+        python_version: "${PYTHON_VERSION}"
+    image: local/pontoon_py${PYTHON_VERSION}
     env_file:
       - docker/config/webapp.env
     depends_on:
