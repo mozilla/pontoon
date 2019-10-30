@@ -162,13 +162,13 @@
     content: "";
 }
 
-.filters-panel .menu li:not(.selected):hover .status:before {
+.filters-panel .menu li:not(.selected):not(.all):hover .status:before {
     content: "";
     font-weight: 100;
     font-size: 16px;
 }
 
-.filters-panel .menu li:not(.selected):hover .status {
+.filters-panel .menu li:not(.selected):not(.all):hover .status {
     left: 4px;
     top: 4px;
 }
