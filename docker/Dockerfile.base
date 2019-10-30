@@ -1,10 +1,10 @@
 ARG pythonversion
 FROM python:${pythonversion}-stretch
 
-RUN apt-get update && apt-get -y --no-install-recommends install \
-    ca-certificates \
-    curl \
-    git
+# Install OS-level things
+COPY docker/set_up_ubuntu.sh /tmp/set_up_ubuntu.sh
+
+RUN /tmp/set_up_ubuntu.sh
 
 RUN gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
     gpg --keyserver p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \

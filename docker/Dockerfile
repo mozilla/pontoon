@@ -1,44 +1,7 @@
-ARG pythonversion
-FROM local/pontoon_base_${pythonversion}
+FROM python:2.7.17-stretch
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HGPYTHON3=1
-
-WORKDIR /app
-
-# Install OS-level things
-COPY docker/set_up_ubuntu.sh /tmp/set_up_ubuntu.sh
-
-RUN /tmp/set_up_ubuntu.sh
-
-# Create the app user
-RUN useradd --shell /bin/bash -c "" -m app
-
-# Install Pontoon Python requirements
-COPY requirements/* /app/requirements/
-RUN pip install -U 'pip>=8' && \
-    pip install --no-cache-dir --require-hashes -r requirements/dev.txt && \
-    pip install --no-cache-dir --require-hashes -r requirements/test.txt
-
-# Install nodejs and npm from Nodesource's 10.x branch, as well as yarn
-RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb https://deb.nodesource.com/node_10.x jessie main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src https://deb.nodesource.com/node_10.x jessie main' >> /etc/apt/sources.list.d/nodesource.list
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs yarn
-
-COPY . /app/
-
-# Create the folder for front-end assets
-RUN mkdir -p /app/assets
-
-# Install node requirements
-RUN cd /app && npm install
-RUN cd /app/frontend && yarn install
-
-COPY ./docker/config/webapp.env /app/.env
 
 # Python environment variables
 ENV PYTHONUNBUFFERED 1
@@ -49,16 +12,69 @@ ENV PYTHONPATH /app
 ENV WEBPACK_BINARY /app/node_modules/.bin/webpack
 ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
 
+# Install required software.
+RUN apt-get update \
+    # Enable downloading packages over https
+    && apt-get install -y apt-transport-https \
+    # Get source for node.js
+    && curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && echo 'deb https://deb.nodesource.com/node_10.x jessie main' > /etc/apt/sources.list.d/nodesource.list \
+    && echo 'deb-src https://deb.nodesource.com/node_10.x jessie main' >> /etc/apt/sources.list.d/nodesource.list \
+    # Get source for yarn
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
+    # Install software
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libmemcached-dev \
+        nodejs \
+        postgresql-client-9.6 \
+        postgresql-server-dev-9.6 \
+        yarn \
+    # Clean up what can be cleaned up.
+    && apt-get autoremove -y
+
+WORKDIR /app
+
+# Install Pontoon Python requirements
+COPY requirements/* /app/requirements/
+RUN pip install -U 'pip>=8' && \
+    pip install --no-cache-dir --require-hashes -r requirements/dev.txt && \
+    pip install --no-cache-dir --require-hashes -r requirements/test.txt
+
+# Create the app user
+RUN groupadd -r pontoon && useradd --no-log-init -r -m -g pontoon pontoon
+RUN chown -R pontoon:pontoon /app
+USER pontoon
+
+# Install node requirements
+COPY package.json .
+RUN npm install
+
+RUN mkdir frontend
+WORKDIR frontend
+COPY frontend/package.json .
+COPY frontend/yarn.lock .
+RUN yarn install
+
+WORKDIR /app
+COPY --chown=pontoon:pontoon ./docker/config/webapp.env .env
+COPY --chown=pontoon:pontoon . /app/
+
 # Run webpack to compile JS files
-RUN cd /app/ && $WEBPACK_BINARY
+# Create the folder for front-end assets
+RUN mkdir -p assets
+RUN $WEBPACK_BINARY
 
 # Build Translate.Next frontend resources
-RUN cd /app/frontend/ && yarn build
+WORKDIR frontend
+RUN yarn build
+
+WORKDIR /app
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
-RUN cd /app/ && python manage.py collectstatic --noinput
-
-RUN chown -R app:app /app
+RUN python manage.py collectstatic --noinput
 
 CMD ["/app/docker/run_webapp.sh"]
