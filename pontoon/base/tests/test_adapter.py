@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import pytest
 
-from mock import patch, MagicMock
+from mock import MagicMock
 
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
