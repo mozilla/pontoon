@@ -57,6 +57,7 @@ var Pontoon = (function (my) {
 
                 $('<td>', {
                   class: 'last-changed',
+                  datetime: bug.last_change_time,
                   html: formatter.format(new Date(bug.last_change_time))
                 }).appendTo(tr);
 
@@ -96,7 +97,56 @@ var Pontoon = (function (my) {
             }
           }
         });
-      }
+      },
+
+      /*
+       * Sort Bug Table
+       */
+      sort: function() {
+        $('body').on('click', 'table.buglist th', function () {
+          
+          function getString(el) {
+            return $(el).find('td:eq(' + index + ')').text();
+          }
+
+          function getNumber(el) {
+            return parseInt($(el).find('.id').text().replace(/,/g, ''));
+          }
+
+          function getTime(el) {
+            var date = $(el).find('.last-changed').attr('datetime') || 0;
+            return new Date(date).getTime();
+          }
+
+          var node = $(this),
+              index = node.index(),
+              table = node.parents('.buglist'),
+              list = table.find('tbody'),
+              items = list.find('tr'),
+              dir = node.hasClass('asc') ? -1 : 1,
+              cls = node.hasClass('asc') ? 'desc' : 'asc';
+
+          $(table).find('th').removeClass('asc desc');
+          node.addClass(cls);
+
+          items.sort(function(a, b) {
+            // Sort by bugzilla ID
+            if (node.is('.id')) {
+              return (getNumber(a) - getNumber(b)) * dir;
+
+            // Sort by last changed
+            } else if (node.is('.last-changed')) {
+              return (getTime(b) - getTime(a)) * dir;
+
+            // Sort by alphabetical order
+            } else {
+              return getString(a).localeCompare(getString(b)) * dir;
+            }
+          });
+
+          list.append(items);
+        })
+      }()
 
     }
   });
