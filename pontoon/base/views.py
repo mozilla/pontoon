@@ -983,7 +983,7 @@ def user_data(request):
     user = request.user
 
     if not user.is_authenticated:
-        if settings.DJANGO_LOGIN:
+        if settings.AUTHENTICATION_METHOD == 'django':
             login_url = reverse('standalone_login')
         else:
             login_url = provider_login_url(request)
@@ -993,7 +993,7 @@ def user_data(request):
             'login_url': login_url,
         })
 
-    if settings.DJANGO_LOGIN:
+    if settings.AUTHENTICATION_METHOD == 'django':
         logout_url = reverse('standalone_logout')
     else:
         logout_url = reverse('account_logout')

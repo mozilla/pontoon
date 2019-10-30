@@ -79,7 +79,7 @@
                   <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
                   {% endif %}
 
-                  {% if settings.DJANGO_LOGIN %}
+                  {% if settings.AUTHENTICATION_METHOD == 'django' %}
                     {% if user.is_authenticated %}
                       <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}
