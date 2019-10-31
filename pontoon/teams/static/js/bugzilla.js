@@ -74,10 +74,10 @@ var Pontoon = (function (my) {
                 class: 'buglist striped',
                 html: '<thead>' +
                   '<tr>' +
-                    '<th class="id">ID</th>' +
-                    '<th class="summary">Summary</th>' +
-                    '<th class="last-changed">Last Changed</th>' +
-                    '<th class="assigned-to">Assigned To</th>' +
+                    '<th class="id">ID<i class="fa"></i></th>' +
+                    '<th class="summary">Summary<i class="fa"></i></th>' +
+                    '<th class="last-changed">Last Changed<i class="fa"></i></th>' +
+                    '<th class="assigned-to">Assigned To<i class="fa"></i></th>' +
                   '</tr>' +
                 '</thead>'
               }).append(tbody);
