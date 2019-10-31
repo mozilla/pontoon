@@ -12,27 +12,27 @@ NPM="$(which npm)"
 PYTEST="$(which pytest)"
 CODECOV="$(which codecov)"
 
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
-echo "Linting Python code"
-$FLAKE8 pontoon
-
-echo "Linting JavaScript code"
-./node_modules/.bin/eslint .
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
-echo "Collecting static files and bundles"
-$WEBPACK_BINARY
-$PYTHON manage.py collectstatic -v0 --noinput
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
-echo "Running JavaScript tests"
-$NPM test
+#
+#echo ""
+#echo "--------------------------------------------------------------------------------------------"
+#echo "Linting Python code"
+#$FLAKE8 pontoon
+#
+#echo "Linting JavaScript code"
+#./node_modules/.bin/eslint .
+#
+#echo ""
+#echo "--------------------------------------------------------------------------------------------"
+#echo "Collecting static files and bundles"
+#$WEBPACK_BINARY
+#$PYTHON manage.py collectstatic -v0 --noinput
+#
+#echo ""
+#echo "--------------------------------------------------------------------------------------------"
+#echo "Running JavaScript tests"
+#$NPM test
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Running Python tests"
-$PYTEST --cov-append --cov-report=term --cov=.
+$PYTEST --cov-append --cov-report=term --cov=. --junitxml=/app/pontoon/pontoon-tests.xml
