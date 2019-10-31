@@ -27,7 +27,6 @@ type Props = {|
 
 type State = {|
     seeMore: boolean,
-    isNotTruncated: boolean,
 |};
 
 /**
@@ -44,43 +43,21 @@ type State = {|
  *  - a link to the project
  */
 export default class Metadata extends React.Component<Props, State> {
-    div: { current: any };
-
     constructor(props: Props) {
         super(props);
-        this.state = {
-            seeMore: false,
-            isNotTruncated: false,
-        };
-        this.div = React.createRef();
-    }
-
-    componentDidMount() {
-        this.setState({ isNotTruncated: this.isEllispsisActivated() });
+        this.state = { seeMore: false };
     }
 
     componentDidUpdate(prevProps: Props) {
         if (this.props.entity !== prevProps.entity) {
-            this.setState({
-                seeMore: false,
-                isNotTruncated: this.isEllispsisActivated(),
-             });
+            this.setState({ seeMore: false });
         }
     }
-
-    isEllispsisActivated = () => {
-        if (this.div.current) {
-            const div = this.div.current;
-            const element = div.querySelector('span.resource')
-            return element.getBoundingClientRect().width < element.scrollWidth
-        }
-        return true;
-    };
 
     handleClickOnSeeMore = () => {
         this.setState({ seeMore: true });
     };
-    
+
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         if (this.props.isReadOnlyEditor) {
             return;
@@ -142,24 +119,20 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     renderResourceComment(entity: Entity): React.Node {
-        const { seeMore, isNotTruncated } = this.state;
+        const { seeMore } = this.state;
 
         if (!entity.resource_comment) {
             return null;
         }
 
+        let comment = entity.resource_comment
+
         return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
-            <Property
-                title='Resource Comment'
-                className={ seeMore ? 'comment' : 'comment truncate' }
-            >
-                <Linkify
-                    properties={ { target: '_blank', rel: 'noopener noreferrer' } }
-                    className='resource'
-                >
-                    { entity.resource_comment }
+            <Property title='Resource Comment' className='comment truncate'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } } className='resource'>
+                    { comment.length < 85 || seeMore ? comment : comment.slice(0, 85) + "..." }
                 </Linkify>
-                { isNotTruncated || seeMore ? null :
+                { comment.length < 85 || seeMore ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
@@ -235,7 +208,7 @@ export default class Metadata extends React.Component<Props, State> {
     render(): React.Node {
         const { entity, locale, openLightbox, pluralForm } = this.props;
 
-        return <div className="metadata" ref={ this.div }>
+        return <div className="metadata">
             <Screenshots
                 source={ entity.comment }
                 locale={ locale.code }
