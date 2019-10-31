@@ -38,7 +38,7 @@ def map_translations_to_events(days, translations):
     return timeline
 
 
-def users_with_translations_counts(start_date=None, query_filters=None, limit=100):
+def users_with_translations_counts(start_date=None, query_filters=None, limit=100, all_users=True):
     """
     Returns contributors list, sorted by count of their translations. Every user instance has
     the following properties:
@@ -56,7 +56,10 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     """
     # Collect data for faster user stats calculation.
     user_stats = {}
-    translations = Translation.objects.exclude(user=None)
+    if all_users:
+        translations = Translation.objects.all()
+    else: 
+        translations = Translation.objects.exclude(user=None)
 
     if start_date:
         translations = translations.filter(date__gte=start_date)
@@ -116,10 +119,21 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
             translators[user].add(locale.code)
 
     # Assign properties to user objects.
-    contributors = User.objects.filter(pk__in=user_stats.keys())
+    if all_users:
+        contributors = (
+            User.objects
+            .filter(pk__in=user_stats.keys()) | User.objects.filter(username='AnonymousUser')
+        )
+    else:
+        contributors = User.objects.filter(pk__in=user_stats.keys())
 
     for contributor in contributors:
-        user = user_stats[contributor.pk]
+        if contributor.username == 'AnonymousUser':
+            user = user_stats[None]
+            contributor.first_name = 'Imported'
+            contributor.user_role = 'System User'
+        else:
+            user = user_stats[contributor.pk]
         contributor.translations_count = user['total']
         contributor.translations_approved_count = user['approved']
         contributor.translations_rejected_count = user['rejected']
