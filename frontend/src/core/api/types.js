@@ -23,6 +23,8 @@ export type Entity = {|
     +original: string,
     +original_plural: string,
     +comment: string,
+    +group_comment: string,
+    +resource_comment: string,
     +key: string,
     +format: string,
     +path: string,

@@ -49,3 +49,11 @@
     margin: 0;
     padding: 0;
 }
+
+.metadata button {
+    background: none;
+    border: none;
+    color: #7BC876;
+    font-style: italic;
+    padding: 0 0 0 2px;
+}

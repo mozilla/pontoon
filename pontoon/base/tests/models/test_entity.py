@@ -239,6 +239,8 @@ def test_entity_project_locale_no_paths(
     # Ensure all attributes are assigned correctly
     expected = {
         'comment': '',
+        'group_comment': '',
+        'resource_comment': '',
         'format': 'po',
         'obsolete': False,
         'marked': text_type(entity_a.string),
