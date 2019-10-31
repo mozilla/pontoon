@@ -93,7 +93,11 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Translated
                             </Localized>
                         </span>
-                        <p className="value"><Link to={{ search:"?status=translated" }}>{ asLocaleString(approved) }</Link></p>
+                        <p className="value" onClick={ this.handleClickOutside }>
+                            <Link to={{ search: "?status=translated" }}>
+                                { asLocaleString(approved) }
+                            </Link>
+                        </p>
                     </div>
                     <div className="fuzzy">
                         <span className="title">
@@ -101,7 +105,11 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Fuzzy
                             </Localized>
                         </span>
-                        <p className="value"><Link to={{ search:"?status=fuzzy" }}>{ asLocaleString(fuzzy) }</Link></p>
+                        <p className="value" onClick={ this.toggleVisibility }>
+                            <Link to={{ search: "?status=fuzzy" }}>
+                                { asLocaleString(fuzzy) }
+                            </Link>
+                        </p>
                     </div>
                     <div className="warnings">
                         <span className="title">
@@ -109,7 +117,11 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Warnings
                             </Localized>
                         </span>
-                        <p className="value"><Link to={{ search:"?status=warnings" }}>{ asLocaleString(warnings) }</Link></p>
+                        <p className="value" onClick={ this.toggleVisibility }>
+                            <Link to={{ search: "?status=warnings" }}>
+                                { asLocaleString(warnings) }
+                            </Link>
+                        </p>
                     </div>
                     <div className="errors">
                         <span className="title">
@@ -117,7 +129,11 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Errors
                             </Localized>
                         </span>
-                        <p className="value"><Link to={{ search:"?status=errors" }}>{ asLocaleString(errors) }</Link></p>
+                        <p className="value" onClick={ this.toggleVisibility }>
+                            <Link to={{ search: "?status=errors" }}>
+                                { asLocaleString(errors) }
+                            </Link>
+                        </p>
                     </div>
                     <div className="missing">
                         <span className="title">
@@ -125,7 +141,11 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Missing
                             </Localized>
                         </span>
-                        <p className="value"><Link to={{search:"?status=missing" }}>{ asLocaleString(missing) }</Link></p>
+                        <p className="value" onClick={ this.toggleVisibility }>
+                            <Link to={{search: "?status=missing" }}>
+                                { asLocaleString(missing) }
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </aside>
