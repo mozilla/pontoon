@@ -51,11 +51,7 @@
 }
 
 .truncate {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    padding-right: 9%;
     position: relative;
-    white-space: nowrap;
 }
 
 .metadata button {
