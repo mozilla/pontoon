@@ -129,7 +129,7 @@ export default class Metadata extends React.Component<Props, State> {
         let comment = entity.resource_comment
 
         return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
-            <Property title='Resource Comment' className='comment truncate'>
+            <Property title='Resource Comment' className='comment'>
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { comment.length < MAX_LENGTH || seeMore ? comment : comment.slice(0, MAX_LENGTH) + '\u2026' }
                 </Linkify>
