@@ -76,7 +76,7 @@ var Pontoon = (function (my) {
                   '<tr>' +
                     '<th class="id">ID<i class="fa"></i></th>' +
                     '<th class="summary">Summary<i class="fa"></i></th>' +
-                    '<th class="last-changed">Last Changed<i class="fa"></i></th>' +
+                    '<th class="last-changed desc">Last Changed<i class="fa"></i></th>' +
                     '<th class="assigned-to">Assigned To<i class="fa"></i></th>' +
                   '</tr>' +
                 '</thead>'
@@ -123,8 +123,8 @@ var Pontoon = (function (my) {
               table = node.parents('.buglist'),
               list = table.find('tbody'),
               items = list.find('tr'),
-              dir = node.hasClass('asc') ? -1 : 1,
-              cls = node.hasClass('asc') ? 'desc' : 'asc';
+              dir = node.hasClass('desc') ? -1 : 1,
+              cls = node.hasClass('desc') ? 'asc' : 'desc';
 
           $(table).find('th').removeClass('asc desc');
           node.addClass(cls);
