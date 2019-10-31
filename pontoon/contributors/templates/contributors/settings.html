@@ -59,6 +59,11 @@
       </div>
     </div>
 
+    <div id="preferred-locale" class="clearfix">
+      <h3>Preferred source locale</h3>
+      <span>{% include 'teams/widgets/team_selector.html' %}</span>
+    </div>
+
     <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
 
     {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}

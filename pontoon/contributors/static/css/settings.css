@@ -53,6 +53,20 @@
   margin: 9px;
 }
 
+#preferred-locale h3 {
+  float: left;
+  padding: 0 0 40px 0;
+}
+
+#preferred-locale .locale-selector {
+  float: right;
+  padding-top: 4px; 
+}
+
+#preferred-locale .locale-selector .locale-select .menu {
+  z-index: 30;
+}
+
 #profile-form {
   display: block;
   position: relative;
