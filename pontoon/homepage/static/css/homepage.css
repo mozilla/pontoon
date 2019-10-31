@@ -108,7 +108,7 @@ h2 {
 #edit-homepage .select {
   float: right;
   top: 70px;
-  z-index: 10;
+  z-index: 5;
 }
 
 #edit-homepage .button {
