@@ -120,6 +120,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     renderResourceComment(entity: Entity): React.Node {
         const { seeMore } = this.state;
+        const MAX_LENGTH = 85;
 
         if (!entity.resource_comment) {
             return null;
@@ -129,10 +130,10 @@ export default class Metadata extends React.Component<Props, State> {
 
         return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
             <Property title='Resource Comment' className='comment truncate'>
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } } className='resource'>
-                    { comment.length < 85 || seeMore ? comment : comment.slice(0, 85) + "..." }
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment.length < MAX_LENGTH || seeMore ? comment : comment.slice(0, MAX_LENGTH) + '\u2026' }
                 </Linkify>
-                { comment.length < 85 || seeMore ? null :
+                { comment.length < MAX_LENGTH || seeMore ? null :
                     <Localized id='entitydetails-Metadata--see-more'>
                         <button onClick={ this.handleClickOnSeeMore }>
                             { 'See More' }
