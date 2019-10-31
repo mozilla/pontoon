@@ -25,6 +25,9 @@ type Props = {|
     +navigateToPath: (string) => void,
 |};
 
+type State = {|
+    seeMore: boolean,
+|};
 
 /**
  * Component showing metadata of an entity.
@@ -32,12 +35,29 @@ type Props = {|
  * Shows:
  *  - the original string
  *  - a comment (if any)
+ *  - a group comment (if any)
+ *  - a resource comment (if any)
  *  - a context (if any)
  *  - a list of source files (if any)
  *  - a link to the resource
  *  - a link to the project
  */
-export default class Metadata extends React.Component<Props> {
+export default class Metadata extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = { seeMore: false };
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        if (this.props.entity !== prevProps.entity) {
+            this.setState({ seeMore: false });
+        }
+    }
+
+    handleClickOnSeeMore = () => {
+        this.setState({ seeMore: true });
+    };
+
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         if (this.props.isReadOnlyEditor) {
             return;
@@ -80,6 +100,46 @@ export default class Metadata extends React.Component<Props> {
                 <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                     { comment }
                 </Linkify>
+            </Property>
+        </Localized>;
+    }
+
+    renderGroupComment(entity: Entity): React.Node {
+        if (!entity.group_comment) {
+            return null;
+        }
+
+        return <Localized id='entitydetails-Metadata--group-comment' attrs={ { title: true } }>
+            <Property title='Group Comment' className='comment'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { entity.group_comment }
+                </Linkify>
+            </Property>
+        </Localized>;
+    }
+
+    renderResourceComment(entity: Entity): React.Node {
+        const { seeMore } = this.state;
+        const MAX_LENGTH = 85;
+
+        if (!entity.resource_comment) {
+            return null;
+        }
+
+        let comment = entity.resource_comment
+
+        return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
+            <Property title='Resource Comment' className='comment'>
+                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                    { comment.length < MAX_LENGTH || seeMore ? comment : comment.slice(0, MAX_LENGTH) + '\u2026' }
+                </Linkify>
+                { comment.length < MAX_LENGTH || seeMore ? null :
+                    <Localized id='entitydetails-Metadata--see-more'>
+                        <button onClick={ this.handleClickOnSeeMore }>
+                            { 'See More' }
+                        </button>
+                    </Localized>
+                }
             </Property>
         </Localized>;
     }
@@ -162,6 +222,8 @@ export default class Metadata extends React.Component<Props> {
                 handleClickOnPlaceable={ this.handleClickOnPlaceable }
             />
             { this.renderComment(entity) }
+            { this.renderGroupComment(entity) }
+            { this.renderResourceComment(entity) }
             <FluentAttribute entity={ entity } />
             { this.renderContext(entity) }
             { this.renderSources(entity) }

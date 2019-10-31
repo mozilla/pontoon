@@ -181,6 +181,8 @@ class ChangeSet(object):
             'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
+            'group_comment': '\n'.join(vcs_entity.group_comments),
+            'resource_comment': '\n'.join(vcs_entity.resource_comments),
             # one timestamp per import, unlike timezone.now()
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
@@ -387,6 +389,8 @@ class ChangeSet(object):
                 'string_plural',
                 'key',
                 'comment',
+                'group_comment',
+                'resource_comment',
                 'order',
                 'source',
             ])
