@@ -10,7 +10,6 @@ describe('<Translation>', () => {
         sources: [
             {
                 type: 'translation-memory',
-                url: 'http://pontoon.mozilla.org',
             },
         ],
         original: ORIGINAL,

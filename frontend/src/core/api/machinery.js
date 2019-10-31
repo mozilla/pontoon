@@ -43,8 +43,8 @@ export default class MachineryAPI extends APIBase {
             return {
                 sources: [{
                     type: 'translation-memory',
-                    itemCount: item.count,
                 }],
+                itemCount: item.count,
                 original: item.source,
                 translation: item.target,
                 quality: Math.round(item.quality),
@@ -122,8 +122,6 @@ export default class MachineryAPI extends APIBase {
             return {
                 sources: [{
                     type: 'microsoft-terminology',
-                    sourceString: item.source,
-                    localeCode: locale.msTerminologyCode,
                 }],
                 original: item.source,
                 translation: item.target,
@@ -148,8 +146,6 @@ export default class MachineryAPI extends APIBase {
             return {
                 sources: [{
                     type: 'transvision',
-                    sourceString: source,
-                    localeCode: locale.code,
                 }],
                 original: item.source,
                 translation: item.target,

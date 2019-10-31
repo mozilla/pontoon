@@ -41,7 +41,7 @@ export default class Translation extends React.Component<Props> {
         }
 
         this.props.updateEditorTranslation(this.props.translation.translation, 'machinery');
-    }
+    };
 
     render() {
         const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
@@ -66,7 +66,9 @@ export default class Translation extends React.Component<Props> {
                         <span className="quality">{ translation.quality + '%' }</span>
                     }
                     <TranslationSource
-                        translation={ translation }/>
+                        translation={ translation }
+                        locale={ locale }
+                    />
                 </header>
                 <p className="original">
                     { types.indexOf('caighdean') === -1 ?
