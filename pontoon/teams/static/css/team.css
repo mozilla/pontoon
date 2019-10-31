@@ -31,6 +31,31 @@
   color: #7BC876;
 }
 
+.buglist th {
+  cursor: pointer;
+}
+
+.buglist th:hover {
+  color: #ebebeb;
+}
+
+.buglist th i {
+  margin-left: 5px;
+  position: absolute;
+}
+
+.buglist th.asc i:after {
+  content: "";
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.buglist th.desc i:after {
+  content: "";
+  display: inline-block;
+  margin-top: -5px;
+}
+
 .controls.no-projects {
   text-align: right;
 }
