@@ -19,10 +19,11 @@ from pontoon.base.utils import (
 
 
 def test_util_glob_to_regex():
-    assert glob_to_regex('*') == '^.*$'
-    assert glob_to_regex('/foo*') == '^\\/foo.*$'
-    assert glob_to_regex('*foo') == '^.*foo$'
-    assert glob_to_regex('*foo*') == '^.*foo.*$'
+    assert glob_to_regex('*') == '^([^/]*)$'
+    assert glob_to_regex('{ variable }/foo*') == '^/foo([^/]*)$'
+    assert glob_to_regex('bar/**/foo*') == '^bar/(.*)foo([^/]*)$'
+    assert glob_to_regex('*foo') == '^([^/]*)foo$'
+    assert glob_to_regex('*foo*') == '^([^/]*)foo([^/]*)$'
 
 
 @pytest.mark.django_db
@@ -33,6 +34,14 @@ def test_util_glob_to_regex_db(resource_a, resource_b):
         list(Resource.objects.filter(path__regex=glob_to_regex('*')))
         == list(Resource.objects.all())
     )
+
+    assert resource_a in Resource.objects.filter(path__regex=glob_to_regex('**'))
+    assert resource_b in Resource.objects.filter(path__regex=glob_to_regex('**'))
+    assert (
+        list(Resource.objects.filter(path__regex=glob_to_regex('**')))
+        == list(Resource.objects.all())
+    )
+
     assert (
         resource_a
         in Resource.objects.filter(

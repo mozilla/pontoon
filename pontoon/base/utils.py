@@ -676,6 +676,9 @@ def glob_to_regex(glob):
     """
     This util uses PatternParser from compare_locales to convert a glob to a regex in a way
     that can then be used with django's `__regex` queryset selector.
+    Supported wildcard operators:
+    - *
+    - **
     """
     pattern = PatternParser().parse(glob)
     regex = r""
@@ -685,12 +688,12 @@ def glob_to_regex(glob):
         elif isinstance(part, Star):
             regex += r"([^/]*)"
         elif isinstance(part, Variable):
-            # Variables arent't supported.
+            # Variables are unsupported
             pass
         else:
             regex += part.regex_pattern(None)
 
-    return '^{}$'.format(regex)
+    return r'^{}$'.format(regex)
 
 
 def get_m2m_changes(current_qs, new_qs):
