@@ -262,8 +262,7 @@ _tag_kwargs = OrderedDict(
      ('path_match', dict(path=11)),
      ('slug_no_match', dict(slug="NOSLUGSHERE")),
      ('slug_exact', dict(slug=23)),
-     ('slug_glob', dict(slug="factory*7"))),
- )
+     ('slug_glob', dict(slug="factory*7"))))
 
 
 @pytest.fixture(params=_tag_kwargs)

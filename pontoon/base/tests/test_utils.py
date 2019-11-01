@@ -24,12 +24,20 @@ def test_util_glob_to_regex():
     assert glob_to_regex('*foo') == '^([^/]*)foo$'
     assert glob_to_regex('*foo*') == '^([^/]*)foo([^/]*)$'
 
-@pytest.mark.skipif(sys.version_info[0] > 2, reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3.")
-def test_util_glob_to_regex_python2():
-    assert glob_to_regex('{ variable }/foo*') == '^\/foo([^/]*)$'
-    assert glob_to_regex('bar/**/foo*') == '^bar\/(.*)foo([^/]*)$'
 
-@pytest.mark.skipif(sys.version_info[0] < 3, reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3.")
+@pytest.mark.skipif(
+    sys.version_info[0] > 2,
+    reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3."
+)
+def test_util_glob_to_regex_python2():
+    assert glob_to_regex('{ variable }/foo*') == '^\/foo([^/]*)$'  # noqa: W605
+    assert glob_to_regex('bar/**/foo*') == '^bar\/(.*)foo([^/]*)$'  # noqa: W605
+
+
+@pytest.mark.skipif(
+    sys.version_info[0] < 3,
+    reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3."
+)
 def test_util_glob_to_regex_python3():
     assert glob_to_regex('{ variable }/foo*') == '^/foo([^/]*)$'
     assert glob_to_regex('bar/**/foo*') == '^bar/(.*)foo([^/]*)$'
