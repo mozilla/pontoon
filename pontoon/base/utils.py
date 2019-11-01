@@ -682,15 +682,34 @@ def glob_to_regex(glob):
     """
     pattern = PatternParser().parse(glob)
     regex = r""
+
     for part in pattern:
         if isinstance(part, Starstar):
             regex += r"(.*)"
         elif isinstance(part, Star):
             regex += r"([^/]*)"
         elif isinstance(part, Variable):
-            # Variables are unsupported
+            # Variables are unsupportedignored because
             pass
         else:
+            # re.escape escapes all non-alphanum characters on Python 2:
+            # On Python 2:
+            # re.escape('/') == '\/'
+            # However, this behavior changes on Python 3:
+            # Python 3:
+            # re.escape('/') == '/'
+            #
+            # Postgresql is able to ignore this difference and match the string correctly:
+            # pontoon=# select regexp_matches('^/foo$', '/foo');
+            # regexp_matches # ----------------
+            # {/foo}
+            # (1 row)
+            #
+            # pontoon=# select regexp_matches('^\/foo$', '/foo');
+            # regexp_matches
+            # ----------------
+            # {/foo}
+
             regex += part.regex_pattern(None)
 
     return r'^{}$'.format(regex)

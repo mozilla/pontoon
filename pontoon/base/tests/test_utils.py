@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import sys
 
 import pytest
 
@@ -20,10 +21,18 @@ from pontoon.base.utils import (
 
 def test_util_glob_to_regex():
     assert glob_to_regex('*') == '^([^/]*)$'
-    assert glob_to_regex('{ variable }/foo*') == '^/foo([^/]*)$'
-    assert glob_to_regex('bar/**/foo*') == '^bar/(.*)foo([^/]*)$'
     assert glob_to_regex('*foo') == '^([^/]*)foo$'
     assert glob_to_regex('*foo*') == '^([^/]*)foo([^/]*)$'
+
+@pytest.mark.skipif(sys.version_info[0] > 2, reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3.")
+def test_util_glob_to_regex_python2():
+    assert glob_to_regex('{ variable }/foo*') == '^\/foo([^/]*)$'
+    assert glob_to_regex('bar/**/foo*') == '^bar\/(.*)foo([^/]*)$'
+
+@pytest.mark.skipif(sys.version_info[0] < 3, reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3.")
+def test_util_glob_to_regex_python3():
+    assert glob_to_regex('{ variable }/foo*') == '^/foo([^/]*)$'
+    assert glob_to_regex('bar/**/foo*') == '^bar/(.*)foo([^/]*)$'
 
 
 @pytest.mark.django_db
