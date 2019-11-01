@@ -193,11 +193,21 @@ def settings(request):
     else:
         custom_homepage_locale = default_homepage_locale
 
+    preferred_locales = list(Locale.objects.all())
+
+    # Set preferred source locale
+    preferred_source_locale = request.user.profle.preferred_source_locale
+    if preferred_source_locale:
+        custom_preferred_source_locale = (
+            Locale.objects.filter(code=preferred_source_locale).first()
+        )
+
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
         'available_locales': available_locales,
         'locales': all_locales,
         'locale': custom_homepage_locale,
+        'preferred_locales': preferred_locales,
         'profile_form': profile_form,
     })
 

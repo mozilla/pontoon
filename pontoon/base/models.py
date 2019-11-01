@@ -343,6 +343,9 @@ class UserProfile(models.Model):
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=10, blank=True, null=True)
 
+    # Used to display strings from preferred source locale.
+    preferred_source_locale = models.CharField(max_length=10, blank=True, null=True)
+
     # Used to keep track of start/step no. of user tour.
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)

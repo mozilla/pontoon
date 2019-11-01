@@ -1,0 +1,35 @@
+<!-- Locale selector -->
+<div class="locale-selector">
+    <div class="locale select">
+      <div class="button breadcrumbs selector noselect">
+        <span class="language" {{ locale.serialize() | dict_html_attrs }}>{{ locale.name }}</span><span class="code">{{ locale.code }}</span>
+      </div>
+  
+      <div class="menu">
+        <div class="search-wrapper clearfix">
+          <div class="icon fa fa-search"></div>
+          <input type="search" autocomplete="off" autofocus>
+        </div>
+  
+        <ul>
+          {% for l in preferred_locales %}
+            <li class="clearfix">
+              <span class="language"
+                {{ l.serialize() | dict_html_attrs }}
+  
+                {% if project and locale and locale == l %}
+                  data-projects="{{ l.available_projects_list()|to_json }}"
+                {% endif %}
+              >
+                {{ l.name }}
+              </span>
+              <span class="code">
+                {{ l.code }}
+              </span>
+            </li>
+          {% endfor %}
+          <li class="no-match">No results</li>
+        </ul>
+      </div>
+    </div>
+  </div>
