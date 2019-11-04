@@ -58,7 +58,7 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     user_stats = {}
     if all_users:
         translations = Translation.objects.all()
-    else: 
+    else:
         translations = Translation.objects.exclude(user=None)
 
     if start_date:
