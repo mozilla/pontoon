@@ -38,7 +38,7 @@ def map_translations_to_events(days, translations):
     return timeline
 
 
-def users_with_translations_counts(start_date=None, query_filters=None, limit=100, all_users=False):
+def users_with_translations_counts(start_date=None, query_filters=None, limit=100):
     """
     Returns contributors list, sorted by count of their translations. Every user instance has
     the following properties:
@@ -56,16 +56,16 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     """
     # Collect data for faster user stats calculation.
     user_stats = {}
-    if all_users:
-        translations = Translation.objects.all()
-    else:
-        translations = Translation.objects.exclude(user=None)
+    translations = Translation.objects.all()
 
-    if start_date:
-        translations = translations.filter(date__gte=start_date)
     if query_filters:
         translations = translations.filter(query_filters)
 
+    if start_date:
+        translations = translations.filter(date__gte=start_date)
+
+    # Count('user') returns 0 if the user is None.
+    # See https://docs.djangoproject.com/en/1.11/topics/db/aggregation/#values.
     translations = (
         translations
         .values('user', 'approved', 'fuzzy', 'rejected')
@@ -123,20 +123,20 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
 
     contributors = list(contributors)
     if None in user_stats.keys():
-        contributors.insert(0, User(username='Imported', first_name='Imported', email='imported'))
+        contributors.append(User(username='Imported', first_name='Imported', email='imported'))
 
     for contributor in contributors:
-        if contributor.username == 'Imported':
-            user = user_stats[None]
-            contributor.user_role = 'System Role'
-        else:
-            user = user_stats[contributor.pk]
-            contributor.user_role = contributor.role(managers, translators)
+        user = user_stats[contributor.pk]
         contributor.translations_count = user['total']
         contributor.translations_approved_count = user['approved']
         contributor.translations_rejected_count = user['rejected']
         contributor.translations_unapproved_count = user['unreviewed']
         contributor.translations_needs_work_count = user['fuzzy']
+
+        if contributor.pk is None:
+            contributor.user_role = 'System User'
+        else:
+            contributor.user_role = contributor.role(managers, translators)
 
     contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
     if limit:

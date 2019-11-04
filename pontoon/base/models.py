@@ -2171,16 +2171,16 @@ class EntityQuerySet(models.QuerySet):
                 return False
 
         sanitized_emails = filter(is_email, emails)
-        queryUsers = Q()
+        query = Q()
 
         if sanitized_emails:
-            queryUsers = queryUsers | Q(translation__user__email__in=sanitized_emails)
+            query |= Q(translation__user__email__in=sanitized_emails)
 
         if 'imported' in emails:
-            queryUsers = queryUsers | Q(translation__user__isnull=True)
+            query |= Q(translation__user__isnull=True)
 
         if sanitized_emails or 'imported' in emails:
-            return queryUsers & Q(translation__locale=locale)
+            return query & Q(translation__locale=locale)
 
         return Q()
 
@@ -2660,9 +2660,9 @@ class TranslationQuerySet(models.QuerySet):
              'translation_count': user.translations_count,
              'role': user.user_role}
             for user in users_with_translations_counts(
-                None, Q(id__in=self),
-                limit=100,
-                all_users=True
+                None,
+                Q(id__in=self),
+                limit=100
             )
         ]
 
