@@ -46,7 +46,7 @@ export default class Translation extends React.Component<Props> {
     render() {
         const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
 
-        const types = translation.sources.map(source => source.type);
+        const types = translation.sources.map(source => source);
 
         let className = 'translation';
 

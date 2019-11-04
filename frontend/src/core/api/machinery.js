@@ -41,9 +41,7 @@ export default class MachineryAPI extends APIBase {
 
         return results.map((item): MachineryTranslation => {
             return {
-                sources: [{
-                    type: 'translation-memory',
-                }],
+                sources: ['translation-memory'],
                 itemCount: item.count,
                 original: item.source,
                 translation: item.target,
@@ -69,9 +67,7 @@ export default class MachineryAPI extends APIBase {
         }
 
         return [{
-            sources: [{
-                type: 'google-translate',
-            }],
+            sources: ['google-translate'],
             original: source,
             translation: result.translation,
         }];
@@ -94,9 +90,7 @@ export default class MachineryAPI extends APIBase {
         }
 
         return [{
-            sources: [{
-                type: 'microsoft-translator',
-            }],
+            sources: ['microsoft-translator'],
             original: source,
             translation: result.translation,
         }];
@@ -120,9 +114,7 @@ export default class MachineryAPI extends APIBase {
 
         return results.translations.map((item): MachineryTranslation => {
             return {
-                sources: [{
-                    type: 'microsoft-terminology',
-                }],
+                sources: ['microsoft-terminology'],
                 original: item.source,
                 translation: item.target,
                 quality: Math.round(item.quality),
@@ -144,9 +136,7 @@ export default class MachineryAPI extends APIBase {
 
         return results.map((item): MachineryTranslation => {
             return {
-                sources: [{
-                    type: 'transvision',
-                }],
+                sources: ['transvision'],
                 original: item.source,
                 translation: item.target,
                 quality: Math.round(item.quality),
@@ -173,9 +163,7 @@ export default class MachineryAPI extends APIBase {
         }
 
         return [{
-            sources: [{
-                type: 'caighdean',
-            }],
+            sources: ['caighdean'],
             original: result.original,
             translation: result.translation,
         }];

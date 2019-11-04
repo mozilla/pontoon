@@ -6,11 +6,7 @@ import TranslationSource from './TranslationSource';
 
 
 const DEFAULT_TRANSLATION = {
-    sources: [
-        {
-            type: 'translation-memory',
-        },
-    ]
+    sources: ['translation-memory',]
 };
 
 
@@ -23,11 +19,7 @@ describe('<TranslationSource>', () => {
         ['caighdean', 'CaighdeanTranslation'],
     ]).it('renders `%s` type for `%s` component correctly', (type, component) => {
         const translation = {
-            sources: [
-                {
-                    type: type,
-                },
-            ],
+            sources: [type],
         };
         const wrapper = shallow(<TranslationSource
             translation={ translation }
@@ -40,9 +32,7 @@ describe('<TranslationSource>', () => {
         const translation = {
             sources: [
                 ...DEFAULT_TRANSLATION.sources,
-                {
-                    type: 'microsoft-terminology',
-                },
+                'microsoft-terminology',
             ],
         };
         const wrapper = shallow(<TranslationSource

@@ -55,8 +55,10 @@ export type OtherLocaleTranslation = {|
  * Translation that comes from a machine (Machine Translation,
  * Translation Memory... ).
  */
+type SourceType = 'translation-memory' | 'google-translate' | 'microsoft-translator' | 'microsoft-terminology' | 'transvision' | 'caighdean'
+
 export type MachineryTranslation = {|
-    sources: Array<{ type: 'translation-memory' | 'google-translate' | 'microsoft-translator' | 'microsoft-terminology' | 'transvision' | 'caighdean' }>,
+    sources: Array<SourceType>,
     itemCount?: number,
     original: string,
     translation: string,

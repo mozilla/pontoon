@@ -17,7 +17,7 @@ export default class Count extends React.Component<Props> {
         const machineryCount = machinery.translations.length;
 
         const preferredCount = machinery.translations.reduce((count, item) => {
-            if (item.sources.find(source => source.type === 'Translation memory')) {
+            if (item.sources.find(source => source === 'Translation memory')) {
                 return count + 1;
             }
             return count;
