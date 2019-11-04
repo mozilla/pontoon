@@ -10,6 +10,8 @@ import { GenericTranslation } from 'core/translation';
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 
+import TranslationSource from './TranslationSource';
+
 
 type Props = {|
     isReadOnlyEditor: boolean,
@@ -39,12 +41,12 @@ export default class Translation extends React.Component<Props> {
         }
 
         this.props.updateEditorTranslation(this.props.translation.translation, 'machinery');
-    }
+    };
 
     render() {
         const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
 
-        const types = translation.sources.map(source => source.type);
+        const types = translation.sources;
 
         let className = 'translation';
 
@@ -63,33 +65,13 @@ export default class Translation extends React.Component<Props> {
                     { !translation.quality ? null :
                         <span className="quality">{ translation.quality + '%' }</span>
                     }
-                    <ul className="sources">
-                        { translation.sources.map((source, i) => <li key={ i }>
-                            <a
-                                className="translation-source"
-                                href={ source.url }
-                                title={ source.title }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-                            >
-                                <span>{ source.type }</span>
-                                { !source.count ? null :
-                                    <Localized
-                                        id="machinery-Translation--number-occurrences"
-                                        attrs={{ title: true }}
-                                    >
-                                        <sup title="Number of translation occurrences">
-                                            { source.count }
-                                        </sup>
-                                    </Localized>
-                                }
-                            </a>
-                        </li>) }
-                    </ul>
+                    <TranslationSource
+                        translation={ translation }
+                        locale={ locale }
+                    />
                 </header>
                 <p className="original">
-                    { types.indexOf('Caighdean') === -1 ?
+                    { types.indexOf('caighdean') === -1 ?
                         <GenericTranslation
                             content={ sourceString }
                             diffTarget={ translation.original }

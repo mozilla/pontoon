@@ -9,15 +9,12 @@ describe('<Translation>', () => {
     const DEFAULT_TRANSLATION = {
         sources: [
             {
-                type: 'Translation memory',
-                url: 'http://pontoon.mozilla.org',
-                title: 'Pontoon',
+                type: 'translation-memory',
             },
         ],
         original: ORIGINAL,
         translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
     };
-
     const DEFAULT_LOCALE = {
         direction: 'ltr',
         code: 'kg',
@@ -40,9 +37,6 @@ describe('<Translation>', () => {
             wrapper.find('.suggestion').find('GenericTranslation').props().content
         ).toContain('Un cheval, un cheval !');
 
-        expect(wrapper.find('ul li')).toHaveLength(1);
-        expect(wrapper.find('ul li a').text()).toEqual('Translation memory');
-
         // No count.
         expect(wrapper.find('ul li sup')).toHaveLength(0);
         // No quality.
@@ -62,31 +56,5 @@ describe('<Translation>', () => {
 
         expect(wrapper.find('.quality')).toHaveLength(1);
         expect(wrapper.find('.quality').text()).toEqual('100%');
-    });
-
-    it('shows several sources', () => {
-        const translation = {
-            ...DEFAULT_TRANSLATION,
-            sources: [
-                ...DEFAULT_TRANSLATION.sources,
-                {
-                    type: 'Transvision',
-                    url: '',
-                    title: 'Transvision memory',
-                    count: 24,
-                },
-            ],
-        };
-        const wrapper = shallow(<Translation
-            translation={ translation }
-            locale={ DEFAULT_LOCALE }
-            entity={ DEFAULT_ENTITY }
-        />);
-
-        expect(wrapper.find('ul').text()).toContain('Translation memory');
-        expect(wrapper.find('ul').text()).toContain('Transvision');
-
-        expect(wrapper.find('ul li sup')).toHaveLength(1);
-        expect(wrapper.find('ul li sup').text()).toEqual('24');
     });
 });
