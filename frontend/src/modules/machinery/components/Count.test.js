@@ -26,9 +26,15 @@ describe('<Count>', () => {
     it('shows the correct number of remaining translations', () => {
         const machinery = {
             translations: [
+<<<<<<< HEAD
                 { sources: ['microsoft'] },
                 { sources: ['transvision'] },
                 { sources: ['transvision'] },
+=======
+                { sources: ['Microsoft'] },
+                { sources: ['Transvision'] },
+                { sources: ['Transvision'] },
+>>>>>>> Fix bug 1588931 - Localize Machinery sources (#1441)
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
@@ -46,11 +52,19 @@ describe('<Count>', () => {
     it('shows the correct numbers of preferred and remaining translations', () => {
         const machinery = {
             translations: [
+<<<<<<< HEAD
                 { sources: ['translation-memory'] },
                 { sources: ['translation-memory'] },
                 { sources: ['microsoft'] },
                 { sources: ['transvision'] },
                 { sources: ['transvision'] },
+=======
+                { sources: ['Translation memory'] },
+                { sources: ['Translation memory'] },
+                { sources: ['Microsoft'] },
+                { sources: ['Transvision'] },
+                { sources: ['Transvision'] },
+>>>>>>> Fix bug 1588931 - Localize Machinery sources (#1441)
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
