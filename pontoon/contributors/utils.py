@@ -38,7 +38,7 @@ def map_translations_to_events(days, translations):
     return timeline
 
 
-def users_with_translations_counts(start_date=None, query_filters=None, limit=100, all_users=True):
+def users_with_translations_counts(start_date=None, query_filters=None, limit=100, all_users=False):
     """
     Returns contributors list, sorted by count of their translations. Every user instance has
     the following properties:
@@ -69,7 +69,7 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     translations = (
         translations
         .values('user', 'approved', 'fuzzy', 'rejected')
-        .annotate(count=Count('user'))
+        .annotate(count=Count('approved'))
     )
 
     for translation in translations:
@@ -119,27 +119,24 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
             translators[user].add(locale.code)
 
     # Assign properties to user objects.
-    if all_users:
-        contributors = (
-            User.objects
-            .filter(pk__in=user_stats.keys()) | User.objects.filter(username='AnonymousUser')
-        )
-    else:
-        contributors = User.objects.filter(pk__in=user_stats.keys())
+    contributors = User.objects.filter(pk__in=user_stats.keys())
+
+    contributors = list(contributors)
+    if None in user_stats.keys():
+        contributors.insert(0, User(username='Imported', first_name='Imported', email='imported'))
 
     for contributor in contributors:
-        if contributor.username == 'AnonymousUser':
+        if contributor.username == 'Imported':
             user = user_stats[None]
-            contributor.first_name = 'Imported'
-            contributor.user_role = 'System User'
+            contributor.user_role = 'System Role'
         else:
             user = user_stats[contributor.pk]
+            contributor.user_role = contributor.role(managers, translators)
         contributor.translations_count = user['total']
         contributor.translations_approved_count = user['approved']
         contributor.translations_rejected_count = user['rejected']
         contributor.translations_unapproved_count = user['unreviewed']
         contributor.translations_needs_work_count = user['fuzzy']
-        contributor.user_role = contributor.role(managers, translators)
 
     contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
     if limit:
