@@ -586,6 +586,8 @@ class VCSConfiguration(object):
                 resource.path,
             )
 
+            absolute_resource_path = locale_to_source_path(absolute_resource_path)
+
             if project_files.match(absolute_resource_path):
                 resources.append(resource)
 
