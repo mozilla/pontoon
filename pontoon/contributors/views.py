@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Q, Count
 from django.http import (
     Http404,
     HttpResponse,
@@ -257,7 +257,7 @@ class ContributorsMixin(object):
         """
         Return Q() filters for fetching contributors. Fetches all by default.
         """
-        return None
+        return Q()
 
     def get_context_data(self, **kwargs):
         """Top contributors view."""
@@ -272,7 +272,10 @@ class ContributorsMixin(object):
             start_date = None
 
         context['contributors'] = (
-            users_with_translations_counts(start_date, self.contributors_filter(**kwargs))
+            users_with_translations_counts(
+                start_date,
+                self.contributors_filter(**kwargs) & Q(user__isnull=False)
+            )
         )
         context['period'] = period
         return context
