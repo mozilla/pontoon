@@ -2171,8 +2171,17 @@ class EntityQuerySet(models.QuerySet):
                 return False
 
         sanitized_emails = filter(is_email, emails)
+        query = Q()
+
         if sanitized_emails:
-            return Q(translation__locale=locale, translation__user__email__in=sanitized_emails)
+            query |= Q(translation__user__email__in=sanitized_emails)
+
+        if 'imported' in emails:
+            query |= Q(translation__user__isnull=True)
+
+        if sanitized_emails or 'imported' in emails:
+            return query & Q(translation__locale=locale)
+
         return Q()
 
     def between_time_interval(self, locale, start, end):
@@ -2656,7 +2665,11 @@ class TranslationQuerySet(models.QuerySet):
              'gravatar_url': user.gravatar_url(88),
              'translation_count': user.translations_count,
              'role': user.user_role}
-            for user in users_with_translations_counts(None, Q(id__in=self), limit=100)
+            for user in users_with_translations_counts(
+                None,
+                Q(id__in=self),
+                limit=100
+            )
         ]
 
     def counts_per_minute(self):
