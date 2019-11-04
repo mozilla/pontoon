@@ -58,11 +58,11 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     user_stats = {}
     translations = Translation.objects.all()
 
-    if query_filters:
-        translations = translations.filter(query_filters)
-
     if start_date:
         translations = translations.filter(date__gte=start_date)
+
+    if query_filters:
+        translations = translations.filter(query_filters)
 
     # Count('user') returns 0 if the user is None.
     # See https://docs.djangoproject.com/en/1.11/topics/db/aggregation/#values.
@@ -121,8 +121,8 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
 
-    contributors = list(contributors)
     if None in user_stats.keys():
+        contributors = list(contributors)
         contributors.append(User(username='Imported', first_name='Imported', email='imported'))
 
     for contributor in contributors:
