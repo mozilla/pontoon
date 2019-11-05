@@ -341,10 +341,10 @@ class UserProfile(models.Model):
     force_suggestions = models.BooleanField(default=False)
 
     # Used to redirect a user to a custom team page.
-    custom_homepage = models.CharField(max_length=10, blank=True, null=True)
+    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
 
     # Used to display strings from preferred source locale.
-    preferred_source_locale = models.CharField(max_length=10, blank=True, null=True)
+    preferred_source_locale = models.ForeignKey(Locale)
 
     # Used to keep track of start/step no. of user tour.
     # Not started:0, Completed: -1, Finished Step No. otherwise

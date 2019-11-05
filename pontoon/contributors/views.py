@@ -208,6 +208,7 @@ def settings(request):
         'locales': all_locales,
         'locale': custom_homepage_locale,
         'preferred_locales': preferred_locales,
+        'preferred_locale': custom_preferred_source_locale,
         'profile_form': profile_form,
     })
 
