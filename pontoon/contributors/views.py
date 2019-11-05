@@ -196,7 +196,7 @@ def settings(request):
     preferred_locales = list(Locale.objects.all())
 
     # Set preferred source locale
-    preferred_source_locale = request.user.profle.preferred_source_locale
+    preferred_source_locale = request.user.profile.preferred_source_locale
     if preferred_source_locale:
         custom_preferred_source_locale = (
             Locale.objects.filter(code=preferred_source_locale).first()
@@ -208,7 +208,6 @@ def settings(request):
         'locales': all_locales,
         'locale': custom_homepage_locale,
         'preferred_locales': preferred_locales,
-        'preferred_locale': custom_preferred_source_locale,
         'profile_form': profile_form,
     })
 

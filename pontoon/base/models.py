@@ -333,41 +333,6 @@ User.add_to_class('menu_notifications', menu_notifications)
 User.add_to_class('serialized_notifications', serialized_notifications)
 
 
-class UserProfile(models.Model):
-    # This field is required.
-    user = models.OneToOneField(User, related_name='profile')
-    # Other fields here.
-    quality_checks = models.BooleanField(default=True)
-    force_suggestions = models.BooleanField(default=False)
-
-    # Used to redirect a user to a custom team page.
-    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
-
-    # Used to display strings from preferred source locale.
-    preferred_source_locale = models.ForeignKey(Locale)
-
-    # Used to keep track of start/step no. of user tour.
-    # Not started:0, Completed: -1, Finished Step No. otherwise
-    tour_status = models.IntegerField(default=0)
-
-    # Defines the order of locales displayed in locale tab.
-    locales_order = ArrayField(
-        models.PositiveIntegerField(),
-        default=list,
-        blank=True,
-    )
-
-    @property
-    def sorted_locales(self):
-        locales = Locale.objects.filter(pk__in=self.locales_order)
-        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
-
-    @property
-    def sorted_locales_codes(self):
-        """Return the codes of locales that contributor set in his preferences."""
-        return [l.code for l in self.sorted_locales]
-
-
 class PermissionChangelog(models.Model):
     """
     Track changes of roles added or removed from a user.
@@ -1380,6 +1345,41 @@ class Project(AggregatedStats):
         return list(
             self.locales.all().values_list('code', flat=True)
         )
+
+
+class UserProfile(models.Model):
+    # This field is required.
+    user = models.OneToOneField(User, related_name='profile')
+    # Other fields here.
+    quality_checks = models.BooleanField(default=True)
+    force_suggestions = models.BooleanField(default=False)
+
+    # Used to redirect a user to a custom team page.
+    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
+
+    # Used to display strings from preferred source locale.
+    preferred_source_locale = models.ForeignKey(Locale, blank=True, null=True)
+
+    # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
+    tour_status = models.IntegerField(default=0)
+
+    # Defines the order of locales displayed in locale tab.
+    locales_order = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        blank=True,
+    )
+
+    @property
+    def sorted_locales(self):
+        locales = Locale.objects.filter(pk__in=self.locales_order)
+        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
+
+    @property
+    def sorted_locales_codes(self):
+        """Return the codes of locales that contributor set in his preferences."""
+        return [l.code for l in self.sorted_locales]
 
 
 @python_2_unicode_compatible
