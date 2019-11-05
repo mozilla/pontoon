@@ -120,8 +120,8 @@ class XLIFFResource(ParsedResource):
             if node.get('target-language'):
                 node.set('target-language', locale_code)
 
-        with open(self.path, 'w') as f:
-            f.writelines(str(self.xliff_file))
+        with open(self.path, 'wb') as f:
+            f.write(bytes(self.xliff_file))
 
 
 def parse(path, source_path=None, locale=None):

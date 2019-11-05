@@ -199,7 +199,7 @@ class ContributorTimelineViewTests(UserTestCase):
                     'count': count,
                     'project': self.project,
                     'translation': translations[0][0],
-                } for (dt, count), translations in self.translations.items()[10:20]
+                } for (dt, count), translations in list(self.translations.items())[10:20]
             ]
         )
 
