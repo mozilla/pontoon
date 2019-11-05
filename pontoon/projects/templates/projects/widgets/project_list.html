@@ -42,7 +42,7 @@
       {% if project.total_strings %}
         {{ ProgressChart.span(chart, chart_link, link_parameter) }}
       {% else %}
-        <span class="not">Not synced yet</span>
+        <span class="not-ready">Not synced yet</span>
       {% endif %}
     </td>
     {% if request %}
@@ -50,7 +50,7 @@
         {% if project.total_strings %}
           <span>{{ project.avg_string_count|intcomma }}</span>
         {% else %}
-          <span class="not">Not synced yet</span>
+          <span class="not-ready">Not synced yet</span>
         {% endif %}
       </td>
       <td class="check fa fa-fw"></td>
