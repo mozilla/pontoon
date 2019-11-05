@@ -11,8 +11,9 @@ table.table.project-list.hidden {
   vertical-align: middle;
 }
 
-/* Used to designate from main style, e.g. project not active, deadline not set, no latest activity... */
-.table td .not {
+/* Used to designate from main style, e.g. deadline not set, no latest activity, project not ready... */
+.table td .not,
+.table td .not-ready {
   font-style: italic;
 }
 
