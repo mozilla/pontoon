@@ -563,11 +563,12 @@ class VCSConfiguration(object):
             ProjectFiles(locale_code, [self.parsed_configuration]),
         )
 
-    def l10n_path(self, locale, reference_path):
+    def l10n_path(self, locale, absolute_resource_path):
         """
         Return l10n path for the given locale and reference path.
         """
         project_files = self.get_or_set_project_files(locale.code)
+        reference_path = locale_to_source_path(absolute_resource_path)
 
         m = project_files.match(reference_path)
         return m[0] if m is not None else None
@@ -585,10 +586,9 @@ class VCSConfiguration(object):
                 self.vcs_project.source_directory_path,
                 resource.path,
             )
+            reference_path = locale_to_source_path(absolute_resource_path)
 
-            absolute_resource_path = locale_to_source_path(absolute_resource_path)
-
-            if project_files.match(absolute_resource_path):
+            if project_files.match(reference_path):
                 resources.append(resource)
 
         return resources
