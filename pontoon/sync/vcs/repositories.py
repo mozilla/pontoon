@@ -354,7 +354,7 @@ class GitRepository(VCSRepository):
         code, output, error = self.execute(
             ['git', 'rev-parse', 'HEAD'],
         )
-        return output.strip() if code == 0 else None
+        return output.strip().decode('utf-8') if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
@@ -377,7 +377,7 @@ class HgRepository(VCSRepository):
             cwd=self.path,
             log_errors=True
         )
-        return output.strip() if code == 0 else None
+        return output.strip().decode('utf-8') if code == 0 else None
 
     def _strip(self, rev):
         "Ignore trailing + in revision number. It marks local changes."
