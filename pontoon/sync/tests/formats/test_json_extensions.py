@@ -95,11 +95,11 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         expected_string = dedent("""
             {
               "SourceString": {
-                "message": "New Translated String", 
+                "message": "New Translated String",
                 "description": "Comment"
               }
             }
-        """) # noqa
+        """)
 
         self.run_save_basic(
             input_string,

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import pytest
 
@@ -125,7 +125,7 @@ def test_batch_edit_translations_no_permissions(
     )
 
     assert response.status_code == 403
-    assert 'Forbidden' in response.content
+    assert b'Forbidden' in response.content
 
 
 @pytest.mark.django_db
