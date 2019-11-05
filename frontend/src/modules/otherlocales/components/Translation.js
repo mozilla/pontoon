@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Localized } from '@fluent/react';
+import { Link } from 'react-router-dom';
 
 import './Translation.css';
 
@@ -64,8 +65,8 @@ export default class Translation extends React.Component<Props> {
                         $locale={ translation.locale }
                         $code={ translation.code }
                     >
-                        <a
-                            href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
+                        <Link
+                            to={ `/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
                             target='_blank'
                             rel='noopener noreferrer'
                             title='Open string in { $locale } ({ $code })'
@@ -73,7 +74,7 @@ export default class Translation extends React.Component<Props> {
                         >
                             { translation.locale }
                             <span>{ translation.code }</span>
-                        </a>
+                        </Link>
                     </Localized>
                 </header>
                 <p
