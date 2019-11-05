@@ -4,6 +4,8 @@ import pytest
 
 from django.urls import reverse
 
+from waffle.testutils import override_flag
+
 from pontoon.base.models import Translation
 from pontoon.test.factories import (
     ProjectFactory,
@@ -196,11 +198,12 @@ def test_view_translate_invalid_pl(
     redirect home.
     """
     # this doesnt seem to redirect as the comment suggests
-    response = client.get(
-        '/%s/%s/path/'
-        % (locale_a.code, project_b.slug)
-    )
-    assert response.status_code == 404
+    with override_flag('translate_next', active=True):
+        response = client.get(
+            '/%s/%s/path/'
+            % (locale_a.code, project_b.slug)
+        )
+        assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -225,11 +228,13 @@ def test_view_translate_not_authed_public_project(
     TranslatedResourceFactory.create(
         resource=resource, locale=locale_a,
     )
-    response = client.get(
-        '/%s/%s/%s/'
-        % (locale_a.code, project.slug, resource.path)
-    )
-    assert response.status_code == 200
+
+    with override_flag('translate_next', active=True):
+        response = client.get(
+            '/%s/%s/%s/'
+            % (locale_a.code, project.slug, resource.path)
+        )
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
