@@ -26,24 +26,7 @@ def test_translate_template(client, project_locale_a, resource_a):
     )
 
     response = client.get(url)
-<<<<<<< HEAD
     assert b'Pontoon' in response.content
-=======
-    assert response.status_code == 302
-
-    with override_flag('translate_next', active=True):
-        response = client.get(url)
-        assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_translate_template(client):
-    url = reverse('pontoon.translate.next')
-
-    with override_flag('translate_next', active=True):
-        response = client.get(url)
-        assert b'Pontoon' in response.content
->>>>>>> Bug 1585251 Fix some failing tests  (#1428)
 
 
 @pytest.mark.django_db

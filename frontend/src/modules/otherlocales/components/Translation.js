@@ -102,8 +102,8 @@ export default class Translation extends React.Component<Props> {
                         $locale={ translation.locale }
                         $code={ translation.code }
                     >
-                        <a
-                            href={ `/translate/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
+                        <Link
+                            to={ `/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
                             target='_blank'
                             rel='noopener noreferrer'
                             title='Open string in { $locale } ({ $code })'
@@ -111,7 +111,7 @@ export default class Translation extends React.Component<Props> {
                         >
                             { translation.locale }
                             <span>{ translation.code }</span>
-                        </a>
+                        </Link>
                     </Localized>
 >>>>>>> Fix bug 1545964 - Confusing Copy Into Translate tooltip (#1417)
                 </header>
