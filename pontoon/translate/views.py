@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 import requests
 
-import waffle
-
 from django import http
 from django.conf import settings
 from django.contrib import messages
@@ -105,25 +103,17 @@ def get_preferred_locale(request):
     return None
 
 
-def translate(request, locale=None, project=None, resource=None):
-    # Redirect the user to the old Translate page if needed.
-    # To be removed as part of bug 1527853.
-    if not waffle.flag_is_active(request, 'translate_next'):
-        raise Http404
+def translate(request, locale, project, resource):
+    # Validate Locale
+    locale = get_object_or_404(Locale, code=locale)
 
-    # We make parameters optional to simplify testing
-    if locale and project:
+    # Validate Project
+    if project.lower() != 'all-projects':
+        project = get_object_or_404(Project.objects.available(), slug=project)
 
-        # Validate Locale
-        locale = get_object_or_404(Locale, code=locale)
-
-        # Validate Project
-        if project.lower() != 'all-projects':
-            project = get_object_or_404(Project.objects.available(), slug=project)
-
-            # Validate ProjectLocale
-            if locale not in project.locales.all():
-                raise Http404
+        # Validate ProjectLocale
+        if locale not in project.locales.all():
+            raise Http404
 
     context = {
         'locale': get_preferred_locale(request),

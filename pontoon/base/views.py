@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import logging
 from datetime import datetime
 
-import waffle
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -56,23 +54,6 @@ log = logging.getLogger(__name__)
 
 def translate(request, locale, slug, part):
     """Translate view."""
-    # Redirect the user to the Translate.Next app if needed.
-    # To be removed as part of bug 1527853.
-    if waffle.flag_is_active(request, 'translate_next'):
-        url = reverse(
-            'pontoon.translate.next',
-            kwargs={
-                'project': slug,
-                'locale': locale,
-                'resource': part,
-            }
-        )
-        query = request.GET.urlencode()
-        if query:
-            url += '?' + query
-
-        return redirect(url)
-
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
