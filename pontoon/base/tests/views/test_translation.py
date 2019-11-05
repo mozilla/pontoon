@@ -4,14 +4,10 @@ import pytest
 
 from django.urls import reverse
 
+from waffle.testutils import override_flag
+
 from pontoon.base.models import Translation
-from pontoon.test.factories import (
-    ProjectFactory,
-    ProjectLocaleFactory,
-    ResourceFactory,
-    TranslationFactory,
-    TranslatedResourceFactory,
-)
+from pontoon.test.factories import TranslationFactory
 
 
 @pytest.fixture
@@ -196,40 +192,12 @@ def test_view_translate_invalid_pl(
     redirect home.
     """
     # this doesnt seem to redirect as the comment suggests
-    response = client.get(
-        '/%s/%s/path/'
-        % (locale_a.code, project_b.slug)
-    )
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_view_translate_not_authed_public_project(
-    client,
-    locale_a,
-    settings_debug,
-):
-    """
-    If the user is not authenticated and we're translating project
-    ID 1, return a 200.
-    """
-    project = ProjectFactory.create(slug='valid-project')
-    ProjectLocaleFactory.create(
-        project=project, locale=locale_a,
-    )
-    resource = ResourceFactory.create(
-        project=project,
-        path='foo.lang',
-        total_strings=1,
-    )
-    TranslatedResourceFactory.create(
-        resource=resource, locale=locale_a,
-    )
-    response = client.get(
-        '/%s/%s/%s/'
-        % (locale_a.code, project.slug, resource.path)
-    )
-    assert response.status_code == 200
+    with override_flag('translate_next', active=True):
+        response = client.get(
+            '/%s/%s/path/'
+            % (locale_a.code, project_b.slug)
+        )
+        assert response.status_code == 404
 
 
 @pytest.mark.django_db

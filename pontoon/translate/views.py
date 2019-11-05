@@ -11,11 +11,9 @@ from django.contrib.staticfiles.views import serve
 from django.http import Http404
 from django.shortcuts import (
     get_object_or_404,
-    redirect,
     render,
 )
 from django.template import engines
-from django.urls import reverse
 from django.views.decorators.csrf import (
     csrf_exempt,
     ensure_csrf_cookie,
@@ -25,8 +23,6 @@ from pontoon.base.models import (
     Locale,
     Project,
 )
-
-from . import URL_BASE
 
 
 UPSTREAM = 'http://localhost:3000'
@@ -65,11 +61,7 @@ def catchall_dev(request, context=None):
     if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
         return http.HttpResponseRedirect(UPSTREAM + request.path)
 
-    # Until we change it, this app doesn't live at the root of our website.
-    # Since the frontend server is at the root, and won't recognize our URL,
-    # we need to remove the base part of the path before proxying.
-    request_path = request.path.replace(URL_BASE, '')
-    upstream_url = UPSTREAM + request_path
+    upstream_url = UPSTREAM + request.path
     method = request.META['REQUEST_METHOD'].lower()
     response = getattr(requests, method)(upstream_url, stream=True)
     content_type = response.headers.get('Content-Type')
@@ -117,19 +109,7 @@ def translate(request, locale=None, project=None, resource=None):
     # Redirect the user to the old Translate page if needed.
     # To be removed as part of bug 1527853.
     if not waffle.flag_is_active(request, 'translate_next'):
-        url = reverse(
-            'pontoon.translate',
-            kwargs={
-                'slug': project,
-                'locale': locale,
-                'part': resource,
-            }
-        )
-        query = request.GET.urlencode()
-        if query:
-            url += '?' + query
-
-        return redirect(url)
+        raise Http404
 
     # We make parameters optional to simplify testing
     if locale and project:
