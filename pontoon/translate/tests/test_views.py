@@ -17,11 +17,18 @@ def user_arabic(user_a):
 
 
 @pytest.mark.django_db
-def test_translate_behind_flag(client):
-    url = reverse('pontoon.translate.next')
+def test_translate_behind_flag(client, project_locale_a, resource_a):
+    url = reverse(
+        'pontoon.translate',
+        kwargs={
+            'locale': project_locale_a.locale.code,
+            'project': project_locale_a.project.slug,
+            'resource': 'all-resources',
+        },
+    )
 
     response = client.get(url)
-    assert response.status_code == 302
+    assert response.status_code == 404
 
     with override_flag('translate_next', active=True):
         response = client.get(url)
@@ -29,8 +36,15 @@ def test_translate_behind_flag(client):
 
 
 @pytest.mark.django_db
-def test_translate_template(client):
-    url = reverse('pontoon.translate.next')
+def test_translate_template(client, project_locale_a, resource_a):
+    url = reverse(
+        'pontoon.translate',
+        kwargs={
+            'locale': project_locale_a.locale.code,
+            'project': project_locale_a.project.slug,
+            'resource': 'all-resources',
+        },
+    )
 
     with override_flag('translate_next', active=True):
         response = client.get(url)
@@ -40,7 +54,7 @@ def test_translate_template(client):
 @pytest.mark.django_db
 def test_translate_validate_parameters(client, project_locale_a, resource_a):
     url_invalid = reverse(
-        'pontoon.translate.next',
+        'pontoon.translate',
         kwargs={
             'locale': 'locale',
             'project': 'project',
@@ -49,7 +63,7 @@ def test_translate_validate_parameters(client, project_locale_a, resource_a):
     )
 
     url_valid = reverse(
-        'pontoon.translate.next',
+        'pontoon.translate',
         kwargs={
             'locale': project_locale_a.locale.code,
             'project': project_locale_a.project.slug,
