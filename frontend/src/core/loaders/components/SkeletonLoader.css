@@ -1,0 +1,23 @@
+.skeleton-loader p {
+    height: 0.875rem;
+    background-color: #E2E2E2;
+    animation: fading 1.5s infinite;
+}
+
+.skeleton-loader .text-2 {
+    width: 15%;
+}
+
+@keyframes fading {
+    0% {
+        opacity: .1;
+    }
+  
+    50% {
+        opacity: .2;
+    }
+  
+    100% {
+        opacity: .1;
+    }
+}

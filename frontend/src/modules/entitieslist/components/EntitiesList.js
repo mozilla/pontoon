@@ -15,7 +15,7 @@ import * as batchactions from 'modules/batchactions';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import Entity from './Entity';
-import { CircleLoader } from 'core/loaders'
+import { SkeletonLoader } from 'core/loaders';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { Entity as EntityType } from 'core/api';
@@ -335,7 +335,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 pageStart={ 1 }
                 loadMore={ this.getMoreEntities }
                 hasMore={ hasMore }
-                loader={ <CircleLoader key={0} /> }
+                loader={ <SkeletonLoader key={0} /> }
                 useWindow={ false }
                 threshold={ 600 }
             >
