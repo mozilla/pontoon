@@ -121,14 +121,14 @@ def translate_locale_agnostic(request, slug, part):
         if locale and project_locales.filter(code=locale).exists():
             path = reverse(
                 'pontoon.translate',
-                kwargs=dict(slug=slug, locale=locale, part=part))
+                kwargs=dict(project=slug, locale=locale, resource=part))
             return redirect("%s%s" % (path, query))
 
     locale = utils.get_project_locale_from_request(request, project_locales)
     path = (
         reverse(
             'pontoon.translate',
-            kwargs=dict(slug=slug, locale=locale, part=part))
+            kwargs=dict(project=slug, locale=locale, resource=part))
         if locale
         else reverse(
             'pontoon.projects.project',
