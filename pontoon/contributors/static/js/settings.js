@@ -38,7 +38,7 @@ $(function() {
       },
       success: function(data) {
         if (data === 'ok') {
-          Pontoon.endLoader('Custom source locale saved.');
+          Pontoon.endLoader('Preferred source locale saved.');
         }
       },
       error: function(request) {

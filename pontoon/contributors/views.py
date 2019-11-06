@@ -211,7 +211,6 @@ def settings(request):
 
     default_preferred_source_locale = Locale(name='Default project locale', code='')
     preferred_locales = list(Locale.objects.all())
-    preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale
     preferred_source_locale = request.user.profile.preferred_source_locale
