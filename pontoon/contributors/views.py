@@ -209,7 +209,7 @@ def settings(request):
     else:
         custom_homepage_locale = default_homepage_locale
 
-    default_preferred_source_locale = Locale(name='', code='')
+    default_preferred_source_locale = Locale(name='Default project locale', code='')
     preferred_locales = list(Locale.objects.all())
     preferred_locales.insert(0, default_preferred_source_locale)
 

@@ -1,25 +1,35 @@
-#homepage {
+#homepage,
+#preferred-locale {
   margin-top: 30px;
 }
 
-#homepage .label {
+#homepage .label,
+#preferred-locale .label {
   color: #AAA;
   display: inline-block;
   font-size: 16px;
   font-weight: 300;
   margin: 6px 10px 0 0;
+  text-align: left;
   vertical-align: top;
 }
 
-#homepage .locale-selector {
+#homepage .label {
+  padding-right: 50px;
+}
+
+#homepage .locale-selector,
+#preferred-locale .locale-selector {
   display: inline-block;
 }
 
-#homepage .locale-selector .locale.select {
+#homepage .locale-selector .locale.select,
+#preferred-locale .locale-selector .locale.select {
   width: 280px;
 }
 
-#homepage .locale-selector .locale.select .button {
+#homepage .locale-selector .locale.select .button,
+#preferred-locale .locale-selector .locale.select .button {
   background: #272A2F;
   color: #AAAAAA;
   font-size: 16px;
@@ -30,7 +40,8 @@
   width: 100%;
 }
 
-#homepage .locale-selector .locale.select .menu {
+#homepage .locale-selector .locale.select .menu,
+#preferred-locale .locale-selector .locale.select .menu {
   background: #272A2F;
   border: 1px solid #333941;
   border-top: none;
@@ -51,23 +62,6 @@
 #main .controls .cancel {
   float: none;
   margin: 9px;
-}
-
-#preferred-locale h3 {
-  float: left;
-  padding: 0 0 40px 0;
-}
-
-#preferred-locale .locale-selector {
-  float: right;
-  padding-top: 4px;
-}
-
-#preferred-locale .locale-selector .locale-select .menu {
-  top: 36px;
-  left: -1px;
-  width: 282px;
-  z-index: 30;
 }
 
 #profile-form {
