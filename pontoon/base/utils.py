@@ -13,7 +13,6 @@ import zipfile
 from compare_locales.paths.matcher import (
     PatternParser,
     Star,
-    Starstar,
     Variable,
 )
 
@@ -682,12 +681,14 @@ def glob_to_regex(glob):
     """
     pattern = PatternParser().parse(glob)
     regex = r""
-
     for part in pattern:
-        if isinstance(part, Starstar):
-            regex += r"(.*)"
-        elif isinstance(part, Star):
-            regex += r"([^/]*)"
+        if isinstance(part, Star):
+            # Extract the regex pattern
+            regex += r'(' + re.sub(
+                r'\(\?P<s[0-9]+>',
+                '',
+                part.regex_pattern(None),
+            )
         elif isinstance(part, Variable):
             raise ValueError("Variables in Glob expressions aren't supported")
         else:
