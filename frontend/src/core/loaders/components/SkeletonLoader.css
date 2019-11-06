@@ -2,6 +2,16 @@
     height: 0.875rem;
     background-color: #E2E2E2;
     animation: fading 1.5s infinite;
+    overflow: hidden;
+}
+
+.skeleton-loader .entity {
+    pointer-events: none;
+}
+
+div.skeleton-loader .translation-string {
+    margin-left: 2%;
+    width: 47%;
 }
 
 .skeleton-loader .text-2 {
