@@ -70,8 +70,8 @@ def test_view_lang_agnostic_authed(redirect_mock, reverse_mock, projects_mock,
         == [('pontoon.translate',),
             {'kwargs': {
                 'locale': 23,
-                'part': u'BAR',
-                'slug': u'FOO'}}])
+                'resource': u'BAR',
+                'project': u'FOO'}}])
 
     # redirect was called with reverse result
     assert(
@@ -138,8 +138,8 @@ def test_view_lang_agnostic_anon_available_accept_language(redirect_mock,
         == [('pontoon.translate',),
             {'kwargs': {
                 'locale': 23,
-                'part': u'BAR',
-                'slug': u'FOO'}}])
+                'resource': u'BAR',
+                'project': u'FOO'}}])
 
     # redirect was called with reverse result
     assert (
