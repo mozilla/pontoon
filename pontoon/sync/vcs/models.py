@@ -139,8 +139,9 @@ class VCSProject(object):
         )
 
         # Unify filesystem and data model file extensions
-        modified_files = map(source_to_locale_path, modified_files)
-        removed_files = map(source_to_locale_path, removed_files)
+        if not self.configuration:
+            modified_files = map(source_to_locale_path, modified_files)
+            removed_files = map(source_to_locale_path, removed_files)
 
         if source_resources_repo.source_repo or not last_revision:
             def get_path(path):
@@ -435,7 +436,8 @@ class VCSProject(object):
             paths = self.resource_paths_without_config()
 
         for path in paths:
-            path = source_to_locale_path(path)
+            if not self.configuration:
+                path = source_to_locale_path(path)
             yield os.path.relpath(path, self.source_directory_path)
 
     def resource_paths_with_config(self):
@@ -586,9 +588,8 @@ class VCSConfiguration(object):
                 self.vcs_project.source_directory_path,
                 resource.path,
             )
-            reference_path = locale_to_source_path(absolute_resource_path)
 
-            if project_files.match(reference_path):
+            if project_files.match(absolute_resource_path):
                 resources.append(resource)
 
         return resources

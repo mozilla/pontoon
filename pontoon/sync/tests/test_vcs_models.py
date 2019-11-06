@@ -265,7 +265,7 @@ class VCSConfigurationTests(TestCase):
 
         self.resource_amo = ResourceFactory.create(
             project=self.db_project,
-            path='values/amo.po',
+            path='values/amo.pot',
         )
         self.resource_strings = ResourceFactory.create(
             project=self.db_project,
