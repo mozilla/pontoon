@@ -257,10 +257,9 @@ class UserPreferredSourceLocaleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserPreferredSourceLocaleForm, self).__init__(*args, **kwargs)
-        all_locales = list(Locale.objects.all().values_list('code', 'name'))
 
-        self.fields['preferred_source_locale'] = forms.ChoiceField(
-            all_locales, required=False)
+        self.fields['preferred_source_locale'] = forms.ModelChoiceField(
+            queryset=Locale.objects.all(), required=False)
 
 
 class UserLocalesOrderForm(forms.ModelForm):

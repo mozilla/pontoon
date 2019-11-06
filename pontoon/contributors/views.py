@@ -150,6 +150,22 @@ def save_custom_homepage(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@transaction.atomic
+def save_custom_preferred_source_locale(request):
+    """Save custom preferred source locale """
+    form = forms.UserPreferredSourceLocaleForm(request.POST, instance=request.user.profile)
+
+    if not form.is_valid():
+        error = escape(u'\n'.join(form.errors['preferred_source_locale']))
+        return HttpResponseBadRequest(error)
+
+    form.save()
+
+    return HttpResponse('ok')
+
+
+@login_required(redirect_field_name='', login_url='/403')
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
@@ -193,7 +209,9 @@ def settings(request):
     else:
         custom_homepage_locale = default_homepage_locale
 
+    default_preferred_source_locale = Locale(name='', code='')
     preferred_locales = list(Locale.objects.all())
+    preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale
     preferred_source_locale = request.user.profile.preferred_source_locale
@@ -201,6 +219,8 @@ def settings(request):
         custom_preferred_source_locale = (
             Locale.objects.filter(code=preferred_source_locale).first()
         )
+    else:
+        custom_preferred_source_locale = default_preferred_source_locale
 
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
@@ -208,6 +228,7 @@ def settings(request):
         'locales': all_locales,
         'locale': custom_homepage_locale,
         'preferred_locales': preferred_locales,
+        'preferred_locale': custom_preferred_source_locale,
         'profile_form': profile_form,
     })
 

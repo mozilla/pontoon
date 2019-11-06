@@ -60,10 +60,13 @@
 
 #preferred-locale .locale-selector {
   float: right;
-  padding-top: 4px; 
+  padding-top: 4px;
 }
 
 #preferred-locale .locale-selector .locale-select .menu {
+  top: 36px;
+  left: -1px;
+  width: 282px;
   z-index: 30;
 }
 
