@@ -689,8 +689,7 @@ def glob_to_regex(glob):
         elif isinstance(part, Star):
             regex += r"([^/]*)"
         elif isinstance(part, Variable):
-            # Variables are unsupportedignored because
-            pass
+            raise ValueError("Variables in Glob expressions aren't supported")
         else:
             # re.escape escapes all non-alphanum characters on Python 2:
             # On Python 2:

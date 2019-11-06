@@ -30,9 +30,14 @@ def test_util_glob_to_regex():
     reason="re.escape escapes non-alphanum characters differently between Python 2 and Python 3."
 )
 def test_util_glob_to_regex_python2():
-    assert glob_to_regex('{ variable }/foo*') == '^\/foo([^/]*)$'  # noqa: W605
-    assert glob_to_regex('bar/**/foo*') == '^bar\/(.*)foo([^/]*)$'  # noqa: W605
+    assert glob_to_regex('{ variable }/foo*') == r'^\/foo([^/]*)$'
+    assert glob_to_regex('bar/**/foo*') == r'^bar\/(.*)foo([^/]*)$'
 
+
+def test_util_glob_to_regex_unsupported_variables():
+    """Raise an error if the user tries to use variables in the glob expression."""
+    with pytest.raises(ValueError):
+        glob_to_regex('{ variable }/smth')
 
 @pytest.mark.skipif(
     sys.version_info[0] < 3,
