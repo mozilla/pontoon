@@ -20,7 +20,7 @@ def test_form_project_tag_resources(client, project_a, tag_a):
     form = LinkTagResourcesAdminForm(project=project_a)
     assert not form.is_valid()
     assert form.project == project_a
-    assert form.fields.keys() == ['tag', 'type', 'data', 'search']
+    assert list(form.fields.keys()) == ['tag', 'type', 'data', 'search']
     assert (
         list(form.fields['data'].choices)
         == list(
