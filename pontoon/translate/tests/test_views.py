@@ -4,8 +4,6 @@ import pytest
 
 from django.urls import reverse
 
-from waffle.testutils import override_flag
-
 from pontoon.translate.views import get_preferred_locale
 
 
@@ -14,25 +12,6 @@ def user_arabic(user_a):
     user_a.profile.custom_homepage = 'ar'
     user_a.save()
     return user_a
-
-
-@pytest.mark.django_db
-def test_translate_behind_flag(client, project_locale_a, resource_a):
-    url = reverse(
-        'pontoon.translate',
-        kwargs={
-            'locale': project_locale_a.locale.code,
-            'project': project_locale_a.project.slug,
-            'resource': 'all-resources',
-        },
-    )
-
-    response = client.get(url)
-    assert response.status_code == 404
-
-    with override_flag('translate_next', active=True):
-        response = client.get(url)
-        assert response.status_code == 200
 
 
 @pytest.mark.django_db
@@ -46,9 +25,8 @@ def test_translate_template(client, project_locale_a, resource_a):
         },
     )
 
-    with override_flag('translate_next', active=True):
-        response = client.get(url)
-        assert b'Pontoon' in response.content
+    response = client.get(url)
+    assert b'Pontoon' in response.content
 
 
 @pytest.mark.django_db
@@ -71,12 +49,11 @@ def test_translate_validate_parameters(client, project_locale_a, resource_a):
         }
     )
 
-    with override_flag('translate_next', active=True):
-        response = client.get(url_invalid)
-        assert response.status_code == 404
+    response = client.get(url_invalid)
+    assert response.status_code == 404
 
-        response = client.get(url_valid)
-        assert response.status_code == 200
+    response = client.get(url_valid)
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
