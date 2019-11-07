@@ -1358,7 +1358,7 @@ class UserProfile(models.Model):
     custom_homepage = models.CharField(max_length=20, blank=True, null=True)
 
     # Used to display strings from preferred source locale.
-    preferred_source_locale = models.ForeignKey(Locale, blank=True, null=True)
+    preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
 
     # Used to keep track of start/step no. of user tour.
     # Not started:0, Completed: -1, Finished Step No. otherwise

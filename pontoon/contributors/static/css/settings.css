@@ -1,35 +1,31 @@
-#homepage,
-#preferred-locale {
+#heading {
   margin-top: 30px;
 }
 
-#homepage .label,
-#preferred-locale .label {
+#heading .clear {
+  clear: both;
+  margin-top: 10px;
+}
+
+#heading .label {
   color: #AAA;
   display: inline-block;
   font-size: 16px;
   font-weight: 300;
   margin: 6px 10px 0 0;
-  text-align: left;
+  text-align: right;
   vertical-align: top;
 }
 
-#homepage .label {
-  padding-right: 50px;
-}
-
-#homepage .locale-selector,
-#preferred-locale .locale-selector {
+#heading .locale-selector {
   display: inline-block;
 }
 
-#homepage .locale-selector .locale.select,
-#preferred-locale .locale-selector .locale.select {
-  width: 280px;
+#heading .locale-selector .locale.select {
+  width: 270px;
 }
 
-#homepage .locale-selector .locale.select .button,
-#preferred-locale .locale-selector .locale.select .button {
+#heading .locale-selector .locale.select .button {
   background: #272A2F;
   color: #AAAAAA;
   font-size: 16px;
@@ -40,8 +36,7 @@
   width: 100%;
 }
 
-#homepage .locale-selector .locale.select .menu,
-#preferred-locale .locale-selector .locale.select .menu {
+#heading .locale-selector .locale.select .menu {
   background: #272A2F;
   border: 1px solid #333941;
   border-top: none;
