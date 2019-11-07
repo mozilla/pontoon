@@ -9,7 +9,7 @@
     pointer-events: none;
 }
 
-div.skeleton-loader .translation-string {
+ul.skeleton-loader .translation-string {
     margin-left: 2%;
     width: 47%;
 }
