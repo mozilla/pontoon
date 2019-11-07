@@ -137,6 +137,8 @@ To upgrade dependency to a specific version, run the following commands:
     make build
 ```
 
+Note that, in order to add new dependencies, you need to have `yarn` installed and perform the actions locally (outside docker). You might want to remove the `node_modules` folder after you've run the install or update command (and the `package.json` and `yarn.lock` files have been updated) and before rebuilding the image, to reduce the size of the docker context.
+
 
 ## Type checking
 
@@ -144,7 +146,7 @@ Our code uses Flow to enforce type checking. This is a good way to significantly
 
 To check for Flow issues during development while you edit files, run:
 
-    yarn flow:dev
+    $ make flow
 
 To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/). Additionally, you can read through the [web-ext guide](https://github.com/mozilla/web-ext/blob/master/CONTRIBUTING.md#check-for-flow-errors) for hints on how to solve common Flow errors.
 
@@ -159,7 +161,7 @@ Tests are run using [`jest`](https://facebook.github.io/jest/). We use [`enzyme`
 
 To run the test suite, use:
 
-    $ yarn test
+    $ make test-frontend
 
 It will start an auto-reloading test runner, that will refresh every time you make a change to the code or tests.
 
@@ -171,10 +173,10 @@ describe('<Component>', () => {
 });
 ```
 
-Individual tests follow `mocha`'s syntax:
+Individual tests follow `mocha`'s descriptive syntax. Try to be as explicit as possible in your test description. If you cannot, that probably means the test you want to write is not focused enough. Each test should be as small as possible, testing one single thing. It's better to have many small tests than one single, humongous test. Code repetition is tolerated in unit tests.
 
 ```javascript
-it('does something', () => {
+it('does something specific', () => {
     // unit test here
 });
 ```
