@@ -1,5 +1,4 @@
-# Translate.Next — a better Translate app for Pontoon
-
+# Translate front-end app
 
 ## Tools
 
@@ -72,10 +71,6 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 
 ## Running and deploying
-
-### This feature is behind a Flag
-
-While this is under development, the feature is hidden behing a feature flag, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_flag translate_next --everyone --create`, then restart your web server. To turn it off, run `./manage.py waffle_flag translate_next --deactivate`.
 
 ### Production
 
