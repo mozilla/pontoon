@@ -1,6 +1,6 @@
 #app {
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 25% 75%;
     grid-template-rows: 60px auto;
     height: 100vh;
 }

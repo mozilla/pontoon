@@ -6,7 +6,6 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { History } from 'modules/history';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
@@ -14,16 +13,13 @@ import type { Entity, OtherLocaleTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
 
 type Props = {|
     entity: Entity,
-    history: HistoryState,
     isReadOnlyEditor: boolean,
-    isTranslator: boolean,
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
@@ -31,9 +27,7 @@ type Props = {|
     preferredLocalesCount: number,
     parameters: NavigationParams,
     user: UserState,
-    deleteTranslation: (number) => void,
     updateEditorTranslation: (string, string) => void,
-    updateTranslationStatus: (number, ChangeOperation) => void,
     searchMachinery: (string) => void,
 |};
 
@@ -47,9 +41,7 @@ export default class Helpers extends React.Component<Props> {
     render() {
         const {
             entity,
-            history,
             isReadOnlyEditor,
-            isTranslator,
             locale,
             machinery,
             otherlocales,
@@ -57,26 +49,15 @@ export default class Helpers extends React.Component<Props> {
             preferredLocalesCount,
             parameters,
             user,
-            deleteTranslation,
             updateEditorTranslation,
-            updateTranslationStatus,
             searchMachinery,
         } = this.props;
 
-        const historyCount = history.translations.length;
         const machineryCount = machinery.translations.length;
         const otherlocalesCount = otherlocales.translations.length;
 
         return <Tabs>
             <TabList>
-                <Tab>
-                    <Localized id='entitydetails-Helpers--history'>
-                        { 'History' }
-                    </Localized>
-                    { !historyCount ? null :
-                    <span className={ 'count' }>{ historyCount }</span>
-                    }
-                </Tab>
                 <Tab>
                     <Localized id='entitydetails-Helpers--machinery'>
                         { 'Machinery' }
@@ -98,19 +79,6 @@ export default class Helpers extends React.Component<Props> {
                 </Tab>
             </TabList>
 
-            <TabPanel>
-                <History
-                    entity={ entity }
-                    history={ history }
-                    isReadOnlyEditor={ isReadOnlyEditor }
-                    isTranslator={ isTranslator }
-                    locale={ locale }
-                    user={ user }
-                    deleteTranslation={ deleteTranslation }
-                    updateTranslationStatus={ updateTranslationStatus }
-                    updateEditorTranslation={ updateEditorTranslation }
-                />
-            </TabPanel>
             <TabPanel>
                 <Machinery
                     isReadOnlyEditor={ isReadOnlyEditor }

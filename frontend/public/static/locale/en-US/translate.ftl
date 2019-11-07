@@ -179,7 +179,6 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--history = History
 entitydetails-Helpers--machinery = Machinery
 entitydetails-Helpers--locales = Locales
 
