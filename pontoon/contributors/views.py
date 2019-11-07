@@ -154,7 +154,10 @@ def save_custom_homepage(request):
 @transaction.atomic
 def save_custom_preferred_source_locale(request):
     """Save custom preferred source locale """
-    form = forms.UserPreferredSourceLocaleForm(request.POST, instance=request.user.profile)
+    form = forms.UserPreferredSourceLocaleForm(
+        request.POST,
+        instance=request.user.profile
+    )
 
     if not form.is_valid():
         error = escape(u'\n'.join(form.errors['preferred_source_locale']))

@@ -27,14 +27,14 @@ $(function() {
 
 $(function() {
   $('#preferred-locale .locale .menu li:not(".no-match")').click(function () {
-    var custom_preferred_source_locale = $(this).find('.language').data('code');
+    var preferred_source_locale = $(this).find('.language').data('name');
 
     $.ajax({
       url: '/save-custom-preferred-source-locale/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),
-        custom_preferred_source_locale: custom_preferred_source_locale
+        preferred_source_locale: preferred_source_locale
       },
       success: function(data) {
         if (data === 'ok') {
