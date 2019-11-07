@@ -32,11 +32,14 @@
   </ul>
 
   <div id="heading" class="clearfix">
-    <span class="label">Select your homepage</span>
-    {% include 'teams/widgets/team_selector.html' %}
-    <div class='clear'></div>
-    <span class="label preferred-locale">Select preferred source locale</span>
-    {% include 'teams/widgets/preferred_locale_selector.html' %}
+    <div id="homepage">
+      <span class="label">Select your homepage</span>
+      <span class="homepage">{% include 'teams/widgets/team_selector.html' %}</span>
+    </div>
+    <div id="preferred-locale">
+      <span class="label preferred-locale">Select preferred source locale</span>
+      <span class="preferred-locale">{% include 'teams/widgets/preferred_locale_selector.html' %}</span>
+    </div>
   </div>
 
 </section>

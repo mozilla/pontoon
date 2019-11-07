@@ -214,12 +214,13 @@ def settings(request):
 
     default_preferred_source_locale = Locale(name='Default project locale', code='')
     preferred_locales = list(Locale.objects.all())
+    preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale
     preferred_source_locale = request.user.profile.preferred_source_locale
     if preferred_source_locale:
         custom_preferred_source_locale = (
-            Locale.objects.filter(code=preferred_source_locale).first()
+            Locale.objects.filter(name=preferred_source_locale).first()
         )
     else:
         custom_preferred_source_locale = default_preferred_source_locale
