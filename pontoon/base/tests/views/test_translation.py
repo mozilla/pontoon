@@ -4,8 +4,6 @@ import pytest
 
 from django.urls import reverse
 
-from waffle.testutils import override_flag
-
 from pontoon.base.models import Translation
 from pontoon.test.factories import TranslationFactory
 
