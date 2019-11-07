@@ -11,6 +11,7 @@
     border: none;
     box-sizing: border-box;
     display: block;
+    font-size: 14px;
     line-height: 22px;
     height: calc(100% - 60px);
     min-height: 100px;
