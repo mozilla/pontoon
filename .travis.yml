@@ -5,10 +5,6 @@ python:
   - '2.7'
   - '3.7'
 
-matrix:
-  allow_failures:
-  - python: '3.7'
-
 cache:
   pip: true
   npm: true
