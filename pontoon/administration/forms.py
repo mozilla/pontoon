@@ -48,7 +48,9 @@ class ProjectForm(forms.ModelForm):
             'contact',
             'disabled',
             'sync_disabled',
-            'tags_enabled')
+            'tags_enabled',
+            'pretranslation_enabled',
+        )
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

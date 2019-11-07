@@ -294,6 +294,20 @@
       {% endif %}
   </section>
 
+  <section class="controls clearfix">
+    <h3>
+      <span>Pretranslation</span>
+    </h3>
+    <div class="clearfix">
+      <button class="pretranslate button clearfix">Pretranslate</button>
+      <div class="checkbox clearfix">
+        <label for="id_pretranslation_enabled">
+            {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
+        </label>
+      </div>
+    </div>
+  </section>
+
   <div class="controls clearfix">
       {% if settings.MANUAL_SYNC %}
       <button class="sync button">Sync</button>

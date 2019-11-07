@@ -72,6 +72,32 @@ $(function() {
     });
   });
 
+  // Manually Pretranslate project
+  $('.pretranslate').click(function(e) {
+    e.preventDefault();
+
+    var button = $(this),
+        title = button.html();
+
+    if (button.is('.in-progress')) {
+      return;
+    }
+
+    button.addClass('in-progress').html('Pretranslating...');
+
+    $.ajax({
+      url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/'
+    }).success(function() {
+      button.html('Pretranslation started');
+    }).error(function() {
+      button.html('Whoops!');
+    }).complete(function() {
+      setTimeout(function() {
+        button.removeClass('in-progress').html(title);
+      }, 2000);
+    });
+  });
+
   // Suggest slugified name for new projects
   $('#id_name').blur(function() {
     if ($('input[name=pk]').length > 0 || !$('#id_name').val()) {
