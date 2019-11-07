@@ -1,21 +1,19 @@
-.skeleton-loader p {
-    height: 0.875rem;
-    background-color: #E2E2E2;
-    animation: fading 1.5s infinite;
+.skeleton-loader.entities {
+    height: 100%;
+    pointer-events: none;
     overflow: hidden;
 }
 
-.skeleton-loader .entity {
-    pointer-events: none;
-}
-
-ul.skeleton-loader .translation-string {
-    margin-left: 2%;
-    width: 47%;
+.skeleton-loader p {
+    height: 0.8125rem;
+    background-color: #E2E2E2;
+    animation: fading 1.5s infinite;
 }
 
 .skeleton-loader .text-2 {
-    width: 15%;
+    width: 50%;
+    margin-bottom: 5px;
+    display: inline-block;
 }
 
 @keyframes fading {
