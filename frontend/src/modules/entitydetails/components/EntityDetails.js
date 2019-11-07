@@ -309,13 +309,22 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     <fluenteditor.Editor /> :
                     <genericeditor.Editor />
                 }
-            </section>
-            <section className="third-column">
-                <Helpers
+                <history.History
                     entity={ state.selectedEntity }
                     history={ state.history }
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     isTranslator={ state.isTranslator }
+                    locale={ state.locale }
+                    user={ state.user }
+                    deleteTranslation={ this.deleteTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
+                    updateEditorTranslation={ this.updateEditorTranslation }
+                />
+            </section>
+            <section className="third-column">
+                <Helpers
+                    entity={ state.selectedEntity }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }
                     machinery={ state.machinery }
                     otherlocales={ state.otherlocales }
@@ -323,8 +332,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     preferredLocalesCount={ state.preferredLocalesCount }
                     parameters={ state.parameters }
                     user={ state.user }
-                    deleteTranslation={ this.deleteTranslation }
-                    updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
                 />
