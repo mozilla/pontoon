@@ -153,7 +153,6 @@ INSTALLED_APPS = (
     'notifications',
     'graphene_django',
     'webpack_loader',
-    'waffle',
     'django_ace',
 )
 
@@ -175,7 +174,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
-    'waffle.middleware.WaffleMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
@@ -225,7 +223,6 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.templatetags.ext.PipelineExtension',
-                'waffle.jinja.WaffleExtension',
                 'webpack_loader.contrib.jinja2ext.WebpackExtension',
             ],
         }
