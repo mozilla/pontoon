@@ -2,7 +2,7 @@
 .react-tabs {
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    height: calc(60% - 60px);
+    height: 100%;
 }
 
 .react-tabs__tab-list {
