@@ -220,7 +220,7 @@ def settings(request):
     preferred_source_locale = request.user.profile.preferred_source_locale
     if preferred_source_locale:
         custom_preferred_source_locale = (
-            Locale.objects.filter(name=preferred_source_locale).first()
+            Locale.objects.filter(code=preferred_source_locale).first()
         )
     else:
         custom_preferred_source_locale = default_preferred_source_locale

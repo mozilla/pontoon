@@ -27,7 +27,7 @@ $(function() {
 
 $(function() {
   $('#preferred-locale .locale .menu li:not(".no-match")').click(function () {
-    var preferred_source_locale = $(this).find('.language').data('name');
+    var preferred_source_locale = $(this).find('.language').data('code');
 
     $.ajax({
       url: '/save-custom-preferred-source-locale/',
