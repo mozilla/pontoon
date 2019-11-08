@@ -19,5 +19,12 @@ locales = [
         "fr",
     ]
 
+[[paths]]
+    reference = "values/amo.pot"
+    l10n = "{l}amo.po"
+    locales = [
+        "fr",
+    ]
+
 [[includes]]
     path = "child.toml"

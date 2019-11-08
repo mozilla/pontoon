@@ -290,41 +290,52 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         return <section className="entity-details">
-            <EntityNavigation
-                copyLinkToClipboard={ this.copyLinkToClipboard }
-                goToNextEntity={ this.goToNextEntity }
-                goToPreviousEntity={ this.goToPreviousEntity }
-            />
-            <Metadata
-                entity={ state.selectedEntity }
-                isReadOnlyEditor={ state.isReadOnlyEditor }
-                locale={ state.locale }
-                pluralForm={ state.pluralForm }
-                openLightbox={ this.openLightbox }
-                addTextToEditorTranslation={ this.addTextToEditorTranslation }
-                navigateToPath={ this.navigateToPath }
-            />
-            { state.selectedEntity.format === 'ftl' ?
-                <fluenteditor.Editor /> :
-                <genericeditor.Editor />
-            }
-            <Helpers
-                entity={ state.selectedEntity }
-                history={ state.history }
-                isReadOnlyEditor={ state.isReadOnlyEditor }
-                isTranslator={ state.isTranslator }
-                locale={ state.locale }
-                machinery={ state.machinery }
-                otherlocales={ state.otherlocales }
-                orderedOtherLocales={ state.orderedOtherLocales }
-                preferredLocalesCount={ state.preferredLocalesCount }
-                parameters={ state.parameters }
-                user={ state.user }
-                deleteTranslation={ this.deleteTranslation }
-                updateTranslationStatus={ this.updateTranslationStatus }
-                updateEditorTranslation={ this.updateEditorTranslation }
-                searchMachinery={ this.searchMachinery }
-            />
+            <section className="main-column">
+                <EntityNavigation
+                    copyLinkToClipboard={ this.copyLinkToClipboard }
+                    goToNextEntity={ this.goToNextEntity }
+                    goToPreviousEntity={ this.goToPreviousEntity }
+                />
+                <Metadata
+                    entity={ state.selectedEntity }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    locale={ state.locale }
+                    pluralForm={ state.pluralForm }
+                    openLightbox={ this.openLightbox }
+                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                    navigateToPath={ this.navigateToPath }
+                />
+                { state.selectedEntity.format === 'ftl' ?
+                    <fluenteditor.Editor /> :
+                    <genericeditor.Editor />
+                }
+                <history.History
+                    entity={ state.selectedEntity }
+                    history={ state.history }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    isTranslator={ state.isTranslator }
+                    locale={ state.locale }
+                    user={ state.user }
+                    deleteTranslation={ this.deleteTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
+                    updateEditorTranslation={ this.updateEditorTranslation }
+                />
+            </section>
+            <section className="third-column">
+                <Helpers
+                    entity={ state.selectedEntity }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    locale={ state.locale }
+                    machinery={ state.machinery }
+                    otherlocales={ state.otherlocales }
+                    orderedOtherLocales={ state.orderedOtherLocales }
+                    preferredLocalesCount={ state.preferredLocalesCount }
+                    parameters={ state.parameters }
+                    user={ state.user }
+                    updateEditorTranslation={ this.updateEditorTranslation }
+                    searchMachinery={ this.searchMachinery }
+                />
+            </section>
         </section>;
     }
 }

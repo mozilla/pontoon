@@ -47,11 +47,6 @@ urlpatterns = [
         views.translate_locale_agnostic,
         name='pontoon.translate.locale.agnostic'),
 
-    # Translate project
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
-        views.translate,
-        name='pontoon.translate'),
-
     # Download translation memory
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<filename>.+)\.tmx$',
         views.download_translation_memory,

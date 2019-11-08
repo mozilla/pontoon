@@ -2,8 +2,9 @@ from __future__ import absolute_import
 
 from django.conf import settings
 from django.conf.urls import url
+from django.views.generic import RedirectView
 
-from . import URL_BASE, views
+from . import views
 
 
 LOCALE_PART = r'(?P<locale>[A-Za-z0-9\-\@\.]+)'
@@ -12,20 +13,28 @@ RESOURCE_PART = r'(?P<resource>.+)'
 
 
 urlpatterns = [
+    # For backwards compatibility, redirect old `translate/` URLs.
     url(
-        r'^%s$' % URL_BASE,
-        views.translate,
-        name='pontoon.translate.next',
+        r'^translate/{locale}/{project}/{resource}/$'.format(
+            locale=LOCALE_PART,
+            project=PROJECT_PART,
+            resource=RESOURCE_PART,
+        ),
+        RedirectView.as_view(
+            url="/%(locale)s/%(project)s/%(resource)s/",
+            query_string=True,
+            permanent=False,
+        )
     ),
+
     url(
-        r'^{base}{locale}/{project}/{resource}/$'.format(
-            base=URL_BASE,
+        r'^{locale}/{project}/{resource}/$'.format(
             locale=LOCALE_PART,
             project=PROJECT_PART,
             resource=RESOURCE_PART,
         ),
         views.translate,
-        name='pontoon.translate.next',
+        name='pontoon.translate',
     ),
 ]
 

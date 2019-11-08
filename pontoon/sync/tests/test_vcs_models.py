@@ -87,7 +87,7 @@ class VCSProjectTests(TestCase):
                 ['foo.po', 'meh/bar.po']
             )
 
-    def test_source_directory_pc(self):
+    def test_source_directory_with_config(self):
         """
         If project configuration provided, use source repository checkout path
         as source directory path.
@@ -192,6 +192,7 @@ class VCSProjectTests(TestCase):
                 self.vcs_project.resource_paths_with_config()
             )),
             sorted([
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/amo.pot'),
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings.properties'),
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_child.properties'),
                 os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, 'values/strings_reality.properties'),
@@ -262,6 +263,10 @@ class VCSConfigurationTests(TestCase):
         self.mock_checkout_path = checkout_path_patch.start()
         self.addCleanup(checkout_path_patch.stop)
 
+        self.resource_amo = ResourceFactory.create(
+            project=self.db_project,
+            path='values/amo.pot',
+        )
         self.resource_strings = ResourceFactory.create(
             project=self.db_project,
             path='values/strings.properties',
@@ -337,20 +342,20 @@ class VCSConfigurationTests(TestCase):
         assert_true(self.vcs_project.configuration.add_locale.called)
 
     def test_l10n_path(self):
-        reference_path = os.path.join(
+        absolute_resource_path = os.path.join(
             PROJECT_CONFIG_CHECKOUT_PATH,
-            'values/strings.properties',
+            'values/amo.pot',
         )
 
         l10n_path = os.path.join(
             PROJECT_CONFIG_CHECKOUT_PATH,
-            'values-fr/strings.properties',
+            'values-fr/amo.po',
         )
 
         assert_equal(
             self.vcs_project.configuration.l10n_path(
                 self.locale,
-                reference_path,
+                absolute_resource_path,
             ),
             l10n_path,
         )
@@ -362,6 +367,7 @@ class VCSConfigurationTests(TestCase):
                 key=lambda r: r.path
             ),
             [
+                self.resource_amo,
                 self.resource_strings,
                 self.resource_strings_child,
                 self.resource_strings_reality,

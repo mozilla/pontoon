@@ -179,7 +179,6 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--history = History
 entitydetails-Helpers--machinery = Machinery
 entitydetails-Helpers--locales = Locales
 
@@ -358,19 +357,55 @@ interactivetour-InteractiveTour--end-footer =
 
 ## Machinery
 ## Shows a list of translations from machines.
-
 machinery-Machinery--search-placeholder =
     .placeholder = Search in Machinery
 
 
-## Machinery Translation
-## Shows a specific translation from machinery
+## Machinery Caighdean Translation
+## Shows the translation source from Caighdean Machine Translation.
+machinery-CaighdeanTranslation--visit-caighdean = Caighdean
+    .title = Visit Caighdean Machine Translation
 
+
+## Machinery Google Translation
+## Shows the translation source from Google Translate.
+machinery-GoogleTranslation--visit-google = Google Translate
+    .title = Visit Google Translate
+
+
+## Machinery Microsoft Terminology
+## Shows the translation source from Microsoft Terminology.
+machinery-MicrosoftTerminology--visit-microsoft = Microsoft
+    .title =
+        Visit Microsoft Terminology Service API.
+        © 2018 Microsoft Corporation. All rights reserved.
+
+
+## Machinery Microsoft Translation
+## Shows the translation source from Microsoft Translation.
+machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
+    .title = Visit Bing Translate
+
+
+## Machinery Translation
+## Shows a specific translation from machinery.
 machinery-Translation--copy =
     .title = Copy Into Translation
 
-machinery-Translation--number-occurrences =
+
+## Machinery Translation Memory
+## Shows the translation source from Pontoon's memory.
+machinery-TranslationMemory--pontoon-homepage =
+    .title = Pontoon Homepage
+machinery-TranslationMemory--translation-memory = Translation memory
+machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
+
+
+## Machinery Transvision Memory
+## Shows the translation source from Transvision.
+machinery-TransvisionMemory--visit-transvision = Mozilla
+    .title = Visit Transvision
 
 
 ## Notification Messages
@@ -403,7 +438,7 @@ notification--string-link-copied = Link copied to clipboard
 otherlocales-Translation--copy =
     .title = Copy Into Translation
 
-otherlocales-Translation--header-link = 
+otherlocales-Translation--header-link =
     .title = Open string in { $locale } ({ $code })
 
 
