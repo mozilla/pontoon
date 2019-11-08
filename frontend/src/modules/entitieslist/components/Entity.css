@@ -41,6 +41,7 @@
 
 .entity .translation-string {
     color: #AAAAAA;
+    min-height: 20px;
     text-align: start;
 }
 
