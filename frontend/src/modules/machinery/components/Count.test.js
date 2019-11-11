@@ -26,15 +26,9 @@ describe('<Count>', () => {
     it('shows the correct number of remaining translations', () => {
         const machinery = {
             translations: [
-<<<<<<< HEAD
                 { sources: ['microsoft'] },
                 { sources: ['transvision'] },
                 { sources: ['transvision'] },
-=======
-                { sources: ['Microsoft'] },
-                { sources: ['Transvision'] },
-                { sources: ['Transvision'] },
->>>>>>> Fix bug 1588931 - Localize Machinery sources (#1441)
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
@@ -53,11 +47,15 @@ describe('<Count>', () => {
         const machinery = {
             translations: [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Fix bug 1594177: Visually indicate TM matches in Machinery count (#1482)
                 { sources: ['translation-memory'] },
                 { sources: ['translation-memory'] },
                 { sources: ['microsoft'] },
                 { sources: ['transvision'] },
                 { sources: ['transvision'] },
+<<<<<<< HEAD
 =======
                 { sources: ['Translation memory'] },
                 { sources: ['Translation memory'] },
@@ -65,6 +63,8 @@ describe('<Count>', () => {
                 { sources: ['Transvision'] },
                 { sources: ['Transvision'] },
 >>>>>>> Fix bug 1588931 - Localize Machinery sources (#1441)
+=======
+>>>>>>> Fix bug 1594177: Visually indicate TM matches in Machinery count (#1482)
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
