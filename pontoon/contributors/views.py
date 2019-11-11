@@ -168,6 +168,14 @@ def save_custom_preferred_source_locale(request):
     return HttpResponse('ok')
 
 
+def user_preferred_source_locale(request):
+    preferred_locale = request.user.profile.preferred_source_locale
+
+    return JsonResponse({
+        'preferred-locale': preferred_locale,
+    })
+
+
 @login_required(redirect_field_name='', login_url='/403')
 def settings(request):
     """View and edit user settings."""

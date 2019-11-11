@@ -116,9 +116,20 @@ export function get(): Function {
     }
 }
 
+/**
+ * Get preferred source locale for the current user from the server.
+ */
+export function getUserPreferredLocale(): Function {
+    return async dispatch => {
+        const content = await api.user.getUserPreferredLocale();
+        dispatch(update(content));
+    }
+}
+
 
 export default {
     get,
+    getUserPreferredLocale,
     markAllNotificationsAsRead,
     saveSetting,
     signOut,
