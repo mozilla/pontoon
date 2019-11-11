@@ -79,6 +79,11 @@
     content: "";
 }
 
+.entity:hover .status:before {
+    content: "";
+    font-weight: 100;
+}
+
 .entity.batch-editable .status:hover:before {
     content: "";
 }
