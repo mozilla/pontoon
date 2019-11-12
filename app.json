@@ -57,14 +57,6 @@
       "value": "False",
       "description": "Controls whether asynchronous tasks (mainly used during sync) are sent to Celery or executed immediately and synchronously. Set this to ``False`` on production."
     },
-    "DJANGO_DEBUG": {
-      "value": "True",
-      "description": "Controls ``DEBUG`` mode for the site. Should be set to `False` in production."
-    },
-    "DJANGO_DEV": {
-      "value": "False",
-      "description": "Signifies whether this is a development server or not. Should be `False` in production. Adds some additional django apps that can be helpful during day to day development."
-    },
     "SECRET_KEY": {
       "description": "Secret key used for sessions, cryptographic signing, etc.",
       "generator": "secret"
