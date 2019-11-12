@@ -32,7 +32,7 @@ def pretranslate(project, locales=None, entities=None):
     else:
         locales = project.locales.filter(
             project_locale__readonly=False,
-            pk__in = locales,
+            pk__in=locales,
         ).prefetch_project_locale(project)
 
     if not entities:

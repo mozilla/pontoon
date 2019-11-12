@@ -9,8 +9,7 @@ from django.utils import timezone
 from pontoon.base.models import (
     ChangedEntityLocale,
     Project,
-    Repository,
-    Locale,
+    Repository
 )
 
 from pontoon.base.tasks import PontoonTask

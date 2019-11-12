@@ -208,7 +208,6 @@ def update_translated_resources_with_config(db_project, vcs_project, locale):
     return flag
 
 
-
 def update_translated_resources_without_config(db_project, vcs_project, locale):
     """
     We only want to create/update the TranslatedResource object if the
