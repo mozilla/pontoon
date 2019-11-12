@@ -6,9 +6,6 @@ set -x
 # Some of scripts like e.g. migrations require SITE_URL to be set before the database is initialized.
 export SITE_URL='http://localhost:8000'
 
-# Compile static assets
-source ./bin/post_compile
-
 MEMCACHE_SERVER=$(echo $MEMCACHE_SERVERS | cut -f1 -d:)
 MEMCACHE_PORT=$(echo $MEMCACHE_SERVERS | cut -f2 -d:)
 
