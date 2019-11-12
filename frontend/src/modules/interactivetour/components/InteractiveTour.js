@@ -195,7 +195,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 </div>,
             },
             {
-                selector: '#app > .panel-content .entity-details .react-tabs',
+                selector: '#app > .panel-content .entity-details .history',
                 content: <div>
                     <Localized id="interactivetour-InteractiveTour--history-title">
                         <h3>History</h3>
@@ -207,9 +207,6 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         Unreviewed).</p>
                     </Localized>
                 </div>,
-                action: node => {
-                    node.querySelector('#react-tabs-0').click();
-                },
             },
             {
                 selector: '#app > .panel-content .entity-details .react-tabs',
@@ -224,7 +221,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </Localized>
                 </div>,
                 action: node => {
-                    node.querySelector('#react-tabs-2').click();
+                    node.querySelector('#react-tabs-0').click();
                 },
             },
             {
@@ -240,7 +237,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </Localized>
                 </div>,
                 action: node => {
-                    node.querySelector('#react-tabs-4').click();
+                    node.querySelector('#react-tabs-2').click();
                 },
             },
             {
