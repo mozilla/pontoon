@@ -29,6 +29,11 @@ def pretranslate(project, locales=None, entities=None):
         locales = project.locales.filter(
             project_locale__readonly=False,
         ).prefetch_project_locale(project)
+    else:
+        locales = project.locales.filter(
+            project_locale__readonly=False,
+            pk__in = locales,
+        ).prefetch_project_locale(project)
 
     if not entities:
         entities = Entity.objects.filter(

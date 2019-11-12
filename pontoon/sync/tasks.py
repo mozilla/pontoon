@@ -10,6 +10,7 @@ from pontoon.base.models import (
     ChangedEntityLocale,
     Project,
     Repository,
+    Locale,
 )
 
 from pontoon.base.tasks import PontoonTask
@@ -27,6 +28,7 @@ from pontoon.sync.core import (
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs.repositories import CommitToRepositoryException
 from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
+from pontoon.pretranslation.tasks import pretranslate
 
 
 log = logging.getLogger(__name__)
@@ -279,6 +281,8 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
+    new_locales = []
+
     for locale in locales:
         try:
             with transaction.atomic():
@@ -297,7 +301,8 @@ def sync_translations(
                 changeset = ChangeSet(db_project, vcs_project, now, locale)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
-                update_translated_resources(db_project, vcs_project, locale)
+                if update_translated_resources(db_project, vcs_project, locale):
+                    new_locales.append(locale.pk)
                 update_locale_project_locale_stats(locale, db_project)
 
                 # Clear out the "has_changed" markers now that we've finished
@@ -348,7 +353,8 @@ def sync_translations(
 
             # We have files: update all translated resources.
             if locale in locales:
-                update_translated_resources(db_project, vcs_project, locale)
+                if update_translated_resources(db_project, vcs_project, locale):
+                    new_locales.append[locale.pk]
 
             # We don't have files: we can still update asymmetric translated resources.
             else:
@@ -389,3 +395,6 @@ def sync_translations(
             locales=repo_locales[r.pk].exclude(code__in=failed_locales)
         )
     repo_sync_log.end()
+
+    if new_locales:
+        pretranslate(db_project, locales=new_locales)
