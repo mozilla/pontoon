@@ -12,7 +12,6 @@ export default function SkeletonLoader () {
                 <span className='status fa'/>
                 <div>
                     <p className='source-string'></p>
-                    <p className='text-2'></p>
                     <p className='translation-string'></p>
                 </div>
             </li>

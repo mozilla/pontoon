@@ -10,12 +10,6 @@
     animation: fading 1.5s infinite;
 }
 
-.skeleton-loader .text-2 {
-    width: 50%;
-    margin-bottom: 5px;
-    display: inline-block;
-}
-
 @keyframes fading {
     0% {
         opacity: .1;
