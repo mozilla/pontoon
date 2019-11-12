@@ -17,7 +17,7 @@ from django.http import (
     JsonResponse,
     StreamingHttpResponse
 )
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -45,44 +45,13 @@ from pontoon.base.models import (
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon import translate
 
 
 log = logging.getLogger(__name__)
 
+
 # TRANSLATE VIEWs
-
-
-def translate(request, locale, slug, part):
-    """Translate view."""
-    locale = get_object_or_404(Locale, code=locale)
-
-    projects = (
-        Project.objects.available()
-        .prefetch_related('subpage_set', 'tag_set')
-        .order_by('name')
-    )
-
-    if slug.lower() == 'all-projects':
-        project = Project(name='All Projects', slug=slug.lower())
-
-    else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
-        if locale not in project.locales.all():
-            raise Http404
-
-    return render(request, 'translate.html', {
-        'download_form': forms.DownloadFileForm(),
-        'upload_form': forms.UploadFileForm(),
-        'locale': locale,
-        'locale_projects': locale.available_projects_list(),
-        'locales': Locale.objects.available(),
-        'part': part,
-        'project': project,
-        'projects': projects,
-        'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
-        'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
-    })
-
 
 def translate_locale_agnostic(request, slug, part):
     """Locale Agnostic Translate view."""
@@ -918,7 +887,7 @@ def upload(request):
             for error in errors:
                 messages.error(request, error)
 
-    return translate(request, code, slug, part)
+    return translate.views.translate(request, code, slug, part)
 
 
 @condition(etag_func=None)
