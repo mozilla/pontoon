@@ -8,7 +8,13 @@
     height: 0.8125rem;
     background-color: #E2E2E2;
     animation: fading 1.5s infinite;
+    padding-bottom: 3px;
 }
+
+.skeleton-loader .text-2 {
+    width: 50%;
+    display: inline-block;
+}	
 
 @keyframes fading {
     0% {
