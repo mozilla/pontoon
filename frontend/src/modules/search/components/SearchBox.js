@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import isEqual from 'lodash.isequal';
+import _ from 'lodash';
 
 import './SearchBox.css';
 
@@ -146,7 +146,8 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     static getDerivedStateFromProps(prevProps: InternalProps, nextProps) {
         let initialStatuses = nextProps.statuses;
         if (prevProps.parameters.status) {
-            prevProps.parameters.status.split(',').forEach(f => {
+            prevProps.parameters.status.split(',').forEach((f, key) => {
+                initialStatuses = _.mapValues(initialStatuses, () => false);
                 initialStatuses[f] = true;
             });
         }
@@ -197,6 +198,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     getSelectedStatuses(): Array<string> {
+        console.log("current state is", this.state.statuses, Object.keys(this.state.statuses).filter(s => this.state.statuses[s]) )
         return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
     }
 
