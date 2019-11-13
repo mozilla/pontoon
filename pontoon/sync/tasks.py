@@ -115,7 +115,7 @@ def sync_project(
             return
 
     # Sync translations
-    sync_translations.delay(
+    new_entities = sync_translations.delay(
         project_pk,
         project_sync_log.pk,
         now,
@@ -127,6 +127,15 @@ def sync_project(
         no_commit=no_commit,
         full_scan=force
     )
+
+    new_entities = new_entities.result
+
+    if source_changes.get('new_entities'):
+        new_entities = new_entities + source_changes.get('new_entities')
+
+    if db_project.pretranslation_enabled and len(new_entities):
+        new_entities = list(set(new_entities))  # take only unique entities
+        pretranslate(db_project, entities=new_entities)
 
 
 def sync_sources(db_project, now, force, no_pull):
@@ -149,7 +158,7 @@ def sync_sources(db_project, now, force, no_pull):
 
     if force or source_repo_changed:
         try:
-            added_paths, removed_paths, changed_paths = update_originals(
+            added_paths, removed_paths, changed_paths, new_entities = update_originals(
                 db_project, now, full_scan=force
             )
         except MissingSourceDirectoryError as e:
@@ -161,7 +170,7 @@ def sync_sources(db_project, now, force, no_pull):
         log.info('Synced sources for project {0}.'.format(db_project.slug))
 
     else:
-        added_paths, removed_paths, changed_paths = None, None, None
+        added_paths, removed_paths, changed_paths, new_entities = None, None, None, []
         log.info(
             'Skipping syncing sources for project {0}, no changes detected.'.format(
                 db_project.slug
@@ -172,6 +181,7 @@ def sync_sources(db_project, now, force, no_pull):
         'added_paths': added_paths,
         'removed_paths': removed_paths,
         'changed_paths': changed_paths,
+        'new_entities': new_entities,
     }
 
 
@@ -280,7 +290,8 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
-    new_locales = []
+    new_locales = []  # store the new locales added to the project
+    new_entities = []  # store the new entities added to the project
 
     for locale in locales:
         try:
@@ -300,6 +311,9 @@ def sync_translations(
                 changeset = ChangeSet(db_project, vcs_project, now, locale)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
+
+                new_entities = new_entities + changeset.new_entities
+
                 if update_translated_resources(db_project, vcs_project, locale):
                     new_locales.append(locale.pk)
                 update_locale_project_locale_stats(locale, db_project)
@@ -397,3 +411,5 @@ def sync_translations(
 
     if new_locales:
         pretranslate(db_project, locales=new_locales)
+
+    return new_entities

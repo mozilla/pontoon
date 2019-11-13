@@ -27,14 +27,15 @@ log = logging.getLogger(__name__)
 
 def update_originals(db_project, now, full_scan=False):
     vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
-
+    new_entities = []
     with transaction.atomic():
         added_paths, removed_paths, changed_paths = update_resources(db_project, vcs_project)
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
+        new_entities = changeset.new_entities
 
-    return added_paths, removed_paths, changed_paths
+    return added_paths, removed_paths, changed_paths, new_entities
 
 
 def serial_task(timeout, lock_key="", on_error=None, **celery_args):
