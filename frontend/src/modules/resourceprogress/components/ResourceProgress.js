@@ -93,7 +93,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 Translated
                             </Localized>
                         </span>
-                        <p className="value" onClick={ this.handleClickOutside }>
+                        <p className="value" onClick={ this.toggleVisibility }>
                             <Link to={{ search: "?status=translated" }}>
                                 { asLocaleString(approved) }
                             </Link>
