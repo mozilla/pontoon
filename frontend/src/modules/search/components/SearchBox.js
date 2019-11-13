@@ -143,6 +143,21 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     }
 
+    static getDerivedStateFromProps(prevProps: InternalProps, nextProps) {
+        let initialStatuses = nextProps.statuses;
+        if (prevProps.parameters.status) {
+            prevProps.parameters.status.split(',').forEach(f => {
+                initialStatuses[f] = true;
+            });
+        }
+        if (nextProps.statuses !== initialStatuses) {
+            return {
+                statuses: initialStatuses,
+            };
+        }
+        return null;
+      }
+
     componentWillUnmount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
