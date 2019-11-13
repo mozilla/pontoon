@@ -198,7 +198,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     getSelectedStatuses(): Array<string> {
-        console.log("current state is", this.state.statuses, Object.keys(this.state.statuses).filter(s => this.state.statuses[s]) )
         return Object.keys(this.state.statuses).filter(s => this.state.statuses[s]);
     }
 
