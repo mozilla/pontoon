@@ -4,6 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import _ from 'lodash';
+import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
