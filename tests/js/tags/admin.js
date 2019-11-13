@@ -143,7 +143,7 @@ test('TagResourceManagerWidget handleSubmit', async () => {
     manager.setState({foo: 7, bar: 23});
     expect(await manager.instance().handleSubmit({bar: 43, baz: 73})).toBe(23);
     expect(handleSubmit.mock.calls).toEqual(
-        [[{"bar": 43, "baz": 73, "foo": 7, "search": "*", "type": "assoc"}]]);
+        [[{"bar": 43, "baz": 73, "foo": 7, "search": "**", "type": "assoc"}]]);
 });
 
 
