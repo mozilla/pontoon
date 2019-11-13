@@ -79,9 +79,21 @@
     content: "";
 }
 
+.entity.checked .status:before,
+.entity.selected .status:before {
+    content: "";
+    font-weight: bold;
+}
+
 .entity:hover .status:before {
     content: "";
     font-weight: 100;
+}
+
+.entity.checked:hover .status:before,
+.entity.selected:hover .status:before {
+    content: "";
+    font-weight: bold;
 }
 
 .entity.batch-editable .status:hover:before {
