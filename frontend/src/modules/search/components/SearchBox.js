@@ -144,10 +144,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     }
 
-    static getDerivedStateFromProps(prevProps: InternalProps, nextProps: InternalProps) {
+    static getDerivedStateFromProps(prevProps: InternalProps, nextProps: Object) {
         let initialStatuses = nextProps.statuses;
         if (prevProps.parameters.status) {
-            prevProps.parameters.status.split(',').forEach((f, key) => {
+            prevProps.parameters.status.split(',').forEach(f => {
                 initialStatuses = _.mapValues(initialStatuses, () => false);
                 initialStatuses[f] = true;
             });
