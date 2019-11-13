@@ -1,4 +1,4 @@
-#heading {
+#user-preference {
   margin-top: 30px;
 }
 
@@ -6,7 +6,7 @@
   margin-top: 10px;
 }
 
-#heading .label {
+#user-preference .label {
   color: #AAA;
   display: inline-block;
   font-size: 16px;
@@ -16,15 +16,15 @@
   vertical-align: top;
 }
 
-#heading .locale-selector {
+#user-preference .locale-selector {
   display: inline-block;
 }
 
-#heading .locale-selector .locale.select {
+#user-preference .locale-selector .locale.select {
   width: 270px;
 }
 
-#heading .locale-selector .locale.select .button {
+#user-preference .locale-selector .locale.select .button {
   background: #272A2F;
   color: #AAAAAA;
   font-size: 16px;
@@ -35,7 +35,7 @@
   width: 100%;
 }
 
-#heading .locale-selector .locale.select .menu {
+#user-preference .locale-selector .locale.select .menu {
   background: #272A2F;
   border: 1px solid #333941;
   border-top: none;

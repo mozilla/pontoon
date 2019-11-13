@@ -23,7 +23,7 @@ export default class UserAPI extends APIBase {
     /**
      * Return preferred source locale for the current user from the server.
      */
-    async getUserPreferredLocale(): Promise<Object> {
+    async getUserPreferredSourceLocale(): Promise<Object> {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
