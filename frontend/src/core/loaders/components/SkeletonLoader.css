@@ -1,5 +1,12 @@
+.entities .loading {
+    color: #7BC876;
+    font-size: 128px;
+    height: 190px;
+    padding: 40px 0 10px;
+    text-align: center;
+}
+
 .skeleton-loader.entities {
-    height: 100%;
     pointer-events: none;
     overflow: hidden;
 }
@@ -14,7 +21,7 @@
 .skeleton-loader .text-2 {
     width: 50%;
     display: inline-block;
-}	
+}
 
 @keyframes fading {
     0% {
