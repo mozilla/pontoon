@@ -1,9 +1,0 @@
-{% macro item(type, title, count=False) %}
-<li class="{{ type }}" data-type="{{ type }}">
-  <span class="status fa"></span>
-  <span class="title">{{ title }}</span>
-  {% if count %}
-  <span class="count"></span>
-  {% endif %}
-</li>
-{% endmacro %}
