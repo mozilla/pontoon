@@ -887,7 +887,16 @@ def upload(request):
             for error in errors:
                 messages.error(request, error)
 
-    return translate.views.translate(request, code, slug, part)
+    response = HttpResponse(content='', status=303)
+    response['Location'] = reverse(
+        'pontoon.translate',
+        kwargs={
+            'locale': code,
+            'project': slug,
+            'resource': part,
+        },
+    )
+    return response
 
 
 @condition(etag_func=None)
