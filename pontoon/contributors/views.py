@@ -212,10 +212,10 @@ def settings(request):
     all_locales.insert(0, default_homepage_locale)
 
     # Set custom homepage selector value
-    custom_homepage = request.user.profile.custom_homepage
-    if custom_homepage:
+    custom_homepage_locale = request.user.profile.custom_homepage
+    if custom_homepage_locale:
         custom_homepage_locale = (
-            Locale.objects.filter(code=custom_homepage).first()
+            Locale.objects.filter(code=custom_homepage_locale).first()
         )
     else:
         custom_homepage_locale = default_homepage_locale
@@ -227,11 +227,11 @@ def settings(request):
     # Set preferred source locale
     preferred_source_locale = request.user.profile.preferred_source_locale
     if preferred_source_locale:
-        custom_preferred_source_locale = (
+        preferred_source_locale = (
             Locale.objects.filter(code=preferred_source_locale).first()
         )
     else:
-        custom_preferred_source_locale = default_preferred_source_locale
+        preferred_source_locale = default_preferred_source_locale
 
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
@@ -239,7 +239,7 @@ def settings(request):
         'locales': all_locales,
         'locale': custom_homepage_locale,
         'preferred_locales': preferred_locales,
-        'preferred_locale': custom_preferred_source_locale,
+        'preferred_locale': preferred_source_locale,
         'profile_form': profile_form,
     })
 
