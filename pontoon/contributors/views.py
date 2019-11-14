@@ -169,10 +169,10 @@ def save_custom_preferred_source_locale(request):
 
 
 def user_preferred_source_locale(request):
-    preferred_locale = request.user.profile.preferred_source_locale
+    preferred_source_locale = request.user.profile.preferred_source_locale
 
     return JsonResponse({
-        'preferred-locale': preferred_locale,
+        'preferred-source_locale': preferred_source_locale,
     })
 
 
