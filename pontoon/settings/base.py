@@ -341,14 +341,6 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/sync_logs.min.css',
     },
-    'translate': {
-        'source_filenames': (
-            'css/jquery-ui.css',
-            'css/jquery-ui-timepicker-addon.css',
-            'css/translate.css',
-        ),
-        'output_filename': 'css/translate.min.css',
-    },
     'profile': {
         'source_filenames': (
             'css/contributor.css',
@@ -405,14 +397,6 @@ PIPELINE_CSS = {
             'css/homepage.css',
         ),
         'output_filename': 'css/homepage.min.css'
-    },
-    'tour': {
-        'source_filenames': (
-            'js/lib/sideshow/fonts/sideshow-fontface.min.css',
-            'js/lib/sideshow/stylesheets/sideshow.css',
-            'css/tour.css',
-        ),
-        'output_filename': 'css/tour.min.css',
     },
 }
 
@@ -490,18 +474,6 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/teams.min.js',
     },
-    'translate': {
-        'source_filenames': (
-            'js/lib/jquery-ui.js',
-            'js/lib/jquery-ui-timepicker-addon.js',
-            'js/lib/jquery.mark.js',
-            'js/lib/highstock.js',
-            'js/lib/diff.js',
-            'js/fluent_interface.js',
-            'js/translate.js',
-        ),
-        'output_filename': 'js/translate.min.js',
-    },
     'profile': {
         'source_filenames': (
             'js/contributor.js',
@@ -539,16 +511,6 @@ PIPELINE_JS = {
             'js/homepage.js'
         ),
         'output_filename': 'js/homepage.min.js',
-    },
-    'tour': {
-        'source_filenames': (
-            'js/lib/sideshow/dependencies/jazz.min.js',
-            'js/lib/sideshow/dependencies/pagedown.min.js',
-            'js/lib/sideshow/sideshow.js',
-            'js/tour.config.js',
-            'js/tour.js',
-        ),
-        'output_filename': 'js/tour.min.js',
     },
 }
 
