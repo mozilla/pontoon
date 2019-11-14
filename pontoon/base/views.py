@@ -45,7 +45,6 @@ from pontoon.base.models import (
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
-from pontoon import translate
 
 
 log = logging.getLogger(__name__)
