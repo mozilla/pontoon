@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'pontoon.localizations',
     'pontoon.machinery',
     'pontoon.projects',
+    'pontoon.review',
     'pontoon.sync',
     'pontoon.tags',
     'pontoon.teams',
