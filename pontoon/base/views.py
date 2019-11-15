@@ -999,6 +999,7 @@ def user_data(request):
             'force_suggestions': user.profile.force_suggestions,
         },
         'preferred_locales': user.profile.sorted_locales_codes,
+        'preferred_source_locale': user.profile.preferred_source_locale,
         'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
         'gravatar_url_small': user.gravatar_url(88),

@@ -21,16 +21,6 @@ export default class UserAPI extends APIBase {
     }
 
     /**
-     * Return preferred source locale for the current user from the server.
-     */
-    async getUserPreferredSourceLocale(): Promise<Object> {
-        const headers = new Headers();
-        headers.append('X-Requested-With', 'XMLHttpRequest');
-
-        return await this.fetch('/user-preferred-source-locale/', 'GET', null, headers);
-    }
-
-    /**
      * Mark all notifications of the current user as read.
      */
     async markAllNotificationsAsRead(): Promise<Object> {

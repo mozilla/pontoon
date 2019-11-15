@@ -8,6 +8,7 @@ import { TranslationProxy } from 'core/translation';
 
 import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { UserState } from 'core/user';
 
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
     locale: Locale,
+    user: UserState,
     search: ?string,
     selected: boolean,
     selectEntity: Function,
@@ -114,9 +116,12 @@ export default class Entity extends React.Component<Props> {
             isReadOnlyEditor,
             isTranslator,
             locale,
+            user,
             search,
             selected,
         } = this.props;
+
+        console.log(user) // current value is 'undefined'
 
         const classSelected = selected ? 'selected' : '';
 

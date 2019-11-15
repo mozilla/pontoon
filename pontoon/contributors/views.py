@@ -152,8 +152,8 @@ def save_custom_homepage(request):
 @login_required(redirect_field_name='', login_url='/403')
 @require_POST
 @transaction.atomic
-def save_custom_preferred_source_locale(request):
-    """Save custom preferred source locale """
+def save_preferred_source_locale(request):
+    """Save preferred source locale """
     form = forms.UserPreferredSourceLocaleForm(
         request.POST,
         instance=request.user.profile
@@ -166,14 +166,6 @@ def save_custom_preferred_source_locale(request):
     form.save()
 
     return HttpResponse('ok')
-
-
-def user_preferred_source_locale(request):
-    preferred_source_locale = request.user.profile.preferred_source_locale
-
-    return JsonResponse({
-        'preferred-source_locale': preferred_source_locale,
-    })
 
 
 @login_required(redirect_field_name='', login_url='/403')
