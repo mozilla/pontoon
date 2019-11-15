@@ -70,19 +70,19 @@ export default class TranslationAPI extends APIBase {
     }
 
     approve(id: number, resource: string, ignoreWarnings: ?boolean) {
-        return this._changeStatus('/approve-translation/', id, resource, ignoreWarnings);
+        return this._changeStatus('/review/approve/', id, resource, ignoreWarnings);
     }
 
     unapprove(id: number, resource: string) {
-        return this._changeStatus('/unapprove-translation/', id, resource);
+        return this._changeStatus('/review/unapprove/', id, resource);
     }
 
     reject(id: number, resource: string) {
-        return this._changeStatus('/reject-translation/', id, resource);
+        return this._changeStatus('/review/reject/', id, resource);
     }
 
     unreject(id: number, resource: string) {
-        return this._changeStatus('/unreject-translation/', id, resource);
+        return this._changeStatus('/review/unreject/', id, resource);
     }
 
     delete(id: number) {
