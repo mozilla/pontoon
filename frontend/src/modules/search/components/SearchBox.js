@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 import mapValues from 'lodash.mapvalues';
+
 import './SearchBox.css';
 
 import * as navigation from 'core/navigation';
@@ -131,7 +132,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.updateFiltersFromURLParams();
     }
 
-    componentDidUpdate(prevProps: InternalProps, state: Object) {
+    componentDidUpdate(prevProps: InternalProps) {
         // Clear search field when navigating to a new file
         if (
             this.props.parameters.search === null &&
