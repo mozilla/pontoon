@@ -103,6 +103,7 @@ urlpatterns = [
     url(r'', include('pontoon.projects.urls')),
     url(r'', include('pontoon.machinery.urls')),
     url(r'', include('pontoon.contributors.urls')),
+    url(r'^review/', include('pontoon.review.urls')),
     url(r'', include('pontoon.localizations.urls')),
     url(r'', include('pontoon.base.urls')),
     url(r'', include('pontoon.translate.urls')),
