@@ -11,10 +11,12 @@ import ProgressChart from './ProgressChart';
 
 import { asLocaleString } from 'core/utils';
 
+import type { NavigationParams } from 'core/navigation';
 import type { Stats } from 'core/stats';
 
 
 type Props = {|
+    parameters: NavigationParams,
     stats: Stats,
 |};
 
@@ -49,7 +51,9 @@ export class ResourceProgressBase extends React.Component<Props, State> {
     }
 
     render() {
-        const { approved, fuzzy, warnings, errors, missing, unreviewed, total } = this.props.stats;
+        const { parameters, stats } = this.props;
+        const { approved, fuzzy, warnings, errors, missing, unreviewed, total } = stats;
+        const currentPath = `/${parameters.locale}/${parameters.project}/${parameters.resource}/`;
         const complete = approved + warnings;
 
         let percent = 0;
@@ -94,7 +98,12 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             </Localized>
                         </span>
                         <p className="value" onClick={ this.toggleVisibility }>
-                            <Link to={{ search: "?status=translated" }}>
+                            <Link
+                                to={{
+                                    pathname: currentPath,
+                                    search: "?status=translated"
+                                }}
+                            >
                                 { asLocaleString(approved) }
                             </Link>
                         </p>
@@ -106,7 +115,12 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             </Localized>
                         </span>
                         <p className="value" onClick={ this.toggleVisibility }>
-                            <Link to={{ search: "?status=fuzzy" }}>
+                            <Link
+                                to={{
+                                    pathname: currentPath,
+                                    search: "?status=fuzzy"
+                                }}
+                            >
                                 { asLocaleString(fuzzy) }
                             </Link>
                         </p>
@@ -118,7 +132,12 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             </Localized>
                         </span>
                         <p className="value" onClick={ this.toggleVisibility }>
-                            <Link to={{ search: "?status=warnings" }}>
+                            <Link
+                                to={{
+                                    pathname: currentPath,
+                                    search: "?status=warnings"
+                                }}
+                            >
                                 { asLocaleString(warnings) }
                             </Link>
                         </p>
@@ -130,7 +149,12 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             </Localized>
                         </span>
                         <p className="value" onClick={ this.toggleVisibility }>
-                            <Link to={{ search: "?status=errors" }}>
+                            <Link
+                                to={{
+                                    pathname: currentPath,
+                                    search: "?status=errors"
+                                }}
+                            >
                                 { asLocaleString(errors) }
                             </Link>
                         </p>
@@ -142,7 +166,12 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             </Localized>
                         </span>
                         <p className="value" onClick={ this.toggleVisibility }>
-                            <Link to={{search: "?status=missing" }}>
+                            <Link
+                                to={{
+                                    pathname: currentPath,
+                                    search: "?status=missing"
+                                }}
+                            >
                                 { asLocaleString(missing) }
                             </Link>
                         </p>
