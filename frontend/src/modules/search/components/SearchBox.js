@@ -3,9 +3,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import _ from 'lodash';
 import isEqual from 'lodash.isequal';
-
+import mapValues from 'lodash.mapvalues';
 import './SearchBox.css';
 
 import * as navigation from 'core/navigation';
@@ -132,7 +131,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.updateFiltersFromURLParams();
     }
 
-    componentDidUpdate(prevProps: InternalProps) {
+    componentDidUpdate(prevProps: InternalProps, state: Object) {
         // Clear search field when navigating to a new file
         if (
             this.props.parameters.search === null &&
@@ -144,15 +143,19 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     }
 
-    static getDerivedStateFromProps(prevProps: InternalProps, nextProps: Object) {
-        let initialStatuses = nextProps.statuses;
+    static getDerivedStateFromProps(prevProps: InternalProps, state: Object) {
+        // Get the current status from props
+        let initialStatuses = state.statuses;
         if (prevProps.parameters.status) {
             prevProps.parameters.status.split(',').forEach(f => {
-                initialStatuses = _.mapValues(initialStatuses, () => false);
+                // reset all statuses value to false then set the current status value to true
+                initialStatuses = mapValues(initialStatuses, () => false);
                 initialStatuses[f] = true;
             });
         }
-        if (nextProps.statuses !== initialStatuses) {
+
+        // Compare previous state to the updated state then setState of statuses
+        if (state.statuses !== initialStatuses) {
             return {
                 statuses: initialStatuses,
             };
