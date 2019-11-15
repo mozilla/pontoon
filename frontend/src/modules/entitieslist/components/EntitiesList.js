@@ -335,9 +335,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 pageStart={ 1 }
                 loadMore={ this.getMoreEntities }
                 hasMore={ hasMore }
-                loader={ <SkeletonLoader key={0} /> }
+                loader={ <SkeletonLoader key={0} entities={props.entities.entities}/> }
                 useWindow={ false }
-                threshold={ 1000 }
+                threshold={ 600 }
             >
             { (hasMore || props.entities.entities.length) ?
                 <ul>

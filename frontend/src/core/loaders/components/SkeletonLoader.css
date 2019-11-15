@@ -1,14 +1,13 @@
-.entities .loading {
-    color: #7BC876;
-    font-size: 128px;
-    height: 190px;
-    padding: 40px 0 10px;
-    text-align: center;
-}
-
 .skeleton-loader.entities {
     pointer-events: none;
     overflow: hidden;
+    height: 100%;
+}
+
+.skeleton-loader.loading {
+    pointer-events: none;
+    overflow: hidden;
+    height: auto;
 }
 
 .skeleton-loader p {
