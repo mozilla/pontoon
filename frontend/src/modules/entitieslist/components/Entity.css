@@ -81,7 +81,7 @@
 
 .entity.checked .status:before,
 .entity.selected .status:before {
-    content: "";
+    content: "";
     font-weight: bold;
 }
 
@@ -92,12 +92,13 @@
 
 .entity.checked:hover .status:before,
 .entity.selected:hover .status:before {
-    content: "";
+    content: "";
     font-weight: bold;
 }
 
 .entity.batch-editable .status:hover:before {
     content: "";
+    font-weight: bold;
 }
 
 .entity.batch-editable.checked > .status:before {
