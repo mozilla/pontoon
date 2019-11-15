@@ -1,4 +1,4 @@
-FROM postgres:9.4
+FROM postgres:11.5
 
 RUN echo "tr_TR.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen
