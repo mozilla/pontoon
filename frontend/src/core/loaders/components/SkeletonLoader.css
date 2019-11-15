@@ -4,9 +4,7 @@
     height: 100%;
 }
 
-.skeleton-loader.loading {
-    pointer-events: none;
-    overflow: hidden;
+.skeleton-loader.entities.scroll {
     height: auto;
 }
 

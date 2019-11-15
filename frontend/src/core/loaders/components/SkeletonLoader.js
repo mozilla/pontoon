@@ -2,13 +2,14 @@ import React from 'react';
 
 import './SkeletonLoader.css';
 
-let list;
-
 export default function SkeletonLoader (props) {
-    { list = props.entities.length === 0 ? [...Array(30).keys()] : [...Array(2).keys()] }
-    return <ul className={`skeleton-loader entities ${props.entities.length === 0 ? 'entities' : 'loading'}`}>
+    const firstLoad = props.entities.length === 0;
+    const entityCount = firstLoad ? 30 : 2;
+    const list = [...Array(entityCount).keys()];
+
+    return <ul className={ `skeleton-loader entities ${ firstLoad ? null : 'scoll' }` }>
         { list.map((i) => {
-            const classes = `entity missing ${i === 0 ? 'selected' : null}`
+            const classes = `entity missing ${ i === 0 && firstLoad ? 'selected' : null }`
             return <li className={ classes } key={ i }>
                 <span className='status fa'/>
                 <div>
