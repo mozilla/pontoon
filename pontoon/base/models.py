@@ -2571,7 +2571,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities.order_by(*order_fields)
 
     @classmethod
-    def map_entities(cls, locale, entities, visible_entities=None):
+    def map_entities(cls, locale, preferred_source_locale, entities, visible_entities=None):
         entities_array = []
         visible_entities = visible_entities or []
 
@@ -2591,6 +2591,13 @@ class Entity(DirtyFieldsMixin, models.Model):
         for entity in entities:
             translation_array = []
 
+            if preferred_source_locale == "":
+                string = entity.string
+                string_plural = entity.string_plural
+            else:
+                string = "hello"
+                string_plural = "many greetings"
+
             if entity.string_plural == "":
                 translation = entity.get_active_translation().serialize()
                 translation_array.append(translation)
@@ -2602,9 +2609,9 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             entities_array.append({
                 'pk': entity.pk,
-                'original': entity.string,
+                'original': string,
                 'marked': entity.marked,
-                'original_plural': entity.string_plural,
+                'original_plural': string_plural,
                 'marked_plural': entity.marked_plural,
                 'key': entity.cleaned_key,
                 'path': entity.resource.path,

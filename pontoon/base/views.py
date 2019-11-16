@@ -174,7 +174,7 @@ def authors_and_time_range(request, locale, slug, part):
     }, safe=False)
 
 
-def _get_entities_list(locale, project, form):
+def _get_entities_list(locale, preferred_source_locale, project, form):
     """Return a specific list of entities, as defined by the `entity_ids` field of the form.
 
     This is used for batch editing.
@@ -186,14 +186,14 @@ def _get_entities_list(locale, project, form):
     )
 
     return JsonResponse({
-        'entities': Entity.map_entities(locale, entities),
+        'entities': Entity.map_entities(locale, preferred_source_locale, entities),
         'stats': TranslatedResource.objects.stats(
             project, form.cleaned_data['paths'], locale
         ),
     }, safe=False)
 
 
-def _get_all_entities(locale, project, form, entities):
+def _get_all_entities(locale, preferred_source_locale, project, form, entities):
     """Return entities without pagination.
 
     This is used by the in-context mode of the Translate page.
@@ -208,7 +208,12 @@ def _get_all_entities(locale, project, form, entities):
     visible_entities = entities.values_list('pk', flat=True)
 
     return JsonResponse({
-        'entities': Entity.map_entities(locale, entities_to_map, visible_entities),
+        'entities': Entity.map_entities(
+            locale,
+            preferred_source_locale,
+            entities_to_map,
+            visible_entities
+        ),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(
             project, form.cleaned_data['paths'], locale
@@ -216,7 +221,7 @@ def _get_all_entities(locale, project, form, entities):
     }, safe=False)
 
 
-def _get_paginated_entities(locale, project, form, entities):
+def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
@@ -246,7 +251,7 @@ def _get_paginated_entities(locale, project, form, entities):
                 entities_to_map = entities.filter(pk__in=entities_to_map_pks)
 
     return JsonResponse({
-        'entities': Entity.map_entities(locale, entities_to_map, []),
+        'entities': Entity.map_entities(locale, preferred_source_locale, entities_to_map, []),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(
             project, form.cleaned_data['paths'], locale
@@ -267,6 +272,7 @@ def entities(request):
         }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
+    preferred_source_locale = request.user.profile.preferred_source_locale
 
     project_slug = form.cleaned_data['project']
     if project_slug == 'all-projects':
@@ -276,7 +282,7 @@ def entities(request):
 
     # Only return entities with provided IDs (batch editing)
     if form.cleaned_data['entity_ids']:
-        return _get_entities_list(locale, project, form)
+        return _get_entities_list(locale, preferred_source_locale, project, form)
 
     # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
     # make a new dict with only the keys we want to pass to that function.
@@ -301,10 +307,10 @@ def entities(request):
 
     # In-place view: load all entities
     if form.cleaned_data['inplace_editor']:
-        return _get_all_entities(locale, project, form, entities)
+        return _get_all_entities(locale, preferred_source_locale, project, form, entities)
 
     # Out-of-context view: paginate entities
-    return _get_paginated_entities(locale, project, form, entities)
+    return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
 
 @utils.require_AJAX

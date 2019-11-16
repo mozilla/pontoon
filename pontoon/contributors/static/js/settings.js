@@ -30,7 +30,7 @@ $(function() {
     var preferred_source_locale = $(this).find('.language').data('code');
 
     $.ajax({
-      url: '/save-custom-preferred-source-locale/',
+      url: '/save-preferred-source-locale/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('#server').data('csrf'),
