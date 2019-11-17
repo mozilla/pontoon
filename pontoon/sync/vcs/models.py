@@ -139,8 +139,9 @@ class VCSProject(object):
         )
 
         # Unify filesystem and data model file extensions
-        modified_files = map(source_to_locale_path, modified_files)
-        removed_files = map(source_to_locale_path, removed_files)
+        if not self.configuration:
+            modified_files = map(source_to_locale_path, modified_files)
+            removed_files = map(source_to_locale_path, removed_files)
 
         if source_resources_repo.source_repo or not last_revision:
             def get_path(path):
@@ -355,7 +356,7 @@ class VCSProject(object):
                 locales = []
 
             locales = set([l for l in locales if l in self.locales])
-            map(self.synced_locales.add, locales)
+            self.synced_locales.update(locales)
 
             log.debug(
                 'Detected resource file {} for {}'.format(
@@ -435,7 +436,8 @@ class VCSProject(object):
             paths = self.resource_paths_without_config()
 
         for path in paths:
-            path = source_to_locale_path(path)
+            if not self.configuration:
+                path = source_to_locale_path(path)
             yield os.path.relpath(path, self.source_directory_path)
 
     def resource_paths_with_config(self):
@@ -623,6 +625,14 @@ class VCSResource(object):
                 string=translation.source_string,
                 string_plural=translation.source_string_plural,
                 comments=translation.comments,
+                group_comments=(
+                    translation.group_comments
+                    if hasattr(translation, 'group_comments') else None
+                ),
+                resource_comments=(
+                    translation.resource_comments
+                    if hasattr(translation, 'resource_comments') else None
+                ),
                 source=translation.source,
                 order=translation.order or index
             )
@@ -688,13 +698,15 @@ class VCSEntity(object):
     stores the translations for an entity from several locales.
     """
     def __init__(self, resource, key, string, comments, source, string_plural='',
-                 order=0):
+                 order=0, group_comments=None, resource_comments=None):
         self.resource = resource
         self.key = key
         self.string = string
         self.string_plural = string_plural
         self.translations = {}
         self.comments = comments
+        self.group_comments = group_comments or []
+        self.resource_comments = resource_comments or []
         self.source = source
         self.order = order
 
@@ -714,9 +726,15 @@ class VCSTranslation(object):
     translation for that plural form.
     """
     def __init__(
-        self, key, strings, comments, fuzzy,
+        self,
+        key,
+        strings,
+        comments,
+        fuzzy,
         source_string='',
         source_string_plural='',
+        group_comments=None,
+        resource_comments=None,
         order=0,
         source=None,
         last_translator=None,
@@ -727,6 +745,8 @@ class VCSTranslation(object):
         self.source_string_plural = source_string_plural
         self.strings = strings
         self.comments = comments
+        self.group_comments = group_comments
+        self.resource_comments = resource_comments
         self.fuzzy = fuzzy
         self.order = order
         self.source = source or []

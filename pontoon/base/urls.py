@@ -47,22 +47,10 @@ urlpatterns = [
         views.translate_locale_agnostic,
         name='pontoon.translate.locale.agnostic'),
 
-    # Translate project
-    url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<part>.+)/$',
-        views.translate,
-        name='pontoon.translate'),
-
     # Download translation memory
     url(r'^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<filename>.+)\.tmx$',
         views.download_translation_memory,
         name='pontoon.download_tmx'),
-
-    # To be removed as part of bug 1527853.
-    url(
-        r'toggle-use-translate-next/',
-        views.toggle_use_translate_next,
-        name='pontoon.user.toggle_use_translate_next'
-    ),
 
     # AJAX
     url(r'^get-entities/', views.entities,
@@ -73,14 +61,6 @@ urlpatterns = [
         name='pontoon.perform.checks'),
     url(r'^get-history/', views.get_translation_history,
         name='pontoon.get_history'),
-    url(r'^approve-translation/', views.approve_translation,
-        name='pontoon.approve_translation'),
-    url(r'^unapprove-translation/', views.unapprove_translation,
-        name='pontoon.unapprove_translation'),
-    url(r'^reject-translation/', views.reject_translation,
-        name='pontoon.reject_translation'),
-    url(r'^unreject-translation/', views.unreject_translation,
-        name='pontoon.unreject_translation'),
     url(r'^delete-translation/', views.delete_translation,
         name='pontoon.delete_translation'),
     url(r'^other-locales/', views.get_translations_from_other_locales,

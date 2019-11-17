@@ -19,7 +19,7 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False) %}
+{% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False, not_ready_message='Not synced yet') %}
   <tr class="{{ class }}">
     <td class="name" data-slug="{{ locale.code }}">
       <h4>
@@ -27,7 +27,9 @@
       </h4>
     </td>
     <td class="code">
+      <div>
         <a href="{{ main_link }}">{{ locale.code }}</a>
+      </div>
     </td>
     <td class="population">
       <span>{{ locale.population|intcomma or 'Unknown' }}</span>
@@ -39,7 +41,7 @@
       {% if chart.total_strings %}
         {{ ProgressChart.span(chart, chart_link, link_parameter, has_param) }}
       {% else %}
-        <span class="not-ready">Not synced yet</span>
+        <span class="not-ready">{{ not_ready_message }}</span>
       {% endif %}
     </td>
     {% if request %}

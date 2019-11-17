@@ -179,7 +179,7 @@ def test_get_failed_checks_db_objects(translation_a):
     assert all([e.pk is None for e in errors])
 
     cl_warning, = warnings
-    p_error, cl_error = errors
+    cl_error, p_error = sorted(errors, key=lambda e: e.library)
 
     assert cl_warning.library == 'cl'
     assert cl_warning.message == 'compare-locales warning 1'

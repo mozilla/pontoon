@@ -3,7 +3,7 @@
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
 
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './FiltersPanel.css';
 
@@ -36,6 +36,7 @@ type Props = {|
     toggleFilter: (string, string) => void,
     update: () => void,
     updateTimeRange: (filter: string) => void,
+    updateFiltersFromURLParams: () => void,
 |};
 
 type State = {|
@@ -78,6 +79,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.setState(state => {
             return { visible: !state.visible };
         });
+        this.props.updateFiltersFromURLParams();
     }
 
     // This method is called by the Higher-Order Component `onClickOutside`
@@ -86,10 +88,13 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.setState({
             visible: false,
         });
+        this.props.updateFiltersFromURLParams();
     }
 
     applyFilters = () => {
-        this.toggleVisibility();
+        this.setState({
+            visible: false,
+        });
         return this.props.update();
     }
 
@@ -243,7 +248,9 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(status.slug, 'statuses') }
                             ></span>
-                            <span className="title">{ status.name }</span>
+                            <Localized id={ `search-FiltersPanel--status-name-${status.slug}` }>
+                                <span className="title">{ status.name }</span>
+                            </Localized>
                             <span className="count">
                                 { asLocaleString(count) }
                             </span>
@@ -275,7 +282,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 <span className="title">{ tag.name }</span>
                                 <span className="priority">
                                     { [1, 2, 3, 4, 5].map((index) => {
-                                        const active = index < tag.priority ? 'active' : '';
+                                        const active = index <= tag.priority ? 'active' : '';
                                         return <span
                                             className={ `fa fa-star ${active}` }
                                             key={ index }
@@ -307,7 +314,9 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 className="status fa"
                                 onClick={ this.createToggleFilter(extra.slug, 'extras') }
                             ></span>
-                            <span className="title">{ extra.name }</span>
+                            <Localized id={ `search-FiltersPanel--extra-name-${extra.slug}` }>
+                                <span className="title">{ extra.name }</span>
+                            </Localized>
                         </li>
                     }) }
 
@@ -348,6 +357,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                             alt=""
                                             className="rounded"
                                             src={ author.gravatar_url }
+                                            width="44"
+                                            height="44"
                                         />
                                     </span>
                                     <figcaption>

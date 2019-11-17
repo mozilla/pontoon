@@ -14,7 +14,7 @@ from django.contrib.auth.views import login, logout
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers
 
-if settings.DJANGO_LOGIN:
+if settings.AUTHENTICATION_METHOD == 'django':
     urlpatterns = [
         url(r'^standalone-login/$', login, name='standalone_login'),
         url(r'^standalone-logout/$', logout, name='standalone_logout', kwargs={'next_page': '/'}),

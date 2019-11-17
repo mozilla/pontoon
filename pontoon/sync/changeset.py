@@ -14,7 +14,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Translation,
-    TranslationMemoryEntry
+    TranslationMemoryEntry,
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
@@ -60,7 +60,7 @@ class ChangeSet(object):
     @property
     def changed_translations(self):
         """A list of Translation objects that have been created or updated."""
-        return self.translations_to_create + self.translations_to_update.values()
+        return self.translations_to_create + list(self.translations_to_update.values())
 
     def update_vcs_entity(self, locale, db_entity, vcs_entity):
         """
@@ -181,6 +181,8 @@ class ChangeSet(object):
             'string_plural': vcs_entity.string_plural,
             'key': vcs_entity.key,
             'comment': '\n'.join(vcs_entity.comments),
+            'group_comment': '\n'.join(vcs_entity.group_comments),
+            'resource_comment': '\n'.join(vcs_entity.resource_comments),
             # one timestamp per import, unlike timezone.now()
             'date_created': db_entity.date_created if db_entity else self.now,
             'order': vcs_entity.order,
@@ -387,6 +389,8 @@ class ChangeSet(object):
                 'string_plural',
                 'key',
                 'comment',
+                'group_comment',
+                'resource_comment',
                 'order',
                 'source',
             ])
@@ -396,7 +400,7 @@ class ChangeSet(object):
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
-            bulk_update(self.translations_to_update.values(), update_fields=[
+            bulk_update(list(self.translations_to_update.values()), update_fields=[
                 'entity',
                 'locale',
                 'string',

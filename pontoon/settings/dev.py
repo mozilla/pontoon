@@ -3,7 +3,9 @@
 from __future__ import absolute_import
 
 import copy
-import base
+import re
+from . import base
+
 
 INSTALLED_APPS = base.INSTALLED_APPS + (
     # Provides a special toolbar which helps with tracking performance issues.
@@ -16,14 +18,32 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
     'sslserver',
 )
 
-MIDDLEWARE_CLASSES = base.MIDDLEWARE_CLASSES + (
+# In development, we want to remove the WhiteNoise middleware, because we need
+# precise control of static files loading in order to properly load frontend
+# resources. See the `pontoon.translate` module.
+MIDDLEWARE_CLASSES = tuple(
+    middleware for middleware in base.MIDDLEWARE_CLASSES
+    if middleware != 'whitenoise.middleware.WhiteNoiseMiddleware'
+) + (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 TEMPLATES = copy.copy(base.TEMPLATES)
-TEMPLATES[0]['OPTIONS']['match_regex'] = (
-    r'^(?!(admin|debug_toolbar|registration|account|socialaccount)/).*\.(html|jinja|js)$'
-)
+TEMPLATES[0]['OPTIONS']['match_regex'] = re.compile(
+    r'''
+        ^(?!(
+            admin|
+            debug_toolbar|
+            registration|
+            account|
+            socialaccount|
+            graphene|
+        )/).*\.(
+            html|
+            jinja|
+            js|
+        )$
+    ''', re.VERBOSE)
 
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + ('http://ajax.googleapis.com',)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ('data:',)

@@ -28,7 +28,8 @@ class FTLEntity(VCSTranslation):
     Represents entities in FTL (without its attributes).
     """
     def __init__(
-        self, key, source_string, source_string_plural, strings, comments=None, order=None
+        self, key, source_string, source_string_plural, strings, comments=None,
+        group_comments=None, resource_comments=None, order=None
     ):
         super(FTLEntity, self).__init__(
             key=key,
@@ -36,6 +37,8 @@ class FTLEntity(VCSTranslation):
             source_string_plural=source_string_plural,
             strings=strings,
             comments=comments or [],
+            group_comments=group_comments or [],
+            resource_comments=resource_comments or [],
             fuzzy=False,
             order=order,
         )
@@ -61,6 +64,8 @@ class FTLResource(ParsedResource):
                     '',
                     {},
                     copy.copy(entity.comments),
+                    copy.copy(entity.group_comments),
+                    copy.copy(entity.resource_comments),
                     entity.order
                 )
 
@@ -76,6 +81,7 @@ class FTLResource(ParsedResource):
                 raise
 
         group_comment = []
+        resource_comment = []
         for obj in self.structure.body:
             if isinstance(obj, localizable_entries):
                 key = get_key(obj)
@@ -90,13 +96,18 @@ class FTLResource(ParsedResource):
                     translation,
                     '',
                     {None: translation},
-                    group_comment + comment,
+                    comment,
+                    group_comment,
+                    resource_comment,
                     self.order
                 )
                 self.order += 1
 
             elif isinstance(obj, ast.GroupComment):
                 group_comment = [obj.content]
+
+            elif isinstance(obj, ast.ResourceComment):
+                resource_comment += [obj.content]
 
     @property
     def translations(self):

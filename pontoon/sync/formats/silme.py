@@ -73,6 +73,11 @@ class SilmeEntity(VCSTranslation):
         return not self.__eq__(other)
 
     def __nonzero__(self):
+        # TODO: remove python2
+        return bool(self.strings)
+
+    def __bool__(self):
+        # python 3
         return bool(self.strings)
 
 
@@ -128,7 +133,7 @@ class SilmeResource(ParsedResource):
 
     @property
     def translations(self):
-        return self.entities.values()
+        return list(self.entities.values())
 
     def save(self, locale):
         """

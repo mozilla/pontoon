@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import onClickOutside from 'react-onclickoutside';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './UserMenu.css';
 import FileUpload from './FileUpload';
@@ -78,8 +78,14 @@ export class UserMenuBase extends React.Component<Props, State> {
                 onClick={ this.toggleVisibility }
             >
                 { user.isAuthenticated ?
-                <img src={ user.gravatarURLSmall } alt="User avatar" /> :
-                <div className="menu-icon fa fa-bars" />
+                    <img
+                        src={ user.gravatarURLSmall }
+                        alt=""
+                        height="44"
+                        width="44"
+                    />
+                    :
+                    <div className="menu-icon fa fa-bars" />
                 }
             </div>
 
@@ -88,8 +94,13 @@ export class UserMenuBase extends React.Component<Props, State> {
                 { !user.isAuthenticated ? null :
                 <React.Fragment>
                     <li className="details">
-                        <a href="/profile/">
-                            <img src={ user.gravatarURLBig } alt="User avatar" />
+                        <a href={ `/contributors/${user.username}/` }>
+                            <img
+                                src={ user.gravatarURLBig }
+                                alt=""
+                                height="88"
+                                width="88"
+                            />
                             <p className="name">{ user.nameOrEmail }</p>
                             <p className="email">{ user.email }</p>
                         </a>
@@ -136,39 +147,51 @@ export class UserMenuBase extends React.Component<Props, State> {
 
                 <li>
                     <Localized
-                        id="user-UserMenu--top-contributors"
-                        glyph={
-                            <i className="fa fa-trophy fa-fw"></i>
-                        }
-                    >
-                        <a href="/contributors/">
-                            { '<glyph></glyph>Top Contributors' }
-                        </a>
-                    </Localized>
-                </li>
-
-                <li>
-                    <Localized
-                        id="user-UserMenu--machinery"
-                        glyph={
-                            <i className="fa fa-search fa-fw"></i>
-                        }
-                    >
-                        <a href="/machinery/">
-                            { '<glyph></glyph>Machinery' }
-                        </a>
-                    </Localized>
-                </li>
-
-                <li>
-                    <Localized
                         id="user-UserMenu--terms"
                         glyph={
                             <i className="fa fa-gavel fa-fw"></i>
                         }
                     >
-                        <a href="/terms/">
+                        <a
+                            href="/terms/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Terms of Use' }
+                        </a>
+                    </Localized>
+                </li>
+
+                <li>
+                    <Localized
+                        id="user-UserMenu--github"
+                        glyph={
+                            <i className="fab fa-github fa-fw"></i>
+                        }
+                    >
+                        <a
+                            href="https://github.com/mozilla/pontoon/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
+                            { '<glyph></glyph>Hack it on GitHub' }
+                        </a>
+                    </Localized>
+                </li>
+
+                <li>
+                    <Localized
+                        id="user-UserMenu--feedback"
+                        glyph={
+                            <i className="fa fa-comment-dots fa-fw"></i>
+                        }
+                    >
+                        <a
+                            href="https://discourse.mozilla.org/c/pontoon"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
+                            { '<glyph></glyph>Give Feedback' }
                         </a>
                     </Localized>
                 </li>
@@ -180,7 +203,11 @@ export class UserMenuBase extends React.Component<Props, State> {
                             <i className="fa fa-life-ring fa-fw"></i>
                         }
                     >
-                        <a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/">
+                        <a
+                            href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
                             { '<glyph></glyph>Help' }
                         </a>
                     </Localized>

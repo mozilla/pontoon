@@ -1,18 +1,18 @@
 .search-box {
-    border-bottom: 1px solid #5e6475;
+    margin: 9px 5px 11px;
     position: static;
 }
 
 .search-box input[type="search"] {
-    background: #4d5967;
-    border: 0;
+    background: #4D5967;
+    border: none;
+    border-radius: 20px;
     box-sizing: border-box;
     color: #fff;
-    float: left;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
     line-height: 23px;
-    padding: 10px 35px 10px 43px;
+    padding: 5px 33px 5px 37px;
     width: 100%;
 }
 
@@ -32,23 +32,23 @@
 }
 
 .search-box > label {
-    color: #aaa;
-    font-size: 19px;
+    color: #AAAAAA;
+    font-size: 17px;
     left: auto;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 16px;
+    top: 16px;
 }
 
 .search-box .status.fa {
     position: absolute;
     left: 16px;
-    top: 13px;
+    top: 9px;
 }
 
 .search-box .all .status {
-    left: 14px;
-    top: 11px;
+    left: 15px;
+    top: 9px;
 }
 
 .search-box .status.fa::before {
@@ -59,7 +59,7 @@
 .search-box .all .status::before {
     color: #AAAAAA;
     content: "";
-    font-size: 19px;
+    font-size: 16px;
 }
 
 .search-box .translated .status:before {
@@ -89,13 +89,24 @@
 }
 
 .search-box .unreviewed.selected .status:before,
-.search-box .unreviewed .status:hover:before {
-  font-size: 16px;
+.search-box .unreviewed:not(.visibility-switch) .status:hover:before {
+    font-size: 16px;
 }
 
 .search-box .unchanged .status:before {
     color: #AAAAAA;
     content: "";
+}
+
+.search-box .empty .status:before {
+    color: #AAAAAA;
+    content: "\f111";
+    font-weight: 100;
+}
+
+.search-box .menu .empty.selected .status:before,
+.search-box .menu .empty .status:hover:before {
+    font-weight: 900;
 }
 
 .search-box .rejected .status:before {

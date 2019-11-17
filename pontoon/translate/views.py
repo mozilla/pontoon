@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 import requests
 
-import waffle
-
 from django import http
 from django.conf import settings
 from django.contrib import messages
@@ -11,11 +9,9 @@ from django.contrib.staticfiles.views import serve
 from django.http import Http404
 from django.shortcuts import (
     get_object_or_404,
-    redirect,
     render,
 )
 from django.template import engines
-from django.urls import reverse
 from django.views.decorators.csrf import (
     csrf_exempt,
     ensure_csrf_cookie,
@@ -26,13 +22,11 @@ from pontoon.base.models import (
     Project,
 )
 
-from . import URL_BASE
-
 
 UPSTREAM = 'http://localhost:3000'
 
 
-def static_serve_dev(request, path, insecure=False, **kwargs):
+def static_serve_dev(request, path):
     """Proxy missing static files to the webpack server.
 
     This view replaces django's static files serve view. When a file is
@@ -47,7 +41,7 @@ def static_serve_dev(request, path, insecure=False, **kwargs):
     """
     try:
         # First try to load the file with django's regular serve view.
-        return serve(request, path, insecure=False, **kwargs)
+        return serve(request, path, insecure=True)
     except Http404:
         # If the file couldn't be found in django's static files, then we
         # try to proxy it to the webpack server.
@@ -65,11 +59,7 @@ def catchall_dev(request, context=None):
     if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
         return http.HttpResponseRedirect(UPSTREAM + request.path)
 
-    # Until we change it, this app doesn't live at the root of our website.
-    # Since the frontend server is at the root, and won't recognize our URL,
-    # we need to remove the base part of the path before proxying.
-    request_path = request.path.replace(URL_BASE, '')
-    upstream_url = UPSTREAM + request_path
+    upstream_url = UPSTREAM + request.path
     method = request.META['REQUEST_METHOD'].lower()
     response = getattr(requests, method)(upstream_url, stream=True)
     content_type = response.headers.get('Content-Type')
@@ -113,41 +103,17 @@ def get_preferred_locale(request):
     return None
 
 
-def translate(request, locale=None, project=None, resource=None):
-    if not waffle.flag_is_active(request, 'translate_next'):
-        raise Http404
+def translate(request, locale, project, resource):
+    # Validate Locale
+    locale = get_object_or_404(Locale, code=locale)
 
-    # Redirect the user to the old Translate page if needed.
-    # To be removed as part of bug 1527853.
-    user = request.user
-    if user.is_authenticated and not user.profile.use_translate_next:
-        url = reverse(
-            'pontoon.translate',
-            kwargs={
-                'slug': project,
-                'locale': locale,
-                'part': resource,
-            }
-        )
-        query = request.GET.urlencode()
-        if query:
-            url += '?' + query
+    # Validate Project
+    if project.lower() != 'all-projects':
+        project = get_object_or_404(Project.objects.available(), slug=project)
 
-        return redirect(url)
-
-    # We make parameters optional to simplify testing
-    if locale and project:
-
-        # Validate Locale
-        locale = get_object_or_404(Locale, code=locale)
-
-        # Validate Project
-        if project.lower() != 'all-projects':
-            project = get_object_or_404(Project.objects.available(), slug=project)
-
-            # Validate ProjectLocale
-            if locale not in project.locales.all():
-                raise Http404
+        # Validate ProjectLocale
+        if locale not in project.locales.all():
+            raise Http404
 
     context = {
         'locale': get_preferred_locale(request),

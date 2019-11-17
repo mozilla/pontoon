@@ -62,6 +62,7 @@ export type EditorProps = {|
     searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
+    addTextToEditorTranslation: (content: string) => void,
     clearEditor: () => void,
     copyOriginalIntoEditor: () => void,
     handleShortcuts: (
@@ -104,6 +105,10 @@ export default function connectedEditor<Object>(
             this.props.dispatch(actions.update(translation, source));
         }
 
+        addTextToEditorTranslation = (content: string) => {
+            this.props.dispatch(actions.updateSelection(content));
+        }
+
         hideUnsavedChanges = () => {
             this.props.dispatch(unsavedchanges.actions.hide());
         }
@@ -140,8 +145,13 @@ export default function connectedEditor<Object>(
 
             let handledEvent = false;
 
+            // Disable keyboard shortcuts when editor is in read only.
+            if (this.props.isReadOnlyEditor) {
+                return;
+            }
+
             // On Enter:
-            //   - If unsaved changes popup is shown, leave anyway.
+            //   - If unsaved changes popup is shown, proceed.
             //   - If failed checks popup is shown after approving a translation, approve it anyway.
             //   - In other cases, send current translation.
             if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
@@ -158,7 +168,7 @@ export default function connectedEditor<Object>(
                 const source = this.props.editor.source;
                 const ignoreWarnings = !!(errors.length || warnings.length);
 
-                // Leave anyway
+                // Proceed
                 if (this.props.unsavedchanges.shown) {
                     this.ignoreUnsavedChanges();
                 }
@@ -312,6 +322,7 @@ export default function connectedEditor<Object>(
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
+                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     clearEditor={ this.clearEditor }
                     copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
                     handleShortcuts={ this.handleShortcuts }

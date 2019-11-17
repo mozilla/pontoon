@@ -32,8 +32,6 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') != 'False'
 
 HEROKU_DEMO = os.environ.get('HEROKU_DEMO', 'False') != 'False'
 
-DJANGO_LOGIN = os.environ.get('DJANGO_LOGIN', 'False') != 'False' or HEROKU_DEMO
-
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
 # and password 'AUTO_LOGIN_PASSWORD'
 AUTO_LOGIN = os.environ.get('AUTO_LOGIN', 'False') != 'False'
@@ -122,6 +120,7 @@ INSTALLED_APPS = (
     'pontoon.localizations',
     'pontoon.machinery',
     'pontoon.projects',
+    'pontoon.review',
     'pontoon.sync',
     'pontoon.tags',
     'pontoon.teams',
@@ -134,6 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
     # Django sites app is required by django-allauth
@@ -149,11 +149,12 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.fxa',
+    'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'notifications',
     'graphene_django',
     'webpack_loader',
-    'waffle',
     'django_ace',
 )
 
@@ -175,7 +176,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
     'pontoon.base.middleware.AutomaticLoginUserMiddleware',
-    'waffle.middleware.WaffleMiddleware',
 )
 
 CONTEXT_PROCESSORS = (
@@ -225,7 +225,6 @@ TEMPLATES = [
                 'django_jinja.builtins.extensions.StaticFilesExtension',
                 'django_jinja.builtins.extensions.DjangoFiltersExtension',
                 'pipeline.templatetags.ext.PipelineExtension',
-                'waffle.jinja.WaffleExtension',
                 'webpack_loader.contrib.jinja2ext.WebpackExtension',
             ],
         }
@@ -344,14 +343,6 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/sync_logs.min.css',
     },
-    'translate': {
-        'source_filenames': (
-            'css/jquery-ui.css',
-            'css/jquery-ui-timepicker-addon.css',
-            'css/translate.css',
-        ),
-        'output_filename': 'css/translate.min.css',
-    },
     'profile': {
         'source_filenames': (
             'css/contributor.css',
@@ -408,14 +399,6 @@ PIPELINE_CSS = {
             'css/homepage.css',
         ),
         'output_filename': 'css/homepage.min.css'
-    },
-    'tour': {
-        'source_filenames': (
-            'js/lib/sideshow/fonts/sideshow-fontface.min.css',
-            'js/lib/sideshow/stylesheets/sideshow.css',
-            'css/tour.css',
-        ),
-        'output_filename': 'css/tour.min.css',
     },
 }
 
@@ -493,18 +476,6 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/teams.min.js',
     },
-    'translate': {
-        'source_filenames': (
-            'js/lib/jquery-ui.js',
-            'js/lib/jquery-ui-timepicker-addon.js',
-            'js/lib/jquery.mark.js',
-            'js/lib/highstock.js',
-            'js/lib/diff.js',
-            'js/fluent_interface.js',
-            'js/translate.js',
-        ),
-        'output_filename': 'js/translate.min.js',
-    },
     'profile': {
         'source_filenames': (
             'js/contributor.js',
@@ -542,16 +513,6 @@ PIPELINE_JS = {
             'js/homepage.js'
         ),
         'output_filename': 'js/homepage.min.js',
-    },
-    'tour': {
-        'source_filenames': (
-            'js/lib/sideshow/dependencies/jazz.min.js',
-            'js/lib/sideshow/dependencies/pagedown.min.js',
-            'js/lib/sideshow/sideshow.js',
-            'js/tour.config.js',
-            'js/tour.js',
-        ),
-        'output_filename': 'js/tour.min.js',
     },
 }
 
@@ -782,6 +743,10 @@ USE_I18N = False
 # calendars according to the current locale
 USE_L10N = False
 
+# Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
+# See bug 1567402 for details. A Mozilla-specific variable.
+ENABLE_BUGS_TAB = os.environ.get('ENABLE_BUGS_TAB', 'False') != 'False'
+
 # Bleach tags and attributes
 ALLOWED_TAGS = [
     'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'code', 'em', 'i',
@@ -827,19 +792,43 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
+# Supported values: 'django', 'fxa', 'github'
+AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
+
 
 def account_username(user):
     return user.name_or_email
 
 
+# django-allauth settings
 ACCOUNT_AUTHENTICATED_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_DISPLAY = account_username
 
+# Firefox Accounts
+FXA_CLIENT_ID = os.environ.get('FXA_CLIENT_ID', '')
+FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
+FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
+FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
+FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
+
+# Github
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
+GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
+
 # Google Accounts
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY', '')
+
+# All settings related to the AllAuth
+SOCIALACCOUNT_PROVIDERS = {
+    'fxa': {
+        'SCOPE': FXA_SCOPE,
+        'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
+        'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
+    }
+}
 
 # Defined all trusted origins that will be returned in pontoon.js file.
 if os.environ.get('JS_TRUSTED_ORIGINS'):

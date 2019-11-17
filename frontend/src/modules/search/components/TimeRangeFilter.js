@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import date from 'date-and-time';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 import cloneDeep from 'lodash.clonedeep';
 
 import Highcharts from 'highcharts/highstock'
@@ -140,6 +140,11 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
 
     plotChart = () => {
         const { timeRange, timeRangeData } = this.props;
+
+        // In case of no translations
+        if (timeRangeData.length === 0) {
+            return null;
+        }
 
         // Set default chart boundaries (full chart)
         let chartFrom = this.getTimeForURL(timeRangeData[0][0]);

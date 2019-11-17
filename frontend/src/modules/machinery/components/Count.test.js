@@ -8,8 +8,8 @@ describe('<Count>', () => {
     it('shows the correct number of preferred translations', () => {
         const machinery = {
             translations: [
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Translation memory' }] },
+                { sources: ['translation-memory'] },
+                { sources: ['translation-memory'] },
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
@@ -26,9 +26,9 @@ describe('<Count>', () => {
     it('shows the correct number of remaining translations', () => {
         const machinery = {
             translations: [
-                { sources: [{ type: 'Microsoft' }] },
-                { sources: [{ type: 'Transvision' }] },
-                { sources: [{ type: 'Transvision' }] },
+                { sources: ['microsoft'] },
+                { sources: ['transvision'] },
+                { sources: ['transvision'] },
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);
@@ -46,11 +46,11 @@ describe('<Count>', () => {
     it('shows the correct numbers of preferred and remaining translations', () => {
         const machinery = {
             translations: [
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Translation memory' }] },
-                { sources: [{ type: 'Microsoft' }] },
-                { sources: [{ type: 'Transvision' }] },
-                { sources: [{ type: 'Transvision' }] },
+                { sources: ['translation-memory'] },
+                { sources: ['translation-memory'] },
+                { sources: ['microsoft'] },
+                { sources: ['transvision'] },
+                { sources: ['transvision'] },
             ],
         };
         const wrapper = shallow(<Count machinery={ machinery } />);

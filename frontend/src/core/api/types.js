@@ -23,6 +23,8 @@ export type Entity = {|
     +original: string,
     +original_plural: string,
     +comment: string,
+    +group_comment: string,
+    +resource_comment: string,
     +key: string,
     +format: string,
     +path: string,
@@ -55,13 +57,18 @@ export type OtherLocaleTranslation = {|
  * Translation that comes from a machine (Machine Translation,
  * Translation Memory... ).
  */
+type SourceType =
+    | 'translation-memory'
+    | 'google-translate'
+    | 'microsoft-translator'
+    | 'microsoft-terminology'
+    | 'transvision'
+    | 'caighdean'
+;
+
 export type MachineryTranslation = {|
-    sources: Array<{|
-        type: string,
-        url: string,
-        title: string,
-        count?: number,
-    |}>,
+    sources: Array<SourceType>,
+    itemCount?: number,
     original: string,
     translation: string,
     quality?: number,

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './OtherLocales.css';
 
@@ -21,7 +21,7 @@ type Props = {|
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
 |};
 
 

@@ -20,6 +20,7 @@ import * as otherlocales from 'modules/otherlocales';
 import * as genericeditor from 'modules/genericeditor';
 import * as fluenteditor from 'modules/fluenteditor';
 import * as unsavedchanges from 'modules/unsavedchanges';
+import * as notification from 'core/notification';
 
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
@@ -168,6 +169,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         dispatch(machinery.actions.get(source, locale, pk));
     }
 
+    copyLinkToClipboard = () => {
+        const { locale, project, resource, entity } = this.props.parameters;
+        const { protocol, host } = window.location;
+
+        const string_link = `${protocol}//${host}/${locale}/${project}/${resource}/?string=${entity}`;
+        navigator.clipboard.writeText(string_link).then(() => {
+            // Notify the user of the change that happened.
+            const notif = notification.messages.STRING_LINK_COPIED;
+            this.props.dispatch(notification.actions.add(notif));
+        });
+    }
+
     goToNextEntity = () => {
         const { dispatch, nextEntity, router } = this.props;
 
@@ -219,8 +232,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(lightbox.actions.open(image));
     }
 
-    updateEditorTranslation = (translation: string) => {
-        this.props.dispatch(editor.actions.update(translation, 'external'));
+    updateEditorTranslation = (translation: string, changeSource: string) => {
+        this.props.dispatch(editor.actions.update(translation, changeSource));
     }
 
     addTextToEditorTranslation = (content: string) => {
@@ -244,16 +257,25 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      */
     updateTranslationStatus = (translationId: number, change: ChangeOperation) => {
         const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
-        dispatch(history.actions.updateStatus(
-            change,
-            selectedEntity,
-            locale,
-            parameters.resource,
-            pluralForm,
-            translationId,
-            nextEntity,
-            router,
-        ));
+        // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
+        // because it cannot be triggered for the use case of bug 1508474.
+        dispatch(
+            unsavedchanges.actions.check(
+                this.props.unsavedchanges,
+                () => {
+                    dispatch(history.actions.updateStatus(
+                        change,
+                        selectedEntity,
+                        locale,
+                        parameters.resource,
+                        pluralForm,
+                        translationId,
+                        nextEntity,
+                        router,
+                    ));
+                }
+            )
+        );
     }
 
     render() {
@@ -268,40 +290,52 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         return <section className="entity-details">
-            <EntityNavigation
-                goToNextEntity={ this.goToNextEntity }
-                goToPreviousEntity={ this.goToPreviousEntity }
-            />
-            <Metadata
-                entity={ state.selectedEntity }
-                isReadOnlyEditor={ state.isReadOnlyEditor }
-                locale={ state.locale }
-                pluralForm={ state.pluralForm }
-                openLightbox={ this.openLightbox }
-                addTextToEditorTranslation={ this.addTextToEditorTranslation }
-                navigateToPath={ this.navigateToPath }
-            />
-            { state.selectedEntity.format === 'ftl' ?
-                <fluenteditor.Editor /> :
-                <genericeditor.Editor />
-            }
-            <Helpers
-                entity={ state.selectedEntity }
-                history={ state.history }
-                isReadOnlyEditor={ state.isReadOnlyEditor }
-                isTranslator={ state.isTranslator }
-                locale={ state.locale }
-                machinery={ state.machinery }
-                otherlocales={ state.otherlocales }
-                orderedOtherLocales={ state.orderedOtherLocales }
-                preferredLocalesCount={ state.preferredLocalesCount }
-                parameters={ state.parameters }
-                user={ state.user }
-                deleteTranslation={ this.deleteTranslation }
-                updateTranslationStatus={ this.updateTranslationStatus }
-                updateEditorTranslation={ this.updateEditorTranslation }
-                searchMachinery={ this.searchMachinery }
-            />
+            <section className="main-column">
+                <EntityNavigation
+                    copyLinkToClipboard={ this.copyLinkToClipboard }
+                    goToNextEntity={ this.goToNextEntity }
+                    goToPreviousEntity={ this.goToPreviousEntity }
+                />
+                <Metadata
+                    entity={ state.selectedEntity }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    locale={ state.locale }
+                    pluralForm={ state.pluralForm }
+                    openLightbox={ this.openLightbox }
+                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                    navigateToPath={ this.navigateToPath }
+                />
+                { state.selectedEntity.format === 'ftl' ?
+                    <fluenteditor.Editor /> :
+                    <genericeditor.Editor />
+                }
+                <history.History
+                    entity={ state.selectedEntity }
+                    history={ state.history }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    isTranslator={ state.isTranslator }
+                    locale={ state.locale }
+                    user={ state.user }
+                    deleteTranslation={ this.deleteTranslation }
+                    updateTranslationStatus={ this.updateTranslationStatus }
+                    updateEditorTranslation={ this.updateEditorTranslation }
+                />
+            </section>
+            <section className="third-column">
+                <Helpers
+                    entity={ state.selectedEntity }
+                    isReadOnlyEditor={ state.isReadOnlyEditor }
+                    locale={ state.locale }
+                    machinery={ state.machinery }
+                    otherlocales={ state.otherlocales }
+                    orderedOtherLocales={ state.orderedOtherLocales }
+                    preferredLocalesCount={ state.preferredLocalesCount }
+                    parameters={ state.parameters }
+                    user={ state.user }
+                    updateEditorTranslation={ this.updateEditorTranslation }
+                    searchMachinery={ this.searchMachinery }
+                />
+            </section>
         </section>;
     }
 }

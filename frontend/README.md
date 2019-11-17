@@ -1,5 +1,4 @@
-# Translate.Next — a better Translate app for Pontoon
-
+# Translate front-end app
 
 ## Tools
 
@@ -73,10 +72,6 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 ## Running and deploying
 
-### This feature is behind a Switch
-
-While this is under development, the feature is hidden behing a feature flag, and thus is not accessible by default. In order to turn it on, you have to run `./manage.py waffle_flag translate_next --everyone --create`, then restart your web server. To turn it off, run `./manage.py waffle_flag translate_next --deactivate`.
-
 ### Production
 
 The only required step for the front-end is to build static files with `yarn build`. Django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
@@ -137,6 +132,8 @@ To upgrade dependency to a specific version, run the following commands:
     make build
 ```
 
+Note that, in order to add new dependencies, you need to have `yarn` installed and perform the actions locally (outside docker). You might want to remove the `node_modules` folder after you've run the install or update command (and the `package.json` and `yarn.lock` files have been updated) and before rebuilding the image, to reduce the size of the docker context.
+
 
 ## Type checking
 
@@ -144,7 +141,7 @@ Our code uses Flow to enforce type checking. This is a good way to significantly
 
 To check for Flow issues during development while you edit files, run:
 
-    yarn flow:dev
+    $ make flow
 
 To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/). Additionally, you can read through the [web-ext guide](https://github.com/mozilla/web-ext/blob/master/CONTRIBUTING.md#check-for-flow-errors) for hints on how to solve common Flow errors.
 
@@ -159,7 +156,7 @@ Tests are run using [`jest`](https://facebook.github.io/jest/). We use [`enzyme`
 
 To run the test suite, use:
 
-    $ yarn test
+    $ make test-frontend
 
 It will start an auto-reloading test runner, that will refresh every time you make a change to the code or tests.
 
@@ -171,10 +168,10 @@ describe('<Component>', () => {
 });
 ```
 
-Individual tests follow `mocha`'s syntax:
+Individual tests follow `mocha`'s descriptive syntax. Try to be as explicit as possible in your test description. If you cannot, that probably means the test you want to write is not focused enough. Each test should be as small as possible, testing one single thing. It's better to have many small tests than one single, humongous test. Code repetition is tolerated in unit tests.
 
 ```javascript
-it('does something', () => {
+it('does something specific', () => {
     // unit test here
 });
 ```
@@ -188,7 +185,7 @@ The user interface is localized using [Fluent](https://projectfluent.org/) and t
 
 ### Adding localized content
 
-Every time you add a piece of UI that contains some content, there are 2 things you need to do. First, make sure you put it inside a `<Localized>` element, and give it an id. String identifiers should follow this form: `${module}-${component}-${contentDescription}`. For example, if you were to add a new button (`<button>Update</button>`) to the `Editor` component in the `entitydetails` module, the id for that button might be `entitydetails-editor-button-update`.
+Every time you add a piece of UI that contains some content, there are 2 things you need to do. First, make sure you put it inside a `<Localized>` element, and give it an id. String identifiers should follow this form: `${module}-${ComponentName}--${string-description}`. For example, if you were to add a new button (`<button>Update</button>`) to the `Editor` component in the `entitydetails` module, the id for that button might be `entitydetails-Editor--button-update`.
 
 That would give:
 
@@ -196,7 +193,7 @@ That would give:
 class Editor extends React.Component {
     render() {
         return <div>
-            <Localized id="entitydetails-editor-button-update">
+            <Localized id="entitydetails-Editor--button-update">
                 <button>Update</button>
             </Localized>
         </div>;
@@ -221,6 +218,14 @@ An important part of the contract is that the developer commits to treat the loc
 In return, localizers enter the social contract by promising to provide an accurate and clean translation of the messages that match the request.
 
 In Fluent, the developer is not to be bothered with inner logic and complexity that the localization will use to construct the response. Whether declensions or other variant selection techniques are used is up to a localizer and their particular translation. From the developer perspective, Fluent returns a final string to be presented to the user, with no l10n logic required in the running code.
+
+### Pseudo-localization
+
+In order to easily verify that a string is effectively localized, you can turn on pseudo-localization. To do that, add `pseudolocalization=accented` or `pseudolocalization=bidi` to the URL, then refresh the page.
+
+Pseudo-localization turns every supported string into a different version of itself. We support two modes: "accented" (transforms "Accented English" into "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ") and "bidi" (transforms "Reversed English" into "‮ᴚǝʌǝɹsǝp Ǝuƃʅısɥ‬"). Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are *not* properly localized in the interface.
+
+You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.org/wiki/Pseudolocalization).
 
 
 ## Development resources

@@ -21,7 +21,7 @@
     {% if my_profile %}
       <div class="desc">Update profile picture</div>
     {% endif %}
-    <img class="rounded" src="{{ contributor.gravatar_url(200) }}">
+    <img class="rounded" src="{{ contributor.gravatar_url(400) }}" width="200" height="200">
   </a>
 
   <h2 id="username">{{ contributor.first_name }}</h2>
@@ -32,7 +32,7 @@
       {% if user.is_authenticated() %}
       <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
       {% else %}
-      {% if settings.DJANGO_LOGIN %}
+      {% if settings.AUTHENTICATION_METHOD == 'django' %}
         {% set login_url = url('standalone_login') %}
       {% else %}
         {% set login_url = provider_login_url(request) %}

@@ -55,10 +55,10 @@ describe('<ResourceMenuBase>', () => {
         expect(wrapper.find('.resource-menu .selector .icon')).toHaveLength(1);
     });
 
-    it('sets resource name correctly for all-resources', () => {
+    it('sets a localized resource name correctly for all-resources', () => {
         const wrapper = createShallowResourceMenu({ resource: 'all-resources' });
 
-        expect(wrapper.find('.resource-menu .selector span:first-child').text()).toEqual('All Resources');
+        expect(wrapper.find('#resource-ResourceMenu--all-resources')).toHaveLength(1);
     });
 
     it('renders resource menu correctly', () => {

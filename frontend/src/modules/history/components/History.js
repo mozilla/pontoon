@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './History.css';
 
@@ -21,7 +21,7 @@ type Props = {|
     locale: Locale,
     user: UserState,
     deleteTranslation: (number) => void,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 

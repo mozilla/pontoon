@@ -82,8 +82,6 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 editor-UnsavedChanges--close = ×
     .aria-label = Cacher les changements non-sauvegardés
 editor-UnsavedChanges--title = Vous avez des changements non-sauvegardés
-editor-UnsavedChanges--body = Voulez-vous vraiment quitter ?
-editor-UnsavedChanges--leave-anyway = Quitter quand même
 
 
 ## Entity Navigation
@@ -98,7 +96,6 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Précédent
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--history = Historique
 entitydetails-Helpers--machinery = Machinerie
 entitydetails-Helpers--locales = Langues
 
@@ -117,9 +114,6 @@ entitydetails-Metadata--placeholder =
 
 entitydetails-Metadata--resource =
     .title = Ressource
-
-entitydetails-Metadata--project =
-    .title = Projet
 
 
 ## Entity Details GenericOriginalString
@@ -160,13 +154,6 @@ history-Translation--button-reject =
 
 history-Translation--button-unreject =
     .title = Dérejeter
-
-
-## Machinery
-## Shows a list of translations from machines.
-
-machinery-Machinery--search-placeholder =
-    .placeholder = Saisir pour rechercher la machinerie
 
 
 ## Machinery Translation
@@ -212,8 +199,6 @@ otherlocales-Translation--copy =
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-allCapitalsString =
-    .title = Chaîne longue en majuscules
 placeable-parser-altAttribute =
     .title = Attribut 'alt' dans une balise XML
 placeable-parser-camelCaseString =
@@ -238,6 +223,8 @@ placeable-parser-newlineEscape =
     .title = Caractère de nouvelle ligne échappé
 placeable-parser-nonBreakingSpace =
     .title = Espace insécable
+placeable-parser-nsisVariable =
+    .title = Variable NSIS
 placeable-parser-numberString =
     .title = Nombre
 placeable-parser-optionPattern =
@@ -254,6 +241,8 @@ placeable-parser-qtFormatting =
     .title = Variable de chaîne de mise en forme Qt
 placeable-parser-stringFormattingVariable =
     .title = Variable de chaîne de mise en forme
+placeable-parser-shortCapitalNumberString =
+    .title = Chaîne courte de majuscules et chiffres
 placeable-parser-tabCharacter =
     .title = Caractère tabulation
 placeable-parser-thinSpace =
@@ -292,7 +281,6 @@ search-FiltersPanel--apply-filters =
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
-user-AppSwitcher--leave-translate-next = Quitter Translate.Next
 user-SignIn--sign-in = Connectez-vous
 user-SignOut--sign-out = <glyph></glyph>Se déconnecter
 
@@ -300,8 +288,6 @@ user-UserMenu--download-tm = <glyph></glyph>Télécharger la Mémoire de traduct
 user-UserMenu--download-translations = <glyph></glyph>Télécharger les traductions
 user-UserMenu--upload-translations = <glyph></glyph>Envoyer des traductions
 
-user-UserMenu--top-contributors = <glyph></glyph>Contributeurs et contributrices remarquables
-user-UserMenu--machinery = <glyph></glyph>Machinerie
 user-UserMenu--terms = <glyph></glyph>Conditions d’utilisation
 user-UserMenu--help = <glyph></glyph>Aide
 

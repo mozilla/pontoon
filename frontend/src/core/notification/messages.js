@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 
 export default {
@@ -116,5 +116,11 @@ export default {
             Can’t load specified string
         </Localized>,
         type: 'error',
+    },
+    'STRING_LINK_COPIED': {
+        content: <Localized id='notification--string-link-copied'>
+            Link copied to clipboard
+        </Localized>,
+        type: 'info',
     },
 };

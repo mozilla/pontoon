@@ -30,7 +30,7 @@ describe('<UnsavedChangesBase>', () => {
         expect(wrapper.find('.close')).toHaveLength(1);
         expect(wrapper.find('.title')).toHaveLength(1);
         expect(wrapper.find('.body')).toHaveLength(1);
-        expect(wrapper.find('.leave.anyway')).toHaveLength(1);
+        expect(wrapper.find('.proceed.anyway')).toHaveLength(1);
     });
 
     it('does not render if not shown', () => {
@@ -46,10 +46,10 @@ describe('<UnsavedChangesBase>', () => {
         expect(actions.hide.calledOnce).toBeTruthy();
     });
 
-    it('ignores the unsaved changes popup when the Leave anyway button is clicked', () => {
+    it('ignores the unsaved changes popup when the Proceed button is clicked', () => {
         const wrapper = shallow(<UnsavedChangesBase unsavedchanges={ { shown: true } } dispatch={ () => {} } />);
 
-        wrapper.find('.leave.anyway').simulate('click');
+        wrapper.find('.proceed.anyway').simulate('click');
         expect(actions.ignore.calledOnce).toBeTruthy();
     });
 });

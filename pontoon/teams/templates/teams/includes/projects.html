@@ -1,22 +1,20 @@
 {% import 'projects/widgets/project_list.html' as ProjectList with context %}
 
 <div class="projects items">
-  <menu class="controls">
+  <menu class="controls {% if no_visible_projects %}no-projects{% endif %}">
     <div class="search-wrapper small clearfix">
       <div class="icon fa fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
 
-    {% if user.is_authenticated() %}
+    {% if user.is_authenticated() and has_projects_to_request %}
     <button class="request-toggle button small request-projects">
       <span class="fa fa-chevron-right"></span>
     </button>
     {% endif %}
   </menu>
 
-  {{ ProjectList.header(request=True) }}
-
-  {% set locale_projects = locale.available_projects_list() %}
+  {{ ProjectList.header(request=True, visible=not no_visible_projects) }}
 
   {% for project in projects %}
     {% set main_link = url('pontoon.projects.project', project.slug) %}
@@ -36,4 +34,9 @@
   {% endfor %}
 
   {{ ProjectList.footer(request=True) }}
+
 </div>
+
+{% if no_visible_projects %}
+<p class="no-results">No projects enabled for the team yet.</p>
+{% endif %}

@@ -29,6 +29,7 @@ describe('<FiltersPanelBase>', () => {
                 stats={ {} }
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 
@@ -98,6 +99,7 @@ describe('<FiltersPanelBase>', () => {
                 stats={ {} }
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 
@@ -157,6 +159,7 @@ describe('<FiltersPanelBase>', () => {
                     parameters={ {} }
                     getAuthorsAndTimeRangeData={ sinon.spy() }
                     applySingleFilter= { applySingleFilter }
+                    updateFiltersFromURLParams={ sinon.spy() }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
@@ -199,6 +202,7 @@ describe('<FiltersPanelBase>', () => {
                     parameters={ {} }
                     getAuthorsAndTimeRangeData={ sinon.spy() }
                     toggleFilter= { toggleFilter }
+                    updateFiltersFromURLParams={ sinon.spy() }
                 />
             );
             wrapper.find('.visibility-switch').simulate('click');
@@ -239,6 +243,7 @@ describe('<FiltersPanelBase>', () => {
                 stats={ {} }
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 
@@ -269,6 +274,7 @@ describe('<FiltersPanelBase>', () => {
                 stats={ {} }
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 
@@ -301,6 +307,7 @@ describe('<FiltersPanelBase>', () => {
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
                 resetFilters={ resetFilters }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 
@@ -335,6 +342,7 @@ describe('<FiltersPanelBase>', () => {
                 parameters={ {} }
                 getAuthorsAndTimeRangeData={ sinon.spy() }
                 update={ update }
+                updateFiltersFromURLParams={ sinon.spy() }
             />
         );
 

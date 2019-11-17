@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 
 /**
@@ -17,8 +17,8 @@ import { Localized } from 'fluent-react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L208
  */
 const filePattern = {
-    rule: /((~\/|\/|\.\/)([-A-Za-z0-9_$.+!*(),;:@&=?/~#%]|\\){3,})/,
-    matchIndex: 0,
+    rule: /(^|\s)((~\/|\/|\.\/)([-A-Za-z0-9_$.+!*(),;:@&=?/~#%]|\\){3,})/,
+    matchIndex: 2,
     tag: (x: string) => {
         return <Localized
             id='placeable-parser-filePattern'

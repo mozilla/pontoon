@@ -1,17 +1,11 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import pytest
 
 from django.urls import reverse
 
 from pontoon.base.models import Translation
-from pontoon.test.factories import (
-    ProjectFactory,
-    ProjectLocaleFactory,
-    ResourceFactory,
-    TranslationFactory,
-    TranslatedResourceFactory,
-)
+from pontoon.test.factories import TranslationFactory
 
 
 @pytest.fixture
@@ -33,88 +27,6 @@ def rejected_translation(locale_a, project_locale_a, entity_a, user_a):
 
 
 @pytest.mark.django_db
-def test_approve_translation_basic(translation_a, client_superuser):
-    """Check if approve view works properly."""
-    url = reverse('pontoon.approve_translation')
-    params = {
-        'translation': translation_a.pk,
-        'paths': [],
-        'ignore_warnings': 'true',
-    }
-
-    response = client_superuser.post(url, params)
-    assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
-
-    response = client_superuser.post(
-        url, params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-    )
-    assert response.status_code == 200, response.content
-
-    translation_a.refresh_from_db()
-    assert translation_a.approved is True
-    assert translation_a.approved_user == response.wsgi_request.user
-    assert translation_a.memory_entries.exists() is True
-
-
-@pytest.mark.django_db
-def test_approve_translation_rejects_previous_approved(
-    approved_translation,
-    translation_a,
-    client_superuser,
-):
-    """Check if previously approved translations get rejected on approve."""
-    url = reverse('pontoon.approve_translation')
-    params = {
-        'translation': translation_a.pk,
-        'paths': [],
-        'ignore_warnings': 'true',
-    }
-
-    response = client_superuser.post(
-        url, params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-    )
-
-    assert response.status_code == 200, response.content
-    approved_translation.refresh_from_db()
-
-    translation_a.refresh_from_db()
-    assert translation_a.approved is True
-    assert translation_a.active is True
-    assert approved_translation.approved is False
-    assert approved_translation.active is False
-    assert approved_translation.rejected is True
-    assert approved_translation.rejected_user == response.wsgi_request.user
-
-
-@pytest.mark.django_db
-def test_view_translation_unapprove(approved_translation, member):
-    """Check if unapprove view works properly."""
-    url = reverse('pontoon.unapprove_translation')
-    params = {
-        'translation': approved_translation.pk,
-        'paths': [],
-    }
-
-    response = member.client.post(url, params)
-    assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
-
-    response = member.client.post(
-        url,
-        params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-    )
-    assert response.status_code == 200
-
-    approved_translation.refresh_from_db()
-    assert approved_translation.approved is False
-    assert approved_translation.unapproved_user == response.wsgi_request.user
-
-
-@pytest.mark.django_db
 def test_view_translation_delete(approved_translation, rejected_translation, member):
     """Check if delete view works properly."""
     url = reverse('pontoon.delete_translation')
@@ -124,7 +36,7 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
 
     response = member.client.post(url, params)
     assert response.status_code == 400
-    assert response.content == 'Bad Request: Request must be AJAX'
+    assert response.content == b'Bad Request: Request must be AJAX'
 
     # Rejected translation gets deleted
     response = member.client.post(
@@ -201,35 +113,6 @@ def test_view_translate_invalid_pl(
         % (locale_a.code, project_b.slug)
     )
     assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_view_translate_not_authed_public_project(
-    client,
-    locale_a,
-    settings_debug,
-):
-    """
-    If the user is not authenticated and we're translating project
-    ID 1, return a 200.
-    """
-    project = ProjectFactory.create(slug='valid-project')
-    ProjectLocaleFactory.create(
-        project=project, locale=locale_a,
-    )
-    resource = ResourceFactory.create(
-        project=project,
-        path='foo.lang',
-        total_strings=1,
-    )
-    TranslatedResourceFactory.create(
-        resource=resource, locale=locale_a,
-    )
-    response = client.get(
-        '/%s/%s/%s/'
-        % (locale_a.code, project.slug, resource.path)
-    )
-    assert response.status_code == 200
 
 
 @pytest.mark.django_db

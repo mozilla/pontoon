@@ -56,17 +56,20 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     """
     # Collect data for faster user stats calculation.
     user_stats = {}
-    translations = Translation.objects.exclude(user=None)
+    translations = Translation.objects.all()
 
     if start_date:
         translations = translations.filter(date__gte=start_date)
+
     if query_filters:
         translations = translations.filter(query_filters)
 
+    # Count('user') returns 0 if the user is None.
+    # See https://docs.djangoproject.com/en/1.11/topics/db/aggregation/#values.
     translations = (
         translations
         .values('user', 'approved', 'fuzzy', 'rejected')
-        .annotate(count=Count('user'))
+        .annotate(count=Count('approved'))
     )
 
     for translation in translations:
@@ -118,6 +121,10 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
 
+    if None in user_stats.keys():
+        contributors = list(contributors)
+        contributors.append(User(username='Imported', first_name='Imported', email='imported'))
+
     for contributor in contributors:
         user = user_stats[contributor.pk]
         contributor.translations_count = user['total']
@@ -125,7 +132,11 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
         contributor.translations_rejected_count = user['rejected']
         contributor.translations_unapproved_count = user['unreviewed']
         contributor.translations_needs_work_count = user['fuzzy']
-        contributor.user_role = contributor.role(managers, translators)
+
+        if contributor.pk is None:
+            contributor.user_role = 'System User'
+        else:
+            contributor.user_role = contributor.role(managers, translators)
 
     contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
     if limit:

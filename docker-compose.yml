@@ -3,32 +3,18 @@
 # Note: Requires docker-compose 1.10+.
 version: "2"
 services:
-  # Pontoon base image
-  # This image handles user creation and permissions, so that code can be
-  # shared from your local folder into the docker container.
-  base:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.base
-      args:
-        pythonversion: "${PYTHON_VERSION}"
-    image: local/pontoon_base_${PYTHON_VERSION}
-
-  # Webapp app
+  # Webapp
   webapp:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
       args:
-        pythonversion: "${PYTHON_VERSION}"
+        python_version: "${PYTHON_VERSION}"
     image: local/pontoon_py${PYTHON_VERSION}
     env_file:
       - docker/config/webapp.env
-    environment:
-      - LOCAL_USER_ID=1000
     depends_on:
       - postgresql
-    command: ["/app/docker/run_webapp.sh"]
     ports:
       - "8000:8000"
       - "3000:3000"
@@ -40,6 +26,7 @@ services:
       # git is used to run only tests that changed
       - ./.git:/app/.git
 
+  # Database
   postgresql:
     build:
       context: ./docker/postgres

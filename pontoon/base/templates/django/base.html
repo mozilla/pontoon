@@ -55,8 +55,7 @@
             <div id="profile" class="select">
               <div class="button selector">
                 {% if user.is_authenticated %}
-                  <span class="title noselect">{{ user.name_or_email|nospam }}</span>
-                  <img class="rounded" src="{{ request.user.gravatar_url }}">
+                  <img class="rounded" src="{{ request.user.gravatar_url_small }}" width="44" height="44">
                 {% else %}
                   <div class="menu-icon fa fa-bars"></div>
                 {% endif %}
@@ -64,13 +63,15 @@
               <div class="menu">
                 <ul>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'pontoon.contributors.profile' %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
+                  <li><a href="{% url 'pontoon.contributors.contributor.username' username=user %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
                   <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
                   <li class="horizontal-separator"></li>
                   {% endif %}
 
-                  <li><a href="{% url 'pontoon.terms' %}"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
-                  <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+                  <li><a href="{% url 'pontoon.terms' %}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
+                  <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>
+                  <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>Give Feedback</a></li>
+                  <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
                   <li class="horizontal-separator"></li>
 
@@ -78,7 +79,7 @@
                   <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
                   {% endif %}
 
-                  {% if settings.DJANGO_LOGIN %}
+                  {% if settings.AUTHENTICATION_METHOD == 'django' %}
                     {% if user.is_authenticated %}
                       <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}

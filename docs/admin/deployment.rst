@@ -51,6 +51,11 @@ you create:
 ``ADMIN_NAME``
    Optional. Name for the ``ADMINS`` setting.
 
+``AUTHENTICATION_METHOD``
+   The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
+   Set to 'fxa' if you want to use 'Firefox Accounts' (corresponding FXA_* settings must be set).
+   Set to 'github' if you want to use 'GitHub' (corresponding GITHUB_* settings must be set).
+
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to
    Celery or executed immediately and synchronously. Set this to ``False`` on
@@ -78,10 +83,9 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
-``DJANGO_LOGIN``
-   Required for non-Mozilla deployments, which cannot use `Firefox Accounts`_ for
-   login. Set to True if you want to use the default Django login instead. This will
-   allow you to log in via accounts created using `manage.py shell`.
+``ENABLE_BUGS_TAB``
+   Optional. Enables Bugs tab on team pages, which pulls team data from
+   bugzilla.mozilla.org. Specific for Mozilla deployments.
 
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters

@@ -2,13 +2,18 @@ table.table {
   text-align: center;
 }
 
+table.table.project-list.hidden {
+  display: none;
+}
+
 .table td {
   padding: 0 10px;
   vertical-align: middle;
 }
 
-/* Used to designate from main style, e.g. project not active, deadline not set, no latest activity... */
-.table td .not {
+/* Used to designate from main style, e.g. deadline not set, no latest activity, project not ready... */
+.table td .not,
+.table td .not-ready {
   font-style: italic;
 }
 
@@ -128,6 +133,13 @@ table.table {
 /* Selector must also match heading-info */
 .deadline time.overdue {
   color: #F36;
+}
+
+.table td.code div {
+  width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .table td.code a {

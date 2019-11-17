@@ -103,11 +103,16 @@ def user_gravatar_url(self, size):
     data = {'s': str(size)}
 
     if not settings.DEBUG:
-        append = '_big' if size > 44 else ''
+        append = '_big' if size > 88 else ''
         data['d'] = settings.SITE_URL + static('img/anon' + append + '.jpg')
 
     return '//www.gravatar.com/avatar/{email}?{data}'.format(
         email=email, data=urlencode(data))
+
+
+@property
+def user_gravatar_url_small(self):
+    return user_gravatar_url(self, 88)
 
 
 @property
@@ -311,6 +316,7 @@ def serialized_notifications(self):
 
 User.add_to_class('profile_url', user_profile_url)
 User.add_to_class('gravatar_url', user_gravatar_url)
+User.add_to_class('gravatar_url_small', user_gravatar_url_small)
 User.add_to_class('name_or_email', user_name_or_email)
 User.add_to_class('display_name', user_display_name)
 User.add_to_class('display_name_and_email', user_display_name_and_email)
@@ -340,13 +346,6 @@ class UserProfile(models.Model):
     # Used to keep track of start/step no. of user tour.
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)
-
-    # If this is True, the user will automatically be redirected to the
-    # Translate.Next app when going to the translate page. If it is False,
-    # the user will instead be redirected to the translate page when trying
-    # to reach Translate.Next.
-    # To be removed as part of bug 1527853.
-    use_translate_next = models.BooleanField(default=False)
 
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
@@ -738,7 +737,7 @@ class Locale(AggregatedStats):
         if self.cldr_plurals == '':
             return [1]
         else:
-            return map(int, self.cldr_plurals.split(','))
+            return [int(p) for p in self.cldr_plurals.split(',')]
 
     def cldr_plurals_list(self):
         return ', '.join(
@@ -1154,6 +1153,14 @@ class Project(AggregatedStats):
 
     tags_enabled = models.BooleanField(default=True)
 
+    pretranslation_enabled = models.BooleanField(
+        default=False,
+        help_text="""
+        Pretranslate project strings using automated sources
+        like translation memory and machine translation.
+        """
+    )
+
     objects = ProjectQuerySet.as_manager()
 
     class Meta:
@@ -1182,6 +1189,7 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
+
         if self.pk is not None:
             try:
                 original = Project.objects.get(pk=self.pk)
@@ -1931,10 +1939,11 @@ class EntityQuerySet(models.QuerySet):
             for candidate in plural_candidates:
                 count = 0
                 for i in range(locale.nplurals):
-                    candidate_translations = filter(
-                        lambda x: x.plural_form == i,
-                        candidate.fetched_translations
-                    )
+                    candidate_translations = [
+                        translation
+                        for translation in candidate.fetched_translations
+                        if translation.plural_form == i
+                    ]
                     if len(candidate_translations) and rule(candidate_translations[0]):
                         count += 1
 
@@ -2104,6 +2113,23 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def empty(self, locale):
+        """Return a filter to be used to select empty translations.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(string=''),
+                lambda x: x.string == '',
+                match_all=False,
+            )
+        )
+
     def unchanged(self, locale):
         """Return a filter to be used to select entities that have unchanged translations.
 
@@ -2145,8 +2171,17 @@ class EntityQuerySet(models.QuerySet):
                 return False
 
         sanitized_emails = filter(is_email, emails)
+        query = Q()
+
         if sanitized_emails:
-            return Q(translation__locale=locale, translation__user__email__in=sanitized_emails)
+            query |= Q(translation__user__email__in=sanitized_emails)
+
+        if 'imported' in emails:
+            query |= Q(translation__user__isnull=True)
+
+        if sanitized_emails or 'imported' in emails:
+            return query & Q(translation__locale=locale)
+
         return Q()
 
     def between_time_interval(self, locale, start, end):
@@ -2218,6 +2253,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)
     comment = models.TextField(blank=True)
+    group_comment = models.TextField(blank=True)
+    resource_comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
@@ -2459,7 +2496,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ('rejected', 'unchanged')
+            extra_filter_choices = ('rejected', 'unchanged', 'empty')
             post_filters.append(
                 combine_entity_filters(
                     entities,
@@ -2504,6 +2541,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q(string__icontains=search)
                 | Q(string_plural__icontains=search)
                 | Q(comment__icontains=search)
+                | Q(group_comment__icontains=search)
+                | Q(resource_comment__icontains=search)
                 | Q(key__icontains=search)
                 for search in search_list)
 
@@ -2569,6 +2608,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 'project': entity.resource.project.serialize(),
                 'format': entity.resource.format,
                 'comment': entity.comment,
+                'group_comment': entity.group_comment,
+                'resource_comment': entity.resource_comment,
                 'order': entity.order,
                 'source': entity.source,
                 'obsolete': entity.obsolete,
@@ -2621,10 +2662,14 @@ class TranslationQuerySet(models.QuerySet):
             {'email': user.email,
              'display_name': user.name_or_email,
              'id': user.id,
-             'gravatar_url': user.gravatar_url(44),
+             'gravatar_url': user.gravatar_url(88),
              'translation_count': user.translations_count,
              'role': user.user_role}
-            for user in users_with_translations_counts(None, Q(id__in=self), limit=100)
+            for user in users_with_translations_counts(
+                None,
+                Q(id__in=self),
+                limit=100
+            )
         ]
 
     def counts_per_minute(self):

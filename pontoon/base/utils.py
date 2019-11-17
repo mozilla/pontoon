@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import codecs
-import fnmatch
 import functools
 import os
 import pytz
@@ -10,6 +9,12 @@ import requests
 import tempfile
 import time
 import zipfile
+
+from compare_locales.paths.matcher import (
+    PatternParser,
+    Star,
+    Variable,
+)
 
 from datetime import datetime, timedelta
 
@@ -40,8 +45,7 @@ from translate.storage.placeables.interfaces import BasePlaceable
 
 def split_ints(s):
     """Splits string by comma and maps items to the integer."""
-    integers = filter(None, (s or '').split(','))
-    return map(int, integers)
+    return [int(part) for part in (s or '').split(',') if part]
 
 
 def get_project_locale_from_request(request, locales):
@@ -668,18 +672,47 @@ def build_translation_memory_file(creation_date, locale_code, entries):
 
 
 def glob_to_regex(glob):
-    """This util uses python's fnmatch to convert a glob to a regex in a way
-    that can then be used with django's `__regex` queryset selector.
-
-    It prefixes the regex with `^`, and replaces the more complex match ending
-    provided by fnmatch, with the simpler `$`
-
     """
-    regex = "^%s" % fnmatch.translate(glob)
-    return (
-        "%s$" % regex[:-7]
-        if regex[-7:] == "\\Z(?ms)"
-        else regex)
+    This util uses PatternParser from compare_locales to convert a glob to a regex in a way
+    that can then be used with django's `__regex` queryset selector.
+    Supported wildcard operators:
+    - *
+    - **
+    """
+    pattern = PatternParser().parse(glob)
+    regex = r""
+    for part in pattern:
+        if isinstance(part, Star):
+            # Extract the regex pattern
+            regex += r'(' + re.sub(
+                r'\(\?P<s[0-9]+>',
+                '',
+                part.regex_pattern(None),
+            )
+        elif isinstance(part, Variable):
+            raise ValueError("Variables in Glob expressions aren't supported")
+        else:
+            # re.escape escapes all non-alphanum characters on Python 2:
+            # On Python 2:
+            # re.escape('/') == '\/'
+            # However, this behavior changes on Python 3:
+            # Python 3:
+            # re.escape('/') == '/'
+            #
+            # Postgresql is able to ignore this difference and match the string correctly:
+            # pontoon=# select regexp_matches('^/foo$', '/foo');
+            # regexp_matches # ----------------
+            # {/foo}
+            # (1 row)
+            #
+            # pontoon=# select regexp_matches('^\/foo$', '/foo');
+            # regexp_matches
+            # ----------------
+            # {/foo}
+
+            regex += part.regex_pattern(None)
+
+    return r'^{}$'.format(regex)
 
 
 def get_m2m_changes(current_qs, new_qs):

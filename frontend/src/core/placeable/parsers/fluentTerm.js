@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 
 /**
@@ -16,7 +16,7 @@ import { Localized } from 'fluent-react';
  *   { -brand-name }
  */
 const fluentTerm = {
-    rule: /({ ?-.* ?})/,
+    rule: /({ ?-[^}]* ?})/,
     tag: (x: string) => {
         return <Localized
             id='placeable-parser-fluentTerm'

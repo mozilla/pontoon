@@ -137,13 +137,13 @@ Installation
 
       python manage.py sync_projects --projects=pontoon-intro --no-commit
 
-9. After you've provided credentials to Firefox Accounts, you have to update them in database,
+9. After you've provided credentials for your django-allauth provider, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
-   FXA settings (e.g. client key):
+   django-allauth settings (e.g. client key):
 
    .. code-block:: bash
 
-      python manage.py updatefxaprovider
+      python manage.py update_auth_providers
 
 10. Install the required Node libraries using ``npm``:
 
@@ -182,8 +182,6 @@ The following extra settings can be added to your ``.env`` file.
    Set your `Google Analytics key`_ to use Google Analytics.
 ``MANUAL_SYNC``
    Enable Sync button in project Admin.
-``DJANGO_LOGIN``
-   Set to True if you want to use the default Django login instead of Firefox Accounts. This will allow you to log in via accounts created using `manage.py shell`.
 
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/

@@ -260,15 +260,9 @@ _tag_kwargs = OrderedDict(
      ('priority_false_match', dict(priority=False)),
      ('path_no_match', dict(path="NOPATHSHERE")),
      ('path_match', dict(path=11)),
-     ('path_glob', dict(path="resource[5-9]*")),
      ('slug_no_match', dict(slug="NOSLUGSHERE")),
      ('slug_exact', dict(slug=23)),
-     ('slug_glob', dict(slug="factory*7")),
-     ('party_glob',
-      dict(path="resource[1]*",
-           projects=[0, 2],
-           locales=[1, 2],
-           slug="factory*[2-5]"))))
+     ('slug_glob', dict(slug="factory*7"))))
 
 
 @pytest.fixture(params=_tag_kwargs)

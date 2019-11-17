@@ -45,7 +45,7 @@ batchactions-BatchActions--replace-with =
 ## RejectAll
 ## Renders Reject All batch action button.
 
-batchactions-RejectAll--default = Reject all
+batchactions-RejectAll--default = Reject all suggestions
 batchactions-RejectAll--confirmation = Are you sure?
 batchactions-RejectAll--success =
     { $changedCount ->
@@ -69,15 +69,31 @@ batchactions-ReplaceAll--invalid = { $invalidCount } failed
 batchactions-ReplaceAll--error = Oops, something went wrong
 
 
+## ResourceProgress
+##  Show a panel with progress chart and stats for the current resource.
+
+resourceprogress-ResourceProgress--all-strings = All strings
+resourceprogress-ResourceProgress--unreviewed = Unreviewed
+resourceprogress-ResourceProgress--translated = Translated
+resourceprogress-ResourceProgress--fuzzy = Fuzzy
+resourceprogress-ResourceProgress--warnings = Warnings
+resourceprogress-ResourceProgress--errors = Errors
+resourceprogress-ResourceProgress--missing = Missing
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
 editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
 editor-EditorMenu--read-only-localization = This is a read-only localization.
 editor-EditorMenu--button-copy = Copy
+    .title = Copy From Source (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = Clear
+    .title = Clear Translation (Ctrl + Shift + Backspace)
 editor-EditorMenu--button-save = Save
+    .title = Save Translation (Enter)
 editor-EditorMenu--button-suggest = Suggest
+    .title = Suggest Translation (Enter)
 
 
 ## Editor Settings
@@ -145,13 +161,15 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 editor-UnsavedChanges--close = ×
     .aria-label = Close unsaved changes popup
 editor-UnsavedChanges--title = You have unsaved changes
-editor-UnsavedChanges--body = Sure you want to leave?
-editor-UnsavedChanges--leave-anyway = Leave anyway
+editor-UnsavedChanges--body = Are you sure you want to proceed?
+editor-UnsavedChanges--proceed = Proceed
 
 
 ## Entity Details Navigation
-## Shows next/previous buttons.
+## Shows Copy Link and Next/Previous buttons.
 
+entitydetails-EntityNavigation--link = <glyph></glyph>Copy Link
+    .title = Copy Link to String
 entitydetails-EntityNavigation--next = <glyph></glyph>Next
     .title = Go To Next String (Alt + Down)
 entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
@@ -161,7 +179,6 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--history = History
 entitydetails-Helpers--machinery = Machinery
 entitydetails-Helpers--locales = Locales
 
@@ -172,6 +189,14 @@ entitydetails-Helpers--locales = Locales
 entitydetails-Metadata--comment =
     .title = Comment
 
+entitydetails-Metadata--group-comment =
+    .title = Group Comment
+
+entitydetails-Metadata--resource-comment =
+    .title = Resource Comment
+
+entitydetails-Metadata--see-more = See More
+
 entitydetails-Metadata--context =
     .title = Context
 
@@ -180,9 +205,6 @@ entitydetails-Metadata--placeholder =
 
 entitydetails-Metadata--resource =
     .title = Resource
-
-entitydetails-Metadata--project =
-    .title = Project
 
 
 ## Entity Details GenericOriginalString
@@ -229,6 +251,18 @@ history-Translation--button-reject =
 
 history-Translation--button-unreject =
     .title = Unreject
+
+history-Translation--button-not-approved =
+    .title = Not approved
+
+history-Translation--button-approved =
+    .title = Approved
+
+history-Translation--button-not-rejected =
+    .title = Not rejected
+
+history-Translation--button-rejected =
+    .title = Rejected
 
 
 ## Interactive Tour
@@ -323,19 +357,55 @@ interactivetour-InteractiveTour--end-footer =
 
 ## Machinery
 ## Shows a list of translations from machines.
-
 machinery-Machinery--search-placeholder =
-    .placeholder = Type to search machinery
+    .placeholder = Search in Machinery
+
+
+## Machinery Caighdean Translation
+## Shows the translation source from Caighdean Machine Translation.
+machinery-CaighdeanTranslation--visit-caighdean = Caighdean
+    .title = Visit Caighdean Machine Translation
+
+
+## Machinery Google Translation
+## Shows the translation source from Google Translate.
+machinery-GoogleTranslation--visit-google = Google Translate
+    .title = Visit Google Translate
+
+
+## Machinery Microsoft Terminology
+## Shows the translation source from Microsoft Terminology.
+machinery-MicrosoftTerminology--visit-microsoft = Microsoft
+    .title =
+        Visit Microsoft Terminology Service API.
+        © 2018 Microsoft Corporation. All rights reserved.
+
+
+## Machinery Microsoft Translation
+## Shows the translation source from Microsoft Translation.
+machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
+    .title = Visit Bing Translate
 
 
 ## Machinery Translation
-## Shows a specific translation from machinery
-
+## Shows a specific translation from machinery.
 machinery-Translation--copy =
     .title = Copy Into Translation
 
-machinery-Translation--number-occurrences =
+
+## Machinery Translation Memory
+## Shows the translation source from Pontoon's memory.
+machinery-TranslationMemory--pontoon-homepage =
+    .title = Pontoon Homepage
+machinery-TranslationMemory--translation-memory = Translation memory
+machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
+
+
+## Machinery Transvision Memory
+## Shows the translation source from Transvision.
+machinery-TransvisionMemory--visit-transvision = Mozilla
+    .title = Visit Transvision
 
 
 ## Notification Messages
@@ -359,6 +429,7 @@ notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
 notification--entity-not-found = Can’t load specified string
+notification--string-link-copied = Link copied to clipboard
 
 
 ## OtherLocales Translation
@@ -367,12 +438,13 @@ notification--entity-not-found = Can’t load specified string
 otherlocales-Translation--copy =
     .title = Copy Into Translation
 
+otherlocales-Translation--header-link =
+    .title = Open string in { $locale } ({ $code })
+
 
 ## Placeable parsers
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-allCapitalsString =
-    .title = Long all-caps string
 placeable-parser-altAttribute =
     .title = 'alt' attribute inside XML tag
 placeable-parser-camelCaseString =
@@ -397,6 +469,8 @@ placeable-parser-newlineEscape =
     .title = Escaped newline
 placeable-parser-nonBreakingSpace =
     .title = Non-breaking space
+placeable-parser-nsisVariable =
+    .title = NSIS Variable
 placeable-parser-numberString =
     .title = Number
 placeable-parser-optionPattern =
@@ -413,6 +487,8 @@ placeable-parser-qtFormatting =
     .title = Qt string formatting variable
 placeable-parser-stringFormattingVariable =
     .title = String formatting variable
+placeable-parser-shortCapitalNumberString =
+    .title = Short capital letter and number string
 placeable-parser-tabCharacter =
     .title = Tab character
 placeable-parser-thinSpace =
@@ -427,11 +503,25 @@ placeable-parser-xmlTag =
     .title = XML tag
 
 
+## Project menu
+## Used in the project menu in the main navigation bar.
+project-ProjectMenu--no-results = No results
+project-ProjectMenu--project = Project
+project-ProjectMenu--progress = Progress
+project-ProjectMenu--all-projects = All Projects
+project-ProjectMenu--search-placeholder =
+    .placeholder = Filter projects
+
+
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
 resource-ResourceMenu--no-results = No results
+resource-ResourceMenu--resource = Resource
+resource-ResourceMenu--progress = Progress
 resource-ResourceMenu--all-resources = All Resources
 resource-ResourceMenu--all-projects = All Projects
+resource-ResourceMenu--search-placeholder =
+    .placeholder = Filter resources
 
 
 ## Search
@@ -441,6 +531,16 @@ search-FiltersPanel--heading-status = Translation Status
 search-FiltersPanel--heading-tags = Tags
 search-FiltersPanel--heading-extra = Extra Filters
 search-FiltersPanel--heading-authors = Translation Authors
+search-FiltersPanel--status-name-all = All
+search-FiltersPanel--status-name-translated = Translated
+search-FiltersPanel--status-name-fuzzy = Fuzzy
+search-FiltersPanel--status-name-warnings = Warnings
+search-FiltersPanel--status-name-errors = Errors
+search-FiltersPanel--status-name-missing = Missing
+search-FiltersPanel--status-name-unreviewed = Unreviewed
+search-FiltersPanel--extra-name-unchanged = Unchanged
+search-FiltersPanel--extra-name-empty = Empty
+search-FiltersPanel--extra-name-rejected = Rejected
 
 search-FiltersPanel--clear-selection = <glyph></glyph>Clear
     .title = Uncheck selected filters
@@ -464,7 +564,6 @@ search-TimeRangeFilter--save-range = Save Range
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 
-user-AppSwitcher--leave-translate-next = Leave Translate.Next
 user-SignIn--sign-in = Sign in
 user-SignOut--sign-out = <glyph></glyph>Sign out
 
@@ -472,9 +571,9 @@ user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
 user-UserMenu--download-translations = <glyph></glyph>Download Translations
 user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
 
-user-UserMenu--top-contributors = <glyph></glyph>Top Contributors
-user-UserMenu--machinery = <glyph></glyph>Machinery
 user-UserMenu--terms = <glyph></glyph>Terms of Use
+user-UserMenu--github = <glyph></glyph>Hack it on GitHub
+user-UserMenu--feedback = <glyph></glyph>Give Feedback
 user-UserMenu--help = <glyph></glyph>Help
 
 user-UserMenu--admin = <glyph></glyph>Admin
@@ -489,3 +588,9 @@ user-UserMenu--settings = <glyph></glyph>Settings
 user-UserNotificationsMenu--no-notifications-title = No new notifications.
 user-UserNotificationsMenu--no-notifications-description = Here you’ll see updates for localizations you contribute to.
 user-UserNotificationsMenu--see-all-notifications = See all Notifications
+
+
+## Project Info
+## Shows information of all projects
+
+projectinfo-ProjectInfo--project-info-title = Project Info

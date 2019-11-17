@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import logging
 from datetime import datetime
 
-import waffle
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -19,7 +17,7 @@ from django.http import (
     JsonResponse,
     StreamingHttpResponse
 )
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -51,62 +49,8 @@ from pontoon.checks.utils import are_blocking_checks
 
 log = logging.getLogger(__name__)
 
+
 # TRANSLATE VIEWs
-
-
-def translate(request, locale, slug, part):
-    """Translate view."""
-    # Redirect the user to the Translate.Next app if needed.
-    # To be removed as part of bug 1527853.
-    user = request.user
-    if (
-        waffle.flag_is_active(request, 'translate_next') and
-        user.is_authenticated and
-        user.profile.use_translate_next
-    ):
-        url = reverse(
-            'pontoon.translate.next',
-            kwargs={
-                'project': slug,
-                'locale': locale,
-                'resource': part,
-            }
-        )
-        query = request.GET.urlencode()
-        if query:
-            url += '?' + query
-
-        return redirect(url)
-
-    locale = get_object_or_404(Locale, code=locale)
-
-    projects = (
-        Project.objects.available()
-        .prefetch_related('subpage_set', 'tag_set')
-        .order_by('name')
-    )
-
-    if slug.lower() == 'all-projects':
-        project = Project(name='All Projects', slug=slug.lower())
-
-    else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
-        if locale not in project.locales.all():
-            raise Http404
-
-    return render(request, 'translate.html', {
-        'download_form': forms.DownloadFileForm(),
-        'upload_form': forms.UploadFileForm(),
-        'locale': locale,
-        'locale_projects': locale.available_projects_list(),
-        'locales': Locale.objects.available(),
-        'part': part,
-        'project': project,
-        'projects': projects,
-        'is_google_translate_supported': bool(settings.GOOGLE_TRANSLATE_API_KEY),
-        'is_microsoft_translator_supported': bool(settings.MICROSOFT_TRANSLATOR_API_KEY),
-    })
-
 
 def translate_locale_agnostic(request, slug, part):
     """Locale Agnostic Translate view."""
@@ -126,14 +70,14 @@ def translate_locale_agnostic(request, slug, part):
         if locale and project_locales.filter(code=locale).exists():
             path = reverse(
                 'pontoon.translate',
-                kwargs=dict(slug=slug, locale=locale, part=part))
+                kwargs=dict(project=slug, locale=locale, resource=part))
             return redirect("%s%s" % (path, query))
 
     locale = utils.get_project_locale_from_request(request, project_locales)
     path = (
         reverse(
             'pontoon.translate',
-            kwargs=dict(slug=slug, locale=locale, part=part))
+            kwargs=dict(project=slug, locale=locale, resource=part))
         if locale
         else reverse(
             'pontoon.projects.project',
@@ -390,6 +334,7 @@ def get_translation_history(request):
             "user": "Imported" if u is None else u.name_or_email,
             "uid": "" if u is None else u.id,
             "username": "" if u is None else u.username,
+            "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
             "date": t.date.strftime('%b %d, %Y %H:%M'),
             "date_iso": t.date.isoformat(),
             "approved_user": User.display_name_or_blank(t.approved_user),
@@ -398,229 +343,6 @@ def get_translation_history(request):
         payload.append(translation_dict)
 
     return JsonResponse(payload, safe=False)
-
-
-@utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def approve_translation(request):
-    """Approve given translation."""
-    try:
-        t = request.POST['translation']
-        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
-        paths = request.POST.getlist('paths[]')
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
-
-    translation = get_object_or_404(Translation, pk=t)
-    entity = translation.entity
-    project = entity.resource.project
-    locale = translation.locale
-    user = request.user
-
-    # Read-only translations cannot be approved
-    if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
-
-    if translation.approved:
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This translation is already approved.',
-        }, status=403)
-
-    # Only privileged users can approve translations
-    if not user.can_translate(locale, project):
-        return JsonResponse({
-            'status': False,
-            'message': "Forbidden: You don't have permission to approve this translation.",
-        }, status=403)
-
-    # Check for errors.
-    # Checks are disabled for the tutorial.
-    use_checks = project.slug != 'tutorial'
-
-    if use_checks:
-        failed_checks = run_checks(
-            entity,
-            locale.code,
-            entity.string,
-            translation.string,
-            user.profile.quality_checks,
-        )
-
-        if are_blocking_checks(failed_checks, ignore_warnings):
-            return JsonResponse({
-                'string': translation.string,
-                'failedChecks': failed_checks,
-            })
-
-    translation.approve(user)
-
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
-
-    return JsonResponse({
-        'translation': active_translation.serialize(),
-        'stats': TranslatedResource.objects.stats(project, paths, locale),
-    })
-
-
-@utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def unapprove_translation(request):
-    """Unapprove given translation."""
-    try:
-        t = request.POST['translation']
-        paths = request.POST.getlist('paths[]')
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
-
-    translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
-    locale = translation.locale
-
-    # Read-only translations cannot be un-approved
-    if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
-
-    # Only privileged users or authors can un-approve translations
-    if not (
-        request.user.can_translate(locale, project) or
-        request.user == translation.user or
-        translation.approved
-    ):
-        return JsonResponse({
-            'status': False,
-            'message': "Forbidden: You can't unapprove this translation.",
-        }, status=403)
-
-    translation.unapprove(request.user)
-
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
-
-    return JsonResponse({
-        'translation': active_translation.serialize(),
-        'stats': TranslatedResource.objects.stats(project, paths, locale),
-    })
-
-
-@utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def reject_translation(request):
-    """Reject given translation."""
-    try:
-        t = request.POST['translation']
-        paths = request.POST.getlist('paths[]')
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
-
-    translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
-    locale = translation.locale
-
-    # Read-only translations cannot be rejected
-    if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
-
-    # Non-privileged users can only reject own unapproved translations
-    if not request.user.can_translate(locale, project):
-        if translation.user == request.user:
-            if translation.approved is True:
-                return JsonResponse({
-                    'status': False,
-                    'message': "Forbidden: You can't reject approved translations.",
-                }, status=403)
-        else:
-            return JsonResponse({
-                'status': False,
-                'message': "Forbidden: You can't reject translations from other users.",
-            }, status=403)
-
-    translation.reject(request.user)
-
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
-
-    return JsonResponse({
-        'translation': active_translation.serialize(),
-        'stats': TranslatedResource.objects.stats(project, paths, locale),
-    })
-
-
-@utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def unreject_translation(request):
-    """Unreject given translation."""
-    try:
-        t = request.POST['translation']
-        paths = request.POST.getlist('paths[]')
-    except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
-
-    translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
-    locale = translation.locale
-
-    # Read-only translations cannot be un-rejected
-    if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
-
-    # Only privileged users or authors can un-reject translations
-    if not (
-        request.user.can_translate(locale, project) or
-        request.user == translation.user or
-        translation.approved
-    ):
-        return JsonResponse({
-            'status': False,
-            'message': "Forbidden: You can't unreject this translation.",
-        }, status=403)
-
-    translation.unreject(request.user)
-
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
-
-    return JsonResponse({
-        'translation': active_translation.serialize(),
-        'stats': TranslatedResource.objects.stats(project, paths, locale),
-    })
 
 
 @utils.require_AJAX
@@ -941,7 +663,16 @@ def upload(request):
             for error in errors:
                 messages.error(request, error)
 
-    return translate(request, code, slug, part)
+    response = HttpResponse(content='', status=303)
+    response['Location'] = reverse(
+        'pontoon.translate',
+        kwargs={
+            'locale': code,
+            'project': slug,
+            'resource': part,
+        },
+    )
+    return response
 
 
 @condition(etag_func=None)
@@ -987,7 +718,7 @@ def user_data(request):
     user = request.user
 
     if not user.is_authenticated:
-        if settings.DJANGO_LOGIN:
+        if settings.AUTHENTICATION_METHOD == 'django':
             login_url = reverse('standalone_login')
         else:
             login_url = provider_login_url(request)
@@ -997,7 +728,7 @@ def user_data(request):
             'login_url': login_url,
         })
 
-    if settings.DJANGO_LOGIN:
+    if settings.AUTHENTICATION_METHOD == 'django':
         logout_url = reverse('standalone_logout')
     else:
         logout_url = reverse('account_logout')
@@ -1024,25 +755,10 @@ def user_data(request):
         'preferred_locales': user.profile.sorted_locales_codes,
         'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
-        'gravatar_url_small': user.gravatar_url(44),
-        'gravatar_url_big': user.gravatar_url(88),
+        'gravatar_url_small': user.gravatar_url(88),
+        'gravatar_url_big': user.gravatar_url(176),
         'notifications': user.serialized_notifications,
     })
-
-
-# To be removed as part of bug 1527853.
-@login_required(redirect_field_name='', login_url='/403')
-@transaction.atomic
-def toggle_use_translate_next(request):
-    profile = request.user.profile
-    profile.use_translate_next = not profile.use_translate_next
-    profile.save()
-
-    next = request.GET.get('next')
-    if next:
-        return redirect(next)
-
-    return redirect(reverse('pontoon.homepage'))
 
 
 class AjaxFormView(FormView):

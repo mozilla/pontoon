@@ -191,7 +191,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
 
         if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
-            this.selectEntity(firstEntity);
+            this.selectEntity(
+                firstEntity,
+                true, // Replace the last history item instead of pushing a new one.
+            );
 
             // Only do this the very first time entities are loaded.
             if (props.entities.fetchCount === 1 && selectedEntity && !isSelectedEntityValid) {
@@ -204,7 +207,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    selectEntity = (entity: EntityType) => {
+    selectEntity = (entity: EntityType, replaceHistory?: boolean) => {
         const { dispatch, router } = this.props;
 
         dispatch(
@@ -218,6 +221,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                         navigation.actions.updateEntity(
                             router,
                             entity.pk.toString(),
+                            replaceHistory,
                         )
                     );
                 }

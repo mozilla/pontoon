@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import pytest
 
@@ -87,12 +87,12 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
     # No `locale` parameter.
     response = batch_action(action='reject')
     assert response.status_code == 400
-    assert 'locale' in response.content
+    assert b'locale' in response.content
 
     # No `action` parameter.
     response = batch_action(locale=locale_a.code)
     assert response.status_code == 400
-    assert 'action' in response.content
+    assert b'action' in response.content
 
     # Incorrect `action` parameter.
     response = batch_action(
@@ -101,7 +101,7 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
     )
 
     assert response.status_code == 400
-    assert 'action' in response.content
+    assert b'action' in response.content
 
 
 @pytest.mark.django_db
@@ -125,7 +125,7 @@ def test_batch_edit_translations_no_permissions(
     )
 
     assert response.status_code == 403
-    assert 'Forbidden' in response.content
+    assert b'Forbidden' in response.content
 
 
 @pytest.mark.django_db

@@ -31,7 +31,7 @@ from pontoon.teams.forms import LocaleRequestForm
 def teams(request):
     """List all active localization teams."""
     locales = (
-        Locale.objects.visible()
+        Locale.objects.available()
         .prefetch_related('latest_translation__user')
     )
 
@@ -52,13 +52,14 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
-    count = locale.project_set.visible().count()
+    available_count = locale.project_set.available().count()
+    visible_count = locale.project_set.visible().count()
 
-    if not count:
+    if not available_count:
         raise Http404
 
     return render(request, 'teams/team.html', {
-        'count': count,
+        'count': visible_count,
         'locale': locale,
     })
 
@@ -76,12 +77,21 @@ def ajax_projects(request, locale):
         .annotate(enabled_locales=Count('project_locale', distinct=True))
     )
 
+    locale_projects = locale.available_projects_list()
+
+    no_visible_projects = locale.project_set.visible().count() == 0
+
+    has_projects_to_request = projects.exclude(locales=locale).count() > 0
+
     if not projects:
         raise Http404
 
     return render(request, 'teams/includes/projects.html', {
         'locale': locale,
         'projects': projects,
+        'locale_projects': locale_projects,
+        'no_visible_projects': no_visible_projects,
+        'has_projects_to_request': has_projects_to_request,
     })
 
 
@@ -162,7 +172,11 @@ def ajax_permissions(request, locale):
 
     contributors_emails = set(
         contributor.email
-        for contributor in users_with_translations_counts(None, Q(locale=locale), None)
+        for contributor in users_with_translations_counts(
+            None,
+            Q(locale=locale) & Q(user__isnull=False),
+            None
+        )
     )
 
     locale_projects = locale.projects_permissions

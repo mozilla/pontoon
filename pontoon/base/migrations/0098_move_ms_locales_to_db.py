@@ -179,7 +179,7 @@ def migrate_locales(apps, schema_editor):
         if pontoon_code in locale_map:
             locale_map[pontoon_code].ms_terminology_code = ms_code
 
-    bulk_update(locale_map.values(), update_fields=['ms_translator_code', 'ms_terminology_code'])
+    bulk_update(list(locale_map.values()), update_fields=['ms_translator_code', 'ms_terminology_code'])
 
 
 class Migration(migrations.Migration):

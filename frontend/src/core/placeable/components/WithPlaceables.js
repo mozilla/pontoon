@@ -4,7 +4,6 @@ import createMarker from 'react-content-marker';
 
 import './WithPlaceables.css';
 
-import allCapitalsString from '../parsers/allCapitalsString';
 import altAttribute from '../parsers/altAttribute';
 import camelCaseString from '../parsers/camelCaseString';
 import emailPattern from '../parsers/emailPattern';
@@ -18,6 +17,7 @@ import narrowNonBreakingSpace from '../parsers/narrowNonBreakingSpace';
 import newlineCharacter from '../parsers/newlineCharacter';
 import newlineEscape from '../parsers/newlineEscape';
 import nonBreakingSpace from '../parsers/nonBreakingSpace';
+import nsisVariable from '../parsers/nsisVariable';
 import numberString from '../parsers/numberString';
 import optionPattern from '../parsers/optionPattern';
 import punctuation from '../parsers/punctuation';
@@ -25,6 +25,7 @@ import pythonFormatNamedString from '../parsers/pythonFormatNamedString';
 import pythonFormatString from '../parsers/pythonFormatString';
 import pythonFormattingVariable from '../parsers/pythonFormattingVariable';
 import qtFormatting from '../parsers/qtFormatting';
+import shortCapitalNumberString from '../parsers/shortCapitalNumberString';
 import stringFormattingVariable from '../parsers/stringFormattingVariable';
 import tabCharacter from '../parsers/tabCharacter';
 import thinSpace from '../parsers/thinSpace';
@@ -62,6 +63,7 @@ export const rules = [
     pythonFormattingVariable,
     javaFormattingVariable,
     stringFormattingVariable,
+    nsisVariable,
 
     jsonPlaceholder,
 
@@ -72,7 +74,7 @@ export const rules = [
     uriPattern,
     filePattern,
     emailPattern,
-    allCapitalsString,
+    shortCapitalNumberString,
     camelCaseString,
     optionPattern,
     punctuation,

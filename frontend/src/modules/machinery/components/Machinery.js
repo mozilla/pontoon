@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 
@@ -15,7 +15,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
-    updateEditorTranslation: (string) => void,
+    updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
 |};
 
@@ -54,13 +54,16 @@ export default class Machinery extends React.Component<Props> {
 
         return <section className="machinery">
             <div className="search-wrapper clearfix">
-                <div className="icon fa fa-search"></div>
+                <label htmlFor="machinery-search">
+                    <div className="fa fa-search"></div>
+                </label>
                 <form onSubmit={ this.submitForm }>
                     <Localized id="machinery-Machinery--search-placeholder" attrs={{ placeholder: true }}>
                         <input
+                            id="machinery-search"
                             type="search"
                             autoComplete="off"
-                            placeholder="Type to search machinery"
+                            placeholder="Search in Machinery"
                             ref={ this.searchInput }
                         />
                     </Localized>

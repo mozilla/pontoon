@@ -1,6 +1,7 @@
 DC := $(shell which docker-compose)
 DOCKER := $(shell which docker)
-export PYTHON_VERSION := 2.7.13
+export PYTHON_VERSION := 2.7.17
+export PYTHON_3_VERSION := 3.7.3
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
@@ -16,9 +17,10 @@ help:
 	@echo "  setup            Configures a local instance after a fresh build"
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
-	@echo "  shell            Opens a Bash shell"
+	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-frontend    Runs the new frontend's test suite (Translate.Next)"
+	@echo "  jest             Runs the new frontend's test suite (Translate.Next)"
+	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -34,19 +36,21 @@ build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
 	sed -i -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
-	${DC} build base
 	${DC} build webapp
 
 	touch .docker-build
 
-build-py3: override PYTHON_VERSION=3.7.3
+build-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 build-py3: build
 
-test-py3: override PYTHON_VERSION=3.7.3
+test-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 test-py3: test
 
-shell-py3: override PYTHON_VERSION=3.7.3
+shell-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 shell-py3: shell
+
+pytest-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
+pytest-py3: pytest
 
 
 setup: .docker-build
@@ -61,8 +65,12 @@ clean:
 test:
 	${DC} run --rm webapp /app/docker/run_tests.sh
 
-test-frontend:
+test-frontend: jest
+jest:
 	${DC} run --rm -w /app/frontend webapp yarn test
+
+pytest:
+	${DC} run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
 flow:
 	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
@@ -90,13 +98,3 @@ build-frontend:
 
 build-frontend-w:
 	${DC} run --rm webapp npm run build-w
-
-# Old targets for backwards compatibility.
-dockerbuild: build
-dockersetup: setup
-dockerrun: run
-dockerclean: clean
-dockertest: test
-dockershell: shell
-dockerloaddb: loaddb
-dockerwebpack: build-frontend-w

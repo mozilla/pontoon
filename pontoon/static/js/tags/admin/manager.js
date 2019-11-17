@@ -11,7 +11,7 @@ import {dataManager} from 'utils/data';
 
 
 export class TagResourceManagerWidget extends React.Component {
-    state = {type: 'assoc', search: "*"};
+    state = {type: 'assoc', search: "**"};
 
     componentDidMount () {
         this.props.refreshData({...this.state});

@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from '@fluent/react';
 import onClickOutside from 'react-onclickoutside';
 
 import './ResourceProgress.css';
@@ -69,11 +70,15 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                 <div className="main">
                     <header>
                         <h2>
-                            All strings
+                            <Localized id="resourceprogress-ResourceProgress--all-strings">
+                                All strings
+                            </Localized>
                             <span className="value">{ asLocaleString(total) }</span>
                         </h2>
                         <h2 className="small">
-                            Unreviewed
+                            <Localized id="resourceprogress-ResourceProgress--unreviewed">
+                                Unreviewed
+                            </Localized>
                             <span className="value">{ asLocaleString(unreviewed) }</span>
                         </h2>
                     </header>
@@ -82,23 +87,43 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                 </div>
                 <div className="details">
                     <div className="approved">
-                        <span className="title">Translated</span>
+                        <span className="title">
+                            <Localized id="resourceprogress-ResourceProgress--translated">
+                                Translated
+                            </Localized>
+                        </span>
                         <p className="value">{ asLocaleString(approved) }</p>
                     </div>
                     <div className="fuzzy">
-                        <span className="title">Fuzzy</span>
+                        <span className="title">
+                            <Localized id="resourceprogress-ResourceProgress--fuzzy">
+                                Fuzzy
+                            </Localized>
+                        </span>
                         <p className="value">{ asLocaleString(fuzzy) }</p>
                     </div>
                     <div className="warnings">
-                        <span className="title">Warnings</span>
+                        <span className="title">
+                            <Localized id="resourceprogress-ResourceProgress--warnings">
+                                Warnings
+                            </Localized>
+                        </span>
                         <p className="value">{ asLocaleString(warnings) }</p>
                     </div>
                     <div className="errors">
-                        <span className="title">Errors</span>
+                        <span className="title">
+                            <Localized id="resourceprogress-ResourceProgress--errors">
+                                Errors
+                            </Localized>
+                        </span>
                         <p className="value">{ asLocaleString(errors) }</p>
                     </div>
                     <div className="missing">
-                        <span className="title">Missing</span>
+                        <span className="title">
+                            <Localized id="resourceprogress-ResourceProgress--missing">
+                                Missing
+                            </Localized>
+                        </span>
                         <p className="value">{ asLocaleString(missing) }</p>
                     </div>
                 </div>

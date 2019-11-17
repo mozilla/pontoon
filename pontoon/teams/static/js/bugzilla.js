@@ -22,7 +22,7 @@ var Pontoon = (function (my) {
             'type0-0-1': 'regexp',
             'value0-0-1': '^' + locale + ' / ',
             'resolution': '---',
-            'include_fields': 'id,summary,creation_time,last_change_time'
+            'include_fields': 'id,summary,last_change_time,assigned_to'
           },
           success: function(data) {
             if (data.bugs.length) {
@@ -57,13 +57,15 @@ var Pontoon = (function (my) {
 
                 $('<td>', {
                   class: 'last-changed',
+                  datetime: bug.last_change_time,
                   html: formatter.format(new Date(bug.last_change_time))
                 }).appendTo(tr);
 
                 $('<td>', {
-                  class: 'date-created',
-                  html: formatter.format(new Date(bug.creation_time))
+                  class: 'assigned-to',
+                  html: bug.assigned_to
                 }).appendTo(tr);
+
 
                 tbody.append(tr);
               });
@@ -72,10 +74,10 @@ var Pontoon = (function (my) {
                 class: 'buglist striped',
                 html: '<thead>' +
                   '<tr>' +
-                    '<th class="id">ID</th>' +
-                    '<th class="summary">Summary</th>' +
-                    '<th class="last-changed">Last Changed</th>' +
-                    '<th class="date-created">Date Created</th>' +
+                    '<th class="id">ID<i class="fa"></i></th>' +
+                    '<th class="summary">Summary<i class="fa"></i></th>' +
+                    '<th class="last-changed desc">Last Changed<i class="fa"></i></th>' +
+                    '<th class="assigned-to">Assigned To<i class="fa"></i></th>' +
                   '</tr>' +
                 '</thead>'
               }).append(tbody);
@@ -95,7 +97,56 @@ var Pontoon = (function (my) {
             }
           }
         });
-      }
+      },
+
+      /*
+       * Sort Bug Table
+       */
+      sort: function() {
+        $('body').on('click', 'table.buglist th', function () {
+          
+          function getString(el) {
+            return $(el).find('td:eq(' + index + ')').text();
+          }
+
+          function getNumber(el) {
+            return parseInt($(el).find('.id').text().replace(/,/g, ''));
+          }
+
+          function getTime(el) {
+            var date = $(el).find('.last-changed').attr('datetime') || 0;
+            return new Date(date).getTime();
+          }
+
+          var node = $(this),
+              index = node.index(),
+              table = node.parents('.buglist'),
+              list = table.find('tbody'),
+              items = list.find('tr'),
+              dir = node.hasClass('desc') ? -1 : 1,
+              cls = node.hasClass('desc') ? 'asc' : 'desc';
+
+          $(table).find('th').removeClass('asc desc');
+          node.addClass(cls);
+
+          items.sort(function(a, b) {
+            // Sort by bugzilla ID
+            if (node.is('.id')) {
+              return (getNumber(a) - getNumber(b)) * dir;
+
+            // Sort by last changed
+            } else if (node.is('.last-changed')) {
+              return (getTime(b) - getTime(a)) * dir;
+
+            // Sort by alphabetical order
+            } else {
+              return getString(a).localeCompare(getString(b)) * dir;
+            }
+          });
+
+          list.append(items);
+        })
+      }()
 
     }
   });

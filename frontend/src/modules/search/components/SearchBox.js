@@ -65,6 +65,21 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     constructor(props: InternalProps) {
         super(props);
 
+        this.state = {
+            search : '',
+            statuses: {},
+            extras: {},
+            tags: {},
+            timeRange: null,
+            authors: {},
+        };
+
+        this.searchInput = React.createRef();
+    }
+
+    updateFiltersFromURLParams = () => {
+        const props = this.props;
+
         const statuses = this.getInitialStatuses();
         if (props.parameters.status) {
             props.parameters.status.split(',').forEach(f => {
@@ -100,21 +115,20 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
         const searchParam = props.parameters.search;
 
-        this.state = {
+        this.setState({
             search: searchParam ? searchParam.toString() : '',
             statuses,
             extras,
             tags,
             timeRange,
             authors,
-        };
-
-        this.searchInput = React.createRef();
+        });
     }
 
     componentDidMount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
+        this.updateFiltersFromURLParams();
     }
 
     componentDidUpdate(prevProps: InternalProps) {
@@ -443,6 +457,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 toggleFilter={ this.toggleFilter }
                 update={ this.update }
                 updateTimeRange={ this.updateTimeRange }
+                updateFiltersFromURLParams={ this.updateFiltersFromURLParams }
             />
         </div>;
     }

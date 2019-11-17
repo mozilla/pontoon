@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { Localized } from 'fluent-react';
+import { Localized } from '@fluent/react';
 
 
 /**
@@ -16,7 +16,7 @@ import { Localized } from 'fluent-react';
  *   { -brand-name(foo-bar: "now that's a value!") }
  */
 const fluentParametrizedTerm = {
-    rule: /({ ?-.*(.*: ?.*) ?})/,
+    rule: /({ ?-[^}]*([^}]*: ?[^}]*) ?})/,
     matchIndex: 1,
     tag: (x: string) => {
         return <Localized

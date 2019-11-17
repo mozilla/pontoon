@@ -2,7 +2,7 @@
 .react-tabs {
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    height: calc(60% - 60px);
+    height: 100%;
 }
 
 .react-tabs__tab-list {
@@ -21,9 +21,9 @@
     cursor: pointer;
     display: table-cell;
     font-weight: 300;
-    line-height: 22px;
+    line-height: 18px;
     list-style: none;
-    padding: 10px 5px;
+    padding: 12px 5px 13px;
     text-align: center;
     text-transform: uppercase;
 }
@@ -66,9 +66,9 @@
 
 .react-tabs__tab,
 .react-tabs__tab-panel {
-    height: calc(100% - 43px);
+    height: calc(100% - 44px);
 }
 
 .react-tabs__tab-panel > section {
-    padding-top: 25px;
+    padding-top: 10px;
 }

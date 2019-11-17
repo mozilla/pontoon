@@ -255,7 +255,7 @@ def nospam(self):
 
 
 @library.global_function
-def provider_login_url(request, provider_id='google', **query):
+def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **query):
     """
     This function adapts the django-allauth templatetags that don't support jinja2.
     @TODO: land support for the jinja2 tags in the django-allauth.
@@ -315,7 +315,9 @@ def dict_html_attrs(dict_obj):
 
 def _get_default_variant(variants):
     """Return default variant from the list of variants."""
-    return filter(lambda x: x.default, variants)[0]
+    for variant in variants:
+        if variant.default:
+            return variant
 
 
 def _serialize_value(value):

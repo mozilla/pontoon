@@ -42,8 +42,8 @@ def revert_simplify_ftl_tm_entries(apps, schema):
     )
 
     for tme in tm_entries:
-        tme.source = tme.translation.string
-        tme.target = tme.entity.string
+        tme.source = tme.entity.string
+        tme.target = tme.translation.string
 
     bulk_update(
         tm_entries,

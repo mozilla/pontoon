@@ -18,8 +18,7 @@
 }
 
 .entity > div {
-    height: 22px;
-    line-height: 22px;
+    line-height: 20px;
 }
 
 .entity mark.search {
@@ -33,18 +32,16 @@
 .entity .source-string,
 .entity .translation-string {
     display: inline-block;
-    height: 22px;
-    line-height: 22px;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 49%;
+    padding-bottom: 3px;
+    width: 100%;
+    vertical-align: top;
+    word-wrap: break-word;
 }
 
 .entity .translation-string {
     color: #AAAAAA;
-    padding-left: 2%;
+    min-height: 20px;
     text-align: start;
 }
 

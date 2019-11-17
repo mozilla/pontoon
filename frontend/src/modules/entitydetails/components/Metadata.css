@@ -32,7 +32,7 @@
 
 .metadata .original {
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     font-style: normal;
     line-height: 22px;
     padding-bottom: 6px;
@@ -48,4 +48,12 @@
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.metadata button {
+    background: none;
+    border: none;
+    color: #7BC876;
+    font-style: italic;
+    padding: 0 0 0 2px;
 }
