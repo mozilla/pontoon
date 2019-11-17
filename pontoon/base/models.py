@@ -2596,15 +2596,15 @@ class Entity(DirtyFieldsMixin, models.Model):
                 string_plural = entity.string_plural
             else:
                 preferredSourceLocale = Locale.objects.filter(
-                    code=preferred_source_locale
-                    ).values_list('pk')[0][0]
+                    code=preferred_source_locale).values_list('pk')[0][0]
                 string = Translation.objects.filter(locale=preferredSourceLocale, entity=entity)
                 if not string:
                     string = entity.string
                     string_plural = entity.string_plural
                 else:
                     string = string.values_list('string')[0]
-                    string_plural = entity.string_plural # replace with Source Locale Translated Plural String
+                    # replace with Source Locale Translated Plural String
+                    string_plural = entity.string_plural
 
             if string_plural == "":
                 translation = entity.get_active_translation().serialize()
