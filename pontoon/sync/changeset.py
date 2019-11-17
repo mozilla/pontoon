@@ -236,7 +236,7 @@ class ChangeSet(object):
                     ))
 
         self.send_notifications(new_entities)
-        self.new_entities = self.new_entities + new_entities
+        self.new_entities = new_entities
 
     def update_entity_translations_from_vcs(
             self, db_entity, locale_code, vcs_translation,

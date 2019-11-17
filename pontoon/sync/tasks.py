@@ -9,7 +9,7 @@ from django.utils import timezone
 from pontoon.base.models import (
     ChangedEntityLocale,
     Project,
-    Repository
+    Repository,
 )
 
 from pontoon.base.tasks import PontoonTask
@@ -115,7 +115,7 @@ def sync_project(
             return
 
     # Sync translations
-    new_entities = sync_translations.delay(
+    sync_translations.delay(
         project_pk,
         project_sync_log.pk,
         now,
@@ -128,13 +128,10 @@ def sync_project(
         full_scan=force
     )
 
-    new_entities = new_entities.result
+    new_entities = source_changes.get('new_entities')
 
-    if source_changes.get('new_entities'):
-        new_entities = new_entities + source_changes.get('new_entities')
-
-    if db_project.pretranslation_enabled and len(new_entities):
-        new_entities = list(set(new_entities))  # take only unique entities
+    if db_project.pretranslation_enabled and new_entities:
+        new_entities = list(set(source_changes.get('new_entities')))
         pretranslate(db_project, entities=new_entities)
 
 
@@ -170,7 +167,7 @@ def sync_sources(db_project, now, force, no_pull):
         log.info('Synced sources for project {0}.'.format(db_project.slug))
 
     else:
-        added_paths, removed_paths, changed_paths, new_entities = None, None, None, []
+        added_paths, removed_paths, changed_paths, new_entities = None, None, None, None
         log.info(
             'Skipping syncing sources for project {0}, no changes detected.'.format(
                 db_project.slug
@@ -290,8 +287,7 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
-    new_locales = []  # store the new locales added to the project
-    new_entities = []  # store the new entities added to the project
+    new_locales = []  # store the locales for which new resources are added
 
     for locale in locales:
         try:
@@ -312,9 +308,8 @@ def sync_translations(
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
 
-                new_entities = new_entities + changeset.new_entities
-
-                if update_translated_resources(db_project, vcs_project, locale):
+                created = update_translated_resources(db_project, vcs_project, locale)
+                if created:
                     new_locales.append(locale.pk)
                 update_locale_project_locale_stats(locale, db_project)
 
@@ -366,7 +361,8 @@ def sync_translations(
 
             # We have files: update all translated resources.
             if locale in locales:
-                if update_translated_resources(db_project, vcs_project, locale):
+                created = update_translated_resources(db_project, vcs_project, locale)
+                if created:
                     new_locales.append[locale.pk]
 
             # We don't have files: we can still update asymmetric translated resources.
@@ -409,7 +405,5 @@ def sync_translations(
         )
     repo_sync_log.end()
 
-    if new_locales:
+    if db_project.pretranslation_enabled and len(new_locales):
         pretranslate(db_project, locales=new_locales)
-
-    return new_entities

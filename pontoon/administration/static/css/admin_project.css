@@ -149,13 +149,18 @@ form .button {
 }
 
 .controls .button.sync,
-.controls .button.sync:hover,
-.controls .button.pretranslate,
-.controls .button.pretranslate:hover {
-  background: #F36;
-  color: #272A2F;
+.controls .button.sync:hover {
+  background: #333941;
+  color: #fff;
   float: left;
   margin-right: 10px;
+}
+
+.controls .button.pretranslate,
+.controls .button.pretranslate:hover {
+  background: #333941;
+  color: #fff;
+  float: right;
 }
 
 form a:link, form a:visited {

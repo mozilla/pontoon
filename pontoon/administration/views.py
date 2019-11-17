@@ -537,7 +537,7 @@ def manually_sync_project(request, slug):
 def manually_pretranslate_project(request, slug):
     if not request.user.has_perm('base.can_manage_project') or not settings.MANUAL_SYNC:
         return HttpResponseForbidden(
-            "Forbidden: You don't have permission for syncing projects"
+            "Forbidden: You don't have permission for pretranslating projects"
         )
 
     project = Project.objects.get(slug=slug)
