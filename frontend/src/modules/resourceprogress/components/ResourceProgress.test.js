@@ -15,10 +15,12 @@ describe('<ResourceProgress>', () => {
         total: 15,
     };
     const PARAMETERS = {
+        entity: 0,
         locale: "en-GB",
         project: "tutorial",
         resource: "all-resources",
-        status: "errors"
+        status: "errors",
+        search: null
     };
 
     it('shows only a selector by default', () => {
