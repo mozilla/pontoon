@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.fxa',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
     'notifications',
     'graphene_django',
     'webpack_loader',
@@ -791,7 +792,7 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
-# Supported values: 'django', 'fxa', 'github'
+# Supported values: 'django', 'fxa', 'github', 'google'
 AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
 
 
@@ -815,6 +816,10 @@ FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
 # Github
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
 GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
+
+# Google Accounts
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY', '')
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {

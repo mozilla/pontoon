@@ -55,6 +55,7 @@ you create:
    The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
    Set to 'fxa' if you want to use 'Firefox Accounts' (corresponding FXA_* settings must be set).
    Set to 'github' if you want to use 'GitHub' (corresponding GITHUB_* settings must be set).
+   Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to
