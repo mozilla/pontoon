@@ -1,0 +1,38 @@
+.skeleton-loader {
+    animation: fading 1.5s infinite;
+}
+
+.skeleton-loader.entities {
+    pointer-events: none;
+    overflow: hidden;
+    height: 100%;
+}
+
+.skeleton-loader.entities.scroll {
+    height: auto;
+}
+
+.skeleton-loader p {
+    height: 0.8125rem;
+    background-color: #E2E2E2;
+    padding-bottom: 3px;
+}
+
+.skeleton-loader .text-2 {
+    width: 50%;
+    display: inline-block;
+}
+
+@keyframes fading {
+    0% {
+        opacity: .1;
+    }
+  
+    50% {
+        opacity: .2;
+    }
+  
+    100% {
+        opacity: .1;
+    }
+}
