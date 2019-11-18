@@ -4,6 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
+import mapValues from 'lodash.mapvalues';
 
 import './SearchBox.css';
 
@@ -142,6 +143,26 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
     }
+
+    static getDerivedStateFromProps(prevProps: InternalProps, state: Object) {
+        // Get the current status from props
+        let initialStatuses = state.statuses;
+        if (prevProps.parameters.status) {
+            prevProps.parameters.status.split(',').forEach(f => {
+                // reset all statuses value to false then set the current status value to true
+                initialStatuses = mapValues(initialStatuses, () => false);
+                initialStatuses[f] = true;
+            });
+        }
+
+        // Compare previous state to the updated state then setState of statuses
+        if (state.statuses !== initialStatuses) {
+            return {
+                statuses: initialStatuses,
+            };
+        }
+        return null;
+      }
 
     componentWillUnmount() {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
