@@ -7,7 +7,7 @@ export default function SkeletonLoader (props) {
     const entityCount = firstLoad ? 30 : 2;
     const list = [...Array(entityCount).keys()];
 
-    return <ul className={ `skeleton-loader entities ${ firstLoad ? null : 'scoll' }` }>
+    return <ul className={ `skeleton-loader entities ${ firstLoad ? null : 'scroll' }` }>
         { list.map((i) => {
             const classes = `entity missing ${ i === 0 && firstLoad ? 'selected' : null }`
             return <li className={ classes } key={ i }>

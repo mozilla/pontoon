@@ -1,3 +1,7 @@
+.skeleton-loader {
+    animation: fading 1.5s infinite;
+}
+
 .skeleton-loader.entities {
     pointer-events: none;
     overflow: hidden;
@@ -11,7 +15,6 @@
 .skeleton-loader p {
     height: 0.8125rem;
     background-color: #E2E2E2;
-    animation: fading 1.5s infinite;
     padding-bottom: 3px;
 }
 
