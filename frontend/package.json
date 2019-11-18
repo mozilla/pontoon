@@ -55,7 +55,7 @@
     "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
   },
   "devDependencies": {
-    "chokidar-cli": "1.2.2",
+    "chokidar-cli": "2.1.0",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.11.2",
     "sinon": "7.3.1"
