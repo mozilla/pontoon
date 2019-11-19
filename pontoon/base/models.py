@@ -2296,6 +2296,12 @@ class EntityQuerySet(models.QuerySet):
 
         translations.filter(pk__in=unreviewed_pks).update(active=True)
 
+    def get_or_create(self, defaults=None, **kwargs):
+        return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
+
+    def bulk_update(self, objs, fields=None, batch_size=None):
+        return bulk_update(objs, fields, batch_size)
+
 
 @python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):
