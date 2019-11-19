@@ -35,19 +35,40 @@ tqdm==4.31.1 \
     --hash=sha256:d385c95361699e5cf7622485d9b9eae2d4864b21cd5a2374a9c381ffed701021 \
     --hash=sha256:e22977e3ebe961f72362f6ddfb9197cc531c9737aaf5f607ef09740c849ecd05
 
-# >=3.3.0.20,<3.4 celery
-billiard==3.3.0.20 \
-    --hash=sha256:688f9466b1c3ae14106381e6dbd328115e75c5260c542eb48e6c46931f6928cc
+# >=3.6.0,<4.0 celery
+billiard==3.6.1.0 \
+    --hash=sha256:01afcb4e7c4fd6480940cfbd4d9edc19d7a7509d6ada533984d0d0f49901ec82 \
+    --hash=sha256:b8809c74f648dfe69b973c8e660bcec00603758c9db8ba89d7719f88d5f01f26
 
-# >=3.0.25,<3.1 celery
-kombu==3.0.35 \
-    --hash=sha256:2c59a5e087d5895675cdb4d6a38a0aa147f0411366e68330a76e480ba3b25727 \
-    --hash=sha256:22ab336a17962717a5d9470547e5508d4bcf1b6ec10cd9486868daf4e5edb727
+# >=1.3.0 celery
+vine==1.3.0 \
+    --hash=sha256:133ee6d7a9016f177ddeaf191c1f58421a1dcc6ee9a42c58b34bed40e1d2cd87 \
+    --hash=sha256:ea4947cc56d1fd6f2095c8d543ee25dad966f78692528e68b4fada11ba3f98af
 
-# >=1.4.9,<2.0 kombu
-amqp==1.4.9 \
-    --hash=sha256:e0ed0ce6b8ffe5690a2e856c7908dc557e0e605283d6885dd1361d79f2928908 \
-    --hash=sha256:2dea4d16d073c902c3b89d9b96620fb6729ac0f7a923bbc777cb4ad827c0c61a
+# >=4.4.0,<5.0 celery
+kombu==4.6.6 \
+    --hash=sha256:1760b54b1d15a547c9a26d3598a1c8cdaf2436386ac1f5561934bc8a3cbbbd86 \
+    --hash=sha256:e7465aa85a1db889116819f08c5de29520d2fa103324dcdca5e90af345f01771
+
+# >=2.5.2,<2.6 kombu
+amqp==2.5.2 \
+    --hash=sha256:6e649ca13a7df3faacdc8bbb280aa9a6602d22fd9d545336077e573a1f4ff3b8 \
+    --hash=sha256:77f1aef9410698d20eaeac5b73a87817365f457a507d82edf292e12cbb83b08d
+
+# >=0.18 kombu
+importlib-metadata==0.23 \
+    --hash=sha256:aa18d7378b00b40847790e7c27e11673d7fed219354109d0e7b9e5b25dc3ad26 \
+    --hash=sha256:d5f18a79777f3aa179c145737780282e27b508fc8fd688cb17c7a813e8bd39af
+
+# >=0.5 importlib-metadata
+zipp==0.6.0 \
+    --hash=sha256:3718b1cbcd963c7d4c5511a8240812904164b7f381b647143a89d3b98f9bcd8e \
+    --hash=sha256:f06903e9f1f43b12d371004b4ac7b06ab39a44adc747266928ae6debfa7b3335
+
+# zipp
+more-itertools==7.2.0 \
+    --hash=sha256:409cd48d4db7052af495b09dec721011634af3753ae1ef92d2b32f73a745f832 \
+    --hash=sha256:92b8c4b06dac4f0611c0729b2f2ede52b2e1bac1ab48f089c7ddc12e26bb60c4
 
 # >=0.3.3 kombu
 anyjson==0.3.3 \
