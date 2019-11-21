@@ -1,7 +1,7 @@
 DC := $(shell which docker-compose)
 DOCKER := $(shell which docker)
 export PYTHON_VERSION := 2.7.17
-export PYTHON_3_VERSION := 3.7.3
+export PYTHON_3_VERSION := 3.7.5
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
