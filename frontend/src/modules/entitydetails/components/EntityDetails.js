@@ -21,6 +21,7 @@ import * as genericeditor from 'modules/genericeditor';
 import * as fluenteditor from 'modules/fluenteditor';
 import * as unsavedchanges from 'modules/unsavedchanges';
 import * as notification from 'core/notification';
+import { EditorLoader } from 'core/loaders';
 
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
@@ -286,7 +287,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (!state.selectedEntity) {
-            return <section className="entity-details"></section>;
+            return <EditorLoader />
         }
 
         return <section className="entity-details">

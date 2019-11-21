@@ -1,0 +1,45 @@
+.editor-loader {
+    animation: fading 1.5s infinite;
+    pointer-events: none;
+    overflow: hidden;
+    height: 100%;
+}
+
+.editor-loader .entity-navigation{
+    padding: 18px;
+}
+
+.editor-loader p {
+    height: 0.8125rem;
+    background-color: #E2E2E2;
+    padding-bottom: 3px;
+    margin: 20px 15px;
+}
+
+.editor-loader .metadata p {
+    margin: 5px 5px;
+}
+
+.editor-loader .text-2 {
+    width: 50%;
+    display: inline-block;
+}
+
+.editor-loader .editor {
+    background-color: #E2E2E2;
+    margin: 15px;
+}
+
+@keyframes fading {
+    0% {
+        opacity: .1;
+    }
+
+    50% {
+        opacity: .2;
+    }
+
+    100% {
+        opacity: .1;
+    }
+}
