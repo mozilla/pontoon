@@ -81,12 +81,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     updateFiltersFromURLParams = () => {
         const props = this.props;
 
-        const statuses = this.getInitialStatuses();
-        if (props.parameters.status) {
-            props.parameters.status.split(',').forEach(f => {
-                statuses[f] = true;
-            });
-        }
+        // let statuses = this.getInitialStatuses();
+        // if (props.parameters.status) {
+        //     console.log(props.parameters.status, ">>>>>>>>>")
+        //     props.parameters.status.split(',').forEach(f => {
+        //         statuses = mapValues(statuses, () => false);
+        //         statuses[f] = true;
+        //     });
+        // }
 
         const extras = this.getInitialExtras();
         if (props.parameters.extra) {
@@ -118,7 +120,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
         this.setState({
             search: searchParam ? searchParam.toString() : '',
-            statuses,
             extras,
             tags,
             timeRange,
@@ -153,6 +154,9 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 initialStatuses = mapValues(initialStatuses, () => false);
                 initialStatuses[f] = true;
             });
+        } else {
+            // reset the status object to empty if there is no status selected
+            initialStatuses = {};
         }
 
         // Compare previous state to the updated state then setState of statuses
