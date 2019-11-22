@@ -2602,7 +2602,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     string = entity.string
                     string_plural = entity.string_plural
                 else:
-                    string = string.values_list('string')[0]
+                    string = string.values_list('string')[0][0]
                     # replace with Source Locale Translated Plural String
                     string_plural = entity.string_plural
 
@@ -2618,9 +2618,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities_array.append({
                 'pk': entity.pk,
                 'original': string,
-                'marked': entity.marked,
                 'original_plural': string_plural,
-                'marked_plural': entity.marked_plural,
                 'key': entity.cleaned_key,
                 'path': entity.resource.path,
                 'project': entity.resource.project.serialize(),
