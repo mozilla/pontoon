@@ -226,7 +226,7 @@ def test_manage_project_strings_list(client_superuser):
     response = client_superuser.get(url)
     assert response.status_code == 200
     for i in range(nb_entities):
-        assert ('string %s' % i).encode('utf-8') in response.content
+        assert (entities[i].string).encode('utf-8') in response.content
 
     # Test editing strings and comments.
     form_data = {
@@ -283,9 +283,9 @@ def test_manage_project_strings_list(client_superuser):
     new_string = Entity.objects.filter(
         resource=resource, obsolete=False, string='new string',
     ).first()
-    # The highest order before adding new string was 0,
-    # so the order of that new one should be 1.
-    assert new_string.order == 1
+    # The order of the new string should be that of the highest existing order
+    # plus one. In our case, we know the highest was simply the other string.
+    assert new_string.order == entities[0].order + 1
 
 
 @pytest.mark.django_db
