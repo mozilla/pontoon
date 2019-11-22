@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 
+from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.models import (
     TranslatedResource,
@@ -77,6 +78,8 @@ def approve_translation(request):
 
     translation.approve(user)
 
+    log_action('translation:approved', user, translation=translation)
+
     active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
@@ -125,6 +128,8 @@ def unapprove_translation(request):
         }, status=403)
 
     translation.unapprove(request.user)
+
+    log_action('translation:unapproved', request.user, translation=translation)
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale,
@@ -178,6 +183,8 @@ def reject_translation(request):
 
     translation.reject(request.user)
 
+    log_action('translation:rejected', request.user, translation=translation)
+
     active_translation = translation.entity.reset_active_translation(
         locale=locale,
         plural_form=translation.plural_form,
@@ -226,6 +233,8 @@ def unreject_translation(request):
         }, status=403)
 
     translation.unreject(request.user)
+
+    log_action('translation:unrejected', request.user, translation=translation)
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale,
