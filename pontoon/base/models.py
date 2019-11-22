@@ -2621,9 +2621,8 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             if preferred_source_locale != '' and entity.alternative_originals:
                 original = entity.alternative_originals[0].string
-
-            if original_plural != '':
-                original_plural = entity.alternative_originals[-1].string
+                if original_plural != '':
+                    original_plural = entity.alternative_originals[-1].string
 
             entities_array.append({
                 'pk': entity.pk,
