@@ -273,6 +273,7 @@ def test_entity_project_locale_no_paths(
         'original_plural': text_type(entity_a.string_plural),
         'pk': entity_a.pk,
         'original': text_type(entity_a.string),
+        'machineryOriginal': text_type(entity_a.string),
         'readonly': False,
         'visible': False,
     }
