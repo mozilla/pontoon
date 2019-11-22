@@ -2607,24 +2607,28 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         for entity in entities:
             translation_array = []
-            string = entity.string
-            string_plural = entity.string_plural
 
-            if string_plural == "":
+            original = entity.string
+            original_plural = entity.string_plural
+
+            if original_plural == '':
                 translation = entity.get_active_translation().serialize()
                 translation_array.append(translation)
-                if preferred_source_locale != '' and entity.alternative_originals:
-                    string = entity.alternative_originals[0].string
-
             else:
                 for plural_form in range(0, locale.nplurals or 1):
                     translation = entity.get_active_translation(plural_form).serialize()
                     translation_array.append(translation)
 
+            if preferred_source_locale != '' and entity.alternative_originals:
+                original = entity.alternative_originals[0].string
+
+            if original_plural != '':
+                original_plural = entity.alternative_originals[-1].string
+
             entities_array.append({
                 'pk': entity.pk,
-                'original': string,
-                'original_plural': string_plural,
+                'original': original,
+                'original_plural': original_plural,
                 'key': entity.cleaned_key,
                 'path': entity.resource.path,
                 'project': entity.resource.project.serialize(),
