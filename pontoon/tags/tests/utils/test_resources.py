@@ -118,7 +118,7 @@ def test_util_tags_resources_tool_params(kwargs):
 def test_util_tags_resources_tool_find(tag_a, tag_b):
     resource_tool = TagsResourcesTool()
 
-    data = resource_tool.find('*')
+    data = resource_tool.find('**')
     assert isinstance(data, QuerySet)
     assert data.count() == Resource.objects.count()
 
@@ -128,18 +128,18 @@ def test_util_tags_resources_tool_find(tag_a, tag_b):
     assert data.count() == 1
     assert data[0] == resource
 
-    data = resource_tool.find('*', exclude=tag_a.slug)
+    data = resource_tool.find('**', exclude=tag_a.slug)
     assert isinstance(data, QuerySet)
     assert data.count()
     assert resource not in data
 
-    data = resource_tool.find('*', include=tag_a.slug)
+    data = resource_tool.find('**', include=tag_a.slug)
     assert isinstance(data, QuerySet)
     assert data.count() == 1
     assert resource in data
 
     resource_tool = TagsResourcesTool(projects=[resource.project])
-    data = resource_tool.find('*')
+    data = resource_tool.find('**')
     assert (
         data.count()
         == Resource.objects.filter(project=resource.project).count()
@@ -152,7 +152,7 @@ def test_util_tags_resources_tool_link(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
     assert tag_c.resources.count() == 0
-    resource_tool.link(tag_c.slug, '*')
+    resource_tool.link(tag_c.slug, '**')
     assert tag_c.resources.count() == Resource.objects.count()
 
     tag_c.resources.remove(*list(tag_c.resources.all()))
@@ -167,7 +167,7 @@ def test_util_tags_resources_tool_link_project(resource_a, tag_c):
     tag_c.project = resource_a.project
     tag_c.save()
     assert tag_c.resources.count() == 0
-    resource_tool.link(tag_c.slug, '*')
+    resource_tool.link(tag_c.slug, '**')
     assert (
         tag_c.resources.count()
         == Resource.objects.filter(project=resource_a.project).count()
@@ -182,7 +182,7 @@ def test_util_tags_resources_tool_link_bad(resource_a, tag_c, project_b):
     with pytest.raises(InvalidProjectError):
         resource_tool.link(tag_c.slug, resource_a.path)
     with pytest.raises(InvalidProjectError):
-        resource_tool.link(tag_c.slug, "*")
+        resource_tool.link(tag_c.slug, '**')
     with pytest.raises(InvalidProjectError):
         resource_tool.link(
             tag_c.slug,
@@ -226,7 +226,7 @@ def test_util_tags_resources_tool_linkable_resources(resource_a, tag_c):
         m.return_value = values
         linkable = resource_tool.get_linkable_resources(23)
         assert linkable == 7
-        assert list(m.call_args) == [('*',), {'exclude': 23}]
+        assert list(m.call_args) == [('**',), {'exclude': 23}]
         assert (
             list(values.values.call_args)
             == [('path', 'project'), {}]
@@ -260,7 +260,7 @@ def test_util_tags_resources_tool_unlink(tag_a, resource_c):
 
     tag_a.resources.add(resource_c)
     assert tag_a.resources.count() == 2
-    resource_tool.unlink(tag_a.slug, '*')
+    resource_tool.unlink(tag_a.slug, '**')
     assert tag_a.resources.count() == 0
 
     tag_a.resources.add(resource, resource_c)
