@@ -2208,6 +2208,20 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def prefetch_alternative_originals(self, code):
+        """
+        Prefetch active translations for given preferred source locale.
+        """
+        return self.prefetch_related(
+            Prefetch(
+                'translation_set',
+                queryset=(
+                    Translation.objects.filter(locale__code=code, approved=True)
+                ),
+                to_attr='alternative_originals'
+            )
+        )
+
     def reset_active_translations(self, locale):
         """
         Reset active translation for given set of entities and locale.
@@ -2588,27 +2602,19 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
         )
 
+        if preferred_source_locale != '':
+            entities = entities.prefetch_alternative_originals(preferred_source_locale)
+
         for entity in entities:
             translation_array = []
-
-            if preferred_source_locale == "":
-                string = entity.string
-                string_plural = entity.string_plural
-            else:
-                preferredSourceLocale = Locale.objects.filter(
-                    code=preferred_source_locale).values_list('pk')[0][0]
-                string = Translation.objects.filter(locale=preferredSourceLocale, entity=entity)
-                if not string:
-                    string = entity.string
-                    string_plural = entity.string_plural
-                else:
-                    string = string.values_list('string')[0][0]
-                    # replace with Source Locale Translated Plural String
-                    string_plural = entity.string_plural
+            string = entity.string
+            string_plural = entity.string_plural
 
             if string_plural == "":
                 translation = entity.get_active_translation().serialize()
                 translation_array.append(translation)
+                if preferred_source_locale != '' and entity.alternative_originals:
+                    string = entity.alternative_originals[0].string
 
             else:
                 for plural_form in range(0, locale.nplurals or 1):
