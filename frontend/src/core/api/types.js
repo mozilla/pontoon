@@ -22,6 +22,7 @@ export type Entity = {|
     +pk: number,
     +original: string,
     +original_plural: string,
+    +machineryOriginal: string,
     +comment: string,
     +group_comment: string,
     +resource_comment: string,
