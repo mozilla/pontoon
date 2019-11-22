@@ -70,7 +70,7 @@ class TagsResourcesTool(TagsDataTool):
         but are not already
         """
 
-        return self.find('*', exclude=slug).values('path', 'project')
+        return self.find('**', exclude=slug).values('path', 'project')
 
     def get_linked_resources(self, slug):
         """ Return `values` of resources that are already linked to a given tag
