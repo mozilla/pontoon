@@ -262,7 +262,7 @@ def test_form_project_tag_resources_paths_for_select(
     assert not glob_mock.called
 
     # search set, resources filtered
-    form.cleaned_data = dict(search='*')
+    form.cleaned_data = dict(search='**')
     assert form._clean_paths_for_select() == 23
     assert (
         list(resources_mock.filter.call_args)
@@ -270,7 +270,7 @@ def test_form_project_tag_resources_paths_for_select(
     )
     assert (
         list(glob_mock.call_args)
-        == [('*',), {}]
+        == [('**',), {}]
     )
 
 
