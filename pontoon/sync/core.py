@@ -174,7 +174,7 @@ def update_translations(db_project, vcs_project, locale, changeset):
 def update_translated_resources(db_project, vcs_project, locale):
     """
     Update the TranslatedResource entries in the database.
-    Returns true if a new resource is added to the locale.
+    Returns true if a new TranslatedResource is added to the locale.
     """
     if vcs_project.configuration:
         return update_translated_resources_with_config(
@@ -202,7 +202,8 @@ def update_translated_resources_with_config(db_project, vcs_project, locale):
             TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
         )
 
-        tr_created |= created  # set to true if at least one instance is created
+        if created:
+            tr_created = True
         translatedresource.calculate_stats()
 
     return tr_created
@@ -225,7 +226,8 @@ def update_translated_resources_without_config(db_project, vcs_project, locale):
                     TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
                 )
 
-                tr_created |= created  # set to true if at least one instance is created
+                if created:
+                    tr_created = True
                 translatedresource.calculate_stats()
 
     return tr_created

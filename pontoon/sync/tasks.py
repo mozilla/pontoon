@@ -131,7 +131,7 @@ def sync_project(
     new_entities = source_changes.get('new_entities')
 
     if db_project.pretranslation_enabled and new_entities:
-        new_entities = list(set(source_changes.get('new_entities')))
+        new_entities = list(set(new_entities))
         pretranslate(db_project, entities=new_entities)
 
 

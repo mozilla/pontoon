@@ -309,9 +309,6 @@
   </section>
 
   <div class="controls clearfix">
-      {% if settings.MANUAL_SYNC %}
-      <button class="sync button">Sync</button>
-      {% endif %}
       <div class="checkbox clearfix">
           <label for="id_disabled">
               {{ form.disabled }}{{ form.disabled.label }}
@@ -322,6 +319,9 @@
               {{ form.sync_disabled }}{{ form.sync_disabled.label }}
           </label>
       </div>
+      {% if settings.MANUAL_SYNC %}
+      <button class="sync button">Sync</button>
+      {% endif %}
       <button class="button active save">Save project</button>
       <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
   </div>

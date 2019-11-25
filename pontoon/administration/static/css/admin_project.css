@@ -151,15 +151,14 @@ form .button {
 .controls .button.sync,
 .controls .button.sync:hover {
   background: #333941;
-  color: #fff;
+  color: #aaa;
   float: left;
-  margin-right: 10px;
 }
 
 .controls .button.pretranslate,
 .controls .button.pretranslate:hover {
   background: #333941;
-  color: #fff;
+  color: #aaa;
   float: right;
 }
 
