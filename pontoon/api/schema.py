@@ -1,17 +1,20 @@
 from __future__ import absolute_import
 
+from django.contrib.auth.models import User as UserModel
+
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
 
 from pontoon.api.util import get_fields
 
+from pontoon.actionlog.models import ActionLog as ActionLogModel
 from pontoon.base.models import (
     Locale as LocaleModel,
     Project as ProjectModel,
     ProjectLocale as ProjectLocaleModel,
+    Translation as TranslationModel,
 )
-
 from pontoon.tags.models import Tag as TagModel
 
 
@@ -112,6 +115,54 @@ class Locale(DjangoObjectType, Stats):
         return qs.filter(project__disabled=False)
 
 
+class ActionLog(DjangoObjectType):
+    class Meta:
+        model = ActionLogModel
+        only_fields = (
+            "action_type",
+            "created_at",
+            "performed_by",
+            "translation",
+        )
+
+
+class User(DjangoObjectType):
+    class Meta:
+        convert_choices_to_enum = False
+        model = UserModel
+        only_fields = (
+            "username",
+            "first_name",
+            "last_name",
+        )
+
+    actions = graphene.List(ActionLog)
+
+    def resolve_actions(obj, info):
+        return ActionLogModel.objects.filter(performed_by=obj)
+
+
+class Translation(DjangoObjectType):
+    class Meta:
+        model = TranslationModel
+        only_fields = (
+            "user",
+            "locale",
+            "string",
+            "plural_form",
+            "date",
+            "active",
+            "fuzzy",
+            "approved",
+            "rejected",
+        )
+
+    actions = graphene.List(ActionLog)
+
+    def resolve_actions(obj, info):
+        return ActionLogModel.objects.filter(translation=obj)
+
+
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="__debug")
 
@@ -121,6 +172,14 @@ class Query(graphene.ObjectType):
 
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
+
+    user = graphene.Field(User, username=graphene.String())
+
+    translations = graphene.List(
+        Translation, project=graphene.String(), locale=graphene.String(),
+    )
+
+    actions = graphene.List(ActionLog)
 
     def resolve_projects(obj, info, include_disabled):
         qs = ProjectModel.objects
@@ -175,6 +234,24 @@ class Query(graphene.ObjectType):
             raise Exception("Cyclic queries are forbidden")
 
         return qs.get(code=code)
+
+    def resolve_user(obj, info, username):
+        return UserModel.objects.get(username=username)
+
+    def resolve_translations(obj, info, project, locale):
+        qs = TranslationModel.objects
+        fields = get_fields(info)
+
+        if "user" in fields:
+            qs = qs.prefetch_related("translation__user")
+
+        if "locale" in fields:
+            qs = qs.prefetch_related("translation__locale")
+
+        return qs.filter(locale__code=locale, entity__resource__project__slug=project,)
+
+    def resolve_actions(obj, info):
+        return ActionLogModel.objects.all()
 
 
 schema = graphene.Schema(query=Query)
