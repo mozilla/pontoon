@@ -45,7 +45,7 @@ RUN pip install -U 'pip>=8' && \
     pip install --no-cache-dir --require-hashes -r requirements/test.txt
 
 # Create the app user
-RUN groupadd -r pontoon && useradd --no-log-init -r -m -g pontoon pontoon
+RUN groupadd -r --gid=1000 pontoon && useradd --no-log-init -r -m -g pontoon pontoon
 RUN chown -R pontoon:pontoon /app
 USER pontoon
 
