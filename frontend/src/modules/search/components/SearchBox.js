@@ -153,7 +153,8 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 initialStatuses = mapValues(initialStatuses, () => false);
                 initialStatuses[f] = true;
             });
-        } else {
+        
+        } else if (prevProps.parameters.status === null) {
             // reset the status object to empty if there is no status selected
             initialStatuses = {};
         }
