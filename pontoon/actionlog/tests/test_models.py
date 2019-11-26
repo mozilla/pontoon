@@ -5,6 +5,7 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from pontoon.actionlog import utils
+from pontoon.actionlog.models import ActionLog
 
 
 @pytest.mark.django_db
@@ -64,6 +65,10 @@ def test_log_action_valid_with_translation(user_a, translation_a):
         translation=translation_a,
     )
 
+    log = ActionLog.objects.filter(performed_by=user_a, translation=translation_a)
+    assert len(log) == 1
+    assert log[0].action_type == 'translation:created'
+
 
 @pytest.mark.django_db
 def test_log_action_valid_with_entity_locale(user_a, entity_a, locale_a):
@@ -73,3 +78,11 @@ def test_log_action_valid_with_entity_locale(user_a, entity_a, locale_a):
         entity=entity_a,
         locale=locale_a,
     )
+
+    log = ActionLog.objects.filter(
+        performed_by=user_a,
+        entity=entity_a,
+        locale=locale_a,
+    )
+    assert len(log) == 1
+    assert log[0].action_type == 'translation:deleted'
