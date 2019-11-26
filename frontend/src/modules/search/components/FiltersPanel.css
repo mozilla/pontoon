@@ -236,14 +236,15 @@
     color: #AAAAAA;
 }
 
-
 .filters-panel .menu li.author.selected .status,
-.filters-panel .menu li.author .sel:hover .status {
+.filters-panel .menu li.author .sel:hover .status,
+.filters-panel .menu li.author:hover .status {
     display: block;
 }
 
 .filters-panel .menu li.author.selected img,
-.filters-panel .menu li.author .sel:hover img {
+.filters-panel .menu li.author .sel:hover img,
+.filters-panel .menu li.author:hover img {
     opacity: 0.3;
 }
 
