@@ -10,6 +10,7 @@ from django.db.models import Prefetch
 from django.template.defaultfilters import pluralize
 from notifications.signals import notify
 
+from pontoon.actionlog.utils import log_action
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -57,6 +58,8 @@ class ChangeSet(object):
         self.new_entities = []
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
+
+        self.sync_user = User.objects.get(username='pontoon-sync')
 
     @property
     def changed_translations(self):
@@ -261,6 +264,11 @@ class ChangeSet(object):
             # Modify existing translation.
             if db_translation:
                 if not db_translation.approved and not vcs_translation.fuzzy:
+                    log_action(
+                        'translation:approved',
+                        user or self.sync_user,
+                        translation=db_translation,
+                    )
                     db_translation.approved = True
                     db_translation.approved_user = user
                     db_translation.approved_date = self.now
@@ -305,6 +313,11 @@ class ChangeSet(object):
                 # Reject translations unless they became fuzzy during sync. Condition is sufficient
                 # because they were approved previously.
                 if not translation.fuzzy:
+                    log_action(
+                        'translation:rejected',
+                        user or self.sync_user,
+                        translation=translation,
+                    )
                     translation.rejected = True
                     translation.rejected_user = user
                     translation.rejected_date = self.now
@@ -399,6 +412,12 @@ class ChangeSet(object):
 
     def bulk_create_translations(self):
         Translation.objects.bulk_create(self.translations_to_create)
+        for translation in self.translations_to_create:
+            log_action(
+                'translation:created',
+                translation.user or self.sync_user,
+                translation=translation,
+            )
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
