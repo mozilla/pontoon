@@ -608,6 +608,8 @@ def update_translation(request):
 
                 t.save(failed_checks=failed_checks)
 
+                log_action('translation:approved', user, translation=t)
+
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
@@ -663,6 +665,8 @@ def update_translation(request):
             t.approved_date = now
 
         t.save(failed_checks=failed_checks)
+
+        log_action('translation:created', user, translation=t)
 
         return JsonResponse({
             'type': 'saved',
