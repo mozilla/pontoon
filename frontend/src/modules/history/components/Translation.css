@@ -118,7 +118,7 @@
     opacity: 1;
 }
 
-.history .translation.fuzzy > header button.approve:before {
+.history .translation.fuzzy .content > header button.approve:before {
     color: #FED271;
 }
 
