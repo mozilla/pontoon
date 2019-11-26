@@ -85,13 +85,13 @@
     font-weight: bold;
 }
 
-.entity:hover .status:before {
+.entity:hover .status:before,
+.entity.selected:hover .status:before {
     content: "";
     font-weight: 100;
 }
 
-.entity.checked:hover .status:before,
-.entity.selected:hover .status:before {
+.entity.checked:hover .status:before {
     content: "";
     font-weight: bold;
 }
