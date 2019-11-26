@@ -535,7 +535,7 @@ def manually_sync_project(request, slug):
 @login_required(redirect_field_name='', login_url='/403')
 @require_AJAX
 def manually_pretranslate_project(request, slug):
-    if not request.user.has_perm('base.can_manage_project') or not settings.MANUAL_SYNC:
+    if not request.user.has_perm('base.can_manage_project'):
         return HttpResponseForbidden(
             "Forbidden: You don't have permission for pretranslating projects"
         )

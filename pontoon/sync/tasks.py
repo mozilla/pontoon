@@ -125,14 +125,9 @@ def sync_project(
         locale=locale,
         no_pull=no_pull,
         no_commit=no_commit,
-        full_scan=force
+        full_scan=force,
+        new_entities=source_changes.get('new_entities')
     )
-
-    new_entities = source_changes.get('new_entities')
-
-    if db_project.pretranslation_enabled and new_entities:
-        new_entities = list(set(new_entities))
-        pretranslate(db_project, entities=new_entities)
 
 
 def sync_sources(db_project, now, force, no_pull):
@@ -191,6 +186,7 @@ def sync_sources(db_project, now, force, no_pull):
 def sync_translations(
     self, project_pk, project_sync_log_pk, now, added_paths=None, removed_paths=None,
     changed_paths=None, locale=None, no_pull=False, no_commit=False, full_scan=False,
+    new_entities=None,
 ):
     db_project = get_or_fail(
         Project,
@@ -405,5 +401,12 @@ def sync_translations(
         )
     repo_sync_log.end()
 
-    if db_project.pretranslation_enabled and len(new_locales):
-        pretranslate(db_project, locales=new_locales)
+    if db_project.pretranslation_enabled:
+        # Pretranslate all entities for newly added locales
+        if len(new_locales):
+            pretranslate(db_project, locales=new_locales)
+
+        # Pretranslate newly added entities for all locales
+        if new_entities:
+            new_entities = list(set(new_entities))
+            pretranslate(db_project, entities=new_entities)

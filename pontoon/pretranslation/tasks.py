@@ -25,15 +25,17 @@ def pretranslate(project, locales=None, entities=None):
 
     log.info('Fetching pretranslations for project {} started'.format(project.name))
 
-    if not locales:
-        locales = project.locales.filter(
-            project_locale__readonly=False,
-        ).prefetch_project_locale(project)
+    if locales:
+        locales = project.locales.filter(pk__in=locales)
     else:
-        locales = project.locales.filter(
-            project_locale__readonly=False,
-            pk__in=locales,
-        ).prefetch_project_locale(project)
+        locales = project.locales
+
+    locales = (
+        locales
+        .filter(project_locale__readonly=False)
+        .distinct()
+        .prefetch_project_locale(project)
+    )
 
     if not entities:
         entities = Entity.objects.filter(
