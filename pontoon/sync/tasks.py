@@ -122,11 +122,11 @@ def sync_project(
         source_changes.get('added_paths'),
         source_changes.get('removed_paths'),
         source_changes.get('changed_paths'),
+        source_changes.get('new_entities'),
         locale=locale,
         no_pull=no_pull,
         no_commit=no_commit,
         full_scan=force,
-        new_entities=source_changes.get('new_entities')
     )
 
 
@@ -185,8 +185,8 @@ def sync_sources(db_project, now, force, no_pull):
 )
 def sync_translations(
     self, project_pk, project_sync_log_pk, now, added_paths=None, removed_paths=None,
-    changed_paths=None, locale=None, no_pull=False, no_commit=False, full_scan=False,
-    new_entities=None,
+    changed_paths=None, new_entities=None, locale=None, no_pull=False, no_commit=False,
+    full_scan=False
 ):
     db_project = get_or_fail(
         Project,
