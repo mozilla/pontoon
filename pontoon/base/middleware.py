@@ -1,4 +1,6 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
+import sys
 
 from django.conf import settings
 from django.contrib import auth
@@ -13,8 +15,11 @@ class RaygunExceptionMiddleware(Provider):
         # Ignore non-failure exceptions. We don't need to be notified
         # of these.
         if not isinstance(exception, (Http404, PermissionDenied)):
-            return (super(RaygunExceptionMiddleware, self)
-                    .process_exception(request, text_type(exception).encode('utf-8')))
+            if sys.version_info.major == 2:
+                exc_value = text_type(exception).encode('utf-8')
+            else:
+                exc_value = exception
+            return super(RaygunExceptionMiddleware, self).process_exception(request, exc_value)
 
 
 class BlockedIpMiddleware(object):
