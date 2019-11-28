@@ -55,4 +55,8 @@ urlpatterns = [
     # AJAX
     url(r'^save-custom-homepage/$', views.save_custom_homepage,
         name='pontoon.contributors.save_custom_homepage'),
+
+    # AJAX: Save preferred source locale
+    url(r'^save-preferred-source-locale/$', views.save_preferred_source_locale,
+        name='pontoon.contributors.save_preferred_source_locale'),
 ]

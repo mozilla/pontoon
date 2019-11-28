@@ -150,6 +150,25 @@ def save_custom_homepage(request):
 
 
 @login_required(redirect_field_name='', login_url='/403')
+@require_POST
+@transaction.atomic
+def save_preferred_source_locale(request):
+    """Save preferred source locale """
+    form = forms.UserPreferredSourceLocaleForm(
+        request.POST,
+        instance=request.user.profile,
+    )
+
+    if not form.is_valid():
+        error = escape(u'\n'.join(form.errors['preferred_source_locale']))
+        return HttpResponseBadRequest(error)
+
+    form.save()
+
+    return HttpResponse('ok')
+
+
+@login_required(redirect_field_name='', login_url='/403')
 def settings(request):
     """View and edit user settings."""
     if request.method == 'POST':
@@ -185,19 +204,34 @@ def settings(request):
     all_locales.insert(0, default_homepage_locale)
 
     # Set custom homepage selector value
-    custom_homepage = request.user.profile.custom_homepage
-    if custom_homepage:
+    custom_homepage_locale = request.user.profile.custom_homepage
+    if custom_homepage_locale:
         custom_homepage_locale = (
-            Locale.objects.filter(code=custom_homepage).first()
+            Locale.objects.filter(code=custom_homepage_locale).first()
         )
     else:
         custom_homepage_locale = default_homepage_locale
+
+    default_preferred_source_locale = Locale(name='Default project locale', code='')
+    preferred_locales = list(Locale.objects.all())
+    preferred_locales.insert(0, default_preferred_source_locale)
+
+    # Set preferred source locale
+    preferred_source_locale = request.user.profile.preferred_source_locale
+    if preferred_source_locale:
+        preferred_source_locale = (
+            Locale.objects.filter(code=preferred_source_locale).first()
+        )
+    else:
+        preferred_source_locale = default_preferred_source_locale
 
     return render(request, 'contributors/settings.html', {
         'selected_locales': selected_locales,
         'available_locales': available_locales,
         'locales': all_locales,
         'locale': custom_homepage_locale,
+        'preferred_locales': preferred_locales,
+        'preferred_locale': preferred_source_locale,
         'profile_form': profile_form,
     })
 

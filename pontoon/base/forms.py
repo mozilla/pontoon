@@ -247,6 +247,23 @@ class UserCustomHomepageForm(forms.ModelForm):
         ] + all_locales, required=False)
 
 
+class UserPreferredSourceLocaleForm(forms.ModelForm):
+    """
+    Form is responsible for saving preferred source locale
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('preferred_source_locale',)
+
+    def __init__(self, *args, **kwargs):
+        super(UserPreferredSourceLocaleForm, self).__init__(*args, **kwargs)
+        all_locales = list(Locale.objects.all().values_list('code', 'name'))
+
+        self.fields['preferred_source_locale'] = forms.ChoiceField(choices=[
+            ('', 'Default project locale')
+        ] + all_locales, required=False)
+
+
 class UserLocalesOrderForm(forms.ModelForm):
     """
     Form is responsible for saving preferred locales of contributor.

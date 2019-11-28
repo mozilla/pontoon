@@ -119,7 +119,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (selectedEntity.pk !== this.props.machinery.entity) {
-            const source = utils.getOptimizedContent(selectedEntity.original, selectedEntity.format);
+            const source = utils.getOptimizedContent(selectedEntity.machinery_original, selectedEntity.format);
             dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
         }
     }

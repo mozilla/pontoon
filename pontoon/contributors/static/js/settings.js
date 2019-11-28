@@ -24,3 +24,30 @@ $(function() {
     });
   });
 });
+
+$(function() {
+  $('#preferred-locale .locale .menu li:not(".no-match")').click(function () {
+    var preferred_source_locale = $(this).find('.language').data('code');
+
+    $.ajax({
+      url: '/save-preferred-source-locale/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('#server').data('csrf'),
+        preferred_source_locale: preferred_source_locale
+      },
+      success: function(data) {
+        if (data === 'ok') {
+          Pontoon.endLoader('Preferred source locale saved.');
+        }
+      },
+      error: function(request) {
+        if (request.responseText === 'error') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        } else {
+          Pontoon.endLoader(request.responseText, 'error');
+        }
+      }
+    });
+  });
+});

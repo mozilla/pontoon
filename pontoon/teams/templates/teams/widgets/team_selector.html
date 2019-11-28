@@ -1,8 +1,9 @@
 <!-- Locale selector -->
+{% macro locale(locales_list, locale_selected) %}
 <div class="locale-selector">
   <div class="locale select">
     <div class="button breadcrumbs selector noselect">
-      <span class="language" {{ locale.serialize() | dict_html_attrs }}>{{ locale.name }}</span><span class="code">{{ locale.code }}</span>
+      <span class="language" {{ locale_selected.serialize() | dict_html_attrs }}>{{ locale_selected.name }}</span><span class="code">{{ locale_selected.code }}</span>
     </div>
 
     <div class="menu">
@@ -12,14 +13,10 @@
       </div>
 
       <ul>
-        {% for l in locales %}
+        {% for l in locales_list %}
           <li class="clearfix">
             <span class="language"
               {{ l.serialize() | dict_html_attrs }}
-
-              {% if project and locale and locale == l %}
-                data-projects="{{ l.available_projects_list()|to_json }}"
-              {% endif %}
             >
               {{ l.name }}
             </span>
@@ -30,21 +27,7 @@
         {% endfor %}
         <li class="no-match">No results</li>
       </ul>
-
-      {% if part and locale %}
-      <div class="static-links">
-        <a href="{{ url('pontoon.teams') }}">
-          <div>
-            <span class="title">Teams Dashboard</span>
-          </div>
-        </a>
-        <a href="{{ url('pontoon.teams.team', locale.code) }}">
-          <div class="current-team">
-            <span class="title">Current Team Dashboard</span>
-          </div>
-        </a>
-      </div>
-      {% endif %}
     </div>
   </div>
 </div>
+{% endmacro %}
