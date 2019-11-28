@@ -333,38 +333,6 @@ User.add_to_class('menu_notifications', menu_notifications)
 User.add_to_class('serialized_notifications', serialized_notifications)
 
 
-class UserProfile(models.Model):
-    # This field is required.
-    user = models.OneToOneField(User, related_name='profile')
-    # Other fields here.
-    quality_checks = models.BooleanField(default=True)
-    force_suggestions = models.BooleanField(default=False)
-
-    # Used to redirect a user to a custom team page.
-    custom_homepage = models.CharField(max_length=10, blank=True, null=True)
-
-    # Used to keep track of start/step no. of user tour.
-    # Not started:0, Completed: -1, Finished Step No. otherwise
-    tour_status = models.IntegerField(default=0)
-
-    # Defines the order of locales displayed in locale tab.
-    locales_order = ArrayField(
-        models.PositiveIntegerField(),
-        default=list,
-        blank=True,
-    )
-
-    @property
-    def sorted_locales(self):
-        locales = Locale.objects.filter(pk__in=self.locales_order)
-        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
-
-    @property
-    def sorted_locales_codes(self):
-        """Return the codes of locales that contributor set in his preferences."""
-        return [l.code for l in self.sorted_locales]
-
-
 class PermissionChangelog(models.Model):
     """
     Track changes of roles added or removed from a user.
@@ -1379,6 +1347,41 @@ class Project(AggregatedStats):
         )
 
 
+class UserProfile(models.Model):
+    # This field is required.
+    user = models.OneToOneField(User, related_name='profile')
+    # Other fields here.
+    quality_checks = models.BooleanField(default=True)
+    force_suggestions = models.BooleanField(default=False)
+
+    # Used to redirect a user to a custom team page.
+    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
+
+    # Used to display strings from preferred source locale.
+    preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
+
+    # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
+    tour_status = models.IntegerField(default=0)
+
+    # Defines the order of locales displayed in locale tab.
+    locales_order = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        blank=True,
+    )
+
+    @property
+    def sorted_locales(self):
+        locales = Locale.objects.filter(pk__in=self.locales_order)
+        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
+
+    @property
+    def sorted_locales_codes(self):
+        """Return the codes of locales that contributor set in his preferences."""
+        return [l.code for l in self.sorted_locales]
+
+
 @python_2_unicode_compatible
 class ExternalResource(models.Model):
     """
@@ -2205,6 +2208,20 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def prefetch_alternative_originals(self, code):
+        """
+        Prefetch approved translations for given preferred source locale.
+        """
+        return self.prefetch_related(
+            Prefetch(
+                'translation_set',
+                queryset=(
+                    Translation.objects.filter(locale__code=code, approved=True)
+                ),
+                to_attr='alternative_originals'
+            )
+        )
+
     def reset_active_translations(self, locale):
         """
         Reset active translation for given set of entities and locale.
@@ -2568,7 +2585,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities.order_by(*order_fields)
 
     @classmethod
-    def map_entities(cls, locale, entities, visible_entities=None):
+    def map_entities(cls, locale, preferred_source_locale, entities, visible_entities=None):
         entities_array = []
         visible_entities = visible_entities or []
 
@@ -2585,24 +2602,33 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
         )
 
+        if preferred_source_locale != '':
+            entities = entities.prefetch_alternative_originals(preferred_source_locale)
+
         for entity in entities:
             translation_array = []
 
-            if entity.string_plural == "":
+            original = entity.string
+            original_plural = entity.string_plural
+
+            if original_plural == '':
                 translation = entity.get_active_translation().serialize()
                 translation_array.append(translation)
-
             else:
                 for plural_form in range(0, locale.nplurals or 1):
                     translation = entity.get_active_translation(plural_form).serialize()
                     translation_array.append(translation)
 
+            if preferred_source_locale != '' and entity.alternative_originals:
+                original = entity.alternative_originals[0].string
+                if original_plural != '':
+                    original_plural = entity.alternative_originals[-1].string
+
             entities_array.append({
                 'pk': entity.pk,
-                'original': entity.string,
-                'marked': entity.marked,
-                'original_plural': entity.string_plural,
-                'marked_plural': entity.marked_plural,
+                'original': original,
+                'original_plural': original_plural,
+                'machinery_original': entity.string,
                 'key': entity.cleaned_key,
                 'path': entity.resource.path,
                 'project': entity.resource.project.serialize(),
