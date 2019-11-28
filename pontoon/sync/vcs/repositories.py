@@ -173,6 +173,9 @@ class CommitToGit(CommitToRepository):
         if code != 0:
             raise CommitToRepositoryException(text_type(error))
 
+        if type(error) is bytes:
+            error = error.decode('utf-8')
+
         if 'Everything up-to-date' in error:
             return self.nothing_to_commit()
 
@@ -327,6 +330,8 @@ class SvnRepository(VCSRepository):
             ['svn', 'diff', '-r', '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
             cwd=path
         )
+        if type(output) is bytes:
+            output = output.decode('utf-8')
         if code == 0:
             # Mark added/modfied files as the changed ones
             return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
@@ -350,6 +355,8 @@ class GitRepository(VCSRepository):
         code, output, error = self.execute(
             ['git', 'diff', '--name-status', '{}..HEAD'.format(from_revision), '--', path],
         )
+        if type(output) is bytes:
+            output = output.decode('utf-8')
         if code == 0:
             return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
         return []
@@ -381,6 +388,8 @@ class HgRepository(VCSRepository):
             ],
             cwd=path
         )
+        if type(output) is bytes:
+            output = output.decode('utf-8')
         if code == 0:
             # Mark added / modified files as the changed ones
             return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
