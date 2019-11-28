@@ -212,7 +212,7 @@ def _get_all_entities(locale, preferred_source_locale, project, form, entities):
             locale,
             preferred_source_locale,
             entities_to_map,
-            visible_entities
+            visible_entities,
         ),
         'has_next': has_next,
         'stats': TranslatedResource.objects.stats(

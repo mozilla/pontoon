@@ -2210,7 +2210,7 @@ class EntityQuerySet(models.QuerySet):
 
     def prefetch_alternative_originals(self, code):
         """
-        Prefetch active translations for given preferred source locale.
+        Prefetch approved translations for given preferred source locale.
         """
         return self.prefetch_related(
             Prefetch(

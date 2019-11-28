@@ -156,7 +156,7 @@ def save_preferred_source_locale(request):
     """Save preferred source locale """
     form = forms.UserPreferredSourceLocaleForm(
         request.POST,
-        instance=request.user.profile
+        instance=request.user.profile,
     )
 
     if not form.is_valid():
