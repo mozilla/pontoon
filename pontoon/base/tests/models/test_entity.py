@@ -221,11 +221,13 @@ def test_entity_project_locale_no_paths(
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
     locale_a = tr0.locale
+    preferred_source_locale = ''
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(project_a, locale_a),
     )
     assert len(entities) == 2
@@ -243,7 +245,6 @@ def test_entity_project_locale_no_paths(
         'resource_comment': '',
         'format': 'po',
         'obsolete': False,
-        'marked': text_type(entity_a.string),
         'key': '',
         'path': text_type(resource0.path),
         'project': project_a.serialize(),
@@ -270,9 +271,9 @@ def test_entity_project_locale_no_paths(
         'order': 0,
         'source': [],
         'original_plural': text_type(entity_a.string_plural),
-        'marked_plural': text_type(entity_a.string_plural),
         'pk': entity_a.pk,
         'original': text_type(entity_a.string),
+        'machinery_original': text_type(entity_a.string),
         'readonly': False,
         'visible': False,
     }
@@ -287,10 +288,12 @@ def test_entity_project_locale_paths(entity_test_models):
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
     locale_a = tr0.locale
+    preferred_source_locale = ''
     project_a = tr0.entity.resource.project
     paths = ['resourceX.po']
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(
             project_a,
             locale_a,
@@ -313,12 +316,14 @@ def test_entity_project_locale_subpages(entity_test_models):
     tr0 = entity_test_models[0]
     subpageX = entity_test_models[3]
     locale_a = tr0.locale
+    preferred_source_locale = ''
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
     subpages = [subpageX.name]
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(
             project_a,
             locale_a,
@@ -342,10 +347,12 @@ def test_entity_project_locale_plurals(
     """
     tr0, tr0pl, trX, subpageX = entity_test_models
     locale_a = tr0.locale
+    preferred_source_locale = ''
     entity_a = tr0.entity
     project_a = tr0.entity.resource.project
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(
             project_a,
             locale_a,
@@ -364,6 +371,7 @@ def test_entity_project_locale_order(entity_test_models):
     """
     resource0 = entity_test_models[0].entity.resource
     locale_a = entity_test_models[0].locale
+    preferred_source_locale = ''
     project_a = resource0.project
     EntityFactory.create(
         order=2,
@@ -377,6 +385,7 @@ def test_entity_project_locale_order(entity_test_models):
     )
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(
             project_a,
             locale_a,
@@ -394,9 +403,11 @@ def test_entity_project_locale_cleaned_key(entity_test_models):
     """
     resource0 = entity_test_models[0].entity.resource
     locale_a = entity_test_models[0].locale
+    preferred_source_locale = ''
     project_a = resource0.project
     entities = Entity.map_entities(
         locale_a,
+        preferred_source_locale,
         Entity.for_project_locale(
             project_a,
             locale_a,

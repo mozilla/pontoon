@@ -2,6 +2,8 @@
 
 {% import "widgets/checkbox.html" as Checkbox %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'teams/widgets/team_selector.html' as team_selector %}
+
 
 {% block title %}Settings{% endblock %}
 
@@ -31,10 +33,17 @@
     {% endif %}
   </ul>
 
-  <div id="homepage" class="clearfix">
-    <span class="label">Select your homepage</span>
-    {% include 'teams/widgets/team_selector.html' %}
+  <div id="user-preference" class="clearfix">
+    <div id="homepage">
+      <span class="label">Select your homepage</span>
+      <span>{{ team_selector.locale(locales, locale) }}</span>
+    </div>
+    <div id="preferred-locale">
+      <span class="label">Select preferred source locale</span>
+      <span>{{ team_selector.locale(preferred_locales, preferred_locale) }}</span>
+    </div>
   </div>
+
 </section>
 {% endblock %}
 
