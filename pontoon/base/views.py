@@ -325,20 +325,9 @@ def get_translations_from_other_locales(request):
             'message': 'Bad Request: {error}'.format(error=e),
         }, status=400)
 
-    original_string = Entity.objects.filter(pk=entity).values('string')[0]
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
     plural_form = None if entity.string_plural == "" else 0
-    preferred_source_locale = request.user.profile.preferred_source_locale
-
-    original_source = list(Locale.objects.filter(pk=279).values(
-        'direction', 'code', 'name', 'script'
-    ))
-    original_source[0]['locale__direction'] = original_source[0].pop('direction')
-    original_source[0]['locale__code'] = original_source[0].pop('code')
-    original_source[0]['locale__name'] = original_source[0].pop('name')
-    original_source[0]['locale__script'] = original_source[0].pop('script')
-    original_source[0].update(original_string)
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -350,10 +339,6 @@ def get_translations_from_other_locales(request):
     payload = list(translations.values(
         'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
     ))
-
-    if preferred_source_locale != '':
-        payload.insert(0, original_source[0])
-
     return JsonResponse(payload, safe=False)
 
 
