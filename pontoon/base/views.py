@@ -240,6 +240,7 @@ def entities(request):
         }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
+    preferred_source_locale = request.user.profile.preferred_source_locale
 
     preferred_source_locale = ''
     if request.user.is_authenticated:
