@@ -27,7 +27,7 @@ function createEditorBase() {
         editor={ { translation: '' } }
         pluralForm={ -1 }
         entity={ ENTITIES[0] }
-        activeTranslation={ ENTITIES[0].translation[0].string }
+        activeTranslationString={ ENTITIES[0].translation[0].string }
         updateTranslation={ updateTranslationMock }
     />);
 

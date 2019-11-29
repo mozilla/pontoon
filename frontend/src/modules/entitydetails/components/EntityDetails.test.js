@@ -60,7 +60,7 @@ const USER = {
 
 function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
     return shallow(<EntityDetailsBase
-        activeTranslation={ TRANSLATION }
+        activeTranslationString={ TRANSLATION }
         history={ HISTORY }
         otherlocales={ LOCALES }
         navigation={ NAVIGATION }

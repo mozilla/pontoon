@@ -19,11 +19,11 @@ import { NAME, actions } from '..';
 
 import { withActionsDisabled } from 'core/utils';
 
-import type { Entity } from 'core/api';
+import type { Entity, EntityTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { ChangeOperation } from 'modules/history';
+import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { SearchAndFilters } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 import type { EditorState } from '../reducer';
@@ -31,9 +31,12 @@ import type { Translation } from '../actions';
 
 
 type Props = {|
-    activeTranslation: string,
+    activeTranslation: EntityTranslation,
+    activeTranslationString: string,
     editor: EditorState,
     isReadOnlyEditor: boolean,
+    isTranslator: boolean,
+    history: HistoryState,
     locale: Locale,
     nextEntity: Entity,
     parameters: NavigationParams,
@@ -53,10 +56,13 @@ type InternalProps = {|
 |};
 
 export type EditorProps = {|
-    activeTranslation: string,
+    activeTranslation: EntityTranslation,
+    activeTranslationString: string,
     editor: EditorState,
     entity: Entity,
     isReadOnlyEditor: boolean,
+    isTranslator: boolean,
+    history: HistoryState,
     locale: Locale,
     pluralForm: number,
     searchInputFocused: boolean,
@@ -125,7 +131,7 @@ export default function connectedEditor<Object>(
             }
 
             if (!initial) {
-                initial = props.editor.initialTranslation || props.activeTranslation;
+                initial = props.editor.initialTranslation || props.activeTranslationString;
             }
 
             this.props.dispatch(unsavedchanges.actions.update(translation, initial));
@@ -314,9 +320,12 @@ export default function connectedEditor<Object>(
             return <div className="editor">
                 <WrappedComponent
                     activeTranslation={ this.props.activeTranslation }
-                    isReadOnlyEditor={ this.props.isReadOnlyEditor }
+                    activeTranslationString={ this.props.activeTranslationString }
                     entity={ this.props.selectedEntity }
                     editor={ this.props.editor }
+                    isReadOnlyEditor={ this.props.isReadOnlyEditor }
+                    isTranslator={ this.props.isTranslator }
+                    history={ this.props.history }
                     locale={ this.props.locale }
                     pluralForm={ this.props.pluralForm }
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
@@ -345,8 +354,11 @@ export default function connectedEditor<Object>(
     const mapStateToProps = (state: Object): Props => {
         return {
             activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
+            activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(state),
             editor: state[NAME],
             isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
+            isTranslator: user.selectors.isTranslator(state),
+            history: state[history.NAME],
             locale: state[locale.NAME],
             nextEntity: entities.selectors.getNextEntity(state),
             parameters: navigation.selectors.getNavigationParams(state),

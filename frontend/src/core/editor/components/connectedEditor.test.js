@@ -87,6 +87,9 @@ function createEditorBase({
             settings: {
                 forceSuggestions: false
             },
+            managerForLocales: [],
+            translatorForProjects: {},
+            translatorForLocales: [],
         },
         unsavedchanges,
     };

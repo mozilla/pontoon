@@ -9,6 +9,8 @@ import * as editor from 'core/editor';
 import * as user from 'core/user';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
+import EditorMainAction from './EditorMainAction';
+
 import type { EditorProps } from 'core/editor';
 
 
@@ -87,35 +89,16 @@ export default class EditorMenu extends React.Component<Props> {
                                 Clear
                             </button>
                         </Localized>
-                        { props.user.settings.forceSuggestions ?
-                        // Suggest button, will send an unreviewed translation.
-                        <Localized
-                            id="editor-EditorMenu--button-suggest"
-                            attrs={{ title: true }}
-                        >
-                            <button
-                                className="action-suggest"
-                                onClick={ props.sendTranslation }
-                                title="Suggest Translation (Enter)"
-                            >
-                                Suggest
-                            </button>
-                        </Localized>
-                        :
-                        // Save button, will send an approved translation.
-                        <Localized
-                            id="editor-EditorMenu--button-save"
-                            attrs={{ title: true }}
-                        >
-                            <button
-                                className="action-save"
-                                onClick={ props.sendTranslation }
-                                title="Save Translation (Enter)"
-                            >
-                                Save
-                            </button>
-                        </Localized>
-                        }
+                        <EditorMainAction
+                            activeTranslation={ props.activeTranslation }
+                            initialTranslation={ props.editor.initialTranslation }
+                            isTranslator={ props.isTranslator }
+                            forceSuggestions={ props.user.settings.forceSuggestions }
+                            history={ props.history }
+                            translation={ props.editor.translation }
+                            sendTranslation={ props.sendTranslation }
+                            updateTranslationStatus={ props.updateTranslationStatus }
+                        />
                     </div>
                 </React.Fragment>
             }

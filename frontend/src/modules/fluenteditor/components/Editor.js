@@ -119,7 +119,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
     analyzeFluentMessage(translation: ?string) {
         const props = this.props;
 
-        const source = translation || props.activeTranslation || props.entity.original;
+        const source = translation || props.activeTranslationString || props.entity.original;
         const message = fluent.parser.parseEntry(source);
 
         // In case simple message gets analyzed again
@@ -132,7 +132,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
         this.setState({ syntaxType });
 
         // Figure out and set the initial translation content.
-        let translationContent = translation || props.activeTranslation;
+        let translationContent = translation || props.activeTranslationString;
 
         if (syntaxType === 'simple') {
             translationContent = fluent.getSimplePreview(translationContent);
@@ -162,7 +162,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             toSyntax,
             translation,
             props.entity.original,
-            props.activeTranslation,
+            props.activeTranslationString,
             props.locale,
         );
 
