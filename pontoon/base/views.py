@@ -320,7 +320,7 @@ def get_translations_from_other_locales(request):
         'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
     ))
 
-    payload = { 'preferred_locales': preferred_locales, 'other_locales': other_locales }
+    payload = {'preferred_locales': preferred_locales, 'other_locales': other_locales}
 
     return JsonResponse(payload, safe=False)
 
