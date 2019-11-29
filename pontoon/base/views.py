@@ -295,6 +295,7 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locales = entity.resource.project.locales.exclude(code=locale)
+    selected_locales = request.user.profile.sorted_locales
     plural_form = None if entity.string_plural == "" else 0
 
     translations = Translation.objects.filter(
@@ -304,9 +305,23 @@ def get_translations_from_other_locales(request):
         approved=True
     ).order_by('locale__name')
 
-    payload = list(translations.values(
+    other_locales = list(translations.values(
         'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
     ))
+
+    preferred_source_translations = Translation.objects.filter(
+        entity=entity,
+        locale__in=selected_locales,
+        plural_form=plural_form,
+        approved=True
+    )
+
+    preferred_locales = list(preferred_source_translations.values(
+        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
+    ))
+
+    payload = { 'preferred_locales': preferred_locales, 'other_locales': other_locales }
+
     return JsonResponse(payload, safe=False)
 
 
