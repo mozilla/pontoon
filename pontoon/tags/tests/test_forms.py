@@ -242,16 +242,14 @@ def test_form_project_tag_resources_resources(tag_mock, project_a):
 @pytest.mark.django_db
 @patch('pontoon.tags.admin.forms.LinkTagResourcesAdminForm.resources',
        new_callable=PropertyMock())
-@patch('pontoon.tags.admin.forms.glob_to_regex')
 def test_form_project_tag_resources_paths_for_select(
-    glob_mock, resources_mock, project_a
+    resources_mock, project_a
 ):
     # tests that selected paths are correct filtered
     resources_mock.configure_mock(**{
         'filter.return_value.values_list.return_value': 23,
         'values_list.return_value': 17,
     })
-    glob_mock.return_value = 7
 
     form = LinkTagResourcesAdminForm(project=project_a)
 
@@ -259,18 +257,13 @@ def test_form_project_tag_resources_paths_for_select(
     form.cleaned_data = dict(search='')
     assert form._clean_paths_for_select() == 17
     assert not resources_mock.filter.called
-    assert not glob_mock.called
 
     # search set, resources filtered
-    form.cleaned_data = dict(search='**')
+    form.cleaned_data = dict(search='search query')
     assert form._clean_paths_for_select() == 23
     assert (
         list(resources_mock.filter.call_args)
-        == [(), {'path__regex': 7}]
-    )
-    assert (
-        list(glob_mock.call_args)
-        == [('**',), {}]
+        == [(), {'path__contains': 'search query'}]
     )
 
 

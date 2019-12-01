@@ -81,7 +81,7 @@ def test_util_tags_resources_tool_filtered_data(tag_matrix, tag_test_kwargs):
         ).distinct()
     if 'slug' in kwargs:
         expected = expected.filter(
-            tag__slug__regex=glob_to_regex(kwargs['slug'])
+            tag__slug__contains=kwargs['slug']
         ).distinct()
     if kwargs.get("path"):
         expected = list(
@@ -167,7 +167,7 @@ def test_util_tags_resources_tool_link_project(resource_a, tag_c):
     tag_c.project = resource_a.project
     tag_c.save()
     assert tag_c.resources.count() == 0
-    resource_tool.link(tag_c.slug, '**')
+    resource_tool.link(tag_c.slug, resource_a.path)
     assert (
         tag_c.resources.count()
         == Resource.objects.filter(project=resource_a.project).count()
@@ -182,7 +182,7 @@ def test_util_tags_resources_tool_link_bad(resource_a, tag_c, project_b):
     with pytest.raises(InvalidProjectError):
         resource_tool.link(tag_c.slug, resource_a.path)
     with pytest.raises(InvalidProjectError):
-        resource_tool.link(tag_c.slug, '**')
+        resource_tool.link(tag_c.slug, resource_a.path)
     with pytest.raises(InvalidProjectError):
         resource_tool.link(
             tag_c.slug,
