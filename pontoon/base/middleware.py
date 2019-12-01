@@ -1,7 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import sys
-import warnings
 
 from django.conf import settings
 from django.contrib import auth
@@ -16,7 +15,8 @@ class RaygunExceptionMiddleware(Provider):
         # Ignore non-failure exceptions. We don't need to be notified
         # of these.
         if not isinstance(exception, (Http404, PermissionDenied)):
-            # On Python 2, Raygun4py fails to send an exception with the Unicode message and throws the UnicodeDecodeError.
+            # On Python 2, Raygun4py fails to send an exception with the Unicode message
+            # and throws the UnicodeDecodeError.
             # To avoid this, the middleware casts the exception to the str object.
             # On Python 3, Raygun4py requires an instance of an Exception instead of a string.
             # This is the temporary solution and will be removed after the migration to Python 3.
