@@ -141,18 +141,25 @@ export default class EntityAPI extends APIBase {
 
         const results = await this.fetch('/other-locales/', 'GET', payload, headers);
 
-        if (!Array.isArray(results)) {
+        if (typeof results !== 'object' || Array.isArray(results)) {
             return [];
         }
 
-        return results.map(entry => {
-            return {
-                code: entry.locale__code,
-                locale: entry.locale__name,
-                direction: entry.locale__direction,
-                script: entry.locale__script,
-                translation: entry.string,
-            };
-        });
+        const locales = Object.keys(results).map(key => results[key]).map(locale_lists => {
+            return locale_lists.map(entry => {
+                return {
+                    code: entry.locale__code,
+                    locale: entry.locale__name,
+                    direction: entry.locale__direction,
+                    script: entry.locale__script,
+                    translation: entry.string,
+                }
+            })
+        } );
+
+        const preferred_locales = locales[0];
+        const other_locales = locales[1];
+
+        return other_locales;
     }
 }
