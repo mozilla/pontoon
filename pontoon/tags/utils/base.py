@@ -168,7 +168,7 @@ class TagsTRTool(TagsDataTool):
     def filter_path(self, trs):
         return (
             trs.filter(
-                resource__path__regex=glob_to_regex(self.path)).distinct()
+                resource__path__contains=self.path).distinct()
             if self.path
             else trs)
 
@@ -189,7 +189,7 @@ class TagsTRTool(TagsDataTool):
             q &= ~Q(resource__tag__isnull=True)
 
         if self.slug:
-            q &= Q(resource__tag__slug__regex=glob_to_regex(self.slug))
+            q &= Q(resource__tag__slug__contains=self.slug)
 
         if self.priority is not None:
             if self.priority is False:

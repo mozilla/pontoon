@@ -31,7 +31,7 @@ class TagsResourcesTool(TagsDataTool):
 
     def filter_path(self, resources):
         return (
-            resources.filter(path__regex=glob_to_regex(self.path))
+            resources.filter(path__contains=self.path)
             if self.path
             else resources)
 
@@ -43,7 +43,7 @@ class TagsResourcesTool(TagsDataTool):
 
     def filter_slug(self, resources):
         return (
-            resources.filter(tag__slug__regex=glob_to_regex(self.slug))
+            resources.filter(tag__slug__contains=self.slug)
             if self.slug
             else resources)
 
@@ -60,7 +60,7 @@ class TagsResourcesTool(TagsDataTool):
             resources = self.resource_manager
         if self.projects:
             resources = resources.filter(project__in=self.projects)
-        return resources.filter(path__regex=glob_to_regex(glob))
+        return resources.filter(path__contains=glob)
 
     def get(self, tag):
         return self.filtered_data.filter(tag__slug=tag).distinct()

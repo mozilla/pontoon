@@ -81,8 +81,8 @@ class LinkTagResourcesAdminForm(forms.Form):
         qs = self.resources
         if self.cleaned_data['search']:
             qs = qs.filter(
-                path__regex=glob_to_regex(
-                    self.cleaned_data['search']))
+                path__contains=self.cleaned_data['search']
+            )
         return qs.values_list('path')
 
     def _clean_paths_for_submit(self):
