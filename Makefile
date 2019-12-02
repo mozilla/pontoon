@@ -52,6 +52,11 @@ shell-py3: shell
 pytest-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 pytest-py3: pytest
 
+run-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
+run-py3: run
+
+setup-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
+setup-py3: setup
 
 setup: .docker-build
 	${DC} run webapp /app/docker/set_up_webapp.sh
