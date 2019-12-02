@@ -153,7 +153,8 @@
     color: #7BC876;
 }
 
-.filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before {
+.filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before,
+.filters-panel .menu li.author:hover .status:before {
     content: "";
     font-weight: bold;
 }
@@ -162,7 +163,7 @@
     content: "";
 }
 
-.filters-panel .menu li:not(.selected):not(.all):hover .status:before {
+.filters-panel .menu li:not(.selected):not(.all):not(.author):hover .status:before {
     content: "";
     font-weight: 100;
     font-size: 16px;
