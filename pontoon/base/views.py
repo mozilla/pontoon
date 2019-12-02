@@ -284,6 +284,10 @@ def entities(request):
     # Out-of-context view: paginate entities
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
+def get_translation_values(query):
+    return query.values(
+        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
+    )
 
 def _serialize_translation_values(query):
     translations = query.values(
@@ -326,7 +330,7 @@ def get_translations_from_other_locales(request):
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
 
-    translations = Translation.objects.filter(
+    preferred_source_translations = Translation.objects.filter(
         entity=entity,
         plural_form=plural_form,
         approved=True,
