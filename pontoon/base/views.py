@@ -280,6 +280,10 @@ def entities(request):
     # Out-of-context view: paginate entities
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
+def get_translation_values(query):
+    return query.values(
+        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
+    )
 
 @utils.require_AJAX
 def get_translations_from_other_locales(request):
@@ -294,20 +298,9 @@ def get_translations_from_other_locales(request):
         }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
-    locales = entity.resource.project.locales.exclude(code=locale)
+    locale = get_object_or_404(Locale, code=locale)
     selected_locales = request.user.profile.sorted_locales
     plural_form = None if entity.string_plural == "" else 0
-
-    translations = Translation.objects.filter(
-        entity=entity,
-        locale__in=locales,
-        plural_form=plural_form,
-        approved=True
-    ).order_by('locale__name')
-
-    other_locales = list(translations.values(
-        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
-    ))
 
     preferred_source_translations = Translation.objects.filter(
         entity=entity,
@@ -316,11 +309,20 @@ def get_translations_from_other_locales(request):
         approved=True
     )
 
-    preferred_locales = list(preferred_source_translations.values(
-        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
-    ))
+    preferred_locales = list(get_translation_values(preferred_source_translations))
 
-    payload = {'preferred_locales': preferred_locales, 'other_locales': other_locales}
+    translations = Translation.objects.filter(
+        entity=entity,
+        plural_form=plural_form,
+        approved=True
+    ).exclude(locale=locale)
+
+    other_locales = list(get_translation_values(translations))
+
+    payload = {
+        'preferred_locales': preferred_locales,
+        'other_locales': other_locales,
+    }
 
     return JsonResponse(payload, safe=False)
 
