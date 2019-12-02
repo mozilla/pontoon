@@ -141,7 +141,7 @@ export default class EntityAPI extends APIBase {
 
         const results = await this.fetch('/other-locales/', 'GET', payload, headers);
 
-        if (typeof results !== 'object' || Array.isArray(results)) {
+        if (typeof results !== 'object' || Array.isArray(results) || results == null) {
             return [];
         }
 
@@ -157,9 +157,9 @@ export default class EntityAPI extends APIBase {
             })
         } );
 
-        const preferred_locales = locales[0];
-        const other_locales = locales[1];
+        const preferredLocales = locales[0];
+        const otherLocales = locales[1];
 
-        return other_locales;
+        return otherLocales;
     }
 }
