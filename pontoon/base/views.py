@@ -283,10 +283,12 @@ def entities(request):
     # Out-of-context view: paginate entities
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
+
 def get_translation_values(query):
     return query.values(
         'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
     )
+
 
 @utils.require_AJAX
 def get_translations_from_other_locales(request):
