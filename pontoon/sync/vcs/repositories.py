@@ -205,6 +205,10 @@ class CommitToHg(CommitToRepository):
         # Push
         push = ["hg", "push"]
         code, output, error = execute(push, path)
+
+        if type(output) is bytes:
+            output = output.decode('utf-8')
+
         if code == 1 and 'no changes found' in output:
             return self.nothing_to_commit()
 
