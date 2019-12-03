@@ -354,6 +354,10 @@ def get_translations_from_other_locales(request):
 
     other_translations = _serialize_translation_values(other)
 
+    preferred_locale_codes = [locale['locale__code'] for locale in preferred_locales]
+    for code in preferred_locale_codes:
+        other_locales = [l for l in other_locales if not (l['locale__code'] == code)]
+
     payload = {
         'preferred': preferred_translations,
         'other': other_translations,
