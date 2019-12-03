@@ -160,6 +160,6 @@ export default class EntityAPI extends APIBase {
         const preferredLocales = locales[0];
         const otherLocales = locales[1];
 
-        return preferredLocales.concat(otherLocales);
+        return [preferredLocales, otherLocales];
     }
 }
