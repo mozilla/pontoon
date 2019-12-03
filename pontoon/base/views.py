@@ -329,7 +329,7 @@ def get_translations_from_other_locales(request):
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
 
-    preferred_source_translations = Translation.objects.filter(
+    translations = Translation.objects.filter(
         entity=entity,
         plural_form=plural_form,
         approved=True,
@@ -357,9 +357,8 @@ def get_translations_from_other_locales(request):
 
     other_translations = _serialize_translation_values(other)
 
-    preferred_locale_codes = [element['locale__code'] for element in preferred_locales]
-    for code in preferred_locale_codes:
-        other_locales = [l for l in other_locales if not (l['locale__code'] == code)]
+    preferred_locales_list = list(_get_translation_values(preferred))
+    other_locales_list = list(_get_translation_values(other))
 
     payload = {
         'preferred': preferred_translations,
