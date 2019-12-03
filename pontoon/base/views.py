@@ -281,9 +281,13 @@ def entities(request):
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
 
-def get_translation_values(query):
+def _get_translation_values(query):
     return query.values(
-        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
+        'locale__code',
+        'locale__name',
+        'locale__direction',
+        'locale__script',
+        'string',
     )
 
 
@@ -301,17 +305,8 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    selected_locales = request.user.profile.sorted_locales
+    preferred_locales = request.user.profile.sorted_locales
     plural_form = None if entity.string_plural == "" else 0
-
-    preferred_source_translations = Translation.objects.filter(
-        entity=entity,
-        locale__in=selected_locales,
-        plural_form=plural_form,
-        approved=True
-    ).exclude(locale=locale)
-
-    preferred_locales = list(get_translation_values(preferred_source_translations))
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -319,15 +314,15 @@ def get_translations_from_other_locales(request):
         approved=True
     ).exclude(locale=locale)
 
-    other_locales = list(get_translation_values(translations))
+    preferred = translations.filter(locale__in=preferred_locales)
+    other = translations.exclude(locale__in=preferred_locales)
 
-    preferred_locale_codes = [element['locale__code'] for element in preferred_locales]
-    for code in preferred_locale_codes:
-        other_locales = [l for l in other_locales if not (l['locale__code'] == code)]
+    preferred_locales_list = list(_get_translation_values(preferred))
+    other_locales_list = list(_get_translation_values(other))
 
     payload = {
-        'preferred_locales': preferred_locales,
-        'other_locales': other_locales,
+        'preferred_locales_list': preferred_locales_list,
+        'other_locales_list': other_locales_list,
     }
 
     return JsonResponse(payload, safe=False)
