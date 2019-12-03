@@ -240,7 +240,10 @@ def entities(request):
         }, status=400)
 
     locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
-    preferred_source_locale = request.user.profile.preferred_source_locale
+
+    preferred_source_locale = ''
+    if request.user.is_authenticated:
+        preferred_source_locale = request.user.profile.preferred_source_locale
 
     project_slug = form.cleaned_data['project']
     if project_slug == 'all-projects':
