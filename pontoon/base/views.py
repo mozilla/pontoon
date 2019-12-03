@@ -321,7 +321,7 @@ def get_translations_from_other_locales(request):
 
     other_locales = list(get_translation_values(translations))
 
-    preferred_locale_codes = [locale['locale__code'] for locale in preferred_locales]
+    preferred_locale_codes = [element['locale__code'] for element in preferred_locales]
     for code in preferred_locale_codes:
         other_locales = [l for l in other_locales if not (l['locale__code'] == code)]
 
