@@ -34,7 +34,7 @@ class VCSChangedFilesTests(object):
     * shell_output - should contain an string which is returned.
     * repository_type - a type of the repository that will be used to perform the test.
     """
-    shell_output = b''
+    shell_output = ''
     repository_type = None
 
     def setUp(self):
@@ -90,7 +90,7 @@ class GitChangedFilesTest(VCSChangedFilesTests, TestCase):
         M changed_file2.properties
         D removed_file1.properties
         D removed_file2.properties
-    """).encode('utf-8')
+    """)
 
 
 class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
@@ -100,7 +100,7 @@ class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
         M changed_file2.properties
         R removed_file1.properties
         R removed_file2.properties
-    """).encode('utf-8')
+    """)
 
 
 class SVNChangedFilesTest(VCSChangedFilesTests, TestCase):
@@ -110,4 +110,4 @@ class SVNChangedFilesTest(VCSChangedFilesTests, TestCase):
         M changed_file2.properties
         D removed_file1.properties
         D removed_file2.properties
-    """).encode('utf-8')
+    """)
