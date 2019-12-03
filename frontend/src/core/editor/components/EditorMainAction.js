@@ -43,23 +43,23 @@ export default function EditorMainAction(props: Props) {
         updateTranslationStatus,
     } = props;
 
-    let sameTranslationAs = null;
+    let existingTranslation = null;
     if (translation) {
         if (translation === initialTranslation) {
-            sameTranslationAs = activeTranslation;
+            existingTranslation = activeTranslation;
         }
         else if (history.translations.length) {
-            sameTranslationAs = history.translations.find(t => t.string === translation)
+            existingTranslation = history.translations.find(t => t.string === translation)
         }
     }
 
     function approveTranslation() {
-        if (sameTranslationAs) {
-            updateTranslationStatus(sameTranslationAs.pk, 'approve');
+        if (existingTranslation) {
+            updateTranslationStatus(existingTranslation.pk, 'approve');
         }
     }
 
-    if (isTranslator && sameTranslationAs && !sameTranslationAs.approved) {
+    if (isTranslator && existingTranslation && !existingTranslation.approved) {
         // Approve button, will approve the translation.
         return <Localized
             id="editor-EditorMenu--button-approve"
@@ -75,7 +75,7 @@ export default function EditorMainAction(props: Props) {
         </Localized>;
     }
 
-    if (forceSuggestions) {
+    if (forceSuggestions || !isTranslator) {
         // Suggest button, will send an unreviewed translation.
         return <Localized
             id="editor-EditorMenu--button-suggest"

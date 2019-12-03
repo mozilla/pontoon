@@ -68,9 +68,23 @@ describe('<EditorMainAction>', () => {
         expect(wrapper.find('.action-save')).toHaveLength(0);
     });
 
+    it('renders the Suggest button when user does not have permission', () => {
+        const params = {
+            initialTranslation: 'something',
+            isTranslator: false,
+            history: HISTORY,
+            translation: 'something',
+        }
+        const wrapper = shallow(<EditorMainAction { ...params } />);
+
+        expect(wrapper.find('.action-suggest')).toHaveLength(1);
+        expect(wrapper.find('.action-save')).toHaveLength(0);
+        expect(wrapper.find('.action-approve')).toHaveLength(0);
+    });
+
     it('renders the Save button when force suggestion is off', () => {
         const params = {
-            isTranslator: false,
+            isTranslator: true,
             forceSuggestions: false,
         }
         const wrapper = shallow(<EditorMainAction { ...params } />);
@@ -94,26 +108,12 @@ describe('<EditorMainAction>', () => {
         expect(wrapper.find('.action-approve')).toHaveLength(0);
     });
 
-    it('renders the Save button when same translation exists but is approved', () => {
+    it('renders the Save button when same translation exists in history but is approved', () => {
         const params = {
             initialTranslation: 'something',
             isTranslator: true,
             history: HISTORY,
             translation: 'hello, world!',
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
-
-        expect(wrapper.find('.action-save')).toHaveLength(1);
-        expect(wrapper.find('.action-suggest')).toHaveLength(0);
-        expect(wrapper.find('.action-approve')).toHaveLength(0);
-    });
-
-    it('renders the Save button when user does not have permission', () => {
-        const params = {
-            initialTranslation: 'something',
-            isTranslator: false,
-            history: HISTORY,
-            translation: 'something',
         }
         const wrapper = shallow(<EditorMainAction { ...params } />);
 
