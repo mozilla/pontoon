@@ -9,6 +9,7 @@ from django_nose.tools import (
 )
 from mock import Mock, MagicMock, patch
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
     assert_attributes_equal,
@@ -226,6 +227,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved_date=aware_datetime(1970, 1, 1)
         )
 
+        assert ActionLog.objects.filter(action_type='translation:approved', translation=self.main_db_translation.pk).exists()
+
     def test_update_db_dont_approve_fuzzy(self):
         """
         Do not approve un-approved translations that have non-fuzzy
@@ -263,6 +266,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
             fuzzy=False,
             extra={'tags': []}
         )
+
+        assert ActionLog.objects.filter(action_type='translation:created', translation=translation.pk).exists()
 
     def test_update_db_unfuzzy_existing(self):
         """
@@ -306,12 +311,38 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved_date=None
         )
 
+        assert ActionLog.objects.filter(action_type='translation:rejected', translation=self.main_db_translation.pk).exists()
+
         created_after_translation.refresh_from_db()
         assert_attributes_equal(
             created_after_translation,
             approved=True,
             approved_date=aware_datetime(1970, 1, 3)
         )
+
+    def test_update_db_unapprove_fuzzy(self):
+        """
+        If an existing translation became fuzzy and doesn't match anything in VCS,
+        unapproved that translation without rejecting it.
+        """
+        self.main_db_translation.fuzzy = True
+        self.main_db_translation.approved = True
+        self.main_db_translation.approved_date = aware_datetime(1970, 1, 1)
+        self.main_db_translation.approved_user = UserFactory.create()
+        self.main_db_translation.save()
+        self.main_vcs_translation.strings[None] = 'New Translated String'
+
+        self.update_main_db_entity()
+        self.main_db_translation.refresh_from_db()
+        assert_attributes_equal(
+            self.main_db_translation,
+            approved=False,
+            approved_user=None,
+            approved_date=None,
+            rejected=False,
+        )
+
+        assert ActionLog.objects.filter(action_type='translation:unapproved', translation=self.main_db_translation.pk).exists()
 
     def test_update_db_unapprove_clean(self):
         """
@@ -345,6 +376,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
             self.main_db_translation,
             rejected=True,
         )
+
+        assert ActionLog.objects.filter(action_type='translation:rejected', translation=self.main_db_translation.pk).exists()
 
     def test_update_db_reject_approved_skip_fuzzy(self):
         """
