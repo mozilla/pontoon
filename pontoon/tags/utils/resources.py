@@ -77,15 +77,15 @@ class TagsResourcesTool(TagsDataTool):
         """
         return self.get(slug).values('path', 'project')
 
-    def link(self, tag, search=None, resources=None):
+    def link(self, tag, search_query=None, resources=None):
         """ Associate Resources with a Tag. The Resources can be selected
-        either by passing a glob expression to match, or by passing a list
+        either by passing a search query to match, or by passing a list
         of Resource paths
         """
         query = Q(project__in=self.projects) if self.projects else Q()
         tag = self.tag_manager.filter(query).get(slug=tag)
-        if search is not None:
-            resources = list(self.find(search, exclude=tag))
+        if search_query is not None:
+            resources = list(self.find(search_query, exclude=tag))
             for resource in resources:
                 self._validate_resource(tag, resource.project_id)
             tag.resources.add(*resources)
@@ -99,14 +99,14 @@ class TagsResourcesTool(TagsDataTool):
                     path=resource["path"])
             tag.resources.add(*list(_resources))
 
-    def unlink(self, tag, glob=None, resources=None):
+    def unlink(self, tag, search_query=None, resources=None):
         """ Unassociate Resources from a Tag. The Resources can be selected
-        either by passing a glob expression to match, or by passing a list
+        either by passing a search query to match, or by passing a list
         of Resource paths
         """
         query = Q(project__in=self.projects) if self.projects else Q()
-        if glob is not None:
-            resources = list(self.find(glob, include=tag))
+        if search_query is not None:
+            resources = list(self.find(search_query, include=tag))
             self.tag_manager.filter(query).get(slug=tag).resources.remove(*resources)
             return resources
         if resources is not None:

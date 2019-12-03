@@ -152,7 +152,7 @@ def test_util_tags_resources_tool_link(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
     assert tag_c.resources.count() == 0
-    resource_tool.link(tag_c.slug, '**')
+    resource_tool.link(tag_c.slug, tag_c.slug)
     assert tag_c.resources.count() == Resource.objects.count()
 
     tag_c.resources.remove(*list(tag_c.resources.all()))
@@ -260,7 +260,7 @@ def test_util_tags_resources_tool_unlink(tag_a, resource_c):
 
     tag_a.resources.add(resource_c)
     assert tag_a.resources.count() == 2
-    resource_tool.unlink(tag_a.slug, '**')
+    resource_tool.unlink(tag_a.slug, tag_a.slug)
     assert tag_a.resources.count() == 0
 
     tag_a.resources.add(resource, resource_c)

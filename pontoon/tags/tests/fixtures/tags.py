@@ -96,11 +96,11 @@ def _tag_iterator(things, **kwargs):
             continue
         if projects and thing["project"] not in projects:
             continue
-        if path and not fnmatch.fnmatch(thing['path'], path):
+        if path and path not in thing['path']:
             continue
         for tag in resource_tags.get(thing['resource'], []):
             __, _slug, __ = tag
-            if slug and not fnmatch.fnmatch(_slug, slug):
+            if slug and slug not in _slug:
                 continue
             yield thing, tag
 
@@ -262,7 +262,7 @@ _tag_kwargs = OrderedDict(
      ('path_match', dict(path=11)),
      ('slug_no_match', dict(slug="NOSLUGSHERE")),
      ('slug_exact', dict(slug=23)),
-     ('slug_glob', dict(slug="factory*7"))))
+     ('slug_glob', dict(slug="factorytag7"))))
 
 
 @pytest.fixture(params=_tag_kwargs)

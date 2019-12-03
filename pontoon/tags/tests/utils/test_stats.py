@@ -170,7 +170,7 @@ def test_util_tags_stats_tool_get_data_matrix(
         assert len(data) > 0
     if kwargs.get("slug"):
         for result in data:
-            assert fnmatch.fnmatch(result['slug'], kwargs["slug"])
+            assert kwargs["slug"] in result["slug"]
 
 
 @pytest.mark.django_db
