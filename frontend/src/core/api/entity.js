@@ -157,9 +157,6 @@ export default class EntityAPI extends APIBase {
             })
         } );
 
-        const preferredLocales = locales[0];
-        const otherLocales = locales[1];
-
-        return [preferredLocales, otherLocales];
+        return locales;
     }
 }
