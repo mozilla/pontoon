@@ -62,7 +62,11 @@ export default class OtherLocales extends React.Component<Props> {
             return null;
         }
 
+<<<<<<< HEAD
         if (!translation.other.length && !translation.preferred.length) {
+=======
+        if (!Object.keys(otherlocales.translations).length) {
+>>>>>>> Initial progress to refactor frontend
             return this.renderNoResults();
         }
 

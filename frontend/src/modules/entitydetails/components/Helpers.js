@@ -54,8 +54,12 @@ export default class Helpers extends React.Component<Props> {
         }
 
         const machineryCount = machinery.translations.length;
+<<<<<<< HEAD
         const translations = otherlocales.translations;
         const otherlocalesCount = translations.other.length || translations.preferred.length;
+=======
+        const otherlocalesCount = 2 //otherlocales.translations.other.length;
+>>>>>>> Initial progress to refactor frontend
 
         return <Tabs>
             <TabList>
