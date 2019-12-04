@@ -30,10 +30,11 @@ def get_max_length(comment):
     return None
 
 
-def run_checks(entity, string):
+def run_checks(entity, original, string):
     """
     Group all checks related to the base UI that get stored in the DB
     :arg pontoon.base.models.Entity entity: Source entity
+    :arg basestring original: an original string
     :arg basestring string: a translation
     """
     checks = defaultdict(list)
@@ -64,6 +65,17 @@ def run_checks(entity, string):
                 checks['pErrors'].append(
                     'Translation too long'
                 )
+
+    # Bug 1599056: Original and translation must either both end in a newline,
+    # or none of them should.
+    if resource_ext == 'po':
+        if (
+            original.endswith('\n') and not string.endswith('\n') or
+            not original.endswith('\n') and string.endswith('\n')
+        ):
+            checks['pErrors'].append(
+                'Ending newline'
+            )
 
     # Prevent empty translation submissions if not supported
     if string == '' and not entity.resource.allows_empty_translations:
