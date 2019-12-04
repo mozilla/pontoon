@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import * as user from 'core/user';
 import * as otherlocales from 'modules/otherlocales';
 
-import type { OtherLocaleTranslation } from 'core/api';
+//import type { OtherLocaleTranslation } from 'core/api';
 import type { UserState } from 'core/user';
 import type { LocalesState } from '.';
 
@@ -13,11 +13,11 @@ import type { LocalesState } from '.';
 const otherLocalesSelector = (state): LocalesState => state[otherlocales.NAME];
 const userSelector = (state): UserState => state[user.NAME];
 
-
+/*
 export function _getOrderedOtherLocales(
     otherlocales: LocalesState,
     user: UserState,
-): Array<OtherLocaleTranslation> {
+): OtherLocaleTranslation {
     const translations = otherlocales.translations;
 
     if (!user.isAuthenticated) {
@@ -54,7 +54,7 @@ export function _getOrderedOtherLocales(
 export const getOrderedOtherLocales: Function = createSelector(
     otherLocalesSelector,
     userSelector,
-    _getOrderedOtherLocales
+    //_getOrderedOtherLocales
 );
 
 
@@ -66,12 +66,7 @@ export function _getPreferredLocalesCount(
         return 0;
     }
 
-    return otherlocales.translations.reduce((count, item) => {
-        if (user.preferredLocales.indexOf(item.code) > -1) {
-            return count + 1;
-        }
-        return count;
-    }, 0);
+    return 2 //otherlocales.translations.preferred.length
 }
 
 
