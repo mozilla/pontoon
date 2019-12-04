@@ -357,8 +357,14 @@ def get_translations_from_other_locales(request):
 
     other_translations = _serialize_translation_values(other)
 
-    preferred_locales_list = list(_get_translation_values(preferred))
-    other_locales_list = list(_get_translation_values(other))
+    preferred_translations = sorted(
+        _get_translation_values(preferred),
+        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
+    )
+    other_translations = sorted(
+        _get_translation_values(other),
+        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
+    )
 
     payload = {
         'preferred': preferred_translations,
