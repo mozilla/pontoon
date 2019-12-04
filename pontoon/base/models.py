@@ -1372,8 +1372,13 @@ class UserProfile(models.Model):
     )
 
     @property
-    def sorted_locales(self):
+    def preferred_locales(self):
         locales = Locale.objects.filter(pk__in=self.locales_order)
+        return locales
+
+    @property
+    def sorted_locales(self):
+        locales = self.preferred_locales
         return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
 
     @property

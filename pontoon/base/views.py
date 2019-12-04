@@ -285,13 +285,14 @@ def entities(request):
 
 
 def _get_translation_values(query):
-    return query.values(
-        'locale__code',
-        'locale__name',
-        'locale__direction',
-        'locale__script',
-        'string',
-    )
+    return [{
+        'code': translation.locale.code,
+        'direction': translation.locale.direction,
+        'locale': translation.locale.name,
+        'locale_pk': translation.locale.pk,
+        'script': translation.locale.script,
+        'translation': translation.string,
+    } for translation in query]
 
 
 @utils.require_AJAX
@@ -308,7 +309,7 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    preferred_locales = request.user.profile.sorted_locales
+    preferred_locales = request.user.profile.preferred_locales
     plural_form = None if entity.string_plural == "" else 0
 
     translations = Translation.objects.filter(
@@ -320,12 +321,18 @@ def get_translations_from_other_locales(request):
     preferred = translations.filter(locale__in=preferred_locales)
     other = translations.exclude(locale__in=preferred_locales)
 
-    preferred_locales_list = list(_get_translation_values(preferred))
-    other_locales_list = list(_get_translation_values(other))
+    preferred_translations = sorted(
+        _get_translation_values(preferred),
+        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
+    )
+    other_translations = sorted(
+        _get_translation_values(other),
+        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
+    )
 
     payload = {
-        'preferred_locales_list': preferred_locales_list,
-        'other_locales_list': other_locales_list,
+        'preferred_translations': preferred_translations,
+        'other_translations': other_translations,
     }
 
     return JsonResponse(payload, safe=False)
