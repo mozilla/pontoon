@@ -48,6 +48,7 @@ export type Entities = Array<Entity>;
 export type OtherLocaleTranslation = {|
     +code: string,
     +locale: string,
+    +locale_pk: number,
     +direction: string,
     +script: string,
     +translation: string,
