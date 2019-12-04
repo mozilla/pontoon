@@ -331,8 +331,8 @@ def get_translations_from_other_locales(request):
     )
 
     payload = {
-        'preferred_translations': preferred_translations,
-        'other_translations': other_translations,
+        'preferred': preferred_translations,
+        'other': other_translations,
     }
 
     return JsonResponse(payload, safe=False)

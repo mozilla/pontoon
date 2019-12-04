@@ -54,7 +54,7 @@ export default class Helpers extends React.Component<Props> {
         } = this.props;
 
         const machineryCount = machinery.translations.length;
-        const otherlocalesCount = otherlocales.translations.length;
+        const otherlocalesCount = 2 //otherlocales.translations.other.length;
 
         return <Tabs>
             <TabList>
