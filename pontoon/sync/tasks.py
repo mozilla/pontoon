@@ -283,7 +283,8 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
-    new_locales = []  # store the locales for which new resources are added
+    # Store newly added locales and locales with newly added resources
+    new_locales = []
 
     for locale in locales:
         try:
@@ -403,10 +404,13 @@ def sync_translations(
 
     if db_project.pretranslation_enabled:
         # Pretranslate all entities for newly added locales
+        # and locales with newly added resource
         if len(new_locales):
             pretranslate(db_project, locales=new_locales)
 
+        locales = db_project.locales.exclude(pk__in=new_locales).values_list('pk', flat=True)
+
         # Pretranslate newly added entities for all locales
-        if new_entities:
+        if new_entities and locales:
             new_entities = list(set(new_entities))
-            pretranslate(db_project, entities=new_entities)
+            pretranslate(db_project, locales=locales, entities=new_entities)
