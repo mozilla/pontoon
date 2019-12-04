@@ -11,10 +11,16 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +translations: Array<OtherLocaleTranslation>,
+    +translations: {
+        preferred: Array<OtherLocaleTranslation>,
+        other: Array<OtherLocaleTranslation>,
+    },
 |};
 export function receive(
-    translations: Array<OtherLocaleTranslation>
+    translations: {
+        preferred: Array<OtherLocaleTranslation>,
+        other: Array<OtherLocaleTranslation>,
+    }
 ): ReceiveAction {
     return {
         type: RECEIVE,

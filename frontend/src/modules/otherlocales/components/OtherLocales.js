@@ -52,7 +52,7 @@ export default class OtherLocales extends React.Component<Props> {
             return null;
         }
 
-        if (!otherlocales.translations.length) {
+        if (!Object.keys(otherlocales.translations).length) {
             return this.renderNoResults();
         }
 
