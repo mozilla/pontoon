@@ -48,7 +48,7 @@ class TagsResourcesTool(TagsDataTool):
             else resources)
 
     def find(self, search_path, include=None, exclude=None):
-        """ Find filtered resources for a glob match, and optionally
+        """ Find filtered resources by their path, and optionally
         include/exclude resources linked to given tags
         """
 
@@ -60,7 +60,11 @@ class TagsResourcesTool(TagsDataTool):
             resources = self.resource_manager
         if self.projects:
             resources = resources.filter(project__in=self.projects)
-        return resources.filter(path__contains=search_path)
+
+        if search_path:
+            return resources.filter(path__contains=search_path)
+        else:
+            return resources.all()
 
     def get(self, tag):
         return self.filtered_data.filter(tag__slug=tag).distinct()
@@ -77,20 +81,14 @@ class TagsResourcesTool(TagsDataTool):
         """
         return self.get(slug).values('path', 'project')
 
-    def link(self, tag, search_query=None, resources=None):
+    def link(self, tag, resources=None):
         """ Associate Resources with a Tag. The Resources can be selected
         either by passing a search query to match, or by passing a list
         of Resource paths
         """
         query = Q(project__in=self.projects) if self.projects else Q()
         tag = self.tag_manager.filter(query).get(slug=tag)
-        if search_query is not None:
-            resources = list(self.find(search_query, exclude=tag))
-            for resource in resources:
-                self._validate_resource(tag, resource.project_id)
-            tag.resources.add(*resources)
-            return resources
-        elif resources is not None:
+        if resources is not None:
             _resources = self.resource_manager.none()
             for resource in resources:
                 self._validate_resource(tag, resource['project'])
@@ -99,16 +97,9 @@ class TagsResourcesTool(TagsDataTool):
                     path=resource["path"])
             tag.resources.add(*list(_resources))
 
-    def unlink(self, tag, search_query=None, resources=None):
-        """ Unassociate Resources from a Tag. The Resources can be selected
-        either by passing a search query to match, or by passing a list
-        of Resource paths
-        """
+    def unlink(self, tag, resources=None):
+        """Unassociate Resources from a Tag. The Resources can be selected by passing a list of Resource paths."""
         query = Q(project__in=self.projects) if self.projects else Q()
-        if search_query is not None:
-            resources = list(self.find(search_query, include=tag))
-            self.tag_manager.filter(query).get(slug=tag).resources.remove(*resources)
-            return resources
         if resources is not None:
             _resources = self.resource_manager.none()
             for resource in resources:
