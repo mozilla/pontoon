@@ -288,7 +288,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         );
     }
 
-    renderInput(value: string, path: MessagePath, maxlength: ?number) {
+    renderTextarea(value: string, path: MessagePath, maxlength: ?number) {
         return <textarea
             id={ `${path.join('-')}` }
             key={ `${path.join('-')}` }
@@ -304,19 +304,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         />;
     }
 
-    renderAccessKeys() {
-        const message = this.props.editor.translation;
-
-        if (typeof(message) === 'string') {
-            return null;
-        }
-
-        const keys = fluent.extractAccessKeyCandidates(message);
-
-        if (!keys) {
-            return null;
-        }
-
+    renderAccessKeys(candidates: Array<string>) {
         // Get selected access key
         const id = this.accessKeyElementId;
         let accessKey = null;
@@ -328,7 +316,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         }
 
         return <div className="accesskeys">
-            { keys.map((key, i) => <button
+            { candidates.map((key, i) => <button
                 className={ `key ${ key === accessKey ? 'active' : '' }` }
                 key={ i }
                 onClick={ this.handleAccessKeyClick }
@@ -346,7 +334,29 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             <span className="example">
                 { '{ $plural } (e.g. <stress>{ $example }</stress>)' }
             </span>
-        </Localized>
+        </Localized>;
+    }
+
+    renderInput(value: string, path: MessagePath, label: string) {
+        const message = this.props.editor.translation;
+
+        let candidates = null;
+        if (typeof(message) !== 'string' && label === 'accesskey') {
+            candidates = fluent.extractAccessKeyCandidates(message);
+        }
+
+        if (candidates && candidates.length) {
+            this.accessKeyElementId = path.join('-');
+            return <td>
+                { this.renderTextarea(value, path, 1) }
+                { this.renderAccessKeys(candidates) }
+            </td>;
+        }
+        else {
+            return <td>
+                { this.renderTextarea(value, path) }
+            </td>;
+        }
     }
 
     renderItem(
@@ -356,10 +366,6 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         className: ?string,
         example: ?number,
     ) {
-        const isAccessKey = label === 'accesskey';
-        const maxlength = isAccessKey ? 1 : null;
-        this.accessKeyElementId = isAccessKey ? path.join('-') : null;
-
         return <tr key={ `${path.join('-')}` } className={ className }>
             <td>
                 <label htmlFor={ `${path.join('-')}` }>
@@ -370,10 +376,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                     }
                 </label>
             </td>
-            <td>
-                { this.renderInput(value, path, maxlength) }
-                { isAccessKey ? this.renderAccessKeys() : null }
-            </td>
+            { this.renderInput(value, path, label) }
         </tr>;
     }
 
