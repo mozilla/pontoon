@@ -345,6 +345,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             candidates = fluent.extractAccessKeyCandidates(message);
         }
 
+        // Access Key UI
         if (candidates && candidates.length) {
             this.accessKeyElementId = path.join('-');
             return <td>
@@ -352,6 +353,8 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 { this.renderAccessKeys(candidates) }
             </td>;
         }
+
+        // Default UI
         else {
             return <td>
                 { this.renderTextarea(value, path) }
