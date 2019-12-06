@@ -328,9 +328,9 @@ def get_translations_from_other_locales(request):
         other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
 
         preferred_translations = sorted(
-        _serialize_translation_values(preferred),
-        key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
-    )
+            _serialize_translation_values(preferred),
+            key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
+        )
     else:
         other = translations.order_by('locale__code')
         preferred_translations = {}
@@ -793,7 +793,6 @@ def user_data(request):
             'quality_checks': user.profile.quality_checks,
             'force_suggestions': user.profile.force_suggestions,
         },
-        'preferred_locales': user.profile.sorted_locales_codes,
         'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
         'gravatar_url_small': user.gravatar_url(88),
