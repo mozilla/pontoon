@@ -281,15 +281,20 @@ def entities(request):
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
 
-def _get_translation_values(query):
-    return [{
-        'code': translation.locale.code,
-        'direction': translation.locale.direction,
-        'locale': translation.locale.name,
-        'locale_pk': translation.locale.pk,
-        'script': translation.locale.script,
-        'translation': translation.string,
-    } for translation in query]
+def _serialize_translation_values(query):
+    return [
+        {
+            'locale': {
+                'code': translation.locale.code,
+                'direction': translation.locale.direction,
+                'name': translation.locale.name,
+                'pk': translation.locale.pk,
+                'script': translation.locale.script,
+            },
+            'translation': translation.string,
+        }
+        for translation in query
+    ]
 
 
 @utils.require_AJAX
@@ -306,8 +311,9 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    preferred_locales = request.user.profile.preferred_locales
     plural_form = None if entity.string_plural == "" else 0
+    if request.user.is_authenticated:
+        preferred_locales = request.user.profile.preferred_locales
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -316,16 +322,13 @@ def get_translations_from_other_locales(request):
     ).exclude(locale=locale)
 
     preferred = translations.filter(locale__in=preferred_locales)
-    other = translations.exclude(locale__in=preferred_locales)
+    other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
 
     preferred_translations = sorted(
-        _get_translation_values(preferred),
-        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
+        _serialize_translation_values(preferred),
+        key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
     )
-    other_translations = sorted(
-        _get_translation_values(other),
-        key=lambda t: request.user.profile.locales_order.index(t(['locale_pk']))
-    )
+    other_translations = sorted(_serialize_translation_values(other))
 
     payload = {
         'preferred': preferred_translations,

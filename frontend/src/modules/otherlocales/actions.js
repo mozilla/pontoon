@@ -2,7 +2,7 @@
 
 import api from 'core/api';
 
-import type { OtherLocaleTranslation } from 'core/api';
+import type { OtherLocaleTranslations } from 'core/api';
 
 
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
@@ -11,16 +11,10 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +translations: {
-        preferred: Array<OtherLocaleTranslation>,
-        other: Array<OtherLocaleTranslation>,
-    },
+    +translations: ?OtherLocaleTranslations,
 |};
 export function receive(
-    translations: {
-        preferred: Array<OtherLocaleTranslation>,
-        other: Array<OtherLocaleTranslation>,
-    }
+    translations: ?OtherLocaleTranslations
 ): ReceiveAction {
     return {
         type: RECEIVE,
