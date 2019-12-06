@@ -16,7 +16,6 @@ import type { LocalesState } from '..';
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
-    orderedOtherLocales: Array<OtherLocaleTranslation>,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
@@ -40,40 +39,60 @@ export default class OtherLocales extends React.Component<Props> {
         const {
             entity,
             isReadOnlyEditor,
-            orderedOtherLocales,
             otherlocales,
             parameters,
             updateEditorTranslation,
         } = this.props;
 
-        if (otherlocales.fetching) {
-            return null;
-        }
-
         if (!otherlocales.translations) {
             return null;
         }
 
-        if (!Object.keys(otherlocales.translations).length) {
+        const translation = otherlocales.translations
+        const preferredCount = translation.preferred.length
+
+        if (otherlocales.fetching) {
+            return null;
+        }
+
+        if (!translation.other.length && !translation.preferred.length) {
             return this.renderNoResults();
         }
 
-        return <section className="other-locales">
-            <ul>
-                { orderedOtherLocales.map((translation, index) => {
-                    //let lastPreferred = (index === preferredLocalesCount - 1);
+        return <section>
+            <section className="other-locales">
+                <ul>
+                    { translation.preferred.map((translation, index) => {
+                        let lastPreferred = !(index === preferredCount -1);
 
-                    return <Translation
-                        entity={ entity }
-                        isReadOnlyEditor={ isReadOnlyEditor }
-                        translation={ translation }
-                        parameters={ parameters }
-                        updateEditorTranslation={ updateEditorTranslation }
-                        //lastPreferred={ lastPreferred }
-                        key={ index }
-                    />;
-                }) }
-            </ul>
+                        return <Translation
+                            entity={ entity }
+                            isReadOnlyEditor={ isReadOnlyEditor }
+                            translation={ translation }
+                            parameters={ parameters }
+                            updateEditorTranslation={ updateEditorTranslation }
+                            lastPreferred = { lastPreferred }
+                            key={ index }
+                        />;
+                    }) }
+                </ul>
+            </section>
+            <section className="other-locales">
+                <ul>
+                    { translation.other.map((translation, index) => {
+
+                        return <Translation
+                            entity={ entity }
+                            isReadOnlyEditor={ isReadOnlyEditor }
+                            translation={ translation }
+                            parameters={ parameters }
+                            updateEditorTranslation={ updateEditorTranslation }
+                            lastPreferred={ true }
+                            key={ index }
+                        />;
+                    }) }
+                </ul>
+            </section>
         </section>;
     }
 }
