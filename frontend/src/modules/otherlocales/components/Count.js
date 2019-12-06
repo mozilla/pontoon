@@ -13,9 +13,9 @@ type Props = {|
 
 export default class Count extends React.Component<Props> {
     render() {
-        const { /*otherlocales,*/ preferredLocalesCount } = this.props;
+        const { otherlocales, preferredLocalesCount } = this.props;
 
-        const otherlocalesCount = 2 //otherlocales.translations.other.length;
+        const otherlocalesCount = 3 //otherlocales.translations.other.length;
 
         const remainingCount = otherlocalesCount - preferredLocalesCount;
 

@@ -16,6 +16,7 @@ export type {
     Entity,
     EntityTranslation,
     MachineryTranslation,
+    OtherLocaleTranslations,
     OtherLocaleTranslation,
 } from './types';
 
