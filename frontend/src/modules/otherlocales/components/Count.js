@@ -25,6 +25,11 @@ export default class Count extends React.Component<Props> {
             !preferredLocalesCount ? null :
             <span className='preferred'>{ preferredLocalesCount }</span>
         );
+        console.log(!otherlocalesCount)
+        const other = (
+            !otherlocalesCount ? null :
+            <span>{ otherlocalesCount }</span>
+        )
         const plus = (
             !otherlocalesCount || !preferredLocalesCount ? null :
             <span>{ '+' }</span>
@@ -33,7 +38,7 @@ export default class Count extends React.Component<Props> {
         return <span className='count'>
             { preferred }
             { plus }
-            { otherlocalesCount }
+            { other }
         </span>;
     }
 }
