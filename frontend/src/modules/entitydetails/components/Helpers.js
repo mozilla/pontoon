@@ -93,10 +93,6 @@ export default class Helpers extends React.Component<Props> {
                     entity={ entity }
                     isReadOnlyEditor={ isReadOnlyEditor }
                     otherlocales={ otherlocales }
-<<<<<<< HEAD
-=======
-                    orderedOtherLocales= { orderedOtherLocales }
->>>>>>> Refactored for user authenticated and refactored count
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }
