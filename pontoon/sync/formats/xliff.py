@@ -3,6 +3,8 @@ Parser for the xliff translation format.
 """
 from __future__ import absolute_import
 
+import sys
+
 from six import text_type
 from translate.storage import xliff
 
@@ -126,5 +128,10 @@ class XLIFFResource(ParsedResource):
 
 def parse(path, source_path=None, locale=None):
     with open(path) as f:
-        xliff_file = xliff.xlifffile(f)
+        # To be removed as part of bug 1600344.
+        if sys.version_info.major == 2:
+            xliff_file = xliff.xlifffile(f)
+        else:
+            xml = f.read().encode('utf-8')
+            xliff_file = xliff.xlifffile(xml)
     return XLIFFResource(path, xliff_file)
