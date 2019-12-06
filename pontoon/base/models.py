@@ -1381,11 +1381,6 @@ class UserProfile(models.Model):
         locales = self.preferred_locales
         return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
 
-    @property
-    def sorted_locales_codes(self):
-        """Return the codes of locales that contributor set in his preferences."""
-        return [l.code for l in self.sorted_locales]
-
 
 @python_2_unicode_compatible
 class ExternalResource(models.Model):
