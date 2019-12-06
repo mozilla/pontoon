@@ -43,11 +43,7 @@ export type Entities = Array<Entity>;
 
 
 /*
-<<<<<<< HEAD
  * A collection of translations of an entity to a locale other than
-=======
- * Preferred and Other Translations of an entity in a locale other than
->>>>>>> Progress on frontend refactor
  * the currently selected locale.
  */
 export type OtherLocaleTranslations = {|

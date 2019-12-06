@@ -62,11 +62,7 @@ export default class OtherLocales extends React.Component<Props> {
             return null;
         }
 
-<<<<<<< HEAD
         if (!translation.other.length && !translation.preferred.length) {
-=======
-        if (!Object.keys(otherlocales.translations).length) {
->>>>>>> Initial progress to refactor frontend
             return this.renderNoResults();
         }
 
@@ -81,11 +77,26 @@ export default class OtherLocales extends React.Component<Props> {
             </ul>
 
             <ul>
+<<<<<<< HEAD
                 { translation.other.map((translation, index) => {
                     return this.renderTranslations(
                         translation,
                         index,
                     );
+=======
+                { orderedOtherLocales.map((translation, index) => {
+                    //let lastPreferred = (index === preferredLocalesCount - 1);
+
+                    return <Translation
+                        entity={ entity }
+                        isReadOnlyEditor={ isReadOnlyEditor }
+                        translation={ translation }
+                        parameters={ parameters }
+                        updateEditorTranslation={ updateEditorTranslation }
+                        //lastPreferred={ lastPreferred }
+                        key={ index }
+                    />;
+>>>>>>> Refactored for user authenticated and refactored count
                 }) }
             </ul>
         </section>;

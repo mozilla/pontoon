@@ -54,12 +54,8 @@ export default class Helpers extends React.Component<Props> {
         }
 
         const machineryCount = machinery.translations.length;
-<<<<<<< HEAD
         const translations = otherlocales.translations;
         const otherlocalesCount = translations.other.length || translations.preferred.length;
-=======
-        const otherlocalesCount = 2 //otherlocales.translations.other.length;
->>>>>>> Initial progress to refactor frontend
 
         return <Tabs>
             <TabList>
@@ -97,6 +93,10 @@ export default class Helpers extends React.Component<Props> {
                     entity={ entity }
                     isReadOnlyEditor={ isReadOnlyEditor }
                     otherlocales={ otherlocales }
+<<<<<<< HEAD
+=======
+                    orderedOtherLocales= { orderedOtherLocales }
+>>>>>>> Refactored for user authenticated and refactored count
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }

@@ -42,15 +42,9 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-<<<<<<< HEAD
         const { entity, translation, parameters, isReadOnlyEditor } = this.props;
 
         let className = 'translation';
-=======
-        const { entity, translation, parameters, lastPreferred, isReadOnlyEditor } = this.props;
-
-        let className = lastPreferred ? 'translation last-preferred' : 'translation';
->>>>>>> Fix bug 1545964 - Confusing Copy Into Translate tooltip (#1417)
 
         if (isReadOnlyEditor) {
             // Copying into the editor is not allowed
@@ -64,7 +58,6 @@ export default class Translation extends React.Component<Props> {
                 onClick={ this.copyTranslationIntoEditor }
             >
                 <header>
-<<<<<<< HEAD
                     { translation.locale.code === 'en-US' ?
                         <Localized
                             id='otherlocales-Translation--header-link'
@@ -95,25 +88,6 @@ export default class Translation extends React.Component<Props> {
                             </Link>
                         </Localized>
                     }
-=======
-                    <Localized
-                        id='otherlocales-Translation--header-link'
-                        attrs={{ title: true }}
-                        $locale={ translation.locale }
-                        $code={ translation.code }
-                    >
-                        <Link
-                            to={ `/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            title='Open string in { $locale } ({ $code })'
-                            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-                        >
-                            { translation.locale }
-                            <span>{ translation.code }</span>
-                        </Link>
-                    </Localized>
->>>>>>> Fix bug 1545964 - Confusing Copy Into Translate tooltip (#1417)
                 </header>
                 <p
                     lang={ translation.locale.code }
