@@ -66,7 +66,11 @@ export function _getPreferredLocalesCount(
         return 0;
     }
 
-    return 2 //otherlocales.translations.preferred.length
+    if (!otherlocales.translations) {
+        return 0;
+    }
+
+    return otherlocales.translations.preferred.length
 }
 
 

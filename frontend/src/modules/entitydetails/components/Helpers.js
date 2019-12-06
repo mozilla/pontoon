@@ -24,7 +24,6 @@ type Props = {|
     machinery: MachineryState,
     otherlocales: LocalesState,
     orderedOtherLocales: Array<OtherLocaleTranslation>,
-    preferredLocalesCount: number,
     parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string, string) => void,
@@ -46,7 +45,6 @@ export default class Helpers extends React.Component<Props> {
             machinery,
             otherlocales,
             orderedOtherLocales,
-            preferredLocalesCount,
             parameters,
             user,
             updateEditorTranslation,
@@ -73,7 +71,6 @@ export default class Helpers extends React.Component<Props> {
                     { !otherlocalesCount ? null :
                     <OtherLocalesCount
                         otherlocales={ otherlocales }
-                        preferredLocalesCount={ preferredLocalesCount }
                     />
                     }
                 </Tab>
@@ -94,7 +91,6 @@ export default class Helpers extends React.Component<Props> {
                     isReadOnlyEditor={ isReadOnlyEditor }
                     otherlocales={ otherlocales }
                     orderedOtherLocales= { orderedOtherLocales }
-                    preferredLocalesCount={ preferredLocalesCount }
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }

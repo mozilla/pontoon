@@ -49,7 +49,6 @@ type Props = {|
     previousEntity: Entity,
     otherlocales: LocalesState,
     orderedOtherLocales: Array<OtherLocaleTranslation>,
-    preferredLocalesCount: number,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
@@ -329,7 +328,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     machinery={ state.machinery }
                     otherlocales={ state.otherlocales }
                     orderedOtherLocales={ state.orderedOtherLocales }
-                    preferredLocalesCount={ state.preferredLocalesCount }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
@@ -354,7 +352,6 @@ const mapStateToProps = (state: Object): Props => {
         previousEntity: entities.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
         orderedOtherLocales: otherlocales.selectors.getOrderedOtherLocales(state),
-        preferredLocalesCount: otherlocales.selectors.getPreferredLocalesCount(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
