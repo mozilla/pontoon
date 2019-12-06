@@ -2,7 +2,7 @@
 
 import APIBase from './base';
 
-import type { OtherLocaleTranslation } from './types';
+import type { OtherLocaleTranslations } from './types';
 
 
 export default class EntityAPI extends APIBase {
@@ -131,10 +131,7 @@ export default class EntityAPI extends APIBase {
     async getOtherLocales(
         entity: number,
         locale: string,
-    ): Promise<{
-        preferred: Array<OtherLocaleTranslation>,
-        other: Array<OtherLocaleTranslation>,
-        }> {
+    ): Promise<?OtherLocaleTranslations> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);
@@ -145,7 +142,7 @@ export default class EntityAPI extends APIBase {
         const results = await this.fetch('/other-locales/', 'GET', payload, headers);
 
         if (results.status === false) {
-            return {};
+            return null;
         }
 
         return results;
