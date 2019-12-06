@@ -17,7 +17,6 @@ type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
     orderedOtherLocales: Array<OtherLocaleTranslation>,
-    preferredLocalesCount: number,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
@@ -42,13 +41,16 @@ export default class OtherLocales extends React.Component<Props> {
             entity,
             isReadOnlyEditor,
             orderedOtherLocales,
-            preferredLocalesCount,
             otherlocales,
             parameters,
             updateEditorTranslation,
         } = this.props;
 
         if (otherlocales.fetching) {
+            return null;
+        }
+
+        if (!otherlocales.translations) {
             return null;
         }
 
@@ -59,7 +61,7 @@ export default class OtherLocales extends React.Component<Props> {
         return <section className="other-locales">
             <ul>
                 { orderedOtherLocales.map((translation, index) => {
-                    let lastPreferred = (index === preferredLocalesCount - 1);
+                    //let lastPreferred = (index === preferredLocalesCount - 1);
 
                     return <Translation
                         entity={ entity }
@@ -67,7 +69,7 @@ export default class OtherLocales extends React.Component<Props> {
                         translation={ translation }
                         parameters={ parameters }
                         updateEditorTranslation={ updateEditorTranslation }
-                        lastPreferred={ lastPreferred }
+                        //lastPreferred={ lastPreferred }
                         key={ index }
                     />;
                 }) }

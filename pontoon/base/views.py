@@ -315,8 +315,6 @@ def get_translations_from_other_locales(request):
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
-    if request.user.is_authenticated:
-        preferred_locales = request.user.profile.preferred_locales
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -324,13 +322,19 @@ def get_translations_from_other_locales(request):
         approved=True
     ).exclude(locale=locale)
 
-    preferred = translations.filter(locale__in=preferred_locales)
-    other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
+    if request.user.is_authenticated:
+        preferred_locales = request.user.profile.preferred_locales
+        preferred = translations.filter(locale__in=preferred_locales)
+        other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
 
-    preferred_translations = sorted(
+        preferred_translations = sorted(
         _serialize_translation_values(preferred),
         key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
     )
+    else:
+        other = translations.order_by('locale__code')
+        preferred_translations = {}
+
     other_translations = sorted(_serialize_translation_values(other))
 
     payload = {
