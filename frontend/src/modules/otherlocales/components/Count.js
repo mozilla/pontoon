@@ -18,25 +18,17 @@ export default class Count extends React.Component<Props> {
             return null;
         }
 
-<<<<<<< HEAD
         const otherlocalesCount = otherlocales.translations.other.length;
         const preferredLocalesCount = otherlocales.translations.preferred.length;
-=======
-        const preferredLocalesCount = otherlocales.translations.preferred.length
-        const otherlocalesCount = otherlocales.translations.other.length;
->>>>>>> Refactored for user authenticated and refactored count
 
         const preferred = (
             !preferredLocalesCount ? null :
             <span className='preferred'>{ preferredLocalesCount }</span>
         );
-<<<<<<< HEAD
         const other = (
             !otherlocalesCount ? null :
             <span>{ otherlocalesCount }</span>
         );
-=======
->>>>>>> Refactored for user authenticated and refactored count
         const plus = (
             !otherlocalesCount || !preferredLocalesCount ? null :
             <span>{ '+' }</span>
@@ -45,11 +37,7 @@ export default class Count extends React.Component<Props> {
         return <span className='count'>
             { preferred }
             { plus }
-<<<<<<< HEAD
             { other }
-=======
-            { otherlocalesCount }
->>>>>>> Refactored for user authenticated and refactored count
         </span>;
     }
 }
