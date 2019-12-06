@@ -23,7 +23,6 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
-    orderedOtherLocales: Array<OtherLocaleTranslation>,
     parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string, string) => void,
@@ -44,7 +43,6 @@ export default class Helpers extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
-            orderedOtherLocales,
             parameters,
             user,
             updateEditorTranslation,
@@ -90,7 +88,6 @@ export default class Helpers extends React.Component<Props> {
                     entity={ entity }
                     isReadOnlyEditor={ isReadOnlyEditor }
                     otherlocales={ otherlocales }
-                    orderedOtherLocales= { orderedOtherLocales }
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }

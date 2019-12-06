@@ -13,11 +13,6 @@ describe('<OtherLocales>', () => {
                 { code: 'cr' },
             ],
         };
-        const orderedOtherLocales = [
-            { code: 'br' },
-            { code: 'ar' },
-            { code: 'cr' },
-        ];
         const params = {
             locale: 'kg',
             project: 'tmo',
@@ -26,7 +21,6 @@ describe('<OtherLocales>', () => {
         const wrapper = shallow(
             <OtherLocales
                 otherlocales={ otherlocales }
-                orderedOtherLocales={ orderedOtherLocales }
                 parameters={ params }
                 user={ user }
             />
