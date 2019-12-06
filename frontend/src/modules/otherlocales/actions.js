@@ -11,23 +11,10 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-<<<<<<< HEAD
     +translations: ?OtherLocaleTranslations,
 |};
 export function receive(
     translations: ?OtherLocaleTranslations
-=======
-    +translations: {
-        preferred: Array<OtherLocaleTranslation>,
-        other: Array<OtherLocaleTranslation>,
-    },
-|};
-export function receive(
-    translations: {
-        preferred: Array<OtherLocaleTranslation>,
-        other: Array<OtherLocaleTranslation>,
-    }
->>>>>>> Initial progress to refactor frontend
 ): ReceiveAction {
     return {
         type: RECEIVE,

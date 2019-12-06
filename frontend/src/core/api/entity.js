@@ -142,7 +142,7 @@ export default class EntityAPI extends APIBase {
         const results = await this.fetch('/other-locales/', 'GET', payload, headers);
 
         if (results.status === false) {
-            return {};
+            return null;
         }
 
         return results;
