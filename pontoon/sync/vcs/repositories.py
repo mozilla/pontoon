@@ -202,6 +202,7 @@ class CommitToHg(CommitToRepository):
         # Push
         push = ["hg", "push"]
         code, output, error = execute(push, path)
+
         if code == 1 and 'no changes found' in output:
             return self.nothing_to_commit()
 
@@ -227,7 +228,7 @@ class CommitToSvn(CommitToRepository):
 
         code, output, error = execute(command, env=get_svn_env())
         if code != 0:
-            raise CommitToRepositoryException(error.decode('utf-8'))
+            raise CommitToRepositoryException(error)
 
         if not output and not error:
             return self.nothing_to_commit()
@@ -242,10 +243,20 @@ def execute(command, cwd=None, env=None):
             args=command, stdout=st, stderr=st, stdin=st, cwd=cwd, env=env)
 
         (output, error) = proc.communicate()
+
+        # Make sure that we manipulate strings instead of bytes, to avoid
+        # compatibility errors in Python 3.
+        if type(output) is bytes:
+            output = output.decode('utf-8')
+        if type(error) is bytes:
+            error = error.decode('utf-8')
+
         code = proc.returncode
         return code, output, error
 
     except OSError as error:
+        if type(error) is bytes:
+            error = error.decode('utf-8')
         return -1, "", error
 
 
@@ -343,7 +354,7 @@ class GitRepository(VCSRepository):
         code, output, error = self.execute(
             ['git', 'rev-parse', 'HEAD'],
         )
-        return output.strip().decode('utf-8') if code == 0 else None
+        return output.strip() if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ('A', 'M')
@@ -366,7 +377,7 @@ class HgRepository(VCSRepository):
             cwd=self.path,
             log_errors=True
         )
-        return output.strip().decode('utf-8') if code == 0 else None
+        return output.strip() if code == 0 else None
 
     def _strip(self, rev):
         "Ignore trailing + in revision number. It marks local changes."
