@@ -43,7 +43,7 @@ export type Entities = Array<Entity>;
 
 
 /*
- * Preferred and Other Translations of an entity in a locale other than
+ * A collection of translations of an entity to a locale other than
  * the currently selected locale.
  */
 export type OtherLocaleTranslations = {|
@@ -53,7 +53,7 @@ export type OtherLocaleTranslations = {|
 
 
 /*
- * Translation of an entity in a locale.
+ * Translation of an entity in a locale other than the currently selected locale.
  */
 export type OtherLocaleTranslation = {|
     +locale: {|

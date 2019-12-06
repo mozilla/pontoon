@@ -18,7 +18,7 @@ type Props = {|
     translation: Object,
     parameters: NavigationParams,
     updateEditorTranslation: (string, string) => void,
-    lastPreferred: boolean,
+    //lastPreferred: boolean,
 |};
 
 
@@ -43,9 +43,9 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { entity, translation, parameters, lastPreferred, isReadOnlyEditor } = this.props;
+        const { entity, translation, parameters, /*lastPreferred,*/ isReadOnlyEditor } = this.props;
 
-        let className = lastPreferred ? 'translation last-preferred' : 'translation';
+        let className = /*lastPreferred ? 'translation last-preferred' : */ 'translation';
 
         if (isReadOnlyEditor) {
             // Copying into the editor is not allowed
