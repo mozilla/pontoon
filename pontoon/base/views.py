@@ -370,9 +370,9 @@ def get_translations_from_other_locales(request):
 >>>>>>> Refactored for user authenticated and refactored count
 
         preferred_translations = sorted(
-        _serialize_translation_values(preferred),
-        key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
-    )
+            _serialize_translation_values(preferred),
+            key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
+        )
     else:
         other = translations.order_by('locale__code')
         preferred_translations = {}
