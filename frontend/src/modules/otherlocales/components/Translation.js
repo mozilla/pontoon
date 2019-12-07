@@ -59,23 +59,36 @@ export default class Translation extends React.Component<Props> {
                 onClick={ this.copyTranslationIntoEditor }
             >
                 <header>
-                    <Localized
-                        id='otherlocales-Translation--header-link'
-                        attrs={{ title: true }}
-                        $locale={ translation.locale.name }
-                        $code={ translation.locale.code }
-                    >
-                        <Link
-                            to={ `/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            title='Open string in { $locale } ({ $code })'
-                            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                    { translation.locale.code === 'en-US' ?
+                        <Localized
+                            id='otherlocales-Translation--header-link'
+                            $locale={ translation.locale.name }
+                            $code={ translation.locale.code }
                         >
-                            { translation.locale.name }
-                            <span>{ translation.locale.code }</span>
-                        </Link>
-                    </Localized>
+                            <div>
+                                { translation.locale.name }
+                                <span>{ translation.locale.code }</span>
+                            </div>
+                        </Localized>
+                    :
+                        <Localized
+                            id='otherlocales-Translation--header-link'
+                            attrs={{ title: true }}
+                            $locale={ translation.locale.name }
+                            $code={ translation.locale.code }
+                        >
+                            <Link
+                                to={ `/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                title='Open string in { $locale } ({ $code })'
+                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                            >
+                                { translation.locale.name }
+                                <span>{ translation.locale.code }</span>
+                            </Link>
+                        </Localized>
+                    }
                 </header>
                 <p
                     lang={ translation.locale.code }
