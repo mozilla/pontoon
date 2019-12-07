@@ -18,14 +18,16 @@ export default class Count extends React.Component<Props> {
             return null;
         }
 
-        const preferredLocalesCount = otherlocales.translations.preferred.length
         const otherlocalesCount = otherlocales.translations.other.length;
+        let preferredLocalesCount = otherlocales.translations.preferred.length;
+
+        otherlocales.translations.preferred[0].locale.code === 'en-US' ?
+            preferredLocalesCount -= 1 : preferredLocalesCount;
 
         const preferred = (
             !preferredLocalesCount ? null :
             <span className='preferred'>{ preferredLocalesCount }</span>
         );
-        console.log(!otherlocalesCount)
         const other = (
             !otherlocalesCount ? null :
             <span>{ otherlocalesCount }</span>
