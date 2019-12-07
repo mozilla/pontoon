@@ -7,7 +7,7 @@ import './OtherLocales.css';
 
 import Translation from './Translation';
 
-import type { Entity, OtherLocaleTranslation } from 'core/api';
+import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { LocalesState } from '..';
