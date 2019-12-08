@@ -331,15 +331,15 @@ def get_translations_from_other_locales(request):
     preferred_source_locale = request.user.profile.preferred_source_locale
 
     preferred_source_translation = {
-            'locale': {
-                'code': 'en-US',
-                'direction': 'ltr',
-                'name': 'English',
-                'pk': 279,
-                'script': 'latin',
-            },
-            'translation': entity.string,
-        }
+        'locale': {
+            'code': 'en-US',
+            'direction': 'ltr',
+            'name': 'English',
+            'pk': 279,
+            'script': 'latin',
+        },
+        'translation': entity.string,
+    }
 
     translations = Translation.objects.filter(
         entity=entity,
