@@ -261,7 +261,7 @@ _tag_kwargs = OrderedDict(
      ('path_match', dict(path=11)),
      ('slug_no_match', dict(slug="NOSLUGSHERE")),
      ('slug_exact', dict(slug=23)),
-     ('slug_glob', dict(slug="factorytag7"))))
+     ('slug_contains', dict(slug="factorytag7"))))
 
 
 @pytest.fixture(params=_tag_kwargs)
@@ -285,7 +285,7 @@ def tag_test_kwargs(request, tag_matrix):
 
     Parameters suffixed with `_exact` expect exactly 1 result.
 
-    Parameters suffixed with `_glob` expect more than 1 result.
+    Parameters suffixed with `_contains` expect more than 1 result.
 
     Finally, parameters suffixed with `_no_match` expect 0 results.
     """
