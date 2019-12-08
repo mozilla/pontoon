@@ -7,10 +7,22 @@ import Count from './Count';
 describe('<Count>', () => {
     it('shows the correct number of preferred translations', () => {
         const otherlocales = {
-            translations: [
-                { code: 'ab' },
-                { code: 'cd' },
-            ],
+            translations: {
+                preferred: [
+                    {
+                        'locale': {
+                            code: 'ab',
+                        },
+                    },
+                    {
+                        'locale': {
+
+                            code: 'cd',
+                        },
+                    },
+                ],
+                other: [],
+            },
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
@@ -25,13 +37,30 @@ describe('<Count>', () => {
         expect(wrapper.text()).not.toContain('+');
     });
 
-    it('shows the correct number of remaining translations', () => {
+    it('shows the correct number of other translations', () => {
         const otherlocales = {
-            translations: [
-                { code: 'ef' },
-                { code: 'gh' },
-                { code: 'ij' },
-            ],
+            translations: {
+                preferred: [],
+                other: [
+                    {
+                        'locale': {
+                            code: 'ef',
+                        },
+                    },
+                    {
+                        'locale': {
+
+                            code: 'gh',
+                        },
+                    },
+                    {
+                        'locale': {
+
+                            code: 'ij',
+                        },
+                    },
+                ],
+            },
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
@@ -47,15 +76,39 @@ describe('<Count>', () => {
         expect(wrapper.text()).not.toContain('+');
     });
 
-    it('shows the correct numbers of preferred and remaining translations', () => {
+    it('shows the correct numbers of preferred and other translations', () => {
         const otherlocales = {
-            translations: [
-                { code: 'ab' },
-                { code: 'cd' },
-                { code: 'ef' },
-                { code: 'gh' },
-                { code: 'ij' },
-            ],
+            translations: {
+                preferred: [
+                    {
+                        'locale': {
+                            code: 'ab',
+                        },
+                    },
+                    {
+                        'locale': {
+                            code: 'cd',
+                        },
+                    },
+                ],
+                other: [
+                    {
+                        'locale': {
+                            code: 'ef',
+                        },
+                    },
+                    {
+                        'locale': {
+                            code: 'gh',
+                        },
+                    },
+                    {
+                        'locale': {
+                            code: 'ij',
+                        },
+                    },
+                ],
+            },
         };
         const wrapper = shallow(<Count
             otherlocales={ otherlocales }
