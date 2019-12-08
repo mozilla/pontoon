@@ -364,30 +364,8 @@ def get_translations_from_other_locales(request):
                 'translation': entity.string,
             })
     else:
-        other = translations
+        other = translations.order_by('locale__name')
         preferred_translations = []
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    other_translations = _serialize_translation_values(other)
-=======
-    preferred = translations.filter(locale__in=preferred_locales)
-    other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
->>>>>>> Progress on frontend refactor
-=======
-    if request.user.is_authenticated:
-        preferred_locales = request.user.profile.preferred_locales
-        preferred = translations.filter(locale__in=preferred_locales)
-        other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
->>>>>>> Refactored for user authenticated and refactored count
-
-        preferred_translations = sorted(
-            _serialize_translation_values(preferred),
-            key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
-        )
-    else:
-        other = translations.order_by('locale__code')
-        preferred_translations = {}
 
     other_translations = sorted(_serialize_translation_values(other))
 
