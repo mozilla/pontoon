@@ -16,7 +16,6 @@ describe('<Count>', () => {
                     },
                     {
                         'locale': {
-
                             code: 'cd',
                         },
                     },
@@ -49,13 +48,11 @@ describe('<Count>', () => {
                     },
                     {
                         'locale': {
-
                             code: 'gh',
                         },
                     },
                     {
                         'locale': {
-
                             code: 'ij',
                         },
                     },
