@@ -7,11 +7,26 @@ import OtherLocales from './OtherLocales';
 describe('<OtherLocales>', () => {
     it('shows the correct number of translations', () => {
         const otherlocales = {
-            translations: [
-                { code: 'ar' },
-                { code: 'br' },
-                { code: 'cr' },
-            ],
+            translations: {
+                preferred: [],
+                other: [
+                    {
+                        'locale': {
+                            code: 'ar',
+                        },
+                    },
+                    {
+                        'locale': {
+                            code: 'br',
+                        },
+                    },
+                    {
+                        'locale': {
+                            code: 'cr',
+                        },
+                    },
+                ],
+            },
         };
         const params = {
             locale: 'kg',
@@ -45,7 +60,10 @@ describe('<OtherLocales>', () => {
     it('renders a no results message if otherlocales is empty', () => {
         const otherlocales = {
             fetching: false,
-            translations: [],
+            translations: {
+                preferred: [],
+                other: [],
+            },
         };
         const user = {}
         const wrapper = shallow(<OtherLocales
