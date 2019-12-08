@@ -337,14 +337,14 @@ def get_translations_from_other_locales(request):
     if request.user.is_authenticated:
         preferred_locales = request.user.profile.preferred_locales
         preferred = translations.filter(locale__in=preferred_locales)
-        other = translations.exclude(locale__in=preferred_locales).order_by('locale__code')
+        other = translations.exclude(locale__in=preferred_locales).order_by('locale__name')
 
         preferred_translations = sorted(
             _serialize_translation_values(preferred),
             key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
         )
     else:
-        other = translations.order_by('locale__code')
+        other = translations.order_by('locale__name')
         preferred_translations = {}
 
     other_translations = sorted(_serialize_translation_values(other))
