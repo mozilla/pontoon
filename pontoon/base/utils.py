@@ -10,12 +10,6 @@ import tempfile
 import time
 import zipfile
 
-from compare_locales.paths.matcher import (
-    PatternParser,
-    Star,
-    Variable,
-)
-
 from datetime import datetime, timedelta
 
 from guardian.decorators import (
