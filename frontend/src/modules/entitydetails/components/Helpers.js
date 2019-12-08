@@ -49,12 +49,13 @@ export default class Helpers extends React.Component<Props> {
             searchMachinery,
         } = this.props;
 
-        const machineryCount = machinery.translations.length;
         if (!otherlocales.translations) {
             return null;
         }
-        const translations = otherlocales.translations
-        const localesCount = translations.other.length && translations.preferred.length;
+
+        const machineryCount = machinery.translations.length;
+        const translations = otherlocales.translations;
+        const localesCount = translations.other.length || translations.preferred.length;
 
         return <Tabs>
             <TabList>
