@@ -7,7 +7,6 @@ from django.utils.functional import cached_property
 
 from pontoon.base.models import (
     Locale, Project, Resource, TranslatedResource, Translation)
-from pontoon.base.utils import glob_to_regex
 from pontoon.tags.models import Tag
 
 

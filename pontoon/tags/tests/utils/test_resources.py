@@ -11,7 +11,6 @@ from pontoon.test.factories import (
     ResourceFactory,
     TagFactory,
 )
-from pontoon.base.utils import glob_to_regex
 from pontoon.tags.exceptions import InvalidProjectError
 from pontoon.tags.models import Tag
 from pontoon.tags.utils import TagsResourcesTool
@@ -211,7 +210,7 @@ def test_util_tags_resources_tool_linkable_resources(resource_a, tag_c):
         m.return_value = values
         linkable = resource_tool.get_linkable_resources(23)
         assert linkable == 7
-        assert list(m.call_args) == [('**',), {'exclude': 23}]
+        assert list(m.call_args) == [tuple(), {'exclude': 23}]
         assert (
             list(values.values.call_args)
             == [('path', 'project'), {}]

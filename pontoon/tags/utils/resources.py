@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 from django.db.models import Q
 
-from pontoon.base.utils import glob_to_regex
-
 from pontoon.tags.exceptions import InvalidProjectError
 
 from .base import TagsDataTool
@@ -58,6 +56,7 @@ class TagsResourcesTool(TagsDataTool):
             resources = self.resource_manager.exclude(tag__slug=exclude)
         else:
             resources = self.resource_manager
+
         if self.projects:
             resources = resources.filter(project__in=self.projects)
 
@@ -74,7 +73,7 @@ class TagsResourcesTool(TagsDataTool):
         but are not already
         """
 
-        return self.find('**', exclude=slug).values('path', 'project')
+        return self.find(exclude=slug).values('path', 'project')
 
     def get_linked_resources(self, slug):
         """ Return `values` of resources that are already linked to a given tag
@@ -98,7 +97,11 @@ class TagsResourcesTool(TagsDataTool):
             tag.resources.add(*list(_resources))
 
     def unlink(self, tag, resources=None):
-        """Unassociate Resources from a Tag. The Resources can be selected by passing a list of Resource paths."""
+        """
+        Unassociate Resources from a Tag.
+
+        The Resources can be selected by passing a list of Resource paths.
+        """
         query = Q(project__in=self.projects) if self.projects else Q()
         if resources is not None:
             _resources = self.resource_manager.none()

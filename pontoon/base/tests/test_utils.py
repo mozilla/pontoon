@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-import sys
 
 import pytest
 
@@ -7,16 +6,15 @@ from django.contrib.auth import get_user_model
 
 from pontoon.base.models import (
     Project,
-    Resource,
 )
 from pontoon.base.utils import (
     aware_datetime,
     extension_in,
     get_m2m_changes,
     get_object_or_none,
-    glob_to_regex,
     latest_datetime,
 )
+
 
 @pytest.mark.django_db
 def test_get_m2m_changes_no_change(user_a):

@@ -72,6 +72,9 @@ jest:
 pytest:
 	${DC} run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
+flake8:
+	${DC} run --rm -w /app webapp flake8
+
 flow:
 	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
 

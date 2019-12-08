@@ -4,7 +4,6 @@ from django import forms
 from django.utils.functional import cached_property
 
 from pontoon.base.models import Resource
-from pontoon.base.utils import glob_to_regex
 from pontoon.tags.utils import TagsTool
 
 
