@@ -5,7 +5,7 @@ import { FailedChecksBase } from './FailedChecks';
 
 
 describe('<FailedChecksBase>', () => {
-    it('do not render if no errors or warnings present', () => {
+    it('does not render if no errors or warnings present', () => {
         const wrapper = shallow(<FailedChecksBase
             errors={ [] }
             warnings={ [] }
@@ -14,7 +14,7 @@ describe('<FailedChecksBase>', () => {
         expect(wrapper.find('.failed-checks')).toHaveLength(0);
     });
 
-    it('render popup with errors and warnings', () => {
+    it('renders popup with errors and warnings', () => {
         const wrapper = shallow(<FailedChecksBase
             errors={ ['Error1'] }
             warnings={ ['Warning1', 'Warning2'] }
@@ -27,7 +27,7 @@ describe('<FailedChecksBase>', () => {
         expect(wrapper.find('.warning')).toHaveLength(2);
     });
 
-    it('render save anyway button if translation with warnings submitted', () => {
+    it('renders save anyway button if translation with warnings submitted', () => {
         const wrapper = shallow(<FailedChecksBase
             source={ 'submitted' }
             errors={ [] }
@@ -37,12 +37,13 @@ describe('<FailedChecksBase>', () => {
                     forceSuggestions: false,
                 },
             } }
+            isTranslator={ true }
         />);
 
         expect(wrapper.find('.save.anyway')).toHaveLength(1);
     });
 
-    it('render suggest anyway button if translation with warnings suggested', () => {
+    it('renders suggest anyway button if translation with warnings suggested', () => {
         const wrapper = shallow(<FailedChecksBase
             source={ 'submitted' }
             errors={ [] }
@@ -57,7 +58,23 @@ describe('<FailedChecksBase>', () => {
         expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
     });
 
-    it('render approve anyway button if translation with warnings approved', () => {
+    it('renders suggest anyway button if user does not have sufficient permissions', () => {
+        const wrapper = shallow(<FailedChecksBase
+            source={ 'submitted' }
+            errors={ [] }
+            warnings={ ['Warning1'] }
+            user={ {
+                settings: {
+                    forceSuggestions: false,
+                },
+            } }
+            isTranslator={ false }
+        />);
+
+        expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
+    });
+
+    it('renders approve anyway button if translation with warnings approved', () => {
         const wrapper = shallow(<FailedChecksBase
             errors={ [] }
             warnings={ ['Warning1'] }

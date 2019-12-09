@@ -13,15 +13,15 @@ import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from '..';
-import type { DBTranslation } from '../reducer';
+import type { HistoryTranslation } from '../reducer';
 
 
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
     canReview: boolean,
-    translation: DBTranslation,
-    activeTranslation: DBTranslation,
+    translation: HistoryTranslation,
+    activeTranslation: HistoryTranslation,
     locale: Locale,
     user: UserState,
     index: number,
