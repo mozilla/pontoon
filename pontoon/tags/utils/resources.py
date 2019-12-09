@@ -45,9 +45,10 @@ class TagsResourcesTool(TagsDataTool):
             if self.slug
             else resources)
 
-    def find(self, search_path, include=None, exclude=None):
+    def find(self, search_path=None, include=None, exclude=None):
         """ Find filtered resources by their path, and optionally
-        include/exclude resources linked to given tags
+        include/exclude resources linked to given tags.
+        Return all resources by default.
         """
 
         if include:
@@ -101,6 +102,7 @@ class TagsResourcesTool(TagsDataTool):
         Unassociate Resources from a Tag.
 
         The Resources can be selected by passing a list of Resource paths.
+        Remove all resources by default.
         """
         query = Q(project__in=self.projects) if self.projects else Q()
         if resources is not None:
@@ -110,6 +112,8 @@ class TagsResourcesTool(TagsDataTool):
                     project=resource["project"],
                     path=resource["path"])
             self.tag_manager.filter(query).get(slug=tag).resources.remove(*list(_resources))
+        else:
+            self.tag_manager.filter(query).get(slug=tag).resources.clear()
 
     def _validate_resource(self, tag, resource_project):
         if tag.project_id and resource_project != tag.project_id:
