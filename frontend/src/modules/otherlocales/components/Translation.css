@@ -5,7 +5,7 @@
     transition: all 0.1s ease-out;
 }
 
-.other-locales .translation.last-preferred {
+.other-locales ul.preferred-list .translation:last-child {
     border-bottom-color: #7BC876;
 }
 
