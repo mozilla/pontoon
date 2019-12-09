@@ -1,4 +1,8 @@
-import { _getPluralForm, _getTranslationForSelectedEntity } from './selectors';
+import {
+    _getPluralForm,
+    _getTranslationForSelectedEntity,
+    _getTranslationStringForSelectedEntity,
+} from './selectors';
 
 
 describe('getPluralForm', () => {
@@ -15,35 +19,53 @@ describe('getPluralForm', () => {
     });
 });
 
-describe('getTranslationForSelectedEntity', () => {
-    const entities = [
-        {
-            translation: [
-                {
-                    string: 'world',
-                },
-            ],
-        },
-        {
-            translation: [
-                {
-                    string: 'wat',
-                    rejected: true,
-                },
-            ],
-        },
-    ];
 
+const ENTITIES = [
+    {
+        translation: [
+            {
+                string: 'world',
+            },
+        ],
+    },
+    {
+        translation: [
+            {
+                string: 'wat',
+                rejected: true,
+            },
+        ],
+    },
+];
+
+
+describe('getTranslationForSelectedEntity', () => {
     it('returns the correct string', () => {
-        const entity = entities[0];
+        const entity = ENTITIES[0];
         const res = _getTranslationForSelectedEntity(entity, -1);
+
+        expect(res).toEqual({ string: 'world' });
+    });
+
+    it('does not return rejected translations', () => {
+        const entity = ENTITIES[1];
+        const res = _getTranslationForSelectedEntity(entity, -1);
+
+        expect(res).toEqual(null);
+    });
+});
+
+describe('getTranslationStringForSelectedEntity', () => {
+    it('returns the correct string', () => {
+        const entity = ENTITIES[0];
+        const res = _getTranslationStringForSelectedEntity(entity, -1);
 
         expect(res).toEqual('world');
     });
 
     it('does not return rejected translations', () => {
-        const entity = entities[1];
-        const res = _getTranslationForSelectedEntity(entity, -1);
+        const entity = ENTITIES[1];
+        const res = _getTranslationStringForSelectedEntity(entity, -1);
 
         expect(res).toEqual('');
     });

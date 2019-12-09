@@ -13,6 +13,7 @@ import type { ChangeOperation } from 'modules/history';
 type Props = {|
     source: '' | 'stored' | 'submitted' | number,
     user: UserState,
+    isTranslator: boolean,
     errors: Array<string>,
     warnings: Array<string>,
     resetFailedChecks: () => void,
@@ -60,8 +61,50 @@ export class FailedChecksBase extends React.Component<InternalProps> {
         this.props.sendTranslation(true);
     }
 
+    renderMainAction() {
+        const { source, user, isTranslator, errors } = this.props;
+
+        if (source === 'stored' || errors.length) {
+            return null;
+        }
+
+        if (source !== 'submitted') {
+            return <Localized id="editor-FailedChecks--approve-anyway">
+                <button
+                    className="approve anyway"
+                    disabled={ this.props.isActionDisabled }
+                    onClick={ this.approveAnyway }
+                >
+                    Approve anyway
+                </button>
+            </Localized>;
+        }
+
+        if (user.settings.forceSuggestions || !isTranslator) {
+            return <Localized id="editor-FailedChecks--suggest-anyway">
+                <button
+                    className="suggest anyway"
+                    disabled={ this.props.isActionDisabled }
+                    onClick={ this.submitAnyway }
+                >
+                    Suggest anyway
+                </button>
+            </Localized>;
+        }
+
+        return <Localized id="editor-FailedChecks--save-anyway">
+            <button
+                className="save anyway"
+                disabled={ this.props.isActionDisabled }
+                onClick={ this.submitAnyway }
+            >
+                Save anyway
+            </button>
+        </Localized>;
+    }
+
     render() {
-        const { source, user, errors, warnings } = this.props;
+        const { errors, warnings } = this.props;
 
         if (!errors.length && !warnings.length) {
             return null;
@@ -99,38 +142,7 @@ export class FailedChecksBase extends React.Component<InternalProps> {
                     })
                 }
             </ul>
-            { (source === 'stored' || errors.length) ? null :
-                source !== 'submitted' ?
-                <Localized id="editor-FailedChecks--approve-anyway">
-                    <button
-                        className="approve anyway"
-                        disabled={ this.props.isActionDisabled }
-                        onClick={ this.approveAnyway }
-                    >
-                        Approve anyway
-                    </button>
-                </Localized>
-                : user.settings.forceSuggestions ?
-                <Localized id="editor-FailedChecks--suggest-anyway">
-                    <button
-                        className="suggest anyway"
-                        disabled={ this.props.isActionDisabled }
-                        onClick={ this.submitAnyway }
-                    >
-                        Suggest anyway
-                    </button>
-                </Localized>
-                :
-                <Localized id="editor-FailedChecks--save-anyway">
-                    <button
-                        className="save anyway"
-                        disabled={ this.props.isActionDisabled }
-                        onClick={ this.submitAnyway }
-                    >
-                        Save anyway
-                    </button>
-                </Localized>
-            }
+            { this.renderMainAction() }
         </div>;
     }
 }

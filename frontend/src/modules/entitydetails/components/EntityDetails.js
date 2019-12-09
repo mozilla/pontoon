@@ -38,7 +38,7 @@ import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
-    activeTranslation: string,
+    activeTranslationString: string,
     editor: EditorState,
     history: HistoryState,
     isReadOnlyEditor: boolean,
@@ -80,14 +80,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     componentDidUpdate(prevProps: InternalProps) {
-        const { activeTranslation, nextEntity, pluralForm, selectedEntity } = this.props;
+        const { activeTranslationString, nextEntity, pluralForm, selectedEntity } = this.props;
 
         if (
             pluralForm !== prevProps.pluralForm ||
             selectedEntity !== prevProps.selectedEntity ||
             (
                 selectedEntity === nextEntity &&
-                activeTranslation !== prevProps.activeTranslation
+                activeTranslationString !== prevProps.activeTranslationString
             )
         ) {
             this.updateFailedChecks();
@@ -343,7 +343,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
 const mapStateToProps = (state: Object): Props => {
     return {
-        activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
+        activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(state),
         editor: state[editor.NAME],
         history: state[history.NAME],
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),

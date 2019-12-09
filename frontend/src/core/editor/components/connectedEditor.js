@@ -15,15 +15,15 @@ import * as history from 'modules/history';
 import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { NAME, actions } from '..';
+import { NAME, actions, selectors } from '..';
 
 import { withActionsDisabled } from 'core/utils';
 
-import type { Entity } from 'core/api';
+import type { Entity, EntityTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { ChangeOperation } from 'modules/history';
+import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { SearchAndFilters } from 'modules/search';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 import type { EditorState } from '../reducer';
@@ -31,14 +31,18 @@ import type { Translation } from '../actions';
 
 
 type Props = {|
-    activeTranslation: string,
+    activeTranslation: EntityTranslation,
+    activeTranslationString: string,
     editor: EditorState,
     isReadOnlyEditor: boolean,
+    isTranslator: boolean,
+    history: HistoryState,
     locale: Locale,
     nextEntity: Entity,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
+    sameExistingTranslation: ?EntityTranslation,
     searchAndFilters: SearchAndFilters,
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
@@ -53,12 +57,16 @@ type InternalProps = {|
 |};
 
 export type EditorProps = {|
-    activeTranslation: string,
+    activeTranslation: EntityTranslation,
+    activeTranslationString: string,
     editor: EditorState,
     entity: Entity,
     isReadOnlyEditor: boolean,
+    isTranslator: boolean,
+    history: HistoryState,
     locale: Locale,
     pluralForm: number,
+    sameExistingTranslation: ?EntityTranslation,
     searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
@@ -125,7 +133,7 @@ export default function connectedEditor<Object>(
             }
 
             if (!initial) {
-                initial = props.editor.initialTranslation || props.activeTranslation;
+                initial = props.editor.initialTranslation || props.activeTranslationString;
             }
 
             this.props.dispatch(unsavedchanges.actions.update(translation, initial));
@@ -168,15 +176,25 @@ export default function connectedEditor<Object>(
                 const source = this.props.editor.source;
                 const ignoreWarnings = !!(errors.length || warnings.length);
 
-                // Proceed
+                // There are unsaved changes, proceed.
                 if (this.props.unsavedchanges.shown) {
                     this.ignoreUnsavedChanges();
                 }
-                // Approve anyway
+                // Approve anyway.
                 else if (typeof(source) === 'number') {
                     this.updateTranslationStatus(source, 'approve', ignoreWarnings);
                 }
-                // Send translation
+                else if (
+                    this.props.sameExistingTranslation
+                    && !this.props.sameExistingTranslation.approved
+                ) {
+                    this.updateTranslationStatus(
+                        this.props.sameExistingTranslation.pk,
+                        'approve',
+                        ignoreWarnings,
+                    );
+                }
+                // Send translation.
                 else {
                     sendTranslation(ignoreWarnings);
                 }
@@ -314,11 +332,15 @@ export default function connectedEditor<Object>(
             return <div className="editor">
                 <WrappedComponent
                     activeTranslation={ this.props.activeTranslation }
-                    isReadOnlyEditor={ this.props.isReadOnlyEditor }
+                    activeTranslationString={ this.props.activeTranslationString }
                     entity={ this.props.selectedEntity }
                     editor={ this.props.editor }
+                    isReadOnlyEditor={ this.props.isReadOnlyEditor }
+                    isTranslator={ this.props.isTranslator }
+                    history={ this.props.history }
                     locale={ this.props.locale }
                     pluralForm={ this.props.pluralForm }
+                    sameExistingTranslation={ this.props.sameExistingTranslation }
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
@@ -345,13 +367,17 @@ export default function connectedEditor<Object>(
     const mapStateToProps = (state: Object): Props => {
         return {
             activeTranslation: plural.selectors.getTranslationForSelectedEntity(state),
+            activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(state),
             editor: state[NAME],
             isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
+            isTranslator: user.selectors.isTranslator(state),
+            history: state[history.NAME],
             locale: state[locale.NAME],
             nextEntity: entities.selectors.getNextEntity(state),
             parameters: navigation.selectors.getNavigationParams(state),
             pluralForm: plural.selectors.getPluralForm(state),
             router: state.router,
+            sameExistingTranslation: selectors.sameExistingTranslation(state),
             searchAndFilters: state[search.NAME],
             selectedEntity: entities.selectors.getSelectedEntity(state),
             unsavedchanges: state[unsavedchanges.NAME],
