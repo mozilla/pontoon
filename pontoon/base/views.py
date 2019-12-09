@@ -315,42 +315,40 @@ def get_translations_from_other_locales(request):
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
-    preferred_source_locale = request.user.profile.preferred_source_locale
-
-    preferred_source_translation = {
-        'locale': {
-            'code': 'en-US',
-            'direction': 'ltr',
-            'name': 'English',
-            'pk': 279,
-            'script': 'latin',
-        },
-        'translation': entity.string,
-    }
 
     translations = Translation.objects.filter(
         entity=entity,
         plural_form=plural_form,
         approved=True
-    ).exclude(locale=locale)
+    ).exclude(locale=locale).order_by('locale__name')
 
     if request.user.is_authenticated:
         preferred_locales = request.user.profile.preferred_locales
         preferred = translations.filter(locale__in=preferred_locales)
-        other = translations.exclude(locale__in=preferred_locales).order_by('locale__name')
+        other = translations.exclude(locale__in=preferred_locales)
 
         preferred_translations = sorted(
             _serialize_translation_values(preferred),
             key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
         )
+
+        if (request.user.profile.preferred_source_locale):
+            # TODO: De-hardcode as part of bug 1328879.
+            preferred_translations.insert(0, {
+                'locale': {
+                    'code': 'en-US',
+                    'direction': 'ltr',
+                    'name': 'English',
+                    'pk': 279,
+                    'script': 'latin',
+                },
+                'translation': entity.string,
+            })
     else:
-        other = translations.order_by('locale__name')
+        other = translations
         preferred_translations = {}
 
-    other_translations = sorted(_serialize_translation_values(other))
-
-    if (preferred_source_locale):
-        preferred_translations.insert(0, preferred_source_translation)
+    other_translations = _serialize_translation_values(other)
 
     payload = {
         'preferred': preferred_translations,
