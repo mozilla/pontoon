@@ -32,6 +32,7 @@ export default class EditorMenu extends React.Component<Props> {
             <editor.FailedChecks
                 source={ props.editor.source }
                 user={ props.user }
+                isTranslator={ props.isTranslator }
                 errors={ props.editor.errors }
                 warnings={ props.editor.warnings }
                 resetFailedChecks={ props.resetFailedChecks }
