@@ -24,7 +24,11 @@ const HISTORY = {
         {
             pk: 98,
             string: 'hello, world!',
-        }
+        },
+        {
+            pk: 10010,
+            string: '',
+        },
     ],
 };
 
@@ -37,7 +41,7 @@ const HISTORY_FLUENT = {
         {
             pk: 98,
             string: 'msg = hello, world!',
-        }
+        },
     ],
 };
 
@@ -56,6 +60,14 @@ describe('sameExistingTranslation', () => {
             { ...EDITOR_FLUENT, translation: EDITOR_FLUENT.initialTranslation },
             ACTIVE_TRANSLATION,
             HISTORY_FLUENT,
+        )).toEqual(ACTIVE_TRANSLATION);
+    });
+
+    it('finds empty initial/active translation', () => {
+        expect(_existingTranslation(
+            { translation: '', initialTranslation: '' },
+            ACTIVE_TRANSLATION,
+            HISTORY,
         )).toEqual(ACTIVE_TRANSLATION);
     });
 
@@ -99,5 +111,13 @@ describe('sameExistingTranslation', () => {
             ACTIVE_TRANSLATION,
             HISTORY_FLUENT,
         )).toEqual(HISTORY_FLUENT.translations[1]);
+    });
+
+    it('finds empty translation in history', () => {
+        expect(_existingTranslation(
+            { ...EDITOR, translation: '' },
+            ACTIVE_TRANSLATION,
+            HISTORY,
+        )).toEqual(HISTORY.translations[2]);
     });
 });

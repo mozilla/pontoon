@@ -184,7 +184,10 @@ export default function connectedEditor<Object>(
                 else if (typeof(source) === 'number') {
                     this.updateTranslationStatus(source, 'approve', ignoreWarnings);
                 }
-                else if (this.props.sameExistingTranslation) {
+                else if (
+                    this.props.sameExistingTranslation
+                    && !this.props.sameExistingTranslation.approved
+                ) {
                     this.updateTranslationStatus(
                         this.props.sameExistingTranslation.pk,
                         'approve',

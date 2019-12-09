@@ -56,7 +56,8 @@ function createEditorBase({
     pluralForm = -1,
     errors = [],
     warnings = [],
-    translation = '',
+    translation = 'hello',
+    initialTranslation = '',
     source = '',
     unsavedchanges = { shown: false },
 } = {}) {
@@ -66,7 +67,7 @@ function createEditorBase({
             warnings,
             source,
             translation,
-            initialTranslation: translation,
+            initialTranslation,
         },
         entities: {
             entities: ENTITIES,
@@ -213,10 +214,12 @@ describe('connectedEditor', () => {
     });
 
     it('approves the translation on Enter if an identical translation exists', () => {
+        const translation = SELECTED_ENTITY.translation[0].string;
         const wrapper = createEditorBase({
             errors: ['error1'],
             warnings: ['warning1'],
-            translation: SELECTED_ENTITY.translation[0].string,
+            translation: translation,
+            initialTranslation: translation,
         });
 
         const event = {

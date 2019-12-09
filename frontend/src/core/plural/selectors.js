@@ -40,7 +40,7 @@ export function _getTranslationForSelectedEntity(
     }
 
     if (
-        entity && entity.translation[pluralForm].string &&
+        entity && entity.translation[pluralForm] &&
         !entity.translation[pluralForm].rejected
     ) {
         return entity.translation[pluralForm];
