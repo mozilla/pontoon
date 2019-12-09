@@ -108,7 +108,7 @@ describe('<SearchBoxBase>', () => {
         });
 
         const selected = wrapper.instance().getSelectedStatuses();
-        expect(selected).toEqual(['warnings', 'errors']);
+        expect(selected).toEqual([ 'warnings', 'errors' ]);
     });
 
     it('returns correct list of selected extras', () => {

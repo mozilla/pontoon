@@ -141,6 +141,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 search: '',
             });
         }
+
+        // When the URL changes, for example from links in the ResourceProgress
+        // component, reload the filters from the URL parameters.
+        if (this.props.parameters !== prevProps.parameters) {
+            this.updateFiltersFromURLParams();
+        }
     }
 
     componentWillUnmount() {
