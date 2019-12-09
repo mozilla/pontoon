@@ -15,7 +15,7 @@ import * as history from 'modules/history';
 import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { NAME, actions } from '..';
+import { NAME, actions, selectors } from '..';
 
 import { withActionsDisabled } from 'core/utils';
 
@@ -42,6 +42,7 @@ type Props = {|
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
+    sameExistingTranslation: ?EntityTranslation,
     searchAndFilters: SearchAndFilters,
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
@@ -65,6 +66,7 @@ export type EditorProps = {|
     history: HistoryState,
     locale: Locale,
     pluralForm: number,
+    sameExistingTranslation: ?EntityTranslation,
     searchInputFocused: boolean,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
@@ -174,15 +176,22 @@ export default function connectedEditor<Object>(
                 const source = this.props.editor.source;
                 const ignoreWarnings = !!(errors.length || warnings.length);
 
-                // Proceed
+                // There are unsaved changes, proceed.
                 if (this.props.unsavedchanges.shown) {
                     this.ignoreUnsavedChanges();
                 }
-                // Approve anyway
+                // Approve anyway.
                 else if (typeof(source) === 'number') {
                     this.updateTranslationStatus(source, 'approve', ignoreWarnings);
                 }
-                // Send translation
+                else if (this.props.sameExistingTranslation) {
+                    this.updateTranslationStatus(
+                        this.props.sameExistingTranslation.pk,
+                        'approve',
+                        ignoreWarnings,
+                    );
+                }
+                // Send translation.
                 else {
                     sendTranslation(ignoreWarnings);
                 }
@@ -328,6 +337,7 @@ export default function connectedEditor<Object>(
                     history={ this.props.history }
                     locale={ this.props.locale }
                     pluralForm={ this.props.pluralForm }
+                    sameExistingTranslation={ this.props.sameExistingTranslation }
                     searchInputFocused={ this.props.searchAndFilters.searchInputFocused }
                     unsavedchanges={ this.props.unsavedchanges }
                     user={ this.props.user }
@@ -364,6 +374,7 @@ export default function connectedEditor<Object>(
             parameters: navigation.selectors.getNavigationParams(state),
             pluralForm: plural.selectors.getPluralForm(state),
             router: state.router,
+            sameExistingTranslation: selectors.sameExistingTranslation(state),
             searchAndFilters: state[search.NAME],
             selectedEntity: entities.selectors.getSelectedEntity(state),
             unsavedchanges: state[unsavedchanges.NAME],

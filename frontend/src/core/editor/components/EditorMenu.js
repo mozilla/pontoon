@@ -91,12 +91,9 @@ export default class EditorMenu extends React.Component<Props> {
                             </button>
                         </Localized>
                         <EditorMainAction
-                            activeTranslation={ props.activeTranslation }
-                            initialTranslation={ props.editor.initialTranslation }
                             isTranslator={ props.isTranslator }
                             forceSuggestions={ props.user.settings.forceSuggestions }
-                            history={ props.history }
-                            translation={ props.editor.translation }
+                            sameExistingTranslation={ props.sameExistingTranslation }
                             sendTranslation={ props.sendTranslation }
                             updateTranslationStatus={ props.updateTranslationStatus }
                         />

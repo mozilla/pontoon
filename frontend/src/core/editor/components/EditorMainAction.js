@@ -4,17 +4,13 @@ import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { EntityTranslation } from 'core/api';
-import type { ChangeOperation, HistoryState } from 'modules/history';
-import type { Translation } from '..';
+import type { ChangeOperation } from 'modules/history';
 
 
 type Props = {
-    activeTranslation: EntityTranslation,
-    initialTranslation: Translation,
     isTranslator: boolean,
     forceSuggestions: boolean,
-    history: HistoryState,
-    translation: Translation,
+    sameExistingTranslation: ?EntityTranslation,
     sendTranslation: () => void,
     updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
 };
@@ -33,33 +29,20 @@ type Props = {
  */
 export default function EditorMainAction(props: Props) {
     const {
-        activeTranslation,
-        initialTranslation,
         isTranslator,
         forceSuggestions,
-        history,
-        translation,
+        sameExistingTranslation,
         sendTranslation,
         updateTranslationStatus,
     } = props;
 
-    let existingTranslation = null;
-    if (translation) {
-        if (translation === initialTranslation) {
-            existingTranslation = activeTranslation;
-        }
-        else if (history.translations.length) {
-            existingTranslation = history.translations.find(t => t.string === translation)
-        }
-    }
-
     function approveTranslation() {
-        if (existingTranslation) {
-            updateTranslationStatus(existingTranslation.pk, 'approve');
+        if (sameExistingTranslation) {
+            updateTranslationStatus(sameExistingTranslation.pk, 'approve');
         }
     }
 
-    if (isTranslator && existingTranslation && !existingTranslation.approved) {
+    if (isTranslator && sameExistingTranslation && !sameExistingTranslation.approved) {
         // Approve button, will approve the translation.
         return <Localized
             id="editor-EditorMenu--button-approve"

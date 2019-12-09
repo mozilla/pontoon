@@ -18,8 +18,8 @@ const SELECTED_ENTITY = {
     original: 'le test',
     original_plural: 'les tests',
     translation: [
-        { string: 'test' },
-        { string: 'test plural' },
+        { string: 'test', pk: 2 },
+        { string: 'test plural', pk: 3 },
     ],
 };
 
@@ -56,6 +56,7 @@ function createEditorBase({
     pluralForm = -1,
     errors = [],
     warnings = [],
+    translation = '',
     source = '',
     unsavedchanges = { shown: false },
 } = {}) {
@@ -64,7 +65,8 @@ function createEditorBase({
             errors,
             warnings,
             source,
-            translation: '',
+            translation,
+            initialTranslation: translation,
         },
         entities: {
             entities: ENTITIES,
@@ -195,6 +197,26 @@ describe('connectedEditor', () => {
             errors: ['error1'],
             warnings: ['warning1'],
             source: 1,
+        });
+
+        const event = {
+            preventDefault: sinon.spy(),
+            keyCode: 13,  // Enter
+            altKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+        };
+
+        expect(history.actions.updateStatus.called).toBeFalsy();
+        wrapper.find('textarea').simulate('keydown', event);
+        expect(history.actions.updateStatus.called).toBeTruthy();
+    });
+
+    it('approves the translation on Enter if an identical translation exists', () => {
+        const wrapper = createEditorBase({
+            errors: ['error1'],
+            warnings: ['warning1'],
+            translation: SELECTED_ENTITY.translation[0].string,
         });
 
         const event = {
