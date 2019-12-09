@@ -12,7 +12,7 @@ type Action =
 ;
 
 
-export type DBTranslation = {|
+export type HistoryTranslation = {|
     +approved: boolean,
     +approved_user: string,
     +date: string,
@@ -32,11 +32,11 @@ export type HistoryState = {|
     +fetching: boolean,
     +entity: ?number,
     +pluralForm: ?number,
-    +translations: Array<DBTranslation>,
+    +translations: Array<HistoryTranslation>,
 |};
 
 
-function updateTranslation(translations: Array<DBTranslation>, newTranslation: DBTranslation) {
+function updateTranslation(translations: Array<HistoryTranslation>, newTranslation: HistoryTranslation) {
     return translations.map(translation => {
         if (translation.pk === newTranslation.pk) {
             return { ...translation, ...newTranslation };

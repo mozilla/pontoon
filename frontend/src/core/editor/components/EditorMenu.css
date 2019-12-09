@@ -22,6 +22,7 @@
     color: #7BC876;
 }
 
+.editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
     background: #7BC876;
@@ -36,6 +37,7 @@
     background: #4FC4F6;
 }
 
+.editor-menu .actions .action-approve:hover,
 .editor-menu .actions .action-save:hover,
 .editor-menu .actions .action-suggest:hover {
     color: #EBEBEB;
