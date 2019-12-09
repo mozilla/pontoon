@@ -328,18 +328,6 @@ def get_translations_from_other_locales(request):
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
-    preferred_source_locale = request.user.profile.preferred_source_locale
-
-    preferred_source_translation = {
-        'locale': {
-            'code': 'en-US',
-            'direction': 'ltr',
-            'name': 'English',
-            'pk': 279,
-            'script': 'latin',
-        },
-        'translation': entity.string,
-    }
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -367,10 +355,7 @@ def get_translations_from_other_locales(request):
         other = translations.order_by('locale__name')
         preferred_translations = []
 
-    other_translations = sorted(_serialize_translation_values(other))
-
-    if (preferred_source_locale):
-        preferred_translations.insert(0, preferred_source_translation)
+    other_translations = _serialize_translation_values(other)
 
     payload = {
         'preferred': preferred_translations,

@@ -38,10 +38,6 @@ export default class OtherLocales extends React.Component<Props> {
     renderTranslations(
         translation: OtherLocaleTranslation,
         index: number,
-<<<<<<< HEAD
-=======
-        lastPreferred: boolean,
->>>>>>> Refactored translations and removed unneeded test
     ) {
         return <Translation
             entity={ this.props.entity }
@@ -49,10 +45,6 @@ export default class OtherLocales extends React.Component<Props> {
             translation={ translation }
             parameters={ this.props.parameters }
             updateEditorTranslation={ this.props.updateEditorTranslation }
-<<<<<<< HEAD
-=======
-            lastPreferred = { lastPreferred }
->>>>>>> Refactored translations and removed unneeded test
             key={ index }
         />;
     }
@@ -65,10 +57,6 @@ export default class OtherLocales extends React.Component<Props> {
         }
 
         const translation = otherlocales.translations;
-<<<<<<< HEAD
-=======
-        const preferredCount = translation.preferred.length;
->>>>>>> Refactored translations and removed unneeded test
 
         if (otherlocales.fetching) {
             return null;
@@ -78,7 +66,6 @@ export default class OtherLocales extends React.Component<Props> {
             return this.renderNoResults();
         }
 
-<<<<<<< HEAD
         return <section className="other-locales">
             <ul className="preferred-list">
                 { translation.preferred.map((translation, index) => {
@@ -97,33 +84,6 @@ export default class OtherLocales extends React.Component<Props> {
                     );
                 }) }
             </ul>
-=======
-        return <section>
-            <section className="other-locales">
-                <ul>
-                    { translation.preferred.map((translation, index) => {
-                        const lastPreferred = (index === preferredCount -1);
-
-                        return this.renderTranslations(
-                            translation,
-                            index,
-                            lastPreferred,
-                        );
-                    }) }
-                </ul>
-                <ul>
-                    { translation.other.map((translation, index) => {
-                        const lastPreferred = false;
-
-                        return this.renderTranslations(
-                            translation,
-                            index,
-                            lastPreferred,
-                        );
-                    }) }
-                </ul>
-            </section>
->>>>>>> Refactored translations and removed unneeded test
         </section>;
     }
 }

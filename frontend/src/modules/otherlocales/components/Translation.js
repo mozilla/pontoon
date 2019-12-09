@@ -44,11 +44,7 @@ export default class Translation extends React.Component<Props> {
     render() {
         const { entity, translation, parameters, isReadOnlyEditor } = this.props;
 
-<<<<<<< HEAD
         let className = 'translation';
-=======
-        let className = lastPreferred ? 'translation last-preferred' : 'translation';
->>>>>>> Refactored translations and removed unneeded test
 
         if (isReadOnlyEditor) {
             // Copying into the editor is not allowed
