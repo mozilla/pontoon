@@ -690,6 +690,7 @@ class Locale(AggregatedStats):
         return {
             'code': self.code,
             'name': self.name,
+            'pk': self.pk,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
