@@ -69,7 +69,7 @@ you create:
    The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
    Set to 'fxa' if you want to use 'Firefox Accounts' (corresponding FXA_* settings must be set).
    Set to 'github' if you want to use 'GitHub' (corresponding GITHUB_* settings must be set).
-   Set to 'gitlab' if you want to yse 'GitLab' (corresponding GITLAB_* settings must be set if required).
+   Set to 'gitlab' if you want to use 'GitLab' (corresponding GITLAB_* settings must be set if required).
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``CELERY_ALWAYS_EAGER``
@@ -108,7 +108,7 @@ you create:
    a system error. See `Heroku Reference`_ for more information.
 
 ``GITLAB_URL``
-   Optional. URL of your GitLab instace when ``AUTHENTICATION_METHOD=gitlab``.
+   Optional. URL of your GitLab instance when ``AUTHENTICATION_METHOD=gitlab``.
    If not defined, ``https://gitlab.com`` will be used by default.
 
 ``GOOGLE_ANALYTICS_KEY``
