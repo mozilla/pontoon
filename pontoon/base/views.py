@@ -334,7 +334,7 @@ def get_translations_from_other_locales(request):
             })
     else:
         other = translations
-        preferred_translations = {}
+        preferred_translations = []
 
     other_translations = _serialize_translation_values(other)
 
