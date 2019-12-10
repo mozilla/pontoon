@@ -285,12 +285,27 @@ def entities(request):
 
 
 def _serialize_translation_values(query):
+    translations = query.values(
+        'locale__pk',
+        'locale__code',
+        'locale__name',
+        'locale__direction',
+        'locale__script',
+        'string',
+    )
+
     return [
         {
-            'locale': translation.locale.serialize(),
-            'translation': translation.string,
+            'locale': {
+                'pk': translation['locale__pk'],
+                'code': translation['locale__code'],
+                'name': translation['locale__name'],
+                'direction': translation['locale__direction'],
+                'script': translation['locale__script'],
+            },
+            'translation': translation['string'],
         }
-        for translation in query
+        for translation in translations
     ]
 
 
@@ -313,7 +328,7 @@ def get_translations_from_other_locales(request):
     translations = Translation.objects.filter(
         entity=entity,
         plural_form=plural_form,
-        approved=True
+        approved=True,
     ).exclude(locale=locale).order_by('locale__name')
 
     if request.user.is_authenticated:
