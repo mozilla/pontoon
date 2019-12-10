@@ -55,7 +55,7 @@ export default class Helpers extends React.Component<Props> {
 
         const machineryCount = machinery.translations.length;
         const translations = otherlocales.translations;
-        const otherlocalesCount = translations.other.length || translations.preferred.length;
+        const otherlocalesCount = Object.keys(translations).length === 0;
 
         return <Tabs>
             <TabList>
@@ -71,7 +71,7 @@ export default class Helpers extends React.Component<Props> {
                     <Localized id='entitydetails-Helpers--locales'>
                         { 'Locales' }
                     </Localized>
-                    { !otherlocalesCount ? null :
+                    { otherlocalesCount ? null :
                     <OtherLocalesCount
                         otherlocales={ otherlocales }
                     />
