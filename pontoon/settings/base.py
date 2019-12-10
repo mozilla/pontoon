@@ -89,9 +89,6 @@ MICROSOFT_TRANSLATOR_API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_API_KEY', ''
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY', '')
 
-# GitLab
-GITLAB_URL = os.environ.get('GITLAB_URL', 'https://gitlab.com')
-
 # Raygun.io configuration
 RAYGUN4PY_CONFIG = {
     'api_key': os.environ.get('RAYGUN_APIKEY', '')
@@ -820,6 +817,9 @@ FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
 # Github
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
 GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
+
+# GitLab
+GITLAB_URL = os.environ.get('GITLAB_URL', 'https://gitlab.com')
 
 # Google Accounts
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
