@@ -8,9 +8,13 @@ from __future__ import absolute_import
 
 import os
 
+import dotenv
 from django.core.wsgi import get_wsgi_application
 from wsgi_sslify import sslify
 
+
+if 'DOTENV_PATH' in os.environ:
+    dotenv.read_dotenv(os.environ["DOTENV_PATH"])
 
 # Set settings env var before importing whitenoise as it depends on
 # some settings.
