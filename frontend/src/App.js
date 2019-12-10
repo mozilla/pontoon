@@ -104,6 +104,7 @@ class App extends React.Component<InternalProps> {
                 <Navigation />
                 <ResourceProgress
                     stats={ state.stats }
+                    parameters={ state.parameters }
                 />
                 <ProjectInfo
                     projectSlug={ state.parameters.project }

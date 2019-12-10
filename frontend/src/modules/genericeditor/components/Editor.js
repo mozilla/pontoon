@@ -12,17 +12,17 @@ import type { EditorProps } from 'core/editor';
 
 export class EditorBase extends React.Component<EditorProps> {
     componentDidMount() {
-        this.props.updateTranslation(this.props.activeTranslation, true);
+        this.props.updateTranslation(this.props.activeTranslationString, true);
     }
 
     componentDidUpdate(prevProps: EditorProps) {
-        const { pluralForm, entity, activeTranslation } = this.props;
+        const { pluralForm, entity, activeTranslationString } = this.props;
 
         if (
             pluralForm !== prevProps.pluralForm ||
             entity !== prevProps.entity
         ) {
-            this.props.updateTranslation(activeTranslation, true);
+            this.props.updateTranslation(activeTranslationString, true);
         }
     }
 

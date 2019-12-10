@@ -63,13 +63,8 @@ describe('<EditorMenu>', () => {
         const wrapper = createEditorMenu();
 
         // 3 buttons to control the editor.
-        expect(wrapper.find('button')).toHaveLength(3);
-    });
-
-    it('shows the Save button when forceSuggestions is off', () => {
-        const wrapper = createEditorMenu({ forceSuggestions: false });
-
-        expect(wrapper.find('.action-save').exists()).toBeTruthy();
+        expect(wrapper.find('button')).toHaveLength(2);
+        expect(wrapper.find('EditorMainAction')).toHaveLength(1);
     });
 
     it('hides the settings and actions when the user is logged out', () => {
