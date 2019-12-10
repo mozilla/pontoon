@@ -796,7 +796,7 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
-# Supported values: 'django', 'fxa', 'github', 'google'
+# Supported values: 'django', 'fxa', 'github', 'gitlab', 'google'
 AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
 
 
