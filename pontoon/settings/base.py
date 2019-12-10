@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.fxa',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.gitlab',
     'notifications',
     'graphene_django',
     'webpack_loader',
@@ -827,7 +828,11 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': FXA_SCOPE,
         'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
-    }
+    },
+    'gitlab': {
+        'GITLAB_URL': os.environ.get('GITLAB_URL', 'https://gitlab.com'),
+        'SCOPE': ['read_user'],
+    },
 }
 
 # Defined all trusted origins that will be returned in pontoon.js file.
