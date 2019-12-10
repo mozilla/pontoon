@@ -67,24 +67,23 @@ export default class OtherLocales extends React.Component<Props> {
         }
 
         return <section className="other-locales">
-                <ul className="preferred-list">
-                    { translation.preferred.map((translation, index) => {
+            <ul className="preferred-list">
+                { translation.preferred.map((translation, index) => {
+                    return this.renderTranslations(
+                        translation,
+                        index,
+                    );
+                }) }
+            </ul>
 
-                        return this.renderTranslations(
-                            translation,
-                            index,
-                        );
-                    }) }
-                </ul>
-                <ul>
-                    { translation.other.map((translation, index) => {
-
-                        return this.renderTranslations(
-                            translation,
-                            index,
-                        );
-                    }) }
-                </ul>
-            </section>;
+            <ul>
+                { translation.other.map((translation, index) => {
+                    return this.renderTranslations(
+                        translation,
+                        index,
+                    );
+                }) }
+            </ul>
+        </section>;
     }
 }

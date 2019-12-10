@@ -287,13 +287,7 @@ def entities(request):
 def _serialize_translation_values(query):
     return [
         {
-            'locale': {
-                'code': translation.locale.code,
-                'direction': translation.locale.direction,
-                'name': translation.locale.name,
-                'pk': translation.locale.pk,
-                'script': translation.locale.script,
-            },
+            'locale': translation.locale.serialize(),
             'translation': translation.string,
         }
         for translation in query
@@ -335,13 +329,7 @@ def get_translations_from_other_locales(request):
         if (request.user.profile.preferred_source_locale):
             # TODO: De-hardcode as part of bug 1328879.
             preferred_translations.insert(0, {
-                'locale': {
-                    'code': 'en-US',
-                    'direction': 'ltr',
-                    'name': 'English',
-                    'pk': 279,
-                    'script': 'latin',
-                },
+                'locale': Locale.objects.get(code='en-US').serialize(),
                 'translation': entity.string,
             })
     else:
