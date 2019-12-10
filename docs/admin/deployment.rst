@@ -45,6 +45,20 @@ Environment Variables
 The following is a list of environment variables you'll want to set on the app
 you create:
 
+.. NOTE::
+
+   Alternatively, you can put all variables below in a `dotenv
+   <https://github.com/theskumar/python-dotenv>`_ text file::
+
+      VAR="value 1"
+      OTHER_VAR="other value"
+
+   If you do so, you will only have to give the path of this file to Pontoon
+   through the ``DOTENV_PATH`` environment variable::
+
+      DOTENV_PATH=/path/to/my/config.env
+
+
 ``ADMIN_EMAIL``
    Optional. Email address for the ``ADMINS`` setting.
 
