@@ -28,7 +28,7 @@ type Props = {|
  */
 export default class OtherLocales extends React.Component<Props> {
     renderNoResults() {
-        return <section className="other-locales">
+        return <section className="history">
             <Localized id="history-history-no-translations">
                 <p>No translations available.</p>
             </Localized>
@@ -56,19 +56,19 @@ export default class OtherLocales extends React.Component<Props> {
             return null;
         }
 
-        const translation = otherlocales.translations;
+        const translations = otherlocales.translations;
 
         if (otherlocales.fetching) {
             return null;
         }
 
-        if (!translation.other.length && !translation.preferred.length) {
+        if (!translations.other.length && !translations.preferred.length) {
             return this.renderNoResults();
         }
 
         return <section className="other-locales">
             <ul className="preferred-list">
-                { translation.preferred.map((translation, index) => {
+                { translations.preferred.map((translation, index) => {
                     return this.renderTranslations(
                         translation,
                         index,
@@ -77,7 +77,7 @@ export default class OtherLocales extends React.Component<Props> {
             </ul>
 
             <ul>
-                { translation.other.map((translation, index) => {
+                { translations.other.map((translation, index) => {
                     return this.renderTranslations(
                         translation,
                         index,
