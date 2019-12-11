@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Check if FXA_* settings are configured
-        if settings.FXA_CLIENT_ID is not None or settings.FXA_SECRET_KEY is not None:
+        if settings.FXA_CLIENT_ID is not None and settings.FXA_SECRET_KEY is not None:
             fxa_data = dict(
                 name='FxA',
                 provider=FXA_PROVIDER_ID,
@@ -57,8 +57,8 @@ class Command(BaseCommand):
 
             self.update_provider(fxa_data)
 
-        # Check if GitHub_* settings are configured
-        if settings.GITHUB_CLIENT_ID is not None or settings.GITHUB_SECRET_KEY is not None:
+        # Check if GITHUB_* settings are configured
+        if settings.GITHUB_CLIENT_ID is not None and settings.GITHUB_SECRET_KEY is not None:
             github_data = dict(
                 name='GitHub',
                 provider=GITHUB_PROVIDER_ID,
@@ -79,7 +79,8 @@ class Command(BaseCommand):
 
             self.update_provider(gitlab_data)
 
-        if settings.GOOGLE_CLIENT_ID is not None or settings.GOOGLE_SECRET_KEY is not None:
+        # Check if GOOGLE_* settings are configured
+        if settings.GOOGLE_CLIENT_ID is not None and settings.GOOGLE_SECRET_KEY is not None:
             google_data = dict(
                 name='Google',
                 provider=GOOGLE_PROVIDER_ID,
