@@ -10,6 +10,7 @@ import os.path
 import re
 
 import Levenshtein
+import warnings
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
@@ -41,6 +42,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
+from django.utils.version import get_version
 
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
@@ -58,6 +60,7 @@ from pontoon.sync.vcs.repositories import (
     update_from_vcs,
     PullFromRepositoryException,
 )
+from distutils.version import LooseVersion
 
 
 log = logging.getLogger(__name__)
@@ -2299,8 +2302,23 @@ class EntityQuerySet(models.QuerySet):
     def get_or_create(self, defaults=None, **kwargs):
         return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
 
+    # This is the temporary solution and will be removed after the migration to Django 2.
+    # Ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1600344
     def bulk_update(self, objs, fields=None, batch_size=None):
+        if get_version() >= LooseVersion("2"):
+            msg = "Django version is 2 or higher. Function bulk_update need to be removed"
+            warnings.warn(msg, PendingDeprecationWarning)
+
+        for obj in objs:
+            if hasattr(obj, 'string'):
+                obj.word_count = get_word_count(obj.string)
+                obj.save()
+
         return bulk_update(objs, fields, batch_size)
+
+
+def get_word_count(string):
+    return len(re.findall(r'\w+', string))
 
 
 @python_2_unicode_compatible
