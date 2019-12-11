@@ -352,7 +352,7 @@ def get_translations_from_other_locales(request):
                 'translation': entity.string,
             })
     else:
-        other = translations.order_by('locale__name')
+        other = translations
         preferred_translations = []
 
     other_translations = _serialize_translation_values(other)

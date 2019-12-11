@@ -65,10 +65,6 @@ class Command(BaseCommand):
             )
 
             self.update_provider(github_data)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Fix bug 1597284: Add support for authenticating with Google (#1491)
 
         if settings.GOOGLE_CLIENT_ID is not None or settings.GOOGLE_SECRET_KEY is not None:
             google_data = dict(
@@ -79,8 +75,3 @@ class Command(BaseCommand):
             )
 
             self.update_provider(google_data)
-<<<<<<< HEAD
-=======
->>>>>>> Fix bug 1558484 - Add ability to log users in using GitHub (#1442)
-=======
->>>>>>> Fix bug 1597284: Add support for authenticating with Google (#1491)
