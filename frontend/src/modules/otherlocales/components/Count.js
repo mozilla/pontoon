@@ -14,12 +14,20 @@ export default class Count extends React.Component<Props> {
     render() {
         const { otherlocales } = this.props;
 
+        if (otherlocales.fetching) {
+            return null;
+        }
+
         if (!otherlocales.translations) {
             return null;
         }
 
         const otherlocalesCount = otherlocales.translations.other.length;
         const preferredLocalesCount = otherlocales.translations.preferred.length;
+
+        if (!otherlocalesCount && !preferredLocalesCount) {
+            return null;
+        }
 
         const preferred = (
             !preferredLocalesCount ? null :

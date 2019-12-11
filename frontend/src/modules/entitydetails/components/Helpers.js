@@ -49,33 +49,19 @@ export default class Helpers extends React.Component<Props> {
             searchMachinery,
         } = this.props;
 
-        if (!otherlocales.translations) {
-            return null;
-        }
-
-        const machineryCount = machinery.translations.length;
-        const translations = otherlocales.translations;
-        const otherlocalesCount = Object.keys(translations).length === 0;
-
         return <Tabs>
             <TabList>
                 <Tab>
                     <Localized id='entitydetails-Helpers--machinery'>
                         { 'Machinery' }
                     </Localized>
-                    { !machineryCount ? null :
                     <MachineryCount machinery={ machinery } />
-                    }
                 </Tab>
                 <Tab>
                     <Localized id='entitydetails-Helpers--locales'>
                         { 'Locales' }
                     </Localized>
-                    { otherlocalesCount ? null :
-                    <OtherLocalesCount
-                        otherlocales={ otherlocales }
-                    />
-                    }
+                    <OtherLocalesCount otherlocales={ otherlocales } />
                 </Tab>
             </TabList>
 

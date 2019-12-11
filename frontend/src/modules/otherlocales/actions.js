@@ -1,5 +1,7 @@
 /* @flow */
 
+import isEmpty from 'lodash.isempty';
+
 import api from 'core/api';
 
 import type { OtherLocaleTranslations } from 'core/api';
@@ -45,6 +47,12 @@ export function get(entity: number, locale: string): Function {
         await api.entity.abort();
 
         const content = await api.entity.getOtherLocales(entity, locale);
+
+        // The default return value of aborted requests is {},
+        // which is incompatible with reducer
+        if (isEmpty(content)) {
+            content = null;
+        }
 
         dispatch(receive(content));
     }
