@@ -187,16 +187,28 @@ th {
   position: absolute;
 }
 
-.table-sort th.asc i:after {
+.table-sort th.sort-order i:after {
   content: "";
   display: inline-block;
   margin-top: 5px;
 }
 
-.table-sort th.desc i:after {
+.table-sort th.rev-order i:after {
   content: "";
   display: inline-block;
   margin-top: -5px;
+}
+
+.table-sort th.priority.sort-order i:after {
+  content: "";
+  display: inline-block;
+  margin-top: -5px;
+}
+
+.table-sort th.priority.rev-order i:after {
+  content: "";
+  display: inline-block;
+  margin-top: 5px;
 }
 
 td {

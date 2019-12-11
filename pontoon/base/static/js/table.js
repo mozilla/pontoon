@@ -135,15 +135,15 @@ var Pontoon = (function (my) {
               table = node.parents('.table-sort'),
               list = table.find('tbody'),
               items = list.find('tr'),
-              dir = node.hasClass('asc') ? -1 : 1,
-              cls = node.hasClass('asc') ? 'desc' : 'asc';
+              dir = node.hasClass('sort-order') ? -1 : 1,
+              cls = node.hasClass('sort-order') ? 'rev-order' : 'sort-order';
 
           // Default value for rows which don't have a timestamp
           if (node.is('.deadline')) {
             var defaultTime = new Date(0).getTime();
           }
 
-          $(table).find('th').removeClass('asc desc');
+          $(table).find('th').removeClass('sort-order rev-order');
           node.addClass(cls);
 
           items.sort(function(a, b) {
@@ -190,7 +190,7 @@ var Pontoon = (function (my) {
 
             // Sort by priority
             } else if (node.is('.priority')) {
-              return (getPriority(a) - getPriority(b)) * dir;
+              return (getPriority(b) - getPriority(a)) * dir;
 
             // Sort by enabled state
             } else if (node.is('.check')) {
