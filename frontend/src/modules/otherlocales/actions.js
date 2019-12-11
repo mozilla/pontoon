@@ -46,7 +46,7 @@ export function get(entity: number, locale: string): Function {
         // Abort all previously running requests.
         await api.entity.abort();
 
-        const content = await api.entity.getOtherLocales(entity, locale);
+        let content = await api.entity.getOtherLocales(entity, locale);
 
         // The default return value of aborted requests is {},
         // which is incompatible with reducer
