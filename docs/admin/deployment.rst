@@ -107,10 +107,6 @@ you create:
    Optional. URL to the page displayed to your users when the application encounters
    a system error. See `Heroku Reference`_ for more information.
 
-``GITLAB_URL``
-   Optional. URL of your GitLab instance when ``AUTHENTICATION_METHOD=gitlab``.
-   If not defined, ``https://gitlab.com`` will be used by default.
-
 ``GOOGLE_ANALYTICS_KEY``
    Optional. Set your `Google Analytics key`_ to use Google Analytics.
 
