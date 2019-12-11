@@ -81,7 +81,7 @@ class TagsResourcesTool(TagsDataTool):
         """
         return self.get(slug).values('path', 'project')
 
-    def link(self, tag, resources=None):
+    def link(self, tag, resources):
         """ Associate Resources with a Tag. The Resources can be selected
         either by passing a search query to match, or by passing a list
         of Resource paths
@@ -97,12 +97,11 @@ class TagsResourcesTool(TagsDataTool):
                     path=resource["path"])
             tag.resources.add(*list(_resources))
 
-    def unlink(self, tag, resources=None):
+    def unlink(self, tag, resources):
         """
         Unassociate Resources from a Tag.
 
         The Resources can be selected by passing a list of Resource paths.
-        Remove all resources by default.
         """
         query = Q(project__in=self.projects) if self.projects else Q()
         if resources is not None:
@@ -112,8 +111,6 @@ class TagsResourcesTool(TagsDataTool):
                     project=resource["project"],
                     path=resource["path"])
             self.tag_manager.filter(query).get(slug=tag).resources.remove(*list(_resources))
-        else:
-            self.tag_manager.filter(query).get(slug=tag).resources.clear()
 
     def _validate_resource(self, tag, resource_project):
         if tag.project_id and resource_project != tag.project_id:
