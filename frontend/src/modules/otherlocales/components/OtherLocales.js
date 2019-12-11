@@ -28,7 +28,7 @@ type Props = {|
  */
 export default class OtherLocales extends React.Component<Props> {
     renderNoResults() {
-        return <section className="history">
+        return <section className="other-locales">
             <Localized id="history-history-no-translations">
                 <p>No translations available.</p>
             </Localized>
