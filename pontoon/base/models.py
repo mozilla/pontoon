@@ -690,6 +690,7 @@ class Locale(AggregatedStats):
         return {
             'code': self.code,
             'name': self.name,
+            'pk': self.pk,
             'nplurals': self.nplurals,
             'plural_rule': self.plural_rule,
             'cldr_plurals': self.cldr_plurals_list(),
@@ -1372,14 +1373,13 @@ class UserProfile(models.Model):
     )
 
     @property
-    def sorted_locales(self):
-        locales = Locale.objects.filter(pk__in=self.locales_order)
-        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
+    def preferred_locales(self):
+        return Locale.objects.filter(pk__in=self.locales_order)
 
     @property
-    def sorted_locales_codes(self):
-        """Return the codes of locales that contributor set in his preferences."""
-        return [l.code for l in self.sorted_locales]
+    def sorted_locales(self):
+        locales = self.preferred_locales
+        return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
 
 
 @python_2_unicode_compatible

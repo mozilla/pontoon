@@ -2,7 +2,7 @@
 
 import { RECEIVE, REQUEST } from './actions';
 
-import type { OtherLocaleTranslation } from 'core/api';
+import type { OtherLocaleTranslations } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
 
@@ -15,14 +15,14 @@ type Action =
 export type LocalesState = {|
     +fetching: boolean,
     +entity: ?number,
-    +translations: Array<OtherLocaleTranslation>,
+    +translations: ?OtherLocaleTranslations
 |};
 
 
 const initialState = {
     fetching: false,
     entity: null,
-    translations: [],
+    translations: null,
 };
 
 export default function reducer(
@@ -35,7 +35,7 @@ export default function reducer(
                 ...state,
                 fetching: true,
                 entity: action.entity,
-                translations: [],
+                translations: null,
             };
         case RECEIVE:
             return {

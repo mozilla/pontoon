@@ -7,35 +7,45 @@ import type { LocalesState } from 'modules/otherlocales';
 
 type Props = {|
     otherlocales: LocalesState,
-    preferredLocalesCount: number,
 |};
 
 
 export default class Count extends React.Component<Props> {
     render() {
-        const { otherlocales, preferredLocalesCount } = this.props;
+        const { otherlocales } = this.props;
 
-        const otherlocalesCount = otherlocales.translations.length;
+        if (otherlocales.fetching) {
+            return null;
+        }
 
-        const remainingCount = otherlocalesCount - preferredLocalesCount;
+        if (!otherlocales.translations) {
+            return null;
+        }
+
+        const otherlocalesCount = otherlocales.translations.other.length;
+        const preferredLocalesCount = otherlocales.translations.preferred.length;
+
+        if (!otherlocalesCount && !preferredLocalesCount) {
+            return null;
+        }
 
         const preferred = (
             !preferredLocalesCount ? null :
             <span className='preferred'>{ preferredLocalesCount }</span>
         );
-        const remaining = (
-            !remainingCount ? null :
-            <span>{ remainingCount }</span>
+        const other = (
+            !otherlocalesCount ? null :
+            <span>{ otherlocalesCount }</span>
         );
         const plus = (
-            !remainingCount || !preferredLocalesCount ? null :
+            !otherlocalesCount || !preferredLocalesCount ? null :
             <span>{ '+' }</span>
         );
 
         return <span className='count'>
             { preferred }
             { plus }
-            { remaining }
+            { other }
         </span>;
     }
 }
