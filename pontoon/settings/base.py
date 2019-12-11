@@ -820,6 +820,8 @@ GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
 
 # GitLab
 GITLAB_URL = os.environ.get('GITLAB_URL', 'https://gitlab.com')
+GITLAB_CLIENT_ID = os.environ.get('GITLAB_CLIENT_ID')
+GITLAB_SECRET_KEY = os.environ.get('GITLAB_SECRET_KEY')
 
 # Google Accounts
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')

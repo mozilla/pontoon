@@ -11,11 +11,13 @@ from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.fxa.provider import FirefoxAccountsProvider
 from allauth.socialaccount.providers.github.provider import GitHubProvider
+from allauth.socialaccount.providers.gitlab.provider import GitLabProvider
 from allauth.socialaccount.providers.google.provider import GoogleProvider
 
 
 FXA_PROVIDER_ID = FirefoxAccountsProvider.id
 GITHUB_PROVIDER_ID = GitHubProvider.id
+GITLAB_PROVIDER_ID = GitLabProvider.id
 GOOGLE_PROVIDER_ID = GoogleProvider.id
 
 
@@ -65,6 +67,17 @@ class Command(BaseCommand):
             )
 
             self.update_provider(github_data)
+
+        # Check if GITLAB_* settings are configured
+        if settings.GITLAB_CLIENT_ID is not None and settings.GITLAB_SECRET_KEY is not None:
+            gitlab_data = dict(
+                name='GitLab',
+                provider=GITLAB_PROVIDER_ID,
+                client_id=settings.GITLAB_CLIENT_ID,
+                secret=settings.GITLAB_SECRET_KEY
+            )
+
+            self.update_provider(gitlab_data)
 
         if settings.GOOGLE_CLIENT_ID is not None or settings.GOOGLE_SECRET_KEY is not None:
             google_data = dict(
