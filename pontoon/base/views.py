@@ -284,6 +284,31 @@ def entities(request):
     return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
 
 
+def _serialize_translation_values(query):
+    translations = query.values(
+        'locale__pk',
+        'locale__code',
+        'locale__name',
+        'locale__direction',
+        'locale__script',
+        'string',
+    )
+
+    return [
+        {
+            'locale': {
+                'pk': translation['locale__pk'],
+                'code': translation['locale__code'],
+                'name': translation['locale__name'],
+                'direction': translation['locale__direction'],
+                'script': translation['locale__script'],
+            },
+            'translation': translation['string'],
+        }
+        for translation in translations
+    ]
+
+
 @utils.require_AJAX
 def get_translations_from_other_locales(request):
     """Get entity translations for all but specified locale."""
@@ -297,19 +322,42 @@ def get_translations_from_other_locales(request):
         }, status=400)
 
     entity = get_object_or_404(Entity, pk=entity)
-    locales = entity.resource.project.locales.exclude(code=locale)
+    locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
 
     translations = Translation.objects.filter(
         entity=entity,
-        locale__in=locales,
         plural_form=plural_form,
-        approved=True
-    ).order_by('locale__name')
+        approved=True,
+    ).exclude(locale=locale).order_by('locale__name')
 
-    payload = list(translations.values(
-        'locale__code', 'locale__name', 'locale__direction', 'locale__script', 'string'
-    ))
+    if request.user.is_authenticated:
+        preferred_locales = request.user.profile.preferred_locales
+        preferred = translations.filter(locale__in=preferred_locales)
+        other = translations.exclude(locale__in=preferred_locales)
+
+        preferred_translations = sorted(
+            _serialize_translation_values(preferred),
+            key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
+        )
+
+        if (request.user.profile.preferred_source_locale):
+            # TODO: De-hardcode as part of bug 1328879.
+            preferred_translations.insert(0, {
+                'locale': Locale.objects.get(code='en-US').serialize(),
+                'translation': entity.string,
+            })
+    else:
+        other = translations
+        preferred_translations = []
+
+    other_translations = _serialize_translation_values(other)
+
+    payload = {
+        'preferred': preferred_translations,
+        'other': other_translations,
+    }
+
     return JsonResponse(payload, safe=False)
 
 
@@ -761,7 +809,6 @@ def user_data(request):
             'quality_checks': user.profile.quality_checks,
             'force_suggestions': user.profile.force_suggestions,
         },
-        'preferred_locales': user.profile.sorted_locales_codes,
         'tour_status': user.profile.tour_status,
         'logout_url': logout_url,
         'gravatar_url_small': user.gravatar_url(88),

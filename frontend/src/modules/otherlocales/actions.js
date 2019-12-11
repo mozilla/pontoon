@@ -1,8 +1,10 @@
 /* @flow */
 
+import isEmpty from 'lodash.isempty';
+
 import api from 'core/api';
 
-import type { OtherLocaleTranslation } from 'core/api';
+import type { OtherLocaleTranslations } from 'core/api';
 
 
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
@@ -11,10 +13,10 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +translations: Array<OtherLocaleTranslation>,
+    +translations: ?OtherLocaleTranslations,
 |};
 export function receive(
-    translations: Array<OtherLocaleTranslation>
+    translations: ?OtherLocaleTranslations
 ): ReceiveAction {
     return {
         type: RECEIVE,
@@ -44,7 +46,13 @@ export function get(entity: number, locale: string): Function {
         // Abort all previously running requests.
         await api.entity.abort();
 
-        const content = await api.entity.getOtherLocales(entity, locale);
+        let content = await api.entity.getOtherLocales(entity, locale);
+
+        // The default return value of aborted requests is {},
+        // which is incompatible with reducer
+        if (isEmpty(content)) {
+            content = null;
+        }
 
         dispatch(receive(content));
     }

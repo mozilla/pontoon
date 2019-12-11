@@ -43,13 +43,26 @@ export type Entities = Array<Entity>;
 
 
 /*
- * Translation of an entity in a locale other than the currently selected.
+ * A collection of translations of an entity to a locale other than
+ * the currently selected locale.
+ */
+export type OtherLocaleTranslations = {|
+    +preferred: Array<OtherLocaleTranslation>,
+    +other: Array<OtherLocaleTranslation>,
+|};
+
+
+/*
+ * Translation of an entity in a locale other than the currently selected locale.
  */
 export type OtherLocaleTranslation = {|
-    +code: string,
-    +locale: string,
-    +direction: string,
-    +script: string,
+    +locale: {|
+        +code: string,
+        +name: string,
+        +pk: number,
+        +direction: string,
+        +script: string,
+    |},
     +translation: string,
 |};
 
