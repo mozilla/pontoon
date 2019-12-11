@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.fxa',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.gitlab',
     'notifications',
     'graphene_django',
     'webpack_loader',
@@ -792,7 +793,7 @@ CORS_URLS_REGEX = r'^/(pontoon\.js|graphql/?)$'
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = 'pontoon.base.adapter.PontoonSocialAdapter'
 
-# Supported values: 'django', 'fxa', 'github', 'google'
+# Supported values: 'django', 'fxa', 'github', 'gitlab', 'google'
 AUTHENTICATION_METHOD = os.environ.get('AUTHENTICATION_METHOD', 'django')
 
 
@@ -807,19 +808,24 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_DISPLAY = account_username
 
 # Firefox Accounts
-FXA_CLIENT_ID = os.environ.get('FXA_CLIENT_ID', '')
-FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY', '')
+FXA_CLIENT_ID = os.environ.get('FXA_CLIENT_ID')
+FXA_SECRET_KEY = os.environ.get('FXA_SECRET_KEY')
 FXA_OAUTH_ENDPOINT = os.environ.get('FXA_OAUTH_ENDPOINT', '')
 FXA_PROFILE_ENDPOINT = os.environ.get('FXA_PROFILE_ENDPOINT', '')
 FXA_SCOPE = ['profile:uid', 'profile:display_name', 'profile:email']
 
 # Github
-GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
-GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY', '')
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
+GITHUB_SECRET_KEY = os.environ.get('GITHUB_SECRET_KEY')
+
+# GitLab
+GITLAB_URL = os.environ.get('GITLAB_URL', 'https://gitlab.com')
+GITLAB_CLIENT_ID = os.environ.get('GITLAB_CLIENT_ID')
+GITLAB_SECRET_KEY = os.environ.get('GITLAB_SECRET_KEY')
 
 # Google Accounts
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
-GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY', '')
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_SECRET_KEY = os.environ.get('GOOGLE_SECRET_KEY')
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
@@ -827,7 +833,11 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': FXA_SCOPE,
         'OAUTH_ENDPOINT': FXA_OAUTH_ENDPOINT,
         'PROFILE_ENDPOINT': FXA_PROFILE_ENDPOINT,
-    }
+    },
+    'gitlab': {
+        'GITLAB_URL': GITLAB_URL,
+        'SCOPE': ['read_user'],
+    },
 }
 
 # Defined all trusted origins that will be returned in pontoon.js file.
