@@ -26,7 +26,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity, OtherLocaleTranslation } from 'core/api';
+import type { Entity } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -48,8 +48,6 @@ type Props = {|
     nextEntity: Entity,
     previousEntity: Entity,
     otherlocales: LocalesState,
-    orderedOtherLocales: Array<OtherLocaleTranslation>,
-    preferredLocalesCount: number,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
@@ -328,8 +326,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     locale={ state.locale }
                     machinery={ state.machinery }
                     otherlocales={ state.otherlocales }
-                    orderedOtherLocales={ state.orderedOtherLocales }
-                    preferredLocalesCount={ state.preferredLocalesCount }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
@@ -353,8 +349,6 @@ const mapStateToProps = (state: Object): Props => {
         nextEntity: entities.selectors.getNextEntity(state),
         previousEntity: entities.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
-        orderedOtherLocales: otherlocales.selectors.getOrderedOtherLocales(state),
-        preferredLocalesCount: otherlocales.selectors.getPreferredLocalesCount(state),
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,

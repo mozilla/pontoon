@@ -7,10 +7,13 @@
     margin: 0;
 }
 
+.other-locales > ul:first-child {
+    padding-top: 10px;
+}
+
 .other-locales > p {
     border-bottom: 1px solid #5E6475;
     color: #aaa;
     font-style: italic;
-    min-height: 22px;
-    padding: 5px 10px 20px 10px;
+    padding: 15px 10px;
 }

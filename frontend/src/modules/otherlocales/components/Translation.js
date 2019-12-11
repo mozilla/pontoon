@@ -18,7 +18,6 @@ type Props = {|
     translation: Object,
     parameters: NavigationParams,
     updateEditorTranslation: (string, string) => void,
-    lastPreferred: boolean,
 |};
 
 
@@ -43,9 +42,9 @@ export default class Translation extends React.Component<Props> {
     }
 
     render() {
-        const { entity, translation, parameters, lastPreferred, isReadOnlyEditor } = this.props;
+        const { entity, translation, parameters, isReadOnlyEditor } = this.props;
 
-        let className = lastPreferred ? 'translation last-preferred' : 'translation';
+        let className = 'translation';
 
         if (isReadOnlyEditor) {
             // Copying into the editor is not allowed
@@ -59,28 +58,41 @@ export default class Translation extends React.Component<Props> {
                 onClick={ this.copyTranslationIntoEditor }
             >
                 <header>
-                    <Localized
-                        id='otherlocales-Translation--header-link'
-                        attrs={{ title: true }}
-                        $locale={ translation.locale }
-                        $code={ translation.code }
-                    >
-                        <Link
-                            to={ `/${translation.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            title='Open string in { $locale } ({ $code })'
-                            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                    { translation.locale.code === 'en-US' ?
+                        <Localized
+                            id='otherlocales-Translation--header-link'
+                            $locale={ translation.locale.name }
+                            $code={ translation.locale.code }
                         >
-                            { translation.locale }
-                            <span>{ translation.code }</span>
-                        </Link>
-                    </Localized>
+                            <div>
+                                { translation.locale.name }
+                                <span>{ translation.locale.code }</span>
+                            </div>
+                        </Localized>
+                    :
+                        <Localized
+                            id='otherlocales-Translation--header-link'
+                            attrs={{ title: true }}
+                            $locale={ translation.locale.name }
+                            $code={ translation.locale.code }
+                        >
+                            <Link
+                                to={ `/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                title='Open string in { $locale } ({ $code })'
+                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                            >
+                                { translation.locale.name }
+                                <span>{ translation.locale.code }</span>
+                            </Link>
+                        </Localized>
+                    }
                 </header>
                 <p
-                    lang={ translation.code }
-                    dir={ translation.direction }
-                    script={ translation.script }
+                    lang={ translation.locale.code }
+                    dir={ translation.locale.direction }
+                    script={ translation.locale.script }
                 >
                     <TranslationProxy
                         content={ translation.translation }

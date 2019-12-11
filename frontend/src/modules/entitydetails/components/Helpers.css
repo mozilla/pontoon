@@ -68,7 +68,3 @@
 .react-tabs__tab-panel {
     height: calc(100% - 44px);
 }
-
-.react-tabs__tab-panel > section {
-    padding-top: 10px;
-}
