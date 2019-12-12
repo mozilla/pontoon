@@ -187,7 +187,7 @@ def test_util_tags_stats_tool_groupby_locale(
 
     # this is only used with slug set to a unique slug, and doesnt work
     # correctly without
-    if name in ['slug_glob', 'party_glob'] or not kwargs.get('slug'):
+    if name == 'slug_contains' or not kwargs.get('slug'):
         kwargs['slug'] = tag_matrix['tags'][0].slug
 
     stats_tool = TagsStatsTool(groupby="locale", **kwargs)
