@@ -187,15 +187,15 @@ th {
   position: absolute;
 }
 
-.table-sort th.default-order i:after,
-.table-sort th.desc-sort.reverse-order i:after {
+.table-sort th.asc i:after,
+.table-sort th.desc.inverted i:after {
   content: "";
   display: inline-block;
   margin-top: 5px;
 }
 
-.table-sort th.reverse-order i:after,
-.table-sort th.desc-sort.default-order i:after {
+.table-sort th.desc i:after,
+.table-sort th.asc.inverted i:after {
   content: "";
   display: inline-block;
   margin-top: -5px;

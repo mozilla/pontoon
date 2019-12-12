@@ -135,15 +135,15 @@ var Pontoon = (function (my) {
               table = node.parents('.table-sort'),
               list = table.find('tbody'),
               items = list.find('tr'),
-              dir = node.hasClass('default-order') ? -1 : 1,
-              cls = node.hasClass('default-order') ? 'reverse-order' : 'default-order';
+              dir = node.hasClass('asc') ? -1 : 1,
+              cls = node.hasClass('asc') ? 'desc' : 'asc';
 
           // Default value for rows which don't have a timestamp
           if (node.is('.deadline')) {
             var defaultTime = new Date(0).getTime();
           }
 
-          $(table).find('th').removeClass('default-order reverse-order');
+          $(table).find('th').removeClass('asc desc');
           node.addClass(cls);
 
           items.sort(function(a, b) {
