@@ -11,6 +11,7 @@ import re
 
 import Levenshtein
 import warnings
+import django
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
