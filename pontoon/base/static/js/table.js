@@ -168,7 +168,7 @@ var Pontoon = (function (my) {
 
             // Sort by unreviewed state
             } else if (node.is('.unreviewed-status')) {
-              return (getUnreviewed(a) - getUnreviewed(b)) * dir;
+              return (getUnreviewed(b) - getUnreviewed(a)) * dir;
 
             // Sort by deadline
             } else if (node.is('.deadline')) {
@@ -190,7 +190,7 @@ var Pontoon = (function (my) {
 
             // Sort by priority
             } else if (node.is('.priority')) {
-              return (getPriority(a) - getPriority(b)) * dir;
+              return (getPriority(b) - getPriority(a)) * dir;
 
             // Sort by enabled state
             } else if (node.is('.check')) {
