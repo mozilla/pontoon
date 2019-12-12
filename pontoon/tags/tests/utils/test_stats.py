@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-import fnmatch
-
 import pytest
 from mock import MagicMock, patch, PropertyMock
 
@@ -159,18 +157,23 @@ def test_util_tags_stats_tool_get_data_matrix(
     assert isinstance(data, QuerySet)
     _tags = calculate_tags(**kwargs)
     assert_tags(_tags, data)
-    if "exact" in name:
+
+    if name.endswith("_exact"):
         assert len(data) == 1
-    if "glob" in name:
-        assert len(data) > 1
-        assert len(data) < len(tag_matrix['tags'])
-    if "no_match" in name:
+    elif name.endswith("_no_match"):
         assert len(data) == 0
-    elif "match" in name:
+    elif name.endswith('_match'):
         assert len(data) > 0
-    if kwargs.get("slug"):
+    elif name.endswith('_contains'):
+        assert 1 < len(data) < len(tag_matrix['tags'])
+    elif name == 'empty':
+        pass
+    else:
+        raise ValueError("Unsupported assertion type: {}".format(name))
+
+    if name.startswith('slug_') and "slug" in kwargs:
         for result in data:
-            assert fnmatch.fnmatch(result['slug'], kwargs["slug"])
+            assert kwargs["slug"] in result["slug"]
 
 
 @pytest.mark.django_db
@@ -184,7 +187,7 @@ def test_util_tags_stats_tool_groupby_locale(
 
     # this is only used with slug set to a unique slug, and doesnt work
     # correctly without
-    if name in ['slug_glob', 'party_glob'] or not kwargs.get('slug'):
+    if name == 'slug_contains' or not kwargs.get('slug'):
         kwargs['slug'] = tag_matrix['tags'][0].slug
 
     stats_tool = TagsStatsTool(groupby="locale", **kwargs)

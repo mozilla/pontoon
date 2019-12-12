@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from django.utils.functional import cached_property
 
-from pontoon.base.utils import glob_to_regex
 from pontoon.tags.models import Tag
 
 from .base import Clonable
@@ -79,7 +78,7 @@ class TagsTool(Clonable):
         tags = self.tag_manager.filter(project__in=self.projects).values(
             "pk", "name", "slug", "priority", "project")
         if slug:
-            return tags.filter(slug__regex=glob_to_regex(slug))
+            return tags.filter(slug__contains=slug)
         return tags
 
     def iter_tags(self, tags):

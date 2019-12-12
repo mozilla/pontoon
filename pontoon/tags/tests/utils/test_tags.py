@@ -195,9 +195,7 @@ def test_util_tags_tool_iter_tags(tag_mock, trans_mock):
 
 @patch('pontoon.tags.utils.TagsTool.tag_manager',
        new_callable=PropertyMock)
-@patch('pontoon.tags.utils.tags.glob_to_regex')
-def test_util_tags_tool_get_tags(glob_mock, tag_mock):
-    glob_mock.return_value = 17
+def test_util_tags_tool_get_tags(tag_mock):
     filter_mock = MagicMock(
         **{'filter.return_value': 23})
     tag_mock.configure_mock(
@@ -207,7 +205,6 @@ def test_util_tags_tool_get_tags(glob_mock, tag_mock):
     # no slug provided, returns `values`
     assert tags_tool.get_tags() is filter_mock
     assert not filter_mock.called
-    assert not glob_mock.called
     assert (
         list(tag_mock.return_value.filter.return_value.values.call_args)
         == [('pk', 'name', 'slug', 'priority', 'project'), {}])
@@ -218,8 +215,7 @@ def test_util_tags_tool_get_tags(glob_mock, tag_mock):
     assert tags_tool.get_tags('FOO') == 23
     assert (
         list(filter_mock.filter.call_args)
-        == [(), {'slug__regex': 17}])
-    assert list(glob_mock.call_args) == [('FOO',), {}]
+        == [(), {'slug__contains': 'FOO'}])
     assert (
         list(tag_mock.return_value.filter.return_value.values.call_args)
         == [('pk', 'name', 'slug', 'priority', 'project'), {}])
