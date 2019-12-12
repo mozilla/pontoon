@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import fnmatch
 import functools
 from collections import OrderedDict
 from datetime import datetime
@@ -96,11 +95,11 @@ def _tag_iterator(things, **kwargs):
             continue
         if projects and thing["project"] not in projects:
             continue
-        if path and not fnmatch.fnmatch(thing['path'], path):
+        if path and path not in thing['path']:
             continue
         for tag in resource_tags.get(thing['resource'], []):
             __, _slug, __ = tag
-            if slug and not fnmatch.fnmatch(_slug, slug):
+            if slug and slug not in _slug:
                 continue
             yield thing, tag
 
@@ -262,7 +261,7 @@ _tag_kwargs = OrderedDict(
      ('path_match', dict(path=11)),
      ('slug_no_match', dict(slug="NOSLUGSHERE")),
      ('slug_exact', dict(slug=23)),
-     ('slug_glob', dict(slug="factory*7"))))
+     ('slug_contains', dict(slug="factorytag7"))))
 
 
 @pytest.fixture(params=_tag_kwargs)
@@ -286,7 +285,7 @@ def tag_test_kwargs(request, tag_matrix):
 
     Parameters suffixed with `_exact` expect exactly 1 result.
 
-    Parameters suffixed with `_glob` expect more than 1 result.
+    Parameters suffixed with `_contains` expect more than 1 result.
 
     Finally, parameters suffixed with `_no_match` expect 0 results.
     """

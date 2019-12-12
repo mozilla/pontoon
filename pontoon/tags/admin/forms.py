@@ -4,7 +4,6 @@ from django import forms
 from django.utils.functional import cached_property
 
 from pontoon.base.models import Resource
-from pontoon.base.utils import glob_to_regex
 from pontoon.tags.utils import TagsTool
 
 
@@ -81,8 +80,8 @@ class LinkTagResourcesAdminForm(forms.Form):
         qs = self.resources
         if self.cleaned_data['search']:
             qs = qs.filter(
-                path__regex=glob_to_regex(
-                    self.cleaned_data['search']))
+                path__contains=self.cleaned_data['search']
+            )
         return qs.values_list('path')
 
     def _clean_paths_for_submit(self):
