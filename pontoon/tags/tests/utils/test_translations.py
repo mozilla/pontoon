@@ -40,15 +40,19 @@ def test_util_tags_translation_tool_get_data(
     for k, (pk, date) in exp.items():
         assert data[k]['date'] == date
         assert data[k]['string'] == translations.get(pk).string
-    if "exact" in name:
+
+    if name.endswith('_exact'):
         assert len(data) == 1
-    if "glob" in name:
-        assert len(data) > 1
-        assert len(data) < len(tag_matrix['tags'])
-    if "no_match" in name:
+    elif name.endswith('_no_match'):
         assert len(data) == 0
-    elif "match" in name:
+    elif name.endswith('_match'):
         assert len(data) > 0
+    elif name.endswith('_contains'):
+        assert 1 < len(data) < len(tag_matrix['tags'])
+    elif name == 'empty':
+        pass
+    else:
+        raise ValueError('Unsupported assertion type: {}'.format(name))
 
 
 @patch('pontoon.tags.utils.TagsLatestTranslationsTool.get_data')
