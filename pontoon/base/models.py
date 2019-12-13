@@ -3415,3 +3415,6 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(Translation)
     comment = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.translation.string
