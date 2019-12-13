@@ -1,9 +1,11 @@
 /* @flow */
 
 import {
+    END_UPDATE_TRANSLATION,
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
     SET_INITIAL_TRANSLATION,
+    START_UPDATE_TRANSLATION,
     UPDATE,
     UPDATE_FAILED_CHECKS,
     UPDATE_SELECTION,
@@ -11,9 +13,11 @@ import {
 
 import type {
     FailedChecks,
+    EndUpdateTranslationAction,
+    InitialTranslationAction,
     ResetFailedChecksAction,
     ResetSelectionAction,
-    InitialTranslationAction,
+    StartUpdateTranslationAction,
     Translation,
     UpdateAction,
     UpdateFailedChecksAction,
@@ -22,9 +26,11 @@ import type {
 
 
 type Action =
+    | EndUpdateTranslationAction
+    | InitialTranslationAction
     | ResetFailedChecksAction
     | ResetSelectionAction
-    | InitialTranslationAction
+    | StartUpdateTranslationAction
     | UpdateAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
@@ -58,6 +64,11 @@ export type EditorState = {|
     //   - 'submitted': failed checks of the submitted translation
     //   - number (translationId): failed checks of the approved translation
     +source: '' | 'stored' | 'submitted' | number,
+
+    // True when there is a request to send a new translation running, false
+    // otherwise. Used to prevent duplicate actions from users spamming their
+    // keyboard or mouse.
+    +isRunningRequest: boolean,
 |};
 
 
@@ -91,6 +102,7 @@ const initial: EditorState = {
     errors: [],
     warnings: [],
     source: '',
+    isRunningRequest: false,
 };
 
 export default function reducer(
@@ -98,11 +110,17 @@ export default function reducer(
     action: Action,
 ): EditorState {
     switch (action.type) {
+        case END_UPDATE_TRANSLATION:
+            return {
+                ...state,
+                isRunningRequest: false,
+            };
         case UPDATE:
             return {
                 ...state,
                 translation: action.translation,
                 changeSource: action.changeSource,
+                source: '',
             };
         case UPDATE_FAILED_CHECKS:
             return {
@@ -121,6 +139,11 @@ export default function reducer(
             return {
                 ...state,
                 initialTranslation: action.translation,
+            };
+        case START_UPDATE_TRANSLATION:
+            return {
+                ...state,
+                isRunningRequest: true,
             };
         case RESET_FAILED_CHECKS:
             return {

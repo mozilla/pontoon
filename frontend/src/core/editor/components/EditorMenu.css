@@ -22,6 +22,10 @@
     color: #7BC876;
 }
 
+.editor-menu .actions button .fa {
+    margin-right: 4px;
+}
+
 .editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
