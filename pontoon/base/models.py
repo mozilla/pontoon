@@ -3408,3 +3408,10 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(User)
+    timestamp = models.DateTimeField(default=timezone.now)
+    translation = models.ForeignKey(Translation)
+    comment = models.TextField(blank=True)
