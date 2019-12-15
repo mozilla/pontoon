@@ -2633,6 +2633,12 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         for entity in entities:
             translation_array = []
+            translation_comments_array = []
+
+            translation_id = Translation.objects.filter(locale=locale, entity=entity).values('id')
+            translation_comments = Comment.objects.filter(translation=translation_id).values()
+            for comment in translation_comments:
+                translation_comments_array.append(comment)
 
             original = entity.string
             original_plural = entity.string_plural
