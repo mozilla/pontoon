@@ -47,7 +47,6 @@ describe('<EditorMainAction>', () => {
     });
 
     it('shows a spinner and a disabled Suggesting button when running request', () => {
-        const updateStatus = sinon.mock();
         const params = {
             isTranslator: true,
             forceSuggestions: true,
@@ -84,7 +83,6 @@ describe('<EditorMainAction>', () => {
     });
 
     it('shows a spinner and a disabled Saving button when running request', () => {
-        const updateStatus = sinon.mock();
         const params = {
             isTranslator: true,
             isRunningRequest: true,
