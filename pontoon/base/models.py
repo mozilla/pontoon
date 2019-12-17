@@ -2635,8 +2635,8 @@ class Entity(DirtyFieldsMixin, models.Model):
             translation_array = []
             translation_comments_array = []
 
-            translation_id = Translation.objects.filter(locale=locale, entity=entity).values('id')
-            translation_comments = Comment.objects.filter(translation=translation_id).values()
+            translation = entity.get_active_translation()
+            translation_comments = Comment.objects.filter(translation=translation).values()
             for comment in translation_comments:
                 translation_comments_array.append(comment)
 
