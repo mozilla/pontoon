@@ -113,7 +113,7 @@ def test_util_latest_activity():
     # check user is created if present
     activity = LatestActivity(dict(user__email=43))
     assert isinstance(activity.user, LatestActivityUser)
-    assert activity.user.user == {'user__email': 43}
+    assert activity.user.activity == {'user__email': 43}
 
     # check translation is created if present
     activity = LatestActivity(dict(string='foo'))
@@ -127,7 +127,7 @@ def test_util_latest_activity_user(avatar_mock):
     avatar_mock.return_value = 113
 
     # call with random user data - defaults
-    user = LatestActivityUser(dict(foo='bar'))
+    user = LatestActivityUser(dict(foo='bar'), 'submitted')
     assert user.email is None
     assert user.first_name is None
     assert user.name_or_email is None
@@ -135,7 +135,9 @@ def test_util_latest_activity_user(avatar_mock):
 
     # call with email - user data added
     user = LatestActivityUser(
-        dict(user__email='bar@ba.z'))
+        dict(user__email='bar@ba.z'),
+        'submitted',
+    )
     assert user.email == 'bar@ba.z'
     assert user.first_name is None
     assert user.name_or_email == 'bar@ba.z'
@@ -146,8 +148,9 @@ def test_util_latest_activity_user(avatar_mock):
 
     # call with email and name - correct name
     user = LatestActivityUser(
-        dict(user__email='bar@ba.z',
-             user__name='FOOBAR'))
+        dict(user__email='bar@ba.z', user__name='FOOBAR'),
+        'submitted',
+    )
     assert user.email == 'bar@ba.z'
     assert user.first_name is None
     assert user.name_or_email == 'bar@ba.z'
