@@ -414,6 +414,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             format={ entity.format }
                         />
                     </p>
+                    <p>
+                        { entity.translation_comments.map(comment => {
+                            return comment.comment
+                        })}
+                    </p>
                 </div>
             </li>
         </Localized>;
