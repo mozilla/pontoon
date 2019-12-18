@@ -41,12 +41,19 @@ class TagsLatestTranslationsTool(TagsTRTool):
                 Q(**{'date': tr["last_change"],
                      self.groupby_prefix: tr[self.get_groupby()[0]]}))
         return _translations.values(
-            *('string',
-              'date',
-              'approved_date',
-              'user__first_name',
-              'user__email')
-            + (self.groupby_prefix, ))
+            *(
+                'string',
+                'date',
+                'approved_date',
+                'user__email',
+                'user__first_name',
+                'user__username',
+            )
+            +
+            (
+                self.groupby_prefix,
+            )
+        )
 
     def filter_latest(self, qs):
         return qs.exclude(latest_translation__isnull=True)
