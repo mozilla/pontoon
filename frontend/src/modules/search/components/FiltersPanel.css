@@ -165,7 +165,7 @@
 }
 
 .filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before,
-.filters-panel .menu li.author:hover .status:before {
+.filters-panel .menu li:not(.selected).author:hover .status:before {
     content: "";
     font-weight: bold;
 }
