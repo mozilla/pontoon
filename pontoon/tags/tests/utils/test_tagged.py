@@ -101,19 +101,20 @@ def test_util_latest_activity():
     activity = LatestActivity(dict(approved_date=7))
     assert activity.approved_date == 7
 
-    # check data
+    # check date
     activity = LatestActivity(dict(date=23))
     assert activity.date == 23
+    activity = LatestActivity(dict(date=23, approved_date=113))
+    assert activity.date == 113
 
     # check type is approved
-    activity = LatestActivity(
-        dict(date=23, approved_date=113))
+    activity = LatestActivity(dict(date=23, approved_date=113))
     assert activity.type == 'approved'
 
     # check user is created if present
     activity = LatestActivity(dict(user__email=43))
     assert isinstance(activity.user, LatestActivityUser)
-    assert activity.user.user == {'user__email': 43}
+    assert activity.user.activity == {'user__email': 43}
 
     # check translation is created if present
     activity = LatestActivity(dict(string='foo'))
@@ -127,7 +128,11 @@ def test_util_latest_activity_user(avatar_mock):
     avatar_mock.return_value = 113
 
     # call with random user data - defaults
-    user = LatestActivityUser(dict(foo='bar'))
+    user = LatestActivityUser(
+        dict(foo='bar'),
+        'submitted',
+    )
+    assert user.prefix == ''
     assert user.email is None
     assert user.first_name is None
     assert user.name_or_email is None
@@ -135,7 +140,10 @@ def test_util_latest_activity_user(avatar_mock):
 
     # call with email - user data added
     user = LatestActivityUser(
-        dict(user__email='bar@ba.z'))
+        dict(user__email='bar@ba.z'),
+        'submitted',
+    )
+    assert user.prefix == ''
     assert user.email == 'bar@ba.z'
     assert user.first_name is None
     assert user.name_or_email == 'bar@ba.z'
@@ -144,13 +152,32 @@ def test_util_latest_activity_user(avatar_mock):
 
     avatar_mock.reset_mock()
 
-    # call with email and name - correct name
+    # call with email and first_name - correct first_name
     user = LatestActivityUser(
-        dict(user__email='bar@ba.z',
-             user__name='FOOBAR'))
+        dict(user__email='bar@ba.z', user__first_name='FOOBAR'),
+        'submitted',
+    )
+    assert user.prefix == ''
     assert user.email == 'bar@ba.z'
-    assert user.first_name is None
-    assert user.name_or_email == 'bar@ba.z'
+    assert user.first_name == 'FOOBAR'
+    assert user.name_or_email == 'FOOBAR'
+    assert user.gravatar_url(23) == 113
+    assert list(avatar_mock.call_args) == [(user, 23), {}]
+
+    # call with approved user and activity type - correct prefix
+    user = LatestActivityUser(
+        dict(
+            approved_user__email='bar@ba.z',
+            approved_user__first_name='FOOBAR',
+            user__email='foo.bar@ba.z',
+            user__first_name='FOOBARBAZ',
+        ),
+        'approved',
+    )
+    assert user.prefix == 'approved_'
+    assert user.email == 'bar@ba.z'
+    assert user.first_name == 'FOOBAR'
+    assert user.name_or_email == 'FOOBAR'
     assert user.gravatar_url(23) == 113
     assert list(avatar_mock.call_args) == [(user, 23), {}]
 
