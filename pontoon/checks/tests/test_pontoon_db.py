@@ -107,6 +107,40 @@ def test_too_long_translation_invalid_length(get_entity_mock):
     ) == {'pErrors': ['Translation too long']}
 
 
+def test_ending_newline(get_entity_mock):
+    """
+    Original and translation in a PO file must either both end
+    in a newline, or none of them should.
+    """
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original',
+        'Translation\n'
+    ) == {
+        'pErrors': [u'Ending newline mismatch']
+    }
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original\n',
+        'Translation'
+    ) == {
+        'pErrors': [u'Ending newline mismatch']
+    }
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original\n',
+        'Translation\n'
+    ) == {}
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original',
+        'Translation'
+    ) == {}
+
+
 def test_empty_translations(get_entity_mock):
     """
     Empty translations shouldn't be allowed for some extensions.

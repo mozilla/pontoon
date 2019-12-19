@@ -74,7 +74,7 @@ def run_checks(entity, original, string):
             not original.endswith('\n') and string.endswith('\n')
         ):
             checks['pErrors'].append(
-                'Ending newline'
+                'Ending newline mismatch'
             )
 
     # Prevent empty translation submissions if not supported
