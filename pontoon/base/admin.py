@@ -246,7 +246,7 @@ class TranslationAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    row_id_fields = ('comment',)
+    raw_id_fields = ('translation',)
 
 
 class TranslationMemoryEntryAdmin(admin.ModelAdmin):

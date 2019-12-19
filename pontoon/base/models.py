@@ -2633,12 +2633,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         for entity in entities:
             translation_array = []
-            translation_comments_array = []
-
-            translation = entity.get_active_translation()
-            translation_comments = Comment.objects.filter(translation=translation).values()
-            for comment in translation_comments:
-                translation_comments_array.append(comment)
 
             original = entity.string
             original_plural = entity.string_plural
@@ -3420,7 +3414,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User)
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(Translation)
-    comment = models.TextField(blank=True)
+    content = models.TextField()
 
-    def __unicode__(self):
-        return self.translation.string
+    def __str__(self):
+        return self.content

@@ -17,9 +17,9 @@ export type EntityTranslation = {|
 /**
  * Comments pertaining to a translation.
  */
-export type TranslationComments = {|
+export type TranslationComment = {|
     +author_id: number,
-    +comment: ?string,
+    +content: string,
     +timestamp: number,
     +translation_id: number,
 |};
@@ -43,7 +43,6 @@ export type Entity = {|
     +project: Object,
     +source: Array<Array<string>> | Object,
     +translation: Array<EntityTranslation>,
-    +translation_comments: Array<TranslationComments>,
     +readonly: boolean,
 |};
 

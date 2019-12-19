@@ -15,7 +15,7 @@ export type {
     Entities,
     Entity,
     EntityTranslation,
-    TranslationComments,
+    TranslationComment,
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,

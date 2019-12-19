@@ -3,6 +3,7 @@
 import { RECEIVE, REQUEST, UPDATE } from './actions';
 
 import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
+import type { TranslationComment } from 'core/api'
 
 
 type Action =
@@ -26,6 +27,7 @@ export type HistoryTranslation = {|
     +user: string,
     +username: string,
     +user_gravatar_url_small: string,
+    +comments: Array<TranslationComment>,
 |};
 
 export type HistoryState = {|

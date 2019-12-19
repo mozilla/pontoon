@@ -415,8 +415,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         />
                     </p>
                     <p>
-                        { entity.translation_comments.map(comment => {
-                            return comment.comment
+                        { translation.comments.map(comment => {
+                            return comment.content
                         })}
                     </p>
                 </div>
