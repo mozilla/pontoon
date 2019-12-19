@@ -127,7 +127,10 @@ def test_util_latest_activity_user(avatar_mock):
     avatar_mock.return_value = 113
 
     # call with random user data - defaults
-    user = LatestActivityUser(dict(foo='bar'), 'submitted')
+    user = LatestActivityUser(
+        dict(foo='bar'),
+        'submitted',
+    )
     assert user.email is None
     assert user.first_name is None
     assert user.name_or_email is None

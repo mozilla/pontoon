@@ -8,9 +8,9 @@ from pontoon.base.models import user_gravatar_url
 
 class LatestActivityUser(object):
 
-    def __init__(self, activity, type):
+    def __init__(self, activity, activity_type):
         self.activity = activity
-        self.type = type
+        self.type = activity_type
 
     @property
     def prefix(self):
