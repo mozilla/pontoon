@@ -480,12 +480,18 @@ var Pontoon = (function (my) {
               .find('.remaining').html(remaining).toggle(remaining > 0).end()
               .toggle(preferred > 0 || remaining > 0);
 
-          // No match
-          if (requests === 0 && ul.children('li').length === 0) {
-            tab.find('.count').hide();
-            ul.append('<li class="disabled">' +
-              '<p>No translations available.</p>' +
-            '</li>');
+          // All requests complete
+          if (requests === 0) {
+            // Stop the loader
+            $('#' + loader).removeClass('loading');
+
+            // No match
+            if (ul.children('li').length === 0) {
+                tab.find('.count').hide();
+                ul.append('<li class="disabled">' +
+                '<p>No translations available.</p>' +
+                '</li>');
+            }
           }
         }
       }
