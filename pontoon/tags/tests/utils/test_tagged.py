@@ -132,7 +132,7 @@ def test_util_latest_activity_user(avatar_mock):
         dict(foo='bar'),
         'submitted',
     )
-    assert user.prefix is ''
+    assert user.prefix == ''
     assert user.email is None
     assert user.first_name is None
     assert user.name_or_email is None
@@ -143,7 +143,7 @@ def test_util_latest_activity_user(avatar_mock):
         dict(user__email='bar@ba.z'),
         'submitted',
     )
-    assert user.prefix is ''
+    assert user.prefix == ''
     assert user.email == 'bar@ba.z'
     assert user.first_name is None
     assert user.name_or_email == 'bar@ba.z'
@@ -157,9 +157,9 @@ def test_util_latest_activity_user(avatar_mock):
         dict(user__email='bar@ba.z', user__first_name='FOOBAR'),
         'submitted',
     )
-    assert user.prefix is ''
+    assert user.prefix == ''
     assert user.email == 'bar@ba.z'
-    assert user.first_name is 'FOOBAR'
+    assert user.first_name == 'FOOBAR'
     assert user.name_or_email == 'FOOBAR'
     assert user.gravatar_url(23) == 113
     assert list(avatar_mock.call_args) == [(user, 23), {}]
@@ -174,9 +174,9 @@ def test_util_latest_activity_user(avatar_mock):
         ),
         'approved',
     )
-    assert user.prefix is 'approved_'
+    assert user.prefix == 'approved_'
     assert user.email == 'bar@ba.z'
-    assert user.first_name is 'FOOBAR'
+    assert user.first_name == 'FOOBAR'
     assert user.name_or_email == 'FOOBAR'
     assert user.gravatar_url(23) == 113
     assert list(avatar_mock.call_args) == [(user, 23), {}]
