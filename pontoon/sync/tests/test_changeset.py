@@ -229,7 +229,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         assert ActionLog.objects.filter(
             action_type='translation:approved',
-            translation=self.main_db_translation.pk
+            translation=self.main_db_translation.pk,
         ).exists()
 
     def test_update_db_dont_approve_fuzzy(self):
@@ -272,7 +272,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         assert ActionLog.objects.filter(
             action_type='translation:created',
-            translation=translation.pk
+            translation=translation.pk,
         ).exists()
 
     def test_update_db_unfuzzy_existing(self):
@@ -319,7 +319,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         assert ActionLog.objects.filter(
             action_type='translation:rejected',
-            translation=self.main_db_translation.pk
+            translation=self.main_db_translation.pk,
         ).exists()
 
         created_after_translation.refresh_from_db()
@@ -331,8 +331,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
     def test_update_db_unapprove_fuzzy(self):
         """
-        If an existing translation became fuzzy and doesn't match anything in VCS,
-        unapproved that translation without rejecting it.
+        If an existing translation is fuzzy and doesn't match anything in VCS,
+        unapprove and unfuzzy that translation without rejecting it.
         """
         self.main_db_translation.fuzzy = True
         self.main_db_translation.approved = True
@@ -349,11 +349,12 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved_user=None,
             approved_date=None,
             rejected=False,
+            fuzzy=False,
         )
 
         assert ActionLog.objects.filter(
             action_type='translation:unapproved',
-            translation=self.main_db_translation.pk
+            translation=self.main_db_translation.pk,
         ).exists()
 
     def test_update_db_unapprove_clean(self):
@@ -391,7 +392,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
 
         assert ActionLog.objects.filter(
             action_type='translation:rejected',
-            translation=self.main_db_translation.pk
+            translation=self.main_db_translation.pk,
         ).exists()
 
     def test_update_db_reject_approved_skip_fuzzy(self):

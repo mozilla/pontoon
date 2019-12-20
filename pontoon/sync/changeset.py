@@ -268,12 +268,13 @@ class ChangeSet(object):
 
             # Modify existing translation.
             if db_translation:
+                new_action = None
                 if not db_translation.approved and not vcs_translation.fuzzy:
-                    self.actions_to_log.append(ActionLog(
+                    new_action = ActionLog(
                         action_type='translation:approved',
                         performed_by=user or self.sync_user,
                         translation=db_translation,
-                    ))
+                    )
                     db_translation.approved = True
                     db_translation.approved_user = user
                     db_translation.approved_date = self.now
@@ -283,6 +284,8 @@ class ChangeSet(object):
 
                 if db_translation.is_dirty():
                     self.translations_to_update[db_translation.pk] = db_translation
+                    if new_action:
+                        self.actions_to_log.append(new_action)
                 if db_translation.fuzzy:
                     fuzzy_translations.append(db_translation)
                 else:
@@ -318,23 +321,24 @@ class ChangeSet(object):
                 # Reject translations unless they became fuzzy during sync. Condition is sufficient
                 # because they were approved previously.
                 if not translation.fuzzy:
-                    self.actions_to_log.append(ActionLog(
+                    new_action = ActionLog(
                         action_type='translation:rejected',
                         performed_by=user or self.sync_user,
                         translation=translation,
-                    ))
+                    )
                     translation.rejected = True
                     translation.rejected_user = user
                     translation.rejected_date = self.now
                 else:
-                    self.actions_to_log.append(ActionLog(
+                    new_action = ActionLog(
                         action_type='translation:unapproved',
                         performed_by=user or self.sync_user,
                         translation=translation,
-                    ))
+                    )
 
                 if translation.is_dirty():
                     self.translations_to_update[translation.pk] = translation
+                    self.actions_to_log.append(new_action)
 
         # Unfuzzy existing translations unless sync resolves them as active fuzzy translations.
         # Note: Translations cannot get fuzzy after the sync job starts, because they cannot be
