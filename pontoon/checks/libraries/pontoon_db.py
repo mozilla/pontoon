@@ -69,10 +69,7 @@ def run_checks(entity, original, string):
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.
     if resource_ext == 'po':
-        if (
-            original.endswith('\n') and not string.endswith('\n') or
-            not original.endswith('\n') and string.endswith('\n')
-        ):
+        if original.endswith('\n') != string.endswith('\n'):
             checks['pErrors'].append(
                 'Ending newline mismatch'
             )
