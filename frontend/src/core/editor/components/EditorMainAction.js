@@ -97,7 +97,7 @@ export default function EditorMainAction(props: Props) {
             title={ btn.title}
             disabled={ isRunningRequest }
         >
-            { !isRunningRequest ? null : <i className="fa fa-spinner fa-spin" /> }
+            { !isRunningRequest ? null : <i className="fa fa-circle-notch fa-spin" /> }
             { btn.label }
         </button>
     </Localized>;
