@@ -92,7 +92,7 @@ export default class ApproveAll extends React.Component<Props> {
         >
             { this.renderTitle() }
             { this.props.batchactions.requestInProgress !== 'approve' ? null :
-                <span className="fa fa-2x fa-sync fa-spin"></span>
+                <i className="fa fa-2x fa-spinner fa-spin"></i>
             }
         </button>;
     }
