@@ -415,9 +415,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         />
                     </p>
                     <ul>
-                        { translation.comments.map(comment =>
-                            <Comments comment={ comment } />
-                        )}
+                        <Comments translationComments={ translation.comments } />
                     </ul>
                 </div>
             </li>
