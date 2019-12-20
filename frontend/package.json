@@ -49,7 +49,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --modulePaths=src",
+    "test": "react-scripts test --modulePaths=src --watchAll",
     "eject": "react-scripts eject",
     "flow": "flow",
     "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
