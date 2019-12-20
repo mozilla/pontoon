@@ -25,7 +25,7 @@ def run_checks(
         * JsonResponse - If there are errors
         * None - If there's no errors and non-omitted warnings.
     """
-    pontoon_db_checks = pontoon_db.run_checks(entity, string)
+    pontoon_db_checks = pontoon_db.run_checks(entity, original, string)
     pontoon_non_db_checks = pontoon_non_db.run_checks(entity, string)
 
     try:

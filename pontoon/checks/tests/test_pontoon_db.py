@@ -57,6 +57,7 @@ def test_too_long_translation_valid_length(get_entity_mock):
     """
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '',
         '0123'
     ) == {}
 
@@ -67,11 +68,13 @@ def test_too_long_translation_html_tags(get_entity_mock):
     """
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '',
         '<a href="pontoon.mozilla.org">01</a><i>23</i>'
     ) == {}
 
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '',
         '<a href="pontoon.mozilla.org">012</a><i>23</i>'
     ) == {
         'pErrors': ['Translation too long']
@@ -80,11 +83,13 @@ def test_too_long_translation_html_tags(get_entity_mock):
     # Check if entities are causing false errors
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '',
         '<a href="pontoon.mozilla.org">ł&nbsp;</a><i>ń&nbsp;</i>'
     ) == {}
 
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 4'),
+        '',
         '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>'
     ) == {
         'pErrors': ['Translation too long']
@@ -97,8 +102,43 @@ def test_too_long_translation_invalid_length(get_entity_mock):
     """
     assert run_checks(
         get_entity_mock('lang', 'MAX_LENGTH: 2'),
+        '',
         '0123'
     ) == {'pErrors': ['Translation too long']}
+
+
+def test_ending_newline(get_entity_mock):
+    """
+    Original and translation in a PO file must either both end
+    in a newline, or none of them should.
+    """
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original',
+        'Translation\n'
+    ) == {
+        'pErrors': [u'Ending newline mismatch']
+    }
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original\n',
+        'Translation'
+    ) == {
+        'pErrors': [u'Ending newline mismatch']
+    }
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original\n',
+        'Translation\n'
+    ) == {}
+
+    assert run_checks(
+        get_entity_mock('po'),
+        'Original',
+        'Translation'
+    ) == {}
 
 
 def test_empty_translations(get_entity_mock):
@@ -107,6 +147,7 @@ def test_empty_translations(get_entity_mock):
     """
     assert run_checks(
         get_entity_mock('po'),
+        '',
         ''
     ) == {
         'pErrors': [u'Empty translations are not allowed']
@@ -117,6 +158,7 @@ def test_lang_newlines(get_entity_mock):
     """Newlines aren't allowed in lang files"""
     assert run_checks(
         get_entity_mock('lang'),
+        '',
         'aaa\nbbb'
     ) == {
         'pErrors': [u'Newline characters are not allowed']
@@ -124,6 +166,7 @@ def test_lang_newlines(get_entity_mock):
 
     assert run_checks(
         get_entity_mock('po'),
+        '',
         'aaa\nbbb'
     ) == {}
 
@@ -132,6 +175,7 @@ def test_ftl_parse_error(get_entity_mock):
     """Invalid FTL strings are not allowed"""
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
+        '',
         'key ='
     ) == {
         'pErrors': [u'Expected message "key" to have a value or attributes']
@@ -139,6 +183,7 @@ def test_ftl_parse_error(get_entity_mock):
 
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
+        '',
         'key = translation'
     ) == {}
 
@@ -147,6 +192,7 @@ def test_ftl_non_localizable_entries(get_entity_mock):
     """Non-localizable entries are not allowed"""
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
+        '',
         '[[foo]]'
     ) == {
         'pErrors': [u'Expected an entry start']
@@ -157,6 +203,7 @@ def test_ftl_id_missmatch(get_entity_mock):
     """ID of the source string and translation must be the same"""
     assert run_checks(
         get_entity_mock('ftl', string='key = value'),
+        '',
         'key1 = translation'
     ) == {
         'pErrors': [u'Translation key needs to match source string key']
