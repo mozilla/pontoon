@@ -6,7 +6,9 @@ import { Localized } from '@fluent/react';
 
 import './Translation.css';
 
-import { TranslationProxy, Comments } from 'core/translation';
+import { TranslationProxy } from 'core/translation';
+import { CommentsList } from 'core/comments';
+import { UserImage } from 'core/user';
 import * as utils from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -123,34 +125,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         return 'Not reviewed yet';
     }
 
-    renderUserAvatar() {
-        const { translation } = this.props;
-
-        if (!translation.uid) {
-            return <img
-                src='/static/img/anon.jpg'
-                alt=''
-                height='44'
-                width='44'
-            />;
-        }
-
-        return <a
-            href={ `/contributors/${translation.username}` }
-            title={ this.getApprovalTitle() }
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-        >
-            <img
-                src={ translation.user_gravatar_url_small }
-                alt=''
-                height='44'
-                width='44'
-            />
-        </a>
-    }
-
     renderUser() {
         const { translation } = this.props;
 
@@ -260,9 +234,12 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 title='Copy Into Translation'
                 onClick={ this.copyTranslationIntoEditor }
             >
-                <div className='avatar'>
-                    { this.renderUserAvatar() }
-                </div>
+                <UserImage
+                    user={ translation.user }
+                    username={ translation.username }
+                    title={ this.getApprovalTitle() }
+                    imageUrl={ translation.user_gravatar_url_small }
+                />
                 <div className='content'>
                     <header className='clearfix'>
                         <div className='info'>
@@ -414,9 +391,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             format={ entity.format }
                         />
                     </p>
-                    <div>
-                        <Comments translationComments={ translation.comments } />
-                    </div>
+                    <CommentsList comments={ translation.comments } />
                 </div>
             </li>
         </Localized>;

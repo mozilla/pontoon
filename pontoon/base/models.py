@@ -3413,7 +3413,7 @@ class TranslatedResource(AggregatedStats):
 class Comment(models.Model):
     author = models.ForeignKey(User)
     timestamp = models.DateTimeField(default=timezone.now)
-    translation = models.ForeignKey(Translation)
+    translation = models.ForeignKey(Translation, related_name='comments')
     content = models.TextField()
 
     def __str__(self):
@@ -3421,8 +3421,11 @@ class Comment(models.Model):
 
     def serialize(self):
         return {
-            'author': self.author_id,
-            'timestamp': self.timestamp,
-            'content': self.content,
-            'translation': self.translation_id
+            "author": self.author.name_or_email,
+            "username": self.author.username,
+            "userGravatarUrlSmall": self.author.gravatar_url(88),
+            "createdAt": self.timestamp.strftime('%b %d, %Y %H:%M'),
+            "dateIso": self.timestamp.isoformat(),
+            'translation': self.translation_id,
+            "content": self.content,
         }
