@@ -6,7 +6,7 @@ import { Localized } from '@fluent/react';
 
 import './Translation.css';
 
-import { TranslationProxy } from 'core/translation';
+import { TranslationProxy, Comments } from 'core/translation';
 import * as utils from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -414,11 +414,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             format={ entity.format }
                         />
                     </p>
-                    <p>
-                        { translation.comments.map(comment => {
-                            return comment.content
-                        })}
-                    </p>
+                    <ul>
+                        { translation.comments.map(comment =>
+                            <Comments comment={ comment } />
+                        )}
+                    </ul>
                 </div>
             </li>
         </Localized>;

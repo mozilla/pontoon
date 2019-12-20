@@ -18,10 +18,14 @@ export type EntityTranslation = {|
  * Comments pertaining to a translation.
  */
 export type TranslationComment = {|
+    +author: string,
     +author_id: number,
+    +username: string,
+    +user_gravatar_url_small: string,
+    +timestamp: string,
+    +date_iso: string,
     +content: string,
-    +timestamp: number,
-    +translation_id: number,
+    +translation: number,
 |};
 
 

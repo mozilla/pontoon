@@ -3418,3 +3418,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+    def serialize(self):
+        return {
+            'author': self.author_id,
+            'timestamp': self.timestamp,
+            'content': self.content,
+            'translation': self.translation_id
+        }

@@ -407,9 +407,20 @@ def get_translation_history(request):
     translation_comments_array = []
 
     translations = Translation.objects.filter(entity=entity, locale=locale)
-    translation_comments = Comment.objects.filter(translation=translations).values()
-    for comment in translation_comments:
-        translation_comments_array.append(comment)
+    translation_comments = Comment.objects.filter(translation=translations)
+    for c in translation_comments:
+        a = c.author
+        comment_dict = c.serialize()
+        comment_dict.update({
+            "author": a.name_or_email,
+            "author_id": a.id,
+            "username": a.username,
+            "user_gravatar_url_small": a.gravatar_url(88),
+            "timestamp": c.timestamp.strftime('%b %d, %Y %H:%M'),
+            "date_iso": c.timestamp.isoformat(),
+            "content": c.content,
+        })
+        translation_comments_array.append(comment_dict)
 
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
