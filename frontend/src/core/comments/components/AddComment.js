@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 
-type Props = {|
+// type Props = {|
 
-|};
+// |};
 
 
-export default function AddComments(props: Props) {
+export default function AddComments(/*props: Props*/) {
     return <h2 title='Add Comment'>Test of Add Comment Component</h2>
 }

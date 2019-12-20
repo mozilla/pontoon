@@ -39,7 +39,6 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     TranslatedResource,
     Translation,
-    Comment,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -404,7 +403,6 @@ def get_translation_history(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    translation_comments_array = []
 
     translations = Translation.objects.filter(
         entity=entity,
