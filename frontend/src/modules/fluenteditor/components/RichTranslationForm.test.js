@@ -135,6 +135,46 @@ title = Title
         expect(wrapper.find('.accesskeys button').at(7).text()).toEqual('s');
     });
 
+    it('does not render the access key UI if no candidates can be generated', () => {
+        const input = `
+title =
+    .label = { reference }
+    .accesskey = C`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationForm
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('.accesskeys')).toHaveLength(0);
+    });
+
+    it('does not render the access key UI if access key is longer than 1 character', () => {
+        const input = `
+title =
+    .label = Candidates
+    .accesskey = { reference }`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationForm
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('.accesskeys')).toHaveLength(0);
+    });
+
     it('calls the updateTranslation function on mount and change', () => {
         const updateMock = sinon.spy();
 
