@@ -253,7 +253,7 @@ export default function connectedEditor<Object>(
         sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {
             const props = this.props;
 
-            if (!props.selectedEntity || !props.locale) {
+            if (props.editor.isRunningRequest || !props.selectedEntity || !props.locale) {
                 return;
             }
 

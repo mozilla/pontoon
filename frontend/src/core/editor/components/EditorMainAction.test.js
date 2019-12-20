@@ -20,7 +20,6 @@ describe('<EditorMainAction>', () => {
         expect(wrapper.find('.action-save')).toHaveLength(0);
 
         wrapper.find('.action-approve').simulate('click');
-
         expect(updateStatus.calledWith(1, 'approve')).toBeTruthy();
     });
 
@@ -47,6 +46,18 @@ describe('<EditorMainAction>', () => {
         expect(wrapper.find('.action-approve')).toHaveLength(0);
     });
 
+    it('shows a spinner and a disabled Suggesting button when running request', () => {
+        const params = {
+            isTranslator: true,
+            forceSuggestions: true,
+            isRunningRequest: true,
+        }
+        const wrapper = shallow(<EditorMainAction { ...params } />);
+
+        expect(wrapper.find('.action-suggest')).toHaveLength(1);
+        expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
+    });
+
     it('renders the Save button when force suggestion is off', () => {
         const params = {
             isTranslator: true,
@@ -69,5 +80,16 @@ describe('<EditorMainAction>', () => {
         expect(wrapper.find('.action-save')).toHaveLength(1);
         expect(wrapper.find('.action-suggest')).toHaveLength(0);
         expect(wrapper.find('.action-approve')).toHaveLength(0);
+    });
+
+    it('shows a spinner and a disabled Saving button when running request', () => {
+        const params = {
+            isTranslator: true,
+            isRunningRequest: true,
+        }
+        const wrapper = shallow(<EditorMainAction { ...params } />);
+
+        expect(wrapper.find('.action-save')).toHaveLength(1);
+        expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);
     });
 });

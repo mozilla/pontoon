@@ -92,7 +92,7 @@ export default class ReplaceAll extends React.Component<Props> {
         >
             { this.renderTitle() }
             { this.props.batchactions.requestInProgress !== 'replace' ? null :
-                <span className="fa fa-2x fa-sync fa-spin"></span>
+                <i className="fa fa-2x fa-circle-notch fa-spin"></i>
             }
         </button>;
     }

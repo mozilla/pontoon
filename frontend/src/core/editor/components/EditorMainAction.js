@@ -8,6 +8,7 @@ import type { ChangeOperation } from 'modules/history';
 
 
 type Props = {
+    isRunningRequest: boolean,
     isTranslator: boolean,
     forceSuggestions: boolean,
     sameExistingTranslation: ?EntityTranslation,
@@ -29,6 +30,7 @@ type Props = {
  */
 export default function EditorMainAction(props: Props) {
     const {
+        isRunningRequest,
         isTranslator,
         forceSuggestions,
         sameExistingTranslation,
@@ -42,49 +44,61 @@ export default function EditorMainAction(props: Props) {
         }
     }
 
+    let btn;
+
     if (isTranslator && sameExistingTranslation && !sameExistingTranslation.approved) {
         // Approve button, will approve the translation.
-        return <Localized
-            id="editor-EditorMenu--button-approve"
-            attrs={{ title: true }}
-        >
-            <button
-                className="action-approve"
-                onClick={ approveTranslation }
-                title="Approve Translation (Enter)"
-            >
-                Approve
-            </button>
-        </Localized>;
+        btn = {
+            id: 'editor-EditorMenu--button-approve',
+            className: 'action-approve',
+            action: approveTranslation,
+            title: 'Approve Translation (Enter)',
+            label: 'Approve',
+        };
     }
-
-    if (forceSuggestions || !isTranslator) {
+    else if (forceSuggestions || !isTranslator) {
         // Suggest button, will send an unreviewed translation.
-        return <Localized
-            id="editor-EditorMenu--button-suggest"
-            attrs={{ title: true }}
-        >
-            <button
-                className="action-suggest"
-                onClick={ sendTranslation }
-                title="Suggest Translation (Enter)"
-            >
-                Suggest
-            </button>
-        </Localized>;
+        btn = {
+            id: 'editor-EditorMenu--button-suggest',
+            className: 'action-suggest',
+            action: sendTranslation,
+            title: 'Suggest Translation (Enter)',
+            label: 'Suggest',
+        };
+
+        if (isRunningRequest) {
+            btn.id = 'editor-EditorMenu--button-suggesting';
+            btn.label = 'Suggesting';
+        }
+    }
+    else {
+        // Save button, will send an approved translation.
+        btn = {
+            id: 'editor-EditorMenu--button-save',
+            className: 'action-save',
+            action: sendTranslation,
+            title: 'Save Translation (Enter)',
+            label: 'Save',
+        };
+
+        if (isRunningRequest) {
+            btn.id = 'editor-EditorMenu--button-saving';
+            btn.label = 'Saving';
+        }
     }
 
-    // Save button, will send an approved translation.
     return <Localized
-        id="editor-EditorMenu--button-save"
+        id={ btn.id }
         attrs={{ title: true }}
     >
         <button
-            className="action-save"
-            onClick={ sendTranslation }
-            title="Save Translation (Enter)"
+            className={ btn.className }
+            onClick={ btn.action }
+            title={ btn.title}
+            disabled={ isRunningRequest }
         >
-            Save
+            { !isRunningRequest ? null : <i className="fa fa-circle-notch fa-spin" /> }
+            { btn.label }
         </button>
     </Localized>;
 }

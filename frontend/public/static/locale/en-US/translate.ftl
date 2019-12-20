@@ -94,8 +94,12 @@ editor-EditorMenu--button-approve = Approve
     .title = Approve Translation (Enter)
 editor-EditorMenu--button-save = Save
     .title = Save Translation (Enter)
+editor-EditorMenu--button-saving = Saving
+    .title = Saving Translation…
 editor-EditorMenu--button-suggest = Suggest
     .title = Suggest Translation (Enter)
+editor-EditorMenu--button-suggesting = Suggesting
+    .title = Suggesting Translation…
 
 
 ## Editor Settings

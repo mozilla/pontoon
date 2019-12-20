@@ -16,9 +16,11 @@ import type { Locale } from 'core/locale';
 import type { FluentMessage } from 'core/utils/fluent/types';
 
 
+export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' = 'editor/END_UPDATE_TRANSLATION';
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' = 'editor/RESET_SELECTION';
 export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' = 'editor/SET_INITIAL_TRANSLATION';
+export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' = 'editor/START_UPDATE_TRANSLATION';
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
@@ -128,6 +130,26 @@ export function resetFailedChecks(): ResetFailedChecksAction {
 }
 
 
+export type StartUpdateTranslationAction = {|
+   +type: typeof START_UPDATE_TRANSLATION,
+|};
+function startUpdateTranslation(): StartUpdateTranslationAction {
+    return {
+        type: START_UPDATE_TRANSLATION,
+    };
+}
+
+
+export type EndUpdateTranslationAction = {|
+   +type: typeof END_UPDATE_TRANSLATION,
+|};
+function endUpdateTranslation(): EndUpdateTranslationAction {
+    return {
+        type: END_UPDATE_TRANSLATION,
+    };
+}
+
+
 function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
     switch (change) {
         case 'added':
@@ -158,6 +180,7 @@ export function sendTranslation(
 ): Function {
     return async dispatch => {
         NProgress.start();
+        dispatch(startUpdateTranslation());
 
         const content = await api.translation.updateTranslation(
             entity.pk,
@@ -223,6 +246,7 @@ export function sendTranslation(
             }
         }
 
+        dispatch(endUpdateTranslation());
         NProgress.done();
     }
 }

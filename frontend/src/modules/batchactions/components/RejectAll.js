@@ -129,7 +129,7 @@ export default class RejectAll extends React.Component<Props, State> {
         >
             { this.renderTitle() }
             { this.props.batchactions.requestInProgress !== 'reject' ? null :
-                <span className="fa fa-2x fa-sync fa-spin"></span>
+                <i className="fa fa-2x fa-circle-notch fa-spin"></i>
             }
         </button>;
     }
