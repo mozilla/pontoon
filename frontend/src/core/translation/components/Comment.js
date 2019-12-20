@@ -68,21 +68,21 @@ export default class Comment extends React.Component<Props> {
 
         var divStyle = { display: 'inline' }
 
-        return <div>
-                <li title='Comment'>
+        return (
+                <div title='Comment'>
                     <div className='avatar' style={divStyle}>
                         { this.renderUserAvatar() }
                     </div>
                     { this.renderUser() }
                     <WithPlaceables> { comment.content } </WithPlaceables>
-                </li>
-                <li>
-                    <ReactTimeAgo
-                        dir='ltr'
-                        date={ new Date(comment.date_iso) }
-                        title={ `${comment.timestamp} UTC` }
-                    />
-                </li>
-            </div>
+                    <div>
+                        <ReactTimeAgo
+                            dir='ltr'
+                            date={ new Date(comment.date_iso) }
+                            title={ `${comment.timestamp} UTC` }
+                        />
+                    </div>
+                </div>
+        )
     }
 }

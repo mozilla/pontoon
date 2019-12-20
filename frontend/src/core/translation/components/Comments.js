@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import type { TranslationComment } from 'core/api';
 
-import { Comment } from 'core/translation';
+import { Comment, AddComment } from 'core/translation';
 
 
 type Props = {|
@@ -21,11 +21,16 @@ export default class Comments extends React.Component<Props> {
         }
 
         return (
-            <li>
-                { translationComments.map(content =>
-                    <Comment comment={ content } />
-                )}
-            </li>
+            <ul>
+                <li>
+                    { translationComments.map(content =>
+                        <Comment comment={ content } />
+                    )}
+                </li>
+                <li>
+                    <AddComment />
+                </li>
+            </ul>
         )
     }
 }

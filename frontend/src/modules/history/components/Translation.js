@@ -414,9 +414,9 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             format={ entity.format }
                         />
                     </p>
-                    <ul>
+                    <div>
                         <Comments translationComments={ translation.comments } />
-                    </ul>
+                    </div>
                 </div>
             </li>
         </Localized>;
