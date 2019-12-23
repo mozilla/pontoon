@@ -57,7 +57,7 @@ RUN npm install
 RUN mkdir frontend
 WORKDIR frontend
 COPY frontend/package.json .
-COPY frontend/yarn.lock .
+COPY --chown=pontoon:pontoon frontend/yarn.lock .
 RUN yarn install
 
 WORKDIR /app
