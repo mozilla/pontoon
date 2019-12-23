@@ -404,7 +404,7 @@ def sync_translations(
 
     if db_project.pretranslation_enabled:
         # Pretranslate all entities for newly added locales
-        # and locales with newly added resource
+        # and locales with newly added resources
         if len(new_locales):
             pretranslate(db_project, locales=new_locales)
 

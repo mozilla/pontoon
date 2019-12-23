@@ -293,6 +293,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         self.mock_pull_changes.return_value = [True, {
             self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
         }]
+        all_locales = list(self.db_project.locales.values_list('pk', flat=True))
 
         with self.patch('pontoon.sync.tasks.update_translated_resources', return_value=False):
             sync_translations(self.db_project.pk, self.project_sync_log.pk,
@@ -300,10 +301,11 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
         assert_true(self.mock_pretranslate.called)
         assert_equal(self.mock_pretranslate.call_args[1]['entities'], ['new_entity'])
+        assert_equal(list(self.mock_pretranslate.call_args[1]['locales']), all_locales)
 
-    def test_new_resource_pretranslation(self):
+    def test_new_translated_resource_pretranslation(self):
         """
-        Test if pretranslate is called for locales with newly added resource.
+        Test if pretranslation is called for locales with newly added TranslatedResource.
         """
         self.db_project.pretranslation_enabled = True
         self.db_project.save()
