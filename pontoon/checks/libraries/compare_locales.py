@@ -31,6 +31,10 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
         self.raw_val = raw_val
         self.pre_comment = pre_comment
 
+    @property
+    def all(self):
+        return u'%s = %s'.format(self.key, self.raw_val)
+
     def __repr__(self):
         return u'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
             self.key,
