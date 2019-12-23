@@ -3428,4 +3428,5 @@ class Comment(models.Model):
             "dateIso": self.timestamp.isoformat(),
             'translation': self.translation_id,
             "content": self.content,
+            "id": self.id,
         }

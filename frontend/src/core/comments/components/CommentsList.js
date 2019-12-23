@@ -23,7 +23,10 @@ export default function CommentsList(props: Props) {
         <div>
             <ul>
                 { comments.map(comment =>
-                    <Comment comment={ comment } />
+                    <Comment
+                        comment={ comment }
+                        key={ comment.id }
+                    />
                 )}
             </ul>
             <AddComment />

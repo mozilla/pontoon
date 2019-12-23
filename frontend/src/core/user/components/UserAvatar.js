@@ -9,19 +9,21 @@ type Props = {|
     imageUrl: string,
 |};
 
-export default function UserImage(props: Props) {
+export default function UserAvatar(props: Props) {
     const { user, username, title, imageUrl } = props;
 
     if (!user) {
-        return <img
-            src='/static/img/anon.jpg'
-            alt=''
-            height='44'
-            width='44'
-        />;
+        return <div className='user-avatar'>
+            <img
+                src='/static/img/anon.jpg'
+                alt='Anonymous User'
+                height='44'
+                width='44'
+            />
+        </div>;
     }
 
-    return <div className='avatar'>
+    return <div className='user-avatar'>
         <a
             href={ `/contributors/${username}` }
             title={ title }
@@ -31,7 +33,7 @@ export default function UserImage(props: Props) {
         >
             <img
                 src={ imageUrl }
-                alt=''
+                alt='User Profile'
                 height='44'
                 width='44'
             />

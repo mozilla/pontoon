@@ -5,7 +5,7 @@ import ReactTimeAgo from 'react-time-ago';
 
 import type { TranslationComment } from 'core/api';
 
-import { UserImage } from 'core/user'
+import { UserAvatar } from 'core/user'
 
 
 type Props = {|
@@ -16,39 +16,32 @@ type Props = {|
 export default function Comment(props: Props) {
     const { comment } = props;
 
-    function renderUser() {
-        return <a
+    if (!comment) {
+            return null;
+    }
+
+    return <div>
+        <UserAvatar
+            user={ comment.author }
+            username={ comment.username }
+            title= ''
+            imageUrl={ comment.userGravatarUrlSmall }
+        />
+        <a
             href={ `/contributors/${comment.username}` }
-            title='Author'
             target='_blank'
             rel='noopener noreferrer'
             onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
         >
             { comment.author }
         </a>
-    }
-
-    if (!comment) {
-            return null;
-    }
-
-    return <div>
-        <div title='Comment'>
-            <UserImage
-                user={ comment.author }
-                username={ comment.username }
-                title= 'Author'
-                imageUrl={ comment.userGravatarUrlSmall }
+        { comment.content }
+        <div>
+            <ReactTimeAgo
+                dir='ltr'
+                date={ new Date(comment.dateIso) }
+                title={ `${comment.createdAt} UTC` }
             />
-            { renderUser() }
-            { comment.content }
-            <div>
-                <ReactTimeAgo
-                    dir='ltr'
-                    date={ new Date(comment.dateIso) }
-                    title={ `${comment.createdAt} UTC` }
-                />
-            </div>
         </div>
     </div>
 }

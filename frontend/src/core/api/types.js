@@ -25,6 +25,7 @@ export type TranslationComment = {|
     +dateIso: string,
     +content: string,
     +translation: number,
+    +id: number,
 |};
 
 

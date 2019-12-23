@@ -8,7 +8,7 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 import { CommentsList } from 'core/comments';
-import { UserImage } from 'core/user';
+import { UserAvatar } from 'core/user';
 import * as utils from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -234,7 +234,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 title='Copy Into Translation'
                 onClick={ this.copyTranslationIntoEditor }
             >
-                <UserImage
+                <UserAvatar
                     user={ translation.user }
                     username={ translation.username }
                     title={ this.getApprovalTitle() }

@@ -14,18 +14,18 @@
     background: #4D5967;
 }
 
-.history .translation .avatar {
+.history .translation .user-avatar {
     padding-right: 8px;
     position: relative;
     top: 3px;
 }
 
-.history .translation .avatar img {
+.history .translation .user-avatar img {
     border-radius: 6px;
     border: 2px solid #5E6475;
 }
 
-.history .translation:hover .avatar img {
+.history .translation:hover .user-avatar img {
     border-color: #637283;
 }
 
