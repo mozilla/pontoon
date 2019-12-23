@@ -41,7 +41,7 @@ class SyncProjectTests(TestCase):
 
         self.mock_update_originals = self.patch(
             'pontoon.sync.tasks.update_originals',
-            return_value=[[], [], []]
+            return_value=[[], [], [], []]
         )
 
         self.mock_source_directory_path = self.patch(
@@ -139,6 +139,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         self.mock_pull_changes = self.patch(
             'pontoon.sync.tasks.pull_changes', return_value=[True, {}])
         self.mock_commit_changes = self.patch('pontoon.sync.tasks.commit_changes')
+        self.mock_pretranslate = self.patch('pontoon.sync.tasks.pretranslate')
         self.mock_repo_checkout_path = self.patch_object(
             Repository, 'checkout_path', new_callable=PropertyMock,
             return_value=FAKE_CHECKOUT_PATH)
@@ -258,6 +259,68 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
         log = RepositorySyncLog.objects.get(repository=repo.pk)
         assert_equal(log.repository, repo)
+
+    def test_no_pretranslation(self):
+        """
+        Ensure that pretranslation isn't called if pretranslation not enabled
+        or no new Entity, Locale or TranslatedResource is created.
+        """
+        self.mock_pull_changes.return_value = [True, {
+            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
+        }]
+
+        sync_translations(self.db_project.pk, self.project_sync_log.pk,
+                          self.now, [], [], [], ['new_entity'])
+
+        # Pretranslation is not enabled
+        assert_false(self.mock_pretranslate.called)
+
+        self.db_project.pretranslation_enabled = True
+        self.db_project.save()
+
+        with self.patch('pontoon.sync.tasks.update_translated_resources', return_value=False):
+            sync_translations(self.db_project.pk, self.project_sync_log.pk, self.now)
+
+        # No new Entity, Locale or TranslatedResource
+        assert_false(self.mock_pretranslate.called)
+
+    def test_new_entities_pretranslation(self):
+        """
+        Test if pretranslation is called for newly added entities.
+        """
+        self.db_project.pretranslation_enabled = True
+        self.db_project.save()
+        self.mock_pull_changes.return_value = [True, {
+            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
+        }]
+        all_locales = list(self.db_project.locales.values_list('pk', flat=True))
+
+        with self.patch('pontoon.sync.tasks.update_translated_resources', return_value=False):
+            sync_translations(self.db_project.pk, self.project_sync_log.pk,
+                              self.now, [], [], [], ['new_entity'])
+
+        assert_true(self.mock_pretranslate.called)
+        assert_equal(self.mock_pretranslate.call_args[1]['entities'], ['new_entity'])
+        assert_equal(list(self.mock_pretranslate.call_args[1]['locales']), all_locales)
+
+    def test_new_translated_resource_pretranslation(self):
+        """
+        Test if pretranslation is called for locales with newly added TranslatedResource.
+        """
+        self.db_project.pretranslation_enabled = True
+        self.db_project.save()
+        self.mock_pull_changes.return_value = [True, {
+            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
+        }]
+
+        sync_translations(self.db_project.pk, self.project_sync_log.pk,
+                          self.now, [], [], [], ['new_entity'])
+
+        assert_true(self.mock_pretranslate.called)
+        assert_equal(self.mock_pretranslate.call_args[1]['locales'], [self.translated_locale.pk])
+
+        # Ensure that pretranslate is called only once for the locale.
+        assert_equal(self.mock_pretranslate.call_args[1].get('entities'), None)
 
 
 class UserError(Exception):
