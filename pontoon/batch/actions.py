@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from django.utils import timezone
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     TranslationMemoryEntry,
     Translation,
@@ -69,6 +70,16 @@ def approve_translations(form, user, translations, locale):
         translations,
         locale,
     )
+
+    # Log actions
+    actions_to_log = [ActionLog(
+        action_type='translation:approved',
+        performed_by=user,
+        translation=t,
+    ) for t in translations]
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    # Approve translations.
     translations.update(
         approved=True,
         approved_user=user,
@@ -110,6 +121,16 @@ def reject_translations(form, user, translations, locale):
         locale,
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
+
+    # Log actions
+    actions_to_log = [ActionLog(
+        action_type='translation:rejected',
+        performed_by=user,
+        translation=t,
+    ) for t in translations]
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    # Reject translations.
     suggestions.update(
         active=False,
         rejected=True,
@@ -156,6 +177,14 @@ def replace_translations(form, user, translations, locale):
         locale,
     )
 
+    # Log rejecting actions
+    actions_to_log = [ActionLog(
+        action_type='translation:rejected',
+        performed_by=user,
+        translation=t,
+    ) for t in old_translations]
+    ActionLog.objects.bulk_create(actions_to_log)
+
     # Deactivate and unapprove old translations
     old_translations.update(
         active=False,
@@ -172,6 +201,14 @@ def replace_translations(form, user, translations, locale):
     changed_translations = Translation.objects.bulk_create(
         translations_to_create,
     )
+
+    # Log creating actions
+    actions_to_log = [ActionLog(
+        action_type='translation:created',
+        performed_by=user,
+        translation=t,
+    ) for t in changed_translations]
+    ActionLog.objects.bulk_create(actions_to_log)
 
     changed_translation_pks = [c.pk for c in changed_translations]
 

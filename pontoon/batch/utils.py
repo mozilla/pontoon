@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from copy import deepcopy
+
 from django.utils import timezone
 
 from pontoon.base.models import Entity
@@ -96,42 +98,41 @@ def find_and_replace(translations, find, replace, user):
 
     for translation in translations:
         # Cache the old value to identify changed translations
-        string = translation.string
-        old_translation_pk = translation.pk
+        new_translation = deepcopy(translation)
 
         if translation.entity.resource.format == 'ftl':
-            translation.string = ftl_find_and_replace(string, find, replace)
+            new_translation.string = ftl_find_and_replace(translation.string, find, replace)
         else:
-            translation.string = string.replace(find, replace)
+            new_translation.string = translation.string.replace(find, replace)
 
         # Quit early if no changes are made
-        if translation.string == string:
+        if new_translation.string == translation.string:
             continue
 
-        translation.pk = None  # Create new translation
-        translation.user = translation.approved_user = user
-        translation.date = translation.approved_date = now
-        translation.approved = True
-        translation.rejected = False
-        translation.rejected_date = None
-        translation.rejected_user = None
-        translation.fuzzy = False
+        new_translation.pk = None  # Create new translation
+        new_translation.user = new_translation.approved_user = user
+        new_translation.date = new_translation.approved_date = now
+        new_translation.approved = True
+        new_translation.rejected = False
+        new_translation.rejected_date = None
+        new_translation.rejected_user = None
+        new_translation.fuzzy = False
 
-        if translation.entity.resource.format in DB_FORMATS:
+        if new_translation.entity.resource.format in DB_FORMATS:
             errors = run_checks(
-                translation.entity,
-                translation.locale.code,
-                translation.entity.string,
-                translation.string,
+                new_translation.entity,
+                new_translation.locale.code,
+                new_translation.entity.string,
+                new_translation.string,
                 use_tt_checks=False,
             )
         else:
             errors = {}
 
         if errors:
-            translations_with_errors.append(old_translation_pk)
+            translations_with_errors.append(translation.pk)
         else:
-            translations_to_create.append(translation)
+            translations_to_create.append(new_translation)
 
     if translations_with_errors:
         translations = translations.exclude(

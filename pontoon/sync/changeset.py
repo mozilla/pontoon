@@ -430,6 +430,7 @@ class ChangeSet(object):
         for translation in self.translations_to_create:
             self.actions_to_log.append(ActionLog(
                 action_type='translation:created',
+                created_at=translation.date,
                 performed_by=translation.user or self.sync_user,
                 translation=translation,
             ))
