@@ -34,7 +34,7 @@ def update_originals(db_project, now, full_scan=False):
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
 
-    return added_paths, removed_paths, changed_paths
+    return added_paths, removed_paths, changed_paths, changeset.new_entities
 
 
 def serial_task(timeout, lock_key="", on_error=None, **celery_args):
@@ -172,15 +172,18 @@ def update_translations(db_project, vcs_project, locale, changeset):
 
 
 def update_translated_resources(db_project, vcs_project, locale):
-    """Update the TranslatedResource entries in the database."""
+    """
+    Update the TranslatedResource entries in the database.
+    Returns true if a new TranslatedResource is added to the locale.
+    """
     if vcs_project.configuration:
-        update_translated_resources_with_config(
+        return update_translated_resources_with_config(
             db_project,
             vcs_project,
             locale,
         )
     else:
-        update_translated_resources_without_config(
+        return update_translated_resources_without_config(
             db_project,
             vcs_project,
             locale,
@@ -192,11 +195,18 @@ def update_translated_resources_with_config(db_project, vcs_project, locale):
     Create/update the TranslatedResource objects for each Resource instance
     that is enabled for the given locale through project configuration.
     """
+    tr_created = False
+
     for resource in vcs_project.configuration.locale_resources(locale):
-        translatedresource, _ = (
+        translatedresource, created = (
             TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
         )
+
+        if created:
+            tr_created = True
         translatedresource.calculate_stats()
+
+    return tr_created
 
 
 def update_translated_resources_without_config(db_project, vcs_project, locale):
@@ -204,16 +214,23 @@ def update_translated_resources_without_config(db_project, vcs_project, locale):
     We only want to create/update the TranslatedResource object if the
     resource exists in the current locale, UNLESS the file is asymmetric.
     """
+    tr_created = False
+
     for resource in db_project.resources.all():
         vcs_resource = vcs_project.resources.get(resource.path, None)
 
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
-                translatedresource, _ = (
+                translatedresource, created = (
                     TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
                 )
+
+                if created:
+                    tr_created = True
                 translatedresource.calculate_stats()
+
+    return tr_created
 
 
 def update_translated_resources_no_files(db_project, locale, changed_resources):

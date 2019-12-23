@@ -150,10 +150,16 @@ form .button {
 
 .controls .button.sync,
 .controls .button.sync:hover {
-  background: #F36;
-  color: #272A2F;
+  background: #333941;
+  color: #aaa;
   float: left;
-  margin-right: 10px;
+}
+
+.controls .button.pretranslate,
+.controls .button.pretranslate:hover {
+  background: #333941;
+  color: #aaa;
+  float: right;
 }
 
 form a:link, form a:visited {
@@ -464,7 +470,7 @@ textarea.strings-source {
 .locales .errorlist {
   margin-top: 10px;
   text-align: center;
-  width: 100%;  
+  width: 100%;
 }
 
 .notification {

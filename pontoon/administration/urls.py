@@ -41,6 +41,13 @@ urlpatterns = [
         name='pontoon.admin.project.strings'
     ),
 
+    # Pretranslate project
+    url(
+        r'^projects/(?P<slug>[\w-]+)/pretranslate/$',
+        views.manually_pretranslate_project,
+        name='pontoon.project.sync'
+    ),
+
     # Edit project
     url(
         r'^projects/(?P<slug>.+)/$',

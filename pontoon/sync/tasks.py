@@ -27,6 +27,7 @@ from pontoon.sync.core import (
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs.repositories import CommitToRepositoryException
 from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
+from pontoon.pretranslation.tasks import pretranslate
 
 
 log = logging.getLogger(__name__)
@@ -121,10 +122,11 @@ def sync_project(
         source_changes.get('added_paths'),
         source_changes.get('removed_paths'),
         source_changes.get('changed_paths'),
+        source_changes.get('new_entities'),
         locale=locale,
         no_pull=no_pull,
         no_commit=no_commit,
-        full_scan=force
+        full_scan=force,
     )
 
 
@@ -148,7 +150,7 @@ def sync_sources(db_project, now, force, no_pull):
 
     if force or source_repo_changed:
         try:
-            added_paths, removed_paths, changed_paths = update_originals(
+            added_paths, removed_paths, changed_paths, new_entities = update_originals(
                 db_project, now, full_scan=force
             )
         except MissingSourceDirectoryError as e:
@@ -160,7 +162,7 @@ def sync_sources(db_project, now, force, no_pull):
         log.info('Synced sources for project {0}.'.format(db_project.slug))
 
     else:
-        added_paths, removed_paths, changed_paths = None, None, None
+        added_paths, removed_paths, changed_paths, new_entities = None, None, None, None
         log.info(
             'Skipping syncing sources for project {0}, no changes detected.'.format(
                 db_project.slug
@@ -171,6 +173,7 @@ def sync_sources(db_project, now, force, no_pull):
         'added_paths': added_paths,
         'removed_paths': removed_paths,
         'changed_paths': changed_paths,
+        'new_entities': new_entities,
     }
 
 
@@ -182,7 +185,8 @@ def sync_sources(db_project, now, force, no_pull):
 )
 def sync_translations(
     self, project_pk, project_sync_log_pk, now, added_paths=None, removed_paths=None,
-    changed_paths=None, locale=None, no_pull=False, no_commit=False, full_scan=False,
+    changed_paths=None, new_entities=None, locale=None, no_pull=False, no_commit=False,
+    full_scan=False
 ):
     db_project = get_or_fail(
         Project,
@@ -279,6 +283,9 @@ def sync_translations(
     synced_locales = set()
     failed_locales = set()
 
+    # Store newly added locales and locales with newly added resources
+    new_locales = []
+
     for locale in locales:
         try:
             with transaction.atomic():
@@ -297,7 +304,10 @@ def sync_translations(
                 changeset = ChangeSet(db_project, vcs_project, now, locale)
                 update_translations(db_project, vcs_project, locale, changeset)
                 changeset.execute()
-                update_translated_resources(db_project, vcs_project, locale)
+
+                created = update_translated_resources(db_project, vcs_project, locale)
+                if created:
+                    new_locales.append(locale.pk)
                 update_locale_project_locale_stats(locale, db_project)
 
                 # Clear out the "has_changed" markers now that we've finished
@@ -348,7 +358,9 @@ def sync_translations(
 
             # We have files: update all translated resources.
             if locale in locales:
-                update_translated_resources(db_project, vcs_project, locale)
+                created = update_translated_resources(db_project, vcs_project, locale)
+                if created:
+                    new_locales.append[locale.pk]
 
             # We don't have files: we can still update asymmetric translated resources.
             else:
@@ -389,3 +401,16 @@ def sync_translations(
             locales=repo_locales[r.pk].exclude(code__in=failed_locales)
         )
     repo_sync_log.end()
+
+    if db_project.pretranslation_enabled:
+        # Pretranslate all entities for newly added locales
+        # and locales with newly added resources
+        if len(new_locales):
+            pretranslate(db_project, locales=new_locales)
+
+        locales = db_project.locales.exclude(pk__in=new_locales).values_list('pk', flat=True)
+
+        # Pretranslate newly added entities for all locales
+        if new_entities and locales:
+            new_entities = list(set(new_entities))
+            pretranslate(db_project, locales=locales, entities=new_entities)

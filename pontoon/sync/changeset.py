@@ -54,6 +54,7 @@ class ChangeSet(object):
         self.entities_to_update = []
         self.translations_to_update = {}
         self.translations_to_create = []
+        self.new_entities = []
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
 
@@ -235,6 +236,7 @@ class ChangeSet(object):
                     ))
 
         self.send_notifications(new_entities)
+        self.new_entities = new_entities
 
     def update_entity_translations_from_vcs(
             self, db_entity, locale_code, vcs_translation,
