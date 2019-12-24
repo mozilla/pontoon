@@ -7,15 +7,15 @@ import { TranslationBase } from './Translation';
 describe('<TranslationBase>', () => {
     const DEFAULT_TRANSLATION = {
         approved: false,
-        approved_user: '',
+        approvedUser: '',
         date: '',
-        date_iso: '',
+        dateIso: '',
         fuzzy: false,
         pk: 1,
         rejected: false,
         string: 'The storm approaches. We speak no more.',
         uid: 0,
-        unapproved_user: '',
+        unapprovedUser: '',
         user: '',
         username: 'michel',
     };
@@ -92,7 +92,7 @@ describe('<TranslationBase>', () => {
         it('returns the correct approver title when approved', () => {
             const translation = {
                 ...DEFAULT_TRANSLATION,
-                ...{ approved: true, approved_user: 'Cespenar' }
+                ...{ approved: true, approvedUser: 'Cespenar' }
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }
@@ -106,7 +106,7 @@ describe('<TranslationBase>', () => {
         it('returns the correct approver title when unapproved', () => {
             const translation = {
                 ...DEFAULT_TRANSLATION,
-                ...{ unapproved_user: 'Bhaal' }
+                ...{ unapprovedUser: 'Bhaal' }
             };
             const wrapper = shallow(<TranslationBase
                 translation={ translation }

@@ -125,7 +125,45 @@ export default class EntityAPI extends APIBase {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
-        return await this.fetch('/get-history/', 'GET', payload, headers);
+        const results = await this.fetch('/get-history/', 'GET', payload, headers);
+
+        if (results.length === 0) {
+            return []
+        }
+
+        const keysMap = {
+            approved_user: 'approvedUser',
+            unapproved_user: 'unapprovedUser',
+            user_gravatar_url_small: 'userGravatarUrlSmall',
+            created_at: 'createdAt',
+            date_iso: 'dateIso',
+        };
+
+        const renameKeys = (keysMap, obj) => {
+            return Object
+                .keys(obj)
+                .reduce((acc, key) => {
+                    const renamedObject = {
+                        [keysMap[key] || key]: obj[key]
+                    };
+                    return {
+                        ...acc,
+                        ...renamedObject
+                    }
+                }, {});
+        };
+
+        const renamedResultsKeys = renameKeys(keysMap, results[0]);
+
+        const renamedCommentsKeys = results[0].comments.map(comment => {
+            return renameKeys(keysMap, comment);
+        });
+
+        if (renamedResultsKeys.comments) {
+            renamedResultsKeys.comments = renamedCommentsKeys;
+        }
+
+        return [renamedResultsKeys];
     }
 
     async getOtherLocales(

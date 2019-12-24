@@ -116,11 +116,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     getApprovalTitle() {
         const { translation } = this.props;
 
-        if (translation.approved && translation.approved_user) {
-            return `Approved by ${translation.approved_user}`;
+        if (translation.approved && translation.approvedUser) {
+            return `Approved by ${translation.approvedUser}`;
         }
-        if (translation.unapproved_user) {
-            return `Unapproved by ${translation.unapproved_user}`;
+        if (translation.unapprovedUser) {
+            return `Unapproved by ${translation.unapprovedUser}`;
         }
         return 'Not reviewed yet';
     }
@@ -238,7 +238,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     user={ translation.user }
                     username={ translation.username }
                     title={ this.getApprovalTitle() }
-                    imageUrl={ translation.user_gravatar_url_small }
+                    imageUrl={ translation.userGravatarUrlSmall }
                 />
                 <div className='content'>
                     <header className='clearfix'>
@@ -246,7 +246,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             { this.renderUser() }
                             <ReactTimeAgo
                                 dir='ltr'
-                                date={ new Date(translation.date_iso) }
+                                date={ new Date(translation.dateIso) }
                                 title={ `${translation.date} UTC` }
                             />
                         </div>

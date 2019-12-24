@@ -3423,9 +3423,9 @@ class Comment(models.Model):
         return {
             "author": self.author.name_or_email,
             "username": self.author.username,
-            "userGravatarUrlSmall": self.author.gravatar_url(88),
-            "createdAt": self.timestamp.strftime('%b %d, %Y %H:%M'),
-            "dateIso": self.timestamp.isoformat(),
+            "user_gravatar_url_small": self.author.gravatar_url(88),
+            "created_at": self.timestamp.strftime('%b %d, %Y %H:%M'),
+            "date_iso": self.timestamp.isoformat(),
             'translation': self.translation_id,
             "content": self.content,
             "id": self.id,
