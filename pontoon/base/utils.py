@@ -540,6 +540,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     changeset.bulk_create_translations()
     changeset.bulk_update_translations()
+    changeset.bulk_log_actions()
 
     if changeset.changed_translations:
         # Update 'active' status of all changed translations and their siblings,

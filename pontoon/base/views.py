@@ -31,6 +31,7 @@ from django.views.generic.edit import FormView
 
 from six.moves.urllib.parse import urlparse
 
+from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
 from pontoon.base import utils
 from pontoon.base.models import (
@@ -416,7 +417,8 @@ def delete_translation(request):
         }, status=400)
 
     translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
+    entity = translation.entity
+    project = entity.resource.project
     locale = translation.locale
 
     # Read-only translations cannot be deleted
@@ -438,6 +440,8 @@ def delete_translation(request):
         }, status=403)
 
     translation.delete()
+
+    log_action('translation:deleted', request.user, entity=entity, locale=locale)
 
     return JsonResponse({
         'status': True,
@@ -604,6 +608,8 @@ def update_translation(request):
 
                 t.save(failed_checks=failed_checks)
 
+                log_action('translation:approved', user, translation=t)
+
                 return JsonResponse({
                     'type': 'updated',
                     'translation': t.serialize(),
@@ -627,6 +633,8 @@ def update_translation(request):
                 t.approved_date = now
 
             t.save(failed_checks=failed_checks)
+
+            log_action('translation:created', user, translation=t)
 
             active_translation = e.reset_active_translation(
                 locale=locale,
@@ -657,6 +665,8 @@ def update_translation(request):
             t.approved_date = now
 
         t.save(failed_checks=failed_checks)
+
+        log_action('translation:created', user, translation=t)
 
         return JsonResponse({
             'type': 'saved',
