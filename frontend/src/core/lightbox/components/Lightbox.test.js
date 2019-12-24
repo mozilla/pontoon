@@ -1,4 +1,5 @@
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
 
@@ -41,7 +42,9 @@ describe('<Lightbox>', () => {
         const wrapper = mount(<Lightbox store={ store } />);
         expect(wrapper.find('img')).toHaveLength(1);
 
-        store.dispatch(actions.close());
+        act(() => {
+            store.dispatch(actions.close());
+        });
         expect(wrapper.update().find('img')).toHaveLength(0);
     });
 });
