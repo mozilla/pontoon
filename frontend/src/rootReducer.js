@@ -1,6 +1,7 @@
 /* @flow */
 
 import { combineReducers } from 'redux';
+import { connectRouter } from 'connected-react-router';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
@@ -22,7 +23,9 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 
 
 // Combine reducers from all modules, using their NAME constant as key.
-export default combineReducers({
+export default (browserHistory: any) => combineReducers({
+    // System modules
+    router: connectRouter(browserHistory),
     // Core modules
     [editor.NAME]: editor.reducer,
     [entities.NAME]: entities.reducer,

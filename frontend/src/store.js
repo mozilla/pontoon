@@ -1,10 +1,10 @@
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { routerMiddleware } from 'connected-react-router';
 
 import history from './history';
-import rootReducer from './rootReducer';
+import createRootReducer from './rootReducer';
 
 
 const middlewares = [
@@ -19,9 +19,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default createStore(
-    connectRouter(history)(rootReducer),
+    createRootReducer(history),
     {}, // initial state
     compose(
-        applyMiddleware(...middlewares)
-    )
+        applyMiddleware(...middlewares),
+    ),
 );
