@@ -112,6 +112,7 @@ else:
 ROOT_URLCONF = 'pontoon.urls'
 
 INSTALLED_APPS = (
+    'pontoon.actionlog',
     'pontoon.administration',
     'pontoon.base',
     'pontoon.contributors',

@@ -44,6 +44,7 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.templatetags.helpers import as_simple_translation
 from pontoon.checks import DB_FORMATS
@@ -2875,7 +2876,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Only one translation can be approved at a time for any
         # Entity/Locale.
         if self.approved:
-            (
+            approved_translations = (
                 Translation.objects
                 .filter(
                     entity=self.entity,
@@ -2884,15 +2885,24 @@ class Translation(DirtyFieldsMixin, models.Model):
                     rejected=False,
                 )
                 .exclude(pk=self.pk)
-                .update(
-                    approved=False,
-                    approved_user=None,
-                    approved_date=None,
-                    rejected=True,
-                    rejected_user=self.approved_user,
-                    rejected_date=self.approved_date,
-                    fuzzy=False,
+            )
+
+            # Log that all those translations are rejected.
+            for t in approved_translations:
+                log_action(
+                    'translation:rejected',
+                    self.approved_user or self.user,
+                    translation=t,
                 )
+
+            approved_translations.update(
+                approved=False,
+                approved_user=None,
+                approved_date=None,
+                rejected=True,
+                rejected_user=self.approved_user,
+                rejected_date=self.approved_date,
+                fuzzy=False,
             )
 
             if not self.memory_entries.exists():

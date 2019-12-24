@@ -10,6 +10,7 @@ from django.db.models import Prefetch
 from django.template.defaultfilters import pluralize
 from notifications.signals import notify
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -54,9 +55,13 @@ class ChangeSet(object):
         self.entities_to_update = []
         self.translations_to_update = {}
         self.translations_to_create = []
-        self.new_entities = []
+        self.actions_to_log = []
+
         self.commit_authors_per_locale = defaultdict(list)
         self.locales_to_commit = set()
+        self.new_entities = []
+
+        self.sync_user = User.objects.get(username='pontoon-sync')
 
     @property
     def changed_translations(self):
@@ -111,6 +116,9 @@ class ChangeSet(object):
         self.bulk_update_entities()
         self.bulk_create_translations()
         self.bulk_update_translations()
+
+        # Create all log events.
+        self.bulk_log_actions()
 
         # Clean up any duplicate approvals
         if self.locale:
@@ -260,7 +268,13 @@ class ChangeSet(object):
 
             # Modify existing translation.
             if db_translation:
+                new_action = None
                 if not db_translation.approved and not vcs_translation.fuzzy:
+                    new_action = ActionLog(
+                        action_type='translation:approved',
+                        performed_by=user or self.sync_user,
+                        translation=db_translation,
+                    )
                     db_translation.approved = True
                     db_translation.approved_user = user
                     db_translation.approved_date = self.now
@@ -270,6 +284,8 @@ class ChangeSet(object):
 
                 if db_translation.is_dirty():
                     self.translations_to_update[db_translation.pk] = db_translation
+                    if new_action:
+                        self.actions_to_log.append(new_action)
                 if db_translation.fuzzy:
                     fuzzy_translations.append(db_translation)
                 else:
@@ -305,12 +321,24 @@ class ChangeSet(object):
                 # Reject translations unless they became fuzzy during sync. Condition is sufficient
                 # because they were approved previously.
                 if not translation.fuzzy:
+                    new_action = ActionLog(
+                        action_type='translation:rejected',
+                        performed_by=user or self.sync_user,
+                        translation=translation,
+                    )
                     translation.rejected = True
                     translation.rejected_user = user
                     translation.rejected_date = self.now
+                else:
+                    new_action = ActionLog(
+                        action_type='translation:unapproved',
+                        performed_by=user or self.sync_user,
+                        translation=translation,
+                    )
 
                 if translation.is_dirty():
                     self.translations_to_update[translation.pk] = translation
+                    self.actions_to_log.append(new_action)
 
         # Unfuzzy existing translations unless sync resolves them as active fuzzy translations.
         # Note: Translations cannot get fuzzy after the sync job starts, because they cannot be
@@ -399,6 +427,13 @@ class ChangeSet(object):
 
     def bulk_create_translations(self):
         Translation.objects.bulk_create(self.translations_to_create)
+        for translation in self.translations_to_create:
+            self.actions_to_log.append(ActionLog(
+                action_type='translation:created',
+                created_at=translation.date,
+                performed_by=translation.user or self.sync_user,
+                translation=translation,
+            ))
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
@@ -414,6 +449,9 @@ class ChangeSet(object):
                 'fuzzy',
                 'extra'
             ])
+
+    def bulk_log_actions(self):
+        ActionLog.objects.bulk_create(self.actions_to_log)
 
     def bulk_create_translation_memory_entries(self, valid_translations_pks):
         """
