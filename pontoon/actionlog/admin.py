@@ -6,6 +6,7 @@ from pontoon.actionlog.models import ActionLog
 
 
 class ActionLogAdmin(admin.ModelAdmin):
+    list_display = ('action_type',)
     search_fields = [
         'action_type',
     ]
@@ -17,6 +18,14 @@ class ActionLogAdmin(admin.ModelAdmin):
         'translation_id',
         'entity_id',
         'locale_id',
+    )
+    fieldsets = (
+        (None, {
+            'fields': (
+                'action_type',
+                'performed_by',
+            ),
+        }),
     )
 
 

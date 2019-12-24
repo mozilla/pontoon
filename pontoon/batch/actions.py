@@ -71,7 +71,7 @@ def approve_translations(form, user, translations, locale):
         locale,
     )
 
-    # Log actions
+    # Log approving actions
     actions_to_log = [ActionLog(
         action_type='translation:approved',
         performed_by=user,
@@ -122,7 +122,7 @@ def reject_translations(form, user, translations, locale):
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
 
-    # Log actions
+    # Log rejecting actions
     actions_to_log = [ActionLog(
         action_type='translation:rejected',
         performed_by=user,
