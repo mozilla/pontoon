@@ -19,14 +19,7 @@ class ActionLogAdmin(admin.ModelAdmin):
         'entity_id',
         'locale_id',
     )
-    fieldsets = (
-        (None, {
-            'fields': (
-                'action_type',
-                'performed_by',
-            ),
-        }),
-    )
+    raw_id_fields = ('entity', 'translation',)
 
 
 admin.site.register(ActionLog, ActionLogAdmin)
