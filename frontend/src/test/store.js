@@ -6,16 +6,16 @@
 
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { routerMiddleware } from 'connected-react-router';
 
-import rootReducer from 'rootReducer';
+import createRootReducer from 'rootReducer';
 
 import history from './history';
 
 
 export function createReduxStore(initialState = {}) {
     return createStore(
-        connectRouter(history)(rootReducer),
+        createRootReducer(history),
         initialState, // initial state
         compose(
             applyMiddleware(
