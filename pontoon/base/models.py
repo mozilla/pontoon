@@ -2303,7 +2303,7 @@ class EntityQuerySet(models.QuerySet):
 
     def get_or_create(self, defaults=None, **kwargs):
         if 'string' in kwargs:
-            kwargs.word_count = self._get_word_count(kwargs['string'])
+            kwargs['word_count'] = self._get_word_count(kwargs['string'])
         return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
 
     def bulk_update(self, objs, fields=None, batch_size=None):
