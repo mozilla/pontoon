@@ -376,7 +376,23 @@ class VCSConfigurationTests(TestCase):
 
 
 class GrandFatheredVCSConfigurationTest(VCSConfigurationTests):
+    '''Testing with deep includes and excludes'''
     toml = 'grandfather.toml'
+
+    def test_locale_resources(self):
+        # no resource_strings, excluded for `fr`
+        assert_equal(
+            sorted(
+                self.vcs_project.configuration.locale_resources(self.locale),
+                key=lambda r: r.path
+            ),
+            [
+                self.resource_amo,
+                # self.resource_strings,
+                self.resource_strings_child,
+                self.resource_strings_reality,
+            ],
+        )
 
 
 def setUpResource(self):
