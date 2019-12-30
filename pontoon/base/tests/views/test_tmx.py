@@ -22,42 +22,34 @@ def _check_xml(xml_content, expected_xml=None, dtd_path=None):
             raise AssertionError(dtd.error_log)
 
     if expected_xml is not None:
-        assert (
-            validated_xml
-            == etree.tostring(etree.fromstring(expected_xml))
-        )
+        assert validated_xml == etree.tostring(etree.fromstring(expected_xml))
 
 
 @pytest.mark.django_db
 def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
     """By download the data."""
     response = client.get(
-        '/{locale}/{project}/{locale}.{project}.tmx'.format(
-            locale=locale_a.code,
-            project=entity_a.resource.project.slug,
+        "/{locale}/{project}/{locale}.{project}.tmx".format(
+            locale=locale_a.code, project=entity_a.resource.project.slug,
         )
     )
     assert response.status_code == 200
-    _check_xml(
-        b''.join(response.streaming_content)
-    )
+    _check_xml(b"".join(response.streaming_content))
 
 
 @pytest.mark.django_db
 def test_view_tmx_bad_params(client, entity_a, locale_a, settings_debug):
     """Validate locale code and don't return data."""
     response = client.get(
-        '/{locale}/{project}/{locale}.{project}.tmx'.format(
-            locale='invalidlocale',
-            project='invalidproject',
+        "/{locale}/{project}/{locale}.{project}.tmx".format(
+            locale="invalidlocale", project="invalidproject",
         )
     )
     assert response.status_code == 404
 
     response = client.get(
-        '/{locale}/{project}/{locale}.{project}.tmx'.format(
-            locale=locale_a,
-            project='invalidproject',
+        "/{locale}/{project}/{locale}.{project}.tmx".format(
+            locale=locale_a, project="invalidproject",
         )
     )
     assert response.status_code == 404
@@ -66,80 +58,72 @@ def test_view_tmx_bad_params(client, entity_a, locale_a, settings_debug):
 @pytest.mark.xfail(reason="Original tests were broken")
 @pytest.mark.django_db
 def test_view_tmx_empty_file():
-    data_root = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'data',
-    )
-    filepath = 'tmx/no_entries.tmx'
+    data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
+    filepath = "tmx/no_entries.tmx"
 
-    with open(os.path.join(data_root, filepath), 'rU') as f:
-        xml = f.read().decode('utf-8')
+    with open(os.path.join(data_root, filepath), "rU") as f:
+        xml = f.read().decode("utf-8")
 
-    tmx_contents = build_translation_memory_file(
-        datetime(2010, 1, 1), 'sl', ()
-    )
+    tmx_contents = build_translation_memory_file(datetime(2010, 1, 1), "sl", ())
     _check_xml(
-        ''.join(tmx_contents).encode('utf-8'),
+        "".join(tmx_contents).encode("utf-8"),
         xml,
-        os.path.join(data_root, 'tmx/tmx14.dtd'),
+        os.path.join(data_root, "tmx/tmx14.dtd"),
     )
 
 
 @pytest.mark.xfail(reason="Original tests were broken")
 @pytest.mark.django_db
 def test_view_tmx_valid_entries():
-    data_root = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'data',
-    )
-    filepath = 'tmx/valid_entries.tmx'
+    data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
+    filepath = "tmx/valid_entries.tmx"
 
-    with open(os.path.join(data_root, filepath), 'rU') as f:
-        xml = f.read().decode('utf-8')
+    with open(os.path.join(data_root, filepath), "rU") as f:
+        xml = f.read().decode("utf-8")
 
     tmx_contents = build_translation_memory_file(
         datetime(2010, 1, 1),
-        'sl',
+        "sl",
         (
             (
-                'aa/bb/ccc',
-                'xxx',
-                'source string',
-                'translation',
-                'Pontoon App',
-                'pontoon',
+                "aa/bb/ccc",
+                "xxx",
+                "source string",
+                "translation",
+                "Pontoon App",
+                "pontoon",
             ),
             # Test escape of characters
             (
-                'aa/bb/ccc',
+                "aa/bb/ccc",
                 'x&x&x#"',
-                'source string',
-                'translation',
-                'Pontoon & App',
-                'pontoon',
+                "source string",
+                "translation",
+                "Pontoon & App",
+                "pontoon",
             ),
             # Handle unicode characters
             (
-                'aa/bb/ccc',
-                'xxx',
-                u'source string łążśźć',
-                u'translation łążśźć',
-                'pontoon',
-                'pontoon',
+                "aa/bb/ccc",
+                "xxx",
+                "source string łążśźć",
+                "translation łążśźć",
+                "pontoon",
+                "pontoon",
             ),
             # Handle html content
             (
-                'aa/bb/ccc',
-                'xxx',
-                u'<p>source <strong>string</p>',
-                u'<p>translation łążśźć</p>',
-                'pontoon',
-                'pontoon',
+                "aa/bb/ccc",
+                "xxx",
+                "<p>source <strong>string</p>",
+                "<p>translation łążśźć</p>",
+                "pontoon",
+                "pontoon",
             ),
-        )
+        ),
     )
     _check_xml(
-        ''.join(tmx_contents).encode('utf-8'),
+        "".join(tmx_contents).encode("utf-8"),
         xml,
-        os.path.join(data_root, 'tmx/tmx14.dtd'),
+        os.path.join(data_root, "tmx/tmx14.dtd"),
     )

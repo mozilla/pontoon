@@ -18,7 +18,7 @@ class BatchActionsForm(forms.Form):
     replace = forms.CharField(required=False)
 
     def clean_entities(self):
-        return utils.split_ints(self.cleaned_data['entities'])
+        return utils.split_ints(self.cleaned_data["entities"])
 
     def decode_field(self, param_name):
         """
@@ -26,11 +26,11 @@ class BatchActionsForm(forms.Form):
 
         Related bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1438575
         """
-        field_val = self.cleaned_data.get(param_name, '')
+        field_val = self.cleaned_data.get(param_name, "")
         return urllib.parse.unquote(field_val)
 
     def clean_find(self):
-        return self.decode_field('find')
+        return self.decode_field("find")
 
     def clean_replace(self):
-        return self.decode_field('replace')
+        return self.decode_field("replace")

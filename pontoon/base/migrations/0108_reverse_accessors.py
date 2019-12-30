@@ -9,28 +9,52 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0107_project_data_source'),
+        ("base", "0107_project_data_source"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='locale',
-            name='latest_translation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='locale_latest', to='base.Translation'),
+            model_name="locale",
+            name="latest_translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="locale_latest",
+                to="base.Translation",
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='latest_translation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='project_latest', to='base.Translation'),
+            model_name="project",
+            name="latest_translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="project_latest",
+                to="base.Translation",
+            ),
         ),
         migrations.AlterField(
-            model_name='projectlocale',
-            name='latest_translation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='project_locale_latest', to='base.Translation'),
+            model_name="projectlocale",
+            name="latest_translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="project_locale_latest",
+                to="base.Translation",
+            ),
         ),
         migrations.AlterField(
-            model_name='translatedresource',
-            name='latest_translation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='resource_latest', to='base.Translation'),
+            model_name="translatedresource",
+            name="latest_translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="resource_latest",
+                to="base.Translation",
+            ),
         ),
     ]

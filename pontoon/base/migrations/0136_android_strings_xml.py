@@ -8,13 +8,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0135_project_project_configuration'),
+        ("base", "0135_project_project_configuration"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='resource',
-            name='format',
-            field=models.CharField(blank=True, choices=[('dtd', 'dtd'), ('ftl', 'ftl'), ('inc', 'inc'), ('ini', 'ini'), ('json', 'json'), ('lang', 'lang'), ('po', 'po'), ('properties', 'properties'), ('xlf', 'xliff'), ('xliff', 'xliff'), ('xml', 'xml')], max_length=20, verbose_name='Format'),
+            model_name="resource",
+            name="format",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("dtd", "dtd"),
+                    ("ftl", "ftl"),
+                    ("inc", "inc"),
+                    ("ini", "ini"),
+                    ("json", "json"),
+                    ("lang", "lang"),
+                    ("po", "po"),
+                    ("properties", "properties"),
+                    ("xlf", "xliff"),
+                    ("xliff", "xliff"),
+                    ("xml", "xml"),
+                ],
+                max_length=20,
+                verbose_name="Format",
+            ),
         ),
     ]

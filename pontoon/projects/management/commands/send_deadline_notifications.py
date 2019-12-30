@@ -10,7 +10,7 @@ from pontoon.base.models import Project
 
 
 class Command(BaseCommand):
-    help = 'Notify contributors about the approaching project deadline'
+    help = "Notify contributors about the approaching project deadline"
 
     def handle(self, *args, **options):
         """
@@ -28,9 +28,11 @@ class Command(BaseCommand):
             else:
                 continue
 
-            self.stdout.write('Sending deadline notifications for project {}.'.format(project))
+            self.stdout.write(
+                "Sending deadline notifications for project {}.".format(project)
+            )
 
-            verb = 'due in {} days'.format(days_left)
+            verb = "due in {} days".format(days_left)
             locales = []
 
             for project_locale in project.project_locale.all():
@@ -39,14 +41,12 @@ class Command(BaseCommand):
 
             contributors = User.objects.filter(
                 translation__entity__resource__project=project,
-                translation__locale__in=locales
+                translation__locale__in=locales,
             ).distinct()
 
             for contributor in contributors:
-                notify.send(
-                    project,
-                    recipient=contributor,
-                    verb=verb
-                )
+                notify.send(project, recipient=contributor, verb=verb)
 
-            self.stdout.write('Deadline notifications for project {} sent.'.format(project))
+            self.stdout.write(
+                "Deadline notifications for project {} sent.".format(project)
+            )

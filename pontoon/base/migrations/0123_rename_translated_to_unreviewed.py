@@ -8,28 +8,28 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0122_auto_20180525_0832'),
+        ("base", "0122_auto_20180525_0832"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='locale',
-            old_name='translated_strings',
-            new_name='unreviewed_strings',
+            model_name="locale",
+            old_name="translated_strings",
+            new_name="unreviewed_strings",
         ),
         migrations.RenameField(
-            model_name='project',
-            old_name='translated_strings',
-            new_name='unreviewed_strings',
+            model_name="project",
+            old_name="translated_strings",
+            new_name="unreviewed_strings",
         ),
         migrations.RenameField(
-            model_name='projectlocale',
-            old_name='translated_strings',
-            new_name='unreviewed_strings',
+            model_name="projectlocale",
+            old_name="translated_strings",
+            new_name="unreviewed_strings",
         ),
         migrations.RenameField(
-            model_name='translatedresource',
-            old_name='translated_strings',
-            new_name='unreviewed_strings',
+            model_name="translatedresource",
+            old_name="translated_strings",
+            new_name="unreviewed_strings",
         ),
     ]

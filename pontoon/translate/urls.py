@@ -7,34 +7,29 @@ from django.views.generic import RedirectView
 from . import views
 
 
-LOCALE_PART = r'(?P<locale>[A-Za-z0-9\-\@\.]+)'
-PROJECT_PART = r'(?P<project>[\w-]+)'
-RESOURCE_PART = r'(?P<resource>.+)'
+LOCALE_PART = r"(?P<locale>[A-Za-z0-9\-\@\.]+)"
+PROJECT_PART = r"(?P<project>[\w-]+)"
+RESOURCE_PART = r"(?P<resource>.+)"
 
 
 urlpatterns = [
     # For backwards compatibility, redirect old `translate/` URLs.
     url(
-        r'^translate/{locale}/{project}/{resource}/$'.format(
-            locale=LOCALE_PART,
-            project=PROJECT_PART,
-            resource=RESOURCE_PART,
+        r"^translate/{locale}/{project}/{resource}/$".format(
+            locale=LOCALE_PART, project=PROJECT_PART, resource=RESOURCE_PART,
         ),
         RedirectView.as_view(
             url="/%(locale)s/%(project)s/%(resource)s/",
             query_string=True,
             permanent=False,
-        )
+        ),
     ),
-
     url(
-        r'^{locale}/{project}/{resource}/$'.format(
-            locale=LOCALE_PART,
-            project=PROJECT_PART,
-            resource=RESOURCE_PART,
+        r"^{locale}/{project}/{resource}/$".format(
+            locale=LOCALE_PART, project=PROJECT_PART, resource=RESOURCE_PART,
         ),
         views.translate,
-        name='pontoon.translate',
+        name="pontoon.translate",
     ),
 ]
 
@@ -50,12 +45,6 @@ urlpatterns = [
 # automatically done when running with `make run`.
 if settings.DEV:
     urlpatterns += [
-        url(
-            r'^static/(?P<path>.*)$',
-            views.static_serve_dev,
-        ),
-        url(
-            r'^sockjs-node/.*$',
-            views.translate,
-        ),
+        url(r"^static/(?P<path>.*)$", views.static_serve_dev,),
+        url(r"^sockjs-node/.*$", views.translate,),
     ]

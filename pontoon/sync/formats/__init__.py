@@ -21,18 +21,18 @@ from pontoon.sync.formats import (
 # where the key is the extension you're parsing and the value is a
 # callable returning an instance of a ParsedResource subclass.
 SUPPORTED_FORMAT_PARSERS = {
-    '.dtd': silme.parse_dtd,
-    '.ftl': ftl.parse,
-    '.inc': silme.parse_inc,
-    '.ini': silme.parse_ini,
-    '.json': json_extensions.parse,
-    '.lang': lang.parse,
-    '.po': po.parse,
-    '.pot': po.parse,
-    '.properties': silme.parse_properties,
-    '.xlf': xliff.parse,
-    '.xliff': xliff.parse,
-    '.xml': compare_locales.parse,
+    ".dtd": silme.parse_dtd,
+    ".ftl": ftl.parse,
+    ".inc": silme.parse_inc,
+    ".ini": silme.parse_ini,
+    ".json": json_extensions.parse,
+    ".lang": lang.parse,
+    ".po": po.parse,
+    ".pot": po.parse,
+    ".properties": silme.parse_properties,
+    ".xlf": xliff.parse,
+    ".xliff": xliff.parse,
+    ".xml": compare_locales.parse,
 }
 
 
@@ -53,7 +53,8 @@ def parse(path, source_path=None, locale=None):
     """
     root, extension = os.path.splitext(path)
     if extension in SUPPORTED_FORMAT_PARSERS:
-        return SUPPORTED_FORMAT_PARSERS[extension](path, source_path=source_path, locale=locale)
+        return SUPPORTED_FORMAT_PARSERS[extension](
+            path, source_path=source_path, locale=locale
+        )
     else:
-        raise ValueError('Translation format {0} is not supported.'
-                         .format(extension))
+        raise ValueError("Translation format {0} is not supported.".format(extension))

@@ -8,13 +8,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tags', '0001_initial'),
+        ("tags", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='tag',
-            name='priority',
-            field=models.IntegerField(blank=True, choices=[(1, 'Lowest'), (2, 'Low'), (3, 'Normal'), (4, 'High'), (5, 'Highest')], null=True),
+            model_name="tag",
+            name="priority",
+            field=models.IntegerField(
+                blank=True,
+                choices=[
+                    (1, "Lowest"),
+                    (2, "Low"),
+                    (3, "Normal"),
+                    (4, "High"),
+                    (5, "Highest"),
+                ],
+                null=True,
+            ),
         ),
     ]

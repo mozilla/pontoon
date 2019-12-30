@@ -12,23 +12,48 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('base', '0108_reverse_accessors'),
+        ("base", "0108_reverse_accessors"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tag',
+            name="Tag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.CharField(max_length=20)),
-                ('name', models.CharField(max_length=30)),
-                ('priority', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(5), django.core.validators.MinValueValidator(1)])),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Project')),
-                ('resources', models.ManyToManyField(to='base.Resource')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("slug", models.CharField(max_length=20)),
+                ("name", models.CharField(max_length=30)),
+                (
+                    "priority",
+                    models.IntegerField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MaxValueValidator(5),
+                            django.core.validators.MinValueValidator(1),
+                        ],
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="base.Project",
+                    ),
+                ),
+                ("resources", models.ManyToManyField(to="base.Resource")),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='tag',
-            unique_together=set([('slug', 'project')]),
+            name="tag", unique_together=set([("slug", "project")]),
         ),
     ]

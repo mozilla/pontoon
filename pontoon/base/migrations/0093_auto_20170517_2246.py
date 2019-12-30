@@ -9,21 +9,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0092_locale_db_collation'),
+        ("base", "0092_locale_db_collation"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translationmemoryentry',
-            name='project',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='memory_entries', to='base.Project'),
+            model_name="translationmemoryentry",
+            name="project",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="memory_entries",
+                to="base.Project",
+            ),
         ),
         migrations.AlterField(
-            model_name='translationmemoryentry',
-            name='entity',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='memory_entries', to='base.Entity'),
+            model_name="translationmemoryentry",
+            name="entity",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="memory_entries",
+                to="base.Entity",
+            ),
         ),
-
         # Assign projects to existing TM entries in raw SQL because of a lot better performance.
         migrations.RunSQL(
             """
@@ -38,6 +47,6 @@ class Migration(migrations.Migration):
             """,
             """
             UPDATE base_translationmemoryentry SET project_id=NULL WHERE project_id IS NOT NULL
-            """
-        )
+            """,
+        ),
     ]

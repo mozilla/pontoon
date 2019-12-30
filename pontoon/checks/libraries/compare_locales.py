@@ -15,15 +15,12 @@ from compare_locales.paths import File
 from pontoon.sync.utils import escape_quotes
 
 
-CommentEntity = namedtuple(
-    'Comment', (
-        'all',
-    )
-)
+CommentEntity = namedtuple("Comment", ("all",))
 
 
 # Because we can't pass the context to all entities passed to compare-locales,
 # we have to create our equivalents of compare-locale's internal classes.
+
 
 class ComparePropertiesEntity(PropertiesEntityMixin):
     def __init__(self, key, raw_val, pre_comment):
@@ -33,13 +30,11 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
 
     @property
     def all(self):
-        return u'%s = %s'.format(self.key, self.raw_val)
+        return u"%s = %s".format(self.key, self.raw_val)
 
     def __repr__(self):
         return u'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
-            self.key,
-            self.raw_val,
-            self.pre_comment.all,
+            self.key, self.raw_val, self.pre_comment.all,
         )
 
 
@@ -58,27 +53,25 @@ class CompareDTDEntity(DTDEntityMixin):
         else:
             wrap = '"'
 
-        return u'<!ENTITY {key} {wrap}{entity}{wrap}>'.format(
-            key=self.key,
-            entity=self.raw_val,
-            wrap=wrap,
+        return u"<!ENTITY {key} {wrap}{entity}{wrap}>".format(
+            key=self.key, entity=self.raw_val, wrap=wrap,
         )
 
     def __repr__(self):
         return u'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
-            self.key,
-            self.raw_val,
-            self.pre_comment.all,
+            self.key, self.raw_val, self.pre_comment.all,
         )
 
 
 class UnsupportedResourceTypeError(Exception):
     """Raise if compare-locales doesn't support given resource-type."""
+
     pass
 
 
 class UnsupportedStringError(Exception):
     """Raise if compare-locales doesn't support given string."""
+
     pass
 
 
@@ -92,39 +85,25 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
-    if resource_ext == '.properties':
+    if resource_ext == ".properties":
         return (
             ComparePropertiesEntity(
-                entity.key,
-                entity.string,
-                CommentEntity(entity.comment)
+                entity.key, entity.string, CommentEntity(entity.comment)
             ),
-            ComparePropertiesEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            )
+            ComparePropertiesEntity(entity.key, string, CommentEntity(entity.comment),),
         )
 
-    elif resource_ext == '.dtd':
+    elif resource_ext == ".dtd":
         return (
-            CompareDTDEntity(
-                entity.key,
-                entity.string,
-                CommentEntity(entity.comment),
-            ),
-            CompareDTDEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            )
+            CompareDTDEntity(entity.key, entity.string, CommentEntity(entity.comment),),
+            CompareDTDEntity(entity.key, string, CommentEntity(entity.comment),),
         )
 
-    elif resource_ext == '.ftl':
+    elif resource_ext == ".ftl":
         parser = FluentParser()
 
         parser.readUnicode(entity.string)
-        refEntity, = list(parser)
+        (refEntity,) = list(parser)
 
         parser.readUnicode(string)
         trEntity = list(parser)[0] if list(parser) else None
@@ -137,7 +116,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
             trEntity,
         )
 
-    elif resource_ext == '.xml':
+    elif resource_ext == ".xml":
         parser = AndroidParser()
 
         content = u"""<?xml version="1.0" encoding="utf-8"?>
@@ -146,9 +125,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
                 <string name="{key}"><![CDATA[{translation}]]></string>
             </resources>
         """.format(
-            key=entity.key,
-            original=entity.string,
-            translation=string,
+            key=entity.key, original=entity.string, translation=string,
         )
 
         parser.readUnicode(content)
@@ -186,23 +163,19 @@ def run_checks(entity, locale_code, string):
         }
         Both keys are optional.
     """
-    resource_ext = '.{}'.format(entity.resource.format)
+    resource_ext = ".{}".format(entity.resource.format)
     extra_tests = None
 
-    if 'mobile/android/base' in entity.resource.path:
-        extra_tests = {'android-dtd'}
+    if "mobile/android/base" in entity.resource.path:
+        extra_tests = {"android-dtd"}
         entity.string = escape_quotes(entity.string)
         string = escape_quotes(string)
 
-    source_ent, translation_ent = cast_to_compare_locales(
-        resource_ext,
-        entity,
-        string,
-    )
+    source_ent, translation_ent = cast_to_compare_locales(resource_ext, entity, string,)
 
     checker = getChecker(
         File(entity.resource.path, entity.resource.path, locale=locale_code),
-        extra_tests
+        extra_tests,
     )
     if checker is None:
         # compare-locales has no checks for this format, it's OK.
@@ -211,11 +184,7 @@ def run_checks(entity, locale_code, string):
     # Currently, references are required only by DTD files but that may change in the future.
     if checker.needs_reference:
         references = KeyedTuple(
-            CompareDTDEntity(
-                e.key,
-                e.string,
-                e.comment,
-            )
+            CompareDTDEntity(e.key, e.string, e.comment,)
             for e in entity.resource.entities.all()
         )
         checker.set_reference(references)
@@ -223,7 +192,7 @@ def run_checks(entity, locale_code, string):
     errors = {}
 
     for severity, _, message, _ in checker.check(source_ent, translation_ent):
-        messages = errors.setdefault('cl%ss' % severity.capitalize(), [])
+        messages = errors.setdefault("cl%ss" % severity.capitalize(), [])
         # Old-school duplicate prevention - set() is not JSON serializable
         if message not in messages:
             messages.append(message)

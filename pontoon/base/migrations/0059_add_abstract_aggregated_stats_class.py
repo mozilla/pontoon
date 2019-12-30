@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0058_rename_stats_fields'),
+        ("base", "0058_rename_stats_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translatedresource',
-            name='total_strings',
+            model_name="translatedresource",
+            name="total_strings",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

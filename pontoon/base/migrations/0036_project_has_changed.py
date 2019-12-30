@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0035_remove_deleted_field'),
+        ("base", "0035_remove_deleted_field"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='has_changed',
+            model_name="project",
+            name="has_changed",
             field=models.BooleanField(default=False),
         ),
     ]

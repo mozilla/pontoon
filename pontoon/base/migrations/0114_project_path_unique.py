@@ -8,12 +8,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0113_idx_trans_locale_user_entity'),
+        ("base", "0113_idx_trans_locale_user_entity"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='resource',
-            unique_together=set([('project', 'path')]),
+            name="resource", unique_together=set([("project", "path")]),
         ),
     ]

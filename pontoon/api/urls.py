@@ -13,7 +13,7 @@ from pontoon.settings import DEV
 urlpatterns = [
     # GraphQL endpoint. In DEV mode it serves the GraphiQL IDE if accessed with Accept: text/html
     url(
-        r'^graphql',
-        csp_exempt(csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=DEV)))
+        r"^graphql",
+        csp_exempt(csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=DEV))),
     ),
 ]

@@ -7,12 +7,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0044_locale_translators'),
+        ("base", "0044_locale_translators"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='project',
-            options={'permissions': (('can_manage', 'Can manage projects'),)},
+            name="project",
+            options={"permissions": (("can_manage", "Can manage projects"),)},
         ),
     ]

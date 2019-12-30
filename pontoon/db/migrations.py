@@ -14,6 +14,7 @@ class BaseSQL(Operation):
     """
     Allows to create parameterized sql migrations.
     """
+
     forward_sql = None
     backward_sql = None
     sql_opts = {}
@@ -45,6 +46,7 @@ class GINIndex(BaseSQL):
     """
     RunIndex operations share some parts like e.g. drop of an index.
     """
+
     forward_sql = """
         CREATE INDEX {table}_{field}_{index_suffix} ON \"{table}\"
         USING GIN({expression} {index_opts})
@@ -55,7 +57,7 @@ class GINIndex(BaseSQL):
     """
 
     sql_opts = {
-        'index_opts': '',
+        "index_opts": "",
     }
 
 
@@ -63,14 +65,15 @@ class MultiFieldTRGMIndex(GINIndex):
     """
     Create a gin-based trigram index on a set of fields.
     """
-    sql_opts = {
-        'index_opts': '',
-        'index_suffix': 'trigram_index'
-    }
+
+    sql_opts = {"index_opts": "", "index_suffix": "trigram_index"}
 
     @property
     def sql(self):
         def index_field(field_name):
-            return 'UPPER({}) gin_trgm_ops'.format(field_name)
-        self.sql_opts['expression'] = ','.join(map(index_field, self.sql_opts['from_fields']))
+            return "UPPER({}) gin_trgm_ops".format(field_name)
+
+        self.sql_opts["expression"] = ",".join(
+            map(index_field, self.sql_opts["from_fields"])
+        )
         return self.forward_sql.format(**self.sql_opts)

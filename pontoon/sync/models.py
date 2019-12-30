@@ -35,12 +35,14 @@ class SyncLog(BaseLog):
     @cached_property
     def end_time(self):
         try:
-            repo_logs = RepositorySyncLog.objects.filter(project_sync_log__sync_log=self)
-            repo_end = repo_logs.latest('end_time').end_time
+            repo_logs = RepositorySyncLog.objects.filter(
+                project_sync_log__sync_log=self
+            )
+            repo_end = repo_logs.latest("end_time").end_time
 
-            skipped_end = self.project_sync_logs.aggregate(
-                Max('skipped_end_time')
-            )['skipped_end_time__max']
+            skipped_end = self.project_sync_logs.aggregate(Max("skipped_end_time"))[
+                "skipped_end_time__max"
+            ]
 
             return latest_datetime([repo_end, skipped_end])
 
@@ -52,7 +54,7 @@ class SyncLog(BaseLog):
         return all(log.finished for log in self.project_sync_logs.all())
 
     def get_absolute_url(self):
-        return reverse('pontoon.sync.logs.details', kwargs={'sync_log_pk': self.pk})
+        return reverse("pontoon.sync.logs.details", kwargs={"sync_log_pk": self.pk})
 
     def fix_stats(self):
         """
@@ -64,28 +66,27 @@ class SyncLog(BaseLog):
 
         # total_strings missmatch between TranslatedResource & Resource
         translated_resources = []
-        tr_source = (
-            TranslatedResource.objects
-            .exclude(total_strings=F('resource__total_strings'))
-            .select_related('resource')
-        )
+        tr_source = TranslatedResource.objects.exclude(
+            total_strings=F("resource__total_strings")
+        ).select_related("resource")
         for t in tr_source:
             t.total_strings = t.resource.total_strings
             translated_resources.append(t)
             log.info(
-                "Fix stats: total_strings mismatch for {resource}, {locale}."
-                .format(resource=t.resource, locale=t.locale.code)
+                "Fix stats: total_strings mismatch for {resource}, {locale}.".format(
+                    resource=t.resource, locale=t.locale.code
+                )
             )
 
-        bulk_update(translated_resources, update_fields=['total_strings'])
+        bulk_update(translated_resources, update_fields=["total_strings"])
 
         # total_strings missmatch in ProjectLocales within the same project
         for p in Project.objects.available():
             count = (
-                ProjectLocale.objects
-                .filter(project=p)
+                ProjectLocale.objects.filter(project=p)
                 .values("total_strings")
-                .distinct().count()
+                .distinct()
+                .count()
             )
             if count > 1:
                 for pl in ProjectLocale.objects.filter(project=p):
@@ -93,24 +94,24 @@ class SyncLog(BaseLog):
 
         # approved + fuzzy + errors + warnings > total in TranslatedResource
         for t in (
-            TranslatedResource.objects
-            .filter(
+            TranslatedResource.objects.filter(
                 resource__project__disabled=False,
                 resource__project__sync_disabled=False,
             )
             .annotate(
                 total=Sum(
-                    F('approved_strings') +
-                    F('fuzzy_strings') +
-                    F('strings_with_errors') +
-                    F('strings_with_warnings')
+                    F("approved_strings")
+                    + F("fuzzy_strings")
+                    + F("strings_with_errors")
+                    + F("strings_with_warnings")
                 )
             )
-            .filter(total__gt=F('total_strings'))
+            .filter(total__gt=F("total_strings"))
         ):
             log.info(
-                "Fix stats: total_strings overflow for {resource}, {locale}."
-                .format(resource=t.resource, locale=t.locale.code)
+                "Fix stats: total_strings overflow for {resource}, {locale}.".format(
+                    resource=t.resource, locale=t.locale.code
+                )
             )
             t.calculate_stats()
 
@@ -118,7 +119,7 @@ class SyncLog(BaseLog):
 
 
 class ProjectSyncLog(BaseLog):
-    sync_log = models.ForeignKey(SyncLog, related_name='project_sync_logs')
+    sync_log = models.ForeignKey(SyncLog, related_name="project_sync_logs")
     project = models.ForeignKey(Project)
 
     start_time = models.DateTimeField(default=timezone.now)
@@ -131,8 +132,8 @@ class ProjectSyncLog(BaseLog):
         if self.skipped:
             return self.skipped_end_time
         elif self.finished:
-            aggregate = self.repository_sync_logs.all().aggregate(Max('end_time'))
-            return aggregate['end_time__max']
+            aggregate = self.repository_sync_logs.all().aggregate(Max("end_time"))
+            return aggregate["end_time__max"]
         else:
             return None
 
@@ -166,13 +167,14 @@ class ProjectSyncLog(BaseLog):
         """Marks current project sync log as skipped"""
         self.skipped = True
         self.skipped_end_time = end_time or timezone.now()
-        self.save(update_fields=('skipped', 'skipped_end_time'))
+        self.save(update_fields=("skipped", "skipped_end_time"))
         self.sync_log.fix_stats()
 
 
 class RepositorySyncLog(BaseLog):
-    project_sync_log = models.ForeignKey(ProjectSyncLog,
-                                         related_name='repository_sync_logs')
+    project_sync_log = models.ForeignKey(
+        ProjectSyncLog, related_name="repository_sync_logs"
+    )
     repository = models.ForeignKey(Repository)
 
     start_time = models.DateTimeField(default=timezone.now)
@@ -184,5 +186,5 @@ class RepositorySyncLog(BaseLog):
 
     def end(self):
         self.end_time = timezone.now()
-        self.save(update_fields=['end_time'])
+        self.save(update_fields=["end_time"])
         self.project_sync_log.sync_log.fix_stats()

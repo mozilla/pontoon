@@ -13,6 +13,7 @@ from pontoon.test.factories import (
 
 class UserTestCase(TestCase):
     """Default testcase for the views that require logged accounts."""
+
     def setUp(self):
         self.user = UserFactory.create()
         self.client.force_login(self.user)

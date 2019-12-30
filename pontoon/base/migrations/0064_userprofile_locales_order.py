@@ -9,13 +9,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0063_remove_has_changed'),
+        ("base", "0063_remove_has_changed"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='locales_order',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.PositiveIntegerField(), blank=True, default=list, size=None),
+            model_name="userprofile",
+            name="locales_order",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.PositiveIntegerField(),
+                blank=True,
+                default=list,
+                size=None,
+            ),
         ),
     ]

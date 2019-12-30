@@ -9,8 +9,8 @@ from session_csrf import anonymous_csrf
 
 
 class BaseConfig(AppConfig):
-    name = 'pontoon.base'
-    verbose_name = 'Base'
+    name = "pontoon.base"
+    verbose_name = "Base"
 
     _has_patched = False
 
@@ -44,7 +44,6 @@ class SessionCsrfAdminSite(AdminSite):
     def login(self, request, extra_context=None):
         @anonymous_csrf
         def call_parent_login(request, extra_context):
-            return super(SessionCsrfAdminSite, self).login(request,
-                                                           extra_context)
+            return super(SessionCsrfAdminSite, self).login(request, extra_context)
 
         return call_parent_login(request, extra_context)

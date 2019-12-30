@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0140_project_resource_date_fields'),
+        ("base", "0140_project_resource_date_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='use_translate_next',
+            model_name="userprofile",
+            name="use_translate_next",
             field=models.BooleanField(default=False),
         ),
     ]

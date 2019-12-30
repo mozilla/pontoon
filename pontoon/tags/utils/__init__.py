@@ -10,13 +10,14 @@ from .translations import TagsLatestTranslationsTool
 
 
 __all__ = (
-    'LatestActivity',
-    'LatestActivityTranslation',
-    'LatestActivityUser',
-    'TagChart',
-    'TaggedLocale',
-    'TagsLatestTranslationsTool',
-    'TagsResourcesTool',
-    'TagsStatsTool',
-    'TagsTool',
-    'TagTool')
+    "LatestActivity",
+    "LatestActivityTranslation",
+    "LatestActivityUser",
+    "TagChart",
+    "TaggedLocale",
+    "TagsLatestTranslationsTool",
+    "TagsResourcesTool",
+    "TagsStatsTool",
+    "TagsTool",
+    "TagTool",
+)

@@ -10,12 +10,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0114_project_path_unique'),
+        ("base", "0114_project_path_unique"),
     ]
 
     operations = [
         migrations.AlterIndexTogether(
-            name='translation',
-            index_together=set([('entity', 'locale', 'approved'), ('entity', 'user'), ('entity', 'locale', 'fuzzy'), ('date', 'locale')]),
+            name="translation",
+            index_together=set(
+                [
+                    ("entity", "locale", "approved"),
+                    ("entity", "user"),
+                    ("entity", "locale", "fuzzy"),
+                    ("date", "locale"),
+                ]
+            ),
         ),
     ]

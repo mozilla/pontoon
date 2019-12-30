@@ -6,7 +6,12 @@ from django.db.models import Q
 from django.utils.functional import cached_property
 
 from pontoon.base.models import (
-    Locale, Project, Resource, TranslatedResource, Translation)
+    Locale,
+    Project,
+    Resource,
+    TranslatedResource,
+    Translation,
+)
 from pontoon.tags.models import Tag
 
 
@@ -26,10 +31,7 @@ class Clonable(object):
             setattr(self, k, kwargs.get(k))
 
     def __call__(self, **kwargs):
-        clone_kwargs = dict(
-            (k, getattr(self, k))
-            for k
-            in self.clone_kwargs)
+        clone_kwargs = dict((k, getattr(self, k)) for k in self.clone_kwargs)
         clone_kwargs.update(kwargs)
         return self.__class__(**clone_kwargs)
 
@@ -74,10 +76,7 @@ class FilteredDataTool(Clonable):
 
     @property
     def filters(self):
-        return [
-            getattr(self, 'filter_%s' % f)
-            for f
-            in self.filter_methods]
+        return [getattr(self, "filter_%s" % f) for f in self.filter_methods]
 
     @cached_property
     def data(self):
@@ -96,9 +95,9 @@ class FilteredDataTool(Clonable):
 
     def get_data(self):
         """Get the aggregated queryset"""
-        return self.filtered_data.values(
-            *self.get_groupby()).annotate(
-                **self.get_annotations())
+        return self.filtered_data.values(*self.get_groupby()).annotate(
+            **self.get_annotations()
+        )
 
     def get_groupby(self):
         """Get groupby fields"""
@@ -113,15 +112,9 @@ class TagsDataTool(FilteredDataTool):
     """
 
     _default_annotations = ()
-    default_groupby = ('resource__tag', )
-    filter_methods = (
-        'tag', 'locales', 'projects')
-    clone_kwargs = (
-        'locales',
-        'projects',
-        'priority',
-        'slug',
-        'path')
+    default_groupby = ("resource__tag",)
+    filter_methods = ("tag", "locales", "projects")
+    clone_kwargs = ("locales", "projects", "priority", "slug", "path")
 
     @property
     def locale_manager(self):
@@ -152,30 +145,24 @@ class TagsTRTool(TagsDataTool):
     """Data Tool from the perspective of TranslatedResources
     """
 
-    clone_kwargs = TagsDataTool.clone_kwargs + ('annotations', 'groupby')
+    clone_kwargs = TagsDataTool.clone_kwargs + ("annotations", "groupby")
 
     @property
     def data_manager(self):
         return self.tr_manager
 
     def filter_locales(self, trs):
-        return (
-            trs.filter(locale__in=self.locales)
-            if self.locales
-            else trs)
+        return trs.filter(locale__in=self.locales) if self.locales else trs
 
     def filter_path(self, trs):
         return (
-            trs.filter(
-                resource__path__contains=self.path).distinct()
+            trs.filter(resource__path__contains=self.path).distinct()
             if self.path
-            else trs)
+            else trs
+        )
 
     def filter_projects(self, trs):
-        return (
-            trs.filter(resource__project__in=self.projects)
-            if self.projects
-            else trs)
+        return trs.filter(resource__project__in=self.projects) if self.projects else trs
 
     def filter_tag(self, trs):
         """Filters on tag.slug and tag.priority

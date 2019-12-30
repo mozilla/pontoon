@@ -11,40 +11,87 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('base', '0121_bug_1453999_disable_sync'),
+        ("base", "0121_bug_1453999_disable_sync"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Error',
+            name="Error",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('library', models.CharField(choices=[(b'p', b'pontoon'), (b'tt', b'translate-toolkit'), (b'cl', b'compare-locales')], db_index=True, max_length=20)),
-                ('message', models.TextField()),
-                ('translation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='errors', to='base.Translation')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "library",
+                    models.CharField(
+                        choices=[
+                            (b"p", b"pontoon"),
+                            (b"tt", b"translate-toolkit"),
+                            (b"cl", b"compare-locales"),
+                        ],
+                        db_index=True,
+                        max_length=20,
+                    ),
+                ),
+                ("message", models.TextField()),
+                (
+                    "translation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="errors",
+                        to="base.Translation",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='Warning',
+            name="Warning",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('library', models.CharField(choices=[(b'p', b'pontoon'), (b'tt', b'translate-toolkit'), (b'cl', b'compare-locales')], db_index=True, max_length=20)),
-                ('message', models.TextField()),
-                ('translation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='warnings', to='base.Translation')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "library",
+                    models.CharField(
+                        choices=[
+                            (b"p", b"pontoon"),
+                            (b"tt", b"translate-toolkit"),
+                            (b"cl", b"compare-locales"),
+                        ],
+                        db_index=True,
+                        max_length=20,
+                    ),
+                ),
+                ("message", models.TextField()),
+                (
+                    "translation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="warnings",
+                        to="base.Translation",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.AlterUniqueTogether(
-            name='warning',
-            unique_together=set([('translation', 'library', 'message')]),
+            name="warning",
+            unique_together=set([("translation", "library", "message")]),
         ),
         migrations.AlterUniqueTogether(
-            name='error',
-            unique_together=set([('translation', 'library', 'message')]),
+            name="error", unique_together=set([("translation", "library", "message")]),
         ),
     ]

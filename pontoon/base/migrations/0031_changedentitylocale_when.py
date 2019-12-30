@@ -8,13 +8,13 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0030_repository_source_repo'),
+        ("base", "0030_repository_source_repo"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='changedentitylocale',
-            name='when',
+            model_name="changedentitylocale",
+            name="when",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

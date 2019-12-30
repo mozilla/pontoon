@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0124_entity_date_obsoleted'),
+        ("base", "0124_entity_date_obsoleted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectlocale',
-            name='readonly',
+            model_name="projectlocale",
+            name="readonly",
             field=models.BooleanField(default=False),
         ),
     ]

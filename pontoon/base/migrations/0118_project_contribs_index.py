@@ -10,12 +10,20 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0117_bug_1405256_ftl_delete_duplicates'),
+        ("base", "0117_bug_1405256_ftl_delete_duplicates"),
     ]
 
     operations = [
         migrations.AlterIndexTogether(
-            name='translation',
-            index_together=set([('entity', 'locale', 'approved'), ('entity', 'user', 'approved', 'fuzzy'), ('entity', 'locale', 'fuzzy'), ('date', 'locale'), ('locale', 'user', 'entity')]),
+            name="translation",
+            index_together=set(
+                [
+                    ("entity", "locale", "approved"),
+                    ("entity", "user", "approved", "fuzzy"),
+                    ("entity", "locale", "fuzzy"),
+                    ("date", "locale"),
+                    ("locale", "user", "entity"),
+                ]
+            ),
         ),
     ]

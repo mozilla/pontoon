@@ -9,28 +9,45 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0049_create_translation_memory_entries'),
+        ("base", "0049_create_translation_memory_entries"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='resource',
-            name='deadline',
+            model_name="resource",
+            name="deadline",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='resource',
-            name='priority',
-            field=models.IntegerField(choices=[(1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
+            model_name="resource",
+            name="priority",
+            field=models.IntegerField(
+                choices=[
+                    (1, b"Lowest"),
+                    (2, b"Low"),
+                    (3, b"Normal"),
+                    (4, b"High"),
+                    (5, b"Highest"),
+                ],
+                default=3,
+            ),
         ),
         migrations.AlterField(
-            model_name='projectlocale',
-            name='locale',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_locale', to='base.Locale'),
+            model_name="projectlocale",
+            name="locale",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_locale",
+                to="base.Locale",
+            ),
         ),
         migrations.AlterField(
-            model_name='projectlocale',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_locale', to='base.Project'),
+            model_name="projectlocale",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="project_locale",
+                to="base.Project",
+            ),
         ),
     ]

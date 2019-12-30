@@ -11,19 +11,17 @@ from pontoon.tour.forms import UserTourStatusForm
 @require_POST
 def update_tour_status(request):
     """Update User tour status."""
-    form = UserTourStatusForm(
-        request.POST,
-        instance=request.user.profile,
-    )
+    form = UserTourStatusForm(request.POST, instance=request.user.profile,)
 
     if not form.is_valid():
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=form.errors),
-        }, status=400)
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Bad Request: {error}".format(error=form.errors),
+            },
+            status=400,
+        )
 
     form.save()
 
-    return JsonResponse({
-        'status': True,
-    })
+    return JsonResponse({"status": True})

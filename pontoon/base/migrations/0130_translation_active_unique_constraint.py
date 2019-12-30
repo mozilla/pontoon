@@ -9,16 +9,26 @@ import partial_index
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0129_translation_active'),
+        ("base", "0129_translation_active"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='translation',
-            index=partial_index.PartialIndex(fields=['entity', 'locale', 'plural_form', 'active'], name='base_transl_entity__fbea1e_partial', unique=True, where=partial_index.PQ(active=True)),
+            model_name="translation",
+            index=partial_index.PartialIndex(
+                fields=["entity", "locale", "plural_form", "active"],
+                name="base_transl_entity__fbea1e_partial",
+                unique=True,
+                where=partial_index.PQ(active=True),
+            ),
         ),
         migrations.AddIndex(
-            model_name='translation',
-            index=partial_index.PartialIndex(fields=['entity', 'locale', 'active'], name='base_transl_entity__ed9592_partial', unique=True, where=partial_index.PQ(('active', True), ('plural_form__isnull', True))),
+            model_name="translation",
+            index=partial_index.PartialIndex(
+                fields=["entity", "locale", "active"],
+                name="base_transl_entity__ed9592_partial",
+                unique=True,
+                where=partial_index.PQ(("active", True), ("plural_form__isnull", True)),
+            ),
         ),
     ]

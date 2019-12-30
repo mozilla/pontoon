@@ -8,13 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0060_auto_20160516_0849'),
+        ("base", "0060_auto_20160516_0849"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='repository',
-            name='type',
-            field=models.CharField(choices=[(b'git', b'Git'), (b'hg', b'HG'), (b'svn', b'SVN')], default=b'git', max_length=255),
+            model_name="repository",
+            name="type",
+            field=models.CharField(
+                choices=[(b"git", b"Git"), (b"hg", b"HG"), (b"svn", b"SVN")],
+                default=b"git",
+                max_length=255,
+            ),
         ),
     ]

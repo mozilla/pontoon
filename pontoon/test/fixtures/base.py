@@ -8,10 +8,7 @@ from pontoon.test import factories
 @pytest.fixture
 def admin():
     """Admin - a superuser"""
-    return factories.UserFactory.create(
-        username="admin",
-        is_superuser=True,
-    )
+    return factories.UserFactory.create(username="admin", is_superuser=True,)
 
 
 @pytest.fixture
@@ -53,16 +50,13 @@ def member(client, user_a):
 
 @pytest.fixture
 def locale_a():
-    return factories.LocaleFactory(
-        code="kg",
-        name="Klingon",
-    )
+    return factories.LocaleFactory(code="kg", name="Klingon",)
 
 
 @pytest.fixture
 def google_translate_locale(locale_a):
     """Set the Google Cloud Translation API locale code for locale_a"""
-    locale_a.google_translate_code = 'bg'
+    locale_a.google_translate_code = "bg"
     locale_a.save()
     return locale_a
 
@@ -70,17 +64,14 @@ def google_translate_locale(locale_a):
 @pytest.fixture
 def ms_locale(locale_a):
     """Set the Microsoft API locale code for locale_a"""
-    locale_a.ms_translator_code = 'gb'
+    locale_a.ms_translator_code = "gb"
     locale_a.save()
     return locale_a
 
 
 @pytest.fixture
 def locale_b():
-    return factories.LocaleFactory(
-        code="gs",
-        name="Geonosian",
-    )
+    return factories.LocaleFactory(code="gs", name="Geonosian",)
 
 
 @pytest.fixture
@@ -92,15 +83,16 @@ def project_a():
 
 @pytest.fixture
 def project_b():
-    return factories.ProjectFactory(
-        slug="project_b", name="Project B"
-    )
+    return factories.ProjectFactory(slug="project_b", name="Project B")
 
 
 @pytest.fixture
 def system_project_a():
     return factories.ProjectFactory(
-        slug="system_project_a", name="System Project A", repositories=[], system_project=True,
+        slug="system_project_a",
+        name="System Project A",
+        repositories=[],
+        system_project=True,
     )
 
 
@@ -120,24 +112,17 @@ def resource_b(project_b):
 
 @pytest.fixture
 def entity_a(resource_a):
-    return factories.EntityFactory(
-        resource=resource_a, string="entity a"
-    )
+    return factories.EntityFactory(resource=resource_a, string="entity a")
 
 
 @pytest.fixture
 def entity_b(resource_b):
-    return factories.EntityFactory(
-        resource=resource_b, string="entity b"
-    )
+    return factories.EntityFactory(resource=resource_b, string="entity b")
 
 
 @pytest.fixture
 def project_locale_a(project_a, locale_a):
-    return factories.ProjectLocaleFactory(
-        project=project_a,
-        locale=locale_a,
-    )
+    return factories.ProjectLocaleFactory(project=project_a, locale=locale_a,)
 
 
 @pytest.fixture
@@ -151,7 +136,7 @@ def translation_a(locale_a, project_locale_a, entity_a, user_a):
         entity=entity_a,
         locale=locale_a,
         user=user_a,
-        string='Translation for entity_a',
+        string="Translation for entity_a",
     )
     translation_a.locale.refresh_from_db()
     translation_a.entity.resource.project.refresh_from_db()
@@ -161,13 +146,7 @@ def translation_a(locale_a, project_locale_a, entity_a, user_a):
 @pytest.fixture
 def tag_a(resource_a, project_a, locale_a):
     # Tags require a TranslatedResource to work.
-    factories.TranslatedResourceFactory.create(
-        resource=resource_a, locale=locale_a
-    )
-    tag = factories.TagFactory.create(
-        slug="tag",
-        name="Tag",
-        project=project_a,
-    )
+    factories.TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
+    tag = factories.TagFactory.create(slug="tag", name="Tag", project=project_a,)
     tag.resources.add(resource_a)
     return tag

@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0101_userprofile_custom_homepage'),
+        ("base", "0101_userprofile_custom_homepage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='locale',
-            name='transvision',
-            field=models.BooleanField(default=False, help_text='\n        Enable Machinery suggestions from <a href="https://transvision.mozfr.org/">Transvision</a>.\n        Only useful for locales that don\'t translate all projects on Pontoon.\n    '),
+            model_name="locale",
+            name="transvision",
+            field=models.BooleanField(
+                default=False,
+                help_text='\n        Enable Machinery suggestions from <a href="https://transvision.mozfr.org/">Transvision</a>.\n        Only useful for locales that don\'t translate all projects on Pontoon.\n    ',
+            ),
         ),
     ]

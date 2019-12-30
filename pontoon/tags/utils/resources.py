@@ -11,7 +11,7 @@ class TagsResourcesTool(TagsDataTool):
     """ Find, link and unlink Resources for Tags
     """
 
-    filter_methods = ('locales', 'projects', 'slug', 'path')
+    filter_methods = ("locales", "projects", "slug", "path")
 
     @property
     def data_manager(self):
@@ -25,25 +25,21 @@ class TagsResourcesTool(TagsDataTool):
         return (
             resources.filter(translatedresources__locale__in=self.locales)
             if self.locales
-            else resources)
+            else resources
+        )
 
     def filter_path(self, resources):
-        return (
-            resources.filter(path__contains=self.path)
-            if self.path
-            else resources)
+        return resources.filter(path__contains=self.path) if self.path else resources
 
     def filter_projects(self, resources):
         return (
-            resources.filter(project__in=self.projects)
-            if self.projects
-            else resources)
+            resources.filter(project__in=self.projects) if self.projects else resources
+        )
 
     def filter_slug(self, resources):
         return (
-            resources.filter(tag__slug__contains=self.slug)
-            if self.slug
-            else resources)
+            resources.filter(tag__slug__contains=self.slug) if self.slug else resources
+        )
 
     def find(self, search_path=None, include=None, exclude=None):
         """ Find filtered resources by their path, and optionally
@@ -74,12 +70,12 @@ class TagsResourcesTool(TagsDataTool):
         but are not already
         """
 
-        return self.find(exclude=slug).values('path', 'project')
+        return self.find(exclude=slug).values("path", "project")
 
     def get_linked_resources(self, slug):
         """ Return `values` of resources that are already linked to a given tag
         """
-        return self.get(slug).values('path', 'project')
+        return self.get(slug).values("path", "project")
 
     def link(self, tag, resources):
         """ Associate Resources with a Tag. The Resources can be selected
@@ -91,10 +87,10 @@ class TagsResourcesTool(TagsDataTool):
         if resources is not None:
             _resources = self.resource_manager.none()
             for resource in resources:
-                self._validate_resource(tag, resource['project'])
+                self._validate_resource(tag, resource["project"])
                 _resources |= self.resource_manager.filter(
-                    project=resource["project"],
-                    path=resource["path"])
+                    project=resource["project"], path=resource["path"]
+                )
             tag.resources.add(*list(_resources))
 
     def unlink(self, tag, resources):
@@ -108,12 +104,15 @@ class TagsResourcesTool(TagsDataTool):
             _resources = self.resource_manager.none()
             for resource in resources:
                 _resources |= self.resource_manager.filter(
-                    project=resource["project"],
-                    path=resource["path"])
-            self.tag_manager.filter(query).get(slug=tag).resources.remove(*list(_resources))
+                    project=resource["project"], path=resource["path"]
+                )
+            self.tag_manager.filter(query).get(slug=tag).resources.remove(
+                *list(_resources)
+            )
 
     def _validate_resource(self, tag, resource_project):
         if tag.project_id and resource_project != tag.project_id:
             raise InvalidProjectError(
                 "Cannot add Resource from Project (%s) to Tag (%s)"
-                % (resource_project, self.slug))
+                % (resource_project, self.slug)
+            )

@@ -17,12 +17,13 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
     """
     Semi-integration tests for translation checks during a sync.
     """
+
     def setUp(self):
         super(TestChangesetTranslationsChecks, self).setUp()
 
         changed_translation_patch = patch(
-            'pontoon.sync.changeset.ChangeSet.changed_translations',
-            new_callable=PropertyMock
+            "pontoon.sync.changeset.ChangeSet.changed_translations",
+            new_callable=PropertyMock,
         )
 
         self.mock_changed_translations = changed_translation_patch.start()
@@ -41,7 +42,7 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
             locale=self.translated_locale,
             entity=self.main_db_entity,
             approved=True,
-            date=aware_datetime(2015, 1, 1)
+            date=aware_datetime(2015, 1, 1),
         )
 
         self.mock_changed_translations.return_value = [
@@ -50,10 +51,7 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
         ]
         assert_equal(
             self.changeset.bulk_check_translations(),
-            {
-                translation1.pk,
-                translation2.pk,
-            }
+            {translation1.pk, translation2.pk},
         )
         assert_equal(Error.objects.count(), 0)
         assert_equal(Warning.objects.count(), 0)
@@ -69,9 +67,9 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
             locale=self.translated_locale,
             entity=self.main_db_entity,
             approved=True,
-            date=aware_datetime(2015, 1, 1)
+            date=aware_datetime(2015, 1, 1),
         )
-        invalid_translation.string = 'a\nb'
+        invalid_translation.string = "a\nb"
         invalid_translation.save()
 
         # Clear TM entries for those translations
@@ -87,10 +85,10 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
 
         assert_equal(valid_translations, {valid_translation.pk})
 
-        error, = Error.objects.all()
+        (error,) = Error.objects.all()
 
-        assert_equal(error.library, 'p')
-        assert_equal(error.message, 'Newline characters are not allowed')
+        assert_equal(error.library, "p")
+        assert_equal(error.message, "Newline characters are not allowed")
         assert_equal(error.translation, invalid_translation)
 
         self.changeset.translations_to_update = {

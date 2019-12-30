@@ -13,20 +13,14 @@ from pontoon.checks.models import (
 
 @pytest.fixture
 def translation_with_error(translation_a):
-    Error.objects.create(
-        translation=translation_a,
-        library='p',
-        message='error'
-    )
+    Error.objects.create(translation=translation_a, library="p", message="error")
     return translation_a
 
 
 @pytest.fixture
 def translation_with_warning(translation_a):
     Warning.objects.create(
-        translation=translation_a,
-        library='p',
-        message='warning',
+        translation=translation_a, library="p", message="warning",
     )
     return translation_a
 
@@ -37,8 +31,7 @@ def recalculate_stats(translation):
     """
     translation.save(update_stats=False)
     translated_resource = TranslatedResource.objects.get(
-        resource=translation.entity.resource,
-        locale=translation.locale,
+        resource=translation.entity.resource, locale=translation.locale,
     )
     translated_resource.calculate_stats()
 
@@ -50,12 +43,7 @@ def diff_stats(t):
     t.save()
 
 
-@pytest.fixture(
-    params=(
-        recalculate_stats,
-        diff_stats,
-    )
-)
+@pytest.fixture(params=(recalculate_stats, diff_stats,))
 def stats_update(db, request):
     """
     Wrapper fixture which allows to test both implementations of stats calculations.
@@ -66,12 +54,10 @@ def stats_update(db, request):
 @pytest.fixture
 def get_stats():
     def f(translation):
-        return (
-            TranslatedResource.objects.filter(
-                resource=translation.entity.resource,
-                locale=translation.locale,
-            ).aggregated_stats()
-        )
+        return TranslatedResource.objects.filter(
+            resource=translation.entity.resource, locale=translation.locale,
+        ).aggregated_stats()
+
     return f
 
 
@@ -80,24 +66,24 @@ def test_translation_approved(stats_update, get_stats, translation_a):
     stats_update(translation_a)
 
     assert get_stats(translation_a) == {
-        'total': 1,
-        'approved': 1,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 1,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 0,
     }
 
     translation_a.approved = False
     stats_update(translation_a)
 
     assert get_stats(translation_a) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 1,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 1,
+        "warnings": 0,
+        "errors": 0,
     }
 
 
@@ -106,12 +92,12 @@ def test_translation_fuzzy(stats_update, get_stats, translation_a):
     stats_update(translation_a)
 
     assert get_stats(translation_a) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 1,
-        'unreviewed': 0,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 1,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 0,
     }
 
     translation_a.fuzzy = False
@@ -119,12 +105,12 @@ def test_translation_fuzzy(stats_update, get_stats, translation_a):
     stats_update(translation_a)
 
     assert get_stats(translation_a) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 0,
     }
 
 
@@ -133,12 +119,12 @@ def test_translation_with_error(stats_update, get_stats, translation_with_error)
     stats_update(translation_with_error)
 
     assert get_stats(translation_with_error) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 0,
-        'errors': 1,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 1,
     }
 
     translation_with_error.approved = False
@@ -146,24 +132,24 @@ def test_translation_with_error(stats_update, get_stats, translation_with_error)
     stats_update(translation_with_error)
 
     assert get_stats(translation_with_error) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 0,
-        'errors': 1,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 1,
     }
 
     translation_with_error.fuzzy = False
     stats_update(translation_with_error)
 
     assert get_stats(translation_with_error) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 1,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 1,
+        "warnings": 0,
+        "errors": 0,
     }
 
 
@@ -172,12 +158,12 @@ def test_translation_with_warning(stats_update, get_stats, translation_with_warn
     stats_update(translation_with_warning)
 
     assert get_stats(translation_with_warning) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 1,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 1,
+        "errors": 0,
     }
 
     translation_with_warning.approved = False
@@ -185,22 +171,22 @@ def test_translation_with_warning(stats_update, get_stats, translation_with_warn
     stats_update(translation_with_warning)
 
     assert get_stats(translation_with_warning) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 0,
-        'warnings': 1,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 0,
+        "warnings": 1,
+        "errors": 0,
     }
 
     translation_with_warning.fuzzy = False
     stats_update(translation_with_warning)
 
     assert get_stats(translation_with_warning) == {
-        'total': 1,
-        'approved': 0,
-        'fuzzy': 0,
-        'unreviewed': 1,
-        'warnings': 0,
-        'errors': 0,
+        "total": 1,
+        "approved": 0,
+        "fuzzy": 0,
+        "unreviewed": 1,
+        "warnings": 0,
+        "errors": 0,
     }

@@ -12,9 +12,7 @@ from pontoon.base.models import (
     ProjectLocale as ProjectLocaleModel,
 )
 
-from pontoon.tags.models import (
-    Tag as TagModel,
-)
+from pontoon.tags.models import Tag as TagModel
 
 
 class Stats(object):
@@ -27,9 +25,9 @@ class Tag(DjangoObjectType):
         convert_choices_to_enum = False
         model = TagModel
         only_fields = (
-            'slug',
-            'name',
-            'priority',
+            "slug",
+            "name",
+            "priority",
         )
 
 
@@ -37,14 +35,14 @@ class ProjectLocale(DjangoObjectType, Stats):
     class Meta:
         model = ProjectLocaleModel
         only_fields = (
-            'project',
-            'locale',
-            'total_strings',
-            'approved_strings',
-            'fuzzy_strings',
-            'strings_with_errors',
-            'strings_with_warnings',
-            'unreviewed_strings',
+            "project",
+            "locale",
+            "total_strings",
+            "approved_strings",
+            "fuzzy_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
         )
 
 
@@ -52,20 +50,20 @@ class Project(DjangoObjectType, Stats):
     class Meta:
         model = ProjectModel
         only_fields = (
-            'name',
-            'slug',
-            'disabled',
-            'sync_disabled',
-            'info',
-            'deadline',
-            'priority',
-            'contact',
-            'total_strings',
-            'approved_strings',
-            'fuzzy_strings',
-            'strings_with_errors',
-            'strings_with_warnings',
-            'unreviewed_strings',
+            "name",
+            "slug",
+            "disabled",
+            "sync_disabled",
+            "info",
+            "deadline",
+            "priority",
+            "contact",
+            "total_strings",
+            "approved_strings",
+            "fuzzy_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
         )
 
     localizations = graphene.List(ProjectLocale)
@@ -82,28 +80,27 @@ class Locale(DjangoObjectType, Stats):
     class Meta:
         model = LocaleModel
         only_fields = (
-            'name',
-            'code',
-            'direction',
-            'cldr_plurals',
-            'plural_rule',
-            'script',
-            'population',
-            'total_strings',
-            'approved_strings',
-            'fuzzy_strings',
-            'strings_with_errors',
-            'strings_with_warnings',
-            'unreviewed_strings',
-            'google_translate_code',
-            'ms_translator_code',
-            'ms_terminology_code',
-            'transvision',
+            "name",
+            "code",
+            "direction",
+            "cldr_plurals",
+            "plural_rule",
+            "script",
+            "population",
+            "total_strings",
+            "approved_strings",
+            "fuzzy_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
+            "google_translate_code",
+            "ms_translator_code",
+            "ms_terminology_code",
+            "transvision",
         )
 
     localizations = graphene.List(
-        ProjectLocale,
-        include_disabled=graphene.Boolean(False),
+        ProjectLocale, include_disabled=graphene.Boolean(False),
     )
 
     def resolve_localizations(obj, _info, include_disabled):
@@ -116,7 +113,7 @@ class Locale(DjangoObjectType, Stats):
 
 
 class Query(graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name='__debug')
+    debug = graphene.Field(DjangoDebug, name="__debug")
 
     # include_disabled=True will return both active and disabled projects.
     projects = graphene.List(Project, include_disabled=graphene.Boolean(False))
@@ -129,11 +126,11 @@ class Query(graphene.ObjectType):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
-        if 'projects.localizations' in fields:
-            qs = qs.prefetch_related('project_locale__locale')
+        if "projects.localizations" in fields:
+            qs = qs.prefetch_related("project_locale__locale")
 
-        if 'projects.localizations.locale.localizations' in fields:
-            raise Exception('Cyclic queries are forbidden')
+        if "projects.localizations.locale.localizations" in fields:
+            raise Exception("Cyclic queries are forbidden")
 
         if include_disabled:
             return qs.all()
@@ -144,14 +141,14 @@ class Query(graphene.ObjectType):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
-        if 'project.localizations' in fields:
-            qs = qs.prefetch_related('project_locale__locale')
+        if "project.localizations" in fields:
+            qs = qs.prefetch_related("project_locale__locale")
 
-        if 'project.tags' in fields:
-            qs = qs.prefetch_related('tag_set')
+        if "project.tags" in fields:
+            qs = qs.prefetch_related("tag_set")
 
-        if 'project.localizations.locale.localizations' in fields:
-            raise Exception('Cyclic queries are forbidden')
+        if "project.localizations.locale.localizations" in fields:
+            raise Exception("Cyclic queries are forbidden")
 
         return qs.get(slug=slug)
 
@@ -159,11 +156,11 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
-        if 'locales.localizations' in fields:
-            qs = qs.prefetch_related('project_locale__project')
+        if "locales.localizations" in fields:
+            qs = qs.prefetch_related("project_locale__project")
 
-        if 'locales.localizations.project.localizations' in fields:
-            raise Exception('Cyclic queries are forbidden')
+        if "locales.localizations.project.localizations" in fields:
+            raise Exception("Cyclic queries are forbidden")
 
         return qs.all()
 
@@ -171,11 +168,11 @@ class Query(graphene.ObjectType):
         qs = LocaleModel.objects
         fields = get_fields(info)
 
-        if 'locale.localizations' in fields:
-            qs = qs.prefetch_related('project_locale__project')
+        if "locale.localizations" in fields:
+            qs = qs.prefetch_related("project_locale__project")
 
-        if 'locale.localizations.project.localizations' in fields:
-            raise Exception('Cyclic queries are forbidden')
+        if "locale.localizations.project.localizations" in fields:
+            raise Exception("Cyclic queries are forbidden")
 
         return qs.get(code=code)
 

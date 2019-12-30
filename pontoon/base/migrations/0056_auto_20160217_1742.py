@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0055_populate_denormalized_stats'),
+        ("base", "0055_populate_denormalized_stats"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='links',
-            field=models.BooleanField(default=False, verbose_name=b'Keep links on the project website clickable'),
+            model_name="project",
+            name="links",
+            field=models.BooleanField(
+                default=False,
+                verbose_name=b"Keep links on the project website clickable",
+            ),
         ),
     ]

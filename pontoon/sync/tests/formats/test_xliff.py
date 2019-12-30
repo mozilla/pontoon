@@ -57,7 +57,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """XLIFF keys are prefixed with the file name."""
-        return u'filename' + KEY_SEPARATOR + super(XLIFFTests, self).key(source_string)
+        return u"filename" + KEY_SEPARATOR + super(XLIFFTests, self).key(source_string)
 
     def assert_file_content(self, file_path, expected_content):
         """
@@ -68,10 +68,9 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
             # Generate a diff for the error message.
             result = Differ().compare(
-                file_content.splitlines(1),
-                expected_content.splitlines(1)
+                file_content.splitlines(1), expected_content.splitlines(1)
             )
-            msg = 'XML strings are not equal:\n' + ''.join(result)
+            msg = "XML strings are not equal:\n" + "".join(result)
 
             self.assertXMLEqual(file_content, expected_content, msg)
 
@@ -87,7 +86,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
     def test_parse_missing_translation(self):
         self.run_parse_missing_translation(BASE_XLIFF_FILE, 3)
 
-    def generate_xliff(self, body, locale_code='en'):
+    def generate_xliff(self, body, locale_code="en"):
         return XLIFF_TEMPLATE.format(body=body, locale_code=locale_code)
 
     def test_save_basic(self):
@@ -96,38 +95,56 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
         Also happens to test if the locale code is saved correctly.
         """
-        input_string = self.generate_xliff(dedent("""
+        input_string = self.generate_xliff(
+            dedent(
+                """
             <trans-unit id="Source String Key">
                 <source>Source String</source>
                 <target>Translated String</target>
                 <note>Comment</note>
             </trans-unit>
-        """))
+        """
+            )
+        )
 
-        expected_string = self.generate_xliff(dedent("""
+        expected_string = self.generate_xliff(
+            dedent(
+                """
             <trans-unit id="Source String Key">
                 <source>Source String</source>
                 <target>New Translated String</target>
                 <note>Comment</note>
             </trans-unit>
-        """), locale_code=self.locale.code)
+        """
+            ),
+            locale_code=self.locale.code,
+        )
 
         super(XLIFFTests, self).run_save_basic(input_string, expected_string)
 
     def test_save_remove(self):
-        input_string = self.generate_xliff(dedent("""
+        input_string = self.generate_xliff(
+            dedent(
+                """
             <trans-unit id="Source String Key">
                 <source>Source String</source>
                 <target>Translated String</target>
                 <note>Comment</note>
             </trans-unit>
-        """))
+        """
+            )
+        )
 
-        expected_string = self.generate_xliff(dedent("""
+        expected_string = self.generate_xliff(
+            dedent(
+                """
             <trans-unit id="Source String Key">
                 <source>Source String</source>
                 <note>Comment</note>
             </trans-unit>
-        """), locale_code=self.locale.code)
+        """
+            ),
+            locale_code=self.locale.code,
+        )
 
         super(XLIFFTests, self).run_save_remove(input_string, expected_string)

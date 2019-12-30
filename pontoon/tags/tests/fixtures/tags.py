@@ -21,14 +21,12 @@ def tag_factory():
         if not instance.name:
             instance.name = "Factory Tag %s" % i
 
-    return functools.partial(
-        _factory, Model=Tag, instance_attrs=instance_attrs
-    )
+    return functools.partial(_factory, Model=Tag, instance_attrs=instance_attrs)
 
 
 def _assert_tags(expected, data):
     assert len(expected) == len(data)
-    results = dict((d['slug'], d) for d in data)
+    results = dict((d["slug"], d) for d in data)
     attrs = [
         "pk",
         "name",
@@ -58,10 +56,7 @@ def _calculate_resource_tags(**kwargs):
     priority = kwargs.get("priority", None)
     resource_tags = {}
     tags_through = Tag.resources.through.objects.values_list(
-        "resource",
-        "tag",
-        "tag__slug",
-        "tag__name",
+        "resource", "tag", "tag__slug", "tag__name",
     )
     if priority is not None:
         if priority is True:
@@ -72,9 +67,7 @@ def _calculate_resource_tags(**kwargs):
             tags_through = tags_through.filter(tag__priority=priority)
 
     for resource, tag, _slug, name in tags_through.iterator():
-        resource_tags[resource] = (
-            resource_tags.get(resource, []) + [(tag, _slug, name)]
-        )
+        resource_tags[resource] = resource_tags.get(resource, []) + [(tag, _slug, name)]
     return resource_tags
 
 
@@ -95,9 +88,9 @@ def _tag_iterator(things, **kwargs):
             continue
         if projects and thing["project"] not in projects:
             continue
-        if path and path not in thing['path']:
+        if path and path not in thing["path"]:
             continue
-        for tag in resource_tags.get(thing['resource'], []):
+        for tag in resource_tags.get(thing["resource"], []):
             __, _slug, __ = tag
             if slug and slug not in _slug:
                 continue
@@ -120,19 +113,19 @@ def _calculate_tags(**kwargs):
         "latest_translation__date",
     ]
     annotations = dict(
-        total_strings=F('resource__total_strings'),
-        project=F('resource__project'),
-        path=F('resource__path'),
+        total_strings=F("resource__total_strings"),
+        project=F("resource__project"),
+        path=F("resource__path"),
     )
     # this is a `values` of translated resources, with the project, path
     # and total_strings denormalized to project/path/total_strings.
     qs = trs.values(*resource_attrs + attrs).annotate(**annotations)
     translated_resource_tags = _tag_iterator(qs, **kwargs)
-    attrs = ['total_strings'] + attrs
+    attrs = ["total_strings"] + attrs
     # iterate through associated tags for all matching translated resources
     for tr, (_pk, _slug, _name) in translated_resource_tags:
-        if kwargs.get('groupby'):
-            key = tr[kwargs['groupby']]
+        if kwargs.get("groupby"):
+            key = tr[kwargs["groupby"]]
         else:
             key = _slug
         if key not in totals:
@@ -166,9 +159,9 @@ def _calculate_tags_latest(**kwargs):
         "locale",
     ]
     annotations = dict(
-        resource=F('entity__resource'),
-        path=F('entity__resource__path'),
-        project=F('entity__resource__project'),
+        resource=F("entity__resource"),
+        path=F("entity__resource__path"),
+        project=F("entity__resource__project"),
     )
     # this is a `values` of translations, with the resource, path and project
     # denormalized to resource/path/project.
@@ -176,18 +169,16 @@ def _calculate_tags_latest(**kwargs):
     translation_tags = _tag_iterator(qs, **kwargs)
     # iterate through associated tags for all matching translations
     for translation, (tag, __, __) in translation_tags:
-        if kwargs.get('groupby'):
-            key = translation[kwargs['groupby']]
+        if kwargs.get("groupby"):
+            key = translation[kwargs["groupby"]]
         else:
             key = tag
         # get the current latest for this tag
-        _pk, _date = latest_dates.get(
-            key, (None, timezone.make_aware(datetime.min))
-        )
-        if translation['date'] > _date:
+        _pk, _date = latest_dates.get(key, (None, timezone.make_aware(datetime.min)))
+        if translation["date"] > _date:
             # set this translation if its newer than the current latest
             # for this tag
-            latest_dates[key] = (translation['pk'], translation['date'])
+            latest_dates[key] = (translation["pk"], translation["date"])
     return latest_dates
 
 
@@ -209,27 +200,21 @@ def tag_matrix(site_matrix):
     `tag_test_kwargs` fixture
 
     """
-    factories = site_matrix['factories']
-    factories['tag'] = tag_factory()
+    factories = site_matrix["factories"]
+    factories["tag"] = tag_factory()
 
     # this creates 113 tags
     # every 20th tag gets no priority
     # the others get between 0-5
-    tags = factories['tag'](
+    tags = factories["tag"](
         args=[
-            {
-                'priority': (
-                    None
-                    if not i or not (i % 20)
-                    else int(i / 20)
-                )
-            }
+            {"priority": (None if not i or not (i % 20) else int(i / 20))}
             for i in range(0, 113)
         ]
     )
 
     # associate tags with resources
-    for i, resource in enumerate(site_matrix['resources']):
+    for i, resource in enumerate(site_matrix["resources"]):
         x = 0
         indeces = []
         # this distributes the tags amongst resources in
@@ -243,25 +228,28 @@ def tag_matrix(site_matrix):
             x = x + 1
         # add tags to the resource's tag_set
         resource.tag_set.add(*[tags[n] for n in indeces])
-    site_matrix['tags'] = tags
+    site_matrix["tags"] = tags
     return site_matrix
 
 
 _tag_kwargs = OrderedDict(
-    (('empty', dict()),
-     ('project0_match', dict(projects=[0])),
-     ('project1_match', dict(projects=[1])),
-     ('locale_match', dict(locales=[0])),
-     ('locale_and_project_match', dict(locales=[0], projects=[0])),
-     ('locales_and_projects_match', dict(projects=[1, 2], locales=[0, 1])),
-     ('priority_match', dict(priority=3)),
-     ('priority_true_match', dict(priority=True)),
-     ('priority_false_match', dict(priority=False)),
-     ('path_no_match', dict(path="NOPATHSHERE")),
-     ('path_match', dict(path=11)),
-     ('slug_no_match', dict(slug="NOSLUGSHERE")),
-     ('slug_exact', dict(slug=23)),
-     ('slug_contains', dict(slug="factorytag7"))))
+    (
+        ("empty", dict()),
+        ("project0_match", dict(projects=[0])),
+        ("project1_match", dict(projects=[1])),
+        ("locale_match", dict(locales=[0])),
+        ("locale_and_project_match", dict(locales=[0], projects=[0])),
+        ("locales_and_projects_match", dict(projects=[1, 2], locales=[0, 1])),
+        ("priority_match", dict(priority=3)),
+        ("priority_true_match", dict(priority=True)),
+        ("priority_false_match", dict(priority=False)),
+        ("path_no_match", dict(path="NOPATHSHERE")),
+        ("path_match", dict(path=11)),
+        ("slug_no_match", dict(slug="NOSLUGSHERE")),
+        ("slug_exact", dict(slug=23)),
+        ("slug_contains", dict(slug="factorytag7")),
+    )
+)
 
 
 @pytest.fixture(params=_tag_kwargs)
@@ -292,37 +280,45 @@ def tag_test_kwargs(request, tag_matrix):
 
     kwargs = _tag_kwargs.get(request.param).copy()
     if kwargs.get("path"):
-        if isinstance(kwargs['path'], int):
-            kwargs['path'] = tag_matrix['resources'][kwargs['path']].path
+        if isinstance(kwargs["path"], int):
+            kwargs["path"] = tag_matrix["resources"][kwargs["path"]].path
     if kwargs.get("slug"):
-        if isinstance(kwargs['slug'], int):
-            kwargs["slug"] = tag_matrix['tags'][kwargs['slug']].slug
-    for k in ['projects', 'locales']:
+        if isinstance(kwargs["slug"], int):
+            kwargs["slug"] = tag_matrix["tags"][kwargs["slug"]].slug
+    for k in ["projects", "locales"]:
         if kwargs.get(k):
-            kwargs[k] = [
-                tag_matrix[k][i]
-                for i
-                in kwargs[k]]
+            kwargs[k] = [tag_matrix[k][i] for i in kwargs[k]]
     return request.param, kwargs
 
 
 _tag_data_init_kwargs = OrderedDict(
-    (('no_args',
-      dict(annotations=None,
-           groupby=None,
-           locales=None,
-           path=None,
-           priority=None,
-           projects=None,
-           slug=None)),
-     ('args',
-      dict(annotations=1,
-           groupby=2,
-           locales=3,
-           path=4,
-           priority=5,
-           projects=6,
-           slug=7))))
+    (
+        (
+            "no_args",
+            dict(
+                annotations=None,
+                groupby=None,
+                locales=None,
+                path=None,
+                priority=None,
+                projects=None,
+                slug=None,
+            ),
+        ),
+        (
+            "args",
+            dict(
+                annotations=1,
+                groupby=2,
+                locales=3,
+                path=4,
+                priority=5,
+                projects=6,
+                slug=7,
+            ),
+        ),
+    )
+)
 
 
 @pytest.fixture(params=_tag_data_init_kwargs)
@@ -338,18 +334,14 @@ def tag_data_init_kwargs(request):
 
 
 _tag_init_kwargs = OrderedDict(
-    (('no_args',
-      dict(locales=None,
-           path=None,
-           priority=None,
-           projects=None,
-           slug=None)),
-     ('args',
-      dict(locales=1,
-           path=2,
-           priority=3,
-           projects=4,
-           slug=5))))
+    (
+        (
+            "no_args",
+            dict(locales=None, path=None, priority=None, projects=None, slug=None),
+        ),
+        ("args", dict(locales=1, path=2, priority=3, projects=4, slug=5)),
+    )
+)
 
 
 @pytest.fixture(params=_tag_init_kwargs)

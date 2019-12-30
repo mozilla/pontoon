@@ -4,7 +4,10 @@ from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 
 from pontoon.base.models import Entity, TranslatedResource, Translation
-from pontoon.pretranslation.pretranslate import get_translations, update_changed_instances
+from pontoon.pretranslation.pretranslate import (
+    get_translations,
+    update_changed_instances,
+)
 
 
 log = logging.getLogger(__name__)
@@ -23,7 +26,7 @@ def pretranslate(project, locales=None, entities=None):
     :returns: None
     """
 
-    log.info('Fetching pretranslations for project {} started'.format(project.name))
+    log.info("Fetching pretranslations for project {} started".format(project.name))
 
     if locales:
         locales = project.locales.filter(pk__in=locales)
@@ -31,33 +34,41 @@ def pretranslate(project, locales=None, entities=None):
         locales = project.locales
 
     locales = (
-        locales
-        .filter(project_locale__readonly=False)
+        locales.filter(project_locale__readonly=False)
         .distinct()
         .prefetch_project_locale(project)
     )
 
     if not entities:
         entities = Entity.objects.filter(
-            resource__project=project,
-            obsolete=False,
-        ).prefetch_related('resource')
+            resource__project=project, obsolete=False,
+        ).prefetch_related("resource")
 
     # get available TranslatedResource pairs
-    tr_pairs = TranslatedResource.objects.filter(
-        resource__project=project,
-        locale__in=locales,
-    ).annotate(
-        locale_resource=Concat('locale_id', V('-'), 'resource_id', output_field=CharField())
-    ).values_list('locale_resource', flat=True).distinct()
+    tr_pairs = (
+        TranslatedResource.objects.filter(
+            resource__project=project, locale__in=locales,
+        )
+        .annotate(
+            locale_resource=Concat(
+                "locale_id", V("-"), "resource_id", output_field=CharField()
+            )
+        )
+        .values_list("locale_resource", flat=True)
+        .distinct()
+    )
 
     # Fetch all distinct locale-entity pairs for which translation exists
-    translated_entities = Translation.objects.filter(
-        locale__in=locales,
-        entity__in=entities,
-    ).annotate(
-        locale_entity=Concat('locale_id', V('-'), 'entity_id', output_field=CharField())
-    ).values_list('locale_entity', flat=True).distinct()
+    translated_entities = (
+        Translation.objects.filter(locale__in=locales, entity__in=entities,)
+        .annotate(
+            locale_entity=Concat(
+                "locale_id", V("-"), "entity_id", output_field=CharField()
+            )
+        )
+        .values_list("locale_entity", flat=True)
+        .distinct()
+    )
 
     translated_entities = list(translated_entities)
 
@@ -72,10 +83,10 @@ def pretranslate(project, locales=None, entities=None):
     index = -1
 
     for locale in locales:
-        log.info('Fetching pretranslations for locale {} started'.format(locale.code))
+        log.info("Fetching pretranslations for locale {} started".format(locale.code))
         for entity in entities:
-            locale_entity = '{}-{}'.format(locale.id, entity.id)
-            locale_resource = '{}-{}'.format(locale.id, entity.resource.id)
+            locale_entity = "{}-{}".format(locale.id, entity.id)
+            locale_resource = "{}-{}".format(locale.id, entity.resource.id)
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
@@ -103,8 +114,7 @@ def pretranslate(project, locales=None, entities=None):
                     tr_dict[locale_resource] = [index, 0]
                     # Add query for fetching respective TranslatedResource.
                     tr_filter.append(
-                        Q(locale__id=locale.id)
-                        & Q(resource__id=entity.resource.id)
+                        Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
                     )
 
                 if locale.code not in locale_dict:
@@ -117,7 +127,7 @@ def pretranslate(project, locales=None, entities=None):
                 # Increment number of translations (used to adjust stats)
                 tr_dict[locale_resource][1] += 1
                 locale_dict[locale.code][2] += 1
-        log.info('Fetching pretranslations for locale {} done'.format(locale.code))
+        log.info("Fetching pretranslations for locale {} done".format(locale.code))
 
     if len(translations) == 0:
         return
@@ -127,9 +137,9 @@ def pretranslate(project, locales=None, entities=None):
     # Update latest activity and unreviewed count for the project.
     project.latest_translation = translations[-1]
     project.unreviewed_strings += len(translations)
-    project.save(update_fields=['latest_translation', 'unreviewed_strings'])
+    project.save(update_fields=["latest_translation", "unreviewed_strings"])
 
     # Update latest activity and unreviewed count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
 
-    log.info('Fetching pretranslations for project {} done'.format(project.name))
+    log.info("Fetching pretranslations for project {} done".format(project.name))

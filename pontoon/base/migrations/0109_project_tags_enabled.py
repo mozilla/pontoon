@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0108_reverse_accessors'),
+        ("base", "0108_reverse_accessors"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='tags_enabled',
+            model_name="project",
+            name="tags_enabled",
             field=models.BooleanField(default=True),
         ),
     ]

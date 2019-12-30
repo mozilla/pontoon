@@ -13,7 +13,7 @@ def is_hidden(path):
     Return true if path contains hidden directory.
     """
     for p in path.split(os.sep):
-        if p.startswith('.'):
+        if p.startswith("."):
             return True
     return False
 
@@ -54,7 +54,7 @@ def uses_undercore_as_separator(directory):
     Return True if any subdirectory contains underscore.
     """
     subdirs = os.listdir(directory)
-    return ''.join(subdirs).count('_') > ''.join(subdirs).count('-')
+    return "".join(subdirs).count("_") > "".join(subdirs).count("-")
 
 
 def directory_contains_resources(directory_path, source_only=False):
@@ -82,7 +82,7 @@ def locale_directory_path(checkout_path, locale_code, parent_directories=None):
     possible_paths = []
 
     # Check paths that use underscore as locale/country code separator
-    locale_code_variants = [locale_code, locale_code.replace('-', '_')]
+    locale_code_variants = [locale_code, locale_code.replace("-", "_")]
 
     # Optimization for directories with a lot of paths: if parent_directories
     # is provided, we simply join it with locale_code and check if path exists
@@ -106,8 +106,9 @@ def locale_directory_path(checkout_path, locale_code, parent_directories=None):
     if possible_paths:
         return possible_paths[0]
 
-    raise IOError('Directory for locale `{0}` not found'.format(
-                  locale_code or 'source'))
+    raise IOError(
+        "Directory for locale `{0}` not found".format(locale_code or "source")
+    )
 
 
 def locale_to_source_path(path):
@@ -115,8 +116,8 @@ def locale_to_source_path(path):
     Return source resource path for the given locale resource path.
     Source files for .po files are actually .pot.
     """
-    if path.endswith('po'):
-        path += 't'
+    if path.endswith("po"):
+        path += "t"
     return path
 
 
@@ -125,7 +126,7 @@ def source_to_locale_path(path):
     Return locale resource path for the given source resource path.
     Locale files for .pot files are actually .po.
     """
-    if path.endswith('pot'):
+    if path.endswith("pot"):
         path = path[:-1]
     return path
 
@@ -135,19 +136,19 @@ def escape_quotes(value):
     DTD files can use single or double quotes for identifying strings,
     so &quot; and &apos; are the safe bet that will work in both cases.
     """
-    value = value.replace('"', '\\&quot;')
-    value = value.replace("'", '\\&apos;')
+    value = value.replace('"', "\\&quot;")
+    value = value.replace("'", "\\&apos;")
 
     return value
 
 
 def unescape_quotes(value):
-    value = value.replace('\\&quot;', '"')
-    value = value.replace('\\u0022', '"')  # Bug 1390111
+    value = value.replace("\\&quot;", '"')
+    value = value.replace("\\u0022", '"')  # Bug 1390111
     value = value.replace('\\"', '"')
 
-    value = value.replace('\\&apos;', "'")
-    value = value.replace('\\u0027', "'")  # Bug 1390111
+    value = value.replace("\\&apos;", "'")
+    value = value.replace("\\u0027", "'")  # Bug 1390111
     value = value.replace("\\'", "'")
 
     return value

@@ -56,6 +56,6 @@ def get_fields(info):
 
     results = []
     for field_ast in info.field_asts:
-        results.extend(iterate_field_names('', field_ast))
+        results.extend(iterate_field_names("", field_ast))
 
     return results

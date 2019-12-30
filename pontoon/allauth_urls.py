@@ -1,8 +1,8 @@
-'''
+"""
 Pontoon requires a very specific subset of functionality implemented in django allauth.
 Because of concerns related to the security concerns it's a better to keep only selected
 views and don't allow user to tamper with the state of an account.
-'''
+"""
 from __future__ import absolute_import
 
 import importlib
@@ -14,33 +14,38 @@ from django.contrib.auth.views import login, logout
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers
 
-if settings.AUTHENTICATION_METHOD == 'django':
+if settings.AUTHENTICATION_METHOD == "django":
     urlpatterns = [
-        url(r'^standalone-login/$', login, name='standalone_login'),
-        url(r'^standalone-logout/$', logout, name='standalone_logout', kwargs={'next_page': '/'}),
+        url(r"^standalone-login/$", login, name="standalone_login"),
+        url(
+            r"^standalone-logout/$",
+            logout,
+            name="standalone_logout",
+            kwargs={"next_page": "/"},
+        ),
     ]
 else:
     urlpatterns = [
-        url(r'^login/$', account_views.login, name='account_login'),
-        url(r'^logout/$', account_views.logout, name='account_logout'),
-        url(r'^inactive/$', account_views.account_inactive, name='account_inactive'),
+        url(r"^login/$", account_views.login, name="account_login"),
+        url(r"^logout/$", account_views.logout, name="account_logout"),
+        url(r"^inactive/$", account_views.account_inactive, name="account_inactive"),
         url(
-            '^social/login/cancelled/$',
+            "^social/login/cancelled/$",
             socialaccount_views.login_cancelled,
-            name='socialaccount_login_cancelled'
+            name="socialaccount_login_cancelled",
         ),
         url(
-            '^social/login/error/$',
+            "^social/login/error/$",
             socialaccount_views.login_error,
-            name='socialaccount_login_error'
+            name="socialaccount_login_error",
         ),
     ]
 
 for provider in providers.registry.get_list():
     try:
-        prov_mod = importlib.import_module(provider.get_package() + '.urls')
+        prov_mod = importlib.import_module(provider.get_package() + ".urls")
     except ImportError:
         continue
-    prov_urlpatterns = getattr(prov_mod, 'urlpatterns', None)
+    prov_urlpatterns = getattr(prov_mod, "urlpatterns", None)
     if prov_urlpatterns:
         urlpatterns += prov_urlpatterns
