@@ -88,7 +88,7 @@ export default class APIBase {
         }
     }
 
-    keysToCamelCase(results) {
+    keysToCamelCase(results: Object) {
         const toCamelCase = (s) => {
             return s.replace(/([-_][a-z])/ig, ($1) => {
               return $1.toUpperCase()
@@ -106,7 +106,7 @@ export default class APIBase {
         };
 
         if (isObject(results)) {
-          const newObj = {};
+          const newObj: Object = {};
 
           Object.keys(results)
             .forEach((key) => {
