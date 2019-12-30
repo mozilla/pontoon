@@ -3,6 +3,8 @@
 import * as React from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
+import './Comment.css';
+
 import type { TranslationComment } from 'core/api';
 
 import { UserAvatar } from 'core/user'
@@ -20,30 +22,38 @@ export default function Comment(props: Props) {
             return null;
     }
 
-    return <div>
+    return <li className='comment'>
         <UserAvatar
             user={ comment.author }
             username={ comment.username }
             title=''
             imageUrl={ comment.userGravatarUrlSmall }
         />
-        <a
-            href={ `/contributors/${comment.username}` }
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-        >
-            { comment.author }
-        </a>
-        <p>
-            { comment.content }
-        </p>
-        <div>
-            <ReactTimeAgo
-                dir='ltr'
-                date={ new Date(comment.dateIso) }
-                title={ `${comment.createdAt} UTC` }
-            />
+        < div className='container'>
+            <div className='content'>
+                <a
+                    href={ `/contributors/${comment.username}` }
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                >
+                    { comment.author }
+                </a>
+                <p>
+                    { comment.content }
+                </p>
+            </div>
+            <div className='info'>
+                <ReactTimeAgo
+                    dir='ltr'
+                    date={ new Date(comment.dateIso) }
+                    title={ `${comment.createdAt} UTC` }
+                />
+                { '\u2022' }
+                <button>DELETE</button>
+                { '\u2022' }
+                <button>SHARE</button>
+            </div>
         </div>
-    </div>
+    </li>
 }

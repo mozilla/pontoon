@@ -3426,7 +3426,6 @@ class Comment(models.Model):
             "user_gravatar_url_small": self.author.gravatar_url(88),
             "created_at": self.timestamp.strftime('%b %d, %Y %H:%M'),
             "date_iso": self.timestamp.isoformat(),
-            'translation': self.translation_id,
             "content": self.content,
             "id": self.id,
         }

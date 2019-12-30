@@ -19,17 +19,15 @@ export default function CommentsList(props: Props) {
         return null;
     }
 
-    return (
-        <div>
-            <ul>
-                { comments.map(comment =>
-                    <Comment
-                        comment={ comment }
-                        key={ comment.id }
-                    />
-                )}
-            </ul>
-            <AddComment />
-        </div>
-    )
+    return <div>
+        <ul>
+            { comments.map(comment =>
+                <Comment
+                    comment={ comment }
+                    key={ comment.id }
+                />
+            )}
+        </ul>
+        <AddComment />
+    </div>
 }
