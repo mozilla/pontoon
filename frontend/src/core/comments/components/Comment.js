@@ -24,7 +24,7 @@ export default function Comment(props: Props) {
         <UserAvatar
             user={ comment.author }
             username={ comment.username }
-            title= ''
+            title=''
             imageUrl={ comment.userGravatarUrlSmall }
         />
         <a
@@ -35,7 +35,9 @@ export default function Comment(props: Props) {
         >
             { comment.author }
         </a>
-        { comment.content }
+        <p>
+            { comment.content }
+        </p>
         <div>
             <ReactTimeAgo
                 dir='ltr'

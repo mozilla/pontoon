@@ -567,6 +567,12 @@ search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
 search-TimeRangeFilter--save-range = Save Range
 
 
+## User Avatar
+## Shows user Avatar with alt text
+
+user-avatar-anonymous = Anonymous User
+user-avatar = User Profile
+
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 

@@ -5,32 +5,30 @@ import Comment from './Comment';
 
 
 describe('<Comment>', () => {
-    const DEFAULT_COMMENTS = {
+    const DEFAULT_COMMENT = {
         author: '',
         username: '',
         userGravatarUrlSmall: '',
         createdAt: '',
         dateIso: '',
-        content: 'Comment for testing',
+        content: "What I hear when I'm being yelled at is people caring loudly at me.",
         translation: 0,
         id: 1,
     }
 
-    describe('renderUser', () => {
-        it('returns a link for the author', () => {
-            const comments = {
-                ...DEFAULT_COMMENTS,
-                ...{ username: 'id_Sarevok', author: 'Sarevok' }
-            };
-            const wrapper = shallow(<Comment
-                comment={ comments }
-                key={ comments.id }
-            />);
+    it('returns a link for the author', () => {
+        const comments = {
+            ...DEFAULT_COMMENT,
+            ...{ username: 'Leslie_Knope', author: 'LKnope' }
+        };
+        const wrapper = shallow(<Comment
+            comment={ comments }
+            key={ comments.id }
+        />);
 
-            const link = wrapper.find('a');
-            expect(link).toHaveLength(1);
-            expect(link.at(0).props().children).toEqual('Sarevok');
-            expect(link.at(0).props().href).toEqual('/contributors/id_Sarevok');
-        });
+        const link = wrapper.find('a');
+        expect(link).toHaveLength(1);
+        expect(link.at(0).props().children).toEqual('LKnope');
+        expect(link.at(0).props().href).toEqual('/contributors/Leslie_Knope');
     });
 });

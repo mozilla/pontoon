@@ -87,4 +87,39 @@ export default class APIBase {
             return {};
         }
     }
+
+    keysToCamelCase(results) {
+        const toCamelCase = (s) => {
+            return s.replace(/([-_][a-z])/ig, ($1) => {
+              return $1.toUpperCase()
+                .replace('-', '')
+                .replace('_', '');
+            });
+        };
+
+        const isArray = function (arr) {
+            return Array.isArray(arr);
+        };
+
+        const isObject = function (obj) {
+            return obj === Object(obj) && !isArray(obj) && typeof obj !== 'function';
+        };
+
+        if (isObject(results)) {
+          const newObj = {};
+
+          Object.keys(results)
+            .forEach((key) => {
+              newObj[toCamelCase(key)] = this.keysToCamelCase(results[key]);
+            });
+
+          return newObj;
+        } else if (isArray(results)) {
+          return results.map((i) => {
+            return this.keysToCamelCase(i);
+          });
+        }
+
+        return results;
+      };
 }
