@@ -428,6 +428,7 @@ def get_translation_history(request):
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "unapproved_user": User.display_name_or_blank(t.unapproved_user),
+                "comments": [c.serialize() for c in t.comments.all()]
             }
         )
         payload.append(translation_dict)
