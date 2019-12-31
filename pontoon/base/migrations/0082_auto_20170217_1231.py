@@ -8,13 +8,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0081_locale_script_direction_population'),
+        ("base", "0081_locale_script_direction_population"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='repository',
-            name='website',
-            field=models.URLField(blank=True, max_length=2000, verbose_name=b'Public Repository Website'),
+            model_name="repository",
+            name="website",
+            field=models.URLField(
+                blank=True, max_length=2000, verbose_name=b"Public Repository Website"
+            ),
         ),
     ]

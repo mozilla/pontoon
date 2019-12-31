@@ -12,9 +12,7 @@ def run_checks(entity, string):
     checks = defaultdict(list)
 
     # Prevent empty translation submissions if supported
-    if string == '' and entity.resource.allows_empty_translations:
-        checks['pndbWarnings'].append(
-            'Empty translation'
-        )
+    if string == "" and entity.resource.allows_empty_translations:
+        checks["pndbWarnings"].append("Empty translation")
 
     return checks

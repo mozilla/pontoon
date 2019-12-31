@@ -3,7 +3,12 @@ from __future__ import absolute_import
 import pytest
 
 from pontoon.base.models import (
-    Locale, Project, Resource, TranslatedResource, Translation)
+    Locale,
+    Project,
+    Resource,
+    TranslatedResource,
+    Translation,
+)
 
 from pontoon.tags.models import Tag
 from pontoon.tags.utils.base import Clonable, TagsDataTool
@@ -13,7 +18,7 @@ def test_util_clonable():
     # tests that Clonable clones
 
     class MockClonable(Clonable):
-        clone_kwargs = ('foo', 'bar')
+        clone_kwargs = ("foo", "bar")
 
     clonable = MockClonable()
     assert clonable.foo is None
@@ -54,4 +59,4 @@ def test_util_tags_data_tool_instance():
     with pytest.raises(NotImplementedError):
         tool.data_manager
 
-    assert tool.coalesce('X') == 'X'
+    assert tool.coalesce("X") == "X"

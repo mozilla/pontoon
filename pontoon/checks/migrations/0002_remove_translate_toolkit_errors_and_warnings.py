@@ -9,25 +9,19 @@ def remove_warnings_and_errors(apps, schema_editor):
     """
     Remove all warnings and errors related to Translate Toolkit.
     """
-    Warning = apps.get_model('checks', 'Warning')
-    Error = apps.get_model('checks', 'Error')
+    Warning = apps.get_model("checks", "Warning")
+    Error = apps.get_model("checks", "Error")
 
-    Warning.objects.filter(
-        library='tt'
-    ).delete()
-    Error.objects.filter(
-        library='tt'
-    ).delete()
+    Warning.objects.filter(library="tt").delete()
+    Error.objects.filter(library="tt").delete()
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('checks', '0001_initial'),
+        ("checks", "0001_initial"),
     ]
 
     operations = [
-        migrations.RunPython(
-            remove_warnings_and_errors,
-            migrations.RunPython.noop,
-        )
+        migrations.RunPython(remove_warnings_and_errors, migrations.RunPython.noop,)
     ]

@@ -11,9 +11,7 @@ import django.contrib.postgres.search
 from django.contrib.postgres.operations import TrigramExtension, CreateExtension
 from django.db import migrations
 
-from pontoon.db.migrations import (
-    MultiFieldTRGMIndex,
-)
+from pontoon.db.migrations import MultiFieldTRGMIndex
 
 entity_document_update_sql = """
     UPDATE base_translation AS t 
@@ -36,39 +34,34 @@ entity_document_update_trigger_create_sql = """
     CREATE TRIGGER base_translation_entity_document_update BEFORE INSERT OR UPDATE ON "base_translation"
     FOR EACH ROW EXECUTE PROCEDURE base_translation_entity_document_update()
 """
-entity_document_update_trigger_drop_sql = '''
+entity_document_update_trigger_drop_sql = """
     DROP TRIGGER base_translation_entity_document_update ON "base_translation";
     DROP FUNCTION base_translation_entity_document_update();
-'''
+"""
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0090_entity_date_created'),
+        ("base", "0090_entity_date_created"),
     ]
 
     operations = [
-        CreateExtension('btree_gin'),
+        CreateExtension("btree_gin"),
         TrigramExtension(),
         migrations.AddField(
-            model_name='translation',
-            name='entity_document',
-            field=django.db.models.fields.TextField(blank=True)
+            model_name="translation",
+            name="entity_document",
+            field=django.db.models.fields.TextField(blank=True),
         ),
-
-        migrations.RunSQL(
-            entity_document_update_sql,
-            migrations.RunSQL.noop,
-        ),
-
+        migrations.RunSQL(entity_document_update_sql, migrations.RunSQL.noop,),
         migrations.RunSQL(
             entity_document_update_trigger_create_sql,
             entity_document_update_trigger_drop_sql,
         ),
-
         MultiFieldTRGMIndex(
-            table='base_translation',
-            from_fields=['entity_document', 'string'],
-            field='entity_document'
+            table="base_translation",
+            from_fields=["entity_document", "string"],
+            field="entity_document",
         ),
     ]

@@ -3,4 +3,4 @@ class SyncError(RuntimeError):
 
 
 # A separator used in Translation keys as proposed by Translate Toolkit.
-KEY_SEPARATOR = '\x04'
+KEY_SEPARATOR = "\x04"

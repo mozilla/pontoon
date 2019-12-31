@@ -26,34 +26,32 @@ Now go on, grasshopper, and translate to your heart's content!
 
 def create_tutorial_project(apps, schema_editor):
     # Create an empty project
-    Project = apps.get_model('base', 'Project')
+    Project = apps.get_model("base", "Project")
     project, _ = Project.objects.get_or_create(
-        slug='tutorial',
-        name='Tutorial',
-        data_source='database',
+        slug="tutorial",
+        name="Tutorial",
+        data_source="database",
         can_be_requested=False,
         sync_disabled=True,
         system_project=True,
         info=(
-            'A tutorial project, used as a testing playground and for the '
-            'guided tour.'
+            "A tutorial project, used as a testing playground and for the "
+            "guided tour."
         ),
         admin_notes=(
-            'Do not remove, this is required in code to show the guided tour.'
+            "Do not remove, this is required in code to show the guided tour."
         ),
     )
 
     # Add a resource
-    Resource = apps.get_model('base', 'Resource')
-    new_strings = DEMO_PROJECT_CONTENT.strip().split('\n')
+    Resource = apps.get_model("base", "Resource")
+    new_strings = DEMO_PROJECT_CONTENT.strip().split("\n")
     resource, _ = Resource.objects.get_or_create(
-        path='playground',
-        project=project,
-        total_strings=len(new_strings),
+        path="playground", project=project, total_strings=len(new_strings),
     )
 
     # Add entities
-    Entity = apps.get_model('base', 'Entity')
+    Entity = apps.get_model("base", "Entity")
     new_entities = [
         Entity(string=new_string, resource=resource, order=index)
         for index, new_string in enumerate(new_strings)
@@ -61,40 +59,34 @@ def create_tutorial_project(apps, schema_editor):
     Entity.objects.bulk_create(new_entities)
 
     # Enable project for all localizable locales
-    Locale = apps.get_model('base', 'Locale')
-    ProjectLocale = apps.get_model('base', 'ProjectLocale')
-    locales = Locale.objects.exclude(code__in=['en-US', 'en'])
+    Locale = apps.get_model("base", "Locale")
+    ProjectLocale = apps.get_model("base", "ProjectLocale")
+    locales = Locale.objects.exclude(code__in=["en-US", "en"])
     project_locales = [
-        ProjectLocale(
-            project=project,
-            locale=locale,
-            total_strings=len(new_strings),
-        )
+        ProjectLocale(project=project, locale=locale, total_strings=len(new_strings),)
         for locale in locales
     ]
     ProjectLocale.objects.bulk_create(project_locales)
 
     # Update stats
-    TranslatedResource = apps.get_model('base', 'TranslatedResource')
+    TranslatedResource = apps.get_model("base", "TranslatedResource")
     translated_resources = [
         TranslatedResource(
-            resource=resource,
-            locale=locale,
-            total_strings=len(new_strings),
+            resource=resource, locale=locale, total_strings=len(new_strings),
         )
         for locale in locales
     ]
     TranslatedResource.objects.bulk_create(translated_resources)
 
     project.total_strings = len(new_strings) * len(locales)
-    project.save(update_fields=['total_strings'])
+    project.save(update_fields=["total_strings"])
 
 
 def remove_tutorial_project(apps, schema_editor):
-    Project = apps.get_model('base', 'Project')
+    Project = apps.get_model("base", "Project")
 
     try:
-        project = Project.objects.get(slug='tutorial')
+        project = Project.objects.get(slug="tutorial")
     except Project.DoesNotExist:
         return
 
@@ -104,7 +96,7 @@ def remove_tutorial_project(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0126_add_tour_status'),
+        ("base", "0126_add_tour_status"),
     ]
 
     operations = [

@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0126_add_tour_status'),
+        ("base", "0126_add_tour_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='system_project',
-            field=models.BooleanField(default=False, help_text='\n        System projects are built into Pontoon. They are accessible from the\n        translate view, but hidden from dashboards.\n    '),
+            model_name="project",
+            name="system_project",
+            field=models.BooleanField(
+                default=False,
+                help_text="\n        System projects are built into Pontoon. They are accessible from the\n        translate view, but hidden from dashboards.\n    ",
+            ),
         ),
     ]

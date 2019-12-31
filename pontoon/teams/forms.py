@@ -9,10 +9,8 @@ class LocaleRequestForm(forms.ModelForm):
     """
     Form is for validating response of user in locale request form.
     """
+
     class Meta:
         model = Locale
-        fields = ('name', 'code')
-        labels = {
-            'name': 'Language Name',
-            'code': 'Locale Code'
-        }
+        fields = ("name", "code")
+        labels = {"name": "Language Name", "code": "Locale Code"}

@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0146_pretranslate_users'),
+        ("base", "0146_pretranslate_users"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entity',
-            name='group_comment',
+            model_name="entity",
+            name="group_comment",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='entity',
-            name='resource_comment',
+            model_name="entity",
+            name="resource_comment",
             field=models.TextField(blank=True),
         ),
     ]

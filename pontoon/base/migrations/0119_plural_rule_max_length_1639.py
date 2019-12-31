@@ -8,13 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0118_project_contribs_index'),
+        ("base", "0118_project_contribs_index"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='locale',
-            name='plural_rule',
-            field=models.CharField(blank=True, help_text='\n        Plural rule is part of the plurals header in\n        <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">\n        Gettext PO files\n        </a>,\n        that follows the <i>plural=</i> string, without the trailing semicolon.\n        E.g. (n != 1)\n        ', max_length=512),
+            model_name="locale",
+            name="plural_rule",
+            field=models.CharField(
+                blank=True,
+                help_text='\n        Plural rule is part of the plurals header in\n        <a href="https://www.gnu.org/software/gettext/manual/gettext.html#Plural-forms">\n        Gettext PO files\n        </a>,\n        that follows the <i>plural=</i> string, without the trailing semicolon.\n        E.g. (n != 1)\n        ',
+                max_length=512,
+            ),
         ),
     ]

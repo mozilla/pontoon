@@ -13,13 +13,14 @@ def delete_ftl_duplicates(apps, schema):
 
     See bug 1405256 for more details.
     """
-    Translation = apps.get_model('base', 'Translation')
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    Translation = apps.get_model("base", "Translation")
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
     duplicates = []
 
     with connection.cursor() as cursor:
-        cursor.execute("""
+        cursor.execute(
+            """
             WITH d AS (
                 SELECT
                     entity_id,
@@ -35,7 +36,8 @@ def delete_ftl_duplicates(apps, schema):
                 ORDER BY COUNT(t.id) DESC
             )
             SELECT UNNEST(ids[2:100]) FROM d;
-        """)
+        """
+        )
         # Note: Postgres does not support the [2:] syntax.
 
         duplicates = [duplicate[0] for duplicate in cursor.fetchall()]
@@ -52,12 +54,9 @@ def delete_ftl_duplicates(apps, schema):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0116_bug_1441020_ftl_0_6_4'),
+        ("base", "0116_bug_1441020_ftl_0_6_4"),
     ]
 
     operations = [
-        migrations.RunPython(
-            delete_ftl_duplicates,
-            migrations.RunPython.noop
-        )
+        migrations.RunPython(delete_ftl_duplicates, migrations.RunPython.noop)
     ]

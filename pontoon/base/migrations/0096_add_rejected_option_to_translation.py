@@ -11,33 +11,45 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0095_pontoon_intro_permalink_prefix'),
+        ("base", "0095_pontoon_intro_permalink_prefix"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translation',
-            name='rejected',
+            model_name="translation",
+            name="rejected",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='translation',
-            name='rejected_date',
+            model_name="translation",
+            name="rejected_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='translation',
-            name='rejected_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='rejected_translations', to=settings.AUTH_USER_MODEL),
+            model_name="translation",
+            name="rejected_user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="rejected_translations",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='translation',
-            name='unrejected_date',
+            model_name="translation",
+            name="unrejected_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='translation',
-            name='unrejected_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='unrejected_translations', to=settings.AUTH_USER_MODEL),
+            model_name="translation",
+            name="unrejected_user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="unrejected_translations",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

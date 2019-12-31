@@ -8,18 +8,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('checks', '0002_remove_translate_toolkit_errors_and_warnings'),
+        ("checks", "0002_remove_translate_toolkit_errors_and_warnings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='error',
-            name='library',
-            field=models.CharField(choices=[(b'p', b'pontoon'), (b'cl', b'compare-locales')], db_index=True, max_length=20),
+            model_name="error",
+            name="library",
+            field=models.CharField(
+                choices=[(b"p", b"pontoon"), (b"cl", b"compare-locales")],
+                db_index=True,
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='warning',
-            name='library',
-            field=models.CharField(choices=[(b'p', b'pontoon'), (b'cl', b'compare-locales')], db_index=True, max_length=20),
+            model_name="warning",
+            name="library",
+            field=models.CharField(
+                choices=[(b"p", b"pontoon"), (b"cl", b"compare-locales")],
+                db_index=True,
+                max_length=20,
+            ),
         ),
     ]

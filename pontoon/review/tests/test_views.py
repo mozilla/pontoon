@@ -10,11 +10,7 @@ from pontoon.test.factories import TranslationFactory
 @pytest.fixture
 def approved_translation(locale_a, project_locale_a, entity_a, user_a):
     return TranslationFactory(
-        entity=entity_a,
-        locale=locale_a,
-        user=user_a,
-        approved=True,
-        active=True,
+        entity=entity_a, locale=locale_a, user=user_a, approved=True, active=True,
     )
 
 
@@ -28,20 +24,19 @@ def rejected_translation(locale_a, project_locale_a, entity_a, user_a):
 @pytest.mark.django_db
 def test_approve_translation_basic(translation_a, client_superuser):
     """Check if approve view works properly."""
-    url = reverse('pontoon.review.approve')
+    url = reverse("pontoon.review.approve")
     params = {
-        'translation': translation_a.pk,
-        'paths': [],
-        'ignore_warnings': 'true',
+        "translation": translation_a.pk,
+        "paths": [],
+        "ignore_warnings": "true",
     }
 
     response = client_superuser.post(url, params)
     assert response.status_code == 400
-    assert response.content == b'Bad Request: Request must be AJAX'
+    assert response.content == b"Bad Request: Request must be AJAX"
 
     response = client_superuser.post(
-        url, params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 200, response.content
 
@@ -53,21 +48,18 @@ def test_approve_translation_basic(translation_a, client_superuser):
 
 @pytest.mark.django_db
 def test_approve_translation_rejects_previous_approved(
-    approved_translation,
-    translation_a,
-    client_superuser,
+    approved_translation, translation_a, client_superuser,
 ):
     """Check if previously approved translations get rejected on approve."""
-    url = reverse('pontoon.review.approve')
+    url = reverse("pontoon.review.approve")
     params = {
-        'translation': translation_a.pk,
-        'paths': [],
-        'ignore_warnings': 'true',
+        "translation": translation_a.pk,
+        "paths": [],
+        "ignore_warnings": "true",
     }
 
     response = client_superuser.post(
-        url, params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
     assert response.status_code == 200, response.content
@@ -85,21 +77,17 @@ def test_approve_translation_rejects_previous_approved(
 @pytest.mark.django_db
 def test_unapprove_translation(approved_translation, member):
     """Check if unapprove view works properly."""
-    url = reverse('pontoon.review.unapprove')
+    url = reverse("pontoon.review.unapprove")
     params = {
-        'translation': approved_translation.pk,
-        'paths': [],
+        "translation": approved_translation.pk,
+        "paths": [],
     }
 
     response = member.client.post(url, params)
     assert response.status_code == 400
-    assert response.content == b'Bad Request: Request must be AJAX'
+    assert response.content == b"Bad Request: Request must be AJAX"
 
-    response = member.client.post(
-        url,
-        params,
-        HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-    )
+    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
     assert response.status_code == 200
 
     approved_translation.refresh_from_db()

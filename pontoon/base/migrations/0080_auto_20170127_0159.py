@@ -8,33 +8,48 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0079_auto_20170216_2320'),
+        ("base", "0079_auto_20170216_2320"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='locale',
-            name='direction',
-            field=models.CharField(choices=[(b'ltr', b'left-to-right'), (b'rtl', b'right-to-left')], default=b'ltr', max_length=3),
+            model_name="locale",
+            name="direction",
+            field=models.CharField(
+                choices=[(b"ltr", b"left-to-right"), (b"rtl", b"right-to-left")],
+                default=b"ltr",
+                max_length=3,
+            ),
         ),
         migrations.AddField(
-            model_name='locale',
-            name='population',
-            field=models.PositiveIntegerField(default=0, help_text=b'\n        Number of native speakers.\n    '),
+            model_name="locale",
+            name="population",
+            field=models.PositiveIntegerField(
+                default=0, help_text=b"\n        Number of native speakers.\n    "
+            ),
         ),
         migrations.AddField(
-            model_name='locale',
-            name='script',
-            field=models.CharField(default=b'Latin', max_length=128),
+            model_name="locale",
+            name="script",
+            field=models.CharField(default=b"Latin", max_length=128),
         ),
         migrations.AddField(
-            model_name='project',
-            name='deadline',
+            model_name="project",
+            name="deadline",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='project',
-            name='priority',
-            field=models.IntegerField(choices=[(1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=3),
+            model_name="project",
+            name="priority",
+            field=models.IntegerField(
+                choices=[
+                    (1, b"Lowest"),
+                    (2, b"Low"),
+                    (3, b"Normal"),
+                    (4, b"High"),
+                    (5, b"Highest"),
+                ],
+                default=3,
+            ),
         ),
     ]

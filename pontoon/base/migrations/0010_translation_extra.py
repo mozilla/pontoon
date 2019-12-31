@@ -9,13 +9,13 @@ import pontoon.base.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0009_auto_20150721_1511'),
+        ("base", "0009_auto_20150721_1511"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translation',
-            name='extra',
+            model_name="translation",
+            name="extra",
             field=jsonfield.fields.JSONField(default=pontoon.base.models.extra_default),
         ),
     ]

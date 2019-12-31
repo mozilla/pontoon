@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0065_auto_20160713_2118'),
+        ("base", "0065_auto_20160713_2118"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='from_django_browserid',
+            model_name="userprofile",
+            name="from_django_browserid",
             field=models.BooleanField(default=False),
         ),
     ]

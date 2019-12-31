@@ -46,19 +46,14 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """JSON keys can't contain spaces."""
-        return (
-            super(JsonExtensionsTests, self)
-            .key(source_string).replace(' ', '')
-        )
+        return super(JsonExtensionsTests, self).key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_JSON_FILE, 0)
 
     def test_parse_multiple_comments(self):
         self.run_parse_multiple_comments(
-            BASE_JSON_FILE,
-            1,
-            comments=['Second comment'],
+            BASE_JSON_FILE, 1, comments=["Second comment"],
         )
 
     def test_parse_no_comments_no_sources(self):
@@ -70,58 +65,57 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
         path, resource = self.parse_string(input_string)
         assert_attributes_equal(
             resource.translations[translation_index],
-            comments=['Peer greeting'],
-            source={
-                "your_name": {
-                    "content": "$1",
-                    "example": "Cira"
-                }
-            },
-            key=self.key('placeholder'),
-            strings={None: 'Hello $YOUR_NAME$'},
+            comments=["Peer greeting"],
+            source={"your_name": {"content": "$1", "example": "Cira"}},
+            key=self.key("placeholder"),
+            strings={None: "Hello $YOUR_NAME$"},
             fuzzy=False,
             order=translation_index,
         )
 
     def test_save_basic(self):
-        input_string = dedent("""
+        input_string = dedent(
+            """
             {
               "SourceString": {
                 "message": "Source String",
                 "description": "Comment"
               }
             }
-        """)
-        expected_string = dedent("""
+        """
+        )
+        expected_string = dedent(
+            """
             {
               "SourceString": {
                 "message": "New Translated String",
                 "description": "Comment"
               }
             }
-        """)
+        """
+        )
 
         self.run_save_basic(
-            input_string,
-            expected_string,
-            source_string=input_string,
+            input_string, expected_string, source_string=input_string,
         )
 
     def test_save_remove(self):
-        input_string = dedent("""
+        input_string = dedent(
+            """
             {
                 "SourceString": {
                     "message": "Source String",
                     "description": "Comment"
                 }
             }
-        """)
-        expected_string = dedent("""
+        """
+        )
+        expected_string = dedent(
+            """
             {}
-        """)
+        """
+        )
 
         self.run_save_remove(
-            input_string,
-            expected_string,
-            source_string=input_string,
+            input_string, expected_string, source_string=input_string,
         )

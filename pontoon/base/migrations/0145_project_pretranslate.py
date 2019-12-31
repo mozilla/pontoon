@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0144_remove_userprofile_use_translate_next'),
+        ("base", "0144_remove_userprofile_use_translate_next"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='pretranslation_enabled',
-            field=models.BooleanField(default=False, help_text='\n        Pretranslate project strings using automated sources\n        like translation memory and machine translation.\n        '),
+            model_name="project",
+            name="pretranslation_enabled",
+            field=models.BooleanField(
+                default=False,
+                help_text="\n        Pretranslate project strings using automated sources\n        like translation memory and machine translation.\n        ",
+            ),
         ),
     ]

@@ -5,6 +5,7 @@ class ParsedResource(object):
     Each supported format parser should return an instance of a class
     that inherits from this class.
     """
+
     @property
     def translations(self):
         """

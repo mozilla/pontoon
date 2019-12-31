@@ -13,7 +13,7 @@ from pontoon.sync.formats.ftl import localizable_entries
 from six.moves import html_parser
 
 
-MAX_LENGTH_RE = re.compile(r'MAX_LENGTH:( *)(\d+)', re.MULTILINE)
+MAX_LENGTH_RE = re.compile(r"MAX_LENGTH:( *)(\d+)", re.MULTILINE)
 parser = FluentParser()
 html_parser = html_parser.HTMLParser()
 
@@ -22,7 +22,7 @@ def get_max_length(comment):
     """
     Return max length value for an entity with MAX_LENTH.
     """
-    max_length = re.findall(MAX_LENGTH_RE, comment or '')
+    max_length = re.findall(MAX_LENGTH_RE, comment or "")
 
     if max_length:
         return int(max_length[0][1])
@@ -40,67 +40,49 @@ def run_checks(entity, original, string):
     checks = defaultdict(list)
     resource_ext = entity.resource.format
 
-    if resource_ext == 'lang':
+    if resource_ext == "lang":
         # Newlines are not allowed in .lang files (bug 1190754)
-        if '\n' in string:
-            checks['pErrors'].append(
-                'Newline characters are not allowed'
-            )
+        if "\n" in string:
+            checks["pErrors"].append("Newline characters are not allowed")
 
         # Prevent translations exceeding the given length limit
         max_length = get_max_length(entity.comment)
 
         if max_length:
             string_length = len(
-                html_parser.unescape(
-                    bleach.clean(
-                        string,
-                        strip=True,
-                        tags=()
-                    )
-                )
+                html_parser.unescape(bleach.clean(string, strip=True, tags=()))
             )
 
             if string_length > max_length:
-                checks['pErrors'].append(
-                    'Translation too long'
-                )
+                checks["pErrors"].append("Translation too long")
 
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.
-    if resource_ext == 'po':
-        if original.endswith('\n') != string.endswith('\n'):
-            checks['pErrors'].append(
-                'Ending newline mismatch'
-            )
+    if resource_ext == "po":
+        if original.endswith("\n") != string.endswith("\n"):
+            checks["pErrors"].append("Ending newline mismatch")
 
     # Prevent empty translation submissions if not supported
-    if string == '' and not entity.resource.allows_empty_translations:
-        checks['pErrors'].append(
-            'Empty translations are not allowed'
-        )
+    if string == "" and not entity.resource.allows_empty_translations:
+        checks["pErrors"].append("Empty translations are not allowed")
 
     # FTL checks
-    if resource_ext == 'ftl' and string != '':
+    if resource_ext == "ftl" and string != "":
         translation_ast = parser.parse_entry(string)
         entity_ast = parser.parse_entry(entity.string)
 
         # Parse error
         if isinstance(translation_ast, ast.Junk):
-            checks['pErrors'].append(
-                translation_ast.annotations[0].message
-            )
+            checks["pErrors"].append(translation_ast.annotations[0].message)
 
         # Not a localizable entry
         elif not isinstance(translation_ast, localizable_entries):
-            checks['pErrors'].append(
-                'Translation needs to be a valid localizable entry'
+            checks["pErrors"].append(
+                "Translation needs to be a valid localizable entry"
             )
 
         # Message ID mismatch
         elif entity_ast.id.name != translation_ast.id.name:
-            checks['pErrors'].append(
-                'Translation key needs to match source string key'
-            )
+            checks["pErrors"].append("Translation key needs to match source string key")
 
     return checks

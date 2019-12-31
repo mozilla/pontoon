@@ -10,10 +10,8 @@ from pontoon.sync.models import SyncLog
 
 
 class Command(BaseCommand):
-    help = 'Delete sync logs that are older than settings.SYNC_LOG_RETENTION'
+    help = "Delete sync logs that are older than settings.SYNC_LOG_RETENTION"
 
     def handle(self, *args, **options):
         delete_date = timezone.now() - timedelta(days=settings.SYNC_LOG_RETENTION)
-        (SyncLog.objects
-            .filter(start_time__lte=delete_date)
-            .delete())
+        (SyncLog.objects.filter(start_time__lte=delete_date).delete())

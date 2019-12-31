@@ -19,8 +19,8 @@ def migrate_ftl_translations_to_0_6_4(apps, schema):
     serializer = FluentSerializer()
 
     # Translations
-    Translation = apps.get_model('base', 'Translation')
-    translations = Translation.objects.filter(entity__resource__format='ftl')
+    Translation = apps.get_model("base", "Translation")
+    translations = Translation.objects.filter(entity__resource__format="ftl")
     translations_to_update = []
 
     for t in translations:
@@ -31,10 +31,10 @@ def migrate_ftl_translations_to_0_6_4(apps, schema):
         if t.string != current:
             translations_to_update.append(t)
 
-    bulk_update(translations_to_update, update_fields=['string'])
+    bulk_update(translations_to_update, update_fields=["string"])
 
     # Translation Memory Entries
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
     updated_pks = [x.pk for x in translations_to_update]
     tms = TranslationMemoryEntry.objects.filter(translation__pk__in=updated_pks)
     tms_to_update = []
@@ -47,18 +47,17 @@ def migrate_ftl_translations_to_0_6_4(apps, schema):
         if tm.target != current:
             tms_to_update.append(tm)
 
-    bulk_update(tms_to_update, update_fields=['target'])
+    bulk_update(tms_to_update, update_fields=["target"])
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0115_idx_translation_date_locale'),
+        ("base", "0115_idx_translation_date_locale"),
     ]
 
     operations = [
         migrations.RunPython(
-            migrate_ftl_translations_to_0_6_4,
-            migrations.RunPython.noop
+            migrate_ftl_translations_to_0_6_4, migrations.RunPython.noop
         )
     ]

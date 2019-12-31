@@ -15,7 +15,7 @@ from django.http import (
     HttpResponse,
     HttpResponseForbidden,
     JsonResponse,
-    StreamingHttpResponse
+    StreamingHttpResponse,
 )
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -23,10 +23,7 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import (
-    condition,
-    require_POST
-)
+from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
 
 from six.moves.urllib.parse import urlparse
@@ -53,13 +50,14 @@ log = logging.getLogger(__name__)
 
 # TRANSLATE VIEWs
 
+
 def translate_locale_agnostic(request, slug, part):
     """Locale Agnostic Translate view."""
     user = request.user
     query = urlparse(request.get_full_path()).query
-    query = '?%s' % query if query else ''
+    query = "?%s" % query if query else ""
 
-    if slug.lower() == 'all-projects':
+    if slug.lower() == "all-projects":
         project_locales = Locale.objects.available()
     else:
         project = get_object_or_404(Project.objects.available(), slug=slug)
@@ -70,19 +68,19 @@ def translate_locale_agnostic(request, slug, part):
 
         if locale and project_locales.filter(code=locale).exists():
             path = reverse(
-                'pontoon.translate',
-                kwargs=dict(project=slug, locale=locale, resource=part))
+                "pontoon.translate",
+                kwargs=dict(project=slug, locale=locale, resource=part),
+            )
             return redirect("%s%s" % (path, query))
 
     locale = utils.get_project_locale_from_request(request, project_locales)
     path = (
         reverse(
-            'pontoon.translate',
-            kwargs=dict(project=slug, locale=locale, resource=part))
+            "pontoon.translate", kwargs=dict(project=slug, locale=locale, resource=part)
+        )
         if locale
-        else reverse(
-            'pontoon.projects.project',
-            kwargs=dict(slug=slug)))
+        else reverse("pontoon.projects.project", kwargs=dict(slug=slug))
+    )
     return redirect("%s%s" % (path, query))
 
 
@@ -107,40 +105,43 @@ def locale_project_parts(request, locale, slug):
     try:
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Not Found: {error}'.format(error=e),
-        }, status=404)
+        return JsonResponse(
+            {"status": False, "message": "Not Found: {error}".format(error=e)},
+            status=404,
+        )
 
     try:
         project = Project.objects.get(slug=slug)
     except Project.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Not Found: {error}'.format(error=e),
-        }, status=404)
+        return JsonResponse(
+            {"status": False, "message": "Not Found: {error}".format(error=e)},
+            status=404,
+        )
 
     try:
         return JsonResponse(locale.parts_stats(project), safe=False)
     except ProjectLocale.DoesNotExist:
-        return JsonResponse({
-            'status': False,
-            'message': 'Locale not enabled for selected project.',
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Locale not enabled for selected project."},
+            status=400,
+        )
 
 
 @utils.require_AJAX
 def authors_and_time_range(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
     project = get_object_or_404(Project.objects.available(), slug=slug)
-    paths = [part] if part != 'all-resources' else None
+    paths = [part] if part != "all-resources" else None
 
     translations = Translation.for_locale_project_paths(locale, project, paths)
 
-    return JsonResponse({
-        'authors': translations.authors(),
-        'counts_per_minute': translations.counts_per_minute(),
-    }, safe=False)
+    return JsonResponse(
+        {
+            "authors": translations.authors(),
+            "counts_per_minute": translations.counts_per_minute(),
+        },
+        safe=False,
+    )
 
 
 def _get_entities_list(locale, preferred_source_locale, project, form):
@@ -149,17 +150,20 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     This is used for batch editing.
     """
     entities = (
-        Entity.objects.filter(pk__in=form.cleaned_data['entity_ids'])
+        Entity.objects.filter(pk__in=form.cleaned_data["entity_ids"])
         .distinct()
-        .order_by('order')
+        .order_by("order")
     )
 
-    return JsonResponse({
-        'entities': Entity.map_entities(locale, preferred_source_locale, entities),
-        'stats': TranslatedResource.objects.stats(
-            project, form.cleaned_data['paths'], locale
-        ),
-    }, safe=False)
+    return JsonResponse(
+        {
+            "entities": Entity.map_entities(locale, preferred_source_locale, entities),
+            "stats": TranslatedResource.objects.stats(
+                project, form.cleaned_data["paths"], locale
+            ),
+        },
+        safe=False,
+    )
 
 
 def _get_all_entities(locale, preferred_source_locale, project, form, entities):
@@ -171,23 +175,23 @@ def _get_all_entities(locale, preferred_source_locale, project, form, entities):
     entities_to_map = Entity.for_project_locale(
         project,
         locale,
-        paths=form.cleaned_data['paths'],
-        exclude_entities=form.cleaned_data['exclude_entities']
+        paths=form.cleaned_data["paths"],
+        exclude_entities=form.cleaned_data["exclude_entities"],
     )
-    visible_entities = entities.values_list('pk', flat=True)
+    visible_entities = entities.values_list("pk", flat=True)
 
-    return JsonResponse({
-        'entities': Entity.map_entities(
-            locale,
-            preferred_source_locale,
-            entities_to_map,
-            visible_entities,
-        ),
-        'has_next': has_next,
-        'stats': TranslatedResource.objects.stats(
-            project, form.cleaned_data['paths'], locale
-        ),
-    }, safe=False)
+    return JsonResponse(
+        {
+            "entities": Entity.map_entities(
+                locale, preferred_source_locale, entities_to_map, visible_entities,
+            ),
+            "has_next": has_next,
+            "stats": TranslatedResource.objects.stats(
+                project, form.cleaned_data["paths"], locale
+            ),
+        },
+        safe=False,
+    )
 
 
 def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
@@ -195,37 +199,39 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
 
     This is used by the regular mode of the Translate page.
     """
-    paginator = Paginator(entities, form.cleaned_data['limit'])
+    paginator = Paginator(entities, form.cleaned_data["limit"])
 
     try:
         entities_page = paginator.page(1)
     except EmptyPage:
-        return JsonResponse({
-            'has_next': False,
-            'stats': {},
-        })
+        return JsonResponse({"has_next": False, "stats": {}})
 
     has_next = entities_page.has_next()
     entities_to_map = entities_page.object_list
 
     # If requested entity not on the first page
-    if form.cleaned_data['entity']:
-        entity_pk = form.cleaned_data['entity']
+    if form.cleaned_data["entity"]:
+        entity_pk = form.cleaned_data["entity"]
         entities_to_map_pks = [e.pk for e in entities_to_map]
 
         # TODO: entities_to_map.values_list() doesn't return entities from selected page
         if entity_pk not in entities_to_map_pks:
-            if entity_pk in entities.values_list('pk', flat=True):
+            if entity_pk in entities.values_list("pk", flat=True):
                 entities_to_map_pks.append(entity_pk)
                 entities_to_map = entities.filter(pk__in=entities_to_map_pks)
 
-    return JsonResponse({
-        'entities': Entity.map_entities(locale, preferred_source_locale, entities_to_map, []),
-        'has_next': has_next,
-        'stats': TranslatedResource.objects.stats(
-            project, form.cleaned_data['paths'], locale
-        ),
-    }, safe=False)
+    return JsonResponse(
+        {
+            "entities": Entity.map_entities(
+                locale, preferred_source_locale, entities_to_map, []
+            ),
+            "has_next": has_next,
+            "stats": TranslatedResource.objects.stats(
+                project, form.cleaned_data["paths"], locale
+            ),
+        },
+        safe=False,
+    )
 
 
 @csrf_exempt
@@ -235,76 +241,91 @@ def entities(request):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
-        return JsonResponse({
-            'status': False,
-            'message': '{error}'.format(error=form.errors.as_json(escape_html=True)),
-        }, status=400)
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "{error}".format(
+                    error=form.errors.as_json(escape_html=True)
+                ),
+            },
+            status=400,
+        )
 
-    locale = get_object_or_404(Locale, code=form.cleaned_data['locale'])
+    locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
 
-    preferred_source_locale = ''
+    preferred_source_locale = ""
     if request.user.is_authenticated:
         preferred_source_locale = request.user.profile.preferred_source_locale
 
-    project_slug = form.cleaned_data['project']
-    if project_slug == 'all-projects':
+    project_slug = form.cleaned_data["project"]
+    if project_slug == "all-projects":
         project = Project(slug=project_slug)
     else:
         project = get_object_or_404(Project, slug=project_slug)
 
     # Only return entities with provided IDs (batch editing)
-    if form.cleaned_data['entity_ids']:
+    if form.cleaned_data["entity_ids"]:
         return _get_entities_list(locale, preferred_source_locale, project, form)
 
     # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
     # make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
-        'paths', 'status', 'search', 'exclude_entities', 'extra', 'time', 'author', 'tag',
+        "paths",
+        "status",
+        "search",
+        "exclude_entities",
+        "extra",
+        "time",
+        "author",
+        "tag",
     )
-    form_data = {k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data}
+    form_data = {
+        k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data
+    }
 
     try:
         entities = Entity.for_project_locale(project, locale, **form_data)
     except ValueError as error:
-        return JsonResponse({
-            'status': False,
-            'message': '{error}'.format(error=error),
-        }, status=500)
+        return JsonResponse(
+            {"status": False, "message": "{error}".format(error=error)}, status=500
+        )
 
     # Only return a list of entity PKs (batch editing: select all)
-    if form.cleaned_data['pk_only']:
-        return JsonResponse({
-            'entity_pks': list(entities.values_list('pk', flat=True)),
-        })
+    if form.cleaned_data["pk_only"]:
+        return JsonResponse({"entity_pks": list(entities.values_list("pk", flat=True))})
 
     # In-place view: load all entities
-    if form.cleaned_data['inplace_editor']:
-        return _get_all_entities(locale, preferred_source_locale, project, form, entities)
+    if form.cleaned_data["inplace_editor"]:
+        return _get_all_entities(
+            locale, preferred_source_locale, project, form, entities
+        )
 
     # Out-of-context view: paginate entities
-    return _get_paginated_entities(locale, preferred_source_locale, project, form, entities)
+    return _get_paginated_entities(
+        locale, preferred_source_locale, project, form, entities
+    )
 
 
 def _serialize_translation_values(query):
     translations = query.values(
-        'locale__pk',
-        'locale__code',
-        'locale__name',
-        'locale__direction',
-        'locale__script',
-        'string',
+        "locale__pk",
+        "locale__code",
+        "locale__name",
+        "locale__direction",
+        "locale__script",
+        "string",
     )
 
     return [
         {
-            'locale': {
-                'pk': translation['locale__pk'],
-                'code': translation['locale__code'],
-                'name': translation['locale__name'],
-                'direction': translation['locale__direction'],
-                'script': translation['locale__script'],
+            "locale": {
+                "pk": translation["locale__pk"],
+                "code": translation["locale__code"],
+                "name": translation["locale__name"],
+                "direction": translation["locale__direction"],
+                "script": translation["locale__script"],
             },
-            'translation': translation['string'],
+            "translation": translation["string"],
         }
         for translation in translations
     ]
@@ -314,23 +335,25 @@ def _serialize_translation_values(query):
 def get_translations_from_other_locales(request):
     """Get entity translations for all but specified locale."""
     try:
-        entity = request.GET['entity']
-        locale = request.GET['locale']
+        entity = request.GET["entity"]
+        locale = request.GET["locale"]
     except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     plural_form = None if entity.string_plural == "" else 0
 
-    translations = Translation.objects.filter(
-        entity=entity,
-        plural_form=plural_form,
-        approved=True,
-    ).exclude(locale=locale).order_by('locale__name')
+    translations = (
+        Translation.objects.filter(
+            entity=entity, plural_form=plural_form, approved=True,
+        )
+        .exclude(locale=locale)
+        .order_by("locale__name")
+    )
 
     if request.user.is_authenticated:
         preferred_locales = request.user.profile.preferred_locales
@@ -339,15 +362,18 @@ def get_translations_from_other_locales(request):
 
         preferred_translations = sorted(
             _serialize_translation_values(preferred),
-            key=lambda t: request.user.profile.locales_order.index(t['locale']['pk'])
+            key=lambda t: request.user.profile.locales_order.index(t["locale"]["pk"]),
         )
 
-        if (request.user.profile.preferred_source_locale):
+        if request.user.profile.preferred_source_locale:
             # TODO: De-hardcode as part of bug 1328879.
-            preferred_translations.insert(0, {
-                'locale': Locale.objects.get(code='en-US').serialize(),
-                'translation': entity.string,
-            })
+            preferred_translations.insert(
+                0,
+                {
+                    "locale": Locale.objects.get(code="en-US").serialize(),
+                    "translation": entity.string,
+                },
+            )
     else:
         other = translations
         preferred_translations = []
@@ -355,8 +381,8 @@ def get_translations_from_other_locales(request):
     other_translations = _serialize_translation_values(other)
 
     payload = {
-        'preferred': preferred_translations,
-        'other': other_translations,
+        "preferred": preferred_translations,
+        "other": other_translations,
     }
 
     return JsonResponse(payload, safe=False)
@@ -366,14 +392,14 @@ def get_translations_from_other_locales(request):
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
     try:
-        entity = request.GET['entity']
-        locale = request.GET['locale']
-        plural_form = request.GET['plural_form']
+        entity = request.GET["entity"]
+        locale = request.GET["locale"]
+        plural_form = request.GET["plural_form"]
     except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
@@ -381,40 +407,42 @@ def get_translation_history(request):
     translations = Translation.objects.filter(entity=entity, locale=locale)
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
-    translations = translations.order_by('-active', 'rejected', '-date')
+    translations = translations.order_by("-active", "rejected", "-date")
 
     payload = []
 
     for t in translations:
         u = t.user
         translation_dict = t.serialize()
-        translation_dict.update({
-            "user": "Imported" if u is None else u.name_or_email,
-            "uid": "" if u is None else u.id,
-            "username": "" if u is None else u.username,
-            "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
-            "date": t.date.strftime('%b %d, %Y %H:%M'),
-            "date_iso": t.date.isoformat(),
-            "approved_user": User.display_name_or_blank(t.approved_user),
-            "unapproved_user": User.display_name_or_blank(t.unapproved_user),
-        })
+        translation_dict.update(
+            {
+                "user": "Imported" if u is None else u.name_or_email,
+                "uid": "" if u is None else u.id,
+                "username": "" if u is None else u.username,
+                "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
+                "date": t.date.strftime("%b %d, %Y %H:%M"),
+                "date_iso": t.date.isoformat(),
+                "approved_user": User.display_name_or_blank(t.approved_user),
+                "unapproved_user": User.display_name_or_blank(t.unapproved_user),
+            }
+        )
         payload.append(translation_dict)
 
     return JsonResponse(payload, safe=False)
 
 
 @utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
+@login_required(redirect_field_name="", login_url="/403")
 @transaction.atomic
 def delete_translation(request):
     """Delete given translation."""
     try:
-        t = request.POST['translation']
+        t = request.POST["translation"]
     except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     translation = get_object_or_404(Translation, pk=t)
     entity = translation.entity
@@ -423,75 +451,71 @@ def delete_translation(request):
 
     # Read-only translations cannot be deleted
     if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: This string is in read-only mode.",
+            },
+            status=403,
+        )
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project) or
-        request.user == translation.user or
-        translation.approved
+        request.user.can_translate(locale, project)
+        or request.user == translation.user
+        or translation.approved
     ):
-        return JsonResponse({
-            'status': False,
-            'message': "Forbidden: You can't delete this translation.",
-        }, status=403)
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You can't delete this translation.",
+            },
+            status=403,
+        )
 
     translation.delete()
 
-    log_action('translation:deleted', request.user, entity=entity, locale=locale)
+    log_action("translation:deleted", request.user, entity=entity, locale=locale)
 
-    return JsonResponse({
-        'status': True,
-    })
+    return JsonResponse({"status": True})
 
 
 @utils.require_AJAX
 def perform_checks(request):
     """Perform quality checks and return a list of any failed ones."""
     try:
-        entity = request.POST['entity']
-        locale_code = request.POST['locale_code']
-        original = request.POST['original']
-        string = request.POST['string']
-        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
+        entity = request.POST["entity"]
+        locale_code = request.POST["locale_code"]
+        original = request.POST["original"]
+        string = request.POST["string"]
+        ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
     except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     try:
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     failed_checks = run_checks(
-        entity,
-        locale_code,
-        original,
-        string,
-        request.user.profile.quality_checks,
+        entity, locale_code, original, string, request.user.profile.quality_checks,
     )
 
     if are_blocking_checks(failed_checks, ignore_warnings):
-        return JsonResponse({
-            'failedChecks': failed_checks,
-        })
+        return JsonResponse({"failedChecks": failed_checks})
     else:
-        return JsonResponse({
-            'status': True,
-        })
+        return JsonResponse({"status": True})
 
 
 @require_POST
 @utils.require_AJAX
-@login_required(redirect_field_name='', login_url='/403')
+@login_required(redirect_field_name="", login_url="/403")
 @transaction.atomic
 def update_translation(request):
     """Update entity translation for the specified locale and user.
@@ -503,36 +527,36 @@ def update_translation(request):
 
     """
     try:
-        entity = request.POST['entity']
-        string = request.POST['translation']
-        locale = request.POST['locale']
-        plural_form = request.POST['plural_form']
-        original = request.POST['original']
-        ignore_warnings = request.POST.get('ignore_warnings', 'false') == 'true'
-        approve = request.POST.get('approve', 'false') == 'true'
-        force_suggestions = request.POST.get('force_suggestions', 'false') == 'true'
-        paths = request.POST.getlist('paths[]')
+        entity = request.POST["entity"]
+        string = request.POST["translation"]
+        locale = request.POST["locale"]
+        plural_form = request.POST["plural_form"]
+        original = request.POST["original"]
+        ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
+        approve = request.POST.get("approve", "false") == "true"
+        force_suggestions = request.POST.get("force_suggestions", "false") == "true"
+        paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     try:
         e = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     try:
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
-        return JsonResponse({
-            'status': False,
-            'message': 'Bad Request: {error}'.format(error=e),
-        }, status=400)
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
     if plural_form == "-1":
         plural_form = None
@@ -542,47 +566,42 @@ def update_translation(request):
 
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
-        return JsonResponse({
-            'status': False,
-            'message': 'Forbidden: This string is in read-only mode.',
-        }, status=403)
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: This string is in read-only mode.",
+            },
+            status=403,
+        )
 
     now = timezone.now()
-    can_translate = (
-        request.user.can_translate(project=project, locale=locale) and
-        (not force_suggestions or approve)
+    can_translate = request.user.can_translate(project=project, locale=locale) and (
+        not force_suggestions or approve
     )
     translations = Translation.objects.filter(
-        entity=e, locale=locale, plural_form=plural_form)
+        entity=e, locale=locale, plural_form=plural_form
+    )
 
     same_translations = translations.filter(string=string).order_by(
-        '-active', 'rejected', '-date'
+        "-active", "rejected", "-date"
     )
 
     # If same translation exists in the DB, don't save it again.
     if utils.is_same(same_translations, can_translate):
-        return JsonResponse({
-            'same': True,
-        })
+        return JsonResponse({"same": True})
 
     # Check for errors.
     # Checks are disabled for the tutorial.
-    use_checks = project.slug != 'tutorial'
+    use_checks = project.slug != "tutorial"
 
     failed_checks = None
     if use_checks:
         failed_checks = run_checks(
-            e,
-            locale.code,
-            original,
-            string,
-            user.profile.quality_checks,
+            e, locale.code, original, string, user.profile.quality_checks,
         )
 
         if are_blocking_checks(failed_checks, ignore_warnings):
-            return JsonResponse({
-                'failedChecks': failed_checks,
-            })
+            return JsonResponse({"failedChecks": failed_checks})
 
     # Translations exist
     if len(translations) > 0:
@@ -608,13 +627,17 @@ def update_translation(request):
 
                 t.save(failed_checks=failed_checks)
 
-                log_action('translation:approved', user, translation=t)
+                log_action("translation:approved", user, translation=t)
 
-                return JsonResponse({
-                    'type': 'updated',
-                    'translation': t.serialize(),
-                    'stats': TranslatedResource.objects.stats(project, paths, locale),
-                })
+                return JsonResponse(
+                    {
+                        "type": "updated",
+                        "translation": t.serialize(),
+                        "stats": TranslatedResource.objects.stats(
+                            project, paths, locale
+                        ),
+                    }
+                )
 
         # Different translation added
         else:
@@ -634,18 +657,19 @@ def update_translation(request):
 
             t.save(failed_checks=failed_checks)
 
-            log_action('translation:created', user, translation=t)
+            log_action("translation:created", user, translation=t)
 
             active_translation = e.reset_active_translation(
-                locale=locale,
-                plural_form=plural_form,
+                locale=locale, plural_form=plural_form,
             )
 
-            return JsonResponse({
-                'type': 'added',
-                'translation': active_translation.serialize(),
-                'stats': TranslatedResource.objects.stats(project, paths, locale),
-            })
+            return JsonResponse(
+                {
+                    "type": "added",
+                    "translation": active_translation.serialize(),
+                    "stats": TranslatedResource.objects.stats(project, paths, locale),
+                }
+            )
 
     # No translations saved yet
     else:
@@ -666,22 +690,24 @@ def update_translation(request):
 
         t.save(failed_checks=failed_checks)
 
-        log_action('translation:created', user, translation=t)
+        log_action("translation:created", user, translation=t)
 
-        return JsonResponse({
-            'type': 'saved',
-            'translation': t.serialize(),
-            'stats': TranslatedResource.objects.stats(project, paths, locale),
-        })
+        return JsonResponse(
+            {
+                "type": "saved",
+                "translation": t.serialize(),
+                "stats": TranslatedResource.objects.stats(project, paths, locale),
+            }
+        )
 
 
 @transaction.atomic
 def download(request):
     """Download translated resource."""
     try:
-        slug = request.GET['slug']
-        code = request.GET['code']
-        part = request.GET['part']
+        slug = request.GET["slug"]
+        code = request.GET["code"]
+        part = request.GET["part"]
     except MultiValueDictKeyError:
         raise Http404
 
@@ -692,52 +718,46 @@ def download(request):
 
     response = HttpResponse()
     response.content = content
-    response['Content-Type'] = 'text/plain'
-    response['Content-Disposition'] = 'attachment; filename=' + filename
+    response["Content-Type"] = "text/plain"
+    response["Content-Disposition"] = "attachment; filename=" + filename
 
     return response
 
 
-@login_required(redirect_field_name='', login_url='/403')
+@login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
 def upload(request):
     """Upload translated resource."""
     try:
-        slug = request.POST['slug']
-        code = request.POST['code']
-        part = request.POST['part']
+        slug = request.POST["slug"]
+        code = request.POST["code"]
+        part = request.POST["part"]
     except MultiValueDictKeyError:
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project, slug=slug)
 
-    if (
-        not request.user.can_translate(project=project, locale=locale)
-        or utils.readonly_exists(project, locale)
-    ):
+    if not request.user.can_translate(
+        project=project, locale=locale
+    ) or utils.readonly_exists(project, locale):
         return HttpResponseForbidden("You don't have permission to upload files.")
 
     form = forms.UploadFileForm(request.POST, request.FILES)
 
     if form.is_valid():
-        f = request.FILES['uploadfile']
+        f = request.FILES["uploadfile"]
         utils.handle_upload_content(slug, code, part, f, request.user)
-        messages.success(request, 'Translations updated from uploaded file.')
+        messages.success(request, "Translations updated from uploaded file.")
     else:
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(request, error)
 
-    response = HttpResponse(content='', status=303)
-    response['Location'] = reverse(
-        'pontoon.translate',
-        kwargs={
-            'locale': code,
-            'project': slug,
-            'resource': part,
-        },
+    response = HttpResponse(content="", status=303)
+    response["Location"] = reverse(
+        "pontoon.translate", kwargs={"locale": code, "project": slug, "resource": part},
     )
     return response
 
@@ -746,37 +766,38 @@ def upload(request):
 def download_translation_memory(request, locale, slug, filename):
     locale = get_object_or_404(Locale, code=locale)
 
-    if slug.lower() == 'all-projects':
+    if slug.lower() == "all-projects":
         project_filter = Q()
     else:
         project = get_object_or_404(Project.objects.available(), slug=slug)
         project_filter = Q(project=project)
 
     tm_entries = (
-        TranslationMemoryEntry.objects
-        .filter(project_filter)
+        TranslationMemoryEntry.objects.filter(project_filter)
         .filter(locale=locale, translation__isnull=False)
-        .exclude(Q(source='') | Q(target=''))
+        .exclude(Q(source="") | Q(target=""))
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
-    filename = '{code}.{slug}.tmx'.format(code=locale.code, slug=slug)
+    filename = "{code}.{slug}.tmx".format(code=locale.code, slug=slug)
 
     response = StreamingHttpResponse(
         utils.build_translation_memory_file(
             datetime.now(),
             locale.code,
             tm_entries.values_list(
-                'entity__resource__path',
-                'entity__key',
-                'source',
-                'target',
-                'project__name',
-                'project__slug'
-            ).order_by('project__slug', 'source')
+                "entity__resource__path",
+                "entity__key",
+                "source",
+                "target",
+                "project__name",
+                "project__slug",
+            ).order_by("project__slug", "source"),
         ),
-        content_type='text/xml'
+        content_type="text/xml",
     )
-    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
+    response["Content-Disposition"] = 'attachment; filename="{filename}"'.format(
+        filename=filename
+    )
     return response
 
 
@@ -785,46 +806,45 @@ def user_data(request):
     user = request.user
 
     if not user.is_authenticated:
-        if settings.AUTHENTICATION_METHOD == 'django':
-            login_url = reverse('standalone_login')
+        if settings.AUTHENTICATION_METHOD == "django":
+            login_url = reverse("standalone_login")
         else:
             login_url = provider_login_url(request)
 
-        return JsonResponse({
-            'is_authenticated': False,
-            'login_url': login_url,
-        })
+        return JsonResponse({"is_authenticated": False, "login_url": login_url})
 
-    if settings.AUTHENTICATION_METHOD == 'django':
-        logout_url = reverse('standalone_logout')
+    if settings.AUTHENTICATION_METHOD == "django":
+        logout_url = reverse("standalone_logout")
     else:
-        logout_url = reverse('account_logout')
+        logout_url = reverse("account_logout")
 
-    return JsonResponse({
-        'is_authenticated': True,
-        'is_admin': user.has_perm('base.can_manage_project'),
-        'id': user.id,
-        'email': user.email,
-        'display_name': user.display_name,
-        'name_or_email': user.name_or_email,
-        'username': user.username,
-        'manager_for_locales': list(
-            user.managed_locales.values_list('code', flat=True)
-        ),
-        'translator_for_locales': list(
-            user.translated_locales.values_list('code', flat=True)
-        ),
-        'translator_for_projects': user.translated_projects,
-        'settings': {
-            'quality_checks': user.profile.quality_checks,
-            'force_suggestions': user.profile.force_suggestions,
-        },
-        'tour_status': user.profile.tour_status,
-        'logout_url': logout_url,
-        'gravatar_url_small': user.gravatar_url(88),
-        'gravatar_url_big': user.gravatar_url(176),
-        'notifications': user.serialized_notifications,
-    })
+    return JsonResponse(
+        {
+            "is_authenticated": True,
+            "is_admin": user.has_perm("base.can_manage_project"),
+            "id": user.id,
+            "email": user.email,
+            "display_name": user.display_name,
+            "name_or_email": user.name_or_email,
+            "username": user.username,
+            "manager_for_locales": list(
+                user.managed_locales.values_list("code", flat=True)
+            ),
+            "translator_for_locales": list(
+                user.translated_locales.values_list("code", flat=True)
+            ),
+            "translator_for_projects": user.translated_projects,
+            "settings": {
+                "quality_checks": user.profile.quality_checks,
+                "force_suggestions": user.profile.force_suggestions,
+            },
+            "tour_status": user.profile.tour_status,
+            "logout_url": logout_url,
+            "gravatar_url_small": user.gravatar_url(88),
+            "gravatar_url_big": user.gravatar_url(176),
+            "notifications": user.serialized_notifications,
+        }
+    )
 
 
 class AjaxFormView(FormView):

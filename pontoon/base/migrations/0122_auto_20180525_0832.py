@@ -8,13 +8,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0121_bug_1453999_disable_sync'),
+        ("base", "0121_bug_1453999_disable_sync"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='resource',
-            name='format',
-            field=models.CharField(blank=True, choices=[('dtd', 'dtd'), ('ftl', 'ftl'), ('inc', 'inc'), ('ini', 'ini'), ('json', 'json'), ('lang', 'lang'), ('po', 'po'), ('properties', 'properties'), ('xlf', 'xliff'), ('xliff', 'xliff')], max_length=20, verbose_name='Format'),
+            model_name="resource",
+            name="format",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("dtd", "dtd"),
+                    ("ftl", "ftl"),
+                    ("inc", "inc"),
+                    ("ini", "ini"),
+                    ("json", "json"),
+                    ("lang", "lang"),
+                    ("po", "po"),
+                    ("properties", "properties"),
+                    ("xlf", "xliff"),
+                    ("xliff", "xliff"),
+                ],
+                max_length=20,
+                verbose_name="Format",
+            ),
         ),
     ]

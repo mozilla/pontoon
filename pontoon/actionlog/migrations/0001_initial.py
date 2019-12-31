@@ -12,21 +12,72 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('base', '0147_auto_20191016_2349'),
+        ("base", "0147_auto_20191016_2349"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ActionLog',
+            name="ActionLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('action_type', models.CharField(choices=[('translation:created', 'Translation created'), ('translation:deleted', 'Translation deleted'), ('translation:approved', 'Translation approved'), ('translation:unapproved', 'Translation unapproved'), ('translation:rejected', 'Translation rejected'), ('translation:unrejected', 'Translation unrejected')], max_length=50)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('entity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Entity')),
-                ('locale', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Locale')),
-                ('performed_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('translation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='base.Translation')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "action_type",
+                    models.CharField(
+                        choices=[
+                            ("translation:created", "Translation created"),
+                            ("translation:deleted", "Translation deleted"),
+                            ("translation:approved", "Translation approved"),
+                            ("translation:unapproved", "Translation unapproved"),
+                            ("translation:rejected", "Translation rejected"),
+                            ("translation:unrejected", "Translation unrejected"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "entity",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="base.Entity",
+                    ),
+                ),
+                (
+                    "locale",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="base.Locale",
+                    ),
+                ),
+                (
+                    "performed_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "translation",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="base.Translation",
+                    ),
+                ),
             ],
         ),
     ]

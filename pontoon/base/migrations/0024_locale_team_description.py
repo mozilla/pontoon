@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0023_auto_20150916_0642'),
+        ("base", "0023_auto_20150916_0642"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='locale',
-            name='team_description',
+            model_name="locale",
+            name="team_description",
             field=models.TextField(blank=True),
         ),
     ]

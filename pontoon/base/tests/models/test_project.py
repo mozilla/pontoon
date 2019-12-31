@@ -66,7 +66,7 @@ def test_project_repo_path_none(project_a):
     If the project has no matching repositories, raise a ValueError.
     """
     with pytest.raises(ValueError):
-        project_a.repository_for_path('doesnt/exist')
+        project_a.repository_for_path("doesnt/exist")
 
 
 @pytest.mark.django_db
@@ -76,14 +76,10 @@ def test_project_repo_for_path(project_a):
     the given path.
     """
     repos = [
-        RepositoryFactory.create(
-            type="file",
-            project=project_a,
-            url="testrepo%s" % i,
-        )
+        RepositoryFactory.create(type="file", project=project_a, url="testrepo%s" % i,)
         for i in range(0, 3)
     ]
-    path = os.path.join(repos[1].checkout_path, 'foo', 'bar')
+    path = os.path.join(repos[1].checkout_path, "foo", "bar")
     assert project_a.repository_for_path(path) == repos[1]
 
 
@@ -116,10 +112,7 @@ def test_project_latest_activity_with_latest(project_a, translation_a):
     return it.
     """
     assert project_a.latest_translation == translation_a
-    assert (
-        project_a.get_latest_activity()
-        == translation_a.latest_activity
-    )
+    assert project_a.get_latest_activity() == translation_a.latest_activity
 
 
 @pytest.mark.django_db
@@ -130,7 +123,7 @@ def test_project_latest_activity_without_latest(project_a):
 
 @pytest.mark.django_db
 def test_project_latest_activity_with_locale(locale_a, project_a):
-    with patch.object(ProjectLocale, 'get_latest_activity') as m:
-        m.return_value = 'latest'
-        assert project_a.get_latest_activity(locale=locale_a) == 'latest'
+    with patch.object(ProjectLocale, "get_latest_activity") as m:
+        m.return_value = "latest"
+        assert project_a.get_latest_activity(locale=locale_a) == "latest"
         assert m.call_args[0] == (project_a, locale_a)

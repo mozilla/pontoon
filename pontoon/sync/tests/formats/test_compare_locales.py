@@ -33,29 +33,27 @@ class CompareLocalesResourceTests(TestCase):
         shutil.rmtree(self.tempdir)
 
     def get_invalid_file_path(self):
-        return os.path.join(self.tempdir, 'invalid.xml')
+        return os.path.join(self.tempdir, "invalid.xml")
 
     def get_nonexistant_file_path(self):
-        return os.path.join(self.tempdir, 'strings.xml')
+        return os.path.join(self.tempdir, "strings.xml")
 
     def get_nonexistant_file_resource(self, path):
-        contents = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        contents = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
             <resources>
                 <string name="source-string">Source String</string>
             </resources>
-        """)
+        """
+        )
 
         source_path = create_named_tempfile(
-            contents,
-            prefix='strings',
-            suffix='.xml',
-            directory=self.tempdir,
+            contents, prefix="strings", suffix=".xml", directory=self.tempdir,
         )
         source_resource = compare_locales.CompareLocalesResource(source_path)
 
         return compare_locales.CompareLocalesResource(
-            path,
-            source_resource=source_resource,
+            path, source_resource=source_resource,
         )
 
     def test_init_invalid_resource(self):
@@ -96,9 +94,7 @@ class CompareLocalesResourceTests(TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        translated_resource.translations[0].strings = {
-            None: 'New Translated String'
-        }
+        translated_resource.translations[0].strings = {None: "New Translated String"}
 
         assert_false(os.path.exists(path))
         translated_resource.save(LocaleFactory.create())
@@ -135,26 +131,15 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def parse_string(
-        self,
-        string,
-        source_string=None,
-        locale=None,
-        path=None,
-        source_path=None,
+        self, string, source_string=None, locale=None, path=None, source_path=None,
     ):
         """Android XML files must contain the word 'strings'."""
         path = create_named_tempfile(
-            string,
-            prefix='strings',
-            suffix='.xml',
-            directory=self.tempdir,
+            string, prefix="strings", suffix=".xml", directory=self.tempdir,
         )
         if source_string is not None:
             source_path = create_named_tempfile(
-                source_string,
-                prefix='strings',
-                suffix='.xml',
-                directory=self.tempdir,
+                source_string, prefix="strings", suffix=".xml", directory=self.tempdir,
             )
         return super(AndroidXMLTests, self).parse_string(
             string,
@@ -177,33 +162,41 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         self.run_parse_empty_translation(BASE_ANDROID_XML_FILE, 3)
 
     def test_save_basic(self):
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Comment -->
     <string name="Source String">Source String</string>
 </resources>
-        """)
-        expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Comment -->
     <string name="Source String">New Translated String</string>
 </resources>
-        """)
+        """
+        )
 
         self.run_save_basic(input_string, expected_string, source_string=input_string)
 
     def test_save_remove(self):
         """Deleting strings removes them completely from the XML file."""
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Comment -->
     <string name="Source String">Source String</string>
 </resources>
-        """)
-        expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     </resources>
-        """)
+        """
+        )
 
         self.run_save_remove(input_string, expected_string, source_string=input_string)
 
@@ -212,82 +205,110 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         If an entity is missing from the source resource, remove it from
         the translated resource.
         """
-        source_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        source_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Source String">Source String</string>
 </resources>
-        """)
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Missing Source String">Translated Missing String</string>
     <string name="Source String">Translated String</string>
 </resources>
-        """)
-        expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Source String">Translated String</string>
 </resources>
-        """)
+        """
+        )
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string
+        )
 
     def test_save_source_no_translation(self):
         """
         If an entity is missing from the translated resource and has no
         translation, do not add it back in.
         """
-        source_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        source_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Source String">Source String</string>
     <string name="Other Source String">Other String</string>
 </resources>
-        """)
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Other Source String">Translated Other String</string>
 </resources>
-        """)
+        """
+        )
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string
+        )
 
     def test_save_translation_missing(self):
-        source_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        source_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Source String</string>
     <!-- Missing String Comment -->
     <string name="Missing String">Missing Source String</string>
 </resources>
-        """)
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Translated String</string>
 </resources>
-        """)
-        expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Translated String</string>
     <!-- Missing String Comment -->
     <string name="Missing String">Translated Missing String</string>
 </resources>
-        """)
+        """
+        )
 
         self.run_save_translation_missing(source_string, input_string, expected_string)
 
     def test_save_translation_identical(self):
-        source_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        source_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Source String</string>
 </resources>
-        """)
-        input_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        input_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Translated String</string>
 </resources>
-        """)
-        expected_string = dedent("""<?xml version="1.0" encoding="utf-8"?>
+        """
+        )
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="String">Source String</string>
 </resources>
-        """)
+        """
+        )
 
-        self.run_save_translation_identical(source_string, input_string, expected_string)
+        self.run_save_translation_identical(
+            source_string, input_string, expected_string
+        )

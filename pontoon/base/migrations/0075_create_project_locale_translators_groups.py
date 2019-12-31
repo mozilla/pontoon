@@ -7,26 +7,30 @@ from django.db import migrations
 
 def create_project_locale_groups(apps, schema_editor):
     """Create translators groups for every project locale object."""
-    Group = apps.get_model('auth', 'Group')
-    Permission = apps.get_model('auth', 'Permission')
-    ProjectLocale = apps.get_model('base', 'ProjectLocale')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-    GroupObjectPermission = apps.get_model('guardian', 'GroupObjectPermission')
+    Group = apps.get_model("auth", "Group")
+    Permission = apps.get_model("auth", "Permission")
+    ProjectLocale = apps.get_model("base", "ProjectLocale")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    GroupObjectPermission = apps.get_model("guardian", "GroupObjectPermission")
 
-    project_locale_ct = ContentType.objects.get(app_label='base', model='projectlocale')
+    project_locale_ct = ContentType.objects.get(app_label="base", model="projectlocale")
 
-    can_translate = Permission.objects.get(content_type=project_locale_ct, codename='can_translate_project_locale')
+    can_translate = Permission.objects.get(
+        content_type=project_locale_ct, codename="can_translate_project_locale"
+    )
 
     for project_locale in ProjectLocale.objects.all():
-        translators_group = Group.objects.create(name='{}/{} translators'.format(
-            project_locale.project.slug, project_locale.locale.code,
-        ))
+        translators_group = Group.objects.create(
+            name="{}/{} translators".format(
+                project_locale.project.slug, project_locale.locale.code,
+            )
+        )
         translators_group.permissions.add(can_translate)
         GroupObjectPermission.objects.create(
             object_pk=project_locale.pk,
             content_type=project_locale_ct,
             group=translators_group,
-            permission=can_translate
+            permission=can_translate,
         )
 
         project_locale.translators_group = translators_group
@@ -34,7 +38,7 @@ def create_project_locale_groups(apps, schema_editor):
 
 
 def remove_project_locale_groups(apps, schema):
-    ProjectLocale = apps.get_model('base', 'ProjectLocale')
+    ProjectLocale = apps.get_model("base", "ProjectLocale")
 
     for project_locale in ProjectLocale.objects.all():
         project_locale.translators_group.delete()
@@ -43,7 +47,7 @@ def remove_project_locale_groups(apps, schema):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0074_projectlocale_translators_group'),
+        ("base", "0074_projectlocale_translators_group"),
     ]
 
     operations = [

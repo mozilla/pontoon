@@ -7,12 +7,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0010_translation_extra'),
+        ("base", "0010_translation_extra"),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='locale',
-            options={'ordering': ['name']},
-        ),
+        migrations.AlterModelOptions(name="locale", options={"ordering": ["name"]},),
     ]

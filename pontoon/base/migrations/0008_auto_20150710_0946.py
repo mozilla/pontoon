@@ -5,7 +5,7 @@ from django.db import migrations
 
 
 def add_cldr_plurals_to_locales(apps, schema_editor):
-    Locale = apps.get_model('base', 'Locale')
+    Locale = apps.get_model("base", "Locale")
 
     for locale in LOCALE_CLDR:
         l = Locale.objects.get(code=locale)
@@ -16,7 +16,7 @@ def add_cldr_plurals_to_locales(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0007_auto_20150710_0944'),
+        ("base", "0007_auto_20150710_0944"),
     ]
 
     operations = [

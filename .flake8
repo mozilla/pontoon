@@ -1,6 +1,6 @@
 [flake8]
-max_line_length = 100
-ignore = W503, W504
+max_line_length = 88
+ignore = E203, E501, W503
 
 exclude =
     media/*,
@@ -12,4 +12,3 @@ exclude =
     node_modules,
     bin,
     frontend
-

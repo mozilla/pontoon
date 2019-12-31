@@ -7,7 +7,10 @@ import codecs
 import re
 import sys
 
-from parsimonious.exceptions import ParseError as ParsimoniousParseError, VisitationError
+from parsimonious.exceptions import (
+    ParseError as ParsimoniousParseError,
+    VisitationError,
+)
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
 
@@ -18,8 +21,8 @@ from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
 
-BLANK_LINE = 'blank_line'
-TAG_REGEX = re.compile(r'\{(ok|l10n-extra)\}')
+BLANK_LINE = "blank_line"
+TAG_REGEX = re.compile(r"\{(ok|l10n-extra)\}")
 
 
 class LangComment(object):
@@ -52,12 +55,12 @@ class LangEntity(VCSTranslation):
         # If the translation matches the source string without the {ok}
         # tag, then the translation isn't actually valid, so we remove
         # it.
-        if source_string == translation_string and 'ok' not in tags:
+        if source_string == translation_string and "ok" not in tags:
             del self.strings[None]
 
     @property
     def extra(self):
-        return {'tags': list(self.tags)}
+        return {"tags": list(self.tags)}
 
 
 class LangResource(ParsedResource):
@@ -70,42 +73,42 @@ class LangResource(ParsedResource):
         return [c for c in self.children if isinstance(c, LangEntity)]
 
     def save(self, locale):
-        with codecs.open(self.path, 'w', 'utf-8') as f:
+        with codecs.open(self.path, "w", "utf-8") as f:
             for child in self.children:
                 if isinstance(child, LangEntity):
                     self.write_entity(f, child)
                 elif isinstance(child, LangComment):
                     f.write(child.raw)
                 elif child == BLANK_LINE:
-                    f.write(u'\n')
+                    f.write(u"\n")
 
     def write_entity(self, f, entity):
-        f.write(u';{0}\n'.format(entity.source_string))
+        f.write(u";{0}\n".format(entity.source_string))
 
         translation = entity.strings.get(None, None)
         if translation is None:
             # No translation? Output the source string and remove {ok}.
             translation = entity.source_string
-            entity.tags.discard('ok')
+            entity.tags.discard("ok")
         elif translation == entity.source_string:
             # Translation is equal to the source? Include {ok}.
-            entity.tags.add('ok')
+            entity.tags.add("ok")
         elif translation != entity.source_string:
             # Translation is different? Remove {ok}, it's unneeded.
-            entity.tags.discard('ok')
+            entity.tags.discard("ok")
 
-        if entity.extra.get('tags'):
-            tags = [u'{{{tag}}}'.format(tag=t) for t in entity.tags]
-            translation = u'{translation} {tags}'.format(
-                translation=translation,
-                tags=u' '.join(tags)
+        if entity.extra.get("tags"):
+            tags = [u"{{{tag}}}".format(tag=t) for t in entity.tags]
+            translation = u"{translation} {tags}".format(
+                translation=translation, tags=u" ".join(tags)
             )
 
-        f.write(u'{0}\n'.format(translation))
+        f.write(u"{0}\n".format(translation))
 
 
 class LangVisitor(NodeVisitor):
-    grammar = Grammar(r"""
+    grammar = Grammar(
+        r"""
         lang_file = (comment / entity / blank_line)*
 
         comment = "#"+ line_content line_ending
@@ -117,7 +120,8 @@ class LangVisitor(NodeVisitor):
         entity = string translation
         string = ";" line_content line_ending
         translation = line_content line_ending
-    """)
+    """
+    )
 
     def visit_lang_file(self, node, children):
         """
@@ -155,12 +159,13 @@ class LangVisitor(NodeVisitor):
         tag_matches = list(re.finditer(TAG_REGEX, translation))
         if tag_matches:
             tags = [m.group(1) for m in tag_matches]
-            translation = translation[:tag_matches[0].start()].strip()
+            translation = translation[: tag_matches[0].start()].strip()
 
-        if translation == '':
+        if translation == "":
             raise ParsimoniousParseError(
-                'Blank translation for key {key} is not allowed in langfiles.'
-                .format(key=string)
+                "Blank translation for key {key} is not allowed in langfiles.".format(
+                    key=string
+                )
             )
 
         return LangEntity(string, translation, tags)
@@ -186,9 +191,9 @@ def node_text(node):
     actually be a list of nodes due to repetition.
     """
     if node is None:
-        return u''
+        return u""
     elif isinstance(node, list):
-        return ''.join([n.text for n in node])
+        return "".join([n.text for n in node])
     else:
         return node.text
 
@@ -196,13 +201,15 @@ def node_text(node):
 def parse(path, source_path=None, locale=None):
     # Read as utf-8-sig in case there's a BOM at the start of the file
     # that we want to remove.
-    with codecs.open(path, 'r', 'utf-8-sig') as f:
+    with codecs.open(path, "r", "utf-8-sig") as f:
         content = f.read()
 
     try:
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
-        wrapped = ParseError(u'Failed to parse {path}: {err}'.format(path=path, err=err))
+        wrapped = ParseError(
+            u"Failed to parse {path}: {err}".format(path=path, err=err)
+        )
         reraise(ParseError, wrapped, sys.exc_info()[2])  # NOQA
 
     return LangResource(path, children)

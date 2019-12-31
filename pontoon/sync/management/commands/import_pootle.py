@@ -13,29 +13,29 @@ import requests
 
 
 class Command(BaseCommand):
-    help = 'Import translation authors and dates from Verbatim.'
+    help = "Import translation authors and dates from Verbatim."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--project',
-            action='store',
-            dest='project',
-            help='Project slug to import Verbatim data to'
+            "--project",
+            action="store",
+            dest="project",
+            help="Project slug to import Verbatim data to",
         )
 
         parser.add_argument(
-            '--locale',
-            action='store',
-            dest='locale',
-            help='Locale code to import Verbatim data to'
+            "--locale",
+            action="store",
+            dest="locale",
+            help="Locale code to import Verbatim data to",
         )
 
     def handle(self, *args, **options):
-        locale = options['locale']
-        project = options['project']
+        locale = options["locale"]
+        project = options["project"]
 
         if not project and not locale:
-            raise CommandError('You must provide a project or a locale.')
+            raise CommandError("You must provide a project or a locale.")
 
         elif project and locale:
             self.handle_project_locale(project, locale)
@@ -53,37 +53,40 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle_project_locale(self, project, locale):
         # Match locale code inconsistencies
-        pootle_locale = locale.replace('-', '_')
-        if pootle_locale == 'ga_IE':
-            pootle_locale = 'ga'
+        pootle_locale = locale.replace("-", "_")
+        if pootle_locale == "ga_IE":
+            pootle_locale = "ga"
 
         # Match project slug inconsistencies
         pootle_project = {
-            'amo': 'amo',
-            'find-my-device': 'findmydevice',
-            'firefox-accounts': 'accounts',
-            'firefox-accounts-payments': 'payments',
-            'firefox-hello': 'loop',
-            'firefox-input': 'input',
-            'marketplace': 'marketplace',
-            'marketplace-commbadge': 'commbadge',
-            'marketplace-fireplace': 'fireplace',
-            'marketplace-spartacus': 'spartacus',
-            'marketplace-stats': 'marketplace_stats',
-            'marketplace-zippy': 'zippy',
-            'master-firefox-os': 'masterfirefoxos',
-            'mdn': 'mdn',
-            'mozillians': 'mozillians',
-            'social-api-directory': 'socialapi-directory',
-            'sumo': 'sumo',
+            "amo": "amo",
+            "find-my-device": "findmydevice",
+            "firefox-accounts": "accounts",
+            "firefox-accounts-payments": "payments",
+            "firefox-hello": "loop",
+            "firefox-input": "input",
+            "marketplace": "marketplace",
+            "marketplace-commbadge": "commbadge",
+            "marketplace-fireplace": "fireplace",
+            "marketplace-spartacus": "spartacus",
+            "marketplace-stats": "marketplace_stats",
+            "marketplace-zippy": "zippy",
+            "master-firefox-os": "masterfirefoxos",
+            "mdn": "mdn",
+            "mozillians": "mozillians",
+            "social-api-directory": "socialapi-directory",
+            "sumo": "sumo",
         }.get(project)
 
         if not pootle_project:
             return
 
         # Get Pootle data
-        filename = pootle_locale + '_' + pootle_project + '.json'
-        url = 'http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/' + filename
+        filename = pootle_locale + "_" + pootle_project + ".json"
+        url = (
+            "http://svn.mozilla.org/projects/l10n-misc/trunk/pontoon/verbatim/"
+            + filename
+        )
 
         try:
             pootle = requests.get(url).json()
@@ -108,21 +111,25 @@ class Command(BaseCommand):
             entity__string__in=entities,
             locale__code=locale,
             user=None,
-            string__in=strings
+            string__in=strings,
         )
 
         # Save user permissions and create dict to avoid hitting the DB later
         users_dict = {}
         users = User.objects.filter(email__in=emails)
         missing_users_list = []
-        locale_translators_map = dict(Locale.objects.values_list('code', 'translators_group'))
+        locale_translators_map = dict(
+            Locale.objects.values_list("code", "translators_group")
+        )
         for u in users:
             users_dict[u.email] = u
 
-            if 'base.can_translate_locale' not in u.get_all_permissions():
+            if "base.can_translate_locale" not in u.get_all_permissions():
                 u.groups.add(locale_translators_map[locale])
                 self.stdout.write(
-                    'Permission granted to user {} to locale: {}.'.format(u.email, locale)
+                    "Permission granted to user {} to locale: {}.".format(
+                        u.email, locale
+                    )
                 )
 
         if users:
@@ -157,7 +164,7 @@ class Command(BaseCommand):
         missing_users = Counter(missing_users_list)
         for missing_user in missing_users.keys():
             self.stdout.write(
-                'Pontoon user {} not found: {} translations.'.format(
+                "Pontoon user {} not found: {} translations.".format(
                     missing_user, missing_users[missing_user]
                 )
             )

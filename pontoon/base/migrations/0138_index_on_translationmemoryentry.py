@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0137_delete_entries_of_deleted_translations'),
+        ("base", "0137_delete_entries_of_deleted_translations"),
     ]
 
     operations = [
         migrations.RunSQL(
             "CREATE INDEX tm_locale_source_length_idx ON base_translationmemoryentry(locale_id, length(source))",
-            "DROP INDEX tm_locale_source_length_idx"
+            "DROP INDEX tm_locale_source_length_idx",
         )
     ]

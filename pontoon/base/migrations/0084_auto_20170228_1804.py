@@ -8,13 +8,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0083_populate_repository_website'),
+        ("base", "0083_populate_repository_website"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='priority',
-            field=models.IntegerField(choices=[(1, b'Lowest'), (2, b'Low'), (3, b'Normal'), (4, b'High'), (5, b'Highest')], default=1),
+            model_name="project",
+            name="priority",
+            field=models.IntegerField(
+                choices=[
+                    (1, b"Lowest"),
+                    (2, b"Low"),
+                    (3, b"Normal"),
+                    (4, b"High"),
+                    (5, b"Highest"),
+                ],
+                default=1,
+            ),
         ),
     ]

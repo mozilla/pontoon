@@ -26,12 +26,15 @@ class CompareLocalesEntity(VCSTranslation):
     """
     Represents an entity in a file handled by compare-locales.
     """
+
     def __init__(self, key, string, comment, order):
         self.key = key
         self.source_string = string
-        self.source_string_plural = ''
-        self.strings = {None: self.source_string} if self.source_string is not None else {}
-        self.comments = comment.val.split('\n') if comment else []
+        self.source_string_plural = ""
+        self.strings = (
+            {None: self.source_string} if self.source_string is not None else {}
+        )
+        self.comments = comment.val.split("\n") if comment else []
         self.order = order
         self.fuzzy = False
         self.source = []
@@ -56,12 +59,7 @@ class CompareLocalesResource(ParsedResource):
         # source resource entity.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = CompareLocalesEntity(
-                    entity.key,
-                    None,
-                    None,
-                    0,
-                )
+                self.entities[key] = CompareLocalesEntity(entity.key, None, None, 0,)
 
         try:
             self.parser.readFile(self.path)
@@ -79,10 +77,7 @@ class CompareLocalesResource(ParsedResource):
         for entity in self.parsed_objects:
             if isinstance(entity, parser.Entity):
                 self.entities[entity.key] = CompareLocalesEntity(
-                    entity.key,
-                    entity.unwrap(),
-                    entity.pre_comment,
-                    order,
+                    entity.key, entity.unwrap(), entity.pre_comment, order,
                 )
                 order += 1
 
@@ -93,8 +88,7 @@ class CompareLocalesResource(ParsedResource):
     def save(self, locale):
         if not self.source_resource:
             raise SyncError(
-                'Cannot save resource {0}: No source resource given.'
-                .format(self.path)
+                "Cannot save resource {0}: No source resource given.".format(self.path)
             )
 
         # A dictionary of new translations
@@ -106,8 +100,8 @@ class CompareLocalesResource(ParsedResource):
         # Create parent folders if necessary
         create_parent_directory(self.path)
 
-        with open(self.path, 'wb') as output_file:
-            log.debug('Saving file: %s', self.path)
+        with open(self.path, "wb") as output_file:
+            log.debug("Saving file: %s", self.path)
             output_file.write(
                 serializer.serialize(
                     self.path,

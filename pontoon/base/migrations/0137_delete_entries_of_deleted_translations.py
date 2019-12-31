@@ -12,23 +12,19 @@ def delete_tm_entries(apps, schema):
 
     See bug 1506167 for more details.
     """
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
     TranslationMemoryEntry.objects.filter(
-        translation__isnull=True,
-        entity__isnull=False,
+        translation__isnull=True, entity__isnull=False,
     ).delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0136_android_strings_xml'),
+        ("base", "0136_android_strings_xml"),
     ]
 
     operations = [
-        migrations.RunPython(
-            delete_tm_entries,
-            migrations.RunPython.noop,
-        ),
+        migrations.RunPython(delete_tm_entries, migrations.RunPython.noop,),
     ]

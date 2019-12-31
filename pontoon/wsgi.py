@@ -13,12 +13,12 @@ from django.core.wsgi import get_wsgi_application
 from wsgi_sslify import sslify
 
 
-if 'DOTENV_PATH' in os.environ:
+if "DOTENV_PATH" in os.environ:
     dotenv.read_dotenv(os.environ["DOTENV_PATH"])
 
 # Set settings env var before importing whitenoise as it depends on
 # some settings.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pontoon.settings")
 
 # sslify sets a Strict-Transport-Security header,
 # which instructs browsers to always use HTTPS.

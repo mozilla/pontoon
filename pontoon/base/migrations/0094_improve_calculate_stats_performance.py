@@ -8,16 +8,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0093_auto_20170517_2246'),
+        ("base", "0093_auto_20170517_2246"),
     ]
 
     operations = [
         migrations.AlterIndexTogether(
-            name='entity',
-            index_together=set([('resource', 'obsolete', 'string_plural')]),
+            name="entity",
+            index_together=set([("resource", "obsolete", "string_plural")]),
         ),
         migrations.AlterIndexTogether(
-            name='translation',
-            index_together=set([('entity', 'locale', 'approved'), ('entity', 'locale', 'fuzzy')]),
+            name="translation",
+            index_together=set(
+                [("entity", "locale", "approved"), ("entity", "locale", "fuzzy")]
+            ),
         ),
     ]

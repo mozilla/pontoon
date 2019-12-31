@@ -12,54 +12,38 @@ def unescape_quotes_in_tm_entries_from_android_strings_dtd(apps, schema):
     data migration in 4537eac only covered the Translation model, leaving out TranslationMemoryEntry.
     See bugs 1390111 and 1390113 for more details.
     """
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
     TranslationMemoryEntries = TranslationMemoryEntry.objects.filter(
         entity__resource__path__contains="mobile/android/base"
     )
 
-    TranslationMemoryEntries.filter(target__contains='\\u0022').update(
-        target=Func(
-            F('target'),
-            Value('\\u0022'), Value('"'),
-            function='replace',
-        )
+    TranslationMemoryEntries.filter(target__contains="\\u0022").update(
+        target=Func(F("target"), Value("\\u0022"), Value('"'), function="replace",)
     )
 
-    TranslationMemoryEntries.filter(target__contains='\\u0027').update(
-        target=Func(
-            F('target'),
-            Value('\\u0027'), Value("'"),
-            function='replace',
-        )
+    TranslationMemoryEntries.filter(target__contains="\\u0027").update(
+        target=Func(F("target"), Value("\\u0027"), Value("'"), function="replace",)
     )
 
-    TranslationMemoryEntries.filter(source__contains='\\u0022').update(
-        source=Func(
-            F('source'),
-            Value('\\u0022'), Value('"'),
-            function='replace',
-        )
+    TranslationMemoryEntries.filter(source__contains="\\u0022").update(
+        source=Func(F("source"), Value("\\u0022"), Value('"'), function="replace",)
     )
 
-    TranslationMemoryEntries.filter(source__contains='\\u0027').update(
-        source=Func(
-            F('source'),
-            Value('\\u0027'), Value("'"),
-            function='replace',
-        )
+    TranslationMemoryEntries.filter(source__contains="\\u0027").update(
+        source=Func(F("source"), Value("\\u0027"), Value("'"), function="replace",)
     )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0104_update_descriptions'),
+        ("base", "0104_update_descriptions"),
     ]
 
     operations = [
         migrations.RunPython(
             unescape_quotes_in_tm_entries_from_android_strings_dtd,
-            migrations.RunPython.noop
+            migrations.RunPython.noop,
         )
     ]

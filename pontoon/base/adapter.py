@@ -18,7 +18,7 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         user = super(PontoonSocialAdapter, self).save_user(request, sociallogin, form)
         user.username = base64.urlsafe_b64encode(
             hashlib.sha1(smart_bytes(user.email)).digest()
-        ).rstrip(b'=')
+        ).rstrip(b"=")
         user.save()
         return user
 
@@ -28,7 +28,7 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         accounts. Because both of these providers use verified emails,
         we can automatically connect accounts with the same email.
         """
-        email = sociallogin.account.extra_data.get('email')
+        email = sociallogin.account.extra_data.get("email")
 
         if not email:
             return

@@ -1,1 +1,1 @@
-default_app_config = 'pontoon.tags.apps.TagsConfig'
+default_app_config = "pontoon.tags.apps.TagsConfig"

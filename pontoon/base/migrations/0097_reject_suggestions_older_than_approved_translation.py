@@ -45,7 +45,7 @@ REVERSE_SQL = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('base', '0096_add_rejected_option_to_translation'),
+        ("base", "0096_add_rejected_option_to_translation"),
     ]
 
     operations = [

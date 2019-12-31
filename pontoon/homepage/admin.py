@@ -9,13 +9,14 @@ from pontoon.homepage import forms
 
 
 class HomepageAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'created_at',)
+    list_display = (
+        "pk",
+        "created_at",
+    )
     form = forms.HomepageForm
 
     class Media:
-        css = {
-            'all': ('css/homepage_admin.css',)
-        }
+        css = {"all": ("css/homepage_admin.css",)}
 
 
 admin.site.register(models.Homepage, HomepageAdmin)

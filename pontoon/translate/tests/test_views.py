@@ -9,7 +9,7 @@ from pontoon.translate.views import get_preferred_locale
 
 @pytest.fixture
 def user_arabic(user_a):
-    user_a.profile.custom_homepage = 'ar'
+    user_a.profile.custom_homepage = "ar"
     user_a.save()
     return user_a
 
@@ -17,36 +17,32 @@ def user_arabic(user_a):
 @pytest.mark.django_db
 def test_translate_template(client, project_locale_a, resource_a):
     url = reverse(
-        'pontoon.translate',
+        "pontoon.translate",
         kwargs={
-            'locale': project_locale_a.locale.code,
-            'project': project_locale_a.project.slug,
-            'resource': 'all-resources',
+            "locale": project_locale_a.locale.code,
+            "project": project_locale_a.project.slug,
+            "resource": "all-resources",
         },
     )
 
     response = client.get(url)
-    assert b'Pontoon' in response.content
+    assert b"Pontoon" in response.content
 
 
 @pytest.mark.django_db
 def test_translate_validate_parameters(client, project_locale_a, resource_a):
     url_invalid = reverse(
-        'pontoon.translate',
-        kwargs={
-            'locale': 'locale',
-            'project': 'project',
-            'resource': 'resource',
-        }
+        "pontoon.translate",
+        kwargs={"locale": "locale", "project": "project", "resource": "resource"},
     )
 
     url_valid = reverse(
-        'pontoon.translate',
+        "pontoon.translate",
         kwargs={
-            'locale': project_locale_a.locale.code,
-            'project': project_locale_a.project.slug,
-            'resource': 'resource',
-        }
+            "locale": project_locale_a.locale.code,
+            "project": project_locale_a.project.slug,
+            "resource": "resource",
+        },
     )
 
     response = client.get(url_invalid)
@@ -62,7 +58,7 @@ def test_get_preferred_locale_from_user_prefs(rf, user_arabic):
     rf.user = user_arabic
     locale = get_preferred_locale(rf)
 
-    assert locale == 'ar'
+    assert locale == "ar"
 
 
 @pytest.mark.django_db

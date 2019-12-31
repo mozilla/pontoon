@@ -1,4 +1,5 @@
 from __future__ import absolute_import  # Same name as silme library.
+
 """
 Parser for silme-compatible translation formats.
 """
@@ -52,7 +53,7 @@ class SilmeEntity(VCSTranslation):
 
     @property
     def source_string_plural(self):
-        return ''
+        return ""
 
     @property
     def fuzzy(self):
@@ -67,7 +68,9 @@ class SilmeEntity(VCSTranslation):
         return []
 
     def __eq__(self, other):
-        return self.key == other.key and self.strings.get(None) == other.strings.get(None)
+        return self.key == other.key and self.strings.get(None) == other.strings.get(
+            None
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -89,7 +92,7 @@ class SilmeResource(ParsedResource):
         self.entities = OrderedDict()  # Preserve entity order.
 
         # Bug 1193860: unescape quotes in some files
-        self.escape_quotes_on = 'mobile/android/base' in path and parser is DTDParser
+        self.escape_quotes_on = "mobile/android/base" in path and parser is DTDParser
 
         # Copy entities from the source_resource if it's available.
         if source_resource:
@@ -100,10 +103,12 @@ class SilmeResource(ParsedResource):
             # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if this is a .inc
             # file and a source resource (i.e. it has no source resource
             # itself).
-            self.structure = parser.get_structure(read_file(
-                path,
-                uncomment_moz_langpack=parser is IncParser and not source_resource
-            ))
+            self.structure = parser.get_structure(
+                read_file(
+                    path,
+                    uncomment_moz_langpack=parser is IncParser and not source_resource,
+                )
+            )
         except IOError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -128,7 +133,7 @@ class SilmeResource(ParsedResource):
                 for comment in obj:
                     # Silme groups comments together, so we strip
                     # whitespace and split them up.
-                    lines = text_type(comment).strip().split('\n')
+                    lines = text_type(comment).strip().split("\n")
                     comments += [line.strip() for line in lines]
 
     @property
@@ -142,19 +147,28 @@ class SilmeResource(ParsedResource):
         resource.
         """
         if self.source_resource is None:
-            raise SyncError('Cannot save silme resource {0}: No source resource given.'
-                            .format(self.path))
+            raise SyncError(
+                "Cannot save silme resource {0}: No source resource given.".format(
+                    self.path
+                )
+            )
 
         # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if we have a
         # translation for it
-        new_structure = self.parser.get_structure(read_file(
-            self.source_resource.path,
-            uncomment_moz_langpack=self.entities.get('MOZ_LANGPACK_CONTRIBUTORS', False)
-        ))
+        new_structure = self.parser.get_structure(
+            read_file(
+                self.source_resource.path,
+                uncomment_moz_langpack=self.entities.get(
+                    "MOZ_LANGPACK_CONTRIBUTORS", False
+                ),
+            )
+        )
 
         # Update translations in the copied resource.
         entities = [
-            SilmeEntity(obj) for obj in new_structure if isinstance(obj, silme.core.entity.Entity)
+            SilmeEntity(obj)
+            for obj in new_structure
+            if isinstance(obj, silme.core.entity.Entity)
         ]
         for silme_entity in entities:
             key = silme_entity.key
@@ -178,43 +192,42 @@ class SilmeResource(ParsedResource):
                     # No newline at end of file
                     continue
 
-                if type(line) == text_type and line.startswith('\n'):
-                    line = line[len('\n'):]
+                if type(line) == text_type and line.startswith("\n"):
+                    line = line[len("\n") :]
                     new_structure[pos] = line
                     if len(line) == 0:
                         new_structure.remove_element(pos)
 
         # Temporary fix for bug 1236281 until bug 721211 lands
         if (
-            self.path.endswith('browser/chrome/browser/browser.properties') and
-            locale.code == 'zh-CN'
+            self.path.endswith("browser/chrome/browser/browser.properties")
+            and locale.code == "zh-CN"
         ):
             new_entity = silme.core.entity.Entity(
-                'browser.startup.homepage',
-                'https://start.firefoxchina.cn'
+                "browser.startup.homepage", "https://start.firefoxchina.cn"
             )
             new_structure.add_entity(new_entity)
-            new_structure.add_string('\n')
+            new_structure.add_string("\n")
 
         create_parent_directory(self.path)
 
-        with codecs.open(self.path, 'w', 'utf-8') as f:
+        with codecs.open(self.path, "w", "utf-8") as f:
             f.write(self.parser.dump_structure(new_structure))
 
 
 def read_file(path, uncomment_moz_langpack=False):
     """Read the resource at the given path."""
-    with codecs.open(path, 'r', 'utf-8') as f:
+    with codecs.open(path, "r", "utf-8") as f:
         # .inc files have a special commented-out entity called
         # MOZ_LANGPACK_CONTRIBUTORS. We optionally un-comment it before
         # parsing so locales can translate it.
         if uncomment_moz_langpack:
             lines = []
             for line in f:
-                if line.startswith('# #define MOZ_LANGPACK_CONTRIBUTORS'):
+                if line.startswith("# #define MOZ_LANGPACK_CONTRIBUTORS"):
                     line = line[2:]
                 lines.append(line)
-            content = ''.join(lines)
+            content = "".join(lines)
         else:
             content = f.read()
 
@@ -232,7 +245,7 @@ def copy_source_entity(entity):
         entity.silme_object,
         copy(entity.comments),  # Members are strings, shallow is fine.
         entity.order,
-        copy_string=False
+        copy_string=False,
     )
 
 

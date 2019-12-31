@@ -14,53 +14,41 @@ def simplify_ftl_tm_entries(apps, schema):
 
     See bug 1576120 for more details.
     """
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
-    tm_entries = (
-        TranslationMemoryEntry.objects
-        .filter(entity__resource__format='ftl')
-    )
+    tm_entries = TranslationMemoryEntry.objects.filter(entity__resource__format="ftl")
 
     for tme in tm_entries:
         tme.source = as_simple_translation(tme.source)
         tme.target = as_simple_translation(tme.target)
 
     bulk_update(
-        tm_entries,
-        update_fields=['source', 'target'],
-        batch_size=1000,
+        tm_entries, update_fields=["source", "target"], batch_size=1000,
     )
 
 
 def revert_simplify_ftl_tm_entries(apps, schema):
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
-    tm_entries = (
-        TranslationMemoryEntry.objects
-        .filter(entity__resource__format='ftl')
-        .prefetch_related('entity', 'translation')
-    )
+    tm_entries = TranslationMemoryEntry.objects.filter(
+        entity__resource__format="ftl"
+    ).prefetch_related("entity", "translation")
 
     for tme in tm_entries:
         tme.source = tme.entity.string
         tme.target = tme.translation.string
 
     bulk_update(
-        tm_entries,
-        update_fields=['source', 'target'],
-        batch_size=1000,
+        tm_entries, update_fields=["source", "target"], batch_size=1000,
     )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0141_userprofile_use_translate_next'),
+        ("base", "0141_userprofile_use_translate_next"),
     ]
 
     operations = [
-        migrations.RunPython(
-            simplify_ftl_tm_entries,
-            revert_simplify_ftl_tm_entries,
-        )
+        migrations.RunPython(simplify_ftl_tm_entries, revert_simplify_ftl_tm_entries,)
     ]

@@ -14,7 +14,7 @@ def send_exception(exception, exc_info=None):
     """
     Function sends exception to selected provider.
     """
-    api_key = settings.RAYGUN4PY_CONFIG['api_key']
+    api_key = settings.RAYGUN4PY_CONFIG["api_key"]
     if api_key:
         provider = raygunprovider.RaygunSender(api_key)
         provider.send_exception(exception, exc_info=exc_info)
