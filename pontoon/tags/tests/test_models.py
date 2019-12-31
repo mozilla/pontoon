@@ -17,21 +17,9 @@ def test_serialize_tags():
     queryset = Tag.objects.filter(pk__in=pks)
 
     expected = [
-        {
-            'slug': tag1.slug,
-            'name': tag1.name,
-            'priority': tag1.priority,
-        },
-        {
-            'slug': tag2.slug,
-            'name': tag2.name,
-            'priority': tag2.priority,
-        },
-        {
-            'slug': tag3.slug,
-            'name': tag3.name,
-            'priority': tag3.priority,
-        }
+        {"slug": tag1.slug, "name": tag1.name, "priority": tag1.priority},
+        {"slug": tag2.slug, "name": tag2.name, "priority": tag2.priority},
+        {"slug": tag3.slug, "name": tag3.name, "priority": tag3.priority},
     ]
 
     assert queryset.serialize() == expected

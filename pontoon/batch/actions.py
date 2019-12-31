@@ -34,12 +34,12 @@ def batch_action_template(form, user, translations, locale):
 
     """
     return {
-        'count': 0,
-        'translated_resources': [],
-        'changed_entities': [],
-        'latest_translation_pk': None,
-        'changed_translation_pks': [],
-        'invalid_translation_pks': [],
+        "count": 0,
+        "translated_resources": [],
+        "changed_entities": [],
+        "latest_translation_pk": None,
+        "changed_translation_pks": [],
+        "invalid_translation_pks": [],
     }
 
 
@@ -50,33 +50,27 @@ def approve_translations(form, user, translations, locale):
 
     """
     invalid_translation_pks = list(
-        translations.filter(
-            approved=False,
-            errors__isnull=False,
-        ).values_list('pk', flat=True)
+        translations.filter(approved=False, errors__isnull=False,).values_list(
+            "pk", flat=True
+        )
     )
 
-    translations = translations.filter(
-        approved=False,
-        errors__isnull=True,
-    )
-    changed_translation_pks = list(translations.values_list('pk', flat=True))
+    translations = translations.filter(approved=False, errors__isnull=True,)
+    changed_translation_pks = list(translations.values_list("pk", flat=True))
 
     latest_translation_pk = None
     if changed_translation_pks:
         latest_translation_pk = translations.last().pk
 
     count, translated_resources, changed_entities = utils.get_translations_info(
-        translations,
-        locale,
+        translations, locale,
     )
 
     # Log approving actions
-    actions_to_log = [ActionLog(
-        action_type='translation:approved',
-        performed_by=user,
-        translation=t,
-    ) for t in translations]
+    actions_to_log = [
+        ActionLog(action_type="translation:approved", performed_by=user, translation=t,)
+        for t in translations
+    ]
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Approve translations.
@@ -91,12 +85,12 @@ def approve_translations(form, user, translations, locale):
     )
 
     return {
-        'count': count,
-        'translated_resources': translated_resources,
-        'changed_entities': changed_entities,
-        'latest_translation_pk': latest_translation_pk,
-        'changed_translation_pks': changed_translation_pks,
-        'invalid_translation_pks': invalid_translation_pks,
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": latest_translation_pk,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": invalid_translation_pks,
     }
 
 
@@ -112,22 +106,20 @@ def reject_translations(form, user, translations, locale):
     """
     suggestions = Translation.objects.filter(
         locale=locale,
-        entity__pk__in=form.cleaned_data['entities'],
+        entity__pk__in=form.cleaned_data["entities"],
         approved=False,
-        rejected=False
+        rejected=False,
     )
     count, translated_resources, changed_entities = utils.get_translations_info(
-        suggestions,
-        locale,
+        suggestions, locale,
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
 
     # Log rejecting actions
-    actions_to_log = [ActionLog(
-        action_type='translation:rejected',
-        performed_by=user,
-        translation=t,
-    ) for t in translations]
+    actions_to_log = [
+        ActionLog(action_type="translation:rejected", performed_by=user, translation=t,)
+        for t in translations
+    ]
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Reject translations.
@@ -143,12 +135,12 @@ def reject_translations(form, user, translations, locale):
     )
 
     return {
-        'count': count,
-        'translated_resources': translated_resources,
-        'changed_entities': changed_entities,
-        'latest_translation_pk': None,
-        'changed_translation_pks': [],
-        'invalid_translation_pks': [],
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": None,
+        "changed_translation_pks": [],
+        "invalid_translation_pks": [],
     }
 
 
@@ -161,28 +153,25 @@ def replace_translations(form, user, translations, locale):
     For documentation, refer to the `batch_action_template` function.
 
     """
-    find = form.cleaned_data['find']
-    replace = form.cleaned_data['replace']
+    find = form.cleaned_data["find"]
+    replace = form.cleaned_data["replace"]
     latest_translation_pk = None
 
-    old_translations, translations_to_create, invalid_translation_pks = utils.find_and_replace(
-        translations,
-        find,
-        replace,
-        user
-    )
+    (
+        old_translations,
+        translations_to_create,
+        invalid_translation_pks,
+    ) = utils.find_and_replace(translations, find, replace, user)
 
     count, translated_resources, changed_entities = utils.get_translations_info(
-        old_translations,
-        locale,
+        old_translations, locale,
     )
 
     # Log rejecting actions
-    actions_to_log = [ActionLog(
-        action_type='translation:rejected',
-        performed_by=user,
-        translation=t,
-    ) for t in old_translations]
+    actions_to_log = [
+        ActionLog(action_type="translation:rejected", performed_by=user, translation=t,)
+        for t in old_translations
+    ]
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Deactivate and unapprove old translations
@@ -198,16 +187,13 @@ def replace_translations(form, user, translations, locale):
     )
 
     # Create new translations
-    changed_translations = Translation.objects.bulk_create(
-        translations_to_create,
-    )
+    changed_translations = Translation.objects.bulk_create(translations_to_create,)
 
     # Log creating actions
-    actions_to_log = [ActionLog(
-        action_type='translation:created',
-        performed_by=user,
-        translation=t,
-    ) for t in changed_translations]
+    actions_to_log = [
+        ActionLog(action_type="translation:created", performed_by=user, translation=t,)
+        for t in changed_translations
+    ]
     ActionLog.objects.bulk_create(actions_to_log)
 
     changed_translation_pks = [c.pk for c in changed_translations]
@@ -216,12 +202,12 @@ def replace_translations(form, user, translations, locale):
         latest_translation_pk = max(changed_translation_pks)
 
     return {
-        'count': count,
-        'translated_resources': translated_resources,
-        'changed_entities': changed_entities,
-        'latest_translation_pk': latest_translation_pk,
-        'changed_translation_pks': changed_translation_pks,
-        'invalid_translation_pks': invalid_translation_pks,
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": latest_translation_pk,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": invalid_translation_pks,
     }
 
 
@@ -233,7 +219,7 @@ See above for those functions.
 
 """
 ACTIONS_FN_MAP = {
-    'approve': approve_translations,
-    'reject': reject_translations,
-    'replace': replace_translations,
+    "approve": approve_translations,
+    "reject": reject_translations,
+    "replace": replace_translations,
 }

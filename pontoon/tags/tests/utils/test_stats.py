@@ -31,7 +31,7 @@ def test_util_tags_stats_tool_annotations():
     assert stats_tool.get_annotations() == anno
 
 
-@patch('pontoon.tags.utils.TagsStatsTool.get_data')
+@patch("pontoon.tags.utils.TagsStatsTool.get_data")
 def test_util_tags_stats_tool_data(data_mock):
     # tests coalescing and caching of data
     stats_tool = TagsStatsTool()
@@ -51,8 +51,7 @@ def test_util_tags_stats_tool_data(data_mock):
 
 
 @patch(
-    'pontoon.tags.utils.TagsStatsTool.data',
-    new_callable=PropertyMock,
+    "pontoon.tags.utils.TagsStatsTool.data", new_callable=PropertyMock,
 )
 def test_util_tags_stats_tool_len(data_pmock):
     # tests len(stats) is taken from data
@@ -63,9 +62,7 @@ def test_util_tags_stats_tool_len(data_pmock):
     assert result == 2
 
 
-@patch(
-    'pontoon.tags.utils.TagsStatsTool.data',
-    new_callable=PropertyMock)
+@patch("pontoon.tags.utils.TagsStatsTool.data", new_callable=PropertyMock)
 def test_util_tags_stats_tool_iter(data_pmock):
     # tests iter(stats) iterates the data
     stats_tool = TagsStatsTool()
@@ -78,30 +75,20 @@ def test_util_tags_stats_tool_iter(data_pmock):
 def test_util_tags_stats_tool_filters():
     # tests stats tool has expected filters
     stats_tool = TagsStatsTool()
-    assert (
-        stats_tool.filters
-        == [
-            getattr(stats_tool, "filter_%s" % f)
-            for f
-            in stats_tool.filter_methods
-        ]
-    )
+    assert stats_tool.filters == [
+        getattr(stats_tool, "filter_%s" % f) for f in stats_tool.filter_methods
+    ]
 
 
 @patch(
-    'pontoon.tags.utils.TagsStatsTool.tr_manager',
-    new_callable=PropertyMock,
+    "pontoon.tags.utils.TagsStatsTool.tr_manager", new_callable=PropertyMock,
 )
-@patch('pontoon.tags.utils.TagsStatsTool.filter_tag')
-@patch('pontoon.tags.utils.TagsStatsTool.filter_projects')
-@patch('pontoon.tags.utils.TagsStatsTool.filter_locales')
-@patch('pontoon.tags.utils.TagsStatsTool.filter_path')
+@patch("pontoon.tags.utils.TagsStatsTool.filter_tag")
+@patch("pontoon.tags.utils.TagsStatsTool.filter_projects")
+@patch("pontoon.tags.utils.TagsStatsTool.filter_locales")
+@patch("pontoon.tags.utils.TagsStatsTool.filter_path")
 def test_util_tags_stats_tool_fitered_data(
-    m_path,
-    m_locales,
-    m_proj,
-    m_tag,
-    trs_mock,
+    m_path, m_locales, m_proj, m_tag, trs_mock,
 ):
     # tests all filter functions are called when filtering data
     # and that they are called with the result of previous
@@ -137,17 +124,13 @@ def test_util_tags_stats_tool_get_data_empty(calculate_tags, assert_tags):
     assert isinstance(data, QuerySet)
     assert list(data) == []
     assert_tags(
-        calculate_tags(),
-        data,
+        calculate_tags(), data,
     )
 
 
 @pytest.mark.django_db
 def test_util_tags_stats_tool_get_data_matrix(
-    tag_matrix,
-    calculate_tags,
-    assert_tags,
-    tag_test_kwargs,
+    tag_matrix, calculate_tags, assert_tags, tag_test_kwargs,
 ):
     # for different parametrized kwargs, tests that the calculated stat data
     # matches expectations from long-hand calculation
@@ -162,42 +145,39 @@ def test_util_tags_stats_tool_get_data_matrix(
         assert len(data) == 1
     elif name.endswith("_no_match"):
         assert len(data) == 0
-    elif name.endswith('_match'):
+    elif name.endswith("_match"):
         assert len(data) > 0
-    elif name.endswith('_contains'):
-        assert 1 < len(data) < len(tag_matrix['tags'])
-    elif name == 'empty':
+    elif name.endswith("_contains"):
+        assert 1 < len(data) < len(tag_matrix["tags"])
+    elif name == "empty":
         pass
     else:
         raise ValueError("Unsupported assertion type: {}".format(name))
 
-    if name.startswith('slug_') and "slug" in kwargs:
+    if name.startswith("slug_") and "slug" in kwargs:
         for result in data:
             assert kwargs["slug"] in result["slug"]
 
 
 @pytest.mark.django_db
 def test_util_tags_stats_tool_groupby_locale(
-    tag_matrix,
-    calculate_tags,
-    assert_tags,
-    tag_test_kwargs,
+    tag_matrix, calculate_tags, assert_tags, tag_test_kwargs,
 ):
     name, kwargs = tag_test_kwargs
 
     # this is only used with slug set to a unique slug, and doesnt work
     # correctly without
-    if name == 'slug_contains' or not kwargs.get('slug'):
-        kwargs['slug'] = tag_matrix['tags'][0].slug
+    if name == "slug_contains" or not kwargs.get("slug"):
+        kwargs["slug"] = tag_matrix["tags"][0].slug
 
     stats_tool = TagsStatsTool(groupby="locale", **kwargs)
     data = stats_tool.get_data()
     # assert isinstance(data, QuerySet)
-    exp = calculate_tags(groupby='locale', **kwargs)
+    exp = calculate_tags(groupby="locale", **kwargs)
     data = stats_tool.coalesce(data)
     assert len(data) == len(exp)
     for locale in data:
-        locale_exp = exp[locale['locale']]
-        assert locale_exp['total_strings'] == locale['total_strings']
-        assert locale_exp['fuzzy_strings'] == locale['fuzzy_strings']
-        assert locale_exp['approved_strings'] == locale['approved_strings']
+        locale_exp = exp[locale["locale"]]
+        assert locale_exp["total_strings"] == locale["total_strings"]
+        assert locale_exp["fuzzy_strings"] == locale["fuzzy_strings"]
+        assert locale_exp["approved_strings"] == locale["approved_strings"]

@@ -6,11 +6,7 @@ from . import pontoon_db, pontoon_non_db
 
 
 def run_checks(
-    entity,
-    locale_code,
-    original,
-    string,
-    use_tt_checks,
+    entity, locale_code, original, string, use_tt_checks,
 ):
     """
     Main function that performs all quality checks from frameworks handled in Pontoon.
@@ -38,49 +34,42 @@ def run_checks(
     tt_checks = {}
     resource_ext = entity.resource.format
 
-    if use_tt_checks and resource_ext != 'ftl':
+    if use_tt_checks and resource_ext != "ftl":
         # Always disable checks we don't use. For details, see:
         # https://bugzilla.mozilla.org/show_bug.cgi?id=1410619
         # https://bugzilla.mozilla.org/show_bug.cgi?id=1514691
         tt_disabled_checks = {
-            'acronyms',
-            'gconf',
-            'kdecomments',
-            'untranslated',
+            "acronyms",
+            "gconf",
+            "kdecomments",
+            "untranslated",
         }
 
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
-            if resource_ext == 'properties':
-                tt_disabled_checks.update([
-                    'escapes',
-                    'nplurals',
-                    'printf',
-                ])
-            elif resource_ext == 'xml':
-                tt_disabled_checks.update([
-                    'doublespacing',
-                    'endwhitespace',
-                    'escapes',
-                    'newlines',
-                    'numbers',
-                    'printf',
-                    'singlequoting',
-                    'startwhitespace',
-                ])
-        elif resource_ext == 'lang':
-            tt_disabled_checks.update([
-                'newlines',
-            ])
+            if resource_ext == "properties":
+                tt_disabled_checks.update(["escapes", "nplurals", "printf"])
+            elif resource_ext == "xml":
+                tt_disabled_checks.update(
+                    [
+                        "doublespacing",
+                        "endwhitespace",
+                        "escapes",
+                        "newlines",
+                        "numbers",
+                        "printf",
+                        "singlequoting",
+                        "startwhitespace",
+                    ]
+                )
+        elif resource_ext == "lang":
+            tt_disabled_checks.update(["newlines"])
 
         tt_checks = translate_toolkit.run_checks(
             original, string, locale_code, tt_disabled_checks
         )
 
-    checks = dict(
-        tt_checks,
-        **(cl_checks or {})
-    )
+    checks = dict(tt_checks, **(cl_checks or {}))
 
     checks.update(pontoon_db_checks)
     checks.update(pontoon_non_db_checks)

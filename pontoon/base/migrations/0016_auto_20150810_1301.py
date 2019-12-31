@@ -5,22 +5,20 @@ from django.db import migrations
 
 
 def add_tagalog_locale(apps, schema_editor):
-    Locale = apps.get_model('base', 'Locale')
+    Locale = apps.get_model("base", "Locale")
     Locale.objects.create(
-        code='tl',
-        name='Tagalog',
+        code="tl",
+        name="Tagalog",
         nplurals=2,
-        plural_rule='(n > 3) && (n%10 == 4 || n%10 == 6 || n%10 == 9)',
-        cldr_plurals='1,5'
+        plural_rule="(n > 3) && (n%10 == 4 || n%10 == 6 || n%10 == 9)",
+        cldr_plurals="1,5",
     )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0015_remove_project_last_synced'),
+        ("base", "0015_remove_project_last_synced"),
     ]
 
-    operations = [
-        migrations.RunPython(add_tagalog_locale)
-    ]
+    operations = [migrations.RunPython(add_tagalog_locale)]

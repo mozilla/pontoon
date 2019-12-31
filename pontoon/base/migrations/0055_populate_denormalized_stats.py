@@ -9,16 +9,16 @@ from django.db.models import Sum
 
 def aggregate(stats, instance):
     aggregated = stats.aggregate(
-        total=Sum('resource__entity_count'),
-        approved=Sum('approved_count'),
-        translated=Sum('translated_count'),
-        fuzzy=Sum('fuzzy_count')
+        total=Sum("resource__entity_count"),
+        approved=Sum("approved_count"),
+        translated=Sum("translated_count"),
+        fuzzy=Sum("fuzzy_count"),
     )
 
-    instance.total_strings = aggregated['total']
-    instance.approved_strings = aggregated['approved']
-    instance.translated_strings = aggregated['translated']
-    instance.fuzzy_strings = aggregated['fuzzy']
+    instance.total_strings = aggregated["total"]
+    instance.approved_strings = aggregated["approved"]
+    instance.translated_strings = aggregated["translated"]
+    instance.fuzzy_strings = aggregated["fuzzy"]
 
     return instance
 
@@ -33,8 +33,7 @@ def populate_stats(apps, schema_editor):
     projects = Project.objects.all()
     for project in projects:
         stats = Stats.objects.filter(
-            resource__project=project,
-            resource__entities__obsolete=False,
+            resource__project=project, resource__entities__obsolete=False,
         ).distinct()
 
         if stats:
@@ -49,7 +48,7 @@ def populate_stats(apps, schema_editor):
         stats = Stats.objects.filter(
             resource__project__disabled=False,
             resource__entities__obsolete=False,
-            locale=locale
+            locale=locale,
         ).distinct()
 
         if stats:
@@ -65,7 +64,7 @@ def populate_stats(apps, schema_editor):
             resource__project=project_locale.project,
             resource__project__disabled=False,
             resource__entities__obsolete=False,
-            locale=project_locale.locale
+            locale=project_locale.locale,
         ).distinct()
 
         if stats:
@@ -82,7 +81,7 @@ def remove_stats(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0054_rename_stats'),
+        ("base", "0054_rename_stats"),
     ]
 
     operations = [

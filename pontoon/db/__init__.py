@@ -13,6 +13,7 @@ class LevenshteinDistance(Func):
     """
     Calculate the Levenshtein distance between an expression and a string.
     """
+
     function = "levenshtein"
     arity = 5
 
@@ -35,25 +36,28 @@ class IContainsCollate(IContains):
         if len(rhs) == 2 and not isinstance(rhs, six.string_types):
             rhs, self.collation = rhs
         else:
-            raise ValueError('You have to pass collation in order to use this lookup.')
+            raise ValueError("You have to pass collation in order to use this lookup.")
 
         super(IContainsCollate, self).__init__(lhs, rhs)
 
     def process_lhs(self, qn, connection):
         lhs, params = super(IContainsCollate, self).process_lhs(qn, connection)
         if self.collation:
-            lhs = lhs.replace('::text', '::text COLLATE "{}"'.format(self.collation))
-            if '::text' not in lhs:
+            lhs = lhs.replace("::text", '::text COLLATE "{}"'.format(self.collation))
+            if "::text" not in lhs:
                 lhs = lhs.replace(
-                    '."{}"'.format(self.lhs.target.column), '."{}"::text COLLATE "{}"'.format(
-                        self.lhs.target.column, self.collation))
+                    '."{}"'.format(self.lhs.target.column),
+                    '."{}"::text COLLATE "{}"'.format(
+                        self.lhs.target.column, self.collation
+                    ),
+                )
         return lhs, params
 
     def get_rhs_op(self, connection, rhs):
         value = super(IContainsCollate, self).get_rhs_op(connection, rhs)
         if self.collation:
-            return value.replace('%s', '%s COLLATE "{}"'.format(self.collation))
+            return value.replace("%s", '%s COLLATE "{}"'.format(self.collation))
         return value
 
 
-Field.register_lookup(IContainsCollate, lookup_name='icontains_collate')
+Field.register_lookup(IContainsCollate, lookup_name="icontains_collate")

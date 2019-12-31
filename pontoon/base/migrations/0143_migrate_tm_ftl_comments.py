@@ -14,33 +14,28 @@ def regenerate_ftl_entries_with_comments(apps, schema):
 
     See bug 1581594 for more details.
     """
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
 
-    tm_entries = (
-        TranslationMemoryEntry.objects
-        .filter(entity__resource__format='ftl', source__contains="#")
-        .prefetch_related('entity', 'translation')
-    )
+    tm_entries = TranslationMemoryEntry.objects.filter(
+        entity__resource__format="ftl", source__contains="#"
+    ).prefetch_related("entity", "translation")
 
     for tme in tm_entries:
         tme.source = as_simple_translation(tme.entity.string)
 
     bulk_update(
-        tm_entries,
-        update_fields=['source', 'target'],
-        batch_size=1000,
+        tm_entries, update_fields=["source", "target"], batch_size=1000,
     )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0142_migrate_tm_ftl'),
+        ("base", "0142_migrate_tm_ftl"),
     ]
 
     operations = [
         migrations.RunPython(
-            regenerate_ftl_entries_with_comments,
-            migrations.RunPython.noop
+            regenerate_ftl_entries_with_comments, migrations.RunPython.noop
         )
     ]

@@ -8,9 +8,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0056_auto_20160217_1742'),
+        ("base", "0056_auto_20160217_1742"),
     ]
 
     operations = [
-        migrations.RenameModel('Stats', 'TranslatedResource'),
+        migrations.RenameModel("Stats", "TranslatedResource"),
     ]

@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0123_rename_translated_to_unreviewed'),
+        ("base", "0123_rename_translated_to_unreviewed"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entity',
-            name='date_obsoleted',
+            model_name="entity",
+            name="date_obsoleted",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

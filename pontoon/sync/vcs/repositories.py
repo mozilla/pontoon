@@ -19,7 +19,6 @@ class PullFromRepositoryException(Exception):
 
 
 class PullFromRepository(object):
-
     def __init__(self, source, target, branch):
         self.source = source
         self.target = target
@@ -30,7 +29,6 @@ class PullFromRepository(object):
 
 
 class PullFromGit(PullFromRepository):
-
     def pull(self, source=None, target=None, branch=None):
         log.debug("Git: Update repository.")
 
@@ -73,7 +71,6 @@ class PullFromGit(PullFromRepository):
 
 
 class PullFromHg(PullFromRepository):
-
     def pull(self, source=None, target=None):
         log.debug("Mercurial: Update repository.")
 
@@ -95,7 +92,6 @@ class PullFromHg(PullFromRepository):
 
 
 class PullFromSvn(PullFromRepository):
-
     def pull(self, source=None, target=None):
         log.debug("Subversion: Checkout or update repository.")
 
@@ -108,8 +104,14 @@ class PullFromSvn(PullFromRepository):
 
         else:
             status = "checked out"
-            command = ["svn", "checkout", "--trust-server-cert",
-                       "--non-interactive", source, target]
+            command = [
+                "svn",
+                "checkout",
+                "--trust-server-cert",
+                "--non-interactive",
+                source,
+                target,
+            ]
 
         code, output, error = execute(command, env=get_svn_env())
 
@@ -124,7 +126,6 @@ class CommitToRepositoryException(Exception):
 
 
 class CommitToRepository(object):
-
     def __init__(self, path, message, user, branch, url):
         self.path = path
         self.message = message
@@ -136,11 +137,10 @@ class CommitToRepository(object):
         raise NotImplementedError
 
     def nothing_to_commit(self):
-        return log.warning('Nothing to commit')
+        return log.warning("Nothing to commit")
 
 
 class CommitToGit(CommitToRepository):
-
     def commit(self, path=None, message=None, user=None, branch=None):
         log.debug("Git: Commit to repository.")
 
@@ -151,20 +151,25 @@ class CommitToGit(CommitToRepository):
         author = user.display_name_and_email
 
         # Embed git identity info into commands
-        git_cmd = ['git', '-c', 'user.name=Mozilla Pontoon', '-c',
-                   'user.email=pontoon@mozilla.com']
+        git_cmd = [
+            "git",
+            "-c",
+            "user.name=Mozilla Pontoon",
+            "-c",
+            "user.email=pontoon@mozilla.com",
+        ]
 
         # Add new and remove missing paths
-        execute(git_cmd + ['add', '-A', '--', path], path)
+        execute(git_cmd + ["add", "-A", "--", path], path)
 
         # Commit
-        commit = git_cmd + ['commit', '-m', message, '--author', author]
+        commit = git_cmd + ["commit", "-m", message, "--author", author]
         code, output, error = execute(commit, path)
         if code != 0 and len(error):
             raise CommitToRepositoryException(text_type(error))
 
         # Push
-        push_target = 'HEAD'
+        push_target = "HEAD"
         if branch:
             push_target = branch
 
@@ -173,14 +178,13 @@ class CommitToGit(CommitToRepository):
         if code != 0:
             raise CommitToRepositoryException(text_type(error))
 
-        if 'Everything up-to-date' in error:
+        if "Everything up-to-date" in error:
             return self.nothing_to_commit()
 
         log.info(message)
 
 
 class CommitToHg(CommitToRepository):
-
     def commit(self, path=None, message=None, user=None):
         log.debug("Mercurial: Commit to repository.")
 
@@ -203,7 +207,7 @@ class CommitToHg(CommitToRepository):
         push = ["hg", "push"]
         code, output, error = execute(push, path)
 
-        if code == 1 and 'no changes found' in output:
+        if code == 1 and "no changes found" in output:
             return self.nothing_to_commit()
 
         if code != 0 and len(error):
@@ -213,7 +217,6 @@ class CommitToHg(CommitToRepository):
 
 
 class CommitToSvn(CommitToRepository):
-
     def commit(self, path=None, message=None, user=None):
         log.debug("Subversion: Commit to repository.")
 
@@ -223,8 +226,15 @@ class CommitToSvn(CommitToRepository):
         author = user.display_name_and_email
 
         # Commit
-        command = ["svn", "commit", "-m", message, "--with-revprop",
-                   "author=%s" % author, path]
+        command = [
+            "svn",
+            "commit",
+            "-m",
+            message,
+            "--with-revprop",
+            "author=%s" % author,
+            path,
+        ]
 
         code, output, error = execute(command, env=get_svn_env())
         if code != 0:
@@ -240,39 +250,41 @@ def execute(command, cwd=None, env=None):
     try:
         st = subprocess.PIPE
         proc = subprocess.Popen(
-            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd, env=env)
+            args=command, stdout=st, stderr=st, stdin=st, cwd=cwd, env=env
+        )
 
         (output, error) = proc.communicate()
 
         # Make sure that we manipulate strings instead of bytes, to avoid
         # compatibility errors in Python 3.
         if type(output) is bytes:
-            output = output.decode('utf-8')
+            output = output.decode("utf-8")
         if type(error) is bytes:
-            error = error.decode('utf-8')
+            error = error.decode("utf-8")
 
         code = proc.returncode
         return code, output, error
 
     except OSError as error:
         if type(error) is bytes:
-            error = error.decode('utf-8')
+            error = error.decode("utf-8")
         return -1, "", error
 
 
 def update_from_vcs(repo_type, url, path, branch):
-    obj = globals()['PullFrom%s' % repo_type.capitalize()](url, path, branch)
+    obj = globals()["PullFrom%s" % repo_type.capitalize()](url, path, branch)
     obj.pull()
 
 
 def commit_to_vcs(repo_type, path, message, user, branch, url):
     try:
-        obj = globals()['CommitTo%s' % repo_type.capitalize()](
-            path, message, user, branch, url)
+        obj = globals()["CommitTo%s" % repo_type.capitalize()](
+            path, message, user, branch, url
+        )
         return obj.commit()
 
     except CommitToRepositoryException as e:
-        log.debug('%s Commit Error for %s: %s' % (repo_type.upper(), path, e))
+        log.debug("%s Commit Error for %s: %s" % (repo_type.upper(), path, e))
         raise e
 
 
@@ -280,8 +292,9 @@ def get_svn_env():
     """Return an environment dict for running SVN in."""
     if settings.SVN_LD_LIBRARY_PATH:
         env = os.environ.copy()
-        env['LD_LIBRARY_PATH'] = (settings.SVN_LD_LIBRARY_PATH + ':' +
-                                  env['LD_LIBRARY_PATH'])
+        env["LD_LIBRARY_PATH"] = (
+            settings.SVN_LD_LIBRARY_PATH + ":" + env["LD_LIBRARY_PATH"]
+        )
         return env
     else:
         return None
@@ -292,7 +305,7 @@ class VCSRepository(object):
     def for_type(cls, repo_type, path):
         SubClass = cls.REPO_TYPES.get(repo_type)
         if SubClass is None:
-            raise ValueError('No subclass found for repo type {0}.'.format(repo_type))
+            raise ValueError("No subclass found for repo type {0}.".format(repo_type))
 
         return SubClass(path)
 
@@ -303,9 +316,11 @@ class VCSRepository(object):
         cwd = cwd or self.path
         code, output, error = execute(cmd, cwd=cwd, env=env)
         if log_errors and code != 0:
-            log.error('Error while executing command `{cmd}` in `{cwd}`: {stderr}'.format(
-                cmd=text_type(cmd), cwd=cwd, stderr=error
-            ))
+            log.error(
+                "Error while executing command `{cmd}` in `{cwd}`: {stderr}".format(
+                    cmd=text_type(cmd), cwd=cwd, stderr=error
+                )
+            )
         return code, output, error
 
     def get_changed_files(self, path, from_revision, statueses=None):
@@ -323,89 +338,108 @@ class SvnRepository(VCSRepository):
 
     @property
     def revision(self):
-        code, output, error = self.execute(['svnversion', self.path], log_errors=True)
+        code, output, error = self.execute(["svnversion", self.path], log_errors=True)
         return output.strip() if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):
-        statuses = statuses or ('A', 'M')
+        statuses = statuses or ("A", "M")
 
         def normalize_revision(rev):
             """Remove all non digit characters from the revision number. """
-            return ''.join(filter(lambda c: c.isdigit(), rev))
+            return "".join(filter(lambda c: c.isdigit(), rev))
 
         from_revision = normalize_revision(from_revision)
         code, output, error = self.execute(
-            ['svn', 'diff', '-r', '{}:{}'.format(from_revision, 'HEAD'), '--summarize'],
-            cwd=path
+            ["svn", "diff", "-r", "{}:{}".format(from_revision, "HEAD"), "--summarize"],
+            cwd=path,
         )
         if code == 0:
             # Mark added/modfied files as the changed ones
-            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+            return [
+                line.split()[1]
+                for line in output.split("\n")
+                if line and line[0] in statuses
+            ]
         return []
 
     def get_removed_files(self, path, from_revision):
-        return self.get_changed_files(path, from_revision, ('D',))
+        return self.get_changed_files(path, from_revision, ("D",))
 
 
 class GitRepository(VCSRepository):
-
     @property
     def revision(self):
-        code, output, error = self.execute(
-            ['git', 'rev-parse', 'HEAD'],
-        )
+        code, output, error = self.execute(["git", "rev-parse", "HEAD"],)
         return output.strip() if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):
-        statuses = statuses or ('A', 'M')
+        statuses = statuses or ("A", "M")
         code, output, error = self.execute(
-            ['git', 'diff', '--name-status', '{}..HEAD'.format(from_revision), '--', path],
+            [
+                "git",
+                "diff",
+                "--name-status",
+                "{}..HEAD".format(from_revision),
+                "--",
+                path,
+            ],
         )
         if code == 0:
-            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+            return [
+                line.split()[1]
+                for line in output.split("\n")
+                if line and line[0] in statuses
+            ]
         return []
 
     def get_removed_files(self, path, from_revision):
-        return self.get_changed_files(path, from_revision, ('D',))
+        return self.get_changed_files(path, from_revision, ("D",))
 
 
 class HgRepository(VCSRepository):
     @property
     def revision(self):
         code, output, error = self.execute(
-            ['hg', 'identify', '--id', '--rev=default'],
-            cwd=self.path,
-            log_errors=True
+            ["hg", "identify", "--id", "--rev=default"], cwd=self.path, log_errors=True
         )
         return output.strip() if code == 0 else None
 
     def _strip(self, rev):
         "Ignore trailing + in revision number. It marks local changes."
-        return rev.rstrip('+')
+        return rev.rstrip("+")
 
     def get_changed_files(self, path, from_revision, statuses=None):
-        statuses = statuses or ('A', 'M')
+        statuses = statuses or ("A", "M")
         code, output, error = self.execute(
             [
-                'hg', 'status', '-a', '-m', '-r', '--rev={}'.format(self._strip(from_revision)),
-                '--rev=default',
+                "hg",
+                "status",
+                "-a",
+                "-m",
+                "-r",
+                "--rev={}".format(self._strip(from_revision)),
+                "--rev=default",
             ],
-            cwd=path
+            cwd=path,
         )
         if code == 0:
             # Mark added / modified files as the changed ones
-            return [line.split()[1] for line in output.split('\n') if line and line[0] in statuses]
+            return [
+                line.split()[1]
+                for line in output.split("\n")
+                if line and line[0] in statuses
+            ]
         return []
 
     def get_removed_files(self, path, from_revision):
-        return self.get_changed_files(path, self._strip(from_revision), ('R',))
+        return self.get_changed_files(path, self._strip(from_revision), ("R",))
 
 
 # TODO: Tie these to the same constants that the Repository model uses.
 VCSRepository.REPO_TYPES = {
-    'hg': HgRepository,
-    'svn': SvnRepository,
-    'git': GitRepository,
+    "hg": HgRepository,
+    "svn": SvnRepository,
+    "git": GitRepository,
 }
 
 
@@ -417,16 +451,19 @@ def get_revision(repo_type, path):
 def get_changed_files(repo_type, path, revision):
     """Return a list of changed files for the repository."""
     repo = VCSRepository.for_type(repo_type, path)
-    log.info('Retrieving changed files for: {}:{}'.format(path, revision))
+    log.info("Retrieving changed files for: {}:{}".format(path, revision))
     # If there's no latest revision we should return all the files in the latest
     # version of repository
     if revision is None:
         paths = []
         for root, _, files in scandir.walk(path):
             for f in files:
-                if root[0] == '.' or '/.' in root:
+                if root[0] == "." or "/." in root:
                     continue
-                paths.append(os.path.join(root, f).replace(path + '/', ''))
+                paths.append(os.path.join(root, f).replace(path + "/", ""))
         return paths, []
 
-    return repo.get_changed_files(path, revision), repo.get_removed_files(path, revision)
+    return (
+        repo.get_changed_files(path, revision),
+        repo.get_removed_files(path, revision),
+    )

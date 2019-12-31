@@ -8,48 +8,48 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0131_translation_active_populate'),
+        ("base", "0131_translation_active_populate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='locale',
-            name='strings_with_errors',
+            model_name="locale",
+            name="strings_with_errors",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='locale',
-            name='strings_with_warnings',
+            model_name="locale",
+            name="strings_with_warnings",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='project',
-            name='strings_with_errors',
+            model_name="project",
+            name="strings_with_errors",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='project',
-            name='strings_with_warnings',
+            model_name="project",
+            name="strings_with_warnings",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='projectlocale',
-            name='strings_with_errors',
+            model_name="projectlocale",
+            name="strings_with_errors",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='projectlocale',
-            name='strings_with_warnings',
+            model_name="projectlocale",
+            name="strings_with_warnings",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='translatedresource',
-            name='strings_with_errors',
+            model_name="translatedresource",
+            name="strings_with_errors",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='translatedresource',
-            name='strings_with_warnings',
+            model_name="translatedresource",
+            name="strings_with_warnings",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

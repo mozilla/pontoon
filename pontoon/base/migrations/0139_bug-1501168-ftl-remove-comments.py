@@ -18,8 +18,8 @@ def remove_comments_from_ftl_translations(apps, schema):
     serializer = FluentSerializer()
 
     # Translations
-    Translation = apps.get_model('base', 'Translation')
-    translations = Translation.objects.filter(entity__resource__format='ftl')
+    Translation = apps.get_model("base", "Translation")
+    translations = Translation.objects.filter(entity__resource__format="ftl")
     translations_to_update = []
 
     for t in translations:
@@ -31,11 +31,11 @@ def remove_comments_from_ftl_translations(apps, schema):
         if t.string != current:
             translations_to_update.append(t)
 
-    bulk_update(translations_to_update, update_fields=['string'])
+    bulk_update(translations_to_update, update_fields=["string"])
 
     # Entities
-    Entity = apps.get_model('base', 'Entity')
-    entities = Entity.objects.filter(resource__format='ftl')
+    Entity = apps.get_model("base", "Entity")
+    entities = Entity.objects.filter(resource__format="ftl")
     entities_to_update = []
 
     for e in entities:
@@ -47,11 +47,11 @@ def remove_comments_from_ftl_translations(apps, schema):
         if e.string != current:
             entities_to_update.append(e)
 
-    bulk_update(entities_to_update, update_fields=['string'])
+    bulk_update(entities_to_update, update_fields=["string"])
 
     # Translation Memory Entries
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
-    tmes = TranslationMemoryEntry.objects.filter(entity__resource__format='ftl')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
+    tmes = TranslationMemoryEntry.objects.filter(entity__resource__format="ftl")
     tmes_to_update = []
 
     for tme in tmes:
@@ -68,18 +68,17 @@ def remove_comments_from_ftl_translations(apps, schema):
         if tme.source != current_source or tme.target != current_target:
             tmes_to_update.append(tme)
 
-    bulk_update(tmes_to_update, update_fields=['source', 'target'])
+    bulk_update(tmes_to_update, update_fields=["source", "target"])
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0138_index_on_translationmemoryentry'),
+        ("base", "0138_index_on_translationmemoryentry"),
     ]
 
     operations = [
         migrations.RunPython(
-            remove_comments_from_ftl_translations,
-            migrations.RunPython.noop
+            remove_comments_from_ftl_translations, migrations.RunPython.noop
         )
     ]

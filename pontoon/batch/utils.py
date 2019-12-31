@@ -92,16 +92,16 @@ def find_and_replace(translations, find, replace, user):
     translations_with_errors = []
 
     # To speed-up error checks, translations will prefetch additional fields
-    translations = (
-        translations.for_checks(only_db_formats=False)
-    )
+    translations = translations.for_checks(only_db_formats=False)
 
     for translation in translations:
         # Cache the old value to identify changed translations
         new_translation = deepcopy(translation)
 
-        if translation.entity.resource.format == 'ftl':
-            new_translation.string = ftl_find_and_replace(translation.string, find, replace)
+        if translation.entity.resource.format == "ftl":
+            new_translation.string = ftl_find_and_replace(
+                translation.string, find, replace
+            )
         else:
             new_translation.string = translation.string.replace(find, replace)
 
@@ -135,9 +135,7 @@ def find_and_replace(translations, find, replace, user):
             translations_to_create.append(new_translation)
 
     if translations_with_errors:
-        translations = translations.exclude(
-            pk__in=translations_with_errors
-        )
+        translations = translations.exclude(pk__in=translations_with_errors)
 
     return (
         translations,

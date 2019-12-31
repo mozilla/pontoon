@@ -10,19 +10,18 @@ def remove_tm_entries_of_fuzzy_translations(apps, schema):
     Before bug 1415979 was fixed, we created TranslationMemoryDntry objects for all imported
     translations, even if they were fuzzy. Those objects need to be removed.
     """
-    TranslationMemoryEntry = apps.get_model('base', 'TranslationMemoryEntry')
+    TranslationMemoryEntry = apps.get_model("base", "TranslationMemoryEntry")
     TranslationMemoryEntry.objects.filter(translation__fuzzy=True).delete()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0105_unescape_quotes_from_android_strings_dtd_in_translation_memory'),
+        ("base", "0105_unescape_quotes_from_android_strings_dtd_in_translation_memory"),
     ]
 
     operations = [
         migrations.RunPython(
-            remove_tm_entries_of_fuzzy_translations,
-            migrations.RunPython.noop
+            remove_tm_entries_of_fuzzy_translations, migrations.RunPython.noop
         )
     ]

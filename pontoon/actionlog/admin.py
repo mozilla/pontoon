@@ -6,20 +6,23 @@ from pontoon.actionlog.models import ActionLog
 
 
 class ActionLogAdmin(admin.ModelAdmin):
-    list_display = ('action_type',)
+    list_display = ("action_type",)
     search_fields = [
-        'action_type',
+        "action_type",
     ]
     list_display = (
-        'pk',
-        'action_type',
-        'created_at',
-        'performed_by',
-        'translation_id',
-        'entity_id',
-        'locale_id',
+        "pk",
+        "action_type",
+        "created_at",
+        "performed_by",
+        "translation_id",
+        "entity_id",
+        "locale_id",
     )
-    raw_id_fields = ('entity', 'translation',)
+    raw_id_fields = (
+        "entity",
+        "translation",
+    )
 
 
 admin.site.register(ActionLog, ActionLogAdmin)

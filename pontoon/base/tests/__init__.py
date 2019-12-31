@@ -10,10 +10,7 @@ from django.contrib.auth.models import (
     User,
 )
 from django.template.defaultfilters import slugify
-from django.test import (
-    TestCase as BaseTestCase,
-    Client as BaseClient
-)
+from django.test import TestCase as BaseTestCase, Client as BaseClient
 
 import factory
 from django_nose.tools import assert_equal
@@ -31,7 +28,7 @@ from pontoon.base.models import (
     Resource,
     TranslatedResource,
     Translation,
-    TranslationMemoryEntry
+    TranslationMemoryEntry,
 )
 
 
@@ -40,7 +37,7 @@ class PontoonClient(BaseClient):
 
     def ajax_post(self, url, params):
         """Send data to the ajax-type view."""
-        return self.post(url, params, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        return self.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
 
 
 class TestCase(BaseTestCase):
@@ -66,22 +63,22 @@ class TestCase(BaseTestCase):
 
 
 class UserFactory(DjangoModelFactory):
-    username = Sequence(lambda n: 'test%s' % n)
-    email = Sequence(lambda n: 'test%s@example.com' % n)
+    username = Sequence(lambda n: "test%s" % n)
+    email = Sequence(lambda n: "test%s@example.com" % n)
 
     class Meta:
         model = User
 
 
 class GroupFactory(DjangoModelFactory):
-    name = Sequence(lambda n: 'group%s' % n)
+    name = Sequence(lambda n: "group%s" % n)
 
     class Meta:
         model = Group
 
 
 class ProjectFactory(DjangoModelFactory):
-    name = Sequence(lambda n: 'Project {0}'.format(n))
+    name = Sequence(lambda n: "Project {0}".format(n))
     slug = LazyAttribute(lambda p: slugify(p.name))
     links = False
 
@@ -116,8 +113,8 @@ class ProjectLocaleFactory(DjangoModelFactory):
 
 class RepositoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    type = 'git'
-    url = Sequence(lambda n: 'https://example.com/url_{0}.git'.format(n))
+    type = "git"
+    url = Sequence(lambda n: "https://example.com/url_{0}.git".format(n))
 
     class Meta:
         model = Repository
@@ -125,8 +122,8 @@ class RepositoryFactory(DjangoModelFactory):
 
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    path = Sequence(lambda n: '/fake/path{0}.po'.format(n))
-    format = 'po'
+    path = Sequence(lambda n: "/fake/path{0}.po".format(n))
+    format = "po"
     total_strings = 1
 
     class Meta:
@@ -134,8 +131,8 @@ class ResourceFactory(DjangoModelFactory):
 
 
 class LocaleFactory(DjangoModelFactory):
-    code = Sequence(lambda n: 'en-{0}'.format(n))
-    name = Sequence(lambda n: 'English #{0}'.format(n))
+    code = Sequence(lambda n: "en-{0}".format(n))
+    name = Sequence(lambda n: "English #{0}".format(n))
 
     class Meta:
         model = Locale
@@ -143,7 +140,7 @@ class LocaleFactory(DjangoModelFactory):
 
 class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
-    string = Sequence(lambda n: 'string {0}'.format(n))
+    string = Sequence(lambda n: "string {0}".format(n))
 
     class Meta:
         model = Entity
@@ -151,8 +148,8 @@ class EntityFactory(DjangoModelFactory):
 
 class PluralEntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
-    string = Sequence(lambda n: 'string {0}'.format(n))
-    string_plural = Sequence(lambda n: 'string plural {0}'.format(n))
+    string = Sequence(lambda n: "string {0}".format(n))
+    string_plural = Sequence(lambda n: "string plural {0}".format(n))
 
     class Meta:
         model = Entity
@@ -169,7 +166,7 @@ class ChangedEntityLocaleFactory(DjangoModelFactory):
 class TranslationFactory(DjangoModelFactory):
     entity = SubFactory(EntityFactory)
     locale = SubFactory(LocaleFactory)
-    string = Sequence(lambda n: 'translation {0}'.format(n))
+    string = Sequence(lambda n: "translation {0}".format(n))
     user = SubFactory(UserFactory)
 
     class Meta:
@@ -177,13 +174,13 @@ class TranslationFactory(DjangoModelFactory):
 
 
 class IdenticalTranslationFactory(TranslationFactory):
-    entity = SubFactory(EntityFactory, string=SelfAttribute('..string'))
+    entity = SubFactory(EntityFactory, string=SelfAttribute("..string"))
 
 
 class TranslationMemoryFactory(DjangoModelFactory):
-    source = Sequence(lambda n: 'source {0}'.format(n))
-    target = Sequence(lambda n: 'target {0}'.format(n))
-    entity = SubFactory(EntityFactory, string=SelfAttribute('..source'))
+    source = Sequence(lambda n: "source {0}".format(n))
+    target = Sequence(lambda n: "target {0}".format(n))
+    entity = SubFactory(EntityFactory, string=SelfAttribute("..source"))
     locale = SubFactory(LocaleFactory)
 
     class Meta:
@@ -206,9 +203,9 @@ def assert_redirects(response, expected_url, status_code=302, host=None, secure=
     that this version doesn't follow the redirect.
     """
     if host is None:
-        host = '{}://{}'.format('https' if secure else 'http', host or 'testserver')
+        host = "{}://{}".format("https" if secure else "http", host or "testserver")
     assert_equal(response.status_code, status_code)
-    assert_equal(response['Location'], host + expected_url)
+    assert_equal(response["Location"], host + expected_url)
 
 
 def assert_attributes_equal(original, **expected_attrs):
@@ -217,15 +214,18 @@ def assert_attributes_equal(original, **expected_attrs):
     values.
     """
     if not expected_attrs:
-        raise ValueError('Expected some attributes to check.')
+        raise ValueError("Expected some attributes to check.")
 
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
         assert_equal(
             original_value,
             value,
-            ('Attribute `{key}` does not match: {original_value} != {value}'
-             .format(key=key, original_value=original_value, value=value)),
+            (
+                "Attribute `{key}` does not match: {original_value} != {value}".format(
+                    key=key, original_value=original_value, value=value
+                )
+            ),
         )
 
 
@@ -238,6 +238,7 @@ class NOT(object):
     >>> mock_function.assert_called_with(NOT('fizzbarboff'))  # Passes
     >>> mock_function.assert_called_with(NOT('foobarbaz'))  # Fails
     """
+
     def __init__(self, *values):
         self.values = values
 
@@ -248,7 +249,7 @@ class NOT(object):
         return other in self.values
 
     def __repr__(self):
-        return '<NOT %r>' % self.values
+        return "<NOT %r>" % self.values
 
 
 class CONTAINS(object):
@@ -262,6 +263,7 @@ class CONTAINS(object):
     >>> mock_function('foobarbaz')
     >>> mock_function.assert_called_with(CONTAINS('bar'))  # Passes
     """
+
     def __init__(self, *args):
         self.items = args
 
@@ -272,7 +274,7 @@ class CONTAINS(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return '<CONTAINS {0}>'.format(','.join(repr(item) for item in self.items))
+        return "<CONTAINS {0}>".format(",".join(repr(item) for item in self.items))
 
 
 def create_tempfile(contents):
@@ -281,7 +283,7 @@ def create_tempfile(contents):
     to the created file.
     """
     fd, path = tempfile.mkstemp()
-    with os.fdopen(fd, 'w') as f:
+    with os.fdopen(fd, "w") as f:
         f.write(contents)
     return path
 
@@ -292,11 +294,7 @@ def create_named_tempfile(contents, prefix=None, suffix=None, directory=None):
     directory, and return the path to the created file.
     """
     with tempfile.NamedTemporaryFile(
-        mode='w',
-        prefix=prefix,
-        suffix=suffix,
-        dir=directory,
-        delete=False,
+        mode="w", prefix=prefix, suffix=suffix, dir=directory, delete=False,
     ) as temp:
         temp.write(contents)
         temp.flush()
@@ -318,11 +316,11 @@ def po_file(**entries):
     :arg dict entries: keys map to msgids and values map to msgstrs
     :return: read-only file object
     """
-    po_contents = '\n'.join(
+    po_contents = "\n".join(
         'msgid "{}"\nmsgstr "{}"'.format(key, val) for key, val in entries.items()
     )
-    with tempfile.NamedTemporaryFile('w+', suffix='.po') as fp:
+    with tempfile.NamedTemporaryFile("w+", suffix=".po") as fp:
         fp.write(po_contents)
         fp.flush()
 
-        yield open(fp.name, 'r')
+        yield open(fp.name, "r")

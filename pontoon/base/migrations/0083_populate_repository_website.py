@@ -8,12 +8,12 @@ from django.db import migrations
 
 
 def populate_repository_website(apps, schema_editor):
-    Repository = apps.get_model('base', 'Repository')
+    Repository = apps.get_model("base", "Repository")
     for repository in Repository.objects.all():
         repository.website = (
-            re.sub(re.escape('.git') + '$', '', repository.url)
-            .replace('git@github.com:', 'https://github.com/')
-            .replace('ssh://', 'https://')
+            re.sub(re.escape(".git") + "$", "", repository.url)
+            .replace("git@github.com:", "https://github.com/")
+            .replace("ssh://", "https://")
         )
         repository.save()
 
@@ -21,7 +21,7 @@ def populate_repository_website(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0082_auto_20170217_1231'),
+        ("base", "0082_auto_20170217_1231"),
     ]
 
     operations = [

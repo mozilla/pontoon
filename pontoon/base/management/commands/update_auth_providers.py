@@ -22,16 +22,20 @@ GOOGLE_PROVIDER_ID = GoogleProvider.id
 
 
 class Command(BaseCommand):
-    help = ('Ensures an allauth application exists and has credentials that match settings')
+    help = (
+        "Ensures an allauth application exists and has credentials that match settings"
+    )
 
     def update_provider(self, data):
         # Update the existing provider with current settings.
         try:
-            app = SocialApp.objects.get(provider=data['provider'])
+            app = SocialApp.objects.get(provider=data["provider"])
             for k, v in data.items():
                 setattr(app, k, v)
             app.save()
-            self.stdout.write("Updated existing authentication provider (pk=%s)" % app.pk)
+            self.stdout.write(
+                "Updated existing authentication provider (pk=%s)" % app.pk
+            )
 
         # Create the provider if necessary.
         except ObjectDoesNotExist:
@@ -49,43 +53,52 @@ class Command(BaseCommand):
         # Check if FXA_* settings are configured
         if settings.FXA_CLIENT_ID is not None and settings.FXA_SECRET_KEY is not None:
             fxa_data = dict(
-                name='FxA',
+                name="FxA",
                 provider=FXA_PROVIDER_ID,
                 client_id=settings.FXA_CLIENT_ID,
-                secret=settings.FXA_SECRET_KEY
+                secret=settings.FXA_SECRET_KEY,
             )
 
             self.update_provider(fxa_data)
 
         # Check if GITHUB_* settings are configured
-        if settings.GITHUB_CLIENT_ID is not None and settings.GITHUB_SECRET_KEY is not None:
+        if (
+            settings.GITHUB_CLIENT_ID is not None
+            and settings.GITHUB_SECRET_KEY is not None
+        ):
             github_data = dict(
-                name='GitHub',
+                name="GitHub",
                 provider=GITHUB_PROVIDER_ID,
                 client_id=settings.GITHUB_CLIENT_ID,
-                secret=settings.GITHUB_SECRET_KEY
+                secret=settings.GITHUB_SECRET_KEY,
             )
 
             self.update_provider(github_data)
 
         # Check if GITLAB_* settings are configured
-        if settings.GITLAB_CLIENT_ID is not None and settings.GITLAB_SECRET_KEY is not None:
+        if (
+            settings.GITLAB_CLIENT_ID is not None
+            and settings.GITLAB_SECRET_KEY is not None
+        ):
             gitlab_data = dict(
-                name='GitLab',
+                name="GitLab",
                 provider=GITLAB_PROVIDER_ID,
                 client_id=settings.GITLAB_CLIENT_ID,
-                secret=settings.GITLAB_SECRET_KEY
+                secret=settings.GITLAB_SECRET_KEY,
             )
 
             self.update_provider(gitlab_data)
 
         # Check if GOOGLE_* settings are configured
-        if settings.GOOGLE_CLIENT_ID is not None and settings.GOOGLE_SECRET_KEY is not None:
+        if (
+            settings.GOOGLE_CLIENT_ID is not None
+            and settings.GOOGLE_SECRET_KEY is not None
+        ):
             google_data = dict(
-                name='Google',
+                name="Google",
                 provider=GOOGLE_PROVIDER_ID,
                 client_id=settings.GOOGLE_CLIENT_ID,
-                secret=settings.GOOGLE_SECRET_KEY
+                secret=settings.GOOGLE_SECRET_KEY,
             )
 
             self.update_provider(google_data)

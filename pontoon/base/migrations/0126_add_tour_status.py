@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0125_projectlocale_readonly'),
+        ("base", "0125_projectlocale_readonly"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='tour_status',
+            model_name="userprofile",
+            name="tour_status",
             field=models.IntegerField(default=0),
         ),
     ]

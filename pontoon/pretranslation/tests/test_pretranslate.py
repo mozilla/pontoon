@@ -12,7 +12,7 @@ from pontoon.test.factories import (
 )
 
 
-@patch('pontoon.pretranslation.pretranslate.get_google_translate_data')
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale):
     entities = [
@@ -30,10 +30,7 @@ def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale
 
     for entity in entities[0:2]:
         TranslationMemoryFactory.create(
-            entity=entity,
-            source=entity.string,
-            target=entity.string,
-            locale=locale_b,
+            entity=entity, source=entity.string, target=entity.string, locale=locale_b,
         )
         TranslationMemoryFactory.create(
             entity=entity,
@@ -44,8 +41,8 @@ def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale
 
     # Mock the return value of get_google_translate_data
     gt_mock.return_value = {
-        'status': True,
-        'translation': 'gt_translation',
+        "status": True,
+        "translation": "gt_translation",
     }
 
     tm_user = User.objects.get(email="pontoon-tm@mozilla.com")
@@ -63,10 +60,16 @@ def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale
 
     # 100% match does not exists and locale.google_translate_code is not None.
     response = get_translations(entities[2], google_translate_locale)
-    assert response == [('gt_translation', None, gt_user)]
+    assert response == [("gt_translation", None, gt_user)]
 
     # Entity.string_plural is not None.
     response_a = get_translations(entities[1], google_translate_locale)
     response_b = get_translations(entities[3], google_translate_locale)
-    assert response_a == [(entities[1].string, 0, tm_user), (entities[1].string, 1, tm_user)]
-    assert response_b == [('gt_translation', 0, gt_user), ('gt_translation', 1, gt_user)]
+    assert response_a == [
+        (entities[1].string, 0, tm_user),
+        (entities[1].string, 1, tm_user),
+    ]
+    assert response_b == [
+        ("gt_translation", 0, gt_user),
+        ("gt_translation", 1, gt_user),
+    ]

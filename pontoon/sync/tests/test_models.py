@@ -28,22 +28,27 @@ class SyncLogTests(TestCase):
         Return the latest end time among repo sync logs for this log.
         """
         sync_log = SyncLogFactory.create()
-        RepositorySyncLogFactory.create(project_sync_log__sync_log=sync_log,
-                                        end_time=aware_datetime(2015, 1, 1))
-        RepositorySyncLogFactory.create(project_sync_log__sync_log=sync_log,
-                                        end_time=aware_datetime(2015, 1, 2))
+        RepositorySyncLogFactory.create(
+            project_sync_log__sync_log=sync_log, end_time=aware_datetime(2015, 1, 1)
+        )
+        RepositorySyncLogFactory.create(
+            project_sync_log__sync_log=sync_log, end_time=aware_datetime(2015, 1, 2)
+        )
 
         assert_equal(sync_log.end_time, aware_datetime(2015, 1, 2))
 
     def test_end_time_skipped(self):
         """Include skipped repos in finding the latest end time."""
         sync_log = SyncLogFactory.create()
-        RepositorySyncLogFactory.create(project_sync_log__sync_log=sync_log,
-                                        end_time=aware_datetime(2015, 1, 1))
-        ProjectSyncLogFactory.create(sync_log=sync_log, skipped=True,
-                                     skipped_end_time=aware_datetime(2015, 1, 2))
-        ProjectSyncLogFactory.create(sync_log=sync_log, skipped=True,
-                                     skipped_end_time=aware_datetime(2015, 1, 4))
+        RepositorySyncLogFactory.create(
+            project_sync_log__sync_log=sync_log, end_time=aware_datetime(2015, 1, 1)
+        )
+        ProjectSyncLogFactory.create(
+            sync_log=sync_log, skipped=True, skipped_end_time=aware_datetime(2015, 1, 2)
+        )
+        ProjectSyncLogFactory.create(
+            sync_log=sync_log, skipped=True, skipped_end_time=aware_datetime(2015, 1, 4)
+        )
 
         assert_equal(sync_log.end_time, aware_datetime(2015, 1, 4))
 
@@ -53,7 +58,8 @@ class SyncLogTests(TestCase):
         # Create repo without existing log so sync is unfinished.
         repo = RepositoryFactory.create()
         project_sync_log = ProjectSyncLogFactory.create(
-            sync_log=sync_log, project__repositories=[repo])
+            sync_log=sync_log, project__repositories=[repo]
+        )
 
         # Sync isn't finished until all repos are finished.
         assert_false(sync_log.finished)
@@ -62,7 +68,7 @@ class SyncLogTests(TestCase):
             repository=repo,
             project_sync_log=project_sync_log,
             start_time=aware_datetime(2015, 1, 1),
-            end_time=None
+            end_time=None,
         )
         del sync_log.finished
         assert_false(sync_log.finished)
@@ -89,9 +95,11 @@ class ProjectSyncLogTests(TestCase):
         source_repo, repo1, repo2 = RepositoryFactory.create_batch(3, project=project)
         project_sync_log = ProjectSyncLogFactory.create(project=project)
 
-        RepositorySyncLogFactory.create(project_sync_log=project_sync_log,
-                                        repository=repo1,
-                                        end_time=aware_datetime(2015, 1, 1))
+        RepositorySyncLogFactory.create(
+            project_sync_log=project_sync_log,
+            repository=repo1,
+            end_time=aware_datetime(2015, 1, 1),
+        )
 
         assert_equal(project_sync_log.end_time, aware_datetime(2015, 1, 1))
 
@@ -110,8 +118,7 @@ class ProjectSyncLogTests(TestCase):
     def test_status(self):
         repo = RepositoryFactory.create()
         project_sync_log = ProjectSyncLogFactory.create(
-            project__repositories=[repo],
-            skipped=False
+            project__repositories=[repo], skipped=False
         )
 
         # Repos aren't finished, status should be in-progress.
@@ -131,8 +138,7 @@ class ProjectSyncLogTests(TestCase):
 
         # Skipped projects are just "skipped".
         skipped_log = ProjectSyncLogFactory.create(
-            project__repositories=[repo],
-            skipped=True,
+            project__repositories=[repo], skipped=True,
         )
 
         assert_equal(skipped_log.status, ProjectSyncLog.SKIPPED)
@@ -148,7 +154,7 @@ class ProjectSyncLogTests(TestCase):
             repository=repo,
             project_sync_log=project_sync_log,
             start_time=aware_datetime(2015, 1, 1),
-            end_time=None
+            end_time=None,
         )
 
         del project_sync_log.finished

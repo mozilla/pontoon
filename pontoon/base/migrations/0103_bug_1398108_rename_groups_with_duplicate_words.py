@@ -7,29 +7,24 @@ from django.db.models import F, Func, Value
 
 
 def rename_groups_with_duplicate_words(apps, schema_editor):
-    Group = apps.get_model('auth', 'Group')
+    Group = apps.get_model("auth", "Group")
 
-    for name in ('managers', 'translators'):
-        double = '{} {}'.format(name, name)
+    for name in ("managers", "translators"):
+        double = "{} {}".format(name, name)
 
         Group.objects.filter(name__contains=double).update(
-            name=Func(
-                F('name'),
-                Value(double), Value(name),
-                function='replace',
-            )
+            name=Func(F("name"), Value(double), Value(name), function="replace",)
         )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0102_locale_transvision'),
+        ("base", "0102_locale_transvision"),
     ]
 
     operations = [
         migrations.RunPython(
-            rename_groups_with_duplicate_words,
-            migrations.RunPython.noop
+            rename_groups_with_duplicate_words, migrations.RunPython.noop
         ),
     ]

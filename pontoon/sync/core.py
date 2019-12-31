@@ -29,7 +29,9 @@ def update_originals(db_project, now, full_scan=False):
     vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
 
     with transaction.atomic():
-        added_paths, removed_paths, changed_paths = update_resources(db_project, vcs_project)
+        added_paths, removed_paths, changed_paths = update_resources(
+            db_project, vcs_project
+        )
         changeset = ChangeSet(db_project, vcs_project, now)
         update_entities(db_project, vcs_project, changeset)
         changeset.execute()
@@ -46,11 +48,14 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
     :param on_error: callback to be executed if an error is raised.
     :param celery_args: argument passed to celery's shared_task decorator.
     """
+
     def wrapper(func):
         @shared_task(bind=True, **celery_args)
         @wraps(func)
         def wrapped_func(self, *args, **kwargs):
-            lock_name = "serial_task.{}[{}]".format(self.name, lock_key.format(*args, **kwargs))
+            lock_name = "serial_task.{}[{}]".format(
+                self.name, lock_key.format(*args, **kwargs)
+            )
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 error = RuntimeError(
@@ -65,7 +70,9 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
             finally:
                 # release the lock
                 cache.delete(lock_name)
+
         return wrapped_func
+
     return wrapper
 
 
@@ -87,11 +94,13 @@ def collect_entities(db_project, vcs_project, changed_resources):
 
 def update_entities(db_project, vcs_project, changeset):
     changed_resources = vcs_project.changed_files
-    for key, db_entity, vcs_entity in collect_entities(db_project, vcs_project, changed_resources):
+    for key, db_entity, vcs_entity in collect_entities(
+        db_project, vcs_project, changed_resources
+    ):
         if vcs_entity is None:
             if db_entity is None:
                 # This should never happen. What? Hard abort.
-                raise ValueError(u'No entities found for key `{0}`'.format(key))
+                raise ValueError(u"No entities found for key `{0}`".format(key))
             else:
                 # VCS no longer has the entity, obsolete it.
                 changeset.obsolete_db_entity(db_entity)
@@ -104,18 +113,18 @@ def update_entities(db_project, vcs_project, changeset):
 
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
-    log.debug('Scanning {}'.format(vcs_project.source_directory_path))
+    log.debug("Scanning {}".format(vcs_project.source_directory_path))
     vcs_changed_files, vcs_removed_files = vcs_project.changed_source_files
 
     removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
-    removed_paths = removed_resources.values_list('path', flat=True)
+    removed_paths = removed_resources.values_list("path", flat=True)
 
     changed_resources = db_project.resources.filter(path__in=vcs_changed_files)
-    changed_paths = changed_resources.values_list('path', flat=True)
+    changed_paths = changed_resources.values_list("path", flat=True)
 
     added_paths = []
 
-    log.debug('Removed files: {}'.format(', '.join(removed_paths) or 'None'))
+    log.debug("Removed files: {}".format(", ".join(removed_paths) or "None"))
     removed_resources.delete()
 
     for relative_path, vcs_resource in vcs_project.resources.items():
@@ -127,7 +136,7 @@ def update_resources(db_project, vcs_project):
         if created:
             added_paths.append(relative_path)
 
-    log.debug('Added files: {}'.format(', '.join(added_paths) or 'None'))
+    log.debug("Added files: {}".format(", ".join(added_paths) or "None"))
     return added_paths, removed_paths, changed_paths
 
 
@@ -139,9 +148,9 @@ def get_changed_resources(db_project, vcs_project):
 
     if changed_resources is not None:
         changed_resources = (
-            list(changed_resources.keys()) +
-            list(vcs_project.added_paths) +
-            list(vcs_project.changed_paths)
+            list(changed_resources.keys())
+            + list(vcs_project.added_paths)
+            + list(vcs_project.changed_paths)
         )
 
     return changed_resources
@@ -177,16 +186,10 @@ def update_translated_resources(db_project, vcs_project, locale):
     Returns true if a new TranslatedResource is added to the locale.
     """
     if vcs_project.configuration:
-        return update_translated_resources_with_config(
-            db_project,
-            vcs_project,
-            locale,
-        )
+        return update_translated_resources_with_config(db_project, vcs_project, locale,)
     else:
         return update_translated_resources_without_config(
-            db_project,
-            vcs_project,
-            locale,
+            db_project, vcs_project, locale,
         )
 
 
@@ -198,8 +201,8 @@ def update_translated_resources_with_config(db_project, vcs_project, locale):
     tr_created = False
 
     for resource in vcs_project.configuration.locale_resources(locale):
-        translatedresource, created = (
-            TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+        translatedresource, created = TranslatedResource.objects.get_or_create(
+            resource=resource, locale=locale
         )
 
         if created:
@@ -222,8 +225,8 @@ def update_translated_resources_without_config(db_project, vcs_project, locale):
         if vcs_resource is not None:
             resource_exists = vcs_resource.files.get(locale) is not None
             if resource_exists or resource.is_asymmetric:
-                translatedresource, created = (
-                    TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+                translatedresource, created = TranslatedResource.objects.get_or_create(
+                    resource=resource, locale=locale
                 )
 
                 if created:
@@ -244,12 +247,14 @@ def update_translated_resources_no_files(db_project, locale, changed_resources):
         # which we cannot check without files.
         if not resource.is_asymmetric:
             log.error(
-                'Unable to calculate stats for asymmetric resource: {resource}.'.format(resource)
+                "Unable to calculate stats for asymmetric resource: {resource}.".format(
+                    resource
+                )
             )
             continue
 
-        translatedresource, _ = (
-            TranslatedResource.objects.get_or_create(resource=resource, locale=locale)
+        translatedresource, _ = TranslatedResource.objects.get_or_create(
+            resource=resource, locale=locale
         )
         translatedresource.calculate_stats()
 
@@ -260,9 +265,8 @@ def get_vcs_entities(vcs_project):
 
 def get_changed_entities(db_project, changed_resources):
     entities = (
-        Entity.objects
-        .select_related('resource')
-        .prefetch_related('changed_locales')
+        Entity.objects.select_related("resource")
+        .prefetch_related("changed_locales")
         .filter(resource__project=db_project, obsolete=False)
     )
 
@@ -273,9 +277,8 @@ def get_changed_entities(db_project, changed_resources):
 
 def get_db_entities(db_project, changed_resources=None):
     return {
-        entity_key(entity): entity for entity in get_changed_entities(
-            db_project, changed_resources
-        )
+        entity_key(entity): entity
+        for entity in get_changed_entities(db_project, changed_resources)
     }
 
 
@@ -285,7 +288,7 @@ def entity_key(entity):
     project.
     """
     key = entity.key or entity.string
-    return ':'.join([entity.resource.path, key])
+    return ":".join([entity.resource.path, key])
 
 
 def pull_changes(db_project, locales=None):
@@ -341,11 +344,10 @@ def commit_changes(db_project, vcs_project, changeset, locale):
     else:
         commit_author = User(first_name="Mozilla Pontoon", email="pontoon@mozilla.com")
 
-    commit_message = render_to_string('sync/commit_message.jinja', {
-        'locale': locale,
-        'project': db_project,
-        'authors': set(authors)
-    })
+    commit_message = render_to_string(
+        "sync/commit_message.jinja",
+        {"locale": locale, "project": db_project, "authors": set(authors)},
+    )
 
     locale_path = vcs_project.locale_directory_paths[locale.code]
     repo = db_project.repository_for_path(locale_path)
@@ -365,13 +367,17 @@ def get_changed_locales(db_project, locales, now):
         if not repo.api_config:
             return locales
 
-    log.info('Fetching latest commit hashes for project {0} started.'.format(db_project.slug))
+    log.info(
+        "Fetching latest commit hashes for project {0} started.".format(db_project.slug)
+    )
 
     # If locale has changed in the DB, we need to sync it.
-    changed_locale_pks = list(locales.filter(
-        changedentitylocale__entity__resource__project=db_project,
-        changedentitylocale__when__lte=now
-    ).values_list('pk', flat=True))
+    changed_locale_pks = list(
+        locales.filter(
+            changedentitylocale__entity__resource__project=db_project,
+            changedentitylocale__when__lte=now,
+        ).values_list("pk", flat=True)
+    )
 
     unchanged_locale_pks = []
     error_locale_pks = set()
@@ -383,7 +389,9 @@ def get_changed_locales(db_project, locales, now):
                 continue
 
             try:
-                locale_api_endpoint = repo.api_config['endpoint'].format(locale_code=locale.code)
+                locale_api_endpoint = repo.api_config["endpoint"].format(
+                    locale_code=locale.code
+                )
                 response = requests.get(locale_api_endpoint)
 
                 # Raise exception on 4XX client error or 5XX server error response
@@ -396,7 +404,7 @@ def get_changed_locales(db_project, locales, now):
                     continue
 
                 # If locale has changed in the VCS, we need to sync it.
-                latest_commit_id = repo.api_config['get_key'](response.json())
+                latest_commit_id = repo.api_config["get_key"](response.json())
                 if not latest_commit_id.startswith(last_synced_commit_id):
                     changed_locale_pks.append(locale.pk)
 
@@ -414,18 +422,18 @@ def get_changed_locales(db_project, locales, now):
     for l in error_locale_pks:
         if l not in changed_locale_pks + unchanged_locale_pks:
             log.error(
-                'Unable to fetch latest commit hash for locale {locale} in project {project}'
-                .format(locale=Locale.objects.get(pk=l), project=db_project.slug)
+                "Unable to fetch latest commit hash for locale {locale} in project {project}".format(
+                    locale=Locale.objects.get(pk=l), project=db_project.slug
+                )
             )
             changed_locale_pks.append(locale.pk)
 
     changed_locales = db_project.locales.filter(pk__in=changed_locale_pks)
 
     log.info(
-        'Fetching latest commit hashes for project {project} complete. Changed locales: {locales}.'
-        .format(
+        "Fetching latest commit hashes for project {project} complete. Changed locales: {locales}.".format(
             project=db_project.slug,
-            locales=', '.join(changed_locales.values_list("code", flat=True))
+            locales=", ".join(changed_locales.values_list("code", flat=True)),
         )
     )
 

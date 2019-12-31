@@ -42,16 +42,20 @@ class LangTests(FormatTestsMixin, TestCase):
         self.run_parse_no_comments_no_sources(BASE_LANG_FILE, 2)
 
     def test_save_basic(self):
-        input_string = dedent("""
+        input_string = dedent(
+            """
             # Comment
             ;SourceString
             Source String
-        """)
-        expected_string = dedent("""
+        """
+        )
+        expected_string = dedent(
+            """
             # Comment
             ;SourceString
             New Translated String
-        """)
+        """
+        )
 
         self.run_save_basic(input_string, expected_string)
 
@@ -60,16 +64,20 @@ class LangTests(FormatTestsMixin, TestCase):
         Deleting strings shouled replace the translation with the source
         string.
         """
-        input_string = dedent("""
+        input_string = dedent(
+            """
             # Comment
             ;SourceString
             Translated String
-        """)
-        expected_string = dedent("""
+        """
+        )
+        expected_string = dedent(
+            """
             # Comment
             ;SourceString
             SourceString
-        """)
+        """
+        )
 
         self.run_save_remove(input_string, expected_string)
 
@@ -82,17 +90,19 @@ class LangTests(FormatTestsMixin, TestCase):
         for the string "utf-8-sig").
         """
         current_dir = os.path.dirname(__file__)
-        resource = lang.parse(os.path.join(current_dir, 'bom.lang'))
+        resource = lang.parse(os.path.join(current_dir, "bom.lang"))
         assert_equal(len(resource.translations), 1)
         assert_attributes_equal(
             resource.translations[0],
-            source_string='Source String',
-            strings={None: 'Translated String'}
+            source_string="Source String",
+            strings={None: "Translated String"},
         )
 
     def test_parse_comments_arbitrary_hash(self):
         """Comments can have an arbitrary amount of #s at the start."""
-        path, resource = self.parse_string(dedent("""
+        path, resource = self.parse_string(
+            dedent(
+                """
             # 1 hash
             ## 2 hash
             ### 3 hash
@@ -102,25 +112,28 @@ class LangTests(FormatTestsMixin, TestCase):
             ### 3 hash
             ; Source
             Translated
-        """))
+        """
+            )
+        )
 
-        assert_equal(resource.children[1].content, '1 hash')
-        assert_equal(resource.children[2].content, '2 hash')
-        assert_equal(resource.children[3].content, '3 hash')
-        assert_equal(resource.translations[0].comments, ['1 hash', '2 hash', '3 hash'])
+        assert_equal(resource.children[1].content, "1 hash")
+        assert_equal(resource.children[2].content, "2 hash")
+        assert_equal(resource.children[3].content, "3 hash")
+        assert_equal(resource.translations[0].comments, ["1 hash", "2 hash", "3 hash"])
 
     def test_parse_eof(self):
         """Langfiles do not need to end in a newline."""
-        path, resource = self.parse_string(';Source\nTranslation')
-        assert_equal(resource.translations[0].source_string, 'Source')
-        assert_equal(resource.translations[0].strings, {None: 'Translation'})
+        path, resource = self.parse_string(";Source\nTranslation")
+        assert_equal(resource.translations[0].source_string, "Source")
+        assert_equal(resource.translations[0].strings, {None: "Translation"})
 
     def test_preserve_comment_hashes(self):
         """
         If a langfile is parsed and then saved without being modified,
         it should not modify the contents of the file.
         """
-        expected = dedent("""
+        expected = dedent(
+            """
             ## Example langfile with a few constructs that might break
 
             # Entity comment
@@ -134,7 +147,8 @@ class LangTests(FormatTestsMixin, TestCase):
             Identical {ok}
 
             ###Free standing comment at the end. WOW
-        """)
+        """
+        )
         path, resource = self.parse_string(expected)
         resource.save(self.locale)
         self.assert_file_content(path, expected)
@@ -145,7 +159,9 @@ class LangTests(FormatTestsMixin, TestCase):
         ParseError.
         """
         with assert_raises(ParseError):
-            self.parse_string(dedent("""
+            self.parse_string(
+                dedent(
+                    """
                 # Comment
                 ;Source
                 Translated
@@ -154,4 +170,6 @@ class LangTests(FormatTestsMixin, TestCase):
 
                 ;Not Empty
                 Nope
-            """))
+            """
+                )
+            )

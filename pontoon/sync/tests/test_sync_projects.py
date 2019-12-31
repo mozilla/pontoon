@@ -23,16 +23,16 @@ class CommandTests(TestCase):
         self.command.force = False
         self.command.stderr = StringIO()
 
-        Project.objects.filter(slug='pontoon-intro').delete()
+        Project.objects.filter(slug="pontoon-intro").delete()
 
-        self.mock_sync_project = self.patch_object(sync_projects, 'sync_project')
+        self.mock_sync_project = self.patch_object(sync_projects, "sync_project")
 
     def execute_command(self, *args, **kwargs):
-        kwargs.setdefault('verbosity', 0)
-        kwargs.setdefault('locale', False)
-        kwargs.setdefault('no_commit', False)
-        kwargs.setdefault('no_pull', False)
-        kwargs.setdefault('force', False)
+        kwargs.setdefault("verbosity", 0)
+        kwargs.setdefault("locale", False)
+        kwargs.setdefault("no_commit", False)
+        kwargs.setdefault("no_pull", False)
+        kwargs.setdefault("force", False)
 
         self.command.handle(*args, **kwargs)
 
@@ -43,10 +43,7 @@ class CommandTests(TestCase):
         """
         ProjectFactory.create(disabled=True)
         ProjectFactory.create(sync_disabled=True)
-        active_project = ProjectFactory.create(
-            disabled=False,
-            sync_disabled=False,
-        )
+        active_project = ProjectFactory.create(disabled=False, sync_disabled=False,)
 
         self.execute_command()
         self.mock_sync_project.delay.assert_called_with(
@@ -55,13 +52,13 @@ class CommandTests(TestCase):
             locale=None,
             no_pull=False,
             no_commit=False,
-            force=False
+            force=False,
         )
 
     def test_non_repository_projects(self):
         """Only sync projects with data_source=repository."""
-        ProjectFactory.create(data_source='database')
-        repo_project = ProjectFactory.create(data_source='repository')
+        ProjectFactory.create(data_source="database")
+        repo_project = ProjectFactory.create(data_source="repository")
 
         self.execute_command()
         self.mock_sync_project.delay.assert_called_with(
@@ -70,7 +67,7 @@ class CommandTests(TestCase):
             locale=None,
             no_pull=False,
             no_commit=False,
-            force=False
+            force=False,
         )
 
     def test_project_slugs(self):
@@ -87,7 +84,7 @@ class CommandTests(TestCase):
             locale=None,
             no_pull=False,
             no_commit=False,
-            force=False
+            force=False,
         )
 
     def test_no_matching_projects(self):
@@ -96,7 +93,7 @@ class CommandTests(TestCase):
         CommandError.
         """
         with assert_raises(CommandError):
-            self.execute_command(projects='does-not-exist')
+            self.execute_command(projects="does-not-exist")
 
     def test_invalid_slugs(self):
         """
@@ -104,7 +101,7 @@ class CommandTests(TestCase):
         """
         handle_project = ProjectFactory.create()
 
-        self.execute_command(projects=handle_project.slug + ',aaa,bbb')
+        self.execute_command(projects=handle_project.slug + ",aaa,bbb")
 
         self.mock_sync_project.delay.assert_called_with(
             handle_project.pk,
@@ -112,19 +109,21 @@ class CommandTests(TestCase):
             locale=None,
             no_pull=False,
             no_commit=False,
-            force=False
+            force=False,
         )
 
         assert_equal(
             self.command.stderr.getvalue(),
-            "Couldn't find projects with following slugs: aaa, bbb"
+            "Couldn't find projects with following slugs: aaa, bbb",
         )
 
     def test_cant_commit(self):
         """If project.can_commit is False, do not sync it."""
         project = ProjectFactory.create()
 
-        with patch.object(Project, 'can_commit', new_callable=PropertyMock) as can_commit:
+        with patch.object(
+            Project, "can_commit", new_callable=PropertyMock
+        ) as can_commit:
             can_commit.return_value = False
 
             self.execute_command(projects=project.slug)
@@ -134,12 +133,7 @@ class CommandTests(TestCase):
         project = ProjectFactory.create()
         self.execute_command(no_pull=True, no_commit=True)
         self.mock_sync_project.delay.assert_called_with(
-            project.pk,
-            ANY,
-            locale=None,
-            no_pull=True,
-            no_commit=True,
-            force=False
+            project.pk, ANY, locale=None, no_pull=True, no_commit=True, force=False
         )
 
     def test_sync_log(self):
@@ -147,7 +141,7 @@ class CommandTests(TestCase):
         assert_false(SyncLog.objects.exists())
 
         ProjectFactory.create()
-        with patch.object(sync_projects, 'timezone') as mock_timezone:
+        with patch.object(sync_projects, "timezone") as mock_timezone:
             mock_timezone.now.return_value = aware_datetime(2015, 1, 1)
             self.execute_command()
 

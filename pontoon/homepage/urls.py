@@ -6,5 +6,5 @@ from . import views
 
 urlpatterns = [
     # Homepage
-    url(r'^$', views.homepage, name='pontoon.homepage'),
+    url(r"^$", views.homepage, name="pontoon.homepage"),
 ]

@@ -9,18 +9,23 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0075_create_project_locale_translators_groups'),
+        ("base", "0075_create_project_locale_translators_groups"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectlocale',
-            name='has_custom_translators',
+            model_name="projectlocale",
+            name="has_custom_translators",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='projectlocale',
-            name='translators_group',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projectlocales', to='auth.Group'),
+            model_name="projectlocale",
+            name="translators_group",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="projectlocales",
+                to="auth.Group",
+            ),
         ),
     ]

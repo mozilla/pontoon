@@ -10,24 +10,57 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0109_project_tags_enabled'),
+        ("base", "0109_project_tags_enabled"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PermissionChangelog',
+            name="PermissionChangelog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('action_type', models.CharField(choices=[('added', 'Added'), ('removed', 'Removed')], max_length=20)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.Group')),
-                ('performed_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='changed_permissions_log', to=settings.AUTH_USER_MODEL)),
-                ('performed_on', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='permisions_log', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "action_type",
+                    models.CharField(
+                        choices=[("added", "Added"), ("removed", "Removed")],
+                        max_length=20,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="auth.Group"
+                    ),
+                ),
+                (
+                    "performed_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="changed_permissions_log",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "performed_on",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="permisions_log",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ('pk',),
-                'verbose_name': 'User permissions log',
-                'verbose_name_plural': 'Users permissions logs',
+                "ordering": ("pk",),
+                "verbose_name": "User permissions log",
+                "verbose_name_plural": "Users permissions logs",
             },
         ),
     ]

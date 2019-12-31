@@ -5,9 +5,7 @@ from __future__ import absolute_import
 
 import pytest
 
-from pontoon.base.models import (
-    PermissionChangelog,
-)
+from pontoon.base.models import PermissionChangelog
 from pontoon.teams.utils import (
     log_user_groups,
     log_group_members,
@@ -20,9 +18,7 @@ from pontoon.test.factories import (
 
 @pytest.fixture
 def translators_group():
-    return GroupFactory.create(
-        name='some translators',
-    )
+    return GroupFactory.create(name="some translators",)
 
 
 @pytest.mark.django_db
@@ -33,11 +29,7 @@ def test_log_group_members_empty(translators_group, user_a):
 
 
 @pytest.mark.django_db
-def test_log_group_members_added(
-    translators_group,
-    user_a,
-    assert_permissionchangelog
-):
+def test_log_group_members_added(translators_group, user_a, assert_permissionchangelog):
     member0, member1, member2 = UserFactory.create_batch(size=3)
     added_members = [member0, member2]
 
@@ -46,26 +38,16 @@ def test_log_group_members_added(
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
-        changelog_entry0,
-        'added',
-        user_a,
-        member0,
-        translators_group
+        changelog_entry0, "added", user_a, member0, translators_group
     )
     assert_permissionchangelog(
-        changelog_entry1,
-        'added',
-        user_a,
-        member2,
-        translators_group
+        changelog_entry1, "added", user_a, member2, translators_group
     )
 
 
 @pytest.mark.django_db
 def test_log_group_members_removed(
-    translators_group,
-    user_a,
-    assert_permissionchangelog
+    translators_group, user_a, assert_permissionchangelog
 ):
     member0, member1, member2 = UserFactory.create_batch(size=3)
     removed_members = [member0, member2]
@@ -75,53 +57,29 @@ def test_log_group_members_removed(
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
-        changelog_entry0,
-        'removed',
-        user_a,
-        member0,
-        translators_group
+        changelog_entry0, "removed", user_a, member0, translators_group
     )
     assert_permissionchangelog(
-        changelog_entry1,
-        'removed',
-        user_a,
-        member2,
-        translators_group
+        changelog_entry1, "removed", user_a, member2, translators_group
     )
 
 
 @pytest.mark.django_db
-def test_log_group_members_mixed(
-    translators_group,
-    user_a,
-    assert_permissionchangelog
-):
+def test_log_group_members_mixed(translators_group, user_a, assert_permissionchangelog):
     member0, member1, member2 = UserFactory.create_batch(size=3)
     added_members = [member2]
     removed_members = [member0]
 
-    log_group_members(
-        user_a,
-        translators_group,
-        (added_members, removed_members)
-    )
+    log_group_members(user_a, translators_group, (added_members, removed_members))
 
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
-        changelog_entry0,
-        'added',
-        user_a,
-        member2,
-        translators_group
+        changelog_entry0, "added", user_a, member2, translators_group
     )
 
     assert_permissionchangelog(
-        changelog_entry1,
-        'removed',
-        user_a,
-        member0,
-        translators_group
+        changelog_entry1, "removed", user_a, member0, translators_group
     )
 
 
@@ -134,9 +92,7 @@ def test_log_user_groups_empty(user_a, user_b):
 
 @pytest.mark.django_db
 def test_log_user_groups_added(
-    user_a,
-    user_b,
-    assert_permissionchangelog,
+    user_a, user_b, assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     added_groups = [group0, group2]
@@ -145,27 +101,13 @@ def test_log_user_groups_added(
 
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
 
-    assert_permissionchangelog(
-        changelog_entry0,
-        'added',
-        user_a,
-        user_b,
-        group0
-    )
-    assert_permissionchangelog(
-        changelog_entry1,
-        'added',
-        user_a,
-        user_b,
-        group2
-    )
+    assert_permissionchangelog(changelog_entry0, "added", user_a, user_b, group0)
+    assert_permissionchangelog(changelog_entry1, "added", user_a, user_b, group2)
 
 
 @pytest.mark.django_db
 def test_log_user_groups_removed(
-    user_a,
-    user_b,
-    assert_permissionchangelog,
+    user_a, user_b, assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     removed_members = [group0, group2]
@@ -174,28 +116,14 @@ def test_log_user_groups_removed(
 
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
 
-    assert_permissionchangelog(
-        changelog_entry0,
-        'removed',
-        user_a,
-        user_b,
-        group0
-    )
+    assert_permissionchangelog(changelog_entry0, "removed", user_a, user_b, group0)
 
-    assert_permissionchangelog(
-        changelog_entry1,
-        'removed',
-        user_a,
-        user_b,
-        group2
-    )
+    assert_permissionchangelog(changelog_entry1, "removed", user_a, user_b, group2)
 
 
 @pytest.mark.django_db
 def test_log_user_groups_mixed(
-    user_a,
-    user_b,
-    assert_permissionchangelog,
+    user_a, user_b, assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     added_groups = [group2]
@@ -204,18 +132,6 @@ def test_log_user_groups_mixed(
     log_user_groups(user_a, user_b, (added_groups, removed_groups))
 
     changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
-    assert_permissionchangelog(
-        changelog_entry0,
-        'added',
-        user_a,
-        user_b,
-        group2
-    )
+    assert_permissionchangelog(changelog_entry0, "added", user_a, user_b, group2)
 
-    assert_permissionchangelog(
-        changelog_entry1,
-        'removed',
-        user_a,
-        user_b,
-        group0
-    )
+    assert_permissionchangelog(changelog_entry1, "removed", user_a, user_b, group0)

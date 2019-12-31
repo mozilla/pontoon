@@ -8,12 +8,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0143_migrate_tm_ftl_comments'),
+        ("base", "0143_migrate_tm_ftl_comments"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='userprofile',
-            name='use_translate_next',
-        ),
+        migrations.RemoveField(model_name="userprofile", name="use_translate_next",),
     ]

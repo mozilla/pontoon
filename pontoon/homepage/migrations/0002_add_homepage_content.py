@@ -9,19 +9,21 @@ from django.db import migrations
 
 def get_homepage_content():
     module_dir = os.path.dirname(__file__)
-    file_path = os.path.join(module_dir, '../templates/homepage_content.html')
-    data_file = open(file_path , 'r')
+    file_path = os.path.join(module_dir, "../templates/homepage_content.html")
+    data_file = open(file_path, "r")
     data = data_file.read()
     return data
 
 
 def create_homepage_entry(apps, schema_editor):
-    Homepage = apps.get_model('homepage', 'Homepage')
-    homepage = Homepage.objects.create(text=get_homepage_content(), title="Localize Mozilla")
+    Homepage = apps.get_model("homepage", "Homepage")
+    homepage = Homepage.objects.create(
+        text=get_homepage_content(), title="Localize Mozilla"
+    )
 
 
 def remove_homepage_entry(apps, schema_editor):
-    Homepage = apps.get_model('homepage', 'Homepage')
+    Homepage = apps.get_model("homepage", "Homepage")
 
     try:
         homepage = Homepage.objects.last()
@@ -34,7 +36,7 @@ def remove_homepage_entry(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('homepage', '0001_initial'),
+        ("homepage", "0001_initial"),
     ]
 
     operations = [

@@ -17,9 +17,7 @@ def test_util_tags_stats_tool(tag_data_init_kwargs):
 
 @pytest.mark.django_db
 def test_util_tags_translation_tool_get_data(
-    tag_matrix,
-    calculate_tags_latest,
-    tag_test_kwargs,
+    tag_matrix, calculate_tags_latest, tag_test_kwargs,
 ):
     # for different parametrized kwargs, tests that the calculated
     # latest data matches expectations from long-hand calculation
@@ -33,29 +31,29 @@ def test_util_tags_translation_tool_get_data(
     data = tr_tool.coalesce(tr_tool.get_data())
 
     # get a pk dictionary of all translations
-    translations = Translation.objects.select_related('user').in_bulk()
+    translations = Translation.objects.select_related("user").in_bulk()
 
     assert len(data) == len(exp)
 
     for k, (pk, date) in exp.items():
-        assert data[k]['date'] == date
-        assert data[k]['string'] == translations.get(pk).string
+        assert data[k]["date"] == date
+        assert data[k]["string"] == translations.get(pk).string
 
-    if name.endswith('_exact'):
+    if name.endswith("_exact"):
         assert len(data) == 1
-    elif name.endswith('_no_match'):
+    elif name.endswith("_no_match"):
         assert len(data) == 0
-    elif name.endswith('_match'):
+    elif name.endswith("_match"):
         assert len(data) > 0
-    elif name.endswith('_contains'):
-        assert 1 < len(data) < len(tag_matrix['tags'])
-    elif name == 'empty':
+    elif name.endswith("_contains"):
+        assert 1 < len(data) < len(tag_matrix["tags"])
+    elif name == "empty":
         pass
     else:
-        raise ValueError('Unsupported assertion type: {}'.format(name))
+        raise ValueError("Unsupported assertion type: {}".format(name))
 
 
-@patch('pontoon.tags.utils.TagsLatestTranslationsTool.get_data')
+@patch("pontoon.tags.utils.TagsLatestTranslationsTool.get_data")
 def test_util_tags_translation_tool_data(data_mock):
     # ensures latest translation data is coalesced and cached
     # correctly
@@ -64,10 +62,10 @@ def test_util_tags_translation_tool_data(data_mock):
     # set up mock return for get_data that can be used like
     # qs.iterator()
     data_m = [
-        dict(entity__resource__tag='foo'),
-        dict(entity__resource__tag='bar'),
+        dict(entity__resource__tag="foo"),
+        dict(entity__resource__tag="bar"),
     ]
-    data_m2 = [dict(entity__resource__tag='baz')]
+    data_m2 = [dict(entity__resource__tag="baz")]
     iterator_m = MagicMock()
     iterator_m.iterator.return_value = data_m
     data_mock.return_value = iterator_m
@@ -102,42 +100,29 @@ def test_util_tags_translation_tool_data(data_mock):
 
 @pytest.mark.django_db
 def test_util_tags_translation_tool_groupby(
-    tag_matrix,
-    tag_test_kwargs,
-    calculate_tags_latest,
-    user_a,
-    user_b,
+    tag_matrix, tag_test_kwargs, calculate_tags_latest, user_a, user_b,
 ):
     name, kwargs = tag_test_kwargs
 
     # hmm, translations have no users
     #  - set first 3rd to user_a, and second 3rd to user_b
     total = Translation.objects.count()
-    first_third_users = Translation.objects.all()[:total / 3].values_list('pk')
-    second_third_users = (
-        Translation.objects
-        .all()[total / 3: 2 * total / 3].values_list('pk')
-    )
-    (
-        Translation.objects
-        .filter(pk__in=first_third_users)
-        .update(user=user_a)
-    )
-    (
-        Translation.objects
-        .filter(pk__in=second_third_users)
-        .update(user=user_b)
-    )
+    first_third_users = Translation.objects.all()[: total / 3].values_list("pk")
+    second_third_users = Translation.objects.all()[
+        total / 3 : 2 * total / 3
+    ].values_list("pk")
+    (Translation.objects.filter(pk__in=first_third_users).update(user=user_a))
+    (Translation.objects.filter(pk__in=second_third_users).update(user=user_b))
 
     # calculate expectations grouped by locale
-    exp = calculate_tags_latest(groupby='locale', **kwargs)
+    exp = calculate_tags_latest(groupby="locale", **kwargs)
 
     # calculate data from tool grouped by locale
-    tr_tool = TagsLatestTranslationsTool(groupby='locale', **kwargs)
+    tr_tool = TagsLatestTranslationsTool(groupby="locale", **kwargs)
     data = tr_tool.coalesce(tr_tool.get_data())
 
     # get a pk dictionary of all translations
-    translations = Translation.objects.select_related('user').in_bulk()
+    translations = Translation.objects.select_related("user").in_bulk()
 
     assert len(data) == len(exp)
 
@@ -145,16 +130,13 @@ def test_util_tags_translation_tool_groupby(
         # check all of the expected values are correct for the
         # translation and user
         translation = translations.get(pk)
-        assert data[k]['date'] == date
-        assert data[k]['string'] == translation.string
-        assert (
-            data[k]['approved_date']
-            == translation.approved_date
-        )
+        assert data[k]["date"] == date
+        assert data[k]["string"] == translation.string
+        assert data[k]["approved_date"] == translation.approved_date
         user = translation.user
         if user:
-            assert data[k]['user__email'] == user.email
-            assert data[k]['user__first_name'] == user.first_name
+            assert data[k]["user__email"] == user.email
+            assert data[k]["user__first_name"] == user.first_name
         else:
-            assert data[k]['user__email'] is None
-            assert data[k]['user__first_name'] is None
+            assert data[k]["user__email"] is None
+            assert data[k]["user__first_name"] is None

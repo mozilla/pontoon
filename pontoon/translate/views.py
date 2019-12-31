@@ -23,7 +23,7 @@ from pontoon.base.models import (
 )
 
 
-UPSTREAM = 'http://localhost:3000'
+UPSTREAM = "http://localhost:3000"
 
 
 def static_serve_dev(request, path):
@@ -56,18 +56,18 @@ def catchall_dev(request, context=None):
 
     """
     # Redirect websocket requests directly to the webpack server.
-    if request.META.get('HTTP_UPGRADE', '').lower() == 'websocket':
+    if request.META.get("HTTP_UPGRADE", "").lower() == "websocket":
         return http.HttpResponseRedirect(UPSTREAM + request.path)
 
     upstream_url = UPSTREAM + request.path
-    method = request.META['REQUEST_METHOD'].lower()
+    method = request.META["REQUEST_METHOD"].lower()
     response = getattr(requests, method)(upstream_url, stream=True)
-    content_type = response.headers.get('Content-Type')
+    content_type = response.headers.get("Content-Type")
 
-    if content_type == 'text/html; charset=UTF-8':
+    if content_type == "text/html; charset=UTF-8":
         return http.HttpResponse(
             content=(
-                engines['jinja2']
+                engines["jinja2"]
                 .from_string(response.text)
                 .render(request=request, context=context)
             ),
@@ -87,7 +87,7 @@ def catchall_dev(request, context=None):
 # static folders. We can thus simply return a template view of index.html.
 @ensure_csrf_cookie
 def catchall_prod(request, context=None):
-    return render(request, 'index.html', context=context, using='jinja2')
+    return render(request, "index.html", context=context, using="jinja2")
 
 
 def get_preferred_locale(request):
@@ -108,7 +108,7 @@ def translate(request, locale, project, resource):
     locale = get_object_or_404(Locale, code=locale)
 
     # Validate Project
-    if project.lower() != 'all-projects':
+    if project.lower() != "all-projects":
         project = get_object_or_404(Project.objects.available(), slug=project)
 
         # Validate ProjectLocale
@@ -116,17 +116,16 @@ def translate(request, locale, project, resource):
             raise Http404
 
     context = {
-        'locale': get_preferred_locale(request),
-        'notifications': [],
+        "locale": get_preferred_locale(request),
+        "notifications": [],
     }
 
     # Get system notifications and pass them down. We need to transform the
     # django object so that it can be turned into JSON.
     notifications = messages.get_messages(request)
     if notifications:
-        context['notifications'] = map(
-            lambda x: {'content': str(x), 'type': x.tags},
-            notifications
+        context["notifications"] = map(
+            lambda x: {"content": str(x), "type": x.tags}, notifications
         )
 
     if settings.DEBUG:

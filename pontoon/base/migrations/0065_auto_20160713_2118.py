@@ -11,18 +11,24 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0064_userprofile_locales_order'),
+        ("base", "0064_userprofile_locales_order"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translation',
-            name='unapproved_date',
+            model_name="translation",
+            name="unapproved_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='translation',
-            name='unapproved_user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='unapprovers', to=settings.AUTH_USER_MODEL),
+            model_name="translation",
+            name="unapproved_user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="unapprovers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 from django.db import connection, migrations, models
 from django.db.utils import ProgrammingError
 
-entity_document_update_trigger_drop_sql = '''
+entity_document_update_trigger_drop_sql = """
     DROP TRIGGER base_translation_entity_document_update ON "base_translation";
     DROP FUNCTION base_translation_entity_document_update();
-'''
+"""
 
 
 def drop_entity_document(apps, schema):
@@ -22,21 +22,15 @@ def drop_entity_document(apps, schema):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0128_pontoon-intro_to_system_project'),
+        ("base", "0128_pontoon-intro_to_system_project"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='translation',
-            name='entity_document',
-        ),
+        migrations.RemoveField(model_name="translation", name="entity_document",),
         migrations.AddField(
-            model_name='translation',
-            name='active',
+            model_name="translation",
+            name="active",
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(
-            drop_entity_document,
-            migrations.RunPython.noop,
-        ),
+        migrations.RunPython(drop_entity_document, migrations.RunPython.noop,),
     ]

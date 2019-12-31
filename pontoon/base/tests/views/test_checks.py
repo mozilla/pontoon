@@ -13,8 +13,8 @@ def properties_resource(resource_a):
     """
     A resource to trigger Translate Toolkit and compare-locales checks at once.
     """
-    resource_a.format = 'properties'
-    resource_a.path = 'test1.properties'
+    resource_a.format = "properties"
+    resource_a.path = "test1.properties"
     resource_a.save()
 
     yield resource_a
@@ -26,13 +26,13 @@ def properties_entity(entity_a, properties_resource):
     An entity from properties_resource.
     """
     entity_a.translation_set.all().delete()
-    entity_a.string = 'something %s'
+    entity_a.string = "something %s"
     entity_a.save()
 
     yield entity_a
 
 
-@patch('pontoon.base.views.utils.is_same')
+@patch("pontoon.base.views.utils.is_same")
 @pytest.mark.django_db
 def test_run_checks_during_translation_update(
     is_same_mock,
@@ -52,16 +52,16 @@ def test_run_checks_during_translation_update(
         member.client,
         locale=locale_a.code,
         entity=properties_entity.pk,
-        translation='bad  suggestion',
+        translation="bad  suggestion",
         original=properties_entity.string,
-        ignore_warnings='false',
+        ignore_warnings="false",
     )
 
     assert response.status_code == 200
     assert response.json() == {
-        u'failedChecks': {
-            u'clWarnings': [u'trailing argument 1 `s` missing'],
-            u'ttWarnings': [u'Double spaces'],
+        u"failedChecks": {
+            u"clWarnings": [u"trailing argument 1 `s` missing"],
+            u"ttWarnings": [u"Double spaces"],
         },
     }
 
@@ -71,15 +71,15 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         original=properties_entity.string,
         locale=locale_a.code,
-        translation='bad suggestion \\q %q',
-        ignore_warnings='true',
+        translation="bad suggestion \\q %q",
+        ignore_warnings="true",
     )
 
     assert response.status_code == 200
     assert response.json() == {
-        u'failedChecks': {
-            u'clErrors': [u'Found single %'],
-            u'clWarnings': [u'unknown escape sequence, \\q'],
+        u"failedChecks": {
+            u"clErrors": [u"Found single %"],
+            u"clWarnings": [u"unknown escape sequence, \\q"],
         },
     }
 
@@ -89,34 +89,30 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         original=properties_entity.string,
         locale=locale_a.code,
-        translation='bad suggestion',
-        ignore_warnings='true',
+        translation="bad suggestion",
+        ignore_warnings="true",
     )
 
     assert response.status_code == 200
-    assert response.json()['type'] == 'saved'
+    assert response.json()["type"] == "saved"
 
-    translation_pk = response.json()['translation']['pk']
+    translation_pk = response.json()["translation"]["pk"]
     assert Translation.objects.get(pk=translation_pk).approved is False
 
-    warning, = Warning.objects.all()
+    (warning,) = Warning.objects.all()
 
     assert warning.translation_id == translation_pk
-    assert warning.library == 'cl'
-    assert warning.message == 'trailing argument 1 `s` missing'
+    assert warning.library == "cl"
+    assert warning.message == "trailing argument 1 `s` missing"
 
     # Update shouldn't duplicate warnings
-    (
-        Translation.objects
-        .filter(pk=translation_pk)
-        .update(approved=False, fuzzy=True)
-    )
+    (Translation.objects.filter(pk=translation_pk).update(approved=False, fuzzy=True))
 
     # Make sure user can_translate
     (
-        Translation.objects
-        .get(pk=translation_pk)
-        .locale.translators_group.user_set.add(member.user)
+        Translation.objects.get(
+            pk=translation_pk
+        ).locale.translators_group.user_set.add(member.user)
     )
 
     response = request_update_translation(
@@ -124,15 +120,15 @@ def test_run_checks_during_translation_update(
         entity=properties_entity.pk,
         original=properties_entity.string,
         locale=locale_a.code,
-        translation='bad suggestion',
-        ignore_warnings='true'
+        translation="bad suggestion",
+        ignore_warnings="true",
     )
 
     assert response.status_code == 200
-    assert response.json()['type'] == 'updated'
+    assert response.json()["type"] == "updated"
 
-    warning, = Warning.objects.all()
+    (warning,) = Warning.objects.all()
 
     assert warning.translation_id == translation_pk
-    assert warning.library == 'cl'
-    assert warning.message == 'trailing argument 1 `s` missing'
+    assert warning.library == "cl"
+    assert warning.message == "trailing argument 1 `s` missing"

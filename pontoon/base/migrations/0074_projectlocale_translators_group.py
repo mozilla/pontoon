@@ -9,14 +9,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0007_alter_validators_add_error_messages'),
-        ('base', '0073_add_project_locale_permission'),
+        ("auth", "0007_alter_validators_add_error_messages"),
+        ("base", "0073_add_project_locale_permission"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectlocale',
-            name='translators_group',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='translated_project_locales', to='auth.Group'),
+            model_name="projectlocale",
+            name="translators_group",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="translated_project_locales",
+                to="auth.Group",
+            ),
         ),
     ]

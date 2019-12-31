@@ -13,8 +13,8 @@ SYNC_USER = {
 
 
 def add_sync_user(apps, schema_editor):
-    User = apps.get_model('auth', 'User')
-    UserProfile = apps.get_model('base', 'UserProfile')
+    User = apps.get_model("auth", "User")
+    UserProfile = apps.get_model("base", "UserProfile")
 
     user = User(**SYNC_USER)
     user.save()
@@ -24,8 +24,8 @@ def add_sync_user(apps, schema_editor):
 
 
 def remove_sync_user(apps, schema_editor):
-    User = apps.get_model('auth', 'User')
-    UserProfile = apps.get_model('base', 'UserProfile')
+    User = apps.get_model("auth", "User")
+    UserProfile = apps.get_model("base", "UserProfile")
 
     user = User.objects.find(username=SYNC_USER["username"])
     user_profile = UserProfile.objects.find(user=user)
@@ -37,12 +37,9 @@ def remove_sync_user(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sync', '0003_auto_20151204_2343'),
+        ("sync", "0003_auto_20151204_2343"),
     ]
 
     operations = [
-        migrations.RunPython(
-            add_sync_user,
-            remove_sync_user,
-        ),
+        migrations.RunPython(add_sync_user, remove_sync_user,),
     ]

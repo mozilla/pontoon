@@ -8,13 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0106_remove_fuzzy_tm_entries'),
+        ("base", "0106_remove_fuzzy_tm_entries"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='data_source',
-            field=models.CharField(choices=[('repository', 'Repository'), ('database', 'Database')], default='repository', max_length=255),
+            model_name="project",
+            name="data_source",
+            field=models.CharField(
+                choices=[("repository", "Repository"), ("database", "Database")],
+                default="repository",
+                max_length=255,
+            ),
         ),
     ]

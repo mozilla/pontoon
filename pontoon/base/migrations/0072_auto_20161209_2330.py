@@ -8,12 +8,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0071_auto_20161123_2349'),
+        ("base", "0071_auto_20161123_2349"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='projectlocale',
-            options={'permissions': (('can_translate_project_locale', 'Can add translations'),)},
+            name="projectlocale",
+            options={
+                "permissions": (
+                    ("can_translate_project_locale", "Can add translations"),
+                )
+            },
         ),
     ]

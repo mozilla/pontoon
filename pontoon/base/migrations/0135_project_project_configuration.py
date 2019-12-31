@@ -8,13 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0134_google_translate_code'),
+        ("base", "0134_google_translate_code"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='configuration_file',
-            field=models.CharField(blank=True, help_text='\n        A path to the optional project configuration file, relative to the\n        source string repository.\n        ', max_length=2000, null=True),
+            model_name="project",
+            name="configuration_file",
+            field=models.CharField(
+                blank=True,
+                help_text="\n        A path to the optional project configuration file, relative to the\n        source string repository.\n        ",
+                max_length=2000,
+                null=True,
+            ),
         ),
     ]

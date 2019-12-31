@@ -30,30 +30,22 @@ SCHEMA = {
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "message": {
-                "type": "string"
-            },
-            "description": {
-                "type": "string"
-            },
+            "message": {"type": "string"},
+            "description": {"type": "string"},
             "placeholders": {
                 "type": "object",
                 "additionalProperties": {
                     "type": "object",
                     "properties": {
-                        "content": {
-                            "type": "string"
-                        },
-                        "example": {
-                            "type": "string"
-                        }
+                        "content": {"type": "string"},
+                        "example": {"type": "string"},
                     },
-                    "required": ["content"]
-                }
-            }
+                    "required": ["content"],
+                },
+            },
         },
-        "required": ["message"]
-    }
+        "required": ["message"],
+    },
 }
 
 
@@ -61,6 +53,7 @@ class JSONEntity(VCSTranslation):
     """
     Represents an entity in a JSON file.
     """
+
     def __init__(self, order, key, data):
         self.key = key
         self.data = data
@@ -69,15 +62,15 @@ class JSONEntity(VCSTranslation):
 
     @property
     def source_string(self):
-        return self.data['message']
+        return self.data["message"]
 
     @property
     def source_string_plural(self):
-        return ''
+        return ""
 
     @property
     def comments(self):
-        return [self.data['description']] if 'description' in self.data else []
+        return [self.data["description"]] if "description" in self.data else []
 
     @property
     def fuzzy(self):
@@ -89,7 +82,7 @@ class JSONEntity(VCSTranslation):
 
     @property
     def source(self):
-        return self.data.get('placeholders', [])
+        return self.data.get("placeholders", [])
 
 
 class JSONResource(ParsedResource):
@@ -102,20 +95,13 @@ class JSONResource(ParsedResource):
         if source_resource:
             for key, entity in source_resource.entities.items():
                 data = copy.copy(entity.data)
-                data['message'] = None
+                data["message"] = None
 
-                self.entities[key] = JSONEntity(
-                    entity.order,
-                    entity.key,
-                    data,
-                )
+                self.entities[key] = JSONEntity(entity.order, entity.key, data,)
 
         try:
-            with codecs.open(path, 'r', 'utf-8') as resource:
-                self.json_file = json.load(
-                    resource,
-                    object_pairs_hook=OrderedDict
-                )
+            with codecs.open(path, "r", "utf-8") as resource:
+                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
                 validate(self.json_file, SCHEMA)
 
         except (IOError, ValueError, ValidationError) as err:
@@ -128,11 +114,7 @@ class JSONResource(ParsedResource):
                 raise ParseError(err)
 
         for order, (key, data) in enumerate(self.json_file.items()):
-            self.entities[key] = JSONEntity(
-                order,
-                key,
-                data,
-            )
+            self.entities[key] = JSONEntity(order, key, data,)
 
     @property
     def translations(self):
@@ -146,11 +128,12 @@ class JSONResource(ParsedResource):
         """
         if not self.source_resource:
             raise SyncError(
-                'Cannot save JSON resource {0}: No source resource given.'
-                .format(self.path)
+                "Cannot save JSON resource {0}: No source resource given.".format(
+                    self.path
+                )
             )
 
-        with codecs.open(self.source_resource.path, 'r', 'utf-8') as resource:
+        with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
 
             try:
@@ -163,16 +146,20 @@ class JSONResource(ParsedResource):
             entity = self.entities[key]
 
             if entity.strings:
-                json_file[key]['message'] = entity.strings[None]
+                json_file[key]["message"] = entity.strings[None]
             else:
                 del json_file[key]
 
         create_parent_directory(self.path)
 
-        with codecs.open(self.path, 'w+', 'utf-8') as f:
-            log.debug('Saving file: %s', self.path)
-            f.write(json.dumps(json_file, ensure_ascii=False, indent=2, separators=(',', ': ')))
-            f.write('\n')  # Add newline
+        with codecs.open(self.path, "w+", "utf-8") as f:
+            log.debug("Saving file: %s", self.path)
+            f.write(
+                json.dumps(
+                    json_file, ensure_ascii=False, indent=2, separators=(",", ": ")
+                )
+            )
+            f.write("\n")  # Add newline
 
 
 def parse(path, source_path=None, locale=None):

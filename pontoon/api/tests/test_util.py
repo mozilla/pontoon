@@ -13,6 +13,7 @@ class MockResolveInfo:
     resolved, the query AST, fragments ASTs, the schema, the execution context and others.
     get_fields uses ResolveInfo to introspect the AST and return a flat list of requested fields.
     """
+
     def __init__(self, query, fragments=None):
         self.field_asts = query.selection_set.selections
         self.fragments = fragments
@@ -35,16 +36,10 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse_graphql_query(input)
+        (query,) = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
-        self.assertEqual(
-            get_fields(info),
-            [
-                'projects',
-                'projects.name',
-            ]
-        )
+        self.assertEqual(get_fields(info), ["projects", "projects.name"])
 
     def test_get_fields_many(self):
         input = """
@@ -56,16 +51,11 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse_graphql_query(input)
+        (query,) = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
-            get_fields(info),
-            [
-                'projects',
-                'projects.name',
-                'projects.slug',
-            ]
+            get_fields(info), ["projects", "projects.name", "projects.slug"]
         )
 
     def test_get_fields_fragment(self):
@@ -85,17 +75,17 @@ class TestUtil(unittest.TestCase):
         """
 
         query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {'stats': frag})
+        info = MockResolveInfo(query, {"stats": frag})
 
         self.assertEqual(
             get_fields(info),
             [
-                'projects',
-                'projects.name',
-                'projects.slug',
-                'projects.totalStrings',
-                'projects.missingStrings'
-            ]
+                "projects",
+                "projects.name",
+                "projects.slug",
+                "projects.totalStrings",
+                "projects.missingStrings",
+            ],
         )
 
     def test_get_fields_cyclic(self):
@@ -115,20 +105,20 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse_graphql_query(input)
+        (query,) = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
             get_fields(info),
             [
-                'projects',
-                'projects.name',
-                'projects.slug',
-                'projects.localizations',
-                'projects.localizations.locale',
-                'projects.localizations.locale.localizations',
-                'projects.localizations.locale.localizations.totalStrings',
-            ]
+                "projects",
+                "projects.name",
+                "projects.slug",
+                "projects.localizations",
+                "projects.localizations.locale",
+                "projects.localizations.locale.localizations",
+                "projects.localizations.locale.localizations.totalStrings",
+            ],
         )
 
     def test_get_fields_cyclic_with_fragment(self):
@@ -154,20 +144,20 @@ class TestUtil(unittest.TestCase):
         """
 
         query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {'stats': frag})
+        info = MockResolveInfo(query, {"stats": frag})
 
         self.assertEqual(
             get_fields(info),
             [
-                'projects',
-                'projects.name',
-                'projects.slug',
-                'projects.localizations',
-                'projects.localizations.locale',
-                'projects.localizations.locale.localizations',
-                'projects.localizations.locale.localizations.totalStrings',
-                'projects.localizations.locale.localizations.missingStrings',
-            ]
+                "projects",
+                "projects.name",
+                "projects.slug",
+                "projects.localizations",
+                "projects.localizations.locale",
+                "projects.localizations.locale.localizations",
+                "projects.localizations.locale.localizations.totalStrings",
+                "projects.localizations.locale.localizations.missingStrings",
+            ],
         )
 
     def test_get_fields_cyclic_in_fragment(self):
@@ -193,20 +183,20 @@ class TestUtil(unittest.TestCase):
         """
 
         query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {'localizations': frag})
+        info = MockResolveInfo(query, {"localizations": frag})
 
         self.assertEqual(
             get_fields(info),
             [
-                'projects',
-                'projects.name',
-                'projects.slug',
-                'projects.localizations',
-                'projects.localizations.locale',
-                'projects.localizations.locale.localizations',
-                'projects.localizations.locale.localizations.totalStrings',
-                'projects.localizations.locale.localizations.missingStrings',
-            ]
+                "projects",
+                "projects.name",
+                "projects.slug",
+                "projects.localizations",
+                "projects.localizations.locale",
+                "projects.localizations.locale.localizations",
+                "projects.localizations.locale.localizations.totalStrings",
+                "projects.localizations.locale.localizations.missingStrings",
+            ],
         )
 
     def test_get_fields_two_queries(self):
@@ -227,22 +217,10 @@ class TestUtil(unittest.TestCase):
         query1, query2 = parse_graphql_query(input)
 
         info1 = MockResolveInfo(query1)
-        self.assertEqual(
-            get_fields(info1),
-            [
-                'projects',
-                'projects.name',
-            ]
-        )
+        self.assertEqual(get_fields(info1), ["projects", "projects.name"])
 
         info2 = MockResolveInfo(query2)
-        self.assertEqual(
-            get_fields(info2),
-            [
-                'locales',
-                'locales.name',
-            ]
-        )
+        self.assertEqual(get_fields(info2), ["locales", "locales.name"])
 
     def test_get_fields_two_fields(self):
         input = """
@@ -256,15 +234,9 @@ class TestUtil(unittest.TestCase):
             }
         """
 
-        query, = parse_graphql_query(input)
+        (query,) = parse_graphql_query(input)
         info = MockResolveInfo(query)
 
         self.assertEqual(
-            get_fields(info),
-            [
-                'projects',
-                'projects.name',
-                'locales',
-                'locales.name',
-            ]
+            get_fields(info), ["projects", "projects.name", "locales", "locales.name"]
         )

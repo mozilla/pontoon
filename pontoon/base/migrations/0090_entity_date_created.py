@@ -9,13 +9,13 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0089_create_project_manager_group'),
+        ("base", "0089_create_project_manager_group"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entity',
-            name='date_created',
+            model_name="entity",
+            name="date_created",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

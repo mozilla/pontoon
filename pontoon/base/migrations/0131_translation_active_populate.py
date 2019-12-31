@@ -7,7 +7,7 @@ from django.db.models import Q
 
 
 def set_active_translations(apps, schema_editor):
-    Translation = apps.get_model('base', 'Translation')
+    Translation = apps.get_model("base", "Translation")
 
     # All approved and fuzzy translations are active.
     # Note that this wasn't the case for fuzzy translations until this patch:
@@ -22,20 +22,16 @@ def set_active_translations(apps, schema_editor):
     # However, this is a bug, and we're fixing it here.
     unreviewed_pks = set()
     candidates = Translation.objects.filter(
-        approved=False,
-        fuzzy=False,
-        rejected=False,
-    ).values_list('entity', 'locale', 'plural_form')
+        approved=False, fuzzy=False, rejected=False,
+    ).values_list("entity", "locale", "plural_form")
 
     for entity, locale, plural_form in candidates:
         siblings = (
             Translation.objects.filter(
-                entity=entity,
-                locale=locale,
-                plural_form=plural_form,
+                entity=entity, locale=locale, plural_form=plural_form,
             )
             .exclude(rejected=True)
-            .order_by('-active', '-date')
+            .order_by("-active", "-date")
         )
         if siblings and not siblings[0].active:
             unreviewed_pks.add(siblings[0].pk)
@@ -44,19 +40,16 @@ def set_active_translations(apps, schema_editor):
 
 
 def drop_active_translations(apps, schema_editor):
-    Translation = apps.get_model('base', 'Translation')
+    Translation = apps.get_model("base", "Translation")
     Translation.objects.filter(active=True).update(active=False)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0130_translation_active_unique_constraint'),
+        ("base", "0130_translation_active_unique_constraint"),
     ]
 
     operations = [
-        migrations.RunPython(
-            set_active_translations,
-            drop_active_translations,
-        ),
+        migrations.RunPython(set_active_translations, drop_active_translations,),
     ]

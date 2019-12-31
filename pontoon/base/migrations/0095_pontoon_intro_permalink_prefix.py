@@ -6,18 +6,18 @@ from django.db import migrations
 
 
 def load_initial_data(apps, schema_editor):
-    Project = apps.get_model('base', 'Project')
+    Project = apps.get_model("base", "Project")
     repository = Project.objects.get(slug="pontoon-intro").repositories.first()
 
     if not repository.permalink_prefix:
-        repository.permalink_prefix = 'https://raw.githubusercontent.com/mozilla/pontoon-intro/master/static/locales/{locale_code}'
+        repository.permalink_prefix = "https://raw.githubusercontent.com/mozilla/pontoon-intro/master/static/locales/{locale_code}"
         repository.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0094_improve_calculate_stats_performance'),
+        ("base", "0094_improve_calculate_stats_performance"),
     ]
 
     operations = [

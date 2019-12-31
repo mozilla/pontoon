@@ -7,10 +7,11 @@ from django.db import migrations
 # The previous version of this migration has been removed to avoid failures in the future.
 # More info: https://github.com/mozilla/pontoon/pull/1119
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0119_plural_rule_max_length_1639'),
+        ("base", "0119_plural_rule_max_length_1639"),
     ]
 
     operations = []

@@ -7,12 +7,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0021_auto_20150904_1007'),
+        ("base", "0021_auto_20150904_1007"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='locale',
-            name='nplurals',
-        ),
+        migrations.RemoveField(model_name="locale", name="nplurals",),
     ]

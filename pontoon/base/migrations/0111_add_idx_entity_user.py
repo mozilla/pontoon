@@ -10,12 +10,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0110_permissionchangelog'),
+        ("base", "0110_permissionchangelog"),
     ]
 
     operations = [
         migrations.AlterIndexTogether(
-            name='translation',
-            index_together=set([('entity', 'locale', 'approved'), ('entity', 'user'), ('entity', 'locale', 'fuzzy')]),
+            name="translation",
+            index_together=set(
+                [
+                    ("entity", "locale", "approved"),
+                    ("entity", "user"),
+                    ("entity", "locale", "fuzzy"),
+                ]
+            ),
         ),
     ]

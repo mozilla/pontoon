@@ -15,8 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = (
-        """
+    help = """
         Re-calculate statistics for all translated resources and corresponding
         objects.
 
@@ -30,31 +29,25 @@ class Command(BaseCommand):
 
         See bug 1470337 for more details.
         """
-    )
 
     def handle(self, *args, **options):
         # Start with enabled projects in ascending order of resource count
-        projects = (
-            Project.objects
-            .annotate(resource_count=Count('resources'))
-            .order_by('disabled', 'resource_count')
+        projects = Project.objects.annotate(resource_count=Count("resources")).order_by(
+            "disabled", "resource_count"
         )
 
         for index, project in enumerate(projects):
             log.info(
-                u'Calculating stats for project "{project}" ({index}/{total})'
-                .format(
-                    index=index + 1,
-                    total=len(projects),
-                    project=project.name,
+                u'Calculating stats for project "{project}" ({index}/{total})'.format(
+                    index=index + 1, total=len(projects), project=project.name,
                 )
             )
 
-            translated_resources = (
-                TranslatedResource.objects.filter(resource__project=project)
+            translated_resources = TranslatedResource.objects.filter(
+                resource__project=project
             )
 
             for translated_resource in translated_resources:
                 translated_resource.calculate_stats()
 
-        log.info('Calculating stats complete for all projects.')
+        log.info("Calculating stats complete for all projects.")

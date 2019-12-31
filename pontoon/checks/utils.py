@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 
-from pontoon.checks import (
-    DB_LIBRARIES,
-)
+from pontoon.checks import DB_LIBRARIES
 
 
 def bulk_run_checks(translations):
@@ -27,20 +25,15 @@ def bulk_run_checks(translations):
                 translation.locale.code,
                 translation.entity.string,
                 translation.string,
-                use_tt_checks=False
-            )
-
+                use_tt_checks=False,
+            ),
         )
         warnings.extend(warnings_)
         errors.extend(errors_)
 
     # Remove old warnings and errors
-    Warning.objects.filter(
-        translation__pk__in=[t.pk for t in translations]
-    ).delete()
-    Error.objects.filter(
-        translation__pk__in=[t.pk for t in translations]
-    ).delete()
+    Warning.objects.filter(translation__pk__in=[t.pk for t in translations]).delete()
+    Error.objects.filter(translation__pk__in=[t.pk for t in translations]).delete()
 
     # Insert new warnings and errors
     Warning.objects.bulk_create(warnings)
@@ -61,26 +54,21 @@ def get_failed_checks_db_objects(translation, failed_checks):
     errors = []
 
     for check_group, messages in failed_checks.items():
-        library = (
-            check_group
-            .replace('Warnings', '')
-            .replace('Errors', '')
-        )
+        library = check_group.replace("Warnings", "").replace("Errors", "")
         if library not in DB_LIBRARIES:
             continue
 
-        if check_group.endswith('Errors'):
+        if check_group.endswith("Errors"):
             severity_cls, messages_list = Error, errors
         else:
             severity_cls, messages_list = Warning, warnings
 
-        messages_list.extend([
-            severity_cls(
-                library=library,
-                message=message,
-                translation=translation,
-            ) for message in messages
-        ])
+        messages_list.extend(
+            [
+                severity_cls(library=library, message=message, translation=translation,)
+                for message in messages
+            ]
+        )
 
     return warnings, errors
 
@@ -107,6 +95,6 @@ def are_blocking_checks(checks, ignore_warnings):
     :arg dict checks: dictionary with a list of errors/warnings per library
     :arg bool ignore_warnings: ignores failed checks of type warning
     """
-    has_errors = any(p.endswith('Errors') for p in checks)
+    has_errors = any(p.endswith("Errors") for p in checks)
 
     return (not ignore_warnings and checks) or has_errors

@@ -14,15 +14,23 @@ from django.db import migrations
 
 
 def create_locale_permissions(apps, schema_editor):
-    Permission = apps.get_model('auth', 'Permission')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+    Permission = apps.get_model("auth", "Permission")
+    ContentType = apps.get_model("contenttypes", "ContentType")
 
-    locale_content_type, _ = ContentType.objects.get_or_create(app_label='base', model='locale')
+    locale_content_type, _ = ContentType.objects.get_or_create(
+        app_label="base", model="locale"
+    )
 
-    Permission.objects.get_or_create(codename='can_translate_locale', content_type=locale_content_type,
-        name="Can add translations")
-    Permission.objects.get_or_create(codename='can_manage_locale', content_type=locale_content_type,
-        name="Can manage locale")
+    Permission.objects.get_or_create(
+        codename="can_translate_locale",
+        content_type=locale_content_type,
+        name="Can add translations",
+    )
+    Permission.objects.get_or_create(
+        codename="can_manage_locale",
+        content_type=locale_content_type,
+        name="Can manage locale",
+    )
 
 
 def noop(apps, schema_editor):
@@ -32,10 +40,8 @@ def noop(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0040_auto_20151017_0005'),
-        ('auth', '0006_require_contenttypes_0002'),
+        ("base", "0040_auto_20151017_0005"),
+        ("auth", "0006_require_contenttypes_0002"),
     ]
 
-    operations = [
-        migrations.RunPython(create_locale_permissions, noop)
-    ]
+    operations = [migrations.RunPython(create_locale_permissions, noop)]

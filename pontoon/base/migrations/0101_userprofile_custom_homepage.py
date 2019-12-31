@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0100_bug_1390805_create_missing_tm_entries'),
+        ("base", "0100_bug_1390805_create_missing_tm_entries"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='custom_homepage',
+            model_name="userprofile",
+            name="custom_homepage",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
         migrations.RunSQL(
@@ -34,5 +34,5 @@ class Migration(migrations.Migration):
             WHERE cte.rn=1 and cte.contributions_count > 0 and bu.user_id=cte.id;
             """,
             migrations.RunSQL.noop,
-        )
+        ),
     ]

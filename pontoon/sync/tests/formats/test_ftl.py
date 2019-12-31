@@ -35,21 +35,16 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         contents = "text = Arise, awake and do not stop until the goal is reached."
 
         source_path = create_named_tempfile(
-            contents,
-            prefix='strings',
-            suffix='.ftl',
-            directory=self.tempdir,
+            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
         )
-        source_resource = ftl.FTLResource(path=source_path, locale=None, source_resource=None)
+        source_resource = ftl.FTLResource(
+            path=source_path, locale=None, source_resource=None
+        )
 
-        return ftl.FTLResource(
-            path,
-            locale=None,
-            source_resource=source_resource,
-        )
+        return ftl.FTLResource(path, locale=None, source_resource=source_resource,)
 
     def get_nonexistant_file_path(self):
-        return os.path.join(self.tempdir, 'strings.ftl')
+        return os.path.join(self.tempdir, "strings.ftl")
 
     def test_init_missing_resource(self):
         """
@@ -80,9 +75,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        translated_resource.translations[0].strings = {
-            None: 'New Translated String'
-        }
+        translated_resource.translations[0].strings = {None: "New Translated String"}
 
         assert_false(os.path.exists(path))
         translated_resource.save(LocaleFactory.create())
@@ -91,10 +84,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
     def test_parse_with_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
         source_path = create_named_tempfile(
-            contents,
-            prefix='strings',
-            suffix='.ftl',
-            directory=self.tempdir,
+            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
         )
         path = self.get_nonexistant_file_path()
         obj = ftl.parse(path, source_path=source_path, locale=None)
@@ -106,10 +96,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
     def test_parse_with_no_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
         path = create_named_tempfile(
-            contents,
-            prefix='strings',
-            suffix='.ftl',
-            directory=self.tempdir,
+            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
         )
         obj = ftl.parse(path, source_path=None, locale=None)
         assert_equal(obj.path, path)
@@ -145,7 +132,7 @@ class FTLTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """FTL keys can't contain spaces."""
-        return super(FTLTests, self).key(source_string).replace(' ', '')
+        return super(FTLTests, self).key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         input_string = BASE_FTL_FILE
@@ -154,9 +141,9 @@ class FTLTests(FormatTestsMixin, TestCase):
 
         assert_attributes_equal(
             resource.translations[translation_index],
-            comments=['Sample comment'],
-            key=self.key('Source String'),
-            strings={None: 'SourceString = Translated String\n'},
+            comments=["Sample comment"],
+            key=self.key("Source String"),
+            strings={None: "SourceString = Translated String\n"},
             fuzzy=False,
             order=translation_index,
         )
@@ -168,10 +155,10 @@ class FTLTests(FormatTestsMixin, TestCase):
 
         assert_attributes_equal(
             resource.translations[translation_index],
-            comments=['First comment\nSecond comment'],
+            comments=["First comment\nSecond comment"],
             source=[],
-            key=self.key('Multiple Comments'),
-            strings={None: 'MultipleComments = Translated Multiple Comments\n'},
+            key=self.key("Multiple Comments"),
+            strings={None: "MultipleComments = Translated Multiple Comments\n"},
             fuzzy=False,
             order=translation_index,
         )
@@ -185,8 +172,8 @@ class FTLTests(FormatTestsMixin, TestCase):
             resource.translations[translation_index],
             comments=[],
             source=[],
-            key=self.key('No Comments Or Sources'),
-            strings={None: 'NoCommentsOrSources = Translated No Comments or Sources\n'},
+            key=self.key("No Comments Or Sources"),
+            strings={None: "NoCommentsOrSources = Translated No Comments or Sources\n"},
             fuzzy=False,
             order=translation_index,
         )
@@ -217,49 +204,69 @@ class FTLTests(FormatTestsMixin, TestCase):
         If an entity is missing from the source resource, remove it from
         the translated resource.
         """
-        source_string = dedent("""
+        source_string = dedent(
+            """
             SourceString = Source String
-        """)
-        input_string = dedent("""
+        """
+        )
+        input_string = dedent(
+            """
             MissingSourceString = Translated Missing String
             SourceString = Translated String
-        """)
-        expected_string = dedent("""
+        """
+        )
+        expected_string = dedent(
+            """
             SourceString = Translated String
-        """)
+        """
+        )
 
-        self.run_save_no_changes(input_string, expected_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, expected_string, source_string=source_string
+        )
 
     def test_save_source_no_translation(self):
         """
         If an entity is missing from the translated resource and has no
         translation, do not add it back in.
         """
-        source_string = dedent("""
+        source_string = dedent(
+            """
             SourceString = Source String
             OtherSourceString = Other String
-        """)
-        input_string = dedent("""
+        """
+        )
+        input_string = dedent(
+            """
             OtherSourceString = Translated Other String
-        """)
+        """
+        )
 
-        self.run_save_no_changes(input_string, input_string, source_string=source_string)
+        self.run_save_no_changes(
+            input_string, input_string, source_string=source_string
+        )
 
     def test_save_translation_missing(self):
-        source_string = dedent("""
+        source_string = dedent(
+            """
             String = Source String
             MissingString = Missing Source String
-        """)
-        input_string = dedent("""
+        """
+        )
+        input_string = dedent(
+            """
             String = Translated String
-        """)
+        """
+        )
         expected_translation = "MissingString = New Translated String"
-        expected_string = dedent("""
+        expected_string = dedent(
+            """
             String = Translated String
             {expected_translation}
         """.format(
-            expected_translation=expected_translation
-        ))
+                expected_translation=expected_translation
+            )
+        )
 
         self.run_save_translation_missing(
             source_string,
