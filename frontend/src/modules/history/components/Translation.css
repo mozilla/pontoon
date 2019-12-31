@@ -1,5 +1,8 @@
-.history .translation {
+.history .divider {
     border-bottom: 1px solid #5E6475;
+}
+
+.history .translation {
     cursor: pointer;
     padding: 15px 10px;
     transition: all 0.1s ease-out;

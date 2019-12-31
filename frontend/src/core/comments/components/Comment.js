@@ -19,17 +19,17 @@ export default function Comment(props: Props) {
     const { comment } = props;
 
     if (!comment) {
-            return null;
+        return null;
     }
 
-    return <li className='comment'>
+    return <li className='history-comment'>
         <UserAvatar
             user={ comment.author }
             username={ comment.username }
             title=''
             imageUrl={ comment.userGravatarUrlSmall }
         />
-        < div className='container'>
+        <div className='container'>
             <div className='content'>
                 <a
                     href={ `/contributors/${comment.username}` }
