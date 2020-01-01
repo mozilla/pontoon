@@ -81,6 +81,13 @@ resourceprogress-ResourceProgress--errors = Errors
 resourceprogress-ResourceProgress--missing = Missing
 
 
+## Comments
+## Allows user to leave comments on translations
+
+comments-Comments--delete-button = Delete
+comments-Comments--share-button = Share
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 

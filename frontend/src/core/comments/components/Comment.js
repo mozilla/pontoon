@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import ReactTimeAgo from 'react-time-ago';
+import { Localized } from '@fluent/react';
 
 import './Comment.css';
 
@@ -14,6 +15,13 @@ type Props = {|
     comment: TranslationComment,
 |};
 
+const deleteComment = () => {
+    console.log('Delete')
+}
+
+const shareComment = () => {
+    console.log('Share')
+}
 
 export default function Comment(props: Props) {
     const { comment } = props;
@@ -50,9 +58,29 @@ export default function Comment(props: Props) {
                     title={ `${comment.createdAt} UTC` }
                 />
                 { '\u2022' }
-                <button>DELETE</button>
+                <Localized
+                id='comments-Comment--delete-button'
+                attrs={{ title: true }}
+                >
+                    <button
+                        title='Delete'
+                        onClick={ deleteComment }
+                    >
+                        DELETE
+                    </button>
+                </Localized>
                 { '\u2022' }
-                <button>SHARE</button>
+                <Localized
+                id='comments-Comment--share-button'
+                attrs={{ title: true }}
+                >
+                    <button
+                        title='Share'
+                        onClick={ shareComment }
+                    >
+                        SHARE
+                    </button>
+                </Localized>
             </div>
         </div>
     </li>
