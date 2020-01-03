@@ -15,6 +15,7 @@ type Props = {|
     comment: TranslationComment,
 |};
 
+
 const deleteComment = () => {
     console.log('Delete')
 }
@@ -30,7 +31,7 @@ export default function Comment(props: Props) {
         return null;
     }
 
-    return <li className='history-comment'>
+    return <li className='comment'>
         <UserAvatar
             user={ comment.author }
             username={ comment.username }

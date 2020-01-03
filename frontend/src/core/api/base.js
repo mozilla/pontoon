@@ -104,17 +104,17 @@ export default class APIBase {
         if (this.isObject(results)) {
             const newObj: any = {};
 
-          Object.keys(results)
-            .forEach((key) => {
-                newObj[this.toCamelCase(key)] = this.keysToCamelCase(results[key]);
-            });
+            Object.keys(results)
+                .forEach((key) => {
+                    newObj[this.toCamelCase(key)] = this.keysToCamelCase(results[key]);
+                });
 
-          return newObj;
+            return newObj;
         }
         else if (Array.isArray(results)) {
             return results.map((i) => {
                 return this.keysToCamelCase(i);
-          });
+            });
         }
 
         return results;

@@ -19,7 +19,7 @@ export default function CommentsList(props: Props) {
         return null;
     }
 
-    return <div>
+    return <div className='comment-list'>
         <ul>
             { comments.map(comment =>
                 <Comment

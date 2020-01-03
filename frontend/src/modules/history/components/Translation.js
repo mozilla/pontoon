@@ -395,9 +395,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     </div>
                 </div>
             </Localized>
-                <div>
-                    <CommentsList comments={ translation.comments } />
-                </div>
+            <CommentsList comments={ translation.comments } />
         </li>;
     }
 }

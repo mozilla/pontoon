@@ -15,7 +15,7 @@ export default function UserAvatar(props: Props) {
 
     if (!user) {
         return <div className='user-avatar'>
-            <Localized id='user-UserAvatar--anon-alt-text' attrs={{ title: true }} >
+            <Localized id='user-UserAvatar--anon-alt-text' attrs={{ alt: true }} >
                 <img
                     src='/static/img/anon.jpg'
                     alt='Anonymous User'
