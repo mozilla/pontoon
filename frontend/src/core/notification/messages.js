@@ -123,4 +123,10 @@ export default {
         </Localized>,
         type: 'info',
     },
+    'COMMENT_DELETED': {
+        content: <Localized id='notification--comment-deleted'>
+            Comment deleted
+        </Localized>,
+        type: 'info',
+    },
 };

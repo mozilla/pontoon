@@ -7,28 +7,37 @@ import { Localized } from '@fluent/react';
 import './Comment.css';
 
 import type { TranslationComment } from 'core/api';
+import type { UserState } from 'core/user';
 
 import { UserAvatar } from 'core/user'
 
 
 type Props = {|
     comment: TranslationComment,
+    user: UserState,
+    canReview: boolean,
+    deleteComment: (number) => void,
 |};
 
 
-const deleteComment = () => {
-    console.log('Delete')
-}
-
-const shareComment = () => {
-    console.log('Share')
-}
-
 export default function Comment(props: Props) {
-    const { comment } = props;
+    const { comment, canReview, user } = props;
 
     if (!comment) {
         return null;
+    }
+
+    // Does the currently logged in user own this Comment?
+    const ownComment = (
+        user && user.username &&
+        user.username === comment.username
+    );
+
+    let canDelete = (canReview || ownComment);
+
+    const _delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        props.deleteComment(props.comment.id);
     }
 
     return <li className='comment'>
@@ -58,30 +67,19 @@ export default function Comment(props: Props) {
                     date={ new Date(comment.dateIso) }
                     title={ `${comment.createdAt} UTC` }
                 />
-                { '\u2022' }
-                <Localized
-                id='comments-Comment--delete-button'
-                attrs={{ title: true }}
-                >
-                    <button
-                        title='Delete'
-                        onClick={ deleteComment }
+                { !canDelete ? null :
+                    <Localized
+                        id='comments-Comment--delete-button'
+                        attrs={{ title: true }}
                     >
-                        DELETE
-                    </button>
-                </Localized>
-                { '\u2022' }
-                <Localized
-                id='comments-Comment--share-button'
-                attrs={{ title: true }}
-                >
-                    <button
-                        title='Share'
-                        onClick={ shareComment }
-                    >
-                        SHARE
-                    </button>
-                </Localized>
+                        <button
+                            title='Delete'
+                            onClick={ _delete }
+                        >
+                            Delete
+                        </button>
+                    </Localized>
+                }
             </div>
         </div>
     </li>

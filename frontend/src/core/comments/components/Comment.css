@@ -53,14 +53,16 @@
     padding: 0 10px;
 }
 
-.comment-list .comment .info time {
-    padding-right: 4px;
-}
-
 .comment-list .comment button {
     background: none;
     border: none;
     color: #AAAAAA;
     font-size: 1em;
-    padding: 0 4px;
+    padding: 0;
+    text-transform: uppercase;
+}
+
+.comment-list .comment button:before {
+    content: "•";
+    padding: 0 3px;
 }

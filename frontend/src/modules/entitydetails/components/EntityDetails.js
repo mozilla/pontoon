@@ -248,6 +248,16 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    deleteComment = (commentId: number) => {
+        const { parameters, pluralForm, dispatch } = this.props;
+        dispatch(history.actions.deleteComment(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+            commentId,
+        ));
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -315,6 +325,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     locale={ state.locale }
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
+                    deleteComment={ this.deleteComment }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                 />

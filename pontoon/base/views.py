@@ -39,6 +39,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     TranslatedResource,
     Translation,
+    Comment,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -481,6 +482,28 @@ def delete_translation(request):
     translation.delete()
 
     log_action("translation:deleted", request.user, entity=entity, locale=locale)
+
+    return JsonResponse({"status": True})
+
+
+@utils.require_AJAX
+@login_required(redirect_field_name="", login_url="/403")
+@transaction.atomic
+def delete_comment(request):
+    """Delete given comment."""
+    try:
+        c = request.POST["comment"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    comment = get_object_or_404(Comment, pk=c)
+
+    comment.delete()
+
+    # log_action("comment:deleted", request.user)
 
     return JsonResponse({"status": True})
 
