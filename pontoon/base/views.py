@@ -503,7 +503,7 @@ def delete_comment(request):
 
     comment.delete()
 
-    # log_action("comment:deleted", request.user)
+    log_action("comment:deleted", request.user)
 
     return JsonResponse({"status": True})
 

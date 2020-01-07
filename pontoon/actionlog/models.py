@@ -18,6 +18,8 @@ class ActionLog(models.Model):
         ("translation:rejected", "Translation rejected"),
         # A translation has been unrejected.
         ("translation:unrejected", "Translation unrejected"),
+        # A comment has been deleted.
+        ("comment:deleted", "Comment deleted"),
     )
 
     action_type = models.CharField(max_length=50, choices=ACTIONS_TYPES)
@@ -54,7 +56,7 @@ class ActionLog(models.Model):
 
         if self.action_type != "translation:deleted" and (
             not self.translation or self.entity or self.locale
-        ):
+        ) and self.action_type != "comment:deleted":
             raise ValidationError(
                 'Only `translation` is accepted for action type "{}"'.format(
                     self.action_type
