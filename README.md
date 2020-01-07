@@ -11,12 +11,16 @@ uses version-control systems for storing translations.
 ## Installing Pontoon
 
 If you are looking to host your own instance of Pontoon, there are several ways to do so.
-The simplest one is to use the **Heroku platform**, and simply click this button:
+To deploy Pontoon to Heroku without leaving your web browser, click the **Deploy to
+Heroku** button below.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-If you want to deploy to a **different platform**, please read our
+Alternatively, you can deploy to Heroku manually by following our
 [Deployment Documentation](http://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
+
+We don't have documentation for deploying to other platforms yet, so we recommend that
+you read the previously linked documentation and adapt it for your needs.
 
 If you only want to deploy a **local instance of Pontoon**, for development or
 testing for example, see our
