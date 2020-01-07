@@ -12,7 +12,7 @@ review.
 --------------------
 
 *Before contributing to an open source project, it is important to make
-sure that you have the right skill set to make impactful contributions.*
+sure that the project uses technologies that you know and want to learn.*
 
 Pontoon is a web application, with both back-end and front-end code. The
 two languages we use are **Python** (back-end) and **JavaScript**
