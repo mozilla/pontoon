@@ -26,8 +26,16 @@ describe('<Comment>', () => {
     }
 
     it('returns a string', () => {
-        const wrapper = shallow(<p>{ DEFAULT_COMMENT.content }</p>);
-        expect(wrapper.text()).toEqual(
+        const deleteMock = sinon.stub()
+        const wrapper = shallow(<Comment
+            comment={ DEFAULT_COMMENT }
+            key={ DEFAULT_COMMENT.id }
+            user={ DEFAULT_USER }
+            canReview={ DEFAULT_CANREVIEW }
+            deleteComment={ deleteMock }
+        />);
+
+        expect(wrapper.find('p').text()).toEqual(
             "What I hear when I'm being yelled at is people caring loudly at me."
         );
     });
