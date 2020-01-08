@@ -21,8 +21,8 @@ describe('<Comment>', () => {
         username: 'Leslie_Knope',
     };
 
-    const DEFAULT_CANREVIEW = {
-        canReview: true,
+    const DEFAULT_ISTRANSLATOR = {
+        isTranslator: true,
     }
 
     it('returns a string', () => {
@@ -31,7 +31,7 @@ describe('<Comment>', () => {
             comment={ DEFAULT_COMMENT }
             key={ DEFAULT_COMMENT.id }
             user={ DEFAULT_USER }
-            canReview={ DEFAULT_CANREVIEW }
+            isTranslator={ DEFAULT_ISTRANSLATOR }
             deleteComment={ deleteMock }
         />);
 
@@ -50,7 +50,7 @@ describe('<Comment>', () => {
             comment={ comments }
             key={ comments.id }
             user={ DEFAULT_USER }
-            canReview={ DEFAULT_CANREVIEW }
+            isTranslator={ DEFAULT_ISTRANSLATOR }
             deleteComment={ deleteMock }
         />);
 
@@ -66,7 +66,7 @@ describe('<Comment>', () => {
             comment={ DEFAULT_COMMENT }
             key={ DEFAULT_COMMENT.id }
             user={ DEFAULT_USER }
-            canReview={ DEFAULT_CANREVIEW }
+            isTranslator={ DEFAULT_ISTRANSLATOR }
             deleteComment={ deleteMock }
         />);
 

@@ -12,7 +12,7 @@ import { Comment, AddComment } from 'core/comments';
 type Props = {|
     comments: Array<TranslationComment>,
     user: UserState,
-    canReview: boolean,
+    isTranslator: boolean,
     translation: HistoryTranslation,
     deleteComment: (number) => void,
 |};
@@ -22,7 +22,7 @@ export default function CommentsList(props: Props) {
     const {
         comments,
         user,
-        canReview,
+        isTranslator,
         translation,
         deleteComment,
     } = props;
@@ -31,14 +31,14 @@ export default function CommentsList(props: Props) {
         return null;
     }
 
-    return <div className='comment-list'>
+    return <div className='comments-list'>
         <ul>
             { comments.map(comment =>
                 <Comment
                     comment={ comment }
                     key={ comment.id }
                     user={ user }
-                    canReview={ canReview }
+                    isTranslator={ isTranslator }
                     deleteComment={ deleteComment }
                 />
             )}

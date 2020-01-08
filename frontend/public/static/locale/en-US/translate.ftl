@@ -84,8 +84,7 @@ resourceprogress-ResourceProgress--missing = Missing
 ## Comments
 ## Allows user to leave comments on translations
 
-comments-Comments--delete-button = Delete
-comments-Comments--share-button = Share
+comments-Comment--delete-button = Delete
 
 
 ## Editor Menu

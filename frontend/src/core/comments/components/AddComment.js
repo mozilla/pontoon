@@ -58,37 +58,25 @@ export default function AddComments(props: Props) {
                 </Localized>
             </div>
             <div className='options'>
-                <Localized
-                    id='comments-AddComment--comment-button'
-                    attrs={{ title: true }}
-                >
+                <Localized id='comments-AddComment--comment-button'>
                     <button
                         className='comment-btn'
-                        title='Comment'
                         onClick={ (e) => submit_comment(e) }
                     >
                         Comment
                     </button>
                 </Localized>
-                <Localized
-                    id='comments-AddComment--reject-button'
-                    attrs={{ title: true }}
-                >
+                <Localized id='comments-AddComment--reject-button'>
                     <button
                         className='btn'
-                        title='Reject'
                         onClick={ (e) => reject_with_comment(e) }
                     >
                         Reject & Comment
                     </button>
                 </Localized>
-                <Localized
-                    id='comments-AddComment--approve-button'
-                    attrs={{ title: true }}
-                >
+                <Localized id='comments-AddComment--approve-button'>
                     <button
                         className='btn'
-                        title='Approve'
                         onClick={ (e) => approve_with_comment(e) }
                     >
                         Approve & Comment

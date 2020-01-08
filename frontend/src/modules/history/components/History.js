@@ -71,7 +71,7 @@ export default class History extends React.Component<Props> {
                         activeTranslation={ history.translations[0] }
                         entity={ entity }
                         isReadOnlyEditor={ isReadOnlyEditor }
-                        canReview={ isTranslator }
+                        isTranslator={ isTranslator }
                         locale={ locale }
                         user={ user }
                         deleteTranslation={ deleteTranslation }

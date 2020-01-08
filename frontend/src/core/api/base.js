@@ -118,5 +118,5 @@ export default class APIBase {
         }
 
         return results;
-      }
+    }
 }

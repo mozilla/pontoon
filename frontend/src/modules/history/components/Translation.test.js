@@ -237,7 +237,7 @@ describe('<TranslationBase>', () => {
                 translation={ DEFAULT_TRANSLATION }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
-                canReview={ true }
+                isTranslator={ true }
             />);
 
             expect(wrapper.find('.can-reject')).toHaveLength(1);
@@ -250,7 +250,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
-                canReview={ true }
+                isTranslator={ true }
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(1);
@@ -262,7 +262,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
-                canReview={ true }
+                isTranslator={ true }
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(0);

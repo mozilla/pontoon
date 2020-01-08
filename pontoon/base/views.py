@@ -500,10 +500,11 @@ def delete_comment(request):
         )
 
     comment = get_object_or_404(Comment, pk=c)
+    translation = comment.translation
 
     comment.delete()
 
-    log_action("comment:deleted", request.user)
+    log_action("comment:deleted", request.user, translation=translation)
 
     return JsonResponse({"status": True})
 

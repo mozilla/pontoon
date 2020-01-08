@@ -15,13 +15,13 @@ import { UserAvatar } from 'core/user'
 type Props = {|
     comment: TranslationComment,
     user: UserState,
-    canReview: boolean,
+    isTranslator: boolean,
     deleteComment: (number) => void,
 |};
 
 
 export default function Comment(props: Props) {
-    const { comment, canReview, user } = props;
+    const { comment, user, isTranslator } = props;
 
     if (!comment) {
         return null;
@@ -33,7 +33,7 @@ export default function Comment(props: Props) {
         user.username === comment.username
     );
 
-    let canDelete = (canReview || ownComment);
+    let canDelete = (isTranslator || ownComment);
 
     const _delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -68,13 +68,9 @@ export default function Comment(props: Props) {
                     title={ `${comment.createdAt} UTC` }
                 />
                 { !canDelete ? null :
-                    <Localized
-                        id='comments-Comment--delete-button'
-                        attrs={{ title: true }}
-                    >
+                    <Localized id='comments-Comment--delete-button'>
                         <button
                             className='btn'
-                            title='Delete'
                             onClick={ _delete }
                         >
                             Delete

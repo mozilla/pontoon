@@ -232,7 +232,7 @@ export function deleteComment(
     return async dispatch => {
         NProgress.start();
 
-        await api.translation.deleteComment(comment);
+        await api.comment.delete(comment);
 
         dispatch(notification.actions.add(notification.messages.COMMENT_DELETED));
         dispatch(get(entity, locale, pluralForm));

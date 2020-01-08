@@ -21,7 +21,7 @@ import type { HistoryTranslation } from '../reducer';
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
-    canReview: boolean,
+    isTranslator: boolean,
     translation: HistoryTranslation,
     activeTranslation: HistoryTranslation,
     locale: Locale,
@@ -193,7 +193,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
     render() {
         const {
-            canReview,
+            isTranslator,
             entity,
             isReadOnlyEditor,
             translation,
@@ -216,7 +216,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             className += ' cannot-copy';
         }
 
-        if (canReview && !isReadOnlyEditor) {
+        if (isTranslator && !isReadOnlyEditor) {
             // This user is a translator for the current locale, they can
             // perform all review actions.
             className += ' can-approve can-reject';
@@ -227,8 +227,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             className += ' can-reject';
         }
 
-        let canDelete = (canReview || ownTranslation) && !isReadOnlyEditor;
-        let canReject = (canReview || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
+        let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
+        let canReject = (isTranslator || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
 
         return <li className='divider'>
             <Localized id='history-Translation--copy' attrs={{ title: true }}>
@@ -273,7 +273,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             }
                             { translation.approved ?
                                 // Unapprove Button
-                                ( canReview && !isReadOnlyEditor ) ?
+                                ( isTranslator && !isReadOnlyEditor ) ?
                                     <Localized
                                         id='history-Translation--button-unapprove'
                                         attrs={{ title: true }}
@@ -300,7 +300,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                                 :
                                 // Approve Button
-                                ( canReview && !isReadOnlyEditor ) ?
+                                ( isTranslator && !isReadOnlyEditor ) ?
                                     <Localized
                                         id='history-Translation--button-approve'
                                         attrs={{ title: true }}
@@ -400,7 +400,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             <CommentsList
                 comments={ translation.comments }
                 user={ user }
-                canReview={ canReview }
+                isTranslator={ isTranslator }
                 translation={ translation }
                 deleteComment={ deleteComment }
             />
