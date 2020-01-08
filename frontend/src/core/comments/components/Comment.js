@@ -73,6 +73,7 @@ export default function Comment(props: Props) {
                         attrs={{ title: true }}
                     >
                         <button
+                            className='btn'
                             title='Delete'
                             onClick={ _delete }
                         >

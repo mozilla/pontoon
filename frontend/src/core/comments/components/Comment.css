@@ -42,12 +42,20 @@
     padding: 8px;
 }
 
+.comment-list .add-comment .content,
+.comment-list .add-comment input {
+    background-color: #272a2f;
+    border: solid 1px #272a2f;
+    color: #AAAAAA;
+}
+
 .comment-list .comment .content p {
     display: inline-block;
     margin-left: 8px;
 }
 
-.comment-list .comment .info {
+.comment-list .comment .info,
+.comment-list .add-comment .options {
     color: #AAAAAA;
     font-size: 0.85em;
     padding: 0 10px;
@@ -62,7 +70,11 @@
     text-transform: uppercase;
 }
 
-.comment-list .comment button:before {
+.comment-list .comment .btn:before {
     content: "•";
     padding: 0 3px;
+}
+
+.comment-list .add-comment .comment-btn {
+    color: #7BC876;
 }

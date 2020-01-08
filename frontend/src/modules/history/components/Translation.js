@@ -401,6 +401,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 comments={ translation.comments }
                 user={ user }
                 canReview={ canReview }
+                translation={ translation }
                 deleteComment={ deleteComment }
             />
         </li>;
