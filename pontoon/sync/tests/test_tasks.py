@@ -365,13 +365,14 @@ class SyncExecutionTests(TestCase):
         """
 
         @serial_task(100)
-        def test_task(self, callback):
-            return callback()
+        def test_task(self, call_subtask):
+            if call_subtask:
+                return subtask()
 
-        def execute_second_inner_task():
-            return test_task.delay(lambda: None)
+        def subtask():
+            return test_task.delay()
 
-        first_call = test_task.delay(execute_second_inner_task)
+        first_call = test_task.delay(call_subtask=True)
         second_call = first_call.get()
 
         assert_true(first_call.successful())
