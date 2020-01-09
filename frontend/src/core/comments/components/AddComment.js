@@ -23,7 +23,9 @@ export default function AddComments(props: Props) {
 
     const submit_comment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        console.log('Comment');
+        let comment=document.querySelector('#comment-input').value
+        document.getElementById('comment-input').value = ''
+        console.log(comment);
     };
 
     const reject_with_comment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
@@ -54,7 +56,7 @@ export default function AddComments(props: Props) {
                         id='comment-input'
                         name='comment'
                         placeholder={'Write a comment...'}
-                    ></input>
+                    />
                 </Localized>
             </div>
             <div className='options'>
