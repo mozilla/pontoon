@@ -2299,7 +2299,7 @@ class EntityQuerySet(models.QuerySet):
         translations.filter(pk__in=unreviewed_pks).update(active=True)
 
     def _get_word_count(self, string):
-        return len(re.findall(r'\w+', string))
+        return len(re.findall(r'[\w,.-]+', string))
 
     def get_or_create(self, defaults=None, **kwargs):
         if 'string' in kwargs:
@@ -2308,13 +2308,12 @@ class EntityQuerySet(models.QuerySet):
 
     def bulk_update(self, objs, fields=None, batch_size=None):
         if django.VERSION[0] >= 2:
-            msg = "Django version is 2 or higher. Function bulk_update need to be removed"
+            msg = "Django version is 2 or higher. Function bulk_update needs to be removed"
             warnings.warn(msg, PendingDeprecationWarning)
         if objs:
             for obj in objs:
                 if hasattr(obj, 'string'):
                     obj.word_count = self._get_word_count(obj.string)
-                    obj.save()
 
         return bulk_update(objs, fields, batch_size)
 
@@ -2331,6 +2330,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
+    word_count = models.PositiveIntegerField(default=0)
 
     date_created = models.DateTimeField(default=timezone.now)
     date_obsoleted = models.DateTimeField(null=True, blank=True)
