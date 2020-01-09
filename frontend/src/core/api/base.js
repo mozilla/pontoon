@@ -43,7 +43,7 @@ export default class APIBase {
         });
     };
 
-    isObject = function (obj: Object) {
+    isObject = function (obj: any) {
         return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
     };
 
