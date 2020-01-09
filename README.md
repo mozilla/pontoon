@@ -17,14 +17,14 @@ Heroku** button below.
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 Alternatively, you can deploy to Heroku manually by following our
-[Deployment Documentation](http://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
+[Deployment Documentation](https://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
 
 We don't have documentation for deploying to other platforms yet, so we recommend that
 you read the previously linked documentation and adapt it for your needs.
 
 If you only want to deploy a **local instance of Pontoon**, for development or
 testing for example, see our
-[Developer Setup using Docker](http://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html).
+[Developer Setup using Docker](https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html).
 Please note that you should **not** deploy a production instance with Docker.
 
 
@@ -33,13 +33,13 @@ Please note that you should **not** deploy a production instance with Docker.
 Do you want to help us make Pontoon better? We are very glad!
 
 To help you get started with contributing, we wrote
-[**The Guide to your First Contribution to Pontoon**](http://mozilla-pontoon.readthedocs.io/en/latest/dev/first-contribution.html).
+[**The Guide to your First Contribution to Pontoon**](https://mozilla-pontoon.readthedocs.io/en/latest/dev/first-contribution.html).
 It contains all the information you need to know to install Pontoon, populate its
 database, run tests, and send your contribution.
 
 If you want to go further, you can:
 
-* Check out development roadmap on the [wiki](http://wiki.mozilla.org/Pontoon)
+* Check out development roadmap on the [wiki](https://wiki.mozilla.org/Pontoon)
 * File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
 * Check [existing bugs](https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon&resolution=---&list_id=13740920)
 * See Mozilla's Pontoon servers:
@@ -49,7 +49,7 @@ If you want to go further, you can:
 ## License
 
 This software is licensed under the
-[New BSD License](http://creativecommons.org/licenses/BSD/). For more
+[New BSD License](https://creativecommons.org/licenses/BSD/). For more
 information, read [LICENSE](https://github.com/mozilla/pontoon/blob/master/LICENSE).
 
 
