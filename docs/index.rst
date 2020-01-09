@@ -29,8 +29,8 @@ If you want to deploy your own instance of Pontoon, read the :doc:`admin/deploym
 section.
 
 Once you have a running instance, you will likely want to learn about
-:doc:`user/localizing-your-projects`, and then about
-`How to manage communities <https://mozilla-l10n.github.io/documentation/tools/pontoon/>`_.
+:doc:`user/localizing-your-projects`, and then dive into
+`management tasks <https://mozilla-l10n.github.io/documentation/tools/pontoon/>`_.
 
 Localizing
 ----------
