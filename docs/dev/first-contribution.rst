@@ -8,11 +8,11 @@ valuable contributions. It will walk you step by step until you are in a
 position to write code that you can reliably run, test, and send for
 review.
 
-1. Check your skills
---------------------
+1. Make sure it's a good match
+------------------------------
 
 *Before contributing to an open source project, it is important to make
-sure that the project uses technologies that you know and want to learn.*
+sure that the project uses technologies that you know and want to learn more about.*
 
 Pontoon is a web application, with both back-end and front-end code. The
 two languages we use are **Python** (back-end) and **JavaScript**
@@ -46,8 +46,8 @@ to send your contributions our way.
 first need to be able to run that project on your computer.*
 
 The recommended method of installing Pontoon is using ``docker`` and our
-scripts. That is very simple if your computer is running with Linux or
-macOS, you can just follow the instructions in our `Developer Setup
+scripts. It is straightforward if your computer is running with Linux or
+macOS, in which case you can just follow the instructions in our `Developer Setup
 Documentation <https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html>`__.
 
 If you are running Windows on your computer, installing Pontoon might be
