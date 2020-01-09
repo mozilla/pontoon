@@ -21,19 +21,19 @@ export default function AddComments(props: Props) {
         return null;
     }
 
-    const submit_comment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+    const submitComment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         let comment=document.querySelector('#comment-input').value
         document.getElementById('comment-input').value = ''
         console.log(comment);
     };
 
-    const reject_with_comment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+    const rejectWithComment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         console.log('Reject');
     };
 
-    const approve_with_comment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+    const approveWithComment = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         console.log('Approve');
     };
@@ -63,7 +63,7 @@ export default function AddComments(props: Props) {
                 <Localized id='comments-AddComment--comment-button'>
                     <button
                         className='comment-btn'
-                        onClick={ (e) => submit_comment(e) }
+                        onClick={ (e) => submitComment(e) }
                     >
                         Comment
                     </button>
@@ -71,7 +71,7 @@ export default function AddComments(props: Props) {
                 <Localized id='comments-AddComment--reject-button'>
                     <button
                         className='btn'
-                        onClick={ (e) => reject_with_comment(e) }
+                        onClick={ (e) => rejectWithComment(e) }
                     >
                         Reject & Comment
                     </button>
@@ -79,7 +79,7 @@ export default function AddComments(props: Props) {
                 <Localized id='comments-AddComment--approve-button'>
                     <button
                         className='btn'
-                        onClick={ (e) => approve_with_comment(e) }
+                        onClick={ (e) => approveWithComment(e) }
                     >
                         Approve & Comment
                     </button>
