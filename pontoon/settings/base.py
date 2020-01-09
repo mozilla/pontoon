@@ -732,6 +732,11 @@ BROKER_CONNECTION_TIMEOUT = 30  # Give up connecting faster
 CELERY_RESULT_BACKEND = None  # We don't store results
 CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 
+# The default serializer since Celery 4 is 'json'
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_ACCEPT_CONTENT = ['pickle']
+
 # Settings related to the CORS mechanisms.
 # For the sake of integration with other sites,
 # some of javascript files (e.g. pontoon.js)
