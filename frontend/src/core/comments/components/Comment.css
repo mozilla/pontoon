@@ -26,6 +26,7 @@
 .comments-list .comment .container {
     display: flex;
     flex-flow: column wrap;
+    width: 100%;
 }
 
 .comments-list .comment a {
@@ -42,11 +43,14 @@
     padding: 8px;
 }
 
-.comments-list .add-comment .content,
 .comments-list .add-comment input {
     background-color: #272a2f;
     border: solid 1px #272a2f;
+    border-radius: 5px;
     color: #AAAAAA;
+    display: flex;
+    align-items: center;
+    padding: 8px;
 }
 
 .comments-list .comment .content p {

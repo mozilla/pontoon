@@ -18,6 +18,8 @@ class ActionLog(models.Model):
         ("translation:rejected", "Translation rejected"),
         # A translation has been unrejected.
         ("translation:unrejected", "Translation unrejected"),
+        # A comment has been added.
+        ("comment:added", "Comment added"),
         # A comment has been deleted.
         ("comment:deleted", "Comment deleted"),
     )

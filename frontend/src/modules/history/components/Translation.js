@@ -28,6 +28,7 @@ type Props = {|
     user: UserState,
     index: number,
     deleteTranslation: (number) => void,
+    addComment: (string, number) => void,
     deleteComment: (number) => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
@@ -200,6 +201,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             locale,
             user,
             activeTranslation,
+            addComment,
             deleteComment,
         } = this.props;
 
@@ -403,6 +405,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 isTranslator={ isTranslator }
                 translation={ translation }
                 deleteComment={ deleteComment }
+                addComment={ addComment }
             />
         </li>;
     }

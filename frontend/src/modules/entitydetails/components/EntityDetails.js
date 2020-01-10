@@ -248,6 +248,17 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    addComment = (comment: string, translationId: number) => {
+        const { parameters, pluralForm, dispatch } = this.props;
+        dispatch(history.actions.addComment(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+            translationId,
+            comment,
+        ));
+    }
+
     deleteComment = (commentId: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(history.actions.deleteComment(
@@ -325,6 +336,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     locale={ state.locale }
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
+                    addComment={ this.addComment }
                     deleteComment={ this.deleteComment }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }

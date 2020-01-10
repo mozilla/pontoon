@@ -486,6 +486,37 @@ def delete_translation(request):
     return JsonResponse({"status": True})
 
 
+@require_POST
+@utils.require_AJAX
+@login_required(redirect_field_name="", login_url="/403")
+@transaction.atomic
+def add_comment(request):
+    """Add a comment."""
+    try:
+        comment = request.POST["comment"]
+        translationId = request.POST['translationId']
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    user = request.user
+    translation = get_object_or_404(Translation, pk=translationId)
+
+    c = Comment(
+            author=user,
+            translation=translation,
+            content=comment,
+        )
+
+    c.save()
+
+    log_action("comment:added", user, translation=translation)
+
+    return JsonResponse({"status": True})
+
+
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
 @transaction.atomic
