@@ -93,6 +93,15 @@
     outline: none;
 }
 
+.history .translation .content > header button.comment-btn {
+    text-transform: uppercase;
+    padding-right: 8px;
+}
+
+.history .translation .content > header button.comment-btn.comment-visible {
+    color: #7BC876;
+}
+
 .history .translation .content > header button.fa,
 .history .translation .content > header button.far {
     font-size: 1.8em;

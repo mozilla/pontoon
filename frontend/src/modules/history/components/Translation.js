@@ -43,6 +43,7 @@ type InternalProps = {|
 
 type State = {|
     isDiffVisible: boolean,
+    commentsVisible: boolean,
 |};
 
 
@@ -61,6 +62,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         this.state = {
             isDiffVisible: false,
+            commentsVisible: false,
         };
     }
 
@@ -145,6 +147,13 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         </a>
     }
 
+    toggleComments = (event: SyntheticMouseEvent<>) => {
+        event.stopPropagation();
+        this.setState((state) => {
+            return { commentsVisible: !state.commentsVisible };
+        });
+    }
+
     toggleDiff = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
@@ -205,6 +214,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             deleteComment,
         } = this.props;
 
+        const commentCount = translation.comments.length;
+
         // Does the currently logged in user own this translation?
         const ownTranslation = (
             user && user.username &&
@@ -258,6 +269,17 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             <menu className='toolbar'>
 
                             { this.renderDiffToggle() }
+
+                            <Localized id='history-Translation--button-comment'>
+                                <button
+                                    className={ commentCount === 0 ? 'comment-btn' :
+                                        'comment-btn comment-visible'
+                                    }
+                                    onClick={ this.toggleComments }
+                                >
+                                    { commentCount === 0 ?'Comment' : `${commentCount} Comment` }
+                                </button>
+                            </Localized>
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
@@ -399,14 +421,16 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     </div>
                 </div>
             </Localized>
-            <CommentsList
-                comments={ translation.comments }
-                user={ user }
-                isTranslator={ isTranslator }
-                translation={ translation }
-                deleteComment={ deleteComment }
-                addComment={ addComment }
-            />
+            { !this.state.commentsVisible ? null :
+                <CommentsList
+                    comments={ translation.comments }
+                    user={ user }
+                    isTranslator={ isTranslator }
+                    translation={ translation }
+                    deleteComment={ deleteComment }
+                    addComment={ addComment }
+                />
+            }
         </li>;
     }
 }
