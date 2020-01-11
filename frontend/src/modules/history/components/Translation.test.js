@@ -18,6 +18,7 @@ describe('<TranslationBase>', () => {
         unapprovedUser: '',
         user: '',
         username: 'michel',
+        comments: [],
     };
 
     const DEFAULT_USER = {
