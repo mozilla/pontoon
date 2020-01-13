@@ -81,13 +81,13 @@ flake8:
 	"${DC}" run --rm -w /app webapp flake8
 
 flow:
-	"${DC}" run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
+	"${DC}" run --rm -w /app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
 lint-frontend:
 	"${DC}" run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
 
 shell:
-	"${DC}" run --rm webapp /bin/bash
+	"${DC}" run --rm webapp //bin/bash
 
 loaddb:
 	# Stop connections to the database so we can drop it.
