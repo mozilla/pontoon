@@ -12,8 +12,7 @@ from compare_locales import (
     serializer,
 )
 
-from pontoon.sync import SyncError
-from pontoon.sync.exceptions import ParseError
+from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.utils import create_parent_directory
 from pontoon.sync.vcs.models import VCSTranslation
