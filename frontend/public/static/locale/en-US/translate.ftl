@@ -277,6 +277,9 @@ history-Translation--button-not-rejected =
 history-Translation--button-rejected =
     .title = Rejected
 
+history-Translation--button-comment =
+    .title = Comment
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,

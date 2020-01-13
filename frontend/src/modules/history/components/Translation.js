@@ -43,7 +43,7 @@ type InternalProps = {|
 
 type State = {|
     isDiffVisible: boolean,
-    commentsVisible: boolean,
+    isCommentVisible: boolean,
 |};
 
 
@@ -62,7 +62,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         this.state = {
             isDiffVisible: false,
-            commentsVisible: false,
+            isCommentVisible: false,
         };
     }
 
@@ -150,7 +150,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     toggleComments = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
-            return { commentsVisible: !state.commentsVisible };
+            return { isCommentVisible: !state.isCommentVisible };
         });
     }
 
@@ -270,11 +270,15 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { this.renderDiffToggle() }
 
-                            <Localized id='history-Translation--button-comment'>
+                            <Localized
+                                id='history-Translation--button-comment'
+                                attrs={{ title: true }}
+                            >
                                 <button
                                     className={ commentCount === 0 ? 'comment-btn' :
-                                        'comment-btn comment-visible'
+                                        'comment-btn comment-count'
                                     }
+                                    title='Comment'
                                     onClick={ this.toggleComments }
                                 >
                                     { commentCount === 0 ?'Comment' : `${commentCount} Comment` }
@@ -421,7 +425,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     </div>
                 </div>
             </Localized>
-            { !this.state.commentsVisible ? null :
+            { !this.state.isCommentVisible ? null :
                 <CommentsList
                     comments={ translation.comments }
                     user={ user }

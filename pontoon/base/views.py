@@ -505,10 +505,10 @@ def add_comment(request):
     translation = get_object_or_404(Translation, pk=translationId)
 
     c = Comment(
-            author=user,
-            translation=translation,
-            content=comment,
-        )
+        author=user,
+        translation=translation,
+        content=comment,
+    )
 
     c.save()
 

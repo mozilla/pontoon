@@ -98,7 +98,7 @@
     padding-right: 8px;
 }
 
-.history .translation .content > header button.comment-btn.comment-visible {
+.history .translation .content > header button.comment-btn.comment-count {
     color: #7BC876;
 }
 
