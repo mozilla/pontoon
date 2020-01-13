@@ -33,7 +33,13 @@ export default function AddComments(props: Props) {
 
     const submitComment = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
-        addComment(commentInput.current.value, translationId);
+        const comment = commentInput.current.value;
+
+        if(!comment) {
+            return null;
+        }
+
+        addComment(comment, translationId);
         commentInput.current.value = '';
     };
 
