@@ -12,7 +12,7 @@ computer for development with Docker and docker-compose.
 Prerequisites
 -------------
 
-1. Install `Docker <https://docs.docker.com/engine/installation/>`_.
+1. Install `Docker <https://docs.docker.com/install/>`_.
 
 2. Install `docker-compose <https://docs.docker.com/compose/install/>`_. You need
    1.10 or higher.
