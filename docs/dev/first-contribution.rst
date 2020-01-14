@@ -48,8 +48,7 @@ first need to be able to run that project on your computer.*
 The recommended method of installing Pontoon is using ``docker`` and our
 scripts. It is straightforward if your computer is running with Linux or
 macOS, and a tad more difficult for Windows. In all cases, follow the
-instructions in our `Developer Setup Documentation
-<https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html>`__.
+instructions in our :doc:`setup` page.
 
 
 3. Populate your database
@@ -113,15 +112,15 @@ have a list of mentored bugs that are appropriate to work on first, and
 on which mentors will be available to help you.*
 
 Work that needs to be done on Pontoon is tracked in
-`bugzilla <https://bugzilla.mozilla.org/>`__, Mozilla's bug tracking
+`bugzilla <https://bugzilla.mozilla.org/>`_, Mozilla's bug tracking
 software. You will need to create an account there in order to be
 assigned to a bug.
 
 We maintain a list of what we deem "good first bugs". They are marked as
 mentored on bugzilla, and can be found quickly on our `Pontoon wiki
-page <https://wiki.mozilla.org/L10n:Pontoon#Get_involved>`__ or through
+page <https://wiki.mozilla.org/L10n:Pontoon#Get_involved>`_ or through
 `this bugzilla
-search <https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&list_id=15050149&o1=isnotempty&resolution=---&classification=Server%20Software&query_format=advanced&emailbug_mentor1=1&component=Pontoon&product=Webtools>`__.
+search <https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&list_id=15050149&o1=isnotempty&resolution=---&classification=Server%20Software&query_format=advanced&emailbug_mentor1=1&component=Pontoon&product=Webtools>`_.
 Look through that list for unassigned bugs (marked as ``NEW``), choose
 one that is appealing to you and seems adapted to your skill set, then
 comment on that bug asking to be assigned to it. Feel free to start
@@ -136,9 +135,8 @@ risk not being accepted if you don't respect them.*
 
 To make developer's lives easier, we enforce a few contribution rules
 around Pontoon. They range from how to style your code to how to write
-commit messages. All these rules are written in our `Contributing
-Documentation <https://mozilla-pontoon.readthedocs.io/en/latest/dev/contributing.html>`__.
-Please read it before opening a pull request!
+commit messages. All these rules are written in our :doc:`contributing`
+page. Please read it before opening a pull request!
 
 There is more documentation around Pontoon, and it is often worth
 reading it, if only to understand better how the tool works and how and
@@ -147,18 +145,18 @@ documentation resources:
 
 -  If you want to work on the front-end, it is important that you read
    the `Front-End
-   Documentation <https://github.com/mozilla/pontoon/tree/master/frontend>`__.
+   Documentation <https://github.com/mozilla/pontoon/tree/master/frontend>`_.
 -  Most of the documentation around installing and developing can be
    found in `Pontoon's
-   Documentation <https://mozilla-pontoon.readthedocs.io/en/latest/>`__.
+   Documentation <https://mozilla-pontoon.readthedocs.io/en/latest/>`_.
 -  For documentation about using Pontoon to localize, see `How to use
-   Pontoon <https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/>`__.
+   Pontoon <https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/>`_.
 -  For documentation about exposing a project on Pontoon, see `How to
    localize your
-   projects <https://mozilla-pontoon.readthedocs.io/en/latest/user/localizing-your-projects.html>`__.
+   projects <https://mozilla-pontoon.readthedocs.io/en/latest/user/localizing-your-projects.html>`_.
 -  For documentation about managing communities in Pontoon, see `Working
    with
-   Pontoon <https://mozilla-l10n.github.io/documentation/tools/pontoon/>`__.
+   Pontoon <https://mozilla-l10n.github.io/documentation/tools/pontoon/>`_.
 
 7. Communicate with us
 ----------------------
@@ -170,12 +168,12 @@ to such projects.*
 There are two main places where we communicate about Pontoon's
 development. The first one is IRC, used for real-time chat, quick
 questions, side-track conversations, etc. We hang on the #pontoon
-channel on `Mozilla's IRC server <https://wiki.mozilla.org/IRC>`__.
+channel on `Mozilla's IRC server <https://wiki.mozilla.org/IRC>`_.
 
 The second is discourse, a forum platform that we use for more long-term
 conversations. We use `Mozilla's community
-discourse <https://discourse.mozilla.org/>`__ instance, posting in the
-`pontoon category <https://discourse.mozilla.org/c/pontoon>`__.
+discourse <https://discourse.mozilla.org/>`_ instance, posting in the
+`pontoon category <https://discourse.mozilla.org/c/pontoon>`_.
 
 These are both places that we strongly encourage you to join, and they
 are where you should introduce yourself, ask questions, show your work,
@@ -188,13 +186,13 @@ Axel and Staś. We also receive invaluable help from community members.
 +------------+----------+--------------------------+------------+-----------------------------------------------+
 |            | Name     | ROLE                     | IRC        | github                                        |
 +============+==========+==========================+============+===============================================+
-| |image4|   | Matjaž   | Pontoon Core Developer   | mathjazz   | `mathjazz <https://github.com/mathjazz/>`__   |
+| |image4|   | Matjaž   | Pontoon Core Developer   | mathjazz   | `mathjazz <https://github.com/mathjazz/>`_    |
 +------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image5|   | Adrian   | Pontoon Core Developer   | adrian     | `adngdb <https://github.com/adngdb/>`__       |
+| |image5|   | Adrian   | Pontoon Core Developer   | adrian     | `adngdb <https://github.com/adngdb/>`_        |
 +------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image6|   | Axel     | L10n Tech Lead           | Pike       | `Pike <https://github.com/Pike/>`__           |
+| |image6|   | Axel     | L10n Tech Lead           | Pike       | `Pike <https://github.com/Pike/>`_            |
 +------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image7|   | Staś     | Fluent Core Developer    | stas       | `stasm <https://github.com/stasm/>`__         |
+| |image7|   | Staś     | Fluent Core Developer    | stas       | `stasm <https://github.com/stasm/>`_          |
 +------------+----------+--------------------------+------------+-----------------------------------------------+
 
 .. |image0| image:: https://avatars2.githubusercontent.com/u/626716?s=32&v=4
