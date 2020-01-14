@@ -2303,14 +2303,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         index_together = (("resource", "obsolete", "string_plural"),)
 
     @property
-    def marked(self):
-        return utils.mark_placeables(self.string)
-
-    @property
-    def marked_plural(self):
-        return utils.mark_placeables(self.string_plural)
-
-    @property
     def cleaned_key(self):
         """
         Get cleaned key, without the source string and Translate Toolkit
