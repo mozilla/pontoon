@@ -273,12 +273,13 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             <Localized
                                 id='history-Translation--button-comment'
                                 attrs={{ title: true }}
+                                $commentCount={ commentCount }
                             >
                                 <button
                                     className={ commentCount === 0 ? 'comment-btn' :
                                         'comment-btn comment-count'
                                     }
-                                    title='Comment'
+                                    title='Toggle translation comments'
                                     onClick={ this.toggleComments }
                                 >
                                     { commentCount === 0 ?'Comment' : `${commentCount} Comment` }

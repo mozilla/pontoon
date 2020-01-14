@@ -59,6 +59,7 @@ export default function AddComments(props: Props) {
                     type='text'
                     id='comment-input'
                     name='comment'
+                    dir='auto'
                     placeholder={'Write a comment...'}
                     ref={ commentInput }
                 />

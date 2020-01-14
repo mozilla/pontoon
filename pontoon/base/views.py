@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import bleach
 import logging
 from datetime import datetime
 
@@ -494,6 +495,12 @@ def add_comment(request):
     """Add a comment."""
     try:
         comment = request.POST["comment"]
+        comment = bleach.clean(
+            comment,
+            strip=True,
+            tags=settings.ALLOWED_TAGS,
+            attributes=settings.ALLOWED_ATTRIBUTES,
+        )
         translationId = request.POST['translationId']
     except MultiValueDictKeyError as e:
         return JsonResponse(

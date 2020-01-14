@@ -48,7 +48,7 @@ export default function Comment(props: Props) {
             imageUrl={ comment.userGravatarUrlSmall }
         />
         <div className='container'>
-            <div className='content'>
+            <div className='content' dir='auto'>
                 <a
                     href={ `/contributors/${comment.username}` }
                     target='_blank'

@@ -84,7 +84,8 @@ resourceprogress-ResourceProgress--missing = Missing
 ## Comments
 ## Allows user to leave comments on translations
 
-comments-AddComment--input
+comments-AddComment--input =
+    .placeholder = Write a comment...
 comments-Comment--delete-button = Delete
 
 
@@ -278,7 +279,12 @@ history-Translation--button-rejected =
     .title = Rejected
 
 history-Translation--button-comment =
-    .title = Comment
+    .title = Toggle translation comment
+    { $commentCount ->
+        [0] Comment
+        [one] { $commentCount } Comment
+       *[other] { $commentCount } Comments
+    }
 
 
 ## Interactive Tour
@@ -446,6 +452,7 @@ notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
+notification--comment-added = Comment added
 notification--comment-deleted = Comment deleted
 
 

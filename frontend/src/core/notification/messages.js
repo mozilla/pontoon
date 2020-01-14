@@ -125,7 +125,7 @@ export default {
     },
     'COMMENT_ADDED': {
         content: <Localized id='notification--comment-added'>
-            Comment added.
+            Comment added
         </Localized>,
         type: 'info',
     },
