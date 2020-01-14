@@ -279,12 +279,12 @@ history-Translation--button-rejected =
     .title = Rejected
 
 history-Translation--button-comment =
-    .title = Toggle translation comment
     { $commentCount ->
         [0] Comment
         [one] { $commentCount } Comment
        *[other] { $commentCount } Comments
     }
+    .title = Toggle translation comment
 
 
 ## Interactive Tour
