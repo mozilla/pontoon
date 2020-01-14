@@ -80,3 +80,71 @@ The app should now be available at http://localhost:8000 or the custom SITE_URL.
         custom SITE_URL.
 
 And with that, you're ready to start :doc:`contributing`!
+
+
+Installing Docker on Windows Pro/Enterprise/Education
+-----------------------------------------------------
+
+Install `Docker Desktop for Windows <https://docs.docker.com/docker-for-windows/install/>`_.
+
+Install tools (git, make, cygwin)
++++++++++++++++++++++++++++++++++
+
+The easiest way is to use a package manager like
+`Chocolatey <https://chocolatey.org/install>`_. Follow the installation
+instructions for Windows Powershell (Admin), then run
+``choco install make git cygwin`` to install all packages.
+
+Follow the prompt requests allowing script execution. At the end, verify that
+packages are available with ``make --version`` and ``git --version``, it should
+return a version for each command.
+
+At this point you need to disable the config ``core.autocrlf`` before cloning
+the Pontoon repository, otherwise all files will use Windows line-endings
+(CRLF), and docker images will fail to build. To do so, open a Powershell as
+Admin (right click on the Start Menu, select *Windows Powershell (Admin)*), and
+run::
+
+   git config --system --unset core.autocrlf
+   git config --global core.autocrlf false
+
+You can use ``git config -l`` to verify that the value for ``core.autocrlf`` is correctly set.
+
+At this point, you can open the *Cygwin64 Terminal* and proceed with the installation (the content of
+``C:`` will be available in ``/cygdrive/c``).
+
+
+Installing Docker on Windows Home x64 (deprecated)
+--------------------------------------------------
+
+These instructions rely on the installation of a deprecated tool called
+`Docker Toolbox <https://docs.docker.com/toolbox/toolbox_install_windows/>`_, since the official
+installer (Docker Desktop for Windows) is only compatible with Windows Pro, Enterprise, or Education.
+
+Once installed, it will create a *Docker Quickstart Terminal* icon on the Desktop that can be used to
+start a terminal.
+
+While ``git`` is installed as part of Docker Toolbox, you need to disable the config ``core.autocrlf``
+before cloning the Pontoon repository, otherwise all files will use Windows line-endings (CRLF), and
+docker images will fail to build. To do so, open a Powershell as Admin (right click on the Start Menu,
+select *Windows Powershell (Admin)*), and run::
+
+   git config --system --unset core.autocrlf
+   git config --global core.autocrlf false
+
+Install make
+++++++++++++
+
+The easiest way is to use a package manager like `Chocolatey <https://chocolatey.org/install>`_.
+Follow the installation instructions for Windows Powershell (Admin), then run
+``choco install make`` to install ``make``.
+
+Follow the prompt requests allowing script execution. At the end, verify that make is
+available with ``make --version``, it should return a version (e.g. GNU Make 4.2.1)
+
+Repository Path
++++++++++++++++
+
+Make sure to clone the repository in a path where the user has write permissions. The
+procedure has been tested with the clone inside the user's home (``c:\Users\username``).
+Otherwise, the image might fail to load the correct volumes.
