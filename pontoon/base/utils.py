@@ -4,7 +4,6 @@ import codecs
 import functools
 import os
 import pytz
-import re
 import requests
 import tempfile
 import time
