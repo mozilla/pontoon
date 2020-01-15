@@ -39,7 +39,7 @@ Quickstart
    If you want to share your development instance in your local network, you set SITE_URL to bind
    the webapp to any address you like.::
 
-     $ make build SITE_URL="https://192.168.1.14:8000"
+     $ make build SITE_URL="http://192.168.1.14:8000"
 
 
 3. Run the webapp::
@@ -164,5 +164,5 @@ the machine.
 The IP of the virtual machine is displayed when starting *Docker Quickstart
 Terminal*, or can be retrieved using the command `docker-machine ip default`.
 For example, if the IP is ``192.168.99.100``, the Docker image should be built
-with ``make build SITE_URL="https://192.168.99.100:8000"``. Pontoon's instance
-will be then available at ``https://192.168.99.100:8000`` from Windows.
+with ``make build SITE_URL="http://192.168.99.100:8000"``. Pontoon's instance
+will be then available at ``http://192.168.99.100:8000`` from Windows.
