@@ -314,7 +314,12 @@ class VCSProject(object):
     @cached_property
     def resources(self):
         """
-        Lazy-loaded mapping of relative paths -> VCSResources.
+        Lazy-loaded mapping of relative paths -> VCSResources that need to be synced:
+            * changed in repository
+            * changed in Pontoon DB
+            * corresponding source file added
+            * corresponding source file changed
+            * all paths relevant for newly enabled (unsynced) locales
 
         Waiting until first access both avoids unnecessary file reads
         and allows tests that don't need to touch the resources to run
@@ -323,7 +328,7 @@ class VCSProject(object):
         resources = {}
 
         log.info(
-            "Changed files in {} repository and Pontoon: {}".format(
+            "Changed files in {} repository and Pontoon, relevant for enabled locales: {}".format(
                 self.db_project, self.changed_files
             )
         )
@@ -379,10 +384,11 @@ class VCSProject(object):
                 )
 
         log.info(
-            "Changed files in {} repository: {}".format(
+            "Relative paths in {} that need to be synced: {}".format(
                 self.db_project, resources.keys()
             )
         )
+
         return resources
 
     @property
