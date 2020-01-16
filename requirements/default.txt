@@ -73,9 +73,9 @@ django-notifications-hq==1.2 \
 django-partial-index==0.5.2 \
     --hash=sha256:1eae3c5274b7729e92b33bf06abe95b55288c2718904384907e18f88c3d82155 \
     --hash=sha256:8a805b52971a58cb78c925dbb976fecf59c662a1c767846061444a2587247804
-django-pipeline==1.5.3 \
-    --hash=sha256:48e71c8b1781533adee64561cca20c9f17d40136211c2b32531e70ffe7fb0ced \
-    --hash=sha256:752fa35d40cb645e6d3a54ccde01726732e441a2d54d904219c68e402f78e194
+django-pipeline==1.7.0 \
+    --hash=sha256:0ded22b974e3d627c27fc490ef5b23fcdcf0cdb00b704d628b5ca6d0b010d6fe \
+    --hash=sha256:f7da70f00aa4baea3e0811f88927a116425deee05871fa2bfd2f8247f42d8847
 django-cookies-samesite==0.2.0 \
     --hash=sha256:b393f8e2e1c758af952ea10afe44fe837a68a182119fdfbab2fa00f67deded0e
 django-session-csrf==0.7.1 \
