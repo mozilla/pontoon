@@ -221,7 +221,7 @@ TEMPLATES = [
                 "django_jinja.builtins.extensions.UrlsExtension",
                 "django_jinja.builtins.extensions.StaticFilesExtension",
                 "django_jinja.builtins.extensions.DjangoFiltersExtension",
-                "pipeline.templatetags.ext.PipelineExtension",
+                "pipeline.jinja2.PipelineExtension",
                 "webpack_loader.contrib.jinja2ext.WebpackExtension",
             ],
         },
@@ -252,13 +252,7 @@ AUTHENTICATION_BACKENDS = [
 # App supports giving permissions for anonymous users.
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RAISE_403 = True
-PIPELINE_YUGLIFY_BINARY = path(
-    os.environ.get("YUGLIFY_BINARY", "node_modules/.bin/yuglify")
-)
-PIPELINE_BABEL_BINARY = path("node_modules/.bin/babel")
-PIPELINE_BABEL_ARGUMENTS = "--modules ignore"
 
-PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_CSS = {
     "base": {
         "source_filenames": (
@@ -461,6 +455,17 @@ PIPELINE_JS = {
         "source_filenames": ("js/lib/fullpage.js", "js/homepage.js"),
         "output_filename": "js/homepage.min.js",
     },
+}
+
+PIPELINE = {
+    "STYLESHEETS": PIPELINE_CSS,
+    "JAVASCRIPT": PIPELINE_JS,
+    "YUGLIFY_BINARY": path(
+        os.environ.get("YUGLIFY_BINARY", "node_modules/.bin/yuglify")
+    ),
+    "BABEL_BINARY": path("node_modules/.bin/babel"),
+    "BABEL_ARGUMENTS": "--modules ignore",
+    "DISABLE_WRAPPER": True,
 }
 
 # Cache config
@@ -733,9 +738,9 @@ CELERY_RESULT_BACKEND = None  # We don't store results
 CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 
 # The default serializer since Celery 4 is 'json'
-CELERY_TASK_SERIALIZER = 'pickle'
-CELERY_RESULT_SERIALIZER = 'pickle'
-CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_ACCEPT_CONTENT = ["pickle"]
 
 # Settings related to the CORS mechanisms.
 # For the sake of integration with other sites,
