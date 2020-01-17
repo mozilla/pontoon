@@ -59,7 +59,7 @@ setup-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 setup-py3: setup
 
 setup: .docker-build
-	"${DC}" run webapp /app/docker/set_up_webapp.sh
+	"${DC}" run webapp //app/docker/set_up_webapp.sh
 
 run: .docker-build
 	"${DC}" run --rm --service-ports webapp
@@ -68,23 +68,23 @@ clean:
 	rm .docker-build
 
 test:
-	"${DC}" run --rm webapp /app/docker/run_tests.sh
+	"${DC}" run --rm webapp //app/docker/run_tests.sh
 
 test-frontend: jest
 jest:
-	"${DC}" run --rm -w /app/frontend webapp yarn test
+	"${DC}" run --rm -w //app/frontend webapp yarn test
 
 pytest:
-	"${DC}" run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+	"${DC}" run --rm -w //app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
 flake8:
-	"${DC}" run --rm -w /app webapp flake8
+	"${DC}" run --rm -w //app webapp flake8
 
 flow:
-	"${DC}" run --rm -w /app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
+	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
 lint-frontend:
-	"${DC}" run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
+	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/
 
 shell:
 	"${DC}" run --rm webapp //bin/bash
