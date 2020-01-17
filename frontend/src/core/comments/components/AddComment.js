@@ -25,7 +25,7 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    let commentInput: any = React.createRef();
+    let commentInput: any = React.useRef();
 
     if (!user) {
         return null;
@@ -35,7 +35,7 @@ export default function AddComments(props: Props) {
         event.preventDefault();
         const comment = commentInput.current.value;
 
-        if(!comment) {
+        if (!comment) {
             return null;
         }
 
@@ -60,7 +60,7 @@ export default function AddComments(props: Props) {
                     id='comment-input'
                     name='comment'
                     dir='auto'
-                    placeholder={'Write a comment...'}
+                    placeholder={ `Write a comment ${'\u2026'}` }
                     ref={ commentInput }
                 />
             </Localized>

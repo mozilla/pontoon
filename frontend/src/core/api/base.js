@@ -41,11 +41,11 @@ export default class APIBase {
                 .replace('-', '')
                 .replace('_', '');
         });
-    };
+    }
 
     isObject = function (obj: any) {
         return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
-    };
+    }
 
     async fetch(
         url: string,

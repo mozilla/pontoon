@@ -127,10 +127,6 @@ export default class EntityAPI extends APIBase {
 
         const results = await this.fetch('/get-history/', 'GET', payload, headers);
 
-        if (results.length === 0) {
-            return [];
-        }
-
         return this.keysToCamelCase(results);
     }
 

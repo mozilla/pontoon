@@ -25,7 +25,7 @@ describe('<Comment>', () => {
         isTranslator: true,
     }
 
-    it('returns a string', () => {
+    it('renders the correct text', () => {
         const deleteMock = sinon.stub()
         const wrapper = shallow(<Comment
             comment={ DEFAULT_COMMENT }
@@ -40,7 +40,7 @@ describe('<Comment>', () => {
         );
     });
 
-    it('returns a link for the author', () => {
+    it('renders a link for the author', () => {
         const deleteMock = sinon.stub();
         const comments = {
             ...DEFAULT_COMMENT,

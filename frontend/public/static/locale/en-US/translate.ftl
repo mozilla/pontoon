@@ -278,8 +278,7 @@ history-Translation--button-not-rejected =
 history-Translation--button-rejected =
     .title = Rejected
 
-history-Translation--button-comment =
-    { $commentCount ->
+history-Translation--button-comment = { $commentCount ->
         [0] Comment
         [one] { $commentCount } Comment
        *[other] { $commentCount } Comments

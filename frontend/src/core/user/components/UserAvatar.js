@@ -6,7 +6,7 @@ import { Localized } from '@fluent/react';
 type Props = {|
     user: string,
     username: string,
-    title: string,
+    title?: string,
     imageUrl: string,
 |};
 
@@ -30,7 +30,7 @@ export default function UserAvatar(props: Props) {
     return <div className='user-avatar'>
         <a
             href={ `/contributors/${username}` }
-            title={ title }
+            title={ !title ? null : title }
             target='_blank'
             rel='noopener noreferrer'
             onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }

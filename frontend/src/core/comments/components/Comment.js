@@ -6,10 +6,10 @@ import { Localized } from '@fluent/react';
 
 import './Comment.css';
 
+import { UserAvatar } from 'core/user'
+
 import type { TranslationComment } from 'core/api';
 import type { UserState } from 'core/user';
-
-import { UserAvatar } from 'core/user'
 
 
 type Props = {|
@@ -21,7 +21,7 @@ type Props = {|
 
 
 export default function Comment(props: Props) {
-    const { comment, user, isTranslator } = props;
+    const { comment, user, isTranslator, deleteComment} = props;
 
     if (!comment) {
         return null;
@@ -37,14 +37,13 @@ export default function Comment(props: Props) {
 
     const _delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        props.deleteComment(props.comment.id);
+        deleteComment(comment.id);
     }
 
     return <li className='comment'>
         <UserAvatar
             user={ comment.author }
             username={ comment.username }
-            title=''
             imageUrl={ comment.userGravatarUrlSmall }
         />
         <div className='container'>
