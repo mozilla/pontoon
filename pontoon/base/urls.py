@@ -76,11 +76,6 @@ urlpatterns = [
         name="pontoon.add_comment",
     ),
     url(
-        r"^delete-comment/",
-        views.delete_comment,
-        name="pontoon.delete_comment",
-    ),
-    url(
         r"^other-locales/",
         views.get_translations_from_other_locales,
         name="pontoon.other_locales",

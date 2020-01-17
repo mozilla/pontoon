@@ -63,21 +63,3 @@
     font-size: 0.85em;
     padding: 0 10px;
 }
-
-.comments-list .comment button {
-    background: none;
-    border: none;
-    color: #AAAAAA;
-    font-size: 1em;
-    padding: 0;
-    text-transform: uppercase;
-}
-
-.comments-list .comment .btn:before {
-    content: "•";
-    padding: 0 3px;
-}
-
-.comments-list .add-comment .comment-btn {
-    color: #7BC876;
-}

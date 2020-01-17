@@ -16,16 +16,4 @@ export default class CommentAPI extends APIBase {
 
         return this.fetch('/add-comment/', 'POST', payload, headers);
     }
-
-    delete(id: number) {
-        const payload = new URLSearchParams();
-        payload.append('comment', id.toString());
-
-        const headers = new Headers();
-        const csrfToken = this.getCSRFToken();
-        headers.append('X-Requested-With', 'XMLHttpRequest');
-        headers.append('X-CSRFToken', csrfToken);
-
-        return this.fetch('/delete-comment/', 'POST', payload, headers);
-    }
 }

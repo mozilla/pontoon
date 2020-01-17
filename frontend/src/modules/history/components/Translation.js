@@ -29,7 +29,6 @@ type Props = {|
     index: number,
     deleteTranslation: (number) => void,
     addComment: (string, number) => void,
-    deleteComment: (number) => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -211,7 +210,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             user,
             activeTranslation,
             addComment,
-            deleteComment,
         } = this.props;
 
         const commentCount = translation.comments.length;
@@ -429,10 +427,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             { !this.state.isCommentVisible ? null :
                 <CommentsList
                     comments={ translation.comments }
-                    user={ user }
-                    isTranslator={ isTranslator }
                     translation={ translation }
-                    deleteComment={ deleteComment }
                     addComment={ addComment }
                 />
             }

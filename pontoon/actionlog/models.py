@@ -20,8 +20,6 @@ class ActionLog(models.Model):
         ("translation:unrejected", "Translation unrejected"),
         # A comment has been added.
         ("comment:added", "Comment added"),
-        # A comment has been deleted.
-        ("comment:deleted", "Comment deleted"),
     )
 
     action_type = models.CharField(max_length=50, choices=ACTIONS_TYPES)

@@ -86,7 +86,6 @@ resourceprogress-ResourceProgress--missing = Missing
 
 comments-AddComment--input =
     .placeholder = Write a comment...
-comments-Comment--delete-button = Delete
 
 
 ## Editor Menu
@@ -452,7 +451,6 @@ notification--make-suggestions-disabled = Make Suggestions disabled
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
-notification--comment-deleted = Comment deleted
 
 
 ## OtherLocales Translation

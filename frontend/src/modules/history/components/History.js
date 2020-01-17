@@ -22,7 +22,6 @@ type Props = {|
     user: UserState,
     deleteTranslation: (number) => void,
     addComment: (string, number) => void,
-    deleteComment: (number) => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -52,7 +51,6 @@ export default class History extends React.Component<Props> {
             user,
             deleteTranslation,
             addComment,
-            deleteComment,
             updateEditorTranslation,
             updateTranslationStatus,
         } = this.props;
@@ -78,7 +76,6 @@ export default class History extends React.Component<Props> {
                         user={ user }
                         deleteTranslation={ deleteTranslation }
                         addComment={ addComment }
-                        deleteComment={ deleteComment }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateTranslationStatus={ updateTranslationStatus }
                         key={ index }

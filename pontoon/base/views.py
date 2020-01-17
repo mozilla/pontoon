@@ -525,29 +525,6 @@ def add_comment(request):
 
 
 @utils.require_AJAX
-@login_required(redirect_field_name="", login_url="/403")
-@transaction.atomic
-def delete_comment(request):
-    """Delete given comment."""
-    try:
-        c = request.POST["comment"]
-    except MultiValueDictKeyError as e:
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
-        )
-
-    comment = get_object_or_404(Comment, pk=c)
-    translation = comment.translation
-
-    comment.delete()
-
-    log_action("comment:deleted", request.user, translation=translation)
-
-    return JsonResponse({"status": True})
-
-
-@utils.require_AJAX
 def perform_checks(request):
     """Perform quality checks and return a list of any failed ones."""
     try:

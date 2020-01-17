@@ -59,18 +59,4 @@ describe('<Comment>', () => {
         expect(link.at(0).props().children).toEqual('LKnope');
         expect(link.at(0).props().href).toEqual('/contributors/Leslie_Knope');
     });
-
-    it('calls delete function', () => {
-        const deleteMock = sinon.stub();
-        const wrapper = shallow(<Comment
-            comment={ DEFAULT_COMMENT }
-            key={ DEFAULT_COMMENT.id }
-            user={ DEFAULT_USER }
-            isTranslator={ DEFAULT_ISTRANSLATOR }
-            deleteComment={ deleteMock }
-        />);
-
-        wrapper.find('button').first().simulate('click', { stopPropagation() {} });
-        expect(deleteMock.calledOnce).toBeTruthy();
-    });
 });
