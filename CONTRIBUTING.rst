@@ -343,16 +343,3 @@ It's important to remember to update both packages:
 
 * python-fluent (responsible for e.g. server-side sync process)
 * fluent-syntax (required by the fluent editor)
-
-How to build the fresh version of fluent-syntax.js
---------------------------------------------------
-
-You need to bump the version number in the package.json file and then run
-the following commands:
-
-.. code-block:: shell
-
-    $ make build
-    $ make shell
-    app@...:/app$ npm install fluent-syntax
-    app@...:/app$ cp node_modules/fluent-syntax/compat.js pontoon/base/static/js/lib/fluent-syntax.js
