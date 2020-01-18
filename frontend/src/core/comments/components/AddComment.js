@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import './Comment.css';
+import './AddComment.css';
 
 import { UserAvatar } from 'core/user'
 

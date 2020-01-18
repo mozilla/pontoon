@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import './CommentList.css';
+
 import type { TranslationComment } from 'core/api';
 import type { HistoryTranslation } from 'modules/history'
 

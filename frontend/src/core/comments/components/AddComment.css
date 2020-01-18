@@ -1,0 +1,9 @@
+.comments-list .add-comment input {
+    background-color: #272a2f;
+    border: solid 1px #272a2f;
+    border-radius: 5px;
+    color: #AAAAAA;
+    display: flex;
+    align-items: center;
+    padding: 9px;
+}
