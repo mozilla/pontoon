@@ -1,9 +1,10 @@
-.comments-list .add-comment input {
+.comments-list .add-comment textarea {
     background-color: #272a2f;
     border: solid 1px #272a2f;
     border-radius: 5px;
     color: #AAAAAA;
     display: flex;
     align-items: center;
+    height: 1.5em;
     padding: 9px;
 }
