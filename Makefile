@@ -36,7 +36,7 @@ build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
 	sed -i -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
-	${DC} build webapp
+	"${DC}" build webapp
 
 	touch .docker-build
 
@@ -59,50 +59,50 @@ setup-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
 setup-py3: setup
 
 setup: .docker-build
-	${DC} run webapp /app/docker/set_up_webapp.sh
+	"${DC}" run webapp //app/docker/set_up_webapp.sh
 
 run: .docker-build
-	${DC} run --rm --service-ports webapp
+	"${DC}" run --rm --service-ports webapp
 
 clean:
 	rm .docker-build
 
 test:
-	${DC} run --rm webapp /app/docker/run_tests.sh
+	"${DC}" run --rm webapp //app/docker/run_tests.sh
 
 test-frontend: jest
 jest:
-	${DC} run --rm -w /app/frontend webapp yarn test
+	"${DC}" run --rm -w //app/frontend webapp yarn test
 
 pytest:
-	${DC} run --rm -w /app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+	"${DC}" run --rm -w //app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
 flake8:
-	${DC} run --rm -w /app webapp flake8
+	"${DC}" run --rm -w //app webapp flake8
 
 flow:
-	${DC} run --rm -w /app/frontend -e SHELL=/bin/bash webapp yarn flow:dev
+	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
 lint-frontend:
-	${DC} run --rm -w /app/frontend webapp ./node_modules/.bin/eslint src/
+	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/
 
 shell:
-	${DC} run --rm webapp /bin/bash
+	"${DC}" run --rm webapp //bin/bash
 
 loaddb:
 	# Stop connections to the database so we can drop it.
-	-${DC} stop webapp
+	-"${DC}" stop webapp
 	# Make sure the postgresql container is running.
-	-${DC} start postgresql
-	-${DC} exec postgresql dropdb -U pontoon pontoon
-	${DC} exec postgresql createdb -U pontoon pontoon
+	-"${DC}" start postgresql
+	-"${DC}" exec postgresql dropdb -U pontoon pontoon
+	"${DC}" exec postgresql createdb -U pontoon pontoon
 	# Note: docker-compose doesn't support the `-i` (--interactive) argument
 	# that we need to send the dump file through STDIN. We thus are forced to
 	# use docker here instead.
-	${DOCKER} exec -i `${DC} ps -q postgresql` pg_restore -U pontoon -d pontoon -O < ${DB_DUMP_FILE}
+	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
 
 build-frontend:
-	${DC} run --rm webapp npm run build
+	"${DC}" run --rm webapp npm run build
 
 build-frontend-w:
-	${DC} run --rm webapp npm run build-w
+	"${DC}" run --rm webapp npm run build-w
