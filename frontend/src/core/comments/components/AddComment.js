@@ -32,10 +32,10 @@ export default function AddComments(props: Props) {
     }
 
     const onEnterSubmit = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        if(event.keyCode === 13 && event.shiftKey === false) {
+        if (event.keyCode === 13 && event.shiftKey === false) {
             event.preventDefault();
             submitComment(event);
-          }
+        }
     }
 
     const submitComment = (event: SyntheticKeyboardEvent<>) => {
