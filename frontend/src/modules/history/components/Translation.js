@@ -240,7 +240,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
         let canReject = (isTranslator || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
-        let canComment = user && user.isAuthenticated;
+        let canComment = user.isAuthenticated;
 
         return <li className='divider'>
             <Localized id='history-Translation--copy' attrs={{ title: true }}>

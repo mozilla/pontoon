@@ -45,6 +45,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getStatus()).toEqual('approved');
@@ -59,6 +60,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getStatus()).toEqual('rejected');
@@ -73,6 +75,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getStatus()).toEqual('fuzzy');
@@ -83,6 +86,7 @@ describe('<TranslationBase>', () => {
                 translation={ DEFAULT_TRANSLATION }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getStatus()).toEqual('unreviewed');
@@ -99,6 +103,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getApprovalTitle()).toEqual('Approved by Cespenar');
@@ -113,6 +118,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getApprovalTitle()).toEqual('Unapproved by Bhaal');
@@ -123,6 +129,7 @@ describe('<TranslationBase>', () => {
                 translation={ DEFAULT_TRANSLATION }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.instance().getApprovalTitle()).toEqual('Not reviewed yet');
@@ -139,6 +146,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             const link = wrapper.find('a');
@@ -152,6 +160,7 @@ describe('<TranslationBase>', () => {
                 translation={ DEFAULT_TRANSLATION }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('a')).toHaveLength(0);
@@ -168,6 +177,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.approve')).toHaveLength(0);
@@ -185,6 +195,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.approve')).toHaveLength(1);
@@ -198,6 +209,7 @@ describe('<TranslationBase>', () => {
                 translation={ DEFAULT_TRANSLATION }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.approve')).toHaveLength(1);
@@ -239,6 +251,7 @@ describe('<TranslationBase>', () => {
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 isTranslator={ true }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.can-reject')).toHaveLength(1);
@@ -252,6 +265,7 @@ describe('<TranslationBase>', () => {
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 isTranslator={ true }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(1);
@@ -264,6 +278,7 @@ describe('<TranslationBase>', () => {
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
                 isTranslator={ true }
+                user={ DEFAULT_USER }
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(0);
@@ -287,6 +302,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
+                user={ 'Andy_Dwyer' }
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(0);
