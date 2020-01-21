@@ -83,6 +83,7 @@ function updateUI(
                 );
 
                 if (entity.pk === selectedEntity) {
+                    dispatch(historyActions.request(entity.pk, pluralForm));
                     dispatch(
                         historyActions.get(
                             entity.pk,

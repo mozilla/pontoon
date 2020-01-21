@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import AddComment from './AddComment';
@@ -14,7 +14,7 @@ const DEFAULT_USER = {
 describe('<AddComment>', () => {
     it('calls submitComment function', () => {
         const submitCommentFn = sinon.spy();
-        const wrapper = mount(<AddComment
+        const wrapper = shallow(<AddComment
             { ...DEFAULT_USER }
             submitComment={ submitCommentFn }
         />);

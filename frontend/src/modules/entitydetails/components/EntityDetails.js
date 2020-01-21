@@ -109,6 +109,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             pluralForm !== this.props.history.pluralForm ||
             selectedEntity === nextEntity
         ) {
+            dispatch(history.actions.request(parameters.entity, pluralForm));
             dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         }
 

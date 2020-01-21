@@ -64,9 +64,7 @@ export function request(
 
 
 export function get(entity: number, locale: string, pluralForm: number): Function {
-    return async dispatch => {
-        dispatch(request(entity, pluralForm));
-
+    return async dispatch => {;
         // Abort all previously running requests.
         await api.entity.abort();
 

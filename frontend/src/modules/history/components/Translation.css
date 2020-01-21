@@ -77,6 +77,12 @@
     font-weight: 300;
     margin-right: 6px;
     text-transform: uppercase;
+    pointer-events: auto;
+}
+
+.history .translation .content > header .toggle-diff:after {
+    content: "•";
+    padding-left: 3px;
 }
 
 .history .translation .content > header .toggle-diff:hover,
@@ -96,6 +102,7 @@
 .history .translation .content > header button.comment-btn {
     text-transform: uppercase;
     padding-right: 8px;
+    pointer-events: auto;
 }
 
 .history .translation .content > header button.comment-btn.comment-count {

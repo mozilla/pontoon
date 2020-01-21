@@ -429,6 +429,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     comments={ translation.comments }
                     translation={ translation }
                     addComment={ addComment }
+                    isTranslator={ isTranslator }
+                    user={ user }
                 />
             }
         </li>;
