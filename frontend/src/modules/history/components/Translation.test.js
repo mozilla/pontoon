@@ -302,7 +302,7 @@ describe('<TranslationBase>', () => {
                 translation={ translation }
                 entity={ DEFAULT_ENTITY }
                 locale={ DEFAULT_LOCALE }
-                user={ 'Andy_Dwyer' }
+                user={{ username: 'Andy_Dwyer' }}
             />);
 
             expect(wrapper.find('.delete')).toHaveLength(0);
