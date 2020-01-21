@@ -240,6 +240,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
         let canReject = (isTranslator || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
+        let canComment = (isTranslator || ownTranslation);
 
         return <li className='divider'>
             <Localized id='history-Translation--copy' attrs={{ title: true }}>
@@ -268,21 +269,23 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { this.renderDiffToggle() }
 
-                            <Localized
-                                id='history-Translation--button-comment'
-                                attrs={{ title: true }}
-                                $commentCount={ commentCount }
-                            >
-                                <button
-                                    className={ commentCount === 0 ? 'comment-btn' :
-                                        'comment-btn comment-count'
-                                    }
-                                    title='Toggle translation comments'
-                                    onClick={ this.toggleComments }
+                            { (!canComment && commentCount === 0) ? null :
+                                <Localized
+                                    id='history-Translation--button-comment'
+                                    attrs={{ title: true }}
+                                    $commentCount={ commentCount }
                                 >
-                                    { commentCount === 0 ?'Comment' : `${commentCount} Comment` }
-                                </button>
-                            </Localized>
+                                    <button
+                                        className={ commentCount === 0 ? 'comment-btn' :
+                                            'comment-btn comment-count'
+                                        }
+                                        title='Toggle translation comments'
+                                        onClick={ this.toggleComments }
+                                    >
+                                        { commentCount === 0 ?'Comment' : `${commentCount} Comment` }
+                                    </button>
+                                </Localized>
+                            }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
@@ -428,9 +431,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 <CommentsList
                     comments={ translation.comments }
                     translation={ translation }
+                    canComment={ !!canComment }
                     addComment={ addComment }
-                    isTranslator={ isTranslator }
-                    user={ user }
                 />
             }
         </li>;
