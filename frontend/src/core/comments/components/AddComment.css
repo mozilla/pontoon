@@ -1,10 +1,10 @@
 .comments-list .add-comment textarea {
-    background-color: #272a2f;
-    border: solid 1px #272a2f;
-    border-radius: 5px;
-    color: #AAAAAA;
-    display: flex;
-    align-items: center;
-    height: 1.5em;
-    padding: 9px;
+    background-color: transparent;
+    border: solid 1px #5E6475;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 11px;
+    height: 22px;
+    line-height: 22px;
+    padding: 6px;
 }

@@ -1,4 +1,4 @@
-.history .divider {
+.history .wrapper {
     border-bottom: 1px solid #5E6475;
 }
 
@@ -72,7 +72,8 @@
     color: #7BC876;
 }
 
-.history .translation .content > header .toggle-diff {
+.history .translation .content > header .toggle-diff,
+.history .translation .content > header .toggle-comments {
     font-size: inherit;
     font-weight: 300;
     margin-right: 6px;
@@ -80,14 +81,15 @@
     pointer-events: auto;
 }
 
-.history .translation .content > header .toggle-diff:after {
-    content: "•";
-    padding-left: 3px;
-}
-
 .history .translation .content > header .toggle-diff:hover,
+.history .translation .content > header .toggle-comments:hover,
 .history .translation .content > header .toggle-diff.active {
     color: #7BC876;
+}
+
+.history .translation .content > header .divider {
+    margin-right: 3px;
+    margin-left: -3px;
 }
 
 .history .translation .content > header button {
@@ -97,16 +99,6 @@
     display: inline-block;
     padding: 0;
     outline: none;
-}
-
-.history .translation .content > header button.comment-btn {
-    text-transform: uppercase;
-    padding-right: 8px;
-    pointer-events: auto;
-}
-
-.history .translation .content > header button.comment-btn.comment-count {
-    color: #7BC876;
 }
 
 .history .translation .content > header button.fa,

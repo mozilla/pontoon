@@ -208,6 +208,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             translation,
             locale,
             user,
+            index,
             activeTranslation,
             addComment,
         } = this.props;
@@ -242,7 +243,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         let canReject = (isTranslator || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
         let canComment = user.isAuthenticated;
 
-        return <li className='divider'>
+        return <li className='wrapper'>
             <Localized id='history-Translation--copy' attrs={{ title: true }}>
                 <div
                     className={ className }
@@ -269,6 +270,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { this.renderDiffToggle() }
 
+                            { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
+
                             { (!canComment && commentCount === 0) ? null :
                                 <Localized
                                     id='history-Translation--button-comment'
@@ -276,8 +279,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                     $commentCount={ commentCount }
                                 >
                                     <button
-                                        className={ commentCount === 0 ? 'comment-btn' :
-                                            'comment-btn comment-count'
+                                        className={ commentCount === 0 ? 'toggle-comments' :
+                                            'toggle-comments'
                                         }
                                         title='Toggle translation comments'
                                         onClick={ this.toggleComments }
