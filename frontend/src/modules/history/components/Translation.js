@@ -153,12 +153,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         });
     }
 
-    renderCommentButton(commentCount: number) {
-        if(commentCount === 0) {
+    renderCommentToggle(commentCount: number) {
+        if (commentCount === 0) {
             return <Localized
                 id='history-Translation--button-comment'
                 attrs={{ title: true }}
-                $commentCount={ commentCount }
             >
                     <button
                         className='toggle-comments'
@@ -169,7 +168,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     </button>
             </Localized>
         }
-
         else {
             return <Localized
                 id='history-Translation--button-comments'
@@ -181,10 +179,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Toggle translation comments'
                     onClick={ this.toggleComments }
                 >
-                    { commentCount === 1 ?
-                        `1 Comment` :
-                        `${commentCount} Comments`
-                    }
+                    { `${commentCount} Comments` }
                 </button>
             </Localized>
         }
@@ -309,7 +304,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
 
-                            { (!canComment && commentCount === 0) ? null : this.renderCommentButton(commentCount) }
+                            { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
