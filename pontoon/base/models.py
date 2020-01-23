@@ -2301,21 +2301,21 @@ class EntityQuerySet(models.QuerySet):
     def _get_word_count(self, string):
         return len(re.findall(r'[\w,.-]+', string))
 
-    def get_or_create(self, defaults=None, **kwargs):
-        if 'string' in kwargs:
-            kwargs['word_count'] = self._get_word_count(kwargs['string'])
+    def get_or_create(self, defaults, **kwargs):
+
+        defaults['word_count'] = self._get_word_count(defaults['string'])
+
         return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
 
-    def bulk_update(self, objs, fields=None, batch_size=None):
+    def bulk_update(self, objs, update_fields=None, batch_size=None):
         if django.VERSION[0] >= 2:
             msg = "Django version is 2 or higher. Function bulk_update needs to be removed"
             warnings.warn(msg, PendingDeprecationWarning)
         if objs:
             for obj in objs:
-                if hasattr(obj, 'string'):
-                    obj.word_count = self._get_word_count(obj.string)
+                obj.word_count = self._get_word_count(obj.string)
 
-        return bulk_update(objs, fields, batch_size)
+        return bulk_update(objs, update_fields, batch_size)
 
 
 @python_2_unicode_compatible

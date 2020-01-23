@@ -397,18 +397,3 @@ def test_entity_project_locale_tags(entity_a, locale_a, tag_a):
 
     entities = Entity.for_project_locale(project, locale_a, tag=tag_a.slug,)
     assert entity_a not in entities
-
-
-@pytest.mark.django_db
-def test_get_or_create():
-    """ Test
-    """
-    created = True
-    assert created == True
-
-
-@pytest.mark.django_db
-def test_bulk_update():
-    """ Test
-    """
-    assert True

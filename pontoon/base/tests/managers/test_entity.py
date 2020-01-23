@@ -928,3 +928,49 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
     active = entities[4].translation_set.filter(active=True)
     assert active[0].string == entities[4].string + " translation1"
     assert active[1].string == entities[4].string_plural + " translation1plural"
+
+
+@pytest.mark.django_db
+def test_get_word_count(resource_a, locale_a):
+    """ How many words in a string
+    """
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    count = testEntitiesQuerySet._get_word_count("String 123 =+& string hh-gg object.string")
+    assert count == 5
+
+
+@pytest.mark.django_db
+def test_mgr_get_or_create(resource_a, locale_a):
+    """
+    Get or create entities method works and counts words.
+    """
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    arguments = {
+        "resource": resource_a,
+        "string": 'String 123 =+& string hh-gg object.string',
+    }
+    obj, created = testEntitiesQuerySet.get_or_create(arguments)
+
+    assert created
+    assert obj.word_count == 5
+
+
+@pytest.mark.django_db
+def test_mgr_bulk_update(resource_a, locale_a):
+    """
+    Update entities method.
+    """
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+
+    update_fields = [
+        "resource",
+        "string",
+        "string_plural",
+        "key",
+        "comment",
+        "group_comment",
+        "resource_comment",
+        "order",
+        "source",
+    ]
+    assert True
