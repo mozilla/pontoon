@@ -153,6 +153,43 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         });
     }
 
+    renderCommentButton(commentCount: number) {
+        if(commentCount === 0) {
+            return <Localized
+                id='history-Translation--button-comment'
+                attrs={{ title: true }}
+                $commentCount={ commentCount }
+            >
+                    <button
+                        className='toggle-comments'
+                        title='Toggle translation comments'
+                        onClick={ this.toggleComments }
+                    >
+                        { 'Comment' }
+                    </button>
+            </Localized>
+        }
+
+        else {
+            return <Localized
+                id='history-Translation--button-comments'
+                attrs={{ title: true }}
+                $commentCount={ commentCount }
+            >
+                <button
+                    className='toggle-comments'
+                    title='Toggle translation comments'
+                    onClick={ this.toggleComments }
+                >
+                    { commentCount === 1 ?
+                        `1 Comment` :
+                        `${commentCount} Comments`
+                    }
+                </button>
+            </Localized>
+        }
+    }
+
     toggleDiff = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
@@ -272,37 +309,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
 
-                            { (!canComment && commentCount === 0) ? null :
-                                <Localized
-                                    id={ commentCount === 0 ?
-                                        'history-Translation--button-comment' :
-                                        'history-Translation--button-comments'
-                                    }
-                                    attrs={{ title: true }}
-                                    $commentCount={ commentCount }
-                                >
-                                    { commentCount === 0 ?
-                                        <button
-                                            className='toggle-comments'
-                                            title='Toggle translation comments'
-                                            onClick={ this.toggleComments }
-                                        >
-                                            { 'Comment' }
-                                        </button>
-                                    :
-                                        <button
-                                            className='toggle-comments'
-                                            title='Toggle translation comments'
-                                            onClick={ this.toggleComments }
-                                        >
-                                            { commentCount === 1 ?
-                                                `${commentCount} Comment` :
-                                                `${commentCount} Comments`
-                                            }
-                                        </button>
-                                    }
-                                </Localized>
-                            }
+                            { (!canComment && commentCount === 0) ? null : this.renderCommentButton(commentCount) }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
