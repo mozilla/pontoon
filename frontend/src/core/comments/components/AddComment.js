@@ -66,7 +66,7 @@ export default function AddComments(props: Props) {
                     id='comment-input'
                     name='comment'
                     dir='auto'
-                    placeholder={ `Write a comment ${'\u2026'}` }
+                    placeholder={ `Write a comment…` }
                     ref={ commentInput }
                     onKeyDown={ onEnterSubmit }
                 />

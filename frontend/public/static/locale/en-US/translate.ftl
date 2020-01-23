@@ -85,7 +85,7 @@ resourceprogress-ResourceProgress--missing = Missing
 ## Allows user to leave comments on translations
 
 comments-AddComment--input =
-    .placeholder = Write a comment...
+    .placeholder = Write a comment…
 
 
 ## Editor Menu
@@ -277,12 +277,14 @@ history-Translation--button-not-rejected =
 history-Translation--button-rejected =
     .title = Rejected
 
-history-Translation--button-comment = { $commentCount ->
-        [0] Comment
+history-Translation--button-comment = Comment
+    .title = Toggle translation comments
+
+history-Translation--button-comments = { $commentCount ->
         [one] { $commentCount } Comment
        *[other] { $commentCount } Comments
     }
-    .title = Toggle translation comment
+    .title = Toggle translation comments
 
 
 ## Interactive Tour

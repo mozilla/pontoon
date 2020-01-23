@@ -24,7 +24,6 @@ export default function UserAvatar(props: Props) {
                 />
             </Localized>
         </div>;
-
     }
 
     return <div className='user-avatar'>

@@ -274,19 +274,33 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { (!canComment && commentCount === 0) ? null :
                                 <Localized
-                                    id='history-Translation--button-comment'
+                                    id={ commentCount === 0 ?
+                                        'history-Translation--button-comment' :
+                                        'history-Translation--button-comments'
+                                    }
                                     attrs={{ title: true }}
                                     $commentCount={ commentCount }
                                 >
-                                    <button
-                                        className={ commentCount === 0 ? 'toggle-comments' :
-                                            'toggle-comments'
-                                        }
-                                        title='Toggle translation comments'
-                                        onClick={ this.toggleComments }
-                                    >
-                                        { commentCount === 0 ?'Comment' : `${commentCount} Comment` }
-                                    </button>
+                                    { commentCount === 0 ?
+                                        <button
+                                            className='toggle-comments'
+                                            title='Toggle translation comments'
+                                            onClick={ this.toggleComments }
+                                        >
+                                            { 'Comment' }
+                                        </button>
+                                    :
+                                        <button
+                                            className='toggle-comments'
+                                            title='Toggle translation comments'
+                                            onClick={ this.toggleComments }
+                                        >
+                                            { commentCount === 1 ?
+                                                `${commentCount} Comment` :
+                                                `${commentCount} Comments`
+                                            }
+                                        </button>
+                                    }
                                 </Localized>
                             }
 
