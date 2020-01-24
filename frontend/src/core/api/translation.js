@@ -5,12 +5,12 @@ import APIBase from './base';
 
 export default class TranslationAPI extends APIBase {
     /**
-     * Add or update a translation.
+     * Create a new translation.
      *
      * If a similar translation already exists, update it with the new data.
      * Otherwise, create it.
      */
-    updateTranslation(
+    createTranslation(
         entity: number,
         translation: string,
         locale: string,
@@ -45,7 +45,7 @@ export default class TranslationAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('/update/', 'POST', payload, headers);
+        return this.fetch('/translations/create/', 'POST', payload, headers);
     }
 
     _changeStatus(url: string, id: number, resource: string, ignoreWarnings: ?boolean) {

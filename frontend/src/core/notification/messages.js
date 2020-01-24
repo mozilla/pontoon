@@ -33,21 +33,9 @@ export default {
         </Localized>,
         type: 'info',
     },
-    'TRANSLATION_ADDED': {
-        content: <Localized id='notification--translation-added'>
-            Translation added
-        </Localized>,
-        type: 'info',
-    },
     'TRANSLATION_SAVED': {
         content: <Localized id='notification--translation-saved'>
             Translation saved
-        </Localized>,
-        type: 'info',
-    },
-    'TRANSLATION_UPDATED': {
-        content: <Localized id='notification--translation-updated'>
-            Translation updated
         </Localized>,
         type: 'info',
     },
