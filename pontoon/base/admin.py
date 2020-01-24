@@ -245,6 +245,10 @@ class TranslationAdmin(admin.ModelAdmin):
     raw_id_fields = ("entity",)
 
 
+class CommentAdmin(admin.ModelAdmin):
+    raw_id_fields = ('translation',)
+
+
 class TranslationMemoryEntryAdmin(admin.ModelAdmin):
     search_fields = ["source", "target", "locale__name", "locale__code"]
     list_display = ("pk", "source", "target", "locale")
@@ -313,3 +317,4 @@ admin.site.register(models.Translation, TranslationAdmin)
 admin.site.register(models.TranslationMemoryEntry, TranslationMemoryEntryAdmin)
 admin.site.register(models.ChangedEntityLocale, ChangedEntityLocaleAdmin)
 admin.site.register(models.PermissionChangelog, UserRoleLogActionAdmin)
+admin.site.register(models.Comment, CommentAdmin)

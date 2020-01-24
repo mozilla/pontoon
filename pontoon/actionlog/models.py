@@ -18,6 +18,8 @@ class ActionLog(models.Model):
         ("translation:rejected", "Translation rejected"),
         # A translation has been unrejected.
         ("translation:unrejected", "Translation unrejected"),
+        # A comment has been added.
+        ("comment:added", "Comment added"),
     )
 
     action_type = models.CharField(max_length=50, choices=ACTIONS_TYPES)

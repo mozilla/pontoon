@@ -15,6 +15,20 @@ export type EntityTranslation = {|
 
 
 /**
+ * Comments pertaining to a translation.
+ */
+export type TranslationComment = {|
+    +author: string,
+    +username: string,
+    +userGravatarUrlSmall: string,
+    +createdAt: string,
+    +dateIso: string,
+    +content: string,
+    +id: number,
+|};
+
+
+/**
  * String that needs to be translated, along with its current metadata,
  * and its currently accepted translations.
  */

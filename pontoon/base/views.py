@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import bleach
 import logging
 from datetime import datetime
 
@@ -39,6 +40,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     TranslatedResource,
     Translation,
+    Comment,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -404,7 +406,11 @@ def get_translation_history(request):
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
 
-    translations = Translation.objects.filter(entity=entity, locale=locale)
+    translations = Translation.objects.filter(
+        entity=entity,
+        locale=locale,
+    ).prefetch_related('comments')
+
     if plural_form != "-1":
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by("-active", "rejected", "-date")
@@ -424,6 +430,7 @@ def get_translation_history(request):
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "unapproved_user": User.display_name_or_blank(t.unapproved_user),
+                "comments": [c.serialize() for c in t.comments.all()]
             }
         )
         payload.append(translation_dict)
@@ -476,6 +483,49 @@ def delete_translation(request):
     translation.delete()
 
     log_action("translation:deleted", request.user, entity=entity, locale=locale)
+
+    return JsonResponse({"status": True})
+
+
+@require_POST
+@utils.require_AJAX
+@login_required(redirect_field_name="", login_url="/403")
+@transaction.atomic
+def add_comment(request):
+    # TODO: Remove as part of bug 1361318
+    return JsonResponse(
+        {"status": False, "message": "Not Implemented"},
+        status=501,
+    )
+
+    """Add a comment."""
+    try:
+        comment = request.POST["comment"]
+        comment = bleach.clean(
+            comment,
+            strip=True,
+            tags=settings.ALLOWED_TAGS,
+            attributes=settings.ALLOWED_ATTRIBUTES,
+        )
+        translationId = request.POST['translationId']
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    user = request.user
+    translation = get_object_or_404(Translation, pk=translationId)
+
+    c = Comment(
+        author=user,
+        translation=translation,
+        content=comment,
+    )
+
+    c.save()
+
+    log_action("comment:added", user, translation=translation)
 
     return JsonResponse({"status": True})
 

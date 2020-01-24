@@ -9,12 +9,14 @@ import ProjectAPI from './project';
 import ResourceAPI from './resource';
 import TranslationAPI from './translation';
 import UserAPI from './user';
+import CommentAPI from './comment';
 
 
 export type {
     Entities,
     Entity,
     EntityTranslation,
+    TranslationComment,
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,
@@ -23,6 +25,7 @@ export type {
 
 export default {
     entity: new EntityAPI(),
+    comment: new CommentAPI(),
     filter: new FilterAPI(),
     locale: new LocaleAPI(),
     l10n: new L10nAPI(),

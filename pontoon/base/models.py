@@ -3400,3 +3400,24 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(User)
+    timestamp = models.DateTimeField(default=timezone.now)
+    translation = models.ForeignKey(Translation, related_name='comments')
+    content = models.TextField()
+
+    def __str__(self):
+        return self.content
+
+    def serialize(self):
+        return {
+            "author": self.author.name_or_email,
+            "username": self.author.username,
+            "user_gravatar_url_small": self.author.gravatar_url(88),
+            "created_at": self.timestamp.strftime('%b %d, %Y %H:%M'),
+            "date_iso": self.timestamp.isoformat(),
+            "content": self.content,
+            "id": self.id,
+        }

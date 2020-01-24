@@ -81,6 +81,13 @@ resourceprogress-ResourceProgress--errors = Errors
 resourceprogress-ResourceProgress--missing = Missing
 
 
+## Comments
+## Allows user to leave comments on translations
+
+comments-AddComment--input =
+    .placeholder = Write a comment…
+
+
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
@@ -270,6 +277,15 @@ history-Translation--button-not-rejected =
 history-Translation--button-rejected =
     .title = Rejected
 
+history-Translation--button-comment = Comment
+    .title = Toggle translation comments
+
+history-Translation--button-comments = { $commentCount ->
+        [one] { $commentCount } Comment
+       *[other] { $commentCount } Comments
+    }
+    .title = Toggle translation comments
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
@@ -436,6 +452,7 @@ notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
+notification--comment-added = Comment added
 
 
 ## OtherLocales Translation
@@ -566,6 +583,12 @@ search-TimeRangeFilter--heading-time = Translation Time
 search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
 search-TimeRangeFilter--save-range = Save Range
 
+
+## User Avatar
+## Shows user Avatar with alt text
+
+user-UserAvatar--anon-alt-text = Anonymous User
+user-UserAvatar--alt-text = User Profile
 
 ## User Menu
 ## Shows user menu entries and options to sign in or out.

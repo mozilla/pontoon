@@ -35,6 +35,18 @@ export default class APIBase {
         return new URL(url, window.location.origin);
     }
 
+    toCamelCase = (s: string) => {
+        return s.replace(/([-_][a-z])/ig, ($1) => {
+            return $1.toUpperCase()
+                .replace('-', '')
+                .replace('_', '');
+        });
+    }
+
+    isObject = function (obj: any) {
+        return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
+    }
+
     async fetch(
         url: string,
         method: string,
@@ -86,5 +98,25 @@ export default class APIBase {
 
             return {};
         }
+    }
+
+    keysToCamelCase(results: any) {
+        if (this.isObject(results)) {
+            const newObj: any = {};
+
+            Object.keys(results)
+                .forEach((key) => {
+                    newObj[this.toCamelCase(key)] = this.keysToCamelCase(results[key]);
+                });
+
+            return newObj;
+        }
+        else if (Array.isArray(results)) {
+            return results.map((i) => {
+                return this.keysToCamelCase(i);
+            });
+        }
+
+        return results;
     }
 }
