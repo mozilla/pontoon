@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from pontoon.base.models import Translation
 from pontoon.checks.models import Warning
+from pontoon.test.factories import TranslationFactory
 
 
 @pytest.yield_fixture
@@ -23,7 +24,7 @@ def request_create_translation():
         update_params.update(args)
 
         return client.post(
-            reverse("pontoon.translate.create_translation"),
+            reverse("pontoon.translations.create"),
             update_params,
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
@@ -52,17 +53,16 @@ def test_create_translation_success(
 
 
 @pytest.mark.django_db
-def test_create_translation_not_logged_in(client, entity_a, locale_a):
-    url = reverse("pontoon.translate.create_translation")
-    payload = {
-        "entity": entity_a.pk,
-        "locale": locale_a.code,
-        "translation": "Bonjour !",
-        "plural_form": None,
-        "original": entity_a.string,
-    }
-
-    response = client.post(url, payload, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+def test_create_translation_not_logged_in(
+    client, entity_a, locale_a, request_create_translation
+):
+    response = request_create_translation(
+        client,
+        entity=entity_a.pk,
+        original=entity_a.string,
+        locale=locale_a.code,
+        translation="",
+    )
     assert response.status_code == 302
 
 
@@ -202,3 +202,43 @@ def test_run_checks_during_translation_update(
     assert warning.translation_id == translation_pk
     assert warning.library == "cl"
     assert warning.message == "trailing argument 1 `s` missing"
+
+
+@pytest.fixture
+def approved_translation(locale_a, project_locale_a, entity_a, user_a):
+    return TranslationFactory(
+        entity=entity_a, locale=locale_a, user=user_a, approved=True, active=True,
+    )
+
+
+@pytest.fixture
+def rejected_translation(locale_a, project_locale_a, entity_a, user_a):
+    return TranslationFactory(
+        entity=entity_a, locale=locale_a, user=user_a, rejected=True
+    )
+
+
+@pytest.mark.django_db
+def test_view_translation_delete(approved_translation, rejected_translation, member):
+    """Check if delete view works properly."""
+    url = reverse("pontoon.translations.delete")
+    params = {
+        "translation": rejected_translation.pk,
+    }
+
+    response = member.client.post(url, params)
+    assert response.status_code == 400
+    assert response.content == b"Bad Request: Request must be AJAX"
+
+    # Rejected translation gets deleted
+    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    assert response.status_code == 200
+    assert Translation.objects.filter(pk=rejected_translation.pk).exists() is False
+
+    # Approved translation doesn't get deleted
+    params = {
+        "translation": approved_translation.pk,
+    }
+    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    assert response.status_code == 403
+    assert Translation.objects.filter(pk=approved_translation.pk).exists() is True

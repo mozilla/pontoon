@@ -179,6 +179,7 @@ notification--unable-to-approve-translation = Impossible d'approuver la traducti
 notification--unable-to-unapprove-translation = Impossible de désapprouver la traduction
 notification--unable-to-reject-translation = Impossible de rejeter la traduction
 notification--unable-to-unreject-translation = Impossible de dérejeter la traduction
+notification--unable-to-delete-translation = Impossible de supprimer la traduction
 notification--same-translation = Une traduction identique existe déjà
 notification--tt-checks-enabled = Vérifications Translate Toolkit activées
 notification--tt-checks-disabled = Vérifications Translate Toolkit désactivées

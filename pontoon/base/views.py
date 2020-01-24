@@ -436,55 +436,6 @@ def get_translation_history(request):
     return JsonResponse(payload, safe=False)
 
 
-@utils.require_AJAX
-@login_required(redirect_field_name="", login_url="/403")
-@transaction.atomic
-def delete_translation(request):
-    """Delete given translation."""
-    try:
-        t = request.POST["translation"]
-    except MultiValueDictKeyError as e:
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
-        )
-
-    translation = get_object_or_404(Translation, pk=t)
-    entity = translation.entity
-    project = entity.resource.project
-    locale = translation.locale
-
-    # Read-only translations cannot be deleted
-    if utils.readonly_exists(project, locale):
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: This string is in read-only mode.",
-            },
-            status=403,
-        )
-
-    # Only privileged users or authors can delete translations
-    if not translation.rejected or not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
-    ):
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You can't delete this translation.",
-            },
-            status=403,
-        )
-
-    translation.delete()
-
-    log_action("translation:deleted", request.user, entity=entity, locale=locale)
-
-    return JsonResponse({"status": True})
-
-
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")

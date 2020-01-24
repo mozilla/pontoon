@@ -6,9 +6,6 @@ from . import views
 
 
 urlpatterns = [
-    url(
-        r"^create/$",
-        views.create_translation,
-        name="pontoon.translate.create_translation",
-    ),
+    url(r"^create/$", views.create_translation, name="pontoon.translations.create",),
+    url(r"^delete/$", views.delete_translation, name="pontoon.translations.delete",),
 ]

@@ -168,7 +168,7 @@ export function sendTranslation(
         NProgress.start();
         dispatch(startUpdateTranslation());
 
-        const content = await api.translation.createTranslation(
+        const content = await api.translation.create(
             entity.pk,
             translation,
             locale.code,

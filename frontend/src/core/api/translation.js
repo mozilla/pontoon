@@ -10,7 +10,7 @@ export default class TranslationAPI extends APIBase {
      * If a similar translation already exists, update it with the new data.
      * Otherwise, create it.
      */
-    createTranslation(
+    create(
         entity: number,
         translation: string,
         locale: string,
@@ -94,6 +94,6 @@ export default class TranslationAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('/delete-translation/', 'POST', payload, headers);
+        return this.fetch('/translations/delete/', 'POST', payload, headers);
     }
 }

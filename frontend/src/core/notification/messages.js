@@ -63,6 +63,12 @@ export default {
         </Localized>,
         type: 'error',
     },
+    'UNABLE_TO_DELETE_TRANSLATION': {
+        content: <Localized id='notification--unable-to-delete-translation'>
+            Unable to delete translation
+        </Localized>,
+        type: 'error',
+    },
     'SAME_TRANSLATION': {
         content: <Localized id='notification--same-translation'>
             Same translation already exists

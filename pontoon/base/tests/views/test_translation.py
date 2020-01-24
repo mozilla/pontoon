@@ -2,51 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 import pytest
 
-from django.urls import reverse
-
-from pontoon.base.models import Translation
-from pontoon.test.factories import TranslationFactory
-
-
-@pytest.fixture
-def approved_translation(locale_a, project_locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a, approved=True, active=True,
-    )
-
-
-@pytest.fixture
-def rejected_translation(locale_a, project_locale_a, entity_a, user_a):
-    return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a, rejected=True
-    )
-
-
-@pytest.mark.django_db
-def test_view_translation_delete(approved_translation, rejected_translation, member):
-    """Check if delete view works properly."""
-    url = reverse("pontoon.delete_translation")
-    params = {
-        "translation": rejected_translation.pk,
-    }
-
-    response = member.client.post(url, params)
-    assert response.status_code == 400
-    assert response.content == b"Bad Request: Request must be AJAX"
-
-    # Rejected translation gets deleted
-    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
-    assert response.status_code == 200
-    assert Translation.objects.filter(pk=rejected_translation.pk).exists() is False
-
-    # Approved translation doesn't get deleted
-    params = {
-        "translation": approved_translation.pk,
-    }
-    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
-    assert response.status_code == 403
-    assert Translation.objects.filter(pk=approved_translation.pk).exists() is True
-
 
 @pytest.mark.django_db
 def test_view_translate_invalid_locale_project(client, settings_debug):
