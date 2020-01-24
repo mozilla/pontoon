@@ -30,6 +30,12 @@
     text-decoration: none;
 }
 
+.metadata p .divider {
+    font-style: normal;
+    font-weight: 100;
+    margin: 0 3px;
+}
+
 .metadata .original {
     color: white;
     font-size: 14px;

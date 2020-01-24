@@ -109,6 +109,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             pluralForm !== this.props.history.pluralForm ||
             selectedEntity === nextEntity
         ) {
+            dispatch(history.actions.request(parameters.entity, pluralForm));
             dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         }
 
@@ -248,6 +249,17 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    addComment = (comment: string, translationId: number) => {
+        const { parameters, pluralForm, dispatch } = this.props;
+        dispatch(history.actions.addComment(
+            parameters.entity,
+            parameters.locale,
+            pluralForm,
+            translationId,
+            comment,
+        ));
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -315,6 +327,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     locale={ state.locale }
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
+                    addComment={ this.addComment }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                 />

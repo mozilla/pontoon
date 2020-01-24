@@ -125,7 +125,9 @@ export default class EntityAPI extends APIBase {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
-        return await this.fetch('/get-history/', 'GET', payload, headers);
+        const results = await this.fetch('/get-history/', 'GET', payload, headers);
+
+        return this.keysToCamelCase(results);
     }
 
     async getOtherLocales(

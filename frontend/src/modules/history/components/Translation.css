@@ -1,5 +1,8 @@
-.history .translation {
+.history .wrapper {
     border-bottom: 1px solid #5E6475;
+}
+
+.history .translation {
     cursor: pointer;
     padding: 15px 10px;
     transition: all 0.1s ease-out;
@@ -14,18 +17,18 @@
     background: #4D5967;
 }
 
-.history .translation .avatar {
+.history .translation .user-avatar {
     padding-right: 8px;
     position: relative;
     top: 3px;
 }
 
-.history .translation .avatar img {
+.history .translation .user-avatar img {
     border-radius: 6px;
     border: 2px solid #5E6475;
 }
 
-.history .translation:hover .avatar img {
+.history .translation:hover .user-avatar img {
     border-color: #637283;
 }
 
@@ -69,16 +72,24 @@
     color: #7BC876;
 }
 
-.history .translation .content > header .toggle-diff {
+.history .translation .content > header .toggle-diff,
+.history .translation .content > header .toggle-comments {
     font-size: inherit;
     font-weight: 300;
     margin-right: 6px;
     text-transform: uppercase;
+    pointer-events: auto;
 }
 
 .history .translation .content > header .toggle-diff:hover,
+.history .translation .content > header .toggle-comments:hover,
 .history .translation .content > header .toggle-diff.active {
     color: #7BC876;
+}
+
+.history .translation .content > header .divider {
+    margin-right: 3px;
+    margin-left: -3px;
 }
 
 .history .translation .content > header button {

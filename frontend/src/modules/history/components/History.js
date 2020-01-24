@@ -21,6 +21,7 @@ type Props = {|
     locale: Locale,
     user: UserState,
     deleteTranslation: (number) => void,
+    addComment: (string, number) => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -49,6 +50,7 @@ export default class History extends React.Component<Props> {
             locale,
             user,
             deleteTranslation,
+            addComment,
             updateEditorTranslation,
             updateTranslationStatus,
         } = this.props;
@@ -69,10 +71,11 @@ export default class History extends React.Component<Props> {
                         activeTranslation={ history.translations[0] }
                         entity={ entity }
                         isReadOnlyEditor={ isReadOnlyEditor }
-                        canReview={ isTranslator }
+                        isTranslator={ isTranslator }
                         locale={ locale }
                         user={ user }
                         deleteTranslation={ deleteTranslation }
+                        addComment={ addComment }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateTranslationStatus={ updateTranslationStatus }
                         key={ index }
