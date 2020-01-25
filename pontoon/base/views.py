@@ -493,10 +493,10 @@ def delete_translation(request):
 @transaction.atomic
 def add_comment(request):
     # TODO: Remove as part of bug 1361318
-    return JsonResponse(
-        {"status": False, "message": "Not Implemented"},
-        status=501,
-    )
+    # return JsonResponse(
+    #     {"status": False, "message": "Not Implemented"},
+    #     status=501,
+    # )
 
     """Add a comment."""
     try:

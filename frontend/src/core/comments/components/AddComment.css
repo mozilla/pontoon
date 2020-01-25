@@ -4,7 +4,10 @@
     border-radius: 4px;
     color: #FFFFFF;
     font-size: 11px;
-    height: 24px;
+    height: auto;
+    overflow: auto;
     line-height: 24px;
     padding: 6px;
+    /* position: absolute;
+    bottom: 0; */
 }

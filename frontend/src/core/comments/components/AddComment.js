@@ -25,16 +25,36 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    let commentInput: any = React.useRef();
+    const commentInput: any = React.useRef();
+    const [rows, setRows] = React.useState(1);
+    const minRows = 1;
+    const maxRows = 3;
 
     if (!user) {
         return null;
     }
 
-    const onEnterSubmit = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
+    const handleKeyUp = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
         if (event.keyCode === 13 && event.shiftKey === false) {
             event.preventDefault();
             submitComment(event);
+        }
+        else {
+            const textAreaLineHeight = 24;
+            const previousRows = commentInput.current.rows;
+            commentInput.current.rows = minRows;
+
+            const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
+
+            if (currentRows === previousRows) {
+                commentInput.current.rows = currentRows;
+            }
+
+            if (currentRows >= maxRows) {
+                commentInput.current.rows = maxRows;
+            }
+
+            currentRows < maxRows ? setRows(currentRows) : setRows(maxRows);
         }
     }
 
@@ -48,6 +68,7 @@ export default function AddComments(props: Props) {
 
         addComment(comment, translationId);
         commentInput.current.value = '';
+        commentInput.current.rows = minRows;
     };
 
     return <div className='comment add-comment'>
@@ -67,8 +88,9 @@ export default function AddComments(props: Props) {
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }
+                    rows={ rows }
                     ref={ commentInput }
-                    onKeyDown={ onEnterSubmit }
+                    onKeyUp={ handleKeyUp }
                 />
             </Localized>
         </form>
