@@ -41,15 +41,11 @@ export default function AddComments(props: Props) {
         }
         else {
             const textAreaLineHeight = 24;
-            const previousRows = commentInput.current.rows;
             commentInput.current.rows = minRows;
 
             const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
 
-            if (currentRows === previousRows) {
-                commentInput.current.rows = currentRows;
-            }
-            else if (currentRows < maxRows) {
+            if (currentRows < maxRows) {
                 commentInput.current.rows = currentRows;
             }
             else if (currentRows >= maxRows) {
