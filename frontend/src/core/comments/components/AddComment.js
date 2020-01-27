@@ -26,7 +26,7 @@ export default function AddComments(props: Props) {
     } = props;
 
     const commentInput: any = React.useRef();
-    const [rows, setRows] = React.useState(1);
+    const rows = 1;
     const minRows = 1;
     const maxRows = 3;
 
@@ -49,12 +49,12 @@ export default function AddComments(props: Props) {
             if (currentRows === previousRows) {
                 commentInput.current.rows = currentRows;
             }
-
-            if (currentRows >= maxRows) {
+            else if (currentRows < maxRows) {
+                commentInput.current.rows = currentRows;
+            }
+            else if (currentRows >= maxRows) {
                 commentInput.current.rows = maxRows;
             }
-
-            currentRows < maxRows ? setRows(currentRows) : setRows(maxRows);
         }
     }
 
