@@ -1,5 +1,4 @@
-ARG python_version
-FROM python:${python_version}-stretch
+FROM python:3.7.6-stretch
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HGPYTHON3=1

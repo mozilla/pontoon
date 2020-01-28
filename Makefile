@@ -1,7 +1,5 @@
 DC := $(shell which docker-compose)
 DOCKER := $(shell which docker)
-export PYTHON_VERSION := 2.7.17
-export PYTHON_3_VERSION := 3.7.5
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
@@ -32,31 +30,12 @@ help:
 	make build
 
 build:
-	echo "BUILD FOR PYTHON: $(PYTHON_VERSION)"
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
 	sed -i -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
 	"${DC}" build webapp
 
 	touch .docker-build
-
-build-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-build-py3: build
-
-test-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-test-py3: test
-
-shell-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-shell-py3: shell
-
-pytest-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-pytest-py3: pytest
-
-run-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-run-py3: run
-
-setup-py3: override PYTHON_VERSION=$(PYTHON_3_VERSION)
-setup-py3: setup
 
 setup: .docker-build
 	"${DC}" run webapp //app/docker/set_up_webapp.sh
