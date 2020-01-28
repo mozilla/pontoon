@@ -20,7 +20,8 @@ install:
   - pushd frontend && npm install && popd
 script:
   # Lint code
-  - flake8
+  - black pontoon/ --check
+  - flake8 pontoon/
   - ./node_modules/.bin/eslint .
 
   # Build and collect static assets
