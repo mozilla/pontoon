@@ -26,9 +26,9 @@ export default function AddComments(props: Props) {
     } = props;
 
     const commentInput: any = React.useRef();
-    const rows = 1;
     const minRows = 1;
     const maxRows = 3;
+    const rows = minRows;
 
     if (!user) {
         return null;
