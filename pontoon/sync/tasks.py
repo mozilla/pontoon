@@ -120,7 +120,7 @@ def sync_project(
             return
 
     # Sync translations
-    sync_translations.delay(
+    sync_translations(
         project_pk,
         project_sync_log.pk,
         now,
@@ -182,14 +182,7 @@ def sync_sources(db_project, now, force, no_pull):
     }
 
 
-@serial_task(
-    settings.SYNC_TASK_TIMEOUT,
-    base=PontoonTask,
-    lock_key="project={0}",
-    on_error=sync_translations_error,
-)
 def sync_translations(
-    self,
     project_pk,
     project_sync_log_pk,
     now,
