@@ -10,18 +10,33 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('actionlog', '0001_initial'),
+        ("actionlog", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='actionlog',
-            name='action_type',
-            field=models.CharField(choices=[('translation:created', 'Translation created'), ('translation:deleted', 'Translation deleted'), ('translation:approved', 'Translation approved'), ('translation:unapproved', 'Translation unapproved'), ('translation:rejected', 'Translation rejected'), ('translation:unrejected', 'Translation unrejected'), ('comment:added', 'Comment added')], max_length=50),
+            model_name="actionlog",
+            name="action_type",
+            field=models.CharField(
+                choices=[
+                    ("translation:created", "Translation created"),
+                    ("translation:deleted", "Translation deleted"),
+                    ("translation:approved", "Translation approved"),
+                    ("translation:unapproved", "Translation unapproved"),
+                    ("translation:rejected", "Translation rejected"),
+                    ("translation:unrejected", "Translation unrejected"),
+                    ("comment:added", "Comment added"),
+                ],
+                max_length=50,
+            ),
         ),
         migrations.AlterField(
-            model_name='actionlog',
-            name='performed_by',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='actions', to=settings.AUTH_USER_MODEL),
+            model_name="actionlog",
+            name="performed_by",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="actions",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
