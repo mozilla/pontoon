@@ -128,7 +128,7 @@ class SyncProjectTests(TestCase):
         sync_project(self.db_project.pk, self.sync_log.pk)
 
         log = ProjectSyncLog.objects.get(project=self.db_project)
-        assert_equal(self.mock_sync_translations.delay.call_args[0][1], log.pk)
+        assert_equal(self.mock_sync_translations.call_args[0][1], log.pk)
 
 
 class SyncTranslationsTests(FakeCheckoutTestCase):
