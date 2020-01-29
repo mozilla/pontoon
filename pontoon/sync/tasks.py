@@ -50,17 +50,6 @@ def sync_project_error(error, *args, **kwargs):
     ).skip()
 
 
-def sync_translations_error(error, *args, **kwargs):
-    project_sync_log = ProjectSyncLog.objects.get(pk=args[1])
-    repository = project_sync_log.project.translation_repositories()[0]
-
-    RepositorySyncLog.objects.create(
-        project_sync_log=project_sync_log,
-        repository=repository,
-        start_time=timezone.now(),
-    ).end()
-
-
 def update_locale_project_locale_stats(locale, project):
     locale.aggregate_stats()
     locale.project_locale.get(project=project).aggregate_stats()
