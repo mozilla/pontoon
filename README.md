@@ -45,6 +45,7 @@ If you want to go further, you can:
 * See Mozilla's Pontoon servers:
     * [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
     * [Production](https://pontoon.mozilla.org/)
+* Get in touch with us on [chat.mozilla.org](https://chat.mozilla.org/#/room/#pontoon:mozilla.org).
 
 ## License
 

@@ -166,9 +166,9 @@ Communicating with that community is an important part of contributing
 to such projects.*
 
 There are two main places where we communicate about Pontoon's
-development. The first one is IRC, used for real-time chat, quick
-questions, side-track conversations, etc. We hang on the #pontoon
-channel on `Mozilla's IRC server <https://wiki.mozilla.org/IRC>`_.
+development. The first one is `chat.mozilla.org <https://chat.mozilla.org/>`_,
+used for real-time chat, quick questions, side-track conversations, etc.
+Find us in the `#pontoon channel <https://chat.mozilla.org/#/room/#pontoon:mozilla.org>`_.
 
 The second is discourse, a forum platform that we use for more long-term
 conversations. We use `Mozilla's community
@@ -183,17 +183,17 @@ Pontoon's core developer team is currently composed of Matjaž and
 Adrian, with occasional help from other members of Mozilla's L10n team,
 Axel and Staś. We also receive invaluable help from community members.
 
-+------------+----------+--------------------------+------------+-----------------------------------------------+
-|            | Name     | ROLE                     | IRC        | github                                        |
-+============+==========+==========================+============+===============================================+
-| |image4|   | Matjaž   | Pontoon Core Developer   | mathjazz   | `mathjazz <https://github.com/mathjazz/>`_    |
-+------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image5|   | Adrian   | Pontoon Core Developer   | adrian     | `adngdb <https://github.com/adngdb/>`_        |
-+------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image6|   | Axel     | L10n Tech Lead           | Pike       | `Pike <https://github.com/Pike/>`_            |
-+------------+----------+--------------------------+------------+-----------------------------------------------+
-| |image7|   | Staś     | Fluent Core Developer    | stas       | `stasm <https://github.com/stasm/>`_          |
-+------------+----------+--------------------------+------------+-----------------------------------------------+
++------------+----------+--------------------------+------------------+-----------------------------------------------+
+|            | Name     | ROLE                     | chat.mozilla.org | github                                        |
++============+==========+==========================+==================+===============================================+
+| |image4|   | Matjaž   | Pontoon Core Developer   | mathjazz         | `mathjazz <https://github.com/mathjazz/>`_    |
++------------+----------+--------------------------+------------------+-----------------------------------------------+
+| |image5|   | Adrian   | Pontoon Core Developer   | adrian           | `adngdb <https://github.com/adngdb/>`_        |
++------------+----------+--------------------------+------------------+-----------------------------------------------+
+| |image6|   | Axel     | L10n Tech Lead           | Pike             | `Pike <https://github.com/Pike/>`_            |
++------------+----------+--------------------------+------------------+-----------------------------------------------+
+| |image7|   | Staś     | Fluent Core Developer    | stas             | `stasm <https://github.com/stasm/>`_          |
++------------+----------+--------------------------+------------------+-----------------------------------------------+
 
 .. |image0| image:: https://avatars2.githubusercontent.com/u/626716?s=32&v=4
 .. |image1| image:: https://avatars1.githubusercontent.com/u/328790?s=32&v=4
