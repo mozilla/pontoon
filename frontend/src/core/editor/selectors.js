@@ -2,12 +2,13 @@
 
 import { createSelector } from 'reselect';
 
+import * as entities from 'core/entities';
 import * as plural from 'core/plural';
 import { fluent } from 'core/utils';
 import * as history from 'modules/history';
 import { NAME } from '.';
 
-import type { EntityTranslation } from 'core/api';
+import type { EntityTranslation, Entity } from 'core/api';
 import type { HistoryTranslation, HistoryState } from 'modules/history';
 import type { EditorState } from '.';
 
@@ -20,6 +21,7 @@ export function _existingTranslation(
     editor: EditorState,
     activeTranslation: EntityTranslation,
     history: HistoryState,
+    entity: Entity,
 ): ?(EntityTranslation | HistoryTranslation) {
     const { translation, initialTranslation } = editor;
 
@@ -60,9 +62,25 @@ export function _existingTranslation(
         }
         // If translation is a string, from the generic editor.
         else {
-            existingTranslation = history.translations.find(
-                t => t.string === translation
-            )
+            // Except it might actually be a simple Fluent message from the SimpleEditor.
+            if (entity.format === 'ftl') {
+                // This case happens when the format is Fluent and the string is simple.
+                // We thus store a simplified version of the Fluent message in memory,
+                // but the history has actual Fluent-formatted strings (with ID).
+                // Thus, we need to reconstruct the Fluent message in order to be able
+                // to compare it with items in history.
+                const reconstructed = fluent.serializer.serializeEntry(
+                    fluent.getReconstructedMessage(entity.original, translation)
+                );
+                existingTranslation = history.translations.find(
+                    t => t.string === reconstructed
+                )
+            }
+            else {
+                existingTranslation = history.translations.find(
+                    t => t.string === translation
+                )
+            }
         }
     }
     return existingTranslation;
@@ -80,6 +98,7 @@ export const sameExistingTranslation: Function = createSelector(
     editorSelector,
     plural.selectors.getTranslationForSelectedEntity,
     historySelector,
+    entities.selectors.getSelectedEntity,
     _existingTranslation
 );
 

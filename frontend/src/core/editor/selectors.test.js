@@ -13,6 +13,15 @@ const EDITOR_FLUENT = {
     initialTranslation: fluent.parser.parseEntry('msg = something'),
 };
 
+const ENTITY = {
+    format: 'po',
+};
+
+const ENTITY_FLUENT = {
+    original: 'msg = Allez Morty !',
+    format: 'ftl',
+};
+
 const ACTIVE_TRANSLATION = { pk: 1 };
 
 const HISTORY = {
@@ -42,6 +51,10 @@ const HISTORY_FLUENT = {
             pk: 98,
             string: 'msg = hello, world!',
         },
+        {
+            pk: 431,
+            string: 'msg = Come on Morty!\n',
+        },
     ],
 };
 
@@ -52,6 +65,7 @@ describe('sameExistingTranslation', () => {
             { ...EDITOR, translation: EDITOR.initialTranslation },
             ACTIVE_TRANSLATION,
             HISTORY,
+            ENTITY,
         )).toEqual(ACTIVE_TRANSLATION);
     });
 
@@ -60,6 +74,7 @@ describe('sameExistingTranslation', () => {
             { ...EDITOR_FLUENT, translation: EDITOR_FLUENT.initialTranslation },
             ACTIVE_TRANSLATION,
             HISTORY_FLUENT,
+            ENTITY_FLUENT,
         )).toEqual(ACTIVE_TRANSLATION);
     });
 
@@ -68,6 +83,7 @@ describe('sameExistingTranslation', () => {
             { translation: '', initialTranslation: '' },
             ACTIVE_TRANSLATION,
             HISTORY,
+            ENTITY,
         )).toEqual(ACTIVE_TRANSLATION);
     });
 
@@ -76,12 +92,14 @@ describe('sameExistingTranslation', () => {
             { ...EDITOR, translation: HISTORY.translations[0].string },
             ACTIVE_TRANSLATION,
             HISTORY,
+            ENTITY,
         )).toEqual(HISTORY.translations[0]);
 
         expect(_existingTranslation(
             { ...EDITOR, translation: HISTORY.translations[1].string },
             ACTIVE_TRANSLATION,
             HISTORY,
+            ENTITY,
         )).toEqual(HISTORY.translations[1]);
     });
 
@@ -97,6 +115,7 @@ describe('sameExistingTranslation', () => {
             },
             ACTIVE_TRANSLATION,
             HISTORY_FLUENT,
+            ENTITY_FLUENT,
         )).toEqual(HISTORY_FLUENT.translations[0]);
 
         expect(_existingTranslation(
@@ -110,6 +129,7 @@ describe('sameExistingTranslation', () => {
             },
             ACTIVE_TRANSLATION,
             HISTORY_FLUENT,
+            ENTITY_FLUENT,
         )).toEqual(HISTORY_FLUENT.translations[1]);
     });
 
@@ -118,6 +138,16 @@ describe('sameExistingTranslation', () => {
             { ...EDITOR, translation: '' },
             ACTIVE_TRANSLATION,
             HISTORY,
+            ENTITY,
         )).toEqual(HISTORY.translations[2]);
+    });
+
+    it('finds a Fluent translation in history from a simplified Fluent string', () => {
+        expect(_existingTranslation(
+            { initialTranslation: '', translation: 'Come on Morty!' },
+            ACTIVE_TRANSLATION,
+            HISTORY_FLUENT,
+            ENTITY_FLUENT,
+        )).toEqual(HISTORY_FLUENT.translations[2]);
     });
 });
