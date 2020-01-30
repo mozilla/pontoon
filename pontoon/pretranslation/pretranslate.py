@@ -79,26 +79,33 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
     )
 
     for tr in translatedresources:
-        index, diff = tr_dict[tr.locale_resource]
+        index, unreviewed_diff, fuzzy_diff = tr_dict[tr.locale_resource]
         tr.latest_translation = translations[index]
-        tr.unreviewed_strings += diff
+        tr.unreviewed_strings += unreviewed_diff
+        tr.fuzzy_strings += fuzzy_diff
         tr_list.append(tr)
 
-    for locale, index, diff in locale_dict.values():
+    for locale, index, unreviewed_diff, fuzzy_diff in locale_dict.values():
         projectlocale = locale.fetched_project_locale[0]
 
         locale.latest_translation = translations[index]
         projectlocale.latest_translation = translations[index]
 
         # Since the translations fall into unreviewed category.
-        locale.unreviewed_strings += diff
-        projectlocale.unreviewed_strings += diff
+        locale.unreviewed_strings += unreviewed_diff
+        locale.fuzzy_strings += fuzzy_diff
+        projectlocale.unreviewed_strings += unreviewed_diff
+        projectlocale.fuzzy_strings += fuzzy_diff
 
         locale_list.append(locale)
         projectlocale_list.append(projectlocale)
 
-    bulk_update(locale_list, update_fields=["latest_translation", "unreviewed_strings"])
     bulk_update(
-        projectlocale_list, update_fields=["latest_translation", "unreviewed_strings"]
+        locale_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
     )
-    bulk_update(tr_list, update_fields=["latest_translation", "unreviewed_strings"])
+    bulk_update(
+        projectlocale_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+    )
+    bulk_update(
+        tr_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+    )

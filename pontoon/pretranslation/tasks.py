@@ -8,6 +8,9 @@ from pontoon.pretranslation.pretranslate import (
     get_translations,
     update_changed_instances,
 )
+from pontoon.checks.utils import bulk_run_checks, get_failed_checks_db_objects
+from pontoon.checks.libraries import run_checks
+from pontoon.checks.models import Warning, Error
 
 
 log = logging.getLogger(__name__)
@@ -78,6 +81,8 @@ def pretranslate(project, locales=None, entities=None):
     # Also, their latest_translation and stats count
     locale_dict = {}
     tr_dict = {}
+    warnings_list = []
+    errors_list = []
 
     tr_filter = []
     index = -1
@@ -106,38 +111,78 @@ def pretranslate(project, locales=None, entities=None):
                     plural_form=plural_form,
                 )
 
-                translations.append(t)
+                warnings_, errors_ = get_failed_checks_db_objects(
+                    t,
+                    run_checks(
+                        entity,
+                        locale.code,
+                        entity.string,
+                        string,
+                        use_tt_checks=False,
+                    ),
+                )
 
                 index += 1
 
+                if len(warnings_) or len(errors_):
+                    t.fuzzy = True
+                    for warning in warnings_:
+                        warnings_list.append([warning, index])
+                    for error in errors_:
+                        errors_list.append([error, index])
+
+                translations.append(t)
+
                 if locale_resource not in tr_dict:
-                    tr_dict[locale_resource] = [index, 0]
+                    tr_dict[locale_resource] = [index, 0, 0]
                     # Add query for fetching respective TranslatedResource.
                     tr_filter.append(
                         Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
                     )
 
                 if locale.code not in locale_dict:
-                    locale_dict[locale.code] = [locale, index, 0]
+                    locale_dict[locale.code] = [locale, index, 0, 0]
 
                 # Update the latest translation index
                 tr_dict[locale_resource][0] = index
                 locale_dict[locale.code][1] = index
 
                 # Increment number of translations (used to adjust stats)
-                tr_dict[locale_resource][1] += 1
-                locale_dict[locale.code][2] += 1
+                if len(warnings_) or len(errors_):
+                    tr_dict[locale_resource][2] += 1
+                    locale_dict[locale.code][3] += 1
+                else:
+                    tr_dict[locale_resource][1] += 1
+                    locale_dict[locale.code][2] += 1
         log.info("Fetching pretranslations for locale {} done".format(locale.code))
 
     if len(translations) == 0:
         return
 
     translations = Translation.objects.bulk_create(translations)
+    translation_pks = [t.pk for t in translations]
+
+    # bulk save checks
+    warnings = []
+    errors = []
+    for warning, i in warnings_list:
+        warning.translation = translations[i]
+        warnings.append(warning)
+
+    for error, i in errors_list:
+        error.translation = translations[i]
+        errors.append(error)
+
+    Warning.objects.bulk_create(warnings)
+    Error.objects.bulk_create(errors)
+
+    unreviewed_count = Translation.objects.filter(pk__in=translation_pks, errors__isnull=True, warnings__isnull=True).count()
 
     # Update latest activity and unreviewed count for the project.
     project.latest_translation = translations[-1]
-    project.unreviewed_strings += len(translations)
-    project.save(update_fields=["latest_translation", "unreviewed_strings"])
+    project.unreviewed_strings += unreviewed_count
+    project.fuzzy_strings += (len(translations) - unreviewed_count)
+    project.save(update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"])
 
     # Update latest activity and unreviewed count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
