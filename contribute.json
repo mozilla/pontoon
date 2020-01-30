@@ -1,18 +1,20 @@
 {
     "name": "Pontoon",
-    "description": "Pontoon enables localizers to translate web apps and web sites in place with context and spatial limitations right in front of them.",
+    "description": "Pontoon is a translation management system used and developed by the Mozilla localization community.",
     "repository": {
         "url": "https://github.com/mozilla/pontoon",
-        "license": "MPL2"
+        "license": "BSD-2-Clause"
     },
     "participate": {
         "home": "https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org",
         "docs": "http://mozilla-pontoon.readthedocs.io/",
-        "irc": "irc://irc.mozilla.org/#pontoon",
-        "irc-contacts": [
+        "chat": "irc://irc.mozilla.org/#pontoon",
+        "chat-contacts": [
             "mathjazz",
-            "Osmose"
-        ]
+            "adrian",
+            "Pike"
+        ],
+        "mailing-list": "https://discourse.mozilla.org/c/pontoon"
     },
     "bugs": {
         "list": "https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon",
