@@ -7,6 +7,7 @@ set -e
 
 # Make sure we use correct binaries.
 PYTHON="$(which python)"
+BLACK="$(which black)"
 FLAKE8="$(which flake8)"
 NPM="$(which npm)"
 PYTEST="$(which pytest)"
@@ -15,8 +16,14 @@ CODECOV="$(which codecov)"
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"
+echo "Formatting Python code"
+$BLACK pontoon/ --check
+
+
+echo ""
+echo "--------------------------------------------------------------------------------------------"
 echo "Linting Python code"
-$FLAKE8 pontoon
+$FLAKE8 pontoon/
 
 echo "Linting JavaScript code"
 ./node_modules/.bin/eslint .
