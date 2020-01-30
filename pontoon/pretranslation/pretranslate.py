@@ -101,11 +101,14 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
         projectlocale_list.append(projectlocale)
 
     bulk_update(
-        locale_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+        locale_list,
+        update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"],
     )
     bulk_update(
-        projectlocale_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+        projectlocale_list,
+        update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"],
     )
     bulk_update(
-        tr_list, update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+        tr_list,
+        update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"],
     )

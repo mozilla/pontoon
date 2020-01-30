@@ -114,11 +114,7 @@ def pretranslate(project, locales=None, entities=None):
                 warnings_, errors_ = get_failed_checks_db_objects(
                     t,
                     run_checks(
-                        entity,
-                        locale.code,
-                        entity.string,
-                        string,
-                        use_tt_checks=False,
+                        entity, locale.code, entity.string, string, use_tt_checks=False,
                     ),
                 )
 
@@ -176,13 +172,17 @@ def pretranslate(project, locales=None, entities=None):
     Warning.objects.bulk_create(warnings)
     Error.objects.bulk_create(errors)
 
-    unreviewed_count = Translation.objects.filter(pk__in=translation_pks, errors__isnull=True, warnings__isnull=True).count()
+    unreviewed_count = Translation.objects.filter(
+        pk__in=translation_pks, errors__isnull=True, warnings__isnull=True
+    ).count()
 
     # Update latest activity and unreviewed count for the project.
     project.latest_translation = translations[-1]
     project.unreviewed_strings += unreviewed_count
-    project.fuzzy_strings += (len(translations) - unreviewed_count)
-    project.save(update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"])
+    project.fuzzy_strings += len(translations) - unreviewed_count
+    project.save(
+        update_fields=["latest_translation", "unreviewed_strings", "fuzzy_strings"]
+    )
 
     # Update latest activity and unreviewed count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
