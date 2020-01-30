@@ -8,7 +8,7 @@ from pontoon.pretranslation.pretranslate import (
     get_translations,
     update_changed_instances,
 )
-from pontoon.checks.utils import bulk_run_checks, get_failed_checks_db_objects
+from pontoon.checks.utils import get_failed_checks_db_objects
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.models import Warning, Error
 
@@ -160,7 +160,7 @@ def pretranslate(project, locales=None, entities=None):
         return
 
     translations = Translation.objects.bulk_create(translations)
-    translation_pks = [t.pk for t in translations]
+    translation_pks = [translation.pk for translation in translations]
 
     # bulk save checks
     warnings = []
