@@ -11,6 +11,7 @@ from pontoon.pretranslation.pretranslate import (
 )
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import serial_task
+from pontoon.checks.utils import bulk_run_checks
 
 
 log = logging.getLogger(__name__)
@@ -107,6 +108,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
                     string=string,
                     user=user,
                     approved=False,
+                    fuzzy=True,
                     active=True,
                     plural_form=plural_form,
                 )
@@ -138,13 +140,16 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         return
 
     translations = Translation.objects.bulk_create(translations)
+    translation_pks = {translation.pk for translation in translations}
 
-    # Update latest activity and unreviewed count for the project.
+    bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
+
+    # Update latest activity and fuzzy count for the project.
     project.latest_translation = translations[-1]
-    project.unreviewed_strings += len(translations)
-    project.save(update_fields=["latest_translation", "unreviewed_strings"])
+    project.fuzzy_strings += len(translations)
+    project.save(update_fields=["latest_translation", "fuzzy_strings"])
 
-    # Update latest activity and unreviewed count for changed instances.
+    # Update latest activity and fuzzy count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
 
     log.info("Fetching pretranslations for project {} done".format(project.name))
