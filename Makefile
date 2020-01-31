@@ -18,7 +18,7 @@ help:
 	@echo "  setup            Configures a local instance after a fresh build"
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
-	@echo "  shell            Opens a Bash shell in a webpp docker container"
+	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
 	@echo "  jest             Runs the new frontend's test suite (Translate.Next)"
 	@echo "  pytest           Runs the backend's test suite (Python)"
