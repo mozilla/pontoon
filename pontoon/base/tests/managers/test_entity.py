@@ -113,10 +113,9 @@ def test_mgr_entity_filter_translated(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a, entity=entities[2], approved=True,
     )
-    assert set(Entity.objects.filter(Entity.objects.translated(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
+    assert set(
+        Entity.objects.filter(Entity.objects.translated(locale_a, resource_a.project))
+    ) == {entities[0], entities[2]}
 
 
 @pytest.mark.django_db
@@ -146,10 +145,9 @@ def test_mgr_entity_filter_translated_plurals(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a, entity=entities[2], plural_form=1, approved=True,
     )
-    assert set(Entity.objects.filter(Entity.objects.translated(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
+    assert set(
+        Entity.objects.filter(Entity.objects.translated(locale_a, resource_a.project))
+    ) == {entities[0], entities[2]}
 
 
 @pytest.mark.django_db
