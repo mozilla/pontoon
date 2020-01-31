@@ -6,7 +6,10 @@ DOCKER := $(shell which docker)
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
 SITE_URL ?= http://localhost:8000
 
-.PHONY: build build-py3 setup run clean test test-py3 shell shell-py3 loaddb build-frontend build-frontend-w
+USER_ID?=$(shell id -u)
+GROUP_ID?=$(shell id -g)
+
+.PHONY: build setup run clean test shell loaddb build-frontend build-frontend-w
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -33,7 +36,7 @@ build:
 	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
 	sed -i -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
 
-	"${DC}" build webapp
+	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) webapp
 
 	touch .docker-build
 
