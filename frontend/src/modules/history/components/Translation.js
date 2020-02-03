@@ -246,7 +246,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         } = this.props;
 
         // TODO: Uncomment as part of bug 1361318
-        // const commentCount = translation.comments.length;
+        const commentCount = translation.comments.length;
 
         // Does the currently logged in user own this translation?
         const ownTranslation = (
@@ -306,7 +306,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
 
                             { /* TODO: Uncomment as part of bug 1361318 */}
-                            {/* { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) } */}
+                            { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
