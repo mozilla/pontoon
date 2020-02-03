@@ -492,11 +492,11 @@ def delete_translation(request):
 @login_required(redirect_field_name="", login_url="/403")
 @transaction.atomic
 def add_comment(request):
-    # TODO: Remove as part of bug 1361318
-    # return JsonResponse(
-    #     {"status": False, "message": "Not Implemented"},
-    #     status=501,
-    # )
+    TODO: Remove as part of bug 1361318
+    return JsonResponse(
+        {"status": False, "message": "Not Implemented"},
+        status=501,
+    )
 
     """Add a comment."""
     try:
