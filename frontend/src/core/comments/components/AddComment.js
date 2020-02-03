@@ -25,29 +25,41 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    let commentInput: any = React.useRef();
+    const commentInput: any = React.useRef();
+    const minRows = 1;
+    const maxRows = 6;
 
     if (!user) {
         return null;
     }
 
-    const onEnterSubmit = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.keyCode === 13 && event.shiftKey === false) {
-            event.preventDefault();
-            submitComment(event);
+    const handleOnChange = () => {
+        const textAreaLineHeight = 24;
+        commentInput.current.rows = minRows;
+
+        const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
+
+        if (currentRows < maxRows) {
+            commentInput.current.rows = currentRows;
+        }
+        else {
+            commentInput.current.rows = maxRows;
         }
     }
 
     const submitComment = (event: SyntheticKeyboardEvent<>) => {
-        event.preventDefault();
-        const comment = commentInput.current.value;
+        if (event.keyCode === 13 && event.shiftKey === false) {
+            event.preventDefault();
+            const comment = commentInput.current.value;
 
-        if (!comment) {
-            return null;
+            if (!comment) {
+                return null;
+            }
+
+            addComment(comment, translationId);
+            commentInput.current.value = '';
+            commentInput.current.rows = minRows;
         }
-
-        addComment(comment, translationId);
-        commentInput.current.value = '';
     };
 
     return <div className='comment add-comment'>
@@ -67,8 +79,10 @@ export default function AddComments(props: Props) {
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }
+                    rows={ minRows }
                     ref={ commentInput }
-                    onKeyDown={ onEnterSubmit }
+                    onChange={ handleOnChange }
+                    onKeyDown={ submitComment }
                 />
             </Localized>
         </form>
