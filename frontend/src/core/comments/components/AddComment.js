@@ -27,44 +27,39 @@ export default function AddComments(props: Props) {
 
     const commentInput: any = React.useRef();
     const minRows = 1;
-    const maxRows = 3;
-    const rows = minRows;
+    const maxRows = 6;
 
     if (!user) {
         return null;
     }
 
-    const handleKeyUp = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.keyCode === 13 && event.shiftKey === false) {
-            event.preventDefault();
-            submitComment(event);
+    const handleOnChange = () => {
+        const textAreaLineHeight = 24;
+        commentInput.current.rows = minRows;
+
+        const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
+
+        if (currentRows < maxRows) {
+            commentInput.current.rows = currentRows;
         }
         else {
-            const textAreaLineHeight = 24;
-            commentInput.current.rows = minRows;
-
-            const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
-
-            if (currentRows < maxRows) {
-                commentInput.current.rows = currentRows;
-            }
-            else if (currentRows >= maxRows) {
-                commentInput.current.rows = maxRows;
-            }
+            commentInput.current.rows = maxRows;
         }
     }
 
     const submitComment = (event: SyntheticKeyboardEvent<>) => {
-        event.preventDefault();
-        const comment = commentInput.current.value;
+        if (event.keyCode === 13 && event.shiftKey === false) {
+            event.preventDefault();
+            const comment = commentInput.current.value;
 
-        if (!comment) {
-            return null;
+            if (!comment) {
+                return null;
+            }
+
+            addComment(comment, translationId);
+            commentInput.current.value = '';
+            commentInput.current.rows = minRows;
         }
-
-        addComment(comment, translationId);
-        commentInput.current.value = '';
-        commentInput.current.rows = minRows;
     };
 
     return <div className='comment add-comment'>
@@ -84,9 +79,10 @@ export default function AddComments(props: Props) {
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }
-                    rows={ rows }
+                    rows={ minRows }
                     ref={ commentInput }
-                    onKeyUp={ handleKeyUp }
+                    onChange={ handleOnChange }
+                    onKeyUp={ submitComment }
                 />
             </Localized>
         </form>
