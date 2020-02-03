@@ -82,7 +82,7 @@ export default function AddComments(props: Props) {
                     rows={ minRows }
                     ref={ commentInput }
                     onChange={ handleOnChange }
-                    onKeyUp={ submitComment }
+                    onKeyDown={ submitComment }
                 />
             </Localized>
         </form>
