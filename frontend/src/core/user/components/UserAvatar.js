@@ -4,14 +4,13 @@ import React from 'react'
 import { Localized } from '@fluent/react';
 
 type Props = {|
-    user: string,
     username: string,
     title?: string,
     imageUrl: string,
 |};
 
 export default function UserAvatar(props: Props) {
-    const { user, username, title, imageUrl } = props;
+    const { username, title, imageUrl } = props;
 
     if (!imageUrl) {
         return <div className='user-avatar'>

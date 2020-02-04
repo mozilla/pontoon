@@ -284,7 +284,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     onClick={ this.copyTranslationIntoEditor }
                 >
                     <UserAvatar
-                        user={ translation.user }
                         username={ translation.username }
                         title={ this.getApprovalTitle() }
                         imageUrl={ translation.userGravatarUrlSmall }

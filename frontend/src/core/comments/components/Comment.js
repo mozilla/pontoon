@@ -24,7 +24,6 @@ export default function Comment(props: Props) {
 
     return <li className='comment'>
         <UserAvatar
-            user={ comment.author }
             username={ comment.username }
             imageUrl={ comment.userGravatarUrlSmall }
         />

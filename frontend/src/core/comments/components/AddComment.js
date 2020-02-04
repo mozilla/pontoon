@@ -64,7 +64,6 @@ export default function AddComments(props: Props) {
 
     return <div className='comment add-comment'>
         <UserAvatar
-            user={ user }
             username={ username }
             title=''
             imageUrl={ imageURL }
