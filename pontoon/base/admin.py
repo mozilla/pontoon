@@ -45,13 +45,15 @@ class UserAdmin(AuthUserAdmin):
         """
         Save a user and log changes in its roles.
         """
-        add_groups, remove_groups = utils.get_m2m_changes(
-            obj.groups, form.cleaned_data["groups"]
-        )
-
         super(UserAdmin, self).save_model(request, obj, form, change)
 
-        log_user_groups(request.user, obj, (add_groups, remove_groups))
+        # Users can only be moved between groups upon editing, not creation
+        if "groups" in form.cleaned_data:
+            add_groups, remove_groups = utils.get_m2m_changes(
+                obj.groups, form.cleaned_data["groups"]
+            )
+
+            log_user_groups(request.user, obj, (add_groups, remove_groups))
 
 
 class ExternalResourceInline(admin.TabularInline):
