@@ -13,7 +13,7 @@ type Props = {|
 export default function UserAvatar(props: Props) {
     const { user, username, title, imageUrl } = props;
 
-    if (!user) {
+    if (!imageUrl) {
         return <div className='user-avatar'>
             <Localized id='user-UserAvatar--anon-alt-text' attrs={{ alt: true }} >
                 <img
