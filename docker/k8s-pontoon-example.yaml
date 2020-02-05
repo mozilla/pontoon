@@ -1,0 +1,226 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pontoon-prod
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: sec-dockerhub
+  namespace: pontoon-prod
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: <docker auth config json, for private repo>
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: sec-cert
+  namespace: pontoon-prod
+data:
+  crt: <ssl cert for nginx>
+  key: <ssl cert key>
+  dhparam: <ssl cer dhparam>
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: cfg-nginx
+  namespace: pontoon-prod
+data:
+  nginx.conf: |
+    worker_processes 3;
+    error_log /var/log/nginx/error.log warn;
+    pid /tmp/nginx.pid;
+   
+    events {
+      worker_connections 1024;
+    }
+   
+    http {
+      server {
+        listen 8080 ssl http2 default_server;
+       
+        client_max_body_size 100M;
+       
+        ssl_certificate /etc/nginx/cert/crt;
+        ssl_certificate_key /etc/nginx/cert/key;
+        ssl_dhparam /etc/nginx/cert/dhparam;
+       
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+        ssl_ecdh_curve secp384r1;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_tickets off;
+        ssl_stapling on;
+        ssl_stapling_verify on;
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 5s;
+        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+        add_header X-Frame-Options sameorigin;
+        add_header X-Content-Type-Options nosniff;
+                      
+        location / {
+          proxy_redirect off;
+          proxy_buffering off;
+          proxy_http_version 1.1;
+          proxy_set_header Connection 'Keep-Alive';
+          proxy_set_header Proxy-Connection 'Keep-Alive';
+          proxy_pass http://svc-pontoon:8000/;
+        }
+      }
+     
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+     
+      log_format main '{ "http": { '
+                      '    "version": "$server_protocol", '
+                      '    "request": { "method": "$request_method", "referrer": "$http_referer" }, '
+                      '    "response": { "bytes": $bytes_sent , "body": { "bytes": $body_bytes_sent }, "status_code": "$status" } '
+                      '  },'
+                      '  "user_agent": { "original": "$http_user_agent" },'
+                      '  "url": { "original": "$request_uri", "scheme": "$scheme", "query": "$query_string" } }';
+     
+      access_log /var/log/nginx/access.log main;
+     
+      sendfile on;
+      #tcp_nopush on;
+     
+      keepalive_timeout 65;
+     
+      #gzip on;
+     
+      include /etc/nginx/conf.d/*.conf;
+    }
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: dep-nginx
+  namespace: pontoon-prod
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v1
+        smef-logging: enabled
+    spec:
+      containers:
+        - name: con-nginx
+          image: reg-dhc.app.corpintra.net/i3-mirror/docker.io_nginxinc_nginx-unprivileged:1.17.8-alpine
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 0.3
+          volumeMounts:
+          - name: vol-nginx
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+          - name: vol-cert
+            mountPath: /etc/nginx/cert
+            readOnly: true
+      volumes:
+      - name: vol-nginx
+        configMap:
+          name: cfg-nginx
+      - name: vol-cert
+        secret:
+          secretName: sec-cert
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-pontoon
+  namespace: pontoon-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pontoon
+  template:
+    metadata:
+      labels:
+        app: pontoon
+    spec:
+      containers:
+      - name: con-pontoon
+        imagePullPolicy: Always
+        image: <pontoon-prod image>
+        ports:
+        - protocol: TCP
+          containerPort: 3000
+        - protocol: TCP
+          containerPort: 8000
+        resources:
+          limits:
+            memory: 3Gi
+            cpu: 0.5
+        env:
+        - name: SECRET_KEY
+          value: "<the pontoon secret key>"
+        - name: DJANGO_LOGIN
+          value: "true"
+        - name: DJANGO_DEV
+          value: "false"
+        - name: DJANGO_DEBUG
+          value: "true"
+        - name: CI
+          value: "true"
+        - name: DATABASE_URL
+          value: "<pontoon database URL>"
+        - name: ALLOWED_HOSTS
+          value: "<comma seperated list of allowd hosts>"
+        - name: SITE_URL
+          value: "http://127.0.0.10"
+        - name: SYNC_INTERVAL
+          value: "30"
+        - name: KNOWN_HOSTS
+          value: "<base64 encoded file content of .ssh/known_hosts>"
+        - name: SSH_KEY
+          value: "<base64 encoded ssh private key from .ssh/id_rsa>"
+      imagePullSecrets:
+      - name: sec-dockerhub
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-nginx-ingress
+  namespace: 050-zna-dev
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - name: https-web
+      protocol: TCP
+#the port is not really used but mandatory
+      port: 2049
+      targetPort: 8080
+      nodePort: <your assigned node port!>
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-pontoon
+  namespace: pontoon-prod
+spec:
+  selector:
+    app: pontoon
+  ports:
+  - name: http-deprecated
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+  - name: http-ui
+    protocol: TCP
+    port: 8000
+    targetPort: 8000

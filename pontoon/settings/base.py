@@ -15,6 +15,7 @@ _dirname = os.path.dirname
 ROOT = _dirname(_dirname(_dirname(os.path.abspath(__file__))))
 
 
+
 def path(*args):
     return os.path.join(ROOT, *args)
 
@@ -520,15 +521,20 @@ def _allowed_hosts():
     from six.moves.urllib.parse import urlparse
 
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
-
+    result = [host]
     # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
     # have a version of the host that contains the port. This only applies
     # to local development (usually the host is localhost:8000).
     if ":" in host:
         host_no_port = host.rsplit(":", 1)[0]
-        return [host, host_no_port]
+        result = [host, host_no_port]
+    
+    # add values from environment variable. Needed in case of URL/domain redirections
+    envVarsStr = os.getenv('ALLOWED_HOSTS','127.0.0.1:8000');
+    envVars = [x.strip() for x in envVarsStr.split(',')]
+    result.extend(envVars)
 
-    return [host]
+    return result
 
 
 ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
