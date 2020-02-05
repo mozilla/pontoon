@@ -15,7 +15,6 @@ _dirname = os.path.dirname
 ROOT = _dirname(_dirname(_dirname(os.path.abspath(__file__))))
 
 
-
 def path(*args):
     return os.path.join(ROOT, *args)
 
@@ -530,7 +529,7 @@ def _allowed_hosts():
         result = [host, host_no_port]
 
     # add values from environment variable. Needed in case of URL/domain redirections
-    envVarsStr = os.getenv('ALLOWED_HOSTS','127.0.0.1:8000')
+    envVarsStr = os.getenv('ALLOWED_HOSTS', '127.0.0.1:8000')
     envVars = [x.strip() for x in envVarsStr.split(',')]
     result.extend(envVars)
 
