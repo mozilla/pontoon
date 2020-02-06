@@ -196,6 +196,8 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
 
 entitydetails-Helpers--machinery = Machinery
 entitydetails-Helpers--locales = Locales
+entitydetails-Helpers--comments = Comments
+entitydetails-Helpers--no-comments = No comments available.
 
 
 ## Entity Details Metadata
