@@ -3498,10 +3498,10 @@ class Comment(models.Model):
         Translation, related_name="comments", blank=True, null=True
     )
     locale = models.ForeignKey(
-        Locale, related_name="comment_locale", blank=True, null=True
+        Locale, related_name="comments", blank=True, null=True
     )
     entity = models.ForeignKey(
-        Entity, related_name="comment_entity", blank=True, null=True
+        Entity, related_name="comments", blank=True, null=True
     )
     content = models.TextField()
 
