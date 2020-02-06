@@ -3449,4 +3449,6 @@ class Comment(models.Model):
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
             "id": self.id,
+            "enity": self.entity,
+            'locale': self.locale,
         }

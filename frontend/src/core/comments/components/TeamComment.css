@@ -1,0 +1,6 @@
+.team-comment > p {
+    border-bottom: 1px solid #5E6475;
+    color: #aaa;
+    font-style: italic;
+    padding: 15px 10px;
+}
