@@ -72,23 +72,34 @@ The following is the `browser support matrix of Pontoon <https://browserl.ist/?q
 Python code conventions
 =======================
 
-Our Python is automatically formatted using `black <https://black.readthedocs.io/en/stable/>`_.
-We enforce that in our Continuous Integration tool (travis), so you will need to run it
-on your code before sending it for review.
+Our Python code is automatically formatted using `black <https://black.readthedocs.io/en/stable/>`_.
+We enforce that in our Continuous Integration tool (travis), so you will need to run
+black on your code before sending it for review.
 
 You can run black locally either as an
 `add-on in your code editor <https://black.readthedocs.io/en/stable/editor_integration.html>`_,
 or as a `git pre-hook commit <https://black.readthedocs.io/en/stable/version_control_integration.html>`_.
+Alternatively, you can format your code using:
 
-We also use a linter to verify that imports are correct:
+.. code-block:: shell
+
+    $ make black
+
+.. note::
+
+    Using black on all Python code means that we cannot fight over code style anymore.
+    You are free to write code however you like, because in the end black is the one
+    that will format it. We thus don't need to pay any more attention to style during
+    code reviews, and are free from those never-ending code style discussions.
+
+Additionally, we use a linter to verify that imports are correct. You can run it with:
 
 .. code-block:: shell
 
     $ make flake8
 
-
-If you hit issues, use ``# noqa`` to make the linter ignore that error. Note
-that in most cases, it is better to fix the issues than ignoring them.
+In the rare case when you cannot fix a flake8 error, use ``# noqa`` to make the linter
+ignore that error. Note that in most cases, it is better to fix the issues than ignoring them.
 
 
 Javascript code conventions
