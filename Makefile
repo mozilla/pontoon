@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean test shell loaddb build-frontend build-frontend-w
+.PHONY: build setup run clean shell test jest pytest black flow lint-frontend loaddb build-frontend build-frontend-w
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -22,6 +22,7 @@ help:
 	@echo "  test             Runs the entire test suite (back and front)"
 	@echo "  jest             Runs the new frontend's test suite (Translate.Next)"
 	@echo "  pytest           Runs the backend's test suite (Python)"
+	@echo "  black            Runs the black formatted on all Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -57,10 +58,13 @@ jest:
 	"${DC}" run --rm -w //app/frontend webapp yarn test
 
 pytest:
-	"${DC}" run --rm -w //app webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+	"${DC}" run --rm webapp pytest --cov-append --cov-report=term --cov=. $(opts)
 
 flake8:
-	"${DC}" run --rm -w //app webapp flake8
+	"${DC}" run --rm webapp flake8 pontoon/
+
+black:
+	"${DC}" run --rm webapp black pontoon/
 
 flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
