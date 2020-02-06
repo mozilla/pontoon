@@ -23,9 +23,6 @@ from pontoon.base.models import (
 )
 
 
-UPSTREAM = "http://localhost:3000"
-
-
 def static_serve_dev(request, path):
     """Proxy missing static files to the webpack server.
 
@@ -55,6 +52,9 @@ def catchall_dev(request, context=None):
     The implementation is very basic e.g. it doesn't handle HTTP headers.
 
     """
+    # URL to the development webpack server, used to redirect front-end requests.
+    UPSTREAM = "http://localhost:3000"
+
     # Redirect websocket requests directly to the webpack server.
     if request.META.get("HTTP_UPGRADE", "").lower() == "websocket":
         return http.HttpResponseRedirect(UPSTREAM + request.path)
