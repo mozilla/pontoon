@@ -61,11 +61,6 @@ def create_translation(request):
             status=403,
         )
 
-    now = timezone.now()
-    user = request.user
-    can_translate = user.can_translate(project=project, locale=locale) and (
-        not force_suggestions or approve
-    )
     translations = Translation.objects.filter(
         entity=entity, locale=locale, plural_form=plural_form
     )
@@ -76,7 +71,7 @@ def create_translation(request):
     if same_translations:
         return JsonResponse({"status": False, "same": True})
 
-    # Check for errors.
+    # Look for failed checks.
     # Checks are disabled for the tutorial.
     use_checks = project.slug != "tutorial"
 
@@ -88,6 +83,12 @@ def create_translation(request):
 
         if are_blocking_checks(failed_checks, ignore_warnings):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
+
+    now = timezone.now()
+    user = request.user
+    can_translate = user.can_translate(project=project, locale=locale) and (
+        not force_suggestions or approve
+    )
 
     translation = Translation(
         entity=entity,
