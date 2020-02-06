@@ -525,28 +525,6 @@ def get_m2m_changes(current_qs, new_qs):
     return list(add_items), list(remove_items)
 
 
-def is_same(same_translations, can_translate):
-    """
-    Check if translation is the same
-    :arg QuerySet `same_translations`: translations that have the same string
-        as a suggestion/translation.
-    :arg boolean `can_translate`: user is able to submit translations.
-    :returns: True if same translation already exists.
-    """
-    if not same_translations:
-        return False
-
-    st = same_translations[0]
-
-    if can_translate:
-        if st.approved and not st.fuzzy:
-            return True
-    else:
-        return True
-
-    return False
-
-
 def readonly_exists(projects, locale):
     """
     :arg list projects: a list of Project instances.

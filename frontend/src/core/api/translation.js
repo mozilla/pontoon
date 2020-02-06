@@ -5,12 +5,12 @@ import APIBase from './base';
 
 export default class TranslationAPI extends APIBase {
     /**
-     * Add or update a translation.
+     * Create a new translation.
      *
      * If a similar translation already exists, update it with the new data.
      * Otherwise, create it.
      */
-    updateTranslation(
+    create(
         entity: number,
         translation: string,
         locale: string,
@@ -45,7 +45,7 @@ export default class TranslationAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('/update/', 'POST', payload, headers);
+        return this.fetch('/translations/create/', 'POST', payload, headers);
     }
 
     _changeStatus(url: string, id: number, resource: string, ignoreWarnings: ?boolean) {
@@ -70,19 +70,19 @@ export default class TranslationAPI extends APIBase {
     }
 
     approve(id: number, resource: string, ignoreWarnings: ?boolean) {
-        return this._changeStatus('/review/approve/', id, resource, ignoreWarnings);
+        return this._changeStatus('/translations/approve/', id, resource, ignoreWarnings);
     }
 
     unapprove(id: number, resource: string) {
-        return this._changeStatus('/review/unapprove/', id, resource);
+        return this._changeStatus('/translations/unapprove/', id, resource);
     }
 
     reject(id: number, resource: string) {
-        return this._changeStatus('/review/reject/', id, resource);
+        return this._changeStatus('/translations/reject/', id, resource);
     }
 
     unreject(id: number, resource: string) {
-        return this._changeStatus('/review/unreject/', id, resource);
+        return this._changeStatus('/translations/unreject/', id, resource);
     }
 
     delete(id: number) {
@@ -94,6 +94,6 @@ export default class TranslationAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('/delete-translation/', 'POST', payload, headers);
+        return this.fetch('/translations/delete/', 'POST', payload, headers);
     }
 }

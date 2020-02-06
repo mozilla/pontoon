@@ -212,10 +212,17 @@ export function deleteTranslation(
     return async dispatch => {
         NProgress.start();
 
-        await api.translation.delete(translation);
+        const results = await api.translation.delete(translation);
 
-        dispatch(notification.actions.add(notification.messages.TRANSLATION_DELETED));
-        dispatch(get(entity, locale, pluralForm));
+        if (results.status) {
+            dispatch(notification.actions.add(notification.messages.TRANSLATION_DELETED));
+            dispatch(get(entity, locale, pluralForm));
+        }
+        else {
+            dispatch(notification.actions.add(
+                notification.messages.UNABLE_TO_DELETE_TRANSLATION
+            ));
+        }
 
         NProgress.done();
     }
