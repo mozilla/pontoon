@@ -3494,7 +3494,15 @@ class TranslatedResource(AggregatedStats):
 class Comment(models.Model):
     author = models.ForeignKey(User)
     timestamp = models.DateTimeField(default=timezone.now)
-    translation = models.ForeignKey(Translation, related_name="comments")
+    translation = models.ForeignKey(
+        Translation, related_name="comments", blank=True, null=True
+    )
+    locale = models.ForeignKey(
+        Locale, related_name="comment_locale", blank=True, null=True
+    )
+    entity = models.ForeignKey(
+        Entity, related_name="comment_entity", blank=True, null=True
+    )
     content = models.TextField()
 
     def __str__(self):
