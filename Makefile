@@ -6,8 +6,8 @@ DOCKER := $(shell which docker)
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
 SITE_URL ?= http://localhost:8000
 
-USER_ID?=$(shell id -u)
-GROUP_ID?=$(shell id -g)
+USER_ID?=1000
+GROUP_ID?=1000
 
 .PHONY: build setup run clean test shell loaddb build-frontend build-frontend-w
 
