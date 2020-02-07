@@ -11,7 +11,9 @@ from pontoon.pretranslation.pretranslate import (
 )
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import serial_task
-from pontoon.checks.utils import bulk_run_checks
+from pontoon.checks.utils import get_failed_checks_db_objects
+from pontoon.checks.libraries import run_checks
+from pontoon.checks.models import Warning, Error
 
 
 log = logging.getLogger(__name__)
@@ -86,6 +88,10 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     tr_dict = {}
 
     tr_filter = []
+    warnings_list = []
+    errors_list = []
+    total_warning_count = 0
+    total_error_count = 0
     index = -1
 
     for locale in locales:
@@ -113,41 +119,93 @@ def pretranslate(self, project_pk, locales=None, entities=None):
                     plural_form=plural_form,
                 )
 
-                translations.append(t)
+                warnings_, errors_ = get_failed_checks_db_objects(
+                    t,
+                    run_checks(
+                        entity, locale.code, entity.string, string, use_tt_checks=False,
+                    ),
+                )
 
                 index += 1
 
+                for warning in warnings_:
+                    warnings_list.append([warning, index])
+                for error in errors_:
+                    errors_list.append([error, index])
+
+                translations.append(t)
+
                 if locale_resource not in tr_dict:
-                    tr_dict[locale_resource] = [index, 0]
+                    tr_dict[locale_resource] = {
+                        "latest_translation_index": index,
+                        "fuzzy_translation_count": 0,
+                        "error_count": 0,
+                        "warning_count": 0,
+                    }
                     # Add query for fetching respective TranslatedResource.
                     tr_filter.append(
                         Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
                     )
 
                 if locale.code not in locale_dict:
-                    locale_dict[locale.code] = [locale, index, 0]
+                    locale_dict[locale.code] = {
+                        "locale": locale,
+                        "latest_translation_index": index,
+                        "fuzzy_translation_count": 0,
+                        "error_count": 0,
+                        "warning_count": 0,
+                    }
 
                 # Update the latest translation index
-                tr_dict[locale_resource][0] = index
-                locale_dict[locale.code][1] = index
+                tr_dict[locale_resource]["latest_translation_index"] = index
+                locale_dict[locale.code]["latest_translation_index"] = index
 
                 # Increment number of translations (used to adjust stats)
-                tr_dict[locale_resource][1] += 1
-                locale_dict[locale.code][2] += 1
+                if len(errors_):
+                    tr_dict[locale_resource]["error_count"] += 1
+                    locale_dict[locale.code]["error_count"] += 1
+                    total_error_count += 1
+                elif len(warnings_):
+                    tr_dict[locale_resource]["warning_count"] += 1
+                    locale_dict[locale.code]["warning_count"] += 1
+                    total_warning_count += 1
+                else:
+                    tr_dict[locale_resource]["fuzzy_translation_count"] += 1
+                    locale_dict[locale.code]["fuzzy_translation_count"] += 1
+
         log.info("Fetching pretranslations for locale {} done".format(locale.code))
 
     if len(translations) == 0:
         return
 
     translations = Translation.objects.bulk_create(translations)
-    translation_pks = {translation.pk for translation in translations}
 
-    bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
+    warnings = []
+    errors = []
+    for warning, i in warnings_list:
+        warning.translation = translations[i]
+        warnings.append(warning)
+
+    for error, i in errors_list:
+        error.translation = translations[i]
+        errors.append(error)
+
+    Warning.objects.bulk_create(warnings)
+    Error.objects.bulk_create(errors)
 
     # Update latest activity and fuzzy count for the project.
     project.latest_translation = translations[-1]
-    project.fuzzy_strings += len(translations)
-    project.save(update_fields=["latest_translation", "fuzzy_strings"])
+    project.fuzzy_strings += len(translations) - total_error_count - total_warning_count
+    project.strings_with_errors += total_error_count
+    project.strings_with_warnings += total_warning_count
+    project.save(
+        update_fields=[
+            "latest_translation",
+            "fuzzy_strings",
+            "strings_with_warnings",
+            "strings_with_errors",
+        ]
+    )
 
     # Update latest activity and fuzzy count for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
