@@ -6,6 +6,7 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
+import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
@@ -27,6 +28,7 @@ import Metadata from './Metadata';
 import Helpers from './Helpers';
 
 import type { Entity } from 'core/api';
+import type { TeamCommentState } from 'core/comments';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -48,6 +50,7 @@ type Props = {|
     nextEntity: Entity,
     previousEntity: Entity,
     otherlocales: LocalesState,
+    teamComments: TeamCommentState,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
@@ -115,12 +118,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         if (selectedEntity.pk !== this.props.otherlocales.entity) {
             dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+            // TODO: remove this from here once teamComments built out
+            dispatch(comments.actions.get(parameters.entity, parameters.locale));
         }
 
         if (selectedEntity.pk !== this.props.machinery.entity) {
             const source = utils.getOptimizedContent(selectedEntity.machinery_original, selectedEntity.format);
             dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
         }
+
+        // if (selectedEntity.pk !== this.props.teamComments.entity) {
+        //     dispatch(comments.actions.get(parameters.entity, parameters.locale));
+        // }
     }
 
     updateFailedChecks() {
@@ -362,6 +371,7 @@ const mapStateToProps = (state: Object): Props => {
         nextEntity: entities.selectors.getNextEntity(state),
         previousEntity: entities.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
+        teamComments: state[comments.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,

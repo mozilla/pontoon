@@ -20,6 +20,7 @@ export type {
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,
+    TeamComment,
 } from './types';
 
 
