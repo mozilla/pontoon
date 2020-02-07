@@ -248,7 +248,7 @@ class TranslationAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    raw_id_fields = ("translation",)
+    raw_id_fields = ("translation", "entity")
 
 
 class TranslationMemoryEntryAdmin(admin.ModelAdmin):

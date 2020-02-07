@@ -6,15 +6,11 @@ import { Localized } from '@fluent/react';
 
 import './TeamComment.css';
 
-import type { HistoryState } from 'modules/history';
-
-type Props = {|
-    history: HistoryState,
-    addComment: (string, number) => void,
-|};
+// type Props = {|
+// |};
 
 
-export default function TeamComment(props: Props) {
+export default function TeamComment(/*props: Props*/) {
     // const { comment } = props;
 
     return <section className="team-comment">
