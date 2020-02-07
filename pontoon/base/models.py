@@ -2640,13 +2640,15 @@ class Entity(DirtyFieldsMixin, models.Model):
                 queryset=ProjectLocale.objects.filter(locale=locale),
                 to_attr="projectlocale",
             )
-        )
+        ).prefetch_related("comments")
 
         if preferred_source_locale != "":
             entities = entities.prefetch_alternative_originals(preferred_source_locale)
 
         for entity in entities:
             translation_array = []
+
+            team_comment = [c.serialize() for c in entity.comments.all()]
 
             original = entity.string
             original_plural = entity.string_plural
@@ -2677,6 +2679,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "comment": entity.comment,
                     "group_comment": entity.group_comment,
                     "resource_comment": entity.resource_comment,
+                    # "team_comments": team_comments,
                     "order": entity.order,
                     "source": entity.source,
                     "obsolete": entity.obsolete,
@@ -3491,6 +3494,6 @@ class Comment(models.Model):
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
             "id": self.id,
-            "enity": self.entity,
-            'locale': self.locale,
+            "enity": self.entity.pk,
+            'locale': self.locale.code,
         }

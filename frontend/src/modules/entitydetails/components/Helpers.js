@@ -14,7 +14,6 @@ import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
@@ -25,12 +24,10 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
-    history: HistoryState,
     parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
-    addComment: (string, number) => void,
 |};
 
 
@@ -47,12 +44,10 @@ export default class Helpers extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
-            history,
             parameters,
             user,
             updateEditorTranslation,
             searchMachinery,
-            addComment,
         } = this.props;
 
         return <Tabs>
@@ -96,10 +91,7 @@ export default class Helpers extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <TeamComment
-                    history={ history }
-                    addComment={ addComment }
-                />
+                <TeamComment />
             </TabPanel>
         </Tabs>;
     }
