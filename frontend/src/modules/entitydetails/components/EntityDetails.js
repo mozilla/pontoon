@@ -339,8 +339,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     locale={ state.locale }
                     machinery={ state.machinery }
                     otherlocales={ state.otherlocales }
-                    history={ state.history }
-                    addComment={ this.addComment }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
