@@ -27,6 +27,21 @@ export type TranslationComment = {|
     +id: number,
 |};
 
+/**
+ * Team comments pertaining to a locale.
+ */
+export type TeamComment = {|
+    +author: string,
+    +username: string,
+    +userGravatarUrlSmall: string,
+    +createdAt: string,
+    +dateIso: string,
+    +content: string,
+    +id: number,
+    +entity: number,
+    +locale: string,
+|};
+
 
 /**
  * String that needs to be translated, along with its current metadata,

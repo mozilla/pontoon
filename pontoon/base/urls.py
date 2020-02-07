@@ -64,6 +64,11 @@ urlpatterns = [
     url(r"^get-entities/", views.entities, name="pontoon.entities"),
     url(r"^perform-checks/", views.perform_checks, name="pontoon.perform.checks"),
     url(r"^get-history/", views.get_translation_history, name="pontoon.get_history"),
+    url(
+        r"^get-team-comments/",
+        views.get_team_comments,
+        name="pontoon.get_team_comments",
+    ),
     url(r"^add-comment/", views.add_comment, name="pontoon.add_comment",),
     url(
         r"^other-locales/",

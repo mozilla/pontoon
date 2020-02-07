@@ -436,6 +436,25 @@ def get_translation_history(request):
     return JsonResponse(payload, safe=False)
 
 
+@utils.require_AJAX
+def get_team_comments(request):
+    """Get team comments for given locale."""
+    try:
+        entity = request.GET["entity"]
+        locale = request.GET["locale"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    # TODO: query for team comments
+
+    payload = []
+
+    return JsonResponse(payload, safe=False)
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
