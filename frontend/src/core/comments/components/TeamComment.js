@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
-// import ReactTimeAgo from 'react-time-ago';
 
 import './TeamComment.css';
 
