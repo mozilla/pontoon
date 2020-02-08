@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from 'core/api';
 
-import type { TeamComment } from 'core/api';
+import type { TranslationComment } from 'core/api';
 
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
@@ -13,10 +13,10 @@ export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +comments: ?TeamComment,
+    +comments: Array<TranslationComment>,
 |};
 export function receive(
-    comments: ?TeamComment,
+    comments: Array<TranslationComment>,
 ): ReceiveAction {
     return {
         type: RECEIVE,
@@ -51,7 +51,7 @@ export function get(entity: number, locale: string): Function {
         // The default return value of aborted requests is {},
         // which is incompatible with reducer
         if (isEmpty(content)) {
-            content = null;
+            content = [];
         }
 
         dispatch(receive(content));
