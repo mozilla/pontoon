@@ -163,7 +163,6 @@ export default class EntityAPI extends APIBase {
 
         const results = await this.fetch('/get-team-comments/', 'GET', payload, headers);
 
-        return results;
-        // return this.keysToCamelCase(results);
+        return this.keysToCamelCase(results);
     }
 }
