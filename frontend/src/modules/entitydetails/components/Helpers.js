@@ -6,7 +6,7 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { TeamComment } from 'core/comments';
+import { TeamComment, CommentCount } from 'core/comments';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
@@ -71,6 +71,7 @@ export default class Helpers extends React.Component<Props> {
                     <Localized id='entitydetails-Helpers--comments'>
                         { 'Comments' }
                     </Localized>
+                    <CommentCount teamComments={ teamComments }/>
                 </Tab>
             </TabList>
 
