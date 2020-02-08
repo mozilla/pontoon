@@ -11,6 +11,7 @@ import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Entity } from 'core/api';
+import type { TeamCommentState } from 'core/comments';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
@@ -24,6 +25,7 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
+    teamComments: TeamCommentState,
     parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string, string) => void,
@@ -44,6 +46,7 @@ export default class Helpers extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
+            teamComments,
             parameters,
             user,
             updateEditorTranslation,
@@ -91,7 +94,7 @@ export default class Helpers extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <TeamComment />
+                <TeamComment teamComments={ teamComments }/>
             </TabPanel>
         </Tabs>;
     }

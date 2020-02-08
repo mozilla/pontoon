@@ -2,7 +2,7 @@
 
 import { RECEIVE, REQUEST } from './actions';
 
-import type { TeamComment } from 'core/api';
+import type { TranslationComment } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
 
@@ -14,13 +14,13 @@ type Action =
 
 export type TeamCommentState = {|
     +entity: ?number,
-    +comments: ?TeamComment,
+    +comments: Array<TranslationComment>,
 |};
 
 
 const initialState = {
     entity: null,
-    comments: null,
+    comments: [],
 };
 
 export default function reducer(
@@ -32,7 +32,7 @@ export default function reducer(
             return {
                 ...state,
                 entity: action.entity,
-                comments: null,
+                comments: [],
             };
         case RECEIVE:
             return {
