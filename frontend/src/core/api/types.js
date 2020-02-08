@@ -38,8 +38,6 @@ export type TeamComment = {|
     +dateIso: string,
     +content: string,
     +id: number,
-    +entity: number,
-    +locale: string,
 |};
 
 

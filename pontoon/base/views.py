@@ -448,9 +448,14 @@ def get_team_comments(request):
             status=400,
         )
 
-    # TODO: query for team comments
+    entity = get_object_or_404(Entity, pk=entity)
+    locale = get_object_or_404(Locale, code=locale)
+    comments = Comment.objects.filter(entity= entity, locale=locale)
 
     payload = []
+
+    for c in comments:
+        payload.append(c.serialize())
 
     return JsonResponse(payload, safe=False)
 
