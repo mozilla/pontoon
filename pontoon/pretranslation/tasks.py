@@ -3,8 +3,12 @@ import logging
 from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 from django.conf import settings
-
-from pontoon.base.models import Project, Entity, TranslatedResource, Translation
+from pontoon.base.models import (
+    Entity,
+    TranslatedResource,
+    Translation,
+    ChangedEntityLocale,
+)
 from pontoon.pretranslation.pretranslate import (
     get_translations,
     update_changed_instances,
@@ -192,6 +196,18 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     Warning.objects.bulk_create(warnings)
     Error.objects.bulk_create(errors)
+
+    # Mark translations as changed
+    changed_entities = {}
+    existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
+    for t in translations:
+        key = (t.entity.pk, t.locale.pk)
+        # Remove duplicate changes to prevent unique constraint violation
+        if key not in existing:
+            changed_entities[key] = ChangedEntityLocale(
+                entity=t.entity, locale=t.locale
+            )
+    ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 
     # Update latest activity and fuzzy count for the project.
     project.latest_translation = translations[-1]
