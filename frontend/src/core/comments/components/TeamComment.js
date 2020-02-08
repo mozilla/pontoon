@@ -17,7 +17,11 @@ type Props = {|
 export default function TeamComment(props: Props) {
     const { teamComments } = props;
 
-    if (!teamComments) {
+    if (!teamComments.comments) {
+        return null;
+    }
+
+    if (!teamComments.comments.length) {
         return <section className="team-comment">
             <Localized id="entitydetails-Helpers--no-comments">
                 <p>No comments available.</p>
@@ -27,7 +31,7 @@ export default function TeamComment(props: Props) {
 
     return <div>
         <ul>
-            { teamComments.map(comment =>
+            { teamComments.comments.map(comment =>
                 <Comment
                     comment={ comment }
                     key={ comment.id }
