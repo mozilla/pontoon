@@ -450,7 +450,7 @@ def get_team_comments(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    comments = Comment.objects.filter(entity= entity, locale=locale)
+    comments = Comment.objects.filter(entity=entity, locale=locale)
 
     payload = []
 

@@ -1,4 +1,12 @@
-.team-comment > p {
+.team-comment-list .team-comment {
+    margin-left: 0;
+}
+
+.team-comment-list ul {
+    margin-left: .5em;
+}
+
+.no-team-comments > p {
     border-bottom: 1px solid #5E6475;
     color: #aaa;
     font-style: italic;
