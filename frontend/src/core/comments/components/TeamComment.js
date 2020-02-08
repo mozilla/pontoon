@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
+import './CommentList.css'
 import './TeamComment.css';
 
 import { Comment } from 'core/comments';
@@ -22,14 +23,14 @@ export default function TeamComment(props: Props) {
     }
 
     if (!teamComments.comments.length) {
-        return <section className="team-comment">
+        return <section className="no-team-comments">
             <Localized id="entitydetails-Helpers--no-comments">
                 <p>No comments available.</p>
             </Localized>
         </section>
     }
 
-    return <div>
+    return <div className='comments-list team-comment-list'>
         <ul>
             { teamComments.comments.map(comment =>
                 <Comment

@@ -22,7 +22,7 @@ export default function Comment(props: Props) {
         return null;
     }
 
-    return <li className='comment'>
+    return <li className='comment team-comment'>
         <UserAvatar
             username={ comment.username }
             imageUrl={ comment.userGravatarUrlSmall }
