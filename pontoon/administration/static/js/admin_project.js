@@ -83,7 +83,7 @@ $(function() {
       return;
     }
 
-    button.addClass('in-progress').html('Pretranslating...');
+    button.addClass('in-progress').html('Pretranslating');
 
     $.ajax({
       url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/'
