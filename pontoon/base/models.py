@@ -3429,12 +3429,8 @@ class Comment(models.Model):
     translation = models.ForeignKey(
         Translation, related_name="comments", blank=True, null=True
     )
-    locale = models.ForeignKey(
-        Locale, related_name="comments", blank=True, null=True
-    )
-    entity = models.ForeignKey(
-        Entity, related_name="comments", blank=True, null=True
-    )
+    locale = models.ForeignKey(Locale, related_name="comments", blank=True, null=True)
+    entity = models.ForeignKey(Entity, related_name="comments", blank=True, null=True)
     content = models.TextField()
 
     def __str__(self):
