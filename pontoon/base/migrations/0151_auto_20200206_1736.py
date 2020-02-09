@@ -9,23 +9,41 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0150_auto_20200206_0932'),
+        ("base", "0150_auto_20200206_0932"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='comment',
-            name='entity',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='base.Entity'),
+            model_name="comment",
+            name="entity",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Entity",
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='locale',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='base.Locale'),
+            model_name="comment",
+            name="locale",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Locale",
+            ),
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='translation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='base.Translation'),
+            model_name="comment",
+            name="translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Translation",
+            ),
         ),
     ]
