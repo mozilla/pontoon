@@ -1,8 +1,11 @@
 /* @flow */
 
 import isEmpty from 'lodash.isempty';
+import NProgress from 'nprogress';
 
 import api from 'core/api';
+import * as history from 'modules/history';
+import * as notification from 'core/notification';
 
 import type { TeamComment } from 'core/api';
 
@@ -59,8 +62,30 @@ export function get(entity: number, locale: string): Function {
 }
 
 
+export function addComment(
+    entity: number,
+    locale: string,
+    pluralForm: number,
+    translationId: number,
+    comment: string,
+): Function {
+    return async dispatch => {
+        NProgress.start();
+
+        await api.comment.add(comment, translationId);
+
+        dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
+        dispatch(history.actions.get(entity, locale, pluralForm));
+        dispatch(get(entity, locale));
+
+        NProgress.done();
+    }
+}
+
+
 export default {
     get,
     receive,
     request,
+    addComment,
 };
