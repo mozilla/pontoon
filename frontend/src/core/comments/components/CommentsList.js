@@ -44,7 +44,7 @@ export default function CommentsList(props: Props) {
                 user={ translation.user }
                 username={ translation.username }
                 imageURL={ translation.userGravatarUrlSmall}
-                translationId={ translation.pk }
+                id={ translation.pk }
                 addComment={ addComment }
             />
         }
