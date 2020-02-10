@@ -27,6 +27,11 @@ export type TranslationComment = {|
     +id: number,
 |};
 
+/**
+ * Alias to be used for comments pertaining to a Locale
+ */
+export type TeamComment = TranslationComment;
+
 
 /**
  * String that needs to be translated, along with its current metadata,
