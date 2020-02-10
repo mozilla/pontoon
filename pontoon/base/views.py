@@ -452,10 +452,7 @@ def get_team_comments(request):
     locale = get_object_or_404(Locale, code=locale)
     comments = Comment.objects.filter(entity=entity, locale=locale)
 
-    payload = []
-
-    for c in comments:
-        payload.append(c.serialize())
+    payload = [c.serialize() for c in comments]
 
     return JsonResponse(payload, safe=False)
 
@@ -465,9 +462,6 @@ def get_team_comments(request):
 @login_required(redirect_field_name="", login_url="/403")
 @transaction.atomic
 def add_comment(request):
-    # TODO: Remove as part of bug 1361318
-    return JsonResponse({"status": False, "message": "Not Implemented"}, status=501,)
-
     """Add a comment."""
     try:
         comment = request.POST["comment"]

@@ -6,17 +6,24 @@ import { Localized } from '@fluent/react';
 import './CommentList.css'
 import './TeamComment.css';
 
-import { Comment } from 'core/comments';
+import { Comment, AddComment } from 'core/comments';
 
+import type { Entity } from 'core/api';
 import type { TeamCommentState } from 'core/comments';
+import type { UserState } from 'core/user';
 
 type Props = {|
     teamComments: TeamCommentState,
+    user: UserState,
+    entity: Entity,
+    addComment: (string, number) => void,
 |};
 
 
 export default function TeamComment(props: Props) {
-    const { teamComments } = props;
+    const { teamComments, user, entity, addComment } = props;
+
+    let canComment = user.isAuthenticated;
 
     if (!teamComments.comments) {
         return null;
@@ -30,7 +37,7 @@ export default function TeamComment(props: Props) {
         </section>
     }
 
-    return <div className='comments-list team-comment-list'>
+    return <div className='comments-list team-comments-list'>
         <ul>
             { teamComments.comments.map(comment =>
                 <Comment
@@ -39,6 +46,15 @@ export default function TeamComment(props: Props) {
                 />
             )}
         </ul>
+        { !canComment ? null :
+            <AddComment
+                user={ user.nameOrEmail }
+                username={ user.username }
+                imageURL={ user.gravatarURLSmall}
+                id={ entity.pk }
+                addComment={ addComment }
+            />
+        }
     </div>
 
 }

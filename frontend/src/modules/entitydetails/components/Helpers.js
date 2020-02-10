@@ -30,6 +30,7 @@ type Props = {|
     user: UserState,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
+    addComment: (string, number) => void,
 |};
 
 
@@ -51,6 +52,7 @@ export default class Helpers extends React.Component<Props> {
             user,
             updateEditorTranslation,
             searchMachinery,
+            addComment,
         } = this.props;
 
         return <Tabs>
@@ -95,7 +97,12 @@ export default class Helpers extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <TeamComment teamComments={ teamComments }/>
+                <TeamComment
+                    teamComments={ teamComments }
+                    user={ user }
+                    entity={ entity }
+                    addComment={ addComment }
+                />
             </TabPanel>
         </Tabs>;
     }
