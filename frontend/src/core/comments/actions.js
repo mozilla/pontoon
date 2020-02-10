@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from 'core/api';
 
-import type { TranslationComment } from 'core/api';
+import type { TeamComment } from 'core/api';
 
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
@@ -13,10 +13,10 @@ export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +comments: Array<TranslationComment>,
+    +comments: Array<TeamComment>,
 |};
 export function receive(
-    comments: Array<TranslationComment>,
+    comments: Array<TeamComment>,
 ): ReceiveAction {
     return {
         type: RECEIVE,

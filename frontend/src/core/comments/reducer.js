@@ -2,7 +2,7 @@
 
 import { RECEIVE, REQUEST } from './actions';
 
-import type { TranslationComment } from 'core/api';
+import type { TeamComment } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
 
@@ -14,7 +14,7 @@ type Action =
 
 export type TeamCommentState = {|
     +entity: ?number,
-    +comments: Array<TranslationComment>,
+    +comments: Array<TeamComment>,
 |};
 
 
