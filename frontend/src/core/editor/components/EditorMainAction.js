@@ -59,6 +59,7 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-approving';
             btn.label = 'Approving';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
         }
     }
     else if (forceSuggestions || !isTranslator) {
@@ -74,6 +75,7 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-suggesting';
             btn.label = 'Suggesting';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
         }
     }
     else {
@@ -89,12 +91,14 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-saving';
             btn.label = 'Saving';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
         }
     }
 
     return <Localized
         id={ btn.id }
         attrs={{ title: true }}
+        glyph={ btn.glyph }
     >
         <button
             className={ btn.className }
@@ -102,8 +106,7 @@ export default function EditorMainAction(props: Props) {
             title={ btn.title}
             disabled={ isRunningRequest }
         >
-            { !isRunningRequest ? null : <i className="fa fa-circle-notch fa-spin" /> }
-            { btn.label }
+            { btn.glyph }{ btn.label }
         </button>
     </Localized>;
 }

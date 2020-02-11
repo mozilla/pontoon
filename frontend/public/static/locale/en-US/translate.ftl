@@ -99,15 +99,15 @@ editor-EditorMenu--button-clear = Clear
     .title = Clear Translation (Ctrl + Shift + Backspace)
 editor-EditorMenu--button-approve = Approve
     .title = Approve Translation (Enter)
-editor-EditorMenu--button-approving = Approving
+editor-EditorMenu--button-approving = <glyph></glyph>Approving
     .title = Approving Translation…
 editor-EditorMenu--button-save = Save
     .title = Save Translation (Enter)
-editor-EditorMenu--button-saving = Saving
+editor-EditorMenu--button-saving = <glyph></glyph>Saving
     .title = Saving Translation…
 editor-EditorMenu--button-suggest = Suggest
     .title = Suggest Translation (Enter)
-editor-EditorMenu--button-suggesting = Suggesting
+editor-EditorMenu--button-suggesting = <glyph></glyph>Suggesting
     .title = Suggesting Translation…
 
 
