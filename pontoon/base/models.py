@@ -1604,6 +1604,7 @@ class Repository(models.Model):
     # TODO: We should be able to remove this once we have persistent storage
     permalink_prefix = models.CharField(
         "Download prefix",
+        blank=True,
         max_length=2000,
         help_text="""
         A URL prefix for downloading localized files. For GitHub repositories,
