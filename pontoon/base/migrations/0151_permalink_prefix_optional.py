@@ -8,13 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0150_auto_20200206_0932'),
+        ("base", "0150_auto_20200206_0932"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='repository',
-            name='permalink_prefix',
-            field=models.CharField(blank=True, help_text='\n        A URL prefix for downloading localized files. For GitHub repositories,\n        select any localized file on GitHub, click Raw and replace locale code\n        and the following bits in the URL with `{locale_code}`.\n    ', max_length=2000, verbose_name='Download prefix'),
+            model_name="repository",
+            name="permalink_prefix",
+            field=models.CharField(
+                blank=True,
+                help_text="\n        A URL prefix for downloading localized files. For GitHub repositories,\n        select any localized file on GitHub, click Raw and replace locale code\n        and the following bits in the URL with `{locale_code}`.\n    ",
+                max_length=2000,
+                verbose_name="Download prefix",
+            ),
         ),
     ]
