@@ -55,6 +55,11 @@ export default function EditorMainAction(props: Props) {
             title: 'Approve Translation (Enter)',
             label: 'Approve',
         };
+
+        if (isRunningRequest) {
+            btn.id = 'editor-EditorMenu--button-approving';
+            btn.label = 'Approving';
+        }
     }
     else if (forceSuggestions || !isTranslator) {
         // Suggest button, will send an unreviewed translation.

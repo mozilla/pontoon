@@ -295,17 +295,21 @@ export default function connectedEditor<Object>(
          */
         updateTranslationStatus = (translationId: number, change: ChangeOperation, ignoreWarnings: ?boolean) => {
             const { locale, nextEntity, parameters, pluralForm, router, selectedEntity, dispatch } = this.props;
-            dispatch(history.actions.updateStatus(
-                change,
-                selectedEntity,
-                locale,
-                parameters.resource,
-                pluralForm,
-                translationId,
-                nextEntity,
-                router,
-                ignoreWarnings,
-            ));
+            dispatch(async dispatch => {
+                dispatch(actions.startUpdateTranslation());
+                await dispatch(history.actions.updateStatus(
+                    change,
+                    selectedEntity,
+                    locale,
+                    parameters.resource,
+                    pluralForm,
+                    translationId,
+                    nextEntity,
+                    router,
+                    ignoreWarnings,
+                ));
+                dispatch(actions.endUpdateTranslation());
+            });
         }
 
         setInitialTranslation = (translation: Translation) => {
