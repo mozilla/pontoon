@@ -44,7 +44,14 @@ export default function EditorMainAction(props: Props) {
         }
     }
 
-    let btn;
+    let btn: {
+        id: string,
+        className: string,
+        action: Function,
+        title: string,
+        label: string,
+        glyph: ?React.Node,
+    };
 
     if (isTranslator && sameExistingTranslation && !sameExistingTranslation.approved) {
         // Approve button, will approve the translation.
@@ -54,6 +61,7 @@ export default function EditorMainAction(props: Props) {
             action: approveTranslation,
             title: 'Approve Translation (Enter)',
             label: 'Approve',
+            glyph: null,
         };
 
         if (isRunningRequest) {
@@ -70,6 +78,7 @@ export default function EditorMainAction(props: Props) {
             action: sendTranslation,
             title: 'Suggest Translation (Enter)',
             label: 'Suggest',
+            glyph: null,
         };
 
         if (isRunningRequest) {
@@ -86,6 +95,7 @@ export default function EditorMainAction(props: Props) {
             action: sendTranslation,
             title: 'Save Translation (Enter)',
             label: 'Save',
+            glyph: null,
         };
 
         if (isRunningRequest) {
