@@ -150,20 +150,6 @@ function endUpdateTranslation(): EndUpdateTranslationAction {
 }
 
 
-function _getOperationNotif(change: 'added' | 'saved' | 'updated') {
-    switch (change) {
-        case 'added':
-            return notification.messages.TRANSLATION_ADDED;
-        case 'saved':
-            return notification.messages.TRANSLATION_SAVED;
-        case 'updated':
-            return notification.messages.TRANSLATION_UPDATED;
-        default:
-            throw new Error('Unexpected translation status change: ' + change);
-    }
-}
-
-
 /**
  * Save the current translation.
  */
@@ -182,7 +168,7 @@ export function sendTranslation(
         NProgress.start();
         dispatch(startUpdateTranslation());
 
-        const content = await api.translation.updateTranslation(
+        const content = await api.translation.create(
             entity.pk,
             translation,
             locale.code,
@@ -201,14 +187,9 @@ export function sendTranslation(
             // translation for that entity.
             dispatch(notification.actions.add(notification.messages.SAME_TRANSLATION));
         }
-        else if (
-            content.type === 'added' ||
-            content.type === 'saved' ||
-            content.type === 'updated'
-        ) {
+        else if (content.status) {
             // Notify the user of the change that happened.
-            const notif = _getOperationNotif(content.type);
-            dispatch(notification.actions.add(notif));
+            dispatch(notification.actions.add(notification.messages.TRANSLATION_SAVED));
 
             // Ignore existing unsavedchanges because they are saved now.
             dispatch(unsavedchanges.actions.ignore());

@@ -94,6 +94,7 @@ urlpatterns = [
     url(r"^pontoon\.js$", pontoon_js_view),
     url(r"^static/js/pontoon\.js$", pontoon_js_view),
     # Include URL configurations from installed apps
+    url(r"^translations/", include("pontoon.translations.urls")),
     url(r"", include("pontoon.teams.urls")),
     url(r"", include("pontoon.tour.urls")),
     url(r"", include("pontoon.tags.urls")),
@@ -101,7 +102,6 @@ urlpatterns = [
     url(r"", include("pontoon.projects.urls")),
     url(r"", include("pontoon.machinery.urls")),
     url(r"", include("pontoon.contributors.urls")),
-    url(r"^review/", include("pontoon.review.urls")),
     url(r"", include("pontoon.localizations.urls")),
     url(r"", include("pontoon.base.urls")),
     url(r"", include("pontoon.translate.urls")),
