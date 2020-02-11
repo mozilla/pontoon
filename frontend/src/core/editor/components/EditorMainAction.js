@@ -44,7 +44,14 @@ export default function EditorMainAction(props: Props) {
         }
     }
 
-    let btn;
+    let btn: {
+        id: string,
+        className: string,
+        action: Function,
+        title: string,
+        label: string,
+        glyph: ?React.Node,
+    };
 
     if (isTranslator && sameExistingTranslation && !sameExistingTranslation.approved) {
         // Approve button, will approve the translation.
@@ -54,7 +61,14 @@ export default function EditorMainAction(props: Props) {
             action: approveTranslation,
             title: 'Approve Translation (Enter)',
             label: 'Approve',
+            glyph: null,
         };
+
+        if (isRunningRequest) {
+            btn.id = 'editor-EditorMenu--button-approving';
+            btn.label = 'Approving';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
+        }
     }
     else if (forceSuggestions || !isTranslator) {
         // Suggest button, will send an unreviewed translation.
@@ -64,11 +78,13 @@ export default function EditorMainAction(props: Props) {
             action: sendTranslation,
             title: 'Suggest Translation (Enter)',
             label: 'Suggest',
+            glyph: null,
         };
 
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-suggesting';
             btn.label = 'Suggesting';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
         }
     }
     else {
@@ -79,17 +95,20 @@ export default function EditorMainAction(props: Props) {
             action: sendTranslation,
             title: 'Save Translation (Enter)',
             label: 'Save',
+            glyph: null,
         };
 
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-saving';
             btn.label = 'Saving';
+            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
         }
     }
 
     return <Localized
         id={ btn.id }
         attrs={{ title: true }}
+        glyph={ btn.glyph }
     >
         <button
             className={ btn.className }
@@ -97,8 +116,7 @@ export default function EditorMainAction(props: Props) {
             title={ btn.title}
             disabled={ isRunningRequest }
         >
-            { !isRunningRequest ? null : <i className="fa fa-circle-notch fa-spin" /> }
-            { btn.label }
+            { btn.glyph }{ btn.label }
         </button>
     </Localized>;
 }

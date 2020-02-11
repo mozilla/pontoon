@@ -234,10 +234,12 @@ export function sendTranslation(
 
 
 export default {
+    endUpdateTranslation,
     resetFailedChecks,
     resetSelection,
     sendTranslation,
     setInitialTranslation,
+    startUpdateTranslation,
     update,
     updateFailedChecks,
     updateSelection,
