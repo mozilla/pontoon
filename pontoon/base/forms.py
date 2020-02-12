@@ -313,3 +313,14 @@ class GetEntitiesForm(forms.Form):
 
     def clean_entity_ids(self):
         return utils.split_ints(self.cleaned_data["entity_ids"])
+
+
+class AddCommentsForm(forms.Form):
+    """
+    Form for parameters to the `add_comments` view.
+    """
+
+    locale = forms.CharField()
+    entity = forms.IntegerField()
+    comment = forms.CharField()
+    translation = forms.IntegerField(required=False)

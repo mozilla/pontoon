@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import bleach
 import logging
 from datetime import datetime
 
@@ -463,29 +462,34 @@ def get_team_comments(request):
 @transaction.atomic
 def add_comment(request):
     """Add a comment."""
-    try:
-        comment = request.POST["comment"]
-        comment = bleach.clean(
-            comment,
-            strip=True,
-            tags=settings.ALLOWED_TAGS,
-            attributes=settings.ALLOWED_ATTRIBUTES,
-        )
-        translationId = request.POST["translationId"]
-    except MultiValueDictKeyError as e:
+    form = forms.AddCommentsForm(request.POST)
+    if not form.is_valid():
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {
+                "status": False,
+                "message": "{error}".format(
+                    error=form.errors.as_json(escape_html=True)
+                ),
+            },
             status=400,
         )
 
     user = request.user
-    translation = get_object_or_404(Translation, pk=translationId)
+    comment = form.cleaned_data["comment"]
+    translationId = form.cleaned_data["translation"]
+    entity = get_object_or_404(Entity, pk=form.cleaned_data["entity"])
+    locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+    if translationId:
+        translation = get_object_or_404(Translation, pk=translationId)
 
-    c = Comment(author=user, translation=translation, content=comment,)
+    if translationId:
+        c = Comment(author=user, translation=translation, content=comment,)
+        log_action("comment:added", user, translation=translation)
+    else:
+        c = Comment(author=user, entity=entity, locale=locale, content=comment,)
+        log_action("comment:added", user, entity=entity, locale=locale)
 
     c.save()
-
-    log_action("comment:added", user, translation=translation)
 
     return JsonResponse({"status": True})
 

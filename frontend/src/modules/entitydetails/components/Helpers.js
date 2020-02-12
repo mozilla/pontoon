@@ -30,7 +30,7 @@ type Props = {|
     user: UserState,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
-    addComment: (string, number) => void,
+    addComment: (string, any) => void,
 |};
 
 
@@ -100,7 +100,6 @@ export default class Helpers extends React.Component<Props> {
                 <TeamComment
                     teamComments={ teamComments }
                     user={ user }
-                    entity={ entity }
                     addComment={ addComment }
                 />
             </TabPanel>
