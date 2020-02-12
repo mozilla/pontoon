@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import './CommentList.css';
+import './CommentsList.css';
 
 import { Comment, AddComment } from 'core/comments';
 
@@ -14,7 +14,7 @@ type Props = {|
     comments: Array<TranslationComment>,
     translation: HistoryTranslation,
     canComment: boolean,
-    addComment: (string, number) => void,
+    addComment: (string, ?number) => void,
 |};
 
 
@@ -44,7 +44,7 @@ export default function CommentsList(props: Props) {
                 user={ translation.user }
                 username={ translation.username }
                 imageURL={ translation.userGravatarUrlSmall}
-                id={ translation.pk }
+                translation={ translation.pk }
                 addComment={ addComment }
             />
         }

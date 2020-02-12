@@ -11,8 +11,8 @@ type Props = {|
     user: string,
     username: string,
     imageURL: string,
-    id: number,
-    addComment: (string, number) => void,
+    translation?: number,
+    addComment: (string, ?number) => void,
 |};
 
 
@@ -21,7 +21,7 @@ export default function AddComments(props: Props) {
         user,
         username,
         imageURL,
-        id,
+        translation,
         addComment,
     } = props;
 
@@ -56,7 +56,13 @@ export default function AddComments(props: Props) {
                 return null;
             }
 
-            addComment(comment, id);
+            if (translation) {
+                addComment(comment, translation);
+            }
+            else {
+                addComment(comment);
+            }
+
             commentInput.current.value = '';
             commentInput.current.rows = minRows;
         }

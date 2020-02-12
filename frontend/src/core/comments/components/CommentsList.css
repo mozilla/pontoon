@@ -1,0 +1,25 @@
+.comments-list {
+    padding: 8px;
+}
+
+.comments-list .comment {
+    display: flex;
+    margin-left: 58px;
+}
+
+.comments-list .comment .user-avatar {
+    padding-right: 8px;
+}
+
+.comments-list .comment .user-avatar img {
+    border-radius: 4px;
+    border: 2px solid #5E6475;
+    width: 32px;
+    height: 32px;
+}
+
+.comments-list .comment .container {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+}
