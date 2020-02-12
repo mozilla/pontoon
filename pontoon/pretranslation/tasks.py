@@ -223,7 +223,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         ]
     )
 
-    # Update latest activity and fuzzy count for changed instances.
+    # Update latest activity and stats for changed instances.
     update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
 
     log.info("Fetching pretranslations for project {} done".format(project.name))

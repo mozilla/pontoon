@@ -95,7 +95,6 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
             data["latest_translation_index"]
         ]
 
-        # Since the translations fall into fuzzy category.
         locale.fuzzy_strings += data["fuzzy_translation_count"]
         projectlocale.fuzzy_strings += data["fuzzy_translation_count"]
 
