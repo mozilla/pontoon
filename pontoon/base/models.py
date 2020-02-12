@@ -3488,3 +3488,14 @@ class Comment(models.Model):
             "content": self.content,
             "id": self.id,
         }
+
+    def save(self, *args, **kwargs):
+        """
+        Validate Comments before saving.
+        """
+        if (self.translation is not None and (not self.locale and not self.entity)) or (
+            self.translation is None and (self.locale and self.entity)
+        ):
+            super(Comment, self).save(*args, **kwargs)
+        else:
+            raise ValidationError("Invalid comment arguments")

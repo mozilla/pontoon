@@ -483,11 +483,11 @@ def add_comment(request):
         translation = get_object_or_404(Translation, pk=translationId)
 
     if translationId:
-        c = Comment(author=user, translation=translation, content=comment,)
-        log_action("comment:added", user, translation=translation)
+        c = Comment(author=user, translation=translation, content=comment)
+        log_action("translation_comment:added", user, translation=translation)
     else:
-        c = Comment(author=user, entity=entity, locale=locale, content=comment,)
-        log_action("comment:added", user, entity=entity, locale=locale)
+        c = Comment(author=user, entity=entity, locale=locale, content=comment)
+        log_action("team_comment:added", user, entity=entity, locale=locale)
 
     c.save()
 
