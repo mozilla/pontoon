@@ -18,8 +18,10 @@ class ActionLog(models.Model):
         ("translation:rejected", "Translation rejected"),
         # A translation has been unrejected.
         ("translation:unrejected", "Translation unrejected"),
-        # A comment has been added.
-        ("comment:added", "Comment added"),
+        # A translation comment has been added.
+        ("translation_comment:added", "Comment added"),
+        # A team comment has been added.
+        ("team_comment:added", "Comment added"),
     )
 
     action_type = models.CharField(max_length=50, choices=ACTIONS_TYPES)
@@ -53,21 +55,24 @@ class ActionLog(models.Model):
             raise ValidationError(
                 'For action "translation:deleted", `entity` and `locale` are required'
             )
-        elif (self.action_type == "comment:added" and self.translation is None) and (
-            not self.entity or not self.locale
+        elif self.action_type == "translation_comment:added" and (
+            self.translation is None
+            or self.locale is not None
+            or self.entity is not None
         ):
             raise ValidationError(
-                'For action "comment:added" on team comments, `entity` and `locale` are required'
+                'Only `translation` is accepted for action type "translation_comment:added'
             )
-        elif self.action_type == "comment:added" and (
-            not self.translation and not self.entity and not self.locale
+        elif self.action_type == "team_comment:added" and (
+            self.translation is not None or self.locale is None or self.entity is None
         ):
             raise ValidationError(
-                'For action "comment:added" on translation comments, `translation` is required'
+                'Only `entity` and `locale` are accepted for action type "team_comment:added'
             )
         elif (
             self.action_type != "translation:deleted"
-            and self.action_type != "comment:added"
+            and self.action_type != "translation_comment:added"
+            and self.action_type != "team_comment:added"
         ) and (not self.translation or self.entity or self.locale):
             raise ValidationError(
                 'Only `translation` is accepted for action type "{}"'.format(
