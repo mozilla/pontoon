@@ -3,25 +3,23 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import './CommentList.css'
+import './CommentsList.css'
 import './TeamComment.css';
 
 import { Comment, AddComment } from 'core/comments';
 
-import type { Entity } from 'core/api';
 import type { TeamCommentState } from 'core/comments';
 import type { UserState } from 'core/user';
 
 type Props = {|
     teamComments: TeamCommentState,
     user: UserState,
-    entity: Entity,
-    addComment: (string, number) => void,
+    addComment: (string, ?number) => void,
 |};
 
 
 export default function TeamComment(props: Props) {
-    const { teamComments, user, entity, addComment } = props;
+    const { teamComments, user, addComment } = props;
 
     let canComment = user.isAuthenticated;
 
@@ -30,10 +28,22 @@ export default function TeamComment(props: Props) {
     }
 
     if (!teamComments.comments.length) {
-        return <section className="no-team-comments">
-            <Localized id="entitydetails-Helpers--no-comments">
-                <p>No comments available.</p>
-            </Localized>
+        return <section>
+            <div className="no-team-comments">
+                <Localized id="entitydetails-Helpers--no-comments">
+                    <p>No comments available.</p>
+                </Localized>
+            </div>
+            <div className='comments-list team-comments-list'>
+                { !canComment ? null :
+                    <AddComment
+                        user={ user.nameOrEmail }
+                        username={ user.username }
+                        imageURL={ user.gravatarURLSmall}
+                        addComment={ addComment }
+                    />
+                }
+            </div>
         </section>
     }
 
@@ -51,7 +61,6 @@ export default function TeamComment(props: Props) {
                 user={ user.nameOrEmail }
                 username={ user.username }
                 imageURL={ user.gravatarURLSmall}
-                id={ entity.pk }
                 addComment={ addComment }
             />
         }

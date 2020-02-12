@@ -66,17 +66,21 @@ export function addComment(
     entity: number,
     locale: string,
     pluralForm: number,
-    translationId: number,
+    translation?: number,
     comment: string,
 ): Function {
     return async dispatch => {
         NProgress.start();
 
-        await api.comment.add(comment, translationId);
+        await api.comment.add(entity, locale, comment, translation);
 
         dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
-        dispatch(history.actions.get(entity, locale, pluralForm));
-        dispatch(get(entity, locale));
+        if (translation) {
+            dispatch(history.actions.get(entity, locale, pluralForm));
+        }
+        else {
+            dispatch(get(entity, locale));
+        }
 
         NProgress.done();
     }
