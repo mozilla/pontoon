@@ -42,7 +42,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     tm_user = User.objects.get(email="pontoon-tm@mozilla.com")
     gt_mock.return_value = [("pretranslation", None, tm_user)]
 
-    pretranslate(project_a)
+    pretranslate(project_a.pk)
 
     translations = Translation.objects.filter(user=tm_user)
 

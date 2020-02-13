@@ -62,7 +62,7 @@ $(function() {
     $.ajax({
       url: '/admin/projects/' + $('#id_slug').val() + '/sync/'
     }).success(function() {
-      button.html('Sync started');
+      button.html('Started');
     }).error(function() {
       button.html('Whoops!');
     }).complete(function() {
@@ -88,7 +88,7 @@ $(function() {
     $.ajax({
       url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/'
     }).success(function() {
-      button.html('Pretranslation started');
+      button.html('Started');
     }).error(function() {
       button.html('Whoops!');
     }).complete(function() {

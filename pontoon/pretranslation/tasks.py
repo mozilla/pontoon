@@ -4,7 +4,7 @@ from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 from django.conf import settings
 
-from pontoon.base.models import Entity, TranslatedResource, Translation
+from pontoon.base.models import Project, Entity, TranslatedResource, Translation
 from pontoon.pretranslation.pretranslate import (
     get_translations,
     update_changed_instances,
@@ -17,18 +17,19 @@ log = logging.getLogger(__name__)
 
 
 @serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0}")
-def pretranslate(self, project, locales=None, entities=None):
+def pretranslate(self, project_pk, locales=None, entities=None):
     """
     Identifies strings without any translations and any suggestions.
     Engages TheAlgorithm (bug 1552796) to gather pretranslations.
     Stores pretranslations as suggestions (approved=False) to DB.
 
-    :arg Project project: the project to be pretranslated
+    :arg project_pk: the pk of the project to be pretranslated
     :arg Queryset locales: the locales for the project to be pretranslated
     :arg Queryset entites: the entities for the project to be pretranslated
 
     :returns: None
     """
+    project = Project.objects.get(pk=project_pk)
 
     log.info("Fetching pretranslations for project {} started".format(project.name))
 
