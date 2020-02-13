@@ -3,12 +3,12 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import './CommentsList.css'
+import '../../../core/comments/components/CommentsList.css'
 import './TeamComment.css';
 
 import { Comment, AddComment } from 'core/comments';
 
-import type { TeamCommentState } from 'core/comments';
+import type { TeamCommentState } from 'modules/teamcomments';
 import type { UserState } from 'core/user';
 
 type Props = {|
