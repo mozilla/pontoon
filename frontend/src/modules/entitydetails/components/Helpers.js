@@ -6,12 +6,12 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { TeamComment, CommentCount } from 'core/comments';
+import { TeamComment, CommentCount } from 'modules/teamcomments';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Entity } from 'core/api';
-import type { TeamCommentState } from 'core/comments';
+import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';

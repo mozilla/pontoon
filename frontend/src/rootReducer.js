@@ -3,7 +3,6 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 
-import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
@@ -20,6 +19,7 @@ import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as search from 'modules/search';
+import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
@@ -44,7 +44,7 @@ export default (browserHistory: any) => combineReducers({
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
-    [comments.NAME]: comments.reducer,
     [search.NAME]: search.reducer,
+    [teamcomments.NAME]: teamcomments.reducer,
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 });
