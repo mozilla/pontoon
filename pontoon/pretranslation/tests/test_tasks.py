@@ -43,7 +43,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     gt_mock.return_value = [("pretranslation", None, tm_user)]
 
     pretranslate(project_a.pk)
-
+    project_a.refresh_from_db()
     translations = Translation.objects.filter(user=tm_user)
 
     # Total pretranslations = 2(tr_ax) + 2(tr_bx) + 2(tr_ay)
