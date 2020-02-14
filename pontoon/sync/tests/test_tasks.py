@@ -412,10 +412,10 @@ class SyncExecutionTests(TestCase):
             assert_true(first_call.get(), 42)
             assert_true(second_call.get(), 24)
             mock_cache.add.assert_any_call(
-                CONTAINS("serial_task.sync[param=42]"), ANY, timeout=3
+                CONTAINS("task_lock_key[param=42]"), ANY, timeout=3
             )
             mock_cache.add.assert_any_call(
-                CONTAINS("serial_task.sync[param=24]"), ANY, timeout=3
+                CONTAINS("task_lock_key[param=24]"), ANY, timeout=3
             )
 
     def test_exception_during_sync(self):
