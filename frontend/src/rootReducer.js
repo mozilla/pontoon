@@ -15,11 +15,11 @@ import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
 import * as batchactions from 'modules/batchactions';
+import * as commentslist from 'modules/commentslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as search from 'modules/search';
-import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
@@ -41,10 +41,10 @@ export default (browserHistory: any) => combineReducers({
     [user.NAME]: user.reducer,
     // Application modules
     [batchactions.NAME]: batchactions.reducer,
+    [commentslist.NAME]: commentslist.reducer,
     [history.NAME]: history.reducer,
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
     [search.NAME]: search.reducer,
-    [teamcomments.NAME]: teamcomments.reducer,
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 });

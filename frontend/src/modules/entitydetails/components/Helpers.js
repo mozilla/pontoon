@@ -6,15 +6,15 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { TeamComment, CommentCount } from 'modules/teamcomments';
+import { CommentsList, CommentCount } from 'modules/commentslist';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Entity } from 'core/api';
-import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { TeamCommentState } from 'modules/commentslist';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
@@ -97,7 +97,7 @@ export default class Helpers extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <TeamComment
+                <CommentsList
                     teamComments={ teamComments }
                     user={ user }
                     addComment={ addComment }

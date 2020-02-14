@@ -23,3 +23,19 @@
     flex-flow: column wrap;
     width: 100%;
 }
+
+.team-comments-list .comment {
+    margin-left: 0;
+}
+
+.team-comments-list ul {
+    margin-left: .5em;
+}
+
+.no-team-comments > p {
+    border-bottom: 1px solid #5E6475;
+    color: #aaa;
+    font-style: italic;
+    line-height: 22px;
+    padding: 15px 10px;
+}
