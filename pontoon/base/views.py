@@ -484,10 +484,10 @@ def add_comment(request):
 
     if translationId:
         c = Comment(author=user, translation=translation, content=comment)
-        log_action("translation_comment:added", user, translation=translation)
+        log_action("comment:added", user, translation=translation)
     else:
         c = Comment(author=user, entity=entity, locale=locale, content=comment)
-        log_action("team_comment:added", user, entity=entity, locale=locale)
+        log_action("comment:added", user, entity=entity, locale=locale)
 
     c.save()
 
