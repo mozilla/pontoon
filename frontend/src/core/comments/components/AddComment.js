@@ -11,7 +11,7 @@ type Props = {|
     user: string,
     username: string,
     imageURL: string,
-    translation?: number,
+    translation?: ?number,
     addComment: (string, ?number) => void,
 |};
 
