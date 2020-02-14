@@ -513,6 +513,6 @@ def manually_pretranslate_project(request, slug):
         )
 
     project = Project.objects.get(slug=slug)
-    pretranslate(project)
+    pretranslate.delay(project.pk)
 
     return HttpResponse("ok")

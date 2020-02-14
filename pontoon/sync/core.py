@@ -53,7 +53,9 @@ def serial_task(timeout, lock_key="", on_error=None, **celery_args):
         @shared_task(bind=True, **celery_args)
         @wraps(func)
         def wrapped_func(self, *args, **kwargs):
-            lock_name = "serial_task.sync[{}]".format(lock_key.format(*args, **kwargs))
+            lock_name = "serial_task.{}[{}]".format(
+                self.name, lock_key.format(*args, **kwargs)
+            )
             # Acquire the lock
             if not cache.add(lock_name, True, timeout=timeout):
                 error = RuntimeError(
