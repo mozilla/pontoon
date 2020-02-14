@@ -7,7 +7,7 @@ import { Localized } from '@fluent/react';
 import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
-import { CommentsList } from 'modules/commentslist';
+import { CommentsList } from 'core/comments';
 import { UserAvatar } from 'core/user';
 import * as utils from 'core/utils';
 
@@ -449,7 +449,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 <CommentsList
                     comments={ translation.comments }
                     translation={ translation }
-                    user={ user }
+                    canComment={ canComment }
                     addComment={ addComment }
                 />
             }

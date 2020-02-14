@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { TeamCommentState } from 'modules/commentslist';
+import type { TeamCommentState } from 'modules/teamcomments';
 
 
 type Props = {|
