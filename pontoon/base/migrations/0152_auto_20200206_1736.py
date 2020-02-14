@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("base", "0150_auto_20200206_0932"),
+        ("base", "0151_permalink_prefix_optional"),
     ]
 
     operations = [
