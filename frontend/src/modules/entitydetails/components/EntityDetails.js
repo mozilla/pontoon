@@ -14,12 +14,12 @@ import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
 import * as user from 'core/user';
 import * as utils from 'core/utils';
-import * as commentslist from 'modules/commentslist';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as genericeditor from 'modules/genericeditor';
 import * as fluenteditor from 'modules/fluenteditor';
+import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 import * as notification from 'core/notification';
 
@@ -32,10 +32,10 @@ import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import type { TeamCommentState } from 'modules/commentslist';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
+import type { TeamCommentState } from 'modules/teamcomments';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
@@ -126,7 +126,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (selectedEntity.pk !== this.props.teamComments.entity) {
-            dispatch(commentslist.actions.get(parameters.entity, parameters.locale));
+            dispatch(teamcomments.actions.get(parameters.entity, parameters.locale));
         }
     }
 
@@ -258,7 +258,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     addComment = (comment: string, translation?: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
-        dispatch(commentslist.actions.addComment(
+        dispatch(teamcomments.actions.addComment(
             parameters.entity,
             parameters.locale,
             pluralForm,
@@ -371,7 +371,7 @@ const mapStateToProps = (state: Object): Props => {
         nextEntity: entities.selectors.getNextEntity(state),
         previousEntity: entities.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
-        teamComments: state[commentslist.NAME],
+        teamComments: state[teamcomments.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
