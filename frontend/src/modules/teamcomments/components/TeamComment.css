@@ -2,7 +2,8 @@
     margin-left: 0;
 }
 
-.team-comments-list ul {
+.team-comments-list ul,
+.team-comments-list .add-comment {
     margin-left: .5em;
 }
 

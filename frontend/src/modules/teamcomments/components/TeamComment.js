@@ -21,8 +21,9 @@ export default function TeamComment(props: Props) {
     const { teamComments, user, addComment } = props;
 
     let canComment = user.isAuthenticated;
+    const comments = teamComments.comments;
 
-    if (!teamComments.comments) {
+    if (!comments) {
         return null;
     }
 
@@ -46,13 +47,13 @@ export default function TeamComment(props: Props) {
         </section>
     }
 
-    return (
+    return <section className="team-comments-list">
         <CommentsList
-            teamComments={ teamComments }
+            comments={ comments }
             user={ user }
             canComment={ canComment }
             addComment={ addComment }
         />
-    )
+    </section>
 
 }

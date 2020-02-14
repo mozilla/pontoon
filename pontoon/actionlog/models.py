@@ -59,7 +59,7 @@ class ActionLog(models.Model):
             or (not self.translation and self.locale and self.entity)
         ):
             raise ValidationError(
-                'For action type "comment:added", either `translation` or `locale` + `entity` are required'
+                'For action type "comment:added", either `translation` or `locale` and `entity` are required'
             )
 
         if (
