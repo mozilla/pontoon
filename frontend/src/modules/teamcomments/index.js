@@ -3,7 +3,7 @@ export { default as reducer } from './reducer';
 
 
 export { default as CommentCount } from './components/CommentCount';
-export { default as TeamComment } from './components/TeamComment';
+export { default as TeamComments } from './components/TeamComments';
 
 export type { TeamCommentState } from './reducer';
 

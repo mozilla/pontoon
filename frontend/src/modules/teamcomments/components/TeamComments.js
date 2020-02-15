@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import './TeamComment.css';
+import './TeamComments.css';
 
 import { AddComment, CommentsList } from 'core/comments';
 
@@ -17,7 +17,7 @@ type Props = {|
 |};
 
 
-export default function TeamComment(props: Props) {
+export default function TeamComments(props: Props) {
     const { teamComments, user, addComment } = props;
 
     let canComment = user.isAuthenticated;
@@ -27,7 +27,7 @@ export default function TeamComment(props: Props) {
         return null;
     }
 
-    if (!teamComments.comments.length) {
+    if (!comments.length) {
         return <section>
             <div className="no-team-comments">
                 <Localized id="entitydetails-Helpers--no-comments">
