@@ -6,6 +6,7 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
+import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
@@ -258,7 +259,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     addComment = (comment: string, translation?: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
-        dispatch(teamcomments.actions.addComment(
+        dispatch(comments.actions.addComment(
             parameters.entity,
             parameters.locale,
             pluralForm,

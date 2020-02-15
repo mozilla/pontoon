@@ -56,12 +56,7 @@ export default function AddComments(props: Props) {
                 return null;
             }
 
-            if (translation) {
-                addComment(comment, translation);
-            }
-            else {
-                addComment(comment);
-            }
+            addComment(comment, translation);
 
             commentInput.current.value = '';
             commentInput.current.rows = minRows;
