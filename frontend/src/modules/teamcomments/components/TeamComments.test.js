@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import TeamComment from './TeamComment';
+import TeamComments from './TeamComments';
 
-describe('<TeamComment>', () => {
+describe('<TeamComments>', () => {
     const DEFAULT_USER = 'AndyDwyer';
 
     it('shows correct message when no comments', () => {
@@ -12,7 +12,7 @@ describe('<TeamComment>', () => {
             comments: [],
         };
 
-        const wrapper = shallow(<TeamComment
+        const wrapper = shallow(<TeamComments
             teamComments={ teamComments }
             user={ DEFAULT_USER }
         />);

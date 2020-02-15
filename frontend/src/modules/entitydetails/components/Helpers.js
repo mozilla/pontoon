@@ -6,7 +6,7 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { TeamComment, CommentCount } from 'modules/teamcomments';
+import { TeamComments, CommentCount } from 'modules/teamcomments';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
@@ -97,7 +97,7 @@ export default class Helpers extends React.Component<Props> {
                 />
             </TabPanel>
             <TabPanel>
-                <TeamComment
+                <TeamComments
                     teamComments={ teamComments }
                     user={ user }
                     addComment={ addComment }
