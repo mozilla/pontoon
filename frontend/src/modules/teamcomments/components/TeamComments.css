@@ -1,9 +1,10 @@
-.team-comments-list .comment {
+.team-comments-list ul .comment,
+.team-comments-list div .add-comment {
     margin-left: 0;
 }
 
 .team-comments-list ul,
-.team-comments-list .add-comment {
+.team-comments-list div .add-comment {
     margin-left: .5em;
 }
 
