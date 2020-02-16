@@ -9,8 +9,8 @@ from mock import patch
 from random import randint
 from six.moves import range
 
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.urls import reverse
 from django.utils.timezone import now, make_aware
 from django_nose.tools import assert_equal, assert_true, assert_code, assert_contains
 

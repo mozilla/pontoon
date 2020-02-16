@@ -22,7 +22,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.db import models
 from django.db.models import (
@@ -37,6 +36,7 @@ from django.db.models import (
     ExpressionWrapper,
 )
 from django.templatetags.static import static
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property

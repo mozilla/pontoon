@@ -4,10 +4,11 @@ from django.conf import settings
 from django.contrib import auth
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
+from django.utils.deprecation import MiddlewareMixin
 from raygun4py.middleware.django import Provider
 
 
-class RaygunExceptionMiddleware(Provider):
+class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
     def process_exception(self, request, exception):
         # Ignore non-failure exceptions. We don't need to be notified
         # of these.
@@ -17,7 +18,7 @@ class RaygunExceptionMiddleware(Provider):
             )
 
 
-class BlockedIpMiddleware(object):
+class BlockedIpMiddleware(MiddlewareMixin):
     def process_request(self, request):
         try:
             ip = request.META["HTTP_X_FORWARDED_FOR"]
@@ -36,7 +37,7 @@ class BlockedIpMiddleware(object):
         return None
 
 
-class AutomaticLoginUserMiddleware(object):
+class AutomaticLoginUserMiddleware(MiddlewareMixin):
     """
     This middleware automatically logs in the user specified for AUTO_LOGIN.
     """
