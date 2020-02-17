@@ -529,9 +529,9 @@ def _allowed_hosts():
         result = [host, host_no_port]
 
     # add values from environment variable. Needed in case of URL/domain redirections
-    envVarsStr = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
-    envVars = [x.strip() for x in envVarsStr.split(",")]
-    result.extend(envVars)
+    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
+    env_vars = [x.strip() for x in env_vars_str.split(",")]
+    result.extend(env_vars)
 
     return result
 
