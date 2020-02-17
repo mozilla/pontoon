@@ -6,7 +6,7 @@ import caighdean
 import pytest
 import requests_mock
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from six.moves import urllib
 

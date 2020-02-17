@@ -17,8 +17,8 @@ from django import template
 from django.conf import settings
 from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.urlresolvers import reverse
 from django.db.models import QuerySet
+from django.urls import reverse
 from django.utils.encoding import smart_str
 from django.utils.encoding import force_text
 from django.utils.functional import Promise

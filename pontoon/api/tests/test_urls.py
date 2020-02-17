@@ -5,7 +5,7 @@ import unittest
 
 from django.test import TestCase
 from django.conf import settings
-from django.core.urlresolvers import clear_url_caches
+from django.urls import clear_url_caches
 
 from six.moves import reload_module
 
