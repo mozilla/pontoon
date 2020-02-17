@@ -156,7 +156,7 @@ INSTALLED_APPS = (
 
 BLOCKED_IPS = os.environ.get("BLOCKED_IPS", "").split(",")
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_cookies_samesite.middleware.CookiesSameSite",

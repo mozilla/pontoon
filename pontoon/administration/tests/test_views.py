@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from pontoon.administration.forms import ProjectForm
 from pontoon.administration.views import _create_or_update_translated_resources

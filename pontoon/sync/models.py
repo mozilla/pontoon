@@ -4,7 +4,7 @@ import logging
 
 from bulk_update.helper import bulk_update
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models import F, Max, Sum
 from django.utils import timezone
