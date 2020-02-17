@@ -1,9 +1,6 @@
 #!/bin/bash
 echo "out/logs is going into '/app/run_webApp.log'"
 
-#user:
-(echo ">>> running as user: " && whoami) >> /app/run_webApp.log
-
 #user pontoon stuff --> get enc vars
 (echo ">>> running as user: " && whoami) >> /app/run_webApp.log
 if [ ! -z "$SSH_KEY" ]; then
