@@ -12,7 +12,7 @@ export function addComment(
     entity: number,
     locale: string,
     pluralForm: number,
-    translation?: number,
+    translation: ?number,
     comment: string,
 ): Function {
     return async dispatch => {

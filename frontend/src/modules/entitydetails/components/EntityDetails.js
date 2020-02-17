@@ -257,7 +257,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    addComment = (comment: string, translation?: number) => {
+    addComment = (comment: string, translation: ?number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(comments.actions.addComment(
             parameters.entity,
