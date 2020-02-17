@@ -30,7 +30,7 @@ type Props = {|
     user: UserState,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
-    addComment: (string, any) => void,
+    addComment: (string, ?number) => void,
 |};
 
 
