@@ -39,8 +39,6 @@ export function request(
 
 export function get(entity: number, locale: string): Function {
     return async dispatch => {
-        dispatch(request(entity));
-
         // Abort all previously running requests.
         await api.entity.abort();
 
