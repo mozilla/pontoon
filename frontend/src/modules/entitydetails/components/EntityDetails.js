@@ -127,6 +127,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (selectedEntity.pk !== this.props.teamComments.entity) {
+            dispatch(teamcomments.actions.request(parameters.entity));
             dispatch(teamcomments.actions.get(parameters.entity, parameters.locale));
         }
     }
