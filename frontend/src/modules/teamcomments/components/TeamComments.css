@@ -1,11 +1,11 @@
-.team-comments-list ul .comment,
-.team-comments-list div .add-comment {
-    margin-left: 0;
+.team-comments .comments-list {
+    margin-top: 2px;
 }
 
-.team-comments-list ul,
-.team-comments-list div .add-comment {
-    margin-left: .5em;
+.team-comments ul,
+.team-comments ul .comment,
+.team-comments div .add-comment {
+    margin-left: 0;
 }
 
 .no-team-comments > p {
