@@ -320,7 +320,7 @@ class AddCommentsForm(forms.Form):
     Form for parameters to the `add_comments` view.
     """
 
-    locale = forms.CharField()
-    entity = forms.IntegerField()
+    locale = forms.CharField(required=False)
+    entity = forms.IntegerField(required=False)
     comment = forms.CharField()
     translation = forms.IntegerField(required=False)
