@@ -113,10 +113,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             });
         }
 
-        const searchParam = props.parameters.search;
-
         this.setState({
-            search: searchParam ? searchParam.toString() : '',
             statuses,
             extras,
             tags,
@@ -129,6 +126,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
         this.updateFiltersFromURLParams();
+
+        // On mount, update the search input content based on URL.
+        // This is not in the `updateFiltersFromURLParams` method because we want to
+        // do this *only* on mount. The behavior is slightly different on update.
+        const searchParam = this.props.parameters.search;
+        this.setState({
+            search: searchParam ? searchParam.toString() : '',
+        });
     }
 
     componentDidUpdate(prevProps: InternalProps) {
