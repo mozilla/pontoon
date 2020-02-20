@@ -5,7 +5,7 @@ import { Localized } from '@fluent/react';
 
 import './TeamComments.css';
 
-import { AddComment, CommentsList } from 'core/comments';
+import { CommentsList } from 'core/comments';
 
 import type { UserState } from 'core/user';
 import type { TeamCommentState } from 'modules/teamcomments';
