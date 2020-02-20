@@ -27,34 +27,22 @@ export default function TeamComments(props: Props) {
         return null;
     }
 
-    if (!comments.length) {
-        return <section className="team-comments">
-            { !canComment ?
-                <div className="no-team-comments">
-                    <Localized id="entitydetails-Helpers--no-comments">
-                        <p>No comments available.</p>
-                    </Localized>
-                </div>
-                :
-                <section className="team-comments">
-                    <CommentsList
-                        comments={ comments }
-                        user={ user }
-                        canComment={ canComment }
-                        addComment={ addComment }
-                    />
-                </section>
-            }
-        </section>
-    }
-
     return <section className="team-comments">
-        <CommentsList
-            comments={ comments }
-            user={ user }
-            canComment={ canComment }
-            addComment={ addComment }
-        />
+        { !comments.length && !canComment ?
+            <div className="no-team-comments">
+                <Localized id="entitydetails-Helpers--no-comments">
+                    <p>No comments available.</p>
+                </Localized>
+            </div>
+            :
+            <section className="team-comments">
+                <CommentsList
+                    comments={ comments }
+                    user={ user }
+                    canComment={ canComment }
+                    addComment={ addComment }
+                />
+            </section>
+        }
     </section>
-
 }
