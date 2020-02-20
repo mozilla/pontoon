@@ -36,14 +36,14 @@ export default function TeamComments(props: Props) {
                     </Localized>
                 </div>
                 :
-                <div className='comments-list'>
-                    <AddComment
-                        user={ user.nameOrEmail }
-                        username={ user.username }
-                        imageURL={ user.gravatarURLSmall}
+                <section className="team-comments">
+                    <CommentsList
+                        comments={ comments }
+                        user={ user }
+                        canComment={ canComment }
                         addComment={ addComment }
                     />
-                </div>
+                </section>
             }
         </section>
     }

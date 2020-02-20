@@ -3527,9 +3527,10 @@ class Comment(models.Model):
         """
         Validate Comments before saving.
         """
-        if (self.translation and not self.locale and not self.entity) or (
-            not self.translation and self.locale and self.entity
+        if not (
+            (self.translation and not self.locale and not self.entity)
+            or (not self.translation and self.locale and self.entity)
         ):
-            super(Comment, self).save(*args, **kwargs)
-        else:
             raise ValidationError("Invalid comment arguments")
+
+        super(Comment, self).save(*args, **kwargs)
