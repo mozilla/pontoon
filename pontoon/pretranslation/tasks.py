@@ -4,6 +4,7 @@ from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
 from django.conf import settings
 from pontoon.base.models import (
+    Project,
     Entity,
     TranslatedResource,
     Translation,
