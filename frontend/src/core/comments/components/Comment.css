@@ -3,6 +3,7 @@
 }
 
 .comments-list .comment a {
+    margin-right: 6px;
     color: #7BC876;
     font-weight: 400;
     white-space: nowrap;
