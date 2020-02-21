@@ -86,6 +86,8 @@ resourceprogress-ResourceProgress--missing = Missing
 
 comments-AddComment--input =
     .placeholder = Write a comment…
+comments-AddComment--submit-button = <glyph></glyph>
+    .title = Submit comment
 
 
 ## Editor Menu
