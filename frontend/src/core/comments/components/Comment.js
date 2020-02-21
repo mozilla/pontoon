@@ -31,6 +31,7 @@ export default function Comment(props: Props) {
             <div className='content' dir='auto'>
                 <p>
                     <a
+                        className='comment-author'
                         href={ `/contributors/${comment.username}` }
                         target='_blank'
                         rel='noopener noreferrer'
