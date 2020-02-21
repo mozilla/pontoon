@@ -1,3 +1,9 @@
+.comments-list .comment .container {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+}
+
 .comments-list ul .comment {
     padding-bottom: 10px;
 }
