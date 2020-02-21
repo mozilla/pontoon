@@ -47,20 +47,18 @@ export default function AddComments(props: Props) {
         }
     }
 
-    const submitComment = (event: SyntheticKeyboardEvent<>) => {
-        if (event.keyCode === 13 && event.shiftKey === false) {
-            event.preventDefault();
-            const comment = commentInput.current.value;
+    const submitComment = (event: SyntheticMouseEvent<>) => {
+        event.preventDefault();
+        const comment = commentInput.current.value;
 
-            if (!comment) {
-                return null;
-            }
-
-            addComment(comment, translation);
-
-            commentInput.current.value = '';
-            commentInput.current.rows = minRows;
+        if (!comment) {
+            return null;
         }
+
+        addComment(comment, translation);
+
+        commentInput.current.value = '';
+        commentInput.current.rows = minRows;
     };
 
     return <div className='comment add-comment'>
@@ -68,7 +66,7 @@ export default function AddComments(props: Props) {
             username={ username }
             imageUrl={ imageURL }
         />
-        <form className='container'>
+        <form className='form-container'>
             <Localized
                 id='comments-AddComment--input'
                 attrs={{ placeholder: true }}
@@ -81,8 +79,22 @@ export default function AddComments(props: Props) {
                     rows={ minRows }
                     ref={ commentInput }
                     onChange={ handleOnChange }
-                    onKeyDown={ submitComment }
                 />
+            </Localized>
+            <Localized
+                id="comments-AddComment--submit-button"
+                attrs={{ title: true }}
+                glyph={
+                    <i className="fa fa-paper-plane"></i>
+                }
+            >
+                <button
+                    className="submit-button"
+                    title="Submit comment"
+                    onClick={ submitComment }
+                >
+                    { '<glyph></glyph>' }
+                </button>
             </Localized>
         </form>
     </div>
