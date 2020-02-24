@@ -206,6 +206,10 @@ export default class Metadata extends React.Component<Props, State> {
         this.props.navigateToPath(path);
     }
 
+    openComment = () => {
+        console.log('Button works')
+    }
+
     render(): React.Node {
         const { entity, locale, openLightbox, pluralForm } = this.props;
 
@@ -241,6 +245,22 @@ export default class Metadata extends React.Component<Props, State> {
                         { entity.path }
                     </a>
                 </Property>
+            </Localized>
+            <Localized id="entitydetails-Metadata--context-button">
+                <button
+                    className="context-button"
+                    onClick={ this.openComment }
+                >
+                    { 'Request context' }
+                </button>
+            </Localized>
+            <Localized id="entitydetails-Metadata--issue-button">
+                <button
+                    className="issue-button"
+                    onClick={ this.openComment }
+                >
+                    { 'Report issue' }
+                </button>
             </Localized>
         </div>;
     }
