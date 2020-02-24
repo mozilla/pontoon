@@ -13,10 +13,12 @@ import Screenshots from './Screenshots';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { UserState } from 'core/user';
 
 
 type Props = {|
     +entity: Entity,
+    +user: UserState,
     +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
@@ -206,12 +208,12 @@ export default class Metadata extends React.Component<Props, State> {
         this.props.navigateToPath(path);
     }
 
-    openComment = () => {
+    openComments = () => {
         console.log('Button works')
     }
 
     render(): React.Node {
-        const { entity, locale, openLightbox, pluralForm } = this.props;
+        const { entity, user, locale, openLightbox, pluralForm } = this.props;
 
         return <div className="metadata">
             <Screenshots
@@ -246,22 +248,26 @@ export default class Metadata extends React.Component<Props, State> {
                     </a>
                 </Property>
             </Localized>
-            <Localized id="entitydetails-Metadata--context-button">
-                <button
-                    className="context-button"
-                    onClick={ this.openComment }
-                >
-                    { 'Request context' }
-                </button>
-            </Localized>
-            <Localized id="entitydetails-Metadata--issue-button">
-                <button
-                    className="issue-button"
-                    onClick={ this.openComment }
-                >
-                    { 'Report issue' }
-                </button>
-            </Localized>
+            { !user.isAuthenticated ? null :
+                <div>
+                    <Localized id="entitydetails-Metadata--context-button">
+                        <button
+                            className="context-button"
+                            onClick={ this.openComments }
+                        >
+                            { 'Request context' }
+                        </button>
+                    </Localized>
+                    <Localized id="entitydetails-Metadata--issue-button">
+                        <button
+                            className="issue-button"
+                            onClick={ this.openComments }
+                        >
+                            { 'Report issue' }
+                        </button>
+                    </Localized>
+                </div>
+            }
         </div>;
     }
 }

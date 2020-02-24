@@ -317,6 +317,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 />
                 <Metadata
                     entity={ state.selectedEntity }
+                    user={ state.user }
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }
                     pluralForm={ state.pluralForm }
