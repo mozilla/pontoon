@@ -66,7 +66,7 @@ export default function AddComments(props: Props) {
             username={ username }
             imageUrl={ imageURL }
         />
-        <form className='form-container'>
+        <form className='container'>
             <Localized
                 id='comments-AddComment--input'
                 attrs={{ placeholder: true }}

@@ -18,3 +18,9 @@
     width: 32px;
     height: 32px;
 }
+
+.comments-list .comment .container {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+}
