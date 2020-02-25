@@ -249,7 +249,7 @@ export default class Metadata extends React.Component<Props, State> {
                 </Property>
             </Localized>
             { !user.isAuthenticated ? null :
-                <div>
+                <div className='source-comments-buttons'>
                     <Localized id="entitydetails-Metadata--context-button">
                         <button
                             className="context-button"

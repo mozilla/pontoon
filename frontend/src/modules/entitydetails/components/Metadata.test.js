@@ -26,11 +26,15 @@ const LOCALE = {
     code: 'kg',
     cldrPlurals: [1, 3, 5],
 };
+const USER = {
+    user: 'A_Ludgate'
+}
 
 
 function createShallowMetadata(entity = ENTITY, pluralForm = -1) {
     return shallow(<Metadata
         entity={ entity }
+        user={ USER }
         locale={ LOCALE }
         pluralForm={ pluralForm }
     />);

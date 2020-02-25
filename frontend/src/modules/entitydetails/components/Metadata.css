@@ -69,3 +69,7 @@
     color: #AAA;
     padding-right: 3px;
 }
+
+.metadata .source-comments-buttons {
+    margin-top: 10px;
+}
