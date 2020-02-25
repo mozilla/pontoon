@@ -24,11 +24,10 @@ It is unclear yet what the proper way to handle documentation would be, so this 
 
 ## Target audiences
 
-- **Contributor** — New developer looking to contribute to Pontoon's code base. Wants accessible setup and contributing documentation.
-- **Administrator** — System administrator looking to host their own instance of Pontoon. Wants platform-specific setup documentation.
+- **Developer** — New developer looking to contribute to Pontoon's code base, or core developer. Wants accessible setup and contributing documentation, as well as processes and technical documentation.
+- **System Administrator** — System administrator looking to host their own instance of Pontoon. Wants platform-specific setup documentation.
 - **Localizer** — User of Pontoon looking to learn how to efficiently translate projects. Wants detailed features documentation.
-- **Manager** — User of Pontoon looking to learn how to manage projects and locales. Wants detailed administration tasks documentation.
-- **Core developer** — Core developer of Pontoon. Wants processes and technical documentation.
+- **Project Manager** — User of Pontoon looking to learn how to manage projects and locales. Wants detailed administration tasks documentation.
 
 ## How to organize
 
