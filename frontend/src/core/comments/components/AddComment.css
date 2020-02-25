@@ -32,5 +32,6 @@
 }
 
 .comments-list .add-comment .submit-button:hover {
-    color: #fff;
+    color: #272A2F;
+    background: #7BC876;
 }
