@@ -47,6 +47,12 @@ export default function AddComments(props: Props) {
         }
     }
 
+    const handleOnKeyDown = (event: SytheticKeyboardEvent) => {
+        if (event.keyCode === 13 && event.shiftKey === false) {
+            submitComment(event)
+        }
+    }
+
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
         const comment = commentInput.current.value;
@@ -79,9 +85,7 @@ export default function AddComments(props: Props) {
                     rows={ minRows }
                     ref={ commentInput }
                     onChange={ handleOnChange }
-                    onKeyDown={ e =>
-                        (e.keyCode === 13 && e.shiftKey === false) ? submitComment(e) : null
-                    }
+                    onKeyDown={ handleOnKeyDown }
                 />
             </Localized>
             <Localized
