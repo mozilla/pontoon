@@ -27,8 +27,9 @@
     display: flex;
     align-items: center;
     height: 36px;
+    width: 36px;
     margin-left: 6px;
-    padding: 0 12px;
+    padding-left: 10px;
 }
 
 .comments-list .add-comment .submit-button:hover {

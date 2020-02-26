@@ -82,8 +82,9 @@
 }
 
 .history .translation .content > header .toggle-diff:hover,
+.history .translation .content > header .toggle-diff.active,
 .history .translation .content > header .toggle-comments:hover,
-.history .translation .content > header .toggle-diff.active {
+.history .translation .content > header .toggle-comments.active {
     color: #7BC876;
 }
 

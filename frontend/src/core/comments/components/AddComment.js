@@ -78,6 +78,7 @@ export default function AddComments(props: Props) {
                 attrs={{ placeholder: true }}
             >
                 <textarea
+                    autoFocus
                     id='comment-input'
                     name='comment'
                     dir='auto'
