@@ -36,10 +36,11 @@ Quickstart
    That will build the containers required for development: base and
    webapp.
 
-   If you want to share your development instance in your local network, you set SITE_URL to bind
-   the webapp to any address you like.::
+   .. Note::
 
-     $ make build SITE_URL="http://192.168.1.14:8000"
+        If you want to share your development instance in your local network,
+        set SITE_URL to bind the webapp to any address you like, e.g.
+        ``make build SITE_URL="http://192.168.1.14:8000"``.::
 
 
 3. Run the webapp::
