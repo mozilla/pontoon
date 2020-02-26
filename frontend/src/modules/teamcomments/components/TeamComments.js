@@ -29,20 +29,16 @@ export default function TeamComments(props: Props) {
 
     return <section className="team-comments">
         { !comments.length && !canComment ?
-            <div className="no-team-comments">
-                <Localized id="entitydetails-Helpers--no-comments">
-                    <p>No comments available.</p>
-                </Localized>
-            </div>
+            <Localized id="entitydetails-Helpers--no-comments">
+                <p className="no-team-comments">No comments available.</p>
+            </Localized>
             :
-            <section className="team-comments">
-                <CommentsList
-                    comments={ comments }
-                    user={ user }
-                    canComment={ canComment }
-                    addComment={ addComment }
-                />
-            </section>
+            <CommentsList
+                comments={ comments }
+                user={ user }
+                canComment={ canComment }
+                addComment={ addComment }
+            />
         }
     </section>
 }

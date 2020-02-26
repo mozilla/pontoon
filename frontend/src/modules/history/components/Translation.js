@@ -175,7 +175,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 $commentCount={ commentCount }
             >
                 <button
-                    className='toggle-comments'
+                    className='toggle-comments active'
                     title='Toggle translation comments'
                     onClick={ this.toggleComments }
                 >
@@ -301,7 +301,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
                             { this.renderDiffToggle() }
 
-                            { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
+                            { (index === 0 || (!canComment && commentCount === 0)) ? null : <span className='divider'>&bull;</span> }
 
                             { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) }
 

@@ -8,7 +8,7 @@
     margin-left: 0;
 }
 
-.no-team-comments > p {
+.no-team-comments {
     border-bottom: 1px solid #5E6475;
     color: #aaa;
     font-style: italic;
