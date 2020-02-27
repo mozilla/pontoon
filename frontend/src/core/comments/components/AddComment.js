@@ -79,6 +79,10 @@ export default function AddComments(props: Props) {
             >
                 <textarea
                     autoFocus
+<<<<<<< HEAD
+=======
+                    id='comment-input'
+>>>>>>> initial work to open team comments tab from metadata btn
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }

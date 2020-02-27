@@ -67,6 +67,7 @@ type InternalProps = {|
 
 type State = {|
     translation: string,
+    tabIndex: number,
 |};
 
 
@@ -76,6 +77,14 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    constructor(props: InternalProps, state: State) {
+        super(props);
+        this.state = {
+            ...state,
+            tabIndex: 0,
+        };
+    }
+
     componentDidMount() {
         this.updateFailedChecks();
         this.fetchHelpersData();
@@ -95,6 +104,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             this.updateFailedChecks();
             this.fetchHelpersData();
         }
+    }
+
+    setTabState = (tab: number) => {
+        this.setState({ tabIndex: tab })
     }
 
     /*
@@ -324,6 +337,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     openLightbox={ this.openLightbox }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
+                    setTabState={ this.setTabState }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :
@@ -355,6 +369,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
+                    tabIndex={ this.state.tabIndex }
+                    setTabState={ this.setTabState }
                 />
             </section>
         </section>;
