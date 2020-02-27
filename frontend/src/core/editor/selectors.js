@@ -73,8 +73,17 @@ export function _existingTranslation(
                     fluent.getReconstructedMessage(entity.original, translation)
                 );
                 existingTranslation = history.translations.find(
-                    t => t.string === reconstructed
-                )
+                    t => {
+                        // Some Fluent strings are missing the trailing newline
+                        // character while stored in the database. In order for this
+                        // comparison to work, we need to make sure it is there.
+                        let str = t.string;
+                        if (!str.endsWith('\n')) {
+                            str += '\n';
+                        }
+                        return str === reconstructed;
+                    }
+                );
             }
             else {
                 existingTranslation = history.translations.find(
