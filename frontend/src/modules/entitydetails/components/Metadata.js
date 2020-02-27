@@ -25,6 +25,7 @@ type Props = {|
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
+    +setTabState: (number) => void,
 |};
 
 type State = {|
@@ -208,8 +209,10 @@ export default class Metadata extends React.Component<Props, State> {
         this.props.navigateToPath(path);
     }
 
-    openComments = () => {
-        console.log('Button works')
+    openTeamComments = () => {
+        const tab = document.getElementById('react-tabs-4')
+        const teamCommentTabIndex = Array.from(tab.parentNode.children).indexOf(tab)
+        return this.props.setTabState(teamCommentTabIndex)
     }
 
     render(): React.Node {
@@ -253,7 +256,7 @@ export default class Metadata extends React.Component<Props, State> {
                     <Localized id="entitydetails-Metadata--context-button">
                         <button
                             className="context-button"
-                            onClick={ this.openComments }
+                            onClick={ this.openTeamComments }
                         >
                             { 'Request context' }
                         </button>
@@ -261,7 +264,7 @@ export default class Metadata extends React.Component<Props, State> {
                     <Localized id="entitydetails-Metadata--issue-button">
                         <button
                             className="issue-button"
-                            onClick={ this.openComments }
+                            onClick={ this.openTeamComments }
                         >
                             { 'Report issue' }
                         </button>

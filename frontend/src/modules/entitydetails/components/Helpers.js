@@ -28,9 +28,11 @@ type Props = {|
     teamComments: TeamCommentState,
     parameters: NavigationParams,
     user: UserState,
+    tabIndex: number,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
+    setTabState: (number) => void,
 |};
 
 
@@ -50,12 +52,16 @@ export default class Helpers extends React.Component<Props> {
             teamComments,
             parameters,
             user,
+            tabIndex,
             updateEditorTranslation,
             searchMachinery,
             addComment,
         } = this.props;
 
-        return <Tabs>
+        return <Tabs
+            selectedIndex={tabIndex}
+            onSelect={tab => this.props.setTabState(tab)}
+        >
             <TabList>
                 <Tab>
                     <Localized id='entitydetails-Helpers--machinery'>
