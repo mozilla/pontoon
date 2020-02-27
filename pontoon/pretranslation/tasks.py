@@ -176,9 +176,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     # Update latest activity and fuzzy count for the project.
     project.latest_translation = translations[-1]
-    project.save(
-        update_fields=["latest_translation"]
-    )
+    project.save(update_fields=["latest_translation"])
     project.aggregate_stats()
 
     print("####Update Stats Finished:", time.time() - start)
