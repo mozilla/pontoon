@@ -81,50 +81,9 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
     for tr in translatedresources:
         data = tr_dict[tr.locale_resource]
         tr.latest_translation = translations[data["latest_translation_index"]]
-        tr.fuzzy_strings += data["fuzzy_translation_count"]
-        tr.strings_with_warnings += data["warning_count"]
-        tr.strings_with_errors += data["error_count"]
+        tr.calculate_stats(save=False)
         tr_list.append(tr)
 
-    for data in locale_dict.values():
-        locale = data["locale"]
-        projectlocale = locale.fetched_project_locale[0]
-
-        locale.latest_translation = translations[data["latest_translation_index"]]
-        projectlocale.latest_translation = translations[
-            data["latest_translation_index"]
-        ]
-
-        locale.fuzzy_strings += data["fuzzy_translation_count"]
-        projectlocale.fuzzy_strings += data["fuzzy_translation_count"]
-
-        locale.strings_with_errors += data["error_count"]
-        projectlocale.strings_with_errors += data["error_count"]
-
-        locale.strings_with_warnings += data["warning_count"]
-        projectlocale.strings_with_warnings += data["warning_count"]
-
-        locale_list.append(locale)
-        projectlocale_list.append(projectlocale)
-
-    bulk_update(
-        locale_list,
-        update_fields=[
-            "latest_translation",
-            "fuzzy_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-        ],
-    )
-    bulk_update(
-        projectlocale_list,
-        update_fields=[
-            "latest_translation",
-            "fuzzy_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-        ],
-    )
     bulk_update(
         tr_list,
         update_fields=[
@@ -133,4 +92,25 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
             "strings_with_warnings",
             "strings_with_errors",
         ],
+    )
+
+    for data in locale_dict.values():
+        locale = data["locale"]
+        projectlocale = locale.fetched_project_locale[0]
+        locale.aggregate_stats()
+        projectlocale.aggregate_stats()
+
+        locale.latest_translation = translations[data["latest_translation_index"]]
+        projectlocale.latest_translation = translations[
+            data["latest_translation_index"]
+        ]
+
+        locale_list.append(locale)
+        projectlocale_list.append(projectlocale)
+
+    bulk_update(
+        locale_list, update_fields=["latest_translation"],
+    )
+    bulk_update(
+        projectlocale_list, update_fields=["latest_translation"],
     )
