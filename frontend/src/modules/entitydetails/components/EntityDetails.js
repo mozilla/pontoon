@@ -77,12 +77,15 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    tabRef: { current: Object }
+
     constructor(props: InternalProps, state: State) {
         super(props);
         this.state = {
             ...state,
             tabIndex: 0,
         };
+        this.tabRef = React.createRef();
     }
 
     componentDidMount() {
@@ -338,6 +341,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
                     setTabState={ this.setTabState }
+                    tabRef={ this.tabRef }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :
@@ -369,8 +373,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
+                    tabRef={ this.tabRef }
                     tabIndex={ this.state.tabIndex }
                     setTabState={ this.setTabState }
+
                 />
             </section>
         </section>;

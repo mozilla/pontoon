@@ -22,6 +22,7 @@ type Props = {|
     +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
+    tabRef: Object,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
@@ -210,9 +211,9 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     openTeamComments = () => {
-        const tab = document.getElementById('react-tabs-4')
-        const teamCommentTabIndex = Array.from(tab.parentNode.children).indexOf(tab)
-        return this.props.setTabState(teamCommentTabIndex)
+        const teamCommentsTab = this.props.tabRef.current;
+        const index = teamCommentsTab._reactInternalFiber.index;
+        return this.props.setTabState(index);
     }
 
     render(): React.Node {
