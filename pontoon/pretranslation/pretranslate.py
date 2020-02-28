@@ -56,7 +56,7 @@ def get_translations(entity, locale):
     return strings
 
 
-def update_changed_instances(tr_filter, tr_dict, locale_list, translations):
+def update_changed_instances(tr_filter, tr_dict, translations):
     """
     Update the latest activity and stats for changed Locales, ProjectLocales
     & TranslatedResources
@@ -73,7 +73,7 @@ def update_changed_instances(tr_filter, tr_dict, locale_list, translations):
         )
     )
 
-    translatedresources.update_stats(locale_list)
+    translatedresources.update_stats()
 
     for tr in translatedresources:
         index = tr_dict[tr.locale_resource]

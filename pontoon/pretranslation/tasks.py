@@ -85,9 +85,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     translations = []
 
-    # To keep track of changed Locales and TranslatedResources
-    # Also, their latest_translation and stats count
-    locale_set = set()
+    # To keep track of changed TranslatedResources and their latest_translation
     tr_dict = {}
 
     tr_filter = []
@@ -120,7 +118,6 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
                 index += 1
                 translations.append(t)
-                locale_set.add(locale)
 
                 if locale_resource not in tr_dict:
                     tr_dict[locale_resource] = index
@@ -140,6 +137,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     translations = Translation.objects.bulk_create(translations)
 
+    # Run checks on all translations
     translation_pks = {translation.pk for translation in translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
@@ -156,6 +154,6 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 
     # Update latest activity and stats for changed instances.
-    update_changed_instances(tr_filter, tr_dict, list(locale_set), translations)
+    update_changed_instances(tr_filter, tr_dict, translations)
 
     log.info("Fetching pretranslations for project {} done".format(project.name))
