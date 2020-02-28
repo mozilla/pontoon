@@ -3,7 +3,6 @@ import operator
 
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
-from bulk_update.helper import bulk_update
 
 from pontoon.base.models import User, TranslatedResource
 from pontoon.machinery.utils import (
@@ -57,15 +56,11 @@ def get_translations(entity, locale):
     return strings
 
 
-def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
+def update_changed_instances(tr_filter, tr_dict, locale_list, translations):
     """
     Update the latest activity and stats for changed Locales, ProjectLocales
     & TranslatedResources
     """
-    locale_list = []
-    projectlocale_list = []
-    tr_list = []
-
     tr_filter = tuple(tr_filter)
     # Combine all generated filters with an OK operator.
     # `operator.ior` is the '|' Python operator, which turns into a logical OR
@@ -78,39 +73,9 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
         )
     )
 
+    translatedresources.update_stats(locale_list)
+
     for tr in translatedresources:
-        data = tr_dict[tr.locale_resource]
-        tr.latest_translation = translations[data["latest_translation_index"]]
-        tr.calculate_stats(save=False)
-        tr_list.append(tr)
-
-    bulk_update(
-        tr_list,
-        update_fields=[
-            "latest_translation",
-            "fuzzy_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-        ],
-    )
-
-    for data in locale_dict.values():
-        locale = data["locale"]
-        projectlocale = locale.fetched_project_locale[0]
-        locale.aggregate_stats()
-        projectlocale.aggregate_stats()
-
-        locale.latest_translation = translations[data["latest_translation_index"]]
-        projectlocale.latest_translation = translations[
-            data["latest_translation_index"]
-        ]
-
-        locale_list.append(locale)
-        projectlocale_list.append(projectlocale)
-
-    bulk_update(
-        locale_list, update_fields=["latest_translation"],
-    )
-    bulk_update(
-        projectlocale_list, update_fields=["latest_translation"],
-    )
+        index = tr_dict[tr.locale_resource]
+        translation = translations[index]
+        translation.update_latest_translation()

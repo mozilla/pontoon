@@ -18,8 +18,6 @@ from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import serial_task
 from pontoon.checks.utils import bulk_run_checks
 
-import time
-
 
 log = logging.getLogger(__name__)
 
@@ -89,13 +87,12 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     # To keep track of changed Locales and TranslatedResources
     # Also, their latest_translation and stats count
-    locale_dict = {}
+    locale_set = set()
     tr_dict = {}
 
     tr_filter = []
     index = -1
 
-    start = time.time()
     for locale in locales:
         log.info("Fetching pretranslations for locale {} started".format(locale.code))
         for entity in entities:
@@ -123,30 +120,21 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
                 index += 1
                 translations.append(t)
+                locale_set.add(locale)
 
                 if locale_resource not in tr_dict:
-                    tr_dict[locale_resource] = {
-                        "latest_translation_index": index,
-                    }
+                    tr_dict[locale_resource] = index
+
                     # Add query for fetching respective TranslatedResource.
                     tr_filter.append(
                         Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
                     )
 
-                if locale.code not in locale_dict:
-                    locale_dict[locale.code] = {
-                        "locale": locale,
-                        "latest_translation_index": index,
-                    }
-
                 # Update the latest translation index
-                tr_dict[locale_resource]["latest_translation_index"] = index
-                locale_dict[locale.code]["latest_translation_index"] = index
+                tr_dict[locale_resource] = index
 
         log.info("Fetching pretranslations for locale {} done".format(locale.code))
 
-    print("####Collecting Translations Finished:", time.time() - start)
-    start = time.time()
     if len(translations) == 0:
         return
 
@@ -154,8 +142,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     translation_pks = {translation.pk for translation in translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
-    print("####Checks Finished:", time.time() - start)
-    start = time.time()
+
     # Mark translations as changed
     changed_entities = {}
     existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
@@ -168,18 +155,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
             )
     ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 
-    print("#### Mark as changed Finished:", time.time() - start)
-    start = time.time()
-
     # Update latest activity and stats for changed instances.
-    update_changed_instances(tr_filter, tr_dict, locale_dict, translations)
-
-    # Update latest activity and fuzzy count for the project.
-    project.latest_translation = translations[-1]
-    project.save(update_fields=["latest_translation"])
-    project.aggregate_stats()
-
-    print("####Update Stats Finished:", time.time() - start)
-    start = time.time()
+    update_changed_instances(tr_filter, tr_dict, list(locale_set), translations)
 
     log.info("Fetching pretranslations for project {} done".format(project.name))
