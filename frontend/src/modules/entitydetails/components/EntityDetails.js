@@ -68,6 +68,7 @@ type InternalProps = {|
 type State = {|
     translation: string,
     tabIndex: number,
+    projectManager: string,
 |};
 
 
@@ -84,6 +85,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.state = {
             ...state,
             tabIndex: 0,
+            projectManager: '',
         };
         this.tabRef = React.createRef();
     }
@@ -111,6 +113,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
     setTabState = (tab: number) => {
         this.setState({ tabIndex: tab })
+    }
+
+    tagProjectManager = (contact: string) => {
+        this.setState({ projectManager: contact });
     }
 
     /*
@@ -342,6 +348,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     navigateToPath={ this.navigateToPath }
                     setTabState={ this.setTabState }
                     tabRef={ this.tabRef }
+                    tagProjectManager={ this.tagProjectManager }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :
@@ -376,6 +383,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     tabRef={ this.tabRef }
                     tabIndex={ this.state.tabIndex }
                     setTabState={ this.setTabState }
+                    projectManager={ this.state.projectManager }
 
                 />
             </section>
