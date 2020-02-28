@@ -15,6 +15,7 @@ type Props = {|
     comments: Array<TranslationComment>,
     translation?: HistoryTranslation,
     user: UserState,
+    projectManager?: string,
     canComment: boolean,
     addComment: (string, ?number) => void,
 |};
@@ -27,6 +28,7 @@ export default function CommentsList(props: Props) {
         user,
         canComment,
         addComment,
+        projectManager,
     } = props;
 
     const translationId = translation ? translation.pk : null;
@@ -47,6 +49,7 @@ export default function CommentsList(props: Props) {
                 imageURL={ user.gravatarURLSmall}
                 translation={ translationId }
                 addComment={ addComment }
+                projectManager={ projectManager }
             />
         }
     </div>

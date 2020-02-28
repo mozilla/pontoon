@@ -27,6 +27,7 @@ type Props = {|
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
     +setTabState: (number) => void,
+    +tagProjectManager: (string) => void,
 |};
 
 type State = {|
@@ -213,7 +214,12 @@ export default class Metadata extends React.Component<Props, State> {
     openTeamComments = () => {
         const teamCommentsTab = this.props.tabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
+        this.sendContactName();
         return this.props.setTabState(index);
+    }
+
+    sendContactName = () => {
+        return this.props.tagProjectManager("Hello");
     }
 
     render(): React.Node {

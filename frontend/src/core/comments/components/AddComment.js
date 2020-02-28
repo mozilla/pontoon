@@ -12,6 +12,7 @@ type Props = {|
     username: string,
     imageURL: string,
     translation?: ?number,
+    projectManager?: string,
     addComment: (string, ?number) => void,
 |};
 
@@ -23,6 +24,7 @@ export default function AddComments(props: Props) {
         imageURL,
         translation,
         addComment,
+        projectManager,
     } = props;
 
     const commentInput: any = React.useRef();
@@ -32,6 +34,9 @@ export default function AddComments(props: Props) {
     if (!user) {
         return null;
     }
+
+    // TODO: Check for projectManager and add to textarea if it exists
+    // console.log(projectManager)
 
     const handleOnChange = () => {
         const textAreaLineHeight = 24;
@@ -79,10 +84,6 @@ export default function AddComments(props: Props) {
             >
                 <textarea
                     autoFocus
-<<<<<<< HEAD
-=======
-                    id='comment-input'
->>>>>>> initial work to open team comments tab from metadata btn
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }
