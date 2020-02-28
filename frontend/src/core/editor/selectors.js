@@ -62,27 +62,25 @@ export function _existingTranslation(
         }
         // If translation is a string, from the generic editor.
         else {
-            // Except it might actually be a simple Fluent message from the SimpleEditor.
+            // Except it might actually be a Fluent message from the Simple or Source
+            // editors.
             if (entity.format === 'ftl') {
-                // This case happens when the format is Fluent and the string is simple.
-                // We thus store a simplified version of the Fluent message in memory,
-                // but the history has actual Fluent-formatted strings (with ID).
-                // Thus, we need to reconstruct the Fluent message in order to be able
-                // to compare it with items in history.
-                const reconstructed = fluent.serializer.serializeEntry(
-                    fluent.getReconstructedMessage(entity.original, translation)
-                );
+                // For Fluent files, the translation can be stored as a simple string
+                // when the Source editor or the Simple editor are on. Because of that,
+                // we want to turn the string into a Fluent message, as that's simpler
+                // to handle and less prone to errors. We do the same for each history
+                // entry.
+                let ftlMessage = fluent.parser.parseEntry(translation);
+                if (ftlMessage.type === 'Junk') {
+                    // If the message was junk, it means we are likely in the Simple
+                    // editor, and we thus want to reconstruct the Fluent message.
+                    // Note that if the user is actually in the Source editor, and
+                    // entered an invalid value (which creates this junk entry),
+                    // it doesn't matter as there shouldn't be anything matching anyway.
+                    ftlMessage = fluent.getReconstructedMessage(entity.original, translation);
+                }
                 existingTranslation = history.translations.find(
-                    t => {
-                        // Some Fluent strings are missing the trailing newline
-                        // character while stored in the database. In order for this
-                        // comparison to work, we need to make sure it is there.
-                        let str = t.string;
-                        if (!str.endsWith('\n')) {
-                            str += '\n';
-                        }
-                        return str === reconstructed;
-                    }
+                    t => ftlMessage.equals(fluent.parser.parseEntry(t.string))
                 );
             }
             else {
