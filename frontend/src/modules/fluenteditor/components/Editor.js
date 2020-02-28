@@ -146,7 +146,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
             }
         }
 
-        props.setInitialTranslation(translationContent);
+        // Update the initial translation content only when the entity changed, not
+        // when new content is loaded from an external source.
+        if (typeof translation === 'undefined') {
+            props.setInitialTranslation(translationContent);
+        }
         props.updateTranslation(translationContent, true);
     }
 
