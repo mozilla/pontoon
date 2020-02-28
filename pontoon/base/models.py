@@ -17,6 +17,7 @@ from django.db.models.functions import Length, Substr, Cast
 from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import urlencode, urlparse
+from bulk_update.helper import bulk_update
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -3259,6 +3260,47 @@ class TranslatedResourceQuerySet(models.QuerySet):
                 )
 
         return translated_resources.aggregated_stats()
+
+    def update_stats(self):
+        """
+        Update stats on a list of TranslatedResource.
+        """
+        self = self.prefetch_related("resource__project", "locale")
+
+        locales = Locale.objects.filter(translatedresources__in=self,).distinct()
+
+        projects = Project.objects.filter(
+            resources__translatedresources__in=self,
+        ).distinct()
+
+        projectlocales = ProjectLocale.objects.filter(
+            project__resources__translatedresources__in=self,
+            locale__translatedresources__in=self,
+        ).distinct()
+
+        for translated_resource in self:
+            translated_resource.calculate_stats(save=False)
+
+        bulk_update(
+            list(self),
+            update_fields=[
+                "total_strings",
+                "approved_strings",
+                "fuzzy_strings",
+                "strings_with_errors",
+                "strings_with_warnings",
+                "unreviewed_strings",
+            ],
+        )
+
+        for project in projects:
+            project.aggregate_stats()
+
+        for locale in locales:
+            locale.aggregate_stats()
+
+        for projectlocale in projectlocales:
+            projectlocale.aggregate_stats()
 
 
 class TranslatedResource(AggregatedStats):

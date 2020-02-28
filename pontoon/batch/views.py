@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 import logging
 
-from bulk_update.helper import bulk_update
-
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -15,9 +13,9 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    ProjectLocale,
     TranslationMemoryEntry,
     Translation,
+    TranslatedResource,
 )
 from pontoon.base.utils import (
     require_AJAX,
@@ -28,33 +26,6 @@ from pontoon.batch.actions import ACTIONS_FN_MAP
 
 
 log = logging.getLogger(__name__)
-
-
-def update_stats(translated_resources, locale):
-    """Update stats on a list of TranslatedResource.
-    """
-    projects = set()
-    for translated_resource in translated_resources:
-        projects.add(translated_resource.resource.project)
-        translated_resource.calculate_stats(save=False)
-
-    bulk_update(
-        translated_resources,
-        update_fields=[
-            "total_strings",
-            "approved_strings",
-            "fuzzy_strings",
-            "strings_with_errors",
-            "strings_with_warnings",
-            "unreviewed_strings",
-        ],
-    )
-
-    locale.aggregate_stats()
-
-    for project in projects:
-        project.aggregate_stats()
-        ProjectLocale.objects.get(locale=locale, project=project).aggregate_stats()
 
 
 def mark_changed_translation(changed_entities, locale):
@@ -160,7 +131,9 @@ def batch_edit_translations(request):
             {"count": 0, "invalid_translation_count": invalid_translation_count}
         )
 
-    update_stats(action_status["translated_resources"], locale)
+    tr_pks = [tr.pk for tr in action_status["translated_resources"]]
+    TranslatedResource.objects.filter(pk__in=tr_pks).update_stats()
+
     mark_changed_translation(action_status["changed_entities"], locale)
 
     # Update latest translation.
