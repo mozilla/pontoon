@@ -70,17 +70,17 @@ export function _existingTranslation(
                 // we want to turn the string into a Fluent message, as that's simpler
                 // to handle and less prone to errors. We do the same for each history
                 // entry.
-                let ftlMessage = fluent.parser.parseEntry(translation);
-                if (ftlMessage.type === 'Junk') {
+                let fluentTranslation = fluent.parser.parseEntry(translation);
+                if (fluentTranslation.type === 'Junk') {
                     // If the message was junk, it means we are likely in the Simple
                     // editor, and we thus want to reconstruct the Fluent message.
                     // Note that if the user is actually in the Source editor, and
                     // entered an invalid value (which creates this junk entry),
                     // it doesn't matter as there shouldn't be anything matching anyway.
-                    ftlMessage = fluent.getReconstructedMessage(entity.original, translation);
+                    fluentTranslation = fluent.getReconstructedMessage(entity.original, translation);
                 }
                 existingTranslation = history.translations.find(
-                    t => ftlMessage.equals(fluent.parser.parseEntry(t.string))
+                    t => fluentTranslation.equals(fluent.parser.parseEntry(t.string))
                 );
             }
             else {
