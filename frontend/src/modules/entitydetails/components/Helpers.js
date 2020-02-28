@@ -28,6 +28,7 @@ type Props = {|
     teamComments: TeamCommentState,
     parameters: NavigationParams,
     user: UserState,
+    tabRef: Object,
     tabIndex: number,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
@@ -52,6 +53,7 @@ export default class Helpers extends React.Component<Props> {
             teamComments,
             parameters,
             user,
+            tabRef,
             tabIndex,
             updateEditorTranslation,
             searchMachinery,
@@ -75,7 +77,7 @@ export default class Helpers extends React.Component<Props> {
                     </Localized>
                     <OtherLocalesCount otherlocales={ otherlocales } />
                 </Tab>
-                <Tab>
+                <Tab ref={ tabRef }>
                     <Localized id='entitydetails-Helpers--comments'>
                         { 'Comments' }
                     </Localized>
