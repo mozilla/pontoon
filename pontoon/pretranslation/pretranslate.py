@@ -3,7 +3,6 @@ import operator
 
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
-from bulk_update.helper import bulk_update
 
 from pontoon.base.models import User, TranslatedResource
 from pontoon.machinery.utils import (
@@ -57,15 +56,11 @@ def get_translations(entity, locale):
     return strings
 
 
-def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
+def update_changed_instances(tr_filter, tr_dict, translations):
     """
     Update the latest activity and stats for changed Locales, ProjectLocales
     & TranslatedResources
     """
-    locale_list = []
-    projectlocale_list = []
-    tr_list = []
-
     tr_filter = tuple(tr_filter)
     # Combine all generated filters with an OK operator.
     # `operator.ior` is the '|' Python operator, which turns into a logical OR
@@ -78,27 +73,9 @@ def update_changed_instances(tr_filter, tr_dict, locale_dict, translations):
         )
     )
 
+    translatedresources.update_stats()
+
     for tr in translatedresources:
-        index, diff = tr_dict[tr.locale_resource]
-        tr.latest_translation = translations[index]
-        tr.unreviewed_strings += diff
-        tr_list.append(tr)
-
-    for locale, index, diff in locale_dict.values():
-        projectlocale = locale.fetched_project_locale[0]
-
-        locale.latest_translation = translations[index]
-        projectlocale.latest_translation = translations[index]
-
-        # Since the translations fall into unreviewed category.
-        locale.unreviewed_strings += diff
-        projectlocale.unreviewed_strings += diff
-
-        locale_list.append(locale)
-        projectlocale_list.append(projectlocale)
-
-    bulk_update(locale_list, update_fields=["latest_translation", "unreviewed_strings"])
-    bulk_update(
-        projectlocale_list, update_fields=["latest_translation", "unreviewed_strings"]
-    )
-    bulk_update(tr_list, update_fields=["latest_translation", "unreviewed_strings"])
+        index = tr_dict[tr.locale_resource]
+        translation = translations[index]
+        translation.update_latest_translation()
