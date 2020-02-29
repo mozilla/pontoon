@@ -321,6 +321,12 @@ def serialized_notifications(self):
     }
 
 
+@property
+def user_serialize(self):
+    """ Serialize Project contact """
+    return { "contact": self.username }
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -338,6 +344,7 @@ User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("serialize", user_serialize)
 
 
 class PermissionChangelog(models.Model):
@@ -2672,6 +2679,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "key": entity.cleaned_key,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),
+                    # "contact": entity.resource.project.contact.serialize(),
                     "format": entity.resource.format,
                     "comment": entity.comment,
                     "group_comment": entity.group_comment,

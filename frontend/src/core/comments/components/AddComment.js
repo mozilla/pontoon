@@ -35,9 +35,6 @@ export default function AddComments(props: Props) {
         return null;
     }
 
-    // TODO: Check for projectManager and add to textarea if it exists
-    // console.log(projectManager)
-
     const handleOnChange = () => {
         const textAreaLineHeight = 24;
         commentInput.current.rows = minRows;
@@ -78,6 +75,7 @@ export default function AddComments(props: Props) {
             >
                 <textarea
                     autoFocus
+                    value={ !projectManager ? '' : projectManager }
                     id='comment-input'
                     name='comment'
                     dir='auto'
