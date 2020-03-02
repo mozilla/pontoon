@@ -12,9 +12,6 @@
     "Safari >= 10.1",
     "iOS >= 10.3"
   ],
-  "dependencies": {
-    "fluent-syntax": "^0.12.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mozilla/pontoon.git"
