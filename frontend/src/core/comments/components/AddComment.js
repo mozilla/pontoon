@@ -27,6 +27,7 @@ export default function AddComments(props: Props) {
         projectManager,
     } = props;
 
+
     const commentInput: any = React.useRef();
     const minRows = 1;
     const maxRows = 6;

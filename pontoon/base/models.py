@@ -333,7 +333,13 @@ def serialized_notifications(self):
 @property
 def user_serialize(self):
     """ Serialize Project contact """
-    return { "contact": self.username }
+
+    return {
+        "contact": self.name_or_email,
+        "email": self.email,
+        "first_name": self.first_name,
+        "last_name": self.last_name,
+    }
 
 
 User.add_to_class("profile_url", user_profile_url)
