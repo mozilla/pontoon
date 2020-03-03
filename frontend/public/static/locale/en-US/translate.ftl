@@ -286,12 +286,6 @@ history-Translation--button-rejected =
 history-Translation--button-comment = Comment
     .title = Toggle translation comments
 
-history-Translation--button-comments = { $commentCount ->
-        [one] { $commentCount } Comment
-       *[other] { $commentCount } Comments
-    }
-    .title = Toggle translation comments
-
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
@@ -594,6 +588,7 @@ search-TimeRangeFilter--save-range = Save Range
 
 user-UserAvatar--anon-alt-text = Anonymous User
 user-UserAvatar--alt-text = User Profile
+
 
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
