@@ -931,12 +931,23 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_get_word_count(resource_a, locale_a):
+def test_get_word_count_exclude_non_words(resource_a, locale_a):
     """ How many words in a string
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
-    count = testEntitiesQuerySet._get_word_count("String 123 =+& string hh-gg object.string")
+    count = testEntitiesQuerySet._get_word_count(
+        "String 123 =+& string hh-gg object.string"
+    )
     assert count == 5
+
+
+@pytest.mark.django_db
+def test_get_word_count_simple(resource_a, locale_a):
+    """ How many words in a string
+    """
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    count = testEntitiesQuerySet._get_word_count("There are 7 words in this string")
+    assert count == 7
 
 
 @pytest.mark.django_db
@@ -947,12 +958,12 @@ def test_mgr_get_or_create(resource_a, locale_a):
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     arguments = {
         "resource": resource_a,
-        "string": 'String 123 =+& string hh-gg object.string',
+        "string": "simple string",
     }
-    obj, created = testEntitiesQuerySet.get_or_create(arguments)
+    obj, created = testEntitiesQuerySet.get_or_create(**arguments)
 
     assert created
-    assert obj.word_count == 5
+    assert obj.word_count == 2
 
 
 @pytest.mark.django_db
@@ -960,17 +971,24 @@ def test_mgr_bulk_update(resource_a, locale_a):
     """
     Update entities method.
     """
-    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
-
-    update_fields = [
-        "resource",
-        "string",
-        "string_plural",
-        "key",
-        "comment",
-        "group_comment",
-        "resource_comment",
-        "order",
-        "source",
+    objs = [
+        EntityFactory.create(resource=resource_a, string="testentity %s" % i,)
+        for i in range(0, 2)
     ]
+    objs = []
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    testEntitiesQuerySet.bulk_update(
+        objs,
+        update_fields=[
+            "resource",
+            "string",
+            "string_plural",
+            "key",
+            "comment",
+            "group_comment",
+            "resource_comment",
+            "order",
+            "source",
+        ],
+    )
     assert True

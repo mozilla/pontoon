@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0148_auto_20191107_1716'),
+        ("base", "0148_auto_20191107_1716"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entity',
-            name='word_count',
+            model_name="entity",
+            name="word_count",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

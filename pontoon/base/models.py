@@ -2299,12 +2299,10 @@ class EntityQuerySet(models.QuerySet):
         translations.filter(pk__in=unreviewed_pks).update(active=True)
 
     def _get_word_count(self, string):
-        return len(re.findall(r'[\w,.-]+', string))
+        return len(re.findall(r"[\w,.-]+", string))
 
-    def get_or_create(self, defaults, **kwargs):
-
-        defaults['word_count'] = self._get_word_count(defaults['string'])
-
+    def get_or_create(self, defaults=None, **kwargs):
+        kwargs["word_count"] = self._get_word_count(kwargs["string"])
         return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
 
     def bulk_update(self, objs, update_fields=None, batch_size=None):
@@ -2314,7 +2312,6 @@ class EntityQuerySet(models.QuerySet):
         if objs:
             for obj in objs:
                 obj.word_count = self._get_word_count(obj.string)
-
         return bulk_update(objs, update_fields, batch_size)
 
 
