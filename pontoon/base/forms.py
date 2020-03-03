@@ -322,5 +322,5 @@ class AddCommentsForm(forms.Form):
 
     locale = forms.CharField(required=False)
     entity = forms.IntegerField(required=False)
-    comment = forms.CharField()
+    comment = HtmlField()
     translation = forms.IntegerField(required=False)
