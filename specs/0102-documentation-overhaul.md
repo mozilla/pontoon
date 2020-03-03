@@ -103,3 +103,4 @@ We create our own documentation section directly in the Pontoon website.
 - High risk of having documentation out-of-sync with features, as it is more difficult to enforce developers update it when making changes to Pontoon.
 - It is less clear who is responsible to update documentation.
 - Requires deploying and maintaining a custom wiki somewhere.
+- Requires content to be moderated in a different tool than GitHub.
