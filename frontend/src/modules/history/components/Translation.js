@@ -42,7 +42,7 @@ type InternalProps = {|
 
 type State = {|
     isDiffVisible: boolean,
-    isCommentVisible: boolean,
+    areCommentsVisible: boolean,
 |};
 
 
@@ -61,7 +61,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         this.state = {
             isDiffVisible: false,
-            isCommentVisible: false,
+            areCommentsVisible: false,
         };
     }
 
@@ -149,7 +149,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     toggleComments = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
-            return { isCommentVisible: !state.isCommentVisible };
+            return { areCommentsVisible: !state.areCommentsVisible };
         });
     }
 
@@ -218,7 +218,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 <span className='last-commented'>{ 'Last commented <timeago></timeago>' }</span>
             </Localized>
 
-            { !this.state.isCommentVisible ?
+            { !this.state.areCommentsVisible ?
                 <Localized
                     id='history-Translation--comment-summary-expand-comments'
                     glyph={
@@ -499,7 +499,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     </div>
                 </div>
             </Localized>
-            { !this.state.isCommentVisible ? null :
+            { !this.state.areCommentsVisible ? null :
                 <CommentsList
                     comments={ translation.comments }
                     translation={ translation }
