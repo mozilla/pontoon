@@ -330,7 +330,6 @@ def serialized_notifications(self):
     }
 
 
-@property
 def user_serialize(self):
     """ Serialize Project contact """
 
@@ -1211,6 +1210,7 @@ class Project(AggregatedStats):
             "width": self.width or "",
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
+            "contact": self.contact.serialize(),
         }
 
     def save(self, *args, **kwargs):
@@ -2712,7 +2712,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "key": entity.cleaned_key,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),
-                    # "contact": entity.resource.project.contact.serialize(),
                     "format": entity.resource.format,
                     "comment": entity.comment,
                     "group_comment": entity.group_comment,

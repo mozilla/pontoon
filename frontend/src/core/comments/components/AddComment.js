@@ -58,10 +58,14 @@ export default function AddComments(props: Props) {
 
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
-        const comment = commentInput.current.value;
+        let comment = commentInput.current.value;
 
         if (!comment) {
             return null;
+        }
+
+        if (projectManager) {
+            comment = `${projectManager}: ${comment}`;
         }
 
         addComment(comment, translation);

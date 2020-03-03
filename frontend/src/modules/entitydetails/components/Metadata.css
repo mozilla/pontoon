@@ -64,12 +64,6 @@
     padding: 0 0 0 2px;
 }
 
-.metadata button.issue-button:before {
-    content: "•";
-    color: #AAA;
-    padding-right: 3px;
-}
-
-.metadata .source-comments-buttons {
+.metadata .source-comments-button {
     margin-top: 10px;
 }

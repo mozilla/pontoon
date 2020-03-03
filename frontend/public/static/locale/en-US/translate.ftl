@@ -224,8 +224,7 @@ entitydetails-Metadata--placeholder =
 
 entitydetails-Metadata--resource =
     .title = Resource
-entitydetails-Metadata--context-button - Request context
-entitydetails-Metadata--issue-button = Report issue
+entitydetails-Metadata--context-issue-button = Request context / Report issue
 
 
 ## Entity Details GenericOriginalString

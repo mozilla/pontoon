@@ -219,7 +219,8 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     sendContactName = () => {
-        return this.props.tagProjectManager("Hello");
+        const pm = this.props.entity.project.contact
+        return this.props.tagProjectManager(pm.contact);
     }
 
     render(): React.Node {
@@ -259,21 +260,13 @@ export default class Metadata extends React.Component<Props, State> {
                 </Property>
             </Localized>
             { !user.isAuthenticated ? null :
-                <div className='source-comments-buttons'>
-                    <Localized id="entitydetails-Metadata--context-button">
+                <div className='source-comments-button'>
+                    <Localized id="entitydetails-Metadata--context-issue-button">
                         <button
                             className="context-button"
                             onClick={ this.openTeamComments }
                         >
-                            { 'Request context' }
-                        </button>
-                    </Localized>
-                    <Localized id="entitydetails-Metadata--issue-button">
-                        <button
-                            className="issue-button"
-                            onClick={ this.openTeamComments }
-                        >
-                            { 'Report issue' }
+                            { 'Request context / Report issue' }
                         </button>
                     </Localized>
                 </div>
