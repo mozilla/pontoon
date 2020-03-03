@@ -286,6 +286,16 @@ history-Translation--button-rejected =
 history-Translation--button-comment = Comment
     .title = Toggle translation comments
 
+history-Translation--comment-summary-count = { $commentCount ->
+        [one] { $commentCount } Comment
+       *[other] { $commentCount } Comments
+    }
+
+history-Translation--comment-summary-last-commented = Last commented <timeago></timeago>
+
+history-Translation--comment-summary-expand-comments = Expand comments <glyph></glyph>
+history-Translation--comment-summary-collapse-comments = Collapse comments <glyph></glyph>
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
