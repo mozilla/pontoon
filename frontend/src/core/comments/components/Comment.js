@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import './Comment.css';
@@ -39,7 +40,9 @@ export default function Comment(props: Props) {
                     >
                         { comment.author }
                     </a>
-                    { comment.content }
+                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                        { comment.content }
+                    </Linkify>
                 </p>
             </div>
             <div className='info'>
