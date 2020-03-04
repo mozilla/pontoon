@@ -110,6 +110,7 @@ export default class Helpers extends React.Component<Props> {
                 <TeamComments
                     teamComments={ teamComments }
                     user={ user }
+                    entity={ entity }
                     addComment={ addComment }
                     projectManager={ projectManager }
                 />

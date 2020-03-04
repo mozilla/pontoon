@@ -1210,7 +1210,7 @@ class Project(AggregatedStats):
             "width": self.width or "",
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
-            "contact": self.contact.serialize(),
+            "contact": self.contact.serialize() if self.contact else None,
         }
 
     def save(self, *args, **kwargs):

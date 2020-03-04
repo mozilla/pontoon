@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
+import { MentionsInput, Mention } from 'react-mentions';
 
 import './AddComment.css';
 
@@ -29,24 +30,20 @@ export default function AddComments(props: Props) {
 
 
     const commentInput: any = React.useRef();
-    const minRows = 1;
-    const maxRows = 6;
+    const [value, setValue] = React.useState('');
 
     if (!user) {
         return null;
     }
 
     const handleOnChange = () => {
-        const textAreaLineHeight = 24;
-        commentInput.current.rows = minRows;
+        setValue(commentInput.current.value)
+    }
 
-        const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
-
-        if (currentRows < maxRows) {
-            commentInput.current.rows = currentRows;
-        }
-        else {
-            commentInput.current.rows = maxRows;
+    const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
+        if (event.keyCode === 13 && event.shiftKey === false) {
+            event.preventDefault();
+            submitComment(event);
         }
     }
 
@@ -70,8 +67,7 @@ export default function AddComments(props: Props) {
 
         addComment(comment, translation);
 
-        commentInput.current.value = '';
-        commentInput.current.rows = minRows;
+        setValue('');
     };
 
     return <div className='comment add-comment'>
@@ -84,16 +80,33 @@ export default function AddComments(props: Props) {
                 id='comments-AddComment--input'
                 attrs={{ placeholder: true }}
             >
-                <textarea
+                <MentionsInput
+                    className='text-area'
                     autoFocus
-                    name='comment'
+                    value={ value }
                     dir='auto'
                     placeholder={ `Write a comment…` }
-                    rows={ minRows }
-                    ref={ commentInput }
+                    inputRef={ commentInput }
                     onChange={ handleOnChange }
                     onKeyDown={ handleOnKeyDown }
-                />
+                >
+                    <Mention
+                        trigger="@"
+                        data={[{ id: 'abowler', display: 'April Bowler'}]}
+                        markup="@[__display__](__type__:__id__)"
+                        // renderSuggestion={(
+                        //     suggestion,
+                        //     search,
+                        //     highlightedDisplay,
+                        //     index,
+                        //     focused
+                        //   ) => (
+                        //     <div className={`user ${focused ? 'focused' : ''}`}>
+                        //       {highlightedDisplay}
+                        //     </div>
+                        //   )}
+                    />
+                </MentionsInput>
             </Localized>
             <Localized
                 id="comments-AddComment--submit-button"

@@ -225,6 +225,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     render(): React.Node {
         const { entity, user, locale, openLightbox, pluralForm } = this.props;
+        const projectManager = entity.project.contact
 
         return <div className="metadata">
             <Screenshots
@@ -259,7 +260,7 @@ export default class Metadata extends React.Component<Props, State> {
                     </a>
                 </Property>
             </Localized>
-            { !user.isAuthenticated ? null :
+            { !user.isAuthenticated || !projectManager ? null :
                 <div className='source-comments-button'>
                     <Localized id="entitydetails-Metadata--context-issue-button">
                         <button
