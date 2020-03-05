@@ -932,7 +932,7 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
 
 @pytest.mark.django_db
 def test_get_word_count_exclude_non_words(resource_a, locale_a):
-    """ How many words in a string
+    """ How many words in a string with not only alphanumeric symbols
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     count = testEntitiesQuerySet._get_word_count(
@@ -943,7 +943,7 @@ def test_get_word_count_exclude_non_words(resource_a, locale_a):
 
 @pytest.mark.django_db
 def test_get_word_count_simple(resource_a, locale_a):
-    """ How many words in a string
+    """ How many words in a simple alphanumeric string
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     count = testEntitiesQuerySet._get_word_count("There are 7 words in this string")
@@ -953,7 +953,7 @@ def test_get_word_count_simple(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_get_or_create(resource_a, locale_a):
     """
-    Get or create entities method works and counts words.
+    Get or create entities method works and counts words
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     arguments = {
@@ -969,15 +969,16 @@ def test_mgr_get_or_create(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_bulk_update(resource_a, locale_a):
     """
-    Update entities method.
+    Update entities method works and updates word_count field
     """
     objs = [
         EntityFactory.create(resource=resource_a, string="testentity %s" % i,)
         for i in range(0, 2)
     ]
-    objs = []
+    for i in range(0, 2):
+        assert objs[i].word_count == 0
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
-    testEntitiesQuerySet.bulk_update(
+    updated_count = testEntitiesQuerySet.bulk_update(
         objs,
         update_fields=[
             "resource",
@@ -991,4 +992,6 @@ def test_mgr_bulk_update(resource_a, locale_a):
             "source",
         ],
     )
-    assert True
+    for i in range(0, 2):
+        assert objs[i].word_count == 2
+    assert updated_count == len(objs)

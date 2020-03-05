@@ -2303,7 +2303,7 @@ class EntityQuerySet(models.QuerySet):
 
     def get_or_create(self, defaults=None, **kwargs):
         kwargs["word_count"] = self._get_word_count(kwargs["string"])
-        return super(EntityQuerySet, self).get_or_create(defaults, **kwargs)
+        return super(EntityQuerySet, self).get_or_create(defaults=defaults, **kwargs)
 
     def bulk_update(self, objs, update_fields=None, batch_size=None):
         if django.VERSION[0] >= 2:
@@ -2312,7 +2312,7 @@ class EntityQuerySet(models.QuerySet):
         if objs:
             for obj in objs:
                 obj.word_count = self._get_word_count(obj.string)
-        return bulk_update(objs, update_fields, batch_size)
+        return bulk_update(objs, update_fields=update_fields, batch_size=batch_size)
 
 
 @python_2_unicode_compatible
