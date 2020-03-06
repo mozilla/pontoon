@@ -3,6 +3,8 @@ from __future__ import absolute_import
 
 import pytest
 
+from mock import patch, call
+
 from pontoon.base.models import (
     get_word_count,
     Entity,
@@ -952,10 +954,13 @@ def test_get_word_count_simple(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_get_or_create(resource_a, locale_a):
+@patch("pontoon.base.models.get_word_count")
+def test_mgr_get_or_create(get_word_count_mock, resource_a, locale_a):
     """
     Get or create entities method works and counts words
     """
+    get_word_count_mock.return_value = 2
+
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     arguments = {
         "resource": resource_a,
@@ -964,20 +969,25 @@ def test_mgr_get_or_create(resource_a, locale_a):
     obj, created = testEntitiesQuerySet.get_or_create(**arguments)
 
     assert created
-    assert obj.word_count == 2
+    assert get_word_count_mock.called
+    assert get_word_count_mock.call_args == call(arguments["string"])
 
 
 @pytest.mark.django_db
-def test_mgr_bulk_update(resource_a, locale_a):
+@patch("pontoon.base.models.get_word_count")
+def test_mgr_bulk_update(get_word_count_mock, resource_a, locale_a):
     """
     Update entities method works and updates word_count field
     """
+    get_word_count_mock.return_value = 2
+
     objs = [
         EntityFactory.create(resource=resource_a, string="testentity %s" % i,)
         for i in range(0, 2)
     ]
-    for i in range(0, 2):
-        assert objs[i].word_count == 0
+
+    assert get_word_count_mock.call_count == 0
+
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
     updated_count = testEntitiesQuerySet.bulk_update(
         objs,
@@ -993,6 +1003,6 @@ def test_mgr_bulk_update(resource_a, locale_a):
             "source",
         ],
     )
-    for i in range(0, 2):
-        assert objs[i].word_count == 2
+
+    assert get_word_count_mock.call_count == 2
     assert updated_count == len(objs)
