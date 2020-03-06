@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import pytest
 
 from pontoon.base.models import (
+    get_word_count,
     Entity,
     Translation,
     TranslatedResource,
@@ -935,7 +936,7 @@ def test_get_word_count_exclude_non_words(resource_a, locale_a):
     """ How many words in a string with not only alphanumeric symbols
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
-    count = testEntitiesQuerySet._get_word_count(
+    count = get_word_count(
         "String 123 =+& string hh-gg object.string"
     )
     assert count == 5
@@ -946,7 +947,7 @@ def test_get_word_count_simple(resource_a, locale_a):
     """ How many words in a simple alphanumeric string
     """
     testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
-    count = testEntitiesQuerySet._get_word_count("There are 7 words in this string")
+    count = get_word_count("There are 7 words in this string")
     assert count == 7
 
 

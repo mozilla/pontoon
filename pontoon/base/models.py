@@ -95,6 +95,12 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
     return reduce(operator.ior, filters)
 
 
+def get_word_count(string):
+    """Compute the number of words in a given string.
+    """
+    return len(re.findall(r"[\w,.-]+", string))
+
+
 @property
 def user_profile_url(self):
     return reverse(
@@ -2298,11 +2304,8 @@ class EntityQuerySet(models.QuerySet):
 
         translations.filter(pk__in=unreviewed_pks).update(active=True)
 
-    def _get_word_count(self, string):
-        return len(re.findall(r"[\w,.-]+", string))
-
     def get_or_create(self, defaults=None, **kwargs):
-        kwargs["word_count"] = self._get_word_count(kwargs["string"])
+        kwargs["word_count"] = get_word_count(kwargs["string"])
         return super(EntityQuerySet, self).get_or_create(defaults=defaults, **kwargs)
 
     def bulk_update(self, objs, update_fields=None, batch_size=None):
@@ -2311,7 +2314,7 @@ class EntityQuerySet(models.QuerySet):
             warnings.warn(msg, PendingDeprecationWarning)
         if objs:
             for obj in objs:
-                obj.word_count = self._get_word_count(obj.string)
+                obj.word_count = get_word_count(obj.string)
         return bulk_update(objs, update_fields=update_fields, batch_size=batch_size)
 
 
