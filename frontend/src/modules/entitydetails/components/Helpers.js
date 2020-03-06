@@ -30,7 +30,7 @@ type Props = {|
     user: UserState,
     tabRef: Object,
     tabIndex: number,
-    projectManager: string,
+    projectManager: Object,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,

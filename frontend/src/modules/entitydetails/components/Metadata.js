@@ -214,13 +214,12 @@ export default class Metadata extends React.Component<Props, State> {
     openTeamComments = () => {
         const teamCommentsTab = this.props.tabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
-        this.sendContactName();
+        this.sendContactInfo();
         return this.props.setTabState(index);
     }
 
-    sendContactName = () => {
-        const pm = this.props.entity.project.contact
-        return this.props.tagProjectManager(pm.contact);
+    sendContactInfo = () => {
+        return this.props.tagProjectManager(this.props.entity.project.contact);
     }
 
     render(): React.Node {

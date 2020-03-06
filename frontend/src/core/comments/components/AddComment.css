@@ -4,57 +4,6 @@
     padding-bottom: 5px;
 }
 
-<<<<<<< HEAD
-.comments-list .add-comment textarea {
-    align-items: center;
-=======
-.comments-list .add-comment .text-area {
->>>>>>> initial work to implement mentions
-    background-color: #333941;
-    border-radius: 4px;
-    display: flex;
-    flex-grow: 2;
-    font-size: 11px;
-<<<<<<< HEAD
-    height: auto;
-    line-height: 24px;
-    overflow: auto;
-    padding: 6px;
-    resize: none;
-=======
-    min-height: 36px;
-    max-height: 144px;
-    overflow: auto;
-    line-height: 24px;
-}
-
-.comments-list .add-comment .text-area__input {
-    border: none;
-    color: #fff;
-    padding: 9px 6px;
-}
-
-.comments-list .add-comment .text-area__suggestions__list {
-    background: #4d5967;
-    border: 1px solid rgba(0,0,0,0.15);
-    font-size: 11px;
-  }
-
-.comments-list .add-comment .text-area__suggestions__item {
-    padding: 5px 15px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.comments-list .add-comment .text-area__mention {
-    position: relative;
-    z-index: 1;
-    color: #7BC876;
-    /* text-shadow: 1px 1px 1px white, 1px -1px 1px white, -1px 1px 1px white,
-      -1px -1px 1px white; */
-    pointer-events: none;
->>>>>>> initial work to implement mentions
-}
-
 .comments-list .add-comment .submit-button {
     background-color: #4d5967;
     border: solid 1px #4d5967;
@@ -71,4 +20,54 @@
 .comments-list .add-comment .submit-button:hover {
     color: #272A2F;
     background: #7BC876;
+}
+
+.mentions {
+    background-color: #333941;
+    border-radius: 4px;
+    display: flex;
+    flex-grow: 2;
+}
+
+.mentions--multiLine .mentions__control {
+  font-size: 11px;
+  line-height: 24px;
+  min-height: 36px;
+  max-height: 144px;
+  overflow: auto;
+}
+.mentions--multiLine .mentions__highlighter {
+  border: none;
+  padding: 5px 6px;
+  min-height: 36px;
+}
+
+.mentions--multiLine .mentions__input {
+  border: none;
+  color: #fff;
+  padding: 9px 6px;
+}
+  
+.mentions__suggestions__list {
+  background-color:#4d5967;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 10pt;
+}
+
+.mentions__suggestions__item {
+  padding: 5px 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.mentions__suggestions__item--focused {
+  background-color: #333941;
+}
+
+.mentions__mention {
+  position: relative;
+  z-index: 1;
+  color: #7BC876;
+  text-shadow: 1px 1px 1px #333941, 1px -1px 1px #333941, -1px 1px 1px #333941,
+    -1px -1px 1px #333941;
+  pointer-events: none;
 }

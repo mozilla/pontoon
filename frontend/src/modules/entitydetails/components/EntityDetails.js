@@ -68,7 +68,7 @@ type InternalProps = {|
 type State = {|
     translation: string,
     tabIndex: number,
-    projectManager: string,
+    projectManager: Object,
 |};
 
 
@@ -85,7 +85,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.state = {
             ...state,
             tabIndex: 0,
-            projectManager: '',
+            projectManager: {},
         };
         this.tabRef = React.createRef();
     }

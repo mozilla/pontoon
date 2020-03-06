@@ -13,7 +13,7 @@ type Props = {|
     username: string,
     imageURL: string,
     translation?: ?number,
-    projectManager?: string,
+    projectManager?: Object,
     addComment: (string, ?number) => void,
 |};
 
@@ -28,17 +28,17 @@ export default function AddComments(props: Props) {
         projectManager,
     } = props;
 
-
     const commentInput: any = React.useRef();
     const [value, setValue] = React.useState('');
 
-    if (!user) {
-        return null;
-    }
+    React.useEffect(() => {
+        if(projectManager) {
+            setValue(`${projectManager.contact} `);
+            commentInput.current.focus();
+        }
+    }, [projectManager]);
 
-    const handleOnChange = () => {
-        setValue(commentInput.current.value)
-    }
+    const handleOnChange = React.useCallback((_, newValue) => setValue(newValue), [setValue])
 
     const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
         if (event.keyCode === 13 && event.shiftKey === false) {
@@ -61,14 +61,15 @@ export default function AddComments(props: Props) {
             return null;
         }
 
-        if (projectManager) {
-            comment = `${projectManager}: ${comment}`;
-        }
-
         addComment(comment, translation);
 
         setValue('');
     };
+
+    if (!user) {
+        return null;
+    }
+    
 
     return <div className='comment add-comment'>
         <UserAvatar
@@ -81,30 +82,22 @@ export default function AddComments(props: Props) {
                 attrs={{ placeholder: true }}
             >
                 <MentionsInput
-                    className='text-area'
+                    className='mentions'
                     autoFocus
                     value={ value }
                     dir='auto'
                     placeholder={ `Write a comment…` }
+                    markup="@[__display__](__type__:__id__)"
                     inputRef={ commentInput }
                     onChange={ handleOnChange }
                     onKeyDown={ handleOnKeyDown }
                 >
                     <Mention
+                        className='mentions__mention'
                         trigger="@"
-                        data={[{ id: 'abowler', display: 'April Bowler'}]}
-                        markup="@[__display__](__type__:__id__)"
-                        // renderSuggestion={(
-                        //     suggestion,
-                        //     search,
-                        //     highlightedDisplay,
-                        //     index,
-                        //     focused
-                        //   ) => (
-                        //     <div className={`user ${focused ? 'focused' : ''}`}>
-                        //       {highlightedDisplay}
-                        //     </div>
-                        //   )}
+                        data={[{ id: 'abowler', display: 'April Bowler'},
+                            { id: 'mathjazz', display: 'Matjaz Horvat'}]}
+                        appendSpaceOnAdd='true'
                     />
                 </MentionsInput>
             </Localized>
