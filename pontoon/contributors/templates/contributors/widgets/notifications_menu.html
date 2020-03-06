@@ -39,18 +39,37 @@
         <span class="actor">
           <a href="{{ actor_url }}">{{ actor_anchor }}</a>
         </span>
+
         <span class="verb">{{ notification.verb }}</span>
 
-        {% if notification.target %}
-          <span class="target">
-            <a href="{{ url('pontoon.projects.project', notification.target.slug) }}">{{ notification.target }}</a>
-          </span>
+        {% set target = notification.target %}
+        {% set description_safe = True %}
+
+        {% if target %}
+          {% if target.slug %}
+            <span class="target">
+              <a href="{{ url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
+            </span>
+
+          {% elif target.resource %}
+            {% set description_safe = False %}
+            {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
+            <span class="target">
+              <a href="{{ link + '?string=' + target.pk|string }}">{{ target.resource.project.name }}</a>
+            </span>
+          {% endif %}
+        </span>
         {% endif %}
 
         <p class="timeago">{{ notification.timesince() }} ago</p>
 
-        {% if notification.description %}
-          <div class="message">{{ notification.description|safe }}</div>
+        {% set description = notification.description %}
+        {% if description %}
+          {% if description_safe %}
+            <div class="message">{{ description|safe }}</div>
+          {% else %}
+            <div class="message trim">{{ description|linkify|safe }}</div>
+          {% endif %}
         {% endif %}
       </div>
     </li>
