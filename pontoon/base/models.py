@@ -2361,6 +2361,10 @@ class Entity(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
+    def save(self, *args, **kwargs):
+        self.word_count = get_word_count(self.string)
+        super(Entity, self).save(*args, **kwargs)
+
     def get_stats(self, locale):
         """
         Get stats for a single (entity, locale) pair.
