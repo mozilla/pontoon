@@ -58,6 +58,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            migrate_ftl_translations_to_0_6_4, migrations.RunPython.noop
+            migrate_ftl_translations_to_0_6_4, migrations.RunPython.noop, elidable=True
         )
     ]

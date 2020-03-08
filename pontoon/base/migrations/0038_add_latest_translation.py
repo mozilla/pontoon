@@ -188,7 +188,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(
-            migrate_locales_to_new_locales, migrate_new_locales_to_locales
+            migrate_locales_to_new_locales,
+            migrate_new_locales_to_locales,
+            elidable=True,
         ),
         migrations.RemoveField(model_name="project", name="locales",),
         migrations.RemoveField(model_name="project", name="new_locales",),
@@ -199,5 +201,5 @@ class Migration(migrations.Migration):
                 to="base.Locale", through="base.ProjectLocale"
             ),
         ),
-        migrations.RunPython(create_latest_translation, noop),
+        migrations.RunPython(create_latest_translation, noop, elidable=True),
     ]

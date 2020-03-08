@@ -40,6 +40,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            create_translation_memory_entries, remove_translation_memory_entries
+            create_translation_memory_entries,
+            remove_translation_memory_entries,
+            elidable=True,
         )
     ]

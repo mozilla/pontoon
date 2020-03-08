@@ -223,7 +223,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("base", "0132_strings_with_errors_warnings"),
-        ("checks", "0003_auto_20180716_1945"),
+        # ("checks", "0003_auto_20180716_1945"),
     ]
 
     operations = [

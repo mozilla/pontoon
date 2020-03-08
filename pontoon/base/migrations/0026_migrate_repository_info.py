@@ -39,6 +39,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            copy_repo_attributes_to_relation, copy_relation_to_repo_attributes
+            copy_repo_attributes_to_relation,
+            copy_relation_to_repo_attributes,
+            elidable=False,
         ),
     ]

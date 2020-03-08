@@ -20,4 +20,4 @@ class Migration(migrations.Migration):
         ("base", "0033_remove_repository_multi_locale"),
     ]
 
-    operations = [migrations.RunPython(remove_deleted_migrations, noop)]
+    operations = [migrations.RunPython(remove_deleted_migrations, noop, elidable=True)]

@@ -50,5 +50,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(simplify_ftl_tm_entries, revert_simplify_ftl_tm_entries,)
+        migrations.RunPython(
+            simplify_ftl_tm_entries, revert_simplify_ftl_tm_entries, elidable=True
+        )
     ]

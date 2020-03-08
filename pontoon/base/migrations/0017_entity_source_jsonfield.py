@@ -30,7 +30,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             migrate_old_source_fields,
-            lambda apps, schema_editor: None,  # JSON is valid Python
+            migrations.RunPython.noop,  # JSON is valid Python
+            elidable=True,
         ),
         migrations.AlterField(
             model_name="entity",
