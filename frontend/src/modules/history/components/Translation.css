@@ -197,12 +197,24 @@
     transition: all 0.1s ease-out;
 }
 
+.history .comment-summary.no-comments.comments-closed {
+    display: none;
+}
+
 .history .translation:hover .comment-summary {
     border-color: #4d5967;
 }
 
+.history .translation:hover .comment-summary.no-comments.comments-closed {
+    display: inline-block;
+}
+
 .history .translation:hover .comment-summary:hover {
     border-color: #637283;
+}
+
+.history .comment-summary.no-comments span {
+    line-height: 28px;
 }
 
 .history .comment-summary ul {
@@ -242,16 +254,16 @@
     right: 5px;
 }
 
-.history .comment-summary .toggle-comments i {
-    float: right;
-    line-height: 27px;
-    padding-left: 5px;
-}
-
 .history .comment-summary:hover .last-commented {
     visibility: hidden;
 }
 
 .history .comment-summary:hover .toggle-comments {
     display: inline-block;
+}
+
+.history .comment-summary span i {
+    float: right;
+    line-height: 27px;
+    padding-left: 5px;
 }
