@@ -172,6 +172,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             return <Localized
                 id='history-Translation--button-comments'
                 attrs={{ title: true }}
+                stress={ <span className="stress" /> }
                 $commentCount={ commentCount }
             >
                 <button
@@ -179,7 +180,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Toggle translation comments'
                     onClick={ this.toggleComments }
                 >
-                    { `${commentCount} Comments` }
+                    { `<stress>${commentCount}</stress> Comments` }
                 </button>
             </Localized>
         }
