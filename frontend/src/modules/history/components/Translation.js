@@ -42,7 +42,7 @@ type InternalProps = {|
 
 type State = {|
     isDiffVisible: boolean,
-    areCommentsVisible: boolean,
+    isCommentVisible: boolean,
 |};
 
 
@@ -61,7 +61,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         this.state = {
             isDiffVisible: false,
-            areCommentsVisible: false,
+            isCommentVisible: false,
         };
     }
 
@@ -149,125 +149,40 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     toggleComments = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
-            return { areCommentsVisible: !state.areCommentsVisible };
+            return { isCommentVisible: !state.isCommentVisible };
         });
     }
 
-    renderCommentToggle() {
-        return <Localized
-            id='history-Translation--button-comment'
-            attrs={{ title: true }}
-        >
-            <button
-                className='toggle-comments'
-                title='Toggle translation comments'
-                onClick={ this.toggleComments }
-            >
-                { 'Comment' }
-            </button>
-        </Localized>
-    }
-
-    renderCommentSummary() {
-        const comments = this.props.translation.comments;
-        const commentCount = comments.length;
-
+    renderCommentToggle(commentCount: number) {
         if (commentCount === 0) {
-            let className = 'comment-summary no-comments';
-
-            if (!this.state.areCommentsVisible) {
-                className += ' comments-closed'
-            }
-
-            return <div
-                className={ className }
-                onClick={ this.toggleComments }
-                title=''
+            return <Localized
+                id='history-Translation--button-comment'
+                attrs={{ title: true }}
             >
-                { !this.state.areCommentsVisible ?
-                    <Localized
-                        id='history-Translation--comment-summary-add-comment'
-                        glyph={
-                            <i className="fa fa-chevron-down fa-lg" />
-                        }
+                    <button
+                        className='toggle-comments'
+                        title='Toggle translation comments'
+                        onClick={ this.toggleComments }
                     >
-                        <span className='add-comment'>{ 'Add comment <glyph></glyph>' }</span>
-                    </Localized>
-                    :
-                    <Localized
-                        id='history-Translation--comment-summary-collapse-comments'
-                        glyph={
-                            <i className="fa fa-chevron-up fa-lg" />
-                        }
-                    >
-                        <span className='collapse-comments'>{ 'Collapse comments <glyph></glyph>' }</span>
-                    </Localized>
-                }
-            </div>;
+                        { 'Comment' }
+                    </button>
+            </Localized>
         }
-
-        const authors = [...new Set(comments.map(comment => comment.username))];
-        const lastComment = [...comments].pop();
-
-        return <div
-            className='comment-summary'
-            onClick={ this.toggleComments }
-            title=''
-        >
-            <ul>
-                { authors.map((author, index) => {
-                    const comment = comments.filter(comment => (comment.username === author))[0];
-                    return <li key={ index }>
-                        <UserAvatar
-                            username={ author }
-                            imageUrl={ comment.userGravatarUrlSmall }
-                        />
-                    </li>;
-                }) }
-            </ul>
-
-            <Localized
-                id='history-Translation--comment-summary-count'
+        else {
+            return <Localized
+                id='history-Translation--button-comments'
+                attrs={{ title: true }}
                 $commentCount={ commentCount }
             >
-                <span className='count'>
+                <button
+                    className='toggle-comments active'
+                    title='Toggle translation comments'
+                    onClick={ this.toggleComments }
+                >
                     { `${commentCount} Comments` }
-                </span>
+                </button>
             </Localized>
-
-            <Localized
-                id='history-Translation--comment-summary-last-commented'
-                timeago={
-                    <ReactTimeAgo
-                        dir='ltr'
-                        date={ new Date(lastComment.dateIso) }
-                        title={ `${lastComment.createdAt} UTC` }
-                    />
-                }
-            >
-                <span className='last-commented'>{ 'Last commented <timeago></timeago>' }</span>
-            </Localized>
-
-            { !this.state.areCommentsVisible ?
-                <Localized
-                    id='history-Translation--comment-summary-expand-comments'
-                    glyph={
-                        <i className="fa fa-chevron-down fa-lg" />
-                    }
-                >
-                    <span className='toggle-comments'>{ 'Expand comments <glyph></glyph>' }</span>
-                </Localized>
-                :
-                <Localized
-                    id='history-Translation--comment-summary-collapse-comments'
-                    glyph={
-                        <i className="fa fa-chevron-up fa-lg" />
-                    }
-                >
-                    <span className='toggle-comments'>{ 'Collapse comments <glyph></glyph>' }</span>
-                </Localized>
-            }
-        </div>;
+        }
     }
 
     toggleDiff = (event: SyntheticMouseEvent<>) => {
@@ -325,9 +240,12 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             translation,
             locale,
             user,
+            index,
             activeTranslation,
             addComment,
         } = this.props;
+
+        const commentCount = translation.comments.length;
 
         // Does the currently logged in user own this translation?
         const ownTranslation = (
@@ -382,6 +300,10 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             <menu className='toolbar'>
 
                             { this.renderDiffToggle() }
+
+                            { (index === 0 || (!canComment && commentCount === 0)) ? null : <span className='divider'>&bull;</span> }
+
+                            { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button
@@ -520,11 +442,10 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 format={ entity.format }
                             />
                         </p>
-                        { this.renderCommentSummary() }
                     </div>
                 </div>
             </Localized>
-            { !this.state.areCommentsVisible ? null :
+            { !this.state.isCommentVisible ? null :
                 <CommentsList
                     comments={ translation.comments }
                     translation={ translation }
