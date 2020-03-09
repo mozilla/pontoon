@@ -173,7 +173,37 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const commentCount = comments.length;
 
         if (commentCount === 0) {
-            return null;
+            let className = 'comment-summary no-comments';
+
+            if (!this.state.areCommentsVisible) {
+                className += ' comments-closed'
+            }
+
+            return <div
+                className={ className }
+                onClick={ this.toggleComments }
+                title=''
+            >
+                { !this.state.areCommentsVisible ?
+                    <Localized
+                        id='history-Translation--comment-summary-add-comment'
+                        glyph={
+                            <i className="fa fa-chevron-down fa-lg" />
+                        }
+                    >
+                        <span className='add-comment'>{ 'Add comment <glyph></glyph>' }</span>
+                    </Localized>
+                    :
+                    <Localized
+                        id='history-Translation--comment-summary-collapse-comments'
+                        glyph={
+                            <i className="fa fa-chevron-up fa-lg" />
+                        }
+                    >
+                        <span className='collapse-comments'>{ 'Collapse comments <glyph></glyph>' }</span>
+                    </Localized>
+                }
+            </div>;
         }
 
         const authors = [...new Set(comments.map(comment => comment.username))];
@@ -295,7 +325,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             translation,
             locale,
             user,
-            index,
             activeTranslation,
             addComment,
         } = this.props;
@@ -353,10 +382,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             <menu className='toolbar'>
 
                             { this.renderDiffToggle() }
-
-                            { (index === 0 || !canComment) ? null : <span className='divider'>&bull;</span> }
-
-                            { !canComment ? null : this.renderCommentToggle() }
 
                             { (!translation.rejected || !canDelete ) ? null :
                                 // Delete Button

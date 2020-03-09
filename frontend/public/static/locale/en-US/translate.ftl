@@ -293,6 +293,7 @@ history-Translation--comment-summary-count = { $commentCount ->
 
 history-Translation--comment-summary-last-commented = Last commented <timeago></timeago>
 
+history-Translation--comment-summary-add-comment = Add comment <glyph></glyph>
 history-Translation--comment-summary-expand-comments = Expand comments <glyph></glyph>
 history-Translation--comment-summary-collapse-comments = Collapse comments <glyph></glyph>
 
