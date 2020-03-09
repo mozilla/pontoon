@@ -287,8 +287,8 @@ history-Translation--button-comment = Comment
     .title = Toggle translation comments
 
 history-Translation--button-comments = { $commentCount ->
-        [one] { $commentCount } Comment
-       *[other] { $commentCount } Comments
+        [one] <stress>{ $commentCount }</stress> Comment
+       *[other] <stress>{ $commentCount }</stress> Comments
     }
     .title = Toggle translation comments
 
