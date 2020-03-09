@@ -28,7 +28,7 @@
     border: 2px solid #5E6475;
 }
 
-.history .translation:not(.cannot-copy):hover .user-avatar img {
+.history .translation:hover .user-avatar img {
     border-color: #637283;
 }
 
@@ -83,7 +83,8 @@
 
 .history .translation .content > header .toggle-diff:hover,
 .history .translation .content > header .toggle-diff.active,
-.history .translation .content > header .toggle-comments:hover {
+.history .translation .content > header .toggle-comments:hover,
+.history .translation .content > header .toggle-comments.active {
     color: #7BC876;
 }
 
@@ -179,91 +180,4 @@
 
 .translation .content > header button.delete:hover:before {
     color: #F36;
-}
-
-.history .comment-summary {
-    background: #333941;
-    border: 1px solid #3f4752;
-    border-radius: 4px;
-    color: #AAA;
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 300;
-    line-height: 0;
-    margin: 9px 0 -6px;
-    padding: 5px 10px;
-    pointer-events: auto;
-    position: relative;
-    transition: all 0.1s ease-out;
-}
-
-.history .comment-summary.no-comments.comments-closed {
-    display: none;
-}
-
-.history .translation:hover .comment-summary {
-    border-color: #4d5967;
-}
-
-.history .translation:hover .comment-summary.no-comments.comments-closed {
-    display: inline-block;
-}
-
-.history .translation:hover .comment-summary:hover {
-    border-color: #637283;
-}
-
-.history .comment-summary.no-comments span {
-    line-height: 28px;
-}
-
-.history .comment-summary ul {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.history .comment-summary ul li {
-    display: inline-block;
-}
-
-.history .comment-summary .user-avatar {
-    padding-right: 4px;
-    top: 0;
-}
-
-.history .comment-summary .user-avatar a {
-    display: block;
-}
-
-.history .comment-summary .user-avatar img {
-    border: 0;
-    height: 28px;
-    width: 28px;
-}
-
-.history .comment-summary .count {
-    color: #7BC876;
-    font-weight: normal;
-    padding: 0 8px 0 4px;
-}
-
-.history .comment-summary .toggle-comments {
-    display: none;
-    line-height: 25px;
-    position: absolute;
-    right: 5px;
-}
-
-.history .comment-summary:hover .last-commented {
-    visibility: hidden;
-}
-
-.history .comment-summary:hover .toggle-comments {
-    display: inline-block;
-}
-
-.history .comment-summary span i {
-    float: right;
-    line-height: 27px;
-    padding-left: 5px;
 }

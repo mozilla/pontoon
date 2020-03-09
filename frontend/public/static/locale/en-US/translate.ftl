@@ -286,16 +286,11 @@ history-Translation--button-rejected =
 history-Translation--button-comment = Comment
     .title = Toggle translation comments
 
-history-Translation--comment-summary-count = { $commentCount ->
+history-Translation--button-comments = { $commentCount ->
         [one] { $commentCount } Comment
        *[other] { $commentCount } Comments
     }
-
-history-Translation--comment-summary-last-commented = Last commented <timeago></timeago>
-
-history-Translation--comment-summary-add-comment = Add comment <glyph></glyph>
-history-Translation--comment-summary-expand-comments = Expand comments <glyph></glyph>
-history-Translation--comment-summary-collapse-comments = Collapse comments <glyph></glyph>
+    .title = Toggle translation comments
 
 
 ## Interactive Tour
@@ -599,7 +594,6 @@ search-TimeRangeFilter--save-range = Save Range
 
 user-UserAvatar--anon-alt-text = Anonymous User
 user-UserAvatar--alt-text = User Profile
-
 
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
