@@ -43,7 +43,7 @@ export default function withDiff<Config: Object>(
 ): React.AbstractComponent<Config> {
     return function WithDiff(props: { ...Config, ...Props }) {
         return <WrappedComponent { ...props }>
-            { getDiff(props.children, props.diffTarget) }
+            { getDiff(props.diffTarget, props.children) }
         </WrappedComponent>;
     };
 }

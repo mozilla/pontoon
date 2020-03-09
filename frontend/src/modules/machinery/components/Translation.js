@@ -73,8 +73,8 @@ export default class Translation extends React.Component<Props> {
                 <p className="original">
                     { types.indexOf('caighdean') === -1 ?
                         <GenericTranslation
-                            content={ sourceString }
-                            diffTarget={ translation.original }
+                            content={ translation.original }
+                            diffTarget={ sourceString }
                         />
                     :
                         /*
