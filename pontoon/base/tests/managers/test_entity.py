@@ -933,15 +933,18 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
     assert active[1].string == entities[4].string_plural + " translation1plural"
 
 
-def test_get_word_count():
+@pytest.mark.parametrize(
+    "input, expected_count",
+    [
+        ("There are 7 words in this string", 7),
+        ("String 123 =+& string hh-gg object.string", 5),
+    ]
+)
+def test_get_word_count(input, expected_count):
     """
     How many words are in given strings
     """
-    count = get_word_count("There are 7 words in this string")
-    assert count == 7
-
-    count = get_word_count("String 123 =+& string hh-gg object.string")
-    assert count == 5
+    assert get_word_count(input) == expected_count
 
 
 @pytest.mark.django_db
