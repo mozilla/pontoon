@@ -933,18 +933,13 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
     assert active[1].string == entities[4].string_plural + " translation1plural"
 
 
-@pytest.mark.django_db
-def test_get_word_count_simple(resource_a, locale_a):
-    """ How many words in a simple alphanumeric string
+def test_get_word_count():
+    """
+    How many words are in given strings
     """
     count = get_word_count("There are 7 words in this string")
     assert count == 7
 
-
-@pytest.mark.django_db
-def test_get_word_count_exclude_non_words(resource_a, locale_a):
-    """ How many words in a string with not only alphanumeric symbols
-    """
     count = get_word_count("String 123 =+& string hh-gg object.string")
     assert count == 5
 
