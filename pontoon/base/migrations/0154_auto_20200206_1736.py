@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("base", "0151_permalink_prefix_optional"),
+        ("base", "0153_populate_word_count"),
     ]
 
     operations = [
