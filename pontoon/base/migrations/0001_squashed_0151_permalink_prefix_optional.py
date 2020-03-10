@@ -2478,7 +2478,6 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE, to="base.Project"
             ),
         ),
-        migrations.RemoveField(model_name="project", name="locales",),
         migrations.AddField(
             model_name="project",
             name="locales",
