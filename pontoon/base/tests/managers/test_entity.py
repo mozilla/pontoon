@@ -938,7 +938,7 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
     [
         ("There are 7 words in this string", 7),
         ("String 123 =+& string hh-gg object.string", 5),
-    ]
+    ],
 )
 def test_get_word_count(input, expected_count):
     """
