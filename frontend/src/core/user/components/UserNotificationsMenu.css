@@ -63,6 +63,7 @@
     color: #aaa;
     font-size: 14px;
     font-weight: 300;
+    padding: 0 4px;
 }
 
 .user-notifications-menu .menu li:hover {

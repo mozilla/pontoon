@@ -49,10 +49,7 @@ export type Notification = {|
     +id: number,
     +level: string,
     +unread: string,
-    +description: {
-        +content: string,
-        +safe: boolean,
-    },
+    +description: string,
     +verb: string,
     +date: string,
     +date_iso: string,

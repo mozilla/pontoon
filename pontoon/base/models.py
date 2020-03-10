@@ -269,7 +269,7 @@ def menu_notifications(self):
     if unread_count > count:
         count = unread_count
 
-    return self.notifications.prefetch_related("actor", "target", "action_object")[:count]
+    return self.notifications.prefetch_related("actor", "target")[:count]
 
 
 @property
@@ -282,10 +282,8 @@ def serialized_notifications(self):
     if unread_count > count:
         count = unread_count
 
-    for notification in self.notifications.prefetch_related("actor", "target", "action_object")[:count]:
+    for notification in self.notifications.prefetch_related("actor", "target")[:count]:
         actor = None
-        description_safe = True
-
         if hasattr(notification.actor, "slug"):
             actor = {
                 "anchor": notification.actor.name,
@@ -304,41 +302,20 @@ def serialized_notifications(self):
 
         target = None
         if notification.target:
-            t = notification.target
-            # New string or Manual notification
-            if hasattr(t, "slug"):
-                target = {
-                    "anchor": t.name,
-                    "url": reverse(
-                        "pontoon.projects.project",
-                        kwargs={"slug": t.slug},
-                    ),
-                }
-
-            # Comment notifications
-            elif hasattr(t, "resource"):
-                description_safe = False
-                target = {
-                    "anchor": t.resource.project.name,
-                    "url": reverse(
-                        "pontoon.translate",
-                        kwargs={
-                            "locale": notification.action_object.code,
-                            "project": t.resource.project.slug,
-                            "resource": t.resource.path,
-                        },
-                    ) + "?string={entity}".format(entity=t.pk),
-                }
+            target = {
+                "anchor": notification.target.name,
+                "url": reverse(
+                    "pontoon.projects.project",
+                    kwargs={"slug": notification.target.slug},
+                ),
+            }
 
         notifications.append(
             {
                 "id": notification.id,
                 "level": notification.level,
                 "unread": notification.unread,
-                "description": {
-                    "content": notification.description,
-                    "safe": description_safe,
-                },
+                "description": notification.description,
                 "verb": notification.verb,
                 "date": notification.timestamp.strftime("%b %d, %Y %H:%M"),
                 "date_iso": notification.timestamp.isoformat(),
