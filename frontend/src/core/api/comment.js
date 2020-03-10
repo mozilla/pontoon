@@ -25,4 +25,14 @@ export default class CommentAPI extends APIBase {
 
         return this.fetch('/add-comment/', 'POST', payload, headers);
     }
+
+    /**
+     * Get all users usernames and emails from server.
+     */
+    async getUsers(): Promise<Object> {
+        const headers = new Headers();
+        headers.append('X-Requested_With', 'XMLHttpRequest');
+
+        return await this.fetch('/get-users/', 'GET', null, headers);
+    }
 }

@@ -34,6 +34,7 @@ type Props = {|
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
     setTabState: (number) => void,
 |};
 
@@ -60,6 +61,7 @@ export default class Helpers extends React.Component<Props> {
             updateEditorTranslation,
             searchMachinery,
             addComment,
+            getUsers,
         } = this.props;
 
         return <Tabs
@@ -112,6 +114,7 @@ export default class Helpers extends React.Component<Props> {
                     user={ user }
                     entity={ entity }
                     addComment={ addComment }
+                    getUsers= { getUsers }
                     projectManager={ projectManager }
                 />
             </TabPanel>

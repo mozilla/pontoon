@@ -291,6 +291,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    getUsers = () => {
+        this.props.dispatch(comments.actions.getUsers());
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -363,6 +367,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
                     addComment={ this.addComment }
+                    getUsers={ this.getUsers }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                 />
@@ -376,6 +381,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     otherlocales={ state.otherlocales }
                     teamComments={ state.teamComments }
                     addComment={ this.addComment }
+                    getUsers={ this.getUsers }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }

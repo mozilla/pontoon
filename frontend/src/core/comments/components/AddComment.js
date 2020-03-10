@@ -15,6 +15,7 @@ type Props = {|
     translation?: ?number,
     projectManager?: Object,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
@@ -25,18 +26,12 @@ export default function AddComments(props: Props) {
         imageURL,
         translation,
         addComment,
+        getUsers,
         projectManager,
     } = props;
 
     const commentInput: any = React.useRef();
     const [value, setValue] = React.useState('');
-
-    React.useEffect(() => {
-        if(projectManager) {
-            setValue(`${projectManager.contact} `);
-            commentInput.current.focus();
-        }
-    }, [projectManager]);
 
     const handleOnChange = React.useCallback((_, newValue) => setValue(newValue), [setValue])
 
@@ -55,7 +50,7 @@ export default function AddComments(props: Props) {
 
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
-        let comment = commentInput.current.value;
+        const comment = commentInput.current.value;
 
         if (!comment) {
             return null;
@@ -88,15 +83,13 @@ export default function AddComments(props: Props) {
                     dir='auto'
                     placeholder={ `Write a comment…` }
                     markup="@[__display__](__type__:__id__)"
-                    inputRef={ commentInput }
                     onChange={ handleOnChange }
                     onKeyDown={ handleOnKeyDown }
                 >
                     <Mention
                         className='mentions__mention'
                         trigger="@"
-                        data={[{ id: 'abowler', display: 'April Bowler'},
-                            { id: 'mathjazz', display: 'Matjaz Horvat'}]}
+                        data={ getUsers }
                         appendSpaceOnAdd='true'
                     />
                 </MentionsInput>

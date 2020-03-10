@@ -13,13 +13,20 @@ import type { TeamCommentState } from 'modules/teamcomments';
 type Props = {|
     teamComments: TeamCommentState,
     user: UserState,
-    projectManager: string,
+    projectManager: Object,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
 export default function TeamComments(props: Props) {
-    const { teamComments, user, addComment, projectManager } = props;
+    const { 
+        teamComments, 
+        user, 
+        addComment, 
+        getUsers, 
+        projectManager
+    } = props;
 
     let canComment = user.isAuthenticated;
     const comments = teamComments.comments;
@@ -40,6 +47,7 @@ export default function TeamComments(props: Props) {
                     user={ user }
                     canComment={ canComment }
                     addComment={ addComment }
+                    getUsers={ getUsers }
                     projectManager={ projectManager }
                 />
             </section>

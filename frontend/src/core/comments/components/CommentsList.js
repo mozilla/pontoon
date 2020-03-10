@@ -18,6 +18,7 @@ type Props = {|
     projectManager?: string,
     canComment: boolean,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
@@ -28,6 +29,7 @@ export default function CommentsList(props: Props) {
         user,
         canComment,
         addComment,
+        getUsers,
         projectManager,
     } = props;
 
@@ -49,6 +51,7 @@ export default function CommentsList(props: Props) {
                 imageURL={ user.gravatarURLSmall}
                 translation={ translationId }
                 addComment={ addComment }
+                getUsers={ getUsers }
                 projectManager={ projectManager }
             />
         }

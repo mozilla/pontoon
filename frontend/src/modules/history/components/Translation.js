@@ -29,6 +29,7 @@ type Props = {|
     index: number,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -244,6 +245,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             index,
             activeTranslation,
             addComment,
+            getUsers,
         } = this.props;
 
         const commentCount = translation.comments.length;
@@ -453,6 +455,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     user={ user }
                     canComment={ canComment }
                     addComment={ addComment }
+                    getUsers={ getUsers }
                 />
             }
         </li>;
