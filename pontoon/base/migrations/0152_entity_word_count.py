@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0151_permalink_prefix_optional'),
+        ("base", "0151_permalink_prefix_optional"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='entity',
-            name='word_count',
+            model_name="entity",
+            name="word_count",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

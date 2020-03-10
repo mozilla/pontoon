@@ -28,7 +28,7 @@ def reset_word_count(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0152_entity_word_count'),
+        ("base", "0152_entity_word_count"),
     ]
 
     operations = [
