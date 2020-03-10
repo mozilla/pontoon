@@ -5,7 +5,7 @@ import { Localized } from '@fluent/react';
 
 import './History.css';
 
-import Translation from './Translation';
+import Entry from './Entry';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -66,7 +66,7 @@ export default class History extends React.Component<Props> {
         return <section className="history">
             <ul>
                 { history.translations.map((translation, index) => {
-                    return <Translation
+                    return <Entry
                         translation={ translation }
                         activeTranslation={ history.translations[0] }
                         entity={ entity }
