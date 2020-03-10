@@ -10,6 +10,8 @@ import os.path
 import re
 
 import Levenshtein
+import warnings
+import django
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
@@ -91,6 +93,12 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
     # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
     # when used between django ORM query objects.
     return reduce(operator.ior, filters)
+
+
+def get_word_count(string):
+    """Compute the number of words in a given string.
+    """
+    return len(re.findall(r"[\w,.-]+", string))
 
 
 @property
@@ -2296,6 +2304,19 @@ class EntityQuerySet(models.QuerySet):
 
         translations.filter(pk__in=unreviewed_pks).update(active=True)
 
+    def get_or_create(self, defaults=None, **kwargs):
+        kwargs["word_count"] = get_word_count(kwargs["string"])
+        return super(EntityQuerySet, self).get_or_create(defaults=defaults, **kwargs)
+
+    def bulk_update(self, objs, update_fields=None, batch_size=None):
+        if django.VERSION[0] >= 2:
+            msg = "Django version is 2 or higher. Function bulk_update needs to be removed"
+            warnings.warn(msg, PendingDeprecationWarning)
+        if objs:
+            for obj in objs:
+                obj.word_count = get_word_count(obj.string)
+        return bulk_update(objs, update_fields=update_fields, batch_size=batch_size)
+
 
 @python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):
@@ -2309,6 +2330,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
+    word_count = models.PositiveIntegerField(default=0)
 
     date_created = models.DateTimeField(default=timezone.now)
     date_obsoleted = models.DateTimeField(null=True, blank=True)
@@ -2338,6 +2360,10 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def __str__(self):
         return self.string
+
+    def save(self, *args, **kwargs):
+        self.word_count = get_word_count(self.string)
+        super(Entity, self).save(*args, **kwargs)
 
     def get_stats(self, locale):
         """
