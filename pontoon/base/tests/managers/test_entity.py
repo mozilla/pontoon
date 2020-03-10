@@ -3,7 +3,10 @@ from __future__ import absolute_import
 
 import pytest
 
+from mock import patch, call
+
 from pontoon.base.models import (
+    get_word_count,
     Entity,
     Translation,
     TranslatedResource,
@@ -928,3 +931,74 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
     active = entities[4].translation_set.filter(active=True)
     assert active[0].string == entities[4].string + " translation1"
     assert active[1].string == entities[4].string_plural + " translation1plural"
+
+
+@pytest.mark.django_db
+def test_get_word_count_simple(resource_a, locale_a):
+    """ How many words in a simple alphanumeric string
+    """
+    count = get_word_count("There are 7 words in this string")
+    assert count == 7
+
+
+@pytest.mark.django_db
+def test_get_word_count_exclude_non_words(resource_a, locale_a):
+    """ How many words in a string with not only alphanumeric symbols
+    """
+    count = get_word_count("String 123 =+& string hh-gg object.string")
+    assert count == 5
+
+
+@pytest.mark.django_db
+@patch("pontoon.base.models.get_word_count")
+def test_mgr_get_or_create(get_word_count_mock, resource_a, locale_a):
+    """
+    Get or create entities method works and counts words
+    """
+    get_word_count_mock.return_value = 2
+
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    arguments = {
+        "resource": resource_a,
+        "string": "simple string",
+    }
+    obj, created = testEntitiesQuerySet.get_or_create(**arguments)
+
+    assert created
+    assert get_word_count_mock.called
+    assert get_word_count_mock.call_args == call(arguments["string"])
+
+
+@pytest.mark.django_db
+@patch("pontoon.base.models.get_word_count")
+def test_mgr_bulk_update(get_word_count_mock, resource_a, locale_a):
+    """
+    Update entities method works and updates word_count field
+    """
+    get_word_count_mock.return_value = 2
+
+    objs = [
+        EntityFactory.create(resource=resource_a, string="testentity %s" % i,)
+        for i in range(0, 2)
+    ]
+
+    assert get_word_count_mock.call_count == 2
+
+    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    updated_count = testEntitiesQuerySet.bulk_update(
+        objs,
+        update_fields=[
+            "resource",
+            "string",
+            "string_plural",
+            "key",
+            "comment",
+            "group_comment",
+            "resource_comment",
+            "order",
+            "source",
+        ],
+    )
+
+    assert get_word_count_mock.call_count == 4
+    assert updated_count == len(objs)
