@@ -25,6 +25,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
 
+from notifications.signals import notify
 from six.moves.urllib.parse import urlparse
 
 from pontoon.actionlog.utils import log_action
@@ -456,6 +457,65 @@ def get_team_comments(request):
     return JsonResponse(payload, safe=False)
 
 
+def _send_add_comment_notifications(user, comment, entity, locale, translation):
+    # On translation comment, notify:
+    #   - authors of other translation comments in the thread
+    #   - translation author
+    if translation:
+        recipients = list(translation.comments.values_list('author__pk', flat=True))
+        recipients.append(translation.user.pk)
+
+    # On team comment, notify:
+    #   - locale translators
+    #   - project-locale translators
+    #   - locale managers
+    #   - authors of other team comments in the thread
+    #   - authors of translation comments
+    #   - translation authors
+    else:
+        recipients = []
+        project_locale = ProjectLocale.objects.get(
+            project=entity.resource.project,
+            locale=locale,
+        )
+        translations = Translation.objects.filter(entity=entity, locale=locale)
+
+        for group in (
+            locale.translators_group,
+            project_locale.translators_group,
+            locale.managers_group,
+        ):
+            recipients.append(group.user_set.values_list('pk', flat=True))
+
+        recipients.append(
+            Comment.objects.filter(
+                entity=entity, locale=locale
+            ).values_list('author__pk', flat=True)
+        )
+
+        recipients.append(
+            Comment.objects.filter(
+                translation__in=translations
+            ).values_list('author__pk', flat=True)
+        )
+
+        recipients.append(
+            translations.values_list('user__pk', flat=True)
+        )
+
+        recipients = [item for sublist in recipients for item in sublist]
+
+    for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk).distinct():
+        notify.send(
+            user,
+            recipient=recipient,
+            verb="has added a comment in",
+            action_object=locale,
+            target=entity,
+            description=comment,
+        )
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -479,17 +539,25 @@ def add_comment(request):
     translationId = form.cleaned_data["translation"]
     entity = get_object_or_404(Entity, pk=form.cleaned_data["entity"])
     locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
-    if translationId:
-        translation = get_object_or_404(Translation, pk=translationId)
 
     if translationId:
+        translation = get_object_or_404(Translation, pk=translationId)
+    else:
+        translation = None
+
+    # Translation comment
+    if translation:
         c = Comment(author=user, translation=translation, content=comment)
         log_action("comment:added", user, translation=translation)
+
+    # Team comment
     else:
         c = Comment(author=user, entity=entity, locale=locale, content=comment)
         log_action("comment:added", user, entity=entity, locale=locale)
 
     c.save()
+
+    _send_add_comment_notifications(user, comment, entity, locale, translation)
 
     return JsonResponse({"status": True})
 
