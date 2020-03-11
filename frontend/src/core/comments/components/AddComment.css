@@ -5,18 +5,19 @@
 }
 
 .comments-list .add-comment textarea {
+    align-items: center;
     background-color: #333941;
     border: none;
     border-radius: 4px;
     color: #FFFFFF;
     display: flex;
-    align-items: center;
     flex-grow: 2;
     font-size: 11px;
     height: auto;
-    overflow: auto;
     line-height: 24px;
+    overflow: auto;
     padding: 6px;
+    resize: none;
 }
 
 .comments-list .add-comment .submit-button {
