@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import './Comment.css';
@@ -29,16 +30,19 @@ export default function Comment(props: Props) {
         />
         <div className='container'>
             <div className='content' dir='auto'>
-                <a
-                    href={ `/contributors/${comment.username}` }
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-                >
-                    { comment.author }
-                </a>
                 <p>
-                    { comment.content }
+                    <a
+                        className='comment-author'
+                        href={ `/contributors/${comment.username}` }
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
+                    >
+                        { comment.author }
+                    </a>
+                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                        { comment.content }
+                    </Linkify>
                 </p>
             </div>
             <div className='info'>

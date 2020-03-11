@@ -8,6 +8,10 @@
     white-space: nowrap;
 }
 
+.comments-list .comment-author {
+    margin-right: 4px;
+}
+
 .comments-list .comment .content {
     background-color: #4d5967;
     border: solid 1px #4d5967;
@@ -20,7 +24,6 @@
 
 .comments-list .comment .content p {
     color: #CCCCCC;
-    margin-left: 4px;
 }
 
 .comments-list .comment .info {

@@ -35,7 +35,9 @@ describe('<Comment>', () => {
             deleteComment={ deleteMock }
         />);
 
-        expect(wrapper.find('p').text()).toEqual(
+        // Comments are hidden in a Linkify component.
+        const content = wrapper.find('Linkify').map(item => item.props().children);
+        expect(content).toContain(
             "What I hear when I'm being yelled at is people caring loudly at me."
         );
     });

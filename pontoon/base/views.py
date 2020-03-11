@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import bleach
 import logging
 from datetime import datetime
 
@@ -436,38 +435,61 @@ def get_translation_history(request):
     return JsonResponse(payload, safe=False)
 
 
-@require_POST
 @utils.require_AJAX
-@login_required(redirect_field_name="", login_url="/403")
-@transaction.atomic
-def add_comment(request):
-    # TODO: Remove as part of bug 1361318
-    return JsonResponse({"status": False, "message": "Not Implemented"}, status=501,)
-
-    """Add a comment."""
+def get_team_comments(request):
+    """Get team comments for given locale."""
     try:
-        comment = request.POST["comment"]
-        comment = bleach.clean(
-            comment,
-            strip=True,
-            tags=settings.ALLOWED_TAGS,
-            attributes=settings.ALLOWED_ATTRIBUTES,
-        )
-        translationId = request.POST["translationId"]
+        entity = request.GET["entity"]
+        locale = request.GET["locale"]
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
         )
 
-    user = request.user
-    translation = get_object_or_404(Translation, pk=translationId)
+    entity = get_object_or_404(Entity, pk=entity)
+    locale = get_object_or_404(Locale, code=locale)
+    comments = Comment.objects.filter(entity=entity, locale=locale)
 
-    c = Comment(author=user, translation=translation, content=comment,)
+    payload = [c.serialize() for c in comments]
+
+    return JsonResponse(payload, safe=False)
+
+
+@require_POST
+@utils.require_AJAX
+@login_required(redirect_field_name="", login_url="/403")
+@transaction.atomic
+def add_comment(request):
+    """Add a comment."""
+    form = forms.AddCommentsForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "{error}".format(
+                    error=form.errors.as_json(escape_html=True)
+                ),
+            },
+            status=400,
+        )
+
+    user = request.user
+    comment = form.cleaned_data["comment"]
+    translationId = form.cleaned_data["translation"]
+    entity = get_object_or_404(Entity, pk=form.cleaned_data["entity"])
+    locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+    if translationId:
+        translation = get_object_or_404(Translation, pk=translationId)
+
+    if translationId:
+        c = Comment(author=user, translation=translation, content=comment)
+        log_action("comment:added", user, translation=translation)
+    else:
+        c = Comment(author=user, entity=entity, locale=locale, content=comment)
+        log_action("comment:added", user, entity=entity, locale=locale)
 
     c.save()
-
-    log_action("comment:added", user, translation=translation)
 
     return JsonResponse({"status": True})
 

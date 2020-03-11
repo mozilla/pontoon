@@ -19,6 +19,7 @@ import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as search from 'modules/search';
+import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
@@ -44,5 +45,6 @@ export default (browserHistory: any) => combineReducers({
     [machinery.NAME]: machinery.reducer,
     [otherlocales.NAME]: otherlocales.reducer,
     [search.NAME]: search.reducer,
+    [teamcomments.NAME]: teamcomments.reducer,
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 });

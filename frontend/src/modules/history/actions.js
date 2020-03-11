@@ -228,24 +228,6 @@ export function deleteTranslation(
     }
 }
 
-export function addComment(
-    entity: number,
-    locale: string,
-    pluralForm: number,
-    translationId: number,
-    comment: string,
-): Function {
-    return async dispatch => {
-        NProgress.start();
-
-        await api.comment.add(comment, translationId);
-
-        dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
-        dispatch(get(entity, locale, pluralForm));
-
-        NProgress.done();
-    }
-}
 
 export default {
     get,
@@ -253,5 +235,4 @@ export default {
     request,
     updateStatus,
     deleteTranslation,
-    addComment,
 };

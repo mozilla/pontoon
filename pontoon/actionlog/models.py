@@ -54,9 +54,18 @@ class ActionLog(models.Model):
                 'For action "translation:deleted", `entity` and `locale` are required'
             )
 
-        if self.action_type != "translation:deleted" and (
-            not self.translation or self.entity or self.locale
+        if self.action_type == "comment:added" and not (
+            (self.translation and not self.locale and not self.entity)
+            or (not self.translation and self.locale and self.entity)
         ):
+            raise ValidationError(
+                'For action type "comment:added", either `translation` or `locale` and `entity` are required'
+            )
+
+        if (
+            self.action_type != "translation:deleted"
+            and self.action_type != "comment:added"
+        ) and (not self.translation or self.entity or self.locale):
             raise ValidationError(
                 'Only `translation` is accepted for action type "{}"'.format(
                     self.action_type
