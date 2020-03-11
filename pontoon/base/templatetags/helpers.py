@@ -367,14 +367,13 @@ def as_simple_translation(source):
 @library.filter
 def linkify(source):
     """Render URLs in the string as links."""
+
     def set_attrs(attrs, new=False):
-        attrs[(None, 'target')] = '_blank'
-        attrs[(None, 'rel')] = 'noopener noreferrer'
+        attrs[(None, "target")] = "_blank"
+        attrs[(None, "rel")] = "noopener noreferrer"
         return attrs
 
     # Escape all tags
     linker = Linker(callbacks=[set_attrs], recognized_tags=[])
 
-    return jinja2.Markup(
-        linker.linkify(source)
-    )
+    return jinja2.Markup(linker.linkify(source))

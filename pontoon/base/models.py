@@ -269,7 +269,9 @@ def menu_notifications(self):
     if unread_count > count:
         count = unread_count
 
-    return self.notifications.prefetch_related("actor", "target", "action_object")[:count]
+    return self.notifications.prefetch_related("actor", "target", "action_object")[
+        :count
+    ]
 
 
 @property
@@ -282,7 +284,9 @@ def serialized_notifications(self):
     if unread_count > count:
         count = unread_count
 
-    for notification in self.notifications.prefetch_related("actor", "target", "action_object")[:count]:
+    for notification in self.notifications.prefetch_related(
+        "actor", "target", "action_object"
+    )[:count]:
         actor = None
         description_safe = True
 
@@ -310,8 +314,7 @@ def serialized_notifications(self):
                 target = {
                     "anchor": t.name,
                     "url": reverse(
-                        "pontoon.projects.project",
-                        kwargs={"slug": t.slug},
+                        "pontoon.projects.project", kwargs={"slug": t.slug},
                     ),
                 }
 
@@ -327,7 +330,8 @@ def serialized_notifications(self):
                             "project": t.resource.project.slug,
                             "resource": t.resource.path,
                         },
-                    ) + "?string={entity}".format(entity=t.pk),
+                    )
+                    + "?string={entity}".format(entity=t.pk),
                 }
 
         notifications.append(

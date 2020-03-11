@@ -462,7 +462,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     #   - authors of other translation comments in the thread
     #   - translation author
     if translation:
-        recipients = list(translation.comments.values_list('author__pk', flat=True))
+        recipients = list(translation.comments.values_list("author__pk", flat=True))
         recipients.append(translation.user.pk)
 
     # On team comment, notify:
@@ -475,8 +475,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     else:
         recipients = []
         project_locale = ProjectLocale.objects.get(
-            project=entity.resource.project,
-            locale=locale,
+            project=entity.resource.project, locale=locale,
         )
         translations = Translation.objects.filter(entity=entity, locale=locale)
 
@@ -485,27 +484,27 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
             project_locale.translators_group,
             locale.managers_group,
         ):
-            recipients.append(group.user_set.values_list('pk', flat=True))
+            recipients.append(group.user_set.values_list("pk", flat=True))
 
         recipients.append(
-            Comment.objects.filter(
-                entity=entity, locale=locale
-            ).values_list('author__pk', flat=True)
+            Comment.objects.filter(entity=entity, locale=locale).values_list(
+                "author__pk", flat=True
+            )
         )
 
         recipients.append(
-            Comment.objects.filter(
-                translation__in=translations
-            ).values_list('author__pk', flat=True)
+            Comment.objects.filter(translation__in=translations).values_list(
+                "author__pk", flat=True
+            )
         )
 
-        recipients.append(
-            translations.values_list('user__pk', flat=True)
-        )
+        recipients.append(translations.values_list("user__pk", flat=True))
 
         recipients = [item for sublist in recipients for item in sublist]
 
-    for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk).distinct():
+    for recipient in (
+        User.objects.filter(pk__in=recipients).exclude(pk=user.pk).distinct()
+    ):
         notify.send(
             user,
             recipient=recipient,
