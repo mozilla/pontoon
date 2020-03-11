@@ -1,0 +1,17 @@
+.team-comments .comments-list {
+    margin-top: 2px;
+}
+
+.team-comments ul,
+.team-comments ul .comment,
+.team-comments div .add-comment {
+    margin-left: 0;
+}
+
+.no-team-comments {
+    border-bottom: 1px solid #5E6475;
+    color: #aaa;
+    font-style: italic;
+    line-height: 22px;
+    padding: 15px 10px;
+}

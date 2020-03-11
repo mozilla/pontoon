@@ -4,10 +4,19 @@ import APIBase from './base';
 
 
 export default class CommentAPI extends APIBase {
-    add(comment: string, translationId: number) {
+    add(
+        entity: number,
+        locale: string,
+        comment: string,
+        translation: ?number,
+    ) {
         const payload = new URLSearchParams();
+        payload.append('entity', entity.toString());
+        payload.append('locale', locale);
         payload.append('comment', comment);
-        payload.append('translationId', translationId.toString());
+        if (translation) {
+            payload.append('translation', translation.toString());
+        }
 
         const headers = new Headers();
         const csrfToken = this.getCSRFToken();

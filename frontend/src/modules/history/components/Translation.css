@@ -5,7 +5,6 @@
 .history .translation {
     cursor: pointer;
     padding: 15px 10px;
-    transition: all 0.1s ease-out;
     display: flex;
 }
 
@@ -82,9 +81,29 @@
 }
 
 .history .translation .content > header .toggle-diff:hover,
+.history .translation .content > header .toggle-diff.active,
 .history .translation .content > header .toggle-comments:hover,
-.history .translation .content > header .toggle-diff.active {
+.history .translation .content > header .toggle-comments.active {
     color: #7BC876;
+}
+
+.history .translation .content > header .toggle-comments.active {
+    background: #333941;
+    border: 1px solid #3f4752;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.history .translation:hover .content > header .toggle-comments.active {
+    border-color: #4d5967;
+}
+
+.history .translation .content > header .toggle-comments.active:hover {
+    border-color: #637283;
+}
+
+.history .translation .content > header .toggle-comments.active .stress {
+    color: #CCC;
 }
 
 .history .translation .content > header .divider {

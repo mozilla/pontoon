@@ -3494,7 +3494,19 @@ class TranslatedResource(AggregatedStats):
 class Comment(models.Model):
     author = models.ForeignKey(User)
     timestamp = models.DateTimeField(default=timezone.now)
-    translation = models.ForeignKey(Translation, related_name="comments")
+    translation = models.ForeignKey(
+        Translation,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        blank=True,
+        null=True,
+    )
+    locale = models.ForeignKey(
+        Locale, on_delete=models.CASCADE, related_name="comments", blank=True, null=True
+    )
+    entity = models.ForeignKey(
+        Entity, on_delete=models.CASCADE, related_name="comments", blank=True, null=True
+    )
     content = models.TextField()
 
     def __str__(self):
@@ -3510,3 +3522,15 @@ class Comment(models.Model):
             "content": self.content,
             "id": self.id,
         }
+
+    def save(self, *args, **kwargs):
+        """
+        Validate Comments before saving.
+        """
+        if not (
+            (self.translation and not self.locale and not self.entity)
+            or (not self.translation and self.locale and self.entity)
+        ):
+            raise ValidationError("Invalid comment arguments")
+
+        super(Comment, self).save(*args, **kwargs)

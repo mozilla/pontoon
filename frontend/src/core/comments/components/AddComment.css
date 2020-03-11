@@ -1,11 +1,39 @@
+.comments-list .add-comment form.container {
+    flex-flow: row nowrap;
+    align-items: flex-end;
+    padding-bottom: 5px;
+}
+
 .comments-list .add-comment textarea {
+    align-items: center;
     background-color: #333941;
     border: none;
     border-radius: 4px;
     color: #FFFFFF;
+    display: flex;
+    flex-grow: 2;
     font-size: 11px;
     height: auto;
-    overflow: auto;
     line-height: 24px;
+    overflow: auto;
     padding: 6px;
+    resize: none;
+}
+
+.comments-list .add-comment .submit-button {
+    background-color: #4d5967;
+    border: solid 1px #4d5967;
+    border-radius: 4px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    height: 36px;
+    width: 36px;
+    margin-left: 6px;
+    padding-left: 10px;
+}
+
+.comments-list .add-comment .submit-button:hover {
+    color: #272A2F;
+    background: #7BC876;
 }

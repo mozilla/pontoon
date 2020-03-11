@@ -6,10 +6,12 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
+import { TeamComments, CommentCount } from 'modules/teamcomments';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
 import type { Entity } from 'core/api';
+import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
@@ -23,10 +25,12 @@ type Props = {|
     locale: Locale,
     machinery: MachineryState,
     otherlocales: LocalesState,
+    teamComments: TeamCommentState,
     parameters: NavigationParams,
     user: UserState,
     updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
+    addComment: (string, ?number) => void,
 |};
 
 
@@ -43,10 +47,12 @@ export default class Helpers extends React.Component<Props> {
             locale,
             machinery,
             otherlocales,
+            teamComments,
             parameters,
             user,
             updateEditorTranslation,
             searchMachinery,
+            addComment,
         } = this.props;
 
         return <Tabs>
@@ -62,6 +68,12 @@ export default class Helpers extends React.Component<Props> {
                         { 'Locales' }
                     </Localized>
                     <OtherLocalesCount otherlocales={ otherlocales } />
+                </Tab>
+                <Tab>
+                    <Localized id='entitydetails-Helpers--comments'>
+                        { 'Comments' }
+                    </Localized>
+                    <CommentCount teamComments={ teamComments }/>
                 </Tab>
             </TabList>
 
@@ -82,6 +94,13 @@ export default class Helpers extends React.Component<Props> {
                     user={ user }
                     parameters={ parameters }
                     updateEditorTranslation={ updateEditorTranslation }
+                />
+            </TabPanel>
+            <TabPanel>
+                <TeamComments
+                    teamComments={ teamComments }
+                    user={ user }
+                    addComment={ addComment }
                 />
             </TabPanel>
         </Tabs>;

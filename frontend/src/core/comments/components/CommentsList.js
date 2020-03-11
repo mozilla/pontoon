@@ -2,19 +2,21 @@
 
 import * as React from 'react';
 
-import './CommentList.css';
+import './CommentsList.css';
 
 import { Comment, AddComment } from 'core/comments';
 
 import type { TranslationComment } from 'core/api';
+import type { UserState } from 'core/user';
 import type { HistoryTranslation } from 'modules/history'
 
 
 type Props = {|
     comments: Array<TranslationComment>,
-    translation: HistoryTranslation,
+    translation?: HistoryTranslation,
+    user: UserState,
     canComment: boolean,
-    addComment: (string, number) => void,
+    addComment: (string, ?number) => void,
 |};
 
 
@@ -22,13 +24,12 @@ export default function CommentsList(props: Props) {
     const {
         comments,
         translation,
+        user,
         canComment,
         addComment,
     } = props;
 
-    if (!comments) {
-        return null;
-    }
+    const translationId = translation ? translation.pk : null;
 
     return <div className='comments-list'>
         <ul>
@@ -41,10 +42,10 @@ export default function CommentsList(props: Props) {
         </ul>
         { !canComment ? null :
             <AddComment
-                user={ translation.user }
-                username={ translation.username }
-                imageURL={ translation.userGravatarUrlSmall}
-                translationId={ translation.pk }
+                user={ user.nameOrEmail }
+                username={ user.username }
+                imageURL={ user.gravatarURLSmall}
+                translation={ translationId }
                 addComment={ addComment }
             />
         }

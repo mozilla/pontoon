@@ -11,8 +11,8 @@ type Props = {|
     user: string,
     username: string,
     imageURL: string,
-    translationId: number,
-    addComment: (string, number) => void,
+    translation?: ?number,
+    addComment: (string, ?number) => void,
 |};
 
 
@@ -21,7 +21,7 @@ export default function AddComments(props: Props) {
         user,
         username,
         imageURL,
-        translationId,
+        translation,
         addComment,
     } = props;
 
@@ -47,19 +47,24 @@ export default function AddComments(props: Props) {
         }
     }
 
-    const submitComment = (event: SyntheticKeyboardEvent<>) => {
+    const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
         if (event.keyCode === 13 && event.shiftKey === false) {
-            event.preventDefault();
-            const comment = commentInput.current.value;
-
-            if (!comment) {
-                return null;
-            }
-
-            addComment(comment, translationId);
-            commentInput.current.value = '';
-            commentInput.current.rows = minRows;
+            submitComment(event);
         }
+    }
+
+    const submitComment = (event: SyntheticEvent<>) => {
+        event.preventDefault();
+        const comment = commentInput.current.value;
+
+        if (!comment) {
+            return null;
+        }
+
+        addComment(comment, translation);
+
+        commentInput.current.value = '';
+        commentInput.current.rows = minRows;
     };
 
     return <div className='comment add-comment'>
@@ -73,15 +78,30 @@ export default function AddComments(props: Props) {
                 attrs={{ placeholder: true }}
             >
                 <textarea
-                    id='comment-input'
+                    autoFocus
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }
                     rows={ minRows }
                     ref={ commentInput }
                     onChange={ handleOnChange }
-                    onKeyDown={ submitComment }
+                    onKeyDown={ handleOnKeyDown }
                 />
+            </Localized>
+            <Localized
+                id="comments-AddComment--submit-button"
+                attrs={{ title: true }}
+                glyph={
+                    <i className="fa fa-paper-plane"></i>
+                }
+            >
+                <button
+                    className="submit-button"
+                    title="Submit comment"
+                    onClick={ submitComment }
+                >
+                    { '<glyph></glyph>' }
+                </button>
             </Localized>
         </form>
     </div>

@@ -149,4 +149,20 @@ export default class EntityAPI extends APIBase {
 
         return results;
     }
+
+    async getTeamComments(
+        entity: number,
+        locale: string,
+    ) {
+        const payload = new URLSearchParams();
+        payload.append('entity', entity.toString());
+        payload.append('locale', locale);
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        const results = await this.fetch('/get-team-comments/', 'GET', payload, headers);
+
+        return this.keysToCamelCase(results);
+    }
 }
