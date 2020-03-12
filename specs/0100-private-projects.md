@@ -4,7 +4,7 @@
 
 # Summary
 
-Add an option to make a project "private", restricting who can see and interact with it.
+Add an option to make a project "private", restricting who can see it and interact with it.
 
 # Motivation
 
@@ -33,7 +33,15 @@ On each dashboard listing projects (`/projects/`, `/{locale}/`), private project
 
 Pages related to a project (`/projects/{project}/`, `\{locale}/{project}/`, `/{locale}/{project}/{resource}/`) will return a 404 Not Found error unless the user is authenticated and is in the list of approved users. That should also be the case for back-end endpoints used to modify data, as a user should not be able to interact at all with a private project if they are not approved for that project.
 
-All instances of the "latest activity" feature, throughout the website, should also filter out private projects for which the user is not approved.
+All instances of the "latest activity" feature, throughout the website, should also filter out private projects for which the user is not approved. However, data from private projects doesn't need to be removed from Translation Memory. Those projects would be private but not "secret", so it's fine if data is exposed, as long as only a defined set of people can create and modify that data.
+
+# Roles
+
+| Role | Impact |
+| -- | -- |
+| Locale Manager | Can see all private projects of locales they are managing |
+| Translator | Can see all private projects of locales they are managing |
+| Contributor | Cannot access private projects unless they are given explicit permission |
 
 # Drawbacks
 
