@@ -463,18 +463,18 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     #   - translation author
     #   - translation reviewers
     if translation:
-        recipients = list(translation.comments.values_list("author__pk", flat=True))
+        recipients = set(translation.comments.values_list("author__pk", flat=True))
 
-        recipients.append(translation.user.pk)
+        recipients.add(translation.user.pk)
 
         if translation.approved_user:
-            recipients.append(translation.approved_user.pk)
+            recipients.add(translation.approved_user.pk)
         if translation.unapproved_user:
-            recipients.append(translation.unapproved_user.pk)
+            recipients.add(translation.unapproved_user.pk)
         if translation.rejected_user:
-            recipients.append(translation.rejected_user.pk)
+            recipients.add(translation.rejected_user.pk)
         if translation.unrejected_user:
-            recipients.append(translation.unrejected_user.pk)
+            recipients.add(translation.unrejected_user.pk)
 
     # On team comment, notify:
     #   - project-locale translators or locale translators
@@ -484,7 +484,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     #   - translation authors
     #   - translation reviewers
     else:
-        recipients = []
+        recipients = set()
         project_locale = ProjectLocale.objects.get(
             project=entity.resource.project, locale=locale,
         )
@@ -494,35 +494,31 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         translators = project_locale.translators_group.user_set.values_list(
             "pk", flat=True
         )
-        if len(translators) == 0:
+        if not translators:
             translators = locale.translators_group.user_set.values_list("pk", flat=True)
 
-        recipients.append(translators)
-        recipients.append(locale.managers_group.user_set.values_list("pk", flat=True))
+        recipients = recipients.union(translators)
+        recipients = recipients.union(locale.managers_group.user_set.values_list("pk", flat=True))
 
-        recipients.append(
+        recipients = recipients.union(
             Comment.objects.filter(entity=entity, locale=locale).values_list(
                 "author__pk", flat=True
             )
         )
 
-        recipients.append(
+        recipients = recipients.union(
             Comment.objects.filter(translation__in=translations).values_list(
                 "author__pk", flat=True
             )
         )
 
-        recipients.append(translations.values_list("user__pk", flat=True))
-        recipients.append(translations.values_list("approved_user__pk", flat=True))
-        recipients.append(translations.values_list("unapproved_user__pk", flat=True))
-        recipients.append(translations.values_list("rejected_user__pk", flat=True))
-        recipients.append(translations.values_list("unrejected_user__pk", flat=True))
+        recipients = recipients.union(translations.values_list("user__pk", flat=True))
+        recipients = recipients.union(translations.values_list("approved_user__pk", flat=True))
+        recipients = recipients.union(translations.values_list("unapproved_user__pk", flat=True))
+        recipients = recipients.union(translations.values_list("rejected_user__pk", flat=True))
+        recipients = recipients.union(translations.values_list("unrejected_user__pk", flat=True))
 
-        recipients = [item for sublist in recipients for item in sublist]
-
-    for recipient in (
-        User.objects.filter(pk__in=recipients).exclude(pk=user.pk).distinct()
-    ):
+    for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
         notify.send(
             user,
             recipient=recipient,
