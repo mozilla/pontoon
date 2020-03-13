@@ -40,7 +40,7 @@ All instances of the "latest activity" feature, throughout the website, should a
 | Role | Impact |
 | -- | -- |
 | Locale Manager | Can see all private projects of locales they are managing |
-| Translator | Can see all private projects of locales they are managing |
+| Translator | Can see all private projects of locales they are translating |
 | Contributor | Cannot access private projects unless they are given explicit permission |
 
 # Drawbacks
