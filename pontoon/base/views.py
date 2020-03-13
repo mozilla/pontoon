@@ -498,7 +498,9 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
             translators = locale.translators_group.user_set.values_list("pk", flat=True)
 
         recipients = recipients.union(translators)
-        recipients = recipients.union(locale.managers_group.user_set.values_list("pk", flat=True))
+        recipients = recipients.union(
+            locale.managers_group.user_set.values_list("pk", flat=True)
+        )
 
         recipients = recipients.union(
             Comment.objects.filter(entity=entity, locale=locale).values_list(
@@ -513,10 +515,18 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         )
 
         recipients = recipients.union(translations.values_list("user__pk", flat=True))
-        recipients = recipients.union(translations.values_list("approved_user__pk", flat=True))
-        recipients = recipients.union(translations.values_list("unapproved_user__pk", flat=True))
-        recipients = recipients.union(translations.values_list("rejected_user__pk", flat=True))
-        recipients = recipients.union(translations.values_list("unrejected_user__pk", flat=True))
+        recipients = recipients.union(
+            translations.values_list("approved_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("unapproved_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("rejected_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("unrejected_user__pk", flat=True)
+        )
 
     for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
         notify.send(
