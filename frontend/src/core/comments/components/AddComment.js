@@ -30,7 +30,6 @@ export default function AddComments(props: Props) {
         projectManager,
     } = props;
 
-    const commentInput: any = React.useRef();
     const [value, setValue] = React.useState('');
 
     const handleOnChange = React.useCallback((_, newValue) => setValue(newValue), [setValue])
@@ -44,7 +43,7 @@ export default function AddComments(props: Props) {
 
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
-        const comment = commentInput.current.value;
+        const comment = value;
 
         if (!comment) {
             return null;
@@ -76,14 +75,18 @@ export default function AddComments(props: Props) {
                     value={ value }
                     dir='auto'
                     placeholder={ `Write a comment…` }
-                    markup="@[__display__](__type__:__id__)"
                     onChange={ handleOnChange }
                     onKeyDown={ handleOnKeyDown }
                 >
                     <Mention
                         className='mentions__mention'
-                        trigger="@"
-                        data={ getUsers }
+                        trigger='@'
+                        markup='@[__display__](__id__)'
+                        data={[
+                            { display: 'abowler2@gmail.com', id: 'abowler2@gmail.com' }, 
+                            { display: 'adrian@mozilla.com', id: 'adrian@mozilla.com' }, 
+                            { display: 'matjaz@mozilla.com', id: 'matjaz@mozilla.com' },
+                        ]}
                         appendSpaceOnAdd='true'
                     />
                 </MentionsInput>

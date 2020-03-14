@@ -112,7 +112,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     setTabState = (tab: number) => {
-        this.setState({ tabIndex: tab })
+        this.setState({ tabIndex: tab });
     }
 
     tagProjectManager = (contact: string) => {

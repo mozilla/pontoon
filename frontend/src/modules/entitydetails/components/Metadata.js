@@ -224,7 +224,7 @@ export default class Metadata extends React.Component<Props, State> {
 
     render(): React.Node {
         const { entity, user, locale, openLightbox, pluralForm } = this.props;
-        const projectManager = entity.project.contact
+        const projectManager = entity.project.contact;
 
         return <div className="metadata">
             <Screenshots

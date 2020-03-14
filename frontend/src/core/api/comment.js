@@ -27,7 +27,7 @@ export default class CommentAPI extends APIBase {
     }
 
     /**
-     * Get all users usernames and emails from server.
+     * Get all users from server.
      */
     async getUsers(): Promise<Object> {
         const headers = new Headers();

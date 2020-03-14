@@ -318,7 +318,6 @@ def get_users(request):
                 "display": u.name_or_email,
             }
         )
-    print (payload)
     
     return JsonResponse(payload, safe=False)
 
