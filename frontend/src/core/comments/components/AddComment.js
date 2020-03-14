@@ -42,12 +42,6 @@ export default function AddComments(props: Props) {
         }
     }
 
-    const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
-        if (event.keyCode === 13 && event.shiftKey === false) {
-            submitComment(event);
-        }
-    }
-
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
         const comment = commentInput.current.value;
