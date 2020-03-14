@@ -313,12 +313,9 @@ def get_users(request):
 
     for u in users:
         payload.append(
-            {
-                "id": u.email,
-                "display": u.name_or_email,
-            }
+            { "id": u.email, "display": u.name_or_email }
         )
-    
+
     return JsonResponse(payload, safe=False)
 
 
