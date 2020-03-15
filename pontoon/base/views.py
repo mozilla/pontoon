@@ -312,9 +312,7 @@ def get_users(request):
     payload = []
 
     for u in users:
-        payload.append(
-            { "id": u.email, "display": u.name_or_email }
-        )
+        payload.append({"id": u.email, "display": u.name_or_email})
 
     return JsonResponse(payload, safe=False)
 
