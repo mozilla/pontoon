@@ -7,6 +7,7 @@ import json
 import jinja2
 from allauth.socialaccount import providers
 from allauth.utils import get_request_param
+from bleach.linkifier import Linker
 from django_jinja import library
 from fluent.syntax import FluentParser, FluentSerializer, ast
 from fluent.syntax.serializer import serialize_expression
@@ -361,3 +362,18 @@ def as_simple_translation(source):
         tree = translation_ast.attributes[0]
 
     return _serialize_value(tree.value)
+
+
+@library.filter
+def linkify(source):
+    """Render URLs in the string as links."""
+
+    def set_attrs(attrs, new=False):
+        attrs[(None, "target")] = "_blank"
+        attrs[(None, "rel")] = "noopener noreferrer"
+        return attrs
+
+    # Escape all tags
+    linker = Linker(callbacks=[set_attrs], recognized_tags=[])
+
+    return jinja2.Markup(linker.linkify(source))
