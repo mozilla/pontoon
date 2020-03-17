@@ -25,6 +25,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
 
+from notifications.signals import notify
 from six.moves.urllib.parse import urlparse
 
 from pontoon.actionlog.utils import log_action
@@ -456,6 +457,88 @@ def get_team_comments(request):
     return JsonResponse(payload, safe=False)
 
 
+def _send_add_comment_notifications(user, comment, entity, locale, translation):
+    # On translation comment, notify:
+    #   - authors of other translation comments in the thread
+    #   - translation author
+    #   - translation reviewers
+    if translation:
+        recipients = set(translation.comments.values_list("author__pk", flat=True))
+
+        recipients.add(translation.user.pk)
+
+        if translation.approved_user:
+            recipients.add(translation.approved_user.pk)
+        if translation.unapproved_user:
+            recipients.add(translation.unapproved_user.pk)
+        if translation.rejected_user:
+            recipients.add(translation.rejected_user.pk)
+        if translation.unrejected_user:
+            recipients.add(translation.unrejected_user.pk)
+
+    # On team comment, notify:
+    #   - project-locale translators or locale translators
+    #   - locale managers
+    #   - authors of other team comments in the thread
+    #   - authors of translation comments
+    #   - translation authors
+    #   - translation reviewers
+    else:
+        recipients = set()
+        project_locale = ProjectLocale.objects.get(
+            project=entity.resource.project, locale=locale,
+        )
+        translations = Translation.objects.filter(entity=entity, locale=locale)
+
+        # Only notify translators of the project if defined
+        translators = project_locale.translators_group.user_set.values_list(
+            "pk", flat=True
+        )
+        if not translators:
+            translators = locale.translators_group.user_set.values_list("pk", flat=True)
+
+        recipients = recipients.union(translators)
+        recipients = recipients.union(
+            locale.managers_group.user_set.values_list("pk", flat=True)
+        )
+
+        recipients = recipients.union(
+            Comment.objects.filter(entity=entity, locale=locale).values_list(
+                "author__pk", flat=True
+            )
+        )
+
+        recipients = recipients.union(
+            Comment.objects.filter(translation__in=translations).values_list(
+                "author__pk", flat=True
+            )
+        )
+
+        recipients = recipients.union(translations.values_list("user__pk", flat=True))
+        recipients = recipients.union(
+            translations.values_list("approved_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("unapproved_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("rejected_user__pk", flat=True)
+        )
+        recipients = recipients.union(
+            translations.values_list("unrejected_user__pk", flat=True)
+        )
+
+    for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
+        notify.send(
+            user,
+            recipient=recipient,
+            verb="has added a comment in",
+            action_object=locale,
+            target=entity,
+            description=comment,
+        )
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -479,17 +562,25 @@ def add_comment(request):
     translationId = form.cleaned_data["translation"]
     entity = get_object_or_404(Entity, pk=form.cleaned_data["entity"])
     locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
-    if translationId:
-        translation = get_object_or_404(Translation, pk=translationId)
 
     if translationId:
+        translation = get_object_or_404(Translation, pk=translationId)
+    else:
+        translation = None
+
+    # Translation comment
+    if translation:
         c = Comment(author=user, translation=translation, content=comment)
         log_action("comment:added", user, translation=translation)
+
+    # Team comment
     else:
         c = Comment(author=user, entity=entity, locale=locale, content=comment)
         log_action("comment:added", user, entity=entity, locale=locale)
 
     c.save()
+
+    _send_add_comment_notifications(user, comment, entity, locale, translation)
 
     return JsonResponse({"status": True})
 

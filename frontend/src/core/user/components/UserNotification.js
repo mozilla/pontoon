@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago'
 
 import './UserNotification.css';
@@ -74,15 +75,22 @@ export default class UserNotification extends React.Component<Props, State> {
                     title={ `${notification.date} UTC` }
                 />
 
-                { !notification.description ? null :
-                    <div
-                        className="message"
-                        // We can safely use notification.description as it is either generated
-                        // by the code or sanitized when coming from the DB. See:
-                        //   - pontoon.projects.forms.NotificationsForm()
-                        //   - pontoon.base.forms.HtmlField()
-                        dangerouslySetInnerHTML={{ __html: notification.description }}
-                    />
+                { !notification.description.content ? null :
+                    notification.description.safe ?
+                        <div
+                            className="message"
+                            // We can safely use notification.description as it is either generated
+                            // by the code or sanitized when coming from the DB. See:
+                            //   - pontoon.projects.forms.NotificationsForm()
+                            //   - pontoon.base.forms.HtmlField()
+                            dangerouslySetInnerHTML={ { __html: notification.description.content } }
+                        />
+                        :
+                        <div className="message trim">
+                            <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                                { notification.description.content }
+                            </Linkify>
+                        </div>
                 }
             </div>
         </li>;
