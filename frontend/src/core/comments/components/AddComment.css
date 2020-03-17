@@ -1,7 +1,7 @@
 .comments-list .add-comment form.container {
     flex-flow: row nowrap;
     align-items: flex-end;
-    padding-bottom: 5px;
+    padding-bottom: 6px;
 }
 
 .comments-list .add-comment textarea {
