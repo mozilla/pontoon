@@ -34,7 +34,6 @@
   line-height: 24px;
   min-height: 36px;
   max-height: 144px;
-  overflow: auto;
 }
 .mentions--multiLine .mentions__highlighter {
   border: none;
@@ -46,6 +45,7 @@
   border: none;
   color: #fff;
   padding: 9px 6px;
+  overflow: auto;
 }
   
 .mentions__suggestions__list {
