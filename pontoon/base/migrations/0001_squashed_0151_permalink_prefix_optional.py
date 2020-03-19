@@ -12,13 +12,14 @@ import django.utils.timezone
 import jsonfield.fields
 import partial_index
 
-import pontoon.base.models
 import pontoon.db.migrations
-
 
 from bulk_update.helper import bulk_update
 from django.conf import settings
 from django.db import connection, migrations, models, ProgrammingError
+
+from pontoon.base.models import get_word_count
+
 
 MIGRATION_0002_LOCALES = [
     {"code": "af", "name": "Afrikaans", "nplurals": "2", "plural_rule": "(n != 1)"},
@@ -1685,6 +1686,21 @@ def migration_0146_remove_pretranslation_users(apps, schema_editor):
     users.delete()
 
 
+def migration_0153_add_word_count(apps, schema_editor):
+    Entity = apps.get_model("base", "Entity")
+    entities = []
+
+    for e in Entity.objects.all():
+        e.word_count = get_word_count(e.string)
+        entities.append(e)
+    bulk_update(entities, update_fields=["word_count"], batch_size=1000)
+
+
+def migration_0153_reset_word_count(apps, schema_editor):
+    Entity = apps.get_model("base", "Entity")
+    Entity.objects.all().update(word_count=0)
+
+
 class Migration(migrations.Migration):
 
     replaces = [
@@ -1839,6 +1855,9 @@ class Migration(migrations.Migration):
         ("base", "0149_comment"),
         ("base", "0150_auto_20200206_0932"),
         ("base", "0151_permalink_prefix_optional"),
+        ("base", "0152_entity_word_count"),
+        ("base", "0153_populate_word_count"),
+        ("base", "0154_auto_20200206_1736"),
     ]
 
     initial = True
@@ -4036,6 +4055,47 @@ class Migration(migrations.Migration):
                 help_text="\n        A URL prefix for downloading localized files. For GitHub repositories,\n        select any localized file on GitHub, click Raw and replace locale code\n        and the following bits in the URL with `{locale_code}`.\n    ",
                 max_length=2000,
                 verbose_name="Download prefix",
+            ),
+        ),
+        migrations.AddField(
+            model_name="entity",
+            name="word_count",
+            field=models.PositiveIntegerField(default=0),
+        ),
+        migrations.RunPython(
+            migration_0153_add_word_count, migration_0153_reset_word_count
+        ),
+        migrations.AddField(
+            model_name="comment",
+            name="entity",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Entity",
+            ),
+        ),
+        migrations.AddField(
+            model_name="comment",
+            name="locale",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Locale",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="comment",
+            name="translation",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="base.Translation",
             ),
         ),
     ]
