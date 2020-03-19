@@ -30,6 +30,8 @@ export default function AddComments(props: Props) {
         projectManager,
     } = props;
 
+    console.log(projectManager);
+
     const [value, setValue] = React.useState('');
 
     const handleOnChange = React.useCallback((_, newValue) => setValue(newValue), [setValue])
@@ -82,11 +84,13 @@ export default function AddComments(props: Props) {
                         className='mentions__mention'
                         trigger='@'
                         markup='@[__display__](__id__)'
-                        data={[
-                            { display: 'abowler2@gmail.com', id: 'abowler2@gmail.com' }, 
-                            { display: 'adrian@mozilla.com', id: 'adrian@mozilla.com' }, 
-                            { display: 'matjaz@mozilla.com', id: 'matjaz@mozilla.com' },
-                        ]}
+                        data={ getUsers
+                            // [
+                            //     { display: 'abowler2@gmail.com', id: 'abowler2@gmail.com' }, 
+                            //     { display: 'adrian@mozilla.com', id: 'adrian@mozilla.com' }, 
+                            //     { display: 'matjaz@mozilla.com', id: 'matjaz@mozilla.com' },
+                            // ]
+                        }
                         appendSpaceOnAdd='true'
                     />
                 </MentionsInput>
