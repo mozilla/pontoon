@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("base", "0001_squashed_0151_permalink_prefix_optional"),
+        ("base", "0001_squashed_0154_auto_20200206_1736"),
     ]
 
     operations = [
