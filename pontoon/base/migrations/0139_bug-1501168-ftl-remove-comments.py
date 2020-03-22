@@ -79,6 +79,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            remove_comments_from_ftl_translations, migrations.RunPython.noop
+            remove_comments_from_ftl_translations,
+            migrations.RunPython.noop,
+            elidable=True,
         )
     ]

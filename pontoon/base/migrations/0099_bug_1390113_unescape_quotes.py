@@ -33,5 +33,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(unescape_quotes, migrations.RunPython.noop),
+        migrations.RunPython(unescape_quotes, migrations.RunPython.noop, elidable=True),
     ]

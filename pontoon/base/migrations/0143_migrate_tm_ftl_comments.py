@@ -36,6 +36,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            regenerate_ftl_entries_with_comments, migrations.RunPython.noop
+            regenerate_ftl_entries_with_comments,
+            migrations.RunPython.noop,
+            elidable=True,
         )
     ]

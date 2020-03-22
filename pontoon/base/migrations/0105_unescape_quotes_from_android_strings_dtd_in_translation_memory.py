@@ -45,5 +45,6 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             unescape_quotes_in_tm_entries_from_android_strings_dtd,
             migrations.RunPython.noop,
+            elidable=True,
         )
     ]

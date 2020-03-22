@@ -24,4 +24,6 @@ class Migration(migrations.Migration):
         ("base", "0066_userprofile_from_django_browserid"),
     ]
 
-    operations = [migrations.RunPython(mark_browserid_accounts, reverse_migration)]
+    operations = [
+        migrations.RunPython(mark_browserid_accounts, reverse_migration, elidable=True)
+    ]

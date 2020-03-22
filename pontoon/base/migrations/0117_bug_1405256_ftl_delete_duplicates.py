@@ -58,5 +58,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(delete_ftl_duplicates, migrations.RunPython.noop)
+        migrations.RunPython(
+            delete_ftl_duplicates, migrations.RunPython.noop, elidable=True
+        )
     ]

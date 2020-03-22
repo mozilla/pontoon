@@ -51,5 +51,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_active_translations, drop_active_translations,),
+        migrations.RunPython(
+            set_active_translations, drop_active_translations, elidable=True
+        ),
     ]
