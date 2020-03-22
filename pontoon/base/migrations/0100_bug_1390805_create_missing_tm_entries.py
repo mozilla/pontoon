@@ -36,6 +36,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            create_missing_translation_memory_entries, migrations.RunPython.noop
+            create_missing_translation_memory_entries,
+            migrations.RunPython.noop,
+            elidable=True,
         ),
     ]

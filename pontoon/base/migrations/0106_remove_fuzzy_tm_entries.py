@@ -22,6 +22,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            remove_tm_entries_of_fuzzy_translations, migrations.RunPython.noop
+            remove_tm_entries_of_fuzzy_translations,
+            migrations.RunPython.noop,
+            elidable=True,
         )
     ]

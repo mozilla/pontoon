@@ -85,5 +85,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_stats, remove_stats),
+        migrations.RunPython(populate_stats, remove_stats, elidable=True),
     ]

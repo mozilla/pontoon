@@ -25,5 +25,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_repository_website, migrations.RunPython.noop),
+        migrations.RunPython(
+            populate_repository_website, migrations.RunPython.noop, elidable=True
+        ),
     ]

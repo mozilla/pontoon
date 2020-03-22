@@ -26,5 +26,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(delete_tm_entries, migrations.RunPython.noop,),
+        migrations.RunPython(
+            delete_tm_entries, migrations.RunPython.noop, elidable=True
+        ),
     ]
