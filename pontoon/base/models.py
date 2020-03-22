@@ -16,7 +16,6 @@ import django
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 from django.db.models.functions import Length, Substr, Cast
-from partial_index import PartialIndex, PQ
 from six.moves import reduce
 from six.moves.urllib.parse import urlencode, urlparse
 from bulk_update.helper import bulk_update
