@@ -23,7 +23,7 @@
       <div class="right">
         {{ Notifications.menu() }}
 
-        {% if not user.is_authenticated() %}
+        {% if not user.is_authenticated %}
         <div class="sign-in-header">
           {% if settings.AUTHENTICATION_METHOD == 'django' %}
           <a href="{{ url('standalone_login') }}" class="button">Sign in</a>
@@ -44,7 +44,7 @@
               <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>Give Feedback</a></li>
               <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
 
-              {% if user.is_authenticated() %}
+              {% if user.is_authenticated %}
               <li class="horizontal-separator"></li>
               {% endif %}
 
@@ -55,7 +55,7 @@
                 {% endif %}
               {% endif %}
 
-              {% if user.is_authenticated() %}
+              {% if user.is_authenticated %}
                 <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Settings</a></li>
 
                 {% if settings.AUTHENTICATION_METHOD == 'django' %}

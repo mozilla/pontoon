@@ -39,9 +39,9 @@ compare-locales==7.5.1 \
 dj-database-url==0.3.0 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353
-Django==1.11.28 \
-    --hash=sha256:a3b01cdff845a43830d7ccacff55e0b8ff08305a4cbf894517a686e53ba3ad2d \
-    --hash=sha256:b33ce35f47f745fea6b5aa3cf3f4241069803a3712d423ac748bd673a39741eb
+Django==2.2.11 \
+  --hash=sha256:65e2387e6bde531d3bb803244a2b74e0253550a9612c64a60c8c5be267b30f50 \
+  --hash=sha256:b51c9c548d5c3b3ccbb133d0bebc992e8ec3f14899bce8936e6fdda6b23a1881
 django-ace==1.0.5 \
     --hash=sha256:1334f08b4c5548e8ab13b25787e6a3f49dfe5fc92bb3a3d845b5b42fa0e1aff6 \
     --hash=sha256:a2616b0265bdc1f839cc905c77243f779d82c00f3fddf58d23c08eb07e91e189
@@ -58,8 +58,6 @@ django-cors-headers==3.2.1 \
 django_csp==3.4 \
     --hash=sha256:096b634430d8ea81c3d9f216f87be890f3a975c17bb9a4631f6a1619ac09c91e \
     --hash=sha256:04c0ccd4e1339e8f6af48c55c3347dc996fde2d22d79e8bf2f6b7a920412e408
-django-dirtyfields==0.7 \
-    --hash=sha256:53fe6cc4abc05da8f0f032202d5a10dbdf2ade4d42bc70f56557b292bf327289
 django-dotenv==1.3.0 \
     --hash=sha256:dfe5b8c2be5ab3435b3d71e5a1c66bb14da8104da44ef0dd8ccc3e8a927616d9 \
     --hash=sha256:120c4621d1e4f5adabe0a683463d1be7a5a6b992edd4764d323c627d229251e0
@@ -69,16 +67,12 @@ django-jinja==2.2.2 \
     --hash=sha256:f2456d767dfbe4123e42b96015ea4b119838e2d88457999bd574cf7c634a2b25
 django-nose==1.4.4 \
     --hash=sha256:ea24863cd7278aa503af4e693fc639cc86f6ab5cc79fd36dafe17d4f5d8ea114
-django-notifications-hq==1.2 \
-    --hash=sha256:4a7afdc506a15aad89434fb9fd41b611ba2a75bc0f5ba15179b5998c5181a703
 django-partial-index==0.5.2 \
     --hash=sha256:1eae3c5274b7729e92b33bf06abe95b55288c2718904384907e18f88c3d82155 \
     --hash=sha256:8a805b52971a58cb78c925dbb976fecf59c662a1c767846061444a2587247804
 django-pipeline==1.7.0 \
     --hash=sha256:0ded22b974e3d627c27fc490ef5b23fcdcf0cdb00b704d628b5ca6d0b010d6fe \
     --hash=sha256:f7da70f00aa4baea3e0811f88927a116425deee05871fa2bfd2f8247f42d8847
-django-cookies-samesite==0.2.0 \
-    --hash=sha256:b393f8e2e1c758af952ea10afe44fe837a68a182119fdfbab2fa00f67deded0e
 django-session-csrf==0.7.1 \
     --hash=sha256:e17177e6e2e6518ec7ce6693ad10a5c747f8571d09f4cfa9082599334421605d \
     --hash=sha256:ff8c10e30d312c77fc6a6db7710e22b9383e28c03b7fe958876ca96f39aa6cf2
@@ -93,8 +87,6 @@ graphene-django==2.4.0 \
 gunicorn==19.9.0 \
     --hash=sha256:aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471 \
     --hash=sha256:fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3
-jsonfield==1.0.3 \
-    --hash=sha256:7e7f73a675c518712badd783279e26d164140f3fc2ed7a32102c3d08a6a2a4a7
 jsonschema==2.6.0 \
     --hash=sha256:000e68abd33c972a5248544925a0cae7d1125f9bf6c58280d37546b946769a08
 lxml==4.3.3 \
@@ -148,3 +140,11 @@ https://github.com/mathjazz/silme/archive/v0.10.0.zip#egg=silme==0.10.0 \
 
 https://github.com/translate/translate/archive/2.4.0.zip#egg=translate-toolkit==2.4.0 \
     --hash=sha256:ab2443bece230c5fda047786d8a9b71ea5eb874e7f33e8e2ce477a319c859113
+django-notifications-hq==1.6.0 \
+    --hash=sha256:debeb71b7076b08487b40bf07664d1cc43b9977c4480bbc969b30236dda7a461 \
+    --hash=sha256:dfc6f8bd4034ceae91143bc3802ddfb6e276eaec90e63dd23e2584c052561576
+jsonfield==3.1.0 \
+    --hash=sha256:7e4e84597de21eeaeeaaa7cc5da08c61c48a9b64d0c446b2d71255d01812887a \
+    --hash=sha256:df857811587f252b97bafba42e02805e70a398a7a47870bc6358a0308dd689ed
+django-dirtyfields==1.3.1 \
+    --hash=sha256:c3aafe524fc26c6ac573bbaf3ea852607e7b0f8622a2ec23dcdf65e1a9dcb7bb

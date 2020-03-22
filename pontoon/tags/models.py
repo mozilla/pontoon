@@ -13,7 +13,7 @@ class TagQuerySet(models.QuerySet):
 class Tag(models.Model):
     slug = models.CharField(max_length=20)
     name = models.CharField(max_length=30)
-    project = models.ForeignKey(Project, blank=True, null=True)
+    project = models.ForeignKey(Project, models.CASCADE, blank=True, null=True)
     resources = models.ManyToManyField(Resource)
     priority = models.IntegerField(blank=True, null=True, choices=PRIORITY_CHOICES)
 

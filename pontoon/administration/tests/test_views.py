@@ -403,6 +403,7 @@ def test_project_add_locale(client_superuser):
             # These are the values that actually matter.
             "pk": project.pk,
             "locales": [locale_kl.id, locale_gs.id],
+            "configuration_file": "",
         }
     )
 

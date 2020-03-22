@@ -9,7 +9,7 @@ import importlib
 
 from django.conf.urls import url
 from django.conf import settings
-from django.contrib.auth.views import login, logout
+from django.contrib.auth import login, logout
 
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers

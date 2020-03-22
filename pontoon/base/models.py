@@ -390,9 +390,13 @@ class PermissionChangelog(models.Model):
     )
 
     action_type = models.CharField(max_length=20, choices=ACTIONS_TYPES)
-    performed_by = models.ForeignKey(User, related_name="changed_permissions_log")
-    performed_on = models.ForeignKey(User, related_name="permisions_log")
-    group = models.ForeignKey(Group)
+    performed_by = models.ForeignKey(
+        User, models.SET_NULL, null=True, related_name="changed_permissions_log"
+    )
+    performed_on = models.ForeignKey(
+        User, models.SET_NULL, null=True, related_name="permisions_log"
+    )
+    group = models.ForeignKey(Group, models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -1174,6 +1178,7 @@ class Project(AggregatedStats):
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
     contact = models.ForeignKey(
         User,
+        models.SET_NULL,
         null=True,
         blank=True,
         related_name="contact_for",
@@ -1425,7 +1430,7 @@ class Project(AggregatedStats):
 
 class UserProfile(models.Model):
     # This field is required.
-    user = models.OneToOneField(User, related_name="profile")
+    user = models.OneToOneField(User, models.CASCADE, related_name="profile")
     # Other fields here.
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
@@ -1463,8 +1468,10 @@ class ExternalResource(models.Model):
     Has no relation to the Resource class.
     """
 
-    locale = models.ForeignKey(Locale, blank=True, null=True)
-    project = models.ForeignKey(Project, blank=True, null=True)
+    locale = models.ForeignKey(Locale, blank=True, null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project, blank=True, null=True, on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=32)
     url = models.URLField("URL", blank=True)
 
@@ -1487,8 +1494,12 @@ class ProjectLocaleQuerySet(models.QuerySet):
 class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
 
-    project = models.ForeignKey(Project, related_name="project_locale")
-    locale = models.ForeignKey(Locale, related_name="project_locale")
+    project = models.ForeignKey(
+        Project, related_name="project_locale", on_delete=models.CASCADE
+    )
+    locale = models.ForeignKey(
+        Locale, related_name="project_locale", on_delete=models.CASCADE
+    )
     readonly = models.BooleanField(default=False)
 
     #: Most recent translation approved or created for this project in
@@ -1630,7 +1641,9 @@ class Repository(models.Model):
         ("svn", "SVN"),
     )
 
-    project = models.ForeignKey(Project, related_name="repositories")
+    project = models.ForeignKey(
+        Project, related_name="repositories", on_delete=models.CASCADE
+    )
     type = models.CharField(max_length=255, default="git", choices=TYPE_CHOICES)
     url = models.CharField("URL", max_length=2000)
     branch = models.CharField("Branch", blank=True, max_length=2000)
@@ -1880,7 +1893,9 @@ class ResourceQuerySet(models.QuerySet):
 
 @python_2_unicode_compatible
 class Resource(models.Model):
-    project = models.ForeignKey(Project, related_name="resources")
+    project = models.ForeignKey(
+        Project, related_name="resources", on_delete=models.CASCADE
+    )
     path = models.TextField()  # Path to localization file
     total_strings = models.PositiveIntegerField(default=0)
     obsolete = models.BooleanField(default=False)
@@ -1964,7 +1979,7 @@ class Resource(models.Model):
 
 @python_2_unicode_compatible
 class Subpage(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     url = models.URLField("URL", blank=True)
     resources = models.ManyToManyField(Resource, blank=True)
@@ -2347,7 +2362,7 @@ class EntityQuerySet(models.QuerySet):
 
 @python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):
-    resource = models.ForeignKey(Resource, related_name="entities")
+    resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
     string = models.TextField()
     string_plural = models.TextField(blank=True)
     key = models.TextField(blank=True)
@@ -2752,8 +2767,8 @@ class ChangedEntityLocale(models.Model):
     specific entity since the last sync.
     """
 
-    entity = models.ForeignKey(Entity)
-    locale = models.ForeignKey(Locale)
+    entity = models.ForeignKey(Entity, models.CASCADE)
+    locale = models.ForeignKey(Locale, models.CASCADE)
     when = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -2823,9 +2838,9 @@ class TranslationQuerySet(models.QuerySet):
 
 @python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
-    entity = models.ForeignKey(Entity)
-    locale = models.ForeignKey(Locale)
-    user = models.ForeignKey(User, null=True, blank=True)
+    entity = models.ForeignKey(Entity, models.CASCADE)
+    locale = models.ForeignKey(Locale, models.CASCADE)
+    user = models.ForeignKey(User, models.SET_NULL, null=True, blank=True)
     string = models.TextField()
     # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
@@ -2840,23 +2855,39 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
-        User, related_name="approved_translations", null=True, blank=True
+        User,
+        models.SET_NULL,
+        related_name="approved_translations",
+        null=True,
+        blank=True,
     )
     approved_date = models.DateTimeField(null=True, blank=True)
 
     unapproved_user = models.ForeignKey(
-        User, related_name="unapproved_translations", null=True, blank=True
+        User,
+        models.SET_NULL,
+        related_name="unapproved_translations",
+        null=True,
+        blank=True,
     )
     unapproved_date = models.DateTimeField(null=True, blank=True)
 
     rejected = models.BooleanField(default=False)
     rejected_user = models.ForeignKey(
-        User, related_name="rejected_translations", null=True, blank=True
+        User,
+        models.SET_NULL,
+        related_name="rejected_translations",
+        null=True,
+        blank=True,
     )
     rejected_date = models.DateTimeField(null=True, blank=True)
 
     unrejected_user = models.ForeignKey(
-        User, related_name="unrejected_translations", null=True, blank=True
+        User,
+        models.SET_NULL,
+        related_name="unrejected_translations",
+        null=True,
+        blank=True,
     )
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
@@ -2875,17 +2906,17 @@ class Translation(DirtyFieldsMixin, models.Model):
             ("locale", "user", "entity"),
             ("date", "locale"),
         )
-        indexes = [
-            PartialIndex(
+        constraints = [
+            models.UniqueConstraint(
+                name="entity_locale_plural_form_active",
                 fields=["entity", "locale", "plural_form", "active"],
-                unique=True,
-                where=PQ(active=True),
+                condition=Q(active=True),
             ),
             # The rule above doesn't catch the plural_form = None case
-            PartialIndex(
+            models.UniqueConstraint(
+                name="entity_locale_active",
                 fields=["entity", "locale", "active"],
-                unique=True,
-                where=PQ(active=True, plural_form__isnull=True),
+                condition=Q(active=True, plural_form__isnull=True),
             ),
         ]
 
@@ -3252,8 +3283,10 @@ class TranslationMemoryEntry(models.Model):
     translation = models.ForeignKey(
         Translation, null=True, on_delete=models.SET_NULL, related_name="memory_entries"
     )
-    locale = models.ForeignKey(Locale)
-    project = models.ForeignKey(Project, null=True, related_name="memory_entries")
+    locale = models.ForeignKey(Locale, models.CASCADE)
+    project = models.ForeignKey(
+        Project, models.CASCADE, null=True, related_name="memory_entries"
+    )
 
     objects = TranslationMemoryEntryQuerySet.as_manager()
 
@@ -3361,8 +3394,12 @@ class TranslatedResource(AggregatedStats):
     Resource representation for a specific locale.
     """
 
-    resource = models.ForeignKey(Resource, related_name="translatedresources")
-    locale = models.ForeignKey(Locale, related_name="translatedresources")
+    resource = models.ForeignKey(
+        Resource, related_name="translatedresources", on_delete=models.CASCADE
+    )
+    locale = models.ForeignKey(
+        Locale, related_name="translatedresources", on_delete=models.CASCADE
+    )
 
     #: Most recent translation approved or created for this translated
     #: resource.
@@ -3519,7 +3556,7 @@ class TranslatedResource(AggregatedStats):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(
         Translation,

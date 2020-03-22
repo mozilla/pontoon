@@ -371,3 +371,6 @@ Werkzeug==0.15.5 \
 # django-debug-toolbar
 sqlparse==0.1.19 \
     --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
+swapper==1.1.2 \
+    --hash=sha256:4c094929675559d34ff555bfdd7ae56aa22ed828d55e8850599fadb36ca822fc \
+    --hash=sha256:a0abc7427214be9815480c4c57ddc351f3cf062240a96d57adbec36cc3fb1677
