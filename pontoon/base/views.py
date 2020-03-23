@@ -465,8 +465,8 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     if translation:
         recipients = set(translation.comments.values_list("author__pk", flat=True))
 
-        recipients.add(translation.user.pk)
-
+        if translation.user:
+            recipients.add(translation.user.pk)
         if translation.approved_user:
             recipients.add(translation.approved_user.pk)
         if translation.unapproved_user:
