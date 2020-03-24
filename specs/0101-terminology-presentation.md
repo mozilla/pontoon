@@ -23,12 +23,12 @@ Terminology is a group of specialized words, compound words or multi-word expres
 
 As the first step, we need the ability to store terms in the database. Data model should allow for importing terms stored in the TBX format and the [initial Mozilla terms list](https://docs.google.com/spreadsheets/d/1MAPD8WBnstR6pwKbNEDKOpw5CTPnl3qAobDgomdmtdY/edit?ts=5e79126c#gid=1146590716).
 
-The list of fields should include at least the following fields:
-- term
+At least the following information needs to be saved for each term:
+- term itself
 - part of speech
 - definition
 - usage
-- translations
+- translations (separate table)
 
 Next, we need to identify stored terms in any original string used in translation workbench. We should take into account that terms can take various grammatical forms when used in strings.
 
