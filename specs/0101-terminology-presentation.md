@@ -10,7 +10,8 @@ Terminology is a group of specialized words, compound words or multi-word expres
 
 - **Improving translation consistency**: it’s hard to expect all authors to always use the same translations for the same words and phrases without any help from the tool.
 - **Speeding up translation process**: localizers need to manually search for existing translations of terms found in the strings they are translating.
-- **Fixing brand translations**: trademarks present a special case for localization as they have legal and semantic significance.
+- **Fixing brand translations**: trademarks present a special case for localization as they have legal and semantic significance, which isn't always obvious to localizers.
+- **Advancing content comprehension**: it's not always clear what the (standard) expression means, especially if the comment isn't provided.
 
 # Out of scope
 
