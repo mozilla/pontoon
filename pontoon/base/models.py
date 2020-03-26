@@ -3284,7 +3284,7 @@ class TranslationMemoryEntry(models.Model):
     )
     locale = models.ForeignKey(Locale, models.CASCADE)
     project = models.ForeignKey(
-        Project, models.CASCADE, null=True, related_name="memory_entries"
+        Project, models.SET_NULL, null=True, related_name="memory_entries"
     )
 
     objects = TranslationMemoryEntryQuerySet.as_manager()
