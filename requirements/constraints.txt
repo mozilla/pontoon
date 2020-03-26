@@ -182,9 +182,10 @@ nose==1.3.6 \
     --hash=sha256:e19b4f8a495681c367ab56c3c04f8bef30ddd7907ddfd9bee663a3f3286762b6 \
     --hash=sha256:f61e0909a743eed37b1207e38a8e7b4a2fe0a82185e36f2be252ef1b3f901758
 
-# >=2.0.3 django-notifications-hq
-django-model-utils==2.0.3 \
-    --hash=sha256:fae8d517590d99730ed3cfc3fdf9378e0b3815325a8911b963241ee8e9761fd7
+# >=3.1.0 django-notifications-hq
+django-model-utils==4.0.0 \
+    --hash=sha256:9cf882e5b604421b62dbe57ad2b18464dc9c8f963fc3f9831badccae66c1139c \
+    --hash=sha256:adf09e5be15122a7f4e372cb5a6dd512bbf8d78a23a90770ad0983ee9d909061
 
 # >=2.1.3 django-pipeline
 futures==3.0.4 \
