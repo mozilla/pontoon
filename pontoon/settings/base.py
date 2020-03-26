@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     "pontoon.sync",
     "pontoon.tags",
     "pontoon.teams",
+    "pontoon.terminology",
     "pontoon.tour",
     "pontoon.translate",
     "pontoon.translations",
