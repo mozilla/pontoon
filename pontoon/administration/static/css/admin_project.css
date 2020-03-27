@@ -288,6 +288,7 @@ form .locale.select.selected {
 .checkbox label {
   float: left;
   padding: 6px 0 0 15px;
+  text-transform: uppercase;
 }
 
 .data-source,
