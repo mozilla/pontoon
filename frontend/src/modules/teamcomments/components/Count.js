@@ -10,8 +10,12 @@ type Props = {|
 |};
 
 
-export default function CommentCount(props: Props) {
+export default function Count(props: Props) {
     const { teamComments } = props;
+
+    if (teamComments.fetching) {
+        return null;
+    }
 
     if (!teamComments.comments) {
         return null;

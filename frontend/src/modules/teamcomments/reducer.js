@@ -13,12 +13,14 @@ type Action =
 
 
 export type TeamCommentState = {|
+    +fetching: boolean,
     +entity: ?number,
     +comments: Array<TeamComment>,
 |};
 
 
 const initialState = {
+    fetching: false,
     entity: null,
     comments: [],
 };
@@ -31,12 +33,14 @@ export default function reducer(
         case REQUEST:
             return {
                 ...state,
+                fetching: true,
                 entity: action.entity,
                 comments: [],
             };
         case RECEIVE:
             return {
                 ...state,
+                fetching: false,
                 comments: action.comments,
             };
         default:

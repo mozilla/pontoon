@@ -39,6 +39,9 @@ export function request(
 
 export function get(entity: number, locale: string): Function {
     return async dispatch => {
+        // request() must be called separately to prevent
+        // re-rendering of the component on addComment()
+
         // Abort all previously running requests.
         await api.entity.abort();
 
