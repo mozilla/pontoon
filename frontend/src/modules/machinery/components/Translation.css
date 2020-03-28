@@ -2,7 +2,6 @@
     border-bottom: 1px solid #5E6475;
     cursor: pointer;
     padding: 10px;
-    transition: all 0.1s ease-out;
 }
 
 .machinery .translation.cannot-copy {
