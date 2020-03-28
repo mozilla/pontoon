@@ -65,10 +65,14 @@ export function request(
 
 export function get(entity: number, locale: string, pluralForm: number): Function {
     return async dispatch => {
+        // request() must be called separately to prevent
+        // re-rendering of the component on addComment()
+
         // Abort all previously running requests.
         await api.entity.abort();
 
         const content = await api.entity.getHistory(entity, locale, pluralForm);
+
         dispatch(receive(content));
     }
 }

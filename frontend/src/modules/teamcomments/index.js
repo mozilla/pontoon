@@ -1,9 +1,10 @@
+/* @flow */
+
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-
-export { default as CommentCount } from './components/CommentCount';
 export { default as TeamComments } from './components/TeamComments';
+export { default as CommentCount } from './components/Count';
 
 export type { TeamCommentState } from './reducer';
 
