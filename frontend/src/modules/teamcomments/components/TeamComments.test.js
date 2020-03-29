@@ -18,7 +18,6 @@ describe('<TeamComments>', () => {
         />);
 
         expect(wrapper.find('p').text()).toEqual('No comments available.');
-
     });
 
     it('renders correctly when there are comments', () => {

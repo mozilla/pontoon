@@ -196,11 +196,14 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--machinery = Machinery
-entitydetails-Helpers--locales = Locales
+entitydetails-Helpers--terms = Terms
+entitydetails-Helpers--no-terms = No terms available.
+
 entitydetails-Helpers--comments = Comments
 entitydetails-Helpers--no-comments = No comments available.
 
+entitydetails-Helpers--machinery = Machinery
+entitydetails-Helpers--locales = Locales
 
 ## Entity Details Metadata
 ## Shows metadata about an entity (original string)

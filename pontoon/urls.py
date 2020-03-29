@@ -97,6 +97,7 @@ urlpatterns = [
     url(r"^translations/", include("pontoon.translations.urls")),
     url(r"", include("pontoon.teams.urls")),
     url(r"", include("pontoon.tour.urls")),
+    url(r"", include("pontoon.terminology.urls")),
     url(r"", include("pontoon.tags.urls")),
     url(r"", include("pontoon.sync.urls")),
     url(r"", include("pontoon.projects.urls")),
