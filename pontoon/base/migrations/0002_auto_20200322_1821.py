@@ -122,4 +122,9 @@ class Migration(migrations.Migration):
                 name="entity_locale_active",
             ),
         ),
+        migrations.AlterField(
+            model_name='translationmemoryentry',
+            name='project',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='memory_entries', to='base.Project'),
+        ),
     ]
