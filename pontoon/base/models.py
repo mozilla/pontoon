@@ -646,10 +646,10 @@ class Locale(AggregatedStats):
     # Locale contains references to user groups that translate or manage them.
     # Groups store respective permissions for users.
     translators_group = models.ForeignKey(
-        Group, related_name="translated_locales", null=True, on_delete=models.SET_NULL
+        Group, models.SET_NULL, related_name="translated_locales", null=True
     )
     managers_group = models.ForeignKey(
-        Group, related_name="managed_locales", null=True, on_delete=models.SET_NULL
+        Group, models.SET_NULL, related_name="managed_locales", null=True
     )
 
     # CLDR Plurals
@@ -718,10 +718,10 @@ class Locale(AggregatedStats):
     #: Most recent translation approved or created for this locale.
     latest_translation = models.ForeignKey(
         "Translation",
+        models.SET_NULL,
         blank=True,
         null=True,
         related_name="locale_latest",
-        on_delete=models.SET_NULL,
     )
 
     objects = LocaleQuerySet.as_manager()
@@ -1195,10 +1195,10 @@ class Project(AggregatedStats):
     # Most recent translation approved or created for this project.
     latest_translation = models.ForeignKey(
         "Translation",
+        models.SET_NULL,
         blank=True,
         null=True,
         related_name="project_latest",
-        on_delete=models.SET_NULL,
     )
 
     tags_enabled = models.BooleanField(default=True)
@@ -1467,9 +1467,9 @@ class ExternalResource(models.Model):
     Has no relation to the Resource class.
     """
 
-    locale = models.ForeignKey(Locale, blank=True, null=True, on_delete=models.CASCADE)
+    locale = models.ForeignKey(Locale,models.CASCADE, blank=True, null=True)
     project = models.ForeignKey(
-        Project, blank=True, null=True, on_delete=models.CASCADE
+        Project,models.CASCADE, blank=True, null=True, 
     )
     name = models.CharField(max_length=32)
     url = models.URLField("URL", blank=True)
@@ -1494,10 +1494,10 @@ class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
 
     project = models.ForeignKey(
-        Project, related_name="project_locale", on_delete=models.CASCADE
+        Project,models.CASCADE, related_name="project_locale"
     )
     locale = models.ForeignKey(
-        Locale, related_name="project_locale", on_delete=models.CASCADE
+        Locale,models.CASCADE, related_name="project_locale", 
     )
     readonly = models.BooleanField(default=False)
 
@@ -1505,16 +1505,16 @@ class ProjectLocale(AggregatedStats):
     #: this locale.
     latest_translation = models.ForeignKey(
         "Translation",
+        models.SET_NULL,
         blank=True,
         null=True,
         related_name="project_locale_latest",
-        on_delete=models.SET_NULL,
     )
 
     # ProjectLocale contains references to user groups that translate them.
     # Groups store respective permissions for users.
     translators_group = models.ForeignKey(
-        Group, related_name="projectlocales", null=True, on_delete=models.SET_NULL
+        Group,models.SET_NULL, related_name="projectlocales", null=True
     )
 
     # Defines if locale has a translators group for the specific project.
@@ -1641,7 +1641,7 @@ class Repository(models.Model):
     )
 
     project = models.ForeignKey(
-        Project, related_name="repositories", on_delete=models.CASCADE
+        Project,models.CASCADE, related_name="repositories"
     )
     type = models.CharField(max_length=255, default="git", choices=TYPE_CHOICES)
     url = models.CharField("URL", max_length=2000)
@@ -1893,7 +1893,7 @@ class ResourceQuerySet(models.QuerySet):
 @python_2_unicode_compatible
 class Resource(models.Model):
     project = models.ForeignKey(
-        Project, related_name="resources", on_delete=models.CASCADE
+        Project, models.CASCADE, related_name="resources"
     )
     path = models.TextField()  # Path to localization file
     total_strings = models.PositiveIntegerField(default=0)
@@ -1978,7 +1978,7 @@ class Resource(models.Model):
 
 @python_2_unicode_compatible
 class Subpage(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, models.CASCADE)
     name = models.CharField(max_length=128)
     url = models.URLField("URL", blank=True)
     resources = models.ManyToManyField(Resource, blank=True)
@@ -3277,10 +3277,10 @@ class TranslationMemoryEntry(models.Model):
     target = models.TextField()
 
     entity = models.ForeignKey(
-        Entity, null=True, on_delete=models.SET_NULL, related_name="memory_entries"
+        Entity, models.SET_NULL, null=True,  related_name="memory_entries"
     )
     translation = models.ForeignKey(
-        Translation, null=True, on_delete=models.SET_NULL, related_name="memory_entries"
+        Translation,models.SET_NULL, null=True,  related_name="memory_entries"
     )
     locale = models.ForeignKey(Locale, models.CASCADE)
     project = models.ForeignKey(
@@ -3394,20 +3394,20 @@ class TranslatedResource(AggregatedStats):
     """
 
     resource = models.ForeignKey(
-        Resource, related_name="translatedresources", on_delete=models.CASCADE
+        Resource,models.CASCADE, related_name="translatedresources", 
     )
     locale = models.ForeignKey(
-        Locale, related_name="translatedresources", on_delete=models.CASCADE
+        Locale,models.CASCADE, related_name="translatedresources", 
     )
 
     #: Most recent translation approved or created for this translated
     #: resource.
     latest_translation = models.ForeignKey(
         "Translation",
+        models.SET_NULL,
         blank=True,
         null=True,
         related_name="resource_latest",
-        on_delete=models.SET_NULL,
     )
 
     objects = TranslatedResourceQuerySet.as_manager()
@@ -3555,20 +3555,20 @@ class TranslatedResource(AggregatedStats):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(
         Translation,
-        on_delete=models.CASCADE,
+        models.CASCADE,
         related_name="comments",
         blank=True,
         null=True,
     )
     locale = models.ForeignKey(
-        Locale, on_delete=models.CASCADE, related_name="comments", blank=True, null=True
+        Locale, models.CASCADE, related_name="comments", blank=True, null=True
     )
     entity = models.ForeignKey(
-        Entity, on_delete=models.CASCADE, related_name="comments", blank=True, null=True
+        Entity, models.CASCADE, related_name="comments", blank=True, null=True
     )
     content = models.TextField()
 
