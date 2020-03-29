@@ -24,12 +24,18 @@ Terminology is a group of specialized words, compound words or multi-word expres
 
 As the first step, we need the ability to store terms in the database. Data model should allow for importing terms stored in a [TBX file](https://www.gala-global.org/sites/default/files/uploads/pdfs/tbx_oscar_0.pdf) and the [initial Mozilla term list](https://docs.google.com/spreadsheets/d/1MAPD8WBnstR6pwKbNEDKOpw5CTPnl3qAobDgomdmtdY/edit?ts=5e79126c#gid=1146590716).
 
-At least the following information needs to be saved for each term:
+The following information needs to be saved for each term:
 - term itself
-- part of speech
+- review status (new, review, approved, obsolete)
+- part of speech (verb, noun, adjective, adverb)
 - definition
-- usage
-- translations (separate table)
+- usage example
+- notes for term managers
+- case sensitive (boolean, used when finding terms in strings)
+- exact match (boolean, used when finding terms in strings)
+- do not translate (boolean, used when translating terms)
+- forbidden (boolean, note for developers)
+- term translations (separate table)
 
 Next, we need to identify stored terms in any original string used in translation workbench. We should take into account that terms can take various grammatical forms when used in strings and use tokenization and stemming to mitigate that.
 
