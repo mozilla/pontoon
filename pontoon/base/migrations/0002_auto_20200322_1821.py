@@ -123,8 +123,13 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name='translationmemoryentry',
-            name='project',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='memory_entries', to='base.Project'),
+            model_name="translationmemoryentry",
+            name="project",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="memory_entries",
+                to="base.Project",
+            ),
         ),
     ]

@@ -1467,10 +1467,8 @@ class ExternalResource(models.Model):
     Has no relation to the Resource class.
     """
 
-    locale = models.ForeignKey(Locale,models.CASCADE, blank=True, null=True)
-    project = models.ForeignKey(
-        Project,models.CASCADE, blank=True, null=True, 
-    )
+    locale = models.ForeignKey(Locale, models.CASCADE, blank=True, null=True)
+    project = models.ForeignKey(Project, models.CASCADE, blank=True, null=True,)
     name = models.CharField(max_length=32)
     url = models.URLField("URL", blank=True)
 
@@ -1493,12 +1491,8 @@ class ProjectLocaleQuerySet(models.QuerySet):
 class ProjectLocale(AggregatedStats):
     """Link between a project and a locale that is active for it."""
 
-    project = models.ForeignKey(
-        Project,models.CASCADE, related_name="project_locale"
-    )
-    locale = models.ForeignKey(
-        Locale,models.CASCADE, related_name="project_locale", 
-    )
+    project = models.ForeignKey(Project, models.CASCADE, related_name="project_locale")
+    locale = models.ForeignKey(Locale, models.CASCADE, related_name="project_locale",)
     readonly = models.BooleanField(default=False)
 
     #: Most recent translation approved or created for this project in
@@ -1514,7 +1508,7 @@ class ProjectLocale(AggregatedStats):
     # ProjectLocale contains references to user groups that translate them.
     # Groups store respective permissions for users.
     translators_group = models.ForeignKey(
-        Group,models.SET_NULL, related_name="projectlocales", null=True
+        Group, models.SET_NULL, related_name="projectlocales", null=True
     )
 
     # Defines if locale has a translators group for the specific project.
@@ -1640,9 +1634,7 @@ class Repository(models.Model):
         ("svn", "SVN"),
     )
 
-    project = models.ForeignKey(
-        Project,models.CASCADE, related_name="repositories"
-    )
+    project = models.ForeignKey(Project, models.CASCADE, related_name="repositories")
     type = models.CharField(max_length=255, default="git", choices=TYPE_CHOICES)
     url = models.CharField("URL", max_length=2000)
     branch = models.CharField("Branch", blank=True, max_length=2000)
@@ -1892,9 +1884,7 @@ class ResourceQuerySet(models.QuerySet):
 
 @python_2_unicode_compatible
 class Resource(models.Model):
-    project = models.ForeignKey(
-        Project, models.CASCADE, related_name="resources"
-    )
+    project = models.ForeignKey(Project, models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
     total_strings = models.PositiveIntegerField(default=0)
     obsolete = models.BooleanField(default=False)
@@ -3277,10 +3267,10 @@ class TranslationMemoryEntry(models.Model):
     target = models.TextField()
 
     entity = models.ForeignKey(
-        Entity, models.SET_NULL, null=True,  related_name="memory_entries"
+        Entity, models.SET_NULL, null=True, related_name="memory_entries"
     )
     translation = models.ForeignKey(
-        Translation,models.SET_NULL, null=True,  related_name="memory_entries"
+        Translation, models.SET_NULL, null=True, related_name="memory_entries"
     )
     locale = models.ForeignKey(Locale, models.CASCADE)
     project = models.ForeignKey(
@@ -3394,10 +3384,10 @@ class TranslatedResource(AggregatedStats):
     """
 
     resource = models.ForeignKey(
-        Resource,models.CASCADE, related_name="translatedresources", 
+        Resource, models.CASCADE, related_name="translatedresources",
     )
     locale = models.ForeignKey(
-        Locale,models.CASCADE, related_name="translatedresources", 
+        Locale, models.CASCADE, related_name="translatedresources",
     )
 
     #: Most recent translation approved or created for this translated
@@ -3558,11 +3548,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(
-        Translation,
-        models.CASCADE,
-        related_name="comments",
-        blank=True,
-        null=True,
+        Translation, models.CASCADE, related_name="comments", blank=True, null=True,
     )
     locale = models.ForeignKey(
         Locale, models.CASCADE, related_name="comments", blank=True, null=True
