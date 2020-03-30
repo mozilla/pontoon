@@ -39,9 +39,9 @@ The following information needs to be saved for each term:
 
 Next, we need to identify stored terms in any original string used in translation workbench. We should take into account that terms can take various grammatical forms when used in strings and use tokenization and stemming to mitigate that.
 
-Terms should be highlighted in the original string, similarly to how we highlight placeables. On term hover, a popup should appear with a list of matching terms and the corresponding metadata (description, part of speech and translation, if exists). On click, translation of the first term should be inserted into the editor.
+Terms should be highlighted in the original string, similarly to how we highlight placeables. On term hover, a popup should appear with a list of matching terms and the corresponding metadata (part of speech, definition, translation). On click, translation of the first term in the list (if exists) should be inserted into the editor.
 
-Additionally, we could also introduce the Terminology panel in the 3rd column, next to Machinery, Locales and Comments. It would allow translators to see terms and the corresponding metadata all the time, without the need to hover. Translations of terms (if exist) would be inserted into the editor on click.
+Additionally, we could also introduce the Terms panel in the 3rd column with the contents of the term popups of the entire string always visbile. On click, translation of the clicked term (if exists) should be inserted into the editor. Since this 3rd column is getting crowded with tabs, we should either split it vertically (as shown in the mockup) or (at least on narrow screens) replace tab titles with icons.
 
 # Mockup
 
