@@ -37,11 +37,33 @@ The following information needs to be saved for each term:
 - forbidden (boolean, note for developers)
 - term translations (separate table)
 
-Next, we need to identify stored terms in any original string used in translation workbench. We should take into account that terms can take various grammatical forms when used in strings and use tokenization and stemming to mitigate that.
+Next, we need to identify stored terms in any original string used in translation workbench. We should take into account that terms can take various grammatical forms when used in strings, so simple `if term in string` isn't enough. As it turned out in our [previous attempt](https://github.com/mozilla/pontoon/pull/535), stemming yields false positives (e.g "extension" matches "extensibility") and singularization yields false negatives (because e.g. "curricula" results in "curricula"), so we should't use them. See the Algorithm section for more details.
 
 Terms should be highlighted in the original string, similarly to how we highlight placeables. On term hover, a popup should appear with a list of matching terms and the corresponding metadata (part of speech, definition, translation). On click, translation of the first term in the list (if exists) should be inserted into the editor.
 
 Additionally, we could also introduce the Terms panel in the 3rd column with the contents of the term popups of the entire string always visbile. On click, translation of the clicked term (if exists) should be inserted into the editor. Since this 3rd column is getting crowded with tabs, we should either split it vertically (as shown in the mockup) or (at least on narrow screens) replace tab titles with icons.
+
+# Algorithm
+
+The following combination of tokenization and substring matching correctly identifies terms in their usage examples within the [initial Mozilla term list](https://docs.google.com/spreadsheets/d/1MAPD8WBnstR6pwKbNEDKOpw5CTPnl3qAobDgomdmtdY/edit?ts=5e79126c#gid=1146590716), so let's build the algorithm to find terms in a string around this logic:
+
+```
+create a list of source string words using nltk.word_tokenize()
+
+for each term:
+    if term.exact_match == True:
+        if exact match of the term exists in source string:
+            collect term
+
+    else:
+        if term.case_sensitive == False:
+            set re.IGNORECASE flag for the regexes
+        for each source string word:
+            if term is a match or substring of the word:
+                collect term
+```
+
+The algorithm need to be further improved to also supports multi-word terms.
 
 # Mockup
 
