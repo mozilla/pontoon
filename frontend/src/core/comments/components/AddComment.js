@@ -38,6 +38,10 @@ export default function AddComments(props: Props) {
         editor.current.focus();
     }
 
+    const onChange = (editorState) => {
+        setEditorState(editorState);
+    }
+
     function keyBindingFn(e: SyntheticKeyboardEvent<>) {
         if (e.keyCode === 13 && e.shiftKey === false) {
           return 'submitOnEnter' 
@@ -110,10 +114,10 @@ export default function AddComments(props: Props) {
         <div className='container'>
             <div className='comment-div' onClick={ focusEditor }>
                 <Editor
-                    ref={editor}
-                    editorState={editorState}
+                    ref={ editor }
+                    editorState={ editorState }
                     placeholder='Write a comment…'
-                    onChange={editorState => setEditorState(editorState)}
+                    onChange={ onChange }
                     keyBindingFn={ keyBindingFn }
                     handleKeyCommand={ handleKeyCommand }
                 />
