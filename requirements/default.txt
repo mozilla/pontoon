@@ -45,8 +45,8 @@ Django==2.2.11 \
 django-ace==1.0.5 \
     --hash=sha256:1334f08b4c5548e8ab13b25787e6a3f49dfe5fc92bb3a3d845b5b42fa0e1aff6 \
     --hash=sha256:a2616b0265bdc1f839cc905c77243f779d82c00f3fddf58d23c08eb07e91e189
-django-allauth==0.34.0 \
-    --hash=sha256:95a9f7fbebe3e97ce3a541d213fc52492b50dac92f0f91483f58949189e5aa4f
+django-allauth==0.41.0 \
+    --hash=sha256:7ab91485b80d231da191d5c7999ba93170ef1bf14ab6487d886598a1ad03e1d8
 django-bmemcached==0.2.3 \
     --hash=sha256:c9e4f5ca17417a26354e7d6a8899e44e34d541e8731ea0d987f2bf5a04df351a
 django-bulk-update==2.2.0 \
@@ -65,8 +65,9 @@ django-dotenv==1.3.0 \
     --hash=sha256:120c4621d1e4f5adabe0a683463d1be7a5a6b992edd4764d323c627d229251e0
 django_guardian==1.4.9 \
     --hash=sha256:8836ac9263c9bd8c162efa5fbd0729f7f8ef83008c8da298e8e2aa81ea624c47
-django-jinja==2.2.2 \
-    --hash=sha256:f2456d767dfbe4123e42b96015ea4b119838e2d88457999bd574cf7c634a2b25
+django-jinja==2.6.0 \
+    --hash=sha256:4e3e97d7b40669926a9517eb4522cd98dce2e32dcba908aad156810b74744148 \
+    --hash=sha256:7459985c25ddb6584c6bab345761c8c5557713448e6fbb322af1b6dd7f5512bd
 django-nose==1.4.4 \
     --hash=sha256:ea24863cd7278aa503af4e693fc639cc86f6ab5cc79fd36dafe17d4f5d8ea114
 django-notifications-hq==1.6.0 \
