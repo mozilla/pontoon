@@ -167,9 +167,9 @@ oauthlib==2.0.2 \
     --hash=sha256:b3b9b47f2a263fe249b5b48c4e25a5bce882ff20a0ac34d553ce43cff55b53ac
 
 # >=2.5 django-jinja
-Jinja2==2.10.1 \
-    --hash=sha256:065c4f02ebe7f7cf559e49ee5a95fb800a9e4528727aec6f24402a5374c65013 \
-    --hash=sha256:14dd6caf1527abb21f08f86c784eac40853ba93edb79552aa1e4b8aef1b61c7b
+Jinja2==2.11.1 \
+    --hash=sha256:93187ffbc7808079673ef52771baa950426fd664d3aad1d0fa3e95644360e250 \
+    --hash=sha256:b0eaf100007721b5c16c1fc1eecb87409464edc10469ddc9a22a27a99123be49
 
 # Jinja2
 MarkupSafe==0.23 \
@@ -377,6 +377,3 @@ Werkzeug==0.15.5 \
 # django-debug-toolbar
 sqlparse==0.1.19 \
     --hash=sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
-Jinja==1.2 \
-    --hash=sha256:36252f3d0356008a31a537a31cfba189f7b5898b8e2da454f72ea5f987db8b31 \
-    --hash=sha256:4f658d271df403c5fc92837757a051a816ed3914b5d3bdc79fba7031f1f9d68e
