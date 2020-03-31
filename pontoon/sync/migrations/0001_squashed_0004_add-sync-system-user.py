@@ -37,13 +37,6 @@ def remove_sync_user(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("sync", "0001_initial"),
-        ("sync", "0002_auto_20151117_0029"),
-        ("sync", "0003_auto_20151204_2343"),
-        ("sync", "0004_add-sync-system-user"),
-    ]
-
     initial = True
 
     dependencies = [

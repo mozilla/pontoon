@@ -1,5 +1,5 @@
 {% macro menu() %}
-{% if user.is_authenticated() %}
+{% if user.is_authenticated %}
 
 <div id="notifications" class="notifications select{% if user.notifications.unread() %} unread{% endif %}">
 

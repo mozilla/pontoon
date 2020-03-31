@@ -249,7 +249,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         assert_false(RepositorySyncLog.objects.exists())
 
         repo = RepositoryFactory.create()
-        self.db_project.repositories = [repo]
+        self.db_project.repositories.set([repo])
         self.db_project.save()
         self.mock_pull_changes.return_value = [
             True,

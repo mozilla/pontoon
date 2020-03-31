@@ -139,7 +139,7 @@ def test_view_caighdean_bad(client, entity_a):
     response = client.get(url)
     assert response.status_code == 400
     assert response.get("Content-Type") == "application/json"
-    assert json.loads(response.content)["message"] == "Bad Request: \"'id'\""
+    assert json.loads(response.content)["message"] == "Bad Request: 'id'"
 
     response = client.get(url, dict(id="DOESNOTEXIST"))
     assert response.status_code == 400

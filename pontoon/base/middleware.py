@@ -43,7 +43,7 @@ class AutomaticLoginUserMiddleware(MiddlewareMixin):
     """
 
     def process_request(self, request):
-        if settings.AUTO_LOGIN and not request.user.is_authenticated():
+        if settings.AUTO_LOGIN and not request.user.is_authenticated:
             user = auth.authenticate(
                 username=settings.AUTO_LOGIN_USERNAME,
                 password=settings.AUTO_LOGIN_PASSWORD,

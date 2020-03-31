@@ -70,7 +70,7 @@ def url(viewname, *args, **kwargs):
 def return_url(request):
     """Get an url of the previous page."""
     url = request.POST.get("return_url", request.META.get("HTTP_REFERER", "/"))
-    if not is_safe_url(url, allowed_hosts=settings.ALLOWED_HOSTS):
+    if not is_safe_url(url, settings.ALLOWED_HOSTS):
         return settings.SITE_URL
     return url
 

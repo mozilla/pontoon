@@ -38,6 +38,8 @@ AUTO_LOGIN = os.environ.get("AUTO_LOGIN", "False") != "False"
 AUTO_LOGIN_USERNAME = os.environ.get("AUTO_LOGIN_USERNAME", None)
 AUTO_LOGIN_PASSWORD = os.environ.get("AUTO_LOGIN_PASSWORD", None)
 
+LOGOUT_REDIRECT_URL = "/"
+
 ADMINS = MANAGERS = (
     (os.environ.get("ADMIN_NAME", ""), os.environ.get("ADMIN_EMAIL", "")),
 )
@@ -130,6 +132,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.messages",
     "django.contrib.sessions",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
@@ -160,7 +163,6 @@ BLOCKED_IPS = os.environ.get("BLOCKED_IPS", "").split(",")
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django_cookies_samesite.middleware.CookiesSameSite",
     "django.middleware.gzip.GZipMiddleware",
     "pontoon.base.middleware.RaygunExceptionMiddleware",
     "pontoon.base.middleware.BlockedIpMiddleware",
@@ -810,9 +812,12 @@ else:
         SITE_URL,
     ]
 
-# Attach extra arguments passed to notify.send(...) to the .data attribute
-# of the Notification object.
-NOTIFICATIONS_USE_JSONFIELD = True
+# Configuration of `django-notifications-hq` app
+DJANGO_NOTIFICATIONS_CONFIG = {
+    # Attach extra arguments passed to notify.send(...) to the .data attribute
+    # of the Notification object.
+    "USE_JSONFIELD": True,
+}
 
 # Maximum number of read notifications to display in the notifications menu
 NOTIFICATIONS_MAX_COUNT = 7

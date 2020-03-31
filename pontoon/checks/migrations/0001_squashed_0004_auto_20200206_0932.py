@@ -19,14 +19,6 @@ def remove_warnings_and_errors(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ("checks", "0001_initial"),
-        ("checks", "0002_remove_translate_toolkit_errors_and_warnings"),
-        ("checks", "0003_auto_20180716_1945"),
-        ("checks", "0004_auto_20200206_0932"),
-    ]
-
     initial = True
 
     dependencies = [
