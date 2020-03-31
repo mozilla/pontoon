@@ -2,7 +2,15 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
-import { Editor, EditorState, getDefaultKeyBinding } from 'draft-js';
+import { 
+    Editor, 
+    EditorState, 
+    getDefaultKeyBinding, 
+    convertToRaw, 
+    SelectionState,
+    Modifier, 
+} from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
 
 import './AddComment.css';
 
@@ -30,77 +38,58 @@ export default function AddComments(props: Props) {
         EditorState.createEmpty()
     )
     const editor: any = React.useRef(null);
-    // const commentInput: any = React.useRef();
-    // const minRows = 1;
-    // const maxRows = 6;
-
-   function focusEditor() {
-        editor.current.focus();
-    }
+    const rawContentState = convertToRaw(editorState.getCurrentContent());
 
     const onChange = (editorState) => {
         setEditorState(editorState);
+    }
+
+    function focusEditor() {
+        editor.current.focus();
     }
 
     function keyBindingFn(e: SyntheticKeyboardEvent<>) {
         if (e.keyCode === 13 && e.shiftKey === false) {
           return 'submitOnEnter' 
         }
-      
-        // This wasn't the delete key, so we return default for this key
+        
         return getDefaultKeyBinding(e)
-      }
+    }
 
     React.useEffect(() => {
         focusEditor()
     }, []);
 
-    // const handleOnChange = () => {
-    //     const textAreaLineHeight = 24;
-    //     commentInput.current.rows = minRows;
-
-    //     const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
-
-    //     if (currentRows < maxRows) {
-    //         commentInput.current.rows = currentRows;
-    //     }
-    //     else {
-    //         commentInput.current.rows = maxRows;
-    //     }
-    // }
-
-    // const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
-    //     if (event.keyCode === 13 && event.shiftKey === false) {
-    //         submitComment(event);
-    //     }
-    // }
-
     const handleKeyCommand = (command: string) => {
         if (command === 'submitOnEnter') {
             submitComment();
-          return 'handled';
+            return 'handled';
         }
         return 'not-handled';
-      }
+        }
 
       const submitComment = () => {
-          console.log("Submit on enter worked.");
+        const comment = draftToHtml(
+            rawContentState,
+        )
+        
+        addComment(comment, translation);
+
+        // Clear the editor
+        let contentState = editorState.getCurrentContent();
+        const firstBlock = contentState.getFirstBlock();
+        const lastBlock = contentState.getLastBlock();
+        const allSelected = new SelectionState({
+            anchorKey: firstBlock.getKey(),
+            anchorOffset: 0,
+            focusKey: lastBlock.getKey(),
+            focusOffset: lastBlock.getLength(),
+            hasFocus: true
+        });
+        contentState = Modifier.removeRange(contentState, allSelected, 'backward');
+        setEditorState(EditorState.push(editorState, contentState, 'remove-range'));
+        setEditorState(EditorState.forceSelection(contentState, contentState.getSelectionAfter()));
       }
-
-    // const submitComment = (event: SyntheticEvent<>) => {
-    //     event.preventDefault();
-    //     const comment = '';
-    //     const contentState = editorState.getCurrentContent();
-    //     console.log('content state', contentState);
-
-    //     if (!comment) {
-    //         return null;
-    //     }
-
-    //     addComment(comment, translation);
-
-    //     setEditorState(EditorState.createEmpty());
-    // };
 
     if (!user) {
         return null;
@@ -138,37 +127,5 @@ export default function AddComments(props: Props) {
                 </button>
             </Localized>
         </div>
-        {/* <form className='container'>
-            <Localized
-                id='comments-AddComment--input'
-                attrs={{ placeholder: true }}
-            >
-                <textarea
-                    autoFocus
-                    name='comment'
-                    dir='auto'
-                    placeholder={ `Write a comment…` }
-                    rows={ minRows }
-                    ref={ commentInput }
-                    onChange={ handleOnChange }
-                    onKeyDown={ handleOnKeyDown }
-                />
-            </Localized>
-            <Localized
-                id="comments-AddComment--submit-button"
-                attrs={{ title: true }}
-                glyph={
-                    <i className="fa fa-paper-plane"></i>
-                }
-            >
-                <button
-                    className="submit-button"
-                    title="Submit comment"
-                    onClick={ submitComment }
-                >
-                    { '<glyph></glyph>' }
-                </button>
-            </Localized>
-        </form> */}
     </div>
 }
