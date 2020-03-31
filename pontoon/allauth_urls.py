@@ -9,19 +9,18 @@ import importlib
 
 from django.conf.urls import url
 from django.conf import settings
-from django.contrib.auth.views import login, logout
+from django.contrib.auth import views
 
 from allauth.account import views as account_views
 from allauth.socialaccount import views as socialaccount_views, providers
 
 if settings.AUTHENTICATION_METHOD == "django":
     urlpatterns = [
-        url(r"^standalone-login/$", login, name="standalone_login"),
+        url(r"^standalone-login/$", views.LoginView.as_view(), name="standalone_login"),
         url(
             r"^standalone-logout/$",
-            logout,
+            views.LogoutView.as_view(),
             name="standalone_logout",
-            kwargs={"next_page": "/"},
         ),
     ]
 else:

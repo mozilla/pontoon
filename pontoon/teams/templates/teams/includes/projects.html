@@ -7,7 +7,7 @@
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
     </div>
 
-    {% if user.is_authenticated() and has_projects_to_request %}
+    {% if user.is_authenticated and has_projects_to_request %}
     <button class="request-toggle button small request-projects">
       <span class="fa fa-chevron-right"></span>
     </button>

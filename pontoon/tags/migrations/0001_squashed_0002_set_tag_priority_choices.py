@@ -8,8 +8,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [("tags", "0001_initial"), ("tags", "0002_set_tag_priority_choices")]
-
     initial = True
 
     dependencies = [

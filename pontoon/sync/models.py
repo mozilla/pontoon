@@ -119,8 +119,10 @@ class SyncLog(BaseLog):
 
 
 class ProjectSyncLog(BaseLog):
-    sync_log = models.ForeignKey(SyncLog, related_name="project_sync_logs")
-    project = models.ForeignKey(Project)
+    sync_log = models.ForeignKey(
+        SyncLog, models.CASCADE, related_name="project_sync_logs"
+    )
+    project = models.ForeignKey(Project, models.CASCADE)
 
     start_time = models.DateTimeField(default=timezone.now)
 
@@ -173,9 +175,9 @@ class ProjectSyncLog(BaseLog):
 
 class RepositorySyncLog(BaseLog):
     project_sync_log = models.ForeignKey(
-        ProjectSyncLog, related_name="repository_sync_logs"
+        ProjectSyncLog, models.CASCADE, related_name="repository_sync_logs"
     )
-    repository = models.ForeignKey(Repository)
+    repository = models.ForeignKey(Repository, models.CASCADE)
 
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(default=None, blank=True, null=True)

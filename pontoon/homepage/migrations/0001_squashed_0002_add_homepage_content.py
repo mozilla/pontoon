@@ -34,9 +34,6 @@ def remove_homepage_entry(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    replaces = [("homepage", "0001_initial"), ("homepage", "0002_add_homepage_content")]
-
     initial = True
 
     dependencies = []

@@ -6,7 +6,7 @@ import hashlib
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from django.contrib.auth.models import User
-from django.utils.encoding import smart_bytes
+from django.utils.encoding import smart_bytes, smart_str
 
 
 class PontoonSocialAdapter(DefaultSocialAccountAdapter):
@@ -16,9 +16,11 @@ class PontoonSocialAdapter(DefaultSocialAccountAdapter):
         This is required to avoid collisions and the backward compatibility.
         """
         user = super(PontoonSocialAdapter, self).save_user(request, sociallogin, form)
-        user.username = base64.urlsafe_b64encode(
-            hashlib.sha1(smart_bytes(user.email)).digest()
-        ).rstrip(b"=")
+        user.username = smart_str(
+            base64.urlsafe_b64encode(
+                hashlib.sha1(smart_bytes(user.email)).digest()
+            ).rstrip(b"=")
+        )
         user.save()
         return user
 

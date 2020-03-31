@@ -8,12 +8,12 @@
 <!-- Server data -->
 <div id="server" class="hidden"
      {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-     {% if user.is_authenticated() and user.email %}data-email="{{ user.email|nospam }}"{% endif %}
+     {% if user.is_authenticated and user.email %}data-email="{{ user.email|nospam }}"{% endif %}
      >
 </div>
 {% endblock %}
 
-{% set my_profile = (user.is_authenticated() and user.email == contributor.email) %}
+{% set my_profile = (user.is_authenticated and user.email == contributor.email) %}
 
 {% block heading %}
 <section id="heading">
@@ -29,7 +29,7 @@
   <ul class="info">
     <li>
       <span class="fa fa-fw fa-envelope"></span>
-      {% if user.is_authenticated() %}
+      {% if user.is_authenticated %}
       <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
       {% else %}
       {% if settings.AUTHENTICATION_METHOD == 'django' %}

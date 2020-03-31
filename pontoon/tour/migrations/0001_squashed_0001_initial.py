@@ -93,9 +93,6 @@ def remove_tutorial_project(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    replaces = [("tour", "0001_initial")]
-
     initial = True
 
     dependencies = [

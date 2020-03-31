@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth.views import logout
+from django.contrib.auth import logout
 from django.views.generic import RedirectView, TemplateView
 
 from pontoon.teams.views import team
@@ -66,7 +66,7 @@ urlpatterns = [
     # Admin
     url(r"^admin/", include("pontoon.administration.urls")),
     # Django admin
-    url(r"^a/", include(admin.site.urls)),
+    url(r"^a/", admin.site.urls),
     # Logout
     url(r"^signout/$", logout, {"next_page": "/"}, name="signout"),
     # Error pages

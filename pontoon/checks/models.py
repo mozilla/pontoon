@@ -29,14 +29,16 @@ class FailedCheck(models.Model):
 
 
 class Warning(FailedCheck):
-    translation = models.ForeignKey(Translation, related_name="warnings")
+    translation = models.ForeignKey(
+        Translation, models.CASCADE, related_name="warnings"
+    )
 
     class Meta(FailedCheck.Meta):
         unique_together = (("translation", "library", "message"),)
 
 
 class Error(FailedCheck):
-    translation = models.ForeignKey(Translation, related_name="errors")
+    translation = models.ForeignKey(Translation, models.CASCADE, related_name="errors")
 
     class Meta(FailedCheck.Meta):
         unique_together = (("translation", "library", "message"),)
