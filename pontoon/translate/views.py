@@ -124,9 +124,9 @@ def translate(request, locale, project, resource):
     # django object so that it can be turned into JSON.
     notifications = messages.get_messages(request)
     if notifications:
-        context["notifications"] = map(
-            lambda x: {"content": str(x), "type": x.tags}, notifications
-        )
+        context["notifications"] = [
+            {"content": str(x), "type": x.tags} for x in notifications
+        ]
 
     if settings.DEBUG:
         return catchall_dev(request, context=context)
