@@ -308,7 +308,9 @@ After deploying the site, you can create a superuser account using the
 
 .. code-block:: bash
 
-   heroku run ./manage.py createsuperuser --noinput --user=admin --email=your@email.com
+   heroku run ./manage.py createsuperuser --user=admin --email=your@email.com
+
+You'll then be prompted to set a password for your new user.
 
 If you've already logged into the site with the email that you want to use,
 you'll have to use the Django shell to mark your user account as an admin:
