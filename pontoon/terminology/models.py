@@ -1,4 +1,31 @@
+import re
+
+from sacremoses import MosesTokenizer
+
 from django.db import models
+
+
+class TermQuerySet(models.QuerySet):
+    def for_string(self, string):
+        term_pks = []
+        valid_terms = self.exclude(definition="").exclude(forbidden=True)
+        mt = MosesTokenizer()
+        source_words = mt.tokenize(string)
+
+        for term in valid_terms:
+            flags = 0 if term.case_sensitive else re.IGNORECASE
+            terms_words = mt.tokenize(term.text)
+
+            if len(terms_words) == 1:
+                for word in source_words:
+                    if re.search(terms_words[0], word, flags):
+                        term_pks.append(term.pk)
+                        break
+            else:
+                if re.search("".join(terms_words), "".join(source_words), flags):
+                    term_pks.append(term.pk)
+
+        return self.filter(pk__in=term_pks)
 
 
 class Term(models.Model):
@@ -34,14 +61,25 @@ class Term(models.Model):
         "auth.User", models.CASCADE, related_name="terms", null=True, blank=True
     )
 
+    objects = TermQuerySet.as_manager()
+
+    def translation(self, locale):
+        if self.do_not_translate:
+            return self.text
+        else:
+            try:
+                return self.translations.get(locale=locale).text
+            except (AttributeError, TermTranslation.DoesNotExist):
+                return None
+
     def __str__(self):
         return self.text
 
 
 class TermTranslation(models.Model):
     term = models.ForeignKey(Term, models.CASCADE, related_name="translations")
-
     locale = models.ForeignKey("base.Locale", models.CASCADE, related_name="terms")
+
     text = models.CharField(max_length=255)
 
     def __str__(self):

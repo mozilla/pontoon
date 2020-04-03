@@ -1,3 +1,15 @@
+.third-column .top {
+    border-bottom: 1px solid #5E6475;
+    box-sizing: border-box;
+    height: calc(40% + 21px);
+    min-height: 200px;
+}
+
+.third-column .bottom {
+    box-sizing: border-box;
+    height: calc(60% - 21px);
+}
+
 /* Styling the react-tabs library */
 .react-tabs {
     overflow: hidden;
