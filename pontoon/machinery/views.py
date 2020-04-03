@@ -4,8 +4,11 @@ import json
 import logging
 import requests
 import xml.etree.ElementTree as ET
-from uuid import uuid4
+
+from caighdean import Translator
+from caighdean.exceptions import TranslationError
 from six.moves.urllib.parse import quote
+from uuid import uuid4
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -20,19 +23,6 @@ from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
-
-# caighdean depends on nltk which tries to download files when it is imported.
-# This is doomed to fail when you start Pontoon while offline. To let
-# developers work offline, we add a safety net here.
-try:
-    from caighdean import Translator
-    from caighdean.exceptions import TranslationError
-except LookupError:
-    if settings.DEV:
-        # Only use this trick if this is a development server.
-        Translator = TranslationError = None
-    else:
-        raise
 
 
 log = logging.getLogger(__name__)
@@ -196,17 +186,6 @@ def caighdean(request):
         ).string
     except Translation.DoesNotExist:
         return JsonResponse({})
-
-    if Translator is None:
-        # This can happen only if you start Pontoon while offline. See comments
-        # around the import of caighdean.
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Server Error: Caighdean is unavailable offline.",
-            },
-            status=500,
-        )
 
     try:
         translation = Translator().translate(text)
