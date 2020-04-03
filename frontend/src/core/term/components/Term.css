@@ -1,0 +1,39 @@
+.terms-list .term {
+    border-bottom: 1px solid #5E6475;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.terms-list .term.cannot-copy {
+    pointer-events: none;
+}
+
+.terms-list .term:not(.cannot-copy):hover {
+    background: #4D5967;
+    border-color: #5E6475;
+}
+
+.terms-list .term .text {
+    color: #AAA;
+}
+
+.terms-list .term .part-of-speech {
+    color: #AAA;
+    float: right;
+    font-size: 11px;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+.terms-list .term .details {
+    color: #AAA;
+    font-style: italic;
+    padding: 5px 0 0 15px;
+}
+
+.terms-list .term .usage .title {
+    color: #7BC876;
+    font-size: 11px;
+    margin-right: 3px;
+    text-transform: uppercase;
+}

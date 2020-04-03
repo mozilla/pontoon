@@ -13,6 +13,7 @@ import * as lightbox from 'core/lightbox';
 import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
+import * as terms from 'core/term';
 import * as user from 'core/user';
 import * as utils from 'core/utils';
 import * as history from 'modules/history';
@@ -32,6 +33,7 @@ import type { Entity } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
+import type { TermState } from 'core/term';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
@@ -52,6 +54,7 @@ type Props = {|
     previousEntity: Entity,
     otherlocales: LocalesState,
     teamComments: TeamCommentState,
+    terms: TermState,
     parameters: NavigationParams,
     pluralForm: number,
     router: Object,
@@ -117,13 +120,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             dispatch(history.actions.get(parameters.entity, parameters.locale, pluralForm));
         }
 
-        if (selectedEntity.pk !== this.props.otherlocales.entity) {
-            dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
+        const source = utils.getOptimizedContent(selectedEntity.machinery_original, selectedEntity.format);
+
+        if (source !== this.props.terms.sourceString) {
+            dispatch(terms.actions.get(source, parameters.locale));
         }
 
         if (selectedEntity.pk !== this.props.machinery.entity) {
-            const source = utils.getOptimizedContent(selectedEntity.machinery_original, selectedEntity.format);
             dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
+        }
+
+        if (selectedEntity.pk !== this.props.otherlocales.entity) {
+            dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
         }
 
         if (selectedEntity.pk !== this.props.teamComments.entity) {
@@ -349,11 +357,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     machinery={ state.machinery }
                     otherlocales={ state.otherlocales }
                     teamComments={ state.teamComments }
+                    terms={ state.terms }
                     addComment={ this.addComment }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
+                    addTextToEditorTranslation={ this.addTextToEditorTranslation }
                 />
             </section>
         </section>;
@@ -374,6 +384,7 @@ const mapStateToProps = (state: Object): Props => {
         previousEntity: entities.selectors.getPreviousEntity(state),
         otherlocales: state[otherlocales.NAME],
         teamComments: state[teamcomments.NAME],
+        terms: state[terms.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,

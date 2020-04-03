@@ -18,6 +18,7 @@ export type {
     EntityTranslation,
     TranslationComment,
     TeamComment,
+    TermType,
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,

@@ -34,6 +34,18 @@ export type TeamComment = TranslationComment;
 
 
 /**
+ * Term entry with translation.
+ */
+export type TermType = {|
+    +text: string,
+    +partOfSpeech: string,
+    +definition: string,
+    +usage: string,
+    +translation: string,
+|};
+
+
+/**
  * String that needs to be translated, along with its current metadata,
  * and its currently accepted translations.
  */

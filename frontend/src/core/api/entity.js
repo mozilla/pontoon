@@ -165,4 +165,20 @@ export default class EntityAPI extends APIBase {
 
         return this.keysToCamelCase(results);
     }
+
+    async getTerms(
+        sourceString: string,
+        locale: string,
+    ) {
+        const payload = new URLSearchParams();
+        payload.append('source_string', sourceString);
+        payload.append('locale', locale);
+
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        const results = await this.fetch('/terminology/get-terms/', 'GET', payload, headers);
+
+        return this.keysToCamelCase(results);
+    }
 }

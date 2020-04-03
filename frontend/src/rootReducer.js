@@ -13,6 +13,7 @@ import * as plural from 'core/plural';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
+import * as term from 'core/term';
 import * as user from 'core/user';
 import * as batchactions from 'modules/batchactions';
 import * as history from 'modules/history';
@@ -46,5 +47,6 @@ export default (browserHistory: any) => combineReducers({
     [otherlocales.NAME]: otherlocales.reducer,
     [search.NAME]: search.reducer,
     [teamcomments.NAME]: teamcomments.reducer,
+    [term.NAME]: term.reducer,
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 });

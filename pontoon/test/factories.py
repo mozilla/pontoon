@@ -23,6 +23,7 @@ from pontoon.base.models import (
 )
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
+from pontoon.terminology.models import Term, TermTranslation
 
 
 class UserFactory(DjangoModelFactory):
@@ -191,3 +192,23 @@ class TagFactory(DjangoModelFactory):
 
     class Meta:
         model = Tag
+
+
+class TermFactory(DjangoModelFactory):
+    text = Sequence(lambda n: "Term {0}".format(n))
+    definition = "definition"
+    part_of_speech = "part_of_speech"
+    case_sensitive = False
+    do_not_translate = False
+
+    class Meta:
+        model = Term
+
+
+class TermTranslationFactory(DjangoModelFactory):
+    term = SubFactory(TermFactory)
+    locale = SubFactory(LocaleFactory)
+    text = Sequence(lambda n: "Term Translation {0}".format(n))
+
+    class Meta:
+        model = TermTranslation
