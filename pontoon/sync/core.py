@@ -297,6 +297,7 @@ def pull_changes(db_project, locales=None):
     if any of the updated repos have changed since the last sync.
     """
     changed = False
+    source_changed = False
     repo_locales = {}
 
     # When syncing sources, pull source repository only.
@@ -328,9 +329,11 @@ def pull_changes(db_project, locales=None):
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
+            if repo == db_project.source_repository:
+                source_changed = True
             changed = True
 
-    return changed, repo_locales
+    return source_changed, changed, repo_locales
 
 
 def commit_changes(db_project, vcs_project, changeset, locale):
