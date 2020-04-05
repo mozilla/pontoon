@@ -66,16 +66,9 @@ export default function AddComments(props: Props) {
             return 'handled';
         }
         return 'not-handled';
-        }
+    }
 
-      const submitComment = () => {
-        const comment = draftToHtml(
-            rawContentState,
-        )
-        
-        addComment(comment, translation);
-
-        // Clear the editor
+    const clearEditor = () => {
         let contentState = editorState.getCurrentContent();
         const firstBlock = contentState.getFirstBlock();
         const lastBlock = contentState.getLastBlock();
@@ -89,7 +82,17 @@ export default function AddComments(props: Props) {
         contentState = Modifier.removeRange(contentState, allSelected, 'backward');
         setEditorState(EditorState.push(editorState, contentState, 'remove-range'));
         setEditorState(EditorState.forceSelection(contentState, contentState.getSelectionAfter()));
-      }
+    }
+
+    const submitComment = () => {
+        const comment = draftToHtml(
+            rawContentState,
+        )
+        
+        addComment(comment, translation);
+
+        clearEditor();
+    }
 
     if (!user) {
         return null;
