@@ -43,7 +43,7 @@ export default function Comment(props: Props) {
                     <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                         {/* We can safely use comment.content because it is validated by
                         bleach before being saved into the database. */}
-                        <div dangerouslySetInnerHTML={ { __html: comment.content } } />
+                        <span dangerouslySetInnerHTML={ { __html: comment.content } } />
                     </Linkify>
                 </p>
             </div>

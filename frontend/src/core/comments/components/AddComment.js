@@ -6,7 +6,7 @@ import {
     Editor, 
     EditorState, 
     getDefaultKeyBinding, 
-    convertToRaw, 
+    convertToRaw,
     SelectionState,
     Modifier, 
 } from 'draft-js';
@@ -34,7 +34,7 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    const [editorState, setEditorState] = React.useState(
+    let [editorState, setEditorState] = React.useState(
         EditorState.createEmpty()
     )
     const editor: any = React.useRef(null);
@@ -68,7 +68,7 @@ export default function AddComments(props: Props) {
         return 'not-handled';
     }
 
-    const clearEditor = () => {
+    const clearEditorContent = () => {
         let contentState = editorState.getCurrentContent();
         const firstBlock = contentState.getFirstBlock();
         const lastBlock = contentState.getLastBlock();
@@ -80,8 +80,9 @@ export default function AddComments(props: Props) {
             hasFocus: true
         });
         contentState = Modifier.removeRange(contentState, allSelected, 'backward');
-        setEditorState(EditorState.push(editorState, contentState, 'remove-range'));
-        setEditorState(EditorState.forceSelection(contentState, contentState.getSelectionAfter()));
+        editorState = EditorState.push(editorState, contentState, 'remove-range');
+        editorState = EditorState.forceSelection(editorState, contentState.getSelectionAfter());
+        setEditorState(editorState);
     }
 
     const submitComment = () => {
@@ -91,7 +92,7 @@ export default function AddComments(props: Props) {
         
         addComment(comment, translation);
 
-        clearEditor();
+        clearEditorContent();
     }
 
     if (!user) {

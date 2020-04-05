@@ -19,7 +19,6 @@
     display: flex;
     font-size: 11px;
     padding: 6px;
-    white-space: pre-wrap;
 }
 
 .comments-list .comment .content p {
