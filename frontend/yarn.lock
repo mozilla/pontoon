@@ -3783,6 +3783,15 @@ dotenv@8.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
+draft-js-linkify-plugin@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/draft-js-linkify-plugin/-/draft-js-linkify-plugin-2.0.2.tgz#0ef40581f0a97728a49f6b010057c6191aad5d45"
+  integrity sha512-bW2XwNonPNEbfp9T5PmnUIVLVrX5KpU0OHC5KWmo0B8nnCJlbccvTj6CYL7cCGynTg0wycKbXYuJVdggRrExBg==
+  dependencies:
+    clsx "^1.0.4"
+    linkify-it "^2.0.3"
+    tlds "^1.189.0"
+
 draft-js-mention-plugin@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/draft-js-mention-plugin/-/draft-js-mention-plugin-3.1.5.tgz#5ee76fc4b4d1e1b2ef996fcec84ffe5565c8d1a9"
@@ -10677,7 +10686,7 @@ tlds@1.203.1:
   resolved "https://registry.yarnpkg.com/tlds/-/tlds-1.203.1.tgz#4dc9b02f53de3315bc98b80665e13de3edfc1dfc"
   integrity sha512-7MUlYyGJ6rSitEZ3r1Q1QNV8uSIzapS8SmmhSusBuIc7uIxPPwsKllEP0GRp1NS6Ik6F+fRZvnjDWm3ecv2hDw==
 
-tlds@^1.57.0:
+tlds@^1.189.0, tlds@^1.57.0:
   version "1.207.0"
   resolved "https://registry.yarnpkg.com/tlds/-/tlds-1.207.0.tgz#459264e644cf63ddc0965fece3898913286b1afd"
   integrity sha512-k7d7Q1LqjtAvhtEOs3yN14EabsNO8ZCoY6RESSJDB9lst3bTx3as/m1UuAeCKzYxiyhR1qq72ZPhpSf+qlqiwg==
