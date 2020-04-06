@@ -23,7 +23,7 @@ describe('<AddComment>', () => {
             preventDefault: sinon.spy(),
         };
 
-        wrapper.find('form').simulate('submit', event);
+        wrapper.find('.comment-div').simulate('submit', event);
         expect(submitCommentFn.calledOnce).toBeTruthy;
     });
 });
