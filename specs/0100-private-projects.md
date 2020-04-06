@@ -47,6 +47,6 @@ All instances of the "latest activity" feature, throughout the website, should a
 
 This feature risks creating confusion amongst users for Pontoon instances that are usually open to all users (like Mozilla's). It can happen if some users of a local community have access to a project, and others do not. In such instances, private projects should be used only for the sake of configuration, after what they should always be public or marked as obsolete.
 
-# Unresolved questions
+# Mockup
 
-The best user interface for the project administration form is yet to be designed.
+![](0100/mockup.png)
