@@ -186,8 +186,6 @@ def sync_sources(db_project, now, force, no_pull, source_repo_changed):
             log.error(e)
             return False
 
-        if not db_project.has_single_repo:
-            db_project.source_repository.set_last_synced_revisions()
         log.info("Synced sources for project {0}.".format(db_project.slug))
 
     else:
