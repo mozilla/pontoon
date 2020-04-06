@@ -8909,12 +8909,12 @@ react-clientside-effect@^1.2.2:
   dependencies:
     "@babel/runtime" "^7.0.0"
 
-react-content-marker@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.1.1.tgz#7bc8535f2ae1a9f462f8763fe9ad715fa04fb27e"
-  integrity sha512-CynJgNj1TnzrVgvqBiXVm1Ak0Z4TdMGekKVZ5ECFO9VU7qstnMKpgLR0QHHoMen8bxPk+nbxAMXJyVBktW9lMw==
+react-content-marker@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.1.2.tgz#1408f86b2553beba8f0c41ae9b23fe545c6fc6c6"
+  integrity sha512-wboAzF+SD8qcxUBcIZLH2Cd7Qny4v6fKiWsrPeUP7lj5hfv1EZgiKLhfshz8pYWMqIlCRiEQPtJJRbHSUkxziQ==
   dependencies:
-    shortid "^2.2.14"
+    shortid "^2.2.15"
 
 react-create-ref@^1.0.1:
   version "1.0.1"
@@ -9935,7 +9935,7 @@ shortid@2.2.14:
   dependencies:
     nanoid "^2.0.0"
 
-shortid@^2.2.14:
+shortid@^2.2.15:
   version "2.2.15"
   resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.15.tgz#2b902eaa93a69b11120373cd42a1f1fe4437c122"
   integrity sha512-5EaCy2mx2Jgc/Fdn9uuDuNIIfWBpzY4XIlhoqtXF6qsf+/+SGZ+FxDdX/ZsMZiWupIWNqAEmiNY4RC+LSmCeOw==
