@@ -96,8 +96,6 @@ def sync_project(
 
     log.info("Syncing project {0}.".format(db_project.slug))
 
-    # Sync source strings. We cannot sync sources if locale is specified,
-    # because that would apply any source string changes to the specified locale only.
     if locale:
         locales = db_project.locales.filter(pk=locale.pk)
     else:
@@ -105,8 +103,7 @@ def sync_project(
 
     if not locales:
         log.info(
-            "Skipping syncing translations for project {0}, no locales to sync "
-            "found within.".format(db_project.slug)
+            "Skipping project {0}, no locales to sync found.".format(db_project.slug)
         )
         project_sync_log.skip()
         return
@@ -138,10 +135,12 @@ def sync_project(
         source_changed, repos_changed, repo_locales = pull_changes(db_project, locales)
         log.info("Pulling changes for project {0} complete.".format(db_project.slug))
 
+    # Sync source strings. We cannot sync sources if locale is specified,
+    # because that would apply any source string changes to the specified locale only.
     if locale:
         source_changes = {}
     else:
-        source_changes = sync_sources(db_project, now, force, no_pull, source_changed)
+        source_changes = sync_sources(db_project, now, force, source_changed)
         # Skip syncing translations if we already know there's nothing to sync
         if not source_changes:
             project_sync_log.skip()
@@ -159,13 +158,12 @@ def sync_project(
         source_changes.get("removed_paths"),
         source_changes.get("changed_paths"),
         source_changes.get("new_entities"),
-        no_pull=no_pull,
         no_commit=no_commit,
         full_scan=force,
     )
 
 
-def sync_sources(db_project, now, force, no_pull, source_repo_changed):
+def sync_sources(db_project, now, force, source_repo_changed):
     # If the only repo hasn't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
     if (
@@ -215,7 +213,6 @@ def sync_translations(
     removed_paths=None,
     changed_paths=None,
     new_entities=None,
-    no_pull=False,
     no_commit=False,
     full_scan=False,
 ):
