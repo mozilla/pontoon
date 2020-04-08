@@ -331,7 +331,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 example,
                 plural: label,
             }}
-            stress={ <span className="stress" /> }
+            elems={{ stress: <span className="stress" /> }}
         >
             <span className="example">
                 { '{ $plural } (e.g. <stress>{ $example }</stress>)' }

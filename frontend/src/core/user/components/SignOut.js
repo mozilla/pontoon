@@ -20,7 +20,7 @@ export default class SignOut extends React.Component<Props> {
     render() {
         return <Localized
             id='user-SignOut--sign-out'
-            glyph={ <i className="fa fa-sign-out-alt fa-fw"></i> }
+            elems={{ glyph: <i className="fa fa-sign-out-alt fa-fw" /> }}
         >
             <button onClick={ this.signOut }>
                 { '<glyph></glyph>Sign out' }

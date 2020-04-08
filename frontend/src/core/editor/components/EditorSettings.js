@@ -66,9 +66,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                 <Localized
                     id="editor-EditorSettings--toolkit-checks"
                     attrs={{ title: true }}
-                    glyph={
-                        <i className="fa fa-fw"></i>
-                    }
+                    elems={{ glyph: <i className="fa fa-fw" /> }}
                 >
                     <li
                         className={ 'check-box' + (settings.runQualityChecks ? ' enabled' : '') }
@@ -82,9 +80,7 @@ export class EditorSettingsBase extends React.Component<Props, State> {
                 <Localized
                     id="editor-EditorSettings--force-suggestions"
                     attrs={{ title: true }}
-                    glyph={
-                        <i className="fa fa-fw"></i>
-                    }
+                    elems={{ glyph: <i className="fa fa-fw" /> }}
                 >
                     <li
                         className={ 'check-box' + (settings.forceSuggestions ? ' enabled' : '') }

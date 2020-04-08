@@ -183,12 +183,10 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                     <Localized
                         id="batchactions-BatchActions--header-selected-count"
                         attrs={{ title: true }}
-                        glyph={
-                            <i className="fa fa-times fa-lg" />
-                        }
-                        stress={
-                            <span className="stress" />
-                        }
+                        elems={{
+                            glyph: <i className="fa fa-times fa-lg" />,
+                            stress: <span className="stress" />,
+                        }}
                         vars={{ count: this.props.batchactions.entities.length }}
                     >
                         <button
@@ -203,9 +201,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 <Localized
                     id="batchactions-BatchActions--header-select-all"
                     attrs={{ title: true }}
-                    glyph={
-                        <i className="fa fa-check fa-lg" />
-                    }
+                    elems={{ glyph: <i className="fa fa-check fa-lg" /> }}
                 >
                     <button
                         className="select-all"
@@ -221,9 +217,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                 <div className="intro">
                     <Localized
                         id="batchactions-BatchActions--warning"
-                        stress={
-                            <span className="stress" />
-                        }
+                        elems={{ stress: <span className="stress" /> }}
                     >
                         <p>{ '<stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.' }</p>
                     </Localized>

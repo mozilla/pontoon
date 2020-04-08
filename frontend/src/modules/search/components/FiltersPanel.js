@@ -378,8 +378,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 <div className="toolbar clearfix">
                     <Localized
                         id="search-FiltersPanel--clear-selection"
-                        attrs={ { title: true } }
-                        glyph={ <i className="fa fa-times fa-lg"></i> }
+                        attrs={{ title: true }}
+                        elems={{ glyph: <i className="fa fa-times fa-lg" /> }}
                     >
                         <button
                             title="Uncheck selected filters"
@@ -391,9 +391,11 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                     </Localized>
                     <Localized
                         id="search-FiltersPanel--apply-filters"
-                        attrs={ { title: true } }
-                        glyph={ <i className="fa fa-check fa-lg"></i> }
-                        stress={ <span className="applied-count"></span> }
+                        attrs={{ title: true }}
+                        elems={{
+                            glyph: <i className="fa fa-check fa-lg" />,
+                            stress: <span className="applied-count" />,
+                        }}
                         vars={{ count: selectedFiltersCount }}
                     >
                         <button

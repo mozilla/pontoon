@@ -290,7 +290,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
                 { !this.state.visible ?
                     <Localized
                         id="search-TimeRangeFilter--edit-range"
-                        glyph={ <i className="fa fa-chart-area"></i> }
+                        elems={{ glyph: <i className="fa fa-chart-area" /> }}
                     >
                         <button
                             onClick={ this.toggleEditingTimeRange }

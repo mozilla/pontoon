@@ -56,9 +56,7 @@ export default class EntityNavigation extends React.Component<Props> {
             <Localized
                 id="entitydetails-EntityNavigation--link"
                 attrs={{ title: true }}
-                glyph={
-                    <i className="fa fa-link fa-lg"></i>
-                }
+                elems={{ glyph: <i className="fa fa-link fa-lg" /> }}
             >
                 <button
                     className="link"
@@ -71,9 +69,7 @@ export default class EntityNavigation extends React.Component<Props> {
             <Localized
                 id="entitydetails-EntityNavigation--next"
                 attrs={{ title: true }}
-                glyph={
-                    <i className="fa fa-chevron-down fa-lg"></i>
-                }
+                elems={{ glyph: <i className="fa fa-chevron-down fa-lg" /> }}
             >
                 <button
                     className="next"
@@ -86,9 +82,7 @@ export default class EntityNavigation extends React.Component<Props> {
             <Localized
                 id="entitydetails-EntityNavigation--previous"
                 attrs={{ title: true }}
-                glyph={
-                    <i className="fa fa-chevron-up fa-lg"></i>
-                }
+                elems={{ glyph: <i className="fa fa-chevron-up fa-lg" /> }}
             >
                 <button
                     className="previous"

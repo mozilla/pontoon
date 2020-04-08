@@ -54,9 +54,7 @@ export default class FileUpload extends React.Component<Props> {
             <label>
                 <Localized
                     id="user-UserMenu--upload-translations"
-                    glyph={
-                        <i className="fa fa-cloud-upload-alt fa-fw"></i>
-                    }
+                    elems={{ glyph: <i className="fa fa-cloud-upload-alt fa-fw" /> }}
                 >
                     <span>{ '<glyph></glyph>Upload Translations' }</span>
                 </Localized>

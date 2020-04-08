@@ -248,8 +248,10 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </Localized>
                     <Localized
                         id="interactivetour-InteractiveTour--end-content"
-                        // eslint-disable-next-line
-                        a={ <a href="https://mozilla-l10n.github.io/localizer-documentation/"></a> }
+                        elems={{
+                            // eslint-disable-next-line
+                            a: <a href="https://mozilla-l10n.github.io/localizer-documentation/" />
+                        }}
                     >
                         <p>{ `There’s a wide variety of tools to help you with translations,
                         some of which we didn’t mention in this tutorial. For more
@@ -258,8 +260,10 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </Localized>
                     <Localized
                         id="interactivetour-InteractiveTour--end-footer"
-                        // eslint-disable-next-line
-                        a={ <a href={`/${this.props.locale.code}/`}></a> }
+                        elems={{
+                            // eslint-disable-next-line
+                            a: <a href={`/${this.props.locale.code}/`} />
+                        }}
                     >
                         <p>{ `Next, feel free to explore this tutorial project or move straight
                         to <a>translating live projects</a>.` }</p>

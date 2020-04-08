@@ -173,7 +173,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             return <Localized
                 id='history-Translation--button-comments'
                 attrs={{ title: true }}
-                stress={ <span className="stress" /> }
+                elems={{ stress: <span className="stress" /> }}
                 vars={{ commentCount }}
             >
                 <button
