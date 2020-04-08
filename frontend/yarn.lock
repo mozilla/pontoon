@@ -988,31 +988,31 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
   integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
 
-"@fluent/bundle@^0.15.0":
+"@fluent/bundle@0.15.0":
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.15.0.tgz#c123ea08d066d8b987eae5ceaa6632451609efaf"
   integrity sha512-pYz+TuFPwCj5yx51mFG1flPxwTaXWkpi6yt6r+rdm22Y9bkWMHWdwbUnjWLJ+9yJKQMhe2uhvMJ7YfhkF87oNg==
 
-"@fluent/langneg@^0.3.0":
+"@fluent/langneg@0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@fluent/langneg/-/langneg-0.3.0.tgz#8e92cf767f79c8f5e1b116a42248a68a342a1039"
   integrity sha512-ppMMw+xi4ma45P2Nyf0sfnzIxrCswTgy0SBvPeZ8LB0sD0Gj403ZYYJTg06MmAcQITXXku3fGIpt/u1k5Zq1tA==
 
-"@fluent/react@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@fluent/react/-/react-0.10.0.tgz#ce15d8fcf18882594569d07be3fc4d266d322c6a"
-  integrity sha512-SDuvLpSSbgX346UwjAqQtVZCI/NQBKiIonRX2rCvaBUL90jFYSBQTnS9c429p1cSqPvOiB1OH/Qiqq63SkPi4w==
+"@fluent/react@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@fluent/react/-/react-0.12.0.tgz#df4dc87172cb62db8aa666d5a47cb6a049f5f923"
+  integrity sha512-JrQS0OMrPk913HOSuZ356mQ7z7O98GXv20R8pPKj8OMv2XHzL0tP1/kJ1kZUc74TOXtYOUUqD15n3r5vYJrALg==
   dependencies:
-    "@fluent/sequence" "0.4.0"
+    "@fluent/sequence" "0.5.0"
     cached-iterable "^0.2.1"
     prop-types "^15.6.0"
 
-"@fluent/sequence@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@fluent/sequence/-/sequence-0.4.0.tgz#ddba05770fa8a1259dca302ca3530af26c38599a"
-  integrity sha512-ADP/GYbmQZ8DxBHzLGN4I1Vrq0h+ujQuIa9O8E4+Fh5MiSUtPNW0sSH/NzikmAPPQ5cnz5cb53OBv54ANrsvCw==
+"@fluent/sequence@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@fluent/sequence/-/sequence-0.5.0.tgz#6349b614711df2d8ed256598fa31a757fe032539"
+  integrity sha512-70LhnbPO/sO2rI2vHws66QwKq9a7PKiEN0hrc65xY3LzWq3AlATZnt+EmFG1ihmPI+5mqGPnJMAdpp3qze3X2Q==
 
-"@fluent/syntax@^0.15.0":
+"@fluent/syntax@0.15.0":
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@fluent/syntax/-/syntax-0.15.0.tgz#4b05bc16e6d620a9b230f37cca269a4d56e35553"
   integrity sha512-NIObEPekXiaDDO10NQSOeylOETaI2Ns/ymKJNvgkM6FcBARS+t3NVGyLPPIl/pqHDUB9v7bWeEmuVMJQjnpNeg==
@@ -6675,7 +6675,7 @@ lodash.escape@^4.0.1:
   resolved "https://registry.yarnpkg.com/lodash.escape/-/lodash.escape-4.0.1.tgz#c9044690c21e04294beaa517712fded1fa88de98"
   integrity sha1-yQRGkMIeBClL6qUXcS/e0fqI3pg=
 
-lodash.escaperegexp@^4.1.2:
+lodash.escaperegexp@4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.escaperegexp/-/lodash.escaperegexp-4.1.2.tgz#64762c48618082518ac3df4ccf5d5886dae20347"
   integrity sha1-ZHYsSGGAglGKw99Mz11YhtriA0c=
