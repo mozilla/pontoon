@@ -14,7 +14,7 @@ def get_terms(request):
     """Retrieve terms for given source string and Locale."""
     try:
         source_string = request.GET["source_string"]
-        locale_code = request.GET["locale]
+        locale_code = request.GET["locale"]
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
