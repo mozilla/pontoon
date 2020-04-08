@@ -41,7 +41,7 @@ export default class ApproveAll extends React.Component<Props> {
 
         return <Localized
             id="batchactions-ApproveAll--invalid"
-            $invalidCount={ response.invalidCount }
+            vars={{ invalidCount: response.invalidCount }}
         >
             { '{ $invalidCount } failed' }
         </Localized>;
@@ -56,7 +56,7 @@ export default class ApproveAll extends React.Component<Props> {
 
         return <Localized
             id="batchactions-ApproveAll--success"
-            $changedCount={ response.changedCount }
+            vars={{ changedCount: response.changedCount }}
         >
             { '{ $changedCount } strings approved' }
         </Localized>;

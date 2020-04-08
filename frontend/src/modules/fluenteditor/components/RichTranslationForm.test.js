@@ -89,12 +89,16 @@ my-entry =
         expect(wrapper.find('textarea')).toHaveLength(2);
 
         expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
-        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$plural')).toEqual('one');
-        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('$example')).toEqual(1);
+
+        const varsSingular = wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('vars');
+        expect(varsSingular.plural).toEqual('one');
+        expect(varsSingular.example).toEqual(1);
 
         expect(wrapper.find('textarea').at(1).html()).toContain('World!');
-        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$plural')).toEqual('other');
-        expect(wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('$example')).toEqual(2);
+
+        const varsPlural = wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('vars');
+        expect(varsPlural.plural).toEqual('other');
+        expect(varsPlural.example).toEqual(2);
     });
 
     it('renders access keys properly', () => {

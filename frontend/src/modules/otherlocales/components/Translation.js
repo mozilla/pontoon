@@ -59,22 +59,18 @@ export default class Translation extends React.Component<Props> {
             >
                 <header>
                     { translation.locale.code === 'en-US' ?
-                        <Localized
-                            id='otherlocales-Translation--header-link'
-                            $locale={ translation.locale.name }
-                            $code={ translation.locale.code }
-                        >
-                            <div>
-                                { translation.locale.name }
-                                <span>{ translation.locale.code }</span>
-                            </div>
-                        </Localized>
+                        <div>
+                            { translation.locale.name }
+                            <span>{ translation.locale.code }</span>
+                        </div>
                     :
                         <Localized
                             id='otherlocales-Translation--header-link'
                             attrs={{ title: true }}
-                            $locale={ translation.locale.name }
-                            $code={ translation.locale.code }
+                            vars={{
+                                locale: translation.locale.name,
+                                code: translation.locale.code,
+                            }}
                         >
                             <Link
                                 to={ `/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }

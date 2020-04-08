@@ -394,7 +394,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         attrs={ { title: true } }
                         glyph={ <i className="fa fa-check fa-lg"></i> }
                         stress={ <span className="applied-count"></span> }
-                        $count={ selectedFiltersCount }
+                        vars={{ count: selectedFiltersCount }}
                     >
                         <button
                             title="Apply Selected Filters"

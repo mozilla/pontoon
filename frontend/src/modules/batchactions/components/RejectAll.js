@@ -75,7 +75,7 @@ export default class RejectAll extends React.Component<Props, State> {
 
         return <Localized
             id="batchactions-RejectAll--invalid"
-            $invalidCount={ response.invalidCount }
+            vars={{ invalidCount: response.invalidCount }}
         >
             { '{ $invalidCount } failed' }
         </Localized>;
@@ -90,7 +90,7 @@ export default class RejectAll extends React.Component<Props, State> {
 
         return <Localized
             id="batchactions-RejectAll--success"
-            $changedCount={ response.changedCount }
+            vars={{ changedCount: response.changedCount }}
         >
             { '{ $changedCount } strings rejected' }
         </Localized>;

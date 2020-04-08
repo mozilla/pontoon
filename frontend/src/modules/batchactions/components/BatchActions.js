@@ -189,7 +189,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         stress={
                             <span className="stress" />
                         }
-                        $count={ this.props.batchactions.entities.length }
+                        vars={{ count: this.props.batchactions.entities.length }}
                     >
                         <button
                             className="selected-count"
