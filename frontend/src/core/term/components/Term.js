@@ -17,7 +17,7 @@ type Props = {|
  * Show term entry with its metadata.
  */
 export default class Term extends React.Component<Props> {
-    copyTermIntoEditor = (translation: string, event: SyntheticMouseEvent<HTMLLIElement>) => {
+    copyTermIntoEditor = (translation: string) => {
         if (this.props.isReadOnlyEditor) {
             return;
         }
@@ -43,7 +43,7 @@ export default class Term extends React.Component<Props> {
 
         return <li
             className={ `term ${cannotCopy}` }
-            onClick={ (event) => this.copyTermIntoEditor(term.translation, event) }
+            onClick={ () => this.copyTermIntoEditor(term.translation) }
         >
             <header>
                 <span className='text'>{ term.text }</span>
