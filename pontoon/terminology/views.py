@@ -14,14 +14,14 @@ def get_terms(request):
     """Retrieve terms for given source string and Locale."""
     try:
         source_string = request.GET["source_string"]
-        locale = request.GET["locale"]
+        locale_code = request.GET["locale]
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
         )
 
-    locale = get_object_or_404(Locale, code=locale)
+    locale = get_object_or_404(Locale, code=locale_code)
     payload = []
 
     for term in Term.objects.for_string(source_string):

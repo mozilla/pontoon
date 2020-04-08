@@ -177,7 +177,7 @@ export default class EntityAPI extends APIBase {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
-        const results = await this.fetch('/get-terms/', 'GET', payload, headers);
+        const results = await this.fetch('/terminology/get-terms/', 'GET', payload, headers);
 
         return this.keysToCamelCase(results);
     }

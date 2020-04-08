@@ -42,12 +42,13 @@ describe('<Term>', () => {
             addTextToEditorTranslation={ addTextToEditorTranslationFn }
         />);
 
-        wrapper.find('li').simulate('click', { stopPropagation: sinon.fake() });
+        wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(true);
     });
 
     it('does not call the addTextToEditorTranslation function if term not translated', () => {
         const term = {
+            ...TERM,
             translation: '',
         };
         const addTextToEditorTranslationFn = sinon.spy();
@@ -57,7 +58,7 @@ describe('<Term>', () => {
             addTextToEditorTranslation={ addTextToEditorTranslationFn }
         />);
 
-        wrapper.find('li').simulate('click', { stopPropagation: sinon.fake() });
+        wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(false);
     });
 
@@ -70,7 +71,7 @@ describe('<Term>', () => {
             addTextToEditorTranslation={ addTextToEditorTranslationFn }
         />);
 
-        wrapper.find('li').simulate('click', { stopPropagation: sinon.fake() });
+        wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(false);
     });
 });

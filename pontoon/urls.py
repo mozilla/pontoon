@@ -94,10 +94,10 @@ urlpatterns = [
     url(r"^pontoon\.js$", pontoon_js_view),
     url(r"^static/js/pontoon\.js$", pontoon_js_view),
     # Include URL configurations from installed apps
+    url(r"^terminology/", include("pontoon.terminology.urls")),
     url(r"^translations/", include("pontoon.translations.urls")),
     url(r"", include("pontoon.teams.urls")),
     url(r"", include("pontoon.tour.urls")),
-    url(r"", include("pontoon.terminology.urls")),
     url(r"", include("pontoon.tags.urls")),
     url(r"", include("pontoon.sync.urls")),
     url(r"", include("pontoon.projects.urls")),

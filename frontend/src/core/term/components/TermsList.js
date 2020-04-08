@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import './TermsList.css';
 
-import { Term } from 'core/term';
+import Term from './Term';
 
 import type { TermType } from 'core/api';
 

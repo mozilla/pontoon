@@ -17,7 +17,7 @@ type Props = {|
  * Show term entry with its metadata.
  */
 export default class Term extends React.Component<Props> {
-    createHandleClick = (translation: string) => {
+    copyTermIntoEditor = (translation: string, event: SyntheticMouseEvent<HTMLLIElement>) => {
         if (this.props.isReadOnlyEditor) {
             return;
         }
@@ -26,14 +26,6 @@ export default class Term extends React.Component<Props> {
         if (!translation) {
             return;
         }
-
-        return (event: SyntheticMouseEvent<HTMLLIElement>) => {
-            this.copyTermIntoEditor(translation, event);
-        };
-    }
-
-    copyTermIntoEditor = (translation: string, event: SyntheticMouseEvent<HTMLLIElement>) => {
-        event.stopPropagation();
 
         // Ignore if selecting text
         if (window.getSelection().toString()) {
@@ -51,7 +43,7 @@ export default class Term extends React.Component<Props> {
 
         return <li
             className={ `term ${cannotCopy}` }
-            onClick={ this.createHandleClick(term.translation) }
+            onClick={ (event) => this.copyTermIntoEditor(term.translation, event) }
         >
             <header>
                 <span className='text'>{ term.text }</span>
