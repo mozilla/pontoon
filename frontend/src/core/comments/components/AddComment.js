@@ -38,8 +38,15 @@ export default function AddComments(props: Props) {
         EditorState.createEmpty()
     )
     const editor: any = React.useRef(null);
-    const rawContentState = convertToRaw(editorState.getCurrentContent());
 
+    React.useEffect(() => {
+        focusEditor()
+    }, []);
+
+    if (!user) {
+        return null;
+    }
+    
     const onChange = (editorState) => {
         setEditorState(editorState);
     }
@@ -55,10 +62,6 @@ export default function AddComments(props: Props) {
         
         return getDefaultKeyBinding(e)
     }
-
-    React.useEffect(() => {
-        focusEditor()
-    }, []);
 
     const handleKeyCommand = (command: string) => {
         if (command === 'submitOnEnter') {
@@ -86,17 +89,19 @@ export default function AddComments(props: Props) {
     }
 
     const submitComment = () => {
+        const rawContentState = convertToRaw(editorState.getCurrentContent());
         const comment = draftToHtml(
             rawContentState,
         )
         
+        // TODO: This is currently not stopping blank comments from being entered
+        if (!comment) {
+            return null;
+        }
+        
         addComment(comment, translation);
 
         clearEditorContent();
-    }
-
-    if (!user) {
-        return null;
     }
 
     return <div className='comment add-comment'>
