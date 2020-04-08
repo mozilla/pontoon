@@ -25,8 +25,8 @@ from pontoon.sync.vcs.models import VCSProject
 log = logging.getLogger(__name__)
 
 
-def update_originals(db_project, now, full_scan=False):
-    vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
+def update_originals(db_project, now, force=False):
+    vcs_project = VCSProject(db_project, locales=[], force=force)
 
     with transaction.atomic():
         added_paths, removed_paths, changed_paths = update_resources(
@@ -291,7 +291,7 @@ def entity_key(entity):
     return ":".join([entity.resource.path, key])
 
 
-def pull_changes(db_project, locales=None):
+def pull_changes(db_project, locales):
     """
     Update the local files with changes from the VCS. Returns True
     if any of the updated repos have changed since the last sync.
@@ -300,15 +300,12 @@ def pull_changes(db_project, locales=None):
     source_changed = False
     repo_locales = {}
 
-    # When syncing sources, pull source repository only.
-    if locales is None:
-        repositories = [db_project.source_repository]
     # When syncing locales and some have changed, pull all project repositories.
-    elif locales:
+    if locales:
         repositories = db_project.repositories.all()
     # When syncing locales and none have changed, quit early.
     else:
-        return changed, repo_locales
+        return source_changed, changed, repo_locales
 
     locales = locales or db_project.locales.all()
 
