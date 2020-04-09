@@ -428,7 +428,9 @@ class PullChangesTests(FakeCheckoutTestCase):
         sync, consider the VCS unchanged and return False.
         """
         self.mock_repo_pull.return_value = {"single_locale": "asdf"}
-        self.repository.last_synced_revisions = {"single_locale": "asdf"}
+        self.db_project.source_repository.last_synced_revisions = {
+            "single_locale": "asdf"
+        }
         self.repository.save()
         source_changed, has_changed, _ = pull_changes(
             self.db_project, locales=self.db_project.locales.all()

@@ -291,7 +291,7 @@ def entity_key(entity):
     return ":".join([entity.resource.path, key])
 
 
-def pull_changes(db_project, locales):
+def pull_changes(db_project, locales, sync_source=True):
     """
     Update the local files with changes from the VCS. Returns True
     if any of the updated repos have changed since the last sync.
@@ -300,14 +300,22 @@ def pull_changes(db_project, locales):
     source_changed = False
     repo_locales = {}
 
-    # When syncing locales and some have changed, pull all project repositories.
-    if locales:
-        repositories = db_project.repositories.all()
     # When syncing locales and none have changed, quit early.
-    else:
+    if not locales and not sync_source:
         return source_changed, changed, repo_locales
 
-    locales = locales or db_project.locales.all()
+    # When syncing locales and some have changed, pull all project repositories.
+    source_repo = db_project.source_repository
+    repositories = db_project.repositories.exclude(pk=source_repo.pk)
+
+    if sync_source or not repositories:
+        repo_revisions = source_repo.pull()
+        repo_locales[source_repo.pk] = Locale.objects.filter(code__in=repo_revisions.keys())
+        unsure_change = None in repo_revisions.values()
+
+        if unsure_change or repo_revisions != source_repo.last_synced_revisions:
+            source_changed = True
+            changed = True
 
     # Skip already pulled locales. Useful for projects with multiple repositories (e.g. Firefox),
     # since we don't store the information what locale belongs to what repository.
@@ -326,8 +334,6 @@ def pull_changes(db_project, locales):
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
-            if repo == db_project.source_repository:
-                source_changed = True
             changed = True
 
     return source_changed, changed, repo_locales
