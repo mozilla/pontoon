@@ -2,6 +2,7 @@
 
 import { FluentBundle, FluentResource } from '@fluent/bundle';
 import { negotiateLanguages } from '@fluent/langneg';
+import { ReactLocalization } from '@fluent/react';
 
 import api from 'core/api';
 
@@ -31,9 +32,9 @@ export function request(): RequestAction {
  */
 export type ReceiveAction = {
     +type: typeof RECEIVE,
-    +bundles: Array<FluentBundle>,
+    +bundles: ReactLocalization,
 };
-export function receive(bundles: Array<FluentBundle>): ReceiveAction {
+export function receive(bundles: ReactLocalization): ReceiveAction {
     return {
         type: RECEIVE,
         bundles,
@@ -95,7 +96,9 @@ export function get(locales: Array<string>): Function {
             });
         }));
 
-        dispatch(receive(bundles));
+        const localizations = new ReactLocalization(bundles);
+
+        dispatch(receive(localizations));
     }
 }
 

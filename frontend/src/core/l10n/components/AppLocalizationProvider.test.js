@@ -1,5 +1,6 @@
 import React from 'react';
 import sinon from 'sinon';
+import { ReactLocalization } from '@fluent/react';
 
 import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
@@ -38,7 +39,7 @@ describe('<AppLocalizationProvider>', () => {
 
     it('renders its children when locales are loaded', () => {
         const store = createReduxStore();
-        store.dispatch(actions.receive('fr', { messages: [ 'hello' ] }));
+        store.dispatch(actions.receive(new ReactLocalization([])));
 
         const wrapper = shallowUntilTarget(
             <AppLocalizationProvider store={store}>

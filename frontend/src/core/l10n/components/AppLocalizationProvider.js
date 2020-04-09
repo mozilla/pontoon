@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { LocalizationProvider, ReactLocalization } from '@fluent/react';
+import { LocalizationProvider } from '@fluent/react';
 import 'intl-pluralrules';
 
 import * as l10n from 'core/l10n';
@@ -47,9 +47,7 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
     render() {
         const { children, l10n } = this.props;
 
-        const localizations = new ReactLocalization(l10n.bundles);
-
-        return <LocalizationProvider l10n={ localizations }>
+        return <LocalizationProvider l10n={ l10n.bundles }>
             { children }
         </LocalizationProvider>;
     }
