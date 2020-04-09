@@ -310,7 +310,9 @@ def pull_changes(db_project, locales, sync_source=True):
 
     if sync_source or not repositories:
         repo_revisions = source_repo.pull()
-        repo_locales[source_repo.pk] = Locale.objects.filter(code__in=repo_revisions.keys())
+        repo_locales[source_repo.pk] = Locale.objects.filter(
+            code__in=repo_revisions.keys()
+        )
         unsure_change = None in repo_revisions.values()
 
         if unsure_change or repo_revisions != source_repo.last_synced_revisions:
