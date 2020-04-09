@@ -9,7 +9,7 @@ describe('reducer', () => {
         const res = reducer(undefined, {});
         const expected = {
             fetching: false,
-            bundles: new ReactLocalization([]),
+            localization: new ReactLocalization([]),
         }
         expect(res).toEqual(expected);
     });
@@ -22,15 +22,15 @@ describe('reducer', () => {
     it('handles the RECEIVE action', () => {
         const initial = {
             fetching: true,
-            bundles: new ReactLocalization([ { messages: ['hello'] } ]),
+            localization: new ReactLocalization([ { messages: ['hello'] } ]),
         }
-        const bundles = new ReactLocalization([ { messages: ['world'] } ]);
+        const localization = new ReactLocalization([ { messages: ['world'] } ]);
 
-        const res = reducer(initial, { type: RECEIVE, bundles });
+        const res = reducer(initial, { type: RECEIVE, localization });
 
         const expected = {
             fetching: false,
-            bundles,
+            localization,
         };
         expect(res).toEqual(expected);
     });

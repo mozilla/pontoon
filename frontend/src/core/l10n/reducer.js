@@ -14,13 +14,13 @@ type Action =
 
 export type L10nState = {|
     +fetching: boolean,
-    +bundles: ReactLocalization,
+    +localization: ReactLocalization,
 |};
 
 
 const initial: L10nState = {
     fetching: false,
-    bundles: new ReactLocalization([]),
+    localization: new ReactLocalization([]),
 };
 
 export default function reducer(
@@ -37,7 +37,7 @@ export default function reducer(
             return {
                 ...state,
                 fetching: false,
-                bundles: action.bundles,
+                localization: action.localization,
             };
         default:
             return state;

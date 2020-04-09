@@ -32,12 +32,12 @@ export function request(): RequestAction {
  */
 export type ReceiveAction = {
     +type: typeof RECEIVE,
-    +bundles: ReactLocalization,
+    +localization: ReactLocalization,
 };
-export function receive(bundles: ReactLocalization): ReceiveAction {
+export function receive(localization: ReactLocalization): ReceiveAction {
     return {
         type: RECEIVE,
-        bundles,
+        localization,
     };
 }
 
@@ -96,9 +96,8 @@ export function get(locales: Array<string>): Function {
             });
         }));
 
-        const localizations = new ReactLocalization(bundles);
-
-        dispatch(receive(localizations));
+        const localization = new ReactLocalization(bundles);
+        dispatch(receive(localization));
     }
 }
 
