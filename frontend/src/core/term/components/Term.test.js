@@ -21,6 +21,10 @@ describe('<Term>', () => {
         }
     });
 
+    afterAll(() => {
+        window.getSelection = undefined;
+    });
+
     it('renders term correctly', () => {
         const wrapper = shallow(<Term
             term={ TERM }
