@@ -34,7 +34,7 @@ describe('<Term>', () => {
         expect(wrapper.find('.text').text()).toEqual('text');
         expect(wrapper.find('.part-of-speech').text()).toEqual('partOfSpeech');
         expect(wrapper.find('.definition').text()).toEqual('definition');
-        expect(wrapper.find('.usage').text()).toEqual('usage');
+        expect(wrapper.find('.usage .content').text()).toEqual('usage');
         expect(wrapper.find('.translation').text()).toEqual('translation');
     });
 

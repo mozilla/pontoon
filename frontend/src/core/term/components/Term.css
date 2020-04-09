@@ -25,13 +25,15 @@
     text-transform: uppercase;
 }
 
-.terms-list .term .details {
+.terms-list .term .metadata {
     color: #AAA;
     font-style: italic;
     padding: 5px 0 0 15px;
 }
 
-.terms-list .term .divider {
+.terms-list .term .usage .title {
     color: #7BC876;
-    margin: 0 3px;
+    font-size: 11px;
+    margin-right: 3px;
+    text-transform: uppercase;
 }

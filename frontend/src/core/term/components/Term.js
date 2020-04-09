@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from '@fluent/react';
 
 import './Term.css';
 
@@ -14,7 +15,7 @@ type Props = {|
 
 
 /**
- * Show term entry with its metadata.
+ * Shows term entry with its metadata.
  */
 export default function Term(props: Props) {
     const { term, isReadOnlyEditor } = props;
@@ -49,10 +50,14 @@ export default function Term(props: Props) {
             <span className='part-of-speech'>{ term.partOfSpeech }</span>
         </header>
         <p className='translation'>{ term.translation }</p>
-        <p className='details'>
-            <span className='definition'>{ term.definition }</span>
-            <span className='divider'>&bull;</span>
-            <span className='usage'>{ term.usage }</span>
+        <p className='metadata'>
+            <p className='definition'>{ term.definition }</p>
+            <p className='usage'>
+                <Localized id="term-Term--for-example">
+                    <span className='title'>E.g.</span>
+                </Localized>
+                <span className='content'>{ term.usage }</span>
+            </p>
         </p>
     </li>;
 }

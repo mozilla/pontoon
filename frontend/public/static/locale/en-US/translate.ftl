@@ -593,6 +593,12 @@ search-TimeRangeFilter--save-range = Save Range
 
 
 ## User Avatar
+## Shows term entry with its metadata
+
+term-Term--for-example = E.g.
+
+
+## User Avatar
 ## Shows user Avatar with alt text
 
 user-UserAvatar--anon-alt-text = Anonymous User
