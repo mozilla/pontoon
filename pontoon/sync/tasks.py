@@ -144,32 +144,6 @@ def sync_project(
             project_sync_log.skip()
             return
 
-    added_and_changed_resources = db_project.resources.filter(
-        path__in=list(source_changes.get("added_paths") or [])
-        + list(source_changes.get("changed_paths") or [])
-    ).distinct()
-
-    # We should also sync files for which source file change - but only for read-only locales.
-    # See bug 1372151 for more details
-    if added_and_changed_resources:
-        changed_locales_pks = [l.pk for l in locales]
-        readonly_locales = db_project.locales.filter(project_locale__readonly=True)
-        readonly_locales_pks = [l.pk for l in readonly_locales]
-        locales = db_project.locales.filter(
-            pk__in=changed_locales_pks + readonly_locales_pks
-        )
-
-        # Pull changes for readonly locales
-        if not no_pull and not db_project.has_single_repo:
-            _, _, readonly_repo_locales = pull_changes(
-                db_project, locales, sync_source=False
-            )
-            for k, v in readonly_repo_locales.items():
-                if k in repo_locales:
-                    repo_locales[k] = repo_locales[k].union(v)
-                else:
-                    repo_locales[k] = v
-
     # Sync translations
     sync_translations(
         db_project,
@@ -238,11 +212,43 @@ def sync_translations(
         project_sync_log=project_sync_log, repository=repo, start_time=timezone.now()
     )
 
+    readonly_locales = db_project.locales.filter(project_locale__readonly=True)
     added_and_changed_resources = db_project.resources.filter(
         path__in=list(added_paths or []) + list(changed_paths or [])
     ).distinct()
 
-    readonly_locales = db_project.locales.filter(project_locale__readonly=True)
+    # We should also sync files for which source file change - but only for read-only locales.
+    # See bug 1372151 for more details.
+    if added_and_changed_resources:
+        changed_locales_pks = [l.pk for l in locales]
+        readonly_locales_pks = [l.pk for l in readonly_locales]
+        not_pulled_locales = [
+            l for l in readonly_locales_pks if l not in changed_locales_pks
+        ]
+        locales = db_project.locales.filter(
+            pk__in=changed_locales_pks + readonly_locales_pks
+        )
+
+        # Pull repos of readonly locales that haven't been pulled yet
+        if not_pulled_locales and not db_project.has_single_repo:
+            log.info(
+                "Pulling readonly repos for project {0} started.".format(
+                    db_project.slug
+                )
+            )
+            _, _, not_pulled_repo_locales = pull_changes(
+                db_project, not_pulled_locales, sync_source=False
+            )
+            log.info(
+                "Pulling readonly repos for project {0} complete.".format(
+                    db_project.slug
+                )
+            )
+            for k, v in not_pulled_repo_locales.items():
+                if k in repo_locales:
+                    repo_locales[k] = repo_locales[k].union(v)
+                else:
+                    repo_locales[k] = v
 
     vcs_project = VCSProject(
         db_project,

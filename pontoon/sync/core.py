@@ -300,30 +300,14 @@ def pull_changes(db_project, locales, sync_source=True):
     source_changed = False
     repo_locales = {}
 
-    # When syncing locales and none have changed, quit early.
-    if not locales and not sync_source:
-        return source_changed, changed, repo_locales
-
-    # When syncing locales and some have changed, pull all project repositories.
-    source_repo = db_project.source_repository
-    repositories = db_project.repositories.exclude(pk=source_repo.pk)
-
-    if sync_source or not repositories:
-        repo_revisions = source_repo.pull()
-        repo_locales[source_repo.pk] = Locale.objects.filter(
-            code__in=repo_revisions.keys()
-        )
-        unsure_change = None in repo_revisions.values()
-
-        if unsure_change or repo_revisions != source_repo.last_synced_revisions:
-            source_changed = True
-            changed = True
-
     # Skip already pulled locales. Useful for projects with multiple repositories (e.g. Firefox),
     # since we don't store the information what locale belongs to what repository.
     pulled_locales = []
 
-    for repo in repositories:
+    for repo in db_project.repositories.all():
+        if not sync_source and repo.source_repository:
+            continue
+
         remaining_locales = locales.exclude(code__in=pulled_locales)
         if not remaining_locales:
             break
@@ -336,6 +320,8 @@ def pull_changes(db_project, locales, sync_source=True):
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
+            if repo == db_project.source_repository:
+                source_changed = True
             changed = True
 
     return source_changed, changed, repo_locales
