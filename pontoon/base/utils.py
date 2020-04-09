@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.utils.text import slugify
-from six import StringIO
+from six import BytesIO
 
 from xml.sax.saxutils import (
     escape as xml_escape,
@@ -207,7 +207,7 @@ def get_download_content(slug, code, part):
     )
     isZipable = 1 < len(resources) < 10
     if isZipable:
-        s = StringIO()
+        s = BytesIO()
         zf = zipfile.ZipFile(s, "w")
 
     # Download a single file if project has 1 or >= 10 resources
