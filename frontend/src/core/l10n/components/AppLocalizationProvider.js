@@ -47,7 +47,7 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
     render() {
         const { children, l10n } = this.props;
 
-        return <LocalizationProvider bundles={ l10n.bundles }>
+        return <LocalizationProvider l10n={ l10n.localization }>
             { children }
         </LocalizationProvider>;
     }

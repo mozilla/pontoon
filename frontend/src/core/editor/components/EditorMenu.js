@@ -43,9 +43,7 @@ export default class EditorMenu extends React.Component<Props> {
             { !props.user.isAuthenticated ?
                 <Localized
                     id="editor-EditorMenu--sign-in-to-translate"
-                    a={
-                        <user.SignInLink url={ props.user.signInURL }></user.SignInLink>
-                    }
+                    elems={{ a: <user.SignInLink url={ props.user.signInURL } /> }}
                 >
                     <p className='banner'>
                         { '<a>Sign in</a> to translate.' }

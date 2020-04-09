@@ -112,9 +112,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--download-tm"
-                        glyph={
-                            <i className="fa fa-cloud-download-alt fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fa fa-cloud-download-alt fa-fw" /> }}
                     >
                         <a href={ tmHref }>
                             { '<glyph></glyph>Download Translation Memory' }
@@ -126,9 +124,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--download-translations"
-                        glyph={
-                            <i className="fa fa-cloud-download-alt fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fa fa-cloud-download-alt fa-fw" /> }}
                     >
                         <a href={ transHref }>
                             { '<glyph></glyph>Download Translations' }
@@ -148,9 +144,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--terms"
-                        glyph={
-                            <i className="fa fa-gavel fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fa fa-gavel fa-fw" /> }}
                     >
                         <a
                             href="/terms/"
@@ -165,9 +159,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--github"
-                        glyph={
-                            <i className="fab fa-github fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fab fa-github fa-fw" /> }}
                     >
                         <a
                             href="https://github.com/mozilla/pontoon/"
@@ -182,9 +174,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--feedback"
-                        glyph={
-                            <i className="fa fa-comment-dots fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fa fa-comment-dots fa-fw" /> }}
                     >
                         <a
                             href="https://discourse.mozilla.org/c/pontoon"
@@ -199,9 +189,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                 <li>
                     <Localized
                         id="user-UserMenu--help"
-                        glyph={
-                            <i className="fa fa-life-ring fa-fw"></i>
-                        }
+                        elems={{ glyph: <i className="fa fa-life-ring fa-fw" /> }}
                     >
                         <a
                             href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
@@ -222,9 +210,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                     <li>
                         <Localized
                             id="user-UserMenu--admin"
-                            glyph={
-                                <i className="fa fa-wrench fa-fw"></i>
-                            }
+                            elems={{ glyph: <i className="fa fa-wrench fa-fw" /> }}
                         >
                             <a href="/admin/">
                                 { '<glyph></glyph>Admin' }
@@ -234,9 +220,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                     <li>
                         <Localized
                             id="user-UserMenu--admin-project"
-                            glyph={
-                                <i className="fa fa-wrench fa-fw"></i>
-                            }
+                            elems={{ glyph: <i className="fa fa-wrench fa-fw" /> }}
                         >
                             <a href={ `/admin/projects/${project}/` }>
                                 { '<glyph></glyph>Admin · Current Project' }
@@ -251,9 +235,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                     <li>
                         <Localized
                             id="user-UserMenu--settings"
-                            glyph={
-                                <i className="fa fa-cog fa-fw"></i>
-                            }
+                            elems={{ glyph: <i className="fa fa-cog fa-fw" /> }}
                         >
                             <a href="/settings/">
                                 { '<glyph></glyph>Settings' }

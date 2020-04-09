@@ -91,9 +91,7 @@ export default function AddComments(props: Props) {
             <Localized
                 id="comments-AddComment--submit-button"
                 attrs={{ title: true }}
-                glyph={
-                    <i className="fa fa-paper-plane"></i>
-                }
+                elems={{ glyph: <i className="fa fa-paper-plane" /> }}
             >
                 <button
                     className="submit-button"

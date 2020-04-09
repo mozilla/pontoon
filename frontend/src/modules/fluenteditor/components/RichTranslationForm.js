@@ -327,9 +327,11 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     renderLabel(label: string, example: number) {
         return <Localized
             id="fluenteditor-RichTranslationForm--plural-example"
-            $example={ example }
-            $plural={ label }
-            stress={ <span className="stress" /> }
+            vars={{
+                example,
+                plural: label,
+            }}
+            elems={{ stress: <span className="stress" /> }}
         >
             <span className="example">
                 { '{ $plural } (e.g. <stress>{ $example }</stress>)' }
