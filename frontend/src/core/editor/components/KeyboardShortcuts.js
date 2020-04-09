@@ -69,7 +69,9 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--save-translation-shortcut"
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<accel>Enter</accel>' }
@@ -82,7 +84,9 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--cancel-translation-shortcut"
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<accel>Esc</accel>' }
@@ -95,8 +99,10 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--insert-a-new-line-shortcut"
-                                mod1={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Shift</mod1> + <accel>Enter</accel>' }
@@ -111,8 +117,10 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--go-to-next-string-shortcut"
-                                mod1={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Alt</mod1> + <accel>Down</accel>' }
@@ -126,8 +134,10 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--go-to-previous-string-shortcut"
-                                mod1={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Alt</mod1> + <accel>Up</accel>' }
@@ -141,9 +151,11 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--copy-from-source-shortcut"
-                                mod1={ <span/> }
-                                mod2={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                    mod2: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>' }
@@ -156,9 +168,11 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--clear-translation-shortcut"
-                                mod1={ <span/> }
-                                mod2={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                    mod2: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>' }
@@ -171,9 +185,11 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--search-strings-shortcut"
-                                mod1={ <span/> }
-                                mod2={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                    mod2: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>' }
@@ -186,9 +202,11 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                             </Localized>
                             <Localized
                                 id="editor-KeyboardShortcuts--select-all-strings-shortcut"
-                                mod1={ <span/> }
-                                mod2={ <span/> }
-                                accel={ <span/> }
+                                elems={{
+                                    accel: <span/>,
+                                    mod1: <span/>,
+                                    mod2: <span/>,
+                                }}
                             >
                                 <td>
                                     { '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>' }

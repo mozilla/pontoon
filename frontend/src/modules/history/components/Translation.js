@@ -119,6 +119,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     getApprovalTitle() {
         const { translation } = this.props;
 
+        // TODO: To Localize.
         if (translation.approved && translation.approvedUser) {
             return `Approved by ${translation.approvedUser}`;
         }
@@ -143,7 +144,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
         >
             { translation.user }
-        </a>
+        </a>;
     }
 
     toggleComments = (event: SyntheticMouseEvent<>) => {
@@ -166,23 +167,23 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     >
                         { 'Comment' }
                     </button>
-            </Localized>
+            </Localized>;
         }
         else {
             return <Localized
                 id='history-Translation--button-comments'
                 attrs={{ title: true }}
-                stress={ <span className="stress" /> }
-                $commentCount={ commentCount }
+                elems={{ stress: <span className="stress" /> }}
+                vars={{ commentCount }}
             >
                 <button
                     className='toggle-comments active'
                     title='Toggle translation comments'
                     onClick={ this.toggleComments }
                 >
-                    { `<stress>${commentCount}</stress> Comments` }
+                    { '<stress>{ $commentCount }</stress> Comments' }
                 </button>
-            </Localized>
+            </Localized>;
         }
     }
 
