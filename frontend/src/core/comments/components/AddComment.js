@@ -89,15 +89,14 @@ export default function AddComments(props: Props) {
     }
 
     const submitComment = () => {
+        if (!editorState.getCurrentContent().hasText()) {
+            return null;
+        }
+        
         const rawContentState = convertToRaw(editorState.getCurrentContent());
         const comment = draftToHtml(
             rawContentState,
         )
-        
-        // TODO: This is currently not stopping blank comments from being entered
-        if (!comment) {
-            return null;
-        }
         
         addComment(comment, translation);
 

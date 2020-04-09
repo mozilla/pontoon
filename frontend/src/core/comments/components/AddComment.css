@@ -21,10 +21,14 @@
     resize: none;
 }
 
+.public-DraftEditorPlaceholder-root {
+    position: relative;
+    color: #aaa;
+}
+
 .public-DraftEditorPlaceholder-inner {
-  position: absolute;
-  color: #aaa;
-  pointer-events: none;
+    position: absolute;
+    width: 125px;
 }
 
 .comments-list .add-comment .submit-button {
