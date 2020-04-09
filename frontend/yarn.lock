@@ -988,15 +988,15 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
   integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
 
-"@fluent/bundle@0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.15.0.tgz#c123ea08d066d8b987eae5ceaa6632451609efaf"
-  integrity sha512-pYz+TuFPwCj5yx51mFG1flPxwTaXWkpi6yt6r+rdm22Y9bkWMHWdwbUnjWLJ+9yJKQMhe2uhvMJ7YfhkF87oNg==
+"@fluent/bundle@0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.15.1.tgz#95d3b9f836ac138b6ee8480ef8d0547dd59195b1"
+  integrity sha512-uhDGjpEwTMBNxYMSXyjXFBG5LY7dqoNatle6mnghu5lFOrf0JyblY/Y0al2GzDKFuYbtOSbJvUkxzjtYX3odkw==
 
-"@fluent/langneg@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@fluent/langneg/-/langneg-0.3.0.tgz#8e92cf767f79c8f5e1b116a42248a68a342a1039"
-  integrity sha512-ppMMw+xi4ma45P2Nyf0sfnzIxrCswTgy0SBvPeZ8LB0sD0Gj403ZYYJTg06MmAcQITXXku3fGIpt/u1k5Zq1tA==
+"@fluent/langneg@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@fluent/langneg/-/langneg-0.4.0.tgz#40d6d8feb36747910aac05bfb850fec8f363bbef"
+  integrity sha512-MV5/cFL5TrTNhZ/gOlkJmU0KWSHSIxsyJiNjwkIsQOGZlZ56vU92hOfgG47tBRJ9Or74WTxyQcteCSlPHddnww==
 
 "@fluent/react@0.12.0":
   version "0.12.0"
