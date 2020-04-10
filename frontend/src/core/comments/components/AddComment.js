@@ -110,14 +110,19 @@ export default function AddComments(props: Props) {
         />
         <div className='container'>
             <div className='editor-wrapper' onClick={ focusEditor }>
-                <Editor
-                    ref={ editor }
-                    editorState={ editorState }
-                    placeholder='Write a comment…'
-                    onChange={ onChange }
-                    keyBindingFn={ keyBindingFn }
-                    handleKeyCommand={ handleKeyCommand }
-                />
+                <Localized
+                    id='comments-AddComment--input'
+                    attrs={{ placeholder: true }}
+                >
+                    <Editor
+                        ref={ editor }
+                        editorState={ editorState }
+                        placeholder='Write a comment…'
+                        onChange={ onChange }
+                        keyBindingFn={ keyBindingFn }
+                        handleKeyCommand={ handleKeyCommand }
+                    />
+                </Localized>
             </div>
             <Localized
                 id="comments-AddComment--submit-button"
