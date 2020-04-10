@@ -28,10 +28,19 @@ function renderItem(
     label: string,
     key: string,
     className: ?string,
+    attributeLabel: ?string,
 ): React.Node {
     return <tr key={ key } className={ className }>
         <td>
-            <label>{ label }</label>
+            { attributeLabel ?
+                <label>
+                    <span className='attribute-label'>{ attributeLabel }</span>
+                    <span className='divider'>&middot;</span>
+                    <span className='label'>{ label }</span>
+                </label>
+                :
+                <label>{ label }</label>
+            }
         </td>
         <td>
             <span>
@@ -47,6 +56,7 @@ function renderItem(
 function renderElements(
     elements: Array<PatternElement>,
     label: string,
+    attributeLabel: ?string,
 ): React.Node {
     let indent = false;
     return elements.map((element, index) => {
@@ -64,6 +74,7 @@ function renderElements(
                     serializeVariantKey(variant.key),
                     [index, i].join('-'),
                     indent ? 'indented' : null,
+                    attributeLabel,
                 );
             });
             indent = false;
@@ -90,13 +101,18 @@ function renderValue(value: Pattern, label?: string): React.Node {
         return null;
     }
 
+    let attributeLabel = null;
     if (!label) {
         label = 'Value';
+    }
+    else {
+        attributeLabel = label;
     }
 
     return renderElements(
         value.elements,
         label,
+        attributeLabel,
     );
 }
 

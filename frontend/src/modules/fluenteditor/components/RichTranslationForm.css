@@ -32,6 +32,11 @@
     margin-left: 10px;
 }
 
+.fluent-rich-translation-form table tr > td > label .divider {
+    color: #7BC876;
+    padding: 0 3px;
+}
+
 .fluent-rich-translation-form table tr > td > label .stress {
     color: #7BC876;
 }

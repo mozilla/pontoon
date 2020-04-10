@@ -366,6 +366,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         value: string,
         path: MessagePath,
         label: string,
+        attributeLabel: ?string,
         className: ?string,
         example: ?number,
     ) {
@@ -375,7 +376,14 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                     { typeof(example) === 'number' ?
                         this.renderLabel(label, example)
                         :
-                        <span>{ label }</span>
+                        attributeLabel ?
+                            <span>
+                                <span className='attribute-label'>{ attributeLabel }</span>
+                                <span className='divider'>&middot;</span>
+                                <span className='label'>{ label }</span>
+                            </span>
+                            :
+                            <span>{ label }</span>
                     }
                 </label>
             </td>
@@ -390,6 +398,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         eIndex: number,
         vIndex: number,
         pluralExamples: any,
+        attributeLabel: ?string,
     ): React.Node {
         const element = variant.value.elements[0];
         if (element.value === null) {
@@ -415,12 +424,18 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             value,
             [].concat(ePath, vPath),
             label,
+            attributeLabel,
             indent ? 'indented' : null,
             example,
         );
     }
 
-    renderElements(elements: Array<PatternElement>, path: MessagePath, label: string): React.Node {
+    renderElements(
+        elements: Array<PatternElement>,
+        path: MessagePath,
+        label: string,
+        attributeLabel: ?string,
+    ): React.Node {
         let indent = false;
 
         return elements.map((element, eIndex) => {
@@ -440,6 +455,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                         eIndex,
                         vIndex,
                         pluralExamples,
+                        attributeLabel,
                     );
                 });
 
@@ -466,14 +482,19 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             return null;
         }
 
+        let attributeLabel = null;
         if (!label) {
             label = 'Value';
+        }
+        else {
+            attributeLabel = label;
         }
 
         return this.renderElements(
             value.elements,
             [].concat(path, [ 'elements' ]),
             label,
+            attributeLabel,
         );
     }
 
