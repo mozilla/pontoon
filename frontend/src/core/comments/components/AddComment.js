@@ -109,7 +109,7 @@ export default function AddComments(props: Props) {
             imageUrl={ imageURL }
         />
         <div className='container'>
-            <div className='editor-wrapper' onClick={ focusEditor }>
+            <div className='editor-wrapper' onClick={ focusEditor } cursor={ 'text' }>
                 <Localized
                     id='comments-AddComment--input'
                     attrs={{ placeholder: true }}

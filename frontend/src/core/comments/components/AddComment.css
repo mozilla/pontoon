@@ -35,6 +35,10 @@
     position: absolute;
 }
 
+.public-DraftEditor-content {
+    word-break: break-all;
+}
+
 .comments-list .add-comment .submit-button {
     background-color: #4d5967;
     border: solid 1px #4d5967;

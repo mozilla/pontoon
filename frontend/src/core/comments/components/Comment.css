@@ -19,6 +19,7 @@
     display: flex;
     font-size: 11px;
     padding: 6px;
+    word-break: break-all;
 }
 
 .comments-list .comment .content p {
