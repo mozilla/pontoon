@@ -4,7 +4,7 @@
     padding-bottom: 6px;
 }
 
-.comments-list .add-comment .comment-div {
+.comments-list .add-comment .editor-wrapper {
     align-items: center;
     background-color: #333941;
     border: none;
@@ -21,6 +21,11 @@
     resize: none;
 }
 
+.DraftEditor-root {
+    height: 100%;
+    width: 100%;
+}
+
 .public-DraftEditorPlaceholder-root {
     position: relative;
     color: #aaa;
@@ -28,7 +33,6 @@
 
 .public-DraftEditorPlaceholder-inner {
     position: absolute;
-    width: 125px;
 }
 
 .comments-list .add-comment .submit-button {

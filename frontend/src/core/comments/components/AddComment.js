@@ -57,14 +57,14 @@ export default function AddComments(props: Props) {
 
     function keyBindingFn(e: SyntheticKeyboardEvent<>) {
         if (e.keyCode === 13 && e.shiftKey === false) {
-          return 'submitOnEnter' 
+            return 'submit-on-enter'; 
         }
         
         return getDefaultKeyBinding(e)
     }
 
     const handleKeyCommand = (command: string) => {
-        if (command === 'submitOnEnter') {
+        if (command === 'submit-on-enter') {
             submitComment();
             return 'handled';
         }
@@ -109,7 +109,7 @@ export default function AddComments(props: Props) {
             imageUrl={ imageURL }
         />
         <div className='container'>
-            <div className='comment-div' onClick={ focusEditor }>
+            <div className='editor-wrapper' onClick={ focusEditor }>
                 <Editor
                     ref={ editor }
                     editorState={ editorState }

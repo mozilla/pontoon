@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import './Comment.css';
@@ -40,11 +39,9 @@ export default function Comment(props: Props) {
                     >
                         { comment.author }
                     </a>
-                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                        {/* We can safely use comment.content because it is validated by
-                        bleach before being saved into the database. */}
-                        <span dangerouslySetInnerHTML={ { __html: comment.content } } />
-                    </Linkify>
+                    {/* We can safely use comment.content because it is validated by
+                    bleach before being saved into the database. */}
+                    <span className='comment-content' dangerouslySetInnerHTML={ { __html: comment.content } } />
                 </p>
             </div>
             <div className='info'>
