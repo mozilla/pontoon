@@ -177,6 +177,19 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     render() {
         return <div className="batch-actions">
             <div className="topbar clearfix">
+                <Localized
+                    id="batchactions-BatchActions--header-select-all"
+                    attrs={{ title: true }}
+                    elems={{ glyph: <i className="fa fa-check fa-lg" /> }}
+                >
+                    <button
+                        className="select-all"
+                        title="Select All Strings (Ctrl + Shift + A)"
+                        onClick={ this.selectAllEntities }
+                    >
+                        { '<glyph></glyph> Select All' }
+                    </button>
+                </Localized>
                 { this.props.batchactions.requestInProgress === 'select-all' ?
                     <div className="selecting fa fa-sync fa-spin"></div>
                     :
@@ -198,19 +211,6 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         </button>
                     </Localized>
                 }
-                <Localized
-                    id="batchactions-BatchActions--header-select-all"
-                    attrs={{ title: true }}
-                    elems={{ glyph: <i className="fa fa-check fa-lg" /> }}
-                >
-                    <button
-                        className="select-all"
-                        title="Select All Strings (Ctrl + Shift + A)"
-                        onClick={ this.selectAllEntities }
-                    >
-                        { '<glyph></glyph> Select All' }
-                    </button>
-                </Localized>
             </div>
 
             <div className="main-content">
