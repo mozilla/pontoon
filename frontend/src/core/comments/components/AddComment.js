@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
+import Editor from 'draft-js-plugins-editor';
 import { 
-    Editor, 
     EditorState, 
     getDefaultKeyBinding, 
     convertToRaw,
@@ -11,8 +11,11 @@ import {
     Modifier, 
 } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import createLinkifyPlugin from 'draft-js-linkify-plugin';
 
 import './AddComment.css';
+import 'draft-js-linkify-plugin/lib/plugin.css';
+
 
 import { UserAvatar } from 'core/user'
 
@@ -46,6 +49,8 @@ export default function AddComments(props: Props) {
     if (!user) {
         return null;
     }
+
+    const linkifyPlugin = createLinkifyPlugin({ target: '_blank' });
     
     const onChange = (editorState) => {
         setEditorState(editorState);
@@ -71,6 +76,7 @@ export default function AddComments(props: Props) {
         return 'not-handled';
     }
 
+    // TODO: Would like to find another solution or refactor this as it is not very pretty
     const clearEditorContent = () => {
         let contentState = editorState.getCurrentContent();
         const firstBlock = contentState.getFirstBlock();
@@ -119,6 +125,7 @@ export default function AddComments(props: Props) {
                         editorState={ editorState }
                         placeholder='Write a comment…'
                         onChange={ onChange }
+                        plugins={[ linkifyPlugin ]}
                         keyBindingFn={ keyBindingFn }
                         handleKeyCommand={ handleKeyCommand }
                     />
