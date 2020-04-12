@@ -46,6 +46,7 @@
     color: #ccc;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     height: 36px;
     width: 36px;
     margin-left: 6px;
