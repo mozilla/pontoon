@@ -11,7 +11,6 @@
     border-radius: 4px;
     color: #FFFFFF;
     cursor: text;
-    display: flex;
     flex-grow: 2;
     font-size: 11px;
     min-height: 26px;
@@ -22,18 +21,8 @@
     resize: none;
 }
 
-.DraftEditor-root {
-    height: 100%;
-    width: 100%;
-}
-
-.public-DraftEditorPlaceholder-root {
-    position: relative;
-    color: #aaa;
-}
-
 .public-DraftEditorPlaceholder-inner {
-    position: absolute;
+    color: #aaa;
 }
 
 .public-DraftEditor-content {

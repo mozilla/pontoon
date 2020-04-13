@@ -14,6 +14,7 @@ import draftToHtml from 'draftjs-to-html';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
 
 import './AddComment.css';
+import 'draft-js/dist/Draft.css';
 import 'draft-js-linkify-plugin/lib/plugin.css';
 
 
@@ -42,8 +43,12 @@ export default function AddComments(props: Props) {
     )
     const editor: any = React.useRef(null);
 
+    // This is a temporary workaround to keep the editor from clearing the 
+    // decorators set for the plugins
     React.useEffect(() => {
-        focusEditor()
+        setTimeout(() => {
+            focusEditor()
+        }, 0);
     }, []);
 
     if (!user) {
