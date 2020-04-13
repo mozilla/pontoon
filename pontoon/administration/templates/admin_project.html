@@ -286,16 +286,24 @@
       <span>Tags</span>
       <span class="small stress">(optional)</span>
     </h3>
-    <div class="controls clearfix">
-      <div class="checkbox clearfix">
-        <label for="id_tags_enabled">
+      <label for="id_tags_enabled">
           {{ form.tags_enabled }}{{ form.tags_enabled.label }}
-        </label>
-      </div>
+      </label>
+      {% if tag_formset %}
+      {{ tag_inline_formset.render(title='Linked tags', type='tag', formset=tag_formset, project=project) }}
+      {% endif %}
+  </section>
+
+  <section class="section_visibility">
+    <div class="checkbox clearfix id_visibility">
+        <h3>
+            Visibility
+            <span class="small stress">
+
+            {{ form.visibility }}
+            </span>
+        </h3>
     </div>
-    {% if tag_formset %}
-    {{ tag_inline_formset.render(title='Linked tags', type='tag', formset=tag_formset, project=project) }}
-    {% endif %}
   </section>
 
   <section class="controls clearfix">

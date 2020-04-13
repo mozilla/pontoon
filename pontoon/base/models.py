@@ -1147,6 +1147,20 @@ class Project(AggregatedStats):
     """,
     )
 
+    VISIBILITY_TYPES = (
+        ('public', 'Public'),
+        ('private', 'Private'),
+    )
+    visibility = models.CharField(
+        max_length=20,
+        default=VISIBILITY_TYPES[0][0],
+        choices=VISIBILITY_TYPES,
+        help_text="""
+        Private project is invisible for contributors and accessible
+        only to project/locale managers.
+    """,
+    )
+
     # Website for in place localization
     url = models.URLField("URL", blank=True)
     width = models.PositiveIntegerField(
