@@ -50,7 +50,7 @@ export default function Term(props: Props) {
             <span className='part-of-speech'>{ term.partOfSpeech }</span>
         </header>
         <p className='translation'>{ term.translation }</p>
-        <p className='details'>
+        <div className='details'>
             <p className='definition'>{ term.definition }</p>
             <p className='usage'>
                 <Localized id="term-Term--for-example">
@@ -58,6 +58,6 @@ export default function Term(props: Props) {
                 </Localized>
                 <span className='content'>{ term.usage }</span>
             </p>
-        </p>
+        </div>
     </li>;
 }
