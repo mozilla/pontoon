@@ -12,6 +12,7 @@ import {
 } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
 
 import './AddComment.css';
 import 'draft-js/dist/Draft.css';
@@ -38,9 +39,23 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
+    const mentions = [
+        {
+          name: 'Matthew Russell',
+          link: 'https://twitter.com/mrussell247',
+          avatar: 'https://pbs.twimg.com/profile_images/517863945/mattsailing_400x400.jpg',
+        },
+        {
+          name: 'Julian Krispel-Samsel',
+          link: 'https://twitter.com/juliandoesstuff',
+          avatar: 'https://avatars2.githubusercontent.com/u/1188186?v=3&s=400',
+        },
+    ]
+
     let [editorState, setEditorState] = React.useState(
         EditorState.createEmpty()
     )
+    const [suggestions, setSuggestions] = React.useState(mentions)
     const editor: any = React.useRef(null);
 
     // This is a temporary workaround to keep the editor from clearing the 
@@ -56,9 +71,21 @@ export default function AddComments(props: Props) {
     }
 
     const linkifyPlugin = createLinkifyPlugin({ target: '_blank' });
-    
+    const mentionPlugin = createMentionPlugin();
+    const { MentionSuggestions } = mentionPlugin; 
+
+    const plugins = [mentionPlugin, linkifyPlugin];
+
     const onChange = (editorState) => {
         setEditorState(editorState);
+    }
+
+    const onSearchChange = ({ value }) => {
+        setSuggestions(defaultSuggestionsFilter(value, mentions))
+    };
+
+    const onAddMention = () => { 
+        // get the mention object selected
     }
 
     function focusEditor() {
@@ -130,11 +157,16 @@ export default function AddComments(props: Props) {
                         editorState={ editorState }
                         placeholder='Write a comment…'
                         onChange={ onChange }
-                        plugins={[ linkifyPlugin ]}
+                        plugins={ plugins }
                         keyBindingFn={ keyBindingFn }
                         handleKeyCommand={ handleKeyCommand }
                     />
                 </Localized>
+                    <MentionSuggestions
+                        onSearchChange={ onSearchChange }
+                        suggestions={ suggestions }
+                        onAddMention ={ onAddMention }
+                    />
             </div>
             <Localized
                 id="comments-AddComment--submit-button"

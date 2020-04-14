@@ -14,6 +14,7 @@
     "diff-match-patch": "1.0.4",
     "draft-js": "^0.11.5",
     "draft-js-linkify-plugin": "^2.0.2",
+    "draft-js-mention-plugin": "^3.1.5",
     "draft-js-plugins-editor": "^3.0.0",
     "draftjs-to-html": "^0.9.1",
     "flow-bin": "0.95.1",
