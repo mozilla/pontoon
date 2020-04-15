@@ -28,10 +28,19 @@ function renderItem(
     label: string,
     key: string,
     className: ?string,
+    attributeName: ?string,
 ): React.Node {
     return <tr key={ key } className={ className }>
         <td>
-            <label>{ label }</label>
+            { attributeName ?
+                <label>
+                    <span className='attribute-label'>{ attributeName }</span>
+                    <span className='divider'>&middot;</span>
+                    <span className='label'>{ label }</span>
+                </label>
+                :
+                <label>{ label }</label>
+            }
         </td>
         <td>
             <span>
@@ -46,7 +55,7 @@ function renderItem(
 
 function renderElements(
     elements: Array<PatternElement>,
-    label: string,
+    attributeName: ?string,
 ): React.Node {
     let indent = false;
     return elements.map((element, index) => {
@@ -64,6 +73,7 @@ function renderElements(
                     serializeVariantKey(variant.key),
                     [index, i].join('-'),
                     indent ? 'indented' : null,
+                    attributeName,
                 );
             });
             indent = false;
@@ -73,6 +83,10 @@ function renderElements(
             if (typeof(element.value) !== 'string') {
                 return null;
             }
+
+            // When rendering Message attribute, set label to attribute name.
+            // When rendering Message value, set label to "Value".
+            const label = attributeName || 'Value';
 
             indent = true;
             return renderItem(
@@ -85,18 +99,14 @@ function renderElements(
 }
 
 
-function renderValue(value: Pattern, label?: string): React.Node {
+function renderValue(value: Pattern, attributeName?: string): React.Node {
     if (!value) {
         return null;
     }
 
-    if (!label) {
-        label = 'Value';
-    }
-
     return renderElements(
         value.elements,
-        label,
+        attributeName,
     );
 }
 

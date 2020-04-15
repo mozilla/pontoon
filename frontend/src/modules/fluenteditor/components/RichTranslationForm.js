@@ -368,6 +368,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         value: string,
         path: MessagePath,
         label: string,
+        attributeName: ?string,
         className: ?string,
         example: ?number,
     ) {
@@ -377,7 +378,14 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                     { typeof(example) === 'number' ?
                         this.renderLabel(label, example)
                         :
-                        <span>{ label }</span>
+                        attributeName ?
+                            <span>
+                                <span className='attribute-label'>{ attributeName }</span>
+                                <span className='divider'>&middot;</span>
+                                <span className='label'>{ label }</span>
+                            </span>
+                            :
+                            <span>{ label }</span>
                     }
                 </label>
             </td>
@@ -392,6 +400,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         eIndex: number,
         vIndex: number,
         pluralExamples: any,
+        attributeName: ?string,
     ): React.Node {
         const element = variant.value.elements[0];
         if (element.value === null) {
@@ -417,12 +426,17 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             value,
             [].concat(ePath, vPath),
             label,
+            attributeName,
             indent ? 'indented' : null,
             example,
         );
     }
 
-    renderElements(elements: Array<PatternElement>, path: MessagePath, label: string): React.Node {
+    renderElements(
+        elements: Array<PatternElement>,
+        path: MessagePath,
+        attributeName: ?string,
+    ): React.Node {
         let indent = false;
 
         return elements.map((element, eIndex) => {
@@ -442,6 +456,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                         eIndex,
                         vIndex,
                         pluralExamples,
+                        attributeName,
                     );
                 });
 
@@ -449,6 +464,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 return variants;
             }
             else {
+                // When rendering Message attribute, set label to attribute name.
+                // When rendering Message value, set label to "Value".
+                const label = attributeName || 'Value';
+
                 indent = true;
                 if (typeof(element.value) !== 'string') {
                     return null;
@@ -463,19 +482,15 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         });
     }
 
-    renderValue(value: Pattern, path: MessagePath, label?: string): React.Node {
+    renderValue(value: Pattern, path: MessagePath, attributeName?: string): React.Node {
         if (!value) {
             return null;
-        }
-
-        if (!label) {
-            label = 'Value';
         }
 
         return this.renderElements(
             value.elements,
             [].concat(path, [ 'elements' ]),
-            label,
+            attributeName,
         );
     }
 
