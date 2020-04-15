@@ -68,8 +68,8 @@ class Term(models.Model):
             return self.text
         else:
             try:
-                return self.translations.filter(locale=locale).first().text
-            except AttributeError:
+                return self.translations.get(locale=locale).text
+            except (AttributeError, TermTranslation.DoesNotExist):
                 return None
 
     def __str__(self):
