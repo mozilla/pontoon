@@ -50,6 +50,15 @@
     cursor: pointer;
 }
 
+.metadata .original .term {
+    background: inherit;
+    border-bottom: 1px solid #7BC876;
+    color: inherit;
+    cursor: pointer;
+    font-weight: normal;
+    font-style: inherit;
+}
+
 .metadata ul {
     list-style: none;
     margin: 0;

@@ -3,18 +3,24 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { WithPlaceables } from 'core/placeable';
+import { WithPlaceablesNoLeadingSpace } from 'core/placeable';
+import { withTerms } from 'core/term';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { TermState } from 'core/term';
 
 
 type Props = {|
     +entity: Entity,
     +locale: Locale,
     +pluralForm: number,
+    +terms: TermState,
     +handleClickOnPlaceable: (SyntheticMouseEvent<HTMLParagraphElement>) => void,
 |};
+
+
+const WithPlaceablesTerms = withTerms(WithPlaceablesNoLeadingSpace);
 
 
 function getOriginalContent(props: Props) {
@@ -57,9 +63,9 @@ export default function GenericOriginalString(props: Props) {
     return <>
         { title }
         <p className="original" onClick={ props.handleClickOnPlaceable }>
-            <WithPlaceables>
+            <WithPlaceablesTerms terms={ props.terms }>
                 { original }
-            </WithPlaceables>
+            </WithPlaceablesTerms>
         </p>
     </>;
 }

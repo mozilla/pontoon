@@ -13,11 +13,7 @@ type Props = {|
 export default function TermCount(props: Props) {
     const { terms } = props;
 
-    if (terms.fetching) {
-        return null;
-    }
-
-    if (!terms.terms ) {
+    if (terms.fetching || !terms.terms ) {
         return null;
     }
 

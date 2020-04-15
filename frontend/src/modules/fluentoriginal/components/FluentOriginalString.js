@@ -9,10 +9,12 @@ import SimpleString from './SimpleString';
 import SourceString from './SourceString';
 
 import type { Entity } from 'core/api';
+import type { TermState } from 'core/term';
 
 
 type Props = {|
     +entity: Entity,
+    +terms: TermState,
     +handleClickOnPlaceable: (SyntheticMouseEvent<HTMLParagraphElement>) => void,
 |};
 
@@ -30,6 +32,7 @@ export default function FluentOriginalString(props: Props) {
     if (syntax === 'simple') {
         return <SimpleString
             entity={ props.entity }
+            terms={ props.terms }
             handleClickOnPlaceable={ props.handleClickOnPlaceable }
         />;
     }
@@ -37,6 +40,7 @@ export default function FluentOriginalString(props: Props) {
     if (syntax === 'rich') {
         return <RichString
             entity={ props.entity }
+            terms={ props.terms }
             handleClickOnPlaceable={ props.handleClickOnPlaceable }
         />;
     }
@@ -44,6 +48,7 @@ export default function FluentOriginalString(props: Props) {
     // Complex, unsupported strings.
     return <SourceString
         entity={ props.entity }
+        terms={ props.terms }
         handleClickOnPlaceable={ props.handleClickOnPlaceable }
     />
 }

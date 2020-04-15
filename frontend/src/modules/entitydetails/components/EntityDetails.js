@@ -328,6 +328,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }
                     pluralForm={ state.pluralForm }
+                    terms={ state.terms }
                     openLightbox={ this.openLightbox }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }

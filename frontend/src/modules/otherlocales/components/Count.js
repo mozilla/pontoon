@@ -13,11 +13,7 @@ type Props = {|
 export default function Count(props: Props) {
     const { otherlocales } = props;
 
-    if (otherlocales.fetching) {
-        return null;
-    }
-
-    if (!otherlocales.translations) {
+    if (otherlocales.fetching || !otherlocales.translations) {
         return null;
     }
 
