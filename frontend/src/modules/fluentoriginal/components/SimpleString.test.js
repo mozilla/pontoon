@@ -20,8 +20,8 @@ describe('<SimpleString>', () => {
             entity = { ENTITY }
         />);
 
-        expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
-        expect(wrapper.find('.original ContentMarker').children().text()).toEqual('Hello\nSimple\nString');
+        expect(wrapper.find('.original WithTerms').children()).toHaveLength(1);
+        expect(wrapper.find('.original WithTerms').children().text()).toEqual('Hello\nSimple\nString');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {

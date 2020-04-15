@@ -10,9 +10,11 @@ import FluentAttribute from './FluentAttribute';
 import OriginalStringProxy from './OriginalStringProxy';
 import Property from './Property';
 import Screenshots from './Screenshots';
+import TermsPopup from './TermsPopup';
 
-import type { Entity } from 'core/api';
+import type { Entity, TermType } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { TermState } from 'core/term';
 
 
 type Props = {|
@@ -20,12 +22,14 @@ type Props = {|
     +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
+    +terms: TermState,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
 |};
 
 type State = {|
+    popupTerms: Array<TermType>,
     seeMore: boolean,
 |};
 
@@ -45,12 +49,18 @@ type State = {|
 export default class Metadata extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = { seeMore: false };
+        this.state = {
+            popupTerms: [],
+            seeMore: false,
+        };
     }
 
     componentDidUpdate(prevProps: Props) {
         if (this.props.entity !== prevProps.entity) {
-            this.setState({ seeMore: false });
+            this.setState({
+                popupTerms: [],
+                seeMore: false,
+            });
         }
     }
 
@@ -59,14 +69,15 @@ export default class Metadata extends React.Component<Props, State> {
     };
 
     handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
-        if (this.props.isReadOnlyEditor) {
-            return;
-        }
         // Flow requires that we use `e.currentTarget` instead of `e.target`.
-        // However in this case, we do want to use that, so I'm ignoring all
+        // However in this case, we do want to use that, so we're ignoring all
         // errors Flow throws there.
+
         // $FLOW_IGNORE
         if (e.target && e.target.classList.contains('placeable')) {
+            if (this.props.isReadOnlyEditor) {
+                return;
+            }
             // $FLOW_IGNORE
             if (e.target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
@@ -79,7 +90,20 @@ export default class Metadata extends React.Component<Props, State> {
                 this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
             }
         }
+
+        // Handle click on Term
+
+        // $FLOW_IGNORE
+        const markedTerm = e.target.dataset['term'];
+        if (e.target && markedTerm) {
+            const popupTerms = this.props.terms.terms.filter(t => t.text === markedTerm);
+            this.setState({ popupTerms: popupTerms });
+        }
     }
+
+    hidePopupTerms = () => {
+        this.setState({ popupTerms: [] });
+    };
 
     renderComment(entity: Entity): React.Node {
         if (!entity.comment) {
@@ -207,7 +231,8 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     render(): React.Node {
-        const { entity, locale, openLightbox, pluralForm } = this.props;
+        const { entity, isReadOnlyEditor, locale, openLightbox, pluralForm, terms } = this.props;
+        const { popupTerms } = this.state;
 
         return <div className="metadata">
             <Screenshots
@@ -219,7 +244,14 @@ export default class Metadata extends React.Component<Props, State> {
                 entity={ entity }
                 locale={ locale }
                 pluralForm={ pluralForm }
+                terms={ terms }
                 handleClickOnPlaceable={ this.handleClickOnPlaceable }
+            />
+            <TermsPopup
+                isReadOnlyEditor={ isReadOnlyEditor }
+                terms={ popupTerms }
+                addTextToEditorTranslation={ this.props.addTextToEditorTranslation }
+                hide={ this.hidePopupTerms }
             />
             { this.renderComment(entity) }
             { this.renderGroupComment(entity) }

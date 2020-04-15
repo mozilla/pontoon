@@ -52,15 +52,11 @@ export default class OtherLocales extends React.Component<Props> {
     render() {
         const { otherlocales } = this.props;
 
-        if (!otherlocales.translations) {
+        if (otherlocales.fetching || !otherlocales.translations) {
             return null;
         }
 
         const translations = otherlocales.translations;
-
-        if (otherlocales.fetching) {
-            return null;
-        }
 
         if (!translations.other.length && !translations.preferred.length) {
             return this.renderNoResults();

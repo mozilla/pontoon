@@ -25,6 +25,10 @@
     text-transform: uppercase;
 }
 
+.terms-list .term .translation {
+    color: #EBEBEB;
+}
+
 .terms-list .term .details {
     color: #AAA;
     font-style: italic;
