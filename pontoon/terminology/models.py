@@ -1,31 +1,21 @@
 import re
 
-from sacremoses import MosesTokenizer
-
 from django.db import models
 
 
 class TermQuerySet(models.QuerySet):
     def for_string(self, string):
-        term_pks = []
-        valid_terms = self.exclude(definition="").exclude(forbidden=True)
-        mt = MosesTokenizer()
-        source_words = mt.tokenize(string)
+        terms = []
+        available_terms = self.exclude(definition="").exclude(forbidden=True)
 
-        for term in valid_terms:
+        for term in available_terms:
+            term_text = r"\b" + re.escape(term.text)
             flags = 0 if term.case_sensitive else re.IGNORECASE
-            terms_words = mt.tokenize(term.text)
 
-            if len(terms_words) == 1:
-                for word in source_words:
-                    if re.search(terms_words[0], word, flags):
-                        term_pks.append(term.pk)
-                        break
-            else:
-                if re.search("".join(terms_words), "".join(source_words), flags):
-                    term_pks.append(term.pk)
+            if re.search(term_text, string, flags):
+                terms.append(term)
 
-        return self.filter(pk__in=term_pks)
+        return terms
 
 
 class Term(models.Model):

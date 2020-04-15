@@ -22,15 +22,11 @@ type Props = {|
 export default function Terms(props: Props) {
     let { isReadOnlyEditor, terms, addTextToEditorTranslation } = props;
 
-    if (terms.fetching) {
+    if (terms.fetching || !terms.terms) {
         return null;
     }
 
     terms = terms.terms;
-
-    if (!terms) {
-        return null;
-    }
 
     return <section className="terms">
         { !terms.length ?

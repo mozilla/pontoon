@@ -5,10 +5,12 @@ import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichString.css';
 
-import { WithPlaceablesForFluent } from 'core/placeable';
+import { WithPlaceablesForFluentNoLeadingSpace } from 'core/placeable';
+import { withTerms } from 'core/term';
 import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
+import type { TermState } from 'core/term';
 import type {
     FluentAttribute,
     FluentAttributes,
@@ -19,14 +21,19 @@ import type {
 
 type Props = {|
     +entity: Entity,
+    +terms: TermState,
     +handleClickOnPlaceable: (SyntheticMouseEvent<HTMLParagraphElement>) => void,
 |};
+
+
+const WithPlaceablesTerms = withTerms(WithPlaceablesForFluentNoLeadingSpace);
 
 
 function renderItem(
     value: string,
     label: string,
     key: string,
+    terms: TermState,
     className: ?string,
     attributeName: ?string,
 ): React.Node {
@@ -44,9 +51,9 @@ function renderItem(
         </td>
         <td>
             <span>
-                <WithPlaceablesForFluent>
+                <WithPlaceablesTerms terms={ terms }>
                     { value }
-                </WithPlaceablesForFluent>
+                </WithPlaceablesTerms>
             </span>
         </td>
     </tr>;
@@ -55,6 +62,7 @@ function renderItem(
 
 function renderElements(
     elements: Array<PatternElement>,
+    terms: TermState,
     attributeName: ?string,
 ): React.Node {
     let indent = false;
@@ -72,6 +80,7 @@ function renderElements(
                     variant.value.elements[0].value,
                     serializeVariantKey(variant.key),
                     [index, i].join('-'),
+                    terms,
                     indent ? 'indented' : null,
                     attributeName,
                 );
@@ -93,25 +102,27 @@ function renderElements(
                 element.value,
                 label,
                 index.toString(),
+                terms,
             );
         }
     });
 }
 
 
-function renderValue(value: Pattern, attributeName?: string): React.Node {
+function renderValue(value: Pattern, terms: TermState, attributeName?: string): React.Node {
     if (!value) {
         return null;
     }
 
     return renderElements(
         value.elements,
+        terms,
         attributeName,
     );
 }
 
 
-function renderAttributes(attributes: ?FluentAttributes): React.Node {
+function renderAttributes(attributes: ?FluentAttributes, terms: TermState): React.Node {
     if (!attributes) {
         return null;
     }
@@ -119,6 +130,7 @@ function renderAttributes(attributes: ?FluentAttributes): React.Node {
     return attributes.map((attribute: FluentAttribute) => {
         return renderValue(
             attribute.value,
+            terms,
             attribute.id.name,
         );
     });
@@ -135,8 +147,8 @@ export default function RichString(props: Props) {
 
     return <table className="original fluent-rich-string" onClick={ props.handleClickOnPlaceable }>
         <tbody>
-            { renderValue(message.value) }
-            { renderAttributes(message.attributes) }
+            { renderValue(message.value, props.terms) }
+            { renderAttributes(message.attributes, props.terms) }
         </tbody>
     </table>;
 }

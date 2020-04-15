@@ -17,8 +17,8 @@ describe('<SourceString>', () => {
             entity = { ENTITY }
         />);
 
-        expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
-        expect(wrapper.find('.original ContentMarker').children().text()).toEqual('title = Hello From The Other Side');
+        expect(wrapper.find('.original WithTerms').children()).toHaveLength(1);
+        expect(wrapper.find('.original WithTerms').children().text()).toEqual('title = Hello From The Other Side');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {
