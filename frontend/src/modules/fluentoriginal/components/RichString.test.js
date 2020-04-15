@@ -57,6 +57,47 @@ user-entry =
         expect(wrapper.find('ContentMarker').at(1).html()).toContain('Good Bye!');
     });
 
+    it('renders select expression in attributes properly', () => {
+        const input = `
+my-entry =
+    .label =
+        { PLATFORM() ->
+            [macosx] Preferences
+           *[other] Options
+        }
+    .accesskey =
+        { PLATFORM() ->
+            [macosx] e
+           *[other] s
+        }`;
+
+        const entity = {
+            original: input,
+        };
+
+        const wrapper = shallow(<RichString
+            entity = { entity }
+        />);
+
+        expect(wrapper.find('ContentMarker')).toHaveLength(4);
+
+        expect(wrapper.find('label .attribute-label').at(0).html()).toContain('label');
+        expect(wrapper.find('label').at(0).html()).toContain('macosx');
+        expect(wrapper.find('ContentMarker').at(0).html()).toContain('Preferences');
+
+        expect(wrapper.find('label .attribute-label').at(1).html()).toContain('label');
+        expect(wrapper.find('label').at(1).html()).toContain('other');
+        expect(wrapper.find('ContentMarker').at(1).html()).toContain('Options');
+
+        expect(wrapper.find('label .attribute-label').at(2).html()).toContain('accesskey');
+        expect(wrapper.find('label').at(2).html()).toContain('macosx');
+        expect(wrapper.find('ContentMarker').at(2).html()).toContain('e');
+
+        expect(wrapper.find('label .attribute-label').at(3).html()).toContain('accesskey');
+        expect(wrapper.find('label').at(3).html()).toContain('other');
+        expect(wrapper.find('ContentMarker').at(3).html()).toContain('s');
+    });
+
     it('calls the handleClickOnPlaceable function on click on .original', () => {
         const handleClickOnPlaceable = sinon.spy();
         const wrapper = shallow(<RichString

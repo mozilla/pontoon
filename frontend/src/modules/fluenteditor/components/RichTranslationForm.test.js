@@ -67,6 +67,50 @@ my-entry =
         expect(wrapper.find('textarea').at(1).html()).toContain('World!');
     });
 
+    it('renders select expression in attributes properly', () => {
+        const input = `
+my-entry =
+    .label =
+        { PLATFORM() ->
+            [macosx] Preferences
+           *[other] Options
+        }
+    .accesskey =
+        { PLATFORM() ->
+            [macosx] e
+           *[other] s
+        }`;
+
+        const editor = {
+            ...EDITOR,
+            translation: fluent.parser.parseEntry(input),
+        };
+
+        const wrapper = shallow(<RichTranslationForm
+            editor={ editor }
+            locale={ DEFAULT_LOCALE }
+            updateTranslation={ sinon.stub() }
+        />);
+
+        expect(wrapper.find('textarea')).toHaveLength(4);
+
+        expect(wrapper.find('label .attribute-label').at(0).html()).toContain('label');
+        expect(wrapper.find('label .label').at(0).html()).toContain('macosx');
+        expect(wrapper.find('textarea').at(0).html()).toContain('Preferences');
+
+        expect(wrapper.find('label .attribute-label').at(1).html()).toContain('label');
+        expect(wrapper.find('label').at(1).html()).toContain('other');
+        expect(wrapper.find('textarea').at(1).html()).toContain('Options');
+
+        expect(wrapper.find('label .attribute-label').at(2).html()).toContain('accesskey');
+        expect(wrapper.find('label').at(2).html()).toContain('macosx');
+        expect(wrapper.find('textarea').at(2).html()).toContain('e');
+
+        expect(wrapper.find('label .attribute-label').at(3).html()).toContain('accesskey');
+        expect(wrapper.find('label').at(3).html()).toContain('other');
+        expect(wrapper.find('textarea').at(3).html()).toContain('s');
+    });
+
     it('renders plural string properly', () => {
         const input = `
 my-entry =

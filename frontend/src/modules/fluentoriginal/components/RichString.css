@@ -24,6 +24,11 @@
     padding: 0 4px;
 }
 
+.fluent-rich-string tr > td > label .divider {
+    color: #7BC876;
+    padding: 0 3px;
+}
+
 .fluent-rich-string tr.indented > td > label {
     margin-left: 10px;
 }
