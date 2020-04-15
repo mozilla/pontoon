@@ -28,13 +28,13 @@ function renderItem(
     label: string,
     key: string,
     className: ?string,
-    attributeLabel: ?string,
+    attributeName: ?string,
 ): React.Node {
     return <tr key={ key } className={ className }>
         <td>
-            { attributeLabel ?
+            { attributeName ?
                 <label>
-                    <span className='attribute-label'>{ attributeLabel }</span>
+                    <span className='attribute-label'>{ attributeName }</span>
                     <span className='divider'>&middot;</span>
                     <span className='label'>{ label }</span>
                 </label>
@@ -55,8 +55,7 @@ function renderItem(
 
 function renderElements(
     elements: Array<PatternElement>,
-    label: string,
-    attributeLabel: ?string,
+    attributeName: ?string,
 ): React.Node {
     let indent = false;
     return elements.map((element, index) => {
@@ -74,7 +73,7 @@ function renderElements(
                     serializeVariantKey(variant.key),
                     [index, i].join('-'),
                     indent ? 'indented' : null,
-                    attributeLabel,
+                    attributeName,
                 );
             });
             indent = false;
@@ -84,6 +83,10 @@ function renderElements(
             if (typeof(element.value) !== 'string') {
                 return null;
             }
+
+            // When rendering Message attribute, set label to attribute name.
+            // When rendering Message value, set label to "Value".
+            const label = attributeName || 'Value';
 
             indent = true;
             return renderItem(
@@ -96,23 +99,14 @@ function renderElements(
 }
 
 
-function renderValue(value: Pattern, label?: string): React.Node {
+function renderValue(value: Pattern, attributeName?: string): React.Node {
     if (!value) {
         return null;
     }
 
-    let attributeLabel = null;
-    if (!label) {
-        label = 'Value';
-    }
-    else {
-        attributeLabel = label;
-    }
-
     return renderElements(
         value.elements,
-        label,
-        attributeLabel,
+        attributeName,
     );
 }
 
