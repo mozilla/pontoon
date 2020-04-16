@@ -291,23 +291,35 @@ def entity_key(entity):
     return ":".join([entity.resource.path, key])
 
 
-def pull_changes(db_project, locales, sync_source=True):
+def pull_source_repo_changes(db_project):
+    source_repo = db_project.source_repository
+    repo_revisions = source_repo.pull()
+
+    # If any revision is None, we can't be sure if a change
+    # happened or not, so we default to assuming it did.
+    source_changed = None in repo_revisions.values()
+    if repo_revisions != source_repo.last_synced_revisions:
+        source_changed = True
+
+    return source_changed
+
+
+def pull_locale_repo_changes(db_project, locales):
     """
     Update the local files with changes from the VCS. Returns True
     if any of the updated repos have changed since the last sync.
     """
     changed = False
-    source_changed = False
     repo_locales = {}
+
+    if not locales:
+        return changed, repo_locales
 
     # Skip already pulled locales. Useful for projects with multiple repositories (e.g. Firefox),
     # since we don't store the information what locale belongs to what repository.
     pulled_locales = []
 
-    for repo in db_project.repositories.all():
-        if not sync_source and repo.source_repository:
-            continue
-
+    for repo in db_project.translation_repositories():
         remaining_locales = locales.exclude(code__in=pulled_locales)
         if not remaining_locales:
             break
@@ -320,11 +332,9 @@ def pull_changes(db_project, locales, sync_source=True):
         # happened or not, so we default to assuming it did.
         unsure_change = None in repo_revisions.values()
         if unsure_change or repo_revisions != repo.last_synced_revisions:
-            if repo == db_project.source_repository:
-                source_changed = True
             changed = True
 
-    return source_changed, changed, repo_locales
+    return changed, repo_locales
 
 
 def commit_changes(db_project, vcs_project, changeset, locale):

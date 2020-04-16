@@ -8,9 +8,9 @@ from pontoon.base.tests import (
     ChangedEntityLocaleFactory,
     CONTAINS,
     ProjectFactory,
+    RepositoryFactory,
     TestCase,
     TranslationFactory,
-    LocaleFactory,
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.core import serial_task
@@ -27,13 +27,12 @@ from pontoon.sync.tests import (
 class SyncProjectTests(TestCase):
     def setUp(self):
         super(SyncProjectTests, self).setUp()
-        self.locale = LocaleFactory.create(code="locale-1")
-        self.db_project = ProjectFactory.create(locales=[self.locale],)
+        self.db_project = ProjectFactory.create()
         self.repository = self.db_project.repositories.all()[0]
         self.sync_log = SyncLogFactory.create()
 
-        self.mock_pull_changes = self.patch(
-            "pontoon.sync.tasks.pull_changes", return_value=[True, True, {}]
+        self.mock_pull_source_repo_changes = self.patch(
+            "pontoon.sync.tasks.pull_source_repo_changes", return_value=True
         )
         self.mock_project_needs_sync = self.patch_object(
             Project, "needs_sync", new_callable=PropertyMock, return_value=True
@@ -75,7 +74,7 @@ class SyncProjectTests(TestCase):
         If the database has changes and VCS doesn't, skip syncing
         resources, but sync translations.
         """
-        self.mock_pull_changes.return_value = [False, False, {}]
+        self.mock_pull_source_repo_changes.return_value = False
         self.mock_project_needs_sync.return_value = True
 
         with patch("pontoon.sync.tasks.log") as mock_log:
@@ -92,7 +91,7 @@ class SyncProjectTests(TestCase):
         If the database and the source repository both have no
         changes, and project has a single repository, skip sync.
         """
-        self.mock_pull_changes.return_value = [False, False, {}]
+        self.mock_pull_source_repo_changes.return_value = False
         self.mock_project_needs_sync.return_value = False
 
         with patch("pontoon.sync.tasks.log") as mock_log:
@@ -111,7 +110,7 @@ class SyncProjectTests(TestCase):
         If the database and VCS both have no changes, but force is true,
         do not skip syncing resources.
         """
-        self.mock_pull_changes.return_value = [False, False, {}]
+        self.mock_pull_source_repo_changes.return_value = False
         self.mock_project_needs_sync.return_value = False
 
         sync_project(self.db_project.pk, self.sync_log.pk, force=True)
@@ -122,22 +121,24 @@ class SyncProjectTests(TestCase):
         Don't call repo.pull if command.no_pull is True.
         """
         sync_project(self.db_project.pk, self.sync_log.pk, no_pull=True)
-        assert_false(self.mock_pull_changes.called)
+        assert_false(self.mock_pull_source_repo_changes.called)
 
     def test_create_project_log(self):
         assert_false(ProjectSyncLog.objects.exists())
         sync_project(self.db_project.pk, self.sync_log.pk)
 
         log = ProjectSyncLog.objects.get(project=self.db_project)
-        assert_equal(log.project, self.db_project)
+        assert_equal(self.mock_sync_translations.call_args[0][1].pk, log.pk)
 
 
 class SyncTranslationsTests(FakeCheckoutTestCase):
     def setUp(self):
         super(SyncTranslationsTests, self).setUp()
         self.project_sync_log = ProjectSyncLogFactory.create()
-        self.repo_locales = {}
-        self.repos_changed = True
+
+        self.mock_pull_locale_repo_changes = self.patch(
+            "pontoon.sync.tasks.pull_locale_repo_changes", return_value=[True, {}]
+        )
         self.mock_commit_changes = self.patch("pontoon.sync.tasks.commit_changes")
         self.mock_pretranslate = self.patch("pontoon.sync.tasks.pretranslate")
         self.mock_repo_checkout_path = self.patch_object(
@@ -153,6 +154,10 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         before the sync started after handling it.
         """
         self.now = aware_datetime(1970, 1, 2)
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
 
         changed1, changed2, changed_after = ChangedEntityLocaleFactory.create_batch(
             3,
@@ -163,19 +168,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         changed_after.when = aware_datetime(1970, 1, 3)
         changed_after.save()
 
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
-
-        sync_translations(
-            self.db_project,
-            self.project_sync_log,
-            self.now,
-            True,
-            repo_locales,
-            locales,
-        )
+        sync_translations(self.db_project, self.project_sync_log, self.now, True)
         with assert_raises(ChangedEntityLocale.DoesNotExist):
             changed1.refresh_from_db()
         with assert_raises(ChangedEntityLocale.DoesNotExist):
@@ -184,19 +177,12 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
     def test_no_commit(self):
         """Don't call commit_changes if command.no_commit is True."""
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
-
-        sync_translations(
-            self.db_project,
-            self.project_sync_log,
-            self.now,
+        self.mock_pull_locale_repo_changes.return_value = [
             True,
-            repo_locales,
-            locales,
-            no_commit=True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
+        sync_translations(
+            self.db_project, self.project_sync_log, self.now, True, no_commit=True
         )
         assert_false(self.mock_commit_changes.called)
 
@@ -208,19 +194,13 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         project_locale.readonly = True
         project_locale.save()
 
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk,)},
+        ]
 
         sync_translations(
-            self.db_project,
-            self.project_sync_log,
-            self.now,
-            True,
-            repo_locales,
-            locales,
-            no_commit=False,
+            self.db_project, self.project_sync_log, self.now, True, no_commit=False,
         )
 
         assert_false(self.mock_commit_changes.called)
@@ -232,10 +212,10 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         # Trigger creation of new approved translation.
         self.main_vcs_translation.strings[None] = "New Translated String"
         self.main_vcs_translation.fuzzy = False
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
 
         # Translation approved after the sync started simulates the race
         # where duplicate translations occur.
@@ -249,14 +229,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         ChangedEntityLocale.objects.filter(entity=self.main_db_entity).delete()
 
         with patch("pontoon.sync.tasks.VCSProject", return_value=self.vcs_project):
-            sync_translations(
-                self.db_project,
-                self.project_sync_log,
-                self.now,
-                True,
-                repo_locales,
-                locales,
-            )
+            sync_translations(self.db_project, self.project_sync_log, self.now, True)
 
         # Only one translation should be approved: the duplicate_translation.
         assert_equal(
@@ -274,38 +247,35 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
     def test_create_repository_log(self):
         assert_false(RepositorySyncLog.objects.exists())
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
-        sync_translations(
-            self.db_project,
-            self.project_sync_log,
-            self.now,
+
+        repo = RepositoryFactory.create()
+        self.db_project.repositories.set([repo])
+        self.db_project.save()
+        self.mock_pull_locale_repo_changes.return_value = [
             True,
-            repo_locales,
-            locales,
-        )
-        log = RepositorySyncLog.objects.get(repository=self.repository.pk)
-        assert_equal(log.repository, self.repository)
+            {repo.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
+
+        sync_translations(self.db_project, self.project_sync_log, self.now, True)
+
+        log = RepositorySyncLog.objects.get(repository=repo.pk)
+        assert_equal(log.repository, repo)
 
     def test_no_pretranslation(self):
         """
         Ensure that pretranslation isn't called if pretranslation not enabled
         or no new Entity, Locale or TranslatedResource is created.
         """
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
 
         sync_translations(
             self.db_project,
             self.project_sync_log,
             self.now,
             True,
-            repo_locales,
-            locales,
             [],
             [],
             [],
@@ -321,14 +291,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         with self.patch(
             "pontoon.sync.tasks.update_translated_resources", return_value=False
         ):
-            sync_translations(
-                self.db_project,
-                self.project_sync_log,
-                self.now,
-                True,
-                repo_locales,
-                locales,
-            )
+            sync_translations(self.db_project, self.project_sync_log, self.now, True)
 
         # No new Entity, Locale or TranslatedResource
         assert_false(self.mock_pretranslate.called)
@@ -339,10 +302,10 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         """
         self.db_project.pretranslation_enabled = True
         self.db_project.save()
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
         all_locales = list(self.db_project.locales.values_list("pk", flat=True))
 
         with self.patch(
@@ -353,8 +316,6 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
                 self.project_sync_log,
                 self.now,
                 True,
-                repo_locales,
-                locales,
                 [],
                 [],
                 [],
@@ -371,18 +332,16 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         """
         self.db_project.pretranslation_enabled = True
         self.db_project.save()
-        repo_locales = {
-            self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)
-        }
-        locales = self.db_project.locales.all()
+        self.mock_pull_locale_repo_changes.return_value = [
+            True,
+            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk)},
+        ]
 
         sync_translations(
             self.db_project,
             self.project_sync_log,
             self.now,
             True,
-            repo_locales,
-            locales,
             [],
             [],
             [],
