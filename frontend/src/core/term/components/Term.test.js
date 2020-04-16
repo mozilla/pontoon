@@ -13,7 +13,10 @@ describe('<Term>', () => {
         'translation': 'translation',
     };
 
+    let getSelectionBackup;
+
     beforeAll(() => {
+        getSelectionBackup = window.getSelection;
         window.getSelection = () => {
             return {
                 toString: () => {}
@@ -22,7 +25,7 @@ describe('<Term>', () => {
     });
 
     afterAll(() => {
-        window.getSelection = undefined;
+        window.getSelection = getSelectionBackup;
     });
 
     it('renders term correctly', () => {
