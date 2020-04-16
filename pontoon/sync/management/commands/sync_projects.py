@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Project
 from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project
 
@@ -18,14 +18,6 @@ class Command(BaseCommand):
             dest="projects",
             default="",
             help="Sync only projects within this comma-separated list of slugs",
-        )
-
-        parser.add_argument(
-            "--locale",
-            action="store",
-            dest="locale",
-            default=None,
-            help="Sync only locale with this locale code",
         )
 
         parser.add_argument(
@@ -81,13 +73,6 @@ class Command(BaseCommand):
                 )
             )
 
-        locale = None
-        if options["locale"]:
-            try:
-                locale = Locale.objects.get(code=options["locale"])
-            except Locale.DoesNotExist:
-                raise CommandError("No matching locale found.")
-
         for project in projects:
             if not project.can_commit:
                 self.stdout.write(
@@ -102,7 +87,6 @@ class Command(BaseCommand):
                 sync_project.delay(
                     project.pk,
                     sync_log.pk,
-                    locale=locale,
                     no_pull=options["no_pull"],
                     no_commit=options["no_commit"],
                     force=options["force"],
