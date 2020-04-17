@@ -171,7 +171,7 @@ def sync_translations(
     db_project,
     project_sync_log,
     now,
-    repos_changed,
+    has_source_repo_changed,
     added_paths=None,
     removed_paths=None,
     changed_paths=None,
@@ -218,6 +218,9 @@ def sync_translations(
             pk__in=changed_locales_pks + readonly_locales_pks
         )
 
+    have_repos_changed = has_source_repo_changed
+    repo_locales = None
+
     if not no_pull:
         repo_locales = {db_project.source_repository.pk: Locale.objects.none()}
 
@@ -226,24 +229,22 @@ def sync_translations(
             log.info(
                 "Pulling locale repos for project {0} started.".format(db_project.slug)
             )
-            locale_repos_changed, not_pulled_repo_locales = pull_locale_repo_changes(
+            have_locale_repos_changed, pulled_repo_locales = pull_locale_repo_changes(
                 db_project, locales
             )
 
-            repos_changed = repos_changed or locale_repos_changed
+            have_repos_changed = has_source_repo_changed or have_locale_repos_changed
             log.info(
                 "Pulling locale repos for project {0} complete.".format(db_project.slug)
             )
-            repo_locales.update(not_pulled_repo_locales)
-    else:
-        repo_locales = None
+            repo_locales.update(pulled_repo_locales)
 
     # If none of the repos has changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
     if (
         not force
         and not db_project.needs_sync
-        and not repos_changed
+        and not have_repos_changed
         and not (added_paths or removed_paths or changed_paths)
     ):
         log.info("Skipping project {0}, no changes detected.".format(db_project.slug))
