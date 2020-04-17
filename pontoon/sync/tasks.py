@@ -93,7 +93,8 @@ def sync_project(
     log.info("Syncing project {0}.".format(db_project.slug))
 
     source_changes = sync_sources(db_project, now, force, no_pull)
-    # Skip syncing translations if no source directory found
+    # Skip syncing translations if we already know there's nothing to sync
+    # or if no source directory found.
     if not source_changes:
         project_sync_log.skip()
         return
@@ -103,7 +104,7 @@ def sync_project(
         db_project,
         project_sync_log,
         now,
-        source_changes.get("source_changed"),
+        source_changes.get("has_source_repo_changed"),
         source_changes.get("added_paths"),
         source_changes.get("removed_paths"),
         source_changes.get("changed_paths"),
@@ -117,28 +118,28 @@ def sync_project(
 def sync_sources(db_project, now, force, no_pull):
     # Pull from source repository
     if no_pull:
-        source_changed = True
+        has_source_repo_changed = True
     else:
         log.info(
             "Pulling source changes for project {0} started.".format(db_project.slug)
         )
-        source_changed = pull_source_repo_changes(db_project)
+        has_source_repo_changed = pull_source_repo_changes(db_project)
         log.info(
             "Pulling source changes for project {0} complete.".format(db_project.slug)
         )
 
-    # If the repos haven't changed since the last sync and there are
+    # If the only repo hasn't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
     if (
         not force
         and not db_project.needs_sync
-        and not source_changed
+        and not has_source_repo_changed
         and db_project.has_single_repo
     ):
         log.info("Skipping project {0}, no changes detected.".format(db_project.slug))
         return False
 
-    if force or source_changed:
+    if force or has_source_repo_changed:
         try:
             added_paths, removed_paths, changed_paths, new_entities = update_originals(
                 db_project, now, force=force
@@ -158,7 +159,7 @@ def sync_sources(db_project, now, force, no_pull):
         )
 
     return {
-        "source_changed": source_changed,
+        "has_source_repo_changed": has_source_repo_changed,
         "added_paths": added_paths,
         "removed_paths": removed_paths,
         "changed_paths": changed_paths,
