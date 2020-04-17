@@ -76,7 +76,7 @@ class VCSProject(object):
         repo_locales=None,
         added_paths=None,
         changed_paths=None,
-        full_scan=False,
+        force=False,
     ):
         """
         Load resource paths from the given db_project and parse them
@@ -98,7 +98,7 @@ class VCSProject(object):
             List of added source file paths
         :param list changed_paths:
             List of changed source file paths
-        :param bool full_scan:
+        :param bool force:
             Scans all resources in repository
         :param VCSConfiguration configuration:
             Project configuration, provided by the optional configuration file.
@@ -109,7 +109,7 @@ class VCSProject(object):
         self.repo_locales = repo_locales
         self.added_paths = added_paths or []
         self.changed_paths = changed_paths or []
-        self.full_scan = full_scan
+        self.force = force
         self.synced_locales = set()
 
         self.configuration = None
@@ -118,7 +118,7 @@ class VCSProject(object):
 
     @cached_property
     def changed_files(self):
-        if self.full_scan:
+        if self.force:
             # All files are marked as changed
             return None
 

@@ -25,7 +25,7 @@ from pontoon.base.tests import (
 from pontoon.sync.core import (
     commit_changes,
     entity_key,
-    pull_changes,
+    pull_locale_repo_changes,
     update_entities,
     update_resources,
     update_translated_resources,
@@ -391,6 +391,7 @@ class PullChangesTests(FakeCheckoutTestCase):
     def setUp(self):
         super(PullChangesTests, self).setUp()
         self.mock_repo_pull = self.patch_object(Repository, "pull")
+        self.locales = self.db_project.locales.all()
 
     def test_basic(self):
         """
@@ -401,7 +402,7 @@ class PullChangesTests(FakeCheckoutTestCase):
         mock_db_project.repositories.all.return_value = [self.repository]
         self.mock_repo_pull.return_value = {"single_locale": "asdf"}
 
-        has_changed, _ = pull_changes(self.db_project)
+        has_changed, _ = pull_locale_repo_changes(self.db_project, self.locales)
         assert_true(has_changed)
 
     def test_unsure_changes(self):
@@ -413,7 +414,7 @@ class PullChangesTests(FakeCheckoutTestCase):
         self.repository.last_synced_revisions = {"single_locale": None}
         self.repository.save()
 
-        has_changed, _ = pull_changes(self.db_project)
+        has_changed, _ = pull_locale_repo_changes(self.db_project, self.locales)
         assert_true(has_changed)
 
     def test_unchanged(self):
@@ -424,7 +425,7 @@ class PullChangesTests(FakeCheckoutTestCase):
         self.mock_repo_pull.return_value = {"single_locale": "asdf"}
         self.repository.last_synced_revisions = {"single_locale": "asdf"}
         self.repository.save()
-        has_changed, _ = pull_changes(
+        has_changed, _ = pull_locale_repo_changes(
             self.db_project, locales=self.db_project.locales.all()
         )
         assert_false(has_changed)
