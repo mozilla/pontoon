@@ -25,8 +25,8 @@ from pontoon.sync.vcs.models import VCSProject
 log = logging.getLogger(__name__)
 
 
-def update_originals(db_project, now, full_scan=False):
-    vcs_project = VCSProject(db_project, locales=[], full_scan=full_scan)
+def update_originals(db_project, now, force=False):
+    vcs_project = VCSProject(db_project, locales=[], force=force)
 
     with transaction.atomic():
         added_paths, removed_paths, changed_paths = update_resources(
@@ -291,46 +291,55 @@ def entity_key(entity):
     return ":".join([entity.resource.path, key])
 
 
-def pull_changes(db_project, locales=None):
+def has_repo_changed(last_synced_revisions, pulled_revisions):
+    has_changed = False
+
+    # If any revision is None, we can't be sure if a change
+    # happened or not, so we default to assuming it did.
+    unsure_change = None in pulled_revisions.values()
+
+    if unsure_change or pulled_revisions != last_synced_revisions:
+        has_changed = True
+
+    return has_changed
+
+
+def pull_source_repo_changes(db_project):
+    source_repo = db_project.source_repository
+    pulled_revisions = source_repo.pull()
+    has_changed = has_repo_changed(source_repo.last_synced_revisions, pulled_revisions)
+    return has_changed
+
+
+def pull_locale_repo_changes(db_project, locales):
     """
     Update the local files with changes from the VCS. Returns True
     if any of the updated repos have changed since the last sync.
     """
-    changed = False
+    has_changed = False
     repo_locales = {}
 
-    # When syncing sources, pull source repository only.
-    if locales is None:
-        repositories = [db_project.source_repository]
-    # When syncing locales and some have changed, pull all project repositories.
-    elif locales:
-        repositories = db_project.repositories.all()
-    # When syncing locales and none have changed, quit early.
-    else:
-        return changed, repo_locales
+    # If none of the locales have changed, quit early.
+    if not locales:
+        return has_changed, repo_locales
 
-    locales = locales or db_project.locales.all()
-
-    # Skip already pulled locales. Useful for projects with multiple repositories (e.g. Firefox),
+    # Skip already pulled locales. Useful for projects with multiple repositories,
     # since we don't store the information what locale belongs to what repository.
     pulled_locales = []
 
-    for repo in repositories:
+    for repo in db_project.translation_repositories():
         remaining_locales = locales.exclude(code__in=pulled_locales)
         if not remaining_locales:
             break
 
-        repo_revisions = repo.pull(remaining_locales)
-        repo_locales[repo.pk] = Locale.objects.filter(code__in=repo_revisions.keys())
-        pulled_locales += repo_revisions.keys()
+        pulled_revisions = repo.pull(remaining_locales)
+        repo_locales[repo.pk] = Locale.objects.filter(code__in=pulled_revisions.keys())
+        pulled_locales += pulled_revisions.keys()
 
-        # If any revision is None, we can't be sure if a change
-        # happened or not, so we default to assuming it did.
-        unsure_change = None in repo_revisions.values()
-        if unsure_change or repo_revisions != repo.last_synced_revisions:
-            changed = True
+        if has_repo_changed(repo.last_synced_revisions, pulled_revisions):
+            has_changed = True
 
-    return changed, repo_locales
+    return has_changed, repo_locales
 
 
 def commit_changes(db_project, vcs_project, changeset, locale):
