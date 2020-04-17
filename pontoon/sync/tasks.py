@@ -232,11 +232,11 @@ def sync_translations(
             have_locale_repos_changed, pulled_repo_locales = pull_locale_repo_changes(
                 db_project, locales
             )
-
-            have_repos_changed |= have_locale_repos_changed
             log.info(
                 "Pulling locale repos for project {0} complete.".format(db_project.slug)
             )
+
+            have_repos_changed |= have_locale_repos_changed
             repo_locales.update(pulled_repo_locales)
 
     # If none of the repos has changed since the last sync and there are
