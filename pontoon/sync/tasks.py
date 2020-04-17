@@ -233,7 +233,7 @@ def sync_translations(
                 db_project, locales
             )
 
-            have_repos_changed = has_source_repo_changed or have_locale_repos_changed
+            have_repos_changed |= have_locale_repos_changed
             log.info(
                 "Pulling locale repos for project {0} complete.".format(db_project.slug)
             )
