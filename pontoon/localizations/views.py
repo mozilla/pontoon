@@ -21,7 +21,9 @@ from pontoon.tags.utils import TagsTool
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     project_locale = get_object_or_404(ProjectLocale, locale=locale, project=project,)
 
     resource_count = len(locale.parts_stats(project)) - 1
@@ -48,7 +50,10 @@ def ajax_resources(request, code, slug):
     """Resources tab."""
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(
-        Project.objects.available().prefetch_related("subpage_set"), slug=slug
+        Project.objects.visible_for(request.user)
+        .available()
+        .prefetch_related("subpage_set"),
+        slug=slug,
     )
 
     # Amend the parts dict with latest activity info.
@@ -145,7 +150,7 @@ def ajax_resources(request, code, slug):
 def ajax_tags(request, code, slug):
     """Tags tab."""
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not project.tags_enabled:
         raise Http404

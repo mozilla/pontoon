@@ -541,3 +541,24 @@ def readonly_exists(projects, locale):
     return ProjectLocale.objects.filter(
         project__in=projects, locale=locale, readonly=True,
     ).exists()
+
+
+def filter_users_by_project_visibility(project, locale, recipients):
+    from .models import User, ProjectLocale
+
+    if project.visibility == "public":
+        return recipients
+
+    return (
+        User.objects.filter(pk__in=recipients)
+        .filter(
+            groups__in=[
+                ProjectLocale.objects.get(
+                    project=project, locale=locale
+                ).translators_group,
+                locale.translators_group,
+                locale.managers_group,
+            ]
+        )
+        .values_list("pk", flat=True)
+    )

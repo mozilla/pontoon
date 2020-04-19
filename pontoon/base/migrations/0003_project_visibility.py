@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0002_auto_20200322_1821'),
+        ("base", "0002_auto_20200322_1821"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='visibility',
-            field=models.CharField(choices=[('public', 'Public'), ('private', 'Private')], default='public', help_text='\n        Private project is invisible for contributors and accessible\n        only to project/locale managers.\n    ', max_length=20),
+            model_name="project",
+            name="visibility",
+            field=models.CharField(
+                choices=[("public", "Public"), ("private", "Private")],
+                default="public",
+                help_text="\n        Private project is invisible for contributors and accessible\n        only to project/locale managers.\n    ",
+                max_length=20,
+            ),
         ),
     ]

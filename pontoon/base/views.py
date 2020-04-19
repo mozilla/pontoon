@@ -61,7 +61,9 @@ def translate_locale_agnostic(request, slug, part):
     if slug.lower() == "all-projects":
         project_locales = Locale.objects.available()
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(
+            Project.objects.visible_for(request.user).available(), slug=slug
+        )
         project_locales = project.locales
 
     if user.is_authenticated:
@@ -112,7 +114,7 @@ def locale_project_parts(request, locale, slug):
         )
 
     try:
-        project = Project.objects.get(slug=slug)
+        project = Project.objects.visible_for(request.user).get(slug=slug)
     except Project.DoesNotExist as e:
         return JsonResponse(
             {"status": False, "message": "Not Found: {error}".format(error=e)},
@@ -131,7 +133,9 @@ def locale_project_parts(request, locale, slug):
 @utils.require_AJAX
 def authors_and_time_range(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     paths = [part] if part != "all-resources" else None
 
     translations = Translation.for_locale_project_paths(locale, project, paths)
@@ -528,6 +532,9 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
             translations.values_list("unrejected_user__pk", flat=True)
         )
 
+    recipients = utils.filter_users_by_project_visibility(
+        entity.resource.project, locale, recipients
+    )
     for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
         notify.send(
             user,
@@ -654,7 +661,7 @@ def upload(request):
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not request.user.can_translate(
         project=project, locale=locale
@@ -686,7 +693,9 @@ def download_translation_memory(request, locale, slug, filename):
     if slug.lower() == "all-projects":
         project_filter = Q()
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(
+            Project.objects.visible_for(request.user).available(), slug=slug
+        )
         project_filter = Q(project=project)
 
     tm_entries = (

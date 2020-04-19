@@ -41,7 +41,9 @@ def projects(request):
 
 def project(request, slug):
     """Project dashboard."""
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     return render(
         request,
         "projects/project.html",
@@ -59,7 +61,9 @@ def project(request, slug):
 @require_AJAX
 def ajax_teams(request, slug):
     """Teams tab."""
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
 
     locales = (
         Locale.objects.available().prefetch_project_locale(project).order_by("name")
@@ -75,7 +79,7 @@ def ajax_teams(request, slug):
 @require_AJAX
 def ajax_tags(request, slug):
     """Tags tab."""
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not project.tags_enabled:
         raise Http404
@@ -92,7 +96,9 @@ def ajax_tags(request, slug):
 @require_AJAX
 def ajax_info(request, slug):
     """Info tab."""
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
 
     return render(request, "projects/includes/info.html", {"project": project})
 
@@ -102,7 +108,9 @@ def ajax_info(request, slug):
 @require_AJAX
 def ajax_notifications(request, slug):
     """Notifications tab."""
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     available_locales = project.locales.order_by("name")
 
     # Send notifications
@@ -191,6 +199,9 @@ class ProjectContributorsView(ContributorsMixin, DetailView):
 
     template_name = "projects/includes/contributors.html"
     model = Project
+
+    def get_queryset(self):
+        return super().get_queryset().filter(self.request.user)
 
     def get_context_object_name(self, obj):
         return "project"

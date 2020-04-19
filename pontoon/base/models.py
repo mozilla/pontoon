@@ -1031,6 +1031,29 @@ class Locale(AggregatedStats):
 
 
 class ProjectQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        Filter projects by their visibility.
+        """
+        if user.is_superuser:
+            return self
+
+        visibility = Q(visibility="public")
+
+        if user.is_authenticated:
+            locales = get_objects_for_user(
+                user, "base.can_manage_locale", accept_global_perms=False
+            ) | get_objects_for_user(
+                user, "base.can_translate_locale", accept_global_perms=False
+            )
+            project_locales = get_objects_for_user(
+                user, "base.can_translate_project_locale", accept_global_perms=False
+            )
+            visibility |= Q(project_locale__locale__in=locales) | Q(
+                project_locale__in=project_locales
+            )
+        return self.filter(visibility).distinct()
+
     def available(self):
         """
         Available projects are not disabled and have at least one
@@ -1148,8 +1171,8 @@ class Project(AggregatedStats):
     )
 
     VISIBILITY_TYPES = (
-        ('public', 'Public'),
-        ('private', 'Private'),
+        ("public", "Public"),
+        ("private", "Private"),
     )
     visibility = models.CharField(
         max_length=20,

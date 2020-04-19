@@ -201,8 +201,10 @@ def request_item(request, locale=None):
         locale = get_object_or_404(Locale, code=locale)
 
         # Validate projects
-        project_list = Project.objects.visible().filter(
-            slug__in=slug_list, can_be_requested=True
+        project_list = (
+            Project.objects.visible()
+            .visible_for(request.user)
+            .filter(slug__in=slug_list, can_be_requested=True)
         )
         if not project_list:
             return HttpResponseBadRequest(
