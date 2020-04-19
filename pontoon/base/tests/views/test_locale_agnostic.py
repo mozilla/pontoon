@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 
 @patch("pontoon.base.views.get_object_or_404")
 @patch("pontoon.base.views.utils.get_project_locale_from_request")
-@patch("pontoon.base.views.Project.objects.available")
+@patch("pontoon.base.views.Project.objects")
 @patch("pontoon.base.views.reverse")
 @patch("pontoon.base.views.redirect")
 @pytest.mark.django_db
@@ -30,7 +30,7 @@ def test_view_lang_agnostic_authed(
     reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
-    projects_mock.return_value = "AVAILABLEPROJECTS"
+    projects_mock.visible_for().available.return_value = "AVAILABLEPROJECTS"
 
     # create a mock Project with .locales
     project_mock = MagicMock()
@@ -57,7 +57,7 @@ def test_view_lang_agnostic_authed(
     response = client.get(view)
 
     # Project.objects.available was called with no args
-    assert list(projects_mock.call_args) == [(), {}]
+    assert list(projects_mock.visible_for().available.call_args) == [(), {}]
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
@@ -76,7 +76,7 @@ def test_view_lang_agnostic_authed(
 
 @patch("pontoon.base.views.get_object_or_404")
 @patch("pontoon.base.views.utils.get_project_locale_from_request")
-@patch("pontoon.base.views.Project.objects.available")
+@patch("pontoon.base.views.Project.objects")
 @patch("pontoon.base.views.reverse")
 @patch("pontoon.base.views.redirect")
 def test_view_lang_agnostic_anon_available_accept_language(
@@ -92,7 +92,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
     reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
-    projects_mock.return_value = "AVAILABLEPROJECTS"
+    projects_mock.visible_for().available.return_value = "AVAILABLEPROJECTS"
 
     # create a mock Project with .locales
     project_mock = MagicMock()
@@ -111,7 +111,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
     response = client.get("%s?baz=17" % view)
 
     # Project.objects.available was called with no args
-    assert list(projects_mock.call_args) == [(), {}]
+    assert list(projects_mock.visible_for().available.call_args) == [(), {}]
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
@@ -133,7 +133,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
 
 @patch("pontoon.base.views.get_object_or_404")
 @patch("pontoon.base.views.utils.get_project_locale_from_request")
-@patch("pontoon.base.views.Project.objects.available")
+@patch("pontoon.base.views.Project.objects")
 @patch("pontoon.base.views.reverse")
 @patch("pontoon.base.views.redirect")
 def test_view_lang_agnostic_anon_unavailable_accept_language(
@@ -141,7 +141,6 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
 ):
     """ User is not authenticated and Userprofile.custom_homepage not defined,
     redirect to project dashboard """
-
     view = reverse(
         "pontoon.translate.locale.agnostic", kwargs=dict(slug="FOO", part="BAR")
     )
@@ -150,7 +149,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
     reverse_mock.return_value = 73
 
     # mock return value for Project.objects.available
-    projects_mock.return_value = "AVAILABLEPROJECTS"
+    projects_mock.visible_for().available.return_value = "AVAILABLEPROJECTS"
 
     # create a mock Project with .locales
     project_mock = MagicMock()
@@ -169,7 +168,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
     response = client.get("%s?foo=bar" % view)
 
     # Project.objects.available was called with no args
-    assert list(projects_mock.call_args) == [(), {}]
+    assert list(projects_mock.visible_for().available.call_args) == [(), {}]
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
