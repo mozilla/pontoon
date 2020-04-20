@@ -266,10 +266,10 @@ def manage_project(request, slug=None, template="admin_project.html"):
             or locales_selected[0].code
         )
         if locale:
-            data['translate_locale'] = locale
+            data["translate_locale"] = locale
 
     if Resource.objects.filter(project=project, obsolete=False).exists():
-        data['ready'] = True
+        data["ready"] = True
 
     return render(request, template, data)
 
