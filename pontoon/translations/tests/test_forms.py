@@ -15,14 +15,8 @@ def test_create_translation_form_required_fields():
     assert form.errors["locale"]
     assert form.errors["locale"][0] == "This field is required."
 
-    assert form.errors["translation"]
-    assert form.errors["translation"][0] == "This field is required."
-
     assert form.errors["plural_form"]
     assert form.errors["plural_form"][0] == "This field is required."
-
-    assert form.errors["original"]
-    assert form.errors["original"][0] == "This field is required."
 
     assert "ignore_warnings" not in form.errors
     assert "approve" not in form.errors
