@@ -12,10 +12,14 @@ class CreateTranslationForm(forms.Form):
     """
 
     entity = forms.IntegerField()
-    translation = forms.CharField()
     locale = forms.CharField()
     plural_form = forms.CharField()
-    original = forms.CharField()
+
+    # Some file formats allow empty original strings and translations.
+    # We must allow both here. Validation is handled in pontoon.checks module.
+    original = forms.CharField(required=False)
+    translation = forms.CharField(required=False)
+
     ignore_warnings = forms.BooleanField(required=False)
     approve = forms.BooleanField(required=False)
     force_suggestions = forms.BooleanField(required=False)
