@@ -1,10 +1,10 @@
-.comments-list .add-comment form.container {
+.comments-list .add-comment div.container {
     flex-flow: row nowrap;
     align-items: flex-end;
     padding-bottom: 6px;
 }
 
-.comments-list .add-comment textarea {
+.comments-list .add-comment .comment-editor {
     align-items: center;
     background-color: #333941;
     border: none;
@@ -17,7 +17,11 @@
     line-height: 24px;
     overflow: auto;
     padding: 6px;
-    resize: none;
+    word-break: break-all;
+}
+
+.comments-list .add-comment .comment-editor span {
+    vertical-align: baseline !important;
 }
 
 /* Remove highlight in Chrome */

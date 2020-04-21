@@ -2,6 +2,9 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
+import { createEditor, Text } from 'slate';
+import { Slate, Editable, withReact } from 'slate-react';
+import escapeHtml from 'escape-html'
 
 import './AddComment.css';
 
@@ -29,37 +32,44 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    const commentInput: any = React.useRef();
-    const minRows = 1;
-    const maxRows = 6;
+    const blankSlateValue = [{ type:"paragraph", children: [{ text: '' }] }];
+
+    const editor = React.useMemo(() => withReact(createEditor()), []);
+    const [value, setValue] = React.useState(blankSlateValue);
 
     if (!user) {
         return null;
     }
 
-    const handleOnChange = () => {
-        const textAreaLineHeight = 24;
-        commentInput.current.rows = minRows;
 
-        const currentRows = Math.trunc(commentInput.current.scrollHeight / textAreaLineHeight);
 
-        if (currentRows < maxRows) {
-            commentInput.current.rows = currentRows;
+    // TODO:  This is not working as written. It is saying 'value' is undefined
+    const serialize = (value) => {
+        if (Text.isText(value)) {
+            return escapeHtml(value.text);
         }
-        else {
-            commentInput.current.rows = maxRows;
-        }
-    }
 
-    const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
-        if (event.keyCode === 13 && event.shiftKey === false) {
-            submitComment(event);
+        const children = value[0].children.map(n => serialize(n)).join('');
+
+        switch (value.type) {
+            case 'link':
+                return `<a href="${escapeHtml(node.url)}>${children}</a>`
+            default:
+                return `<p>${children}</p>`
         }
     }
+
+    // TODO:  Fix onKeyDown as it submits but crashes the app
+    // const handleOnKeyDown = (event: SyntheticKeyboardEvent<>) => {
+    //     if (event.keyCode === 13 && event.shiftKey === false) {
+    //         event.preventDefault();
+    //         submitComment(event);
+    //     }
+    // }
 
     const submitComment = (event: SyntheticEvent<>) => {
         event.preventDefault();
-        const comment = commentInput.current.value;
+        const comment = serialize(value);
 
         if (!comment) {
             return null;
@@ -67,8 +77,7 @@ export default function AddComments(props: Props) {
 
         addComment(comment, translation);
 
-        commentInput.current.value = '';
-        commentInput.current.rows = minRows;
+        setValue(blankSlateValue);
     };
 
     return <div className='comment add-comment'>
@@ -76,22 +85,22 @@ export default function AddComments(props: Props) {
             username={ username }
             imageUrl={ imageURL }
         />
-        <form className='container'>
-            <Localized
+        <div className='container'>
+            <Slate editor={editor} value={value} onChange={value => setValue(value)}>
+                <Localized
                 id='comments-AddComment--input'
                 attrs={{ placeholder: true }}
             >
-                <textarea
-                    autoFocus={ !parameters || parameters.project !== 'terminology' }
-                    name='comment'
-                    dir='auto'
-                    placeholder={ `Write a comment…` }
-                    rows={ minRows }
-                    ref={ commentInput }
-                    onChange={ handleOnChange }
-                    onKeyDown={ handleOnKeyDown }
-                />
-            </Localized>
+                    <Editable 
+                        className='comment-editor'
+                        autoFocus
+                        name='comment'
+                        dir='auto' 
+                        placeholder={ `Write a comment…` } 
+                        // onKeyDown={ handleOnKeyDown}
+                    />
+                </Localized>
+            </Slate>
             <Localized
                 id="comments-AddComment--submit-button"
                 attrs={{ title: true }}
@@ -101,10 +110,11 @@ export default function AddComments(props: Props) {
                     className="submit-button"
                     title="Submit comment"
                     onClick={ submitComment }
+                    // onClick={ clearEditor }
                 >
                     { '<glyph></glyph>' }
                 </button>
             </Localized>
-        </form>
+        </div>
     </div>
 }

@@ -43,6 +43,8 @@
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "shortid": "2.2.14",
+    "slate": "^0.57.1",
+    "slate-react": "^0.57.1",
     "styled-components": "4.3.2",
     "tlds": "1.203.1"
   },
