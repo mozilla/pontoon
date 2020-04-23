@@ -52,12 +52,15 @@ export default function Term(props: Props) {
         <p className='translation'>{ term.translation }</p>
         <div className='details'>
             <p className='definition'>{ term.definition }</p>
-            <p className='usage'>
-                <Localized id="term-Term--for-example">
-                    <span className='title'>E.g.</span>
-                </Localized>
-                <span className='content'>{ term.usage }</span>
-            </p>
+            {
+                !term.usage ? null :
+                <p className='usage'>
+                    <Localized id="term-Term--for-example">
+                        <span className='title'>E.g.</span>
+                    </Localized>
+                    <span className='content'>{ term.usage }</span>
+                </p>
+            }
         </div>
     </li>;
 }
