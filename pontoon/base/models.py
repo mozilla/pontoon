@@ -60,7 +60,6 @@ from pontoon.sync.vcs.repositories import (
     PullFromRepositoryException,
 )
 
-
 log = logging.getLogger(__name__)
 
 UNUSABLE_SEARCH_CHAR = "☠"
@@ -1038,21 +1037,20 @@ class ProjectQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        visibility = Q(visibility="public")
+        locales = get_objects_for_user(
+            user, "base.can_manage_locale", accept_global_perms=False
+        ) | get_objects_for_user(
+            user, "base.can_translate_locale", accept_global_perms=False
+        )
+        project_locales = get_objects_for_user(
+            user, "base.can_translate_project_locale", accept_global_perms=False
+        )
 
-        if user.is_authenticated:
-            locales = get_objects_for_user(
-                user, "base.can_manage_locale", accept_global_perms=False
-            ) | get_objects_for_user(
-                user, "base.can_translate_locale", accept_global_perms=False
-            )
-            project_locales = get_objects_for_user(
-                user, "base.can_translate_project_locale", accept_global_perms=False
-            )
-            visibility |= Q(project_locale__locale__in=locales) | Q(
-                project_locale__in=project_locales
-            )
-        return self.filter(visibility).distinct()
+        return self.filter(
+            Q(visibility="public")
+            | Q(project_locale__locale__in=locales)
+            | Q(project_locale__in=project_locales)
+        ).distinct()
 
     def available(self):
         """
