@@ -34,6 +34,26 @@
     color: #AAAAAA;
 }
 
+.mention-list {
+    top: -9999px;
+    left: -9999px;
+    position: absolute;
+    z-index: 1;
+    padding: 10px 12px;
+    background-color: #272a2f;
+    border: 1px solid #333941;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.2);
+}
+
+.mention {
+    padding: 0 4px;
+}
+
+.active-mention {
+    background: #aaa;
+}
+
 .comments-list .add-comment .submit-button {
     background-color: #4d5967;
     border: solid 1px #4d5967;

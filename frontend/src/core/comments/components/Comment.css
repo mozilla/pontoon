@@ -26,6 +26,10 @@
     color: #CCCCCC;
 }
 
+.comments-list .comment .content p:first-child {
+    display: inline;
+}
+
 .comments-list .comment .info {
     color: #AAAAAA;
     font-size: 11px;
