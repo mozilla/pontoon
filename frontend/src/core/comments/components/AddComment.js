@@ -9,6 +9,7 @@ import {
     Range, 
     createEditor, 
     Text,
+    Node,
 } from 'slate';
 import { 
     Slate, 
@@ -44,10 +45,10 @@ export default function AddComments(props: Props) {
         addComment,
     } = props;
 
-    const blankSlateValue = [{ type: 'paragraph', children: [{ text: '' }] }];
+    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
 
-    const ref = React.useRef();
-    const [value, setValue] = React.useState(blankSlateValue);
+    const ref: any = React.useRef();
+    const [value, setValue] = React.useState(initialValue);
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');
@@ -100,6 +101,8 @@ export default function AddComments(props: Props) {
                 }
             }
         },
+        // Look into how to avoid issues re: 'char' and 'editor' not being present
+        // eslint-disable-next-line 
         [index, search, target]
     );
     
@@ -138,7 +141,6 @@ export default function AddComments(props: Props) {
         return ReactDOM.createPortal(children, document.body)
     }
 
-    // TODO:  This is not working as written. I get an error of 'value.children is undefined'
     const serialize = (value) => {
         if (Text.isText(value)) {
             return escapeHtml(value.text)
@@ -159,7 +161,8 @@ export default function AddComments(props: Props) {
     };
 
     const submitComment = () => {
-        if (value.every(obj => !obj.children[0].text)) {
+        // TODO: work out how to prevent empty comments when only 'enter' is pressed
+        if (value.length <= 1 && Node.string(value[0]).length === 0) {
             return null;
         }
 
@@ -167,7 +170,7 @@ export default function AddComments(props: Props) {
 
         addComment(comment, translation);
 
-        setValue(blankSlateValue);
+        setValue(initialValue);
     };
 
     return <div className='comment add-comment'>
@@ -176,11 +179,7 @@ export default function AddComments(props: Props) {
             imageUrl={ imageURL }
         />
         <div className='container'>
-            <Slate 
-                editor={ editor } 
-                value={ value }
-                onChange={ onChange }
-            >
+            <Slate  editor={ editor }  value={ value } onChange={ onChange }>
                 <Localized
                 id='comments-AddComment--input'
                 attrs={{ placeholder: true }}
@@ -245,9 +244,11 @@ const withMentions = editor => {
 };
   
 const insertMention = (editor, character) => {
-    const mention = { type: 'mention', character, url: 'https://www.example.com', children: [{ text: 'April' }] }
+    const selectedUser = users.filter(user => user.name === character);
+    const userUrl = selectedUser[0].url;
+    const display = selectedUser[0].display;
+    const mention = { type: 'mention', character, url: userUrl, children: [{ text: display }] }
     Transforms.insertNodes(editor, mention)
-    console.log(mention)
     Transforms.move(editor)
 };
   
@@ -266,7 +267,7 @@ const MentionElement = ({ attributes, children, element }) => {
         <span
             {...attributes}
             contentEditable={false}
-            style={{ color: '#7BC876' }}
+            className='mention-element'
         >
             @{element.character}
             {children}
@@ -274,4 +275,27 @@ const MentionElement = ({ attributes, children, element }) => {
     )
 };
 
-const USERS = ['Matjaz', 'Adrian', 'Jotes', 'April'];
+const users = [
+    { 
+        'name': 'Matjaz',
+        'url': 'https://matjaz.com',
+        'display': 'mathjazz'
+    },
+    { 
+        'name': 'Adrian',
+        'url': 'https://adrian.com',
+        'display': 'adngdb'
+    },
+    { 
+        'name': "Jotes",
+        'url': 'https://jotes.com',
+        'display': 'jotes',
+    },
+    { 
+        'name': 'April',
+        'url': 'https://april.com',
+        'display': 'abowler', 
+    },
+];
+
+const USERS = users.map(user => user.name);

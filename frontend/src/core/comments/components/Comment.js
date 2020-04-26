@@ -41,7 +41,7 @@ export default function Comment(props: Props) {
                     </a>
                     {/* We can safely use comment.content because it is validated by
                     bleach before being saved into the database. */}
-                    <span dangerouslySetInnerHTML={ { __html: comment.content } } />
+                    <span className='comment-content' dangerouslySetInnerHTML={ { __html: comment.content } } />
                 </p>
             </div>
             <div className='info'>

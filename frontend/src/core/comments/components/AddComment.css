@@ -54,6 +54,10 @@
     background: #aaa;
 }
 
+.mention-element {
+    color: #7BC876;
+}
+
 .comments-list .add-comment .submit-button {
     background-color: #4d5967;
     border: solid 1px #4d5967;
