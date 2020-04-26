@@ -1032,7 +1032,10 @@ class Locale(AggregatedStats):
 class ProjectQuerySet(models.QuerySet):
     def visible_for(self, user):
         """
-        Filter projects by their visibility.
+        The visiblity of projects is determined by the role of the user:
+        * Administrators - can access all public and private projects
+        * Project managers, Locale managers, Translators - can work only on public projects and private projects that
+            are assigned to them.
         """
         if user.is_superuser:
             return self

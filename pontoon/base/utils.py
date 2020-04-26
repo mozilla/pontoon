@@ -543,14 +543,17 @@ def readonly_exists(projects, locale):
     ).exists()
 
 
-def filter_users_by_project_visibility(project, locale, recipients):
+def filter_users_by_project_visibility(project, locale, users):
+    """
+    Filter users that can access the project and return their ids.
+    """
     from .models import User, ProjectLocale
 
     if project.visibility == "public":
-        return recipients
+        return users
 
     return (
-        User.objects.filter(pk__in=recipients)
+        User.objects.filter(pk__in=users)
         .filter(
             groups__in=[
                 ProjectLocale.objects.get(

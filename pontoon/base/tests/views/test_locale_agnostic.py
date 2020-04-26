@@ -1,12 +1,13 @@
 from __future__ import absolute_import
 
 import pytest
+from django.utils.functional import SimpleLazyObject
 
 from mock import MagicMock, PropertyMock, patch
 
 from django.http import HttpResponse
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 
 
 @patch("pontoon.base.views.get_object_or_404")
@@ -20,7 +21,8 @@ def test_view_lang_agnostic_authed(
 ):
     """ User is authenticated and Userprofile.custom_homepage defined,
     redirect to Userprofile.custom_homepage """
-    client.force_login(User.objects.get_or_create(username="testuser")[0])
+    test_user, _ = User.objects.get_or_create(username="testuser")
+    client.force_login(test_user)
 
     view = reverse(
         "pontoon.translate.locale.agnostic", kwargs=dict(slug="FOO", part="BAR")
@@ -55,6 +57,9 @@ def test_view_lang_agnostic_authed(
     type(user_mock).profile = PropertyMock(return_value=profile_mock)
 
     response = client.get(view)
+
+    # Project.objects.visible_for was called with the test_user user
+    assert projects_mock.visible_for.call_args[0][0] == test_user
 
     # Project.objects.available was called with no args
     assert list(projects_mock.visible_for().available.call_args) == [(), {}]
@@ -109,6 +114,9 @@ def test_view_lang_agnostic_anon_available_accept_language(
     util_mock.return_value = 23
 
     response = client.get("%s?baz=17" % view)
+
+    # Project.objects.visible_for was called with the test user
+    assert projects_mock.visible_for.call_args[0][0] == AnonymousUser()
 
     # Project.objects.available was called with no args
     assert list(projects_mock.visible_for().available.call_args) == [(), {}]
@@ -166,6 +174,9 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
     util_mock.return_value = None
 
     response = client.get("%s?foo=bar" % view)
+
+    # Project.objects.visible_for was called with the test user
+    assert projects_mock.visible_for.call_args[0][0] == AnonymousUser()
 
     # Project.objects.available was called with no args
     assert list(projects_mock.visible_for().available.call_args) == [(), {}]
