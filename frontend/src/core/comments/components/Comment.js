@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import './Comment.css';

@@ -151,13 +151,15 @@ export default function AddComments(props: Props) {
                 return `<p>${children}</p>`
             case 'link':
                 return `<a href="${escapeHtml(value.url)}">${children}</a>`
+            case 'mention':
+                return `<a href="${escapeHtml(value.url)}">${children}</a>`
             default:
                 return children
         }
     };
 
     const submitComment = () => {
-        if (!value[0].children[0].text) {
+        if (value.every(obj => !obj.children[0].text)) {
             return null;
         }
 
@@ -243,8 +245,9 @@ const withMentions = editor => {
 };
   
 const insertMention = (editor, character) => {
-    const mention = { type: 'mention', character, children: [{ text: '' }] }
+    const mention = { type: 'mention', character, url: 'https://www.example.com', children: [{ text: 'April' }] }
     Transforms.insertNodes(editor, mention)
+    console.log(mention)
     Transforms.move(editor)
 };
   
