@@ -24,7 +24,7 @@ from pontoon.tags.utils import TagsTool
 def projects(request):
     """List all active projects."""
     projects = (
-        Project.objects.visible()
+        Project.objects.visible().visible_for(request.user)
         .prefetch_related("latest_translation__user")
         .order_by("name")
     )
@@ -201,7 +201,7 @@ class ProjectContributorsView(ContributorsMixin, DetailView):
     model = Project
 
     def get_queryset(self):
-        return super().get_queryset().filter(self.request.user)
+        return super().get_queryset().visible_for(self.request.user)
 
     def get_context_object_name(self, obj):
         return "project"
