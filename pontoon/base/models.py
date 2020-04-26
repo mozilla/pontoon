@@ -1253,6 +1253,7 @@ class Project(AggregatedStats):
 
     class Meta:
         permissions = (("can_manage_project", "Can manage project"),)
+        ordering = ("pk",)
 
     def __str__(self):
         return self.name
