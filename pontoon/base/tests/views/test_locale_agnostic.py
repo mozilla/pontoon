@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import pytest
-from django.utils.functional import SimpleLazyObject
 
 from mock import MagicMock, PropertyMock, patch
 

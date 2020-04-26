@@ -200,4 +200,4 @@ def test_project_visible_for_anonymous(public_project, private_project):
         Project.objects.visible_for(AnonymousUser()).filter(
             pk__in=[public_project.pk, private_project.pk]
         )
-    ) == [public_project,]
+    ) == [public_project]
