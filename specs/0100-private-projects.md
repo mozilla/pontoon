@@ -8,13 +8,13 @@ Add an option to make a project "private", restricting who can see it and intera
 
 # Motivation
 
-It can be useful in some cases to be able to hide a project from users. For example, when a superuser creates a new project, they might want to make sure that everything is correctly set up before exposing it — running sync, verifying that it is enabled for the right locales, etc. In such a case, the project being hidden from non-superusers is enough. Once the superuser is done with configuration, they simply make the project public.
+It can be useful in some cases to be able to hide a project from users. For example, when a project manager creates a new project, they might want to make sure that everything is correctly set up before exposing it — running sync, verifying that it is enabled for the right locales, etc. In such a case, the project being hidden from everyone but project managers is enough. Once the project manager is done with configuration, they simply make the project public.
 
 For a different use-case, let's consider an agency working with several clients. They have a number of projects created on Pontoon, and they want to have specific localizers working on specific projects. It would be beneficial for them to be able to restrict seeing a project to only a defined list of users. This requires being able to mark a project as private, and also having a configuration option to select a list of users who will be able to see, and interact, with that project. That would allow for a clear separation of projects, reducing the risk of localizers translating the wrong set of projects.
 
 # Feature explanation
 
-When creating or editing a project, a Project Manager can choose between three Visibility options:
+When creating or editing a project, a project manager can choose between three Visibility options:
 
 1. "Project Managers" (default);
 1. "Selected Users";
