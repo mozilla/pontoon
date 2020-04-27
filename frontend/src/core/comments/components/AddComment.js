@@ -101,9 +101,7 @@ export default function AddComments(props: Props) {
                 }
             }
         },
-        // Look into how to avoid issues re: 'char' and 'editor' not being present
-        // eslint-disable-next-line 
-        [index, search, target]
+        [chars, editor, index, target]
     );
     
     if (!user) {
@@ -141,20 +139,20 @@ export default function AddComments(props: Props) {
         return ReactDOM.createPortal(children, document.body)
     }
 
-    const serialize = (value) => {
-        if (Text.isText(value)) {
-            return escapeHtml(value.text)
+    const serialize = (node) => {
+        if (Text.isText(node)) {
+            return escapeHtml(node.text)
         }
 
-        const children = value.children.map(v => serialize(v)).join('');
+        const children = node.children.map(v => serialize(v)).join('');
 
-        switch (value.type) {
+        switch (node.type) {
             case 'paragraph':
                 return `<p>${children}</p>`
             case 'link':
-                return `<a href="${escapeHtml(value.url)}">${children}</a>`
+                return `<a href="${escapeHtml(node.url)}">${children}</a>`
             case 'mention':
-                return `<a href="${escapeHtml(value.url)}">${children}</a>`
+                return `<a href="${escapeHtml(node.url)}">${children}</a>`
             default:
                 return children
         }
@@ -166,7 +164,7 @@ export default function AddComments(props: Props) {
             return null;
         }
 
-        const comment = serialize(value[0]);
+        const comment = value.map(node => serialize(node)).join('');
 
         addComment(comment, translation);
 
