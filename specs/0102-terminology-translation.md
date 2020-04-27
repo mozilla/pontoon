@@ -18,12 +18,12 @@ As part of [bug 1624557](https://bugzilla.mozilla.org/show_bug.cgi?id=1624557) w
 
 # Feature explanation
 
-We need a new built-in translation project (called "Terminology"), which will allow for translation of all terms using the translation workbench. The project would be similar to system projects (e.g. "Tutorial") in that it would be enabled automatically for any locale and any newly added locale, but would (unlike system projects) remain visible in dashboards and included in team stats.
+We feature introduces a new built-in translation project, called "Terminology". It allows for translation of all terms using the translation workbench. The project is similar to system projects (e.g. "Tutorial") in that it is enabled automatically for any locale and any newly added locale, but (unlike system projects) remains visible in dashboards and included in team stats.
 
-For every `Term` with the `do_not_translate` and `forbidden` field set to False, an `Entity` will be created in the "Terminology" project with the following data:
+For every `Term` with the `do_not_translate` and `forbidden` field set to False, an `Entity` is created in the "Terminology" project with the following data:
 * `Entity.string` with content of `Term.text`.
 * `Entity.comment` with joint content of `Term.part_of_speech`, `Term.definition` and `Term.usage`.
 
-The project will be stored in the database (not repository) and will "sync" automatically with the `Term` and `TermTranslation` models. Whenever a `Term` is created, updated or deleted, that needs to be reflected in the corresponding `Entity` in the "Terminology" project. Similarly, whenever a `Translation` in the "Terminology" project is created, updated (e.g. reviewed) or deleted, we need to make the corresponding change in the `TermTranslation` model.
+The project is stored in the database (not repository) and "syncs" automatically with the `Term` and `TermTranslation` models. Whenever a `Term` is created, updated or deleted, that is reflected in the corresponding `Entity` in the "Terminology" project. Similarly, whenever a `Translation` in the "Terminology" project is created, updated (e.g. reviewed) or deleted, a corresponding change is made in the `TermTranslation` model.
 
-A link should be added to every term in the Terms panel and popup leading to the translate workbench to translate that specific term to the currently used locale.
+Every term in the Terms panel and popup has a link leading to the translate workbench to translate that specific term to the currently used locale.
