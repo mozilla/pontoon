@@ -100,6 +100,12 @@ export default function AddComments(props: Props) {
                         return
                 }
             }
+            // TODO: This submits the comment to the DB but then crashes the app
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                submitComment();
+            }
+        
         },
         [chars, editor, index, target]
     );
@@ -159,7 +165,8 @@ export default function AddComments(props: Props) {
     };
 
     const submitComment = () => {
-        // TODO: work out how to prevent empty comments when only 'enter' is pressed
+        // TODO: work out how to prevent empty comments when only new lines present
+        // i.e.  if 'shift+enter' is used
         if (value.length <= 1 && Node.string(value[0]).length === 0) {
             return null;
         }
