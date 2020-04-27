@@ -8,24 +8,27 @@ Add an option to make a project "private", restricting who can see it and intera
 
 # Motivation
 
-It can be useful in some cases to be able to hide a project from users. For example, when a superuser creates a new project, they might want to make sure that everything is correctly set up before exposing it — running sync, verifying that it is enabled for the right locales, etc. In such a case, the project being not visible from non-superusers is enough. Once the superuser is done with configuration, they simply make the project public.
+It can be useful in some cases to be able to hide a project from users. For example, when a superuser creates a new project, they might want to make sure that everything is correctly set up before exposing it — running sync, verifying that it is enabled for the right locales, etc. In such a case, the project being hidden from non-superusers is enough. Once the superuser is done with configuration, they simply make the project public.
 
-For a different use-case, let's consider an agency working with several clients. They have a number of projects created on Pontoon, and they want to have specific localizers working on specific projects. It would be beneficial for them to be able to restrict seeing a project to only a defined list of users. This requires being able to mark a project as private, and also having a configuration option to select a list of users who will be able to see, and interact, with that project. That would allow a clear separation of projects, reducing the risk of localizers translating the wrong set of projects.
+For a different use-case, let's consider an agency working with several clients. They have a number of projects created on Pontoon, and they want to have specific localizers working on specific projects. It would be beneficial for them to be able to restrict seeing a project to only a defined list of users. This requires being able to mark a project as private, and also having a configuration option to select a list of users who will be able to see, and interact, with that project. That would allow for a clear separation of projects, reducing the risk of localizers translating the wrong set of projects.
 
 # Feature explanation
 
-When creating or editing a project, a superadmin has two new options:
+When creating or editing a project, a Project Manager can choose between three Visibility options:
 
-- a simple selectbox to make the project private or public (private by default);
-- a formset controlling which users can see the project when it is private.
+1. "Project Managers" (default);
+1. "Selected Users";
+1. "All Users".
 
-The "selected users" formset is visible only when the project is marked as private. It has three elements:
+Note: we refer to projects as "public" when they are accessible to all users and as "private" when they aren't.
+
+When the "Selected Users" option is selected, a formset controlling which users can see the project appears. It has three elements:
 
 - a list of users, showing who currently has access (or will upon saving). Clicking a user in the list removes that user from the list;
 - a search input, used to look for a specific user in the database and adding that user to the list;
 - a "copy from project" button, allowing to copy the selected users list from an existing project.
 
-Locale managers and localizers of a project always have access to it, regardless of whether they are in the selected users list or not.
+Note that Locale Managers and Translators of the project always have access when the "Selected Users" option is selected, even if they are not among the selected users.
 
 On the administration page of a project that is marked as private, we show a warning that the project is private and must be made public to enable translation by all users.
 
@@ -39,9 +42,10 @@ All instances of the "latest activity" feature, throughout the website, should a
 
 | Role | Impact |
 | -- | -- |
-| Locale Manager | Can see all private projects of locales they are managing |
-| Translator | Can see all private projects of locales they are translating |
-| Contributor | Cannot access private projects unless they are given explicit permission |
+| Project Manager | Can see all projects |
+| Locale Manager | Can see all projects visible to "Selected Users" for locales they are managing |
+| Translator | Can see all projects visible to "Selected Users" for locales they are translating |
+| Contributor | Can see all projects visible to "Selected Users" if they are given explicit permission |
 
 # Drawbacks
 
