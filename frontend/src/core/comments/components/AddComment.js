@@ -63,11 +63,14 @@ export default function AddComments(props: Props) {
 
     React.useEffect(() => {
         if (target && chars.length > 0) {
-            const el = ref.current
-            const domRange = ReactEditor.toDOMRange(editor, target)
-            const rect = domRange.getBoundingClientRect()
-            el.style.top = `${rect.top + window.pageYOffset + 24}px`
-            el.style.left = `${rect.left + window.pageXOffset}px`
+            const el = ref.current;
+            const domRange = ReactEditor.toDOMRange(editor, target);
+            const rect = domRange.getBoundingClientRect();
+            const suggestionsHeight = el.clientHeight + 10;
+            rect.top + window.pageYOffset + (suggestionsHeight) > window.innerHeight 
+            ? el.style.top = `${rect.top + window.pageYOffset - (suggestionsHeight)}px`
+            : el.style.top = `${rect.top + window.pageYOffset + 24}px`;
+            el.style.left = `${rect.left + window.pageXOffset}px`;
         }
     }, [chars.length, editor, index, search, target]);
 
@@ -76,28 +79,28 @@ export default function AddComments(props: Props) {
             if (target) {
                 switch (event.key) {
                     case 'ArrowDown':
-                        event.preventDefault()
-                        const prevIndex = index >= chars.length - 1 ? 0 : index + 1
-                        setIndex(prevIndex)
-                        break
+                        event.preventDefault();
+                        const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
+                        setIndex(prevIndex);
+                        break;
                     case 'ArrowUp':
-                        event.preventDefault()
-                        const nextIndex = index <= 0 ? chars.length - 1 : index - 1
-                        setIndex(nextIndex)
-                        break
+                        event.preventDefault();
+                        const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
+                        setIndex(nextIndex);
+                        break;
                     case 'Tab':
                     case 'Enter':
-                        event.preventDefault()
-                        Transforms.select(editor, target)
-                        insertMention(editor, chars[index])
-                        setTarget(null)
-                        break
+                        event.preventDefault();
+                        Transforms.select(editor, target);
+                        insertMention(editor, chars[index]);
+                        setTarget(null);
+                        break;
                     case 'Escape':
-                        event.preventDefault()
-                        setTarget(null)
-                        break
+                        event.preventDefault();
+                        setTarget(null);
+                        break;
                     default:
-                        return
+                        return;
                 }
             }
             // TODO: This submits the comment to the DB but then crashes the app
@@ -115,52 +118,52 @@ export default function AddComments(props: Props) {
     }
 
     const onChange = (value) => {
-        setValue(value)
-        const { selection } = editor
+        setValue(value);
+        const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-            const [start] = Range.edges(selection)
-            const wordBefore = Editor.before(editor, start, { unit: 'word' })
-            const before = wordBefore && Editor.before(editor, wordBefore)
-            const beforeRange = before && Editor.range(editor, before, start)
-            const beforeText = beforeRange && Editor.string(editor, beforeRange)
-            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/)
-            const after = Editor.after(editor, start)
-            const afterRange = Editor.range(editor, start, after)
-            const afterText = Editor.string(editor, afterRange)
-            const afterMatch = afterText.match(/^(\s|$)/)
+            const [start] = Range.edges(selection);
+            const wordBefore = Editor.before(editor, start, { unit: 'word' });
+            const before = wordBefore && Editor.before(editor, wordBefore);
+            const beforeRange = before && Editor.range(editor, before, start);
+            const beforeText = beforeRange && Editor.string(editor, beforeRange);
+            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/);
+            const after = Editor.after(editor, start);
+            const afterRange = Editor.range(editor, start, after);
+            const afterText = Editor.string(editor, afterRange);
+            const afterMatch = afterText.match(/^(\s|$)/);
     
             if (beforeMatch && afterMatch) {
-                setTarget(beforeRange)
-                setSearch(beforeMatch[1])
-                setIndex(0)
-                return
+                setTarget(beforeRange);
+                setSearch(beforeMatch[1]);
+                setIndex(0);
+                return;
             }
         }
     
-        setTarget(null)
+        setTarget(null);
     }
 
     const Portal = ({ children }) => {
-        return ReactDOM.createPortal(children, document.body)
+        return ReactDOM.createPortal(children, document.body);
     }
 
     const serialize = (node) => {
         if (Text.isText(node)) {
-            return escapeHtml(node.text)
+            return escapeHtml(node.text);
         }
 
         const children = node.children.map(v => serialize(v)).join('');
 
         switch (node.type) {
             case 'paragraph':
-                return `<p>${children}</p>`
+                return `<p>${children}</p>`;
             case 'link':
-                return `<a href="${escapeHtml(node.url)}">${children}</a>`
+                return `<a href="${escapeHtml(node.url)}">${children}</a>`;
             case 'mention':
-                return `<a href="${escapeHtml(node.url)}">${children}</a>`
+                return `<a href="${escapeHtml(node.url)}">${children}</a>`;
             default:
-                return children
+                return children;
         }
     };
 
@@ -235,14 +238,14 @@ export default function AddComments(props: Props) {
 }
 
 const withMentions = editor => {
-    const { isInline, isVoid } = editor
+    const { isInline, isVoid } = editor;
   
     editor.isInline = element => {
-        return element.type === 'mention' ? true : isInline(element)
+        return element.type === 'mention' ? true : isInline(element);
     }
   
     editor.isVoid = element => {
-        return element.type === 'mention' ? true : isVoid(element)
+        return element.type === 'mention' ? true : isVoid(element);
     }
   
     return editor
@@ -252,18 +255,18 @@ const insertMention = (editor, character) => {
     const selectedUser = users.filter(user => user.name === character);
     const userUrl = selectedUser[0].url;
     const display = selectedUser[0].display;
-    const mention = { type: 'mention', character, url: userUrl, children: [{ text: display }] }
-    Transforms.insertNodes(editor, mention)
-    Transforms.move(editor)
+    const mention = { type: 'mention', character, url: userUrl, children: [{ text: display }] };
+    Transforms.insertNodes(editor, mention);
+    Transforms.move(editor);
 };
   
 const Element = props => {
-    const { attributes, children, element } = props
+    const { attributes, children, element } = props;
         switch (element.type) {
         case 'mention':
-            return <MentionElement {...props} />
+            return <MentionElement {...props} />;
         default:
-            return <p {...attributes}>{children}</p>
+            return <p {...attributes}>{children}</p>;
     }
 };
 
