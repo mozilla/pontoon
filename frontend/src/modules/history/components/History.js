@@ -64,7 +64,7 @@ export default class History extends React.Component<Props> {
         }
 
         return <section className="history">
-            <ul>
+            <ul className="mentions-disable-scroll">
                 { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }

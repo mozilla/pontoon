@@ -63,6 +63,7 @@ export default function AddComments(props: Props) {
 
     React.useEffect(() => {
         if (target && chars.length > 0) {
+            disableHistoryScroll(true);
             const el = ref.current;
             const domRange = ReactEditor.toDOMRange(editor, target);
             const rect = domRange.getBoundingClientRect();
@@ -74,7 +75,7 @@ export default function AddComments(props: Props) {
         }
     }, [chars.length, editor, index, search, target]);
 
-    const onKeyDown = React.useCallback(
+    const mentionsKeyDown = React.useCallback(
         event => {
             if (target) {
                 switch (event.key) {
@@ -93,25 +94,28 @@ export default function AddComments(props: Props) {
                         event.preventDefault();
                         Transforms.select(editor, target);
                         insertMention(editor, chars[index]);
+                        disableHistoryScroll(false);
                         setTarget(null);
                         break;
                     case 'Escape':
                         event.preventDefault();
+                        disableHistoryScroll(false);
                         setTarget(null);
                         break;
                     default:
                         return;
                 }
             }
-            // TODO: This submits the comment to the DB but then crashes the app
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                submitComment();
-            }
-        
         },
         [chars, editor, index, target]
     );
+
+    const onKeyDown = (event: SyntheticKeyboardEvent<>) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            submitComment();
+        }
+    }
     
     if (!user) {
         return null;
@@ -148,6 +152,20 @@ export default function AddComments(props: Props) {
         return ReactDOM.createPortal(children, document.body);
     }
 
+    const disableHistoryScroll = (mentionsActive: boolean) => {
+        const element = document.querySelector(
+            '.history .mentions-disable-scroll'
+        );
+
+        if (!element) {
+            return null;
+        }
+
+        mentionsActive 
+        ? element.style.overflow = 'hidden' 
+        : element.style.overflow = 'auto';
+    }
+
     const serialize = (node) => {
         if (Text.isText(node)) {
             return escapeHtml(node.text);
@@ -178,6 +196,9 @@ export default function AddComments(props: Props) {
 
         addComment(comment, translation);
 
+        Transforms.select(
+            editor, { anchor: { path: [0,0], offset: 0 }, focus: { path: [0,0], offset: 0 } }
+        );
         setValue(initialValue);
     };
 
@@ -199,7 +220,7 @@ export default function AddComments(props: Props) {
                         dir='auto' 
                         placeholder={ `Write a comment…` }
                         renderElement={ renderElement }
-                        onKeyDown={ onKeyDown }
+                        onKeyDown={ target ? mentionsKeyDown : onKeyDown }
                     />
                 </Localized>
                 {target && chars.length > 0 && (
