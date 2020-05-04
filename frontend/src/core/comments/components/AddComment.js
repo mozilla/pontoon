@@ -117,6 +117,11 @@ export default function AddComments(props: Props) {
             event.preventDefault();
             submitComment();
         }
+        if (event.key === 'Enter' && event.shiftKey) { 
+            event.preventDefault();
+            editor.insertText("\n\uFEFF");
+            return null;
+        }
     }
     
     if (!user) {
@@ -176,7 +181,7 @@ export default function AddComments(props: Props) {
             return escapeHtml(node.text);
         }
 
-        const children = node.children.map(v => serialize(v)).join('');
+        const children = node.children.map(n => serialize(n)).join('');
 
         switch (node.type) {
             case 'paragraph':

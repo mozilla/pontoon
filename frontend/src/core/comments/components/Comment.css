@@ -20,6 +20,7 @@
     font-size: 11px;
     padding: 6px;
     word-break: break-all;
+    white-space: pre-wrap;
 }
 
 .comments-list .comment .content p {
