@@ -149,6 +149,9 @@ export default function AddComments(props: Props) {
     }
 
     const Portal = ({ children }) => {
+        if (!document.body) {
+            return null;
+        }
         return ReactDOM.createPortal(children, document.body);
     }
 
@@ -166,7 +169,7 @@ export default function AddComments(props: Props) {
         : element.style.overflow = 'auto';
     }
 
-    const serialize = (node) => {
+    const serialize = (node: any) => {
         if (Text.isText(node)) {
             return escapeHtml(node.text);
         }
