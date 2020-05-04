@@ -182,7 +182,7 @@ def test_project_visible_for_users(
     projects = Project.objects.visible_for(user_a).filter(
         pk__in=[public_project.pk, private_project.pk]
     )
-    assert list(projects) == [public_project, private_project]
+    assert list(projects) == [public_project]
 
 
 @pytest.mark.django_db

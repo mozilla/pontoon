@@ -1034,26 +1034,12 @@ class ProjectQuerySet(models.QuerySet):
         """
         The visiblity of projects is determined by the role of the user:
         * Administrators can access all public and private projects
-        * Project translators, Locale managers and Translators can work only on public projects and private projects that
-            are assigned to them.
+        * Project translators, Locale managers and Translators can see only public projects
         """
         if user.is_superuser:
             return self
 
-        locales = get_objects_for_user(
-            user, "base.can_manage_locale", accept_global_perms=False
-        ) | get_objects_for_user(
-            user, "base.can_translate_locale", accept_global_perms=False
-        )
-        project_locales = get_objects_for_user(
-            user, "base.can_translate_project_locale", accept_global_perms=False
-        )
-
-        return self.filter(
-            Q(visibility="public")
-            | Q(project_locale__locale__in=locales)
-            | Q(project_locale__in=project_locales)
-        ).distinct()
+        return self.filter(visibility="public")
 
     def available(self):
         """
@@ -1179,10 +1165,7 @@ class Project(AggregatedStats):
         max_length=20,
         default=VISIBILITY_TYPES[0][0],
         choices=VISIBILITY_TYPES,
-        help_text="""
-        Private project is invisible for contributors and accessible
-        only to project/locale managers.
-    """,
+        help_text="""Project managers can see all projects, the rest of users can view only public projects""",
     )
 
     # Website for in place localization
