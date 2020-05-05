@@ -44,7 +44,7 @@ class ProjectFactory(DjangoModelFactory):
     name = Sequence(lambda n: "Project {0}".format(n))
     slug = LazyAttribute(lambda p: slugify(p.name))
     links = False
-    visibility = 'public'
+    visibility = "public"
 
     class Meta:
         model = Project

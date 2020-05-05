@@ -6,17 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0002_auto_20200322_1821'),
+        ("base", "0002_auto_20200322_1821"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='project',
-            options={'ordering': ('pk',), 'permissions': (('can_manage_project', 'Can manage project'),)},
+            name="project",
+            options={
+                "ordering": ("pk",),
+                "permissions": (("can_manage_project", "Can manage project"),),
+            },
         ),
         migrations.AddField(
-            model_name='project',
-            name='visibility',
-            field=models.CharField(choices=[('private', 'Private'), ('public', 'Public')], default='private', max_length=20),
+            model_name="project",
+            name="visibility",
+            field=models.CharField(
+                choices=[("private", "Private"), ("public", "Public")],
+                default="private",
+                max_length=20,
+            ),
         ),
     ]
