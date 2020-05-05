@@ -58,6 +58,12 @@ class ProjectForm(forms.ModelForm):
             groups__name="project_managers"
         ).order_by("email")
 
+    def save(self, *args, **kwargs):
+        obj = super(ProjectForm, self).save(*args, **kwargs)
+        if 'visibility' in self.changed_data:
+            obj.aggregate_stats()
+        return obj
+
 
 SubpageInlineFormSet = inlineformset_factory(
     Project, Subpage, extra=1, fields=("project", "name", "url")

@@ -3365,6 +3365,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
 
         projects = Project.objects.filter(
             resources__translatedresources__in=self,
+            visibility='public',
         ).distinct()
 
         projectlocales = ProjectLocale.objects.filter(
