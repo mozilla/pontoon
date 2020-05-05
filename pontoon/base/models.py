@@ -1034,7 +1034,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         The visiblity of projects is determined by the role of the user:
         * Administrators can access all public and private projects
-        * Project translators, Locale managers and Translators can see only public projects
+        * Other users can see only public projects
         """
         if user.is_superuser:
             return self
@@ -1158,14 +1158,11 @@ class Project(AggregatedStats):
     )
 
     VISIBILITY_TYPES = (
-        ("public", "Public"),
         ("private", "Private"),
+        ("public", "Public"),
     )
     visibility = models.CharField(
-        max_length=20,
-        default=VISIBILITY_TYPES[0][0],
-        choices=VISIBILITY_TYPES,
-        help_text="""Project managers can see all projects, the rest of users can view only public projects""",
+        max_length=20, default=VISIBILITY_TYPES[0][0], choices=VISIBILITY_TYPES,
     )
 
     # Website for in place localization

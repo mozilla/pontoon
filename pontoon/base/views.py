@@ -532,9 +532,6 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
             translations.values_list("unrejected_user__pk", flat=True)
         )
 
-    recipients = utils.filter_users_by_project_visibility(
-        entity.resource.project, locale, recipients
-    )
     for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
         notify.send(
             user,

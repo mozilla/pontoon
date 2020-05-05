@@ -175,11 +175,11 @@ class ProjectAdmin(admin.ModelAdmin):
         "priority",
         "contact_person",
         "pk",
-        "enabled",
-        "sync_disabled",
         "system_project",
-        "pretranslation_enabled",
         "visibility",
+        "pretranslation_enabled",
+        "sync_disabled",
+        "enabled",
     )
     ordering = ("disabled",)
 
