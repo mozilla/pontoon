@@ -31,6 +31,7 @@ class TermAdmin(admin.ModelAdmin):
         "do_not_translate",
         "forbidden",
     )
+    raw_id_fields = ("entity",)
 
 
 class TermTranslationAdmin(admin.ModelAdmin):
