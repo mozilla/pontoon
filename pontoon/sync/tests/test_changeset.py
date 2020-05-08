@@ -189,6 +189,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             order=7,
             string_plural="plural string",
             source=["foo.py:87"],
+            date_updated=self.changeset.now,
         )
 
         self.main_db_translation.refresh_from_db()

@@ -2364,6 +2364,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     word_count = models.PositiveIntegerField(default=0)
 
     date_created = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(default=timezone.now)
     date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     changed_locales = models.ManyToManyField(

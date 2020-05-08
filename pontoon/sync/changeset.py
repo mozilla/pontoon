@@ -411,6 +411,9 @@ class ChangeSet(object):
             for field, value in self.get_entity_updates(vcs_entity, db_entity).items():
                 setattr(db_entity, field, value)
 
+            if db_entity.get_dirty_fields().keys() & {"string", "string_plural"}:
+                setattr(db_entity, "date_updated", self.now)
+
             if db_entity.is_dirty(check_relationship=True):
                 self.entities_to_update.append(db_entity)
 
@@ -450,6 +453,7 @@ class ChangeSet(object):
                     "resource_comment",
                     "order",
                     "source",
+                    "date_updated",
                 ],
             )
 
