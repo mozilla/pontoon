@@ -85,6 +85,7 @@ describe('<FiltersPanelBase>', () => {
         const extras = {
             unchanged: false,
             rejected: true,
+            stale: false,
         };
 
         const wrapper = shallow(
@@ -229,6 +230,7 @@ describe('<FiltersPanelBase>', () => {
         const extras = {
             unchanged: false,
             rejected: false,
+            stale: false
         };
 
         const wrapper = shallow(
@@ -260,6 +262,7 @@ describe('<FiltersPanelBase>', () => {
         const extras = {
             unchanged: false,
             rejected: true,
+            stale: false
         };
 
         const wrapper = shallow(
@@ -292,6 +295,7 @@ describe('<FiltersPanelBase>', () => {
         const extras = {
             unchanged: false,
             rejected: true,
+            stale: false
         };
 
         const wrapper = shallow(
@@ -327,6 +331,7 @@ describe('<FiltersPanelBase>', () => {
         const extras = {
             unchanged: false,
             rejected: true,
+            stale: false
         };
 
         const wrapper = shallow(

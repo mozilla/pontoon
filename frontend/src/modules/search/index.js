@@ -67,4 +67,8 @@ export const FILTERS_EXTRA = [
         name: 'Rejected',
         slug: 'rejected',
     },
+    {
+        name: 'Stale',
+        slug: 'stale'
+    }
 ];

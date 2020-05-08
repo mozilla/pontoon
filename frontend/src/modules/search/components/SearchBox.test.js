@@ -122,6 +122,7 @@ describe('<SearchBoxBase>', () => {
             extras: {
                 unchanged: true,
                 rejected: false,
+                stale: false
             }
         });
 
@@ -183,6 +184,7 @@ describe('<SearchBoxBase>', () => {
             extras: {
                 unchanged: false,
                 rejected: true,
+                stale: false
             }
         });
 
@@ -192,6 +194,7 @@ describe('<SearchBoxBase>', () => {
         expect(wrapper.state('statuses').missing).toBeFalsy();
         expect(wrapper.state('extras').unchanged).toBeFalsy();
         expect(wrapper.state('extras').rejected).toBeFalsy();
+        expect(wrapper.state('extras').stale).toBeFalsy();
     });
 
     it('sets status to null when "all" is selected', () => {
