@@ -2245,6 +2245,27 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def stale(self, locale, project=None):
+        """Return a filter to be used to select entities that have stale translations.
+
+        An entity is considered "stale" if none of its plural form translations have been approved since
+        the most recent change to the source string.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(Q(approved=True) & Q(approved_date__lt=F("entity__date_updated"))),
+                lambda x: x.approved and x.approved_date < x.entity.date_updated,
+                match_all=True,
+                project=project,
+            )
+        )
+
     def authored_by(self, locale, emails):
         def is_email(email):
             """
@@ -2611,7 +2632,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ("rejected", "unchanged", "empty")
+            extra_filter_choices = ("rejected", "unchanged", "empty", "stale")
             post_filters.append(
                 combine_entity_filters(
                     entities, extra_filter_choices, extra.split(","), locale

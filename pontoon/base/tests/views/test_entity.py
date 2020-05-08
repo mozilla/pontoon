@@ -56,6 +56,7 @@ def test_view_entity_filters(member, resource_a, locale_a):
         "translated",
         "unchanged",
         "rejected",
+        "stale",
     )
     for filter_ in filters:
         filter_name = filter_.replace("-", "_")
@@ -65,7 +66,7 @@ def test_view_entity_filters(member, resource_a, locale_a):
             "paths[]": [resource_a.path],
             "limit": 1,
         }
-        if filter_ in ("unchanged", "has-suggestions", "rejected"):
+        if filter_ in ("unchanged", "has-suggestions", "rejected", "stale"):
             params["extra"] = filter_
         else:
             params["status"] = filter_

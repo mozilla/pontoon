@@ -18,6 +18,8 @@ from pontoon.test.factories import (
     TranslationFactory,
     WarningFactory,
 )
+from django.utils import timezone
+from datetime import timedelta
 
 
 @pytest.fixture
@@ -553,6 +555,83 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         entities[0],
         entities[2],
     }
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_stale(resource_a, locale_a):
+    now = timezone.now()
+    before = now - timedelta(minutes=1)
+    after = now + timedelta(minutes=1)
+
+    locale_a.cldr_plurals = "1,5"
+    locale_a.save()
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="Source string",
+            string_plural="Source string plural",
+            date_updated=now,
+        )
+        for i in range(0, 3)
+    ]
+
+    # Approved, stale
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        approved=True,
+        plural_form=0,
+        string="Translated string",
+        approved_date=before,
+        date=before,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        approved=True,
+        plural_form=1,
+        string="Translated plural string",
+        approved_date=before,
+        date=before,
+    )
+    # Not approved, stale
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=False,
+        plural_form=0,
+        string="Translated string",
+        date=before,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=False,
+        plural_form=1,
+        string="Translated plural string",
+        date=before,
+    )
+    # Approved, up to date
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        approved=True,
+        plural_form=0,
+        string="Translated string",
+        approved_date=after,
+        date=after,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        approved=True,
+        plural_form=1,
+        string="Translated plural string",
+        approved_date=after,
+        date=before,
+    )
+
+    assert set(Entity.objects.filter(Entity.objects.stale(locale_a))) == {entities[0]}
 
 
 @pytest.mark.django_db
