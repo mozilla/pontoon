@@ -65,12 +65,15 @@ export default class Helpers extends React.Component<Props> {
             <div className="top">
                 <Tabs>
                     <TabList>
-                        <Tab>
-                            <Localized id='entitydetails-Helpers--terms'>
-                                { 'Terms' }
-                            </Localized>
-                            <TermCount terms={ terms }/>
-                        </Tab>
+                        {
+                            parameters.project === 'terminology' ? null :
+                            <Tab>
+                                <Localized id='entitydetails-Helpers--terms'>
+                                    { 'Terms' }
+                                </Localized>
+                                <TermCount terms={ terms }/>
+                            </Tab>
+                        }
                         <Tab>
                             <Localized id='entitydetails-Helpers--comments'>
                                 { 'Comments' }
@@ -78,13 +81,16 @@ export default class Helpers extends React.Component<Props> {
                             <CommentCount teamComments={ teamComments }/>
                         </Tab>
                     </TabList>
-                    <TabPanel>
-                        <Terms
-                            isReadOnlyEditor={ isReadOnlyEditor }
-                            terms={ terms }
-                            addTextToEditorTranslation={ addTextToEditorTranslation }
-                        />
-                    </TabPanel>
+                    {
+                        parameters.project === 'terminology' ? null :
+                        <TabPanel>
+                            <Terms
+                                isReadOnlyEditor={ isReadOnlyEditor }
+                                terms={ terms }
+                                addTextToEditorTranslation={ addTextToEditorTranslation }
+                            />
+                        </TabPanel>
+                    }
                     <TabPanel>
                         <TeamComments
                             teamComments={ teamComments }
