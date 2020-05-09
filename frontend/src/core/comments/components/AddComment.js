@@ -119,7 +119,7 @@ export default function AddComments(props: Props) {
         }
         if (event.key === 'Enter' && event.shiftKey) { 
             event.preventDefault();
-            editor.insertText("\n\uFEFF");
+            editor.insertText('\n\uFEFF');
             return null;
         }
     }
