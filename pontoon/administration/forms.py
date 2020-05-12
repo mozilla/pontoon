@@ -11,6 +11,7 @@ from pontoon.base.models import (
     Project,
     Repository,
     Subpage,
+    TranslatedResource,
 )
 from pontoon.base.forms import HtmlField
 from pontoon.tags.models import Tag
@@ -60,8 +61,8 @@ class ProjectForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         obj = super(ProjectForm, self).save(*args, **kwargs)
-        if 'visibility' in self.changed_data:
-            obj.aggregate_stats()
+        if "visibility" in self.changed_data:
+            TranslatedResource.objects.filter(resource__project=obj).update_stats()
         return obj
 
 

@@ -1496,6 +1496,17 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        Return only project locales that are viewable by the user.
+        """
+        if user.is_superuser:
+            return self
+
+        return self.filter(
+            project__visibility='public'
+        )
+
     def visible(self):
         """
         Visible project locales belong to visible projects.
@@ -3319,7 +3330,6 @@ class TranslatedResourceQuerySet(models.QuerySet):
         instance.strings_with_errors = aggregated_stats["errors"] or 0
         instance.strings_with_warnings = aggregated_stats["warnings"] or 0
         instance.unreviewed_strings = aggregated_stats["unreviewed"] or 0
-
         instance.save(
             update_fields=[
                 "total_strings",
@@ -3359,25 +3369,26 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Update stats on a list of TranslatedResource.
         """
-        self = self.prefetch_related("resource__project", "locale")
+        translated_resources = self.prefetch_related("resource__project", "locale")
 
-        locales = Locale.objects.filter(translatedresources__in=self,).distinct()
+        locales = Locale.objects.filter(
+            translatedresources__in=translated_resources,
+        ).distinct()
 
         projects = Project.objects.filter(
-            resources__translatedresources__in=self,
-            visibility='public',
+            resources__translatedresources__in=translated_resources,
         ).distinct()
 
         projectlocales = ProjectLocale.objects.filter(
-            project__resources__translatedresources__in=self,
-            locale__translatedresources__in=self,
+            project__resources__translatedresources__in=translated_resources,
+            locale__translatedresources__in=translated_resources,
         ).distinct()
 
-        for translated_resource in self:
+        for translated_resource in translated_resources:
             translated_resource.calculate_stats(save=False)
 
         bulk_update(
-            list(self),
+            list(translated_resources),
             update_fields=[
                 "total_strings",
                 "approved_strings",
@@ -3446,6 +3457,25 @@ class TranslatedResource(AggregatedStats):
         """Update stats, including denormalized ones."""
         resource = self.resource
         locale = self.locale
+
+        if self.resource.project.visibility == "private":
+            if save:
+                self.adjust_all_stats(
+                    -self.total_strings,
+                    -self.approved_strings,
+                    -self.fuzzy_strings,
+                    -self.strings_with_errors,
+                    -self.strings_with_warnings,
+                    -self.unreviewed_strings,
+                )
+            else:
+                self.total_strings = 0
+                self.approved_strings = 0
+                self.fuzzy_strings = 0
+                self.strings_with_errors = 0
+                self.strings_with_warnings = 0
+                self.unreviewed_strings = 0
+            return
 
         entity_ids = Translation.objects.filter(locale=locale).values("entity")
         translated_entities = Entity.objects.filter(

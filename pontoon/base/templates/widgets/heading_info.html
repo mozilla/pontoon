@@ -110,7 +110,7 @@
     class='missing',
     value=(obj.total_strings - obj.approved_strings - obj.fuzzy_strings - obj.strings_with_warnings - obj.strings_with_errors),
     link=(link + '?status=missing') if link else None)
-  }}
+  }} {{ obj.total_strings }}
 </ul>
 <div class="non-plottable">
   <div class="all">
