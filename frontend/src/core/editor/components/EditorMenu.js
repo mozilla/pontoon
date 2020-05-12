@@ -93,7 +93,7 @@ export default class EditorMenu extends React.Component<Props> {
                             isTranslator={ props.isTranslator }
                             forceSuggestions={ props.user.settings.forceSuggestions }
                             sameExistingTranslation={ props.sameExistingTranslation }
-                            sendTranslation={ props.sendTranslation }
+                            sendTranslation={ () => props.sendTranslation() }
                             updateTranslationStatus={ props.updateTranslationStatus }
                         />
                     </div>
