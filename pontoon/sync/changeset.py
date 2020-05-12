@@ -228,7 +228,7 @@ class ChangeSet(object):
         for vcs_entity in self.changes["create_db"]:
             # We can't use bulk_create since we need a PK
             entity, created = Entity.objects.get_or_create(
-                **self.get_entity_updates(vcs_entity)
+                **self.get_entity_updates(vcs_entity), date_updated=self.now
             )
 
             if created:

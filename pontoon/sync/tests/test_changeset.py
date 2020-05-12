@@ -142,6 +142,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             order=7,
             string_plural="plural string",
             source=["foo.py:87"],
+            date_updated=aware_datetime(1970, 1, 1),
         )
 
         new_translation = new_entity.translation_set.all()[0]
@@ -189,7 +190,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
             order=7,
             string_plural="plural string",
             source=["foo.py:87"],
-            date_updated=self.changeset.now,
+            date_updated=aware_datetime(1970, 1, 1),
         )
 
         self.main_db_translation.refresh_from_db()
