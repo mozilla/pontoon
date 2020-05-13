@@ -12,9 +12,11 @@ import type { TermType } from 'core/api';
 
 type Props = {|
     +isReadOnlyEditor: boolean,
+    +locale: string,
     +terms: Array<TermType>,
     +addTextToEditorTranslation: (string) => void,
     +hide: () => void,
+    +navigateToPath: (string) => void,
 |};
 
 
@@ -22,7 +24,7 @@ type Props = {|
  * Shows a popup with a list of all terms belonging to the highlighted one.
  */
 export function TermsPopup(props: Props) {
-    const { terms } = props;
+    const { locale, terms } = props;
 
     // This method is called by the Higher-Order Component `onClickOutside`
     // when a user clicks outside this component.
@@ -34,9 +36,11 @@ export function TermsPopup(props: Props) {
 
     return <div className="terms-popup" onClick={ props.hide }>
         <TermsList
-            terms={ terms }
             isReadOnlyEditor={ props.isReadOnlyEditor }
+            locale={ locale }
+            terms={ terms }
             addTextToEditorTranslation={ props.addTextToEditorTranslation }
+            navigateToPath={ props.navigateToPath }
         />
     </div>;
 }

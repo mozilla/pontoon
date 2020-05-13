@@ -365,6 +365,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                    navigateToPath={ this.navigateToPath }
                 />
             </section>
         </section>;

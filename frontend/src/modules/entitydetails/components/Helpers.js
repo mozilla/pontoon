@@ -35,6 +35,7 @@ type Props = {|
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
     addTextToEditorTranslation: (string) => void,
+    navigateToPath: (string) => void,
 |};
 
 
@@ -59,6 +60,7 @@ export default class Helpers extends React.Component<Props> {
             searchMachinery,
             addComment,
             addTextToEditorTranslation,
+            navigateToPath,
         } = this.props;
 
         return <>
@@ -86,8 +88,10 @@ export default class Helpers extends React.Component<Props> {
                         <TabPanel>
                             <Terms
                                 isReadOnlyEditor={ isReadOnlyEditor }
+                                locale={ locale.code }
                                 terms={ terms }
                                 addTextToEditorTranslation={ addTextToEditorTranslation }
+                                navigateToPath={ navigateToPath }
                             />
                         </TabPanel>
                     }

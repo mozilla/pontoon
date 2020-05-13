@@ -11,8 +11,10 @@ import type { TermState } from 'core/term';
 
 type Props = {|
     isReadOnlyEditor: boolean,
+    locale: string,
     terms: TermState,
     addTextToEditorTranslation: (string) => void,
+    navigateToPath: (string) => void,
 |};
 
 
@@ -20,7 +22,7 @@ type Props = {|
  * Shows all terms found in the source string.
  */
 export default function Terms(props: Props) {
-    let { isReadOnlyEditor, terms, addTextToEditorTranslation } = props;
+    let { isReadOnlyEditor, locale, terms, addTextToEditorTranslation, navigateToPath } = props;
 
     if (terms.fetching || !terms.terms) {
         return null;
@@ -35,9 +37,11 @@ export default function Terms(props: Props) {
             </Localized>
             :
             <TermsList
-                terms={ terms }
                 isReadOnlyEditor={ isReadOnlyEditor }
+                locale={ locale }
+                terms={ terms }
                 addTextToEditorTranslation={ addTextToEditorTranslation }            
+                navigateToPath={ navigateToPath }
             />
         }
     </section>;

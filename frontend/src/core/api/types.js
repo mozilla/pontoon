@@ -42,6 +42,7 @@ export type TermType = {|
     +definition: string,
     +usage: string,
     +translation: string,
+    +entityId: number,
 |};
 
 
