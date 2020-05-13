@@ -20,6 +20,16 @@
     resize: none;
 }
 
+/* Remove highlight in Chrome */
+.comments-list .add-comment textarea:focus {
+    outline: none;
+}
+
+/* Style placeholder color in Chrome */
+.comments-list .add-comment textarea::-webkit-input-placeholder {
+    color: #AAAAAA;
+}
+
 .comments-list .add-comment .submit-button {
     background-color: #4d5967;
     border: solid 1px #4d5967;
