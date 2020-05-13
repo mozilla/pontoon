@@ -305,5 +305,5 @@ def test_tt_checks_simple_ftl(
             "doublequoting",
         },
         None,
-        {"varmatches": [("{ $", " }")]},
+        {"varmatches": [("{$", "}")]},
     )
