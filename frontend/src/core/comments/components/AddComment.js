@@ -63,14 +63,22 @@ export default function AddComments(props: Props) {
 
     React.useEffect(() => {
         if (target && chars.length > 0) {
-            disableHistoryScroll(true);
             const el = ref.current;
             const domRange = ReactEditor.toDOMRange(editor, target);
             const rect = domRange.getBoundingClientRect();
+
+            // If suggestions overflow the window height then adjust the
+            // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
-            rect.top + window.pageYOffset + (suggestionsHeight) > window.innerHeight 
-            ? el.style.top = `${rect.top + window.pageYOffset - (suggestionsHeight)}px`
-            : el.style.top = `${rect.top + window.pageYOffset + 24}px`;
+            let setTop = rect.top + window.pageYOffset;
+            
+            if (setTop + suggestionsHeight > window.innerHeight) { 
+                setTop -= suggestionsHeight;
+            }
+            else {
+                setTop += 24;
+            }
+            el.style.top = `${setTop}px`;
             el.style.left = `${rect.left + window.pageXOffset}px`;
         }
     }, [chars.length, editor, index, search, target]);
@@ -96,12 +104,10 @@ export default function AddComments(props: Props) {
                         event.preventDefault();
                         Transforms.select(editor, target);
                         insertMention(editor, chars[index]);
-                        disableHistoryScroll(false);
                         setTarget(null);
                         break;
                     case 'Escape':
                         event.preventDefault();
-                        disableHistoryScroll(false);
                         setTarget(null);
                         break;
                     default:
@@ -119,6 +125,12 @@ export default function AddComments(props: Props) {
         }
         if (event.key === 'Enter' && event.shiftKey) { 
             event.preventDefault();
+            /*
+            * This allows for the new lines to render while adding comments.
+            * To avoid an issue with the cursor placement and an error when 
+            * navigating with arrows that occurs in Firefox '\n' can't be 
+            * the last character so I added the BOM
+            */
             editor.insertText('\n\uFEFF');
             return null;
         }
@@ -160,20 +172,6 @@ export default function AddComments(props: Props) {
             return null;
         }
         return ReactDOM.createPortal(children, document.body);
-    }
-
-    const disableHistoryScroll = (mentionsActive: boolean) => {
-        const element = document.querySelector(
-            '.history .mentions-disable-scroll'
-        );
-
-        if (!element) {
-            return null;
-        }
-
-        mentionsActive 
-        ? element.style.overflow = 'hidden' 
-        : element.style.overflow = 'auto';
     }
 
     const serialize = (node: any) => {
