@@ -5,7 +5,7 @@ import pytest
 from textwrap import dedent
 from mock import patch, MagicMock, ANY
 
-from pontoon.checks.libraries import run_checks
+from pontoon.checks.libraries import run_checks, ftl_to_simplified_string
 
 
 @pytest.yield_fixture
@@ -175,4 +175,135 @@ def test_tt_disabled_checks(
     )
     assert not run_tt_checks_mock.assert_called_with(
         ANY, ANY, ANY, {"acronyms", "gconf", "kdecomments", "untranslated"}
+    )
+
+
+def test_ftl_to_simplified_string():
+    """
+    Check that the ftl_to_simplified_string helper serializes simple and complex Fluent messages down to
+    simplified, translate-toolkit-ready strings
+    """
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome
+    """
+            )
+        )
+        == "Welcome"
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome { $withAVariable }.
+    """
+            )
+        )
+        == "Welcome {$withAVariable}."
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome
+            .withAttribute = with an attribute.
+    """
+            )
+        )
+        == "Welcome with an attribute."
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome {"with a string literal"}.
+    """
+            )
+        )
+        == "Welcome with a string literal."
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome {with-a-message-reference}.
+    """
+            )
+        )
+        == "Welcome ."
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome { $n ->
+            [one] with a select expression
+            *[other] with { $n } multiple cases
+        }.
+    """
+            )
+        )
+        == "Welcome {$n} with a select expression with {$n} multiple cases."
+    )
+
+    assert (
+        ftl_to_simplified_string(
+            dedent(
+                """
+        message-one = Welcome { DATETIME($withAFunctionCall) }.
+    """
+            )
+        )
+        == "Welcome {$withAFunctionCall}."
+    )
+
+
+def test_tt_checks_simple_ftl(
+    entity_ftl_mock, run_tt_checks_mock,
+):
+    """
+    Check translate toolkit checks for a simple ftl entity
+    """
+
+    translated_string = dedent(
+        """
+    windowTitle = Translated string
+        .pontoon = is kewl
+    """
+    )
+
+    run_checks(
+        entity_ftl_mock, "en-US", entity_ftl_mock.string, translated_string, True,
+    )
+
+    run_tt_checks_mock.assert_called_with(
+        "Untranslated string is cool",
+        "Translated string is kewl",
+        ANY,
+        {
+            "acronyms",
+            "gconf",
+            "kdecomments",
+            "untranslated",
+            "doublespacing",
+            "endwhitespace",
+            "escapes",
+            "newlines",
+            "numbers",
+            "printf",
+            "singlequoting",
+            "startwhitespace",
+            "pythonbraceformat",
+            "doublequoting",
+        },
+        None,
+        {"varmatches": [("{ $", " }")]},
     )

@@ -39,3 +39,17 @@ def test_tt_correct_translation(mock_locale):
     Quality check should return empty dictionary if everything is okay (no warnings).
     """
     assert run_checks("Original string", "Translation string", mock_locale) == {}
+
+
+def test_tt_variable(mock_locale):
+    """
+    Variable check should return a warning if variable names do not match
+    """
+    assert run_checks(
+        "Original string with {$variable}.",
+        "Translated string with {$wrongVariable}.",
+        mock_locale,
+        None,
+        {"variables"},
+        {"varmatches": [("{$", "}")]},
+    ) == {"ttWarnings": ["Placeholders"]}
