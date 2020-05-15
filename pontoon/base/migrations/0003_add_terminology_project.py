@@ -122,6 +122,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("base", "0002_auto_20200322_1821"),
+        ("terminology", "0002_term_entity"),
     ]
 
     operations = [
