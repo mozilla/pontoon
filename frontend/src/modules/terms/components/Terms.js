@@ -22,7 +22,7 @@ type Props = {|
  * Shows all terms found in the source string.
  */
 export default function Terms(props: Props) {
-    let { isReadOnlyEditor, locale, terms, addTextToEditorTranslation, navigateToPath } = props;
+    let { terms } = props;
 
     if (terms.fetching || !terms.terms) {
         return null;
@@ -37,11 +37,11 @@ export default function Terms(props: Props) {
             </Localized>
             :
             <TermsList
-                isReadOnlyEditor={ isReadOnlyEditor }
-                locale={ locale }
+                isReadOnlyEditor={ props.isReadOnlyEditor }
+                locale={ props.locale }
                 terms={ terms }
-                addTextToEditorTranslation={ addTextToEditorTranslation }            
-                navigateToPath={ navigateToPath }
+                addTextToEditorTranslation={ props.addTextToEditorTranslation }
+                navigateToPath={ props.navigateToPath }
             />
         }
     </section>;

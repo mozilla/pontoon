@@ -24,7 +24,7 @@ type Props = {|
  * Shows a popup with a list of all terms belonging to the highlighted one.
  */
 export function TermsPopup(props: Props) {
-    const { locale, terms } = props;
+    const { terms } = props;
 
     // This method is called by the Higher-Order Component `onClickOutside`
     // when a user clicks outside this component.
@@ -37,7 +37,7 @@ export function TermsPopup(props: Props) {
     return <div className="terms-popup" onClick={ props.hide }>
         <TermsList
             isReadOnlyEditor={ props.isReadOnlyEditor }
-            locale={ locale }
+            locale={ props.locale }
             terms={ terms }
             addTextToEditorTranslation={ props.addTextToEditorTranslation }
             navigateToPath={ props.navigateToPath }
