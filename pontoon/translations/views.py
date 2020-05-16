@@ -47,7 +47,7 @@ def create_translation(request):
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
-    resources = form.cleaned_data["paths"]
+    paths = form.cleaned_data["paths"]
 
     project = entity.resource.project
 
@@ -117,7 +117,7 @@ def create_translation(request):
         {
             "status": True,
             "translation": translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, resources, locale),
+            "stats": TranslatedResource.objects.stats(project, paths, locale),
         }
     )
 
