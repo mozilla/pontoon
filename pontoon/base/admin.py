@@ -238,7 +238,6 @@ class ProjectAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ["path", "format", "project__name", "project__slug"]
     list_display = ("pk", "project", "path", "format", "deadline")
