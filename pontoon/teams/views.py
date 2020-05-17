@@ -76,9 +76,7 @@ def ajax_projects(request, locale):
 
     locale_projects = locale.available_projects_list()
 
-    no_visible_projects = (
-        locale.project_set.visible().visible_for(request.user).count() == 0
-    )
+    no_visible_projects = locale.project_set.visible().visible_for(request.user).count() == 0
 
     has_projects_to_request = projects.exclude(locales=locale).count() > 0
 

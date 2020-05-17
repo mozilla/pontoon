@@ -11,7 +11,6 @@ from pontoon.base.models import (
     Project,
     Repository,
     Subpage,
-    TranslatedResource,
 )
 from pontoon.base.forms import HtmlField
 from pontoon.tags.models import Tag
