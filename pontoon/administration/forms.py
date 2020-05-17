@@ -61,8 +61,9 @@ class ProjectForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         obj = super(ProjectForm, self).save(*args, **kwargs)
         if "disabled" in self.changed_data or "visibility" in self.changed_data:
-            for locale in self.locales.all():
-                locale.aggregate_stats()
+            for project_locale in obj.project_locale.all():
+                project_locale.locale.aggregate_stats()
+            obj.date_disabled = timezone.now() if obj.disabled else None
         return obj
 
 

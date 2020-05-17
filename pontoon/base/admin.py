@@ -216,7 +216,6 @@ class ProjectAdmin(admin.ModelAdmin):
                     "visibility",
                     "pretranslation_enabled",
                     "sync_disabled",
-                    "enabled",
                 ),
             },
         ),
@@ -230,14 +229,14 @@ class ProjectAdmin(admin.ModelAdmin):
         ExternalProjectResourceInline,
     )
 
-    def save(self, obj):
-        if "visibility" in self.changed_data or "disabled" in self.changed_data:
-            for locale in obj.project_locale.all():
-                locale.aggregate_stats()
+    def save_model(self, request, obj, form, change):
+        if "visibility" in form.changed_data or "disabled" in form.changed_data:
+            for project_locale in obj.project_locale.all():
+                project_locale.locale.aggregate_stats()
 
-            self.date_disabled = timezone.now() if obj.disabled else None
+            obj.date_disabled = timezone.now() if obj.disabled else None
+        super().save_model(request, obj, form, change)
 
-        return super(ProjectAdmin, self).save(obj)
 
 
 class ResourceAdmin(admin.ModelAdmin):
