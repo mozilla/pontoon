@@ -889,6 +889,7 @@ class Locale(AggregatedStats):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
             resource__project__system_project=False,
+            resource__project__visibility="public",
             locale=self,
         ).aggregate_stats(self)
 
@@ -1249,27 +1250,6 @@ class Project(AggregatedStats):
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
         }
-
-    def save(self, *args, **kwargs):
-        """
-        When project disabled status changes, update denormalized stats
-        for all project locales.
-        """
-        disabled_changed = False
-
-        if self.pk is not None:
-            try:
-                original = Project.objects.get(pk=self.pk)
-                if self.disabled != original.disabled:
-                    disabled_changed = True
-                    if self.disabled:
-                        self.date_disabled = timezone.now()
-                    else:
-                        self.date_disabled = None
-            except Project.DoesNotExist:
-                pass
-
-        super(Project, self).save(*args, **kwargs)
 
     def changed_resources(self, now):
         """
@@ -3338,6 +3318,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         if project.slug == "all-projects":
             translated_resources = translated_resources.filter(
                 resource__project__system_project=False,
+                resource__project__visibility="public",
             )
         else:
             translated_resources = translated_resources.filter(

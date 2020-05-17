@@ -229,6 +229,15 @@ class ProjectAdmin(admin.ModelAdmin):
         ExternalProjectResourceInline,
     )
 
+    def save(self, obj):
+        if "visibility" in self.changed_data or "disabled" in self.changed_data:
+            for locale in obj.project_locale.all():
+                locale.aggregate_stats()
+
+            self.date_disabled = timezone.now() if obj.disabled else None
+
+        return super(ProjectAdmin, self).save(obj)
+
 
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ["path", "format", "project__name", "project__slug"]
