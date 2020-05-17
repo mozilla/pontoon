@@ -10,6 +10,7 @@ from django.contrib.auth.models import User, Group
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
+from django.utils import timezone
 
 from pontoon.base import models
 from pontoon.base import utils
