@@ -1271,10 +1271,6 @@ class Project(AggregatedStats):
 
         super(Project, self).save(*args, **kwargs)
 
-        if disabled_changed:
-            for locale in self.locales.all():
-                locale.aggregate_stats()
-
     def changed_resources(self, now):
         """
         Returns a map of resource paths and their locales

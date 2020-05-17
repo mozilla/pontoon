@@ -61,8 +61,9 @@ class ProjectForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         obj = super(ProjectForm, self).save(*args, **kwargs)
-        if "visibility" in self.changed_data:
-            TranslatedResource.objects.filter(resource__project=obj).update_stats()
+        if "disabled" in self.changed_data or "visibility" in self.changed_data:
+            for locale in self.locales.all():
+                locale.aggregate_stats()
         return obj
 
 
