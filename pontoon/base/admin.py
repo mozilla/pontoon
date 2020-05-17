@@ -180,7 +180,7 @@ class ProjectAdmin(admin.ModelAdmin):
         "visibility",
         "pretranslation_enabled",
         "sync_disabled",
-        "enabled",
+        "disabled",
     )
     ordering = ("disabled",)
 
