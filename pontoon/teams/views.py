@@ -49,8 +49,8 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
-    available_count = locale.project_set.available().visible_for(request.user).count()
-    visible_count = locale.project_set.visible().visible_for(request.user).count()
+    available_count = locale.project_set.available().count()
+    visible_count = locale.project_set.visible().count()
 
     if not available_count:
         raise Http404
@@ -67,7 +67,6 @@ def ajax_projects(request, locale):
 
     projects = (
         Project.objects.visible()
-        .visible_for(request.user)
         .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_project_locale(locale)
         .order_by("name")
@@ -76,7 +75,7 @@ def ajax_projects(request, locale):
 
     locale_projects = locale.available_projects_list()
 
-    no_visible_projects = locale.project_set.visible().visible_for(request.user).count() == 0
+    no_visible_projects = locale.project_set.visible().count() == 0
 
     has_projects_to_request = projects.exclude(locales=locale).count() > 0
 
@@ -125,7 +124,7 @@ def ajax_update_info(request, locale):
 @transaction.atomic
 def ajax_permissions(request, locale):
     locale = get_object_or_404(Locale, code=locale)
-    project_locales = locale.project_locale.visible().visible_for(request.user)
+    project_locales = locale.project_locale.visible()
 
     if request.method == "POST":
         locale_form = forms.LocalePermsForm(
