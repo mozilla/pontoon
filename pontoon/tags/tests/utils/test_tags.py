@@ -198,7 +198,7 @@ def test_util_tags_tool_get_tags(tag_mock):
 
     # slug provided, `values` is filtered
     assert tags_tool.get_tags("FOO") == 23
-    assert list(filter_mock.filter.call_args) == [(), {"slug__contains": "FOO"}]
+    assert list(filter_mock.filter.call_args) == [(), {"slug": "FOO"}]
     assert list(tag_mock.return_value.filter.return_value.values.call_args) == [
         ("pk", "name", "slug", "priority", "project"),
         {},
