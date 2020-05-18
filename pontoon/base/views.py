@@ -428,7 +428,7 @@ def get_translation_history(request):
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "unapproved_user": User.display_name_or_blank(t.unapproved_user),
-                "comments": [c.serialize() for c in t.comments.all()],
+                "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
             }
         )
         payload.append(translation_dict)
@@ -450,7 +450,9 @@ def get_team_comments(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    comments = Comment.objects.filter(entity=entity, locale=locale)
+    comments = Comment.objects.filter(entity=entity, locale=locale).order_by(
+        "timestamp"
+    )
 
     payload = [c.serialize() for c in comments]
 
