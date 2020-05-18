@@ -805,7 +805,8 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.visible().visible_for(user)
+            self.project_locale.visible()
+            .visible_for(user)
             .prefetch_related("project", "translators_group")
             .order_by("project__name")
             .values(
@@ -863,9 +864,11 @@ class Locale(AggregatedStats):
 
     def available_projects_list(self, user):
         """Get a list of available project slugs."""
-        return list(self.project_set.available().visible_for(user).values_list("slug", flat=True)) + [
-            "all-projects"
-        ]
+        return list(
+            self.project_set.available()
+            .visible_for(user)
+            .values_list("slug", flat=True)
+        ) + ["all-projects"]
 
     def get_plural_index(self, cldr_plural):
         """Returns plural index for given cldr name."""
