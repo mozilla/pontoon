@@ -61,7 +61,9 @@ In page and your password is the one picked during setup. After you log in,
 access Pontoon Admin (``/admin/``), click **ADD NEW PROJECT** and fill out the
 following required fields:
 
-#. **Name**: name of the project to be displayed throughout Pontoon app.
+#. **Name**: name of the project to be displayed throughout Pontoon app. The
+   following project names are reserved: ``Terminology``, ``Tutorial``,
+   ``Pontoon Intro``.
 #. **Slug**: used in URLs, will be generated automatically based on the Name.
 #. **Locales**: select at least one Localizable locale by clicking on it.
 #. **Repository URL**: enter your repository's SSH URL of the form
