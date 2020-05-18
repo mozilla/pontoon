@@ -72,7 +72,7 @@ class TagsTool(Clonable):
             "pk", "name", "slug", "priority", "project"
         )
         if slug:
-            return tags.filter(slug__contains=slug)
+            return tags.filter(slug=slug)
         return tags
 
     def iter_tags(self, tags):
