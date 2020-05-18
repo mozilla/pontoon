@@ -10,7 +10,6 @@ from django.contrib.auth.models import User, Group
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
-from django.utils import timezone
 
 from pontoon.base import models
 from pontoon.base import utils
@@ -180,7 +179,7 @@ class ProjectAdmin(admin.ModelAdmin):
         "visibility",
         "pretranslation_enabled",
         "sync_disabled",
-        "disabled",
+        "enabled",
     )
     ordering = ("disabled",)
 
@@ -209,13 +208,13 @@ class ProjectAdmin(admin.ModelAdmin):
                     "langpack_url",
                     "configuration_file",
                     "can_be_requested",
-                    "disabled",
                     "date_created",
                     "date_disabled",
                     "system_project",
                     "visibility",
                     "pretranslation_enabled",
                     "sync_disabled",
+                    "disabled",
                 ),
             },
         ),
@@ -228,14 +227,6 @@ class ProjectAdmin(admin.ModelAdmin):
         RepositoryInline,
         ExternalProjectResourceInline,
     )
-
-    def save_model(self, request, obj, form, change):
-        if "visibility" in form.changed_data or "disabled" in form.changed_data:
-            for project_locale in obj.project_locale.all():
-                project_locale.locale.aggregate_stats()
-
-            obj.date_disabled = timezone.now() if obj.disabled else None
-        super().save_model(request, obj, form, change)
 
 
 class ResourceAdmin(admin.ModelAdmin):

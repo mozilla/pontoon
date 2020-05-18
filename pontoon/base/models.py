@@ -1040,6 +1040,12 @@ class ProjectQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
+        return self.public()
+
+    def public(self):
+        """
+        Return only public projects.
+        """
         return self.filter(visibility="public")
 
     def available(self):
@@ -1250,6 +1256,34 @@ class Project(AggregatedStats):
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
         }
+
+    def save(self, *args, **kwargs):
+        """
+        When project disabled status changes, update denormalized stats
+        for all project locales.
+        """
+        disabled_changed = False
+        visibility_changed = False
+
+        if self.pk is not None:
+            try:
+                original = Project.objects.get(pk=self.pk)
+                if self.visibility != original.visibility:
+                    visibility_changed = True
+                if self.disabled != original.disabled:
+                    disabled_changed = True
+                    if self.disabled:
+                        self.date_disabled = timezone.now()
+                    else:
+                        self.date_disabled = None
+            except Project.DoesNotExist:
+                pass
+
+        super(Project, self).save(*args, **kwargs)
+
+        if disabled_changed or visibility_changed:
+            for locale in self.locales.all():
+                locale.aggregate_stats()
 
     def changed_resources(self, now):
         """
@@ -1472,6 +1506,15 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        Filter project locales by the visibility of their projects.
+        """
+        if user.is_superuser:
+            return self
+
+        return self.filter(project__visibility="project",)
+
     def visible(self):
         """
         Visible project locales belong to visible projects.
@@ -2578,7 +2621,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         )
 
         if project.slug == "all-projects":
-            entities = entities.filter(resource__project__system_project=False)
+            entities = entities.filter(
+                resource__project__system_project=False,
+                resource__project__visibility="public",
+            )
         else:
             entities = entities.filter(resource__project=project)
 

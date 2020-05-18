@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         Command is designed to run on a daily basis.
         """
-        for project in Project.objects.available():
+        for project in Project.objects.available().public():
             if project.deadline:
                 days_left = (project.deadline - datetime.date.today()).days
                 if days_left not in (2, 7):

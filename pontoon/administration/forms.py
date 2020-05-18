@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
-from django.utils import timezone
 
 from pontoon.base.models import (
     Entity,
@@ -58,14 +57,6 @@ class ProjectForm(forms.ModelForm):
         self.fields["contact"].queryset = User.objects.filter(
             groups__name="project_managers"
         ).order_by("email")
-
-    def save(self, *args, **kwargs):
-        obj = super(ProjectForm, self).save(*args, **kwargs)
-        if "disabled" in self.changed_data or "visibility" in self.changed_data:
-            for project_locale in obj.project_locale.all():
-                project_locale.locale.aggregate_stats()
-            obj.date_disabled = timezone.now() if obj.disabled else None
-        return obj
 
 
 SubpageInlineFormSet = inlineformset_factory(
