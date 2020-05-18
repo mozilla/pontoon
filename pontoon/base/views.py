@@ -92,7 +92,7 @@ def locale_projects(request, locale):
     """Get active projects for locale."""
     locale = get_object_or_404(Locale, code=locale)
 
-    return JsonResponse(locale.available_projects_list(), safe=False)
+    return JsonResponse(locale.available_projects_list(request.user), safe=False)
 
 
 @utils.require_AJAX

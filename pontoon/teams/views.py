@@ -74,7 +74,7 @@ def ajax_projects(request, locale):
         .annotate(enabled_locales=Count("project_locale", distinct=True))
     )
 
-    locale_projects = locale.available_projects_list()
+    locale_projects = locale.available_projects_list(request.user)
 
     no_visible_projects = (
         locale.project_set.visible().visible_for(request.user).count() == 0
@@ -174,7 +174,7 @@ def ajax_permissions(request, locale):
         )
     )
 
-    locale_projects = locale.projects_permissions
+    locale_projects = locale.projects_permissions(request.user)
 
     return render(
         request,

@@ -776,11 +776,11 @@ class Locale(AggregatedStats):
     def nplurals(self):
         return len(self.cldr_id_list())
 
-    @property
-    def projects_permissions(self):
+    def projects_permissions(self, user):
         """
         List of tuples that contain informations required by the locale permissions view.
 
+        Projects are filtered by their visibility for the user.
         A row contains:
             id  - id of project locale
             slug - slug of the project
@@ -805,7 +805,7 @@ class Locale(AggregatedStats):
             return user_map
 
         project_locales = list(
-            self.project_locale.visible()
+            self.project_locale.visible().visible_for(user)
             .prefetch_related("project", "translators_group")
             .order_by("project__name")
             .values(
@@ -861,9 +861,9 @@ class Locale(AggregatedStats):
 
         return locale_projects
 
-    def available_projects_list(self):
+    def available_projects_list(self, user):
         """Get a list of available project slugs."""
-        return list(self.project_set.available().values_list("slug", flat=True)) + [
+        return list(self.project_set.available().visible_for(user).values_list("slug", flat=True)) + [
             "all-projects"
         ]
 
