@@ -2581,6 +2581,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     @classmethod
     def for_project_locale(
         self,
+        user,
         project,
         locale,
         paths=None,
@@ -2624,9 +2625,10 @@ class Entity(DirtyFieldsMixin, models.Model):
         )
 
         if project.slug == "all-projects":
+            visible_projects = Project.objects.visible_for(user)
             entities = entities.filter(
                 resource__project__system_project=False,
-                resource__project__visibility="public",
+                resource__project__in=visible_projects,
             )
         else:
             entities = entities.filter(resource__project=project)

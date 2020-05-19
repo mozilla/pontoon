@@ -171,13 +171,14 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     )
 
 
-def _get_all_entities(locale, preferred_source_locale, project, form, entities):
+def _get_all_entities(user, locale, preferred_source_locale, project, form, entities):
     """Return entities without pagination.
 
     This is used by the in-context mode of the Translate page.
     """
     has_next = False
     entities_to_map = Entity.for_project_locale(
+        user,
         project,
         locale,
         paths=form.cleaned_data["paths"],
@@ -289,7 +290,7 @@ def entities(request):
     }
 
     try:
-        entities = Entity.for_project_locale(project, locale, **form_data)
+        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
     except ValueError as error:
         return JsonResponse(
             {"status": False, "message": "{error}".format(error=error)}, status=500
@@ -302,7 +303,7 @@ def entities(request):
     # In-place view: load all entities
     if form.cleaned_data["inplace_editor"]:
         return _get_all_entities(
-            locale, preferred_source_locale, project, form, entities
+            request.user, locale, preferred_source_locale, project, form, entities
         )
 
     # Out-of-context view: paginate entities
