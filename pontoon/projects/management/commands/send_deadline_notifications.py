@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from notifications.signals import notify
 
 from pontoon.base.models import Project
+from pontoon.projects.utils import filter_users_by_project_visibility
 
 
 class Command(BaseCommand):
@@ -39,18 +40,16 @@ class Command(BaseCommand):
                 if project_locale.approved_strings < project_locale.total_strings:
                     locales.append(project_locale.locale)
 
-            contributors = User.objects.filter(
-                translation__entity__resource__project=project,
-                translation__locale__in=locales,
-            ).distinct()
+            contributors = filter_users_by_project_visibility(
+                project,
+                User.objects.filter(
+                    translation__entity__resource__project=project,
+                    translation__locale__in=locales,
+                ).distinct(),
+            )
 
             for contributor in contributors:
-                if (
-                    Project.objects.filter(pk=project.pk)
-                    .visible_for(contributor)
-                    .exists()
-                ):
-                    notify.send(project, recipient=contributor, verb=verb)
+                notify.send(project, recipient=contributor, verb=verb)
 
             self.stdout.write(
                 "Deadline notifications for project {} sent.".format(project)
