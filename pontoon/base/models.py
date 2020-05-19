@@ -1516,7 +1516,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.filter(project__visibility="project",)
+        return self.filter(project__visibility="public",)
 
     def visible(self):
         """
