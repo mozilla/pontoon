@@ -1559,6 +1559,7 @@ class ProjectLocale(AggregatedStats):
 
     class Meta:
         unique_together = ("project", "locale")
+        ordering = ("pk",)
         permissions = (("can_translate_project_locale", "Can add translations"),)
 
     @classmethod
