@@ -8,6 +8,7 @@ import math
 import operator
 import os.path
 import re
+import requests
 
 import Levenshtein
 import warnings
@@ -37,7 +38,6 @@ from django.db.models import (
     Value,
     ExpressionWrapper,
 )
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -109,15 +109,19 @@ def user_profile_url(self):
 
 def user_gravatar_url(self, size):
     email = hashlib.md5(self.email.lower().encode("utf-8")).hexdigest()
-    data = {"s": str(size)}
+    data = {"s": str(size), "d": str(404)}
 
-    if not settings.DEBUG:
-        append = "_big" if size > 88 else ""
-        data["d"] = settings.SITE_URL + static("img/anon" + append + ".jpg")
-
-    return "//www.gravatar.com/avatar/{email}?{data}".format(
+    local_gravatar_url = "https://www.gravatar.com/avatar/{email}?{data}".format(
         email=email, data=urlencode(data)
     )
+
+    r = requests.get(local_gravatar_url)
+    if r.status_code == 404:
+        return "https://eu.ui-avatars.com/api/?uppercase=true&name={name}".format(
+            name=self.display_name
+        )
+    else:
+        return local_gravatar_url
 
 
 @property
