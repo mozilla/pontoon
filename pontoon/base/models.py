@@ -21,7 +21,7 @@ from six.moves.urllib.parse import urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, UserManager
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -355,6 +355,14 @@ def serialized_notifications(self):
     }
 
 
+class UserProjectsManager(UserManager):
+    def filter_visibility(self, project):
+        """Return users that can view/access the project."""
+        if project.visibility == "public":
+            return self
+        return self.filter(is_superuser=True)
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -372,6 +380,7 @@ User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("projects", UserProjectsManager())
 
 
 class PermissionChangelog(models.Model):

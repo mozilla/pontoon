@@ -27,7 +27,12 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterModelOptions(
-            name='projectlocale',
-            options={'ordering': ('pk',), 'permissions': (('can_translate_project_locale', 'Can add translations'),)},
+            name="projectlocale",
+            options={
+                "ordering": ("pk",),
+                "permissions": (
+                    ("can_translate_project_locale", "Can add translations"),
+                ),
+            },
         ),
     ]

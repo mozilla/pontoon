@@ -7,7 +7,6 @@ from django.core.management.base import BaseCommand
 from notifications.signals import notify
 
 from pontoon.base.models import Project
-from pontoon.projects.utils import filter_users_by_project_visibility
 
 
 class Command(BaseCommand):
@@ -40,12 +39,13 @@ class Command(BaseCommand):
                 if project_locale.approved_strings < project_locale.total_strings:
                     locales.append(project_locale.locale)
 
-            contributors = filter_users_by_project_visibility(
-                project,
-                User.objects.filter(
+            contributors = (
+                User.projects.filter_by_visibility(project)
+                .filter(
                     translation__entity__resource__project=project,
                     translation__locale__in=locales,
-                ).distinct(),
+                )
+                .distinct(),
             )
 
             for contributor in contributors:
