@@ -8,7 +8,6 @@ import math
 import operator
 import os.path
 import re
-import requests
 
 import Levenshtein
 import warnings
@@ -18,7 +17,7 @@ from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 from django.db.models.functions import Length, Substr, Cast
 from six.moves import reduce
-from six.moves.urllib.parse import urlencode, urlparse
+from six.moves.urllib.parse import quote, urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
@@ -109,19 +108,19 @@ def user_profile_url(self):
 
 def user_gravatar_url(self, size):
     email = hashlib.md5(self.email.lower().encode("utf-8")).hexdigest()
-    data = {"s": str(size), "d": str(404)}
+    data = {
+        "s": str(size),
+        "d": "https://ui-avatars.com/api/{name}/{size}/{background}/{color}".format(
+            name=quote(self.display_name),
+            size=size,
+            background="333941",
+            color="FFFFFF",
+        ),
+    }
 
-    local_gravatar_url = "https://www.gravatar.com/avatar/{email}?{data}".format(
+    return "https://www.gravatar.com/avatar/{email}?{data}".format(
         email=email, data=urlencode(data)
     )
-
-    r = requests.get(local_gravatar_url)
-    if r.status_code == 404:
-        return "https://eu.ui-avatars.com/api/?uppercase=true&name={name}".format(
-            name=self.display_name
-        )
-    else:
-        return local_gravatar_url
 
 
 @property
