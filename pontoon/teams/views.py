@@ -49,8 +49,8 @@ def teams(request):
 def team(request, locale):
     """Team dashboard."""
     locale = get_object_or_404(Locale, code=locale)
-    available_count = locale.project_set.available().count()
-    visible_count = locale.project_set.visible().count()
+    available_count = locale.project_set.available().visible_for(request.user).count()
+    visible_count = locale.project_set.visible().visible_for(request.user).count()
 
     if not available_count:
         raise Http404
@@ -67,15 +67,18 @@ def ajax_projects(request, locale):
 
     projects = (
         Project.objects.visible()
+        .visible_for(request.user)
         .filter(Q(locales=locale) | Q(can_be_requested=True))
         .prefetch_project_locale(locale)
         .order_by("name")
         .annotate(enabled_locales=Count("project_locale", distinct=True))
     )
 
-    locale_projects = locale.available_projects_list()
+    locale_projects = locale.available_projects_list(request.user)
 
-    no_visible_projects = locale.project_set.visible().count() == 0
+    no_visible_projects = (
+        locale.project_set.visible().visible_for(request.user).count() == 0
+    )
 
     has_projects_to_request = projects.exclude(locales=locale).count() > 0
 
@@ -124,7 +127,7 @@ def ajax_update_info(request, locale):
 @transaction.atomic
 def ajax_permissions(request, locale):
     locale = get_object_or_404(Locale, code=locale)
-    project_locales = locale.project_locale.visible()
+    project_locales = locale.project_locale.visible().visible_for(request.user)
 
     if request.method == "POST":
         locale_form = forms.LocalePermsForm(
@@ -171,7 +174,7 @@ def ajax_permissions(request, locale):
         )
     )
 
-    locale_projects = locale.projects_permissions
+    locale_projects = locale.projects_permissions(request.user)
 
     return render(
         request,
@@ -201,8 +204,10 @@ def request_item(request, locale=None):
         locale = get_object_or_404(Locale, code=locale)
 
         # Validate projects
-        project_list = Project.objects.visible().filter(
-            slug__in=slug_list, can_be_requested=True
+        project_list = (
+            Project.objects.visible()
+            .visible_for(request.user)
+            .filter(slug__in=slug_list, can_be_requested=True)
         )
         if not project_list:
             return HttpResponseBadRequest(

@@ -17,7 +17,6 @@ from pontoon.base.tests import (
 )
 
 from pontoon.base.tests.test_views import ViewTestCase
-from pontoon.projects import views
 
 
 class ProjectTests(ViewTestCase):
@@ -31,7 +30,7 @@ class ProjectTests(ViewTestCase):
         """
         Checks if project page is returned properly.
         """
-        project = ProjectFactory.create()
+        project = ProjectFactory.create(visibility="public")
         ResourceFactory.create(project=project)
 
         with patch("pontoon.projects.views.render", wraps=render) as mock_render:
@@ -52,21 +51,20 @@ class ProjectContributorsTests(ViewTestCase):
         """
         Tests if view returns top contributors specific for given project.
         """
-        first_project = ProjectFactory.create()
+        first_project = ProjectFactory.create(visibility="public")
         ResourceFactory.create(project=first_project)
         first_project_contributor = TranslationFactory.create(
             entity__resource__project=first_project
         ).user
 
-        second_project = ProjectFactory.create()
+        second_project = ProjectFactory.create(visibility="public")
         ResourceFactory.create(project=second_project)
         second_project_contributor = TranslationFactory.create(
             entity__resource__project=second_project
         ).user
 
-        with patch.object(
-            views.ProjectContributorsView,
-            "render_to_response",
+        with patch(
+            "pontoon.projects.views.ProjectContributorsView.render_to_response",
             return_value=HttpResponse(""),
         ) as mock_render:
             self.client.get(

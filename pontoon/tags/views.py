@@ -17,6 +17,9 @@ class ProjectTagView(DetailView):
     slug_url_kwarg = "project"
     template_name = "tags/tag.html"
 
+    def get_queryset(self):
+        return super().get_queryset().visible_for(self.request.user)
+
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             return self.get_AJAX(request, *args, **kwargs)

@@ -65,7 +65,7 @@ def test_manage_project_strings_bad_request(client_superuser):
 
 
 @pytest.mark.django_db
-def test_manage_project_strings_new(client_superuser, locale_a):
+def test_manage_project_strings_new(admin, client_superuser, locale_a):
     project = ProjectFactory.create(
         data_source="database", repositories=[], locales=[locale_a],
     )
@@ -87,7 +87,7 @@ def test_manage_project_strings_new(client_superuser, locale_a):
     assert resources[0].path == "database"
 
     # Verify all strings have been created as entities.
-    entities = Entity.for_project_locale(project, locale_a)
+    entities = Entity.for_project_locale(admin, project, locale_a)
     assert len(entities) == 4
 
     expected_strings = [

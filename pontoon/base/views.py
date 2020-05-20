@@ -61,7 +61,9 @@ def translate_locale_agnostic(request, slug, part):
     if slug.lower() == "all-projects":
         project_locales = Locale.objects.available()
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(
+            Project.objects.visible_for(request.user).available(), slug=slug
+        )
         project_locales = project.locales
 
     if user.is_authenticated:
@@ -90,7 +92,7 @@ def locale_projects(request, locale):
     """Get active projects for locale."""
     locale = get_object_or_404(Locale, code=locale)
 
-    return JsonResponse(locale.available_projects_list(), safe=False)
+    return JsonResponse(locale.available_projects_list(request.user), safe=False)
 
 
 @utils.require_AJAX
@@ -112,7 +114,7 @@ def locale_project_parts(request, locale, slug):
         )
 
     try:
-        project = Project.objects.get(slug=slug)
+        project = Project.objects.visible_for(request.user).get(slug=slug)
     except Project.DoesNotExist as e:
         return JsonResponse(
             {"status": False, "message": "Not Found: {error}".format(error=e)},
@@ -131,7 +133,9 @@ def locale_project_parts(request, locale, slug):
 @utils.require_AJAX
 def authors_and_time_range(request, locale, slug, part):
     locale = get_object_or_404(Locale, code=locale)
-    project = get_object_or_404(Project.objects.available(), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     paths = [part] if part != "all-resources" else None
 
     translations = Translation.for_locale_project_paths(locale, project, paths)
@@ -167,13 +171,14 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     )
 
 
-def _get_all_entities(locale, preferred_source_locale, project, form, entities):
+def _get_all_entities(user, locale, preferred_source_locale, project, form, entities):
     """Return entities without pagination.
 
     This is used by the in-context mode of the Translate page.
     """
     has_next = False
     entities_to_map = Entity.for_project_locale(
+        user,
         project,
         locale,
         paths=form.cleaned_data["paths"],
@@ -285,7 +290,7 @@ def entities(request):
     }
 
     try:
-        entities = Entity.for_project_locale(project, locale, **form_data)
+        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
     except ValueError as error:
         return JsonResponse(
             {"status": False, "message": "{error}".format(error=error)}, status=500
@@ -298,7 +303,7 @@ def entities(request):
     # In-place view: load all entities
     if form.cleaned_data["inplace_editor"]:
         return _get_all_entities(
-            locale, preferred_source_locale, project, form, entities
+            request.user, locale, preferred_source_locale, project, form, entities
         )
 
     # Out-of-context view: paginate entities
@@ -656,7 +661,7 @@ def upload(request):
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not request.user.can_translate(
         project=project, locale=locale
@@ -688,7 +693,9 @@ def download_translation_memory(request, locale, slug, filename):
     if slug.lower() == "all-projects":
         project_filter = Q()
     else:
-        project = get_object_or_404(Project.objects.available(), slug=slug)
+        project = get_object_or_404(
+            Project.objects.visible_for(request.user).available(), slug=slug
+        )
         project_filter = Q(project=project)
 
     tm_entries = (

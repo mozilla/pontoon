@@ -112,7 +112,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
         # Update existing project
         try:
             pk = request.POST["pk"]
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.visible_for(request.user).get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
             subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
