@@ -728,7 +728,9 @@ SYNC_TASK_TIMEOUT_DEFAULT = 60 * 60 * 1  # 1 hour
 # potential DB and VCS inconsistencies. We store the information about the
 # running task in cache and clear it after the task completes. In case of an
 # error, we might never clear the cache, so we use SYNC_TASK_TIMEOUT as the
-# longest possible period after which the cache is cleared.
+# longest possible period (in seconds) after which the cache is cleared and
+# the subsequent task can run. The value should exceed the longest sync task
+# of the instance.
 SYNC_TASK_TIMEOUT = os.environ.get("SYNC_TASK_TIMEOUT", SYNC_TASK_TIMEOUT_DEFAULT)
 
 SYNC_LOG_RETENTION = 90  # days
