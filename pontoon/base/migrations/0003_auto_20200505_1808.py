@@ -26,4 +26,8 @@ class Migration(migrations.Migration):
                 max_length=20,
             ),
         ),
+        migrations.AlterModelOptions(
+            name='projectlocale',
+            options={'ordering': ('pk',), 'permissions': (('can_translate_project_locale', 'Can add translations'),)},
+        ),
     ]
