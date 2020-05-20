@@ -118,7 +118,7 @@ def user_gravatar_url(self, size):
         ),
     }
 
-    return "https://www.gravatar.com/avatar/{email}?{data}".format(
+    return "//www.gravatar.com/avatar/{email}?{data}".format(
         email=email, data=urlencode(data)
     )
 
