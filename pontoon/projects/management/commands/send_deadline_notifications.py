@@ -39,10 +39,14 @@ class Command(BaseCommand):
                 if project_locale.approved_strings < project_locale.total_strings:
                     locales.append(project_locale.locale)
 
-            contributors = User.objects.filter(
-                translation__entity__resource__project=project,
-                translation__locale__in=locales,
-            ).distinct()
+            contributors = (
+                User.projects.filter_by_visibility(project)
+                .filter(
+                    translation__entity__resource__project=project,
+                    translation__locale__in=locales,
+                )
+                .distinct(),
+            )
 
             for contributor in contributors:
                 notify.send(project, recipient=contributor, verb=verb)

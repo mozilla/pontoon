@@ -292,17 +292,20 @@ form .locale.select.selected {
 }
 
 .data-source,
-.new-strings {
+.new-strings,
+.visibility {
   position: relative;
 }
 
 .data-source #id_data_source,
-.new-strings .manage-strings {
+.new-strings .manage-strings,
+.visibility #id_visibility {
   position: absolute;
   right: 0;
 }
 
-.data-source #id_data_source {
+.data-source #id_data_source,
+.visibility #id_visibility {
   top: 5px;
 }
 

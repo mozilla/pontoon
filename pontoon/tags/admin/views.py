@@ -16,7 +16,9 @@ class ProjectTagAdminAjaxView(AjaxFormPostView):
     @method_decorator(require_AJAX)
     @method_decorator(permission_required("base.can_manage_project"))
     def post(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, slug=kwargs["project"])
+        self.project = get_object_or_404(
+            Project.objects.visible_for(self.request.user), slug=kwargs["project"]
+        )
         self.tag = kwargs["tag"]
         return super(ProjectTagAdminAjaxView, self).post(*args, **kwargs)
 

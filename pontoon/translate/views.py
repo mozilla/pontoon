@@ -109,7 +109,9 @@ def translate(request, locale, project, resource):
 
     # Validate Project
     if project.lower() != "all-projects":
-        project = get_object_or_404(Project.objects.available(), slug=project)
+        project = get_object_or_404(
+            Project.objects.visible_for(request.user).available(), slug=project
+        )
 
         # Validate ProjectLocale
         if locale not in project.locales.all():
