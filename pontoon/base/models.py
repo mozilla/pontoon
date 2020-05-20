@@ -1052,12 +1052,6 @@ class ProjectQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.public()
-
-    def public(self):
-        """
-        Return only public projects.
-        """
         return self.filter(visibility="public")
 
     def available(self):
