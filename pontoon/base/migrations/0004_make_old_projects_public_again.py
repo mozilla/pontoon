@@ -13,7 +13,7 @@ def make_projects_public(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("base", "0003_auto_20200505_1808"),
+        ("base", "0003_add_visibility_field_to_project"),
     ]
 
     operations = [migrations.RunPython(make_projects_public, migrations.RunPython.noop)]
