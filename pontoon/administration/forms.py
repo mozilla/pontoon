@@ -49,6 +49,7 @@ class ProjectForm(forms.ModelForm):
             "sync_disabled",
             "tags_enabled",
             "pretranslation_enabled",
+            "visibility",
         )
 
     def __init__(self, *args, **kwargs):

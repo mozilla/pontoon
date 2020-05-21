@@ -21,7 +21,7 @@ from six.moves.urllib.parse import quote, urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, UserManager
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -58,7 +58,6 @@ from pontoon.sync.vcs.repositories import (
     update_from_vcs,
     PullFromRepositoryException,
 )
-
 
 log = logging.getLogger(__name__)
 
@@ -359,6 +358,14 @@ def serialized_notifications(self):
     }
 
 
+class UserProjectsManager(UserManager):
+    def filter_visibility(self, project):
+        """Return users that can view/access the project."""
+        if project.visibility == "public":
+            return self
+        return self.filter(is_superuser=True)
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -376,6 +383,7 @@ User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("projects", UserProjectsManager())
 
 
 class PermissionChangelog(models.Model):
@@ -780,11 +788,11 @@ class Locale(AggregatedStats):
     def nplurals(self):
         return len(self.cldr_id_list())
 
-    @property
-    def projects_permissions(self):
+    def projects_permissions(self, user):
         """
         List of tuples that contain informations required by the locale permissions view.
 
+        Projects are filtered by their visibility for the user.
         A row contains:
             id  - id of project locale
             slug - slug of the project
@@ -810,6 +818,7 @@ class Locale(AggregatedStats):
 
         project_locales = list(
             self.project_locale.visible()
+            .visible_for(user)
             .prefetch_related("project", "translators_group")
             .order_by("project__name")
             .values(
@@ -865,11 +874,13 @@ class Locale(AggregatedStats):
 
         return locale_projects
 
-    def available_projects_list(self):
+    def available_projects_list(self, user):
         """Get a list of available project slugs."""
-        return list(self.project_set.available().values_list("slug", flat=True)) + [
-            "all-projects"
-        ]
+        return list(
+            self.project_set.available()
+            .visible_for(user)
+            .values_list("slug", flat=True)
+        ) + ["all-projects"]
 
     def get_plural_index(self, cldr_plural):
         """Returns plural index for given cldr name."""
@@ -893,6 +904,7 @@ class Locale(AggregatedStats):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
             resource__project__system_project=False,
+            resource__project__visibility="public",
             locale=self,
         ).aggregate_stats(self)
 
@@ -1034,6 +1046,17 @@ class Locale(AggregatedStats):
 
 
 class ProjectQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        The visiblity of projects is determined by the role of the user:
+        * Administrators can access all public and private projects
+        * Other users can see only public projects
+        """
+        if user.is_superuser:
+            return self
+
+        return self.filter(visibility="public")
+
     def available(self):
         """
         Available projects are not disabled and have at least one
@@ -1150,6 +1173,14 @@ class Project(AggregatedStats):
     """,
     )
 
+    VISIBILITY_TYPES = (
+        ("private", "Private"),
+        ("public", "Public"),
+    )
+    visibility = models.CharField(
+        max_length=20, default=VISIBILITY_TYPES[0][0], choices=VISIBILITY_TYPES,
+    )
+
     # Website for in place localization
     url = models.URLField("URL", blank=True)
     width = models.PositiveIntegerField(
@@ -1218,6 +1249,7 @@ class Project(AggregatedStats):
 
     class Meta:
         permissions = (("can_manage_project", "Can manage project"),)
+        ordering = ("pk",)
 
     def __str__(self):
         return self.name
@@ -1240,10 +1272,13 @@ class Project(AggregatedStats):
         for all project locales.
         """
         disabled_changed = False
+        visibility_changed = False
 
         if self.pk is not None:
             try:
                 original = Project.objects.get(pk=self.pk)
+                if self.visibility != original.visibility:
+                    visibility_changed = True
                 if self.disabled != original.disabled:
                     disabled_changed = True
                     if self.disabled:
@@ -1255,7 +1290,7 @@ class Project(AggregatedStats):
 
         super(Project, self).save(*args, **kwargs)
 
-        if disabled_changed:
+        if disabled_changed or visibility_changed:
             for locale in self.locales.all():
                 locale.aggregate_stats()
 
@@ -1480,6 +1515,15 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        Filter project locales by the visibility of their projects.
+        """
+        if user.is_superuser:
+            return self
+
+        return self.filter(project__visibility="public",)
+
     def visible(self):
         """
         Visible project locales belong to visible projects.
@@ -1521,6 +1565,7 @@ class ProjectLocale(AggregatedStats):
 
     class Meta:
         unique_together = ("project", "locale")
+        ordering = ("pk",)
         permissions = (("can_translate_project_locale", "Can add translations"),)
 
     @classmethod
@@ -2543,6 +2588,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     @classmethod
     def for_project_locale(
         self,
+        user,
         project,
         locale,
         paths=None,
@@ -2586,7 +2632,11 @@ class Entity(DirtyFieldsMixin, models.Model):
         )
 
         if project.slug == "all-projects":
-            entities = entities.filter(resource__project__system_project=False)
+            visible_projects = Project.objects.visible_for(user)
+            entities = entities.filter(
+                resource__project__system_project=False,
+                resource__project__in=visible_projects,
+            )
         else:
             entities = entities.filter(resource__project=project)
 
@@ -3326,6 +3376,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         if project.slug == "all-projects":
             translated_resources = translated_resources.filter(
                 resource__project__system_project=False,
+                resource__project__visibility="public",
             )
         else:
             translated_resources = translated_resources.filter(

@@ -1,18 +1,22 @@
 from __future__ import absolute_import
 
+import functools
 import os
 
 import pytest
+from django.contrib.auth.models import AnonymousUser
 
 from mock import patch
 
-from pontoon.base.models import ProjectLocale
+from pontoon.base.models import ProjectLocale, Project
 from pontoon.test.factories import (
     ChangedEntityLocaleFactory,
     EntityFactory,
     ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
+    ProjectFactory,
+    LocaleFactory,
 )
 
 
@@ -127,3 +131,73 @@ def test_project_latest_activity_with_locale(locale_a, project_a):
         m.return_value = "latest"
         assert project_a.get_latest_activity(locale=locale_a) == "latest"
         assert m.call_args[0] == (project_a, locale_a)
+
+
+@pytest.fixture
+def public_project():
+    yield ProjectFactory.create()
+
+
+@pytest.fixture
+def private_project():
+    yield ProjectFactory.create(visibility="private")
+
+
+@pytest.mark.parametrize(
+    "users_permissions_group",
+    (
+        # Check visibility of projects for a project translator
+        "translators_group",
+        # Check visibility of projects for a locale translator
+        "locale.translators_group",
+        # Check visibility of projects for a locale manager
+        "locale.managers_group",
+    ),
+)
+@pytest.mark.django_db
+def test_project_visible_for_users(
+    users_permissions_group, user_a, public_project, private_project
+):
+    def get_permissions_group(obj, permissions_group):
+        def _getattr(obj, permissions_group):
+            return getattr(obj, permissions_group)
+
+        return functools.reduce(_getattr, [obj] + permissions_group.split("."))
+
+    projects = Project.objects.visible_for(user_a).filter(
+        pk__in=[public_project.pk, private_project.pk]
+    )
+    assert list(projects) == [
+        public_project,
+    ]
+
+    # Make user_a a project translator
+    private_project_locale = ProjectLocaleFactory.create(
+        project=private_project, locale=LocaleFactory.create()
+    )
+    get_permissions_group(private_project_locale, users_permissions_group).user_set.add(
+        user_a
+    )
+
+    projects = Project.objects.visible_for(user_a).filter(
+        pk__in=[public_project.pk, private_project.pk]
+    )
+    assert list(projects) == [public_project]
+
+
+@pytest.mark.django_db
+def test_project_visible_for_superuser(admin, public_project, private_project):
+    assert list(
+        Project.objects.visible_for(admin).filter(
+            pk__in=[public_project.pk, private_project.pk]
+        )
+    ) == [public_project, private_project]
+
+
+@pytest.mark.django_db
+def test_project_visible_for_anonymous(public_project, private_project):
+    assert list(
+        Project.objects.visible_for(AnonymousUser()).filter(
+            pk__in=[public_project.pk, private_project.pk]
+        )
+    ) == [public_project]

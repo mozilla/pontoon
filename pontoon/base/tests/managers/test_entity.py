@@ -21,7 +21,7 @@ from pontoon.test.factories import (
 
 
 @pytest.fixture
-def entity_test_search(resource_a, locale_a):
+def entity_test_search(admin, resource_a, locale_a):
     """This fixture provides:
 
     - 7 translated entities
@@ -96,7 +96,7 @@ def entity_test_search(resource_a, locale_a):
     return (
         entities,
         lambda q: list(
-            Entity.for_project_locale(resource_a.project, locale_a, search=q,)
+            Entity.for_project_locale(admin, resource_a.project, locale_a, search=q,)
         ),
     )
 
@@ -654,7 +654,7 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_combined(resource_a, locale_a, user_a):
+def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     """
     All filters should be joined by AND instead of OR.
     Tests filters against bug introduced by bug 1243115.
@@ -673,7 +673,11 @@ def test_mgr_entity_filter_combined(resource_a, locale_a, user_a):
     assert (
         list(
             Entity.for_project_locale(
-                resource_a.project, locale_a, status="unreviewed", author=user_a.email,
+                admin,
+                resource_a.project,
+                locale_a,
+                status="unreviewed",
+                author=user_a.email,
             )
         )
         == []
@@ -681,6 +685,7 @@ def test_mgr_entity_filter_combined(resource_a, locale_a, user_a):
     assert (
         list(
             Entity.for_project_locale(
+                admin,
                 resource_a.project,
                 locale_a,
                 status="unreviewed",
@@ -949,13 +954,15 @@ def test_get_word_count(input, expected_count):
 
 @pytest.mark.django_db
 @patch("pontoon.base.models.get_word_count")
-def test_mgr_get_or_create(get_word_count_mock, resource_a, locale_a):
+def test_mgr_get_or_create(get_word_count_mock, admin, resource_a, locale_a):
     """
     Get or create entities method works and counts words
     """
     get_word_count_mock.return_value = 2
 
-    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    testEntitiesQuerySet = Entity.for_project_locale(
+        admin, resource_a.project, locale_a
+    )
     arguments = {
         "resource": resource_a,
         "string": "simple string",
@@ -969,7 +976,7 @@ def test_mgr_get_or_create(get_word_count_mock, resource_a, locale_a):
 
 @pytest.mark.django_db
 @patch("pontoon.base.models.get_word_count")
-def test_mgr_bulk_update(get_word_count_mock, resource_a, locale_a):
+def test_mgr_bulk_update(get_word_count_mock, admin, resource_a, locale_a):
     """
     Update entities method works and updates word_count field
     """
@@ -982,7 +989,9 @@ def test_mgr_bulk_update(get_word_count_mock, resource_a, locale_a):
 
     assert get_word_count_mock.call_count == 2
 
-    testEntitiesQuerySet = Entity.for_project_locale(resource_a.project, locale_a)
+    testEntitiesQuerySet = Entity.for_project_locale(
+        admin, resource_a.project, locale_a
+    )
     updated_count = testEntitiesQuerySet.bulk_update(
         objs,
         update_fields=[
