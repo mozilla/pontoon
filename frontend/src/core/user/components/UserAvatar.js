@@ -12,19 +12,6 @@ type Props = {|
 export default function UserAvatar(props: Props) {
     const { username, title, imageUrl } = props;
 
-    if (!imageUrl) {
-        return <div className='user-avatar'>
-            <Localized id='user-UserAvatar--anon-alt-text' attrs={{ alt: true }} >
-                <img
-                    src='/static/img/anon.jpg'
-                    alt='Anonymous User'
-                    height='44'
-                    width='44'
-                />
-            </Localized>
-        </div>;
-    }
-
     return <div className='user-avatar'>
         <a
             href={ `/contributors/${username}` }
