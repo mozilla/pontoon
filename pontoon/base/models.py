@@ -110,7 +110,9 @@ def user_gravatar_url(self, size):
     data = {
         "s": str(size),
         "d": "https://ui-avatars.com/api/{name}/{size}/{background}/{color}".format(
-            name=quote(self.display_name),
+            name=quote(
+                self.display_name if self.display_name is not "" else "Imported"
+            ),
             size=size,
             background="333941",
             color="FFFFFF",
