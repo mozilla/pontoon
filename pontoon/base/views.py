@@ -497,10 +497,13 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         )
         translations = Translation.objects.filter(entity=entity, locale=locale)
 
-        # Only notify translators of the project if defined
-        translators = project_locale.translators_group.user_set.values_list(
-            "pk", flat=True
-        )
+        translators = []
+        # Some projects (e.g. system projects) don't have translators group
+        if project_locale.translators_group:
+            # Only notify translators of the project if defined
+            translators = project_locale.translators_group.user_set.values_list(
+                "pk", flat=True
+            )
         if not translators:
             translators = locale.translators_group.user_set.values_list("pk", flat=True)
 
