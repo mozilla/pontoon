@@ -186,6 +186,15 @@ you create:
    on Heroku because the Python buildpack alters the path in a way that breaks
    the built-in SVN command. Set this to ``/usr/lib/x86_64-linux-gnu/``.
 
+``SYNC_TASK_TIMEOUT``
+   Optional. Multiple sync tasks for the same project cannot run concurrently to
+   prevent potential DB and VCS inconsistencies. We store the information about
+   the running task in cache and clear it after the task completes. In case of
+   an error, we might never clear the cache, so we use SYNC_TASK_TIMEOUT as the
+   longest possible period after which the cache is cleared and the subsequent
+   task can run. The value should exceed the longest sync task of the instance.
+   The default value is 3600 seconds (1 hour).
+
 ``TZ``
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
    this to ``UTC``.
