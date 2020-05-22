@@ -17,7 +17,7 @@ from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 from django.db.models.functions import Length, Substr, Cast
 from six.moves import reduce
-from six.moves.urllib.parse import urlencode, urlparse
+from six.moves.urllib.parse import quote, urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
@@ -37,7 +37,6 @@ from django.db.models import (
     Value,
     ExpressionWrapper,
 )
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -108,11 +107,15 @@ def user_profile_url(self):
 
 def user_gravatar_url(self, size):
     email = hashlib.md5(self.email.lower().encode("utf-8")).hexdigest()
-    data = {"s": str(size)}
-
-    if not settings.DEBUG:
-        append = "_big" if size > 88 else ""
-        data["d"] = settings.SITE_URL + static("img/anon" + append + ".jpg")
+    data = {
+        "s": str(size),
+        "d": "https://ui-avatars.com/api/{name}/{size}/{background}/{color}".format(
+            name=quote(self.display_name),
+            size=size,
+            background="333941",
+            color="FFFFFF",
+        ),
+    }
 
     return "//www.gravatar.com/avatar/{email}?{data}".format(
         email=email, data=urlencode(data)
