@@ -193,10 +193,12 @@ export default function AddComments(props: Props) {
                 if (node.url) {
                     return `<a href="${escapeHtml(node.url)}">${children}</a>`;
                 }
+                break;
             case 'mention':
                 if (node.url) {
                     return `<a href="${escapeHtml(node.url)}">${children}</a>`;
                 }
+                break;
             default:
                 return children;
         }
