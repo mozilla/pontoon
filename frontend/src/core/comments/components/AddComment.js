@@ -24,6 +24,7 @@ import './AddComment.css';
 import { UserAvatar } from 'core/user'
 
 import type { NavigationParams } from 'core/navigation';
+import type { TextType, MentionType, InitialType } from 'core/api';
 
 type Props = {|
     user: string,
@@ -174,9 +175,13 @@ export default function AddComments(props: Props) {
         return ReactDOM.createPortal(children, document.body);
     }
 
-    const serialize = (node: any) => {
-        if (Text.isText(node)) {
+    const serialize = (node: TextType | MentionType | InitialType) => {
+        if (Text.isText(node) && node.text) {
             return escapeHtml(node.text);
+        }
+
+        if (!node.type  || !node.children) {
+            return;
         }
 
         const children = node.children.map(n => serialize(n)).join('');
@@ -185,9 +190,13 @@ export default function AddComments(props: Props) {
             case 'paragraph':
                 return `<p>${children}</p>`;
             case 'link':
-                return `<a href="${escapeHtml(node.url)}">${children}</a>`;
+                if (node.url) {
+                    return `<a href="${escapeHtml(node.url)}">${children}</a>`;
+                }
             case 'mention':
-                return `<a href="${escapeHtml(node.url)}">${children}</a>`;
+                if (node.url) {
+                    return `<a href="${escapeHtml(node.url)}">${children}</a>`;
+                }
             default:
                 return children;
         }
