@@ -130,7 +130,7 @@ export default function AddComments(props: Props) {
             * This allows for the new lines to render while adding comments.
             * To avoid an issue with the cursor placement and an error when 
             * navigating with arrows that occurs in Firefox '\n' can't be 
-            * the last character so I added the BOM
+            * the last character so the BOM was added
             */
             editor.insertText('\n\uFEFF');
             return null;
@@ -188,7 +188,7 @@ export default function AddComments(props: Props) {
 
         switch (node.type) {
             case 'paragraph':
-                return `<p>${children}</p>`;
+                return `<p>${children.trim()}</p>`;
             case 'link':
                 if (node.url) {
                     return `<a href="${escapeHtml(node.url)}">${children}</a>`;
@@ -205,12 +205,10 @@ export default function AddComments(props: Props) {
     };
 
     const submitComment = () => {
-        // TODO: work out how to prevent empty comments when only new lines present
-        // i.e.  if 'shift+enter' is used
-        if (value.length <= 1 && Node.string(value[0]).length === 0) {
+        if (Node.string(editor).trim() === '') {
             return null;
         }
-
+        
         const comment = value.map(node => serialize(node)).join('');
 
         addComment(comment, translation);
