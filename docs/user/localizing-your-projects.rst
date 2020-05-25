@@ -69,9 +69,14 @@ following required fields:
 5. **Download prefix**: used for manually downloading files. Select any
    localizable file on GitHub, click ``Raw`` and replace locale code and the
    following bits in the URL with {locale_code}.
-6. Click **SAVE PROJECT** at the bottom of the page.
-7. After the page reloads, click **SYNC** and wait for Pontoon to import
-   strings. You can monitor the progrss in the Sync log (``/sync/log/``).
+7. Click **SAVE PROJECT** at the bottom of the page.
+8. All new projects in Pontoon are private by default and aren't visible to
+   localizers and locale managers.
+9. After the page reloads, click **SYNC** and wait for Pontoon to import
+   strings. You can monitor the progress in the Sync log (``/sync/log/``).
+10. When the synchronization is finished, you should check the imported resources
+    and the entities. If everything went okay, you can proceed to the next step.
+11. Go to the project's admin page and change the visibility option to make the project public.
 
 For complete documentation of the Admin form, please refer to Mozilla's
 `new project documentation`_.
