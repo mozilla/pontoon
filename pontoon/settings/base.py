@@ -725,7 +725,6 @@ ALLOWED_ATTRIBUTES = {
     "acronym": ["title"],
 }
 
-SYNC_TASK_TIMEOUT_DEFAULT = 60 * 20 * 1  # 1 hour
 
 # Multiple sync tasks for the same project cannot run concurrently to prevent
 # potential DB and VCS inconsistencies. We store the information about the
@@ -736,6 +735,10 @@ SYNC_TASK_TIMEOUT_DEFAULT = 60 * 20 * 1  # 1 hour
 # of the instance.
 
 SYNC_TASK_TIMEOUT = os.environ.get("SYNC_TASK_TIMEOUT", SYNC_TASK_TIMEOUT_DEFAULT)
+try:
+    SYNC_TASK_TIMEOUT = int(os.environ.get("SYNC_TASK_TIMEOUT", ""))
+except ValueError:
+    SYNC_TASK_TIMEOUT = 60 * 20 * 1  # 1 hour
 
 SYNC_LOG_RETENTION = 3  # days
 
