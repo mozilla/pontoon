@@ -725,6 +725,7 @@ ALLOWED_ATTRIBUTES = {
     "acronym": ["title"],
 }
 
+SYNC_TASK_TIMEOUT_DEFAULT = 60 * 20 * 1  # 1 hour
 
 # Multiple sync tasks for the same project cannot run concurrently to prevent
 # potential DB and VCS inconsistencies. We store the information about the
