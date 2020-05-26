@@ -57,6 +57,8 @@ if not DEV and not DEBUG:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+    
+    db_from_env = dj_database_url.config(conn_max_age=600)
 
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
 
