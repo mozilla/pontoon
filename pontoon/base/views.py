@@ -421,14 +421,14 @@ def get_translation_history(request):
     payload = []
 
     for t in translations:
-        u = t.user or User(username="Imported", first_name="Imported", email="imported")
+        u = t.user
         translation_dict = t.serialize()
         translation_dict.update(
             {
-                "user": u.name_or_email,
-                "uid": u.id,
-                "username": u.username,
-                "user_gravatar_url_small": u.gravatar_url(88),
+                "user": "Imported" if u is None else u.name_or_email,
+                "uid": "" if u is None else u.id,
+                "username": "" if u is None else u.username,
+                "user_gravatar_url_small": "" if u is None else u.gravatar_url(88),
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
