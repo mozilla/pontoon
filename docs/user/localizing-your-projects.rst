@@ -74,9 +74,9 @@ following required fields:
    strings. You can monitor the progress in the Sync log (``/sync/log/``).
 1. When the synchronization is finished, you should check the imported resources
     and the entities. If everything went okay, you can proceed to the next step.
-1. Go to the project's admin page and change the visibility option to make the project public.
-   It's required because all new projects in Pontoon are private by default and aren't visible to
-   localizers and locale managers.
+1. Go to the project's admin page and change the visibility option to make
+   the project public. It's required because all new projects in Pontoon are private
+   by default and aren't visible to localizers and locale managers.
 
 For complete documentation of the Admin form, please refer to Mozilla's
 `new project documentation`_.
