@@ -28,6 +28,10 @@ class LatestActivityUser(object):
         return self.first_name or self.email
 
     @property
+    def display_name(self):
+        return self.first_name or self.email.split("@")[0]
+
+    @property
     def username(self):
         return self.activity.get(self.prefix + "user__username")
 
