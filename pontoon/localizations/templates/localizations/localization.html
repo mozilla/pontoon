@@ -36,7 +36,7 @@
       {{ HeadingInfo.details_item_deadline(project.deadline, project_locale.approved_strings == project_locale.total_strings) }}
 
       {{ HeadingInfo.details_item_url(
-        title='Repository',
+        title='저장소',
         class='repository',
         url=project.repositories.first().website)
       }}
@@ -45,7 +45,7 @@
 
       {% if project.contact %}
         {{ HeadingInfo.details_item(
-          title='Contact person',
+          title='연락',
           class='contact-person',
           value=project.contact.name_or_email,
           value_link=url('pontoon.contributors.contributor.username', project.contact.username))

@@ -1,15 +1,15 @@
 <div id="info-wrapper">
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
   <div class="controls">
-    <a class="edit-info button" href="#"><span class="fa fa-pencil-alt"></span>Edit</a>
-    <a href="#" class="cancel">Cancel</a>
+    <a class="edit-info button" href="#"><span class="fa fa-pencil-alt"></span>편집</a>
+    <a href="#" class="cancel">취소</a>
     <button class="button active save">Save</button>
   </div>
   {% endif %}
 
   <div class="read-only-info">
     <div class="info">{{ locale.team_description|safe }}</div>
-    <p class="no-results {% if locale.team_description %}hidden{% endif %}">No team info available.</p>
+    <p class="no-results {% if locale.team_description %}hidden{% endif %}">팀 정보가 없습니다.</p>
   </div>
 
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
@@ -21,7 +21,7 @@
 
     <div class="toolbar clearfix">
       <div class="subtitle">
-        <p>Supports html</p>
+        <p>html 문법을 지원합니다</p>
       </div>
     </div>
   </div>

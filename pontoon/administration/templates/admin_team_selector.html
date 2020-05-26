@@ -5,22 +5,22 @@
 <div class="admin-team-selector double-list-selector clearfix">
     {{ team_selector_list.list(
         id='available',
-        title='Available',
+        title='가능함',
         locales=locales_available,
-        right_shortcut='Move all →',
+        right_shortcut='모두 옮기기 →',
     )}}
     {{ team_selector_list.list(
         id='selected',
-        title='Localizable',
+        title='번역 가능함',
         locales=locales_selected,
-        left_shortcut='← Move all',
-        right_shortcut='Move all →',
+        left_shortcut='← 모두 옮기기',
+        right_shortcut='모두 옮기기 →',
     )}}
     {{ team_selector_list.list(
         id='readonly',
-        title='Read-only',
+        title='읽기만 됨',
         locales=locales_readonly,
-        right_shortcut='← Move all',
+        right_shortcut='← 모두 옮기기',
     )}}
 </div>
 {% endmacro %}

@@ -34,26 +34,26 @@
 
     <ul class="details">
       {{ HeadingInfo.details_item(
-        title='Plural forms',
+        title='복수형 단어 형태',
         class='plural-forms',
         value=locale.cldr_plurals_list(),
         title_link='http://cldr.unicode.org/index/cldr-spec/plural-rules')
       }}
 
       {{ HeadingInfo.details_item(
-        title='Script',
+        title='스크립트',
         class='script',
         value=locale.script)
       }}
 
       {{ HeadingInfo.details_item(
-        title='Writing direction',
+        title='쓰기 방향',
         class='writing-direction',
         value=locale.get_direction_display()|capitalize)
       }}
 
       {{ HeadingInfo.details_item(
-        title='Number of literate speakers',
+        title='이 언어를 사용하는 사람들 수',
         class='literate-speakers',
         value=(locale.population|intcomma or 'Unknown'),
         title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
@@ -75,7 +75,7 @@
     {% set current_page = request.path.split('/')[2]|default('') %}
     {% call Menu.submenu() %}
       {{ Menu.item(
-          'Projects',
+          '프로젝트',
           url('pontoon.teams.team', locale.code),
           is_active = (current_page == ''),
           count = count,
@@ -83,7 +83,7 @@
         )
       }}
       {{ Menu.item(
-          'Contributors',
+          '기여자',
           url('pontoon.teams.contributors', locale.code),
           is_active = (current_page == 'contributors'),
           count = False,
@@ -92,7 +92,7 @@
       }}
       {% if settings.ENABLE_BUGS_TAB %}
       {{ Menu.item(
-          'Bugs',
+          '버그',
           url('pontoon.teams.bugs', locale.code),
           is_active = (current_page == 'bugs'),
           count = False,
@@ -101,7 +101,7 @@
       }}
       {% endif %}
       {{ Menu.item(
-          'Info',
+          '정보',
           url('pontoon.teams.info', locale.code),
           is_active = (current_page == 'info'),
           count = 1 if locale.team_description else False,
@@ -110,7 +110,7 @@
       }}
       {% if request.user.has_perm('base.can_manage_locale', locale) %}
         {{ Menu.item(
-            'Permissions',
+            '권한',
             url('pontoon.teams.permissions', locale.code),
             is_active = (current_page == 'permissions'),
             count = False,

@@ -4,8 +4,8 @@
     {{ ContributorSelectorList.list(
         'available',
         choices=all_users,
-        label='<a class="contributors active" href="#">team contributors</a> &middot; <a class="all" href="#">all users</a>',
-        description="Click on user's email address to move it to the group pointed to by the arrow.",
+        label='<a class="contributors active" href="#">팀 기여자 </a> &middot; <a class="all" href="#">전체 사용자</a>',
+        description="사용자 email을 클릭하여 그룹을 움직일 수 있습니다.",
         index=index,
         extra=contributors_emails
     ) }}
@@ -15,7 +15,7 @@
     {{ ContributorSelectorList.list(
         'translators',
         choices=translators,
-        label='translators',
+        label='번역자',
         description=description,
         index=index,
         extra=contributors_emails
@@ -26,8 +26,8 @@
     {{ ContributorSelectorList.list(
         'managers',
         choices=managers,
-        label='managers',
-        description='Managers can change team permissions and edit other settings like team description.',
+        label='관리자',
+        description='관리자는 팀의 권한부여와 더불어 팀 설명등을 수정할 수 있습니다.',
         extra=contributors_emails
     ) }}
 {% endmacro %}
@@ -36,10 +36,10 @@
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
     <div class="permissions-groups general clearfix">
-        <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
+        <h3 class="controls">일반 <span class="small stress">(아래에서 오버라이드 되어도 여기서 전체 프로젝트에 제안을 내고 번역을 허가할수 있습니다)</span></h3>
         <div class="selector-wrapper double-list-selector clearfix">
             {{ user_selector(all_users) }}
-            {{ translator_selector('Translators can submit and approve translations in all projects, unless overridden below.', translators) }}
+            {{ translator_selector('아래에서 오버라이드 되어도 여기서 전체 프로젝트에 제안을 내고 번역을 허가할수 있습니다.', translators) }}
             {{ manager_selector() }}
         </div>
     </div>
@@ -56,20 +56,20 @@
             {% endif %}
 
             <h3 class="controls">
-                {{ name }} <span class="small stress">(override team translators for this project)</span>
-                <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
+                {{ name }} <span class="small stress">(이 프로젝트에 대한 팀 번역자 오버라이드)</span>
+                <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>제거</a>
             </h3>
             <div class="selector-wrapper double-list-selector clearfix">
                 {{ user_selector(all_users, pk) }}
-                {{ translator_selector('Add or remove Translators to override default team translators set in the General section.', translators, pk) }}
+                {{ translator_selector('번역자를 추가하거나 제거함으로서 기본 번역자 설정을 오버라이드 할 수 있습니다.', translators, pk) }}
             </div>
         </div>
     {% endfor %}
 
     <menu class="controls">
-        <button class="button active save">Save</button>
+        <button class="button active save">저장</button>
         <div id="project-selector" class="select{% if all_projects_in_translation %} hidden{% endif %}">
-            <div class="button selector">Add custom permissions for project<span class="icon fa fa-caret-up"></span></div>
+            <div class="button selector">프로젝트에 대한 사용자 정의 권한 지정<span class="icon fa fa-caret-up"></span></div>
             <div class="menu">
                 <div class="search-wrapper clearfix">
                     <div class="icon fa fa-search"></div>

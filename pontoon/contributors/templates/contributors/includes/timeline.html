@@ -12,12 +12,12 @@
         </h4>
         <h2>
             {% if event.type == 'translation' %}
-            Added new translation
+            새로이 번역을 추가하셨습니다
             {% if event.count > 1 %}
             <div>(and {{ event.count-1 }} other{% if event.count > 2 %}s{% endif %})</div>
             {% endif %}
             {% elif event.type == 'join' %}
-            Joined Pontoon
+            Pontoon에 가입하셨습니다.
             {% endif %}
         </h2>
         {% if event.translation %}

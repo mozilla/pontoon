@@ -18,7 +18,7 @@
 
 {% macro details_item_priority(priority, title='Priority') %}
 <li class="priority">
-  <span class="title">{{ title }}</span>
+  <span class="title">{{ 중요도 }}</span>
   <span class="value">
     {{ Priority.priority(priority) }}
   </span>
@@ -27,7 +27,7 @@
 
 {% macro details_item_deadline(deadline, complete) %}
 <li class="deadline">
-  <span class="title">Deadline</span>
+  <span class="title"></span>
   <span class="value">
     {{ Deadline.deadline(deadline, complete) }}
   </span>
@@ -49,7 +49,7 @@
 {% macro details_item_resources(resources, locale_code=None) %}
   {% if resources|length %}
   <li class="resources clearfix">
-    <span class="title">Resources</span>
+    <span class="title">리소스</span>
     <span class="value overflow">
       {% for resource in resources %}
         {% if loop.index != 1 %}&middot;{% endif %}
@@ -82,31 +82,31 @@
 {% macro progress_chart_legend(obj, link=None) %}
 <ul class="legend">
   {{ legend_item(
-    title='Translated',
+    title='번역됨',
     class='translated',
     value=obj.approved_strings,
     link=(link + '?status=translated') if link else None)
   }}
   {{ legend_item(
-    title='Fuzzy',
+    title='애매한 번역',
     class='fuzzy',
     value=obj.fuzzy_strings,
     link=(link + '?status=fuzzy') if link else None)
   }}
   {{ legend_item(
-    title='Warnings',
+    title='경고',
     class='warnings',
     value=obj.strings_with_warnings,
     link=(link + '?status=warnings') if link else None)
   }}
   {{ legend_item(
-    title='Errors',
+    title='오류',
     class='errors',
     value=obj.strings_with_errors,
     link=(link + '?status=errors') if link else None)
   }}
   {{ legend_item(
-    title='Missing',
+    title='번역 없음',
     class='missing',
     value=(obj.total_strings - obj.approved_strings - obj.fuzzy_strings - obj.strings_with_warnings - obj.strings_with_errors),
     link=(link + '?status=missing') if link else None)
@@ -115,13 +115,13 @@
 <div class="non-plottable">
   <div class="all">
     {% if link %}<a href="{{ link }}">{% endif %}
-      <p class="title">All strings</p>
+      <p class="title">전체 줄 갯수</p>
       <p class="value" data-value="{{ obj.total_strings }}">{{ obj.total_strings|intcomma }}</p>
     {% if link %}</a>{% endif %}
   </div>
   <div class="unreviewed{% if obj.unreviewed_strings %} pending{% endif %}">
     {% if link %}<a href="{{ link + '?status=unreviewed' }}">{% endif %}
-      <p class="title">Unreviewed</p>
+      <p class="title">리뷰 안됨</p>
       <p class="value">
         <span class="fa status"></span>
         <span class="text">{{ obj.unreviewed_strings|intcomma }}</span>

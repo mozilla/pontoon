@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import re
 import os
 import socket
+import dj_database_url
 
 from django.utils.functional import lazy
 
@@ -23,7 +24,7 @@ def path(*args):
 # variables.
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = "c041bc42047ff65ba66b3818697068be687ea2b52054bcee43df76070fe48695"
 
 # Is this a dev instance?
 DEV = os.environ.get("DJANGO_DEV", "False") != "False"
@@ -48,7 +49,7 @@ ADMINS = MANAGERS = (
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
 DATABASES = {
-    "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
+    "default": dj_database_url.config(default="postgresql://root@localhost/pontoon")
 }
 
 # Ensure that psycopg2 uses a secure SSL connection.
@@ -518,28 +519,29 @@ STATICFILES_DIRS = [
 
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
-def _allowed_hosts():
-    from django.conf import settings
-    from six.moves.urllib.parse import urlparse
+#def _allowed_hosts():
+#    from django.conf import settings
+#    from six.moves.urllib.parse import urlparse
 
-    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
-    result = [host]
+#    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
+#    result = [host]
     # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
     # have a version of the host that contains the port. This only applies
     # to local development (usually the host is localhost:8000).
-    if ":" in host:
-        host_no_port = host.rsplit(":", 1)[0]
-        result = [host, host_no_port]
+#    if ":" in host:
+#        host_no_port = host.rsplit(":", 1)[0]
+#        result = [host, host_no_port]
 
     # add values from environment variable. Needed in case of URL/domain redirections
-    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
-    env_vars = [x.strip() for x in env_vars_str.split(",")]
-    result.extend(env_vars)
+#    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
+#    env_vars = [x.strip() for x in env_vars_str.split(",")]
+#    result.extend(env_vars)
 
-    return result
+#    return result
 
 
-ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+#ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+ALLOWED_HOSTS= ["translate.readingsnail.pe.kr", "readingsnail.pe.kr", "translates.herokuapp.com"]
 
 # Auth
 # The first hasher in this list will be used for new passwords.
@@ -626,48 +628,49 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_DEFAULT_SRC = ("https:",)
 CSP_CHILD_SRC = ("https:",)
 CSP_FRAME_SRC = ("https:",)  # Older browsers
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
 )
-CSP_FONT_SRC = ("'self'",)
+#CSP_FONT_SRC = ("'unsafe-inline'",)
 CSP_IMG_SRC = (
     "'self'",
+    "'unsafe-inline'",
     "https:",
     # Needed for ACE editor images
     "data:",
     "https://*.wp.com/pontoon.mozilla.org/",
-    "https://www.google-analytics.com",
+#    "https://www.google-analytics.com",
     "https://www.gravatar.com/avatar/",
 )
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-eval'",
-    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
+#CSP_SCRIPT_SRC = (
+#    "'self'"
+#    "'unsafe-eval'",
+#    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
     # Rules related to Google Analytics
-    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
-    "https://www.google-analytics.com/analytics.js",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-)
+#    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
+#    "https://www.google-analytics.com/analytics.js",
+#)
+#CSP_STYLE_SRC = (
+#    "'self'",
+#    "'unsafe-inline'",
+#)
 
 # Needed if site not hosted on HTTPS domains (like local setup)
-if not (HEROKU_DEMO or SITE_URL.startswith("https")):
-    CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
-    CSP_CHILD_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
+#if not (HEROKU_DEMO or SITE_URL.startswith("https")):
+#    CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
+#    CSP_CHILD_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
 
 # For absolute urls
-try:
-    DOMAIN = socket.gethostname()
-except socket.error:
-    DOMAIN = "localhost"
-PROTOCOL = "http://"
-PORT = 80
+#try:
+#    DOMAIN = socket.gethostname()
+#except socket.error:
+#    DOMAIN = "localhost"
+#PROTOCOL = "http://"
+#PORT = 80
 
 # Names for slave databases from the DATABASES setting.
 SLAVE_DATABASES = []
@@ -722,7 +725,7 @@ ALLOWED_ATTRIBUTES = {
     "acronym": ["title"],
 }
 
-SYNC_TASK_TIMEOUT_DEFAULT = 60 * 60 * 1  # 1 hour
+SYNC_TASK_TIMEOUT_DEFAULT = 60 * 20 * 1  # 1 hour
 
 # Multiple sync tasks for the same project cannot run concurrently to prevent
 # potential DB and VCS inconsistencies. We store the information about the
@@ -731,9 +734,10 @@ SYNC_TASK_TIMEOUT_DEFAULT = 60 * 60 * 1  # 1 hour
 # longest possible period (in seconds) after which the cache is cleared and
 # the subsequent task can run. The value should exceed the longest sync task
 # of the instance.
+
 SYNC_TASK_TIMEOUT = os.environ.get("SYNC_TASK_TIMEOUT", SYNC_TASK_TIMEOUT_DEFAULT)
 
-SYNC_LOG_RETENTION = 90  # days
+SYNC_LOG_RETENTION = 3  # days
 
 MANUAL_SYNC = os.environ.get("MANUAL_SYNC", "False") != "False"
 
@@ -750,7 +754,7 @@ except ValueError:
     CELERYD_MAX_TASKS_PER_CHILD = 20
 
 BROKER_POOL_LIMIT = 1  # Limit to one connection per worker
-BROKER_CONNECTION_TIMEOUT = 30  # Give up connecting faster
+BROKER_CONNECTION_TIMEOUT = 50  # Give up connecting faster
 CELERY_RESULT_BACKEND = None  # We don't store results
 CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 

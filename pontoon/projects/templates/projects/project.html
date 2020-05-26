@@ -4,7 +4,7 @@
 
 {% block title %}{{ project.name }}{% endblock %}
 
-{% block class %}project{% endblock %}
+{% block class %}프로젝트{% endblock %}
 
 {% block before %}
 <!-- Server data -->
@@ -33,7 +33,7 @@
       {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
 
       {{ HeadingInfo.details_item_url(
-        title='Repository',
+        title='저장소',
         class='repository',
         url=project.repositories.first().website)
       }}
@@ -42,7 +42,7 @@
 
       {% if project.contact %}
         {{ HeadingInfo.details_item(
-          title='Contact person',
+          title='연락',
           class='contact-person',
           value=project.contact.name_or_email,
           value_link=url('pontoon.contributors.contributor.username', project.contact.username))
@@ -62,7 +62,7 @@
     {% set current_page = request.path.split('/')[2]|default('') %}
     {% call Menu.submenu() %}
       {{ Menu.item(
-          'Teams',
+          '팀',
           url('pontoon.projects.project', project.slug),
           is_active = (current_page == ''),
           count = project.locales.count(),
@@ -71,7 +71,7 @@
       }}
       {% if project.tags_enabled and tags %}
          {{ Menu.item(
-           'Tags',
+           '태그',
            url('pontoon.projects.tags', project.slug),
            is_active = (current_page == 'tags'),
            count = tags,
@@ -80,7 +80,7 @@
       }}
       {% endif %}
       {{ Menu.item(
-          'Contributors',
+          '기여자',
           url('pontoon.projects.contributors', project.slug),
           is_active = (current_page == 'contributors'),
           count = False,
@@ -88,7 +88,7 @@
         )
       }}
       {{ Menu.item(
-          'Info',
+          '정보',
           url('pontoon.projects.info', project.slug),
           is_active = (current_page == 'info'),
           count = 1 if project.info else False,
@@ -97,7 +97,7 @@
       }}
       {% if request.user.has_perm('base.can_manage_project') %}
         {{ Menu.item(
-            'Notifications',
+            '알림',
             url('pontoon.projects.notifications', project.slug),
             is_active = (current_page == 'notifications'),
             count = False,

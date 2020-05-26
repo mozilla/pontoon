@@ -7,15 +7,15 @@
   <table class="table table-sort project-list item-list {% if not visible %}hidden{% endif %}">
     <thead>
       <tr>
-        <th class="name asc">Project<i class="fa"></i></th>
-        <th class="deadline">Deadline<i class="fa"></i></th>
-        <th class="priority inverted">Priority<i class="fa"></i></th>
-        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
-        <th class="progress">Progress<i class="fa"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
+        <th class="name asc">프로젝트<i class="fa"></i></th>
+        <th class="deadline">마감선<i class="fa"></i></th>
+        <th class="priority inverted">중요도<i class="fa"></i></th>
+        <th class="latest-activity">마지막 활동<i class="fa"></i></th>
+        <th class="progress">진행률<i class="fa"></i></th>
+        <th class="unreviewed-status inverted" title="리뷰되지 않은 제안들"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
         {% if request %}
-          <th class="all-strings">Number of Strings<i class="fa"></i></th>
-          <th class="check">Request<i class="fa"></i></th>
+          <th class="all-strings">줄 숫자<i class="fa"></i></th>
+          <th class="check">요청<i class="fa"></i></th>
         {% endif %}
       </tr>
     </thead>
@@ -63,8 +63,8 @@
   </table>
   {% if request %}
     <div id="request-item-note">
-      <p>The requested projects won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the <a href="{{ url('pontoon.teams.info', locale.code) }}">localization team</a> if you are a new contributor.</p>
+      <p>프로젝트 요청은 자동으로 이뤄지지 않습니다. Pontoon 어드민과 팀 매니저가 이를 할 수 있습니다. 우린 빠른 시간내에 할 것입니다. 일단 새 사람을 모으기 위해 <a href="{{ url('pontoon.teams.info', locale.code) }}">로컬라이제이션 팀</a>을 두들겨 보세요.</p>
     </div>
-    <button id="request-item">Request new projects</button>
+    <button id="request-item">새 프로젝트 요청</button>
   {% endif %}
 {% endmacro %}

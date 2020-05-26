@@ -3,11 +3,11 @@
   <div class="chart-wrapper">
     <span class="percent">{{ chart.completion_percent }}%</span>
     <span class="chart">
-      <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
-      <span class="fuzzy" style="width:{{ chart.fuzzy_share }}%;"></span>
-      <span class="warnings" style="width:{{ chart.warnings_share }}%;"></span>
-      <span class="errors" style="width:{{ chart.errors_share }}%;"></span>
-      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share - chart.warnings_share - chart.errors_share }}%;"></span>
+      <span class="번역됨" style="width:{{ chart.approved_share }}%;"></span>
+      <span class="애매한 번역" style="width:{{ chart.fuzzy_share }}%;"></span>
+      <span class="경고" style="width:{{ chart.warnings_share }}%;"></span>
+      <span class="오류" style="width:{{ chart.errors_share }}%;"></span>
+      <span class="번역 없음" style="width:{{ 100 - chart.approved_share - chart.fuzzy_share - chart.warnings_share - chart.errors_share }}%;"></span>
     </span>
     <span class="unreviewed-status fa fa-lightbulb{% if chart.unreviewed_strings > 0 %} pending{% endif %}"></span>
   </div>
@@ -15,50 +15,50 @@
     <ul>
       <li class="all">
         <a href="{{ link }}">
-          <div class="title">All</div>
+          <div class="title">전체</div>
           <div class="value" data-value="{{ chart.total_strings }}">{{ chart.total_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="translated">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}">
-          <div class="title">Trnsltd</div>
+          <div class="title">완료</div>
           <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="fuzzy">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=fuzzy{% endif %}">
-          <div class="title">Fuzzy</div>
+          <div class="title">애매한 번역</div>
           <div class="value" data-value="{{ chart.fuzzy_strings }}">{{ chart.fuzzy_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="warnings">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=warnings{% endif %}">
-          <div class="title">Wrngs</div>
+          <div class="title">경고</div>
           <div class="value" data-value="{{ chart.strings_with_warnings }}">{{ chart.strings_with_warnings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="errors">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=errors{% endif %}">
-          <div class="title">Errors</div>
+          <div class="title">오류</div>
           <div class="value" data-value="{{ chart.strings_with_errors }}">{{ chart.strings_with_errors|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="missing">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
-          <div class="title">Missing</div>
+          <div class="title">번역 없음</div>
           {% set missing_strings = chart.total_strings - chart.approved_strings - chart.fuzzy_strings - chart.strings_with_warnings - chart.strings_with_errors %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
         </a>
       </li>
       <li class="unreviewed">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
-          <div class="title">Unrvwd</div>
+          <div class="title">리뷰 안됨</div>
           <div class="value" data-value="{{ chart.unreviewed_strings }}">{{ chart.unreviewed_strings|comma_or_prefix }}</div>
         </a>
       </li>
     </ul>
   </div>
 {% else %}
-  <span class="not-ready">Not synced yet</span>
+  <span class="not-ready">아직 동기화되지 않음</span>
 {% endif %}
 {% endmacro %}

@@ -12,10 +12,10 @@
   </h1>
 
   <div class="controls clearfix">
-    <button type="submit" class="button active">Save strings</button>
-    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Back to Project</a>
+    <button type="submit" class="button active">줄 저장</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">프로젝트로 돌아가기</a>
     {% if project_has_strings %}
-    <a href="#" class="add-inline" data-type="entity">Add New String</a>
+    <a href="#" class="add-inline" data-type="entity">새로운 줄 추가</a>
     {% endif %}
   </div>
 
@@ -59,8 +59,8 @@
   {% endif %}
 
   <div class="controls clearfix">
-    <button type="submit" class="button active">Save strings</button>
-    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">Back to Project</a>
+    <button type="submit" class="button active">줄 저장</button>
+    <a href="{{ url('pontoon.admin.project', project.slug) }}" class="cancel">프로젝트로 돌아가기</a>
     {% if project_has_strings %}
     <a href="#" class="add-inline" data-type="entity">Add New String</a>
     {% endif %}

@@ -3,7 +3,7 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import 'heading.html' as Heading %}
 
-{% block title %}Top Contributors{% endblock %}
+{% block title %}최고 기여자{% endblock %}
 
 {% block class %}top-contributors{% endblock %}
 
@@ -14,35 +14,35 @@
       <div class="container clearfix">
         <h1>
           {{ HeadingInfo.heading_item(
-            title='Top Contributors',
+            title='최고 기여자',
             link=url('pontoon.contributors'))
           }}
         </h1>
 
         <ul class="details">
           {{ HeadingInfo.details_item(
-            title='Top contributor',
+            title='최고 기여자',
             class='banner',
             value='')
           }}
           {{ HeadingInfo.details_item(
-            title='Name',
+            title='이름',
             class='name',
             value=top_contributor.name_or_email,
             value_link=url('pontoon.contributors.contributor.username', top_contributor.username))
           }}
           {{ HeadingInfo.details_item(
-            title='Role',
+            title='역할',
             class='role',
             value=top_contributor.user_role)
           }}
           {{ HeadingInfo.details_item(
-            title='Active since',
+            title='시작 년월',
             class='date-joined',
             value=top_contributor.date_joined.strftime('%d %B %Y'))
           }}
           {{ HeadingInfo.details_item(
-            title='Latest activity',
+            title='마지막 활동',
             class='latest-activity',
             value=top_contributor.contributed_translations.latest('date').date|naturaltime)
           }}
@@ -56,27 +56,27 @@
 
         <ul class="legend">
           {{ HeadingInfo.details_item(
-            title='Contributions in selected period',
+            title='선택된 기간동안 기여',
             class='banner',
             value='')
           }}
           {{ HeadingInfo.legend_item(
-            title='All strings',
+            title='전체 줄',
             class='all',
             value=top_contributor.translations_count)
           }}
           {{ HeadingInfo.legend_item(
-            title='Translated strings',
+            title='번역된 줄',
             class='translated',
             value=top_contributor.translations_approved_count)
           }}
           {{ HeadingInfo.legend_item(
-            title='Fuzzy strings',
+            title='애매한 줄',
             class='fuzzy',
             value=top_contributor.translations_needs_work_count)
           }}
           {{ HeadingInfo.legend_item(
-            title='Unreviewed suggestions',
+            title='리뷰 안 된 제안',
             class='unreviewed',
             value=top_contributor.translations_unapproved_count)
           }}

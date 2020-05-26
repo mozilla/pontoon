@@ -2,7 +2,7 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import 'projects/widgets/project_list.html' as ProjectList %}
 
-{% block title %}Projects{% endblock %}
+{% block title %}프로젝트{% endblock %}
 
 {% block class %}projects{% endblock %}
 
@@ -11,37 +11,37 @@
   <div class="container clearfix">
     <h1>
       {{ HeadingInfo.heading_item(
-        title='Projects',
+        title='프로젝트',
         link=url('pontoon.projects'))
       }}
     </h1>
 
     <ul class="details">
       {{ HeadingInfo.details_item(
-        title='Number of projects',
+        title='프로젝트 갯수',
         class='projects-count',
         value=projects|length)
       }}
       {{ HeadingInfo.details_item(
-        title='Most translations',
+        title='제일 많이 번역된 프로젝트',
         class='most-translations',
         value=top_instances['most_translations'],
         value_link=url('pontoon.projects.project', top_instances['most_translations'].slug))
       }}
       {{ HeadingInfo.details_item(
-        title='Most unreviewed',
+        title='제일 많이 리뷰 안 된 프로젝트',
         class='most-suggestions',
         value=top_instances['most_suggestions'],
         value_link=url('pontoon.projects.project', top_instances['most_suggestions'].slug))
       }}
       {{ HeadingInfo.details_item(
-        title='Most missing strings',
+        title='제일 많이 번역 안 된 프로젝트',
         class='missing-strings',
         value=top_instances['most_missing'],
         value_link=url('pontoon.projects.project', top_instances['most_missing'].slug))
       }}
       {{ HeadingInfo.details_item(
-        title='Most enabled strings',
+        title='제일 번역량이 많은 프로젝트',
         class='most-strings',
         value=top_instances['most_strings'],
         value_link=url('pontoon.projects.project', top_instances['most_strings'].slug))
@@ -60,7 +60,7 @@
     <menu class="controls">
       <div class="search-wrapper small clearfix">
         <div class="icon fa fa-search"></div>
-        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
+        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="프로젝트 필터">
       </div>
     </menu>
 

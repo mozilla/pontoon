@@ -15,9 +15,9 @@
   {{ '%(subtitle)s' | format(subtitle=subtitle) }}
   {% if pk %}
   <aside>
-    <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
+    <a href="{{ url('pontoon.admin.project.new') }}">프로젝트 추가</a>
     {% if translate_locale and form.slug.value() != '' %}
-    <a class="translate" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">Translate</a>
+    <a class="translate" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">번역하기</a>
     {% endif %}
   </aside>
   {% endif %}
@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <h3>Locales</h3>
+  <h3>로케일</h3>
 
   <div class="locales clearfix">
       {{ admin_team_selector.render(locales_available, locales_selected, locales_readonly) }}
@@ -61,12 +61,12 @@
   <div class="locales-toolbar clearfix">
     <section class="can-be-requested checkbox clearfix">
       <label for="id_can_be_requested">
-          {{ form.can_be_requested }}Locales can opt-in
+          {{ form.can_be_requested }}로케일 옵트인을 가능하게 합니다
       </label>
     </section>
     <section class="copy-locales clearfix">
       <select id="copy-locales">
-        <option selected>Copy locales from another project</option>
+        <option selected>다른 프로젝트에서 로케일 복사해오기</option>
         {% for project in projects %}
           <option value="{{ project.locales|to_json() }}">{{ project.name }}</option>
         {% endfor %}
@@ -76,35 +76,35 @@
 
   <section class="data-source">
     <h3>
-      <span>Data Source</span>
+      <span>데이터 소스</span>
     </h3>
     {{ form.data_source }}
   </section>
 
   <section class="new-strings">
     <h3>
-      <span>Strings</span>
+      <span>줄</span>
     </h3>
     {% if not pk %}
     <div class="clearfix">
       <label for="id_new_strings">
-        Enter strings to create the first entities. Strings are separated on new line characters.
+        첫번째 항목을 작성하시려면 줄을 넣어주세요. 줄은 줄바뀜 문자로 나눠집니다.
       </label>
-      <textarea id="id_new_strings" name="new_strings" class="strings-source" placeholder="First strings"></textarea>
+      <textarea id="id_new_strings" name="new_strings" class="strings-source" placeholder="처음 줄"></textarea>
     </div>
     {% endif %}
     {% if pk %}
     <div class="clearfix manage-strings">
-      <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage Strings</a>
-      <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv">Download Strings</a>
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}">줄 관리</a>
+      <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv">줄 다운로드</a>
     </div>
     {% endif %}
   </section>
 
   <section class="repositories">
   <h3>
-    <span>Repositories</span>
-    <a href="#add-repo" class="add-repo">Add more</a>
+    <span>저장소</span>
+    <a href="#add-repo" class="add-repo">더 추가하기</a>
   </h3>
 
   {{ repo_formset.management_form }}
@@ -207,28 +207,28 @@
 
   <h3>
     <span>{{ form.configuration_file.label }}</span>
-    <span class="small stress">(optional)</span>
+    <span class="small stress"> (옵션)</span>
   </h3>
 
   <div class="clearfix">
-    <input id="id_configuration_file" name="configuration_file" type="text" placeholder="l10n.toml" value="{{ form.configuration_file.value() or '' }}">
+    <input id="id_configuration_file" name="설정 파일" type="text" placeholder="l10n.toml" value="{{ form.configuration_file.value() or '' }}">
     <label for="id_configuration_file">
       {{ form.configuration_file.help_text|trim }}
-      <a href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html" target="_blank">Learn more.</a>
+      <a href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html" target="_blank">더 알아보기.</a>
     </label>
     {{ form.configuration_file.errors }}
   </div>
 
-  <h3>Project info <span class="small stress">(optional)</span></h3>
+  <h3>프로젝트 정보<span class="small stress">(옵션)</span></h3>
 
   <div>
       {{ form.info }}
-      <p class="subtitle">Supports HTML</p>
+      <p class="subtitle">HTML를 지원합니다</p>
       {{ form.info.errors }}
   </div>
 
   <div>
-      <label for="id_admin_notes">Internal admin notes - only visible on this page</label>
+      <label for="id_admin_notes">내부 관리자 노트 - 이 페이지에서만 보입니다</label>
       {{ form.admin_notes }}
       {{ form.admin_notes.errors }}
   </div>
@@ -261,7 +261,7 @@
     <option value="Issue tracking">
   </datalist>
 
-  <h3>In-context localization <span class="small stress">(optional)</span></h3>
+  <h3>내부 문맥 로컬라이제이션 <span class="small stress">(옵션)</span></h3>
 
   <div class="clearfix">
       {{ form.url.label_tag() }}
@@ -283,8 +283,8 @@
 
   <section class="tags">
     <h3>
-      <span>Tags</span>
-      <span class="small stress">(optional)</span>
+      <span>태그</span>
+      <span class="small stress"> (옵션)</span>
     </h3>
     <div class="controls clearfix">
       <div class="checkbox clearfix">
@@ -307,10 +307,10 @@
 
   <section class="controls clearfix">
     <h3>
-      <span>Pretranslation</span>
+      <span>미리 번역</span>
     </h3>
     <div class="clearfix">
-      <button class="pretranslate button clearfix">Pretranslate</button>
+      <button class="pretranslate button clearfix">미리 번역</button>
       <div class="checkbox clearfix">
         <label for="id_pretranslation_enabled">
             {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
@@ -331,10 +331,10 @@
           </label>
       </div>
       {% if settings.MANUAL_SYNC %}
-      <button class="sync button">Sync</button>
+      <button class="sync button">동기화</button>
       {% endif %}
-      <button class="button active save">Save project</button>
-      <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
+      <button class="button active save">프로젝트 저장</button>
+      <a href="{{ url('pontoon.admin') }}" class="cancel">취소</a>
   </div>
 
 </form>

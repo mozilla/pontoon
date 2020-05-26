@@ -5,14 +5,14 @@
   <table class="table table-sort team-list item-list">
     <thead>
       <tr>
-        <th class="name asc">Language<i class="fa"></i></th>
-        <th class="code">Locale<i class="fa"></i></th>
-        <th class="population">Speakers<i class="fa"></i></th>
-        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
-        <th class="progress">Progress<i class="fa"></i></th>
+        <th class="name asc">언어<i class="fa"></i></th>
+        <th class="code">로케일<i class="fa"></i></th>
+        <th class="population">사용 인구<i class="fa"></i></th>
+        <th class="latest-activity">마지막 활동<i class="fa"></i></th>
+        <th class="progress">진행도<i class="fa"></i></th>
         <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
         {% if request %}
-          <th class="check">Request<i class="fa"></i></th>
+          <th class="check">언어 제안<i class="fa"></i></th>
         {% endif %}
       </tr>
     </thead>
@@ -67,15 +67,15 @@
         </div>
       </div>
       <div id="request-item-note">
-        <p>The requested team won’t be enabled automatically: an email will be sent to Pontoon admins to evaluate the request. We’ll try to respond as soon as possible.</p>
+        <p>요청하신 팀은 자동으로 만들어지지 않습니다: Pontoon 관리자에게 요청해보세요, 빠른 시일안에 추가할 것입니다.</p>
       </div>
       <button type="submit" id="request-item">Request new team</button>
     </form>
     {% else %}
     <div id="request-item-note">
-      <p>The requested language won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the localization team if you are a new contributor.</p>
+      <p>요청하신 팀은 자동으로 만들어지지 않습니다: Pontoon 관리자에게 요청해보세요, 빠른 시일안에 추가할 것입니다. 그리고 또한 새로운 기여자라면 로컬라이제이션 팀에게 알려주세요.</p>
     </div>
-    <button type="submit" id="request-item">Request new language</button>
+    <button type="submit" id="request-item">새로운 언어 요청</button>
     {% endif %}
   {% endif %}
 {% endmacro %}

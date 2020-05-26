@@ -5,12 +5,12 @@
   <div class="menu permanent left-column">
     <ul>
       <li class="selected">
-        <a href="{{ url('pontoon.projects.notifications', project.slug) }}" data-target="#compose">Compose</a>
+        <a href="{{ url('pontoon.projects.notifications', project.slug) }}" data-target="#compose">컴포즈</a>
       </li>
       <li class="horizontal-separator"></li>
       <li>
         <a href="{{ url('pontoon.projects.notifications', project.slug) }}sent/" data-target="#sent">
-          <span class="name">Sent</span>
+          <span class="name">보내기</span>
           <span class="count">{{ notifications|length }}</span>
         </a>
       </li>
@@ -22,42 +22,42 @@
       <form id="send-notification" method="POST" action="{{ url('pontoon.projects.ajax.notifications', project.slug) }}">
         {% csrf_token %}
 
-        <h3><span class="stress">#1</span> Choose recipient teams</h3>
+        <h3><span class="stress">#1</span> 알림을 받을 팀을 선택</h3>
         <div class="locale-selector">
           <div class="clearfix">
             {{ multiple_team_selector.render(available_locales, [], form_field='selected_locales') }}
           </div>
           <div class="toolbar clearfix">
             <div class="shortcuts clearfix">
-              <a class="complete" href="#choose-complete" data-ids="{{ complete|to_json() }}">Complete only &rarr;</a>
-              <a class="incomplete" href="#choose-incomplete" data-ids="{{ incomplete|to_json() }}">Incomplete only &rarr;</a>
+              <a class="complete" href="#choose-complete" data-ids="{{ complete|to_json() }}">완료시 &rarr;</a>
+              <a class="incomplete" href="#choose-incomplete" data-ids="{{ incomplete|to_json() }}">미완료시 &rarr;</a>
             </div>
             <div class="errors">
-              <p>Select at least one recipient</p>
+              <p>최소 하나는 선택하셔야 합니다</p>
             </div>
           </div>
         </div>
 
-        <h3><span class="stress">#2</span> Enter notification message</h3>
+        <h3><span class="stress">#2</span> 알림 메시지를 넣어주세요</h3>
         <div class="message-wrapper">
           {{ form.message }}
           <div class="toolbar clearfix">
             <div class="errors">
-              <p>Notification message cannot be empty</p>
+              <p>알림 메시지는 비어 있을수 없습니다</p>
             </div>
             <div class="subtitle">
-              <p>Supports html</p>
+              <p>html 태그를 지원합니다</p>
             </div>
           </div>
         </div>
 
         <menu class="controls">
-          <button class="button active send">Send</button>
+          <button class="button active send">보내기</button>
         </menu>
       </form>
     </section>
     <section id="sent">
-      {{ Notifications.list(notifications=notifications, no_title="No notifications sent.", no_description="Here you’ll see notifications sent in the past") }}
+      {{ Notifications.list(notifications=notifications, no_title="보내진 알림 없음.", no_description="여기 이전에 보낸 알람들입니다") }}
     </section>
   </div>
 </section>

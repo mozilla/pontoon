@@ -7,7 +7,7 @@
 {% block class %}admin{% endblock %}
 
 {% block heading %}
-  {{ Heading.heading(title='Admin', subtitle="Don't mess it up. Please.") }}
+  {{ Heading.heading(title='Admin', subtitle="제발 망치지 좀 마요") }}
 {% endblock %}
 
 {% block bottom %}
@@ -16,9 +16,9 @@
     <menu class="controls">
       <div class="search-wrapper big clearfix">
         <div class="icon fa fa-search"></div>
-        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
+        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="프로젝트 필터">
       </div>
-      <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">Add new project</a>
+      <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">새 프로젝트 추가</a>
     </menu>
 
     {{ ProjectList.header() }}

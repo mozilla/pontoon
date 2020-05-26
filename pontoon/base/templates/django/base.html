@@ -45,10 +45,10 @@
           <a href="{% url 'pontoon.homepage' %}" class="logo"><img src="{% static 'img/logo.svg' %}" width="32" height="32"></a>
 
           <ul class="links">
-            <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>
-            <li><a href="{% url 'pontoon.projects' %}">Projects</a></li>
-            <li><a href="{% url 'pontoon.contributors' %}">Contributors</a></li>
-            <li><a href="{% url 'pontoon.machinery' %}">Machinery</a></li>
+            <li><a href="{% url 'pontoon.teams' %}">팀</a></li>
+            <li><a href="{% url 'pontoon.projects' %}">프로젝트</a></li>
+            <li><a href="{% url 'pontoon.contributors' %}">기여자</a></li>
+            <li><a href="{% url 'pontoon.machinery' %}">기계 검색</a></li>
           </ul>
 
           <div class="right">
@@ -63,31 +63,31 @@
               <div class="menu">
                 <ul>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'pontoon.contributors.contributor.username' username=user %}"><i class="fa fa-user fa-fw"></i>My Profile</a></li>
-                  <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fa fa-cog fa-fw"></i>Change Settings</a></li>
+                  <li><a href="{% url 'pontoon.contributors.contributor.username' username=user %}"><i class="fa fa-user fa-fw"></i>내 프로파일</a></li>
+                  <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fa fa-cog fa-fw"></i>설정 변경</a></li>
                   <li class="horizontal-separator"></li>
                   {% endif %}
 
-                  <li><a href="{% url 'pontoon.terms' %}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
-                  <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>
-                  <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>Give Feedback</a></li>
-                  <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+                  <li><a href="{% url 'pontoon.terms' %}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>사용 규정</a></li>
+                  <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Pontoon Github로 가기</a></li>
+                  <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>피드백 제공하기</a></li>
+                  <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Pontoon 도움말</a></li>
 
                   <li class="horizontal-separator"></li>
 
                   {% if perms.base.can_manage_project %}
-                  <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
+                  <li><a href="{% url 'pontoon.admin' %}">관리</li>
                   {% endif %}
 
                   {% if settings.AUTHENTICATION_METHOD == 'django' %}
                     {% if user.is_authenticated %}
-                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>로그아웃</a></li>
                     {% else %}
                       <li id="standalone-signin"><a href="{% url 'standalone_login' %}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                     {% endif %}
                   {% else %}
                     {% if user.is_authenticated %}
-                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out-alt fa-fw"></i>Pontoon 가입</a></li>
                     {% else %}
                       <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                     {% endif %}

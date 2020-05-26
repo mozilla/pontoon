@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /
 Disallow: /a/
 Disallow: /admin/
 Disallow: /contributors/

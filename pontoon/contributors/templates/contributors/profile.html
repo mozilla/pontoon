@@ -19,7 +19,7 @@
 <section id="heading">
   <a class="avatar" href="{% if my_profile %}https://gravatar.com/{% endif %}">
     {% if my_profile %}
-      <div class="desc">Update profile picture</div>
+      <div class="desc">프로파일 그림 업데이트</div>
     {% endif %}
     <img class="rounded" src="{{ contributor.gravatar_url(400) }}" width="200" height="200">
   </a>
@@ -58,16 +58,16 @@
 <section id="middle">
   <div class="container details">
     <div class="total">
-      <span>All strings</span>
+      <span>전체 줄</span>
       <p>{{ translations.count()|intcomma }}</p>
     </div><div class="translated">
-      <span>Translated</span>
+      <span>번역됨</span>
       <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
     </div><div class="fuzzy">
-      <span>Fuzzy</span>
+      <span>애매한 번역</span>
       <p>{{ translations.filter(fuzzy=True).count()|intcomma }}</p>
     </div><div class="unreviewed">
-      <span>Unreviewed</span>
+      <span>리뷰 안됨</span>
       <p>{{ translations.exclude(approved=True).exclude(fuzzy=True).exclude(rejected=True).count()|intcomma }}</p>
     </div>
   </div>

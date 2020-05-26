@@ -3,11 +3,11 @@
 {# Widget to select period for filtering contributors #}
 {% macro select_period(period, viewurl) %}
     {% call Menu.submenu() %}
-        {{ Menu.item('All time', viewurl, is_active = (period == None), class='button') }}
-        {{ Menu.item('12 months', viewurl + '?period=12', is_active = (period == 12), class='button') }}
-        {{ Menu.item('6 months', viewurl + '?period=6', is_active = (period == 6), class='button') }}
-        {{ Menu.item('3 months', viewurl + '?period=3', is_active = (period == 3), class='button') }}
-        {{ Menu.item('Last month', viewurl + '?period=1', is_active = (period == 1), class='button') }}
+        {{ Menu.item('전체 기간', viewurl, is_active = (period == None), class='button') }}
+        {{ Menu.item('1년', viewurl + '?period=12', is_active = (period == 12), class='button') }}
+        {{ Menu.item('6개월', viewurl + '?period=6', is_active = (period == 6), class='button') }}
+        {{ Menu.item('3개월', viewurl + '?period=3', is_active = (period == 3), class='button') }}
+        {{ Menu.item('저번달', viewurl + '?period=1', is_active = (period == 1), class='button') }}
     {% endcall %}
 {% endmacro %}
 
@@ -16,8 +16,8 @@
   <table class="striped">
     <thead>
       <tr>
-        <th>Contributor</th>
-        <th>Translations</th>
+        <th>기여자</th>
+        <th>번역자</th>
       </tr>
     </thead>
     <tbody>
@@ -33,16 +33,16 @@
         <td class="stats">
           <div class="details">
             <div class="total">
-              <span>All strings</span>
+              <span>전체 줄 수</span>
               <p>{{ contributor.translations_count|intcomma }}</p>
             </div><div class="approved">
-              <span>Translated</span>
+              <span>번역됨</span>
               <p>{{ contributor.translations_approved_count|intcomma }}</p>
             </div><div class="fuzzy">
-              <span>Fuzzy</span>
+              <span>애매한 번역</span>
               <p>{{ contributor.translations_needs_work_count|intcomma }}</p>
             </div><div class="unreviewed">
-              <span>Unreviewed</span>
+              <span>리뷰 안됨</span>
               <p>{{ contributor.translations_unapproved_count|intcomma }}</p>
             </div>
           </div>
@@ -55,5 +55,5 @@
 
 {# Widget to display notification if no contributors available. #}
 {% macro no_contributors() %}
-  <p class="no-results">No contributors found.</p>
+  <p class="no-results">기여자를 찾을 수 없습니다.</p>
 {% endmacro %}

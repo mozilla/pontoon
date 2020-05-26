@@ -12,7 +12,7 @@
 
     <ul>
       <li class="horizontal-separator"></li>
-      <li class="see-all"><a href="{{ url('pontoon.contributors.notifications') }}">See all Notifications</a></li>
+      <li class="see-all"><a href="{{ url('pontoon.contributors.notifications') }}">전체 알림 보기</a></li>
     </ul>
   </div>
 
@@ -22,7 +22,7 @@
 {% endmacro %}
 
 
-{% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
+{% macro list(notifications, no_title="새로운 알림이 없습니다.", no_description="여기서 여러분이 기여하는 번역에 대해 업데이트를 받아볼 수 있습니다.") %}
 <ul class="notification-list">
   {% for notification in notifications %}
     <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">

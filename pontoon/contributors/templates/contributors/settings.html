@@ -19,27 +19,27 @@
 {% block heading %}
 <section id="heading">
   <a class="avatar" href="http://gravatar.com/">
-    <div class="desc">Update profile picture</div>
+    <div class="desc">프로파일 사진 업데이트</div>
     <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
   </a>
 
   <h2 id="username">{{ user.first_name }}</h2>
 
   <ul class="info">
-    {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
+    {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='번역을 제출하기 전 번역 체크 확인 도구 돌리기') }}
 
     {% if user.translated_locales %}
-      {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+      {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='번역 저장대신 제안 하기') }}
     {% endif %}
   </ul>
 
   <div id="user-preference" class="clearfix">
     <div id="homepage">
-      <span class="label">Select your homepage</span>
+      <span class="label">홈페이지를 설정해주세요</span>
       <span>{{ team_selector.locale(locales, locale) }}</span>
     </div>
     <div id="preferred-locale">
-      <span class="label">Select preferred source locale</span>
+      <span class="label">선호하는 원본 로케일을 선택해주세요</span>
       <span>{{ team_selector.locale(preferred_locales, preferred_locale) }}</span>
     </div>
   </div>
@@ -54,7 +54,7 @@
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
     <div id="profile-form">
-      <h3>Personal information</h3>
+      <h3>개인 정보</h3>
       <div class="field">
           {{ profile_form.first_name.label_tag(label_suffix='') }}
           {{ profile_form.first_name }}
@@ -68,13 +68,13 @@
       </div>
     </div>
 
-    <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
+    <h3>선호하는 로케일<span class="small stress"> (여기서 로케일 제안을 받습니다)</span></h3>
 
     {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
 
     <div class="controls">
       <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
-      <button class="submit button active">Save</button>
+      <button class="submit button active">저장</button>
     </div>
   </form>
 </section>

@@ -7,19 +7,19 @@
   <table class="table table-sort project-list">
     <thead>
       <tr>
-        <th class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %} asc">Resource<i class="fa"></i></th>
+        <th class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %} asc">리소스<i class="fa"></i></th>
 
         {% if deadline %}
-        <th class="deadline">Deadline<i class="fa"></i></th>
+        <th class="deadline">마감선<i class="fa"></i></th>
         {% endif %}
 
         {% if priority %}
-        <th class="priority inverted">Priority<i class="fa"></i></th>
+        <th class="priority inverted">중요도<i class="fa"></i></th>
         {% endif %}
 
-        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
-        <th class="progress">Progress<i class="fa"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
+        <th class="latest-activity">마지막 활동<i class="fa"></i></th>
+        <th class="progress">진행도<i class="fa"></i></th>
+        <th class="unreviewed-status inverted" title="리뷰되지 않은 제안들"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
       </tr>
     </thead>
     <tbody>
