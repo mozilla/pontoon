@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import ReactTimeAgo from 'react-time-ago';
+import Linkify from 'react-linkify';
+import parse from 'html-react-parser';
 
 import './Comment.css';
 
@@ -29,7 +31,7 @@ export default function Comment(props: Props) {
         />
         <div className='container'>
             <div className='content' dir='auto'>
-                <p>
+                <div>
                     <a
                         className='comment-author'
                         href={ `/contributors/${comment.username}` }
@@ -39,10 +41,10 @@ export default function Comment(props: Props) {
                     >
                         { comment.author }
                     </a>
-                    {/* We can safely use comment.content because it is validated by
-                    bleach before being saved into the database. */}
-                    <span className='comment-content' dangerouslySetInnerHTML={ { __html: comment.content } } />
-                </p>
+                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }> 
+                        { parse(comment.content) }
+                    </Linkify>
+                </div>
             </div>
             <div className='info'>
                 <ReactTimeAgo

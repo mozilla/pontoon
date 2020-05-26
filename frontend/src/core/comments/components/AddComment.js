@@ -189,11 +189,6 @@ export default function AddComments(props: Props) {
         switch (node.type) {
             case 'paragraph':
                 return `<p>${children.trim()}</p>`;
-            case 'link':
-                if (node.url) {
-                    return `<a href="${escapeHtml(node.url)}">${children}</a>`;
-                }
-                break;
             case 'mention':
                 if (node.url) {
                     return `<a href="${escapeHtml(node.url)}">${children}</a>`;
@@ -227,9 +222,9 @@ export default function AddComments(props: Props) {
         <div className='container'>
             <Slate  editor={ editor }  value={ value } onChange={ onChange }>
                 <Localized
-                id='comments-AddComment--input'
-                attrs={{ placeholder: true }}
-            >
+                    id='comments-AddComment--input'
+                    attrs={{ placeholder: true }}
+                >
                     <Editable 
                         className='comment-editor'
                         autoFocus
@@ -275,7 +270,7 @@ export default function AddComments(props: Props) {
     </div>
 }
 
-const withMentions = editor => {
+const withMentions = (editor) => {
     const { isInline, isVoid } = editor;
   
     editor.isInline = element => {
@@ -298,7 +293,7 @@ const insertMention = (editor, character) => {
     Transforms.move(editor);
 };
   
-const Element = props => {
+const Element = (props) => {
     const { attributes, children, element } = props;
         switch (element.type) {
         case 'mention':

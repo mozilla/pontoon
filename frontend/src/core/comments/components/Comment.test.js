@@ -35,9 +35,10 @@ describe('<Comment>', () => {
             deleteComment={ deleteMock }
         />);
 
-        const content = wrapper.find('.comment-content');
-        expect(content.at(0).props().dangerouslySetInnerHTML).toEqual(
-            {"__html": "What I hear when I'm being yelled at is people caring loudly at me."}
+        // Comments are hidden in a Linkify component.
+        const content = wrapper.find('Linkify').map(item => item.props().children);
+        expect(content).toContain(
+            "What I hear when I'm being yelled at is people caring loudly at me."
         )
     });
 
