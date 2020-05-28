@@ -48,12 +48,16 @@ class ProjectLocale(DjangoObjectType, Stats):
 
 class Project(DjangoObjectType, Stats):
     class Meta:
+        convert_choices_to_enum = False
         model = ProjectModel
         only_fields = (
             "name",
             "slug",
             "disabled",
             "sync_disabled",
+            "pretranslation_enabled",
+            "visibility",
+            "system_project",
             "info",
             "deadline",
             "priority",
