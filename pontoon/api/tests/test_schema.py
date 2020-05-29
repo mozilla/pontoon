@@ -24,7 +24,7 @@ class TestCyclicQueries(TestCase):
     def test_projects(self):
         body = {
             "query": """{
-                projects {
+                projects(includeSystem: true) {
                     name
                 }
             }"""
