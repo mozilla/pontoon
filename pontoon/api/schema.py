@@ -112,14 +112,14 @@ class Locale(DjangoObjectType, Stats):
     def resolve_localizations(obj, _info, include_disabled, include_system):
         qs = obj.project_locale
 
-        if include_disabled and include_system:
-            return qs.all()
-        elif include_disabled and not include_system:
-            return qs.filter(project__system_project=False)
-        elif not include_disabled and include_system:
-            return qs.filter(project__disabled=False)
+        records = qs.filter(project__disabled=False, project__system_project=False)
 
-        return qs.filter(project__disabled=False, project__system_project=False)
+        if include_disabled:
+            records = records | qs.filter(project__disabled=True)
+        if include_system:
+            records = records | qs.filter(project__system_project=True)
+
+        return records.distinct()
 
 
 class Query(graphene.ObjectType):
@@ -147,14 +147,14 @@ class Query(graphene.ObjectType):
         if "projects.localizations.locale.localizations" in fields:
             raise Exception("Cyclic queries are forbidden")
 
-        if include_disabled and include_system:
-            return qs.all()
-        elif include_disabled and not include_system:
-            return qs.filter(system_project=False)
-        elif not include_disabled and include_system:
-            return qs.filter(disabled=False)
+        records = qs.filter(disabled=False, system_project=False)
 
-        return qs.filter(disabled=False, system_project=False)
+        if include_disabled:
+            records = records | qs.filter(disabled=True)
+        if include_system:
+            records = records | qs.filter(system_project=True)
+
+        return records.distinct()
 
     def resolve_project(obj, info, slug):
         qs = ProjectModel.objects
