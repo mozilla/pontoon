@@ -48,12 +48,16 @@ class ProjectLocale(DjangoObjectType, Stats):
 
 class Project(DjangoObjectType, Stats):
     class Meta:
+        convert_choices_to_enum = False
         model = ProjectModel
         only_fields = (
             "name",
             "slug",
             "disabled",
             "sync_disabled",
+            "pretranslation_enabled",
+            "visibility",
+            "system_project",
             "info",
             "deadline",
             "priority",
@@ -100,29 +104,40 @@ class Locale(DjangoObjectType, Stats):
         )
 
     localizations = graphene.List(
-        ProjectLocale, include_disabled=graphene.Boolean(False),
+        ProjectLocale,
+        include_disabled=graphene.Boolean(False),
+        include_system=graphene.Boolean(False),
     )
 
-    def resolve_localizations(obj, _info, include_disabled):
+    def resolve_localizations(obj, _info, include_disabled, include_system):
         qs = obj.project_locale
 
-        if include_disabled:
-            return qs.all()
+        records = qs.filter(project__disabled=False, project__system_project=False)
 
-        return qs.filter(project__disabled=False)
+        if include_disabled:
+            records = records | qs.filter(project__disabled=True)
+        if include_system:
+            records = records | qs.filter(project__system_project=True)
+
+        return records.distinct()
 
 
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="__debug")
 
     # include_disabled=True will return both active and disabled projects.
-    projects = graphene.List(Project, include_disabled=graphene.Boolean(False))
+    # include_system=True will return both system and non-system projects.
+    projects = graphene.List(
+        Project,
+        include_disabled=graphene.Boolean(False),
+        include_system=graphene.Boolean(False),
+    )
     project = graphene.Field(Project, slug=graphene.String())
 
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
 
-    def resolve_projects(obj, info, include_disabled):
+    def resolve_projects(obj, info, include_disabled, include_system):
         qs = ProjectModel.objects
         fields = get_fields(info)
 
@@ -132,10 +147,14 @@ class Query(graphene.ObjectType):
         if "projects.localizations.locale.localizations" in fields:
             raise Exception("Cyclic queries are forbidden")
 
-        if include_disabled:
-            return qs.all()
+        records = qs.filter(disabled=False, system_project=False)
 
-        return qs.filter(disabled=False)
+        if include_disabled:
+            records = records | qs.filter(disabled=True)
+        if include_system:
+            records = records | qs.filter(system_project=True)
+
+        return records.distinct()
 
     def resolve_project(obj, info, slug):
         qs = ProjectModel.objects
