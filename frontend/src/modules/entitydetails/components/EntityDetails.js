@@ -70,6 +70,8 @@ type InternalProps = {|
 
 type State = {|
     translation: string,
+    tabIndex: number,
+    projectManager: Object,
 |};
 
 
@@ -79,6 +81,18 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    tabRef: { current: Object }
+
+    constructor(props: InternalProps, state: State) {
+        super(props);
+        this.state = {
+            ...state,
+            tabIndex: 0,
+            projectManager: {},
+        };
+        this.tabRef = React.createRef();
+    }
+    
     componentDidMount() {
         this.updateFailedChecks();
         this.fetchHelpersData();
@@ -98,6 +112,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             this.updateFailedChecks();
             this.fetchHelpersData();
         }
+    }
+
+    setTabState = (tab: number) => {
+        this.setState({ tabIndex: tab });
+    }
+
+    tagProjectManager = (contact: string) => {
+        this.setState({ projectManager: contact });
     }
 
     /*
@@ -329,6 +351,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 />
                 <Metadata
                     entity={ state.selectedEntity }
+                    user={ state.user }
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }
                     pluralForm={ state.pluralForm }
@@ -336,6 +359,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     openLightbox={ this.openLightbox }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
+                    setTabState={ this.setTabState }
+                    tabRef={ this.tabRef }
+                    tagProjectManager={ this.tagProjectManager }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :
@@ -371,6 +397,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     searchMachinery={ this.searchMachinery }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
+                    tabRef={ this.tabRef }
+                    tabIndex={ this.state.tabIndex }
+                    setTabState={ this.setTabState }
+                    projectManager={ this.state.projectManager }
                 />
             </section>
         </section>;

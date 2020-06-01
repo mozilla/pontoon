@@ -358,6 +358,17 @@ def serialized_notifications(self):
     }
 
 
+def user_serialize(self):
+    """ Serialize Project contact """
+
+    return {
+        "contact": self.name_or_email,
+        "email": self.email,
+        "first_name": self.first_name,
+        "last_name": self.last_name,
+    }
+
+
 class UserProjectsManager(UserManager):
     def filter_visibility(self, project):
         """Return users that can view/access the project."""
@@ -384,6 +395,7 @@ User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("serialized_notifications", serialized_notifications)
 User.add_to_class("projects", UserProjectsManager())
+User.add_to_class("serialize", user_serialize)
 
 
 class PermissionChangelog(models.Model):
@@ -1264,6 +1276,7 @@ class Project(AggregatedStats):
             "width": self.width or "",
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
+            "contact": self.contact.serialize() if self.contact else None,
         }
 
     def save(self, *args, **kwargs):
@@ -2797,6 +2810,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 if original_plural != "":
                     original_plural = entity.alternative_originals[-1].string
 
+            print (entity.resource.project.serialize())
             entities_array.append(
                 {
                     "pk": entity.pk,

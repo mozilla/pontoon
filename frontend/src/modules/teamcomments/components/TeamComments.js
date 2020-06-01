@@ -15,6 +15,7 @@ type Props = {|
     parameters: NavigationParams,
     teamComments: TeamCommentState,
     user: UserState,
+    projectManager: Object,
     addComment: (string, ?number) => void,
 |};
 
@@ -40,6 +41,7 @@ export default function TeamComments(props: Props) {
                 comments={ comments }
                 parameters={ parameters }
                 user={ user }
+                projectManager={ projectManager }
                 canComment={ canComment }
                 addComment={ addComment }
             />

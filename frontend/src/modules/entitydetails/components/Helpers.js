@@ -31,12 +31,16 @@ type Props = {|
     terms: TermState,
     parameters: NavigationParams,
     user: UserState,
+    tabRef: Object,
+    tabIndex: number,
+    projectManager: Object,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
+    setTabState: (number) => void,
 |};
 
 
@@ -57,17 +61,24 @@ export default class Helpers extends React.Component<Props> {
             terms,
             parameters,
             user,
+            tabRef,
+            tabIndex,
+            projectManager,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
             addComment,
             addTextToEditorTranslation,
             navigateToPath,
+            setTabState,
         } = this.props;
 
         return <>
             <div className="top">
-                <Tabs>
+                <Tabs
+                    selectedIndex={ tabIndex }
+                    onSelect={ tab => setTabState(tab) }
+                >
                     <TabList>
                         {
                             parameters.project === 'terminology' ? null :
@@ -79,6 +90,13 @@ export default class Helpers extends React.Component<Props> {
                             </Tab>
                         }
                         <Tab>
+                        <Tab>
+                            <Localized id='entitydetails-Helpers--terms'>
+                                { 'Terms' }
+                            </Localized>
+                            <TermCount terms={ terms }/>
+                        </Tab>
+                        <Tab ref={ tabRef }>
                             <Localized id='entitydetails-Helpers--comments'>
                                 { 'Comments' }
                             </Localized>
@@ -103,6 +121,7 @@ export default class Helpers extends React.Component<Props> {
                             teamComments={ teamComments }
                             user={ user }
                             addComment={ addComment }
+                            projectManager={ projectManager }
                         />
                     </TabPanel>
                 </Tabs>

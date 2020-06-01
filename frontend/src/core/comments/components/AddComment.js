@@ -32,6 +32,7 @@ type Props = {|
     imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
+    projectManager?: Object,
     addComment: (string, ?number) => void,
 |};
 
@@ -43,8 +44,11 @@ export default function AddComments(props: Props) {
         imageURL,
         parameters,
         translation,
+        projectManager,
         addComment,
     } = props;
+
+    console.log(projectManager);
 
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
 

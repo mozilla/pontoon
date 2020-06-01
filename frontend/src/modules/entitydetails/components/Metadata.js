@@ -15,17 +15,22 @@ import TermsPopup from './TermsPopup';
 import type { Entity, TermType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
+import type { UserState } from 'core/user';
 
 
 type Props = {|
     +entity: Entity,
+    +user: UserState,
     +isReadOnlyEditor: boolean,
     +locale: Locale,
     +pluralForm: number,
     +terms: TermState,
+    tabRef: Object,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
+    +setTabState: (number) => void,
+    +tagProjectManager: (string) => void,
 |};
 
 type State = {|
@@ -230,9 +235,23 @@ export default class Metadata extends React.Component<Props, State> {
         this.props.navigateToPath(path);
     }
 
+    openTeamComments = () => {
+        const teamCommentsTab = this.props.tabRef.current;
+        const index = teamCommentsTab._reactInternalFiber.index;
+        this.sendContactInfo();
+        return this.props.setTabState(index);
+    }
+
+    sendContactInfo = () => {
+        return this.props.tagProjectManager(
+            this.props.entity.project.contact
+        );
+    }
+
     render(): React.Node {
-        const { entity, isReadOnlyEditor, locale, openLightbox, pluralForm, terms } = this.props;
+        const { entity, user, isReadOnlyEditor, locale, openLightbox, pluralForm, terms } = this.props;
         const { popupTerms } = this.state;
+        const projectManager = entity.project.contact;
 
         return <div className="metadata">
             <Screenshots
@@ -276,6 +295,18 @@ export default class Metadata extends React.Component<Props, State> {
                     </a>
                 </Property>
             </Localized>
-        </div>;
+            { !user.isAuthenticated || !projectManager ? null :
+                <div className='source-comments-button'>
+                    <Localized id='entitydetails-Metadata--context-issue-button'>
+                        <button
+                            className='context-button'
+                            onClick={ this.openTeamComments }
+                        >
+                            {'Request context / Report issue' }
+                        </button>
+                    </Localized>
+                </div>
+            }
+        </div>
     }
 }
