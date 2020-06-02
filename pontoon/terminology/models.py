@@ -57,7 +57,7 @@ class TermQuerySet(models.QuerySet):
 
 class Term(models.Model):
     text = models.CharField(max_length=255)
-    entity = models.OneToOneField("base.Entity", models.SET_NULL, null=True)
+    entity = models.OneToOneField("base.Entity", models.SET_NULL, null=True, blank=True)
 
     PARTS_OF_SPEECH = (
         ("adjective", "Adjective"),
