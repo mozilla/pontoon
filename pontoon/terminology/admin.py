@@ -24,8 +24,8 @@ class TermAdmin(admin.ModelAdmin):
         "forbidden",
     )
     list_editable = (
-        "part_of_speech",
         "status",
+        "part_of_speech",
         "case_sensitive",
         "exact_match",
         "do_not_translate",
