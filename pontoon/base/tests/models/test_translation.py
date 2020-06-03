@@ -2,7 +2,9 @@ from __future__ import absolute_import
 
 import pytest
 
-from pontoon.base.models import TranslationMemoryEntry
+from mock import patch, call
+
+from pontoon.base.models import Project, TranslationMemoryEntry
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -244,3 +246,32 @@ def test_translation_rejected_not_in_tm(locale_a, entity_a):
             target=translation.string,
             locale=translation.locale,
         )
+
+
+@pytest.mark.django_db
+@patch("pontoon.base.models.Entity.reset_term_translation")
+def test_translation_in_terminology_saved(reset_term_translation_mock, locale_a):
+    """
+    When translation in the "Terminology" project gets saved,
+    call the reset_term_translation() method.
+    """
+    project, _ = Project.objects.get_or_create(slug="terminology")
+    entity = EntityFactory.create(resource=project.resources.first())
+    TranslationFactory.create(locale=locale_a, entity=entity)
+
+    assert reset_term_translation_mock.called
+    assert reset_term_translation_mock.call_args == call(locale_a)
+
+
+@pytest.mark.django_db
+@patch("pontoon.base.models.Entity.reset_term_translation")
+def test_translation_not_in_terminology_saved(
+    reset_term_translation_mock, locale_a, entity_a
+):
+    """
+    When translation not in the "Terminology" project gets saved,
+    do not call the reset_term_translation() method.
+    """
+    TranslationFactory.create(locale=locale_a, entity=entity_a)
+
+    assert not reset_term_translation_mock.called
