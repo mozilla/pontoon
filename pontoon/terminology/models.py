@@ -14,13 +14,13 @@ def update_terminology_project_stats():
     resource.total_strings = total_strings
     resource.save(update_fields=["total_strings"])
 
-    translated_resources = TranslatedResource.objects.filter(resource=resource)
+    translated_resources = list(TranslatedResource.objects.filter(resource=resource))
 
     for translated_resource in translated_resources:
         translated_resource.calculate_stats(save=False)
 
     bulk_update(
-        list(translated_resources),
+        translated_resources,
         update_fields=[
             "total_strings",
             "approved_strings",
