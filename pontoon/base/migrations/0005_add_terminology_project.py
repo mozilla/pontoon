@@ -31,6 +31,7 @@ def create_terminology_project(apps, schema_editor):
         "data_source": "database",
         "can_be_requested": False,
         "sync_disabled": True,
+        "visibility": "public",
         "total_strings": len(terms) * len(locales),
         "approved_strings": len(term_translations),
         "info": "A project used to localize terminology.",
