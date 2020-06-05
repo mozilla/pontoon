@@ -1,7 +1,5 @@
 import re
 
-from bulk_update.helper import bulk_update
-
 from django.db import models
 
 from pontoon.base.models import Entity, ProjectLocale, Resource, TranslatedResource
@@ -19,9 +17,9 @@ def update_terminology_project_stats():
     for translated_resource in translated_resources:
         translated_resource.calculate_stats(save=False)
 
-    bulk_update(
+    TranslatedResource.objects.bulk_update(
         translated_resources,
-        update_fields=[
+        [
             "total_strings",
             "approved_strings",
             "fuzzy_strings",
