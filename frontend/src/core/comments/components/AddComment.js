@@ -32,7 +32,7 @@ type Props = {|
     imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
-    projectManager?: Object,
+    // projectManager?: Object,
     addComment: (string, ?number) => void,
 |};
 
@@ -44,15 +44,23 @@ export default function AddComments(props: Props) {
         imageURL,
         parameters,
         translation,
-        projectManager,
+        // projectManager,
         addComment,
     } = props;
 
-    console.log(projectManager);
-
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
+    /**
+     * TODO: This works to add the mention of the PM, but it clears as soon as another char is typed.
+     * Focus is being placed at the beginning instead of the end which could be the reason
+     * Also, this breaks when opening comment tab directly - maybe inserting a node instead of setting state??
+     */ 
+    
+    // const insertProjectManager = (projectManager) => {
+    //     return [{ type: 'mention', character: projectManager.contact, url: `mailto:${projectManager.email}`, children: [{ text: projectManager.contact }, { text: ' ' }]}];
+    // }
 
     const ref: any = React.useRef();
+    // TODO: Make this conditional on if project Manager then call insertProjectManater ???? - this approach breaks the initial value
     const [value, setValue] = React.useState(initialValue);
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
@@ -296,7 +304,7 @@ const insertMention = (editor, character) => {
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
 };
-  
+
 const Element = (props) => {
     const { attributes, children, element } = props;
         switch (element.type) {
