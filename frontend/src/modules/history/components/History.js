@@ -7,7 +7,7 @@ import './History.css';
 
 import Translation from './Translation';
 
-import type { Entity } from 'core/api';
+import type { Entity, UsersType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from '..';
@@ -20,8 +20,10 @@ type Props = {|
     isTranslator: boolean,
     locale: Locale,
     user: UserState,
+    users: Array<UsersType>,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -49,8 +51,10 @@ export default class History extends React.Component<Props> {
             isTranslator,
             locale,
             user,
+            users,
             deleteTranslation,
             addComment,
+            getUsers,
             updateEditorTranslation,
             updateTranslationStatus,
         } = this.props;
@@ -76,6 +80,8 @@ export default class History extends React.Component<Props> {
                         user={ user }
                         deleteTranslation={ deleteTranslation }
                         addComment={ addComment }
+                        getUsers={ getUsers }
+                        users={ users }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateTranslationStatus={ updateTranslationStatus }
                         key={ index }

@@ -7,6 +7,22 @@ import * as notification from 'core/notification';
 import * as history from 'modules/history';
 import * as teamcomments from 'modules/teamcomments';
 
+export const RECEIVE: 'users/RECEIVE' = 'users/RECEIVE';
+
+
+export type ReceiveAction = {|
+    +type: typeof RECEIVE,
+    +users: Array<Object>,    
+|}
+
+export function receive(
+    users: Array<Object>,
+): ReceiveAction {
+    return {
+        type: RECEIVE,
+        users,
+    };
+}
 
 export function addComment(
     entity: number,
@@ -32,7 +48,15 @@ export function addComment(
     }
 }
 
+export function getUsers(): Function {
+    return async dispatch => {
+        const content = await api.comment.getUsers();
+        dispatch(receive(content));
+    }
+}
+
 
 export default {
     addComment,
+    getUsers,
 };

@@ -8,6 +8,7 @@ import './TeamComments.css';
 import { CommentsList } from 'core/comments';
 
 import type { NavigationParams } from 'core/navigation';
+import type { UsersType } from 'core/api';
 import type { UserState } from 'core/user';
 import type { TeamCommentState } from 'modules/teamcomments';
 
@@ -16,12 +17,22 @@ type Props = {|
     teamComments: TeamCommentState,
     user: UserState,
     projectManager: Object,
+    users: Array<UsersType>,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
 export default function TeamComments(props: Props) {
-    const { teamComments, user, parameters, addComment } = props;
+    const { 
+        teamComments, 
+        user,
+        parameters,
+        projectManager,
+        users,
+        addComment,
+        getUsers, 
+    } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
         return null;
@@ -42,8 +53,10 @@ export default function TeamComments(props: Props) {
                 parameters={ parameters }
                 user={ user }
                 projectManager={ projectManager }
+                users={ users }
                 canComment={ canComment }
                 addComment={ addComment }
+                getUsers={ getUsers }
             />
         }
     </section>

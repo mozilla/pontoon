@@ -11,7 +11,7 @@ import { Terms, TermCount } from 'modules/terms';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
-import type { Entity, SourceType } from 'core/api';
+import type { Entity, SourceType, UsersType } from 'core/api';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
@@ -34,10 +34,12 @@ type Props = {|
     tabRef: Object,
     tabIndex: number,
     projectManager: Object,
+    users: Array<UsersType>,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
     setTabState: (number) => void,
@@ -64,10 +66,12 @@ export default class Helpers extends React.Component<Props> {
             tabRef,
             tabIndex,
             projectManager,
+            users,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
             addComment,
+            getUsers,
             addTextToEditorTranslation,
             navigateToPath,
             setTabState,
@@ -121,6 +125,8 @@ export default class Helpers extends React.Component<Props> {
                             teamComments={ teamComments }
                             user={ user }
                             addComment={ addComment }
+                            getUsers={ getUsers }
+                            users={ users }
                             projectManager={ projectManager }
                         />
                     </TabPanel>

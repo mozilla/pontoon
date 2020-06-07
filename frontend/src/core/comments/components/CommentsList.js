@@ -7,7 +7,7 @@ import './CommentsList.css';
 import { Comment, AddComment } from 'core/comments';
 
 import type { NavigationParams } from 'core/navigation';
-import type { TranslationComment } from 'core/api';
+import type { TranslationComment, UsersType } from 'core/api';
 import type { UserState } from 'core/user';
 import type { HistoryTranslation } from 'modules/history'
 
@@ -18,8 +18,10 @@ type Props = {|
     translation?: HistoryTranslation,
     user: UserState,
     projectManager?: Object,
+    users: Array<UsersType>,
     canComment: boolean,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
@@ -31,6 +33,8 @@ export default function CommentsList(props: Props) {
         user,
         canComment,
         addComment,
+        getUsers,
+        users,
         projectManager,
     } = props;
 
@@ -53,7 +57,9 @@ export default function CommentsList(props: Props) {
                 imageURL={ user.gravatarURLSmall}
                 translation={ translationId }
                 projectManager={ projectManager }
+                users={ users }
                 addComment={ addComment }
+                getUsers={ getUsers }
             />
         }
     </div>

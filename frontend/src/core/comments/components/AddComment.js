@@ -24,7 +24,7 @@ import './AddComment.css';
 import { UserAvatar } from 'core/user'
 
 import type { NavigationParams } from 'core/navigation';
-import type { TextType, MentionType, InitialType } from 'core/api';
+import type { TextType, MentionType, InitialType, UsersType } from 'core/api';
 
 type Props = {|
     user: string,
@@ -32,8 +32,10 @@ type Props = {|
     imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
-    // projectManager?: Object,
+    projectManager?: Object,
+    users: Array<UsersType>,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
 |};
 
 
@@ -44,9 +46,16 @@ export default function AddComments(props: Props) {
         imageURL,
         parameters,
         translation,
-        // projectManager,
+        projectManager,
+        users,
         addComment,
+        getUsers,
     } = props;
+
+    if (projectManager) { console.log(projectManager); }
+    console.log(users);
+    
+    
 
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     /**
@@ -70,6 +79,8 @@ export default function AddComments(props: Props) {
         () => withMentions(withReact(createEditor())), []
     );
 
+    const allUsers = users;
+    const USERS = allUsers.map(user => user.name);
     const chars = USERS.filter(c =>
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 10);
@@ -116,7 +127,7 @@ export default function AddComments(props: Props) {
                     case 'Enter':
                         event.preventDefault();
                         Transforms.select(editor, target);
-                        insertMention(editor, chars[index]);
+                        insertMention(editor, chars[index], users);
                         setTarget(null);
                         break;
                     case 'Escape':
@@ -128,7 +139,7 @@ export default function AddComments(props: Props) {
                 }
             }
         },
-        [chars, editor, index, target]
+        [chars, editor, index, target, users]
     );
 
     const onKeyDown = (event: SyntheticKeyboardEvent<>) => {
@@ -168,7 +179,9 @@ export default function AddComments(props: Props) {
             const afterRange = Editor.range(editor, start, after);
             const afterText = Editor.string(editor, afterRange);
             const afterMatch = afterText.match(/^(\s|$)/);
-    
+
+            if (beforeMatch) { getUsers() }
+
             if (beforeMatch && afterMatch) {
                 setTarget(beforeRange);
                 setSearch(beforeMatch[1]);
@@ -296,7 +309,7 @@ const withMentions = (editor) => {
     return editor
 };
   
-const insertMention = (editor, character) => {
+const insertMention = (editor, character, users) => {
     const selectedUser = users.filter(user => user.name === character);
     const userUrl = selectedUser[0].url;
     const display = selectedUser[0].display;
@@ -328,27 +341,25 @@ const MentionElement = ({ attributes, children, element }) => {
     )
 };
 
-const users = [
-    { 
-        'name': 'Matjaz',
-        'url': 'https://matjaz.com',
-        'display': 'mathjazz'
-    },
-    { 
-        'name': 'Adrian',
-        'url': 'https://adrian.com',
-        'display': 'adngdb'
-    },
-    { 
-        'name': "Jotes",
-        'url': 'https://jotes.com',
-        'display': 'jotes',
-    },
-    { 
-        'name': 'April',
-        'url': 'https://april.com',
-        'display': 'abowler', 
-    },
-];
-
-const USERS = users.map(user => user.name);
+// const users = [
+//     { 
+//         'name': 'Matjaz',
+//         'url': 'https://matjaz.com',
+//         'display': 'mathjazz'
+//     },
+//     { 
+//         'name': 'Adrian',
+//         'url': 'https://adrian.com',
+//         'display': 'adngdb'
+//     },
+//     { 
+//         'name': "Jotes",
+//         'url': 'https://jotes.com',
+//         'display': 'jotes',
+//     },
+//     { 
+//         'name': 'April',
+//         'url': 'https://april.com',
+//         'display': 'abowler', 
+//     },
+// ];

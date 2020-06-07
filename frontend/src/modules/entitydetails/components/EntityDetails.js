@@ -29,7 +29,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity, SourceType } from 'core/api';
+import type { Entity, SourceType, UsersType } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -61,6 +61,7 @@ type Props = {|
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
+    users: Array<UsersType>,
 |};
 
 type InternalProps = {|
@@ -303,6 +304,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    getUsers = () => {
+        this.props.dispatch(comments.actions.getUsers());
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -376,6 +381,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
                     addComment={ this.addComment }
+                    getUsers={ this.getUsers }
+                    users={ state.users }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                 />
@@ -390,6 +397,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     teamComments={ state.teamComments }
                     terms={ state.terms }
                     addComment={ this.addComment }
+                    getUsers={ this.getUsers }
+                    users={ state.users }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
@@ -428,6 +437,7 @@ const mapStateToProps = (state: Object): Props => {
         selectedEntity: entities.selectors.getSelectedEntity(state),
         unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
+        users: state[comments.NAME],
     };
 };
 

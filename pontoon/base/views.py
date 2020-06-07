@@ -312,6 +312,17 @@ def entities(request):
     )
 
 
+def get_users(request):
+    """Get all users."""
+    users = User.objects.all()
+    payload = []
+
+    for u in users:
+        payload.append({"name": u.first_name or u.email, "url": u.profile_url, "display": u.name_or_email})
+
+    return JsonResponse(payload, safe=False)
+
+
 def _serialize_translation_values(query):
     translations = query.values(
         "locale__pk",

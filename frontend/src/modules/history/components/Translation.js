@@ -11,7 +11,7 @@ import { CommentsList } from 'core/comments';
 import { UserAvatar } from 'core/user';
 import * as utils from 'core/utils';
 
-import type { Entity } from 'core/api';
+import type { Entity, UsersType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from '..';
@@ -26,9 +26,11 @@ type Props = {|
     activeTranslation: HistoryTranslation,
     locale: Locale,
     user: UserState,
+    users: Array<UsersType>,
     index: number,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
+    getUsers: () => void,
     updateEditorTranslation: (string, string) => void,
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
@@ -242,9 +244,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             translation,
             locale,
             user,
+            users,
             index,
             activeTranslation,
             addComment,
+            getUsers,
         } = this.props;
 
         const commentCount = translation.comments.length;
@@ -466,8 +470,10 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     comments={ translation.comments }
                     translation={ translation }
                     user={ user }
+                    users={ users }
                     canComment={ canComment }
                     addComment={ addComment }
+                    getUsers={ getUsers }
                 />
             }
         </li>;
