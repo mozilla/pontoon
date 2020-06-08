@@ -97,6 +97,7 @@ export default class Helpers extends React.Component<Props> {
                     }
                     <TabPanel>
                         <TeamComments
+                            parameters={ parameters }
                             teamComments={ teamComments }
                             user={ user }
                             addComment={ addComment }
