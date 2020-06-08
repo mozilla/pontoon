@@ -3,7 +3,7 @@
 import logging
 
 from django.db import IntegrityError, migrations
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 
 log = logging.getLogger(__name__)
@@ -119,9 +119,18 @@ def create_terminology_project(apps, schema_editor):
     ProjectLocale.objects.bulk_create(project_locales)
     TranslatedResource.objects.bulk_create(translated_resources)
 
+    # Update locale stats
+    for locale in locales:
+        locale.total_strings += len(terms)
+        locale.approved_strings += counts[locale.code]
+
+    Locale.objects.bulk_update(list(locales), ["total_strings", "approved_strings",])
+
 
 def remove_terminology_project(apps, schema_editor):
     Project = apps.get_model("base", "Project")
+    Locale = apps.get_model("base", "Locale")
+    TranslatedResource = apps.get_model("base", "TranslatedResource")
 
     try:
         project = Project.objects.get(slug="terminology")
@@ -129,6 +138,26 @@ def remove_terminology_project(apps, schema_editor):
         return
 
     project.delete()
+
+    # Aggregate locale stats
+    locales = list(Locale.objects.exclude(code__in=["en-US", "en"]))
+
+    for locale in locales:
+        translated_resources = TranslatedResource.objects.filter(
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__visibility="public",
+            locale=locale,
+        )
+
+        aggregated_stats = translated_resources.aggregate(
+            total=Sum("resource__total_strings"), approved=Sum("approved_strings"),
+        )
+
+        locale.total_strings = aggregated_stats["total"] or 0
+        locale.approved_strings = aggregated_stats["approved"] or 0
+
+    Locale.objects.bulk_update(locales, ["total_strings", "approved_strings",])
 
 
 class Migration(migrations.Migration):
