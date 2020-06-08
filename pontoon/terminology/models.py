@@ -149,7 +149,7 @@ class Term(models.Model):
 
         if created:
             entity.order = (
-                Entity.objects.filter(resource=resource).order_by("-order")[0].order
+                Entity.objects.filter(resource=resource).order_by("-order")[0].order + 1
             )
             entity.save(update_fields=["order"])
         else:
