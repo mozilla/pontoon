@@ -53,22 +53,25 @@ export default function AddComments(props: Props) {
         getUsers,
     } = props;
 
-    if (projectManager) { console.log(projectManager); }
-    
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
+       
     /**
-     * TODO: This works to add the mention of the PM, but it clears as soon as another char is typed.
-     * Focus is being placed at the beginning instead of the end which could be the reason
-     * Also, this breaks when opening comment tab directly - maybe inserting a node instead of setting state??
+     * TODO: This works to add the mention of the PM, but the focus is off. Initial value does not autofocus
+     * and no focus occurs when projectManager is inserted
      */ 
-    
-    // const insertProjectManager = (projectManager) => {
-    //     return [{ type: 'mention', character: projectManager.contact, url: `mailto:${projectManager.email}`, children: [{ text: projectManager.contact }, { text: ' ' }]}];
-    // }
+    const insertProjectManager = (projectManager) => {
+        return [{ 
+            type: 'mention', character: projectManager.contact, 
+            url: projectManager.profile_url, 
+            children: [{ text: projectManager.contact }]
+        }];
+    }
 
     const ref: any = React.useRef();
-    // TODO: Make this conditional on if project Manager then call insertProjectManater ???? - this approach breaks the initial value
-    const [value, setValue] = React.useState(initialValue);
+    const [value, setValue] = React.useState(projectManager && Object.keys(projectManager).length !== 0 
+        ? insertProjectManager(projectManager) 
+        : initialValue
+    );
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');

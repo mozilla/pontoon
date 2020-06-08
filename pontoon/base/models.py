@@ -364,6 +364,7 @@ def user_serialize(self):
     return {
         "contact": self.name_or_email,
         "email": self.email,
+        "profile_url": self.profile_url,
         "first_name": self.first_name,
         "last_name": self.last_name,
     }
