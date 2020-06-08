@@ -11,7 +11,8 @@ import { Terms, TermCount } from 'modules/terms';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
-import type { Entity, SourceType, UsersType } from 'core/api';
+import type { CommentState } from 'core/comments';
+import type { Entity, SourceType } from 'core/api';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
@@ -34,7 +35,7 @@ type Props = {|
     tabRef: Object,
     tabIndex: number,
     projectManager: Object,
-    users: Array<UsersType>,
+    users: CommentState,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,

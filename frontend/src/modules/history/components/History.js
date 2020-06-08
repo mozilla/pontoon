@@ -7,7 +7,9 @@ import './History.css';
 
 import Translation from './Translation';
 
-import type { Entity, UsersType } from 'core/api';
+
+import type { CommentState } from 'core/comments';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from '..';
@@ -20,7 +22,7 @@ type Props = {|
     isTranslator: boolean,
     locale: Locale,
     user: UserState,
-    users: Array<UsersType>,
+    users: CommentState,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
     getUsers: () => void,

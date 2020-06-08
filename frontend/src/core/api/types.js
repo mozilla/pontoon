@@ -51,12 +51,6 @@ export type InitialType = {|
     children: Array<TextType>
 |};
 
-export type UsersType = {|
-    name: string,
-    url: string,
-    display: string,
-|}
-
 
 /**
  * Term entry with translation.

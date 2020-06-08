@@ -23,6 +23,7 @@ import './AddComment.css';
 
 import { UserAvatar } from 'core/user'
 
+import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
 import type { TextType, MentionType, InitialType, UsersType } from 'core/api';
 
@@ -33,7 +34,7 @@ type Props = {|
     parameters: ?NavigationParams,
     translation?: ?number,
     projectManager?: Object,
-    users: Array<UsersType>,
+    users: CommentState,
     addComment: (string, ?number) => void,
     getUsers: () => void,
 |};
@@ -53,10 +54,7 @@ export default function AddComments(props: Props) {
     } = props;
 
     if (projectManager) { console.log(projectManager); }
-    console.log(users);
     
-    
-
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     /**
      * TODO: This works to add the mention of the PM, but it clears as soon as another char is typed.
@@ -79,8 +77,12 @@ export default function AddComments(props: Props) {
         () => withMentions(withReact(createEditor())), []
     );
 
-    const allUsers = users;
-    const USERS = allUsers.map(user => user.name);
+    React.useEffect(() => {
+        getUsers();
+    }, [getUsers])
+
+    const usersList = users.users;
+    const USERS = usersList.map(user => user.name);
     const chars = USERS.filter(c =>
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 10);
@@ -127,7 +129,7 @@ export default function AddComments(props: Props) {
                     case 'Enter':
                         event.preventDefault();
                         Transforms.select(editor, target);
-                        insertMention(editor, chars[index], users);
+                        insertMention(editor, chars[index], users.users);
                         setTarget(null);
                         break;
                     case 'Escape':
@@ -179,8 +181,6 @@ export default function AddComments(props: Props) {
             const afterRange = Editor.range(editor, start, after);
             const afterText = Editor.string(editor, afterRange);
             const afterMatch = afterText.match(/^(\s|$)/);
-
-            if (beforeMatch) { getUsers() }
 
             if (beforeMatch && afterMatch) {
                 setTarget(beforeRange);
@@ -363,3 +363,5 @@ const MentionElement = ({ attributes, children, element }) => {
 //         'display': 'abowler', 
 //     },
 // ];
+
+// const USERS = users.map(user => user.name);

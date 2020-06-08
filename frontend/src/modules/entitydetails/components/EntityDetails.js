@@ -29,7 +29,8 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity, SourceType, UsersType } from 'core/api';
+import type { CommentState } from 'core/comments';
+import type { Entity, SourceType } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -61,7 +62,7 @@ type Props = {|
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
-    users: Array<UsersType>,
+    users: CommentState,
 |};
 
 type InternalProps = {|

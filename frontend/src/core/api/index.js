@@ -21,7 +21,6 @@ export type {
     TermType,
     TextType,
     MentionType,
-    UsersType,
     InitialType,
     MachineryTranslation,
     OtherLocaleTranslations,

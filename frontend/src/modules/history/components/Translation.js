@@ -11,7 +11,8 @@ import { CommentsList } from 'core/comments';
 import { UserAvatar } from 'core/user';
 import * as utils from 'core/utils';
 
-import type { Entity, UsersType } from 'core/api';
+import type { CommentState } from 'core/comments';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation } from '..';
@@ -26,7 +27,7 @@ type Props = {|
     activeTranslation: HistoryTranslation,
     locale: Locale,
     user: UserState,
-    users: Array<UsersType>,
+    users: CommentState,
     index: number,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
