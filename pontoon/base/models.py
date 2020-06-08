@@ -2596,16 +2596,16 @@ class Entity(DirtyFieldsMixin, models.Model):
         because it needs to be rejected first, which triggers the call to this
         function.
         """
-        approved_translations = self.translation_set.filter(
-            locale=locale, approved=True
-        )
         term = self.term
 
-        if approved_translations:
+        try:
+            approved_translation = self.translation_set.get(
+                locale=locale, approved=True
+            )
             term_translation, _ = term.translations.get_or_create(locale=locale)
-            term_translation.text = approved_translations[0].string
+            term_translation.text = approved_translation.string
             term_translation.save(update_fields=["text"])
-        else:
+        except Translation.DoesNotExist:
             term.translations.filter(locale=locale).delete()
 
     @classmethod
