@@ -147,14 +147,17 @@ class Term(models.Model):
         # Using update() to avoid circular Term.save() call
         Term.objects.filter(pk=self.pk).update(entity_id=entity.id)
 
-        if created:
-            entity.order = (
-                Entity.objects.filter(resource=resource).order_by("-order")[0].order + 1
-            )
-            entity.save(update_fields=["order"])
-        else:
+        if not created:
             entity.obsolete = False
             entity.save(update_fields=["obsolete"])
+
+        # Make sure Term entities are ordered alphabetically
+        entities = list(
+            Entity.objects.filter(resource=resource, obsolete=False).order_by("string")
+        )
+        for index, e in enumerate(entities):
+            e.order = index
+        Entity.objects.bulk_update(entities, ["order"])
 
     def obsolete_entity(self):
         entity = self.entity

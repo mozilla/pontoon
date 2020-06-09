@@ -13,8 +13,10 @@ def create_terminology_project(apps, schema_editor):
     # Collect localizable term data to create entities and translations from
     Term = apps.get_model("terminology", "Term")
     TermTranslation = apps.get_model("terminology", "TermTranslation")
-    terms = Term.objects.filter(do_not_translate=False, forbidden=False).exclude(
-        definition=""
+    terms = (
+        Term.objects.filter(do_not_translate=False, forbidden=False)
+        .exclude(definition="")
+        .order_by("text")
     )
     term_translations = TermTranslation.objects.filter(term__in=terms)
 
