@@ -4,11 +4,12 @@ import pytest
 
 from six import text_type
 
-from pontoon.base.models import Entity
+from pontoon.base.models import Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
     SubpageFactory,
+    TermFactory,
     TranslationFactory,
 )
 from pontoon.sync import KEY_SEPARATOR
@@ -181,6 +182,46 @@ def test_reset_active_translation_fuzzy_and_unreviewed(
     translation_a.save()
 
     assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
+def test_reset_term_translation(locale_a):
+    """
+    Test if TermTranslation gets properly updated when translation
+    in the "Terminology" project changes.
+    """
+    project, _ = Project.objects.get_or_create(slug="terminology")
+    entity = EntityFactory.create(resource=project.resources.first())
+
+    term = TermFactory.create()
+    entity.term = term
+
+    # No approved Translations of an Entity: no TermTranslation
+    TranslationFactory.create(locale=locale_a, entity=entity)
+    entity.reset_term_translation(locale_a)
+    assert entity.term.translations.filter(locale=locale_a).count() == 0
+
+    # First approved Translation of an Entity added: create TermTranslation to match the Translation
+    translation_approved = TranslationFactory.create(
+        locale=locale_a, entity=entity, approved=True
+    )
+    entity.reset_term_translation(locale_a)
+    assert entity.term.translations.filter(locale=locale_a).count() == 1
+    assert (
+        entity.term.translations.get(locale=locale_a).text
+        == translation_approved.string
+    )
+
+    # Another approved Translation of an Entity added: update TermTranslation to match the Translation
+    translation_approved_2 = TranslationFactory.create(
+        locale=locale_a, entity=entity, approved=True
+    )
+    entity.reset_term_translation(locale_a)
+    assert entity.term.translations.filter(locale=locale_a).count() == 1
+    assert (
+        entity.term.translations.get(locale=locale_a).text
+        == translation_approved_2.string
+    )
 
 
 @pytest.mark.django_db

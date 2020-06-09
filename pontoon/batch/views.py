@@ -136,6 +136,15 @@ def batch_edit_translations(request):
 
     mark_changed_translation(action_status["changed_entities"], locale)
 
+    # Reset term translations for entities belonging to the Terminology project
+    changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]
+    terminology_entities = Entity.objects.filter(
+        pk__in=changed_entity_pks, resource__project__slug="terminology",
+    )
+
+    for e in terminology_entities:
+        e.reset_term_translation(locale)
+
     # Update latest translation.
     if action_status["latest_translation_pk"]:
         Translation.objects.get(

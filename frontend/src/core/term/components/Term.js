@@ -8,9 +8,11 @@ import './Term.css';
 import type { TermType } from 'core/api';
 
 type Props = {|
-    term: TermType,
     isReadOnlyEditor: boolean,
+    locale: string,
+    term: TermType,
     addTextToEditorTranslation: (string) => void,
+    navigateToPath: (string) => void,
 |};
 
 
@@ -18,7 +20,7 @@ type Props = {|
  * Shows term entry with its metadata.
  */
 export default function Term(props: Props) {
-    const { term, isReadOnlyEditor } = props;
+    const { isReadOnlyEditor, locale, term } = props;
 
     const copyTermIntoEditor = (translation: string) => {
         if (isReadOnlyEditor) {
@@ -38,6 +40,14 @@ export default function Term(props: Props) {
         props.addTextToEditorTranslation(translation);
     }
 
+    const navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const path = event.currentTarget.pathname;
+        props.navigateToPath(path);
+    }
+
     // Copying into the editor is not allowed
     const cannotCopy = (isReadOnlyEditor || !term.translation) ? 'cannot-copy' : '';
 
@@ -48,6 +58,14 @@ export default function Term(props: Props) {
         <header>
             <span className='text'>{ term.text }</span>
             <span className='part-of-speech'>{ term.partOfSpeech }</span>
+            <a
+                href={ `/${locale}/terminology/common/?string=${term.entityId}` }
+                onClick={ navigateToPath }
+                className='translate'
+            >
+                Translate
+            </a>
+
         </header>
         <p className='translation'>{ term.translation }</p>
         <div className='details'>

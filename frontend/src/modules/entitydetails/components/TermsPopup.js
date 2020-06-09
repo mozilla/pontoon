@@ -12,9 +12,11 @@ import type { TermType } from 'core/api';
 
 type Props = {|
     +isReadOnlyEditor: boolean,
+    +locale: string,
     +terms: Array<TermType>,
     +addTextToEditorTranslation: (string) => void,
     +hide: () => void,
+    +navigateToPath: (string) => void,
 |};
 
 
@@ -34,9 +36,11 @@ export function TermsPopup(props: Props) {
 
     return <div className="terms-popup" onClick={ props.hide }>
         <TermsList
-            terms={ terms }
             isReadOnlyEditor={ props.isReadOnlyEditor }
+            locale={ props.locale }
+            terms={ terms }
             addTextToEditorTranslation={ props.addTextToEditorTranslation }
+            navigateToPath={ props.navigateToPath }
         />
     </div>;
 }
