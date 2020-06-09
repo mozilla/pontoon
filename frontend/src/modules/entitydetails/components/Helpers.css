@@ -33,6 +33,7 @@
     cursor: pointer;
     display: table-cell;
     font-weight: 300;
+    height: 44px;
     line-height: 18px;
     list-style: none;
     padding: 12px 5px 13px;
@@ -74,9 +75,4 @@
 
 .react-tabs span.count .preferred {
     color: #7BC876;
-}
-
-.react-tabs__tab,
-.react-tabs__tab-panel {
-    height: calc(100% - 44px);
 }

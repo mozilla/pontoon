@@ -7,10 +7,13 @@ import './AddComment.css';
 
 import { UserAvatar } from 'core/user'
 
+import type { NavigationParams } from 'core/navigation';
+
 type Props = {|
     user: string,
     username: string,
     imageURL: string,
+    parameters: ?NavigationParams,
     translation?: ?number,
     addComment: (string, ?number) => void,
 |};
@@ -21,6 +24,7 @@ export default function AddComments(props: Props) {
         user,
         username,
         imageURL,
+        parameters,
         translation,
         addComment,
     } = props;
@@ -78,7 +82,7 @@ export default function AddComments(props: Props) {
                 attrs={{ placeholder: true }}
             >
                 <textarea
-                    autoFocus
+                    autoFocus={ !parameters || parameters.project !== 'terminology' }
                     name='comment'
                     dir='auto'
                     placeholder={ `Write a comment…` }

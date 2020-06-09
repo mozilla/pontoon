@@ -35,7 +35,15 @@ class TestCyclicQueries(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
-            {"data": {"projects": [{"name": "Pontoon Intro"}, {"name": "Tutorial"}]}},
+            {
+                "data": {
+                    "projects": [
+                        {"name": "Pontoon Intro"},
+                        {"name": "Terminology"},
+                        {"name": "Tutorial"},
+                    ]
+                }
+            },
         )
 
     def test_project_localizations(self):

@@ -122,7 +122,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         const source = utils.getOptimizedContent(selectedEntity.machinery_original, selectedEntity.format);
 
-        if (source !== this.props.terms.sourceString) {
+        if (source !== this.props.terms.sourceString && parameters.project !== 'terminology') {
             dispatch(terms.actions.get(source, parameters.locale));
         }
 
@@ -365,6 +365,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     updateEditorTranslation={ this.updateEditorTranslation }
                     searchMachinery={ this.searchMachinery }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
+                    navigateToPath={ this.navigateToPath }
                 />
             </section>
         </section>;

@@ -249,9 +249,11 @@ export default class Metadata extends React.Component<Props, State> {
             />
             <TermsPopup
                 isReadOnlyEditor={ isReadOnlyEditor }
+                locale={ locale.code }
                 terms={ popupTerms }
                 addTextToEditorTranslation={ this.props.addTextToEditorTranslation }
                 hide={ this.hidePopupTerms }
+                navigateToPath={ this.props.navigateToPath }
             />
             { this.renderComment(entity) }
             { this.renderGroupComment(entity) }
