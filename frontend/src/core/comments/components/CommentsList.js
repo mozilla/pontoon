@@ -6,6 +6,7 @@ import './CommentsList.css';
 
 import { Comment, AddComment } from 'core/comments';
 
+import type { NavigationParams } from 'core/navigation';
 import type { TranslationComment } from 'core/api';
 import type { UserState } from 'core/user';
 import type { HistoryTranslation } from 'modules/history'
@@ -13,6 +14,7 @@ import type { HistoryTranslation } from 'modules/history'
 
 type Props = {|
     comments: Array<TranslationComment>,
+    parameters?: NavigationParams,
     translation?: HistoryTranslation,
     user: UserState,
     canComment: boolean,
@@ -23,6 +25,7 @@ type Props = {|
 export default function CommentsList(props: Props) {
     const {
         comments,
+        parameters,
         translation,
         user,
         canComment,
@@ -42,6 +45,7 @@ export default function CommentsList(props: Props) {
         </ul>
         { !canComment ? null :
             <AddComment
+                parameters={ parameters }
                 user={ user.nameOrEmail }
                 username={ user.username }
                 imageURL={ user.gravatarURLSmall}

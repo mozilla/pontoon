@@ -1,5 +1,7 @@
 /* @flow */
 
+import isEmpty from 'lodash.isempty';
+
 import api from 'core/api';
 
 import type { TeamComment } from 'core/api';
@@ -46,6 +48,12 @@ export function get(entity: number, locale: string): Function {
         await api.entity.abort();
 
         let content = await api.entity.getTeamComments(entity, locale);
+
+        // The default return value of aborted requests is {},
+        // which is incompatible with reducer
+        if (isEmpty(content)) {
+            content = [];
+        }
 
         dispatch(receive(content));
     }

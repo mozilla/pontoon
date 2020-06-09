@@ -2585,6 +2585,29 @@ class Entity(DirtyFieldsMixin, models.Model):
         else:
             return Translation()
 
+    def reset_term_translation(self, locale):
+        """
+        When translation in the "Terminology" project changes, update the corresponding
+        TermTranslation:
+        - If approved translation exists, use it as TermTranslation
+        - If approved translation doesn't exist, remove any TermTranslation instance
+
+        This method is also executed in the process of deleting a term translation,
+        because it needs to be rejected first, which triggers the call to this
+        function.
+        """
+        term = self.term
+
+        try:
+            approved_translation = self.translation_set.get(
+                locale=locale, approved=True
+            )
+            term_translation, _ = term.translations.get_or_create(locale=locale)
+            term_translation.text = approved_translation.string
+            term_translation.save(update_fields=["text"])
+        except Translation.DoesNotExist:
+            term.translations.filter(locale=locale).delete()
+
     @classmethod
     def for_project_locale(
         self,
@@ -3026,6 +3049,8 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         super(Translation, self).save(*args, **kwargs)
 
+        project = self.entity.resource.project
+
         # Only one translation can be approved at a time for any
         # Entity/Locale.
         if self.approved:
@@ -3061,7 +3086,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                     entity=self.entity,
                     translation=self,
                     locale=self.locale,
-                    project=self.entity.resource.project,
+                    project=project,
                 )
 
         # Whenever a translation changes, mark the entity as having
@@ -3069,6 +3094,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         # this but for now this is fine.
         if self.approved:
             self.entity.mark_changed(self.locale)
+
+        if project.slug == "terminology":
+            self.entity.reset_term_translation(self.locale)
 
         # We use get_or_create() instead of just get() to make it easier to test.
         translatedresource, _ = TranslatedResource.objects.get_or_create(

@@ -31,6 +31,7 @@ def get_terms(request):
             "definition": term.definition,
             "usage": term.usage,
             "translation": term.translation(locale),
+            "entity_id": term.entity_id,
         }
         payload.append(data)
 

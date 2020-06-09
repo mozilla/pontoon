@@ -9,9 +9,11 @@ import Term from './Term';
 import type { TermType } from 'core/api';
 
 type Props = {|
-    terms: Array<TermType>,
     isReadOnlyEditor: boolean,
+    locale: string,
+    terms: Array<TermType>,
     addTextToEditorTranslation: (string) => void,
+    navigateToPath: (string) => void,
 |};
 
 
@@ -23,9 +25,11 @@ export default function TermsList(props: Props) {
         { props.terms.map((term, i) => {
             return <Term
                 key={ i }
-                term={ term }
                 isReadOnlyEditor={ props.isReadOnlyEditor }
+                locale={ props.locale }
+                term={ term }
                 addTextToEditorTranslation={ props.addTextToEditorTranslation }
+                navigateToPath={ props.navigateToPath }
             />;
         }) }
     </ul>;
