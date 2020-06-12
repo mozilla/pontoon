@@ -1,4 +1,4 @@
-FROM python:3.7.6-stretch
+FROM python:3.8.3-stretch
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
