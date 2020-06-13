@@ -54,7 +54,6 @@ export default function AddComments(props: Props) {
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
        
     const ref: any = React.useRef();
-    const [value, setValue] = React.useState(initialValue);
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');
@@ -62,7 +61,14 @@ export default function AddComments(props: Props) {
     const editor = React.useMemo(
         () => withMentions(withReact(createEditor())), []
     );
+    const [value, setValue] = React.useState(initialValue);
 
+    // Set focus on Editor
+    React.useEffect(() => {
+        ReactEditor.focus(editor);
+        Transforms.select(editor, Editor.end(editor, []));
+    }, [editor])
+    
     React.useEffect(() => {
         getUsers();
     }, [getUsers])
@@ -238,7 +244,6 @@ export default function AddComments(props: Props) {
                 >
                     <Editable 
                         className='comment-editor'
-                        autoFocus
                         name='comment'
                         dir='auto' 
                         placeholder={ `Write a comment…` }
