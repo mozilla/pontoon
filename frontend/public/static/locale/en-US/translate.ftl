@@ -228,8 +228,6 @@ entitydetails-Metadata--placeholder =
 entitydetails-Metadata--resource =
     .title = Resource
 
-entitydetails-Metadata--context-issue-button = Request context / Report issue
-
 
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity

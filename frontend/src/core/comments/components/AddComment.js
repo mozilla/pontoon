@@ -33,7 +33,6 @@ type Props = {|
     imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
-    projectManager?: Object,
     users: CommentState,
     addComment: (string, ?number) => void,
     getUsers: () => void,
@@ -47,7 +46,6 @@ export default function AddComments(props: Props) {
         imageURL,
         parameters,
         translation,
-        projectManager,
         users,
         addComment,
         getUsers,
@@ -55,23 +53,8 @@ export default function AddComments(props: Props) {
 
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
        
-    /**
-     * TODO: This works to add the mention of the PM, but the focus is off. Initial value does not autofocus
-     * and no focus occurs when projectManager is inserted
-     */ 
-    const insertProjectManager = (projectManager) => {
-        return [{ 
-            type: 'mention', character: projectManager.contact, 
-            url: projectManager.profile_url, 
-            children: [{ text: projectManager.contact }]
-        }];
-    }
-
     const ref: any = React.useRef();
-    const [value, setValue] = React.useState(projectManager && Object.keys(projectManager).length !== 0 
-        ? insertProjectManager(projectManager) 
-        : initialValue
-    );
+    const [value, setValue] = React.useState(initialValue);
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');

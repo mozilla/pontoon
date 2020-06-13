@@ -32,9 +32,6 @@ type Props = {|
     terms: TermState,
     parameters: NavigationParams,
     user: UserState,
-    tabRef: Object,
-    tabIndex: number,
-    projectManager: Object,
     users: CommentState,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
@@ -43,7 +40,6 @@ type Props = {|
     getUsers: () => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
-    setTabState: (number) => void,
 |};
 
 
@@ -64,9 +60,6 @@ export default class Helpers extends React.Component<Props> {
             terms,
             parameters,
             user,
-            tabRef,
-            tabIndex,
-            projectManager,
             users,
             updateEditorTranslation,
             updateMachinerySources,
@@ -75,15 +68,11 @@ export default class Helpers extends React.Component<Props> {
             getUsers,
             addTextToEditorTranslation,
             navigateToPath,
-            setTabState,
         } = this.props;
 
         return <>
             <div className="top">
-                <Tabs
-                    selectedIndex={ tabIndex }
-                    onSelect={ tab => setTabState(tab) }
-                >
+                <Tabs>
                     <TabList>
                         {
                             parameters.project === 'terminology' ? null :
@@ -101,7 +90,7 @@ export default class Helpers extends React.Component<Props> {
                             </Localized>
                             <TermCount terms={ terms }/>
                         </Tab>
-                        <Tab ref={ tabRef }>
+                        <Tab>
                             <Localized id='entitydetails-Helpers--comments'>
                                 { 'Comments' }
                             </Localized>
@@ -128,7 +117,6 @@ export default class Helpers extends React.Component<Props> {
                             addComment={ addComment }
                             getUsers={ getUsers }
                             users={ users }
-                            projectManager={ projectManager }
                         />
                     </TabPanel>
                 </Tabs>
