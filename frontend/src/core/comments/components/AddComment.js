@@ -86,6 +86,7 @@ export default function AddComments(props: Props) {
             const rect = domRange.getBoundingClientRect();
 
             let setTop = (rect.top + window.pageYOffset) + 21;
+            let setLeft = rect.left + window.pageXOffset;
 
             // If suggestions overflow the window height then adjust the
             // position so they display above the comment
@@ -93,9 +94,16 @@ export default function AddComments(props: Props) {
             if (setTop + suggestionsHeight > window.innerHeight) { 
                 setTop = (setTop - suggestionsHeight) - 21;
             }
+            
+            // If suggestions overflow the window width then adjust the
+            // position so they display to the left of the mention
+            const suggestionsWidth = el.clientWidth
+            if (setLeft + suggestionsWidth > window.innerWidth) {
+                setLeft = rect.right - suggestionsWidth;
+            }
 
             el.style.top = `${setTop}px`;
-            el.style.left = `${rect.left + window.pageXOffset}px`;
+            el.style.left = `${setLeft}px`;
         }
     }, [chars.length, editor, index, search, target]);
 
