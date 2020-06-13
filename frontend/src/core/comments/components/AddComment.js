@@ -85,24 +85,22 @@ export default function AddComments(props: Props) {
             const domRange = ReactEditor.toDOMRange(editor, target);
             const rect = domRange.getBoundingClientRect();
 
+            let setTop = (rect.top + window.pageYOffset) + 21;
+
             // If suggestions overflow the window height then adjust the
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
-            let setTop = rect.top + window.pageYOffset;
-            
             if (setTop + suggestionsHeight > window.innerHeight) { 
-                setTop -= suggestionsHeight;
+                setTop = (setTop - suggestionsHeight) - 21;
             }
-            else {
-                setTop += 24;
-            }
+
             el.style.top = `${setTop}px`;
             el.style.left = `${rect.left + window.pageXOffset}px`;
         }
     }, [chars.length, editor, index, search, target]);
 
     const mentionsKeyDown = React.useCallback(
-        event => {
+        (event) => {
             if (target) {
                 switch (event.key) {
                     case 'ArrowDown': {
@@ -121,7 +119,7 @@ export default function AddComments(props: Props) {
                     case 'Enter':
                         event.preventDefault();
                         Transforms.select(editor, target);
-                        insertMention(editor, chars[index], users.users);
+                        insertMention(editor, chars[index], usersList);
                         setTarget(null);
                         break;
                     case 'Escape':
@@ -133,7 +131,7 @@ export default function AddComments(props: Props) {
                 }
             }
         },
-        [chars, editor, index, target, users]
+        [chars, editor, index, target, usersList]
     );
 
     const onKeyDown = (event: SyntheticKeyboardEvent<>) => {
@@ -158,7 +156,7 @@ export default function AddComments(props: Props) {
         return null;
     }
 
-    const onChange = (value) => {
+    const handleOnChange = (value) => {
         setValue(value);
         const { selection } = editor;
 
@@ -237,7 +235,7 @@ export default function AddComments(props: Props) {
             imageUrl={ imageURL }
         />
         <div className='container'>
-            <Slate  editor={ editor }  value={ value } onChange={ onChange }>
+            <Slate  editor={ editor }  value={ value } onChange={ handleOnChange }>
                 <Localized
                     id='comments-AddComment--input'
                     attrs={{ placeholder: true }}
@@ -289,15 +287,15 @@ export default function AddComments(props: Props) {
 const withMentions = (editor) => {
     const { isInline, isVoid } = editor;
   
-    editor.isInline = element => {
+    editor.isInline = (element) => {
         return element.type === 'mention' ? true : isInline(element);
     }
   
-    editor.isVoid = element => {
+    editor.isVoid = (element) => {
         return element.type === 'mention' ? true : isVoid(element);
     }
   
-    return editor
+    return editor;
 };
   
 const insertMention = (editor, character, users) => {
@@ -331,28 +329,3 @@ const MentionElement = ({ attributes, children, element }) => {
         </span>
     )
 };
-
-// const users = [
-//     { 
-//         'name': 'Matjaz',
-//         'url': 'https://matjaz.com',
-//         'display': 'mathjazz'
-//     },
-//     { 
-//         'name': 'Adrian',
-//         'url': 'https://adrian.com',
-//         'display': 'adngdb'
-//     },
-//     { 
-//         'name': "Jotes",
-//         'url': 'https://jotes.com',
-//         'display': 'jotes',
-//     },
-//     { 
-//         'name': 'April',
-//         'url': 'https://april.com',
-//         'display': 'abowler', 
-//     },
-// ];
-
-// const USERS = users.map(user => user.name);

@@ -7,16 +7,18 @@ import * as notification from 'core/notification';
 import * as history from 'modules/history';
 import * as teamcomments from 'modules/teamcomments';
 
+import type { UsersList } from 'core/api';
+
 export const RECEIVE: 'users/RECEIVE' = 'users/RECEIVE';
 
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +users: Array<Object>,    
+    +users: Array<UsersList>,    
 |}
 
 export function receive(
-    users: Array<Object>,
+    users: Array<UsersList>,
 ): ReceiveAction {
     return {
         type: RECEIVE,
@@ -48,7 +50,7 @@ export function addComment(
     }
 }
 
-export function getUsers(): Function {
+export function get(): Function {
     return async dispatch => {
         const content = await api.comment.getUsers();
         dispatch(receive(content));
@@ -58,5 +60,5 @@ export function getUsers(): Function {
 
 export default {
     addComment,
-    getUsers,
+    get,
 };

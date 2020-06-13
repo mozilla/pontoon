@@ -22,6 +22,7 @@ export type {
     TextType,
     MentionType,
     InitialType,
+    UsersList,
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,

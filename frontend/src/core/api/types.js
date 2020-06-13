@@ -51,6 +51,15 @@ export type InitialType = {|
     children: Array<TextType>
 |};
 
+/**
+ * All users for use in mentions suggestions within comments
+ */
+export type UsersList = {|
+    name: string,
+    url: string,
+    display: string,    
+|}
+
 
 /**
  * Term entry with translation.

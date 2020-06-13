@@ -7,7 +7,6 @@ import './History.css';
 
 import Translation from './Translation';
 
-
 import type { CommentState } from 'core/comments';
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -70,7 +69,7 @@ export default class History extends React.Component<Props> {
         }
 
         return <section className="history">
-            <ul className="mentions-disable-scroll">
+            <ul>
                 { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }

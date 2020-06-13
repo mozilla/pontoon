@@ -39,7 +39,7 @@ describe('<Comment>', () => {
         const content = wrapper.find('Linkify').map(item => item.props().children);
         expect(content).toContain(
             "What I hear when I'm being yelled at is people caring loudly at me."
-        )
+        );
     });
 
     it('renders a link for the author', () => {

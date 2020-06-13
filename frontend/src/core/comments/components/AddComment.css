@@ -1,7 +1,7 @@
 .comments-list .add-comment div.container {
     flex-flow: row nowrap;
     align-items: flex-end;
-    padding-bottom: 6px;
+    padding-bottom: 5px;
 }
 
 .comments-list .add-comment .comment-editor {
@@ -13,25 +13,11 @@
     flex-grow: 2;
     font-size: 11px;
     max-height: 144px;
-    line-height: 24px;
+    line-height: 21px;
     margin: auto;
     overflow: auto;
     padding: 6px;
     word-break: break-all;
-}
-
-.comments-list .add-comment .comment-editor span {
-    vertical-align: baseline !important;
-}
-
-/* Remove highlight in Chrome */
-.comments-list .add-comment textarea:focus {
-    outline: none;
-}
-
-/* Style placeholder color in Chrome */
-.comments-list .add-comment textarea::-webkit-input-placeholder {
-    color: #AAAAAA;
 }
 
 .mention-list {

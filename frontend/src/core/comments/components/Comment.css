@@ -23,7 +23,8 @@
     white-space: pre-wrap;
 }
 
-.comments-list .comment .content p {
+.comments-list .comment .content p,
+.comments-list .comment .content span {
     color: #CCCCCC;
 }
 

@@ -284,7 +284,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     getUsers = () => {
-        this.props.dispatch(comments.actions.getUsers());
+        this.props.dispatch(comments.actions.get());
     }
 
     /*

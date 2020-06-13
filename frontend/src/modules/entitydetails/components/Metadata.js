@@ -276,6 +276,6 @@ export default class Metadata extends React.Component<Props, State> {
                     </a>
                 </Property>
             </Localized>
-        </div>
+        </div>;
     }
 }
