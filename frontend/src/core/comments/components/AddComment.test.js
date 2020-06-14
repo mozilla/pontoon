@@ -11,11 +11,24 @@ const DEFAULT_USER = {
     imageURL: '',
 }
 
+const USERS = {users: 
+    { users: 
+        [
+            {
+                'name': 'April Ludwig', 
+                'url': 'aprilL@parksdept.com', 
+                'display': 'April'
+            },
+        ],
+    },
+};
+
 describe('<AddComment>', () => {
     it('calls submitComment function', () => {
         const submitCommentFn = sinon.spy();
         const wrapper = shallow(<AddComment
             { ...DEFAULT_USER }
+            { ...USERS}
             submitComment={ submitCommentFn }
         />);
 
