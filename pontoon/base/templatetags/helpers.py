@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-import cgi
+import html
 import datetime
 import json
 
@@ -252,10 +252,7 @@ def format_timedelta(value):
 @library.filter
 def nospam(self):
     return jinja2.Markup(
-        cgi.escape(self, True)
-        .replace("@", "&#64;")
-        .replace(".", "&#46;")
-        .replace("'", "&quot;")
+        html.escape(self, True).replace("@", "&#64;").replace(".", "&#46;")
     )
 
 

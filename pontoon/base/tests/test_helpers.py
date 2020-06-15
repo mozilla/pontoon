@@ -148,4 +148,4 @@ def test_helper_base_nospam_unicode(settings):
 
 
 def test_helper_base_nospam_escape(settings):
-    assert str(nospam("<>'\"@&")) == "&lt;&gt;&quot;&quot;&#64;&amp;"
+    assert str(nospam("<>'\"@&")) == "&lt;&gt;&#x27;&quot;&#64;&amp;"
