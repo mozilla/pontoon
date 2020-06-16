@@ -1,6 +1,7 @@
 import { Localized } from '@fluent/react';
 import { shallow } from 'enzyme';
 
+
 /*
  * Taken from https://github.com/mozilla/addons-frontend/blob/58d1315409f1ad6dc9b979440794df44c1128455/tests/unit/helpers.js#L276
  * Maybe that ought to be put into a library?
