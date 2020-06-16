@@ -13,11 +13,15 @@
     flex-grow: 2;
     font-size: 11px;
     max-height: 144px;
-    line-height: 21px;
+    line-height: 24px;
     margin: auto;
     overflow: auto;
     padding: 6px;
     word-break: break-all;
+}
+
+.comments-list .add-comment .comment-editor span {
+    vertical-align: baseline !important;
 }
 
 .mention-list {

@@ -57,6 +57,7 @@ export default function AddComments(props: Props) {
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');
+    const [scrollPosition, setScrollPosition] = React.useState(0);
     const renderElement = React.useCallback(props => <Element {...props} />, []);
     const editor = React.useMemo(
         () => withMentions(withReact(createEditor())), []
@@ -79,19 +80,22 @@ export default function AddComments(props: Props) {
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 10);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (target && chars.length > 0) {
             const el = ref.current;
             const domRange = ReactEditor.toDOMRange(editor, target);
             const rect = domRange.getBoundingClientRect();
+            const teamsContainer = document.querySelector('.react-tabs');
+            const teamsRect = teamsContainer ? teamsContainer.getBoundingClientRect() : null;
 
             let setTop = (rect.top + window.pageYOffset) + 21;
             let setLeft = rect.left + window.pageXOffset;
 
-            // If suggestions overflow the window height then adjust the
+            // If suggestions overflow the window or teams container height then adjust the
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
-            if (setTop + suggestionsHeight > window.innerHeight) { 
+            const teamsOverflow = teamsRect ? setTop + suggestionsHeight > teamsRect.height : false;
+            if (setTop + suggestionsHeight > window.innerHeight || teamsOverflow) { 
                 setTop = (setTop - suggestionsHeight) - 21;
             }
             
@@ -105,7 +109,32 @@ export default function AddComments(props: Props) {
             el.style.top = `${setTop}px`;
             el.style.left = `${setLeft}px`;
         }
-    }, [chars.length, editor, index, search, target]);
+    }, [chars.length, editor, index, search, target, scrollPosition]);
+
+    React.useEffect(() => {
+        // $FLOW_IGNORE
+        const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
+            const element = e.currentTarget;
+            setScrollPosition(element.scrollTop);
+        }
+        const historyScroll = document.querySelector('#historyUl');
+        const teamsScroll = document.querySelector('#react-tabs-3');
+        if (!historyScroll && !teamsScroll) {
+            return;
+        }
+
+        // $FLOW_IGNORE
+        historyScroll.addEventListener('scroll', handleScroll);
+        // $FLOW_IGNORE
+        teamsScroll.addEventListener('scroll', handleScroll);
+
+        return () => {
+            // $FLOW_IGNORE
+            historyScroll.removeEventListener('scroll', handleScroll);
+            // $FLOW_IGNORE
+            teamsScroll.removeEventListener('scroll', handleScroll);
+        }
+    }, [])
 
     const mentionsKeyDown = React.useCallback(
         (event) => {
