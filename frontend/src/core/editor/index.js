@@ -11,6 +11,8 @@ export { default as FailedChecks } from './components/FailedChecks';
 export { default as KeyboardShortcuts } from './components/KeyboardShortcuts';
 export { default as TranslationLength } from './components/TranslationLength';
 
+export { default as useUpdateTranslationStatus } from './hooks/useUpdateTranslationStatus';
+
 export type { EditorProps } from './components/connectedEditor';
 export type { EditorState } from './reducer';
 export type { Translation } from './actions';

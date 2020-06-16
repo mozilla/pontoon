@@ -5,11 +5,13 @@ import { Localized } from '@fluent/react';
 
 import './EditorMenu.css';
 
-import * as editor from 'core/editor';
 import * as user from 'core/user';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import EditorMainAction from './EditorMainAction';
+import EditorSettings from './EditorSettings';
+import FailedChecks from './FailedChecks';
+import KeyboardShortcuts from './KeyboardShortcuts';
 
 import type { EditorProps } from 'core/editor';
 
@@ -29,15 +31,8 @@ export default class EditorMenu extends React.Component<Props> {
 
         return <menu className='editor-menu'>
             { props.firstItemHook }
-            <editor.FailedChecks
-                source={ props.editor.source }
-                user={ props.user }
-                isTranslator={ props.isTranslator }
-                errors={ props.editor.errors }
-                warnings={ props.editor.warnings }
-                resetFailedChecks={ props.resetFailedChecks }
+            <FailedChecks
                 sendTranslation={ props.sendTranslation }
-                updateTranslationStatus={ props.updateTranslationStatus }
             />
             <unsavedchanges.UnsavedChanges />
             { !props.user.isAuthenticated ?
@@ -57,11 +52,11 @@ export default class EditorMenu extends React.Component<Props> {
                 </Localized>
             :
                 <React.Fragment>
-                    <editor.EditorSettings
+                    <EditorSettings
                         settings={ props.user.settings }
                         updateSetting={ props.updateSetting }
                     />
-                    <editor.KeyboardShortcuts />
+                    <KeyboardShortcuts />
                     { props.translationLengthHook }
                     <div className="actions">
                         <Localized

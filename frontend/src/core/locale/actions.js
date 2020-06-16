@@ -71,6 +71,7 @@ export function get(code: string): Function {
 }
 
 export default {
+    receive,
     request,
     get,
 };
