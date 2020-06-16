@@ -76,8 +76,8 @@ webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78
 
 # caighdean
-sacremoses==0.0.19 \
-    --hash=sha256:4220bf1474b2d735b6d7e2b27e839ac110cf0f9b4fc244fd649707dd738e3430 \
+sacremoses==0.0.43 \
+    --hash=sha256:123c1bf2664351fb05e16f87d3786dbe44a050cfd7b85161c09ad9a63a8e2948
 
 # sacremoses
 click==7.0 \
@@ -85,9 +85,9 @@ click==7.0 \
     --hash=sha256:5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7
 
 # sacremoses
-joblib==0.13.2 \
-    --hash=sha256:21e0c34a69ad7fde4f2b1f3402290e9ec46f545f15f1541c582edfe05d87b63a \
-    --hash=sha256:315d6b19643ec4afd4c41c671f9f2d65ea9d787da093487a81ead7b0bac94524
+joblib==0.15.1 \
+    --hash=sha256:61e49189c84b3c5d99a969d314853f4d1d263316cc694bec17548ebaa9c47b6e \
+    --hash=sha256:6825784ffda353cc8a1be573118085789e5b5d29401856b35b756645ab5aecb5
 
 # sacremoses
 tqdm==4.31.1 \

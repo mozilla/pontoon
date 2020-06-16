@@ -1,4 +1,4 @@
-FROM python:3.7.6-stretch
+FROM python:3.8.3-buster
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -32,8 +32,8 @@ RUN apt-get update \
         build-essential \
         libmemcached-dev \
         nodejs \
-        postgresql-client-9.6 \
-        postgresql-server-dev-9.6 \
+        postgresql-client-11 \
+        postgresql-server-dev-11 \
         yarn \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
