@@ -52,11 +52,13 @@ export function update(translation: Translation, changeSource?: string): UpdateA
 export type UpdateSelectionAction = {|
     +type: typeof UPDATE_SELECTION,
     +content: string,
+    +changeSource: string,
 |};
-export function updateSelection(content: string): UpdateSelectionAction {
+export function updateSelection(content: string, changeSource?: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+        changeSource: changeSource || 'internal',
     };
 }
 

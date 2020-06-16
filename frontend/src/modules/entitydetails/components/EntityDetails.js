@@ -19,12 +19,11 @@ import * as utils from 'core/utils';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
-import * as genericeditor from 'modules/genericeditor';
-import * as fluenteditor from 'modules/fluenteditor';
 import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 import * as notification from 'core/notification';
 
+import EditorSelector from './EditorSelector';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
@@ -257,8 +256,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(editor.actions.updateMachinerySources(machinerySources, machineryTranslation));
     }
 
-    addTextToEditorTranslation = (content: string) => {
-        this.props.dispatch(editor.actions.updateSelection(content));
+    addTextToEditorTranslation = (content: string, changeSource?: string) => {
+        this.props.dispatch(editor.actions.updateSelection(content, changeSource));
     }
 
     deleteTranslation = (translationId: number) => {
@@ -338,10 +337,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
                 />
-                { state.selectedEntity.format === 'ftl' ?
-                    <fluenteditor.Editor /> :
-                    <genericeditor.Editor />
-                }
+                <EditorSelector
+                    fileFormat={ state.selectedEntity.format }
+                    key={ state.selectedEntity.pk }
+                />
                 <history.History
                     entity={ state.selectedEntity }
                     history={ state.history }
@@ -358,6 +357,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             </section>
             <section className="third-column">
                 <Helpers
+                    editor={ state.editor }
                     entity={ state.selectedEntity }
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }

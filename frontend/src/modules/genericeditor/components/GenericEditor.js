@@ -1,65 +1,57 @@
 /* @flow */
 
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
+import * as entities from 'core/entities';
 import * as plural from 'core/plural';
 
 import GenericTranslationForm from './GenericTranslationForm';
 
-import type { EditorProps } from 'core/editor';
 
+/**
+ * Editor for regular translations.
+ *
+ * Used for all file formats except Fluent.
+ *
+ * Shows a plural selector, a translation form and a menu.
+ */
+export default function GenericEditor() {
+    editor.useLoadTranslation();
+    const updateTranslation = editor.useUpdateTranslation();
+    const clearEditor = editor.useClearEditor();
+    const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
+    const sendTranslation = editor.useSendTranslation();
 
-export class EditorBase extends React.Component<EditorProps> {
-    componentDidMount() {
-        this.props.setInitialTranslation(this.props.activeTranslationString);
-        this.props.updateTranslation(this.props.activeTranslationString, true);
+    const translation = useSelector(state => state.editor.translation);
+    const entity = useSelector(state => entities.selectors.getSelectedEntity(state));
+    const pluralForm = useSelector(state => plural.selectors.getPluralForm(state));
+
+    if (!entity) {
+        return null;
     }
 
-    componentDidUpdate(prevProps: EditorProps) {
-        const { pluralForm, entity, activeTranslationString } = this.props;
+    const original = (pluralForm <= 0) ? entity.original : entity.original_plural;
 
-        if (
-            pluralForm !== prevProps.pluralForm ||
-            entity !== prevProps.entity
-        ) {
-            this.props.setInitialTranslation(activeTranslationString);
-            this.props.updateTranslation(activeTranslationString, true);
-        }
-    }
-
-    render() {
-        const props = this.props;
-
-        // Because Flow.
-        if (typeof(props.editor.translation) !== 'string') {
-            return null;
-        }
-
-        // Transitional state when switching view despite unsaved changes.
-        if (!props.entity) {
-            return null;
-        }
-
-        const original = (props.pluralForm <= 0) ? props.entity.original : props.entity.original_plural;
-
-        return <>
+    return (
+        <>
             <plural.PluralSelector />
-            <GenericTranslationForm { ...props } />
+            <GenericTranslationForm
+                sendTranslation={ sendTranslation }
+                updateTranslation={ updateTranslation }
+            />
             <editor.EditorMenu
                 translationLengthHook={ <editor.TranslationLength
-                    comment={ props.entity.comment }
-                    format={ props.entity.format }
+                    comment={ entity.comment }
+                    format={ entity.format }
                     original={ original }
-                    translation={ props.editor.translation }
+                    translation={ translation }
                 /> }
-                clearEditor={ props.clearEditor }
-                copyOriginalIntoEditor={ props.copyOriginalIntoEditor }
-                sendTranslation={ props.sendTranslation }
+                clearEditor={ clearEditor }
+                copyOriginalIntoEditor={ copyOriginalIntoEditor }
+                sendTranslation={ sendTranslation }
             />
-        </>;
-    }
+        </>
+    );
 }
-
-
-export default editor.connectedEditor(EditorBase);

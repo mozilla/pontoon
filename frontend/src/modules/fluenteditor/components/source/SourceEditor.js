@@ -6,11 +6,8 @@ import * as editor from 'core/editor';
 
 import { GenericTranslationForm } from 'modules/genericeditor';
 
-import type { EditorProps } from 'core/editor';
-
 
 type Props = {
-    ...EditorProps,
     ftlSwitch: React.Node,
 };
 
@@ -21,18 +18,24 @@ type Props = {
  * Displayed when the Rich Editor cannot handle the translation, or if a user
  * forces showing the Fluent source.
  */
-export default class SourceEditor extends React.Component<Props> {
-    render() {
-        const { ftlSwitch, ...props } = this.props;
+export default function SourceEditor(props: Props) {
+    const clearEditor = editor.useClearEditor();
+    const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
+    const sendTranslation = editor.useSendTranslation();
+    const updateTranslation = editor.useUpdateTranslation();
 
-        return <>
-            <GenericTranslationForm { ...props } />
-            <editor.EditorMenu
-                firstItemHook={ ftlSwitch }
-                clearEditor={ props.clearEditor }
-                copyOriginalIntoEditor={ props.copyOriginalIntoEditor }
-                sendTranslation={ props.sendTranslation }
+    return (
+        <>
+            <GenericTranslationForm
+                sendTranslation={ sendTranslation }
+                updateTranslation={ updateTranslation }
             />
-        </>;
-    }
+            <editor.EditorMenu
+                firstItemHook={ props.ftlSwitch }
+                clearEditor={ clearEditor }
+                copyOriginalIntoEditor={ copyOriginalIntoEditor }
+                sendTranslation={ sendTranslation }
+            />
+        </>
+    );
 }

@@ -1,100 +1,92 @@
 /* @flow */
 
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
+import * as entities from 'core/entities';
 import { fluent } from 'core/utils';
 import { GenericTranslationForm } from 'modules/genericeditor';
 
-import type { EditorProps } from 'core/editor';
 
-
-type Props = {
-    ...EditorProps,
+type Props = {|
     ftlSwitch: React.Node,
-};
-
+|};
 
 /**
  * Editor for simple Fluent strings.
+ *
+ * Handles transforming the editor's content back to a valid Fluent message on save.
+ * Makes sure the content is correctly formatted when updated.
  */
-export default class SimpleEditor extends React.Component<Props> {
-    componentDidUpdate(prevProps: Props) {
-        const props = this.props;
-        if (
-            props.entity &&
-            props.editor.translation !== prevProps.editor.translation &&
-            props.editor.changeSource !== 'internal' &&
-            typeof(props.editor.translation) === 'string'
-        ) {
-            this.updateFluentTranslation(props.editor.translation);
-        }
-    }
+export default function SimpleEditor(props: Props) {
+    const updateTranslation = editor.useUpdateTranslation();
+    const clearEditor = editor.useClearEditor();
+    const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
+    const sendTranslation = editor.useSendTranslation();
 
-    updateFluentTranslation(translation: string) {
+    const translation = useSelector(state => state.editor.translation);
+    const changeSource = useSelector(state => state.editor.changeSource);
+    const entity = useSelector(state => entities.selectors.getSelectedEntity(state));
+
+    // Transform the translation into a simple preview whenever it changes from
+    // an external source.
+    React.useEffect(() => {
+        if (changeSource === 'internal' || typeof(translation) !== 'string') {
+            return;
+        }
+
         const message = fluent.parser.parseEntry(translation);
         if (
             fluent.isSimpleMessage(message) ||
             fluent.isSimpleSingleAttributeMessage(message)
         ) {
-            this.props.updateTranslation(
-                fluent.getSimplePreview(translation),
-                true,
-            );
+            updateTranslation(fluent.getSimplePreview(translation));
         }
-    }
+    }, [translation, changeSource, updateTranslation]);
 
-    sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {
-        const entity = this.props.entity;
+    // Reconstruct the translation into a valid Fluent message before sending it.
+    function sendFluentTranslation(ignoreWarnings?: boolean) {
         if (!entity) {
             return;
         }
 
-        const currentTranslation = translation || this.props.editor.translation;
-
-        if (typeof(currentTranslation) !== 'string') {
+        if (typeof(translation) !== 'string') {
             // This should never happen. If it does, the developers have made a
             // mistake in the code. We need this check for Flow's sake though.
             throw new Error('Unexpected data type for translation: ' + typeof(translation));
         }
 
+        // The content was simple, reformat it to be an actual Fluent message.
         const content = fluent.serializer.serializeEntry(
-            fluent.getReconstructedMessage(entity.original, currentTranslation)
+            fluent.getReconstructedMessage(entity.original, translation)
         );
-        this.props.sendTranslation(ignoreWarnings, content, currentTranslation);
+        sendTranslation(ignoreWarnings, content);
     }
 
-    render() {
-        const { ftlSwitch, ...props } = this.props;
+    // If the translation is not a string, wait until the FluentEditor component fixes that.
+    if (!entity || typeof(translation) !== 'string') {
+        return null;
+    }
 
-        // Because Flow.
-        if (typeof(props.editor.translation) !== 'string') {
-            return null;
-        }
-
-        // Transitional state when switching view despite unsaved changes.
-        if (!props.entity) {
-            return null;
-        }
-
-        return <>
+    return (
+        <>
             <GenericTranslationForm
-                { ...props }
-                sendTranslation={ this.sendTranslation }
+                sendTranslation={ sendFluentTranslation }
+                updateTranslation={ updateTranslation }
             />
             <editor.EditorMenu
-                firstItemHook={ ftlSwitch }
+                firstItemHook={ props.ftlSwitch }
                 translationLengthHook={ <editor.TranslationLength
-                    comment={ props.entity.comment }
-                    format={ props.entity.format }
-                    original={ fluent.getSimplePreview(props.entity.original) }
-                    // $FLOW_IGNORE: Flow is dumb.
-                    translation={ fluent.getSimplePreview(props.editor.translation) }
+                    comment={ entity.comment }
+                    format={ entity.format }
+                    original={ fluent.getSimplePreview(entity.original) }
+                    translation={ fluent.getSimplePreview(translation) }
                 /> }
-                clearEditor={ props.clearEditor }
-                copyOriginalIntoEditor={ props.copyOriginalIntoEditor }
-                sendTranslation={ this.sendTranslation }
+                clearEditor={ clearEditor }
+                copyOriginalIntoEditor={ copyOriginalIntoEditor }
+                sendTranslation={ sendFluentTranslation }
             />
-        </>;
-    }
+        </>
+    );
 }

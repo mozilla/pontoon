@@ -80,6 +80,7 @@ describe('<Translation>', () => {
 
         const wrapper = shallow(<Translation
             translation={ DEFAULT_TRANSLATION }
+            editor={ { translation: '' } }
             locale={ DEFAULT_LOCALE }
             entity={ DEFAULT_ENTITY }
             updateEditorTranslation={ translationMock }

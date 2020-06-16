@@ -1,88 +1,94 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import sinon from 'sinon';
+import * as editor from 'core/editor';
+import * as entities from 'core/entities';
+import * as navigation from 'core/navigation';
+import * as plural from 'core/plural';
 
-import { EditorBase } from './Editor';
+import {
+    createDefaultUser,
+    createReduxStore,
+    mountComponentWithStore,
+} from 'test/store';
+
+import GenericEditor from './GenericEditor';
 
 
 const ENTITIES = [
     {
         pk: 1,
+        original: 'something',
         translation: [{
             string: 'quelque chose',
         }],
     },
     {
         pk: 2,
+        original: 'second',
+        original_plural: 'seconds',
         translation: [
-            { string: 'test' },
+            { string: 'deuxième' },
+            { string: 'deuxièmes' },
         ],
     },
 ];
 
 
-function createEditorBase() {
-    const setInitialTranslationMock = sinon.stub();
-    const updateTranslationMock = sinon.stub();
-    const wrapper = shallow(<EditorBase
-        editor={ { translation: '' } }
-        pluralForm={ -1 }
-        entity={ ENTITIES[0] }
-        activeTranslationString={ ENTITIES[0].translation[0].string }
-        setInitialTranslation={ setInitialTranslationMock }
-        updateTranslation={ updateTranslationMock }
-    />);
+async function createComponent(entityIndex = 0) {
+    const store = createReduxStore();
+    createDefaultUser(store);
 
-    return [wrapper, setInitialTranslationMock, updateTranslationMock];
+    const wrapper = mountComponentWithStore(
+        GenericEditor,
+        store,
+    );
+
+    store.dispatch(entities.actions.receive(ENTITIES));
+    await store.dispatch(navigation.actions.updateEntity(store.getState().router, entityIndex));
+
+    // Force a re-render.
+    wrapper.setProps({});
+
+    return [ wrapper, store ];
 }
 
 
 describe('<Editor>', () => {
-    it('updates translation on mount', () => {
-        const [, , updateTranslationMock] = createEditorBase();
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
+    it('updates translation on mount', async () => {
+        const [ , store ] = await createComponent(1);
+        expect(store.getState().editor.translation).toEqual('quelque chose');
     });
 
-    it('sets initial translation on mount', () => {
-        const [, setInitialTranslationMock, ] = createEditorBase();
-        expect(setInitialTranslationMock.calledOnce).toBeTruthy();
+    it('sets initial translation on mount', async () => {
+        const [ , store ] = await createComponent(1);
+        expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
     });
 
-    it('updates translation when entity or plural change', () => {
-        const [wrapper, updateTranslationMock] = createEditorBase();
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
+    it('updates translation when entity or plural change', async () => {
+        const [ wrapper, store ] = await createComponent(1);
 
-        wrapper.setProps({ entity: ENTITIES[1] });
-        expect(updateTranslationMock.calledTwice).toBeTruthy();
+        await store.dispatch(navigation.actions.updateEntity(store.getState().router, 2));
+        expect(store.getState().editor.translation).toEqual('deuxième');
 
-        wrapper.setProps({ pluralForm: 1 });
-        expect(updateTranslationMock.calledThrice).toBeTruthy();
+        await store.dispatch(plural.actions.select(1));
+        wrapper.setProps({});
+        expect(store.getState().editor.translation).toEqual('deuxièmes');
     });
 
-    it('sets initial translation when entity or plural change', () => {
-        const [wrapper, setInitialTranslationMock, ] = createEditorBase();
-        expect(setInitialTranslationMock.calledOnce).toBeTruthy();
+    it('sets initial translation when entity or plural change', async () => {
+        const [ wrapper, store ] = await createComponent(1);
 
-        wrapper.setProps({ entity: ENTITIES[1] });
-        expect(setInitialTranslationMock.calledTwice).toBeTruthy();
+        await store.dispatch(navigation.actions.updateEntity(store.getState().router, 2));
+        expect(store.getState().editor.initialTranslation).toEqual('deuxième');
 
-        wrapper.setProps({ pluralForm: 1 });
-        expect(setInitialTranslationMock.calledThrice).toBeTruthy();
+        await store.dispatch(plural.actions.select(1));
+        wrapper.setProps({});
+        expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
     });
 
-    it('does not update translation when translation changes', () => {
-        const [wrapper, updateTranslationMock] = createEditorBase();
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
+    it('does not set initial translation when translation changes', async () => {
+        const [ , store ] = await createComponent(1);
+        expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
 
-        wrapper.setProps({ editor: { translation: 'hello' } });
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
-    });
-
-    it('does not set initial translation when translation changes', () => {
-        const [wrapper, setInitialTranslationMock, ] = createEditorBase();
-        expect(setInitialTranslationMock.calledOnce).toBeTruthy();
-
-        wrapper.setProps({ editor: { translation: 'hello' } });
-        expect(setInitialTranslationMock.calledOnce).toBeTruthy();
+        store.dispatch(editor.actions.update('autre chose'));
+        expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
     });
 });

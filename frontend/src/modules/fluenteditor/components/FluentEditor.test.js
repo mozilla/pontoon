@@ -1,8 +1,13 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import sinon from 'sinon';
+import * as entities from 'core/entities';
+import * as navigation from 'core/navigation';
 
-import { EditorBase } from './Editor';
+import {
+    createDefaultUser,
+    createReduxStore,
+    mountComponentWithStore,
+} from 'test/store';
+
+import FluentEditor from './FluentEditor';
 
 
 const NESTED_SELECTORS_STRING = `my-message =
@@ -17,24 +22,28 @@ const NESTED_SELECTORS_STRING = `my-message =
 
 const ENTITIES = [
     {
+        pk: 1,
         original: 'my-message = Hello',
         translation: [{
             string: 'my-message = Salut',
         }],
     },
     {
-        original: NESTED_SELECTORS_STRING,
-        translation: [
-            { string: NESTED_SELECTORS_STRING },
-        ],
-    },
-    {
+        pk: 2,
         original: 'my-message =\n    .my-attr = Something guud',
         translation: [
             { string: 'my-message =\n    .my-attr = Quelque chose de bien' },
         ],
     },
     {
+        pk: 3,
+        original: NESTED_SELECTORS_STRING,
+        translation: [
+            { string: NESTED_SELECTORS_STRING },
+        ],
+    },
+    {
+        pk: 4,
         original: 'my-message = Hello',
         translation: [
             { string: '' },
@@ -42,99 +51,65 @@ const ENTITIES = [
     },
 ];
 
-const USER = {
-    isAuthenticated: true,
-};
 
+async function createComponent(entityIndex = 0) {
+    const store = createReduxStore();
+    createDefaultUser(store);
 
-function createEditorBase({
-    entityIndex = 0,
-} = {}) {
-    const updateTranslationMock = sinon.stub();
-    const setInitialTranslationMock = sinon.stub();
-    const wrapper = shallow(<EditorBase
-        activeTranslationString={ ENTITIES[entityIndex].translation[0].string }
-        editor={ { translation: '' } }
-        entity={ ENTITIES[entityIndex] }
-        pluralForm={ -1 }
-        translation={ ENTITIES[entityIndex].translation[0].string }
-        setInitialTranslation={ setInitialTranslationMock }
-        updateTranslation={ updateTranslationMock }
-        user={ USER }
-    />);
+    const wrapper = mountComponentWithStore(
+        FluentEditor,
+        store,
+    );
 
-    return [wrapper, updateTranslationMock, setInitialTranslationMock];
+    store.dispatch(entities.actions.receive(ENTITIES));
+    await store.dispatch(navigation.actions.updateEntity(store.getState().router, entityIndex));
+
+    wrapper.update();
+
+    return wrapper;
 }
 
 
-describe('<Editor>', () => {
-    it('updates translation on mount', () => {
-        const [, updateTranslationMock] = createEditorBase();
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
-    });
-
-    it('updates translation on component update', () => {
-        const [wrapper, updateTranslationMock] = createEditorBase();
-        expect(updateTranslationMock.calledOnce).toBeTruthy();
-
-        wrapper.setProps({ entity: ENTITIES[1] });
-        expect(updateTranslationMock.calledTwice).toBeTruthy();
-    });
-
-    it('renders the simple form when passing a simple string', () => {
-        const [wrapper, ] = createEditorBase();
+describe('<FluentEditor>', () => {
+    it('renders the simple form when passing a simple string', async () => {
+        const wrapper = await createComponent(1);
 
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
 
-    it('renders the simple form when passing a simple string with one attribute', () => {
-        const [wrapper, ] = createEditorBase({
-            entityIndex: 2,
-        });
+    it('renders the simple form when passing a simple string with one attribute', async () => {
+        const wrapper = await createComponent(2);
 
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
 
-    it('renders the source form when passing a complex string', () => {
-        const [wrapper, ] = createEditorBase({
-            entityIndex: 1,
-        });
+    it('renders the source form when passing a complex string', async () => {
+        const wrapper = await createComponent(3);
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
         expect(wrapper.find('SimpleEditor').exists()).toBeFalsy();
     });
 
-    it('converts translation when switching source mode', () => {
-        const [wrapper, updateTranslationMock] = createEditorBase();
+    it('converts translation when switching source mode', async () => {
+        const wrapper = await createComponent(1);
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
-        expect(updateTranslationMock.calledWith('Salut')).toBeTruthy();
-
-        // We've mocked the `updateTranslation` method so it's never called.
-        // Simulate here what it would do.
-        wrapper.setProps({ editor: { translation: 'Salut' } });
 
         // Force source mode.
-        wrapper.instance().toggleForceSource();
+        wrapper.find('button.ftl').simulate('click');
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
-        expect(updateTranslationMock.lastCall.calledWith('my-message = Salut\n')).toBeTruthy();
+        expect(wrapper.find('textarea').text()).toEqual('my-message = Salut\n');
     });
 
-    it('sets empty initial translation in source mode when untranslated', () => {
-        const [
-            wrapper, updateTranslationMock, setInitialTranslationMock
-        ] = createEditorBase({ entityIndex: 3 });
-
-        // We've mocked the `updateTranslation` method so it's never called.
-        // Simulate here what it would do.
-        wrapper.setProps({ editor: { translation: '' } });
+    it('sets empty initial translation in source mode when untranslated', async () => {
+        const wrapper = await createComponent(4);
 
         // Force source mode.
-        wrapper.instance().toggleForceSource();
+        wrapper.find('button.ftl').simulate('click');
 
-        expect(updateTranslationMock.lastCall.calledWith('my-message = ')).toBeTruthy();
-        expect(setInitialTranslationMock.lastCall.calledWith('my-message = \n')).toBeTruthy();
+        expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
+        expect(wrapper.find('textarea').text()).toEqual('my-message = ');
     });
 });

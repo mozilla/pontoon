@@ -1,17 +1,16 @@
 /* @flow */
 
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
+import * as entities from 'core/entities';
 import { fluent } from 'core/utils';
 
 import RichTranslationForm from './RichTranslationForm';
 
-import type { EditorProps, Translation } from 'core/editor';
-
 
 type Props = {
-    ...EditorProps,
     ftlSwitch: React.Node,
 };
 
@@ -24,91 +23,59 @@ type Props = {
  * are made directly to that AST. That is why lots of Editor methods are
  * overwritten, to handle the convertion from AST to string and back.
  */
-export default class RichEditor extends React.Component<Props> {
-    componentDidUpdate(prevProps: Props) {
-        const props = this.props;
-        const translation = props.editor.translation;
+export default function RichEditor(props: Props) {
+    const dispatch = useDispatch();
 
-        if (
-            props.entity &&
-            translation !== prevProps.editor.translation &&
-            props.editor.changeSource !== 'internal' &&
-            this.props.editor.changeSource !== 'machinery' &&
-            typeof(translation) === 'string'
-        ) {
-            let message = fluent.parser.parseEntry(translation);
+    const sendTranslation = editor.useSendTranslation();
+    const updateTranslation = editor.useUpdateTranslation();
 
-            if (message.type === 'Junk') {
-                message = fluent.getReconstructedMessage(
-                    props.entity.original,
-                    translation,
-                );
-            }
+    const translation = useSelector(state => state.editor.translation);
+    const entity = useSelector(state => entities.selectors.getSelectedEntity(state));
+    const locale = useSelector(state => state.locale);
 
-            props.updateTranslation(message, true);
+    React.useEffect(() => {
+        if (typeof(translation) === 'string') {
+            const message = fluent.parser.parseEntry(translation);
+            updateTranslation(message);
         }
-    }
+    }, [translation, updateTranslation, dispatch]);
 
-    clearEditor = () => {
-        const { entity, locale } = this.props;
+    function clearEditor() {
         if (entity) {
-            this.props.updateTranslation(
+            updateTranslation(
                 fluent.getEmptyMessage(
                     fluent.parser.parseEntry(entity.original),
                     locale,
-                ),
-                true,
+                )
             );
         }
     }
 
-    copyOriginalIntoEditor = () => {
-        const { entity } = this.props;
+    function copyOriginalIntoEditor() {
         if (entity) {
-            this.props.updateTranslation(fluent.parser.parseEntry(entity.original), true);
+            updateTranslation(fluent.parser.parseEntry(entity.original));
         }
     }
 
-    sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
-        const message = translation || this.props.editor.translation;
-        const fluentString = fluent.serializer.serializeEntry(message);
-        this.props.sendTranslation(ignoreWarnings, fluentString, message);
+    function sendFluentTranslation(ignoreWarnings?: boolean) {
+        const fluentString = fluent.serializer.serializeEntry(translation);
+        sendTranslation(ignoreWarnings, fluentString);
     }
 
-    updateUnsavedChanges = (translation?: Translation, initial?: Translation) => {
-        const props = this.props;
-
-        if (!translation) {
-            translation = props.editor.translation;
-        }
-
-        if (!initial) {
-            initial = props.editor.initialTranslation;
-        }
-
-        this.props.updateUnsavedChanges(
-            fluent.serializer.serializeEntry(translation),
-            fluent.serializer.serializeEntry(initial),
-        );
-    }
-
-    render() {
-        const { ftlSwitch, ...props } = this.props;
-
-        return <>
+    return (
+        <>
             <RichTranslationForm
-                { ...props }
-                clearEditor={ this.clearEditor }
-                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
-                sendTranslation={ this.sendTranslation }
-                updateUnsavedChanges={ this.updateUnsavedChanges }
+                clearEditor={ clearEditor }
+                copyOriginalIntoEditor={ copyOriginalIntoEditor }
+                sendTranslation={ sendFluentTranslation }
+                updateTranslation={ updateTranslation }
             />
             <editor.EditorMenu
-                firstItemHook={ ftlSwitch }
-                clearEditor={ this.clearEditor }
-                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
-                sendTranslation={ this.sendTranslation }
+                firstItemHook={ props.ftlSwitch }
+                clearEditor={ clearEditor }
+                copyOriginalIntoEditor={ copyOriginalIntoEditor }
+                sendTranslation={ sendFluentTranslation }
             />
-        </>;
-    }
+        </>
+    );
 }

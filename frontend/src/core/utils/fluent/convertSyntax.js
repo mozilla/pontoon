@@ -128,6 +128,7 @@ export function getComplexFromRich(
  * @param {string | FluentMessage} current Current content of the translation, as entered by the user.
  * @param {string} original Original string of the entity.
  * @param {string} initial Currently active translation, if any.
+ * @param {Locale} locale Current locale.
  *
  * @returns {[ string | FluentMessage, string ]} The converted current translation and initial translation.
  */

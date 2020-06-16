@@ -7,15 +7,18 @@ import './Machinery.css';
 
 import Translation from './Translation';
 
+import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { SourceType } from 'core/api';
 import type { MachineryState } from '..';
 
 
 type Props = {|
+    editor: EditorState,
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
+    addTextToEditorTranslation: (string) => void,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
@@ -44,9 +47,11 @@ export default class Machinery extends React.Component<Props> {
 
     render() {
         const {
+            editor,
             isReadOnlyEditor,
             locale,
             machinery,
+            addTextToEditorTranslation,
             updateEditorTranslation,
             updateMachinerySources,
         } = this.props;
@@ -75,10 +80,12 @@ export default class Machinery extends React.Component<Props> {
             <ul>
                 { machinery.translations.map((translation, index) => {
                     return <Translation
+                        editor={ editor }
                         sourceString={ machinery.sourceString }
                         isReadOnlyEditor={ isReadOnlyEditor }
                         locale={ locale }
                         translation={ translation }
+                        addTextToEditorTranslation={ addTextToEditorTranslation }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateMachinerySources={ updateMachinerySources }
                         key={ index }
