@@ -104,7 +104,6 @@ export default class RichEditor extends React.Component<Props> {
                 updateUnsavedChanges={ this.updateUnsavedChanges }
             />
             <editor.EditorMenu
-                { ...props }
                 firstItemHook={ ftlSwitch }
                 clearEditor={ this.clearEditor }
                 copyOriginalIntoEditor={ this.copyOriginalIntoEditor }

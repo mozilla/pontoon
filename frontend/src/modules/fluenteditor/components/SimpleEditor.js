@@ -83,9 +83,7 @@ export default class SimpleEditor extends React.Component<Props> {
                 sendTranslation={ this.sendTranslation }
             />
             <editor.EditorMenu
-                { ...props }
                 firstItemHook={ ftlSwitch }
-                sendTranslation={ this.sendTranslation }
                 translationLengthHook={ <editor.TranslationLength
                     comment={ props.entity.comment }
                     format={ props.entity.format }
@@ -93,6 +91,9 @@ export default class SimpleEditor extends React.Component<Props> {
                     // $FLOW_IGNORE: Flow is dumb.
                     translation={ fluent.getSimplePreview(props.editor.translation) }
                 /> }
+                clearEditor={ props.clearEditor }
+                copyOriginalIntoEditor={ props.copyOriginalIntoEditor }
+                sendTranslation={ this.sendTranslation }
             />
         </>;
     }

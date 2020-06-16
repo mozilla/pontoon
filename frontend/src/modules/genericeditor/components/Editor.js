@@ -47,13 +47,15 @@ export class EditorBase extends React.Component<EditorProps> {
             <plural.PluralSelector />
             <GenericTranslationForm { ...props } />
             <editor.EditorMenu
-                { ...props }
                 translationLengthHook={ <editor.TranslationLength
                     comment={ props.entity.comment }
                     format={ props.entity.format }
                     original={ original }
                     translation={ props.editor.translation }
                 /> }
+                clearEditor={ props.clearEditor }
+                copyOriginalIntoEditor={ props.copyOriginalIntoEditor }
+                sendTranslation={ props.sendTranslation }
             />
         </>;
     }
