@@ -2,7 +2,14 @@ import re
 
 from django.db import models
 
+from django.contrib.auth import get_user_model
 from pontoon.base.models import Entity, ProjectLocale, Resource, TranslatedResource
+
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(
+        username="pontoon-deleted-user", email="pontoon-deleted-user@mozilla.com"
+    )[0]
 
 
 def update_terminology_project_stats():
@@ -84,7 +91,11 @@ class Term(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
-        "auth.User", models.CASCADE, related_name="terms", null=True, blank=True
+        "auth.User",
+        models.SET(get_sentinel_user),
+        related_name="terms",
+        null=True,
+        blank=True,
     )
 
     objects = TermQuerySet.as_manager()
