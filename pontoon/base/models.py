@@ -21,7 +21,6 @@ from six.moves.urllib.parse import quote, urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group, UserManager
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -63,13 +62,6 @@ from pontoon.sync.vcs.repositories import (
 log = logging.getLogger(__name__)
 
 UNUSABLE_SEARCH_CHAR = "☠"
-
-
-def get_sentinel_user():
-    return get_user_model().objects.get_or_create(
-        username="pontoon-deleted-user", email="pontoon-deleted-user@mozilla.com"
-    )[0]
-
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
@@ -409,12 +401,12 @@ class PermissionChangelog(models.Model):
     action_type = models.CharField(max_length=20, choices=ACTIONS_TYPES)
     performed_by = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         null=True,
         related_name="changed_permissions_log",
     )
     performed_on = models.ForeignKey(
-        User, models.SET(get_sentinel_user), null=True, related_name="permisions_log"
+        User, models.SET(utils.get_sentinel_user), null=True, related_name="permisions_log"
     )
     group = models.ForeignKey(Group, models.CASCADE)
 
@@ -1221,7 +1213,7 @@ class Project(AggregatedStats):
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
     contact = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         null=True,
         blank=True,
         related_name="contact_for",
@@ -2915,7 +2907,7 @@ class TranslationQuerySet(models.QuerySet):
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity, models.CASCADE)
     locale = models.ForeignKey(Locale, models.CASCADE)
-    user = models.ForeignKey(User, models.SET(get_sentinel_user), null=True, blank=True)
+    user = models.ForeignKey(User, models.SET(utils.get_sentinel_user), null=True, blank=True)
     string = models.TextField()
     # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
@@ -2931,7 +2923,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     approved = models.BooleanField(default=False)
     approved_user = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         related_name="approved_translations",
         null=True,
         blank=True,
@@ -2940,7 +2932,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     unapproved_user = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         related_name="unapproved_translations",
         null=True,
         blank=True,
@@ -2950,7 +2942,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     rejected = models.BooleanField(default=False)
     rejected_user = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         related_name="rejected_translations",
         null=True,
         blank=True,
@@ -2959,7 +2951,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     unrejected_user = models.ForeignKey(
         User,
-        models.SET(get_sentinel_user),
+        models.SET(utils.get_sentinel_user),
         related_name="unrejected_translations",
         null=True,
         blank=True,
@@ -3637,7 +3629,7 @@ class TranslatedResource(AggregatedStats):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, models.SET(get_sentinel_user))
+    author = models.ForeignKey(User, models.SET(utils.get_sentinel_user))
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(
         Translation, models.CASCADE, related_name="comments", blank=True, null=True,

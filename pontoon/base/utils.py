@@ -21,6 +21,7 @@ from xml.sax.saxutils import (
     quoteattr,
 )
 
+from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
@@ -541,3 +542,10 @@ def readonly_exists(projects, locale):
     return ProjectLocale.objects.filter(
         project__in=projects, locale=locale, readonly=True,
     ).exists()
+
+def get_sentinel_user(email):
+    return get_user_model().objects.get_or_create(
+        username="deleted-user",
+        email="deleted-user@example.com",
+        first_name="Deleted User"
+    )[0]

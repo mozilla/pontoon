@@ -1,14 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
+from pontoon.base.utils import get_sentinel_user
 from django.db import models
-
-
-def get_sentinel_user():
-    return get_user_model().objects.get_or_create(
-        username="pontoon-deleted-user", email="pontoon-deleted-user@mozilla.com"
-    )[0]
 
 
 class ActionLog(models.Model):

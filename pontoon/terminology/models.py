@@ -2,14 +2,8 @@ import re
 
 from django.db import models
 
-from django.contrib.auth import get_user_model
+from pontoon.base.utils import get_sentinel_user
 from pontoon.base.models import Entity, ProjectLocale, Resource, TranslatedResource
-
-
-def get_sentinel_user():
-    return get_user_model().objects.get_or_create(
-        username="pontoon-deleted-user", email="pontoon-deleted-user@mozilla.com"
-    )[0]
 
 
 def update_terminology_project_stats():
