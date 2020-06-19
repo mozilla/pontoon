@@ -63,6 +63,7 @@ log = logging.getLogger(__name__)
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
+
 def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
 
