@@ -25,7 +25,8 @@ import { UserAvatar } from 'core/user'
 
 import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
-import type { TextType, MentionType, InitialType, UsersType } from 'core/api';
+import type { TextType, MentionType, InitialType } from 'core/api';
+import { TeamComments } from 'modules/teamcomments';
 
 type Props = {|
     user: string,
@@ -97,6 +98,13 @@ export default function AddComments(props: Props) {
             const teamsOverflow = teamsRect ? setTop + suggestionsHeight > teamsRect.height : false;
             if (setTop + suggestionsHeight > window.innerHeight || teamsOverflow) { 
                 setTop = (setTop - suggestionsHeight) - 21;
+            }
+
+            // If suggestions scroll below the next section then hide the suggestions
+            const parent = document.querySelector('.team-comments');
+            const teamCommentsActive = parent ? parent.contains(document.activeElement) : false;
+            if (teamCommentsActive && (setTop - 21) > teamsRect.height) {
+                el.style.display = 'none';
             }
             
             // If suggestions overflow the window width then adjust the
