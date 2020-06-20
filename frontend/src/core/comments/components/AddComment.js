@@ -80,29 +80,34 @@ export default function AddComments(props: Props) {
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 10);
 
+    // Set position of mentions suggestions
     React.useLayoutEffect(() => {
         if (target && chars.length > 0) {
             const el = ref.current;
             const domRange = ReactEditor.toDOMRange(editor, target);
             const rect = domRange.getBoundingClientRect();
-            const teamsContainer = document.querySelector('.react-tabs');
-            const teamsRect = teamsContainer ? teamsContainer.getBoundingClientRect() : null;
-            const parent = document.querySelector('.team-comments');
-            const teamCommentsActive = parent ? parent.contains(document.activeElement) : false;
+            const teamCommentsEl = document.querySelector('.top');
+            const teamCommentsRect = teamCommentsEl ? teamCommentsEl.getBoundingClientRect() : null;
+            const teamCommentsActive = teamCommentsEl ? teamCommentsEl.contains(document.activeElement) : false;
+            const transCommentsEl = document.querySelector('.history');
+            const transCommentsRect = transCommentsEl ? transCommentsEl.getBoundingClientRect() : null;
+            const transCommentsActive = transCommentsEl ? transCommentsEl.contains(document.activeElement) : false;
 
             let setTop = (rect.top + window.pageYOffset) + 21;
             let setLeft = rect.left + window.pageXOffset;
-
+            
             // If suggestions overflow the window or teams container height then adjust the
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
-            const teamsOverflow = teamsRect ? setTop + suggestionsHeight > teamsRect.height : false;
+            const teamsOverflow = teamCommentsRect ? setTop + suggestionsHeight > teamCommentsRect.height : false;
             if (setTop + suggestionsHeight > window.innerHeight || (teamCommentsActive && teamsOverflow)) { 
                 setTop = (setTop - suggestionsHeight) - 21;
             }
 
-            // If suggestions in team comments scroll below the next section then hide the suggestions
-            if (teamsRect && teamCommentsActive && (setTop - 21) > teamsRect.height) {
+            // If suggestions in team comments scroll below or suggestions in translation
+            // comments scroll above the next section then hide the suggestions
+            if ((teamCommentsRect && teamCommentsActive && ((setTop - 21) > teamCommentsRect.height)) ||
+                (transCommentsRect && transCommentsActive && (setTop < transCommentsRect.top))) {
                 el.style.display = 'none';
             }
             
