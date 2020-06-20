@@ -26,7 +26,6 @@ import { UserAvatar } from 'core/user'
 import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
 import type { TextType, MentionType, InitialType } from 'core/api';
-import { TeamComments } from 'modules/teamcomments';
 
 type Props = {|
     user: string,
@@ -88,6 +87,8 @@ export default function AddComments(props: Props) {
             const rect = domRange.getBoundingClientRect();
             const teamsContainer = document.querySelector('.react-tabs');
             const teamsRect = teamsContainer ? teamsContainer.getBoundingClientRect() : null;
+            const parent = document.querySelector('.team-comments');
+            const teamCommentsActive = parent ? parent.contains(document.activeElement) : false;
 
             let setTop = (rect.top + window.pageYOffset) + 21;
             let setLeft = rect.left + window.pageXOffset;
@@ -96,14 +97,12 @@ export default function AddComments(props: Props) {
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
             const teamsOverflow = teamsRect ? setTop + suggestionsHeight > teamsRect.height : false;
-            if (setTop + suggestionsHeight > window.innerHeight || teamsOverflow) { 
+            if (setTop + suggestionsHeight > window.innerHeight || (teamCommentsActive && teamsOverflow)) { 
                 setTop = (setTop - suggestionsHeight) - 21;
             }
 
-            // If suggestions scroll below the next section then hide the suggestions
-            const parent = document.querySelector('.team-comments');
-            const teamCommentsActive = parent ? parent.contains(document.activeElement) : false;
-            if (teamCommentsActive && (setTop - 21) > teamsRect.height) {
+            // If suggestions in team comments scroll below the next section then hide the suggestions
+            if (teamsRect && teamCommentsActive && (setTop - 21) > teamsRect.height) {
                 el.style.display = 'none';
             }
             
@@ -120,7 +119,7 @@ export default function AddComments(props: Props) {
     }, [chars.length, editor, index, search, target, scrollPosition]);
 
     React.useEffect(() => {
-        // $FLOW_IGNORE
+       // $FLOW_IGNORE
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;
             setScrollPosition(element.scrollTop);
@@ -131,16 +130,21 @@ export default function AddComments(props: Props) {
             return;
         }
 
-        // $FLOW_IGNORE
-        historyScroll.addEventListener('scroll', handleScroll);
-        // $FLOW_IGNORE
-        teamsScroll.addEventListener('scroll', handleScroll);
+        
+        if (historyScroll !== null) {
+            historyScroll.addEventListener('scroll', handleScroll);
+        }
+        if (teamsScroll !== null) {
+            teamsScroll.addEventListener('scroll', handleScroll);
+        }
 
         return () => {
-            // $FLOW_IGNORE
-            historyScroll.removeEventListener('scroll', handleScroll);
-            // $FLOW_IGNORE
-            teamsScroll.removeEventListener('scroll', handleScroll);
+            if (historyScroll !== null) {
+                historyScroll.removeEventListener('scroll', handleScroll);
+            }
+            if (teamsScroll !== null) {
+                teamsScroll.removeEventListener('scroll', handleScroll);
+            }
         }
     }, [])
 
