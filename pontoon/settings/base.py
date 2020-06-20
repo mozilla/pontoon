@@ -47,6 +47,9 @@ ADMINS = MANAGERS = (
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
+# Email from which new locale requests are sent.
+LOCALE_REQUEST_EMAIL = os.environ.get("LOCALE_REQUEST_EMAIL", "pontoon@example.com")
+
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
@@ -735,6 +738,9 @@ except ValueError:
     SYNC_TASK_TIMEOUT = 60 * 60 * 1  # 1 hour
 
 SYNC_LOG_RETENTION = 90  # days
+
+SYNC_VCS_NAME = os.environ.get("SYNC_VCS_NAME", "Pontoon")
+SYNC_VCS_EMAIL = os.environ.get("SYNC_VCS_EMAIL", "pontoon@example.com")
 
 MANUAL_SYNC = os.environ.get("MANUAL_SYNC", "False") != "False"
 

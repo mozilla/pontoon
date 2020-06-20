@@ -154,9 +154,9 @@ class CommitToGit(CommitToRepository):
         git_cmd = [
             "git",
             "-c",
-            "user.name=Mozilla Pontoon",
+            f"user.name={settings.SYNC_VCS_NAME}",
             "-c",
-            "user.email=pontoon@mozilla.com",
+            f"user.email={settings.SYNC_VCS_EMAIL}",
         ]
 
         # Add new and remove missing paths
