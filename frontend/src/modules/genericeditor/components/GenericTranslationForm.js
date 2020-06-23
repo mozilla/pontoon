@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import type { EditorProps } from 'core/editor';
 
-import  isEqual from 'lodash.isequal';
+import isEqual from 'lodash.isequal';
 
 
 /*
@@ -61,12 +61,17 @@ export default class GenericTranslationForm extends React.Component<EditorProps>
             this.props.resetSelectionContent();
         }
 
-        const prevPropsWithoutUser = (({ user, ...rem }) => rem)(prevProps)
-        const propsWithoutUser = (({ user, ...rem }) => rem)(this.props)
+        const prevPropsWithoutUser = this.removeUser(prevProps);
+        const propsWithoutUser = this.removeUser(this.props);
 
-        if(!isEqual(prevPropsWithoutUser, propsWithoutUser)){
+        if(!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
             this.focusInput(editor.changeSource !== 'internal');
         }
+    }
+
+    removeUser(props: EditorProps) {
+        const { user, ...propsWithoutUser } = props;
+        return propsWithoutUser;
     }
 
     focusInput(putCursorToStart: boolean) {
