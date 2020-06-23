@@ -543,9 +543,10 @@ def readonly_exists(projects, locale):
         project__in=projects, locale=locale, readonly=True,
     ).exists()
 
+
 def get_sentinel_user(email):
     return get_user_model().objects.get_or_create(
         username="deleted-user",
         email="deleted-user@example.com",
-        first_name="Deleted User"
+        first_name="Deleted User",
     )[0]

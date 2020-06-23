@@ -407,7 +407,10 @@ class PermissionChangelog(models.Model):
         related_name="changed_permissions_log",
     )
     performed_on = models.ForeignKey(
-        User, models.SET(utils.get_sentinel_user), null=True, related_name="permisions_log"
+        User,
+        models.SET(utils.get_sentinel_user),
+        null=True,
+        related_name="permisions_log",
     )
     group = models.ForeignKey(Group, models.CASCADE)
 
@@ -2908,7 +2911,9 @@ class TranslationQuerySet(models.QuerySet):
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity, models.CASCADE)
     locale = models.ForeignKey(Locale, models.CASCADE)
-    user = models.ForeignKey(User, models.SET(utils.get_sentinel_user), null=True, blank=True)
+    user = models.ForeignKey(
+        User, models.SET(utils.get_sentinel_user), null=True, blank=True
+    )
     string = models.TextField()
     # Index of Locale.cldr_plurals_list()
     plural_form = models.SmallIntegerField(null=True, blank=True)
