@@ -7,13 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0005_add_terminology_project'),
+        ("base", "0005_add_terminology_project"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='translation',
-            name='machinery_sources',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(choices=[('translation-memory', 'Translation Memory'), ('google-translate', 'Google Translate'), ('microsoft-translator', 'Microsoft Translator'), ('microsoft-terminology', 'Microsoft Terminology'), ('transvision', 'Transvision'), ('caighdean', 'Caighdean')], max_length=30), blank=True, default=list, size=None),
+            model_name="translation",
+            name="machinery_sources",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(
+                    choices=[
+                        ("translation-memory", "Translation Memory"),
+                        ("google-translate", "Google Translate"),
+                        ("microsoft-translator", "Microsoft Translator"),
+                        ("microsoft-terminology", "Microsoft Terminology"),
+                        ("transvision", "Transvision"),
+                        ("caighdean", "Caighdean"),
+                    ],
+                    max_length=30,
+                ),
+                blank=True,
+                default=list,
+                size=None,
+            ),
         ),
     ]
