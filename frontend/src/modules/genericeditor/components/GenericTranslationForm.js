@@ -4,6 +4,8 @@ import * as React from 'react';
 
 import type { EditorProps } from 'core/editor';
 
+import isEqual from 'lodash.isequal';
+
 
 /*
  * Render a simple textarea to edit a translation.
@@ -59,7 +61,17 @@ export default class GenericTranslationForm extends React.Component<EditorProps>
             this.props.resetSelectionContent();
         }
 
-        this.focusInput(editor.changeSource !== 'internal');
+        const prevPropsWithoutUser = this.removeUser(prevProps);
+        const propsWithoutUser = this.removeUser(this.props);
+
+        if(!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
+            this.focusInput(editor.changeSource !== 'internal');
+        }
+    }
+
+    removeUser(props: EditorProps) {
+        const { user, ...propsWithoutUser } = props;
+        return propsWithoutUser;
     }
 
     focusInput(putCursorToStart: boolean) {
