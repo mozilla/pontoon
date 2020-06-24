@@ -20,6 +20,8 @@ import type {
     Variant,
 } from 'core/utils/fluent/types';
 
+import isEqual from 'lodash.isequal';
+
 
 type MessagePath = Array<string | number>;
 
@@ -184,7 +186,17 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.resetSelectionContent();
         }
 
-        this.focusInput(editor.changeSource !== 'internal');
+        const prevPropsWithoutUser = this.removeUser(prevProps);
+        const propsWithoutUser = this.removeUser(this.props);
+
+        if(!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
+            this.focusInput(editor.changeSource !== 'internal');
+        }
+    }
+
+    removeUser(props: EditorProps) {
+        const { user, ...propsWithoutUser } = props;
+        return propsWithoutUser;
     }
 
     focusInput(putCursorToStart: boolean) {
