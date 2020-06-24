@@ -29,7 +29,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity } from 'core/api';
+import type { Entity, SourceType } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -248,8 +248,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(lightbox.actions.open(image));
     }
 
-    updateEditorTranslation = (translation: string, changeSource: string) => {
-        this.props.dispatch(editor.actions.update(translation, changeSource));
+    updateEditorTranslation = (translation: string, changeSource: string, machinerySources?: Array<SourceType>) => {
+        this.props.dispatch(editor.actions.update(translation, changeSource, machinerySources));
     }
 
     addTextToEditorTranslation = (content: string) => {

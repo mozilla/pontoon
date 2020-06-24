@@ -11,7 +11,7 @@ import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import type { Entity } from 'core/api';
+import type { Entity, SourceType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { FluentMessage } from 'core/utils/fluent/types';
 
@@ -35,12 +35,14 @@ export type UpdateAction = {|
     +type: typeof UPDATE,
     +translation: Translation,
     +changeSource: string,
+    +machinerySources: Array<SourceType>,
 |};
-export function update(translation: Translation, changeSource?: string): UpdateAction {
+export function update(translation: Translation, changeSource?: string, machinerySources?: Array<SourceType>): UpdateAction {
     return {
         type: UPDATE,
         translation,
         changeSource: changeSource || 'internal',
+        machinerySources: machinerySources || [],
     };
 }
 
@@ -163,6 +165,7 @@ export function sendTranslation(
     router: Object,
     resource: string,
     ignoreWarnings: ?boolean,
+    machinerySources: Array<SourceType>,
 ): Function {
     return async dispatch => {
         NProgress.start();
@@ -177,6 +180,7 @@ export function sendTranslation(
             forceSuggestions,
             resource,
             ignoreWarnings,
+            machinerySources,
         );
 
         if (content.failedChecks) {

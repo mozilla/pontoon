@@ -275,6 +275,7 @@ export default function connectedEditor<Object>(
                 props.router,
                 props.parameters.resource,
                 ignoreWarnings,
+                props.editor.machinerySources,
             ));
         }
 

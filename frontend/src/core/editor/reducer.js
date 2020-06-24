@@ -1,4 +1,5 @@
 /* @flow */
+import type { SourceType } from 'core/api';
 
 import {
     END_UPDATE_TRANSLATION,
@@ -49,6 +50,8 @@ export type EditorState = {|
     // differently depending on the type of change.
     +changeSource: string,
 
+    +machinerySources: Array<SourceType>,
+
     // Order to replace the currently selected text inside the Editor with
     // this content. This is reset after that change has been made. Because
     // we have different Editor implementations, we need to let those components
@@ -98,6 +101,7 @@ const initial: EditorState = {
     translation: '',
     initialTranslation: '',
     changeSource: 'internal',
+    machinerySources: [],
     selectionReplacementContent: '',
     errors: [],
     warnings: [],
@@ -121,6 +125,7 @@ export default function reducer(
                 translation: action.translation,
                 changeSource: action.changeSource,
                 source: '',
+                machinerySources: action.machinerySources,
             };
         case UPDATE_FAILED_CHECKS:
             return {

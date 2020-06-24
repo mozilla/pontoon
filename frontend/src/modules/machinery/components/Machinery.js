@@ -8,6 +8,7 @@ import './Machinery.css';
 import Translation from './Translation';
 
 import type { Locale } from 'core/locale';
+import type { SourceType } from 'core/api';
 import type { MachineryState } from '..';
 
 
@@ -15,7 +16,7 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
-    updateEditorTranslation: (string, string) => void,
+    updateEditorTranslation: (string, string, Array<SourceType>) => void,
     searchMachinery: (string) => void,
 |};
 
