@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
 import Translation from './Translation';
 
@@ -24,6 +25,21 @@ describe('<Translation>', () => {
     const DEFAULT_ENTITY = {
         original: ORIGINAL,
     };
+
+    let getSelectionBackup;
+
+    beforeAll(() => {
+        getSelectionBackup = window.getSelection;
+        window.getSelection = () => {
+            return {
+                toString: () => {}
+            };
+        }
+    });
+
+    afterAll(() => {
+        window.getSelection = getSelectionBackup;
+    });
 
     it('renders a translation correctly', () => {
         const wrapper = shallow(<Translation
@@ -56,5 +72,21 @@ describe('<Translation>', () => {
 
         expect(wrapper.find('.quality')).toHaveLength(1);
         expect(wrapper.find('.quality').text()).toEqual('100%');
+    });
+
+    it('updateEditorTranslation is called with machinerySources argument', () => {
+        const updateMock = sinon.stub();
+
+        const wrapper = shallow(<Translation
+            translation={ DEFAULT_TRANSLATION }
+            locale={ DEFAULT_LOCALE }
+            entity={ DEFAULT_ENTITY }
+            updateEditorTranslation={ updateMock }
+        />);
+
+        expect(updateMock.calledOnce).toBeFalsy();
+        wrapper.find('li.translation').simulate('click');
+        expect(updateMock.calledOnce).toBeTruthy();
+        expect(updateMock.getCall(0).args[2]).toEqual(DEFAULT_TRANSLATION.sources);
     });
 });
