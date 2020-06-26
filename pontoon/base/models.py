@@ -3035,6 +3035,16 @@ class Translation(DirtyFieldsMixin, models.Model):
             }
 
     @property
+    def machinery_sources_values(self):
+        """
+        Returns the corresponding comma-separated machinery_sources values
+        """
+        choices = dict(self.SOURCE_TYPES)
+        result = [choices[key] for key in self.machinery_sources]
+
+        return ", ".join(result)
+
+    @property
     def tm_source(self):
         source = self.entity.string
 
