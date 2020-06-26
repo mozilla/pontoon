@@ -87,6 +87,12 @@ describe('<Translation>', () => {
         expect(updateMock.calledOnce).toBeFalsy();
         wrapper.find('li.translation').simulate('click');
         expect(updateMock.calledOnce).toBeTruthy();
-        expect(updateMock.getCall(0).args[2]).toEqual(DEFAULT_TRANSLATION.sources);
+        expect(
+            updateMock.calledWith(
+                DEFAULT_TRANSLATION.translation,
+                'machinery',
+                DEFAULT_TRANSLATION.sources
+            )
+        ).toBeTruthy();
     });
 });
