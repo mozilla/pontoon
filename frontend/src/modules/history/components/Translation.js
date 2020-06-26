@@ -284,7 +284,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Copy Into Translation'
                     onClick={ this.copyTranslationIntoEditor }
                 >
-                    <div class="avatar-container">
+                    <div className="avatar-container">
                         <UserAvatar
                             username={ translation.username }
                             title={ this.getApprovalTitle() }
@@ -292,7 +292,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         />
                         { !translation.machinerySources ? null :
                             <span
-                                class="fa machinery-sources"
+                                className="fa machinery-sources"
                                 title={`Copied (${translation.machinerySources})`}
                             >
                             </span>
