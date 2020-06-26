@@ -353,7 +353,7 @@ def commit_changes(db_project, vcs_project, changeset, locale):
         commit_author = Counter(authors).most_common(1)[0][0]
     else:
         commit_author = User(
-            first_name=settings.SYNC_VCS_NAME, email=settings.SYNC_VCS_EMAIL
+            first_name=settings.VCS_SYNC_NAME, email=settings.VCS_SYNC_EMAIL
         )
 
     commit_message = render_to_string(
