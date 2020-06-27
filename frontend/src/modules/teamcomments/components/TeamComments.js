@@ -9,7 +9,6 @@ import { CommentsList } from 'core/comments';
 
 import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
-import type { UsersType } from 'core/api';
 import type { UserState } from 'core/user';
 import type { TeamCommentState } from 'modules/teamcomments';
 

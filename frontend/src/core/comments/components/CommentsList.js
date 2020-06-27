@@ -8,7 +8,7 @@ import { Comment, AddComment } from 'core/comments';
 
 import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
-import type { TranslationComment, UsersType } from 'core/api';
+import type { TranslationComment } from 'core/api';
 import type { UserState } from 'core/user';
 import type { HistoryTranslation } from 'modules/history'
 

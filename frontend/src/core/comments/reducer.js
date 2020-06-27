@@ -3,6 +3,7 @@
 import { RECEIVE } from './actions';
 
 import type { ReceiveAction } from './actions';
+import type { UsersList } from 'core/api';
 
 
 type Action =
@@ -11,7 +12,7 @@ type Action =
 
 
 export type CommentState = {|
-    +users: Array<Object>,
+    +users: Array<UsersList>,
 |};
 
 const initialState = {

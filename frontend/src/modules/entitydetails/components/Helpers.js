@@ -84,13 +84,6 @@ export default class Helpers extends React.Component<Props> {
                             </Tab>
                         }
                         <Tab>
-                        <Tab>
-                            <Localized id='entitydetails-Helpers--terms'>
-                                { 'Terms' }
-                            </Localized>
-                            <TermCount terms={ terms }/>
-                        </Tab>
-                        <Tab>
                             <Localized id='entitydetails-Helpers--comments'>
                                 { 'Comments' }
                             </Localized>

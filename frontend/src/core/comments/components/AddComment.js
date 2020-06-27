@@ -66,8 +66,10 @@ export default function AddComments(props: Props) {
 
     // Set focus on Editor
     React.useEffect(() => {
-        ReactEditor.focus(editor);
-        Transforms.select(editor, Editor.end(editor, []));
+        if (!parameters || parameters.project !== 'terminology') {
+            ReactEditor.focus(editor);
+            Transforms.select(editor, Editor.end(editor, []));
+        }
     }, [editor])
     
     React.useEffect(() => {
