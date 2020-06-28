@@ -248,8 +248,12 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(lightbox.actions.open(image));
     }
 
-    updateEditorTranslation = (translation: string, changeSource: string, machinerySources?: Array<SourceType>) => {
-        this.props.dispatch(editor.actions.update(translation, changeSource, machinerySources));
+    updateEditorTranslation = (translation: string, changeSource: string) => {
+        this.props.dispatch(editor.actions.update(translation, changeSource));
+    }
+
+    updateMachinerySources = (machinerySources: Array<SourceType>, machineryTranslation: string) => {
+        this.props.dispatch(editor.actions.updateMachinerySources(machinerySources, machineryTranslation));
     }
 
     addTextToEditorTranslation = (content: string) => {
@@ -363,6 +367,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
+                    updateMachinerySources={ this.updateMachinerySources }
                     searchMachinery={ this.searchMachinery }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }

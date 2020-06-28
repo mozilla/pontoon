@@ -10,6 +10,7 @@ import {
     UPDATE,
     UPDATE_FAILED_CHECKS,
     UPDATE_SELECTION,
+    UPDATE_MACHINERY_SOURCES,
 } from './actions';
 
 import type {
@@ -23,6 +24,7 @@ import type {
     UpdateAction,
     UpdateFailedChecksAction,
     UpdateSelectionAction,
+    UpdateMachinerySourcesAction,
 } from './actions';
 
 
@@ -35,6 +37,7 @@ type Action =
     | UpdateAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
+    | UpdateMachinerySourcesAction
 ;
 
 export type EditorState = {|
@@ -51,6 +54,8 @@ export type EditorState = {|
     +changeSource: string,
 
     +machinerySources: Array<SourceType>,
+
+    +machineryTranslation: string,
 
     // Order to replace the currently selected text inside the Editor with
     // this content. This is reset after that change has been made. Because
@@ -102,6 +107,7 @@ const initial: EditorState = {
     initialTranslation: '',
     changeSource: 'internal',
     machinerySources: [],
+    machineryTranslation: '',
     selectionReplacementContent: '',
     errors: [],
     warnings: [],
@@ -125,7 +131,6 @@ export default function reducer(
                 translation: action.translation,
                 changeSource: action.changeSource,
                 source: '',
-                machinerySources: action.machinerySources,
             };
         case UPDATE_FAILED_CHECKS:
             return {
@@ -144,6 +149,8 @@ export default function reducer(
             return {
                 ...state,
                 initialTranslation: action.translation,
+                machineryTranslation: '',
+                machinerySources: [],
             };
         case START_UPDATE_TRANSLATION:
             return {
@@ -161,6 +168,12 @@ export default function reducer(
                 ...state,
                 selectionReplacementContent: '',
             };
+        case UPDATE_MACHINERY_SOURCES:
+            return {
+                ...state,
+                machineryTranslation: action.machineryTranslation,
+                machinerySources: action.machinerySources,
+            }
         default:
             return state;
     }

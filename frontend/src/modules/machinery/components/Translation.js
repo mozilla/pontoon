@@ -18,7 +18,8 @@ type Props = {|
     locale: Locale,
     sourceString: string,
     translation: MachineryTranslation,
-    updateEditorTranslation: (string, string, Array<SourceType>) => void,
+    updateEditorTranslation: (string, string) => void,
+    updateMachinerySources: (Array<SourceType>, string) => void,
 |};
 
 
@@ -40,7 +41,9 @@ export default class Translation extends React.Component<Props> {
             return;
         }
 
-        this.props.updateEditorTranslation(this.props.translation.translation, 'machinery', this.props.translation.sources);
+        const { translation, sources } = this.props.translation;
+        this.props.updateEditorTranslation(translation, 'machinery');
+        this.props.updateMachinerySources(sources, translation);
     };
 
     render() {

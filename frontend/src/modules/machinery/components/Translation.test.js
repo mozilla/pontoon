@@ -74,24 +74,25 @@ describe('<Translation>', () => {
         expect(wrapper.find('.quality').text()).toEqual('100%');
     });
 
-    it('updateEditorTranslation is called with machinerySources argument', () => {
-        const updateMock = sinon.stub();
+    it('updateMachinerySources is called while copying', () => {
+        const translationMock = sinon.stub();
+        const machineryMock = sinon.stub();
 
         const wrapper = shallow(<Translation
             translation={ DEFAULT_TRANSLATION }
             locale={ DEFAULT_LOCALE }
             entity={ DEFAULT_ENTITY }
-            updateEditorTranslation={ updateMock }
+            updateEditorTranslation={ translationMock }
+            updateMachinerySources={ machineryMock }
         />);
 
-        expect(updateMock.calledOnce).toBeFalsy();
+        expect(machineryMock.calledOnce).toBeFalsy();
         wrapper.find('li.translation').simulate('click');
-        expect(updateMock.calledOnce).toBeTruthy();
+        expect(machineryMock.calledOnce).toBeTruthy();
         expect(
-            updateMock.calledWith(
+            machineryMock.calledWith(
+                DEFAULT_TRANSLATION.sources,
                 DEFAULT_TRANSLATION.translation,
-                'machinery',
-                DEFAULT_TRANSLATION.sources
             )
         ).toBeTruthy();
     });

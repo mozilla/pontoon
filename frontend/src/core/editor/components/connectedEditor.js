@@ -276,6 +276,7 @@ export default function connectedEditor<Object>(
                 props.parameters.resource,
                 ignoreWarnings,
                 props.editor.machinerySources,
+                props.editor.machineryTranslation,
             ));
         }
 

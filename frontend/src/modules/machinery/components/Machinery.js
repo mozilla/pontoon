@@ -16,7 +16,8 @@ type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
     machinery: MachineryState,
-    updateEditorTranslation: (string, string, Array<SourceType>) => void,
+    updateEditorTranslation: (string, string) => void,
+    updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
 |};
 
@@ -47,6 +48,7 @@ export default class Machinery extends React.Component<Props> {
             locale,
             machinery,
             updateEditorTranslation,
+            updateMachinerySources,
         } = this.props;
 
         if (!locale) {
@@ -78,6 +80,7 @@ export default class Machinery extends React.Component<Props> {
                         locale={ locale }
                         translation={ translation }
                         updateEditorTranslation={ updateEditorTranslation }
+                        updateMachinerySources={ updateMachinerySources }
                         key={ index }
                     />;
                 }) }

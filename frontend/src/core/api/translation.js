@@ -20,6 +20,7 @@ export default class TranslationAPI extends APIBase {
         resource: string,
         ignoreWarnings: ?boolean,
         machinerySources: Array<SourceType>,
+        machineryTranslation: string,
     ) {
         const csrfToken = this.getCSRFToken();
 
@@ -30,7 +31,10 @@ export default class TranslationAPI extends APIBase {
         payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
         payload.append('force_suggestions', forceSuggestions.toString());
-        payload.append('machinery_sources', machinerySources.toString());
+
+        if (machinerySources.toString() && machineryTranslation === translation) {
+            payload.append('machinery_sources', machinerySources.toString());
+        }
 
         if (resource !== 'all-resources') {
             payload.append('paths[]', resource);

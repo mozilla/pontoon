@@ -24,7 +24,7 @@ export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' = 'edit
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
-
+export const UPDATE_MACHINERY_SOURCES: 'editor/UPDATE_MACHINERY_SOURCES' = 'editor/UPDATE_MACHINERY_SOURCES';
 
 export type Translation = string | FluentMessage;
 
@@ -35,14 +35,12 @@ export type UpdateAction = {|
     +type: typeof UPDATE,
     +translation: Translation,
     +changeSource: string,
-    +machinerySources: Array<SourceType>,
 |};
-export function update(translation: Translation, changeSource?: string, machinerySources?: Array<SourceType>): UpdateAction {
+export function update(translation: Translation, changeSource?: string): UpdateAction {
     return {
         type: UPDATE,
         translation,
         changeSource: changeSource || 'internal',
-        machinerySources: machinerySources || [],
     };
 }
 
@@ -59,6 +57,26 @@ export function updateSelection(content: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+    };
+}
+
+
+/**
+ * Update machinerySources and machineryTranslation when copied from machinery tab.
+ */
+export type UpdateMachinerySourcesAction = {|
+    +type: typeof UPDATE_MACHINERY_SOURCES,
+    +machinerySources: Array<SourceType>,
+    +machineryTranslation: string,
+|};
+export function updateMachinerySources(
+    machinerySources: Array<SourceType>,
+    machineryTranslation: string,
+): UpdateMachinerySourcesAction {
+    return {
+        type: UPDATE_MACHINERY_SOURCES,
+        machinerySources,
+        machineryTranslation,
     };
 }
 
@@ -166,6 +184,7 @@ export function sendTranslation(
     resource: string,
     ignoreWarnings: ?boolean,
     machinerySources: Array<SourceType>,
+    machineryTranslation: string,
 ): Function {
     return async dispatch => {
         NProgress.start();
@@ -181,6 +200,7 @@ export function sendTranslation(
             resource,
             ignoreWarnings,
             machinerySources,
+            machineryTranslation,
         );
 
         if (content.failedChecks) {
@@ -247,4 +267,5 @@ export default {
     update,
     updateFailedChecks,
     updateSelection,
+    updateMachinerySources,
 };
