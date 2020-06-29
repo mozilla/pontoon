@@ -184,7 +184,6 @@ export function sendTranslation(
     resource: string,
     ignoreWarnings: ?boolean,
     machinerySources: Array<SourceType>,
-    machineryTranslation: string,
 ): Function {
     return async dispatch => {
         NProgress.start();
@@ -200,7 +199,6 @@ export function sendTranslation(
             resource,
             ignoreWarnings,
             machinerySources,
-            machineryTranslation,
         );
 
         if (content.failedChecks) {

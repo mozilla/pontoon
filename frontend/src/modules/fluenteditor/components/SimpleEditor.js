@@ -61,7 +61,7 @@ export default class SimpleEditor extends React.Component<Props> {
         const content = fluent.serializer.serializeEntry(
             fluent.getReconstructedMessage(entity.original, currentTranslation)
         );
-        this.props.sendTranslation(ignoreWarnings, content);
+        this.props.sendTranslation(ignoreWarnings, content, currentTranslation);
     }
 
     render() {

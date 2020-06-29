@@ -72,8 +72,7 @@ export default class RichEditor extends React.Component<Props> {
     sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
         const message = translation || this.props.editor.translation;
         const fluentString = fluent.serializer.serializeEntry(message);
-
-        this.props.sendTranslation(ignoreWarnings, fluentString);
+        this.props.sendTranslation(ignoreWarnings, fluentString, message);
     }
 
     updateUnsavedChanges = (translation?: Translation, initial?: Translation) => {
