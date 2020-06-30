@@ -9,6 +9,9 @@ from django.contrib.auth.admin import (
     GroupAdmin,
 )
 from django.contrib.auth.models import User, Group
+from django.contrib.admin.utils import NestedObjects
+from django.utils.text import capfirst
+from django.utils.encoding import force_text
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
@@ -59,12 +62,17 @@ class UserAdmin(AuthUserAdmin):
 
             log_user_groups(request.user, obj, (add_groups, remove_groups))
 
+    # This method overrite the default delete process. We are creating new user with random hash
+    # and updating the cascade relationships on the objects with this new user. Then actual user gets
+    # deleted. By this way we persist translations, comments etc for deleted user.
+    # Bug 1561663 Admin should be able to remove an account
     def delete_model(self, request, obj):
         random_hash = uuid.uuid4().hex
         new_user = User.objects.create_user(
             username="deleted-user-" + random_hash,
             email="deleted-user-" + random_hash + "@example.com",
             first_name="Deleted User",
+            is_active=False,
         )
 
         ActionLog.objects.filter(performed_by=obj).update(performed_by=new_user)
@@ -93,9 +101,54 @@ class UserAdmin(AuthUserAdmin):
 
         super(UserAdmin, self).delete_model(request, obj)
 
+    # This method is to overrite bulk delete method from the user list page
     def delete_queryset(self, request, queryset):
         for obj in queryset:
             self.delete_model(request, obj)
+
+    # Due to cascade relationship, all the pontoon objects gets listed on confirmation page.
+    # This method mannually filtering data which is not actualy getting deleted.
+    def get_deleted_objects(self, objs, request):
+        exclude_types = [
+            models.Comment.__name__,
+            ActionLog.__name__,
+            models.PermissionChangelog.__name__,
+            models.Project.__name__,
+            models.Translation.__name__,
+            Term.__name__,
+        ]
+        collector = NestedObjects(using="default")
+        collector.collect(objs)
+
+        def get_class_name_from_label(label):
+            return label.split(".")[1]
+
+        def format_callback(obj):
+            opts = obj._meta
+            no_edit_link = "%s: %s" % (capfirst(opts.verbose_name), force_text(obj))
+            return no_edit_link
+
+        def fun_callback(x):
+            if get_class_name_from_label(x._meta.label) in exclude_types:
+                return False
+            return True
+
+        items = collector.nested()
+        for item in items:
+            if isinstance(item, list):
+                filtered_item = list(filter(lambda x: fun_callback(x), item))
+                filtered_item = map(lambda x: format_callback(x), filtered_item)
+                item.clear()
+                item.extend(filtered_item)
+
+        protected = []
+        perms_needed = []
+        model_count = {
+            model._meta.verbose_name_plural: len(objs)
+            for model, objs in collector.model_objs.items()
+            if get_class_name_from_label(model._meta.label) not in exclude_types
+        }
+        return (items, model_count, perms_needed, protected)
 
 
 class ExternalResourceInline(admin.TabularInline):
