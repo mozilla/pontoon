@@ -25,7 +25,7 @@ class ActionLog(models.Model):
     action_type = models.CharField(max_length=50, choices=ACTIONS_TYPES)
     created_at = models.DateTimeField(auto_now_add=True)
     performed_by = models.ForeignKey(
-        "auth.User", models.CASCADE, related_name="actions"
+        "auth.User", models.SET_NULL, related_name="actions", null=True
     )
 
     # Used to track on what translation related actions apply.

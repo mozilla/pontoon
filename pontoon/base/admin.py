@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import uuid
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import (
@@ -11,8 +13,10 @@ from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base import models
 from pontoon.base import utils
+from pontoon.terminology.models import Term
 
 from pontoon.teams.utils import log_user_groups
 
@@ -54,6 +58,50 @@ class UserAdmin(AuthUserAdmin):
             )
 
             log_user_groups(request.user, obj, (add_groups, remove_groups))
+
+    # Before deleting the user, we need to make sure data we care about is kept,
+    # especially translations the user authored. Hence we create a new anonymized user,
+    # move user data we care about to it and then delete the user.
+    # See bug 1561663 for details.
+    def delete_model(self, request, obj):
+        random_hash = uuid.uuid4().hex
+        new_user = User.objects.create_user(
+            username="deleted-user-" + random_hash,
+            email="deleted-user-" + random_hash + "@example.com",
+            first_name="Deleted User",
+            is_active=False,
+        )
+
+        ActionLog.objects.filter(performed_by=obj).update(performed_by=new_user)
+        models.PermissionChangelog.objects.filter(performed_by=obj).update(
+            performed_by=new_user
+        )
+        models.PermissionChangelog.objects.filter(performed_on=obj).update(
+            performed_on=new_user
+        )
+        models.Project.objects.filter(contact=obj).update(contact=new_user)
+        models.Translation.objects.filter(user=obj).update(user=new_user)
+        models.Translation.objects.filter(approved_user=obj).update(
+            approved_user=new_user
+        )
+        models.Translation.objects.filter(unapproved_user=obj).update(
+            unapproved_user=new_user
+        )
+        models.Translation.objects.filter(rejected_user=obj).update(
+            rejected_user=new_user
+        )
+        models.Translation.objects.filter(unrejected_user=obj).update(
+            unrejected_user=new_user
+        )
+        Term.objects.filter(created_by=obj).update(created_by=new_user)
+        models.Comment.objects.filter(author=obj).update(author=new_user)
+
+        super(UserAdmin, self).delete_model(request, obj)
+
+    # This method is to override bulk delete method from the user list page
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            self.delete_model(request, obj)
 
 
 class ExternalResourceInline(admin.TabularInline):
