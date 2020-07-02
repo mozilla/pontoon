@@ -115,6 +115,9 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
 
+    # Exclude deleted users.
+    contributors = contributors.filter(is_active=True)
+
     if None in user_stats.keys():
         contributors = list(contributors)
         contributors.append(

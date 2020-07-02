@@ -84,7 +84,7 @@ class Term(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
-        "auth.User", models.CASCADE, related_name="terms", null=True, blank=True
+        "auth.User", models.SET_NULL, related_name="terms", null=True, blank=True
     )
 
     objects = TermQuerySet.as_manager()
