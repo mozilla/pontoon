@@ -2960,8 +2960,8 @@ class Translation(DirtyFieldsMixin, models.Model):
         ("translation-memory", "Translation Memory"),
         ("google-translate", "Google Translate"),
         ("microsoft-translator", "Microsoft Translator"),
-        ("microsoft-terminology", "Microsoft Terminology"),
-        ("transvision", "Transvision"),
+        ("microsoft-terminology", "Microsoft"),
+        ("transvision", "Mozilla"),
         ("caighdean", "Caighdean"),
     )
 

@@ -291,11 +291,16 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             imageUrl={ translation.userGravatarUrlSmall }
                         />
                         { !translation.machinerySources ? null :
-                            <span
-                                className="fa machinery-sources"
-                                title={`Copied (${translation.machinerySources})`}
+                            <Localized
+                                id='history-Translation--span-copied'
+                                attrs={{ title: true }}
+                                vars={{ machinerySources: translation.machinerySources }}
                             >
-                            </span>
+                                <span
+                                    className="fa machinery-sources"
+                                    title= { 'Copied ({ $machinerySources })' }
+                                ></span>
+                            </Localized>
                         }
                     </div>
                     <div className='content'>
