@@ -3627,7 +3627,7 @@ class TranslatedResource(AggregatedStats):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, models.CASCADE)
+    author = models.ForeignKey(User, models.SET_NULL, null=True)
     timestamp = models.DateTimeField(default=timezone.now)
     translation = models.ForeignKey(
         Translation, models.CASCADE, related_name="comments", blank=True, null=True,
