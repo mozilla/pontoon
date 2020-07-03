@@ -70,7 +70,7 @@ export default function AddComments(props: Props) {
             ReactEditor.focus(editor);
             Transforms.select(editor, Editor.end(editor, []));
         }
-    }, [editor])
+    }, [editor, parameters])
     
     React.useEffect(() => {
         getUsers();
