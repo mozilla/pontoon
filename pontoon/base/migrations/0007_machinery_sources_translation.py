@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("base", "0005_add_terminology_project"),
+        ("base", "0006_auto_20200703_0710"),
     ]
 
     operations = [
