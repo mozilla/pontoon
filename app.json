@@ -101,6 +101,18 @@
     "HEROKU_DEMO": {
       "description": "Enabled features like a standalone login page etc.",
       "value": "1"
+    },
+    "LOCALE_REQUEST_FROM_EMAIL": {
+      "description": "Requests about new project locales are sent from this email.",
+      "value": "pontoon@example.com"
+    },
+    "VCS_SYNC_NAME": {
+      "description": "Default committer's name that Sync uses when a changeset doesn't have authors.",
+      "value": "Pontoon"
+    },
+    "VCS_SYNC_EMAIL": {
+      "descrition": "Default committer's email that Sync uses when a changeset doesn't have authors.",
+      "value": "pontoon@example.com"
     }
    },
    "buildpacks": [
