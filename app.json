@@ -103,15 +103,15 @@
       "value": "1"
     },
     "LOCALE_REQUEST_FROM_EMAIL": {
-      "description": "Requests about new project locales are sent from this email.",
+      "description": "Optional. Requests for new project locales are sent from this email.",
       "value": "pontoon@example.com"
     },
     "VCS_SYNC_NAME": {
-      "description": "Default committer's name that Sync uses when a changeset doesn't have authors.",
+      "description": "Optional. Default committer's name used when committing translations to version control system.",
       "value": "Pontoon"
     },
     "VCS_SYNC_EMAIL": {
-      "descrition": "Default committer's email that Sync uses when a changeset doesn't have authors.",
+      "description": "Optional. Default committer's email used when committing translations to version control system.",
       "value": "pontoon@example.com"
     }
    },

@@ -115,7 +115,7 @@ you create:
    by Google.
 
 ``LOCALE_REQUEST_FROM_EMAIL``
-   Optional. Requests about new project locales are sent from this email.
+   Optional. Requests for new project locales are sent from this email.
 
 ``MAINTENANCE_PAGE_URL``
    Optional. URL to the page displayed to your users when the application is placed
@@ -203,10 +203,10 @@ you create:
    this to ``UTC``.
 
 ``VCS_SYNC_NAME``
-  Optional. Default committer's name that Sync uses when a changeset doesn't have authors.
+  Optional. Default committer's name used when committing translations to version control system.
 
 ``VCS_SYNC_EMAIL``
-  Optional. Default committer's email that Sync uses when a changeset doesn't have authors.
+  Optional. Default committer's email used when committing translations to version control system.
 
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 .. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
