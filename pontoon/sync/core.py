@@ -7,6 +7,7 @@ import requests
 from celery import shared_task
 from collections import Counter
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import transaction
@@ -351,7 +352,9 @@ def commit_changes(db_project, vcs_project, changeset, locale):
     if len(authors) > 0:
         commit_author = Counter(authors).most_common(1)[0][0]
     else:
-        commit_author = User(first_name="Mozilla Pontoon", email="pontoon@mozilla.com")
+        commit_author = User(
+            first_name=settings.VCS_SYNC_NAME, email=settings.VCS_SYNC_EMAIL
+        )
 
     commit_message = render_to_string(
         "sync/commit_message.jinja",

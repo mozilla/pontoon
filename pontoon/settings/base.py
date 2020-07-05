@@ -47,6 +47,15 @@ ADMINS = MANAGERS = (
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
+# Email from which new locale requests are sent.
+LOCALE_REQUEST_FROM_EMAIL = os.environ.get(
+    "LOCALE_REQUEST_FROM_EMAIL", "pontoon@example.com"
+)
+
+# VCS identity to be used when committing translations.
+VCS_SYNC_NAME = os.environ.get("VCS_SYNC_NAME", "Pontoon")
+VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
+
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
