@@ -8,6 +8,7 @@ import './Machinery.css';
 import Translation from './Translation';
 
 import type { Locale } from 'core/locale';
+import type { SourceType } from 'core/api';
 import type { MachineryState } from '..';
 
 
@@ -16,6 +17,7 @@ type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
     updateEditorTranslation: (string, string) => void,
+    updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
 |};
 
@@ -46,6 +48,7 @@ export default class Machinery extends React.Component<Props> {
             locale,
             machinery,
             updateEditorTranslation,
+            updateMachinerySources,
         } = this.props;
 
         if (!locale) {
@@ -77,6 +80,7 @@ export default class Machinery extends React.Component<Props> {
                         locale={ locale }
                         translation={ translation }
                         updateEditorTranslation={ updateEditorTranslation }
+                        updateMachinerySources={ updateMachinerySources }
                         key={ index }
                     />;
                 }) }

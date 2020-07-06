@@ -199,3 +199,19 @@
 .translation .content > header button.delete:hover:before {
     color: #F36;
 }
+
+.machinery-sources {
+    position: absolute;
+    top: 0;
+    left: -2px;
+    color: #7BC876;
+    font-size: 14px;
+}
+
+.machinery-sources::before {
+    content: "";
+}
+
+.history .translation .avatar-container {
+    position: relative;
+}

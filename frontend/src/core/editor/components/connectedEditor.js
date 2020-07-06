@@ -75,13 +75,13 @@ export type EditorProps = {|
     copyOriginalIntoEditor: () => void,
     handleShortcuts: (
         event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
-        sendTranslation: ?(ignoreWarnings?: boolean, translation?: string) => void,
+        sendTranslation: ?(ignoreWarnings?: boolean, translation?: string, editorTranslation?: Translation) => void,
         clearEditor: ?() => void,
         copyOriginalIntoEditor: ?() => void,
     ) => void,
     resetFailedChecks: () => void,
     resetSelectionContent: () => void,
-    sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
+    sendTranslation: (ignoreWarnings?: boolean, translation?: string, editorTranslation?: Translation) => void,
     setInitialTranslation: (Translation) => void,
     showNotSupportedMessage: () => void,
     updateTranslation: (Translation, fromOutsideEditor?: boolean) => void,
@@ -141,7 +141,7 @@ export default function connectedEditor<Object>(
 
         handleShortcuts = (
             event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
-            sendTranslation: ?(ignoreWarnings?: boolean, translation?: string) => void,
+            sendTranslation: ?(ignoreWarnings?: boolean, translation?: string, editorTranslation?: Translation) => void,
             clearEditor: ?() => void,
             copyOriginalIntoEditor: ?() => void,
         ) => {
@@ -250,7 +250,7 @@ export default function connectedEditor<Object>(
             this.updateTranslation('', true);
         }
 
-        sendTranslation = (ignoreWarnings?: boolean, translation?: string) => {
+        sendTranslation = (ignoreWarnings?: boolean, translation?: string, editorTranslation?: Translation) => {
             const props = this.props;
 
             if (props.editor.isRunningRequest || !props.selectedEntity || !props.locale) {
@@ -258,11 +258,17 @@ export default function connectedEditor<Object>(
             }
 
             const content = translation || props.editor.translation;
+            const editorContent = editorTranslation || props.editor.translation;
             if (typeof(content) !== 'string') {
                 throw new Error(
                     'Trying to save an unsupported non-string translation: ' +
                     typeof(content)
                 );
+            }
+
+            let machinerySources = props.editor.machinerySources;
+            if (machinerySources && props.editor.machineryTranslation !== editorContent) {
+                machinerySources = [];
             }
 
             this.props.dispatch(actions.sendTranslation(
@@ -275,6 +281,7 @@ export default function connectedEditor<Object>(
                 props.router,
                 props.parameters.resource,
                 ignoreWarnings,
+                machinerySources,
             ));
         }
 
