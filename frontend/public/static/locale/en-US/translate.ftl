@@ -295,6 +295,8 @@ history-Translation--button-comments = { $commentCount ->
     }
     .title = Toggle translation comments
 
+history-Translation--span-copied =
+    .title = Copied ({ $machinerySources })
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,

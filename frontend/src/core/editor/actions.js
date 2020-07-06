@@ -11,7 +11,7 @@ import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import type { Entity } from 'core/api';
+import type { Entity, SourceType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { FluentMessage } from 'core/utils/fluent/types';
 
@@ -24,7 +24,7 @@ export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' = 'edit
 export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
 export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' = 'editor/UPDATE_SELECTION';
-
+export const UPDATE_MACHINERY_SOURCES: 'editor/UPDATE_MACHINERY_SOURCES' = 'editor/UPDATE_MACHINERY_SOURCES';
 
 export type Translation = string | FluentMessage;
 
@@ -57,6 +57,26 @@ export function updateSelection(content: string): UpdateSelectionAction {
     return {
         type: UPDATE_SELECTION,
         content,
+    };
+}
+
+
+/**
+ * Update machinerySources and machineryTranslation when copied from machinery tab.
+ */
+export type UpdateMachinerySourcesAction = {|
+    +type: typeof UPDATE_MACHINERY_SOURCES,
+    +machinerySources: Array<SourceType>,
+    +machineryTranslation: string,
+|};
+export function updateMachinerySources(
+    machinerySources: Array<SourceType>,
+    machineryTranslation: string,
+): UpdateMachinerySourcesAction {
+    return {
+        type: UPDATE_MACHINERY_SOURCES,
+        machinerySources,
+        machineryTranslation,
     };
 }
 
@@ -163,6 +183,7 @@ export function sendTranslation(
     router: Object,
     resource: string,
     ignoreWarnings: ?boolean,
+    machinerySources: Array<SourceType>,
 ): Function {
     return async dispatch => {
         NProgress.start();
@@ -177,6 +198,7 @@ export function sendTranslation(
             forceSuggestions,
             resource,
             ignoreWarnings,
+            machinerySources,
         );
 
         if (content.failedChecks) {
@@ -243,4 +265,5 @@ export default {
     update,
     updateFailedChecks,
     updateSelection,
+    updateMachinerySources,
 };

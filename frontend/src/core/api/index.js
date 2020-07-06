@@ -22,6 +22,7 @@ export type {
     MachineryTranslation,
     OtherLocaleTranslations,
     OtherLocaleTranslation,
+    SourceType,
 } from './types';
 
 

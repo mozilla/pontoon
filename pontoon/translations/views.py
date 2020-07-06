@@ -48,6 +48,7 @@ def create_translation(request):
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
     paths = form.cleaned_data["paths"]
+    machinery_sources = form.cleaned_data["machinery_sources"]
 
     project = entity.resource.project
 
@@ -62,7 +63,7 @@ def create_translation(request):
         )
 
     translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form
+        entity=entity, locale=locale, plural_form=plural_form,
     )
 
     same_translations = translations.filter(string=string)
@@ -98,6 +99,7 @@ def create_translation(request):
         user=user,
         date=now,
         approved=can_translate,
+        machinery_sources=machinery_sources,
     )
 
     if can_translate:

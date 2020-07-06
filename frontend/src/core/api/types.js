@@ -103,7 +103,7 @@ export type OtherLocaleTranslation = {|
  * Translation that comes from a machine (Machine Translation,
  * Translation Memory... ).
  */
-type SourceType =
+export type SourceType =
     | 'translation-memory'
     | 'google-translate'
     | 'microsoft-translator'
