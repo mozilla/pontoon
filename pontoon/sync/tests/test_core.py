@@ -383,8 +383,8 @@ class CommitChangesTests(FakeCheckoutTestCase):
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
         )
         user = self.mock_repo_commit.call_args[0][1]
-        assert_equal(user.first_name, "Mozilla Pontoon")
-        assert_equal(user.email, "pontoon@mozilla.com")
+        assert_equal(user.first_name, "Pontoon")
+        assert_equal(user.email, "pontoon@example.com")
 
 
 class PullChangesTests(FakeCheckoutTestCase):

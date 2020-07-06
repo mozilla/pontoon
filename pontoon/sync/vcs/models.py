@@ -560,8 +560,8 @@ class VCSConfiguration(object):
         # Commit configuration file to VCS
         commit_message = 'Update configuration file'
         commit_author = User(
-            first_name='Mozilla Pontoon',
-            email='pontoon@mozilla.com',
+            first_name=settings.VCS_SYNC_NAME,
+            email=settings.VCS_SYNC_EMAIL,
         )
         repo = self.vcs_project.db_project.source_repository
         repo.commit(commit_message, commit_author, repo.checkout_path)
