@@ -13,7 +13,11 @@ versa. Examples could be
 
 * Integration to Mozilla-specific services
 * Integration of instance-specific data collection
-* Theming and branding changes
+
+# Out of scope
+
+Theming and branding require more ground work, and are outside of the
+scope of this spec.
 
 # Feature Explanation
 
