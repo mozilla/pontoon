@@ -24,6 +24,7 @@ export type HistoryTranslation = {|
     +string: string,
     +uid: ?number,
     +unapprovedUser: string,
+    +machinerySources: string,
     +user: string,
     +username: string,
     +userGravatarUrlSmall: string,

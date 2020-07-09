@@ -434,6 +434,7 @@ def get_translation_history(request):
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "unapproved_user": User.display_name_or_blank(t.unapproved_user),
                 "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
+                "machinery_sources": t.machinery_sources_values,
             }
         )
         payload.append(translation_dict)

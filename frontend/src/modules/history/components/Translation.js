@@ -284,11 +284,25 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Copy Into Translation'
                     onClick={ this.copyTranslationIntoEditor }
                 >
-                    <UserAvatar
-                        username={ translation.username }
-                        title={ this.getApprovalTitle() }
-                        imageUrl={ translation.userGravatarUrlSmall }
-                    />
+                    <div className="avatar-container">
+                        <UserAvatar
+                            username={ translation.username }
+                            title={ this.getApprovalTitle() }
+                            imageUrl={ translation.userGravatarUrlSmall }
+                        />
+                        { !translation.machinerySources ? null :
+                            <Localized
+                                id='history-Translation--span-copied'
+                                attrs={{ title: true }}
+                                vars={{ machinerySources: translation.machinerySources }}
+                            >
+                                <span
+                                    className="fa machinery-sources"
+                                    title= { 'Copied ({ $machinerySources })' }
+                                ></span>
+                            </Localized>
+                        }
+                    </div>
                     <div className='content'>
                         <header className='clearfix'>
                             <div className='info'>

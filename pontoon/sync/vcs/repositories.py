@@ -154,9 +154,9 @@ class CommitToGit(CommitToRepository):
         git_cmd = [
             "git",
             "-c",
-            f"user.name={user.first_name}",
+            f"user.name={settings.VCS_SYNC_NAME}",
             "-c",
-            f"user.email={user.email}",
+            f"user.email={settings.VCS_SYNC_EMAIL}",
         ]
 
         # Add new and remove missing paths

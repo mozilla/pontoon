@@ -1,7 +1,7 @@
 /* @flow */
 
 import APIBase from './base';
-
+import type { SourceType  } from './types'
 
 export default class TranslationAPI extends APIBase {
     /**
@@ -19,6 +19,7 @@ export default class TranslationAPI extends APIBase {
         forceSuggestions: boolean,
         resource: string,
         ignoreWarnings: ?boolean,
+        machinerySources: Array<SourceType>,
     ) {
         const csrfToken = this.getCSRFToken();
 
@@ -29,6 +30,7 @@ export default class TranslationAPI extends APIBase {
         payload.append('plural_form', pluralForm.toString());
         payload.append('original', original);
         payload.append('force_suggestions', forceSuggestions.toString());
+        payload.append('machinery_sources', machinerySources.toString());
 
         if (resource !== 'all-resources') {
             payload.append('paths[]', resource);

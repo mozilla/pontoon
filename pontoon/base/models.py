@@ -2953,6 +2953,19 @@ class Translation(DirtyFieldsMixin, models.Model):
     )
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
+    SOURCE_TYPES = (
+        ("translation-memory", "Translation Memory"),
+        ("google-translate", "Google Translate"),
+        ("microsoft-translator", "Microsoft Translator"),
+        ("microsoft-terminology", "Microsoft"),
+        ("transvision", "Mozilla"),
+        ("caighdean", "Caighdean"),
+    )
+
+    machinery_sources = ArrayField(
+        models.CharField(max_length=30, choices=SOURCE_TYPES), default=list, blank=True,
+    )
+
     objects = TranslationQuerySet.as_manager()
 
     # extra stores data that we want to save for the specific format
@@ -3017,6 +3030,16 @@ class Translation(DirtyFieldsMixin, models.Model):
                 "user": self.user,
                 "type": "submitted",
             }
+
+    @property
+    def machinery_sources_values(self):
+        """
+        Returns the corresponding comma-separated machinery_sources values
+        """
+        choices = dict(self.SOURCE_TYPES)
+        result = [choices[key] for key in self.machinery_sources]
+
+        return ", ".join(result)
 
     @property
     def tm_source(self):
