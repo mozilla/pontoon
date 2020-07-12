@@ -27,7 +27,8 @@ help:
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
-	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
+	@echo "  build-frontend-w Watches the frontend static files and builds on change"
+	@echo "  sync-projects    Runs the synchronization task on all projects\n"
 
 
 .docker-build:
@@ -74,6 +75,9 @@ lint-frontend:
 
 shell:
 	"${DC}" run --rm webapp //bin/bash
+
+sync-projects:
+	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)
 
 loaddb:
 	# Stop connections to the database so we can drop it.

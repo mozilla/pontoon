@@ -8,13 +8,16 @@ import os
 import scandir
 import shutil
 
+import requests
+
+from datetime import datetime
+from itertools import chain
+from urllib.parse import urljoin
+
 from compare_locales.paths import (
     ProjectFiles,
     TOMLParser,
 )
-from datetime import datetime
-from itertools import chain
-
 from django.utils import timezone
 from django.utils.functional import cached_property
 
@@ -35,6 +38,36 @@ from pontoon.sync.vcs.repositories import get_changed_files
 
 
 log = logging.getLogger(__name__)
+
+
+class HerokuTOML(TOMLParser):
+    """
+    Heroku worker instances doesn't have a persi
+    Download project config files
+    """
+
+    def __init__(self, checkout_path, permalink_prefix):
+        self.checkout_path = checkout_path
+        self.permalink_prefix = permalink_prefix
+
+    def parse(self, path, env=None, ignore_missing_includes=True):
+        config_path = path.replace(self.checkout_path, "")
+
+        if "{locale_code}" in self.permalink_prefix:
+            remote_path = (self.permalink_prefix or "").format(locale_code=config_path)
+        else:
+            remote_path = urljoin(self.permalink_prefix or "", config_path)
+
+        download_path = os.path.join(self.checkout_path, path)
+
+        with open(download_path, "wb") as f:
+            config_file = requests.get(remote_path)
+            config_file.raise_for_status()
+            f.write(config_file.content)
+
+        return super(HerokuTOML, self).parse(
+            download_path, env, ignore_missing_includes
+        )
 
 
 class MissingSourceRepository(Exception):
@@ -527,9 +560,10 @@ class VCSConfiguration(object):
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        return TOMLParser().parse(
-            self.configuration_path, env={"l10n_base": self.l10n_base},
-        )
+        return HerokuTOML(
+            self.vcs_project.db_project.source_repository.checkout_path,
+            self.vcs_project.db_project.source_repository.permalink_prefix,
+        ).parse(self.configuration_file, env={"l10n_base": self.l10n_base},)
 
     def add_locale(self, locale_code):
         """
