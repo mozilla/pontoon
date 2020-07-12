@@ -40,10 +40,11 @@ from pontoon.sync.vcs.repositories import get_changed_files
 log = logging.getLogger(__name__)
 
 
-class HerokuTOML(TOMLParser):
+class DownloadTOMLParser(TOMLParser):
     """
-    Heroku worker instances doesn't have a persi
-    Download project config files
+    This wrapper is a workaround for the lack of the shared and persistent filesystem
+    on Heroku workers.
+    Related: https://bugzilla.mozilla.org/show_bug.cgi?id=1530988
     """
 
     def __init__(self, checkout_path, permalink_prefix):
@@ -65,7 +66,7 @@ class HerokuTOML(TOMLParser):
             config_file.raise_for_status()
             f.write(config_file.content)
 
-        return super(HerokuTOML, self).parse(
+        return super(DownloadTOMLParser, self).parse(
             download_path, env, ignore_missing_includes
         )
 
@@ -560,7 +561,7 @@ class VCSConfiguration(object):
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        return HerokuTOML(
+        return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
             self.vcs_project.db_project.source_repository.permalink_prefix,
         ).parse(self.configuration_file, env={"l10n_base": self.l10n_base},)
