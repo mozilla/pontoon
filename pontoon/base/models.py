@@ -622,6 +622,25 @@ class Locale(AggregatedStats):
         """,
     )
 
+    # Fields used by optional SYSTRAN services
+    systran_translate_code = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="""
+        SYSTRAN maintains its own list of
+        <a href="https://platform.systran.net/index">supported locales</a>.
+        Choose a matching locale from the list or leave blank to disable
+        support for SYSTRAN machine translation service.
+        """,
+    )
+    systran_translate_profile = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="""
+        SYSTRAN Profile UUID to specify the engine trained on the en-locale language pair.
+        """,
+    )
+
     transvision = models.BooleanField(
         default=False,
         help_text="""
@@ -759,6 +778,7 @@ class Locale(AggregatedStats):
             "script": self.script,
             "google_translate_code": self.google_translate_code,
             "ms_translator_code": self.ms_translator_code,
+            "systran_translate_code": self.systran_translate_code,
             "ms_terminology_code": self.ms_terminology_code,
             "transvision": json.dumps(self.transvision),
         }
@@ -2960,6 +2980,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         ("translation-memory", "Translation Memory"),
         ("google-translate", "Google Translate"),
         ("microsoft-translator", "Microsoft Translator"),
+        ("systran-translate", "Systran Translate"),
         ("microsoft-terminology", "Microsoft"),
         ("transvision", "Mozilla"),
         ("caighdean", "Caighdean"),

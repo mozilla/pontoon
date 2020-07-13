@@ -74,6 +74,11 @@ export function get(source: string, locale: Locale, pk: ?number): Function {
         api.machinery.getMicrosoftTranslation(source, locale)
         .then(results => dispatch(addTranslations(results)));
 
+        if (locale.systranTranslateCode) {
+            api.machinery.getSystranTranslation(source, locale)
+            .then(results => dispatch(addTranslations(results)));
+        }
+
         if (locale.msTerminologyCode) {
             api.machinery.getMicrosoftTerminology(source, locale)
             .then(results => dispatch(addTranslations(results)));

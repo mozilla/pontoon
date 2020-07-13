@@ -198,6 +198,10 @@ you create:
    task can run. The value should exceed the longest sync task of the instance.
    The default value is 3600 seconds (1 hour).
 
+``SYSTRAN_TRANSLATE_API_KEY``
+   Optional. Set your `SYSTRAN Translate API key`_ to use machine translation
+   by SYSTRAN.
+
 ``TZ``
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
    this to ``UTC``.

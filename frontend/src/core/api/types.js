@@ -107,6 +107,7 @@ export type SourceType =
     | 'translation-memory'
     | 'google-translate'
     | 'microsoft-translator'
+    | 'systran-translate'
     | 'microsoft-terminology'
     | 'transvision'
     | 'caighdean'

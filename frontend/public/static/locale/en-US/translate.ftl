@@ -412,6 +412,12 @@ machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
     .title = Visit Microsoft Translator
 
 
+## Machinery Systran Translate
+## Shows the translation source from Systran Translate.
+machinery-SystranTranslate--visit-systran = Systran Translate
+    .title = Visit Systran Translate
+
+
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 machinery-MicrosoftTerminology--visit-microsoft = Microsoft

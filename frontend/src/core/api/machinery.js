@@ -97,6 +97,29 @@ export default class MachineryAPI extends APIBase {
     }
 
     /**
+     * Return translations by SYSTRAN.
+     */
+    async getSystranTranslation(source: string, locale: Locale): Promise<Translations> {
+        const url = '/systran-translate/';
+        const params = {
+            text: source,
+            locale: locale.systranTranslateCode,
+        };
+
+        const result = await this._get(url, params);
+
+        if (!result.translation) {
+            return [];
+        }
+
+        return [{
+            sources: ['systran-translate'],
+            original: source,
+            translation: result.translation,
+        }];
+    }
+
+    /**
      * Return translations from Microsoft Terminology.
      */
     async getMicrosoftTerminology(source: string, locale: Locale): Promise<Translations> {

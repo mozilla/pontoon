@@ -25,6 +25,7 @@ export type Locale = {|
     +script: string,
     +googleTranslateCode: string,
     +msTranslatorCode: string,
+    +systranTranslateCode: string,
     +msTerminologyCode: string,
     +transvision: boolean,
     +localizations: Array<Localization>,
