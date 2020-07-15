@@ -202,6 +202,7 @@ def systran_translate(request):
         "source": "en",
         "target": locale_code,
         "profile": locale.systran_translate_profile,
+        "format": "text",
     }
 
     try:
