@@ -55,9 +55,9 @@ class DownloadTOMLParser(TOMLParser):
         config_path = path.replace(self.checkout_path, "")
 
         if "{locale_code}" in self.permalink_prefix:
-            remote_path = (self.permalink_prefix or "").format(locale_code=config_path)
+            remote_path = self.permalink_prefix.format(locale_code=config_path)
         else:
-            remote_path = urljoin(self.permalink_prefix or "", config_path)
+            raise ValueError('The permalink cannot be empty.')
 
         download_path = os.path.join(self.checkout_path, path)
 
@@ -563,7 +563,7 @@ class VCSConfiguration(object):
         """Return parsed project configuration file."""
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
-            self.vcs_project.db_project.source_repository.permalink_prefix,
+            self.vcs_project.db_project.source_repository.permalink_prefix or '',
         ).parse(self.configuration_file, env={"l10n_base": self.l10n_base},)
 
     def add_locale(self, locale_code):
