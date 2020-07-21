@@ -51,13 +51,14 @@ class DownloadTOMLParser(TOMLParser):
         self.checkout_path = checkout_path
         self.permalink_prefix = permalink_prefix
 
-    def parse(self, path, env=None, ignore_missing_includes=True):
+    def get_project_config(self, path):
+        """Download the project config file and return its local path."""
         config_path = path.replace(self.checkout_path, "")
 
         if "{locale_code}" in self.permalink_prefix:
             remote_path = self.permalink_prefix.format(locale_code=config_path)
         else:
-            raise ValueError('The permalink cannot be empty.')
+            remote_path = urljoin(self.permalink_prefix, config_path)
 
         download_path = os.path.join(self.checkout_path, path)
 
@@ -65,10 +66,19 @@ class DownloadTOMLParser(TOMLParser):
             config_file = requests.get(remote_path)
             config_file.raise_for_status()
             f.write(config_file.content)
+        return download_path
 
+    def parse(self, path, env=None, ignore_missing_includes=True):
         return super(DownloadTOMLParser, self).parse(
-            download_path, env, ignore_missing_includes
+            self.get_project_config(path), env, ignore_missing_includes
         )
+
+
+class MissingRepositoryPermalink(Exception):
+    """
+    Raised when a project uses project config files and
+    and its source repository doesn't have the permalink.
+    """
 
 
 class MissingSourceRepository(Exception):
@@ -148,6 +158,10 @@ class VCSProject(object):
 
         self.configuration = None
         if db_project.configuration_file:
+            # Permalink is required to download project config files.
+            if db_project.source_repository.permalink_prefix:
+                raise MissingRepositoryPermalink()
+
             self.configuration = VCSConfiguration(self)
 
     @cached_property
@@ -563,7 +577,7 @@ class VCSConfiguration(object):
         """Return parsed project configuration file."""
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
-            self.vcs_project.db_project.source_repository.permalink_prefix or '',
+            self.vcs_project.db_project.source_repository.permalink_prefix,
         ).parse(self.configuration_file, env={"l10n_base": self.l10n_base},)
 
     def add_locale(self, locale_code):

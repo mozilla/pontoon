@@ -40,7 +40,23 @@ TEST_CHECKOUT_PATH = os.path.join(
 )
 
 
-class VCSProjectTests(TestCase):
+class VCSTestCase(TestCase):
+    """
+    Setup fixtures that are shared between VCS tests.
+    """
+
+    def setUp(self):
+        self.get_project_config_patcher = patch(
+            "pontoon.sync.vcs.models.DownloadTOMLParser.get_project_config"
+        )
+        self.get_project_config_mock = self.get_project_config_patcher.start()
+        self.get_project_config_mock.side_effect = lambda p: os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, p
+        )
+        self.addCleanup(self.get_project_config_patcher.stop)
+
+
+class VCSProjectTests(VCSTestCase):
     def setUp(self):
         # Force the checkout path to point to a test directory to make
         # resource file loading pass during tests.
@@ -53,8 +69,11 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path = checkout_path_patch.start()
         self.addCleanup(checkout_path_patch.stop)
 
-        self.project = ProjectFactory.create()
+        self.project = ProjectFactory.create(
+            repositories__permalink="https://example.com/l10n/{locale_code}"
+        )
         self.vcs_project = VCSProject(self.project)
+        super(VCSProjectTests, self).setUp()
 
     def test_relative_resource_paths(self):
         with patch.object(
@@ -264,10 +283,11 @@ class VCSProjectTests(TestCase):
             )
 
 
-class VCSConfigurationTests(TestCase):
+class VCSConfigurationTests(VCSTestCase):
     toml = "l10n.toml"
 
     def setUp(self):
+        super(VCSConfigurationTests, self).setUp()
         self.locale, _ = Locale.objects.get_or_create(code="fr")
 
         self.repository = RepositoryFactory()
@@ -298,10 +318,6 @@ class VCSConfigurationTests(TestCase):
         # Make sure VCSConfiguration instance is initialized
         self.db_project.configuration_file = self.toml
         self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
-
-        self.vcs_project.configuration.configuration_path = os.path.join(
-            PROJECT_CONFIG_CHECKOUT_PATH, self.db_project.configuration_file,
-        )
 
     def test_add_locale(self):
         config = self.vcs_project.configuration.parsed_configuration
@@ -424,10 +440,11 @@ def setUpResource(self):
     )
 
 
-class VCSConfigurationFullLocaleTests(TestCase):
+class VCSConfigurationFullLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="fr")
         setUpResource(self)
+        super(VCSConfigurationFullLocaleTests, self).setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -462,10 +479,11 @@ class VCSConfigurationFullLocaleTests(TestCase):
         )
 
 
-class VCSConfigurationPartialLocaleTests(TestCase):
+class VCSConfigurationPartialLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="sl")
         setUpResource(self)
+        super(VCSConfigurationPartialLocaleTests, self).setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -490,7 +508,7 @@ class VCSConfigurationPartialLocaleTests(TestCase):
         assert_equal(r.files, {})
 
 
-class VCSEntityTests(TestCase):
+class VCSEntityTests(VCSTestCase):
     def test_has_translation_for(self):
         """
         Return True if a translation exists for the given locale, even
