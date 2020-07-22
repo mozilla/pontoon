@@ -50,8 +50,8 @@ class VCSTestCase(TestCase):
             "pontoon.sync.vcs.models.DownloadTOMLParser.get_project_config"
         )
         self.get_project_config_mock = self.get_project_config_patcher.start()
-        self.get_project_config_mock.side_effect = lambda p: os.path.join(
-            PROJECT_CONFIG_CHECKOUT_PATH, p
+        self.get_project_config_mock.side_effect = lambda config_path: os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, config_path
         )
         self.addCleanup(self.get_project_config_patcher.stop)
 
@@ -522,3 +522,27 @@ class VCSEntityTests(VCSTestCase):
         assert_false(entity.has_translation_for("missing"))
         assert_true(entity.has_translation_for("empty"))
         assert_true(entity.has_translation_for("full"))
+
+
+class DownloadTOMLParserTests(TestCase):
+    def test_config_file_not_found(self):
+        """
+        When the project config file is not available, throw an error
+        """
+        self.assertTrue(False)
+
+    def test_referenced_files(self):
+        """
+        When a file contains references to other project config files, download them all
+        """
+        self.assertTrue(False)
+
+    def test_locale_code_in_permalink_prefix(self):
+        """
+        """
+        self.assertTrue(False)
+
+    def test_permalink_prefix(self):
+        """
+        """
+        self.assertTrue(False)

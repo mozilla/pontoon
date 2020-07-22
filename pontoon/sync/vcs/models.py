@@ -159,7 +159,7 @@ class VCSProject(object):
         self.configuration = None
         if db_project.configuration_file:
             # Permalink is required to download project config files.
-            if db_project.source_repository.permalink_prefix:
+            if not db_project.source_repository.permalink_prefix:
                 raise MissingRepositoryPermalink()
 
             self.configuration = VCSConfiguration(self)
