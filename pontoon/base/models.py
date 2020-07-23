@@ -8,6 +8,7 @@ import math
 import operator
 import os.path
 import re
+import requests
 
 import Levenshtein
 import warnings
@@ -1064,6 +1065,52 @@ class Locale(AggregatedStats):
         )
 
         return details_list
+
+    def save(self, *args, **kwargs):
+        old = Locale.objects.get(pk=self.pk) if self.pk else None
+        super(Locale, self).save(*args, **kwargs)
+
+        # If SYSTRAN Translate code changes, update SYSTRAN Profile UUID.
+        if old is None or old.systran_translate_code == self.systran_translate_code:
+            return
+
+        api_key = settings.SYSTRAN_TRANSLATE_API_KEY
+        server = settings.SYSTRAN_TRANSLATE_SERVER
+        profile_owner = settings.SYSTRAN_TRANSLATE_PROFILE_OWNER
+        if not (api_key or server or profile_owner):
+            return
+
+        url = "{SERVER}/translation/supportedLanguages".format(SERVER=server)
+
+        payload = {
+            "key": api_key,
+            "source": "en",
+            "target": self.code,
+        }
+
+        try:
+            r = requests.post(url, params=payload)
+            root = json.loads(r.content)
+
+            if "error" in root:
+                log.error(
+                    "Unable to retrieve SYSTRAN Profile UUID: {error}".format(
+                        error=root
+                    )
+                )
+                return
+
+            for languagePair in root["languagePairs"]:
+                for profile in languagePair["profiles"]:
+                    if profile["selectors"]["owner"] == profile_owner:
+                        self.systran_translate_profile = profile["id"]
+                        self.save(update_fields=["systran_translate_profile"])
+                        return
+
+        except requests.exceptions.RequestException as e:
+            log.error(
+                "Unable to retrieve SYSTRAN Profile UUID: {error}".format(error=e)
+            )
 
 
 class ProjectQuerySet(models.QuerySet):
