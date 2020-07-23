@@ -638,6 +638,7 @@ class Locale(AggregatedStats):
         blank=True,
         help_text="""
         SYSTRAN Profile UUID to specify the engine trained on the en-locale language pair.
+        The field is updated automatically after the systran_translate_code field changes.
         """,
     )
 
