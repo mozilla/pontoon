@@ -1,5 +1,6 @@
 .team-comments .comments-list {
     margin-top: 2px;
+    margin-bottom: 10px;
 }
 
 .team-comments ul,
@@ -13,4 +14,8 @@
     font-style: italic;
     line-height: 22px;
     padding: 15px 10px;
+}
+
+.react-tabs__tab-panel {
+    scroll-behavior: smooth;
 }
