@@ -38,8 +38,10 @@
 
 .mention {
     padding: 0 4px;
+    cursor: pointer;
 }
 
+.mention:hover, 
 .active-mention {
     background: #aaa;
 }

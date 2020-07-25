@@ -111,7 +111,7 @@ export default function AddComments(props: Props) {
 
             // If suggestions in team comments scroll below or suggestions in translation
             // comments scroll above the next section then hide the suggestions
-            if ((teamCommentsRect && teamCommentsActive && ((setTop - 21) > teamCommentsRect.height)) ||
+            if ((teamCommentsRect && teamCommentsActive && (((setTop + suggestionsHeight) - 61) > teamCommentsRect.height)) ||
                 (translateCommentsRect && translateCommentsActive && (setTop < translateCommentsRect.top))) {
                 el.style.display = 'none';
             }
@@ -215,6 +215,16 @@ export default function AddComments(props: Props) {
             return null;
         }
     }
+    
+    const handleMouseDown = React.useCallback((event: SyntheticMouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        if (target !== null) {
+            const charIndex = chars.indexOf(event.currentTarget.innerText)
+            Transforms.select(editor, target);
+            insertMention(editor, chars[charIndex], usersList);
+            return setTarget(null);
+        }
+    }, [editor, target, chars, usersList]);
     
     if (!user) {
         return null;
@@ -323,6 +333,7 @@ export default function AddComments(props: Props) {
                                 <div
                                     key={char}
                                     className={ i === index ? 'mention active-mention' : 'mention' }
+                                    onMouseDown={event => handleMouseDown(event)}
                                 >
                                     {char}
                                 </div>
