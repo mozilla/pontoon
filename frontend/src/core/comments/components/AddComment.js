@@ -46,7 +46,7 @@ export default function AddComments(props: Props) {
         imageURL,
         parameters,
         translation,
-        // users,
+        users,
         addComment,
         getUsers,
     } = props;
@@ -76,27 +76,12 @@ export default function AddComments(props: Props) {
         getUsers();
     }, [getUsers])
 
-    const usersList = /*users.users*/[
-        {name: "April", url: "test@url.com", display: "April"}, 
-        {name: "Adrian", url: "test@url.com", display: "Adrian"}, 
-        {name: "Alice", url: "test@url.com", display: "Alice"}, 
-        {name: "Acer", url: "test@url.com", display: "Acer"}, 
-        {name: "Anna", url: "test@url.com", display: "Anna"}, 
-        {name: "Apple", url: "test@url.com", display: "Apple"}, 
-        {name: "Aaron", url: "test@url.com", display: "Aaron"}, 
-        {name: "Annie", url: "test@url.com", display: "Annie"}, 
-        {name: "Alfred", url: "test@url.com", display: "Alfred"}, 
-        {name: "Alison", url: "test@url.com", display: "Alison"}, 
-        {name: "Atlas", url: "test@url.com", display: "Atlas"}, 
-        {name: "Ansibel", url: "test@url.com", display: "Ansibel"}, 
-        {name: "Aria", url: "test@url.com", display: "Aria"},
-    ];
+    const usersList = users.users;
     const USERS = usersList.map(user => user.name);
     const chars = USERS.filter(c =>
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 10);
-    console.log(chars);
-    
+
     // Set position of mentions suggestions
     React.useLayoutEffect(() => {
         if (target && chars.length > 0) {
@@ -230,18 +215,6 @@ export default function AddComments(props: Props) {
             return null;
         }
     }
-
-    // TODO: Only the highlighted suggestion (selected with arrow keys) is submitted. Need to work out how to select
-    // the index of the clicked suggestion. (look at slate-plugins handling for this as a guide). Also
-    // need to change to a pointer when hovering over suggestions.
-    const handleMouseDown = React.useCallback((event: SyntheticMouseEvent<>, editor, index, usersList) => {
-        event.preventDefault();
-        if (target !== null) {
-            Transforms.select(editor, target);
-            insertMention(editor, chars[index], usersList);
-            return setTarget(null);
-        }
-    }, [target, usersList]);
     
     if (!user) {
         return null;
@@ -350,7 +323,6 @@ export default function AddComments(props: Props) {
                                 <div
                                     key={char}
                                     className={ i === index ? 'mention active-mention' : 'mention' }
-                                    onMouseDown={event => handleMouseDown(event, editor, index, usersList)}
                                 >
                                     {char}
                                 </div>
