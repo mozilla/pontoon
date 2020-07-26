@@ -29,7 +29,6 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { CommentState } from 'core/comments';
 import type { Entity, SourceType } from 'core/api';
 import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
@@ -62,7 +61,7 @@ type Props = {|
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
-    users: CommentState,
+    users: UserState,
 |};
 
 type InternalProps = {|
@@ -284,7 +283,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     getUsers = () => {
-        this.props.dispatch(comments.actions.get());
+        this.props.dispatch(user.actions.getUsers());
     }
 
     /*
@@ -408,7 +407,7 @@ const mapStateToProps = (state: Object): Props => {
         selectedEntity: entities.selectors.getSelectedEntity(state),
         unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
-        users: state[comments.NAME],
+        users: state[user.NAME],
     };
 };
 

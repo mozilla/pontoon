@@ -6,7 +6,6 @@ import './CommentsList.css';
 
 import { Comment, AddComment } from 'core/comments';
 
-import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
 import type { TranslationComment } from 'core/api';
 import type { UserState } from 'core/user';
@@ -18,7 +17,7 @@ type Props = {|
     parameters?: NavigationParams,
     translation?: HistoryTranslation,
     user: UserState,
-    users: CommentState,
+    users: UserState,
     canComment: boolean,
     addComment: (string, ?number) => void,
     getUsers: () => void,

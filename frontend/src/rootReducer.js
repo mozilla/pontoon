@@ -3,7 +3,6 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 
-import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
@@ -30,7 +29,6 @@ export default (browserHistory: any) => combineReducers({
     // System modules
     router: connectRouter(browserHistory),
     // Core modules
-    [comments.NAME]: comments.reducer,
     [editor.NAME]: editor.reducer,
     [entities.NAME]: entities.reducer,
     [lightbox.NAME]: lightbox.reducer,

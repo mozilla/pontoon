@@ -7,7 +7,6 @@ import './TeamComments.css';
 
 import { CommentsList } from 'core/comments';
 
-import type { CommentState } from 'core/comments';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 import type { TeamCommentState } from 'modules/teamcomments';
@@ -16,7 +15,7 @@ type Props = {|
     parameters: NavigationParams,
     teamComments: TeamCommentState,
     user: UserState,
-    users: CommentState,
+    users: UserState,
     addComment: (string, ?number) => void,
     getUsers: () => void,
 |};

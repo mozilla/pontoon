@@ -23,9 +23,9 @@ import './AddComment.css';
 
 import { UserAvatar } from 'core/user'
 
-import type { CommentState } from 'core/comments';
-import type { NavigationParams } from 'core/navigation';
 import type { TextType, MentionType, InitialType } from 'core/api';
+import type { NavigationParams } from 'core/navigation';
+import type { UserState } from 'core/user';
 
 type Props = {|
     user: string,
@@ -33,7 +33,7 @@ type Props = {|
     imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
-    users: CommentState,
+    users: UserState,
     addComment: (string, ?number) => void,
     getUsers: () => void,
 |};

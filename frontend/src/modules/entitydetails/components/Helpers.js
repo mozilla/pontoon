@@ -11,7 +11,6 @@ import { Terms, TermCount } from 'modules/terms';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
-import type { CommentState } from 'core/comments';
 import type { Entity, SourceType } from 'core/api';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
@@ -32,7 +31,7 @@ type Props = {|
     terms: TermState,
     parameters: NavigationParams,
     user: UserState,
-    users: CommentState,
+    users: UserState,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
