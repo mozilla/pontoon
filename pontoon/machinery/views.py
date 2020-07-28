@@ -41,6 +41,7 @@ def machinery(request):
             "is_microsoft_translator_supported": bool(
                 settings.MICROSOFT_TRANSLATOR_API_KEY
             ),
+            "is_systran_translate_supported": bool(settings.SYSTRAN_TRANSLATE_API_KEY),
         },
     )
 
@@ -158,6 +159,74 @@ def google_translate(request):
         return JsonResponse(data, status=400)
 
     return JsonResponse(data)
+
+
+def systran_translate(request):
+    """Get translations from SYSTRAN machine translation service."""
+    try:
+        text = request.GET["text"]
+        locale_code = request.GET["locale"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    api_key = settings.SYSTRAN_TRANSLATE_API_KEY
+
+    if not api_key:
+        log.error("SYSTRAN_TRANSLATE_API_KEY not set")
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: Missing api key."}, status=400
+        )
+
+    # Validate if locale exists in the database to avoid any potential XSS attacks.
+    try:
+        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
+    except Locale.DoesNotExist:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Not Found: {error}".format(error=locale_code),
+            },
+            status=404,
+        )
+
+    url = (
+        "https://translationpartners-spn9.mysystran.com:8904/translation/text/translate"
+    )
+
+    payload = {
+        "key": api_key,
+        "input": text,
+        "source": "en",
+        "target": locale_code,
+        "profile": locale.systran_translate_profile,
+        "format": "text",
+    }
+
+    try:
+        r = requests.post(url, params=payload)
+
+        root = json.loads(r.content)
+
+        if "error" in root:
+            log.error("SYSTRAN error: {error}".format(error=root))
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Bad Request: {error}".format(error=root),
+                },
+                status=400,
+            )
+
+        return JsonResponse({"translation": root["outputs"][0]["output"]})
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
 
 
 def caighdean(request):

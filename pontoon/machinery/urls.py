@@ -31,6 +31,11 @@ urlpatterns = [
         views.microsoft_translator,
         name="pontoon.microsoft_translator",
     ),
+    url(
+        r"^systran-translate/$",
+        views.systran_translate,
+        name="pontoon.systran_translate",
+    ),
     url(r"^caighdean/$", views.caighdean, name="pontoon.caighdean"),
     url(
         r"^microsoft-terminology/$",

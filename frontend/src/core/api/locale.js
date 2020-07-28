@@ -15,6 +15,7 @@ export default class LocaleAPI extends APIBase {
                 script
                 googleTranslateCode
                 msTranslatorCode
+                systranTranslateCode
                 msTerminologyCode
                 transvision
                 localizations {

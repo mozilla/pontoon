@@ -5,23 +5,23 @@ import { Localized } from '@fluent/react';
 
 
 /**
- * Show the translation source from Microsoft Translation.
+ * Show the translation source from Systran.
  */
-export default function MicrosoftTranslation() {
+export default function SystranTranslation() {
     return <li>
         <Localized
-            id= "machinery-MicrosoftTranslation--visit-bing"
+            id= "machinery-SystranTranslation--visit-systran"
             attrs={{ title: true }}
         >
             <a
                 className="translation-source"
-                href="https://www.bing.com/translator"
-                title="Visit Microsoft Translator"
+                href="https://translate.systran.net/translationTools"
+                title="Visit Systran Translate"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
             >
-                <span>Microsoft Translator</span>
+                <span>Systran Translate</span>
             </a>
         </Localized>
     </li>;
