@@ -604,6 +604,7 @@ def get_users(request):
     for u in users:
         payload.append(
             {
+                "gravatar": u.gravatar_url(88),
                 "name": u.first_name or u.email,
                 "url": u.profile_url,
                 "display": u.name_or_email,

@@ -80,7 +80,7 @@ export default function AddComments(props: Props) {
     const USERS = usersList.map(user => user.name);
     const chars = USERS.filter(c =>
         c.toLowerCase().startsWith(search.toLowerCase())
-    ).slice(0, 10);
+    ).slice(0, 5);
 
     // Set position of mentions suggestions
     React.useLayoutEffect(() => {
@@ -103,7 +103,7 @@ export default function AddComments(props: Props) {
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
             const teamCommentsOverflow = !teamCommentsRect ? false : 
-                setTop + suggestionsHeight > teamCommentsRect.height;
+                setTop + el.clientHeight > teamCommentsRect.height;
 
             if ((teamCommentsActive && teamCommentsOverflow) || setTop + suggestionsHeight > window.innerHeight) { 
                 setTop = (setTop - suggestionsHeight) - 21;
@@ -226,6 +226,14 @@ export default function AddComments(props: Props) {
         }
     }, [editor, target, chars, usersList]);
     
+    const getUserGravatar = React.useCallback((name: string) => {
+        const user = usersList.find(user => user.name === name);
+        if (!user) {
+            return;
+        }
+        return user.gravatar;
+    }, [usersList])
+    
     if (!user) {
         return null;
     }
@@ -335,7 +343,15 @@ export default function AddComments(props: Props) {
                                     className={ i === index ? 'mention active-mention' : 'mention' }
                                     onMouseDown={event => handleMouseDown(event)}
                                 >
-                                    {char}
+                                    <span className='user-avatar'>
+                                        <img 
+                                            src={ getUserGravatar(char) } 
+                                            alt="User Avatar" 
+                                            width="22" 
+                                            height="22" 
+                                        />
+                                    </span>
+                                    <span className="name">{char}</span>
                                 </div>
                             ))}
                         </div>
@@ -374,9 +390,12 @@ const withMentions = (editor) => {
 };
   
 const insertMention = (editor, character, users) => {
-    const selectedUser = users.filter(user => user.name === character);
-    const userUrl = selectedUser[0].url;
-    const display = selectedUser[0].display;
+    const selectedUser = users.find(user => user.name === character);
+    if (!selectedUser) {
+        return;
+    }
+    const userUrl = selectedUser.url;
+    const display = selectedUser.display;
     const mention = { type: 'mention', character, url: userUrl, children: [{ text: display }] };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);

@@ -7,9 +7,10 @@
     font-weight: 400;
 }
 
-.comments-list .comment a[href^="/contributors/"]:not(.comment-author) {
-    background-color: rgba(51, 57, 65, .4);
-    padding: 0 3px;
+.comments-list .comment .container .content a[href^="/contributors/"]:not(.comment-author) {
+    background-color: #3f4752;
+    padding: 0 2px;
+    border-radius: 2px;
 }
 
 .comments-list .comment-author {

@@ -55,6 +55,7 @@ export type InitialType = {|
  * All users for use in mentions suggestions within comments
  */
 export type UsersList = {|
+    gravatar: string,
     name: string,
     url: string,
     display: string,    

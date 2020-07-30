@@ -30,29 +30,42 @@
     position: absolute;
     z-index: 1;
     padding: 10px 12px;
-    background-color: #272a2f;
+    background-color: #272A2F;
     border: 1px solid #333941;
-    border-radius: 4px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.2);
 }
 
 .mention {
-    padding: 0 4px;
+    padding: 4px 4px 0;
     cursor: pointer;
 }
 
 .mention:hover, 
 .active-mention {
-    background: #aaa;
+    background: #3F4752;
 }
 
 .mention-element {
     color: #7BC876;
 }
 
+.mention .user-avatar {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.mention .user-avatar img {
+    border-radius: 2px;
+    border: 1px solid #5E6475;
+    margin-right: 8px;
+}
+
+.mention .name {
+    font-weight: 300;
+}
+
 .comments-list .add-comment .submit-button {
-    background-color: #4d5967;
-    border: solid 1px #4d5967;
+    background-color: #4D5967;
+    border: solid 1px #4D5967;
     border-radius: 4px;
     color: #ccc;
     display: flex;
