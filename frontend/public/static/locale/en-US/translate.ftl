@@ -406,18 +406,24 @@ machinery-GoogleTranslation--visit-google = Google Translate
     .title = Visit Google Translate
 
 
+## Machinery Microsoft Translation
+## Shows the translation source from Microsoft Translation.
+machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
+    .title = Visit Microsoft Translator
+
+
+## Machinery Systran Translate
+## Shows the translation source from Systran Translate.
+machinery-SystranTranslate--visit-systran = Systran Translate
+    .title = Visit Systran Translate
+
+
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 machinery-MicrosoftTerminology--visit-microsoft = Microsoft
     .title =
         Visit Microsoft Terminology Service API.
         © 2018 Microsoft Corporation. All rights reserved.
-
-
-## Machinery Microsoft Translation
-## Shows the translation source from Microsoft Translation.
-machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
-    .title = Visit Bing Translate
 
 
 ## Machinery Translation

@@ -410,8 +410,8 @@ var Pontoon = (function (my) {
             sourceMap = {
               'Translation memory': 1,
               'Mozilla': 2,
-              'Open Source': 3,
-              'Microsoft': 4,
+              'Microsoft': 3,
+              'Systran Translate': 4,
               'Google Translate': 5,
               'Microsoft Translator': 6,
               'Caighdean': 7,
@@ -580,6 +580,36 @@ var Pontoon = (function (my) {
               url: 'https://www.bing.com/translator',
               title: 'Visit Bing Translator',
               source: 'Microsoft Translator',
+              original: original,
+              translation: data.translation
+            });
+          }
+        }).error(error).complete(complete);
+      }
+
+      // Systran Translate
+      if (
+        $('#server').data('is-systran-translate-supported') &&
+        self.locale.systran_translate_code
+      ) {
+        requests++;
+
+        if (self.XHRsystranTranslate) {
+          self.XHRsystranTranslate.abort();
+        }
+
+        self.XHRsystranTranslate = $.ajax({
+          url: '/systran-translate/',
+          data: {
+            text: original,
+            locale: self.locale.systran_translate_code
+          }
+        }).success(function(data) {
+          if (data.translation) {
+            append({
+              url: 'https://translate.systran.net/translationTools',
+              title: 'Visit Systran Translate',
+              source: 'Systran Translate',
               original: original,
               translation: data.translation
             });

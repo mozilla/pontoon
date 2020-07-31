@@ -99,6 +99,7 @@ class Locale(DjangoObjectType, Stats):
             "unreviewed_strings",
             "google_translate_code",
             "ms_translator_code",
+            "systran_translate_code",
             "ms_terminology_code",
             "transvision",
         )

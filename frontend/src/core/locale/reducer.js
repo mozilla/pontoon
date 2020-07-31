@@ -25,6 +25,7 @@ const initial: LocaleState = {
     script: '',
     googleTranslateCode: '',
     msTranslatorCode: '',
+    systranTranslateCode: '',
     msTerminologyCode: '',
     transvision: false,
     localizations: [],

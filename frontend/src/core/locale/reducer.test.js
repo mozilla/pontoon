@@ -14,6 +14,7 @@ describe('reducer', () => {
             script: '',
             googleTranslateCode: '',
             msTranslatorCode: '',
+            systranTranslateCode: '',
             msTerminologyCode: '',
             transvision: false,
             localizations: [],
