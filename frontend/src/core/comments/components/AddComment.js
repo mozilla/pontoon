@@ -232,7 +232,7 @@ export default function AddComments(props: Props) {
             return;
         }
         return user.gravatar;
-    }, [usersList])
+    }, [usersList]);
     
     if (!user) {
         return null;
@@ -311,6 +311,17 @@ export default function AddComments(props: Props) {
         setValue(initialValue);
     };
 
+    const setStyleForHover = (event: SyntheticMouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        const selected = document.getElementsByClassName('active-mention');
+        selected[0].className = 'mention';
+    }
+
+    const removeStyleForHover = (event: SyntheticMouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.currentTarget.children[0].className = 'mention active-mention';
+    }
+
     return <div className='comment add-comment'>
         <UserAvatar
             username={ username }
@@ -336,12 +347,15 @@ export default function AddComments(props: Props) {
                         <div
                             ref={ref}
                             className='mention-list'
+                            onMouseEnter={ setStyleForHover }
+                            onMouseLeave={ removeStyleForHover }
                         >
                             {chars.map((char, i) => (
                                 <div
                                     key={char}
                                     className={ i === index ? 'mention active-mention' : 'mention' }
-                                    onMouseDown={event => handleMouseDown(event)}
+                                    onMouseEnter={ setStyleForHover }
+                                    onMouseDown={ handleMouseDown }
                                 >
                                     <span className='user-avatar'>
                                         <img 
