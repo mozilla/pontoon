@@ -110,9 +110,10 @@ export default function AddComments(props: Props) {
             }
 
             // If suggestions in team comments scroll below or suggestions in translation
-            // comments scroll above the next section then hide the suggestions
+            // comments scroll above the next section or overflow the window then hide the suggestions
             if ((teamCommentsRect && teamCommentsActive && (((setTop + suggestionsHeight) - 61) > teamCommentsRect.height)) ||
-                (translateCommentsRect && translateCommentsActive && (setTop < translateCommentsRect.top))) {
+                (translateCommentsRect && translateCommentsActive && (rect.top < translateCommentsRect.top)) || 
+                (translateCommentsRect && translateCommentsActive && (setTop + suggestionsHeight > window.innerHeight))) {
                 el.style.display = 'none';
             }
             
@@ -354,7 +355,6 @@ export default function AddComments(props: Props) {
                                 <div
                                     key={char}
                                     className={ i === index ? 'mention active-mention' : 'mention' }
-                                    onMouseEnter={ setStyleForHover }
                                     onMouseDown={ handleMouseDown }
                                 >
                                     <span className='user-avatar'>
