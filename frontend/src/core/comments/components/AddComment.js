@@ -103,7 +103,7 @@ export default function AddComments(props: Props) {
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
             const teamCommentsOverflow = !teamCommentsRect ? false : 
-                ((setTop + el.clientHeight) - 21) > teamCommentsRect.height;
+                ((setTop + el.clientHeight) - 51) > teamCommentsRect.height;
 
             if ((teamCommentsActive && teamCommentsOverflow) || setTop + suggestionsHeight > window.innerHeight) { 
                 setTop = (setTop - suggestionsHeight) - 21;
@@ -314,13 +314,12 @@ export default function AddComments(props: Props) {
 
     const setStyleForHover = (event: SyntheticMouseEvent<HTMLDivElement>) => {
         event.preventDefault();
-        const selected = document.getElementsByClassName('active-mention');
-        selected[0].className = 'mention';
+        event.currentTarget.children[index].className = 'mention';
     }
 
     const removeStyleForHover = (event: SyntheticMouseEvent<HTMLDivElement>) => {
         event.preventDefault();
-        event.currentTarget.children[0].className = 'mention active-mention';
+        event.currentTarget.children[index].className = 'mention active-mention';
     }
 
     return <div className='comment add-comment'>
