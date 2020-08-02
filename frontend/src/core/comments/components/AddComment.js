@@ -103,7 +103,7 @@ export default function AddComments(props: Props) {
             // position so they display above the comment
             const suggestionsHeight = el.clientHeight + 10;
             const teamCommentsOverflow = !teamCommentsRect ? false : 
-                setTop + el.clientHeight > teamCommentsRect.height;
+                ((setTop + el.clientHeight) - 21) > teamCommentsRect.height;
 
             if ((teamCommentsActive && teamCommentsOverflow) || setTop + suggestionsHeight > window.innerHeight) { 
                 setTop = (setTop - suggestionsHeight) - 21;
