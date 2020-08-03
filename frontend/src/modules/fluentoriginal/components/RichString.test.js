@@ -21,16 +21,16 @@ describe('<RichString>', () => {
             terms = { {} }
         />);
 
-        expect(wrapper.find('WithTerms')).toHaveLength(3);
+        expect(wrapper.find('ContentMarker')).toHaveLength(3);
 
         expect(wrapper.find('label').at(0).html()).toContain('Value');
-        expect(wrapper.find('WithTerms').at(0).html()).toContain('Hello');
+        expect(wrapper.find('ContentMarker').at(0).html()).toContain('Hello');
 
         expect(wrapper.find('label').at(1).html()).toContain('genre');
-        expect(wrapper.find('WithTerms').at(1).html()).toContain('Pop');
+        expect(wrapper.find('ContentMarker').at(1).html()).toContain('Pop');
 
         expect(wrapper.find('label').at(2).html()).toContain('album');
-        expect(wrapper.find('WithTerms').at(2).html()).toContain('Hello and Good Bye');
+        expect(wrapper.find('ContentMarker').at(2).html()).toContain('Hello and Good Bye');
     });
 
     it('renders select expression correctly', () => {
@@ -50,13 +50,13 @@ user-entry =
             terms = { {} }
         />);
 
-        expect(wrapper.find('WithTerms')).toHaveLength(2);
+        expect(wrapper.find('ContentMarker')).toHaveLength(2);
 
         expect(wrapper.find('label').at(0).html()).toContain('variant-1');
-        expect(wrapper.find('WithTerms').at(0).html()).toContain('Hello!');
+        expect(wrapper.find('ContentMarker').at(0).html()).toContain('Hello!');
 
         expect(wrapper.find('label').at(1).html()).toContain('variant-2');
-        expect(wrapper.find('WithTerms').at(1).html()).toContain('Good Bye!');
+        expect(wrapper.find('ContentMarker').at(1).html()).toContain('Good Bye!');
     });
 
     it('renders select expression in attributes properly', () => {
@@ -82,23 +82,23 @@ my-entry =
             terms = { {} }
         />);
 
-        expect(wrapper.find('WithTerms')).toHaveLength(4);
+        expect(wrapper.find('ContentMarker')).toHaveLength(4);
 
         expect(wrapper.find('label .attribute-label').at(0).html()).toContain('label');
         expect(wrapper.find('label').at(0).html()).toContain('macosx');
-        expect(wrapper.find('WithTerms').at(0).html()).toContain('Preferences');
+        expect(wrapper.find('ContentMarker').at(0).html()).toContain('Preferences');
 
         expect(wrapper.find('label .attribute-label').at(1).html()).toContain('label');
         expect(wrapper.find('label').at(1).html()).toContain('other');
-        expect(wrapper.find('WithTerms').at(1).html()).toContain('Options');
+        expect(wrapper.find('ContentMarker').at(1).html()).toContain('Options');
 
         expect(wrapper.find('label .attribute-label').at(2).html()).toContain('accesskey');
         expect(wrapper.find('label').at(2).html()).toContain('macosx');
-        expect(wrapper.find('WithTerms').at(2).html()).toContain('e');
+        expect(wrapper.find('ContentMarker').at(2).html()).toContain('e');
 
         expect(wrapper.find('label .attribute-label').at(3).html()).toContain('accesskey');
         expect(wrapper.find('label').at(3).html()).toContain('other');
-        expect(wrapper.find('WithTerms').at(3).html()).toContain('s');
+        expect(wrapper.find('ContentMarker').at(3).html()).toContain('s');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {

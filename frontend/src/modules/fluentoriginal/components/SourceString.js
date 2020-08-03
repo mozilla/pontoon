@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 
-import { WithPlaceablesForFluentNoLeadingSpace } from 'core/placeable';
-import { withTerms } from 'core/term';
+import { withTermsAndPlaceables } from 'core/term';
 
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
@@ -16,16 +15,15 @@ type Props = {|
 |};
 
 
-const WithPlaceablesTerms = withTerms(WithPlaceablesForFluentNoLeadingSpace);
-
-
 /**
  * Show the source string of a Fluent entity.
  */
 export default function SourceString(props: Props) {
+    const WithTermsAndPlaceables = withTermsAndPlaceables(props.terms);
+
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
-        <WithPlaceablesTerms terms={ props.terms }>
+        <WithTermsAndPlaceables>
             { props.entity.original }
-        </WithPlaceablesTerms>
+        </WithTermsAndPlaceables>
     </p>;
 }
