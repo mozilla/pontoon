@@ -14,10 +14,10 @@ import {
 import type { TermState } from 'core/term';
 
 
-export default function withTermsAndPlaceables(terms: TermState, fluent: ?boolean) {
+export default function withTermsAndPlaceables(terms: TermState, isFluent: ?boolean) {
     let placeableRules = getRulesWithoutLeadingSpace(rules);
 
-    if (fluent) {
+    if (isFluent) {
         placeableRules = getRulesWithFluent(placeableRules);
     }
 
