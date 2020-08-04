@@ -18,10 +18,11 @@ describe('<SimpleString>', () => {
     it('renders original input as simple string', () => {
         const wrapper = shallow(<SimpleString
             entity = { ENTITY }
+            terms = { {} }
         />);
 
-        expect(wrapper.find('.original WithTerms').children()).toHaveLength(1);
-        expect(wrapper.find('.original WithTerms').children().text()).toEqual('Hello\nSimple\nString');
+        expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
+        expect(wrapper.find('.original ContentMarker').children().text()).toEqual('Hello\nSimple\nString');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {
@@ -29,6 +30,7 @@ describe('<SimpleString>', () => {
         const wrapper = shallow(<SimpleString
             entity = { ENTITY }
             handleClickOnPlaceable={ handleClickOnPlaceable }
+            terms = { {} }
         />);
 
         wrapper.find('.original').simulate('click');

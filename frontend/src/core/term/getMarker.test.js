@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { markTerms } from './withTerms';
+import getMarker from './getMarker';
 
 
 describe('markTerms', () => {
@@ -18,8 +18,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const marked = markTerms(string, terms);
-        const wrapper = shallow(<p>{ marked }</p>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(2);
         expect(wrapper.find('mark').at(0).text()).toEqual('bar');
@@ -36,8 +36,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const marked = markTerms(string, terms);
-        const wrapper = shallow(<p>{ marked }</p>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('Add-Ons');
@@ -53,8 +53,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const marked = markTerms(string, terms);
-        const wrapper = shallow(<p>{ marked }</p>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(0);
     });
@@ -72,10 +72,35 @@ describe('markTerms', () => {
             ]
         };
 
-        const marked = markTerms(string, terms);
-        const wrapper = shallow(<p>{ marked }</p>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('translation tool');
+    });
+
+    it('does not mark terms within placeables', () => {
+        const string = 'This browser { $version } does not support { $bits }-bit systems.';
+        const terms = {
+            terms: [
+                {
+                    text: 'browser'
+                },
+                {
+                    text: 'version'
+                },
+            ]
+        };
+
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+
+        expect(wrapper.find('mark')).toHaveLength(3);
+        expect(wrapper.find('mark').at(0).text()).toEqual('browser');
+        expect(wrapper.find('mark').at(0).hasClass('term'));
+        expect(wrapper.find('mark').at(1).text()).toEqual('{ $version }');
+        expect(wrapper.find('mark').at(1).hasClass('placeable'));
+        expect(wrapper.find('mark').at(2).text()).toEqual('{ $bits }');
+        expect(wrapper.find('mark').at(2).hasClass('placeable'));
     });
 });
