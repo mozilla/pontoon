@@ -5,8 +5,7 @@ import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichString.css';
 
-import { WithPlaceablesForFluentNoLeadingSpace } from 'core/placeable';
-import { withTerms } from 'core/term';
+import { getMarker } from 'core/term';
 import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -26,9 +25,6 @@ type Props = {|
 |};
 
 
-const WithPlaceablesTerms = withTerms(WithPlaceablesForFluentNoLeadingSpace);
-
-
 function renderItem(
     value: string,
     label: string,
@@ -37,6 +33,8 @@ function renderItem(
     className: ?string,
     attributeName: ?string,
 ): React.Node {
+    const TermsAndPlaceablesMarker = getMarker(terms, true);
+
     return <tr key={ key } className={ className }>
         <td>
             { attributeName ?
@@ -51,9 +49,9 @@ function renderItem(
         </td>
         <td>
             <span>
-                <WithPlaceablesTerms terms={ terms }>
+                <TermsAndPlaceablesMarker>
                     { value }
-                </WithPlaceablesTerms>
+                </TermsAndPlaceablesMarker>
             </span>
         </td>
     </tr>;
