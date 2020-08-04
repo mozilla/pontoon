@@ -18,8 +18,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = getMarker(terms);
-        const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(2);
         expect(wrapper.find('mark').at(0).text()).toEqual('bar');
@@ -36,8 +36,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = getMarker(terms);
-        const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('Add-Ons');
@@ -53,8 +53,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = getMarker(terms);
-        const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(0);
     });
@@ -72,8 +72,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = getMarker(terms);
-        const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('translation tool');
@@ -92,8 +92,8 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = getMarker(terms);
-        const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
+        const TermsAndPlaceablesMarker = getMarker(terms);
+        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
 
         expect(wrapper.find('mark')).toHaveLength(3);
         expect(wrapper.find('mark').at(0).text()).toEqual('browser');

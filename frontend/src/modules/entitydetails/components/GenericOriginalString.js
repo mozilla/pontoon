@@ -56,14 +56,14 @@ function getOriginalContent(props: Props) {
 export default function GenericOriginalString(props: Props) {
     const { title, original } = getOriginalContent(props);
 
-    const WithTermsAndPlaceables = getMarker(props.terms);
+    const TermsAndPlaceablesMarker = getMarker(props.terms);
 
     return <>
         { title }
         <p className="original" onClick={ props.handleClickOnPlaceable }>
-            <WithTermsAndPlaceables>
+            <TermsAndPlaceablesMarker>
                 { original }
-            </WithTermsAndPlaceables>
+            </TermsAndPlaceablesMarker>
         </p>
     </>;
 }

@@ -22,11 +22,11 @@ type Props = {|
 export default function SimpleString(props: Props) {
     const original = fluent.getSimplePreview(props.entity.original);
 
-    const WithTermsAndPlaceables = getMarker(props.terms);
+    const TermsAndPlaceablesMarker = getMarker(props.terms);
 
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
-        <WithTermsAndPlaceables>
+        <TermsAndPlaceablesMarker>
             { original }
-        </WithTermsAndPlaceables>
+        </TermsAndPlaceablesMarker>
     </p>;
 }

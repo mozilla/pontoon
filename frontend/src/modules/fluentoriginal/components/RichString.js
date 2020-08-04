@@ -33,7 +33,7 @@ function renderItem(
     className: ?string,
     attributeName: ?string,
 ): React.Node {
-    const WithTermsAndPlaceables = getMarker(terms, true);
+    const TermsAndPlaceablesMarker = getMarker(terms, true);
 
     return <tr key={ key } className={ className }>
         <td>
@@ -49,9 +49,9 @@ function renderItem(
         </td>
         <td>
             <span>
-                <WithTermsAndPlaceables>
+                <TermsAndPlaceablesMarker>
                     { value }
-                </WithTermsAndPlaceables>
+                </TermsAndPlaceablesMarker>
             </span>
         </td>
     </tr>;
