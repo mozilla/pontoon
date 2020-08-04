@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { withTermsAndPlaceables } from 'core/term';
+import { getMarker } from 'core/term';
 import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -22,7 +22,7 @@ type Props = {|
 export default function SimpleString(props: Props) {
     const original = fluent.getSimplePreview(props.entity.original);
 
-    const WithTermsAndPlaceables = withTermsAndPlaceables(props.terms);
+    const WithTermsAndPlaceables = getMarker(props.terms);
 
     return <p className="original" onClick={ props.handleClickOnPlaceable }>
         <WithTermsAndPlaceables>

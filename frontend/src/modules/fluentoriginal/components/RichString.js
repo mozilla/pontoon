@@ -5,7 +5,7 @@ import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichString.css';
 
-import { withTermsAndPlaceables } from 'core/term';
+import { getMarker } from 'core/term';
 import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
@@ -33,7 +33,7 @@ function renderItem(
     className: ?string,
     attributeName: ?string,
 ): React.Node {
-    const WithTermsAndPlaceables = withTermsAndPlaceables(terms, true);
+    const WithTermsAndPlaceables = getMarker(terms, true);
 
     return <tr key={ key } className={ className }>
         <td>

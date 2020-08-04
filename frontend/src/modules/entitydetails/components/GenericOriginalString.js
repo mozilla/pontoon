@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { withTermsAndPlaceables } from 'core/term';
+import { getMarker } from 'core/term';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -56,7 +56,7 @@ function getOriginalContent(props: Props) {
 export default function GenericOriginalString(props: Props) {
     const { title, original } = getOriginalContent(props);
 
-    const WithTermsAndPlaceables = withTermsAndPlaceables(props.terms);
+    const WithTermsAndPlaceables = getMarker(props.terms);
 
     return <>
         { title }

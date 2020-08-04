@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import withTermsAndPlaceables from './withTermsAndPlaceables';
+import getMarker from './getMarker';
 
 
 describe('markTerms', () => {
@@ -18,7 +18,7 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = withTermsAndPlaceables(terms);
+        const WithTermsAndPlaceables = getMarker(terms);
         const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
 
         expect(wrapper.find('mark')).toHaveLength(2);
@@ -36,7 +36,7 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = withTermsAndPlaceables(terms);
+        const WithTermsAndPlaceables = getMarker(terms);
         const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
@@ -53,7 +53,7 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = withTermsAndPlaceables(terms);
+        const WithTermsAndPlaceables = getMarker(terms);
         const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
 
         expect(wrapper.find('mark')).toHaveLength(0);
@@ -72,7 +72,7 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = withTermsAndPlaceables(terms);
+        const WithTermsAndPlaceables = getMarker(terms);
         const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
 
         expect(wrapper.find('mark')).toHaveLength(1);
@@ -92,7 +92,7 @@ describe('markTerms', () => {
             ]
         };
 
-        const WithTermsAndPlaceables = withTermsAndPlaceables(terms);
+        const WithTermsAndPlaceables = getMarker(terms);
         const wrapper = shallow(<WithTermsAndPlaceables>{ string }</WithTermsAndPlaceables>);
 
         expect(wrapper.find('mark')).toHaveLength(3);

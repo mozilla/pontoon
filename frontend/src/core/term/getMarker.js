@@ -14,7 +14,7 @@ import {
 import type { TermState } from 'core/term';
 
 
-export default function withTermsAndPlaceables(terms: TermState, isFluent: ?boolean) {
+export default function getMarker(terms: TermState, isFluent: ?boolean) {
     let placeableRules = getRulesWithoutLeadingSpace(rules);
 
     if (isFluent) {
