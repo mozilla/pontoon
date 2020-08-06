@@ -51,19 +51,25 @@ class DownloadTOMLParser(TOMLParser):
         self.checkout_path = checkout_path
         self.permalink_prefix = permalink_prefix
 
-    def get_project_config(self, path):
-        """Download the project config file and return its local path."""
+    def get_download_path(self, path):
+        return os.path.join(self.checkout_path, path)
+
+    def get_remote_path(self, path):
+        """
+        """
         config_path = path.replace(self.checkout_path, "")
 
         if "{locale_code}" in self.permalink_prefix:
-            remote_path = self.permalink_prefix.format(locale_code=config_path)
+            return self.permalink_prefix.format(locale_code=config_path)
         else:
-            remote_path = urljoin(self.permalink_prefix, config_path)
+            return urljoin(self.permalink_prefix, config_path)
 
-        download_path = os.path.join(self.checkout_path, path)
+    def get_project_config(self, path):
+        """Download the project config file and return its local path."""
+        download_path = self.get_download_path(path)
 
         with open(download_path, "wb") as f:
-            config_file = requests.get(remote_path)
+            config_file = requests.get(self.get_remote_path(path))
             config_file.raise_for_status()
             f.write(config_file.content)
         return download_path
