@@ -107,3 +107,18 @@ def test_create_translation_form_clean_paths(entity_a, locale_a):
     )
     assert form.is_valid()
     assert form.cleaned_data["paths"] == ["a/d.ext", "foo/bar"]
+
+
+@pytest.mark.django_db
+def test_create_translation_form_clean_translation(entity_a, locale_a):
+    form = CreateTranslationForm(
+        {
+            "entity": entity_a.pk,
+            "translation": " salut ",
+            "locale": locale_a.code,
+            "plural_form": "-1",
+            "original": "hello",
+        }
+    )
+    assert form.is_valid()
+    assert form.cleaned_data["translation"] == " salut "
