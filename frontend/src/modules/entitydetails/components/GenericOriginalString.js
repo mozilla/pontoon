@@ -3,8 +3,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { WithPlaceablesNoLeadingSpace } from 'core/placeable';
-import { withTerms } from 'core/term';
+import { getMarker } from 'core/term';
 
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -18,9 +17,6 @@ type Props = {|
     +terms: TermState,
     +handleClickOnPlaceable: (SyntheticMouseEvent<HTMLParagraphElement>) => void,
 |};
-
-
-const WithPlaceablesTerms = withTerms(WithPlaceablesNoLeadingSpace);
 
 
 function getOriginalContent(props: Props) {
@@ -60,12 +56,14 @@ function getOriginalContent(props: Props) {
 export default function GenericOriginalString(props: Props) {
     const { title, original } = getOriginalContent(props);
 
+    const TermsAndPlaceablesMarker = getMarker(props.terms);
+
     return <>
         { title }
         <p className="original" onClick={ props.handleClickOnPlaceable }>
-            <WithPlaceablesTerms terms={ props.terms }>
+            <TermsAndPlaceablesMarker>
                 { original }
-            </WithPlaceablesTerms>
+            </TermsAndPlaceablesMarker>
         </p>
     </>;
 }

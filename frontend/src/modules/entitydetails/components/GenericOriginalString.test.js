@@ -21,6 +21,7 @@ function createGenericOriginalString(pluralForm = -1) {
         entity={ ENTITY }
         locale={ LOCALE }
         pluralForm={ pluralForm }
+        terms={ {} }
     />);
 }
 
@@ -29,7 +30,7 @@ describe('<GenericOriginalString>', () => {
     it('renders correctly', () => {
         const wrapper = createGenericOriginalString();
 
-        const originalContent = wrapper.find('WithTerms').props().children;
+        const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original);
     });
 
@@ -38,7 +39,7 @@ describe('<GenericOriginalString>', () => {
 
         expect(wrapper.find('#entitydetails-GenericOriginalString--plural')).toHaveLength(1);
 
-        const originalContent = wrapper.find('WithTerms').props().children;
+        const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original_plural);
     });
 
@@ -47,7 +48,7 @@ describe('<GenericOriginalString>', () => {
 
         expect(wrapper.find('#entitydetails-GenericOriginalString--singular')).toHaveLength(1);
 
-        const originalContent = wrapper.find('WithTerms').props().children;
+        const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original);
     });
 });

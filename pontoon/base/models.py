@@ -1071,6 +1071,9 @@ class Locale(AggregatedStats):
         if old is None or old.systran_translate_code == self.systran_translate_code:
             return
 
+        if not self.systran_translate_code:
+            return
+
         api_key = settings.SYSTRAN_TRANSLATE_API_KEY
         server = settings.SYSTRAN_TRANSLATE_SERVER
         profile_owner = settings.SYSTRAN_TRANSLATE_PROFILE_OWNER
@@ -1082,7 +1085,7 @@ class Locale(AggregatedStats):
         payload = {
             "key": api_key,
             "source": "en",
-            "target": self.code,
+            "target": self.systran_translate_code,
         }
 
         try:
