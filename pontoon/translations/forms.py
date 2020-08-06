@@ -54,3 +54,6 @@ class CreateTranslationForm(forms.Form):
         if self.cleaned_data["plural_form"] == "-1":
             return None
         return self.cleaned_data["plural_form"]
+
+    def clean_translation(self):
+        return self.data.get("translation", "")
