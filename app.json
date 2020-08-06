@@ -11,7 +11,7 @@
        "plan": "newrelic:wayne"
      },
      {
-       "plan": "raygun:intro"
+       "plan": "raygun:cr-free"
      },
      {
        "plan": "papertrail:choklad"
