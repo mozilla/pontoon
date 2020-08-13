@@ -42,6 +42,11 @@ export default function Comment(props: Props) {
                         { comment.author }
                     </a>
                     <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }> 
+                        { /* We can safely use parse with comment.content as it is 
+                         *   sanitized when coming from the DB. See:
+                         *   - pontoon.base.forms.forms.AddCommentsForm(}
+                         *   - pontoon.base.forms.HtmlField()
+                         */}
                         { parse(comment.content) }
                     </Linkify>
                 </div>

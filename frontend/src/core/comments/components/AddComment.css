@@ -24,7 +24,11 @@
     vertical-align: baseline !important;
 }
 
-.mention-list {
+.comments-list .add-comment .comment-editor .mention-element {
+    color: #7BC876;
+}
+
+.comments-mention-list {
     top: -9999px;
     left: -9999px;
     position: absolute;
@@ -34,32 +38,28 @@
     border: 1px solid #333941;
 }
 
-.mention {
+.comments-mention-list .mention {
     padding: 4px 4px 0;
     cursor: pointer;
 }
 
-.mention:hover, 
-.active-mention {
+.comments-mention-list .mention:hover, 
+.comments-mention-list .active-mention {
     background: #3F4752;
 }
 
-.mention-element {
-    color: #7BC876;
-}
-
-.mention .user-avatar {
+.comments-mention-list .mention .user-avatar {
     display: inline-block;
     vertical-align: middle;
 }
 
-.mention .user-avatar img {
+.comments-mention-list .mention .user-avatar img {
     border-radius: 2px;
     border: 1px solid #5E6475;
     margin-right: 8px;
 }
 
-.mention .name {
+.comments-mention-list .mention .name {
     font-weight: 300;
 }
 

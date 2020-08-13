@@ -25,7 +25,7 @@ export default class UserAPI extends APIBase {
      */
     async getUsers(): Promise<Object> {
         const headers = new Headers();
-        headers.append('X-Requested_With', `XMLHttpRequest`);
+        headers.append('X-Requested-With', `XMLHttpRequest`);
 
         return await this.fetch('get-users', 'GET', null, headers);
     }

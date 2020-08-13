@@ -32,23 +32,24 @@ export type TranslationComment = {|
  */
 export type TeamComment = TranslationComment;
 
+
 /**
  * Types used within Slate editor for comments
  */
 export type TextType = {|
-    text: string
+    text: string,
 |};
 
 export type MentionType = {|
     type: string, 
     character: string, 
     url: string, 
-    children: Array<TextType>
+    children: Array<TextType>,
 |};
 
 export type InitialType = {|
     type: string, 
-    children: Array<TextType>
+    children: Array<TextType>,
 |};
 
 /**

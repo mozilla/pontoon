@@ -596,6 +596,8 @@ def add_comment(request):
     return JsonResponse({"status": True})
 
 
+@utils.require_AJAX
+@login_required(redirect_field_name="", login_url="/403")
 def get_users(request):
     """Get all users."""
     users = User.objects.all()
@@ -604,7 +606,7 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": u.gravatar_url(88),
+                "gravatar": u.gravatar_url(44),
                 "name": u.first_name or u.email,
                 "url": u.profile_url,
                 "display": u.name_or_email,
