@@ -96,23 +96,37 @@ export default function AddComments(props: Props) {
         const translateCommentsRect = !translateCommentsEl ? null : translateCommentsEl.getBoundingClientRect();
         const translateCommentsActive = !translateCommentsEl ? false : 
             translateCommentsEl.contains(document.activeElement);
+        const editorMenu = document.querySelector('.editor-menu');
+        const editorMenuHeight = !editorMenu ? 0 : editorMenu.clientHeight;
+        const tabIndex = document.querySelector('.react-tabs__tab-list');
+        const tabIndexHeight = !tabIndex ? 0 : tabIndex.clientHeight;
+        const commentEditor = document.querySelector('.comments-list .add-comment .comment-editor');
+        const commentEditorLineHeight = parseInt(window.getComputedStyle(commentEditor).lineHeight) || 0;
+        const commentEditorTopPadding = parseInt(window.getComputedStyle(commentEditor).paddingTop) || 0;
+        const commentEditorBottomPadding = parseInt(window.getComputedStyle(commentEditor).paddingBottom) || 0;
+        const commentEditorSpan = document.querySelector('.comments-list .add-comment .comment-editor p span');
+        const commentEditorSpanHeight = !commentEditorSpan ? 0 : commentEditorSpan.offsetHeight;
+        const setTopAdjustment = commentEditorBottomPadding + commentEditorSpanHeight;
+        const suggestionsHeightAdjustment = (
+            commentEditorTopPadding + ((commentEditorLineHeight - commentEditorSpanHeight)/2));
 
-        let setTop = ( rect.top + window.pageYOffset ) + 21;
+        let setTop = ( rect.top + window.pageYOffset ) + setTopAdjustment;
         let setLeft = rect.left + window.pageXOffset;
 
         // If suggestions overflow the window or teams container height then adjust the
         // position so they display above the comment
-        const suggestionsHeight = el.clientHeight + 10;
+        const suggestionsHeight = el.clientHeight + suggestionsHeightAdjustment;
         const teamCommentsOverflow = !teamCommentsRect ? false : 
-            (( setTop + el.clientHeight ) - 44) > teamCommentsRect.height;
+            (( setTop + el.clientHeight ) - tabIndexHeight) > teamCommentsRect.height;
 
         if (( teamCommentsActive && teamCommentsOverflow ) || setTop + suggestionsHeight > window.innerHeight) { 
-            setTop = ( setTop - suggestionsHeight ) - 21;
+            setTop = (( rect.top + window.pageYOffset ) - suggestionsHeight );
         }
 
         // If suggestions in team comments scroll below or suggestions in translation
         // comments scroll above the next section or overflow the window then hide the suggestions
-        if (( teamCommentsRect && teamCommentsActive && ((( setTop + suggestionsHeight) - 60) > teamCommentsRect.height )) ||
+        if (( teamCommentsRect && teamCommentsActive && 
+                ((( setTop + suggestionsHeight) - editorMenuHeight) > teamCommentsRect.height )) ||
             ( translateCommentsRect && translateCommentsActive && ( rect.top < translateCommentsRect.top )) || 
             ( translateCommentsRect && translateCommentsActive && ( setTop + suggestionsHeight > window.innerHeight ))) {
             el.style.display = 'none';
