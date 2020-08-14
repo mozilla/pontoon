@@ -83,53 +83,55 @@ export default function AddComments(props: Props) {
 
     // Set position of mentions suggestions
     React.useLayoutEffect(() => {
-        if (target && chars.length > 0) {
-            const el = mentionList.current;
-            const domRange = ReactEditor.toDOMRange(editor, target);
-            const rect = domRange.getBoundingClientRect();
-            const teamCommentsEl = document.querySelector('.top');
-            const teamCommentsRect = !teamCommentsEl ? null : teamCommentsEl.getBoundingClientRect();
-            const teamCommentsActive = !teamCommentsEl ? false : teamCommentsEl.contains(document.activeElement);
-            const translateCommentsEl = document.querySelector('.history');
-            const translateCommentsRect = !translateCommentsEl ? null : translateCommentsEl.getBoundingClientRect();
-            const translateCommentsActive = !translateCommentsEl ? false : 
-                translateCommentsEl.contains(document.activeElement);
-
-            let setTop = (rect.top + window.pageYOffset) + 21;
-            let setLeft = rect.left + window.pageXOffset;
-            
-            // If suggestions overflow the window or teams container height then adjust the
-            // position so they display above the comment
-            const suggestionsHeight = el.clientHeight + 10;
-            const teamCommentsOverflow = !teamCommentsRect ? false : 
-                ((setTop + el.clientHeight) - 51) > teamCommentsRect.height;
-
-            if ((teamCommentsActive && teamCommentsOverflow) || setTop + suggestionsHeight > window.innerHeight) { 
-                setTop = (setTop - suggestionsHeight) - 21;
-            }
-
-            // If suggestions in team comments scroll below or suggestions in translation
-            // comments scroll above the next section or overflow the window then hide the suggestions
-            if ((teamCommentsRect && teamCommentsActive && (((setTop + suggestionsHeight) - 61) > teamCommentsRect.height)) ||
-                (translateCommentsRect && translateCommentsActive && (rect.top < translateCommentsRect.top)) || 
-                (translateCommentsRect && translateCommentsActive && (setTop + suggestionsHeight > window.innerHeight))) {
-                el.style.display = 'none';
-            }
-            
-            // If suggestions overflow the window width in team comments or the right side of the 
-            // translations comments then adjust the position so they display to the left of the mention
-            const suggestionsWidth = el.clientWidth
-            const translateCommentsOverflow = !translateCommentsRect ? false :
-                setLeft + suggestionsWidth > translateCommentsRect.right;
-            
-            if (setLeft + suggestionsWidth > window.innerWidth || 
-                (translateCommentsActive && translateCommentsOverflow)) {
-                setLeft = rect.right - suggestionsWidth;
-            }
-
-            el.style.top = `${ setTop }px`;
-            el.style.left = `${ setLeft }px`;
+        if (!target || chars.length <= 0) {
+            return;
         }
+        const el = mentionList.current;
+        const domRange = ReactEditor.toDOMRange(editor, target);
+        const rect = domRange.getBoundingClientRect();
+        const teamCommentsEl = document.querySelector('.top');
+        const teamCommentsRect = !teamCommentsEl ? null : teamCommentsEl.getBoundingClientRect();
+        const teamCommentsActive = !teamCommentsEl ? false : teamCommentsEl.contains(document.activeElement);
+        const translateCommentsEl = document.querySelector('.history');
+        const translateCommentsRect = !translateCommentsEl ? null : translateCommentsEl.getBoundingClientRect();
+        const translateCommentsActive = !translateCommentsEl ? false : 
+            translateCommentsEl.contains(document.activeElement);
+
+        let setTop = ( rect.top + window.pageYOffset ) + 21;
+        let setLeft = rect.left + window.pageXOffset;
+
+        // If suggestions overflow the window or teams container height then adjust the
+        // position so they display above the comment
+        const suggestionsHeight = el.clientHeight + 10;
+        const teamCommentsOverflow = !teamCommentsRect ? false : 
+            (( setTop + el.clientHeight ) - 44) > teamCommentsRect.height;
+
+        if (( teamCommentsActive && teamCommentsOverflow ) || setTop + suggestionsHeight > window.innerHeight) { 
+            setTop = ( setTop - suggestionsHeight ) - 21;
+        }
+
+        // If suggestions in team comments scroll below or suggestions in translation
+        // comments scroll above the next section or overflow the window then hide the suggestions
+        if (( teamCommentsRect && teamCommentsActive && ((( setTop + suggestionsHeight) - 60) > teamCommentsRect.height )) ||
+            ( translateCommentsRect && translateCommentsActive && ( rect.top < translateCommentsRect.top )) || 
+            ( translateCommentsRect && translateCommentsActive && ( setTop + suggestionsHeight > window.innerHeight ))) {
+            el.style.display = 'none';
+        }
+        
+        // If suggestions overflow the window width in team comments or the right side of the 
+        // translations comments then adjust the position so they display to the left of the mention
+        const suggestionsWidth = el.clientWidth
+        const translateCommentsOverflow = !translateCommentsRect ? false :
+            setLeft + suggestionsWidth > translateCommentsRect.right;
+        
+        if (setLeft + suggestionsWidth > window.innerWidth || 
+            ( translateCommentsActive && translateCommentsOverflow )) {
+            setLeft = rect.right - suggestionsWidth;
+        }
+
+        el.style.top = `${ setTop }px`;
+        el.style.left = `${ setLeft }px`;
+    
     }, [chars.length, editor, index, search, target, scrollPosition]);
 
     React.useEffect(() => {
