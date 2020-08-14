@@ -459,8 +459,7 @@ def convert_to_unix_time(my_datetime):
 def build_translation_memory_file(creation_date, locale_code, entries):
     """
     TMX files will contain large amount of entries and it's impossible to render all the data with
-    django templates.
-    Rendering of string in memory is a lot faster.
+    django templates. Rendering a string in memory is a lot faster.
     :arg datetime creation_date: when TMX file is being created.
     :arg str locale_code: code of a locale
     :arg list entries: A list which contains tuples with following items:
@@ -472,7 +471,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * project_slug - slugified name of a project,
     """
     yield (
-        u'<?xml version="1.0" encoding="utf-8" ?>'
+        u'<?xml version="1.0" encoding="UTF-8"?>'
         u'\n<tmx version="1.4">'
         u"\n\t<header"
         u' adminlang="en-US"'

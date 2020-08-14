@@ -57,9 +57,6 @@ export class UserMenuBase extends React.Component<Props, State> {
         const project = parameters.project;
         const resource = parameters.resource;
 
-        const tmHref = `/${locale}/${project}/${locale}.${project}.tmx`;
-        const transHref = `/download/?code=${locale}&slug=${project}&part=${resource}`;
-
         const canDownload = (
             project !== 'all-projects' &&
             resource !== 'all-resources'
@@ -111,10 +108,21 @@ export class UserMenuBase extends React.Component<Props, State> {
 
                 <li>
                     <Localized
+                        id="user-UserMenu--download-terminology"
+                        elems={{ glyph: <i className="fa fa-cloud-download-alt fa-fw" /> }}
+                    >
+                        <a href={ `/terminology/${locale}.tbx` }>
+                            { '<glyph></glyph>Download Terminology' }
+                        </a>
+                    </Localized>
+                </li>
+
+                <li>
+                    <Localized
                         id="user-UserMenu--download-tm"
                         elems={{ glyph: <i className="fa fa-cloud-download-alt fa-fw" /> }}
                     >
-                        <a href={ tmHref }>
+                        <a href={ `/${locale}/${project}/${locale}.${project}.tmx` }>
                             { '<glyph></glyph>Download Translation Memory' }
                         </a>
                     </Localized>
@@ -126,7 +134,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                         id="user-UserMenu--download-translations"
                         elems={{ glyph: <i className="fa fa-cloud-download-alt fa-fw" /> }}
                     >
-                        <a href={ transHref }>
+                        <a href={ `/download/?code=${locale}&slug=${project}&part=${resource}` }>
                             { '<glyph></glyph>Download Translations' }
                         </a>
                     </Localized>
