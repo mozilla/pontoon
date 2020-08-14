@@ -233,7 +233,7 @@ export default function AddComments(props: Props) {
         }
     }
     
-    const handleMouseDown = React.useCallback((event: SyntheticMouseEvent<HTMLDivElement>) => {
+    const handleMentionsMouseDown = React.useCallback((event: SyntheticMouseEvent<HTMLDivElement>) => {
         event.preventDefault();
         if (target !== null) {
             const charIndex = chars.indexOf(event.currentTarget.innerText)
@@ -251,7 +251,7 @@ export default function AddComments(props: Props) {
         return user.gravatar;
     }, [ usersList ]);
     
-    const handleOnChange = (value) => {
+    const handleEditorOnChange = (value) => {
         setValue(value);
         const { selection } = editor;
 
@@ -340,7 +340,7 @@ export default function AddComments(props: Props) {
             imageUrl={ imageURL }
         />
         <div className='container'>
-            <Slate editor={ editor } value={ value } onChange={ handleOnChange }>
+            <Slate editor={ editor } value={ value } onChange={ handleEditorOnChange }>
                 <Localized
                     id='comments-AddComment--input'
                     attrs={{ placeholder: true }}
@@ -366,7 +366,7 @@ export default function AddComments(props: Props) {
                                 <div
                                     key={ char }
                                     className={ i === index ? 'mention active-mention' : 'mention' }
-                                    onMouseDown={ handleMouseDown }
+                                    onMouseDown={ handleMentionsMouseDown }
                                 >
                                     <Localized
                                         id='comments-AddComment--mention-avatar-alt'
