@@ -50,7 +50,6 @@ export default function CommentsList(props: Props) {
         { !canComment ? null :
             <AddComment
                 parameters={ parameters }
-                user={ user.nameOrEmail }
                 username={ user.username }
                 imageURL={ user.gravatarURLSmall}
                 translation={ translationId }

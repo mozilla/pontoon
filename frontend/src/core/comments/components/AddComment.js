@@ -28,7 +28,6 @@ import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
 type Props = {|
-    user: string,
     username: string,
     imageURL: string,
     parameters: ?NavigationParams,
@@ -41,7 +40,6 @@ type Props = {|
 
 export default function AddComments(props: Props) {
     const {
-        user,
         username,
         imageURL,
         parameters,
@@ -253,10 +251,6 @@ export default function AddComments(props: Props) {
         return user.gravatar;
     }, [usersList]);
     
-    if (!user) {
-        return null;
-    }
-
     const handleOnChange = (value) => {
         setValue(value);
         const { selection } = editor;
