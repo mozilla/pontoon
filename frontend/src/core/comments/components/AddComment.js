@@ -106,27 +106,27 @@ export default function AddComments(props: Props) {
         const commentEditorSpanHeight = !commentEditorSpan ? 0 : commentEditorSpan.offsetHeight;
         const setTopAdjustment = commentEditorBottomPadding + commentEditorSpanHeight;
         const suggestionsHeightAdjustment = (
-            commentEditorTopPadding + ((commentEditorLineHeight - commentEditorSpanHeight)/2));
+            commentEditorTopPadding + ((commentEditorLineHeight - commentEditorSpanHeight) / 2));
 
-        let setTop = ( rect.top + window.pageYOffset ) + setTopAdjustment;
+        let setTop = (rect.top + window.pageYOffset) + setTopAdjustment;
         let setLeft = rect.left + window.pageXOffset;
 
         // If suggestions overflow the window or teams container height then adjust the
         // position so they display above the comment
         const suggestionsHeight = el.clientHeight + suggestionsHeightAdjustment;
         const teamCommentsOverflow = !teamCommentsRect ? false : 
-            (( setTop + el.clientHeight ) - tabIndexHeight) > teamCommentsRect.height;
+            ((setTop + el.clientHeight) - tabIndexHeight) > teamCommentsRect.height;
 
-        if (( teamCommentsActive && teamCommentsOverflow ) || setTop + suggestionsHeight > window.innerHeight) { 
-            setTop = (( rect.top + window.pageYOffset ) - suggestionsHeight );
+        if ((teamCommentsActive && teamCommentsOverflow) || setTop + suggestionsHeight > window.innerHeight) { 
+            setTop = ((rect.top + window.pageYOffset) - suggestionsHeight);
         }
 
         // If suggestions in team comments scroll below or suggestions in translation
         // comments scroll above the next section or overflow the window then hide the suggestions
-        if (( teamCommentsRect && teamCommentsActive && 
-                ((( setTop + suggestionsHeight) - editorMenuHeight) > teamCommentsRect.height )) ||
-            ( translateCommentsRect && translateCommentsActive && ( rect.top < translateCommentsRect.top )) || 
-            ( translateCommentsRect && translateCommentsActive && ( setTop + suggestionsHeight > window.innerHeight ))) {
+        if ((teamCommentsRect && teamCommentsActive && 
+                (((setTop + suggestionsHeight) - editorMenuHeight) > teamCommentsRect.height)) ||
+            (translateCommentsRect && translateCommentsActive && (rect.top < translateCommentsRect.top)) || 
+            (translateCommentsRect && translateCommentsActive && (setTop + suggestionsHeight > window.innerHeight))) {
             el.style.display = 'none';
         }
         
@@ -137,18 +137,18 @@ export default function AddComments(props: Props) {
             setLeft + suggestionsWidth > translateCommentsRect.right;
         
         if (setLeft + suggestionsWidth > window.innerWidth || 
-            ( translateCommentsActive && translateCommentsOverflow )) {
+            (translateCommentsActive && translateCommentsOverflow)) {
             setLeft = rect.right - suggestionsWidth;
         }
 
         el.style.top = `${ setTop }px`;
         el.style.left = `${ setLeft }px`;
     
-    }, [chars.length, editor, index, search, target, scrollPosition]);
+    }, [ chars.length, editor, index, search, target, scrollPosition ]);
 
     React.useEffect(() => {
         // Flow does not recognize the event listeners with 'SyntheticEvent`,  
-        // so I'm ignoring the error Flow throws here.
+        // so I'm ignoring the errors Flow throws here.
         // $FLOW_IGNORE
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;
@@ -212,7 +212,7 @@ export default function AddComments(props: Props) {
                     return;
             }
         },
-        [chars, editor, index, target, usersList]
+        [ chars, editor, index, target, usersList ]
     );
 
     const handleEditorKeyDown = (event: SyntheticKeyboardEvent<>) => {
@@ -241,7 +241,7 @@ export default function AddComments(props: Props) {
             insertMention(editor, chars[charIndex], usersList);
             return setTarget(null);
         }
-    }, [editor, target, chars, usersList]);
+    }, [ editor, target, chars, usersList ]);
     
     const getUserGravatar = React.useCallback((name: string) => {
         const user = usersList.find(user => user.name === name);
@@ -249,7 +249,7 @@ export default function AddComments(props: Props) {
             return;
         }
         return user.gravatar;
-    }, [usersList]);
+    }, [ usersList ]);
     
     const handleOnChange = (value) => {
         setValue(value);
