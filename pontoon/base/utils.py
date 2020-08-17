@@ -16,10 +16,7 @@ from guardian.decorators import permission_required as guardian_permission_requi
 from django.utils.text import slugify
 from six import BytesIO
 
-from xml.sax.saxutils import (
-    escape as xml_escape,
-    quoteattr,
-)
+from xml.sax.saxutils import escape, quoteattr
 
 from django.db.models import Prefetch
 from django.db.models.query import QuerySet
@@ -459,8 +456,7 @@ def convert_to_unix_time(my_datetime):
 def build_translation_memory_file(creation_date, locale_code, entries):
     """
     TMX files will contain large amount of entries and it's impossible to render all the data with
-    django templates.
-    Rendering of string in memory is a lot faster.
+    django templates. Rendering a string in memory is a lot faster.
     :arg datetime creation_date: when TMX file is being created.
     :arg str locale_code: code of a locale
     :arg list entries: A list which contains tuples with following items:
@@ -472,7 +468,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * project_slug - slugified name of a project,
     """
     yield (
-        u'<?xml version="1.0" encoding="utf-8" ?>'
+        u'<?xml version="1.0" encoding="UTF-8"?>'
         u'\n<tmx version="1.4">'
         u"\n\t<header"
         u' adminlang="en-US"'
@@ -499,10 +495,10 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             u"\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
-                "source": xml_escape(source),
+                "source": escape(source),
                 "locale_code": quoteattr(locale_code),
-                "target": xml_escape(target),
-                "project_name": xml_escape(project_name),
+                "target": escape(target),
+                "project_name": escape(project_name),
             }
         )
 
