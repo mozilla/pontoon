@@ -618,6 +618,7 @@ user-UserAvatar--alt-text = User Profile
 user-SignIn--sign-in = Sign in
 user-SignOut--sign-out = <glyph></glyph>Sign out
 
+user-UserMenu--download-terminology = <glyph></glyph>Download Terminology
 user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
 user-UserMenu--download-translations = <glyph></glyph>Download Translations
 user-UserMenu--upload-translations = <glyph></glyph>Upload Translations
