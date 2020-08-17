@@ -45,7 +45,7 @@ type State = {|
 
 
 /**
- * Shows a list of filters used to filter the list of entities.
+ * Shows a list of filters, used to filter the list of entities.
  *
  * Changes to the filters will be reflected in the URL.
  */

@@ -563,9 +563,14 @@ resource-ResourceMenu--search-placeholder =
     .placeholder = Filter resources
 
 
-## Search
-## The search bar and filters menu.
+## Search bar
+## Shows and controls a search box, used to filter the list of entities.
+search-SearchBox--search-box-label =
+    .title = Press Enter to Search
 
+
+## Filters Panel
+## Shows a list of filters, used to filter the list of entities.
 search-FiltersPanel--heading-status = Translation Status
 search-FiltersPanel--heading-tags = Tags
 search-FiltersPanel--heading-extra = Extra Filters
@@ -600,7 +605,7 @@ search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
 search-TimeRangeFilter--save-range = Save Range
 
 
-## User Avatar
+## Term
 ## Shows term entry with its metadata
 
 term-Term--for-example = E.g.

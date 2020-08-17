@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
+
+import { Localized } from '@fluent/react';
 
 import './SearchBox.css';
 
@@ -55,9 +56,7 @@ type State = {|
 /**
  * Shows and controls a search box, used to filter the list of entities.
  *
- * Changes to the search input will be reflected in the URL. The user input
- * on that field is debounced, an update of the UI will only be triggered
- * after some time has passed since the last key stroke.
+ * Changes to the search input will be reflected in the URL.
  */
 export class SearchBoxBase extends React.Component<InternalProps, State> {
     searchInput: { current: ?HTMLInputElement };
@@ -330,12 +329,15 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
-        }, () => this.updateSearchParams());
+        });
     }
 
-    updateSearchParams = debounce(() => {
-        this.update();
-    }, 500)
+    performSearch = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+        // On Enter
+        if (event.keyCode === 13) {
+            this.update()
+        }
+    }
 
     _update = () => {
         const statuses = this.getSelectedStatuses();
@@ -435,10 +437,20 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     render() {
         const { searchAndFilters, parameters, project, stats } = this.props;
 
+        let className = "fa fa-search";
+        if (this.state.search && this.state.search !== parameters.search) {
+            className += " changed";
+        }
+
         return <div className="search-box clearfix">
-            <label htmlFor="search">
-                <div className="fa fa-search"></div>
-            </label>
+            <Localized id="search-SearchBox--search-box-label">
+                <label
+                    htmlFor="search"
+                    title="Press Enter to Search"
+                >
+                    <div className={ className }></div>
+                </label>
+            </Localized>
             <input
                 id="search"
                 ref={ this.searchInput }
@@ -450,6 +462,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 onBlur={ this.unsetFocus }
                 onChange={ this.updateSearchInput }
                 onFocus={ this.setFocus }
+                onKeyDown={ this.performSearch }
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
