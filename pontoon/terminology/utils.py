@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from xml.sax.saxutils import escape, quoteattr
+
 
 def build_terminology_file(term_translations, locale):
     """
@@ -42,7 +44,7 @@ def build_terminology_file(term_translations, locale):
             u"\n\t\t\t\t\t\t</descripGrp>"
             u"\n\t\t\t\t\t</termSec>"
             u"\n\t\t\t\t</langSec>"
-            u'\n\t\t\t\t<langSec xml:lang="%(locale)s">'
+            u"\n\t\t\t\t<langSec xml:lang=%(locale)s>"
             u"\n\t\t\t\t\t<termSec>"
             u"\n\t\t\t\t\t\t<term>%(translation)s</term>"
             u"\n\t\t\t\t\t</termSec>"
@@ -50,12 +52,12 @@ def build_terminology_file(term_translations, locale):
             u"\n\t\t\t</conceptEntry>"
             % {
                 "id": term.pk,
-                "term": term.text,
-                "part_of_speech": term.part_of_speech,
-                "definition": term.definition,
-                "usage": term.usage,
-                "locale": locale,
-                "translation": translation.text,
+                "term": escape(term.text),
+                "part_of_speech": escape(term.part_of_speech),
+                "definition": escape(term.definition),
+                "usage": escape(term.usage),
+                "locale": quoteattr(locale),
+                "translation": escape(translation.text),
             }
         )
 

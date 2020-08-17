@@ -16,10 +16,7 @@ from guardian.decorators import permission_required as guardian_permission_requi
 from django.utils.text import slugify
 from six import BytesIO
 
-from xml.sax.saxutils import (
-    escape as xml_escape,
-    quoteattr,
-)
+from xml.sax.saxutils import escape, quoteattr
 
 from django.db.models import Prefetch
 from django.db.models.query import QuerySet
@@ -498,10 +495,10 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             u"\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
-                "source": xml_escape(source),
+                "source": escape(source),
                 "locale_code": quoteattr(locale_code),
-                "target": xml_escape(target),
-                "project_name": xml_escape(project_name),
+                "target": escape(target),
+                "project_name": escape(project_name),
             }
         )
 
