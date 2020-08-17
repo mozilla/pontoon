@@ -4,8 +4,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 
-import { Localized } from '@fluent/react';
-
 import './SearchBox.css';
 
 import * as navigation from 'core/navigation';
@@ -437,20 +435,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     render() {
         const { searchAndFilters, parameters, project, stats } = this.props;
 
-        let className = "fa fa-search";
-        if (this.state.search && this.state.search !== parameters.search) {
-            className += " changed";
-        }
-
         return <div className="search-box clearfix">
-            <Localized id="search-SearchBox--search-box-label">
-                <label
-                    htmlFor="search"
-                    title="Press Enter to Search"
-                >
-                    <div className={ className }></div>
-                </label>
-            </Localized>
+            <label htmlFor="search">
+                <div className="fa fa-search"></div>
+            </label>
             <input
                 id="search"
                 ref={ this.searchInput }

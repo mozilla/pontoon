@@ -563,12 +563,6 @@ resource-ResourceMenu--search-placeholder =
     .placeholder = Filter resources
 
 
-## Search bar
-## Shows and controls a search box, used to filter the list of entities.
-search-SearchBox--search-box-label =
-    .title = Press Enter to Search
-
-
 ## Filters Panel
 ## Shows a list of filters, used to filter the list of entities.
 search-FiltersPanel--heading-status = Translation Status

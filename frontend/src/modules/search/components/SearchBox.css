@@ -40,10 +40,6 @@
     top: 16px;
 }
 
-.search-box > label .changed {
-    color: #7BC876;
-}
-
 .search-box .status.fa {
     position: absolute;
     left: 16px;
