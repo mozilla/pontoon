@@ -330,10 +330,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     }
 
-    performSearch = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
-        // On Enter
+    handleKeyDown = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+        // Perform search on Enter
         if (event.keyCode === 13) {
-            this.update()
+            this.update();
         }
     }
 
@@ -450,7 +450,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 onBlur={ this.unsetFocus }
                 onChange={ this.updateSearchInput }
                 onFocus={ this.setFocus }
-                onKeyDown={ this.performSearch }
+                onKeyDown={ this.handleKeyDown }
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
