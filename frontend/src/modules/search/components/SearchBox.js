@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
@@ -55,9 +54,7 @@ type State = {|
 /**
  * Shows and controls a search box, used to filter the list of entities.
  *
- * Changes to the search input will be reflected in the URL. The user input
- * on that field is debounced, an update of the UI will only be triggered
- * after some time has passed since the last key stroke.
+ * Changes to the search input will be reflected in the URL.
  */
 export class SearchBoxBase extends React.Component<InternalProps, State> {
     searchInput: { current: ?HTMLInputElement };
@@ -330,12 +327,15 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
-        }, () => this.updateSearchParams());
+        });
     }
 
-    updateSearchParams = debounce(() => {
-        this.update();
-    }, 500)
+    handleKeyDown = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+        // Perform search on Enter
+        if (event.keyCode === 13) {
+            this.update();
+        }
+    }
 
     _update = () => {
         const statuses = this.getSelectedStatuses();
@@ -450,6 +450,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
                 onBlur={ this.unsetFocus }
                 onChange={ this.updateSearchInput }
                 onFocus={ this.setFocus }
+                onKeyDown={ this.handleKeyDown }
             />
             <FiltersPanel
                 statuses={ this.state.statuses }
