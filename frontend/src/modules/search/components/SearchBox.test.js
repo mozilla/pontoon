@@ -3,7 +3,7 @@ import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { createReduxStore } from 'test/store';
-import { shallowUntilTarget, sleep } from 'test/utils';
+import { shallowUntilTarget } from 'test/utils';
 
 import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
@@ -258,8 +258,8 @@ describe('<SearchBox>', () => {
 
         const updateSpy = sinon.spy(actions, 'update');
 
-        const event = { currentTarget: { value: 'test' } };
-        wrapper.find('input#search').simulate('change', event);
+        const inputChanged = { currentTarget: { value: 'test' } };
+        wrapper.find('input#search').simulate('change', inputChanged);
 
         // The state has been updated correctly...
         expect(wrapper.state().search).toEqual('test');
@@ -267,10 +267,10 @@ describe('<SearchBox>', () => {
         // ... but it wasn't propagated to the global redux store yet.
         expect(updateSpy.calledOnce).toBeFalsy();
 
-        // Wait for 500ms until the debounce delay has passed.
-        return sleep(500).then(() => {
-            expect(updateSpy.calledOnce).toBeTruthy();
-        });
+        // Wait until Enter is pressed.
+        const enterPressed = { keyCode: 13 };
+        wrapper.find('input#search').simulate('keydown', enterPressed);
+        expect(updateSpy.calledOnce).toBeTruthy();
     });
 
     it('puts focus on the search input on Ctrl + Shift + F', () => {
