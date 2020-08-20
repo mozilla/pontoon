@@ -18,6 +18,10 @@ const DEFAULT_LOCALE = {
 
 
 function createComponent(entityString, updateTranslation) {
+    if (!updateTranslation) {
+        updateTranslation = sinon.fake();
+    }
+
     const store = createReduxStore();
     store.dispatch(locale.actions.receive(DEFAULT_LOCALE));
 

@@ -23,8 +23,6 @@ import type {
     Variant,
 } from 'core/utils/fluent/types';
 
-import isEqual from 'lodash.isequal';
-
 
 type MessagePath = Array<string | number>;
 
@@ -152,12 +150,15 @@ export default function RichTranslationForm(props: Props) {
     }, [entity, changeSource]);
 
     // Walks the tree and unify all simple elements into just one.
-    // React.useEffect(() => {
-    //     const flatMessage = fluent.flattenMessage(message);
-    //     if (!flatMessage.equals(message)) {
-    //         updateTranslation(flatMessage);
-    //     }
-    // }, [entity, message, updateTranslation]);
+    React.useEffect(() => {
+        if (typeof(message) === 'string') {
+            return;
+        }
+        const flatMessage = fluent.flattenMessage(message);
+        if (!flatMessage.equals(message)) {
+            updateTranslation(flatMessage);
+        }
+    }, [entity, message, updateTranslation]);
 
     // Reset checks when content of the editor changes.
     React.useEffect(() => {
@@ -183,23 +184,19 @@ export default function RichTranslationForm(props: Props) {
 
     // Put focus on input.
     React.useEffect(() => {
-        const putCursorToStart = changeSource !== 'internal';
         const input = getFocusedElement() || getFirstInput();
 
-        if (!input) {
-            return;
-        }
-
-        if (searchInputFocused) {
+        if (!input || searchInputFocused) {
             return;
         }
 
         input.focus();
 
+        const putCursorToStart = changeSource !== 'internal';
         if (putCursorToStart) {
             input.setSelectionRange(0, 0);
         }
-    }, [changeSource, searchInputFocused, getFocusedElement, getFirstInput]);
+    }, [message, changeSource, searchInputFocused, getFocusedElement, getFirstInput]);
 
     if (typeof(message) === 'string') {
         // This is a transitional state, and this editor is not able to handle a

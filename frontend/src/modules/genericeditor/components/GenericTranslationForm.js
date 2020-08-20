@@ -8,8 +8,6 @@ import * as entities from 'core/entities';
 import * as plural from 'core/plural';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import isEqual from 'lodash.isequal';
-
 
 type Props = {|
     sendTranslation: (ignoreWarnings?: boolean) => void,
@@ -52,7 +50,7 @@ export default function GenericTranslationForm(props: Props) {
         if (changeSource !== 'internal') {
             input.setSelectionRange(0, 0);
         }
-    });
+    }, [translation, changeSource, searchInputFocused]);
 
     // Reset checks when content of the editor changes.
     React.useEffect(() => {
