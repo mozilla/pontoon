@@ -249,11 +249,10 @@ export default function AddComments(props: Props) {
     
     const handleMentionsMouseDown = (event: SyntheticMouseEvent<HTMLDivElement>) => {
         event.preventDefault();
-        console.log(usersList);
         if (target !== null) {
-            const charIndex = suggestedUsers.indexOf(event.currentTarget.innerText);
+            const suggestedUserIndex = suggestedUsers.indexOf(event.currentTarget.innerText);
             Transforms.select(editor, target);
-            insertMention(editor, suggestedUsers[charIndex], usersList);
+            insertMention(editor, suggestedUsers[suggestedUserIndex], usersList);
             return setTarget(null);
         }
     };
