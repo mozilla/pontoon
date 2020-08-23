@@ -54,7 +54,6 @@ export default function AddComments(props: Props) {
     const [ index, setIndex ] = React.useState(0);
     const [ search, setSearch ] = React.useState('');
     const [ scrollPosition, setScrollPosition ] = React.useState(0);
-    const renderElement = React.useCallback(props => <Element { ...props } />, []);
     const editor = React.useMemo(
         () => withMentions(withReact(createEditor())), []
     );
@@ -75,13 +74,13 @@ export default function AddComments(props: Props) {
 
     const usersList = users.users;
     const USERS = usersList.map(user => user.name);
-    const chars = USERS.filter(c =>
+    const suggestedUsers = USERS.filter(c =>
         c.toLowerCase().startsWith(search.toLowerCase())
     ).slice(0, 5);
 
     // Set position of mentions suggestions
     React.useLayoutEffect(() => {
-        if (!target || chars.length <= 0) {
+        if (!target || suggestedUsers.length <= 0) {
             return;
         }
         const el = mentionList.current;
@@ -144,8 +143,11 @@ export default function AddComments(props: Props) {
         el.style.top = `${ setTop }px`;
         el.style.left = `${ setLeft }px`;
     
-    }, [ chars.length, editor, index, search, target, scrollPosition ]);
+    }, [ suggestedUsers.length, editor, index, search, target, scrollPosition ]);
 
+    // Set scroll position values for Translation and Team Comment containers ~
+    // This allows for the mention suggestions to stay properly positioned
+    // when the container scrolls.
     React.useEffect(() => {
         // Flow does not recognize the event listeners with 'SyntheticEvent`,  
         // so I'm ignoring the errors Flow throws here.
@@ -179,41 +181,38 @@ export default function AddComments(props: Props) {
         }
     }, [])
 
-    const handleMentionsKeyDown = React.useCallback(
-        (event) => {
-            if (!target) { 
+    const handleMentionsKeyDown = (event) => {
+        if (!target) { 
+            return;
+        }
+        switch (event.key) {
+            case 'ArrowDown': {
+                event.preventDefault();
+                const prevIndex = index >= suggestedUsers.length - 1 ? 0 : index + 1;
+                setIndex(prevIndex);
+                break;
+            }
+            case 'ArrowUp': {
+                event.preventDefault();
+                const nextIndex = index <= 0 ? suggestedUsers.length - 1 : index - 1;
+                setIndex(nextIndex);
+                break;
+            }
+            case 'Tab':
+            case 'Enter':
+                event.preventDefault();
+                Transforms.select(editor, target);
+                insertMention(editor, suggestedUsers[index], usersList);
+                setTarget(null);
+                break;
+            case 'Escape':
+                event.preventDefault();
+                setTarget(null);
+                break;
+            default:
                 return;
-            }
-            switch (event.key) {
-                case 'ArrowDown': {
-                    event.preventDefault();
-                    const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
-                    setIndex(prevIndex);
-                    break;
-                }
-                case 'ArrowUp': {
-                    event.preventDefault();
-                    const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
-                    setIndex(nextIndex);
-                    break;
-                }
-                case 'Tab':
-                case 'Enter':
-                    event.preventDefault();
-                    Transforms.select(editor, target);
-                    insertMention(editor, chars[index], usersList);
-                    setTarget(null);
-                    break;
-                case 'Escape':
-                    event.preventDefault();
-                    setTarget(null);
-                    break;
-                default:
-                    return;
-            }
-        },
-        [ chars, editor, index, target, usersList ]
-    );
+        }
+    };
 
     const handleEditorKeyDown = (event: SyntheticKeyboardEvent<>) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -233,15 +232,16 @@ export default function AddComments(props: Props) {
         }
     }
     
-    const handleMentionsMouseDown = React.useCallback((event: SyntheticMouseEvent<HTMLDivElement>) => {
+    const handleMentionsMouseDown = (event: SyntheticMouseEvent<HTMLDivElement>) => {
         event.preventDefault();
+        console.log(usersList);
         if (target !== null) {
-            const charIndex = chars.indexOf(event.currentTarget.innerText)
+            const charIndex = suggestedUsers.indexOf(event.currentTarget.innerText);
             Transforms.select(editor, target);
-            insertMention(editor, chars[charIndex], usersList);
+            insertMention(editor, suggestedUsers[charIndex], usersList);
             return setTarget(null);
         }
-    }, [ editor, target, chars, usersList ]);
+    };
     
     const getUserGravatar = React.useCallback((name: string) => {
         const user = usersList.find(user => user.name === name);
@@ -354,7 +354,7 @@ export default function AddComments(props: Props) {
                         onKeyDown={ target ? handleMentionsKeyDown : handleEditorKeyDown }
                     />
                 </Localized>
-                { target && chars.length > 0 && (
+                { target && suggestedUsers.length > 0 && (
                     <Portal>
                         <div
                             ref={ mentionList }
@@ -362,9 +362,9 @@ export default function AddComments(props: Props) {
                             onMouseEnter={ setStyleForHover }
                             onMouseLeave={ removeStyleForHover }
                         >
-                            { chars.map((char, i) => (
+                            { suggestedUsers.map((suggestedUser, i) => (
                                 <div
-                                    key={ char }
+                                    key={ suggestedUser }
                                     className={ i === index ? 'mention active-mention' : 'mention' }
                                     onMouseDown={ handleMentionsMouseDown }
                                 >
@@ -374,14 +374,14 @@ export default function AddComments(props: Props) {
                                     >
                                         <span className='user-avatar'>
                                             <img 
-                                                src={ getUserGravatar(char) } 
+                                                src={ getUserGravatar(suggestedUser) } 
                                                 alt="User Avatar" 
                                                 width="22" 
                                                 height="22" 
                                             />
                                         </span>
                                     </Localized>
-                                    <span className="name">{ char }</span>
+                                    <span className="name">{ suggestedUser }</span>
                                 </div>
                             ))}
                         </div>
@@ -418,6 +418,20 @@ const withMentions = (editor) => {
   
     return editor;
 };
+
+const renderElement = (props) => {
+    return <Element { ...props } />
+};
+
+const Element = (props) => {
+    const { attributes, children, element } = props;
+        switch (element.type) {
+        case 'mention':
+            return <MentionElement { ...props } />;
+        default:
+            return <p { ...attributes }>{ children }</p>;
+    }
+};
   
 const insertMention = (editor, character, users) => {
     const selectedUser = users.find(user => user.name === character);
@@ -429,16 +443,6 @@ const insertMention = (editor, character, users) => {
     const mention = { type: 'mention', character, url: userUrl, children: [{ text: display }] };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
-};
-
-const Element = (props) => {
-    const { attributes, children, element } = props;
-        switch (element.type) {
-        case 'mention':
-            return <MentionElement { ...props } />;
-        default:
-            return <p { ...attributes }>{ children }</p>;
-    }
 };
 
 const MentionElement = ({ attributes, children, element }) => {

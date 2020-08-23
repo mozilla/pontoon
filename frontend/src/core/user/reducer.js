@@ -1,6 +1,6 @@
 /* @flow */
 
-import { RECEIVE, UPDATE, UPDATE_SETTINGS } from './actions';
+import { RECEIVE_USERS, UPDATE, UPDATE_SETTINGS } from './actions';
 
 import type { ReceiveAction, UpdateAction, UpdateSettingsAction } from './actions';
 import type { UsersList } from 'core/api';
@@ -125,7 +125,7 @@ export default function reducer(
     action: Action,
 ): UserState {
     switch (action.type) {
-        case RECEIVE:
+        case RECEIVE_USERS:
             return {
                 ...state,
                 users: action.users,

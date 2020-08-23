@@ -5,13 +5,13 @@ import * as notification from 'core/notification';
 
 import type { UsersList } from 'core/api';
 
-export const RECEIVE: 'users/RECEIVE' = 'users/RECEIVE';
+export const RECEIVE_USERS: 'users/RECEIVE_USERS' = 'users/RECEIVE_USERS';
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
 export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
 
 
 export type ReceiveAction = {|
-    +type: typeof RECEIVE,
+    +type: typeof RECEIVE_USERS,
     +users: Array<UsersList>,    
 |}
 
@@ -19,7 +19,7 @@ export function receive(
     users: Array<UsersList>,
 ): ReceiveAction {
     return {
-        type: RECEIVE,
+        type: RECEIVE_USERS,
         users,
     };
 }
