@@ -20,7 +20,6 @@ type Props = {|
     users: UserState,
     canComment: boolean,
     addComment: (string, ?number) => void,
-    getUsers: () => void,
 |};
 
 
@@ -32,7 +31,6 @@ export default function CommentsList(props: Props) {
         user,
         canComment,
         addComment,
-        getUsers,
         users,
     } = props;
 
@@ -55,7 +53,6 @@ export default function CommentsList(props: Props) {
                 translation={ translationId }
                 users={ users }
                 addComment={ addComment }
-                getUsers={ getUsers }
             />
         }
     </div>

@@ -34,7 +34,6 @@ type Props = {|
     translation?: ?number,
     users: UserState,
     addComment: (string, ?number) => void,
-    getUsers: () => void,
 |};
 
 
@@ -46,7 +45,6 @@ export default function AddComments(props: Props) {
         translation,
         users,
         addComment,
-        getUsers,
     } = props;
        
     const mentionList: any = React.useRef();
@@ -68,10 +66,6 @@ export default function AddComments(props: Props) {
         }
     }, [editor, parameters])
     
-    React.useEffect(() => {
-        getUsers();
-    }, [getUsers])
-
     const usersList = users.users;
     const USERS = usersList.map(user => user.name);
     const suggestedUsers = USERS.filter(c =>

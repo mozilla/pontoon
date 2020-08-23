@@ -17,7 +17,6 @@ type Props = {|
     user: UserState,
     users: UserState,
     addComment: (string, ?number) => void,
-    getUsers: () => void,
 |};
 
 
@@ -27,8 +26,7 @@ export default function TeamComments(props: Props) {
         user,
         parameters,
         users,
-        addComment,
-        getUsers, 
+        addComment, 
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -52,7 +50,6 @@ export default function TeamComments(props: Props) {
                 users={ users }
                 canComment={ canComment }
                 addComment={ addComment }
-                getUsers={ getUsers }
             />
         }
     </section>

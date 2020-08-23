@@ -14,6 +14,7 @@ import * as notification from 'core/notification';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
+import * as user from 'core/user';
 import * as batchactions from 'modules/batchactions';
 import { UserControls } from 'core/user';
 import { BatchActions } from 'modules/batchactions';
@@ -31,6 +32,7 @@ import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
+import type { UserState } from 'core/user';
 
 
 type Props = {|
@@ -41,6 +43,7 @@ type Props = {|
     parameters: NavigationParams,
     project: ProjectState,
     stats: Stats,
+    users: UserState,
 |};
 
 type InternalProps = {
@@ -58,6 +61,7 @@ class App extends React.Component<InternalProps> {
 
         this.props.dispatch(locale.actions.get(parameters.locale));
         this.props.dispatch(project.actions.get(parameters.project));
+        this.props.dispatch(user.actions.getUsers());
 
         // Load resources, unless we're in the All Projects view
         if (parameters.project !== 'all-projects') {
@@ -139,6 +143,7 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         stats: state[stats.NAME],
+        users: state[user.NAME],
     };
 };
 
