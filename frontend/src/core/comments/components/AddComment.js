@@ -83,27 +83,48 @@ export default function AddComments(props: Props) {
         if (!target || suggestedUsers.length <= 0) {
             return;
         }
+        // get suggestions element and gain access to its measurements
         const el = mentionList.current;
         const domRange = ReactEditor.toDOMRange(editor, target);
         const rect = domRange.getBoundingClientRect();
+
+        // get team comments element, gain access to its measurements, and verify 
+        // if it is active
         const teamCommentsEl = document.querySelector('.top');
         const teamCommentsRect = !teamCommentsEl ? null : teamCommentsEl.getBoundingClientRect();
         const teamCommentsActive = !teamCommentsEl ? false : teamCommentsEl.contains(document.activeElement);
+
+        // get translation comments element, gain access to its measurements, and verify
+        // if it is active
         const translateCommentsEl = document.querySelector('.history');
         const translateCommentsRect = !translateCommentsEl ? null : translateCommentsEl.getBoundingClientRect();
         const translateCommentsActive = !translateCommentsEl ? false : 
             translateCommentsEl.contains(document.activeElement);
+        
+        // get editor menu element and find its height to determine when comment editor goes above
+        // the editor menu in order to hide suggestions element
         const editorMenu = document.querySelector('.editor-menu');
         const editorMenuHeight = !editorMenu ? 0 : editorMenu.clientHeight;
+
+        // get tab index element and find its height to use when determining if suggestions 
+        // element overflows the team comments container
         const tabIndex = document.querySelector('.react-tabs__tab-list');
         const tabIndexHeight = !tabIndex ? 0 : tabIndex.clientHeight;
+
+        // get comment editor element and find measurements of values needed to adjust
+        // the suggestions element to the correct position
         const commentEditor = document.querySelector('.comments-list .add-comment .comment-editor');
         const commentEditorLineHeight = parseInt(window.getComputedStyle(commentEditor).lineHeight) || 0;
         const commentEditorTopPadding = parseInt(window.getComputedStyle(commentEditor).paddingTop) || 0;
         const commentEditorBottomPadding = parseInt(window.getComputedStyle(commentEditor).paddingBottom) || 0;
         const commentEditorSpan = document.querySelector('.comments-list .add-comment .comment-editor p span');
         const commentEditorSpanHeight = !commentEditorSpan ? 0 : commentEditorSpan.offsetHeight;
+
+        // add value of comment editor bottom padding and span height to properly position suggestions element
         const setTopAdjustment = commentEditorBottomPadding + commentEditorSpanHeight;
+
+        // add value of comment editor top padding and difference between line height and span height
+        // of the top half of the comment editor to correctly size the height of the suggestions
         const suggestionsHeightAdjustment = (
             commentEditorTopPadding + ((commentEditorLineHeight - commentEditorSpanHeight) / 2));
 
