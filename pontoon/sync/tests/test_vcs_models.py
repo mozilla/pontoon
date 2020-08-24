@@ -4,9 +4,7 @@ import tempfile
 import os
 
 from http.client import HTTPException
-from itertools import cycle
 
-import requests
 import scandir
 
 from django_nose.tools import (
