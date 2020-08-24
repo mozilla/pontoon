@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
+import tempfile
 import os
+
 from http.client import HTTPException
 from itertools import cycle
 
@@ -552,6 +554,7 @@ class DownloadTOMLParserTests(TestCase):
     def setUp(self):
         self.requests_patcher = patch("pontoon.sync.vcs.models.requests.get")
         self.requests_mock = self.requests_patcher.start()
+        self.temp_dir = tempfile.mkdtemp()
 
     def tearDown(self):
         self.requests_patcher.stop()
@@ -575,7 +578,7 @@ class DownloadTOMLParserTests(TestCase):
         )
         self.assertEqual(
             parser.get_remote_path("subdir/l10n.toml"),
-            "https://example.com/test/l10n.toml",
+            "https://example.com/test/subdir/l10n.toml",
         )
 
     def test_remote_path_without_locale_code(self):
@@ -590,16 +593,18 @@ class DownloadTOMLParserTests(TestCase):
         )
 
     def test_download_path(self):
-        parser = DownloadTOMLParser("/tmp/", "")
-        self.assertEqual(parser.get_download_path("aaa.toml"), "/tmp/aa.toml")
+        parser = DownloadTOMLParser(self.temp_dir, "")
+        self.assertEqual(
+            parser.get_download_path("aaa.toml"), f"{self.temp_dir}/aaa.toml"
+        )
 
     def test_get_project_config(self):
         """
         """
-        parser = DownloadTOMLParser("", "https://example.com/{locale_code}")
+        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
         self.requests_mock.return_value.content = b"test-content"
 
         project_config_path = parser.get_project_config("l10n.toml")
 
-        self.assertEqual(project_config_path, "bbb")
-        self.assertEqual(open(project_config_path, "r").read(), b"test-content")
+        self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
+        self.assertEqual(open(project_config_path, "r").read(), "test-content")
