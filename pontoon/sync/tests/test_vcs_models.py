@@ -599,8 +599,6 @@ class DownloadTOMLParserTests(TestCase):
         )
 
     def test_get_project_config(self):
-        """
-        """
         parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
         self.requests_mock.return_value.content = b"test-content"
 
