@@ -52,11 +52,11 @@ class DownloadTOMLParser(TOMLParser):
         self.permalink_prefix = permalink_prefix
 
     def get_download_path(self, path):
+        """Return the directory in which the config file should be stored."""
         return os.path.join(self.checkout_path, path)
 
     def get_remote_path(self, path):
-        """
-        """
+        """Construct the link to the remote resource based on the local path."""
         config_path = path.replace(self.checkout_path, "")
 
         if "{locale_code}" in self.permalink_prefix:
@@ -75,6 +75,7 @@ class DownloadTOMLParser(TOMLParser):
         return download_path
 
     def parse(self, path, env=None, ignore_missing_includes=True):
+        """Download the config file before it gets parsed."""
         return super(DownloadTOMLParser, self).parse(
             self.get_project_config(path), env, ignore_missing_includes
         )
@@ -584,7 +585,7 @@ class VCSConfiguration(object):
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
             self.vcs_project.db_project.source_repository.permalink_prefix,
-        ).parse(self.configuration_file, env={"l10n_base": self.l10n_base},)
+        ).parse(self.configuration_file, env={"l10n_base": self.l10n_base})
 
     def add_locale(self, locale_code):
         """
