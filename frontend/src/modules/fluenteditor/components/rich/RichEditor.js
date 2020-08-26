@@ -33,7 +33,7 @@ export default function RichEditor(props: Props) {
     const entity = useSelector(state => entities.selectors.getSelectedEntity(state));
     const locale = useSelector(state => state.locale);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (typeof(translation) === 'string') {
             const message = fluent.parser.parseEntry(translation);
             updateTranslation(message);

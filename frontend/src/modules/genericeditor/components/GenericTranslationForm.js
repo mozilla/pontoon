@@ -28,7 +28,6 @@ export default function GenericTranslationForm(props: Props) {
     const isReadOnlyEditor = useSelector(
         state => entities.selectors.isReadOnlyEditor(state)
     );
-    const unsavedChangesShown = useSelector(state => state.unsavedchanges.shown);
 
     const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -57,12 +56,9 @@ export default function GenericTranslationForm(props: Props) {
     // When the translation or the active translation or the initial translation change,
     // check for unsaved changes.
     React.useEffect(() => {
-        if (unsavedChangesShown) {
-            dispatch(unsavedchanges.actions.hide());
-        }
-
+        dispatch(unsavedchanges.actions.hide());
         dispatch(unsavedchanges.actions.update(translation !== initialTranslation));
-    }, [translation, initialTranslation, unsavedChangesShown, dispatch]);
+    }, [translation, initialTranslation, dispatch]);
 
     // Replace selected content on external actions (for example, when a user clicks
     // on a placeable).

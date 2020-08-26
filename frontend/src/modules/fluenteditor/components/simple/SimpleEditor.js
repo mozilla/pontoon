@@ -31,7 +31,7 @@ export default function SimpleEditor(props: Props) {
 
     // Transform the translation into a simple preview whenever it changes from
     // an external source.
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (changeSource === 'internal' || typeof(translation) !== 'string') {
             return;
         }

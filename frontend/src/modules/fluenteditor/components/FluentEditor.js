@@ -39,7 +39,7 @@ function useLoadTranslation(syntaxType, forceSource) {
     // value and only update when it didn't change since the last render.
     const prevForceSource = React.useRef(forceSource);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (prevForceSource.current === forceSource) {
             if (syntaxType === 'complex') {
                 // Use the actual content that we get from the server: a Fluent message as a string.

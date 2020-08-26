@@ -82,7 +82,6 @@ export default function RichTranslationForm(props: Props) {
     const searchInputFocused = useSelector(state => state.search.searchInputFocused);
     const entity = useSelector(state => entities.selectors.getSelectedEntity(state));
     const initialTranslation = useSelector(state => state.editor.initialTranslation);
-    const unsavedChangesShown = useSelector(state => state.unsavedchanges.shown);
 
     const tableBodyRef: { current: any } = React.useRef();
 
@@ -174,11 +173,9 @@ export default function RichTranslationForm(props: Props) {
             return;
         }
 
-        if (unsavedChangesShown) {
-            dispatch(unsavedchanges.actions.hide());
-        }
+        dispatch(unsavedchanges.actions.hide());
         dispatch(unsavedchanges.actions.update(!message.equals(initialTranslation)));
-    }, [message, initialTranslation, unsavedChangesShown, dispatch]);
+    }, [message, initialTranslation, dispatch]);
 
     // Put focus on input.
     React.useEffect(() => {
