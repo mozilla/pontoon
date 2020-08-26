@@ -32,6 +32,10 @@ export default function FailedChecks(props: FailedChecksProps) {
 
     const updateTranslationStatus = useUpdateTranslationStatus();
 
+    if (!errors.length && !warnings.length) {
+        return null;
+    }
+
     function resetChecks() {
         dispatch(actions.resetFailedChecks());
     }
@@ -44,10 +48,6 @@ export default function FailedChecks(props: FailedChecksProps) {
 
     function submitAnyway() {
         props.sendTranslation(true);
-    }
-
-    if (!errors.length && !warnings.length) {
-        return null;
     }
 
     return (

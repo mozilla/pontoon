@@ -22,7 +22,6 @@ import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
@@ -33,7 +32,8 @@ type Props = {|
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
@@ -212,7 +212,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => {
                     dispatch(
                         batchactions.actions.resetSelection()
@@ -235,7 +236,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         dispatch(
             unsavedchanges.actions.check(
-                props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => {
                     // If holding Shift, check all entities in the entity list between the
                     // lastCheckedEntity and the entity if entity not checked. If entity
@@ -383,7 +385,8 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         locale: state[locale.NAME],
         router: state.router,
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
     };
 };
 

@@ -29,7 +29,6 @@ import Metadata from './Metadata';
 import Helpers from './Helpers';
 
 import type { Entity, SourceType } from 'core/api';
-import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { TermState } from 'core/term';
@@ -38,12 +37,10 @@ import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 import type { TeamCommentState } from 'modules/teamcomments';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 
 type Props = {|
     activeTranslationString: string,
-    editor: EditorState,
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
@@ -58,7 +55,8 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: Entity,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
     user: UserState,
     users: UserState,
 |};
@@ -202,7 +200,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -220,7 +219,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -238,7 +238,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => { dispatch(push(path)); }
             )
         );
@@ -292,7 +293,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         // because it cannot be triggered for the use case of bug 1508474.
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 () => {
                     dispatch(history.actions.updateStatus(
                         change,
@@ -357,7 +359,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             </section>
             <section className="third-column">
                 <Helpers
-                    editor={ state.editor }
                     entity={ state.selectedEntity }
                     isReadOnlyEditor={ state.isReadOnlyEditor }
                     locale={ state.locale }
@@ -384,7 +385,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 const mapStateToProps = (state: Object): Props => {
     return {
         activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(state),
-        editor: state[editor.NAME],
         history: state[history.NAME],
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
@@ -399,7 +399,8 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entities.selectors.getSelectedEntity(state),
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
         user: state[user.NAME],
         users: state[user.NAME],
     };

@@ -1,23 +1,20 @@
 /* @flow */
 
-import React from 'react';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './Translation.css';
 
+import * as entities from 'core/entities';
 import { GenericTranslation } from 'core/translation';
 
 import TranslationSource from './TranslationSource';
 
-import type { EditorState } from 'core/editor';
 import type { MachineryTranslation, SourceType } from 'core/api';
-import type { Locale } from 'core/locale';
 
 
 type Props = {|
-    editor: EditorState,
-    isReadOnlyEditor: boolean,
-    locale: Locale,
     sourceString: string,
     translation: MachineryTranslation,
     addTextToEditorTranslation: (string, ?string) => void,
@@ -33,9 +30,21 @@ type Props = {|
  * Similar translations (same original and translation) are shown only once
  * and their sources are merged.
  */
-export default class Translation extends React.Component<Props> {
-    copyTranslationIntoEditor = () => {
-        if (this.props.isReadOnlyEditor) {
+export default function Translation(props: Props) {
+    const {
+        addTextToEditorTranslation,
+        updateEditorTranslation,
+        updateMachinerySources,
+        sourceString,
+        translation,
+    } = props;
+
+    const editorContent = useSelector(state => state.editor.translation);
+    const isReadOnlyEditor = useSelector(state => entities.selectors.isReadOnlyEditor(state));
+    const locale = useSelector(state => state.locale);
+
+    const copyTranslationIntoEditor = React.useCallback(() => {
+        if (isReadOnlyEditor) {
             return;
         }
 
@@ -44,35 +53,32 @@ export default class Translation extends React.Component<Props> {
             return;
         }
 
-        const { translation, sources } = this.props.translation;
-        if (typeof(this.props.editor.translation) !== 'string') {
+        if (typeof(editorContent) !== 'string') {
             // This is a Fluent Message, thus we are in the RichEditor.
             // Handle machinery differently.
-            this.props.addTextToEditorTranslation(translation, 'machinery');
+            addTextToEditorTranslation(translation.translation, 'machinery');
         }
         else {
-            this.props.updateEditorTranslation(translation, 'machinery');
+            updateEditorTranslation(translation.translation, 'machinery');
         }
-        this.props.updateMachinerySources(sources, translation);
-    };
+        updateMachinerySources(translation.sources, translation.translation);
+    }, [
+        isReadOnlyEditor, translation, editorContent,
+        addTextToEditorTranslation, updateEditorTranslation, updateMachinerySources,
+    ]);
 
-    render() {
-        const { locale, sourceString, translation, isReadOnlyEditor } = this.props;
+    let className = 'translation';
+    if (isReadOnlyEditor) {
+        // Copying into the editor is not allowed
+        className += ' cannot-copy';
+    }
 
-        const types = translation.sources;
-
-        let className = 'translation';
-
-        if (isReadOnlyEditor) {
-            // Copying into the editor is not allowed
-            className += ' cannot-copy';
-        }
-
-        return <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
+    return (
+        <Localized id="machinery-Translation--copy" attrs={{ title: true }}>
             <li
                 className={ className }
                 title="Copy Into Translation"
-                onClick={ this.copyTranslationIntoEditor }
+                onClick={ copyTranslationIntoEditor }
             >
                 <header>
                     { !translation.quality ? null :
@@ -84,7 +90,7 @@ export default class Translation extends React.Component<Props> {
                     />
                 </header>
                 <p className="original">
-                    { types.indexOf('caighdean') === -1 ?
+                    { translation.sources.indexOf('caighdean') === -1 ?
                         <GenericTranslation
                             content={ translation.original }
                             diffTarget={ sourceString }
@@ -110,6 +116,6 @@ export default class Translation extends React.Component<Props> {
                     />
                 </p>
             </li>
-        </Localized>;
-    }
+        </Localized>
+    );
 }

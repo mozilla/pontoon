@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
-import * as plural from 'core/plural';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 
@@ -25,13 +24,11 @@ export default function GenericTranslationForm(props: Props) {
     const initialTranslation = useSelector(state => state.editor.initialTranslation);
     const changeSource = useSelector(state => state.editor.changeSource);
     const searchInputFocused = useSelector(state => state.search.searchInputFocused);
-    const activeTranslationString = useSelector(
-        state => plural.selectors.getTranslationStringForSelectedEntity(state)
-    );
     const locale = useSelector(state => state.locale);
     const isReadOnlyEditor = useSelector(
         state => entities.selectors.isReadOnlyEditor(state)
     );
+    const unsavedChangesShown = useSelector(state => state.unsavedchanges.shown);
 
     const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -60,12 +57,12 @@ export default function GenericTranslationForm(props: Props) {
     // When the translation or the active translation or the initial translation change,
     // check for unsaved changes.
     React.useEffect(() => {
-        dispatch(unsavedchanges.actions.hide());
-        dispatch(unsavedchanges.actions.update(
-            translation,
-            initialTranslation || activeTranslationString
-        ));
-    }, [translation, activeTranslationString, initialTranslation, dispatch]);
+        if (unsavedChangesShown) {
+            dispatch(unsavedchanges.actions.hide());
+        }
+
+        dispatch(unsavedchanges.actions.update(translation !== initialTranslation));
+    }, [translation, initialTranslation, unsavedChangesShown, dispatch]);
 
     // Replace selected content on external actions (for example, when a user clicks
     // on a placeable).
