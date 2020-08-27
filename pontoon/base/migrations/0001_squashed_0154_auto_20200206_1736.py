@@ -1200,8 +1200,8 @@ MIGRATION_0134_PONTOON_TO_GOOGLE_TRANSLATE_MAP = [
 ]
 
 MIGRATION_0146_USERS = [
-    ("pontoon-tm@mozilla.com", "translation-memory", "Translation Memory"),
-    ("pontoon-gt@mozilla.com", "google-translate", "Google Translate"),
+    ("pontoon-tm@example.com", "translation-memory", "Translation Memory"),
+    ("pontoon-gt@example.com", "google-translate", "Google Translate"),
 ]
 
 
