@@ -20,6 +20,7 @@ type Props = {|
     isTranslator: boolean,
     locale: Locale,
     user: UserState,
+    users: UserState,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
     updateEditorTranslation: (string, string) => void,
@@ -49,6 +50,7 @@ export default class History extends React.Component<Props> {
             isTranslator,
             locale,
             user,
+            users,
             deleteTranslation,
             addComment,
             updateEditorTranslation,
@@ -64,7 +66,7 @@ export default class History extends React.Component<Props> {
         }
 
         return <section className="history">
-            <ul>
+            <ul id='history-list'>
                 { history.translations.map((translation, index) => {
                     return <Translation
                         translation={ translation }
@@ -76,6 +78,7 @@ export default class History extends React.Component<Props> {
                         user={ user }
                         deleteTranslation={ deleteTranslation }
                         addComment={ addComment }
+                        users={ users }
                         updateEditorTranslation={ updateEditorTranslation }
                         updateTranslationStatus={ updateTranslationStatus }
                         key={ index }

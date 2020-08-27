@@ -15,12 +15,19 @@ type Props = {|
     parameters: NavigationParams,
     teamComments: TeamCommentState,
     user: UserState,
+    users: UserState,
     addComment: (string, ?number) => void,
 |};
 
 
 export default function TeamComments(props: Props) {
-    const { teamComments, user, parameters, addComment } = props;
+    const { 
+        teamComments, 
+        user,
+        parameters,
+        users,
+        addComment, 
+    } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
         return null;
@@ -40,6 +47,7 @@ export default function TeamComments(props: Props) {
                 comments={ comments }
                 parameters={ parameters }
                 user={ user }
+                users={ users }
                 canComment={ canComment }
                 addComment={ addComment }
             />

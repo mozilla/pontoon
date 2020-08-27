@@ -61,6 +61,7 @@ type Props = {|
     selectedEntity: Entity,
     unsavedchanges: UnsavedChangesState,
     user: UserState,
+    users: UserState,
 |};
 
 type InternalProps = {|
@@ -350,6 +351,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     user={ state.user }
                     deleteTranslation={ this.deleteTranslation }
                     addComment={ this.addComment }
+                    users={ state.users }
                     updateTranslationStatus={ this.updateTranslationStatus }
                     updateEditorTranslation={ this.updateEditorTranslation }
                 />
@@ -364,6 +366,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     teamComments={ state.teamComments }
                     terms={ state.terms }
                     addComment={ this.addComment }
+                    users={ state.users }
                     parameters={ state.parameters }
                     user={ state.user }
                     updateEditorTranslation={ this.updateEditorTranslation }
@@ -398,6 +401,7 @@ const mapStateToProps = (state: Object): Props => {
         selectedEntity: entities.selectors.getSelectedEntity(state),
         unsavedchanges: state[unsavedchanges.NAME],
         user: state[user.NAME],
+        users: state[user.NAME],
     };
 };
 

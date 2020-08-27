@@ -1,11 +1,10 @@
-.comments-list .add-comment form.container {
+.comments-list .add-comment div.container {
     flex-flow: row nowrap;
     align-items: flex-end;
     padding-bottom: 6px;
 }
 
-.comments-list .add-comment textarea {
-    align-items: center;
+.comments-list .add-comment .comment-editor {
     background-color: #333941;
     border: none;
     border-radius: 4px;
@@ -13,30 +12,61 @@
     display: flex;
     flex-grow: 2;
     font-size: 11px;
-    height: auto;
-    line-height: 24px;
+    max-height: 144px;
+    line-height: 20px;
+    margin: auto;
     overflow: auto;
-    padding: 6px;
-    resize: none;
+    padding: 7px;
+    word-break: break-all;
 }
 
-/* Remove highlight in Chrome */
-.comments-list .add-comment textarea:focus {
-    outline: none;
+.comments-list .add-comment .comment-editor .mention-element {
+    color: #7BC876;
 }
 
-/* Style placeholder color in Chrome */
-.comments-list .add-comment textarea::-webkit-input-placeholder {
-    color: #AAAAAA;
+.comments-mention-list {
+    top: -9999px;
+    left: -9999px;
+    position: absolute;
+    z-index: 1;
+    padding: 10px 12px;
+    background-color: #272A2F;
+    border: 1px solid #333941;
+}
+
+.comments-mention-list .mention {
+    padding: 4px 4px 0;
+    cursor: pointer;
+}
+
+.comments-mention-list .mention:hover, 
+.comments-mention-list .active-mention {
+    background: #3F4752;
+}
+
+.comments-mention-list .mention .user-avatar {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.comments-mention-list .mention .user-avatar img {
+    border-radius: 2px;
+    border: 1px solid #5E6475;
+    margin-right: 8px;
+}
+
+.comments-mention-list .mention .name {
+    font-weight: 300;
 }
 
 .comments-list .add-comment .submit-button {
-    background-color: #4d5967;
-    border: solid 1px #4d5967;
+    background-color: #4D5967;
+    border: solid 1px #4D5967;
     border-radius: 4px;
     color: #ccc;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     height: 36px;
     width: 36px;
     margin-left: 6px;

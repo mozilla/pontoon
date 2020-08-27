@@ -26,6 +26,7 @@ type Props = {|
     activeTranslation: HistoryTranslation,
     locale: Locale,
     user: UserState,
+    users: UserState,
     index: number,
     deleteTranslation: (number) => void,
     addComment: (string, ?number) => void,
@@ -242,6 +243,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             translation,
             locale,
             user,
+            users,
             index,
             activeTranslation,
             addComment,
@@ -466,6 +468,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     comments={ translation.comments }
                     translation={ translation }
                     user={ user }
+                    users={ users }
                     canComment={ canComment }
                     addComment={ addComment }
                 />

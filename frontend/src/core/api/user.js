@@ -21,6 +21,16 @@ export default class UserAPI extends APIBase {
     }
 
     /**
+     * Get all users from server.
+     */
+    async getUsers(): Promise<Object> {
+        const headers = new Headers();
+        headers.append('X-Requested-With', `XMLHttpRequest`);
+
+        return await this.fetch('get-users', 'GET', null, headers);
+    }
+
+    /**
      * Mark all notifications of the current user as read.
      */
     async markAllNotificationsAsRead(): Promise<Object> {
