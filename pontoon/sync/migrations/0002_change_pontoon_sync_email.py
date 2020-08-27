@@ -8,13 +8,13 @@ from django.db import migrations
 def update_sync_user_email(apps, schema_editor):
     User = apps.get_model("auth", "User")
     User.objects.filter(email="pontoon-sync@mozilla.org").update(
-        email="pontoon-sync@example.com"
+        email="pontoon-sync@mozilla.com"
     )
 
 
 def revert_sync_user_email(apps, schema_editor):
     User = apps.get_model("auth", "User")
-    User.objects.filter(email="pontoon-sync@example.com").update(
+    User.objects.filter(email="pontoon-sync@mozilla.com").update(
         email="pontoon-sync@mozilla.org"
     )
 
