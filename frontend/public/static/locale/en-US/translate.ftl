@@ -86,6 +86,8 @@ resourceprogress-ResourceProgress--missing = Missing
 
 comments-AddComment--input =
     .placeholder = Write a comment…
+comments-AddComment--mention-avatar-alt = 
+    .alt = User Avatar 
 comments-AddComment--submit-button = <glyph></glyph>
     .title = Submit comment
 
@@ -608,8 +610,10 @@ term-Term--for-example = E.g.
 ## User Avatar
 ## Shows user Avatar with alt text
 
-user-UserAvatar--anon-alt-text = Anonymous User
-user-UserAvatar--alt-text = User Profile
+user-UserAvatar--anon-alt-text = 
+    .alt = Anonymous User
+user-UserAvatar--alt-text = 
+    .alt = User Profile
 
 ## User Menu
 ## Shows user menu entries and options to sign in or out.

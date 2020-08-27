@@ -31,6 +31,7 @@ type Props = {|
     terms: TermState,
     parameters: NavigationParams,
     user: UserState,
+    users: UserState,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
@@ -57,6 +58,7 @@ export default class Helpers extends React.Component<Props> {
             terms,
             parameters,
             user,
+            users,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
@@ -103,6 +105,7 @@ export default class Helpers extends React.Component<Props> {
                             teamComments={ teamComments }
                             user={ user }
                             addComment={ addComment }
+                            users={ users }
                         />
                     </TabPanel>
                 </Tabs>

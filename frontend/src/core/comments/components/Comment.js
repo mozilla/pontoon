@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Linkify from 'react-linkify';
+import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago';
 
 import './Comment.css';
@@ -30,7 +31,7 @@ export default function Comment(props: Props) {
         />
         <div className='container'>
             <div className='content' dir='auto'>
-                <p>
+                <div>
                     <a
                         className='comment-author'
                         href={ `/contributors/${comment.username}` }
@@ -40,10 +41,15 @@ export default function Comment(props: Props) {
                     >
                         { comment.author }
                     </a>
-                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                        { comment.content }
+                    <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }> 
+                        { /* We can safely use parse with comment.content as it is 
+                         *   sanitized when coming from the DB. See:
+                         *   - pontoon.base.forms.AddCommentsForm(}
+                         *   - pontoon.base.forms.HtmlField()
+                         */}
+                        { parse(comment.content) }
                     </Linkify>
-                </p>
+                </div>
             </div>
             <div className='info'>
                 <ReactTimeAgo

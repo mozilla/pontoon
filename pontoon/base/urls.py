@@ -62,6 +62,7 @@ urlpatterns = [
     ),
     # AJAX
     url(r"^get-entities/", views.entities, name="pontoon.entities"),
+    url(r"^get-users/", views.get_users, name="pontoon.get_users"),
     url(r"^perform-checks/", views.perform_checks, name="pontoon.perform.checks"),
     url(r"^get-history/", views.get_translation_history, name="pontoon.get_history"),
     url(

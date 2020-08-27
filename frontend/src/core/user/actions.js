@@ -3,8 +3,26 @@
 import api from 'core/api';
 import * as notification from 'core/notification';
 
+import type { UsersList } from 'core/api';
+
+export const RECEIVE_USERS: 'users/RECEIVE_USERS' = 'users/RECEIVE_USERS';
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
 export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
+
+
+export type ReceiveAction = {|
+    +type: typeof RECEIVE_USERS,
+    +users: Array<UsersList>,    
+|}
+
+export function receive(
+    users: Array<UsersList>,
+): ReceiveAction {
+    return {
+        type: RECEIVE_USERS,
+        users,
+    };
+}
 
 
 /**
@@ -117,8 +135,17 @@ export function get(): Function {
 }
 
 
+export function getUsers(): Function {
+    return async dispatch => {
+        const content = await api.user.getUsers();
+        dispatch(receive(content));
+    }
+}
+
+
 export default {
     get,
+    getUsers,
     markAllNotificationsAsRead,
     saveSetting,
     signOut,

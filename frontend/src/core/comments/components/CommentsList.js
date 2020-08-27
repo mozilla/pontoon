@@ -17,6 +17,7 @@ type Props = {|
     parameters?: NavigationParams,
     translation?: HistoryTranslation,
     user: UserState,
+    users: UserState,
     canComment: boolean,
     addComment: (string, ?number) => void,
 |};
@@ -30,6 +31,7 @@ export default function CommentsList(props: Props) {
         user,
         canComment,
         addComment,
+        users,
     } = props;
 
     const translationId = translation ? translation.pk : null;
@@ -46,10 +48,10 @@ export default function CommentsList(props: Props) {
         { !canComment ? null :
             <AddComment
                 parameters={ parameters }
-                user={ user.nameOrEmail }
                 username={ user.username }
                 imageURL={ user.gravatarURLSmall}
                 translation={ translationId }
+                users={ users }
                 addComment={ addComment }
             />
         }

@@ -5,7 +5,12 @@
 .comments-list .comment a {
     color: #7BC876;
     font-weight: 400;
-    white-space: nowrap;
+}
+
+.comments-list .comment .container .content a[href^="/contributors/"]:not(.comment-author) {
+    background-color: #3f4752;
+    padding: 0 2px;
+    border-radius: 2px;
 }
 
 .comments-list .comment-author {
@@ -19,11 +24,17 @@
     display: flex;
     font-size: 11px;
     padding: 6px;
+    word-break: break-word;
     white-space: pre-wrap;
 }
 
-.comments-list .comment .content p {
+.comments-list .comment .content p,
+.comments-list .comment .content span {
     color: #CCCCCC;
+}
+
+.comments-list .comment .content p:first-child {
+    display: inline;
 }
 
 .comments-list .comment .info {

@@ -11,11 +11,24 @@ const DEFAULT_USER = {
     imageURL: '',
 }
 
+const USERS = {users: 
+    { users: 
+        [
+            {
+                'name': 'April Ludwig', 
+                'url': 'aprilL@parksdept.com', 
+                'display': 'April'
+            },
+        ],
+    },
+};
+
 describe('<AddComment>', () => {
     it('calls submitComment function', () => {
         const submitCommentFn = sinon.spy();
         const wrapper = shallow(<AddComment
             { ...DEFAULT_USER }
+            { ...USERS}
             submitComment={ submitCommentFn }
         />);
 
@@ -23,7 +36,7 @@ describe('<AddComment>', () => {
             preventDefault: sinon.spy(),
         };
 
-        wrapper.find('form').simulate('submit', event);
+        wrapper.find('button').simulate('onClick', event);
         expect(submitCommentFn.calledOnce).toBeTruthy;
     });
 });
