@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import logging
+import re
 from datetime import datetime
 
 from django.conf import settings
@@ -538,6 +539,12 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         recipients = recipients.union(
             translations.values_list("unrejected_user__pk", flat=True)
         )
+
+    # Notify users, mentioned in a comment
+    usernames = re.findall(r"<a href=\"\/contributors/([\w.@+-]+)/\">.+</a>", comment)
+    recipients = recipients.union(
+        User.objects.filter(username__in=usernames).values_list("pk", flat=True)
+    )
 
     for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
         notify.send(

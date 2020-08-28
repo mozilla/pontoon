@@ -371,6 +371,6 @@ def linkify(source):
         return attrs
 
     # Escape all tags
-    linker = Linker(callbacks=[set_attrs], recognized_tags=[])
+    linker = Linker(callbacks=[set_attrs])
 
-    return jinja2.Markup(linker.linkify(source))
+    return linker.linkify(source)

@@ -43,7 +43,7 @@
         <span class="verb">{{ notification.verb }}</span>
 
         {% set target = notification.target %}
-        {% set description_safe = True %}
+        {% set is_comment = False %}
 
         {% if target %}
           {% if target.slug %}
@@ -52,7 +52,7 @@
             </span>
 
           {% elif target.resource %}
-            {% set description_safe = False %}
+            {% set is_comment = True %}
             {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
             <span class="target">
               <a href="{{ link + '?string=' + target.pk|string }}">{{ target.resource.project.name }}</a>
@@ -65,7 +65,7 @@
 
         {% set description = notification.description %}
         {% if description %}
-          {% if description_safe %}
+          {% if not is_comment %}
             <div class="message">{{ description|safe }}</div>
           {% else %}
             <div class="message trim">{{ description|linkify|safe }}</div>

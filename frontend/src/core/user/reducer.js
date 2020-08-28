@@ -53,7 +53,7 @@ export type Notification = {|
     +unread: string,
     +description: {
         +content: string,
-        +safe: boolean,
+        +is_comment: boolean,
     },
     +verb: string,
     +date: string,
