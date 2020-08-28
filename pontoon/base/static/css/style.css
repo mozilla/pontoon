@@ -806,10 +806,15 @@ header .right .select .menu {
   padding: 10px;
 }
 
-.notifications .menu li.notification-item .message.trim {
+.notifications .menu li.notification-item .message.trim,
+.notifications .menu li.notification-item .message.trim > p {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.notifications .menu li.notification-item .message.trim p {
+  padding: 0;
 }
 
 /* Users can include HTML tags in their messages */

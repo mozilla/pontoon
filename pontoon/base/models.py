@@ -291,7 +291,7 @@ def serialized_notifications(self):
         "actor", "target", "action_object"
     )[:count]:
         actor = None
-        description_safe = True
+        is_comment = False
 
         if hasattr(notification.actor, "slug"):
             actor = {
@@ -323,7 +323,7 @@ def serialized_notifications(self):
 
             # Comment notifications
             elif hasattr(t, "resource"):
-                description_safe = False
+                is_comment = True
                 target = {
                     "anchor": t.resource.project.name,
                     "url": reverse(
@@ -344,7 +344,7 @@ def serialized_notifications(self):
                 "unread": notification.unread,
                 "description": {
                     "content": notification.description,
-                    "safe": description_safe,
+                    "is_comment": is_comment,
                 },
                 "verb": notification.verb,
                 "date": notification.timestamp.strftime("%b %d, %Y %H:%M"),

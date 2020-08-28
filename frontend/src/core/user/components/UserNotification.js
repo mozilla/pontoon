@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Linkify from 'react-linkify';
+import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago'
 
 import './UserNotification.css';
@@ -76,7 +77,7 @@ export default class UserNotification extends React.Component<Props, State> {
                 />
 
                 { !notification.description.content ? null :
-                    notification.description.safe ?
+                    !notification.description.is_comment ?
                         <div
                             className="message"
                             // We can safely use notification.description as it is either generated
@@ -88,7 +89,14 @@ export default class UserNotification extends React.Component<Props, State> {
                         :
                         <div className="message trim">
                             <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                                { notification.description.content }
+                                {
+                                /* We can safely use parse with notification.description.content as it is
+                                *  sanitized when coming from the DB. See:
+                                *    - pontoon.base.forms.AddCommentsForm(}
+                                *    - pontoon.base.forms.HtmlField()
+                                */
+                                }
+                                { parse(notification.description.content) }
                             </Linkify>
                         </div>
                 }

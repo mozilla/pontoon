@@ -58,10 +58,15 @@
     padding: 10px;
 }
 
-.user-notification .message.trim {
+.user-notification .message.trim,
+.user-notification .message.trim p {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.user-notification .message.trim p {
+    padding: 0;
 }
 
 /* Users can include HTML tags in their messages */
