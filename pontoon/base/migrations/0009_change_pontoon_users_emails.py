@@ -4,28 +4,42 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-def update_base_user_email(apps, schema_editor):
+def update_system_user_email(apps, schema_editor):
     User = apps.get_model("auth", "User")
-    User.objects.filter(email="pontoon-sync@mozilla.com").update(email="pontoon-sync@example.com")
-    User.objects.filter(email="pontoon-gt@mozilla.com").update(email="pontoon-gt@example.com")
-    User.objects.filter(email="pontoon-mt@mozilla.com").update(email="pontoon-mt@example.com")
+    User.objects.filter(email="pontoon-sync@mozilla.com").update(
+        email="pontoon-sync@example.com"
+    )
+    User.objects.filter(email="pontoon-gt@mozilla.com").update(
+        email="pontoon-gt@example.com"
+    )
+    User.objects.filter(email="pontoon-mt@mozilla.com").update(
+        email="pontoon-mt@example.com"
+    )
 
-def revert_base_user_email(apps, schema_editor):
+
+def revert_system_user_email(apps, schema_editor):
     User = apps.get_model("auth", "User")
-    User.objects.filter(email="pontoon-sync@example.com").update(email="pontoon-sync@mozilla.org")
-    User.objects.filter(email="pontoon-gt@example.com").update(email="pontoon-gt@mozilla.com")
-    User.objects.filter(email="pontoon-tm@example.com").update(email="pontoon-tm@mozilla.com")
+    User.objects.filter(email="pontoon-sync@example.com").update(
+        email="pontoon-sync@mozilla.org"
+    )
+    User.objects.filter(email="pontoon-gt@example.com").update(
+        email="pontoon-gt@mozilla.com"
+    )
+    User.objects.filter(email="pontoon-tm@example.com").update(
+        email="pontoon-tm@mozilla.com"
+    )
 
-class Migration(migrations.Migration): 
+
+class Migration(migrations.Migration):
 
     initial = True
 
     dependencies = [
-        ('base', '0008_add_systran_locales'),
+        ("base", "0008_add_systran_locales"),
     ]
 
     operations = [
         migrations.RunPython(
-            code=update_base_user_email, reverse_code=revert_base_user_email,
+            code=update_system_user_email, reverse_code=revert_system_user_email,
         ),
     ]
