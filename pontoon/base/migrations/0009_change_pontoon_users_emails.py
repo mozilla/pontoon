@@ -12,15 +12,15 @@ def update_system_user_email(apps, schema_editor):
     User.objects.filter(email="pontoon-gt@mozilla.com").update(
         email="pontoon-gt@example.com"
     )
-    User.objects.filter(email="pontoon-mt@mozilla.com").update(
-        email="pontoon-mt@example.com"
+    User.objects.filter(email="pontoon-tm@mozilla.com").update(
+        email="pontoon-tm@example.com"
     )
 
 
 def revert_system_user_email(apps, schema_editor):
     User = apps.get_model("auth", "User")
     User.objects.filter(email="pontoon-sync@example.com").update(
-        email="pontoon-sync@mozilla.org"
+        email="pontoon-sync@mozilla.com"
     )
     User.objects.filter(email="pontoon-gt@example.com").update(
         email="pontoon-gt@mozilla.com"
