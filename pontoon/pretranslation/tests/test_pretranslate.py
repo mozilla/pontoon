@@ -45,8 +45,8 @@ def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale
         "translation": "gt_translation",
     }
 
-    tm_user = User.objects.get(email="pontoon-tm@mozilla.com")
-    gt_user = User.objects.get(email="pontoon-gt@mozilla.com")
+    tm_user = User.objects.get(email="pontoon-tm@example.com")
+    gt_user = User.objects.get(email="pontoon-gt@example.com")
 
     # 100% match exists in translation memory.
     response_a = get_translations(entities[0], locale_b)

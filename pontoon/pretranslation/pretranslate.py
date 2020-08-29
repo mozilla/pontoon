@@ -23,8 +23,8 @@ def get_translations(entity, locale):
         - plural form
         - user - tm_user/gt_user
     """
-    tm_user = User.objects.get(email="pontoon-tm@mozilla.com")
-    gt_user = User.objects.get(email="pontoon-gt@mozilla.com")
+    tm_user = User.objects.get(email="pontoon-tm@example.com")
+    gt_user = User.objects.get(email="pontoon-gt@example.com")
 
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
