@@ -66,7 +66,7 @@ def build_tbx_v2_file(term_translations, locale):
             }
         )
 
-    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>")
+    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>\n")
 
 
 def build_tbx_v3_file(term_translations, locale):
@@ -129,4 +129,4 @@ def build_tbx_v3_file(term_translations, locale):
             }
         )
 
-    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>")
+    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>\n")
