@@ -77,3 +77,7 @@
     font-style: italic;
     padding: 0 0 0 2px;
 }
+
+.metadata .source-comments-button {
+    margin-top: 10px;
+}

@@ -16,6 +16,7 @@ type Props = {|
     teamComments: TeamCommentState,
     user: UserState,
     users: UserState,
+    projectManager: string,
     addComment: (string, ?number) => void,
     togglePinnedStatus: (boolean, number) => void,
 |};
@@ -28,6 +29,7 @@ export default function TeamComments(props: Props) {
         users,
         addComment,
         togglePinnedStatus,
+        projectManager,
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -55,6 +57,7 @@ export default function TeamComments(props: Props) {
                     canPin={canPin}
                     addComment={addComment}
                     togglePinnedStatus={togglePinnedStatus}
+                    projectManager={projectManager}
                 />
             )}
         </section>

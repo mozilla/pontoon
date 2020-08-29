@@ -21,6 +21,7 @@ type Props = {|
     parameters: ?NavigationParams,
     translation?: ?number,
     users: UserState,
+    projectManager?: string,
     addComment: (string, ?number) => void,
 |};
 
@@ -31,8 +32,11 @@ export default function AddComment(props: Props) {
         parameters,
         translation,
         users,
+        projectManager,
         addComment,
     } = props;
+
+    console.log(projectManager);
 
     const mentionList: any = React.useRef();
     const [target, setTarget] = React.useState();

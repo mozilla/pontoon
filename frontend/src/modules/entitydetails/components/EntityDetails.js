@@ -70,6 +70,8 @@ type InternalProps = {|
 
 type State = {|
     translation: string,
+    tabIndex: number,
+    projectManager: string,
 |};
 
 /**
@@ -78,6 +80,16 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    tabRef: { current: Object };
+    constructor(props: InternalProps, state: State) {
+        super(props);
+        this.state = {
+            ...state,
+            tabIndex: 0,
+            projectManager: '',
+        };
+        this.tabRef = React.createRef();
+    }
     componentDidMount() {
         this.updateFailedChecks();
         this.fetchHelpersData();
@@ -298,6 +310,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
+    setTabState = (tab: number) => {
+        this.setState({ tabIndex: tab });
+    };
+
+    mentionProjectManager = (contact: string) => {
+        this.setState({ projectManager: contact });
+    };
+
     addComment = (comment: string, translation: ?number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(
@@ -386,6 +406,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         }
                         navigateToPath={this.navigateToPath}
                         teamComments={state.teamComments}
+                        user={state.user}
+                        tabRef={this.tabRef}
+                        setTabState={this.setTabState}
+                        mentionProjectManager={this.mentionProjectManager}
                     />
                     {state.selectedEntity.format === 'ftl' ? (
                         <fluenteditor.Editor />
@@ -427,6 +451,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                             this.addTextToEditorTranslation
                         }
                         navigateToPath={this.navigateToPath}
+                        tabRef={this.tabRef}
+                        tabIndex={this.state.tabIndex}
+                        setTabState={this.setTabState}
+                        projectManager={this.state.projectManager}
                     />
                 </section>
             </section>

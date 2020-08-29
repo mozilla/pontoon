@@ -31,6 +31,9 @@ type Props = {|
     parameters: NavigationParams,
     user: UserState,
     users: UserState,
+    tabRef: Object,
+    tabIndex: number,
+    projectManager: string,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
@@ -38,6 +41,7 @@ type Props = {|
     togglePinnedStatus: (boolean, number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
+    setTabState: (number) => void,
 |};
 
 /**
@@ -58,6 +62,9 @@ export default class Helpers extends React.Component<Props> {
             parameters,
             user,
             users,
+            tabRef,
+            tabIndex,
+            projectManager,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
@@ -65,12 +72,16 @@ export default class Helpers extends React.Component<Props> {
             togglePinnedStatus,
             addTextToEditorTranslation,
             navigateToPath,
+            setTabState,
         } = this.props;
 
         return (
             <>
                 <div className='top'>
-                    <Tabs>
+                    <Tabs
+                        selectedIndex={tabIndex}
+                        onSelect={(tab) => setTabState(tab)}
+                    >
                         <TabList>
                             {parameters.project === 'terminology' ? null : (
                                 <Tab>
@@ -80,7 +91,7 @@ export default class Helpers extends React.Component<Props> {
                                     <TermCount terms={terms} />
                                 </Tab>
                             )}
-                            <Tab>
+                            <Tab ref={tabRef}>
                                 <Localized id='entitydetails-Helpers--comments'>
                                     {'Comments'}
                                 </Localized>
@@ -108,6 +119,7 @@ export default class Helpers extends React.Component<Props> {
                                 addComment={addComment}
                                 users={users}
                                 togglePinnedStatus={togglePinnedStatus}
+                                projectManager={projectManager}
                             />
                         </TabPanel>
                     </Tabs>
