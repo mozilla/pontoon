@@ -41,13 +41,30 @@ def get_terms(request):
 
 
 @condition(etag_func=None)
-def download_terminology(request, locale):
+def download_terminology_tbx_v2(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     term_translations = TermTranslation.objects.filter(locale=locale).prefetch_related(
         "term"
     )
-    content = utils.build_terminology_file(term_translations, locale.code)
+    content = utils.build_tbx_v2_file(term_translations, locale.code)
+
+    response = StreamingHttpResponse(content, content_type="text/xml")
+    response["Content-Disposition"] = 'attachment; filename="{locale}.v2.tbx"'.format(
+        locale=locale.code
+    )
+
+    return response
+
+
+@condition(etag_func=None)
+def download_terminology_tbx_v3(request, locale):
+    locale = get_object_or_404(Locale, code=locale)
+
+    term_translations = TermTranslation.objects.filter(locale=locale).prefetch_related(
+        "term"
+    )
+    content = utils.build_tbx_v3_file(term_translations, locale.code)
 
     response = StreamingHttpResponse(content, content_type="text/xml")
     response["Content-Disposition"] = 'attachment; filename="{locale}.tbx"'.format(
