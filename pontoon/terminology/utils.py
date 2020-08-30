@@ -13,7 +13,7 @@ def build_tbx_v2_file(term_translations, locale):
     yield (
         u'<?xml version="1.0" encoding="UTF-8"?>'
         u'\n<!DOCTYPE martif SYSTEM "TBXcoreStructV02.dtd">'
-        u'\n<martif type="TBX" xml:lang="en">'
+        u'\n<martif type="TBX" xml:lang="en-US">'
         u"\n\t<martifHeader>"
         u"\n\t\t<fileDesc>"
         u"\n\t\t\t<titleStmt>"
@@ -35,7 +35,8 @@ def build_tbx_v2_file(term_translations, locale):
         term = translation.term
         yield (
             u'\n\t\t\t<termEntry id="c%(id)s">'
-            u'\n\t\t\t\t<langSec xml:lang="en-US">'
+            u'\n\t\t\t\t<descrip type="context">%(usage)s</descrip>'
+            u'\n\t\t\t\t<langSet xml:lang="en-US">'
             u"\n\t\t\t\t\t<ntig>"
             u"\n\t\t\t\t\t\t<termGrp>"
             u"\n\t\t\t\t\t\t\t<term>%(term)s</term>"
@@ -44,16 +45,15 @@ def build_tbx_v2_file(term_translations, locale):
             u"\n\t\t\t\t\t</ntig>"
             u"\n\t\t\t\t\t<descripGrp>"
             u'\n\t\t\t\t\t\t<descrip type="definition">%(definition)s</descrip>'
-            u'\n\t\t\t\t\t\t<descrip type="context">%(usage)s</descrip>'
             u"\n\t\t\t\t\t</descripGrp>"
-            u"\n\t\t\t\t</langSec>"
-            u"\n\t\t\t\t<langSec xml:lang=%(locale)s>"
+            u"\n\t\t\t\t</langSet>"
+            u"\n\t\t\t\t<langSet xml:lang=%(locale)s>"
             u"\n\t\t\t\t\t<ntig>"
             u"\n\t\t\t\t\t\t<termGrp>"
             u"\n\t\t\t\t\t\t\t<term>%(translation)s</term>"
             u"\n\t\t\t\t\t\t</termGrp>"
             u"\n\t\t\t\t\t</ntig>"
-            u"\n\t\t\t\t</langSec>"
+            u"\n\t\t\t\t</langSet>"
             u"\n\t\t\t</termEntry>"
             % {
                 "id": term.pk,
@@ -66,7 +66,7 @@ def build_tbx_v2_file(term_translations, locale):
             }
         )
 
-    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>\n")
+    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</martif>\n")
 
 
 def build_tbx_v3_file(term_translations, locale):
