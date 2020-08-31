@@ -14,6 +14,7 @@ import { UserAvatar } from 'core/user';
 import type { TextType, MentionType, InitialType } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import { edit } from 'brace';
 
 type Props = {|
     username: string,
@@ -36,8 +37,6 @@ export default function AddComment(props: Props) {
         addComment,
     } = props;
 
-    console.log(projectManager);
-
     const mentionList: any = React.useRef();
     const [target, setTarget] = React.useState();
     const [index, setIndex] = React.useState(0);
@@ -47,6 +46,12 @@ export default function AddComment(props: Props) {
         () => withMentions(withReact(createEditor())),
         [],
     );
+    const usersList = users.users;
+    const insertProjectManager = () => {
+        if (projectManager) {
+            insertMention(editor, projectManager, usersList);
+        }
+    };
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     const [value, setValue] = React.useState(initialValue);
 
@@ -58,7 +63,10 @@ export default function AddComment(props: Props) {
         }
     }, [editor, parameters]);
 
-    const usersList = users.users;
+    React.useEffect(() => {
+        insertProjectManager();
+    }, []);
+
     const USERS = usersList.map((user) => user.name);
     const suggestedUsers = USERS.filter((c) =>
         c.toLowerCase().startsWith(search.toLowerCase()),
