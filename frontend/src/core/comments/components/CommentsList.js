@@ -17,7 +17,7 @@ type Props = {|
     translation?: HistoryTranslation,
     user: UserState,
     users: UserState,
-    projectManager?: Object,
+    projectManager?: string,
     canComment: boolean,
     canPin?: boolean,
     addComment: (string, ?number) => void,

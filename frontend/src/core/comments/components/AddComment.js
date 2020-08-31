@@ -14,7 +14,6 @@ import { UserAvatar } from 'core/user';
 import type { TextType, MentionType, InitialType } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import { edit } from 'brace';
 
 type Props = {|
     username: string,
