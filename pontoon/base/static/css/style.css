@@ -21,6 +21,10 @@
   content: "";
 }
 
+.missing .status.fa:before {
+    color:#5F7285;
+}
+
 .translated .status.fa:before {
   color: #7BC876;
 }
@@ -641,6 +645,7 @@ img.rounded {
 }
 
 .details div.missing {
+  /*border-color:#5F7285;*/
   border-color: #4D5967;
 }
 
