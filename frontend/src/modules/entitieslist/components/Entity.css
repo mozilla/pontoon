@@ -95,6 +95,11 @@
     color: #FED271;
 }
 
+.entity.missing .status:before {
+    color: #5F7285;
+}
+
+
 .entity.errors .status:before {
     color: #F36;
 }
