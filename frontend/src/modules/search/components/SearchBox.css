@@ -79,7 +79,7 @@
 }
 
 .search-box .missing .status:before {
-    color: #3F4752;
+    color: #5F7285;
 }
 
 .search-box .unreviewed .status:before {
@@ -129,6 +129,3 @@
     content: "";
 }
 
-.search-box .missing:hover .status:before {
-    color: #4D5967;
-}

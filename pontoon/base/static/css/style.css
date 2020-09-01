@@ -17,7 +17,7 @@
 }
 
 .status.fa:before {
-  color: #4D5967;
+  color: #5F7285;
   content: "";
 }
 
@@ -455,7 +455,7 @@ tfoot td a {
 }
 
 .select .menu ul li .chart span.missing {
-  background: #4D5967;
+  background: #5F7285;
 }
 
 .select .menu ul li .latest {
@@ -641,7 +641,7 @@ img.rounded {
 }
 
 .details div.missing {
-  border-color: #4D5967;
+  border-color: #5F7285;
 }
 
 .details div.unreviewed {
