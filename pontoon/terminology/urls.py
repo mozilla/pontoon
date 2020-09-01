@@ -10,13 +10,13 @@ urlpatterns = [
     # AJAX: Download terminology in TBX 2.0
     url(
         r"^(?P<locale>.+)\.v2\.tbx$",
-        views.download_terminology_tbx_v2,
+        views.DownloadTerminologyViewV2.as_view(),
         name="pontoon.terminology.download.tbx.v2",
     ),
     # AJAX: Download terminology in TBX 3.0
     url(
         r"^(?P<locale>.+)\.tbx$",
-        views.download_terminology_tbx_v3,
+        views.DownloadTerminologyViewV3.as_view(),
         name="pontoon.terminology.download.tbx.v3",
     ),
 ]
