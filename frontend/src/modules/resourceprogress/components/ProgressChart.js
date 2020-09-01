@@ -72,7 +72,7 @@ export default class ProgressChart extends React.Component<Props> {
             },
             {
                 type: total ? missing / total : 0,
-                color: '#4D5967',
+                color: '#5F7285',
             },
         ];
 

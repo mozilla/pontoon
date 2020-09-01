@@ -75,7 +75,7 @@
 }
 
 .entity .status:before {
-    color: #4D5967;
+    color: #5F7285;
     content: "";
 }
 
@@ -101,13 +101,4 @@
 
 .entity.warnings .status:before {
     color: #FFA10F;
-}
-
-.entity.missing.checked .status:before,
-.entity.missing.selected .status:before,
-.entity.missing:hover .status:before,
-.entity.partial.checked .status:before,
-.entity.partial.selected .status:before,
-.entity.partial:hover .status:before {
-    color: #3F4752;
 }
