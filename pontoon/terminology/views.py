@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
+from django.views.generic import ListView
 
 from pontoon.base.models import Locale
 from pontoon.base.utils import require_AJAX
@@ -40,18 +42,25 @@ def get_terms(request):
     return JsonResponse(payload, safe=False)
 
 
-@condition(etag_func=None)
-def download_terminology(request, locale):
-    locale = get_object_or_404(Locale, code=locale)
+@method_decorator(condition(etag_func=None), name="dispatch")
+class DownloadTerminologyViewV2(ListView):
+    def get_tbx_file_content(self, term_translations, locale_code):
+        return utils.build_tbx_v2_file(term_translations, locale_code)
 
-    term_translations = TermTranslation.objects.filter(locale=locale).prefetch_related(
-        "term"
-    )
-    content = utils.build_terminology_file(term_translations, locale.code)
+    def dispatch(self, request, locale, *args, **kwargs):
+        locale = get_object_or_404(Locale, code=locale)
+        term_translations = TermTranslation.objects.filter(
+            locale=locale
+        ).prefetch_related("term")
+        content = self.get_tbx_file_content(term_translations, locale.code)
 
-    response = StreamingHttpResponse(content, content_type="text/xml")
-    response["Content-Disposition"] = 'attachment; filename="{locale}.tbx"'.format(
-        locale=locale.code
-    )
+        response = StreamingHttpResponse(content, content_type="text/xml")
+        response["Content-Disposition"] = 'attachment; filename="{locale}.tbx"'.format(
+            locale=locale.code
+        )
+        return response
 
-    return response
+
+class DownloadTerminologyViewV3(DownloadTerminologyViewV2):
+    def get_tbx_file_content(self, term_translations, locale_code):
+        return utils.build_tbx_v3_file(term_translations, locale_code)
