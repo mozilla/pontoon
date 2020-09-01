@@ -16,10 +16,6 @@
   display: block;
 }
 
-.controls > .search-wrapper input {
-  border-color: #5E6475;
-}
-
 .clipboard-success {
   float: left;
   color: #7BC876;
