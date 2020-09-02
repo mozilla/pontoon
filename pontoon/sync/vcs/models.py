@@ -89,7 +89,7 @@ class DownloadTOMLParser(TOMLParser):
 class MissingRepositoryPermalink(Exception):
     """
     Raised when a project uses project config files and
-    and its source repository doesn't have the permalink.
+    its source repository doesn't have the permalink.
     """
 
 
