@@ -12,6 +12,7 @@ import requests
 
 from datetime import datetime
 from itertools import chain
+from pathlib import Path
 from urllib.parse import urljoin
 
 from compare_locales.paths import (
@@ -66,13 +67,18 @@ class DownloadTOMLParser(TOMLParser):
 
     def get_project_config(self, path):
         """Download the project config file and return its local path."""
-        local_path = self.get_local_path(path)
+        local_path = Path(self.get_local_path(path))
+        local_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(local_path, "wb") as f:
+        if local_path.exists():
+            return str(local_path)
+
+
+        with local_path.open("wb") as f:
             config_file = requests.get(self.get_remote_path(path))
             config_file.raise_for_status()
             f.write(config_file.content)
-        return local_path
+        return str(local_path)
 
     def parse(self, path, env=None, ignore_missing_includes=True):
         """Download the config file before it gets parsed."""

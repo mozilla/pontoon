@@ -4,6 +4,7 @@ import tempfile
 import os
 
 from http.client import HTTPException
+from pathlib import Path
 
 import scandir
 
@@ -562,7 +563,7 @@ class DownloadTOMLParserTests(TestCase):
         )
 
         with self.assertRaises(HTTPException):
-            parser = DownloadTOMLParser("", "https://example.com/{locale_code}")
+            parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
             parser.parse("l10n.toml")
 
     def test_remote_path_with_locale_code(self):
@@ -593,8 +594,23 @@ class DownloadTOMLParserTests(TestCase):
     def test_get_project_config(self):
         parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
         self.requests_mock.return_value.content = b"test-content"
-
         project_config_path = parser.get_project_config("l10n.toml")
 
+        self.assertTrue(self.requests_mock.called)
+        self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
+        self.assertEqual(open(project_config_path, "r").read(), "test-content")
+
+    def test_get_project_config_when_file_exists(self):
+        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
+        local_path = Path(self.temp_dir + "/l10n.toml")
+
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with local_path.open("w") as f:
+            f.write('test-content')
+
+        self.requests_mock.return_value.content = b"different-test-content"
+        project_config_path = parser.get_project_config("l10n.toml")
+
+        self.assertFalse(self.requests_mock.called)
         self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
         self.assertEqual(open(project_config_path, "r").read(), "test-content")
