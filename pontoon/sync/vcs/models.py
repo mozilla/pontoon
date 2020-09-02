@@ -565,10 +565,6 @@ class VCSConfiguration(object):
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
-        self.configuration_path = os.path.join(
-            self.vcs_project.db_project.source_repository.checkout_path,
-            self.configuration_file,
-        )
         self.project_files = {}
 
     @cached_property

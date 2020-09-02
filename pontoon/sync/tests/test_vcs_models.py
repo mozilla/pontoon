@@ -459,10 +459,6 @@ def setUpResource(self):
     )
     self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
 
-    self.vcs_project.configuration.configuration_path = os.path.join(
-        PROJECT_CONFIG_CHECKOUT_PATH, self.db_project.configuration_file,
-    )
-
 
 class VCSConfigurationFullLocaleTests(VCSTestCase):
     def setUp(self):
