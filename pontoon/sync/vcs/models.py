@@ -73,7 +73,6 @@ class DownloadTOMLParser(TOMLParser):
         if local_path.exists():
             return str(local_path)
 
-
         with local_path.open("wb") as f:
             config_file = requests.get(self.get_remote_path(path))
             config_file.raise_for_status()
@@ -204,9 +203,7 @@ class VCSProject(object):
         last_revision = source_resources_repo.get_last_synced_revisions()
 
         modified_files, removed_files = get_changed_files(
-            source_resources_repo.type,
-            source_directory,
-            last_revision
+            source_resources_repo.type, source_directory, last_revision
         )
 
         # Unify filesystem and data model file extensions
@@ -590,7 +587,6 @@ class VCSConfiguration(object):
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
             self.vcs_project.db_project.source_repository.permalink_prefix,
-            self.vcs_project
         ).parse(self.configuration_file, env={"l10n_base": self.l10n_base})
 
     def add_locale(self, locale_code):

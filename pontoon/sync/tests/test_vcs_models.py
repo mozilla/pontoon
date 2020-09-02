@@ -4,7 +4,6 @@ import tempfile
 import os
 
 from http.client import HTTPException
-from pathlib import Path
 
 import scandir
 
@@ -563,7 +562,9 @@ class DownloadTOMLParserTests(TestCase):
         )
 
         with self.assertRaises(HTTPException):
-            parser = DownloadTOMLParser(self.temp_dir, "https://example.com/{locale_code}")
+            parser = DownloadTOMLParser(
+                self.temp_dir, "https://example.com/{locale_code}"
+            )
             parser.parse("l10n.toml")
 
     def test_remote_path_with_locale_code(self):
