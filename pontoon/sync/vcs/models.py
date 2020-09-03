@@ -13,7 +13,6 @@ import requests
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
-from urllib.parse import urljoin
 
 from compare_locales.paths import (
     ProjectFiles,
@@ -60,23 +59,18 @@ class DownloadTOMLParser(TOMLParser):
         """Construct the link to the remote resource based on the local path."""
         config_path = path.replace(self.checkout_path, "")
 
-        if "{locale_code}" in self.permalink_prefix:
-            return self.permalink_prefix.format(locale_code=config_path)
-        else:
-            return urljoin(self.permalink_prefix, config_path)
+        return self.permalink_prefix.format(locale_code=config_path)
 
     def get_project_config(self, path):
         """Download the project config file and return its local path."""
         local_path = Path(self.get_local_path(path))
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if local_path.exists():
-            return str(local_path)
-
         with local_path.open("wb") as f:
             config_file = requests.get(self.get_remote_path(path))
             config_file.raise_for_status()
             f.write(config_file.content)
+
         return str(local_path)
 
     def parse(self, path, env=None, ignore_missing_includes=True):
