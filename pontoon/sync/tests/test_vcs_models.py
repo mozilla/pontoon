@@ -577,6 +577,17 @@ class DownloadTOMLParserTests(TestCase):
             "https://example.com/test/subdir/l10n.toml",
         )
 
+    def test_remote_path_without_locale_code(self):
+        parser = DownloadTOMLParser("", "https://example.com/without-locale-code/")
+        self.assertEqual(
+            parser.get_remote_path("l10n.toml"),
+            "https://example.com/without-locale-code/l10n.toml",
+        )
+        self.assertEqual(
+            parser.get_remote_path("subdir/l10n.toml"),
+            "https://example.com/without-locale-code/subdir/l10n.toml",
+        )
+
     def test_local_path(self):
         parser = DownloadTOMLParser(self.temp_dir, "")
         self.assertEqual(parser.get_local_path("aaa.toml"), f"{self.temp_dir}/aaa.toml")
