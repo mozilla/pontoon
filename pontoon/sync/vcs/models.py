@@ -58,12 +58,9 @@ class DownloadTOMLParser(TOMLParser):
 
     def get_remote_path(self, path):
         """Construct the link to the remote resource based on the local path."""
-        config_path = path.replace(self.checkout_path, "")
+        local_config_path = path.replace(self.checkout_path, "")
 
-        if "{locale_code}" in self.permalink_prefix:
-            return self.permalink_prefix.format(locale_code=config_path)
-        else:
-            return urljoin(self.permalink_prefix, config_path)
+        return urljoin(self.permalink_prefix, local_config_path)
 
     def get_project_config(self, path):
         """Download the project config file and return its local path."""
