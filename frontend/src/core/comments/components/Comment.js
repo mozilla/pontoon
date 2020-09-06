@@ -20,12 +20,13 @@ type Props = {|
 
 export default function Comment(props: Props) {
     const { comment } = props;
+    const [ pinned, setPinned ] = React.useState(false);
 
     if (!comment) {
         return null;
     }
 
-    const handleClick = () => { console.log(`Pin button clicked`); }
+    const handleClick = () => { setPinned(!pinned); }
 
     return <li className='comment'>
         <UserAvatar
@@ -54,6 +55,9 @@ export default function Comment(props: Props) {
                         }
                         { parse(comment.content) }
                     </Linkify>
+                    { pinned &&
+                        <div className="fa fa-thumbtack comment-pin"></div>
+                    }
                 </div>
             </div>
             <div className='info'>
@@ -65,13 +69,17 @@ export default function Comment(props: Props) {
                 <Localized
                     id="comments-Comment--pin-button"
                     attrs={{ title: true }}
+                    vars={{
+                        pinnedTitle: !pinned ? 'Pin comment' : 'Unpin comment',
+                        pinButton: !pinned ? 'PIN' : 'UNPIN',
+                    }}
                 >
                     <button 
                         className='pin-button'
-                        title= 'Pin comment'
+                        title= { '$pinnedTitle'  }
                         onClick={ handleClick }
                     >
-                        { 'PIN' }
+                        { '$pinButton' }
                     </button>
                 </Localized>
             </div>

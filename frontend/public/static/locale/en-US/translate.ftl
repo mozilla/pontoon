@@ -90,8 +90,8 @@ comments-AddComment--mention-avatar-alt =
     .alt = User Avatar 
 comments-AddComment--submit-button = <glyph></glyph>
     .title = Submit comment
-comments-Comment--pin-button = PIN
-    .title = Pin comment
+comments-Comment--pin-button = { $pinButton }
+    .title = { $pinnedTitle }
 
 
 ## Editor Menu

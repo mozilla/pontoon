@@ -45,7 +45,7 @@
     padding-left: 8px;
 }
 
-.comments-list .comment .info time:after {
+.comments-list .comment .info .pin-button:before {
     content: "•";
     padding: 0 3px 0 3px;
 }
@@ -57,4 +57,12 @@
     font-size: 11px;
     font-weight: 300;
     padding: 0;
+}
+
+.comments-list .comment .comment-pin {
+    color: orange;
+    position: absolute;
+    right: 15px;
+    margin-top: -13px;
+    font-size: 15px;
 }
