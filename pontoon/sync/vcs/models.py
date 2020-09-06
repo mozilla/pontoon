@@ -13,7 +13,7 @@ import requests
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from compare_locales.paths import (
     ProjectFiles,
@@ -51,14 +51,22 @@ class DownloadTOMLParser(TOMLParser):
     def __init__(self, checkout_path, permalink_prefix):
         self.checkout_path = checkout_path
         self.permalink_prefix = permalink_prefix
+        self.permalink_path = (
+            urlparse(self.permalink_prefix).path.rsplit("/", 1)[0].strip("/")
+        )
 
     def get_local_path(self, path):
         """Return the directory in which the config file should be stored."""
+        url = urlparse(path)
+        if url.netloc:
+            path = url.path.strip("/").rsplit("/", 1)[1]
+        else:
+            path = path.replace(self.permalink_path, "")
         return os.path.join(self.checkout_path, path)
 
     def get_remote_path(self, path):
         """Construct the link to the remote resource based on the local path."""
-        local_config_path = path.replace(self.checkout_path, "")
+        local_config_path = path.replace(self.checkout_path, "").strip("/")
 
         return urljoin(self.permalink_prefix, local_config_path)
 
@@ -67,11 +75,9 @@ class DownloadTOMLParser(TOMLParser):
         local_path = Path(self.get_local_path(path))
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if local_path.exists():
-            return str(local_path)
-
         with local_path.open("wb") as f:
-            config_file = requests.get(self.get_remote_path(path))
+            remote_path = self.get_remote_path(path)
+            config_file = requests.get(remote_path)
             config_file.raise_for_status()
             f.write(config_file.content)
         return str(local_path)
