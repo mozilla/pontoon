@@ -48,27 +48,21 @@ class DownloadTOMLParser(TOMLParser):
     Related: https://bugzilla.mozilla.org/show_bug.cgi?id=1530988
     """
 
-    def __init__(self, checkout_path, permalink_prefix):
-        self.checkout_path = checkout_path
-        self.permalink_prefix = permalink_prefix
-        self.permalink_path = (
-            urlparse(self.permalink_prefix).path.rsplit("/", 1)[0].strip("/")
-        )
+    def __init__(self, checkout_path, configuration_file):
+        self.checkout_path = os.path.join(checkout_path, "")
+        self.config_url = configuration_file
+        self.config_path, self.config_file = urlparse(self.config_url).path.rsplit('/', 1)
 
     def get_local_path(self, path):
         """Return the directory in which the config file should be stored."""
-        url = urlparse(path)
-        if url.netloc:
-            path = url.path.strip("/").rsplit("/", 1)[1]
-        else:
-            path = path.replace(self.permalink_path, "")
-        return os.path.join(self.checkout_path, path)
+        local_path = path.replace(self.config_path, "")
+        return os.path.join(self.checkout_path, local_path)
 
     def get_remote_path(self, path):
         """Construct the link to the remote resource based on the local path."""
-        local_config_path = path.replace(self.checkout_path, "").strip("/")
-
-        return urljoin(self.permalink_prefix, local_config_path)
+        remote_config_path = path.replace(self.checkout_path, "")
+        print("AAAAA", self.config_url, remote_config_path, path, self.checkout_path)
+        return urljoin(self.config_url, remote_config_path)
 
     def get_project_config(self, path):
         """Download the project config file and return its local path."""
@@ -82,10 +76,10 @@ class DownloadTOMLParser(TOMLParser):
             f.write(config_file.content)
         return str(local_path)
 
-    def parse(self, path, env=None, ignore_missing_includes=True):
+    def parse(self, path=None, env=None, ignore_missing_includes=True):
         """Download the config file before it gets parsed."""
         return super(DownloadTOMLParser, self).parse(
-            self.get_project_config(path), env, ignore_missing_includes
+            self.get_project_config(path or self.config_file), env, ignore_missing_includes
         )
 
 
@@ -589,8 +583,8 @@ class VCSConfiguration(object):
         """Return parsed project configuration file."""
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
-            self.vcs_project.db_project.source_repository.permalink_prefix,
-        ).parse(self.configuration_file, env={"l10n_base": self.l10n_base})
+            self.configuration_file,
+        ).parse(env={"l10n_base": self.l10n_base})
 
     def add_locale(self, locale_code):
         """
