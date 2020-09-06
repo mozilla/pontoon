@@ -51,17 +51,20 @@ class DownloadTOMLParser(TOMLParser):
     def __init__(self, checkout_path, configuration_file):
         self.checkout_path = os.path.join(checkout_path, "")
         self.config_url = configuration_file
-        self.config_path, self.config_file = urlparse(self.config_url).path.rsplit('/', 1)
+        self.config_path, self.config_file = urlparse(self.config_url).path.rsplit(
+            "/", 1
+        )
 
     def get_local_path(self, path):
         """Return the directory in which the config file should be stored."""
         local_path = path.replace(self.config_path, "")
+
         return os.path.join(self.checkout_path, local_path)
 
     def get_remote_path(self, path):
         """Construct the link to the remote resource based on the local path."""
         remote_config_path = path.replace(self.checkout_path, "")
-        print("AAAAA", self.config_url, remote_config_path, path, self.checkout_path)
+
         return urljoin(self.config_url, remote_config_path)
 
     def get_project_config(self, path):
@@ -79,7 +82,9 @@ class DownloadTOMLParser(TOMLParser):
     def parse(self, path=None, env=None, ignore_missing_includes=True):
         """Download the config file before it gets parsed."""
         return super(DownloadTOMLParser, self).parse(
-            self.get_project_config(path or self.config_file), env, ignore_missing_includes
+            self.get_project_config(path or self.config_file),
+            env,
+            ignore_missing_includes,
         )
 
 
