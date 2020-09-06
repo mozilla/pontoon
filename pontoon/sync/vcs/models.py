@@ -48,12 +48,11 @@ class DownloadTOMLParser(TOMLParser):
     Related: https://bugzilla.mozilla.org/show_bug.cgi?id=1530988
     """
 
-    def __init__(self, checkout_path, configuration_file):
+    def __init__(self, checkout_path, permalink_prefix, configuration_file):
         self.checkout_path = os.path.join(checkout_path, "")
-        self.config_url = configuration_file
-        self.config_path, self.config_file = urlparse(self.config_url).path.rsplit(
-            "/", 1
-        )
+        self.permalink_prefix = permalink_prefix
+        self.config_path = urlparse(permalink_prefix).path
+        self.config_file = configuration_file
 
     def get_local_path(self, path):
         """Return the directory in which the config file should be stored."""
@@ -65,7 +64,7 @@ class DownloadTOMLParser(TOMLParser):
         """Construct the link to the remote resource based on the local path."""
         remote_config_path = path.replace(self.checkout_path, "")
 
-        return urljoin(self.config_url, remote_config_path)
+        return urljoin(self.permalink_prefix, remote_config_path)
 
     def get_project_config(self, path):
         """Download the project config file and return its local path."""
@@ -588,6 +587,7 @@ class VCSConfiguration(object):
         """Return parsed project configuration file."""
         return DownloadTOMLParser(
             self.vcs_project.db_project.source_repository.checkout_path,
+            self.vcs_project.db_project.source_repository.permalink_prefix,
             self.configuration_file,
         ).parse(env={"l10n_base": self.l10n_base})
 
