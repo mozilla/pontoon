@@ -10,6 +10,7 @@ import './Comment.css';
 import { UserAvatar } from 'core/user'
 
 import type { TranslationComment } from 'core/api';
+import { Localized } from '@fluent/react';
 
 
 type Props = {|
@@ -23,6 +24,8 @@ export default function Comment(props: Props) {
     if (!comment) {
         return null;
     }
+
+    const handleClick = () => { console.log(`Pin button clicked`); }
 
     return <li className='comment'>
         <UserAvatar
@@ -59,7 +62,20 @@ export default function Comment(props: Props) {
                     date={ new Date(comment.dateIso) }
                     title={ `${comment.createdAt} UTC` }
                 />
+                <Localized
+                    id="comments-Comment--pin-button"
+                    attrs={{ title: true }}
+                >
+                    <button 
+                        className='pin-button'
+                        title= 'Pin comment'
+                        onClick={ handleClick }
+                    >
+                        { 'PIN' }
+                    </button>
+                </Localized>
             </div>
+
         </div>
     </li>
 }
