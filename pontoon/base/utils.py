@@ -3,6 +3,9 @@ from __future__ import absolute_import
 import codecs
 import functools
 import os
+from pathlib import Path
+from urllib.parse import urljoin
+
 import pytz
 import requests
 import tempfile
@@ -11,6 +14,7 @@ import zipfile
 
 from datetime import datetime, timedelta
 
+from compare_locales.paths.matcher import Variable
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.utils.text import slugify
@@ -18,7 +22,7 @@ from six import BytesIO
 
 from xml.sax.saxutils import escape, quoteattr
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -133,10 +137,15 @@ def permission_required(perm, *args, **kwargs):
     return wrapper
 
 
-def _download_file(prefixes, dirnames, vcs_project, relative_path):
+def _download_file(prefixes, dirnames, vcs_project, relative_path, project_config=True):
     for prefix in prefixes:
         for dirname in dirnames:
-            if vcs_project.configuration:
+            if project_config:
+                url = prefix.format(
+                    locale=dirname,
+                    locale_code=dirname,
+                )
+            elif vcs_project.configuration:
                 locale = vcs_project.locales[0]
                 absolute_path = os.path.join(
                     vcs_project.source_directory_path, relative_path
@@ -150,7 +159,6 @@ def _download_file(prefixes, dirnames, vcs_project, relative_path):
                 url = prefix.format(locale_code=relative_l10n_path)
             else:
                 url = os.path.join(prefix.format(locale_code=dirname), relative_path)
-
             r = requests.get(url, stream=True)
             if not r.ok:
                 continue
@@ -191,7 +199,7 @@ def get_download_content(slug, code, part):
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
-    from pontoon.sync.vcs.models import VCSProject
+    from pontoon.sync.vcs.models import VCSProject, DownloadTOMLParser
     from pontoon.base.models import Entity, Locale, Project, Resource
 
     project = get_object_or_404(Project, slug=slug)
@@ -214,16 +222,54 @@ def get_download_content(slug, code, part):
             get_object_or_404(Resource, project__slug=slug, path=relative_path)
         ]
 
+    locale_prefixes = []
+
+    if project.configuration_file:
+        checkout_path = os.path.join(project.translation_repositories()[0].checkout_path, "")
+        project_config_parser = DownloadTOMLParser(
+            project.source_repository.checkout_path,
+            project.source_repository.permalink_prefix,
+            project.configuration_file,
+        ).parse(env={"l10n_base": checkout_path})
+        for pc in project_config_parser.children:
+            for path in pc.paths:
+                permalink_prefix = os.path.join(pc.root.replace(checkout_path, ""), "")
+                for part in path["l10n"].pattern:
+                    if isinstance(part, Variable):
+                        permalink_prefix += "{locale}"
+                    else:
+                        permalink_prefix += part
+                path=urljoin(project.source_repository.permalink_prefix, permalink_prefix)
+                for res in resources:
+                    res_directory = str(Path(res.path).parent)
+                    if res_directory in path:
+                        locale_prefixes.append(path)
+                        break
+
+    project_config_enabled = bool(project.configuration_file)
+    if project_config_enabled:
+        source_prefixes = [
+            urljoin(project.source_repository.permalink_prefix, res.path) for res in resources
+        ]
+    else:
+        source_prefixes = project.repositories.values_list(
+            "permalink_prefix", flat=True
+        ).distinct()
     for resource in resources:
         # Get locale file
-        locale_prefixes = (
-            project.repositories.filter(permalink_prefix__contains="{locale_code}")
-            .values_list("permalink_prefix", flat=True)
-            .distinct()
-        )
+        if not project_config_enabled:
+            locale_prefixes = list(
+                project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
+                .values_list("permalink_prefix", flat=True)
+                .distinct()
+            )
         dirnames = set([locale.code, locale.code.replace("-", "_")])
         locale_path = _download_file(
-            locale_prefixes, dirnames, vcs_project, resource.path
+            locale_prefixes,
+            dirnames,
+            vcs_project,
+            resource.path,
+            project_config_enabled,
         )
         if not locale_path and not resource.is_asymmetric:
             return None, None
@@ -231,12 +277,13 @@ def get_download_content(slug, code, part):
         # Get source file if needed
         source_path = None
         if resource.is_asymmetric:
-            source_prefixes = project.repositories.values_list(
-                "permalink_prefix", flat=True
-            ).distinct()
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
-                source_prefixes, dirnames, vcs_project, resource.path
+                source_prefixes,
+                dirnames,
+                vcs_project,
+                resource.path,
+                project_config_enabled,
             )
             if not source_path:
                 return None, None
