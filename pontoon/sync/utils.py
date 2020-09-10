@@ -121,7 +121,8 @@ def locale_to_source_path(path: str) -> str:
     Return source resource path for the given locale resource path.
     Source files for .po files are actually .pot.
     """
-    return path + "t" if path.endswith("po") else path
+    # return path + "t" if path.endswith("po") else path
+    return path
 
 
 def source_to_locale_path(path: str) -> str:
