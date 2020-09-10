@@ -133,22 +133,10 @@ def permission_required(perm, *args, **kwargs):
 
 
 def _download_file(prefixes, dirnames, vcs_project, relative_path):
-    for prefix, from_project_config in prefixes:
+    for prefix in prefixes:
         for dirname in dirnames:
-            if from_project_config:
-                url = prefix.format(locale=dirname, android_locale=dirname,)
-            elif vcs_project.configuration:
-                locale = vcs_project.locales[0]
-                absolute_path = os.path.join(
-                    vcs_project.source_directory_path, relative_path
-                )
-                absolute_l10n_path = vcs_project.configuration.l10n_path(
-                    locale, absolute_path
-                )
-                relative_l10n_path = os.path.relpath(
-                    absolute_l10n_path, vcs_project.locale_directory_paths[locale.code],
-                )
-                url = prefix.format(locale_code=relative_l10n_path)
+            if vcs_project.configuration:
+                url = prefix.format(locale_code=dirname)
             else:
                 url = os.path.join(prefix.format(locale_code=dirname), relative_path)
             r = requests.get(url, stream=True)
@@ -186,7 +174,10 @@ def path_to_prefix(config_root, checkout_path, path):
 
     for part in path["l10n"].pattern:
         if isinstance(part, Variable):
-            permalink_prefix += "{" + part.name + "}"
+            if part.name in ("android_locale", "locale"):
+                permalink_prefix += "{locale_code}"
+            else:
+                raise ValueError(f"Unsupported project config variable: {part.name}")
         elif isinstance(part, (Starstar, Star)):
             return
         else:
@@ -220,7 +211,7 @@ def get_permalinks_from_project_config(project, resources):
 
             for res_directory in resources_directories:
                 if res_directory in path:
-                    yield path, True
+                    yield path
 
 
 def get_download_content(slug, code, part):
@@ -262,14 +253,9 @@ def get_download_content(slug, code, part):
         locale_prefixes += get_permalinks_from_project_config(project, resources)
 
     locale_prefixes += list(
-        [
-            [r, False]
-            for r in project.repositories.filter(
-                Q(permalink_prefix__contains="{locale_code}")
-            )
-            .values_list("permalink_prefix", flat=True)
-            .distinct()
-        ]
+        project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
+        .values_list("permalink_prefix", flat=True)
+        .distinct()
     )
 
     project_config_enabled = bool(project.configuration_file)
@@ -278,17 +264,12 @@ def get_download_content(slug, code, part):
 
     if project_config_enabled:
         source_prefixes += [
-            [urljoin(project.source_repository.permalink_prefix, res.path), True]
+            urljoin(project.source_repository.permalink_prefix, res.path)
             for res in resources
         ]
 
     source_prefixes += list(
-        [
-            [r, False]
-            for r in project.repositories.values_list(
-                "permalink_prefix", flat=True
-            ).distinct()
-        ]
+        project.repositories.values_list("permalink_prefix", flat=True).distinct()
     )
 
     for resource in resources:
@@ -537,31 +518,31 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * project_slug - slugified name of a project,
     """
     yield (
-        u'<?xml version="1.0" encoding="UTF-8"?>'
-        u'\n<tmx version="1.4">'
-        u"\n\t<header"
-        u' adminlang="en-US"'
-        u' creationtoolversion="0.1"'
-        u' creationtool="pontoon"'
-        u' datatype="plaintext"'
-        u' segtype="sentence"'
-        u' o-tmf="plain text"'
-        u' srclang="en-US"'
-        u' creationdate="%(creation_date)s">'
-        u"\n\t</header>"
-        u"\n\t<body>" % {"creation_date": creation_date.isoformat()}
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '\n<tmx version="1.4">'
+        "\n\t<header"
+        ' adminlang="en-US"'
+        ' creationtoolversion="0.1"'
+        ' creationtool="pontoon"'
+        ' datatype="plaintext"'
+        ' segtype="sentence"'
+        ' o-tmf="plain text"'
+        ' srclang="en-US"'
+        ' creationdate="%(creation_date)s">'
+        "\n\t</header>"
+        "\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
     for resource_path, key, source, target, project_name, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify(key)))
         yield (
-            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
-            u'\n\t\t\t<tuv xml:lang="en-US">'
-            u"\n\t\t\t\t<seg>%(source)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t\t<tuv xml:lang=%(locale_code)s>"
-            u"\n\t\t\t\t<seg>%(target)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t</tu>"
+            '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            '\n\t\t\t<tuv xml:lang="en-US">'
+            "\n\t\t\t\t<seg>%(source)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t\t<tuv xml:lang=%(locale_code)s>"
+            "\n\t\t\t\t<seg>%(target)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
                 "source": escape(source),
@@ -571,7 +552,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield (u"\n\t</body>" u"\n</tmx>\n")
+    yield ("\n\t</body>" "\n</tmx>\n")
 
 
 def get_m2m_changes(current_qs, new_qs):
