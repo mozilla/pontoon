@@ -117,8 +117,10 @@ def locale_to_source_path(path):
     Return source resource path for the given locale resource path.
     Source files for .po files are actually .pot.
     """
-    if path.endswith("po"):
-        path += "t"
+    # Comment this for now as js-lingui does not provide .pot files, only .po
+    # Commenting these lines is enough to make it work
+    # if path.endswith("po"):
+    #     path += "t"
     return path
 
 
