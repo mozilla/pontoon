@@ -18,6 +18,10 @@
 {% block heading %}
 <section id="heading">
   <div class="container clearfix">
+      {{ HeadingInfo.item_download_button(
+        locale.code,project.slug,
+        class='menu')
+      }}
     <h1>
       {{ HeadingInfo.heading_item(
         title=project.name,

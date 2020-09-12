@@ -307,6 +307,7 @@ PIPELINE_CSS = {
             "css/contributors.css",
             "css/heading_info.css",
             "css/info.css",
+            "css/download_selector.css",
         ),
         "output_filename": "css/localization.min.css",
     },
@@ -318,6 +319,7 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/table.css",
             "css/double_list_selector.css",
+            "css/download_selector.css",
             "css/contributors.css",
             "css/heading_info.css",
             "css/team.css",
