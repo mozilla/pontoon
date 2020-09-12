@@ -562,11 +562,15 @@ class DownloadTOMLParserTests(TestCase):
         )
 
         with self.assertRaises(HTTPException):
-            parser = DownloadTOMLParser(self.temp_dir, "https://example.com/", "l10n.toml")
+            parser = DownloadTOMLParser(
+                self.temp_dir, "https://example.com/", "l10n.toml"
+            )
             parser.parse()
 
     def test_remote_path(self):
-        parser = DownloadTOMLParser("", "https://example.com/without-locale-code/", "l10n.toml")
+        parser = DownloadTOMLParser(
+            "", "https://example.com/without-locale-code/", "l10n.toml"
+        )
         self.assertEqual(
             parser.get_remote_path("l10n.toml"),
             "https://example.com/without-locale-code/l10n.toml",
