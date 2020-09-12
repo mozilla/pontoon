@@ -189,6 +189,7 @@ def config_path_to_urlpath(config_root, checkout_path, path):
             permalink_prefix += part
     return permalink_prefix
 
+
 def get_permalinks_from_project_config(project, resources):
     """
     Generate the permalinks to the resources based on the configuration of the project.
@@ -228,6 +229,7 @@ def get_permalinks_from_project_config(project, resources):
             )
             if not permalink_prefix:
                 continue
+
             path = urljoin(source_repository.permalink_prefix, permalink_prefix)
             for res_matcher in resources_matchers:
                 if res_matcher in path:
