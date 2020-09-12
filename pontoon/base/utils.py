@@ -169,7 +169,12 @@ def _get_relative_path_from_part(slug, part):
         return part
 
 
-def path_to_prefix(config_root, checkout_path, path):
+def config_path_to_urlpath(config_root, checkout_path, path):
+    """
+    Generate the url path to the resource based on the Project config's l10n path.
+    Unfortunately, it's impossible to map some of the Project Config's semantics e.g. Star and StarStar filters,
+    because they would need the list of files they match (which may be hard to implement).
+    """
     permalink_prefix = os.path.join(config_root.replace(checkout_path, ""), "")
 
     for part in path["l10n"].pattern:
@@ -177,15 +182,17 @@ def path_to_prefix(config_root, checkout_path, path):
             if part.name in ("android_locale", "locale"):
                 permalink_prefix += "{locale_code}"
             else:
-                raise ValueError(f"Unsupported project config variable: {part.name}")
+                raise ValueError(f"Unsupported Project Config variable: {part.name}")
         elif isinstance(part, (Starstar, Star)):
-            return
+            raise ValueError("** and * file filters are unsupported")
         else:
             permalink_prefix += part
     return permalink_prefix
 
-
 def get_permalinks_from_project_config(project, resources):
+    """
+    Generate the permalinks to the resources based on the configuration of the project.
+    """
     from pontoon.sync.vcs.models import DownloadTOMLParser
 
     checkout_path = os.path.join(
@@ -198,19 +205,32 @@ def get_permalinks_from_project_config(project, resources):
         project.configuration_file,
     ).parse(env={"l10n_base": checkout_path})
 
-    resources_directories = [str(Path(res.path).parent) for res in resources]
+    # In order to reduce the number of HTTP requests, we want to filter the list of permalinks retrieved from
+    # the project config files and reduce the list to paths that match the requested resources.
+    resources_matchers = []
+    for res in resources:
+        matcher = str(Path(res.path).parent)
+
+        # @Mathjazz
+        # Without this, it's impossible to figure out url paths of the resources on some repos, e.g.:
+        # * mozilla-donate-content
+        # * thunderbird-donate-content
+        # Do you see a better way to handle this?
+        if source_repository.source_repo:
+            matcher = matcher.replace("templates/", "")
+
+        resources_matchers.append(matcher)
 
     for pc in parser.configs:
         for path in pc.paths:
-            permalink_prefix = path_to_prefix(
+            permalink_prefix = config_path_to_urlpath(
                 os.path.join(pc.root, ""), checkout_path, path
             )
             if not permalink_prefix:
                 continue
             path = urljoin(source_repository.permalink_prefix, permalink_prefix)
-
-            for res_directory in resources_directories:
-                if res_directory in path:
+            for res_matcher in resources_matchers:
+                if res_matcher in path:
                     yield path
 
 
@@ -276,7 +296,7 @@ def get_download_content(slug, code, part):
         # Get locale file
         dirnames = set([locale.code, locale.code.replace("-", "_")])
         locale_path = _download_file(
-            locale_prefixes, dirnames, vcs_project, resource.path,
+            locale_prefixes, dirnames, vcs_project, resource.path
         )
         if not locale_path and not resource.is_asymmetric:
             return None, None
@@ -286,7 +306,7 @@ def get_download_content(slug, code, part):
         if resource.is_asymmetric:
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
-                source_prefixes, dirnames, vcs_project, resource.path,
+                source_prefixes, dirnames, vcs_project, resource.path
             )
             if not source_path:
                 return None, None
