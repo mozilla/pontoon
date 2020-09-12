@@ -562,11 +562,11 @@ class DownloadTOMLParserTests(TestCase):
         )
 
         with self.assertRaises(HTTPException):
-            parser = DownloadTOMLParser(self.temp_dir, "https://example.com/")
-            parser.parse("l10n.toml")
+            parser = DownloadTOMLParser(self.temp_dir, "https://example.com/", "l10n.toml")
+            parser.parse()
 
     def test_remote_path(self):
-        parser = DownloadTOMLParser("", "https://example.com/without-locale-code/")
+        parser = DownloadTOMLParser("", "https://example.com/without-locale-code/", "l10n.toml")
         self.assertEqual(
             parser.get_remote_path("l10n.toml"),
             "https://example.com/without-locale-code/l10n.toml",
@@ -577,11 +577,11 @@ class DownloadTOMLParserTests(TestCase):
         )
 
     def test_local_path(self):
-        parser = DownloadTOMLParser(self.temp_dir, "")
+        parser = DownloadTOMLParser(self.temp_dir, "", "aaa.toml")
         self.assertEqual(parser.get_local_path("aaa.toml"), f"{self.temp_dir}/aaa.toml")
 
     def test_get_project_config(self):
-        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/")
+        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/", "l10n.toml")
         self.requests_mock.return_value.content = b"test-content"
         project_config_path = parser.get_project_config("l10n.toml")
 

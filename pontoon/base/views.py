@@ -659,6 +659,7 @@ def perform_checks(request):
 @transaction.atomic
 def download(request):
     """Download translated resource."""
+    breakpoint()
     try:
         slug = request.GET["slug"]
         code = request.GET["code"]
