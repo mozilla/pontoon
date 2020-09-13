@@ -19,6 +19,7 @@ type Props = {|
     user: UserState,
     users: UserState,
     canComment: boolean,
+    canPin?: boolean,
     addComment: (string, ?number) => void,
 |};
 
@@ -30,6 +31,7 @@ export default function CommentsList(props: Props) {
         translation,
         user,
         canComment,
+        canPin,
         addComment,
         users,
     } = props;
@@ -41,7 +43,9 @@ export default function CommentsList(props: Props) {
             { comments.map(comment =>
                 <Comment
                     comment={ comment }
+                    canPin={ canPin }
                     key={ comment.id }
+                    user={ user }
                 />
             )}
         </ul>

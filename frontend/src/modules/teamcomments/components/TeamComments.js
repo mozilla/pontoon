@@ -36,6 +36,7 @@ export default function TeamComments(props: Props) {
     const comments = teamComments.comments;
 
     let canComment = user.isAuthenticated;
+    const canPin = user.isAdmin;
 
     return <section className="team-comments">
         { !comments.length && !canComment ?
@@ -49,6 +50,7 @@ export default function TeamComments(props: Props) {
                 user={ user }
                 users={ users }
                 canComment={ canComment }
+                canPin={ canPin }
                 addComment={ addComment }
             />
         }
