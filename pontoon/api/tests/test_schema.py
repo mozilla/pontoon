@@ -2,6 +2,8 @@ import sys
 
 import pytest
 
+from pontoon.test.factories import ProjectFactory, UserFactory
+
 
 @pytest.fixture
 def setup_excepthook():
@@ -29,7 +31,34 @@ def test_projects(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
+
+        ProjectFactory.create(visibility="private")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content,
+            {
+                "data": {
+                    "projects": [
+                        {"name": "Pontoon Intro"},
+                        {"name": "Terminology"},
+                        {"name": "Tutorial"},
+                    ]
+                }
+            },
+        )
+
+    def test_project_private(self):
+        body = {
+            "query": """{
+                projects {
+                    name
+                }
+            }"""
+        }
+
+        private_project = ProjectFactory.create(visibility="private")
+        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -42,20 +71,37 @@ def test_projects(client):
         }
     }
 
+        self.client.force_login(self.admin)
 
-@pytest.mark.django_db
-def test_project_localizations(client):
-    body = {
-        "query": """{
-            project(slug: "pontoon-intro") {
-                localizations {
-                    locale {
-                        name
+        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content,
+            {
+                "data": {
+                    "projects": [
+                        {"name": "Pontoon Intro"},
+                        {"name": "Terminology"},
+                        {"name": "Tutorial"},
+                        {"name": private_project.name},
+                    ]
+                }
+            },
+        )
+
+    def test_project_localizations(self):
+        body = {
+            "query": """{
+                project(slug: "pontoon-intro") {
+                    localizations {
+                        locale {
+                            name
+                        }
                     }
                 }
-            }
-        }"""
-    }
+            }"""
+        }
 
     response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 

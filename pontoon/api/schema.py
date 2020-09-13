@@ -1,4 +1,5 @@
 import graphene
+from django.db.models import Q
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
 
@@ -109,16 +110,16 @@ class Locale(DjangoObjectType, Stats):
     )
 
     def resolve_localizations(obj, _info, include_disabled, include_system):
-        qs = obj.project_locale
+        records = (
+            obj.project_locale.visible_for(_info.context.user)
+            .filter(
+                Q(project__disabled=include_disabled)
+                | Q(project__system_project=include_system)
+            )
+            .distinct()
+        )
 
-        records = qs.filter(project__disabled=False, project__system_project=False)
-
-        if include_disabled:
-            records = records | qs.filter(project__disabled=True)
-        if include_system:
-            records = records | qs.filter(project__system_project=True)
-
-        return records.distinct()
+        return records
 
 
 class Query(graphene.ObjectType):
@@ -137,26 +138,22 @@ class Query(graphene.ObjectType):
     locale = graphene.Field(Locale, code=graphene.String())
 
     def resolve_projects(obj, info, include_disabled, include_system):
-        qs = ProjectModel.objects
         fields = get_fields(info)
 
+        records = ProjectModel.objects.visible_for(info.context.user).filter(
+            Q(disabled=include_disabled) | Q(system_project=include_system)
+        )
+
         if "projects.localizations" in fields:
-            qs = qs.prefetch_related("project_locale__locale")
+            records = records.prefetch_related("project_locale__locale")
 
         if "projects.localizations.locale.localizations" in fields:
             raise Exception("Cyclic queries are forbidden")
 
-        records = qs.filter(disabled=False, system_project=False)
-
-        if include_disabled:
-            records = records | qs.filter(disabled=True)
-        if include_system:
-            records = records | qs.filter(system_project=True)
-
         return records.distinct()
 
     def resolve_project(obj, info, slug):
-        qs = ProjectModel.objects
+        qs = ProjectModel.objects.visible_for(info.context.user)
         fields = get_fields(info)
 
         if "project.localizations" in fields:
