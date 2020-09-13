@@ -24,6 +24,7 @@ export type TranslationComment = {|
     +createdAt: string,
     +dateIso: string,
     +content: string,
+    +pinned: boolean,
     +id: number,
 |};
 

@@ -15,14 +15,14 @@ import type { UserState } from 'core/user';
 
 type Props = {|
     comment: TranslationComment,
-    canPin: boolean,
+    canPin?: boolean,
     user: UserState,
 |};
 
 
 export default function Comment(props: Props) {
     const { comment, canPin, user } = props;
-    const [ pinned, setPinned ] = React.useState(false);
+    const [ pinned, setPinned ] = React.useState(comment.pinned);
 
     if (!comment) {
         return null;
