@@ -73,7 +73,8 @@
     background: #4D5967;
 }
 
-.react-tabs span.count .preferred {
+.react-tabs span.count .preferred,
+.react-tabs span.count .pinned {
     color: #7BC876;
 }
 

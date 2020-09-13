@@ -18,8 +18,32 @@ export default function Count(props: Props) {
     }
 
     const commentCount = teamComments.comments.length;
+    const pinnedCommentCount = teamComments.comments.filter(comment => {
+        return comment.pinned === true;
+    }).length;
+
+    if (!commentCount && !pinnedCommentCount) {
+        return null;
+    }
+
+    const pinned = (
+        !pinnedCommentCount ? null :
+        <span className='pinned'>{ pinnedCommentCount }</span>
+    )
+
+    const commentTotal = (
+        !commentCount ? null :
+        <span>{ commentCount }</span>
+    )
+
+    const dash = (
+        !commentCount || !pinnedCommentCount ? null :
+        <span>{ '-' }</span>
+    );
 
     return <span className='count'>
-        { commentCount }
+        { pinned }
+        { dash }
+        { commentTotal }
     </span>;
 }
