@@ -337,6 +337,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     openLightbox={ this.openLightbox }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
+                    teamComments={ state.teamComments }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :

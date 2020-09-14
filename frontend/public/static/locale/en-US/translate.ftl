@@ -221,6 +221,9 @@ entitydetails-Metadata--group-comment =
 entitydetails-Metadata--resource-comment =
     .title = Resource Comment
 
+entitydetails-Metadata--pinned-comment =
+    .title = Pinned Comment
+
 entitydetails-Metadata--see-more = See More
 
 entitydetails-Metadata--context =
