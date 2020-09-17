@@ -20,9 +20,8 @@
 {% block heading %}
 <section id="heading">
   <div class="container clearfix">
-    {{ HeadingInfo.item_download_button(
-      (locale.code),"all-projects",
-      class='menu')
+    {{ HeadingInfo.download_button(
+      locale.code, "all-projects")
     }}
     <h1>
       {{ HeadingInfo.heading_item(
