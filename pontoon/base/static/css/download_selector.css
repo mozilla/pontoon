@@ -20,7 +20,7 @@
   text-align: center;
 }
 
-.download-selector .button :hover {
+.download-selector .button:hover {
   background: #272a2f;
 }
   
@@ -32,7 +32,7 @@
 .download-selector.opened .menu {
   display: block;
   top: 32px;
-  right: 0px;
+  right: 0;
   bottom: auto;
   width: 220px;
 }
