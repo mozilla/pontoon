@@ -20,7 +20,7 @@
   text-align: center;
 }
 
-.download-selector .button:hover {
+.download-selector .selector .fa:hover { 
   background: #272a2f;
 }
   
