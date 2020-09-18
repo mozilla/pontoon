@@ -130,3 +130,21 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro download_selector(locale, project) %}
+<div class="download-selector select">
+  <div class="button selector">
+    <i class="fa fa-cloud-download-alt"></i>
+  </div>
+  <div class="menu">
+      <ul>
+          <li>
+              <a href="/terminology/{{ locale }}.tbx">Download Terminology</a>
+          </li>
+          <li>
+              <a href="/{{ locale }}/{{ project }}/{{ locale }}.{{ project }}.tmx">Download Translation Memory</a>
+          </li>
+      </ul>
+  </div>
+</div>
+{% endmacro %}
