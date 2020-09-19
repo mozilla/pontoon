@@ -45,7 +45,6 @@ export default function CommentsList(props: Props) {
                     comment={ comment }
                     canPin={ canPin }
                     key={ comment.id }
-                    user={ user }
                 />
             )}
         </ul>

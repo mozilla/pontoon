@@ -26,6 +26,7 @@
     padding: 6px;
     word-break: break-word;
     white-space: pre-wrap;
+    position: relative;
 }
 
 .comments-list .comment .content p,
@@ -62,7 +63,7 @@
 .comments-list .comment .comment-pin {
     color: orange;
     position: absolute;
-    right: 15px;
-    margin-top: -13px;
+    right: 10px;
+    top: -10px;
     font-size: 15px;
 }

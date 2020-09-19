@@ -11,17 +11,15 @@ import './Comment.css';
 import { UserAvatar } from 'core/user'
 
 import type { TranslationComment } from 'core/api';
-import type { UserState } from 'core/user';
 
 type Props = {|
     comment: TranslationComment,
     canPin?: boolean,
-    user: UserState,
 |};
 
 
 export default function Comment(props: Props) {
-    const { comment, canPin, user } = props;
+    const { comment, canPin } = props;
     const [ pinned, setPinned ] = React.useState(comment.pinned);
 
     if (!comment) {
@@ -68,7 +66,7 @@ export default function Comment(props: Props) {
                     date={ new Date(comment.dateIso) }
                     title={ `${comment.createdAt} UTC` }
                 />
-                { canPin && (comment.username === user.username) ?
+                { canPin ?
                     <Localized
                         id="comments-Comment--pin-button"
                         attrs={{ title: true }}
