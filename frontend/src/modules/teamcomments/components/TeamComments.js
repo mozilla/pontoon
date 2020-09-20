@@ -17,6 +17,7 @@ type Props = {|
     user: UserState,
     users: UserState,
     addComment: (string, ?number) => void,
+    updatePinnedComment: (boolean, number) => void,
 |};
 
 
@@ -26,7 +27,8 @@ export default function TeamComments(props: Props) {
         user,
         parameters,
         users,
-        addComment, 
+        addComment,
+        updatePinnedComment,
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -52,6 +54,7 @@ export default function TeamComments(props: Props) {
                 canComment={ canComment }
                 canPin={ canPin }
                 addComment={ addComment }
+                updatePinnedComment={ updatePinnedComment }
             />
         }
     </section>

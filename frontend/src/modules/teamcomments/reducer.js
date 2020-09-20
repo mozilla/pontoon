@@ -1,14 +1,15 @@
 /* @flow */
 
-import { RECEIVE, REQUEST } from './actions';
+import { RECEIVE, REQUEST, UPDATE_PINNED } from './actions';
 
 import type { TeamComment } from 'core/api';
-import type { ReceiveAction, RequestAction } from './actions';
+import type { ReceiveAction, RequestAction, UpdatePinnedAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
+    | UpdatePinnedAction
 ;
 
 
@@ -17,6 +18,24 @@ export type TeamCommentState = {|
     +entity: ?number,
     +comments: Array<TeamComment>,
 |};
+
+function updatePinnedComment(
+    state: Object,
+    pinned: boolean,
+    commentId: number,
+): Array<TeamComment> {
+    return state.comments.map(comment => {
+        if (comment.id !== commentId) {
+            return comment;
+        }
+
+        comment.pinned = pinned;
+
+        return {
+            ...comment,
+        };
+    });
+}
 
 
 const initialState = {
@@ -43,6 +62,15 @@ export default function reducer(
                 fetching: false,
                 comments: action.comments,
             };
+        case UPDATE_PINNED:
+            return {
+                ...state,
+                comments: updatePinnedComment(
+                    state,
+                    action.pinned,
+                    action.commentId,
+                )
+            }
         default:
             return state;
     }

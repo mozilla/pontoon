@@ -15,18 +15,23 @@ import type { TranslationComment } from 'core/api';
 type Props = {|
     comment: TranslationComment,
     canPin?: boolean,
+    updatePinnedComment?: (boolean, number) => void,
 |};
 
 
 export default function Comment(props: Props) {
-    const { comment, canPin } = props;
-    const [ pinned, setPinned ] = React.useState(comment.pinned);
+    const { comment, canPin, updatePinnedComment } = props;
 
     if (!comment) {
         return null;
     }
 
-    const handleClick = () => { setPinned(!pinned); }
+    const handlePinnedComment = () => { 
+        if (!updatePinnedComment) {
+            return;
+        }
+        updatePinnedComment(!comment.pinned, comment.id)
+    }
 
     return <li className='comment'>
         <UserAvatar
@@ -55,7 +60,7 @@ export default function Comment(props: Props) {
                         }
                         { parse(comment.content) }
                     </Linkify>
-                    { !pinned ? null :
+                    { !comment.pinned ? null :
                         <div className="fa fa-thumbtack comment-pin"></div>
                     }
                 </div>
@@ -71,14 +76,14 @@ export default function Comment(props: Props) {
                         id="comments-Comment--pin-button"
                         attrs={{ title: true }}
                         vars={{
-                            pinnedTitle: !pinned ? 'Pin comment' : 'Unpin comment',
-                            pinButton: !pinned ? 'PIN' : 'UNPIN',
+                            pinnedTitle: !comment.pinned ? 'Pin comment' : 'Unpin comment',
+                            pinButton: !comment.pinned ? 'PIN' : 'UNPIN',
                         }}
                     >
                         <button
                             className='pin-button'
                             title= { '$pinnedTitle'  }
-                            onClick={ handleClick }
+                            onClick={ handlePinnedComment }
                         >
                             { '$pinButton' }
                         </button>

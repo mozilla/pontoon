@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import json
 import logging
 import re
 from datetime import datetime
@@ -599,6 +600,24 @@ def add_comment(request):
     c.save()
 
     _send_add_comment_notifications(user, comment, entity, locale, translation)
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def update_comment(request):
+    """ Update pinned status of comment """
+    comment_id = request.POST.get("comment_id", None)
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+    pinned = request.POST["pinned"]
+
+    comment.pinned = json.loads(pinned)
+    comment.save()
 
     return JsonResponse({"status": True})
 

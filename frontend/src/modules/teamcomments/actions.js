@@ -9,6 +9,7 @@ import type { TeamComment } from 'core/api';
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
 export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';
+export const UPDATE_PINNED: 'comments/UPDATE_PINNED' = 'comments/UPDATE_PINNED';
 
 
 export type ReceiveAction = {|
@@ -38,6 +39,19 @@ export function request(
     };
 }
 
+export type UpdatePinnedAction = {|
+    +type: typeof UPDATE_PINNED,
+    +pinned: boolean,
+    +commentId: number,
+|};
+export function updatePinned(pinned: boolean, commentId: number):UpdatePinnedAction {
+    return {
+        type: UPDATE_PINNED,
+        pinned,
+        commentId,
+    }
+}
+
 
 export function get(entity: number, locale: string): Function {
     return async dispatch => {
@@ -59,9 +73,19 @@ export function get(entity: number, locale: string): Function {
     }
 }
 
+export function savePinnedStatus(pinned: boolean, commentId: number): Function {
+    return async dispatch => {
+        await api.comment.update(pinned, commentId);
+
+        dispatch(updatePinned(pinned, commentId))
+    }
+}
+
+
 
 export default {
     get,
     receive,
     request,
+    savePinnedStatus,
 };

@@ -282,6 +282,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    updatePinnedComment = (pinned: boolean, commentId: number) => {
+        this.props.dispatch(teamcomments.actions.savePinnedStatus(pinned, commentId));
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -367,6 +371,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     teamComments={ state.teamComments }
                     terms={ state.terms }
                     addComment={ this.addComment }
+                    updatePinnedComment={ this.updatePinnedComment }
                     users={ state.users }
                     parameters={ state.parameters }
                     user={ state.user }
