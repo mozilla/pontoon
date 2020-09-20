@@ -215,9 +215,10 @@ def get_download_content(slug, code, part):
             get_object_or_404(Resource, project__slug=slug, path=relative_path)
         ]
 
-
     if project.configuration_file:
-        locale_prefixes = project.repositories.values_list("permalink_prefix", flat=True)
+        locale_prefixes = project.repositories.values_list(
+            "permalink_prefix", flat=True
+        )
     else:
         locale_prefixes = list(
             project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
