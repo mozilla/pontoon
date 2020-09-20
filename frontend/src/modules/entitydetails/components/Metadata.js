@@ -156,7 +156,7 @@ export default class Metadata extends React.Component<Props, State> {
 
         return <>
             { !pinnedComments ? null : pinnedComments.map(pinnedComment => {
-                return <Localized id='entitydetails-Metadata--pinned-comment' attrs={ { title: true } }>
+                return <Localized id='entitydetails-Metadata--pinned-comment' attrs={ { title: true } } key={pinnedComment.id}>
                     <Property title='Pinned Comment' className='comment'>
                         <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
                         {

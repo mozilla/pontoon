@@ -16,7 +16,7 @@ type Props = {|
 export default function Property(props: Props) {
     const { children, className, title } = props;
 
-    return <p className={ className }>
+    return <div className={ className }>
         <span className="title">{ title }</span>
         {
             /* Extra space between <span> elements prevents cross
@@ -24,5 +24,5 @@ export default function Property(props: Props) {
         }
         { ' ' }
         <span className="content">{ children }</span>
-    </p>;
+    </div>;
 }
