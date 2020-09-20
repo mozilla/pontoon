@@ -20,6 +20,7 @@ if TEST:
     except ImportError:
         pass
 
+
 # Import settings that are helpful during the process of development.
 if DEV:  # noqa
     try:

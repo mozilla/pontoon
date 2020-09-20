@@ -6,23 +6,25 @@ import os
 import tempfile
 import time
 import zipfile
+
 from datetime import datetime, timedelta
-from pathlib import Path
 from urllib.parse import urljoin
-from xml.sax.saxutils import escape, quoteattr
 
 import pytz
 import requests
-from compare_locales.paths.matcher import Variable, Star, Starstar
+from guardian.decorators import permission_required as guardian_permission_required
+
+from django.utils.text import slugify
+from six import BytesIO
+
+from xml.sax.saxutils import escape, quoteattr
+
 from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.utils.text import slugify
 from django.utils.translation import trans_real
-from guardian.decorators import permission_required as guardian_permission_required
-from six import BytesIO
 
 
 def split_ints(s):
@@ -136,9 +138,20 @@ def _download_file(prefixes, dirnames, vcs_project, relative_path):
     for prefix in prefixes:
         for dirname in dirnames:
             if vcs_project.configuration:
-                url = prefix.format(locale_code=dirname)
+                locale = vcs_project.locales[0]
+                absolute_path = os.path.join(
+                    vcs_project.source_directory_path, relative_path
+                )
+                absolute_l10n_path = vcs_project.configuration.l10n_path(
+                    locale, absolute_path
+                )
+                relative_l10n_path = os.path.relpath(
+                    absolute_l10n_path, vcs_project.locale_directory_paths[locale.code],
+                )
+                url = urljoin(prefix, relative_l10n_path)
             else:
                 url = os.path.join(prefix.format(locale_code=dirname), relative_path)
+
             r = requests.get(url, stream=True)
             if not r.ok:
                 continue
@@ -167,73 +180,6 @@ def _get_relative_path_from_part(slug, part):
         return subpage.resources.first().path
     except Subpage.DoesNotExist:
         return part
-
-
-def config_path_to_urlpath(config_root, checkout_path, path):
-    """
-    Generate the url path to the resource based on the Project config's l10n path.
-    Unfortunately, it's impossible to map some of the Project Config's semantics e.g. Star and StarStar filters,
-    because they would need the list of files they match (which may be hard to implement).
-    """
-    permalink_prefix = os.path.join(config_root.replace(checkout_path, ""), "")
-
-    for part in path["l10n"].pattern:
-        if isinstance(part, Variable):
-            if part.name in ("android_locale", "locale"):
-                permalink_prefix += "{locale_code}"
-            else:
-                raise ValueError(f"Unsupported Project Config variable: {part.name}")
-        elif isinstance(part, (Starstar, Star)):
-            raise ValueError("** and * file filters are unsupported")
-        else:
-            permalink_prefix += part
-    return permalink_prefix
-
-
-def get_permalinks_from_project_config(project, resources):
-    """
-    Generate the permalinks to the resources based on the configuration of the project.
-    """
-    from pontoon.sync.vcs.models import DownloadTOMLParser
-
-    checkout_path = os.path.join(
-        project.translation_repositories()[0].checkout_path, ""
-    )
-    source_repository = project.source_repository
-    parser = DownloadTOMLParser(
-        source_repository.checkout_path,
-        source_repository.permalink_prefix,
-        project.configuration_file,
-    ).parse(env={"l10n_base": checkout_path})
-
-    # In order to reduce the number of HTTP requests, we want to filter the list of permalinks retrieved from
-    # the project config files and reduce the list to paths that match the requested resources.
-    resources_matchers = []
-    for res in resources:
-        matcher = str(Path(res.path).parent)
-
-        # @Mathjazz
-        # Without this, it's impossible to figure out url paths of the resources on some repos, e.g.:
-        # * mozilla-donate-content
-        # * thunderbird-donate-content
-        # Do you see a better way to handle this?
-        if source_repository.source_repo:
-            matcher = matcher.replace("templates/", "")
-
-        resources_matchers.append(matcher)
-
-    for pc in parser.configs:
-        for path in pc.paths:
-            permalink_prefix = config_path_to_urlpath(
-                os.path.join(pc.root, ""), checkout_path, path
-            )
-            if not permalink_prefix:
-                continue
-
-            path = urljoin(source_repository.permalink_prefix, permalink_prefix)
-            for res_matcher in resources_matchers:
-                if res_matcher in path:
-                    yield path
 
 
 def get_download_content(slug, code, part):
@@ -269,30 +215,15 @@ def get_download_content(slug, code, part):
             get_object_or_404(Resource, project__slug=slug, path=relative_path)
         ]
 
-    locale_prefixes = []
 
     if project.configuration_file:
-        locale_prefixes += get_permalinks_from_project_config(project, resources)
-
-    locale_prefixes += list(
-        project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
-        .values_list("permalink_prefix", flat=True)
-        .distinct()
-    )
-
-    project_config_enabled = bool(project.configuration_file)
-
-    source_prefixes = []
-
-    if project_config_enabled:
-        source_prefixes += [
-            urljoin(project.source_repository.permalink_prefix, res.path)
-            for res in resources
-        ]
-
-    source_prefixes += list(
-        project.repositories.values_list("permalink_prefix", flat=True).distinct()
-    )
+        locale_prefixes = project.repositories.values_list("permalink_prefix", flat=True)
+    else:
+        locale_prefixes = list(
+            project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
+            .values_list("permalink_prefix", flat=True)
+            .distinct()
+        )
 
     for resource in resources:
         # Get locale file
@@ -306,6 +237,9 @@ def get_download_content(slug, code, part):
         # Get source file if needed
         source_path = None
         if resource.is_asymmetric:
+            source_prefixes = project.repositories.values_list(
+                "permalink_prefix", flat=True
+            ).distinct()
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
                 source_prefixes, dirnames, vcs_project, resource.path
@@ -540,31 +474,31 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * project_slug - slugified name of a project,
     """
     yield (
-        '<?xml version="1.0" encoding="UTF-8"?>'
-        '\n<tmx version="1.4">'
-        "\n\t<header"
-        ' adminlang="en-US"'
-        ' creationtoolversion="0.1"'
-        ' creationtool="pontoon"'
-        ' datatype="plaintext"'
-        ' segtype="sentence"'
-        ' o-tmf="plain text"'
-        ' srclang="en-US"'
-        ' creationdate="%(creation_date)s">'
-        "\n\t</header>"
-        "\n\t<body>" % {"creation_date": creation_date.isoformat()}
+        u'<?xml version="1.0" encoding="UTF-8"?>'
+        u'\n<tmx version="1.4">'
+        u"\n\t<header"
+        u' adminlang="en-US"'
+        u' creationtoolversion="0.1"'
+        u' creationtool="pontoon"'
+        u' datatype="plaintext"'
+        u' segtype="sentence"'
+        u' o-tmf="plain text"'
+        u' srclang="en-US"'
+        u' creationdate="%(creation_date)s">'
+        u"\n\t</header>"
+        u"\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
     for resource_path, key, source, target, project_name, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify(key)))
         yield (
-            '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
-            '\n\t\t\t<tuv xml:lang="en-US">'
-            "\n\t\t\t\t<seg>%(source)s</seg>"
-            "\n\t\t\t</tuv>"
-            "\n\t\t\t<tuv xml:lang=%(locale_code)s>"
-            "\n\t\t\t\t<seg>%(target)s</seg>"
-            "\n\t\t\t</tuv>"
-            "\n\t\t</tu>"
+            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            u'\n\t\t\t<tuv xml:lang="en-US">'
+            u"\n\t\t\t\t<seg>%(source)s</seg>"
+            u"\n\t\t\t</tuv>"
+            u"\n\t\t\t<tuv xml:lang=%(locale_code)s>"
+            u"\n\t\t\t\t<seg>%(target)s</seg>"
+            u"\n\t\t\t</tuv>"
+            u"\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
                 "source": escape(source),
@@ -574,7 +508,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield ("\n\t</body>" "\n</tmx>\n")
+    yield (u"\n\t</body>" u"\n</tmx>\n")
 
 
 def get_m2m_changes(current_qs, new_qs):

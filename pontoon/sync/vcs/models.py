@@ -95,7 +95,6 @@ class MissingRepositoryPermalink(Exception):
 
 
 class MissingSourceRepository(Exception):
-
     """
     Raised when project can't find the repository
     which contains source files.
