@@ -673,7 +673,10 @@ def download(request):
 
     response = HttpResponse()
     response.content = content
-    response["Content-Type"] = "text/plain"
+    if filename.endswith(".zip"):
+        response["Content-Type"] = "application/zip"
+    else:
+        response["Content-Type"] = "text/plain"
     response["Content-Disposition"] = "attachment; filename=" + filename
 
     return response

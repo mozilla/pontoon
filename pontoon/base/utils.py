@@ -19,7 +19,7 @@ from six import BytesIO
 
 from xml.sax.saxutils import escape, quoteattr
 
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -192,6 +192,7 @@ def get_download_content(slug, code, part):
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
+    from pontoon.sync.utils import source_to_locale_path
     from pontoon.sync.vcs.models import VCSProject
     from pontoon.base.models import Entity, Locale, Project, Resource
 
@@ -220,11 +221,17 @@ def get_download_content(slug, code, part):
             "permalink_prefix", flat=True
         )
     else:
-        locale_prefixes = list(
-            project.repositories.filter(Q(permalink_prefix__contains="{locale_code}"))
-            .values_list("permalink_prefix", flat=True)
-            .distinct()
+        locale_prefixes = project.repositories.filter(
+            permalink_prefix__contains="{locale_code}"
         )
+
+    locale_prefixes = locale_prefixes.values_list(
+        "permalink_prefix", flat=True
+    ).distinct()
+
+    source_prefixes = project.repositories.values_list(
+        "permalink_prefix", flat=True
+    ).distinct()
 
     for resource in resources:
         # Get locale file
@@ -238,9 +245,6 @@ def get_download_content(slug, code, part):
         # Get source file if needed
         source_path = None
         if resource.is_asymmetric:
-            source_prefixes = project.repositories.values_list(
-                "permalink_prefix", flat=True
-            ).distinct()
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
                 source_prefixes, dirnames, vcs_project, resource.path
@@ -286,11 +290,11 @@ def get_download_content(slug, code, part):
             return None, None
 
         if isZipable:
-            zf.write(locale_path, resource.path)
+            zf.write(locale_path, source_to_locale_path(resource.path))
         else:
             with codecs.open(locale_path, "r", "utf-8") as f:
                 content = f.read()
-            filename = os.path.basename(resource.path)
+            filename = os.path.basename(source_to_locale_path(resource.path))
 
         # Remove temporary files
         os.remove(locale_path)
