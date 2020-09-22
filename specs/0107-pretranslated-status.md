@@ -4,7 +4,7 @@
 
 # Summary
 
-Introduce a new translation status for Pretranslated strings to distinct them from Fuzzy strings.
+Introduce a new translation status for Pretranslated strings to differentiate them from Fuzzy strings.
 
 # Motivation
 
@@ -13,7 +13,7 @@ Pretranslation is the process of using machines to translate content before it's
 Pretranslations are assigned translation status Fuzzy, which allows us to:
 1. Immediately send them to version control system.
 2. Make them available in the product.
-3. Inform localizers that they should be given another look.
+3. Inform localizers that these strings should be given another look.
 4. Run quality checks on them to identify any errors or warnings.
 
 The caveat however is that translation status Fuzzy is also used for [fuzzy](https://www.gnu.org/software/gettext/manual/html_node/Fuzzy-Entries.html) translations of the Gettext system (filenames ending in .po), which are **not** used in the product. That means bullet point #2 isn't valid for projects using the Gettext system - pretranslated strings in .po files will not make it to the product unless human translator approves them.
@@ -22,7 +22,7 @@ We need to make pretranslation work according to all 4 items from the list above
 
 # Feature explanation
 
-The obvious solution is to introduce a new "Pretranslated" translation status to distinct pretranslated strings from Fuzzy. However, while it solves the problem, adding a new translation status also adds more data to the already condensed dashboards and increases complexity.
+The obvious solution is to introduce a new "Pretranslated" translation status to differentiate pretranslated strings from Fuzzy. However, while it solves the problem, adding a new translation status also adds more data to the already condensed dashboards and increases complexity.
 
 So instead, we make the following two steps:
 1. Treat Gettext Fuzzy strings as Missing.
