@@ -33,17 +33,17 @@ export default function Count(props: Props) {
 
     const commentTotal = (
         !commentCount ? null :
-        <span>{ commentCount }</span>
+        <span>{ commentCount - pinnedCommentCount }</span>
     )
 
-    const dash = (
+    const plus = (
         !commentCount || !pinnedCommentCount ? null :
-        <span>{ '-' }</span>
+        <span>{ '+' }</span>
     );
 
     return <span className='count'>
         { pinned }
-        { dash }
+        { plus }
         { commentTotal }
     </span>;
 }
