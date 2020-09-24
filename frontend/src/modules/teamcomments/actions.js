@@ -75,7 +75,13 @@ export function get(entity: number, locale: string): Function {
 
 export function savePinnedStatus(pinned: boolean, commentId: number): Function {
     return async dispatch => {
-        await api.comment.update(pinned, commentId);
+        if (pinned) {
+            await api.comment.pinComment(pinned, commentId);
+        }
+
+        if (!pinned) {
+            await api.comment.unpinComment(pinned, commentId);
+        }
 
         dispatch(updatePinned(pinned, commentId))
     }

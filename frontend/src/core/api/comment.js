@@ -26,7 +26,7 @@ export default class CommentAPI extends APIBase {
         return this.fetch('/add-comment/', 'POST', payload, headers);
     }
 
-    update(pinned: boolean, commentId: number) {
+    _updateComment(url: string, pinned: boolean, commentId: number) {
         const payload = new URLSearchParams();
         payload.append('pinned', pinned.toString());
         payload.append('comment_id', commentId.toString());
@@ -36,6 +36,14 @@ export default class CommentAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('update-comment/', 'POST', payload, headers);
+        return this.fetch(url, 'POST', payload, headers);
+    }
+
+    pinComment(pinned: boolean, commentId: number) {
+        return this._updateComment('/pin-comment/', pinned, commentId);
+    }
+
+    unpinComment(pinned: boolean, commentId: number) {
+        return this._updateComment('/unpin-comment/', pinned, commentId);
     }
 }
