@@ -12,6 +12,7 @@ import { UserAvatar } from 'core/user'
 
 import type { TranslationComment } from 'core/api';
 
+
 type Props = {|
     comment: TranslationComment,
     canPin?: boolean,
@@ -30,7 +31,7 @@ export default function Comment(props: Props) {
         if (!updatePinnedComment) {
             return;
         }
-        updatePinnedComment(!comment.pinned, comment.id)
+        updatePinnedComment(!comment.pinned, comment.id);
     }
 
     return <li className='comment'>
@@ -72,23 +73,36 @@ export default function Comment(props: Props) {
                     title={ `${comment.createdAt} UTC` }
                 />
                 { canPin ?
-                    <Localized
-                        id="comments-Comment--pin-button"
-                        attrs={{ title: true }}
-                        vars={{
-                            pinnedTitle: !comment.pinned ? 'Pin comment' : 'Unpin comment',
-                            pinButton: !comment.pinned ? 'PIN' : 'UNPIN',
-                        }}
-                    >
-                        <button
-                            className='pin-button'
-                            title= { '$pinnedTitle'  }
-                            onClick={ handlePinnedComment }
+                    comment.pinned ?
+                        // Unpin Button
+                        <Localized
+                            id="comments-Comment--unpin-button"
+                            attrs={{ title: true }}
                         >
-                            { '$pinButton' }
-                        </button>
-                    </Localized>
-                : null
+                            <button
+                                className='pin-button'
+                                title='Unpin comment'
+                                onClick={ handlePinnedComment }
+                            >
+                                { 'UNPIN' }
+                            </button>
+                        </Localized>
+                    :
+                        // Pin Button
+                        <Localized
+                            id="comments-Comment--pin-button"
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='pin-button'
+                                title='Pin comment'
+                                onClick={ handlePinnedComment }
+                            >
+                                { 'PIN' }
+                            </button>
+                        </Localized>
+                :
+                    null
                 }
             </div>
 
