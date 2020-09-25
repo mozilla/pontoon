@@ -1,14 +1,15 @@
 /* @flow */
 
-import { RECEIVE, REQUEST } from './actions';
+import { RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
 
 import type { TeamComment } from 'core/api';
-import type { ReceiveAction, RequestAction } from './actions';
+import type { ReceiveAction, RequestAction, TogglePinnedAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
+    | TogglePinnedAction
 ;
 
 
@@ -17,6 +18,24 @@ export type TeamCommentState = {|
     +entity: ?number,
     +comments: Array<TeamComment>,
 |};
+
+function togglePinnedComment(
+    state: Object,
+    pinned: boolean,
+    commentId: number,
+): Array<TeamComment> {
+    return state.comments.map(comment => {
+        if (comment.id !== commentId) {
+            return comment;
+        }
+
+        comment.pinned = pinned;
+
+        return {
+            ...comment,
+        };
+    });
+}
 
 
 const initialState = {
@@ -43,6 +62,15 @@ export default function reducer(
                 fetching: false,
                 comments: action.comments,
             };
+        case TOGGLE_PINNED:
+            return {
+                ...state,
+                comments: togglePinnedComment(
+                    state,
+                    action.pinned,
+                    action.commentId,
+                )
+            }
         default:
             return state;
     }

@@ -71,6 +71,8 @@ urlpatterns = [
         name="pontoon.get_team_comments",
     ),
     url(r"^add-comment/", views.add_comment, name="pontoon.add_comment",),
+    url(r"^pin-comment/", views.pin_comment, name="pontoon.pin_comment",),
+    url(r"^unpin-comment/", views.unpin_comment, name="pontoon.unpin_comment",),
     url(
         r"^other-locales/",
         views.get_translations_from_other_locales,

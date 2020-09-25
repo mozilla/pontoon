@@ -603,6 +603,40 @@ def add_comment(request):
     return JsonResponse({"status": True})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def pin_comment(request):
+    """ Update a comment as pinned """
+    comment_id = request.POST.get("comment_id", None)
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    comment.pinned = True
+    comment.save()
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def unpin_comment(request):
+    """ Update a comment as unpinned """
+    comment_id = request.POST.get("comment_id", None)
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    comment.pinned = False
+    comment.save()
+
+    return JsonResponse({"status": True})
+
+
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):

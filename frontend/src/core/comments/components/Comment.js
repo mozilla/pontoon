@@ -4,6 +4,7 @@ import * as React from 'react';
 import Linkify from 'react-linkify';
 import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago';
+import { Localized } from '@fluent/react';
 
 import './Comment.css';
 
@@ -14,14 +15,23 @@ import type { TranslationComment } from 'core/api';
 
 type Props = {|
     comment: TranslationComment,
+    canPin?: boolean,
+    togglePinnedStatus?: (boolean, number) => void,
 |};
 
 
 export default function Comment(props: Props) {
-    const { comment } = props;
+    const { comment, canPin, togglePinnedStatus } = props;
 
     if (!comment) {
         return null;
+    }
+
+    const handlePinAndUnpin = () => { 
+        if (!togglePinnedStatus) {
+            return;
+        }
+        togglePinnedStatus(!comment.pinned, comment.id);
     }
 
     return <li className='comment'>
@@ -51,6 +61,9 @@ export default function Comment(props: Props) {
                         }
                         { parse(comment.content) }
                     </Linkify>
+                    { !comment.pinned ? null :
+                        <div className="fa fa-thumbtack comment-pin"></div>
+                    }
                 </div>
             </div>
             <div className='info'>
@@ -59,7 +72,40 @@ export default function Comment(props: Props) {
                     date={ new Date(comment.dateIso) }
                     title={ `${comment.createdAt} UTC` }
                 />
+                { canPin ?
+                    comment.pinned ?
+                        // Unpin Button
+                        <Localized
+                            id="comments-Comment--unpin-button"
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='pin-button'
+                                title='Unpin comment'
+                                onClick={ handlePinAndUnpin }
+                            >
+                                { 'UNPIN' }
+                            </button>
+                        </Localized>
+                    :
+                        // Pin Button
+                        <Localized
+                            id="comments-Comment--pin-button"
+                            attrs={{ title: true }}
+                        >
+                            <button
+                                className='pin-button'
+                                title='Pin comment'
+                                onClick={ handlePinAndUnpin }
+                            >
+                                { 'PIN' }
+                            </button>
+                        </Localized>
+                :
+                    null
+                }
             </div>
+
         </div>
     </li>
 }

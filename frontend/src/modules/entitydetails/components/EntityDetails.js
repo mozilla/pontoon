@@ -282,6 +282,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
+    togglePinnedStatus = (pinned: boolean, commentId: number) => {
+        this.props.dispatch(teamcomments.actions.togglePinnedStatus(pinned, commentId));
+    }
+
     /*
      * This is a copy of EditorBase.updateTranslationStatus().
      * When changing this function, you probably want to change both.
@@ -337,6 +341,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     openLightbox={ this.openLightbox }
                     addTextToEditorTranslation={ this.addTextToEditorTranslation }
                     navigateToPath={ this.navigateToPath }
+                    teamComments={ state.teamComments }
                 />
                 { state.selectedEntity.format === 'ftl' ?
                     <fluenteditor.Editor /> :
@@ -366,6 +371,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     teamComments={ state.teamComments }
                     terms={ state.terms }
                     addComment={ this.addComment }
+                    togglePinnedStatus={ this.togglePinnedStatus }
                     users={ state.users }
                     parameters={ state.parameters }
                     user={ state.user }

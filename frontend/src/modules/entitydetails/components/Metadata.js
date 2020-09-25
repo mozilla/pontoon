@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Linkify from 'react-linkify';
 import { Localized } from '@fluent/react';
+import parse from 'html-react-parser';
 
 import './Metadata.css';
 
@@ -15,6 +16,7 @@ import TermsPopup from './TermsPopup';
 import type { Entity, TermType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
+import type { TeamCommentState } from 'modules/teamcomments';
 
 
 type Props = {|
@@ -23,6 +25,7 @@ type Props = {|
     +locale: Locale,
     +pluralForm: number,
     +terms: TermState,
+    +teamComments: TeamCommentState,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
@@ -142,6 +145,35 @@ export default class Metadata extends React.Component<Props, State> {
         </Localized>;
     }
 
+    renderPinnedComments(teamComments: TeamCommentState): React.Node {
+        if (!teamComments) {
+            return null;
+        }
+
+        const pinnedComments = teamComments.comments.filter(comment => {
+            return comment.pinned === true;
+        });
+
+        return <>
+            { !pinnedComments ? null : pinnedComments.map(pinnedComment => {
+                return <Localized id='entitydetails-Metadata--pinned-comment' attrs={ { title: true } } key={ pinnedComment.id }>
+                    <Property title='Pinned Comment' className='comment'>
+                        <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
+                        {
+                        /* We can safely use parse with pinnedComment.content as it is
+                         * sanitized when coming from the DB. See:
+                         *   - pontoon.base.forms.AddCommentsForm(}
+                         *   - pontoon.base.forms.HtmlField()
+                         */
+                        }
+                            { parse(pinnedComment.content) }
+                        </Linkify>
+                    </Property>
+                </Localized>
+            })}
+        </>;
+    }
+
     renderResourceComment(entity: Entity): React.Node {
         const { seeMore } = this.state;
         const MAX_LENGTH = 85;
@@ -231,7 +263,15 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     render(): React.Node {
-        const { entity, isReadOnlyEditor, locale, openLightbox, pluralForm, terms } = this.props;
+        const { 
+            entity, 
+            isReadOnlyEditor, 
+            locale, 
+            openLightbox, 
+            pluralForm, 
+            terms, 
+            teamComments 
+        } = this.props;
         const { popupTerms } = this.state;
 
         return <div className="metadata">
@@ -258,6 +298,7 @@ export default class Metadata extends React.Component<Props, State> {
             { this.renderComment(entity) }
             { this.renderGroupComment(entity) }
             { this.renderResourceComment(entity) }
+            { this.renderPinnedComments(teamComments) }
             <FluentAttribute entity={ entity } />
             { this.renderContext(entity) }
             { this.renderSources(entity) }
