@@ -282,8 +282,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         ));
     }
 
-    updatePinnedComment = (pinned: boolean, commentId: number) => {
-        this.props.dispatch(teamcomments.actions.savePinnedStatus(pinned, commentId));
+    togglePinnedStatus = (pinned: boolean, commentId: number) => {
+        this.props.dispatch(teamcomments.actions.togglePinnedStatus(pinned, commentId));
     }
 
     /*
@@ -371,7 +371,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                     teamComments={ state.teamComments }
                     terms={ state.terms }
                     addComment={ this.addComment }
-                    updatePinnedComment={ this.updatePinnedComment }
+                    togglePinnedStatus={ this.togglePinnedStatus }
                     users={ state.users }
                     parameters={ state.parameters }
                     user={ state.user }

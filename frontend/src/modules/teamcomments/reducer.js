@@ -19,7 +19,7 @@ export type TeamCommentState = {|
     +comments: Array<TeamComment>,
 |};
 
-function updatePinnedComment(
+function togglePinnedComment(
     state: Object,
     pinned: boolean,
     commentId: number,
@@ -65,7 +65,7 @@ export default function reducer(
         case UPDATE_PINNED:
             return {
                 ...state,
-                comments: updatePinnedComment(
+                comments: togglePinnedComment(
                     state,
                     action.pinned,
                     action.commentId,

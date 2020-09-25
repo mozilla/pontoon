@@ -21,7 +21,7 @@ type Props = {|
     canComment: boolean,
     canPin?: boolean,
     addComment: (string, ?number) => void,
-    updatePinnedComment?: (boolean, number) => void,
+    togglePinnedStatus?: (boolean, number) => void,
 |};
 
 
@@ -35,7 +35,7 @@ export default function CommentsList(props: Props) {
         canPin,
         addComment,
         users,
-        updatePinnedComment,
+        togglePinnedStatus,
     } = props;
 
     const translationId = translation ? translation.pk : null;
@@ -47,7 +47,7 @@ export default function CommentsList(props: Props) {
                     comment={ comment }
                     canPin={ canPin }
                     key={ comment.id }
-                    updatePinnedComment={ updatePinnedComment }
+                    togglePinnedStatus={ togglePinnedStatus }
                 />
             )}
         </ul>

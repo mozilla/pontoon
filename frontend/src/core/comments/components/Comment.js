@@ -16,22 +16,22 @@ import type { TranslationComment } from 'core/api';
 type Props = {|
     comment: TranslationComment,
     canPin?: boolean,
-    updatePinnedComment?: (boolean, number) => void,
+    togglePinnedStatus?: (boolean, number) => void,
 |};
 
 
 export default function Comment(props: Props) {
-    const { comment, canPin, updatePinnedComment } = props;
+    const { comment, canPin, togglePinnedStatus } = props;
 
     if (!comment) {
         return null;
     }
 
-    const handlePinnedComment = () => { 
-        if (!updatePinnedComment) {
+    const handlePinAndUnpin = () => { 
+        if (!togglePinnedStatus) {
             return;
         }
-        updatePinnedComment(!comment.pinned, comment.id);
+        togglePinnedStatus(!comment.pinned, comment.id);
     }
 
     return <li className='comment'>
@@ -82,7 +82,7 @@ export default function Comment(props: Props) {
                             <button
                                 className='pin-button'
                                 title='Unpin comment'
-                                onClick={ handlePinnedComment }
+                                onClick={ handlePinAndUnpin }
                             >
                                 { 'UNPIN' }
                             </button>
@@ -96,7 +96,7 @@ export default function Comment(props: Props) {
                             <button
                                 className='pin-button'
                                 title='Pin comment'
-                                onClick={ handlePinnedComment }
+                                onClick={ handlePinAndUnpin }
                             >
                                 { 'PIN' }
                             </button>

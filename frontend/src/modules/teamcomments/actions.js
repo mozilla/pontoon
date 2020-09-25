@@ -44,7 +44,7 @@ export type UpdatePinnedAction = {|
     +pinned: boolean,
     +commentId: number,
 |};
-export function updatePinned(pinned: boolean, commentId: number):UpdatePinnedAction {
+export function togglePinned(pinned: boolean, commentId: number): UpdatePinnedAction {
     return {
         type: UPDATE_PINNED,
         pinned,
@@ -73,7 +73,7 @@ export function get(entity: number, locale: string): Function {
     }
 }
 
-export function savePinnedStatus(pinned: boolean, commentId: number): Function {
+export function togglePinnedStatus(pinned: boolean, commentId: number): Function {
     return async dispatch => {
         if (pinned) {
             await api.comment.pinComment(commentId);
@@ -82,7 +82,7 @@ export function savePinnedStatus(pinned: boolean, commentId: number): Function {
             await api.comment.unpinComment(commentId);
         }
 
-        dispatch(updatePinned(pinned, commentId))
+        dispatch(togglePinned(pinned, commentId))
     }
 }
 
@@ -92,5 +92,5 @@ export default {
     get,
     receive,
     request,
-    savePinnedStatus,
+    togglePinnedStatus,
 };
