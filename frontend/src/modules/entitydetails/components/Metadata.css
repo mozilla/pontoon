@@ -30,7 +30,7 @@
     text-decoration: none;
 }
 
-.metadata .comment .content {
+.metadata .comment .content p {
     display: inline-block;
 }
 
