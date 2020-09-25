@@ -3726,6 +3726,7 @@ class Comment(models.Model):
         Entity, models.CASCADE, related_name="comments", blank=True, null=True
     )
     content = models.TextField()
+    pinned = models.BooleanField(default=False)
 
     def __str__(self):
         return self.content
@@ -3738,6 +3739,7 @@ class Comment(models.Model):
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
+            "pinned": self.pinned,
             "id": self.id,
         }
 

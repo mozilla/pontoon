@@ -17,6 +17,7 @@ type Props = {|
     user: UserState,
     users: UserState,
     addComment: (string, ?number) => void,
+    togglePinnedStatus: (boolean, number) => void,
 |};
 
 
@@ -26,7 +27,8 @@ export default function TeamComments(props: Props) {
         user,
         parameters,
         users,
-        addComment, 
+        addComment,
+        togglePinnedStatus,
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -36,6 +38,7 @@ export default function TeamComments(props: Props) {
     const comments = teamComments.comments;
 
     let canComment = user.isAuthenticated;
+    const canPin = user.isAdmin;
 
     return <section className="team-comments">
         { !comments.length && !canComment ?
@@ -49,7 +52,9 @@ export default function TeamComments(props: Props) {
                 user={ user }
                 users={ users }
                 canComment={ canComment }
+                canPin={ canPin }
                 addComment={ addComment }
+                togglePinnedStatus={ togglePinnedStatus }
             />
         }
     </section>

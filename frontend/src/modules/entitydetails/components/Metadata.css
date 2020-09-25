@@ -30,6 +30,10 @@
     text-decoration: none;
 }
 
+.metadata .comment .content p {
+    display: inline-block;
+}
+
 .metadata p .divider {
     font-style: normal;
     font-weight: 100;

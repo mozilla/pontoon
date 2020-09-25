@@ -36,6 +36,7 @@ type Props = {|
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
+    togglePinnedStatus: (boolean, number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
 |};
@@ -63,6 +64,7 @@ export default class Helpers extends React.Component<Props> {
             updateMachinerySources,
             searchMachinery,
             addComment,
+            togglePinnedStatus,
             addTextToEditorTranslation,
             navigateToPath,
         } = this.props;
@@ -106,6 +108,7 @@ export default class Helpers extends React.Component<Props> {
                             user={ user }
                             addComment={ addComment }
                             users={ users }
+                            togglePinnedStatus={ togglePinnedStatus }
                         />
                     </TabPanel>
                 </Tabs>
