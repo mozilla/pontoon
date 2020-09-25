@@ -355,7 +355,7 @@ Integration with fluent
 =======================
 
 Pontoon is able to synchronize translations produced by libraries provided by
-`Project Fluent <http://projectfluent.io/>`_ and provides an advanced editor for translators.
+`Project Fluent <https://projectfluent.org/>`_ and provides an advanced editor for translators.
 
 Because of our very close integration, we'll need to compile the fresh versions of
 javascript/python libraries in order to provide new features.
