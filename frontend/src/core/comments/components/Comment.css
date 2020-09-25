@@ -60,6 +60,10 @@
     padding: 0;
 }
 
+.comments-list .comment .info .pin-button:hover {
+    color: #7BC876;
+}
+
 .comments-list .comment .comment-pin {
     color: #7BC876;;
     position: absolute;
