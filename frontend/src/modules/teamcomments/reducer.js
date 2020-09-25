@@ -1,15 +1,15 @@
 /* @flow */
 
-import { RECEIVE, REQUEST, UPDATE_PINNED } from './actions';
+import { RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
 
 import type { TeamComment } from 'core/api';
-import type { ReceiveAction, RequestAction, UpdatePinnedAction } from './actions';
+import type { ReceiveAction, RequestAction, TogglePinnedAction } from './actions';
 
 
 type Action =
     | ReceiveAction
     | RequestAction
-    | UpdatePinnedAction
+    | TogglePinnedAction
 ;
 
 
@@ -62,7 +62,7 @@ export default function reducer(
                 fetching: false,
                 comments: action.comments,
             };
-        case UPDATE_PINNED:
+        case TOGGLE_PINNED:
             return {
                 ...state,
                 comments: togglePinnedComment(

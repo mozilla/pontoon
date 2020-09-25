@@ -9,7 +9,7 @@ import type { TeamComment } from 'core/api';
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
 export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';
-export const UPDATE_PINNED: 'comments/UPDATE_PINNED' = 'comments/UPDATE_PINNED';
+export const TOGGLE_PINNED: 'comments/TOGGLE_PINNED' = 'comments/TOGGLE_PINNED';
 
 
 export type ReceiveAction = {|
@@ -39,14 +39,14 @@ export function request(
     };
 }
 
-export type UpdatePinnedAction = {|
-    +type: typeof UPDATE_PINNED,
+export type TogglePinnedAction = {|
+    +type: typeof TOGGLE_PINNED,
     +pinned: boolean,
     +commentId: number,
 |};
-export function togglePinned(pinned: boolean, commentId: number): UpdatePinnedAction {
+export function togglePinned(pinned: boolean, commentId: number): TogglePinnedAction {
     return {
-        type: UPDATE_PINNED,
+        type: TOGGLE_PINNED,
         pinned,
         commentId,
     }
