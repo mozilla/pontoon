@@ -4,18 +4,13 @@ import { CLOSE, OPEN } from './actions';
 
 import type { CloseAction, OpenAction } from './actions';
 
-
-type Action =
-    | CloseAction
-    | OpenAction
-;
+type Action = CloseAction | OpenAction;
 
 // Read-only state (marked by '+').
 export type LightboxState = {|
     +image: string,
     +isOpen: boolean,
 |};
-
 
 const initial: LightboxState = {
     image: '',

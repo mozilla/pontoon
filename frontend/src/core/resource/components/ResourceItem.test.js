@@ -4,28 +4,20 @@ import { shallow } from 'enzyme';
 import ResourceItem from './ResourceItem';
 import ResourcePercent from './ResourcePercent';
 
-
-function createShallowResourceItem({
-    path = 'path',
-} = {}) {
+function createShallowResourceItem({ path = 'path' } = {}) {
     return shallow(
         <ResourceItem
-            parameters={
-                {
-                    locale: 'locale',
-                    project: 'project',
-                    resource: 'resource',
-                }
-            }
-            resource={
-                {
-                    path: path,
-                }
-            }
-        />
+            parameters={{
+                locale: 'locale',
+                project: 'project',
+                resource: 'resource',
+            }}
+            resource={{
+                path: path,
+            }}
+        />,
     );
 }
-
 
 describe('<ResourceItem>', () => {
     it('renders correctly', () => {

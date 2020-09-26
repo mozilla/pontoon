@@ -8,7 +8,6 @@ export { default as PluralSelector } from './components/PluralSelector';
 
 export type { PluralState } from './reducer';
 
-
 // List of available CLDR plural categories.
 export const CLDR_PLURALS: Array<string> = [
     'zero',
@@ -18,7 +17,6 @@ export const CLDR_PLURALS: Array<string> = [
     'many',
     'other',
 ];
-
 
 // Name of this module.
 // Used as the key to store this module's reducer.

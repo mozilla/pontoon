@@ -4,38 +4,37 @@ import sinon from 'sinon';
 
 import { EditorBase } from './Editor';
 
-
 const ENTITIES = [
     {
         pk: 1,
-        translation: [{
-            string: 'quelque chose',
-        }],
+        translation: [
+            {
+                string: 'quelque chose',
+            },
+        ],
     },
     {
         pk: 2,
-        translation: [
-            { string: 'test' },
-        ],
+        translation: [{ string: 'test' }],
     },
 ];
-
 
 function createEditorBase() {
     const setInitialTranslationMock = sinon.stub();
     const updateTranslationMock = sinon.stub();
-    const wrapper = shallow(<EditorBase
-        editor={ { translation: '' } }
-        pluralForm={ -1 }
-        entity={ ENTITIES[0] }
-        activeTranslationString={ ENTITIES[0].translation[0].string }
-        setInitialTranslation={ setInitialTranslationMock }
-        updateTranslation={ updateTranslationMock }
-    />);
+    const wrapper = shallow(
+        <EditorBase
+            editor={{ translation: '' }}
+            pluralForm={-1}
+            entity={ENTITIES[0]}
+            activeTranslationString={ENTITIES[0].translation[0].string}
+            setInitialTranslation={setInitialTranslationMock}
+            updateTranslation={updateTranslationMock}
+        />,
+    );
 
     return [wrapper, setInitialTranslationMock, updateTranslationMock];
 }
-
 
 describe('<Editor>', () => {
     it('updates translation on mount', () => {
@@ -44,7 +43,7 @@ describe('<Editor>', () => {
     });
 
     it('sets initial translation on mount', () => {
-        const [, setInitialTranslationMock, ] = createEditorBase();
+        const [, setInitialTranslationMock] = createEditorBase();
         expect(setInitialTranslationMock.calledOnce).toBeTruthy();
     });
 
@@ -60,7 +59,7 @@ describe('<Editor>', () => {
     });
 
     it('sets initial translation when entity or plural change', () => {
-        const [wrapper, setInitialTranslationMock, ] = createEditorBase();
+        const [wrapper, setInitialTranslationMock] = createEditorBase();
         expect(setInitialTranslationMock.calledOnce).toBeTruthy();
 
         wrapper.setProps({ entity: ENTITIES[1] });
@@ -79,7 +78,7 @@ describe('<Editor>', () => {
     });
 
     it('does not set initial translation when translation changes', () => {
-        const [wrapper, setInitialTranslationMock, ] = createEditorBase();
+        const [wrapper, setInitialTranslationMock] = createEditorBase();
         expect(setInitialTranslationMock.calledOnce).toBeTruthy();
 
         wrapper.setProps({ editor: { translation: 'hello' } });

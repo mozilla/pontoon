@@ -4,11 +4,7 @@ import { UPDATE } from './actions';
 
 import type { UpdateAction, Stats } from './actions';
 
-
-type Action =
-    | UpdateAction
-;
-
+type Action = UpdateAction;
 
 const initial: Stats = {
     approved: 0,
@@ -20,10 +16,7 @@ const initial: Stats = {
     total: 0,
 };
 
-export default function reducer(
-    state: Stats = initial,
-    action: Action,
-): Stats {
+export default function reducer(state: Stats = initial, action: Action): Stats {
     switch (action.type) {
         case UPDATE:
             return {

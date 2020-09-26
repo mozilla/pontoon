@@ -1,6 +1,6 @@
 .failed-checks {
-    background: #272A2F;
-    border-top: 1px solid #5E6475;
+    background: #272a2f;
+    border-top: 1px solid #5e6475;
     bottom: 0;
     box-sizing: border-box;
     left: 0;
@@ -16,7 +16,7 @@
 .failed-checks .close {
     background: none;
     border: none;
-    color: #AAAAAA;
+    color: #aaaaaa;
     float: right;
     font-size: 24px;
     font-weight: 100;
@@ -26,11 +26,11 @@
 }
 
 .failed-checks .close:hover {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .failed-checks .title {
-    color: #F36;
+    color: #f36;
     font-size: 14px;
     font-weight: 300;
     text-transform: uppercase;
@@ -55,23 +55,23 @@
 }
 
 .failed-checks .warning {
-    color: #AAAAAA;
+    color: #aaaaaa;
 }
 
 .failed-checks .error:before {
-    color: #F36;
+    color: #f36;
 }
 
 .failed-checks .warning:before {
-    color: #4D5967;
+    color: #4d5967;
 }
 
 .failed-checks .anyway {
-    background: #7BC876;
+    background: #7bc876;
     border: none;
     border-radius: 3px;
     bottom: 10px;
-    color: #272A2F;
+    color: #272a2f;
     font-weight: 600;
     margin-left: 10px;
     padding: 10px;
@@ -81,9 +81,9 @@
 }
 
 .failed-checks .anyway.suggest {
-    background: #4FC4F6;
+    background: #4fc4f6;
 }
 
 .failed-checks .anyway:hover {
-    color: #EBEBEB;
+    color: #ebebeb;
 }

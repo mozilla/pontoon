@@ -6,11 +6,11 @@ import Term from './Term';
 
 describe('<Term>', () => {
     const TERM = {
-        'text': 'text',
-        'partOfSpeech': 'partOfSpeech',
-        'definition': 'definition',
-        'usage': 'usage',
-        'translation': 'translation',
+        text: 'text',
+        partOfSpeech: 'partOfSpeech',
+        definition: 'definition',
+        usage: 'usage',
+        translation: 'translation',
     };
 
     let getSelectionBackup;
@@ -19,9 +19,9 @@ describe('<Term>', () => {
         getSelectionBackup = window.getSelection;
         window.getSelection = () => {
             return {
-                toString: () => {}
+                toString: () => {},
             };
-        }
+        };
     });
 
     afterAll(() => {
@@ -29,9 +29,7 @@ describe('<Term>', () => {
     });
 
     it('renders term correctly', () => {
-        const wrapper = shallow(<Term
-            term={ TERM }
-        />);
+        const wrapper = shallow(<Term term={TERM} />);
 
         expect(wrapper.find('li')).toHaveLength(1);
         expect(wrapper.find('.text').text()).toEqual('text');
@@ -44,10 +42,12 @@ describe('<Term>', () => {
     it('calls the addTextToEditorTranslation function on click', () => {
         const addTextToEditorTranslationFn = sinon.spy();
 
-        const wrapper = shallow(<Term
-            term={ TERM }
-            addTextToEditorTranslation={ addTextToEditorTranslationFn }
-        />);
+        const wrapper = shallow(
+            <Term
+                term={TERM}
+                addTextToEditorTranslation={addTextToEditorTranslationFn}
+            />,
+        );
 
         wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(true);
@@ -60,10 +60,12 @@ describe('<Term>', () => {
         };
         const addTextToEditorTranslationFn = sinon.spy();
 
-        const wrapper = shallow(<Term
-            term={ term }
-            addTextToEditorTranslation={ addTextToEditorTranslationFn }
-        />);
+        const wrapper = shallow(
+            <Term
+                term={term}
+                addTextToEditorTranslation={addTextToEditorTranslationFn}
+            />,
+        );
 
         wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(false);
@@ -72,11 +74,13 @@ describe('<Term>', () => {
     it('does not call the addTextToEditorTranslation function if read-only editor', () => {
         const addTextToEditorTranslationFn = sinon.spy();
 
-        const wrapper = shallow(<Term
-            isReadOnlyEditor={ true }
-            term={ TERM }
-            addTextToEditorTranslation={ addTextToEditorTranslationFn }
-        />);
+        const wrapper = shallow(
+            <Term
+                isReadOnlyEditor={true}
+                term={TERM}
+                addTextToEditorTranslation={addTextToEditorTranslationFn}
+            />,
+        );
 
         wrapper.find('li').simulate('click');
         expect(addTextToEditorTranslationFn.called).toEqual(false);

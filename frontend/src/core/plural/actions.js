@@ -4,10 +4,8 @@ import { actions as navActions } from 'core/navigation';
 
 import type { Locale } from 'core/locale';
 
-
 export const RESET: 'plural/RESET' = 'plural/RESET';
 export const SELECT: 'plural/SELECT' = 'plural/SELECT';
-
 
 /**
  * Move to next Entity or pluralForm.
@@ -22,12 +20,10 @@ export function moveToNextTranslation(
 ): Function {
     if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
         dispatch(select(pluralForm + 1));
-    }
-    else if (nextEntity !== entity) {
+    } else if (nextEntity !== entity) {
         dispatch(navActions.updateEntity(router, nextEntity.toString()));
     }
 }
-
 
 export type ResetAction = {|
     type: typeof RESET,
@@ -37,7 +33,6 @@ export function reset() {
         type: RESET,
     };
 }
-
 
 export type SelectAction = {|
     type: typeof SELECT,
@@ -49,7 +44,6 @@ export function select(pluralForm: number) {
         pluralForm,
     };
 }
-
 
 export default {
     moveToNextTranslation,

@@ -4,31 +4,23 @@ import { shallow } from 'enzyme';
 import ProjectItem from './ProjectItem';
 import ProjectPercent from './ProjectPercent';
 
-
-function createShallowProjectItem({
-    slug = 'slug',
-} = {}) {
+function createShallowProjectItem({ slug = 'slug' } = {}) {
     return shallow(
         <ProjectItem
-            parameters={
-                {
-                    locale: 'locale',
-                    project: 'project',
-                    resource: 'resource',
-                }
-            }
-            localization={
-                {
-                    project: {
-                        slug: slug,
-                        name: 'Project',
-                    },
-                }
-            }
-        />
+            parameters={{
+                locale: 'locale',
+                project: 'project',
+                resource: 'resource',
+            }}
+            localization={{
+                project: {
+                    slug: slug,
+                    name: 'Project',
+                },
+            }}
+        />,
     );
 }
-
 
 describe('<ProjectItem>', () => {
     it('renders correctly', () => {
@@ -37,7 +29,9 @@ describe('<ProjectItem>', () => {
         expect(wrapper.find('a')).toHaveLength(1);
         expect(wrapper.find('span')).toHaveLength(1);
         expect(wrapper.find(ProjectPercent)).toHaveLength(1);
-        expect(wrapper.find('a').prop('href')).toEqual('/locale/slug/all-resources/');
+        expect(wrapper.find('a').prop('href')).toEqual(
+            '/locale/slug/all-resources/',
+        );
     });
 
     it('sets the className correctly', () => {

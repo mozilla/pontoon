@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks unusually placed spaces:
  * - at the end of a line
@@ -19,14 +18,16 @@ import { Localized } from '@fluent/react';
 const unusualSpace = {
     rule: /( +$|[\r\n\t]( +)| {2,})/,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-unusualSpace'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Unusual space'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-unusualSpace'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Unusual space'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

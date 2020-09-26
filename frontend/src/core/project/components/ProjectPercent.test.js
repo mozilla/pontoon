@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import ProjectPercent from './ProjectPercent';
 
-
 describe('<ProjectPercent>', () => {
     const LOCALIZATION = {
         approvedStrings: 2,
@@ -12,7 +11,7 @@ describe('<ProjectPercent>', () => {
     };
 
     it('renders correctly', () => {
-        const wrapper = shallow(<ProjectPercent localization={ LOCALIZATION } />);
+        const wrapper = shallow(<ProjectPercent localization={LOCALIZATION} />);
         expect(wrapper.find('.percent').text()).toEqual('50%');
     });
 });

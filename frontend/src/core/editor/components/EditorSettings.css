@@ -12,7 +12,7 @@
 }
 
 .editor-settings .selector:hover {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .editor-settings .menu {
@@ -38,7 +38,7 @@
 }
 
 .editor-settings .menu li:hover {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .editor-settings .menu li:hover,
@@ -59,11 +59,11 @@
 }
 
 .editor-settings .menu .check-box .fa:before {
-    color: #F36;
-    content: "";
+    color: #f36;
+    content: '';
 }
 
 .editor-settings .menu .check-box.enabled .fa:before {
-    color: #7BC876;
-    content: "";
+    color: #7bc876;
+    content: '';
 }

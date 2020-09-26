@@ -1,7 +1,6 @@
 import getSyntaxType from './getSyntaxType';
 import parser from './parser';
 
-
 describe('getSyntaxType', () => {
     it('returns "simple" for a string with simple value', () => {
         const input = 'my-entry = Hello!';
@@ -22,7 +21,8 @@ my-entry =
     });
 
     it('returns "simple" for a string with a reference to a built-in function', () => {
-        const input = 'my-entry = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }';
+        const input =
+            'my-entry = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }';
         const message = parser.parseEntry(input);
 
         expect(getSyntaxType(message)).toEqual('simple');

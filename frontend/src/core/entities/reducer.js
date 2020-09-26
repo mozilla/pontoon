@@ -3,16 +3,14 @@
 import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
 
 import type { Entities, EntityTranslation } from 'core/api';
-import type { ReceiveAction, RequestAction, ResetAction, UpdateAction } from './actions';
+import type {
+    ReceiveAction,
+    RequestAction,
+    ResetAction,
+    UpdateAction,
+} from './actions';
 
-
-export type Action =
-    | ReceiveAction
-    | RequestAction
-    | ResetAction
-    | UpdateAction
-;
-
+export type Action = ReceiveAction | RequestAction | ResetAction | UpdateAction;
 
 // Read-only state (marked by '+').
 export type EntitiesState = {
@@ -22,19 +20,18 @@ export type EntitiesState = {
     +hasMore: boolean,
 };
 
-
 function updateEntityTranslation(
     state: Object,
     entity: number,
     pluralForm: number,
-    translation: EntityTranslation
+    translation: EntityTranslation,
 ): Entities {
-    return state.entities.map(item => {
+    return state.entities.map((item) => {
         if (item.pk !== entity) {
             return item;
         }
 
-        const translations = [ ...item.translation ];
+        const translations = [...item.translation];
 
         // If the plural form is -1, then there's no plural and we should
         // simply update the first translation.
@@ -47,7 +44,6 @@ function updateEntityTranslation(
         };
     });
 }
-
 
 const initial: EntitiesState = {
     entities: [],
@@ -89,7 +85,7 @@ export default function reducer(
                     state,
                     action.entity,
                     action.pluralForm,
-                    action.translation
+                    action.translation,
                 ),
             };
         default:

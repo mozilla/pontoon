@@ -18,7 +18,6 @@ import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
 
-
 type Props = {|
     +entity: Entity,
     +isReadOnlyEditor: boolean,
@@ -85,12 +84,14 @@ export default class Metadata extends React.Component<Props, State> {
             if (e.target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
                     // $FLOW_IGNORE
-                    e.target.dataset['match']
+                    e.target.dataset['match'],
                 );
             }
             // $FLOW_IGNORE
             else if (e.target.childNodes.length) {
-                this.props.addTextToEditorTranslation(e.target.childNodes[0].data);
+                this.props.addTextToEditorTranslation(
+                    e.target.childNodes[0].data,
+                );
             }
         }
 
@@ -99,10 +100,12 @@ export default class Metadata extends React.Component<Props, State> {
         // $FLOW_IGNORE
         const markedTerm = e.target.dataset['term'];
         if (e.target && markedTerm) {
-            const popupTerms = this.props.terms.terms.filter(t => t.text === markedTerm);
+            const popupTerms = this.props.terms.terms.filter(
+                (t) => t.text === markedTerm,
+            );
             this.setState({ popupTerms: popupTerms });
         }
-    }
+    };
 
     hidePopupTerms = () => {
         this.setState({ popupTerms: [] });
@@ -122,13 +125,23 @@ export default class Metadata extends React.Component<Props, State> {
             comment = parts.join('\n');
         }
 
-        return <Localized id='entitydetails-Metadata--comment' attrs={ { title: true } }>
-            <Property title='Comment' className='comment'>
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { comment }
-                </Linkify>
-            </Property>
-        </Localized>;
+        return (
+            <Localized
+                id='entitydetails-Metadata--comment'
+                attrs={{ title: true }}
+            >
+                <Property title='Comment' className='comment'>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {comment}
+                    </Linkify>
+                </Property>
+            </Localized>
+        );
     }
 
     renderGroupComment(entity: Entity): React.Node {
@@ -136,13 +149,23 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        return <Localized id='entitydetails-Metadata--group-comment' attrs={ { title: true } }>
-            <Property title='Group Comment' className='comment'>
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { entity.group_comment }
-                </Linkify>
-            </Property>
-        </Localized>;
+        return (
+            <Localized
+                id='entitydetails-Metadata--group-comment'
+                attrs={{ title: true }}
+            >
+                <Property title='Group Comment' className='comment'>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {entity.group_comment}
+                    </Linkify>
+                </Property>
+            </Localized>
+        );
     }
 
     renderPinnedComments(teamComments: TeamCommentState): React.Node {
@@ -150,28 +173,44 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        const pinnedComments = teamComments.comments.filter(comment => {
+        const pinnedComments = teamComments.comments.filter((comment) => {
             return comment.pinned === true;
         });
 
-        return <>
-            { !pinnedComments ? null : pinnedComments.map(pinnedComment => {
-                return <Localized id='entitydetails-Metadata--pinned-comment' attrs={ { title: true } } key={ pinnedComment.id }>
-                    <Property title='Pinned Comment' className='comment'>
-                        <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                        {
-                        /* We can safely use parse with pinnedComment.content as it is
-                         * sanitized when coming from the DB. See:
-                         *   - pontoon.base.forms.AddCommentsForm(}
-                         *   - pontoon.base.forms.HtmlField()
-                         */
-                        }
-                            { parse(pinnedComment.content) }
-                        </Linkify>
-                    </Property>
-                </Localized>
-            })}
-        </>;
+        return (
+            <>
+                {!pinnedComments
+                    ? null
+                    : pinnedComments.map((pinnedComment) => {
+                          return (
+                              <Localized
+                                  id='entitydetails-Metadata--pinned-comment'
+                                  attrs={{ title: true }}
+                                  key={pinnedComment.id}
+                              >
+                                  <Property
+                                      title='Pinned Comment'
+                                      className='comment'
+                                  >
+                                      <Linkify
+                                          properties={{
+                                              target: '_blank',
+                                              rel: 'noopener noreferrer',
+                                          }}
+                                      >
+                                          {/* We can safely use parse with pinnedComment.content as it is
+                                           * sanitized when coming from the DB. See:
+                                           *   - pontoon.base.forms.AddCommentsForm(}
+                                           *   - pontoon.base.forms.HtmlField()
+                                           */}
+                                          {parse(pinnedComment.content)}
+                                      </Linkify>
+                                  </Property>
+                              </Localized>
+                          );
+                      })}
+            </>
+        );
     }
 
     renderResourceComment(entity: Entity): React.Node {
@@ -182,22 +221,34 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        let comment = entity.resource_comment
+        let comment = entity.resource_comment;
 
-        return <Localized id='entitydetails-Metadata--resource-comment' attrs={ { title: true } }>
-            <Property title='Resource Comment' className='comment'>
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { comment.length < MAX_LENGTH || seeMore ? comment : comment.slice(0, MAX_LENGTH) + '\u2026' }
-                </Linkify>
-                { comment.length < MAX_LENGTH || seeMore ? null :
-                    <Localized id='entitydetails-Metadata--see-more'>
-                        <button onClick={ this.handleClickOnSeeMore }>
-                            { 'See More' }
-                        </button>
-                    </Localized>
-                }
-            </Property>
-        </Localized>;
+        return (
+            <Localized
+                id='entitydetails-Metadata--resource-comment'
+                attrs={{ title: true }}
+            >
+                <Property title='Resource Comment' className='comment'>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {comment.length < MAX_LENGTH || seeMore
+                            ? comment
+                            : comment.slice(0, MAX_LENGTH) + '\u2026'}
+                    </Linkify>
+                    {comment.length < MAX_LENGTH || seeMore ? null : (
+                        <Localized id='entitydetails-Metadata--see-more'>
+                            <button onClick={this.handleClickOnSeeMore}>
+                                {'See More'}
+                            </button>
+                        </Localized>
+                    )}
+                </Property>
+            </Localized>
+        );
     }
 
     renderContext(entity: Entity): React.Node {
@@ -205,11 +256,16 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        return <Localized id='entitydetails-Metadata--context' attrs={ { title: true } }>
-            <Property title='Context' className='context'>
-                { entity.key }
-            </Property>
-        </Localized>;
+        return (
+            <Localized
+                id='entitydetails-Metadata--context'
+                attrs={{ title: true }}
+            >
+                <Property title='Context' className='context'>
+                    {entity.key}
+                </Property>
+            </Localized>
+        );
     }
 
     renderSourceArray(source: Array<Array<string>>): React.Node {
@@ -217,13 +273,22 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        return <ul>{ source.map((value, key) => {
-            return <li key={ key }><span className="title">#:</span>{ value.join(':') }</li>;
-        }) }</ul>;
+        return (
+            <ul>
+                {source.map((value, key) => {
+                    return (
+                        <li key={key}>
+                            <span className='title'>#:</span>
+                            {value.join(':')}
+                        </li>
+                    );
+                })}
+            </ul>
+        );
     }
 
     renderSourceObject(source: Object): React.Node {
-        const examples = Object.keys(source).map(value => {
+        const examples = Object.keys(source).map((value) => {
             if (!source[value].example) {
                 return null;
             }
@@ -234,13 +299,23 @@ export default class Metadata extends React.Component<Props, State> {
             return null;
         }
 
-        return <Localized id='entitydetails-Metadata--placeholder' attrs={ { title: true } }>
-            <Property title='Placeholder Examples' className='placeholder'>
-                <Linkify properties={ { target: '_blank', rel: 'noopener noreferrer' } }>
-                    { examples.join(', ') }
-                </Linkify>
-            </Property>
-        </Localized>;
+        return (
+            <Localized
+                id='entitydetails-Metadata--placeholder'
+                attrs={{ title: true }}
+            >
+                <Property title='Placeholder Examples' className='placeholder'>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {examples.join(', ')}
+                    </Linkify>
+                </Property>
+            </Localized>
+        );
     }
 
     renderSources(entity: Entity): React.Node {
@@ -260,63 +335,70 @@ export default class Metadata extends React.Component<Props, State> {
 
         const path = event.currentTarget.pathname;
         this.props.navigateToPath(path);
-    }
+    };
 
     render(): React.Node {
-        const { 
-            entity, 
-            isReadOnlyEditor, 
-            locale, 
-            openLightbox, 
-            pluralForm, 
-            terms, 
-            teamComments 
+        const {
+            entity,
+            isReadOnlyEditor,
+            locale,
+            openLightbox,
+            pluralForm,
+            terms,
+            teamComments,
         } = this.props;
         const { popupTerms } = this.state;
 
-        return <div className="metadata">
-            <Screenshots
-                source={ entity.comment }
-                locale={ locale.code }
-                openLightbox={ openLightbox }
-            />
-            <OriginalStringProxy
-                entity={ entity }
-                locale={ locale }
-                pluralForm={ pluralForm }
-                terms={ terms }
-                handleClickOnPlaceable={ this.handleClickOnPlaceable }
-            />
-            <TermsPopup
-                isReadOnlyEditor={ isReadOnlyEditor }
-                locale={ locale.code }
-                terms={ popupTerms }
-                addTextToEditorTranslation={ this.props.addTextToEditorTranslation }
-                hide={ this.hidePopupTerms }
-                navigateToPath={ this.props.navigateToPath }
-            />
-            { this.renderComment(entity) }
-            { this.renderGroupComment(entity) }
-            { this.renderResourceComment(entity) }
-            { this.renderPinnedComments(teamComments) }
-            <FluentAttribute entity={ entity } />
-            { this.renderContext(entity) }
-            { this.renderSources(entity) }
-            <Localized id='entitydetails-Metadata--resource' attrs={ { title: true } }>
-                <Property title='Resource' className='resource'>
-                    <a href={ `/${locale.code}/${entity.project.slug}/` }>
-                        { entity.project.name }
-                    </a>
-                    <span className='divider'>&bull;</span>
-                    <a
-                        href={ `/${locale.code}/${entity.project.slug}/${entity.path}/` }
-                        onClick={ this.navigateToPath }
-                        className='resource-path'
-                    >
-                        { entity.path }
-                    </a>
-                </Property>
-            </Localized>
-        </div>;
+        return (
+            <div className='metadata'>
+                <Screenshots
+                    source={entity.comment}
+                    locale={locale.code}
+                    openLightbox={openLightbox}
+                />
+                <OriginalStringProxy
+                    entity={entity}
+                    locale={locale}
+                    pluralForm={pluralForm}
+                    terms={terms}
+                    handleClickOnPlaceable={this.handleClickOnPlaceable}
+                />
+                <TermsPopup
+                    isReadOnlyEditor={isReadOnlyEditor}
+                    locale={locale.code}
+                    terms={popupTerms}
+                    addTextToEditorTranslation={
+                        this.props.addTextToEditorTranslation
+                    }
+                    hide={this.hidePopupTerms}
+                    navigateToPath={this.props.navigateToPath}
+                />
+                {this.renderComment(entity)}
+                {this.renderGroupComment(entity)}
+                {this.renderResourceComment(entity)}
+                {this.renderPinnedComments(teamComments)}
+                <FluentAttribute entity={entity} />
+                {this.renderContext(entity)}
+                {this.renderSources(entity)}
+                <Localized
+                    id='entitydetails-Metadata--resource'
+                    attrs={{ title: true }}
+                >
+                    <Property title='Resource' className='resource'>
+                        <a href={`/${locale.code}/${entity.project.slug}/`}>
+                            {entity.project.name}
+                        </a>
+                        <span className='divider'>&bull;</span>
+                        <a
+                            href={`/${locale.code}/${entity.project.slug}/${entity.path}/`}
+                            onClick={this.navigateToPath}
+                            className='resource-path'
+                        >
+                            {entity.path}
+                        </a>
+                    </Property>
+                </Localized>
+            </div>
+        );
     }
 }

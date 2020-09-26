@@ -15,9 +15,9 @@
 
 .fluent-rich-string tr > td > label {
     background: transparent;
-    border: 1px solid #5E6475;
+    border: 1px solid #5e6475;
     box-sizing: border-box;
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     font-weight: normal;
     margin: 2px 5px 2px 0;
@@ -25,7 +25,7 @@
 }
 
 .fluent-rich-string tr > td > label .divider {
-    color: #7BC876;
+    color: #7bc876;
     padding: 0 3px;
 }
 

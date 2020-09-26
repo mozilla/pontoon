@@ -1,7 +1,6 @@
 import reducer from './reducer';
 import { RECEIVE, REQUEST } from './actions';
 
-
 describe('reducer', () => {
     it('returns the initial state', () => {
         const res = reducer(undefined, {});
@@ -19,7 +18,7 @@ describe('reducer', () => {
             transvision: false,
             localizations: [],
             fetching: false,
-        }
+        };
         expect(res).toEqual(expected);
     });
 

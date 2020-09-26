@@ -1,6 +1,5 @@
 import { getNavigationParams } from './selectors';
 
-
 describe('selectors', () => {
     describe('getNavigationParams', () => {
         it('correctly parses the pathname', () => {

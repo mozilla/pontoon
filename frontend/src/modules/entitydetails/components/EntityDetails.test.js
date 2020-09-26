@@ -10,32 +10,35 @@ import * as history from 'modules/history';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 
-
 const ENTITIES = [
     {
         pk: 42,
         original: 'le test',
-        translation: [{
-            string: 'test',
-            errors: [],
-            warnings: [],
-        }],
+        translation: [
+            {
+                string: 'test',
+                errors: [],
+                warnings: [],
+            },
+        ],
     },
     {
         pk: 1,
         original: 'something',
-        translation: [{
-            string: 'quelque chose',
-            errors: [],
-            warnings: [],
-        }],
+        translation: [
+            {
+                string: 'quelque chose',
+                errors: [],
+                warnings: [],
+            },
+        ],
     },
 ];
 const TRANSLATION = 'test';
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
-    translation: [{string: TRANSLATION}],
+    translation: [{ string: TRANSLATION }],
 };
 const NAVIGATION = {
     entity: 42,
@@ -55,28 +58,28 @@ const USER = {
         forceSuggestions: true,
     },
     username: 'Franck',
-}
-
+};
 
 function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
-    return shallow(<EntityDetailsBase
-        activeTranslationString={ TRANSLATION }
-        history={ HISTORY }
-        otherlocales={ LOCALES }
-        navigation={ NAVIGATION }
-        selectedEntity={ selectedEntity }
-        parameters={ PARAMETERS }
-        locale={ { code: 'kg' } }
-        dispatch={ () => {} }
-        user={ { settings: {} } }
-    />);
+    return shallow(
+        <EntityDetailsBase
+            activeTranslationString={TRANSLATION}
+            history={HISTORY}
+            otherlocales={LOCALES}
+            navigation={NAVIGATION}
+            selectedEntity={selectedEntity}
+            parameters={PARAMETERS}
+            locale={{ code: 'kg' }}
+            dispatch={() => {}}
+            user={{ settings: {} }}
+        />,
+    );
 }
-
 
 function createEntityDetailsWithStore() {
     const initialState = {
         entities: {
-            entities: ENTITIES
+            entities: ENTITIES,
         },
         user: USER,
         router: {
@@ -91,17 +94,20 @@ function createEntityDetailsWithStore() {
     };
     const store = createReduxStore(initialState);
 
-    return [shallowUntilTarget(
-        <EntityDetails store={ store } />,
-        EntityDetailsBase
-    ), store];
+    return [
+        shallowUntilTarget(<EntityDetails store={store} />, EntityDetailsBase),
+        store,
+    ];
 }
-
 
 describe('<EntityDetailsBase>', () => {
     beforeAll(() => {
-        sinon.stub(editor.actions, 'updateFailedChecks').returns({ type: 'whatever'});
-        sinon.stub(editor.actions, 'resetFailedChecks').returns({ type: 'whatever'});
+        sinon
+            .stub(editor.actions, 'updateFailedChecks')
+            .returns({ type: 'whatever' });
+        sinon
+            .stub(editor.actions, 'resetFailedChecks')
+            .returns({ type: 'whatever' });
     });
 
     afterEach(() => {
@@ -140,12 +146,14 @@ describe('<EntityDetailsBase>', () => {
             selectedEntity: {
                 pk: 2,
                 original: 'something',
-                translation: [{
-                    approved: true,
-                    string: 'quelque chose',
-                    errors: ['Error1'],
-                    warnings: ['Warning1'],
-                }],
+                translation: [
+                    {
+                        approved: true,
+                        string: 'quelque chose',
+                        errors: ['Error1'],
+                        warnings: ['Warning1'],
+                    },
+                ],
             },
         });
 
@@ -166,12 +174,14 @@ describe('<EntityDetailsBase>', () => {
             selectedEntity: {
                 pk: 2,
                 original: 'something',
-                translation: [{
-                    approved: true,
-                    string: 'quelque chose',
-                    errors: [],
-                    warnings: [],
-                }],
+                translation: [
+                    {
+                        approved: true,
+                        string: 'quelque chose',
+                        errors: [],
+                        warnings: [],
+                    },
+                ],
             },
         });
 
@@ -183,8 +193,10 @@ describe('<EntityDetailsBase>', () => {
 
 describe('<EntityDetails>', () => {
     beforeAll(() => {
-        sinon.stub(editor.actions, 'update').returns({ type: 'whatever'});
-        sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever'});
+        sinon.stub(editor.actions, 'update').returns({ type: 'whatever' });
+        sinon
+            .stub(history.actions, 'updateStatus')
+            .returns({ type: 'whatever' });
     });
 
     afterEach(() => {

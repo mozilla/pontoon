@@ -5,19 +5,13 @@ import { RECEIVE, REQUEST } from './actions';
 import type { OtherLocaleTranslations } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-;
-
+type Action = ReceiveAction | RequestAction;
 
 export type LocalesState = {|
     +fetching: boolean,
     +entity: ?number,
-    +translations: ?OtherLocaleTranslations
+    +translations: ?OtherLocaleTranslations,
 |};
-
 
 const initialState = {
     fetching: false,
@@ -27,7 +21,7 @@ const initialState = {
 
 export default function reducer(
     state: LocalesState = initialState,
-    action: Action
+    action: Action,
 ): LocalesState {
     switch (action.type) {
         case REQUEST:

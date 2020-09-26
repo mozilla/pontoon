@@ -2,12 +2,10 @@
 
 import * as React from 'react';
 
-
 type Props = {|
     children?: React.Node,
     url: string,
 |};
-
 
 /*
  * Render a link to the Sign In process.
@@ -24,8 +22,6 @@ export default class SignInLink extends React.Component<Props> {
     }
 
     render() {
-        return <a href={ this.generateSignInURL() }>
-            { this.props.children }
-        </a>;
+        return <a href={this.generateSignInURL()}>{this.props.children}</a>;
     }
 }

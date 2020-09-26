@@ -1,5 +1,5 @@
 .entity-details {
-    background: #3F4752;
+    background: #3f4752;
     height: 100%;
 }
 
@@ -15,6 +15,6 @@
 .entity-details .third-column {
     float: right;
     width: 33.33%;
-    border-left: 1px solid #5E6475;
+    border-left: 1px solid #5e6475;
     box-sizing: border-box;
 }

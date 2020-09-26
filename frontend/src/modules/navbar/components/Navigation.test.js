@@ -3,11 +3,10 @@ import { shallow } from 'enzyme';
 
 import { NavigationBase } from './Navigation';
 
-
 describe('<Navigation>', () => {
     const LOCALE = {
         code: 'kg',
-        name: 'Klingon'
+        name: 'Klingon',
     };
     const PROJECT = {
         name: 'Mark 42',
@@ -19,11 +18,13 @@ describe('<Navigation>', () => {
     };
 
     it('shows navigation', () => {
-        const wrapper = shallow(<NavigationBase
-            locale={ LOCALE }
-            parameters={ PARAMETERS }
-            project={ PROJECT }
-        />);
+        const wrapper = shallow(
+            <NavigationBase
+                locale={LOCALE}
+                parameters={PARAMETERS}
+                project={PROJECT}
+            />,
+        );
 
         expect(wrapper.text()).toContain('Klingon');
         expect(wrapper.text()).toContain('kg');

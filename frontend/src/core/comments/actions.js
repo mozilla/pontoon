@@ -7,7 +7,6 @@ import * as notification from 'core/notification';
 import * as history from 'modules/history';
 import * as teamcomments from 'modules/teamcomments';
 
-
 export function addComment(
     entity: number,
     locale: string,
@@ -15,7 +14,7 @@ export function addComment(
     translation: ?number,
     comment: string,
 ): Function {
-    return async dispatch => {
+    return async (dispatch) => {
         NProgress.start();
 
         await api.comment.add(entity, locale, comment, translation);
@@ -23,15 +22,13 @@ export function addComment(
         dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
         if (translation) {
             dispatch(history.actions.get(entity, locale, pluralForm));
-        }
-        else {
+        } else {
             dispatch(teamcomments.actions.get(entity, locale));
         }
 
         NProgress.done();
-    }
+    };
 }
-
 
 export default {
     addComment,

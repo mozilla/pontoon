@@ -3,15 +3,13 @@
 import { RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
 
 import type { TeamComment } from 'core/api';
-import type { ReceiveAction, RequestAction, TogglePinnedAction } from './actions';
+import type {
+    ReceiveAction,
+    RequestAction,
+    TogglePinnedAction,
+} from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-    | TogglePinnedAction
-;
-
+type Action = ReceiveAction | RequestAction | TogglePinnedAction;
 
 export type TeamCommentState = {|
     +fetching: boolean,
@@ -24,7 +22,7 @@ function togglePinnedComment(
     pinned: boolean,
     commentId: number,
 ): Array<TeamComment> {
-    return state.comments.map(comment => {
+    return state.comments.map((comment) => {
         if (comment.id !== commentId) {
             return comment;
         }
@@ -37,7 +35,6 @@ function togglePinnedComment(
     });
 }
 
-
 const initialState = {
     fetching: false,
     entity: null,
@@ -46,7 +43,7 @@ const initialState = {
 
 export default function reducer(
     state: TeamCommentState = initialState,
-    action: Action
+    action: Action,
 ): TeamCommentState {
     switch (action.type) {
         case REQUEST:
@@ -69,8 +66,8 @@ export default function reducer(
                     state,
                     action.pinned,
                     action.commentId,
-                )
-            }
+                ),
+            };
         default:
             return state;
     }

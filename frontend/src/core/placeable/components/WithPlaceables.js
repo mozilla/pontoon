@@ -34,7 +34,6 @@ import uriPattern from '../parsers/uriPattern';
 import xmlEntity from '../parsers/xmlEntity';
 import xmlTag from '../parsers/xmlTag';
 
-
 // Note: the order of these MATTERS!
 export const rules = [
     newlineEscape,
@@ -81,11 +80,9 @@ export const rules = [
     numberString,
 ];
 
-
 /**
  * Component that marks placeables in a string.
  */
 const WithPlaceables = createMarker(rules);
-
 
 export default WithPlaceables;

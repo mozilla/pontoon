@@ -1,7 +1,7 @@
 /* @flow */
 
 import APIBase from './base';
-import type { SourceType  } from './types'
+import type { SourceType } from './types';
 
 export default class TranslationAPI extends APIBase {
     /**
@@ -43,14 +43,22 @@ export default class TranslationAPI extends APIBase {
         payload.append('csrfmiddlewaretoken', csrfToken);
 
         const headers = new Headers();
-        headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        headers.append(
+            'Content-Type',
+            'application/x-www-form-urlencoded; charset=UTF-8',
+        );
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
         return this.fetch('/translations/create/', 'POST', payload, headers);
     }
 
-    _changeStatus(url: string, id: number, resource: string, ignoreWarnings: ?boolean) {
+    _changeStatus(
+        url: string,
+        id: number,
+        resource: string,
+        ignoreWarnings: ?boolean,
+    ) {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -72,7 +80,12 @@ export default class TranslationAPI extends APIBase {
     }
 
     approve(id: number, resource: string, ignoreWarnings: ?boolean) {
-        return this._changeStatus('/translations/approve/', id, resource, ignoreWarnings);
+        return this._changeStatus(
+            '/translations/approve/',
+            id,
+            resource,
+            ignoreWarnings,
+        );
     }
 
     unapprove(id: number, resource: string) {

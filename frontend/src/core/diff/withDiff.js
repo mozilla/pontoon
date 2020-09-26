@@ -5,11 +5,9 @@ import DiffMatchPatch from 'diff-match-patch';
 
 import './components/TranslationDiff.css';
 
-
 const dmp = new DiffMatchPatch();
 
-
-export function getDiff(base: string, target: string){
+export function getDiff(base: string, target: string) {
     const diff = dmp.diff_main(base, target);
 
     dmp.diff_cleanupSemantic(diff);
@@ -19,12 +17,12 @@ export function getDiff(base: string, target: string){
         let type = item[0];
         let slice = item[1];
 
-        switch(type) {
+        switch (type) {
             case DiffMatchPatch.DIFF_INSERT:
-                return <ins key={ index }>{ slice }</ins>;
+                return <ins key={index}>{slice}</ins>;
 
             case DiffMatchPatch.DIFF_DELETE:
-                return <del key={ index }>{ slice }</del>;
+                return <del key={index}>{slice}</del>;
 
             default:
                 return slice;
@@ -32,18 +30,18 @@ export function getDiff(base: string, target: string){
     });
 }
 
-
 type Props = {
     diffTarget: string,
 };
 
-
 export default function withDiff<Config: Object>(
-    WrappedComponent: React.AbstractComponent<Config>
+    WrappedComponent: React.AbstractComponent<Config>,
 ): React.AbstractComponent<Config> {
     return function WithDiff(props: { ...Config, ...Props }) {
-        return <WrappedComponent { ...props }>
-            { getDiff(props.diffTarget, props.children) }
-        </WrappedComponent>;
+        return (
+            <WrappedComponent {...props}>
+                {getDiff(props.diffTarget, props.children)}
+            </WrappedComponent>
+        );
     };
 }

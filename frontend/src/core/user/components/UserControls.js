@@ -19,7 +19,6 @@ import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
-
 type Props = {|
     isTranslator: boolean,
     parameters: NavigationParams,
@@ -32,46 +31,45 @@ type InternalProps = {
     dispatch: Function,
 };
 
-
 export class UserControlsBase extends React.Component<InternalProps> {
     getUserData = () => {
         this.props.dispatch(actions.get());
-    }
+    };
 
     markAllNotificationsAsRead = () => {
         this.props.dispatch(actions.markAllNotificationsAsRead());
-    }
+    };
 
     signUserOut = () => {
         const { user } = this.props;
         this.props.dispatch(actions.signOut(user.signOutURL));
-    }
+    };
 
     render() {
         const { isTranslator, parameters, user, selectedEntity } = this.props;
 
         const isReadOnly = selectedEntity ? selectedEntity.readonly : true;
 
-        return <div className='user-controls'>
-            <UserAutoUpdater getUserData={ this.getUserData } />
+        return (
+            <div className='user-controls'>
+                <UserAutoUpdater getUserData={this.getUserData} />
 
-            <UserMenu
-                isReadOnly={ isReadOnly }
-                isTranslator={ isTranslator }
-                parameters={ parameters }
-                signOut={ this.signUserOut }
-                user={ user }
-            />
+                <UserMenu
+                    isReadOnly={isReadOnly}
+                    isTranslator={isTranslator}
+                    parameters={parameters}
+                    signOut={this.signUserOut}
+                    user={user}
+                />
 
-            <UserNotificationsMenu
-                markAllNotificationsAsRead={ this.markAllNotificationsAsRead }
-                user={ user }
-            />
+                <UserNotificationsMenu
+                    markAllNotificationsAsRead={this.markAllNotificationsAsRead}
+                    user={user}
+                />
 
-            { user.isAuthenticated ? null :
-            <SignIn url={ user.signInURL } />
-            }
-        </div>;
+                {user.isAuthenticated ? null : <SignIn url={user.signInURL} />}
+            </div>
+        );
     }
 }
 

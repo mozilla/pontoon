@@ -4,12 +4,7 @@ import { RECEIVE, REQUEST } from './actions';
 
 import type { ReceiveAction, RequestAction, Tag } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-;
-
+type Action = ReceiveAction | RequestAction;
 
 export type ProjectState = {|
     +fetching: boolean,
@@ -18,7 +13,6 @@ export type ProjectState = {|
     +info: string,
     +tags: Array<Tag>,
 |};
-
 
 const initial: ProjectState = {
     fetching: false,

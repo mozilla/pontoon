@@ -4,17 +4,12 @@ import { RECEIVE, UPDATE } from './actions';
 
 import type { Resource, ReceiveAction, UpdateAction } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | UpdateAction
-;
+type Action = ReceiveAction | UpdateAction;
 
 export type ResourcesState = {|
     +resources: Array<Resource>,
     +allResources: Resource,
 |};
-
 
 function updateResource(
     resources: Array<Resource>,
@@ -22,20 +17,18 @@ function updateResource(
     approvedStrings: number,
     stringsWithWarnings: number,
 ): Array<Resource> {
-    return resources.map(item => {
+    return resources.map((item) => {
         if (item.path === resourcePath) {
             return {
                 ...item,
                 approvedStrings,
                 stringsWithWarnings,
-            }
-        }
-        else {
+            };
+        } else {
             return item;
         }
     });
 }
-
 
 function updateAllResources(
     state: Object,
@@ -43,7 +36,9 @@ function updateAllResources(
     approvedStrings: number,
     stringsWithWarnings: number,
 ): Resource {
-    const updatedResource = state.resources.find(item => item.path === resourcePath);
+    const updatedResource = state.resources.find(
+        (item) => item.path === resourcePath,
+    );
 
     // That can happen in All Projects view
     if (!updatedResource) {
@@ -51,15 +46,16 @@ function updateAllResources(
     }
 
     const diffApproved = approvedStrings - updatedResource.approvedStrings;
-    const diffWarnings = stringsWithWarnings - updatedResource.stringsWithWarnings;
+    const diffWarnings =
+        stringsWithWarnings - updatedResource.stringsWithWarnings;
 
     return {
         ...state.allResources,
         approvedStrings: state.allResources.approvedStrings + diffApproved,
-        stringsWithWarnings: state.allResources.stringsWithWarnings + diffWarnings,
-    }
+        stringsWithWarnings:
+            state.allResources.stringsWithWarnings + diffWarnings,
+    };
 }
-
 
 const initial: ResourcesState = {
     resources: [],

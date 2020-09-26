@@ -6,9 +6,7 @@ import * as entities from 'core/entities';
 
 import type { EntityTranslation, Entity } from 'core/api';
 
-
 const pluralSelector = (state): number => state.plural.pluralForm;
-
 
 export function _getPluralForm(pluralForm: number, entity: ?Entity): number {
     if (pluralForm === -1 && entity && entity.original_plural) {
@@ -27,9 +25,8 @@ export function _getPluralForm(pluralForm: number, entity: ?Entity): number {
 export const getPluralForm: Function = createSelector(
     pluralSelector,
     entities.selectors.getSelectedEntity,
-    _getPluralForm
+    _getPluralForm,
 );
-
 
 export function _getTranslationForSelectedEntity(
     entity: Entity,
@@ -40,7 +37,8 @@ export function _getTranslationForSelectedEntity(
     }
 
     if (
-        entity && entity.translation[pluralForm] &&
+        entity &&
+        entity.translation[pluralForm] &&
         !entity.translation[pluralForm].rejected
     ) {
         return entity.translation[pluralForm];
@@ -48,7 +46,6 @@ export function _getTranslationForSelectedEntity(
 
     return null;
 }
-
 
 /**
  * Return the active translation for the currently selected entity
@@ -60,9 +57,8 @@ export function _getTranslationForSelectedEntity(
 export const getTranslationForSelectedEntity: Function = createSelector(
     entities.selectors.getSelectedEntity,
     getPluralForm,
-    _getTranslationForSelectedEntity
+    _getTranslationForSelectedEntity,
 );
-
 
 export function _getTranslationStringForSelectedEntity(
     entity: Entity,
@@ -75,7 +71,6 @@ export function _getTranslationStringForSelectedEntity(
     return '';
 }
 
-
 /**
  * Return the active translation *string* for the currently selected entity
  * and plural form.
@@ -86,9 +81,8 @@ export function _getTranslationStringForSelectedEntity(
 export const getTranslationStringForSelectedEntity: Function = createSelector(
     entities.selectors.getSelectedEntity,
     getPluralForm,
-    _getTranslationStringForSelectedEntity
+    _getTranslationStringForSelectedEntity,
 );
-
 
 export default {
     getPluralForm,

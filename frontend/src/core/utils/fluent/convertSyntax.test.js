@@ -8,7 +8,6 @@ import {
 import getEmptyMessage from './getEmptyMessage';
 import parser from './parser';
 
-
 describe('getComplexFromRich', () => {
     it('converts rich translation to complex', () => {
         // Input is a Fluent AST.

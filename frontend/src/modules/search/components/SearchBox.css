@@ -3,7 +3,7 @@
     position: static;
 }
 
-.search-box input[type="search"] {
+.search-box input[type='search'] {
     background: #333941;
     border: none;
     border-radius: 20px;
@@ -17,22 +17,22 @@
 }
 
 /* Remove highlight in Chrome */
-.search-box input[type="search"]:focus {
+.search-box input[type='search']:focus {
     outline: none;
 }
 
 /* Remove cancel button in Chrome */
-.search-box input[type=search]::-webkit-search-cancel-button {
+.search-box input[type='search']::-webkit-search-cancel-button {
     display: none;
 }
 
 /* Style placeholder color in Chrome */
-.search-box input[type=search]::-webkit-input-placeholder {
-    color: #AAAAAA;
+.search-box input[type='search']::-webkit-input-placeholder {
+    color: #aaaaaa;
 }
 
 .search-box > label {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 17px;
     left: auto;
     position: absolute;
@@ -52,38 +52,38 @@
 }
 
 .search-box .status.fa::before {
-    color: #AAAAAA;
-    content: "";
+    color: #aaaaaa;
+    content: '';
 }
 
 .search-box .all .status::before {
-    content: "";
+    content: '';
     font-size: 16px;
 }
 
 .search-box .translated .status:before {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .search-box .fuzzy .status:before {
-    color: #FED271;
+    color: #fed271;
 }
 
 .search-box .warnings .status:before {
-    color: #FFA10F;
+    color: #ffa10f;
 }
 
 .search-box .errors .status:before {
-    color: #F36;
+    color: #f36;
 }
 
 .search-box .missing .status:before {
-    color: #5F7285;
+    color: #5f7285;
 }
 
 .search-box .unreviewed .status:before {
-    color: #4FC4F6;
-    content: "";
+    color: #4fc4f6;
+    content: '';
     font-size: 18px;
 }
 
@@ -93,11 +93,11 @@
 }
 
 .search-box .unchanged .status:before {
-    content: "";
+    content: '';
 }
 
 .search-box .empty .status:before {
-    content: "\f111";
+    content: '\f111';
     font-weight: 100;
 }
 
@@ -107,18 +107,17 @@
 }
 
 .search-box .rejected .status:before {
-    content: "";
+    content: '';
 }
 
 .search-box .tag .status:before {
-    content: "";
+    content: '';
 }
 
 .search-box .time-range .status:before {
-    content: "";
+    content: '';
 }
 
 .search-box .author .status:before {
-    content: "";
+    content: '';
 }
-

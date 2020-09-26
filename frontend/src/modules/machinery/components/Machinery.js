@@ -11,7 +11,6 @@ import type { Locale } from 'core/locale';
 import type { SourceType } from 'core/api';
 import type { MachineryState } from '..';
 
-
 type Props = {|
     isReadOnlyEditor: boolean,
     locale: ?Locale,
@@ -20,7 +19,6 @@ type Props = {|
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
 |};
-
 
 /**
  * Show translations from machines.
@@ -40,7 +38,7 @@ export default class Machinery extends React.Component<Props> {
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
-    }
+    };
 
     render() {
         const {
@@ -55,36 +53,45 @@ export default class Machinery extends React.Component<Props> {
             return null;
         }
 
-        return <section className="machinery">
-            <div className="search-wrapper clearfix">
-                <label htmlFor="machinery-search">
-                    <div className="fa fa-search"></div>
-                </label>
-                <form onSubmit={ this.submitForm }>
-                    <Localized id="machinery-Machinery--search-placeholder" attrs={{ placeholder: true }}>
-                        <input
-                            id="machinery-search"
-                            type="search"
-                            autoComplete="off"
-                            placeholder="Search in Machinery"
-                            ref={ this.searchInput }
-                        />
-                    </Localized>
-                </form>
-            </div>
-            <ul>
-                { machinery.translations.map((translation, index) => {
-                    return <Translation
-                        sourceString={ machinery.sourceString }
-                        isReadOnlyEditor={ isReadOnlyEditor }
-                        locale={ locale }
-                        translation={ translation }
-                        updateEditorTranslation={ updateEditorTranslation }
-                        updateMachinerySources={ updateMachinerySources }
-                        key={ index }
-                    />;
-                }) }
-            </ul>
-        </section>;
+        return (
+            <section className='machinery'>
+                <div className='search-wrapper clearfix'>
+                    <label htmlFor='machinery-search'>
+                        <div className='fa fa-search'></div>
+                    </label>
+                    <form onSubmit={this.submitForm}>
+                        <Localized
+                            id='machinery-Machinery--search-placeholder'
+                            attrs={{ placeholder: true }}
+                        >
+                            <input
+                                id='machinery-search'
+                                type='search'
+                                autoComplete='off'
+                                placeholder='Search in Machinery'
+                                ref={this.searchInput}
+                            />
+                        </Localized>
+                    </form>
+                </div>
+                <ul>
+                    {machinery.translations.map((translation, index) => {
+                        return (
+                            <Translation
+                                sourceString={machinery.sourceString}
+                                isReadOnlyEditor={isReadOnlyEditor}
+                                locale={locale}
+                                translation={translation}
+                                updateEditorTranslation={
+                                    updateEditorTranslation
+                                }
+                                updateMachinerySources={updateMachinerySources}
+                                key={index}
+                            />
+                        );
+                    })}
+                </ul>
+            </section>
+        );
     }
 }

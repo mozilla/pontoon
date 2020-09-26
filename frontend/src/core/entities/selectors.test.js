@@ -5,14 +5,9 @@ import {
     _isReadOnlyEditor,
 } from './selectors';
 
-
 describe('selectors', () => {
     describe('getNextEntity', () => {
-        const ENTITIES = [
-            { pk: 1 },
-            { pk: 2 },
-            { pk: 3 },
-        ];
+        const ENTITIES = [{ pk: 1 }, { pk: 2 }, { pk: 3 }];
 
         it('returns the next entity in the list', () => {
             const params = { entity: 1 };
@@ -34,11 +29,7 @@ describe('selectors', () => {
     });
 
     describe('getPreviousEntity', () => {
-        const ENTITIES = [
-            { pk: 1 },
-            { pk: 2 },
-            { pk: 3 },
-        ];
+        const ENTITIES = [{ pk: 1 }, { pk: 2 }, { pk: 3 }];
 
         it('returns the previous entity in the list', () => {
             const params = { entity: 2 };

@@ -12,7 +12,6 @@ import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
 import type { ChangeOperation, HistoryState } from '..';
 
-
 type Props = {|
     entity: Entity,
     history: HistoryState,
@@ -27,7 +26,6 @@ type Props = {|
     updateTranslationStatus: (number, ChangeOperation) => void,
 |};
 
-
 /**
  * Shows all existing translations of an entity.
  *
@@ -35,11 +33,13 @@ type Props = {|
  */
 export default class History extends React.Component<Props> {
     renderNoResults() {
-        return <section className="history">
-            <Localized id="history-History--no-translations">
-                <p>No translations available.</p>
-            </Localized>
-        </section>
+        return (
+            <section className='history'>
+                <Localized id='history-History--no-translations'>
+                    <p>No translations available.</p>
+                </Localized>
+            </section>
+        );
     }
 
     render() {
@@ -65,27 +65,35 @@ export default class History extends React.Component<Props> {
             return this.renderNoResults();
         }
 
-        return <section className="history">
-            <ul id='history-list'>
-                { history.translations.map((translation, index) => {
-                    return <Translation
-                        translation={ translation }
-                        activeTranslation={ history.translations[0] }
-                        entity={ entity }
-                        isReadOnlyEditor={ isReadOnlyEditor }
-                        isTranslator={ isTranslator }
-                        locale={ locale }
-                        user={ user }
-                        deleteTranslation={ deleteTranslation }
-                        addComment={ addComment }
-                        users={ users }
-                        updateEditorTranslation={ updateEditorTranslation }
-                        updateTranslationStatus={ updateTranslationStatus }
-                        key={ index }
-                        index={ index }
-                    />;
-                }) }
-            </ul>
-        </section>;
+        return (
+            <section className='history'>
+                <ul id='history-list'>
+                    {history.translations.map((translation, index) => {
+                        return (
+                            <Translation
+                                translation={translation}
+                                activeTranslation={history.translations[0]}
+                                entity={entity}
+                                isReadOnlyEditor={isReadOnlyEditor}
+                                isTranslator={isTranslator}
+                                locale={locale}
+                                user={user}
+                                deleteTranslation={deleteTranslation}
+                                addComment={addComment}
+                                users={users}
+                                updateEditorTranslation={
+                                    updateEditorTranslation
+                                }
+                                updateTranslationStatus={
+                                    updateTranslationStatus
+                                }
+                                key={index}
+                                index={index}
+                            />
+                        );
+                    })}
+                </ul>
+            </section>
+        );
     }
 }

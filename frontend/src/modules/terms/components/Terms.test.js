@@ -10,9 +10,7 @@ describe('<Terms>', () => {
             fetching: true,
         };
 
-        const wrapper = shallow(<Terms
-            terms={ terms }
-        />);
+        const wrapper = shallow(<Terms terms={terms} />);
 
         expect(wrapper.type()).toBeNull();
     });
@@ -22,9 +20,7 @@ describe('<Terms>', () => {
             terms: [],
         };
 
-        const wrapper = shallow(<Terms
-            terms={ terms }
-        />);
+        const wrapper = shallow(<Terms terms={terms} />);
 
         expect(wrapper.find('p').text()).toEqual('No terms available.');
     });
@@ -34,9 +30,7 @@ describe('<Terms>', () => {
             terms: [{}],
         };
 
-        const wrapper = shallow(<Terms
-            terms={ terms }
-        />);
+        const wrapper = shallow(<Terms terms={terms} />);
 
         expect(wrapper.find('p')).toHaveLength(0);
         expect(wrapper.find(TermsList)).toHaveLength(1);

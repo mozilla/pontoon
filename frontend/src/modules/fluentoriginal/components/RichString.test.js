@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import RichString from './RichString';
 
-
 const ORIGINAL = `
 song-title = Hello
     .genre = Pop
@@ -16,10 +15,7 @@ const ENTITY = {
 
 describe('<RichString>', () => {
     it('renders value and each attribute correctly', () => {
-        const wrapper = shallow(<RichString
-            entity = { ENTITY }
-            terms = { {} }
-        />);
+        const wrapper = shallow(<RichString entity={ENTITY} terms={{}} />);
 
         expect(wrapper.find('ContentMarker')).toHaveLength(3);
 
@@ -30,7 +26,9 @@ describe('<RichString>', () => {
         expect(wrapper.find('ContentMarker').at(1).html()).toContain('Pop');
 
         expect(wrapper.find('label').at(2).html()).toContain('album');
-        expect(wrapper.find('ContentMarker').at(2).html()).toContain('Hello and Good Bye');
+        expect(wrapper.find('ContentMarker').at(2).html()).toContain(
+            'Hello and Good Bye',
+        );
     });
 
     it('renders select expression correctly', () => {
@@ -45,10 +43,7 @@ user-entry =
             original: input,
         };
 
-        const wrapper = shallow(<RichString
-            entity = { entity }
-            terms = { {} }
-        />);
+        const wrapper = shallow(<RichString entity={entity} terms={{}} />);
 
         expect(wrapper.find('ContentMarker')).toHaveLength(2);
 
@@ -56,7 +51,9 @@ user-entry =
         expect(wrapper.find('ContentMarker').at(0).html()).toContain('Hello!');
 
         expect(wrapper.find('label').at(1).html()).toContain('variant-2');
-        expect(wrapper.find('ContentMarker').at(1).html()).toContain('Good Bye!');
+        expect(wrapper.find('ContentMarker').at(1).html()).toContain(
+            'Good Bye!',
+        );
     });
 
     it('renders select expression in attributes properly', () => {
@@ -77,37 +74,46 @@ my-entry =
             original: input,
         };
 
-        const wrapper = shallow(<RichString
-            entity = { entity }
-            terms = { {} }
-        />);
+        const wrapper = shallow(<RichString entity={entity} terms={{}} />);
 
         expect(wrapper.find('ContentMarker')).toHaveLength(4);
 
-        expect(wrapper.find('label .attribute-label').at(0).html()).toContain('label');
+        expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
+            'label',
+        );
         expect(wrapper.find('label').at(0).html()).toContain('macosx');
-        expect(wrapper.find('ContentMarker').at(0).html()).toContain('Preferences');
+        expect(wrapper.find('ContentMarker').at(0).html()).toContain(
+            'Preferences',
+        );
 
-        expect(wrapper.find('label .attribute-label').at(1).html()).toContain('label');
+        expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
+            'label',
+        );
         expect(wrapper.find('label').at(1).html()).toContain('other');
         expect(wrapper.find('ContentMarker').at(1).html()).toContain('Options');
 
-        expect(wrapper.find('label .attribute-label').at(2).html()).toContain('accesskey');
+        expect(wrapper.find('label .attribute-label').at(2).html()).toContain(
+            'accesskey',
+        );
         expect(wrapper.find('label').at(2).html()).toContain('macosx');
         expect(wrapper.find('ContentMarker').at(2).html()).toContain('e');
 
-        expect(wrapper.find('label .attribute-label').at(3).html()).toContain('accesskey');
+        expect(wrapper.find('label .attribute-label').at(3).html()).toContain(
+            'accesskey',
+        );
         expect(wrapper.find('label').at(3).html()).toContain('other');
         expect(wrapper.find('ContentMarker').at(3).html()).toContain('s');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {
         const handleClickOnPlaceable = sinon.spy();
-        const wrapper = shallow(<RichString
-            entity = { ENTITY }
-            terms = { {} }
-            handleClickOnPlaceable={ handleClickOnPlaceable }
-        />);
+        const wrapper = shallow(
+            <RichString
+                entity={ENTITY}
+                terms={{}}
+                handleClickOnPlaceable={handleClickOnPlaceable}
+            />,
+        );
 
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);

@@ -6,21 +6,16 @@ import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
-
 const LOCALE = {
     code: 'kg',
-}
+};
 
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
     original_plural: 'les tests',
-    translation: [
-        { string: 'test' },
-        { string: 'test plural' },
-    ],
+    translation: [{ string: 'test' }, { string: 'test plural' }],
 };
-
 
 function createEditorMenu({
     forceSuggestions = true,
@@ -28,26 +23,23 @@ function createEditorMenu({
     entity = SELECTED_ENTITY,
     firstItemHook = null,
 } = {}) {
-    return shallow(<EditorMenu
-        editor={
-            { translation: 'initial' }
-        }
-        locale={ LOCALE }
-        parameters={
-            { resource: 'resource' }
-        }
-        entity={ entity }
-        user={ {
-            isAuthenticated,
-            username: 'Sarevok',
-            settings: {
-                forceSuggestions,
-            },
-        } }
-        firstItemHook={ firstItemHook }
-    />);
+    return shallow(
+        <EditorMenu
+            editor={{ translation: 'initial' }}
+            locale={LOCALE}
+            parameters={{ resource: 'resource' }}
+            entity={entity}
+            user={{
+                isAuthenticated,
+                username: 'Sarevok',
+                settings: {
+                    forceSuggestions,
+                },
+            }}
+            firstItemHook={firstItemHook}
+        />,
+    );
 }
-
 
 function expectHiddenSettingsAndActions(wrapper) {
     expect(wrapper.find('button')).toHaveLength(0);
@@ -56,7 +48,6 @@ function expectHiddenSettingsAndActions(wrapper) {
     expect(wrapper.find(TranslationLength)).toHaveLength(0);
     expect(wrapper.find('#editor-EditorMenu--button-copy')).toHaveLength(0);
 }
-
 
 describe('<EditorMenu>', () => {
     it('renders correctly', () => {
@@ -72,19 +63,23 @@ describe('<EditorMenu>', () => {
 
         expectHiddenSettingsAndActions(wrapper);
 
-        expect(wrapper.find('#editor-EditorMenu--sign-in-to-translate')).toHaveLength(1);
+        expect(
+            wrapper.find('#editor-EditorMenu--sign-in-to-translate'),
+        ).toHaveLength(1);
     });
 
     it('hides the settings and actions when the entity is read-only', () => {
         const entity = {
             ...SELECTED_ENTITY,
             readonly: true,
-        }
+        };
         const wrapper = createEditorMenu({ entity });
 
         expectHiddenSettingsAndActions(wrapper);
 
-        expect(wrapper.find('#editor-EditorMenu--read-only-localization')).toHaveLength(1);
+        expect(
+            wrapper.find('#editor-EditorMenu--read-only-localization'),
+        ).toHaveLength(1);
     });
 
     it('accepts a firstItemHook and shows it as its first child', () => {

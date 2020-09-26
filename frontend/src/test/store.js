@@ -12,16 +12,10 @@ import createRootReducer from 'rootReducer';
 
 import history from './history';
 
-
 export function createReduxStore(initialState = {}) {
     return createStore(
         createRootReducer(history),
         initialState, // initial state
-        compose(
-            applyMiddleware(
-                routerMiddleware(history),
-                thunkMiddleware,
-            )
-        )
+        compose(applyMiddleware(routerMiddleware(history), thunkMiddleware)),
     );
 }

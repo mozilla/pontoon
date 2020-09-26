@@ -20,10 +20,9 @@ type Props = {|
     togglePinnedStatus: (boolean, number) => void,
 |};
 
-
 export default function TeamComments(props: Props) {
-    const { 
-        teamComments, 
+    const {
+        teamComments,
         user,
         parameters,
         users,
@@ -40,22 +39,24 @@ export default function TeamComments(props: Props) {
     let canComment = user.isAuthenticated;
     const canPin = user.isAdmin;
 
-    return <section className="team-comments">
-        { !comments.length && !canComment ?
-            <Localized id="entitydetails-Helpers--no-comments">
-                <p className="no-team-comments">No comments available.</p>
-            </Localized>
-            :
-            <CommentsList
-                comments={ comments }
-                parameters={ parameters }
-                user={ user }
-                users={ users }
-                canComment={ canComment }
-                canPin={ canPin }
-                addComment={ addComment }
-                togglePinnedStatus={ togglePinnedStatus }
-            />
-        }
-    </section>
+    return (
+        <section className='team-comments'>
+            {!comments.length && !canComment ? (
+                <Localized id='entitydetails-Helpers--no-comments'>
+                    <p className='no-team-comments'>No comments available.</p>
+                </Localized>
+            ) : (
+                <CommentsList
+                    comments={comments}
+                    parameters={parameters}
+                    user={user}
+                    users={users}
+                    canComment={canComment}
+                    canPin={canPin}
+                    addComment={addComment}
+                    togglePinnedStatus={togglePinnedStatus}
+                />
+            )}
+        </section>
+    );
 }
