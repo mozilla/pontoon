@@ -94,8 +94,8 @@ export default class SimpleEditor extends React.Component<Props> {
                             original={fluent.getSimplePreview(
                                 props.entity.original,
                             )}
-                            // $FLOW_IGNORE: Flow is dumb.
                             translation={fluent.getSimplePreview(
+                                // $FLOW_IGNORE: Flow is dumb.
                                 props.editor.translation,
                             )}
                         />
