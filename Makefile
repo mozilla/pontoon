@@ -69,6 +69,13 @@ black:
 flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
+prettier:
+	"${DC}" run --rm -w //app/frontend webapp yarn prettier
+
+format:
+	make prettier
+	make black
+
 lint-frontend:
 	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/
 

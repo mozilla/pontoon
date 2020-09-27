@@ -108,8 +108,20 @@ Javascript code conventions
 Outside the ``frontend`` folder, we don't follow strict rules other than using
 2-space indentation.
 
-Inside ``frontend`` (which contains the Translate app), we use 4-space
-indentation, as well as a lot of other rules that are defined in our
+Inside ``frontend`` (which contains the Translate app), our code is formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
+We enforce that in our Continuous Integration tool (travis), so you will need to run
+prettier on your code before sending it for review.
+
+You can run prettier locally either as an
+`add-on in your code editor <https://prettier.io/docs/en/editors.html>`_,
+or as a `git pre-hook commit <https://prettier.io/docs/en/precommit.html>`_.
+Alternatively, you can format your code using:
+
+.. code-block:: shell
+
+    $ make prettier 
+
+Additioanally, there are linting rules that are defined in our
 ``.eslintrc.js`` file.
 
 To run the linter, do:
@@ -119,6 +131,15 @@ To run the linter, do:
     $ make lint-frontend
 
 For more specifics about the ```frontend`` folder, look at the README.md file there.
+
+
+.. A note about formatting...::
+
+    To format both the frontend and Python code at once you can use:
+
+    .. code-block:: shell
+
+        $ make format
 
 
 Git conventions
