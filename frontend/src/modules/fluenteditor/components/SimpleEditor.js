@@ -8,12 +8,10 @@ import { GenericTranslationForm } from 'modules/genericeditor';
 
 import type { EditorProps } from 'core/editor';
 
-
 type Props = {
     ...EditorProps,
     ftlSwitch: React.Node,
 };
-
 
 /**
  * Editor for simple Fluent strings.
@@ -25,7 +23,7 @@ export default class SimpleEditor extends React.Component<Props> {
             props.entity &&
             props.editor.translation !== prevProps.editor.translation &&
             props.editor.changeSource !== 'internal' &&
-            typeof(props.editor.translation) === 'string'
+            typeof props.editor.translation === 'string'
         ) {
             this.updateFluentTranslation(props.editor.translation);
         }
@@ -52,23 +50,25 @@ export default class SimpleEditor extends React.Component<Props> {
 
         const currentTranslation = translation || this.props.editor.translation;
 
-        if (typeof(currentTranslation) !== 'string') {
+        if (typeof currentTranslation !== 'string') {
             // This should never happen. If it does, the developers have made a
             // mistake in the code. We need this check for Flow's sake though.
-            throw new Error('Unexpected data type for translation: ' + typeof(translation));
+            throw new Error(
+                'Unexpected data type for translation: ' + typeof translation,
+            );
         }
 
         const content = fluent.serializer.serializeEntry(
-            fluent.getReconstructedMessage(entity.original, currentTranslation)
+            fluent.getReconstructedMessage(entity.original, currentTranslation),
         );
         this.props.sendTranslation(ignoreWarnings, content, currentTranslation);
-    }
+    };
 
     render() {
         const { ftlSwitch, ...props } = this.props;
 
         // Because Flow.
-        if (typeof(props.editor.translation) !== 'string') {
+        if (typeof props.editor.translation !== 'string') {
             return null;
         }
 
@@ -77,23 +77,31 @@ export default class SimpleEditor extends React.Component<Props> {
             return null;
         }
 
-        return <>
-            <GenericTranslationForm
-                { ...props }
-                sendTranslation={ this.sendTranslation }
-            />
-            <editor.EditorMenu
-                { ...props }
-                firstItemHook={ ftlSwitch }
-                sendTranslation={ this.sendTranslation }
-                translationLengthHook={ <editor.TranslationLength
-                    comment={ props.entity.comment }
-                    format={ props.entity.format }
-                    original={ fluent.getSimplePreview(props.entity.original) }
-                    // $FLOW_IGNORE: Flow is dumb.
-                    translation={ fluent.getSimplePreview(props.editor.translation) }
-                /> }
-            />
-        </>;
+        return (
+            <>
+                <GenericTranslationForm
+                    {...props}
+                    sendTranslation={this.sendTranslation}
+                />
+                <editor.EditorMenu
+                    {...props}
+                    firstItemHook={ftlSwitch}
+                    sendTranslation={this.sendTranslation}
+                    translationLengthHook={
+                        <editor.TranslationLength
+                            comment={props.entity.comment}
+                            format={props.entity.format}
+                            original={fluent.getSimplePreview(
+                                props.entity.original,
+                            )}
+                            translation={fluent.getSimplePreview(
+                                // $FLOW_IGNORE: Flow is dumb.
+                                props.editor.translation,
+                            )}
+                        />
+                    }
+                />
+            </>
+        );
     }
 }

@@ -12,13 +12,11 @@ import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
-
 
 type Props = {|
     locale: Locale,
@@ -32,7 +30,6 @@ type InternalProps = {|
     ...Props,
     dispatch: Function,
 |};
-
 
 /**
  * Render a breadcrumb-like navigation bar.
@@ -54,7 +51,7 @@ export class NavigationBase extends React.Component<InternalProps> {
             // Load resources, unless we're in the All Projects view
             if (parameters.project !== 'all-projects') {
                 this.props.dispatch(
-                    resource.actions.get(parameters.locale, parameters.project)
+                    resource.actions.get(parameters.locale, parameters.project),
                 );
             }
         }
@@ -77,18 +74,17 @@ export class NavigationBase extends React.Component<InternalProps> {
 
         const projectName = project.name || 'All Projects';
         document.title = `${locale.name} (${locale.code}) · ${projectName}`;
-    }
+    };
 
     navigateToPath = (path: string) => {
         const { dispatch } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(
-                this.props.unsavedchanges,
-                () => { dispatch(push(path)); }
-            )
+            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
+                dispatch(push(path));
+            }),
         );
-    }
+    };
 
     render() {
         const { locale, parameters, resources } = this.props;
@@ -97,40 +93,41 @@ export class NavigationBase extends React.Component<InternalProps> {
             return null;
         }
 
-        return <nav className="navigation">
-            <ul>
-                <li>
-                    <a href="/">
-                        <img
-                            src="/static/img/logo.svg"
-                            width="32"
-                            height="32"
-                            alt="Pontoon logo"
-                        />
-                    </a>
-                </li>
-                <li>
-                    <a href={ `/${locale.code}/` }>
-                        { locale.name }
-                        <span className="locale-code">{ locale.code }</span>
-                    </a>
-                </li>
-                <project.ProjectMenu
-                    locale={ locale }
-                    parameters={ parameters }
-                    project={ this.props.project }
-                    navigateToPath={ this.navigateToPath }
-                />
-                <resource.ResourceMenu
-                    parameters={ parameters }
-                    resources={ resources }
-                    navigateToPath={ this.navigateToPath }
-                />
-            </ul>
-        </nav>;
+        return (
+            <nav className='navigation'>
+                <ul>
+                    <li>
+                        <a href='/'>
+                            <img
+                                src='/static/img/logo.svg'
+                                width='32'
+                                height='32'
+                                alt='Pontoon logo'
+                            />
+                        </a>
+                    </li>
+                    <li>
+                        <a href={`/${locale.code}/`}>
+                            {locale.name}
+                            <span className='locale-code'>{locale.code}</span>
+                        </a>
+                    </li>
+                    <project.ProjectMenu
+                        locale={locale}
+                        parameters={parameters}
+                        project={this.props.project}
+                        navigateToPath={this.navigateToPath}
+                    />
+                    <resource.ResourceMenu
+                        parameters={parameters}
+                        resources={resources}
+                        navigateToPath={this.navigateToPath}
+                    />
+                </ul>
+            </nav>
+        );
     }
 }
-
 
 const mapStateToProps = (state: Object): Props => {
     return {

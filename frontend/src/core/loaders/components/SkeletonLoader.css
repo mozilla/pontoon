@@ -14,7 +14,7 @@
 
 .skeleton-loader p {
     height: 0.8125rem;
-    background-color: #E2E2E2;
+    background-color: #e2e2e2;
     padding-bottom: 3px;
 }
 
@@ -25,14 +25,14 @@
 
 @keyframes fading {
     0% {
-        opacity: .1;
+        opacity: 0.1;
     }
-  
+
     50% {
-        opacity: .2;
+        opacity: 0.2;
     }
-  
+
     100% {
-        opacity: .1;
+        opacity: 0.1;
     }
 }

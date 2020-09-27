@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks spaces at the beginning of a string.
  *
@@ -14,14 +13,16 @@ import { Localized } from '@fluent/react';
 const leadingSpace = {
     rule: /(^ +)/,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-leadingSpace'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Leading space'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-leadingSpace'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Leading space'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

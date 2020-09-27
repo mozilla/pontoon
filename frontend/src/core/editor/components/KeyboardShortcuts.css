@@ -1,5 +1,5 @@
 .keyboard-shortcuts {
-    color: #AAAAAA;
+    color: #aaaaaa;
     cursor: pointer;
     float: left;
 }
@@ -10,7 +10,7 @@
 }
 
 .keyboard-shortcuts .overlay {
-    background: #272A2F;
+    background: #272a2f;
     border: 1px solid #333941;
     font-size: 13px;
     width: 400px;
@@ -52,8 +52,8 @@
 }
 
 .keyboard-shortcuts .overlay span {
-    background: #3F4752;
-    border: 1px solid #5E6475;
+    background: #3f4752;
+    border: 1px solid #5e6475;
     border-radius: 2px;
     font-weight: 300;
     margin: 0 4px;

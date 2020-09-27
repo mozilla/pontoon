@@ -22,7 +22,7 @@
 }
 
 .entity mark.search {
-    color: #FFA10F;
+    color: #ffa10f;
     font-weight: normal;
     font-style: inherit;
     background: #676054;
@@ -40,15 +40,15 @@
 }
 
 .entity .translation-string {
-    color: #AAAAAA;
+    color: #aaaaaa;
     min-height: 20px;
     text-align: start;
 }
 
-.entity .translation-string[data-script="Latin"],
-.entity .translation-string[data-script="Greek"],
-.entity .translation-string[data-script="Cyrillic"],
-.entity .translation-string[data-script="Vietnamese"] {
+.entity .translation-string[data-script='Latin'],
+.entity .translation-string[data-script='Greek'],
+.entity .translation-string[data-script='Cyrillic'],
+.entity .translation-string[data-script='Vietnamese'] {
     font-style: italic;
 }
 
@@ -56,9 +56,9 @@
  * Use a different font for Serbian and Macedonian because of a lack of
  * support in Open Sans.
  */
-.entity .translation-string[lang="mk"],
-.entity .translation-string[lang="sr"] {
-  font-family: "Ubuntu Regular";
+.entity .translation-string[lang='mk'],
+.entity .translation-string[lang='sr'] {
+    font-family: 'Ubuntu Regular';
 }
 
 /* Make selection area bigger and fit the entire row for easier use */
@@ -75,30 +75,30 @@
 }
 
 .entity .status:before {
-    color: #5F7285;
-    content: "";
+    color: #5f7285;
+    content: '';
 }
 
 .entity.batch-editable .status:hover:before {
-    content: "";
+    content: '';
 }
 
 .entity.batch-editable.checked > .status:before {
-    content: "";
+    content: '';
 }
 
 .entity.approved .status:before {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .entity.fuzzy .status:before {
-    color: #FED271;
+    color: #fed271;
 }
 
 .entity.errors .status:before {
-    color: #F36;
+    color: #f36;
 }
 
 .entity.warnings .status:before {
-    color: #FFA10F;
+    color: #ffa10f;
 }

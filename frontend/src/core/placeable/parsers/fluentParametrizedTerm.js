@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks parametrized term expressions from Fluent syntax.
  *
@@ -19,14 +18,16 @@ const fluentParametrizedTerm = {
     rule: /({ ?-[^}]*([^}]*: ?[^}]*) ?})/,
     matchIndex: 1,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-fluentParametrizedTerm'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Fluent parametrized term'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-fluentParametrizedTerm'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Fluent parametrized term'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

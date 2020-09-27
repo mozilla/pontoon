@@ -17,7 +17,6 @@ import type { UserState } from 'core/user';
 import type { ChangeOperation } from '..';
 import type { HistoryTranslation } from '../reducer';
 
-
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
@@ -40,12 +39,10 @@ type InternalProps = {|
     disableAction: () => void,
 |};
 
-
 type State = {|
     isDiffVisible: boolean,
     areCommentsVisible: boolean,
 |};
-
 
 /**
  * Render a translation in the History tab.
@@ -77,7 +74,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const action = event.target.name;
 
         this.props.updateTranslationStatus(this.props.translation.pk, action);
-    }
+    };
 
     delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         if (this.props.isActionDisabled) {
@@ -87,7 +84,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         event.stopPropagation();
         this.props.deleteTranslation(this.props.translation.pk);
-    }
+    };
 
     copyTranslationIntoEditor = () => {
         if (this.props.isReadOnlyEditor) {
@@ -99,8 +96,11 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             return;
         }
 
-        this.props.updateEditorTranslation(this.props.translation.string, 'history');
-    }
+        this.props.updateEditorTranslation(
+            this.props.translation.string,
+            'history',
+        );
+    };
 
     getStatus() {
         const { translation } = this.props;
@@ -134,18 +134,20 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const { translation } = this.props;
 
         if (!translation.uid) {
-            return <span>{ translation.user }</span>;
+            return <span>{translation.user}</span>;
         }
 
-        return <a
-            href={ `/contributors/${translation.username}` }
-            title={ this.getApprovalTitle() }
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-        >
-            { translation.user }
-        </a>;
+        return (
+            <a
+                href={`/contributors/${translation.username}`}
+                title={this.getApprovalTitle()}
+                target='_blank'
+                rel='noopener noreferrer'
+                onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
+            >
+                {translation.user}
+            </a>
+        );
     }
 
     toggleComments = (event: SyntheticMouseEvent<>) => {
@@ -153,38 +155,41 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         this.setState((state) => {
             return { areCommentsVisible: !state.areCommentsVisible };
         });
-    }
+    };
 
     renderCommentToggle(commentCount: number) {
         if (commentCount === 0) {
-            return <Localized
-                id='history-Translation--button-comment'
-                attrs={{ title: true }}
-            >
+            return (
+                <Localized
+                    id='history-Translation--button-comment'
+                    attrs={{ title: true }}
+                >
                     <button
                         className='toggle-comments'
                         title='Toggle translation comments'
-                        onClick={ this.toggleComments }
+                        onClick={this.toggleComments}
                     >
-                        { 'Comment' }
+                        {'Comment'}
                     </button>
-            </Localized>;
-        }
-        else {
-            return <Localized
-                id='history-Translation--button-comments'
-                attrs={{ title: true }}
-                elems={{ stress: <span className="stress" /> }}
-                vars={{ commentCount }}
-            >
-                <button
-                    className='toggle-comments active'
-                    title='Toggle translation comments'
-                    onClick={ this.toggleComments }
+                </Localized>
+            );
+        } else {
+            return (
+                <Localized
+                    id='history-Translation--button-comments'
+                    attrs={{ title: true }}
+                    elems={{ stress: <span className='stress' /> }}
+                    vars={{ commentCount }}
                 >
-                    { '<stress>{ $commentCount }</stress> Comments' }
-                </button>
-            </Localized>;
+                    <button
+                        className='toggle-comments active'
+                        title='Toggle translation comments'
+                        onClick={this.toggleComments}
+                    >
+                        {'<stress>{ $commentCount }</stress> Comments'}
+                    </button>
+                </Localized>
+            );
         }
     }
 
@@ -193,7 +198,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         this.setState((state) => {
             return { isDiffVisible: !state.isDiffVisible };
         });
-    }
+    };
 
     renderDiffToggle() {
         const { index } = this.props;
@@ -204,34 +209,38 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
         // Hide Diff
         if (this.state.isDiffVisible) {
-            return <Localized
-                id='history-Translation--hide-diff'
-                attrs={{ title: true }}
-            >
-                <button
-                    className='toggle-diff hide'
-                    title='Hide diff against the currently active translation'
-                    onClick={ this.toggleDiff }
+            return (
+                <Localized
+                    id='history-Translation--hide-diff'
+                    attrs={{ title: true }}
                 >
-                    { 'Hide diff' }
-                </button>
-            </Localized>;
+                    <button
+                        className='toggle-diff hide'
+                        title='Hide diff against the currently active translation'
+                        onClick={this.toggleDiff}
+                    >
+                        {'Hide diff'}
+                    </button>
+                </Localized>
+            );
         }
 
         // Show Diff
         else {
-            return <Localized
-                id='history-Translation--show-diff'
-                attrs={{ title: true }}
-            >
-                <button
-                    className='toggle-diff show'
-                    title='Show diff against the currently active translation'
-                    onClick={ this.toggleDiff }
+            return (
+                <Localized
+                    id='history-Translation--show-diff'
+                    attrs={{ title: true }}
                 >
-                    { 'Show diff' }
-                </button>
-            </Localized>;
+                    <button
+                        className='toggle-diff show'
+                        title='Show diff against the currently active translation'
+                        onClick={this.toggleDiff}
+                    >
+                        {'Show diff'}
+                    </button>
+                </Localized>
+            );
         }
     }
 
@@ -252,10 +261,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         const commentCount = translation.comments.length;
 
         // Does the currently logged in user own this translation?
-        const ownTranslation = (
-            user && user.username &&
-            user.username === translation.username
-        );
+        const ownTranslation =
+            user && user.username && user.username === translation.username;
 
         let className = 'translation ' + this.getStatus();
 
@@ -268,214 +275,259 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             // This user is a translator for the current locale, they can
             // perform all review actions.
             className += ' can-approve can-reject';
-        }
-        else if (ownTranslation && !translation.approved && !isReadOnlyEditor) {
+        } else if (
+            ownTranslation &&
+            !translation.approved &&
+            !isReadOnlyEditor
+        ) {
             // This user owns the translation and it's not approved, they
             // can only reject or unreject it.
             className += ' can-reject';
         }
 
         let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
-        let canReject = (isTranslator || (ownTranslation && !translation.approved)) && !isReadOnlyEditor;
+        let canReject =
+            (isTranslator || (ownTranslation && !translation.approved)) &&
+            !isReadOnlyEditor;
         let canComment = user.isAuthenticated;
 
-        return <li className='wrapper'>
-            <Localized id='history-Translation--copy' attrs={{ title: true }}>
-                <div
-                    className={ className }
-                    title='Copy Into Translation'
-                    onClick={ this.copyTranslationIntoEditor }
+        return (
+            <li className='wrapper'>
+                <Localized
+                    id='history-Translation--copy'
+                    attrs={{ title: true }}
                 >
-                    <div className="avatar-container">
-                        <UserAvatar
-                            username={ translation.username }
-                            title={ this.getApprovalTitle() }
-                            imageUrl={ translation.userGravatarUrlSmall }
-                        />
-                        { !translation.machinerySources ? null :
-                            <Localized
-                                id='history-Translation--span-copied'
-                                attrs={{ title: true }}
-                                vars={{ machinerySources: translation.machinerySources }}
-                            >
-                                <span
-                                    className="fa machinery-sources"
-                                    title= { 'Copied ({ $machinerySources })' }
-                                ></span>
-                            </Localized>
-                        }
-                    </div>
-                    <div className='content'>
-                        <header className='clearfix'>
-                            <div className='info'>
-                                { this.renderUser() }
-                                <ReactTimeAgo
-                                    dir='ltr'
-                                    date={ new Date(translation.dateIso) }
-                                    title={ `${translation.date} UTC` }
-                                />
-                            </div>
-                            <menu className='toolbar'>
-
-                            { this.renderDiffToggle() }
-
-                            { (index === 0 || (!canComment && commentCount === 0)) ? null : <span className='divider'>&bull;</span> }
-
-                            { (!canComment && commentCount === 0) ? null : this.renderCommentToggle(commentCount) }
-
-                            { (!translation.rejected || !canDelete ) ? null :
-                                // Delete Button
-                                <Localized
-                                    id='history-Translation--button-delete'
-                                    attrs={{ title: true }}
-                                >
-                                    <button
-                                        className='delete far'
-                                        title='Delete'
-                                        onClick={ this.delete }
-                                        disabled={ this.props.isActionDisabled }
-                                    />
-                                </Localized>
-                            }
-                            { translation.approved ?
-                                // Unapprove Button
-                                ( isTranslator && !isReadOnlyEditor ) ?
-                                    <Localized
-                                        id='history-Translation--button-unapprove'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='unapprove fa'
-                                            title='Unapprove'
-                                            name='unapprove'
-                                            onClick={ this.handleStatusChange }
-                                            disabled={ this.props.isActionDisabled }
-                                        />
-                                    </Localized>
-                                    :
-                                    <Localized
-                                        id='history-Translation--button-approved'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='unapprove fa'
-                                            title='Approved'
-                                            disabled
-                                        />
-                                    </Localized>
-
-                                :
-                                // Approve Button
-                                ( isTranslator && !isReadOnlyEditor ) ?
-                                    <Localized
-                                        id='history-Translation--button-approve'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='approve fa'
-                                            title='Approve'
-                                            name='approve'
-                                            onClick={ this.handleStatusChange }
-                                            disabled={ this.props.isActionDisabled }
-                                        />
-                                    </Localized>
-                                    :
-                                    <Localized
-                                        id='history-Translation--button-not-approved'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='approve fa'
-                                            title='Not approved'
-                                            disabled
-                                        />
-                                    </Localized>
-                            }
-                            { translation.rejected ?
-                                // Unreject Button
-                                canReject ?
-                                    <Localized
-                                        id='history-Translation--button-unreject'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='unreject fa'
-                                            title='Unreject'
-                                            name='unreject'
-                                            onClick={ this.handleStatusChange }
-                                            disabled={ this.props.isActionDisabled }
-                                        />
-                                    </Localized>
-                                    :
-                                    <Localized
-                                        id='history-Translation--button-rejected'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='unreject fa'
-                                            title='Rejected'
-                                            disabled
-                                        />
-                                    </Localized>
-                                :
-                                // Reject Button
-                                canReject ?
-                                    <Localized
-                                        id='history-Translation--button-reject'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='reject fa'
-                                            title='Reject'
-                                            name='reject'
-                                            onClick={ this.handleStatusChange }
-                                            disabled={ this.props.isActionDisabled }
-                                        />
-                                    </Localized>
-                                    :
-                                    <Localized
-                                        id='history-Translation--button-not-rejected'
-                                        attrs={{ title: true }}
-                                    >
-                                        <button
-                                            className='reject fa'
-                                            title='Not rejected'
-                                            disabled
-                                        />
-                                    </Localized>
-                            }
-                            </menu>
-                        </header>
-                        <p
-                            className={ this.state.isDiffVisible ? 'diff' : 'default' }
-                            dir={ locale.direction }
-                            lang={ locale.code }
-                            data-script={ locale.script }
-                        >
-                            <TranslationProxy
-                                content={ translation.string }
-                                diffTarget={
-                                    this.state.isDiffVisible ? activeTranslation.string : null
-                                }
-                                format={ entity.format }
+                    <div
+                        className={className}
+                        title='Copy Into Translation'
+                        onClick={this.copyTranslationIntoEditor}
+                    >
+                        <div className='avatar-container'>
+                            <UserAvatar
+                                username={translation.username}
+                                title={this.getApprovalTitle()}
+                                imageUrl={translation.userGravatarUrlSmall}
                             />
-                        </p>
+                            {!translation.machinerySources ? null : (
+                                <Localized
+                                    id='history-Translation--span-copied'
+                                    attrs={{ title: true }}
+                                    vars={{
+                                        machinerySources:
+                                            translation.machinerySources,
+                                    }}
+                                >
+                                    <span
+                                        className='fa machinery-sources'
+                                        title={'Copied ({ $machinerySources })'}
+                                    ></span>
+                                </Localized>
+                            )}
+                        </div>
+                        <div className='content'>
+                            <header className='clearfix'>
+                                <div className='info'>
+                                    {this.renderUser()}
+                                    <ReactTimeAgo
+                                        dir='ltr'
+                                        date={new Date(translation.dateIso)}
+                                        title={`${translation.date} UTC`}
+                                    />
+                                </div>
+                                <menu className='toolbar'>
+                                    {this.renderDiffToggle()}
+
+                                    {index === 0 ||
+                                    (!canComment &&
+                                        commentCount === 0) ? null : (
+                                        <span className='divider'>&bull;</span>
+                                    )}
+
+                                    {!canComment && commentCount === 0
+                                        ? null
+                                        : this.renderCommentToggle(
+                                              commentCount,
+                                          )}
+
+                                    {!translation.rejected ||
+                                    !canDelete ? null : (
+                                        // Delete Button
+                                        <Localized
+                                            id='history-Translation--button-delete'
+                                            attrs={{ title: true }}
+                                        >
+                                            <button
+                                                className='delete far'
+                                                title='Delete'
+                                                onClick={this.delete}
+                                                disabled={
+                                                    this.props.isActionDisabled
+                                                }
+                                            />
+                                        </Localized>
+                                    )}
+                                    {translation.approved ? (
+                                        // Unapprove Button
+                                        isTranslator && !isReadOnlyEditor ? (
+                                            <Localized
+                                                id='history-Translation--button-unapprove'
+                                                attrs={{ title: true }}
+                                            >
+                                                <button
+                                                    className='unapprove fa'
+                                                    title='Unapprove'
+                                                    name='unapprove'
+                                                    onClick={
+                                                        this.handleStatusChange
+                                                    }
+                                                    disabled={
+                                                        this.props
+                                                            .isActionDisabled
+                                                    }
+                                                />
+                                            </Localized>
+                                        ) : (
+                                            <Localized
+                                                id='history-Translation--button-approved'
+                                                attrs={{ title: true }}
+                                            >
+                                                <button
+                                                    className='unapprove fa'
+                                                    title='Approved'
+                                                    disabled
+                                                />
+                                            </Localized>
+                                        )
+                                    ) : // Approve Button
+                                    isTranslator && !isReadOnlyEditor ? (
+                                        <Localized
+                                            id='history-Translation--button-approve'
+                                            attrs={{ title: true }}
+                                        >
+                                            <button
+                                                className='approve fa'
+                                                title='Approve'
+                                                name='approve'
+                                                onClick={
+                                                    this.handleStatusChange
+                                                }
+                                                disabled={
+                                                    this.props.isActionDisabled
+                                                }
+                                            />
+                                        </Localized>
+                                    ) : (
+                                        <Localized
+                                            id='history-Translation--button-not-approved'
+                                            attrs={{ title: true }}
+                                        >
+                                            <button
+                                                className='approve fa'
+                                                title='Not approved'
+                                                disabled
+                                            />
+                                        </Localized>
+                                    )}
+                                    {translation.rejected ? (
+                                        // Unreject Button
+                                        canReject ? (
+                                            <Localized
+                                                id='history-Translation--button-unreject'
+                                                attrs={{ title: true }}
+                                            >
+                                                <button
+                                                    className='unreject fa'
+                                                    title='Unreject'
+                                                    name='unreject'
+                                                    onClick={
+                                                        this.handleStatusChange
+                                                    }
+                                                    disabled={
+                                                        this.props
+                                                            .isActionDisabled
+                                                    }
+                                                />
+                                            </Localized>
+                                        ) : (
+                                            <Localized
+                                                id='history-Translation--button-rejected'
+                                                attrs={{ title: true }}
+                                            >
+                                                <button
+                                                    className='unreject fa'
+                                                    title='Rejected'
+                                                    disabled
+                                                />
+                                            </Localized>
+                                        )
+                                    ) : // Reject Button
+                                    canReject ? (
+                                        <Localized
+                                            id='history-Translation--button-reject'
+                                            attrs={{ title: true }}
+                                        >
+                                            <button
+                                                className='reject fa'
+                                                title='Reject'
+                                                name='reject'
+                                                onClick={
+                                                    this.handleStatusChange
+                                                }
+                                                disabled={
+                                                    this.props.isActionDisabled
+                                                }
+                                            />
+                                        </Localized>
+                                    ) : (
+                                        <Localized
+                                            id='history-Translation--button-not-rejected'
+                                            attrs={{ title: true }}
+                                        >
+                                            <button
+                                                className='reject fa'
+                                                title='Not rejected'
+                                                disabled
+                                            />
+                                        </Localized>
+                                    )}
+                                </menu>
+                            </header>
+                            <p
+                                className={
+                                    this.state.isDiffVisible
+                                        ? 'diff'
+                                        : 'default'
+                                }
+                                dir={locale.direction}
+                                lang={locale.code}
+                                data-script={locale.script}
+                            >
+                                <TranslationProxy
+                                    content={translation.string}
+                                    diffTarget={
+                                        this.state.isDiffVisible
+                                            ? activeTranslation.string
+                                            : null
+                                    }
+                                    format={entity.format}
+                                />
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </Localized>
-            { !this.state.areCommentsVisible ? null :
-                <CommentsList
-                    comments={ translation.comments }
-                    translation={ translation }
-                    user={ user }
-                    users={ users }
-                    canComment={ canComment }
-                    addComment={ addComment }
-                />
-            }
-        </li>;
+                </Localized>
+                {!this.state.areCommentsVisible ? null : (
+                    <CommentsList
+                        comments={translation.comments}
+                        translation={translation}
+                        user={user}
+                        users={users}
+                        canComment={canComment}
+                        addComment={addComment}
+                    />
+                )}
+            </li>
+        );
     }
 }
-
 
 export default utils.withActionsDisabled(TranslationBase);

@@ -4,17 +4,18 @@ import sinon from 'sinon';
 
 import EntityNavigation from './EntityNavigation';
 
-
 describe('<EntityNavigation>', () => {
     function getEntityNav({ create = shallow } = {}) {
         const copyMock = sinon.stub();
         const nextMock = sinon.stub();
         const prevMock = sinon.stub();
-        const wrapper = create(<EntityNavigation
-            copyLinkToClipboard={ copyMock }
-            goToNextEntity={ nextMock }
-            goToPreviousEntity={ prevMock }
-        />);
+        const wrapper = create(
+            <EntityNavigation
+                copyLinkToClipboard={copyMock}
+                goToNextEntity={nextMock}
+                goToPreviousEntity={prevMock}
+            />,
+        );
 
         return {
             wrapper,
@@ -30,7 +31,7 @@ describe('<EntityNavigation>', () => {
         expect(copyMock.calledOnce).toBeFalsy();
         wrapper.find('button.link').simulate('click');
         expect(copyMock.calledOnce).toBeTruthy();
-    })
+    });
 
     it('goes to the next entity on click on the Next button', () => {
         const { wrapper, nextMock } = getEntityNav();
@@ -53,7 +54,7 @@ describe('<EntityNavigation>', () => {
         expect(nextMock.calledOnce).toBeFalsy();
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 40,  // Down
+            keyCode: 40, // Down
             altKey: true,
             ctrlKey: false,
             shiftKey: false,
@@ -83,7 +84,7 @@ describe('<EntityNavigation>', () => {
         expect(prevMock.calledOnce).toBeFalsy();
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 38,  // Up
+            keyCode: 38, // Up
             altKey: true,
             ctrlKey: false,
             shiftKey: false,

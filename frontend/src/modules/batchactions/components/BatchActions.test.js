@@ -10,14 +10,12 @@ import ReplaceAll from './ReplaceAll';
 
 import { actions } from '..';
 
-
 const DEFAULT_BATCH_ACTIONS = {
     entities: [],
     lastCheckedEntity: null,
     requestInProgress: null,
     response: null,
 };
-
 
 describe('<BatchActionsBase>', () => {
     beforeAll(() => {
@@ -37,9 +35,7 @@ describe('<BatchActionsBase>', () => {
 
     it('renders correctly', () => {
         const wrapper = shallow(
-            <BatchActionsBase
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-            />
+            <BatchActionsBase batchactions={DEFAULT_BATCH_ACTIONS} />,
         );
 
         expect(wrapper.find('.batch-actions')).toHaveLength(1);
@@ -50,24 +46,34 @@ describe('<BatchActionsBase>', () => {
 
         expect(wrapper.find('.main-content')).toHaveLength(1);
 
-        expect(wrapper.find('#batchactions-BatchActions--warning')).toHaveLength(1);
+        expect(
+            wrapper.find('#batchactions-BatchActions--warning'),
+        ).toHaveLength(1);
 
-        expect(wrapper.find('#batchactions-BatchActions--review-heading')).toHaveLength(1);
+        expect(
+            wrapper.find('#batchactions-BatchActions--review-heading'),
+        ).toHaveLength(1);
         expect(wrapper.find(ApproveAll)).toHaveLength(1);
         expect(wrapper.find(RejectAll)).toHaveLength(1);
 
-        expect(wrapper.find('#batchactions-BatchActions--find-replace-heading')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-BatchActions--find')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-BatchActions--replace-with')).toHaveLength(1);
+        expect(
+            wrapper.find('#batchactions-BatchActions--find-replace-heading'),
+        ).toHaveLength(1);
+        expect(wrapper.find('#batchactions-BatchActions--find')).toHaveLength(
+            1,
+        );
+        expect(
+            wrapper.find('#batchactions-BatchActions--replace-with'),
+        ).toHaveLength(1);
         expect(wrapper.find(ReplaceAll)).toHaveLength(1);
     });
 
     it('closes batch actions panel when the Close button with selected count is clicked', () => {
         const wrapper = shallow(
             <BatchActionsBase
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                dispatch={ () => {} }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                dispatch={() => {}}
+            />,
         );
 
         wrapper.find('.selected-count').simulate('click');
@@ -77,10 +83,10 @@ describe('<BatchActionsBase>', () => {
     it('selects all entities when the Select All button is clicked', () => {
         const wrapper = shallow(
             <BatchActionsBase
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                dispatch={ () => {} }
-                parameters={ {} }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                dispatch={() => {}}
+                parameters={{}}
+            />,
         );
 
         wrapper.find('.select-all').simulate('click');

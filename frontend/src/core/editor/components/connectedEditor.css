@@ -1,6 +1,6 @@
 .editor {
     background: rgb(39, 42, 47);
-    border-bottom: 1px solid #5E6475;
+    border-bottom: 1px solid #5e6475;
     display: flex;
     flex-direction: column;
     height: calc(20% + 60px);
@@ -30,10 +30,10 @@
 }
 
 .editor textarea[readonly] {
-    background: #C7CACF;
+    background: #c7cacf;
     cursor: default;
 }
 
-.editor textarea[data-script="Arabic"] {
+.editor textarea[data-script='Arabic'] {
     font-size: 15px;
 }

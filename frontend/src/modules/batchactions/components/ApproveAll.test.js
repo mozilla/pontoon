@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import ApproveAll from './ApproveAll';
 
-
 const DEFAULT_BATCH_ACTIONS = {
     entities: [],
     lastCheckedEntity: null,
@@ -12,20 +11,23 @@ const DEFAULT_BATCH_ACTIONS = {
     response: null,
 };
 
-
 describe('<ApproveAll>', () => {
     it('renders default button correctly', () => {
         const wrapper = shallow(
-            <ApproveAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-            />
+            <ApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />,
         );
 
         expect(wrapper.find('.approve-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -39,14 +41,20 @@ describe('<ApproveAll>', () => {
                         error: true,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.approve-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -60,14 +68,20 @@ describe('<ApproveAll>', () => {
                         changedCount: 2,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.approve-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -82,14 +96,20 @@ describe('<ApproveAll>', () => {
                         invalidCount: 1,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.approve-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -98,9 +118,9 @@ describe('<ApproveAll>', () => {
 
         const wrapper = shallow(
             <ApproveAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                approveAll={ mockApproveAll }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                approveAll={mockApproveAll}
+            />,
         );
 
         expect(mockApproveAll.called).toBeFalsy();

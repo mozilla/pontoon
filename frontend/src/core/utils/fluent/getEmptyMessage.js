@@ -10,12 +10,11 @@ import { CLDR_PLURALS } from 'core/plural';
 import type { FluentMessage } from './types';
 import type { Locale } from 'core/locale';
 
-
 /**
  * Gather custom (numeric) plural variants
  */
 function getNumericVariants(variants) {
-    return variants.filter(variant => {
+    return variants.filter((variant) => {
         return variant.key.type === 'NumberLiteral';
     });
 }
@@ -24,7 +23,7 @@ function getNumericVariants(variants) {
  * Generate a CLDR template variant
  */
 function getCldrTemplateVariant(variants) {
-    return variants.find(variant => {
+    return variants.find((variant) => {
         return CLDR_PLURALS.indexOf(variant.key.name) !== -1;
     });
 }
@@ -33,7 +32,7 @@ function getCldrTemplateVariant(variants) {
  * Generate locale plural variants from a template
  */
 function getLocaleVariants(locale, template) {
-    return locale.cldrPlurals.map(item => {
+    return locale.cldrPlurals.map((item) => {
         const localeVariant = template.clone();
         localeVariant.key.name = CLDR_PLURALS[item];
         localeVariant.default = false;
@@ -45,12 +44,12 @@ function getLocaleVariants(locale, template) {
  * Return variants with default variant set
  */
 function withDefaultVariant(variants) {
-    const defaultVariant = variants.find(variant => {
+    const defaultVariant = variants.find((variant) => {
         return variant.default === true;
     });
 
     if (!defaultVariant) {
-        variants[variants.length-1].default = true;
+        variants[variants.length - 1].default = true;
     }
 
     return variants;
@@ -89,10 +88,12 @@ export default function getEmptyMessage(
                 const numericVariants = getNumericVariants(variants);
 
                 const template = getCldrTemplateVariant(variants);
-                const localeVariants = template ? getLocaleVariants(locale, template) : [];
+                const localeVariants = template
+                    ? getLocaleVariants(locale, template)
+                    : [];
 
                 node.variants = withDefaultVariant(
-                    numericVariants.concat(localeVariants)
+                    numericVariants.concat(localeVariants),
                 );
             }
 

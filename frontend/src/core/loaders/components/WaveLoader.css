@@ -25,7 +25,7 @@
     display: inline-block;
     width: 12px;
     height: 100%;
-    background-color: #7BC876;
+    background-color: #7bc876;
 
     -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
     animation: stretchdelay 1.2s infinite ease-in-out;
@@ -37,8 +37,8 @@
 }
 
 .wave-loader .animation div:nth-child(3) {
-    -webkit-animation-delay: -1.0s;
-    animation-delay: -1.0s;
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
 }
 
 .wave-loader .animation div:nth-child(4) {
@@ -52,22 +52,26 @@
 }
 
 @-webkit-keyframes stretchdelay {
-    0%, 40%, 100% {
-        -webkit-transform: scaleY(0.4)
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4);
     }
     20% {
-        -webkit-transform: scaleY(1.0)
+        -webkit-transform: scaleY(1);
     }
 }
 
 @keyframes stretchdelay {
-    0%, 40%, 100% {
+    0%,
+    40%,
+    100% {
         transform: scaleY(0.4);
         -webkit-transform: scaleY(0.4);
     }
     20% {
-        transform: scaleY(1.0);
-        -webkit-transform: scaleY(1.0);
+        transform: scaleY(1);
+        -webkit-transform: scaleY(1);
     }
 }
 

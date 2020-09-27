@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import SimpleString from './SimpleString';
 
-
 const ORIGINAL = `header = 
             .page-title = Hello
             Simple
@@ -16,22 +15,25 @@ const ENTITY = {
 
 describe('<SimpleString>', () => {
     it('renders original input as simple string', () => {
-        const wrapper = shallow(<SimpleString
-            entity = { ENTITY }
-            terms = { {} }
-        />);
+        const wrapper = shallow(<SimpleString entity={ENTITY} terms={{}} />);
 
-        expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
-        expect(wrapper.find('.original ContentMarker').children().text()).toEqual('Hello\nSimple\nString');
+        expect(wrapper.find('.original ContentMarker').children()).toHaveLength(
+            1,
+        );
+        expect(
+            wrapper.find('.original ContentMarker').children().text(),
+        ).toEqual('Hello\nSimple\nString');
     });
 
     it('calls the handleClickOnPlaceable function on click on .original', () => {
         const handleClickOnPlaceable = sinon.spy();
-        const wrapper = shallow(<SimpleString
-            entity = { ENTITY }
-            handleClickOnPlaceable={ handleClickOnPlaceable }
-            terms = { {} }
-        />);
+        const wrapper = shallow(
+            <SimpleString
+                entity={ENTITY}
+                handleClickOnPlaceable={handleClickOnPlaceable}
+                terms={{}}
+            />,
+        );
 
         wrapper.find('.original').simulate('click');
         expect(handleClickOnPlaceable.called).toEqual(true);

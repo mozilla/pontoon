@@ -1,11 +1,11 @@
 .other-locales .translation {
-    border-bottom: 1px solid #5E6475;
+    border-bottom: 1px solid #5e6475;
     cursor: pointer;
     padding: 10px;
 }
 
 .other-locales ul.preferred-list .translation:last-child {
-    border-bottom-color: #7BC876;
+    border-bottom-color: #7bc876;
 }
 
 .other-locales .translation.cannot-copy {
@@ -13,12 +13,12 @@
 }
 
 .other-locales .translation:not(.cannot-copy):hover {
-    background: #4D5967;
-    border-color: #5E6475;
+    background: #4d5967;
+    border-color: #5e6475;
 }
 
 .other-locales .translation > header {
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     font-size: 11px;
     font-weight: 300;
@@ -28,7 +28,7 @@
 }
 
 .other-locales .translation > header span {
-    color: #7BC876;
+    color: #7bc876;
     padding-left: 3px;
 }
 

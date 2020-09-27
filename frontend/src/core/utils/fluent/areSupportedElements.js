@@ -10,16 +10,16 @@ import isSimpleElement from './isSimpleElement';
  * - select expressions, whose variants are simple elements
  */
 export default function areSupportedElements(elements: Array<Object>) {
-    return elements.every(element => {
+    return elements.every((element) => {
         return (
             isSimpleElement(element) ||
-            (
-                element.type === 'Placeable' &&
+            (element.type === 'Placeable' &&
                 element.expression.type === 'SelectExpression' &&
-                element.expression.variants.every(variant =>  {
-                    return variant.value.elements.every(element => isSimpleElement(element));
-                })
-            )
+                element.expression.variants.every((variant) => {
+                    return variant.value.elements.every((element) =>
+                        isSimpleElement(element),
+                    );
+                }))
         );
     });
 }

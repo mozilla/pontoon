@@ -11,13 +11,13 @@
 }
 
 .user-notifications-menu .selector .icon {
-    color: #4D5967;
+    color: #4d5967;
     font-size: 26px;
     margin-top: 17px;
 }
 
 .user-notifications-menu.unread .selector .icon {
-    color: #F36;
+    color: #f36;
 }
 
 .user-notifications-menu.read.menu-visible .selector .icon {
@@ -27,18 +27,17 @@
 
 @keyframes fadeout-color {
     0% {
-        color: #F36;
+        color: #f36;
     }
 
     50% {
-        color: #F36;
+        color: #f36;
     }
 
     100% {
-        color: #4D5967;
+        color: #4d5967;
     }
 }
-
 
 .user-notifications-menu .menu {
     background-color: #272a2f;
@@ -66,7 +65,7 @@
 }
 
 .user-notifications-menu .menu li:hover {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .user-notifications-menu .menu li.no {
@@ -83,12 +82,12 @@
 }
 
 .user-notifications-menu .menu li.no .title {
-    color: #EBEBEB;
+    color: #ebebeb;
     font-size: 16px;
 }
 
 .user-notifications-menu .menu li.no .description {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 12px;
     padding-top: 4px;
 }
@@ -105,6 +104,6 @@
 }
 
 .user-notifications-menu .menu .see-all a:hover {
-    background: #3F4752;
-    color: #FFFFFF;
+    background: #3f4752;
+    color: #ffffff;
 }

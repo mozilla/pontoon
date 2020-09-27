@@ -6,7 +6,6 @@ import createMarker from 'react-content-marker';
 
 import uriPattern from './uriPattern';
 
-
 describe('uriPattern', () => {
     each([
         ['http://example.org/'],
@@ -22,10 +21,9 @@ describe('uriPattern', () => {
         ['http://example.org/path/to/resource?var1=$@3!?%=iwdu8'],
         ['http://example.org/path/to/resource?var1=$@3!?%=iwdu8&var2=bar'],
         ['HTTP://EXAMPLE.org/'],
-    ])
-    .it('correctly marks URI `%s`', (uri) => {
+    ]).it('correctly marks URI `%s`', (uri) => {
         const Marker = createMarker([uriPattern]);
-        const wrapper = shallow(<Marker>{ uri }</Marker>);
+        const wrapper = shallow(<Marker>{uri}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(uri);
     });

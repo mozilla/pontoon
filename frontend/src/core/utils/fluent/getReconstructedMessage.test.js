@@ -2,14 +2,13 @@ import getReconstructedMessage from './getReconstructedMessage';
 import parser from './parser';
 import serializer from './serializer';
 
-
 describe('getReconstructedMessage', () => {
     it('returns the correct value for a simple message', () => {
         const original = 'title = Marvel Cinematic Universe';
         const translation = 'Univers cinématographique Marvel';
         const res = getReconstructedMessage(original, translation);
         const expected = parser.parseEntry(
-            'title = Univers cinématographique Marvel'
+            'title = Univers cinématographique Marvel',
         );
         expect(res).toEqual(expected);
     });
@@ -19,7 +18,7 @@ describe('getReconstructedMessage', () => {
         const translation = 'Qui meurt ?';
         const res = getReconstructedMessage(original, translation);
         const expected = parser.parseEntry(
-            'spoilers =\n    .who-dies = Qui meurt ?'
+            'spoilers =\n    .who-dies = Qui meurt ?',
         );
         expect(res).toEqual(expected);
     });
@@ -29,7 +28,7 @@ describe('getReconstructedMessage', () => {
         const translation = 'Ils ont inventé le\nvoyage temporel';
         const res = getReconstructedMessage(original, translation);
         const expected = parser.parseEntry(
-            'time-travel =\n    Ils ont inventé le\n    voyage temporel'
+            'time-travel =\n    Ils ont inventé le\n    voyage temporel',
         );
         expect(res).toEqual(expected);
     });
@@ -39,7 +38,7 @@ describe('getReconstructedMessage', () => {
         const translation = 'Ils se déplacent\nen mouvement lents';
         const res = getReconstructedMessage(original, translation);
         const expected = parser.parseEntry(
-            'slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents'
+            'slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents',
         );
         expect(res).toEqual(expected);
     });
@@ -48,14 +47,13 @@ describe('getReconstructedMessage', () => {
         const original = '-my-term = My Term';
         const translation = 'Mon Terme';
         const res = getReconstructedMessage(original, translation);
-        const expected = parser.parseEntry(
-            '-my-term = Mon Terme'
-        );
+        const expected = parser.parseEntry('-my-term = Mon Terme');
         expect(res).toEqual(expected);
     });
 
     it('empties all but the first text element', () => {
-        const original = 'stark = Tony Stark\n    .hero = IronMan\n    .hair = black';
+        const original =
+            'stark = Tony Stark\n    .hero = IronMan\n    .hair = black';
         const translation = 'Anthony Stark';
         const res = getReconstructedMessage(original, translation);
 
@@ -68,6 +66,8 @@ describe('getReconstructedMessage', () => {
         const translation = 'Je suis { -term }';
         const res = getReconstructedMessage(original, translation);
 
-        expect(serializer.serializeEntry(res)).toEqual('with-term = Je suis { -term }\n');
+        expect(serializer.serializeEntry(res)).toEqual(
+            'with-term = Je suis { -term }\n',
+        );
     });
 });

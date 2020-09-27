@@ -1,43 +1,50 @@
 /* Reset HTML5 Search Input in Webkit */
-input[type=search] {
+input[type='search'] {
     -webkit-appearance: none;
     -webkit-border-radius: 0;
 }
 
-body, select, input, textarea, button {
-    font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+body,
+select,
+input,
+textarea,
+button {
+    font-family: 'Open Sans', 'Lucida Sans', 'Lucida Grande',
+        'Lucida Sans Unicode', Verdana, sans-serif;
 }
 
 body {
-    background: #272A2F;
-    color: #EBEBEB;
+    background: #272a2f;
+    color: #ebebeb;
 }
 
-body, html, #root {
+body,
+html,
+#root {
     height: 100%;
     width: 100%;
 }
 
 a:link,
 a:visited {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-weight: 300;
     text-decoration: none;
 }
 
 a:hover,
 a:active {
-    color: #7BC876;
+    color: #7bc876;
     text-decoration: none;
 }
 
 /* Bug 1351813
  * Increase font size for the Arabic language to make it readable.
 */
-[data-script="Arabic"] {
+[data-script='Arabic'] {
     font-size: 1.1em;
 }
 
-[data-script="Arabic"] .placeable {
+[data-script='Arabic'] .placeable {
     font-size: 0.9em;
 }

@@ -2,7 +2,6 @@
 
 import { serializeExpression } from '@fluent/syntax';
 
-
 /**
  * Returns a list of values from a Fluent AST.
  *
@@ -16,10 +15,11 @@ export default function serialize(elements: Array<Object>): Array<any> {
 
         if (elt.type === 'Placeable') {
             if (elt.expression.type === 'SelectExpression') {
-                const defaultVariants = elt.expression.variants.filter(v => v.default);
+                const defaultVariants = elt.expression.variants.filter(
+                    (v) => v.default,
+                );
                 return serialize(defaultVariants[0].value.elements);
-            }
-            else {
+            } else {
                 const expression = serializeExpression(elt.expression);
                 return `{ ${expression} }`;
             }

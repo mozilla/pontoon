@@ -6,7 +6,6 @@ import { Localized } from '@fluent/react';
 import type { EntityTranslation } from 'core/api';
 import type { ChangeOperation } from 'modules/history';
 
-
 type Props = {
     isRunningRequest: boolean,
     isTranslator: boolean,
@@ -15,7 +14,6 @@ type Props = {
     sendTranslation: () => void,
     updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
 };
-
 
 /**
  * Render the main action button of the Editor.
@@ -53,7 +51,11 @@ export default function EditorMainAction(props: Props) {
         glyph: ?React.Node,
     };
 
-    if (isTranslator && sameExistingTranslation && !sameExistingTranslation.approved) {
+    if (
+        isTranslator &&
+        sameExistingTranslation &&
+        !sameExistingTranslation.approved
+    ) {
         // Approve button, will approve the translation.
         btn = {
             id: 'editor-EditorMenu--button-approve',
@@ -67,10 +69,9 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-approving';
             btn.label = 'Approving';
-            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
+            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
-    }
-    else if (forceSuggestions || !isTranslator) {
+    } else if (forceSuggestions || !isTranslator) {
         // Suggest button, will send an unreviewed translation.
         btn = {
             id: 'editor-EditorMenu--button-suggest',
@@ -84,10 +85,9 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-suggesting';
             btn.label = 'Suggesting';
-            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
+            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
-    }
-    else {
+    } else {
         // Save button, will send an approved translation.
         btn = {
             id: 'editor-EditorMenu--button-save',
@@ -101,22 +101,21 @@ export default function EditorMainAction(props: Props) {
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-saving';
             btn.label = 'Saving';
-            btn.glyph = <i className="fa fa-circle-notch fa-spin" />;
+            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
     }
 
-    return <Localized
-        id={ btn.id }
-        attrs={{ title: true }}
-        glyph={ btn.glyph }
-    >
-        <button
-            className={ btn.className }
-            onClick={ btn.action }
-            title={ btn.title}
-            disabled={ isRunningRequest }
-        >
-            { btn.glyph }{ btn.label }
-        </button>
-    </Localized>;
+    return (
+        <Localized id={btn.id} attrs={{ title: true }} glyph={btn.glyph}>
+            <button
+                className={btn.className}
+                onClick={btn.action}
+                title={btn.title}
+                disabled={isRunningRequest}
+            >
+                {btn.glyph}
+                {btn.label}
+            </button>
+        </Localized>
+    );
 }

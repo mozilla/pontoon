@@ -9,7 +9,7 @@
 }
 
 .navigation > ul > li + li::before {
-    color: #4D5967;
+    color: #4d5967;
     content: '/';
     font-size: 28px;
     font-weight: 100;
@@ -17,13 +17,13 @@
 }
 
 .navigation > ul > li > a {
-    color: #EBEBEB;
+    color: #ebebeb;
     font-weight: 300;
     padding: 0 12px;
 }
 
 .navigation > ul > li > a:hover {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .navigation img {
@@ -32,6 +32,6 @@
 }
 
 .navigation .locale-code {
-    color: #7BC876;
+    color: #7bc876;
     padding-left: 7px;
 }

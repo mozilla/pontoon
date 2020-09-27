@@ -6,7 +6,6 @@ import { UnsavedChangesBase } from './UnsavedChanges';
 
 import { actions } from '..';
 
-
 describe('<UnsavedChangesBase>', () => {
     beforeAll(() => {
         sinon.stub(actions, 'hide').returns({ type: 'whatever' });
@@ -24,7 +23,9 @@ describe('<UnsavedChangesBase>', () => {
     });
 
     it('renders correctly if shown', () => {
-        const wrapper = shallow(<UnsavedChangesBase unsavedchanges={ { shown: true } } />);
+        const wrapper = shallow(
+            <UnsavedChangesBase unsavedchanges={{ shown: true }} />,
+        );
 
         expect(wrapper.find('.unsaved-changes')).toHaveLength(1);
         expect(wrapper.find('.close')).toHaveLength(1);
@@ -34,20 +35,32 @@ describe('<UnsavedChangesBase>', () => {
     });
 
     it('does not render if not shown', () => {
-        const wrapper = shallow(<UnsavedChangesBase unsavedchanges={ { shown: false } } />);
+        const wrapper = shallow(
+            <UnsavedChangesBase unsavedchanges={{ shown: false }} />,
+        );
 
         expect(wrapper.find('.unsaved-changes')).toHaveLength(0);
     });
 
     it('closes the unsaved changes popup when the Close button is clicked', () => {
-        const wrapper = shallow(<UnsavedChangesBase unsavedchanges={ { shown: true } } dispatch={ () => {} } />);
+        const wrapper = shallow(
+            <UnsavedChangesBase
+                unsavedchanges={{ shown: true }}
+                dispatch={() => {}}
+            />,
+        );
 
         wrapper.find('.close').simulate('click');
         expect(actions.hide.calledOnce).toBeTruthy();
     });
 
     it('ignores the unsaved changes popup when the Proceed button is clicked', () => {
-        const wrapper = shallow(<UnsavedChangesBase unsavedchanges={ { shown: true } } dispatch={ () => {} } />);
+        const wrapper = shallow(
+            <UnsavedChangesBase
+                unsavedchanges={{ shown: true }}
+                dispatch={() => {}}
+            />,
+        );
 
         wrapper.find('.proceed.anyway').simulate('click');
         expect(actions.ignore.calledOnce).toBeTruthy();

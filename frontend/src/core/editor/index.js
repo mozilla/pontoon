@@ -15,7 +15,6 @@ export type { EditorProps } from './components/connectedEditor';
 export type { EditorState } from './reducer';
 export type { Translation } from './actions';
 
-
 // Name of this module.
 // Used as the key to store this module's reducer.
 export const NAME: string = 'editor';

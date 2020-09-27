@@ -1,6 +1,5 @@
 import getSimplePreview from './getSimplePreview';
 
-
 describe('getSimplePreview', () => {
     it('works for an empty string', () => {
         expect(getSimplePreview('')).toEqual('');
@@ -114,7 +113,9 @@ describe('getSimplePreview', () => {
         }Read more
         `;
         const res = getSimplePreview(message);
-        expect(res).toEqual('{ LINK("Wikipedia", title: "Go to Wikipedia") }Read more');
+        expect(res).toEqual(
+            '{ LINK("Wikipedia", title: "Go to Wikipedia") }Read more',
+        );
     });
 
     it('works with variable reference', () => {

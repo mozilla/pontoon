@@ -6,7 +6,6 @@ import './NotificationPanel.css';
 
 import type { NotificationState } from '../reducer';
 
-
 type Props = {|
     notification: NotificationState,
 |};
@@ -14,7 +13,6 @@ type Props = {|
 type State = {|
     hiding: boolean,
 |};
-
 
 /**
  * Show a status notification for a short period of time.
@@ -52,7 +50,7 @@ export default class NotificationPanel extends React.Component<Props, State> {
     hide = () => {
         clearTimeout(this.hideTimeout);
         this.setState({ hiding: true });
-    }
+    };
 
     render() {
         const { notification } = this.props;
@@ -64,12 +62,17 @@ export default class NotificationPanel extends React.Component<Props, State> {
 
         const notif = notification.message;
 
-        return <div className={ 'notification-panel' + hideClass } onClick={ this.hide }>
-            { !notif ? <span /> :
-                <span className={ notif.type }>
-                    { notif.content }
-                </span>
-            }
-        </div>
+        return (
+            <div
+                className={'notification-panel' + hideClass}
+                onClick={this.hide}
+            >
+                {!notif ? (
+                    <span />
+                ) : (
+                    <span className={notif.type}>{notif.content}</span>
+                )}
+            </div>
+        );
     }
 }

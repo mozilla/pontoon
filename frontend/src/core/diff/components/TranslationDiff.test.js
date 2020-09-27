@@ -3,14 +3,10 @@ import { shallow } from 'enzyme';
 
 import TranslationDiff from './TranslationDiff';
 
-
 describe('<TranslationDiff>', () => {
     it('returns the correct diff for provided strings', () => {
         const wrapper = shallow(
-            <TranslationDiff
-                base={ 'abcdef' }
-                target={ 'cdefgh' }
-            />
+            <TranslationDiff base={'abcdef'} target={'cdefgh'} />,
         );
 
         expect(wrapper.find('ins')).toHaveLength(1);
@@ -20,10 +16,7 @@ describe('<TranslationDiff>', () => {
 
     it('returns the same string if provided strings are equal', () => {
         const wrapper = shallow(
-            <TranslationDiff
-                base={ 'abcdef' }
-                target={ 'abcdef' }
-            />
+            <TranslationDiff base={'abcdef'} target={'abcdef'} />,
         );
 
         expect(wrapper.find('ins')).toHaveLength(0);

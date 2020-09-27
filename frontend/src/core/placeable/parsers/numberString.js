@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks numbers.
  *
@@ -21,14 +20,16 @@ const numberString = {
     rule: /([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-numberString'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Number'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-numberString'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Number'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

@@ -14,14 +14,12 @@ import RichEditor from './RichEditor';
 import type { EditorProps, Translation } from 'core/editor';
 import type { SyntaxType } from 'core/utils/fluent/types';
 
-
 type State = {|
     // Force using the source editor.
     forceSource: boolean,
     // The type of form to use to show the translation.
     syntaxType: SyntaxType,
 |};
-
 
 /**
  * Editor dedicated to modifying Fluent strings.
@@ -43,10 +41,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
 
     componentDidUpdate(prevProps: EditorProps, prevState: State) {
         // If the entity changed, re-analyze the translation.
-        if (
-            this.props.entity &&
-            this.props.entity !== prevProps.entity
-        ) {
+        if (this.props.entity && this.props.entity !== prevProps.entity) {
             this.setState({ forceSource: false });
             this.analyzeFluentMessage();
         }
@@ -60,7 +55,9 @@ export class EditorBase extends React.Component<EditorProps, State> {
             // Syntax type might have changed in the source editor, make sure it's set correctly
             let syntaxType = this.state.syntaxType;
             if (prevState.forceSource) {
-                const message = fluent.parser.parseEntry(this.props.editor.translation);
+                const message = fluent.parser.parseEntry(
+                    this.props.editor.translation,
+                );
                 if (message.type !== 'Junk') {
                     syntaxType = fluent.getSyntaxType(message);
                     this.setState({ syntaxType });
@@ -88,7 +85,7 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.props.editor.translation !== prevProps.editor.translation &&
             this.props.editor.changeSource !== 'internal' &&
             this.props.editor.changeSource !== 'machinery' &&
-            typeof(this.props.editor.translation) === 'string'
+            typeof this.props.editor.translation === 'string'
         ) {
             this.analyzeFluentMessage(this.props.editor.translation);
         }
@@ -99,9 +96,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
             this.state.forceSource &&
             this.props.editor.translation !== prevProps.editor.translation &&
             this.props.editor.changeSource === 'machinery' &&
-            typeof(this.props.editor.translation) === 'string'
+            typeof this.props.editor.translation === 'string'
         ) {
-            const message = fluent.parser.parseEntry(this.props.editor.translation);
+            const message = fluent.parser.parseEntry(
+                this.props.editor.translation,
+            );
             if (message.type === 'Junk') {
                 this.updateEditorContent(
                     this.props.editor.translation,
@@ -119,7 +118,10 @@ export class EditorBase extends React.Component<EditorProps, State> {
     analyzeFluentMessage(translation: ?string) {
         const props = this.props;
 
-        const source = translation || props.activeTranslationString || props.entity.original;
+        const source =
+            translation ||
+            props.activeTranslationString ||
+            props.entity.original;
         const message = fluent.parser.parseEntry(source);
 
         // In case simple message gets analyzed again
@@ -136,12 +138,13 @@ export class EditorBase extends React.Component<EditorProps, State> {
 
         if (syntaxType === 'simple') {
             translationContent = fluent.getSimplePreview(translationContent);
-        }
-        else if (syntaxType === 'rich') {
+        } else if (syntaxType === 'rich') {
             if (!translationContent) {
-                translationContent = fluent.getEmptyMessage(message, props.locale);
-            }
-            else {
+                translationContent = fluent.getEmptyMessage(
+                    message,
+                    props.locale,
+                );
+            } else {
                 translationContent = message;
             }
         }
@@ -158,7 +161,11 @@ export class EditorBase extends React.Component<EditorProps, State> {
      * Update the content for the new type of form from the previous one. This
      * allows to keep changes made by the user when switching editing modes.
      */
-    updateEditorContent(translation: Translation, fromSyntax: SyntaxType, toSyntax: SyntaxType) {
+    updateEditorContent(
+        translation: Translation,
+        fromSyntax: SyntaxType,
+        toSyntax: SyntaxType,
+    ) {
         const props = this.props;
 
         const [translationContent, initialContent] = fluent.convertSyntax(
@@ -175,20 +182,19 @@ export class EditorBase extends React.Component<EditorProps, State> {
     }
 
     toggleForceSource = () => {
-        this.setState(state => {
+        this.setState((state) => {
             return {
                 ...state,
                 forceSource: !state.forceSource,
             };
         });
-    }
+    };
 
     render() {
         let EditorImplementation = RichEditor;
         if (this.state.forceSource || this.state.syntaxType === 'complex') {
-            EditorImplementation = SourceEditor
-        }
-        else if (this.state.syntaxType === 'simple') {
+            EditorImplementation = SourceEditor;
+        } else if (this.state.syntaxType === 'simple') {
             EditorImplementation = SimpleEditor;
         }
 
@@ -196,27 +202,30 @@ export class EditorBase extends React.Component<EditorProps, State> {
         let ftlSwitch = null;
         // But only if the user is logged in and the string is not read-only.
         if (this.props.user.isAuthenticated && !this.props.isReadOnlyEditor) {
-            ftlSwitch = this.state.syntaxType === 'complex' ? <button
-                className='ftl active'
-                title='Advanced FTL mode enabled'
-                onClick={ this.props.showNotSupportedMessage }
-            >
-                FTL
-            </button> : <button
-                className={ 'ftl' + (this.state.forceSource ? ' active' : '') }
-                title='Toggle between simple and advanced FTL mode'
-                onClick={ this.toggleForceSource }
-            >
-                FTL
-            </button>;
+            ftlSwitch =
+                this.state.syntaxType === 'complex' ? (
+                    <button
+                        className='ftl active'
+                        title='Advanced FTL mode enabled'
+                        onClick={this.props.showNotSupportedMessage}
+                    >
+                        FTL
+                    </button>
+                ) : (
+                    <button
+                        className={
+                            'ftl' + (this.state.forceSource ? ' active' : '')
+                        }
+                        title='Toggle between simple and advanced FTL mode'
+                        onClick={this.toggleForceSource}
+                    >
+                        FTL
+                    </button>
+                );
         }
 
-        return <EditorImplementation
-            { ...this.props }
-            ftlSwitch={ ftlSwitch }
-        />;
+        return <EditorImplementation {...this.props} ftlSwitch={ftlSwitch} />;
     }
 }
-
 
 export default editor.connectedEditor(EditorBase);

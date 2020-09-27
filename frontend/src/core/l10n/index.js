@@ -7,11 +7,9 @@ export { default as AppLocalizationProvider } from './components/AppLocalization
 
 export type { L10nState } from './reducer';
 
-
 // Name of this module.
 // Used as the key to store this module's reducer.
 export const NAME: string = 'l10n';
-
 
 // List of available locales for the UI.
 // Use to choose which locale files to download.

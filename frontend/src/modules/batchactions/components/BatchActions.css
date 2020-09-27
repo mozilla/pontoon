@@ -4,13 +4,13 @@
 }
 
 .batch-actions .topbar {
-    background: #4D5967;
-    border-bottom: 1px solid #5E6475;
+    background: #4d5967;
+    border-bottom: 1px solid #5e6475;
     padding: 12px 10px 13px;
 }
 
 .batch-actions .topbar .selecting {
-    color: #CCCCCC;
+    color: #cccccc;
     float: right;
     margin-top: 2px;
 }
@@ -18,14 +18,14 @@
 .batch-actions .topbar button {
     background: none;
     border: none;
-    color: #CCCCCC;
+    color: #cccccc;
     font-weight: 300;
     padding: 0;
     text-transform: uppercase;
 }
 
 .batch-actions .topbar button:hover {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .batch-actions .topbar button.select-all {
@@ -37,7 +37,7 @@
 }
 
 .batch-actions .topbar button.selected-count .stress {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .batch-actions .topbar button .fa {
@@ -65,7 +65,7 @@
 }
 
 .batch-actions .main-content h2 {
-    color: #CCCCCC;
+    color: #cccccc;
     font-size: 14px;
     font-weight: 300;
     padding-bottom: 2px;
@@ -73,12 +73,12 @@
 }
 
 .batch-actions .main-content .intro p {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-style: italic;
 }
 
 .batch-actions .main-content .intro p .stress {
-    color: #F36;
+    color: #f36;
 }
 
 .batch-actions .main-content button,
@@ -88,10 +88,10 @@
 }
 
 .batch-actions .main-content button {
-    background: #7BC876;
+    background: #7bc876;
     border: none;
     border-radius: 3px;
-    color: #272A2F;
+    color: #272a2f;
     font-weight: 600;
     margin-top: 10px;
     padding: 15px 5px;
@@ -107,14 +107,14 @@
 }
 
 .batch-actions .main-content button.reject-all {
-    background: #F36;
+    background: #f36;
 }
 
 .batch-actions .main-content input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid #5E6475;
-    color: #FFFFFF;
+    border-bottom: 1px solid #5e6475;
+    color: #ffffff;
     float: none;
     margin-bottom: 10px;
     padding: 15px 0 5px;
@@ -132,5 +132,5 @@
 
 /* Style placeholder color in Chrome */
 .batch-actions .main-content input::-webkit-input-placeholder {
-    color: #AAAAAA;
+    color: #aaaaaa;
 }

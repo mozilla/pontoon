@@ -6,18 +6,15 @@ import tlds from 'tlds';
 
 import './Screenshots.css';
 
-
 // Create and configure a URLs matcher.
 const linkify = new LinkifyIt();
 linkify.tlds(tlds);
-
 
 type Props = {|
     locale: string,
     source: string,
     openLightbox: Function,
 |};
-
 
 /**
  * Shows screenshot miniatures based on the content of a string.
@@ -28,7 +25,7 @@ type Props = {|
 export default class Screenshots extends React.Component<Props> {
     openLightbox = (image: string) => {
         return () => this.props.openLightbox(image);
-    }
+    };
 
     getImages(): ?Array<React.Node> {
         const { locale, source } = this.props;
@@ -45,13 +42,18 @@ export default class Screenshots extends React.Component<Props> {
         const images = [];
         matches.forEach((match, i) => {
             if (/(https?:\/\/.*\.(?:png|jpg))/im.test(match.url)) {
-                const urlWithLocale = match.url.replace(/en-US\//gi, locale + '/');
-                images.push(<img
-                    src={ urlWithLocale }
-                    alt=""
-                    key={ i }
-                    onClick={ this.openLightbox(urlWithLocale) }
-                />);
+                const urlWithLocale = match.url.replace(
+                    /en-US\//gi,
+                    locale + '/',
+                );
+                images.push(
+                    <img
+                        src={urlWithLocale}
+                        alt=''
+                        key={i}
+                        onClick={this.openLightbox(urlWithLocale)}
+                    />,
+                );
             }
         });
 
@@ -64,10 +66,10 @@ export default class Screenshots extends React.Component<Props> {
             return null;
         }
 
-        return <React.Fragment>
-            <div className="screenshots">
-                { images }
-            </div>
-        </React.Fragment>
+        return (
+            <React.Fragment>
+                <div className='screenshots'>{images}</div>
+            </React.Fragment>
+        );
     }
 }

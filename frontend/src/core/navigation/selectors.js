@@ -2,7 +2,6 @@
 
 import { createSelector } from 'reselect';
 
-
 const pathSelector = (state): string => state.router.location.pathname;
 const querySelector = (state): string => state.router.location.search;
 
@@ -59,9 +58,8 @@ export const getNavigationParams: Function = createSelector(
             author,
             time,
         };
-    }
+    },
 );
-
 
 export default {
     getNavigationParams,

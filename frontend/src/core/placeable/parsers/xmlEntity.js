@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks XML entities.
  *
@@ -19,14 +18,13 @@ const xmlEntity = {
     rule: /(&(([a-zA-Z][a-zA-Z0-9.-]*)|([#](\d{1,5}|x[a-fA-F0-9]{1,5})+));)/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-xmlEntity'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='XML entity'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized id='placeable-parser-xmlEntity' attrs={{ title: true }}>
+                <mark className='placeable' title='XML entity'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

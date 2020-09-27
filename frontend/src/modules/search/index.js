@@ -10,11 +10,9 @@ export type { Author } from './actions';
 export type { SearchAndFilters } from './reducer';
 export type { TimeRangeType } from './components/SearchBox';
 
-
 // Name of this module.
 // Used as the key to store this module's reducer.
 export const NAME: string = 'search';
-
 
 // List of available status filters.
 // This list controls the creation of the UI.
@@ -50,7 +48,6 @@ export const FILTERS_STATUS = [
         slug: 'unreviewed',
     },
 ];
-
 
 // List of available extra filters.
 // This list controls the creation of the UI.

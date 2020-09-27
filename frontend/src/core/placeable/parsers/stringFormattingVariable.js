@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks printf string formatting variables.
  *
@@ -22,14 +21,16 @@ const stringFormattingVariable = {
     rule: /(%(\d+\$)?[-+0#'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-stringFormattingVariable'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='String formatting variable'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-stringFormattingVariable'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='String formatting variable'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

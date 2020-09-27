@@ -6,12 +6,10 @@ import './ProgressChart.css';
 
 import type { Stats } from 'core/stats';
 
-
 type Props = {|
     stats: Stats,
     size: number,
 |};
-
 
 /**
  * Render current resource progress data on canvas.
@@ -49,7 +47,14 @@ export default class ProgressChart extends React.Component<Props> {
     }
 
     drawCanvas() {
-        const { approved, fuzzy, warnings, errors, missing, total } = this.props.stats;
+        const {
+            approved,
+            fuzzy,
+            warnings,
+            errors,
+            missing,
+            total,
+        } = this.props.stats;
         const dpr = window.devicePixelRatio || 1;
         const canvas = this.canvas.current;
 
@@ -91,9 +96,9 @@ export default class ProgressChart extends React.Component<Props> {
         const radius = (canvas.width - context.lineWidth) / 2;
         let end = null;
 
-        data.forEach(item => {
+        data.forEach((item) => {
             const length = item.type * 2;
-            const start = (end !== null) ? end : -0.5;
+            const start = end !== null ? end : -0.5;
             end = start + length;
 
             context.beginPath();
@@ -104,10 +109,12 @@ export default class ProgressChart extends React.Component<Props> {
     }
 
     render() {
-        return <canvas
-            ref={ this.canvas }
-            height={ this.props.size }
-            width={ this.props.size }
-        />;
+        return (
+            <canvas
+                ref={this.canvas}
+                height={this.props.size}
+                width={this.props.size}
+            />
+        );
     }
 }

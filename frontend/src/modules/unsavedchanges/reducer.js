@@ -1,11 +1,6 @@
 /* @flow */
 
-import {
-    HIDE,
-    IGNORE,
-    SHOW,
-    UPDATE,
-} from './actions';
+import { HIDE, IGNORE, SHOW, UPDATE } from './actions';
 
 import type {
     HideAction,
@@ -14,14 +9,7 @@ import type {
     UpdateAction,
 } from './actions';
 
-
-type Action =
-    | HideAction
-    | IgnoreAction
-    | ShowAction
-    | UpdateAction
-;
-
+type Action = HideAction | IgnoreAction | ShowAction | UpdateAction;
 
 export type UnsavedChangesState = {|
     +callback: ?Function,
@@ -29,7 +17,6 @@ export type UnsavedChangesState = {|
     +ignored: boolean,
     +shown: boolean,
 |};
-
 
 const initialState = {
     callback: null,

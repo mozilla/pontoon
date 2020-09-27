@@ -13,7 +13,7 @@
 }
 
 .user-notification.unread {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .user-notification.read {
@@ -23,11 +23,11 @@
 
 @keyframes fadeout-background {
     0% {
-        background: #3F4752;
+        background: #3f4752;
     }
 
     50% {
-        background: #3F4752;
+        background: #3f4752;
     }
 
     100% {
@@ -45,12 +45,12 @@
 }
 
 .user-notification a {
-    color: #F36;
+    color: #f36;
     display: inline;
 }
 
 .user-notification .verb {
-    color: #EBEBEB;
+    color: #ebebeb;
     padding: 0 3px;
 }
 
@@ -76,7 +76,7 @@
 .user-notification .message h4,
 .user-notification .message h5,
 .user-notification .message h6 {
-    color: #EBEBEB;
+    color: #ebebeb;
     font-size: 14px;
     font-style: normal;
     font-weight: bold;

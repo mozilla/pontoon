@@ -59,12 +59,12 @@
 }
 
 .user-menu .menu li.details .name {
-    color: #EBEBEB;
+    color: #ebebeb;
     font-size: 16px;
 }
 
 .user-menu .menu li.details .email {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 12px;
 }
 
@@ -90,7 +90,7 @@
 }
 
 .user-menu .menu li:hover {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .user-menu .menu li:hover,
