@@ -334,9 +334,7 @@ class VCSConfigurationTests(VCSTestCase):
 
         # Make sure VCSConfiguration instance is initialized
         self.db_project.configuration_file = self.toml
-        self.db_project.source_repository.permalink_prefix = (
-            "https://example.com/{locale_code}"
-        )
+        self.db_project.source_repository.permalink_prefix = "https://example.com/"
         self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
 
     def test_add_locale(self):
@@ -454,9 +452,7 @@ def setUpResource(self):
     # Make sure VCSConfiguration instance is initialized
     self.db_project.configuration_file = "l10n.toml"
 
-    self.db_project.source_repository.permalink_prefix = (
-        "https://example.com/{locale_code}"
-    )
+    self.db_project.source_repository.permalink_prefix = "https://example.com/"
     self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
 
 
