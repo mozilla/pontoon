@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import GenericTranslationForm from './GenericTranslationForm';
 
-
 const DEFAULT_LOCALE = {
     direction: 'ltr',
     code: 'kg',
@@ -17,13 +16,11 @@ const EDITOR = {
     warnings: [],
 };
 
-
 describe('<GenericTranslationForm>', () => {
     it('renders a textarea with some content', () => {
-        const wrapper = shallow(<GenericTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-        />);
+        const wrapper = shallow(
+            <GenericTranslationForm editor={EDITOR} locale={DEFAULT_LOCALE} />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(1);
         expect(wrapper.find('textarea').html()).toContain('world');
@@ -31,14 +28,18 @@ describe('<GenericTranslationForm>', () => {
 
     it('calls the updateTranslation function on change', () => {
         const mockUpdate = sinon.spy();
-        const wrapper = shallow(<GenericTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ mockUpdate }
-        />);
+        const wrapper = shallow(
+            <GenericTranslationForm
+                editor={EDITOR}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={mockUpdate}
+            />,
+        );
 
         expect(mockUpdate.called).toBeFalsy();
-        wrapper.find('textarea').simulate('change', { currentTarget: { value: 'good bye' } });
+        wrapper
+            .find('textarea')
+            .simulate('change', { currentTarget: { value: 'good bye' } });
         expect(mockUpdate.called).toBeTruthy();
     });
 
@@ -46,14 +47,16 @@ describe('<GenericTranslationForm>', () => {
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<GenericTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-            unsavedchanges={ { shown: false } }
-            resetSelectionContent={ resetMock }
-            updateTranslation={ updateMock }
-            updateUnsavedChanges={ sinon.stub() }
-        />);
+        const wrapper = mount(
+            <GenericTranslationForm
+                editor={EDITOR}
+                locale={DEFAULT_LOCALE}
+                unsavedchanges={{ shown: false }}
+                resetSelectionContent={resetMock}
+                updateTranslation={updateMock}
+                updateUnsavedChanges={sinon.stub()}
+            />,
+        );
 
         wrapper.setProps({ editor: { selectionReplacementContent: 'hello ' } });
 

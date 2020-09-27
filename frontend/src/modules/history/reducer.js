@@ -3,15 +3,9 @@
 import { RECEIVE, REQUEST, UPDATE } from './actions';
 
 import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
-import type { TranslationComment } from 'core/api'
+import type { TranslationComment } from 'core/api';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-    | UpdateAction
-;
-
+type Action = ReceiveAction | RequestAction | UpdateAction;
 
 export type HistoryTranslation = {|
     +approved: boolean,
@@ -38,16 +32,17 @@ export type HistoryState = {|
     +translations: Array<HistoryTranslation>,
 |};
 
-
-function updateTranslation(translations: Array<HistoryTranslation>, newTranslation: HistoryTranslation) {
-    return translations.map(translation => {
+function updateTranslation(
+    translations: Array<HistoryTranslation>,
+    newTranslation: HistoryTranslation,
+) {
+    return translations.map((translation) => {
         if (translation.pk === newTranslation.pk) {
             return { ...translation, ...newTranslation };
         }
         return translation;
     });
 }
-
 
 const initialState = {
     fetching: false,
@@ -58,7 +53,7 @@ const initialState = {
 
 export default function reducer(
     state: HistoryState = initialState,
-    action: Action
+    action: Action,
 ): HistoryState {
     switch (action.type) {
         case REQUEST:
@@ -78,7 +73,10 @@ export default function reducer(
         case UPDATE:
             return {
                 ...state,
-                translations: updateTranslation(state.translations, action.translation),
+                translations: updateTranslation(
+                    state.translations,
+                    action.translation,
+                ),
             };
         default:
             return state;

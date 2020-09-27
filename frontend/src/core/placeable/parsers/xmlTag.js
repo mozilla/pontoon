@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks XML tags.
  *
@@ -20,14 +19,13 @@ const xmlTag = {
     rule: /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-xmlTag'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='XML tag'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized id='placeable-parser-xmlTag' attrs={{ title: true }}>
+                <mark className='placeable' title='XML tag'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

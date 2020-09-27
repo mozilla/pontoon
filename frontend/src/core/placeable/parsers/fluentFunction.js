@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks functions from Fluent syntax.
  *
@@ -18,14 +17,16 @@ import { Localized } from '@fluent/react';
 const fluentFunction = {
     rule: /({ ?[A-W0-9\-_]+[^}]* ?})/,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-fluentFunction'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Fluent function'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-fluentFunction'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Fluent function'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

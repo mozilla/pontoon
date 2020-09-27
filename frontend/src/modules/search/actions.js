@@ -2,10 +2,8 @@
 
 import api from 'core/api';
 
-
 export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
 export const SET_FOCUS: 'search/SET_FOCUS' = 'search/SET_FOCUS';
-
 
 export type Author = {
     email: string,
@@ -32,23 +30,17 @@ export function update(response: ResponseType): UpdateAction {
     };
 }
 
-
 export function getAuthorsAndTimeRangeData(
     locale: string,
     project: string,
     resource: string,
 ): Function {
-    return async dispatch => {
-        const response = await api.filter.get(
-            locale,
-            project,
-            resource,
-        );
+    return async (dispatch) => {
+        const response = await api.filter.get(locale, project, resource);
 
         dispatch(update(response));
     };
 }
-
 
 export type SetFocusAction = {|
     type: typeof SET_FOCUS,
@@ -60,7 +52,6 @@ export function setFocus(searchInputFocused: boolean): SetFocusAction {
         searchInputFocused,
     };
 }
-
 
 export default {
     getAuthorsAndTimeRangeData,

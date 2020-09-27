@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import OtherLocales from './OtherLocales';
 
-
 describe('<OtherLocales>', () => {
     it('shows the correct number of translations', () => {
         const otherlocales = {
@@ -11,17 +10,17 @@ describe('<OtherLocales>', () => {
                 preferred: [],
                 other: [
                     {
-                        'locale': {
+                        locale: {
                             code: 'ar',
                         },
                     },
                     {
-                        'locale': {
+                        locale: {
                             code: 'br',
                         },
                     },
                     {
-                        'locale': {
+                        locale: {
                             code: 'cr',
                         },
                     },
@@ -32,13 +31,13 @@ describe('<OtherLocales>', () => {
             locale: 'kg',
             project: 'tmo',
         };
-        const user = {}
+        const user = {};
         const wrapper = shallow(
             <OtherLocales
-                otherlocales={ otherlocales }
-                parameters={ params }
-                user={ user }
-            />
+                otherlocales={otherlocales}
+                parameters={params}
+                user={user}
+            />,
         );
 
         expect(wrapper.find('Translation')).toHaveLength(3);
@@ -48,11 +47,10 @@ describe('<OtherLocales>', () => {
         const otherlocales = {
             fetching: true,
         };
-        const user = {}
-        const wrapper = shallow(<OtherLocales
-            otherlocales={ otherlocales }
-            user={ user }
-        />);
+        const user = {};
+        const wrapper = shallow(
+            <OtherLocales otherlocales={otherlocales} user={user} />,
+        );
 
         expect(wrapper.type()).toBeNull();
     });
@@ -65,12 +63,13 @@ describe('<OtherLocales>', () => {
                 other: [],
             },
         };
-        const user = {}
-        const wrapper = shallow(<OtherLocales
-            otherlocales={ otherlocales }
-            user={ user }
-        />);
+        const user = {};
+        const wrapper = shallow(
+            <OtherLocales otherlocales={otherlocales} user={user} />,
+        );
 
-        expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
+        expect(wrapper.find('#history-history-no-translations')).toHaveLength(
+            1,
+        );
     });
 });

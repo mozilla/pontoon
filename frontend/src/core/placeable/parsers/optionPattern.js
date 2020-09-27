@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks command line options.
  *
@@ -19,14 +18,16 @@ const optionPattern = {
     rule: /(\B(-[a-zA-Z]|--[a-z-]+)\b)/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-optionPattern'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Command line option'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-optionPattern'
+                attrs={{ title: true }}
+            >
+                <mark className='placeable' title='Command line option'>
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

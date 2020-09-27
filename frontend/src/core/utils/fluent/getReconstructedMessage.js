@@ -4,12 +4,14 @@ import parser from './parser';
 
 import type { FluentMessage } from './types';
 
-
 /**
  * Return a reconstructed Fluent message from the original message and some
  * translated content.
  */
-export default function getReconstructedMessage(original: string, translation: string): FluentMessage {
+export default function getReconstructedMessage(
+    original: string,
+    translation: string,
+): FluentMessage {
     const message = parser.parseEntry(original);
     let key = message.id.name;
 
@@ -28,18 +30,17 @@ export default function getReconstructedMessage(original: string, translation: s
 
         if (isMultilineTranslation) {
             content = `${key} =\n    .${attribute} =`;
-            translation.split('\n').forEach(t => content += `\n        ${t}`);
-        }
-        else {
+            translation
+                .split('\n')
+                .forEach((t) => (content += `\n        ${t}`));
+        } else {
             content = `${key} =\n    .${attribute} = ${translation}`;
         }
-    }
-    else {
+    } else {
         if (isMultilineTranslation) {
             content = `${key} =`;
-            translation.split('\n').forEach(t => content += `\n    ${t}`);
-        }
-        else {
+            translation.split('\n').forEach((t) => (content += `\n    ${t}`));
+        } else {
             content = `${key} = ${translation}`;
         }
     }

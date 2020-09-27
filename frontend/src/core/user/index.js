@@ -11,7 +11,6 @@ export { default as UserAvatar } from './components/UserAvatar';
 export type { Settings } from './actions';
 export type { SettingsState, UserState } from './reducer';
 
-
 // Name of this module.
 // Used as the key to store this module's reducer.
 export const NAME: string = 'user';

@@ -1,7 +1,6 @@
 import flattenMessage from './flattenMessage';
 import parser from './parser';
 
-
 describe('flattenMessage', () => {
     it('does not modify value with single element', () => {
         const message = parser.parseEntry('title = My Title');
@@ -21,7 +20,8 @@ describe('flattenMessage', () => {
     });
 
     it('does not modify value with a single select expression', () => {
-        const input = 'my-entry =' +
+        const input =
+            'my-entry =' +
             '\n    { PLATFORM() ->' +
             '\n        [variant] Hello!' +
             '\n       *[another-variant] World!' +
@@ -30,8 +30,14 @@ describe('flattenMessage', () => {
         const res = flattenMessage(message);
 
         expect(res.value.elements).toHaveLength(1);
-        expect(res.value.elements[0].expression.variants[0].value.elements[0].value).toEqual('Hello!');
-        expect(res.value.elements[0].expression.variants[1].value.elements[0].value).toEqual('World!');
+        expect(
+            res.value.elements[0].expression.variants[0].value.elements[0]
+                .value,
+        ).toEqual('Hello!');
+        expect(
+            res.value.elements[0].expression.variants[1].value.elements[0]
+                .value,
+        ).toEqual('World!');
     });
 
     it('flattens a value with several elements', () => {
@@ -46,7 +52,9 @@ describe('flattenMessage', () => {
     });
 
     it('flattens an attribute with several elements', () => {
-        const message = parser.parseEntry('title =\n    .foo = Bar { -foo } Baz');
+        const message = parser.parseEntry(
+            'title =\n    .foo = Bar { -foo } Baz',
+        );
 
         expect(message.attributes[0].value.elements).toHaveLength(3);
 
@@ -54,11 +62,14 @@ describe('flattenMessage', () => {
 
         expect(res.attributes).toHaveLength(1);
         expect(res.attributes[0].value.elements).toHaveLength(1);
-        expect(res.attributes[0].value.elements[0].value).toEqual('Bar { -foo } Baz');
+        expect(res.attributes[0].value.elements[0].value).toEqual(
+            'Bar { -foo } Baz',
+        );
     });
 
     it('flattens value and attributes', () => {
-        const input = 'batman = The { $dark } Knight' +
+        const input =
+            'batman = The { $dark } Knight' +
             '\n    .weapon = Brain and { -wayne-enterprise }' +
             '\n    .history = Lost { 2 } parents, has { 1 } "$alfred"';
         const message = parser.parseEntry(input);
@@ -76,17 +87,18 @@ describe('flattenMessage', () => {
 
         expect(res.attributes[0].value.elements).toHaveLength(1);
         expect(res.attributes[0].value.elements[0].value).toEqual(
-            'Brain and { -wayne-enterprise }'
+            'Brain and { -wayne-enterprise }',
         );
 
         expect(res.attributes[1].value.elements).toHaveLength(1);
         expect(res.attributes[1].value.elements[0].value).toEqual(
-            'Lost { 2 } parents, has { 1 } "$alfred"'
+            'Lost { 2 } parents, has { 1 } "$alfred"',
         );
     });
 
     it('flattens values surrounding a select expression and select expression variants', () => {
-        const input = 'my-entry =' +
+        const input =
+            'my-entry =' +
             '\n    There { $num ->' +
             '\n        [one] is one email' +
             '\n       *[other] are { $num } emails' +
@@ -101,13 +113,24 @@ describe('flattenMessage', () => {
 
         expect(res.value.elements[0].value).toEqual('There ');
 
-        expect(res.value.elements[1].expression.variants[0].value.elements[0].value).toEqual('is one email');
-        expect(res.value.elements[1].expression.variants[1].value.elements[0].value).toEqual('are { $num } emails');
+        expect(
+            res.value.elements[1].expression.variants[0].value.elements[0]
+                .value,
+        ).toEqual('is one email');
+        expect(
+            res.value.elements[1].expression.variants[1].value.elements[0]
+                .value,
+        ).toEqual('are { $num } emails');
 
         expect(res.value.elements[2].value).toEqual(' for { $awesome } ');
 
-        expect(res.value.elements[3].expression.variants[0].value.elements[0].value).toEqual('him');
-        expect(res.value.elements[3].expression.variants[1].value.elements[0].value).toEqual('her');
-
+        expect(
+            res.value.elements[3].expression.variants[0].value.elements[0]
+                .value,
+        ).toEqual('him');
+        expect(
+            res.value.elements[3].expression.variants[1].value.elements[0]
+                .value,
+        ).toEqual('her');
     });
 });

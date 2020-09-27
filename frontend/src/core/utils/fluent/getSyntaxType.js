@@ -6,7 +6,6 @@ import isSupportedMessage from './isSupportedMessage';
 
 import type { FluentMessage, SyntaxType } from './types';
 
-
 /**
  * Return the syntax type of a given Fluent message.
  *
@@ -22,10 +21,7 @@ export default function getSyntaxType(message: FluentMessage): SyntaxType {
         return 'complex';
     }
 
-    if (
-        isSimpleMessage(message) ||
-        isSimpleSingleAttributeMessage(message)
-    ) {
+    if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
         return 'simple';
     }
 

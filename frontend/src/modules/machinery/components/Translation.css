@@ -1,5 +1,5 @@
 .machinery .translation {
-    border-bottom: 1px solid #5E6475;
+    border-bottom: 1px solid #5e6475;
     cursor: pointer;
     padding: 10px;
 }
@@ -9,11 +9,11 @@
 }
 
 .machinery .translation:not(.cannot-copy):hover {
-    background: #4D5967;
+    background: #4d5967;
 }
 
 .machinery .translation > header {
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     font-size: 11px;
     font-weight: 300;
@@ -31,24 +31,24 @@
     padding-left: 3px;
 }
 
-.machinery .translation > header a{
+.machinery .translation > header a {
     pointer-events: auto;
 }
 
 .machinery .translation > header ul li:not(:first-child)::before {
-    content: "•";
+    content: '•';
     padding-right: 3px;
 }
 
 .machinery .translation > header .quality::after {
-    content: "•";
-    color: #AAAAAA;
+    content: '•';
+    color: #aaaaaa;
     padding-left: 3px;
 }
 
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .machinery .translation p {
@@ -58,5 +58,5 @@
 }
 
 .machinery .translation p.original {
-    color: #AAAAAA;
+    color: #aaaaaa;
 }

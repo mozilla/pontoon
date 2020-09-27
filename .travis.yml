@@ -2,7 +2,7 @@ dist: xenial
 sudo: false
 language: python
 python:
-  - '3.8'
+  - "3.8"
 
 cache:
   pip: true
@@ -22,6 +22,7 @@ script:
   # Lint code
   - black pontoon/ --check
   - flake8 pontoon/
+  - ./frontend/node_modules/.bin/prettier --check '**/src/**/*'
   - ./node_modules/.bin/eslint .
 
   # Build and collect static assets

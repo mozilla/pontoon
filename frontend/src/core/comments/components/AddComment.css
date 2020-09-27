@@ -8,7 +8,7 @@
     background-color: #333941;
     border: none;
     border-radius: 4px;
-    color: #FFFFFF;
+    color: #ffffff;
     display: flex;
     flex-grow: 2;
     font-size: 11px;
@@ -21,7 +21,7 @@
 }
 
 .comments-list .add-comment .comment-editor .mention-element {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .comments-mention-list {
@@ -30,7 +30,7 @@
     position: absolute;
     z-index: 1;
     padding: 10px 12px;
-    background-color: #272A2F;
+    background-color: #272a2f;
     border: 1px solid #333941;
 }
 
@@ -39,9 +39,9 @@
     cursor: pointer;
 }
 
-.comments-mention-list .mention:hover, 
+.comments-mention-list .mention:hover,
 .comments-mention-list .active-mention {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .comments-mention-list .mention .user-avatar {
@@ -51,7 +51,7 @@
 
 .comments-mention-list .mention .user-avatar img {
     border-radius: 2px;
-    border: 1px solid #5E6475;
+    border: 1px solid #5e6475;
     margin-right: 8px;
 }
 
@@ -60,8 +60,8 @@
 }
 
 .comments-list .add-comment .submit-button {
-    background-color: #4D5967;
-    border: solid 1px #4D5967;
+    background-color: #4d5967;
+    border: solid 1px #4d5967;
     border-radius: 4px;
     color: #ccc;
     display: flex;
@@ -74,6 +74,6 @@
 }
 
 .comments-list .add-comment .submit-button:hover {
-    color: #272A2F;
-    background: #7BC876;
+    color: #272a2f;
+    background: #7bc876;
 }

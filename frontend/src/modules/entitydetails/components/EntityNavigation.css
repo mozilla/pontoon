@@ -1,13 +1,13 @@
 .entity-navigation {
-    background: #4D5967;
-    border-bottom: 1px solid #5E6475;
+    background: #4d5967;
+    border-bottom: 1px solid #5e6475;
     padding: 12px 10px 13px;
 }
 
 .entity-navigation button {
     background: none;
     border: none;
-    color: #CCCCCC;
+    color: #cccccc;
     float: right;
     font-weight: 300;
     padding: 0;
@@ -23,7 +23,7 @@
 }
 
 .entity-navigation button:hover {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .entity-navigation button .fa {

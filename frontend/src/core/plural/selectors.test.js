@@ -4,7 +4,6 @@ import {
     _getTranslationStringForSelectedEntity,
 } from './selectors';
 
-
 describe('getPluralForm', () => {
     it('returns the plural form', () => {
         expect(_getPluralForm(3, null)).toEqual(3);
@@ -14,11 +13,10 @@ describe('getPluralForm', () => {
 
     it('corrects the plural number', () => {
         expect(
-            _getPluralForm(-1, { original_plural: 'I have a plural!' })
+            _getPluralForm(-1, { original_plural: 'I have a plural!' }),
         ).toEqual(0);
     });
 });
-
 
 const ENTITIES = [
     {
@@ -37,7 +35,6 @@ const ENTITIES = [
         ],
     },
 ];
-
 
 describe('getTranslationForSelectedEntity', () => {
     it('returns the correct string', () => {

@@ -6,13 +6,14 @@ import { createReduxStore } from 'test/store';
 import { shallowUntilTarget } from 'test/utils';
 
 import { actions } from '..';
-import AppLocalizationProvider, { AppLocalizationProviderBase } from './AppLocalizationProvider';
-
+import AppLocalizationProvider, {
+    AppLocalizationProviderBase,
+} from './AppLocalizationProvider';
 
 describe('<AppLocalizationProvider>', () => {
     beforeAll(() => {
         const getMock = sinon.stub(actions, 'get');
-        getMock.returns({type: 'whatever'});
+        getMock.returns({ type: 'whatever' });
     });
 
     afterEach(() => {
@@ -31,7 +32,7 @@ describe('<AppLocalizationProvider>', () => {
             <AppLocalizationProvider store={store}>
                 <div />
             </AppLocalizationProvider>,
-            AppLocalizationProviderBase
+            AppLocalizationProviderBase,
         );
 
         expect(actions.get.callCount).toEqual(1);
@@ -43,11 +44,13 @@ describe('<AppLocalizationProvider>', () => {
 
         const wrapper = shallowUntilTarget(
             <AppLocalizationProvider store={store}>
-                <div id="content-test-AppLocalizationProvider" />
+                <div id='content-test-AppLocalizationProvider' />
             </AppLocalizationProvider>,
-            AppLocalizationProviderBase
+            AppLocalizationProviderBase,
         );
 
-        expect(wrapper.find('#content-test-AppLocalizationProvider')).toHaveLength(1);
+        expect(
+            wrapper.find('#content-test-AppLocalizationProvider'),
+        ).toHaveLength(1);
     });
 });

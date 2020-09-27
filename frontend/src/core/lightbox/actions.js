@@ -3,7 +3,6 @@
 export const CLOSE: 'lightbox/CLOSE' = 'lightbox/CLOSE';
 export const OPEN: 'lightbox/OPEN' = 'lightbox/OPEN';
 
-
 /**
  * Open the lightbox to show the specified image.
  */
@@ -18,7 +17,6 @@ export function open(image: string): OpenAction {
     };
 }
 
-
 /**
  * Hide the lightbox.
  */
@@ -30,7 +28,6 @@ export function close(): CloseAction {
         type: CLOSE,
     };
 }
-
 
 export default {
     close,

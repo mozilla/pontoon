@@ -22,7 +22,9 @@ help:
 	@echo "  test             Runs the entire test suite (back and front)"
 	@echo "  jest             Runs the new frontend's test suite (Translate.Next)"
 	@echo "  pytest           Runs the backend's test suite (Python)"
-	@echo "  black            Runs the black formatted on all Python code"
+	@echo "  black            Runs the black formatter on all Python code"
+	@echo "  prettier         Runs the prettier formatter on the frontend code"
+	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -68,6 +70,13 @@ black:
 
 flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
+
+prettier:
+	"${DC}" run --rm -w //app/frontend webapp yarn prettier
+
+format:
+	make prettier
+	make black
 
 lint-frontend:
 	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/

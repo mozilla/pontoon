@@ -2,7 +2,6 @@ import extractAccessKeyCandidates from './extractAccessKeyCandidates';
 import flattenMessage from './flattenMessage';
 import parser from './parser';
 
-
 describe('extractAccessKeyCandidates', () => {
     it('returns null if the message has no attributes', () => {
         const message = flattenMessage(parser.parseEntry('title = Title'));
@@ -12,8 +11,7 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('returns null if the message has no accesskey attribute', () => {
-        const input = 'title =' +
-            '\n    .foo = Bar';
+        const input = 'title =' + '\n    .foo = Bar';
         const message = flattenMessage(parser.parseEntry(input));
         const res = extractAccessKeyCandidates(message);
 
@@ -21,9 +19,7 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('returns null if the message has no label attribute or value', () => {
-        const input = 'title =' +
-            '\n    .foo = Bar' +
-            '\n    .accesskey = B';
+        const input = 'title =' + '\n    .foo = Bar' + '\n    .accesskey = B';
         const message = flattenMessage(parser.parseEntry(input));
         const res = extractAccessKeyCandidates(message);
 
@@ -31,8 +27,7 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('returns a list of access keys from the message value', () => {
-        const input = 'title = Candidates' +
-            '\n    .accesskey = B';
+        const input = 'title = Candidates' + '\n    .accesskey = B';
         const message = flattenMessage(parser.parseEntry(input));
         const res = extractAccessKeyCandidates(message);
 
@@ -40,7 +35,8 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('returns a list of access keys from the label attribute', () => {
-        const input = 'title = Title' +
+        const input =
+            'title = Title' +
             '\n    .label = Candidates' +
             '\n    .accesskey = B';
         const message = flattenMessage(parser.parseEntry(input));
@@ -50,7 +46,8 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('Does not take Placeables into account when generating candidates', () => {
-        const input = 'title = Title' +
+        const input =
+            'title = Title' +
             '\n    .label = Candidates { brand }' +
             '\n    .accesskey = B';
         const message = flattenMessage(parser.parseEntry(input));
@@ -60,7 +57,8 @@ describe('extractAccessKeyCandidates', () => {
     });
 
     it('returns a list of access keys from all label attribute variants', () => {
-        const input = 'title = Title' +
+        const input =
+            'title = Title' +
             '\n    .label =' +
             '\n        { PLATFORM() ->' +
             '\n            [windows] Ctrl' +

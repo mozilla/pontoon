@@ -24,8 +24,8 @@
 }
 
 #app .panel-content {
-	border-left: 1px solid #5E6475;
-	box-sizing: border-box;
+    border-left: 1px solid #5e6475;
+    box-sizing: border-box;
 }
 
 #app .inner {
@@ -39,7 +39,7 @@
 }
 
 #nprogress .bar {
-    background: #7BC876;
+    background: #7bc876;
     position: fixed;
     z-index: 1031;
     top: 0;
@@ -54,7 +54,7 @@
     right: 0px;
     width: 100px;
     height: 100%;
-    box-shadow: 0 0 10px #7BC876, 0 0 5px #7BC876;
-    opacity: 1.0;
+    box-shadow: 0 0 10px #7bc876, 0 0 5px #7bc876;
+    opacity: 1;
     transform: rotate(3deg) translate(0px, -4px);
 }

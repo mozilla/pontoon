@@ -12,7 +12,6 @@ import { actions } from '..';
 
 import connectedEditor from './connectedEditor';
 
-
 const SELECTED_ENTITY = {
     pk: 42,
     original: 'le test',
@@ -28,29 +27,35 @@ const ENTITIES = [
     {
         pk: 1,
         original: 'something',
-        translation: [{
-            string: 'quelque chose',
-        }],
+        translation: [
+            {
+                string: 'quelque chose',
+            },
+        ],
     },
 ];
 
-
 class FakeEditor extends React.Component {
     render() {
-        return <div>
-            <p>Hello</p>
-            <textarea onKeyDown={ this.props.handleShortcuts } />
-            <button className='clear' onClick={ this.props.clearEditor } />
-            <button className='copy' onClick={ this.props.copyOriginalIntoEditor } />
-            <button className='save' onClick={ this.props.sendTranslation } />
-            <button className='settings' onClick={
-                () => this.props.updateSetting('setting', true)
-            } />
-        </div>;
+        return (
+            <div>
+                <p>Hello</p>
+                <textarea onKeyDown={this.props.handleShortcuts} />
+                <button className='clear' onClick={this.props.clearEditor} />
+                <button
+                    className='copy'
+                    onClick={this.props.copyOriginalIntoEditor}
+                />
+                <button className='save' onClick={this.props.sendTranslation} />
+                <button
+                    className='settings'
+                    onClick={() => this.props.updateSetting('setting', true)}
+                />
+            </div>
+        );
     }
 }
 const FakeConnectedEditor = connectedEditor(FakeEditor);
-
 
 function createEditorBase({
     pluralForm = -1,
@@ -85,10 +90,10 @@ function createEditorBase({
             pluralForm,
         },
         user: {
-            username: "michael_umanah",
+            username: 'michael_umanah',
             isAuthenticated: true,
             settings: {
-                forceSuggestions: false
+                forceSuggestions: false,
             },
             managerForLocales: [],
             translatorForProjects: {},
@@ -97,11 +102,8 @@ function createEditorBase({
         unsavedchanges,
     };
     const store = createReduxStore(initialState);
-    return mount(<FakeConnectedEditor
-        store={ store }
-    />);
+    return mount(<FakeConnectedEditor store={store} />);
 }
-
 
 describe('connectedEditor', () => {
     beforeAll(() => {
@@ -109,9 +111,15 @@ describe('connectedEditor', () => {
         sinon.stub(actions, 'sendTranslation').returns({ type: 'whatever' });
         sinon.spy(actions, 'update');
         sinon.stub(user.actions, 'saveSetting').returns({ type: 'whatever' });
-        sinon.stub(history.actions, 'updateStatus').returns({ type: 'whatever' });
-        sinon.stub(unsavedchanges.actions, 'hide').returns({ type: 'whatever' });
-        sinon.stub(unsavedchanges.actions, 'ignore').returns({ type: 'whatever' });
+        sinon
+            .stub(history.actions, 'updateStatus')
+            .returns({ type: 'whatever' });
+        sinon
+            .stub(unsavedchanges.actions, 'hide')
+            .returns({ type: 'whatever' });
+        sinon
+            .stub(unsavedchanges.actions, 'ignore')
+            .returns({ type: 'whatever' });
     });
 
     afterEach(() => {
@@ -152,7 +160,9 @@ describe('connectedEditor', () => {
 
         wrapper.find('.copy').simulate('click');
         expect(actions.update.calledOnce).toBeTruthy();
-        expect(actions.update.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
+        expect(
+            actions.update.calledWith(SELECTED_ENTITY.original),
+        ).toBeTruthy();
     });
 
     it('copies the plural string when the copyOriginalIntoEditor prop is called', () => {
@@ -160,7 +170,9 @@ describe('connectedEditor', () => {
 
         wrapper.find('.copy').simulate('click');
         expect(actions.update.calledOnce).toBeTruthy();
-        expect(actions.update.calledWith(SELECTED_ENTITY.original_plural)).toBeTruthy();
+        expect(
+            actions.update.calledWith(SELECTED_ENTITY.original_plural),
+        ).toBeTruthy();
     });
 
     it('calls the sendTranslation action when the sendTranslation prop is called', () => {
@@ -182,7 +194,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 13,  // Enter
+            keyCode: 13, // Enter
             altKey: false,
             ctrlKey: false,
             shiftKey: false,
@@ -202,7 +214,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 13,  // Enter
+            keyCode: 13, // Enter
             altKey: false,
             ctrlKey: false,
             shiftKey: false,
@@ -224,7 +236,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 13,  // Enter
+            keyCode: 13, // Enter
             altKey: false,
             ctrlKey: false,
             shiftKey: false,
@@ -242,7 +254,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 13,  // Enter
+            keyCode: 13, // Enter
             altKey: false,
             ctrlKey: false,
             shiftKey: false,
@@ -260,7 +272,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 27,  // Esc
+            keyCode: 27, // Esc
         };
 
         expect(unsavedchanges.actions.hide.called).toBeFalsy();
@@ -276,7 +288,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 27,  // Esc
+            keyCode: 27, // Esc
         };
 
         expect(actions.resetFailedChecks.called).toBeFalsy();
@@ -289,7 +301,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 67,  // C
+            keyCode: 67, // C
             altKey: false,
             ctrlKey: true,
             shiftKey: true,
@@ -298,7 +310,9 @@ describe('connectedEditor', () => {
         expect(actions.update.called).toBeFalsy();
         wrapper.find('textarea').simulate('keydown', event);
         expect(actions.update.called).toBeTruthy();
-        expect(actions.update.calledWith(SELECTED_ENTITY.original)).toBeTruthy();
+        expect(
+            actions.update.calledWith(SELECTED_ENTITY.original),
+        ).toBeTruthy();
     });
 
     it('clears the translation on Ctrl + Shift + Backspace', () => {
@@ -306,7 +320,7 @@ describe('connectedEditor', () => {
 
         const event = {
             preventDefault: sinon.spy(),
-            keyCode: 8,  // Backspace
+            keyCode: 8, // Backspace
             altKey: false,
             ctrlKey: true,
             shiftKey: true,

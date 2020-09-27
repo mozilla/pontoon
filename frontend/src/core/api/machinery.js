@@ -5,9 +5,7 @@ import APIBase from './base';
 import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
 
-
 type Translations = Array<MachineryTranslation>;
-
 
 export default class MachineryAPI extends APIBase {
     async _get(url: string, params: Object) {
@@ -25,7 +23,11 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translations from Pontoon's memory.
      */
-    async getTranslationMemory(source: string, locale: Locale, pk: ?number): Promise<Translations> {
+    async getTranslationMemory(
+        source: string,
+        locale: Locale,
+        pk: ?number,
+    ): Promise<Translations> {
         const url = '/translation-memory/';
         const params = {
             text: source,
@@ -53,7 +55,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translation by Google Translate.
      */
-    async getGoogleTranslation(source: string, locale: Locale): Promise<Translations> {
+    async getGoogleTranslation(
+        source: string,
+        locale: Locale,
+    ): Promise<Translations> {
         const url = '/google-translate/';
         const params = {
             text: source,
@@ -66,17 +71,22 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return [{
-            sources: ['google-translate'],
-            original: source,
-            translation: result.translation,
-        }];
+        return [
+            {
+                sources: ['google-translate'],
+                original: source,
+                translation: result.translation,
+            },
+        ];
     }
 
     /**
      * Return translation by Microsoft Translator.
      */
-    async getMicrosoftTranslation(source: string, locale: Locale): Promise<Translations> {
+    async getMicrosoftTranslation(
+        source: string,
+        locale: Locale,
+    ): Promise<Translations> {
         const url = '/microsoft-translator/';
         const params = {
             text: source,
@@ -89,17 +99,22 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return [{
-            sources: ['microsoft-translator'],
-            original: source,
-            translation: result.translation,
-        }];
+        return [
+            {
+                sources: ['microsoft-translator'],
+                original: source,
+                translation: result.translation,
+            },
+        ];
     }
 
     /**
      * Return translations by SYSTRAN.
      */
-    async getSystranTranslation(source: string, locale: Locale): Promise<Translations> {
+    async getSystranTranslation(
+        source: string,
+        locale: Locale,
+    ): Promise<Translations> {
         const url = '/systran-translate/';
         const params = {
             text: source,
@@ -112,17 +127,22 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return [{
-            sources: ['systran-translate'],
-            original: source,
-            translation: result.translation,
-        }];
+        return [
+            {
+                sources: ['systran-translate'],
+                original: source,
+                translation: result.translation,
+            },
+        ];
     }
 
     /**
      * Return translations from Microsoft Terminology.
      */
-    async getMicrosoftTerminology(source: string, locale: Locale): Promise<Translations> {
+    async getMicrosoftTerminology(
+        source: string,
+        locale: Locale,
+    ): Promise<Translations> {
         const url = '/microsoft-terminology/';
         const params = {
             text: source,
@@ -148,7 +168,10 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return translations from Transvision.
      */
-    async getTransvisionMemory(source: string, locale: Locale): Promise<Translations> {
+    async getTransvisionMemory(
+        source: string,
+        locale: Locale,
+    ): Promise<Translations> {
         const url = '/transvision/';
         const params = {
             text: source,
@@ -172,7 +195,11 @@ export default class MachineryAPI extends APIBase {
      *
      * Works only for the `ga-IE` locale.
      */
-    async getCaighdeanTranslation(source: string, locale: Locale, pk: number): Promise<Translations> {
+    async getCaighdeanTranslation(
+        source: string,
+        locale: Locale,
+        pk: number,
+    ): Promise<Translations> {
         const url = '/caighdean/';
         const params = {
             id: pk,
@@ -185,10 +212,12 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        return [{
-            sources: ['caighdean'],
-            original: result.original,
-            translation: result.translation,
-        }];
+        return [
+            {
+                sources: ['caighdean'],
+                original: result.original,
+                translation: result.translation,
+            },
+        ];
     }
 }

@@ -4,41 +4,38 @@ import sinon from 'sinon';
 
 import SimpleEditor from './SimpleEditor';
 
-
 const ENTITIES = [
     {
         pk: 1,
         original: 'my-message = Hello',
-        translation: [{
-            string: 'my-message = Salut',
-        }],
+        translation: [
+            {
+                string: 'my-message = Salut',
+            },
+        ],
     },
     {
         pk: 2,
         original: 'my-message = Hello\n    .my-attr = World!',
-        translation: [
-            { string: 'my-message = Salut\n    .my-attr = Monde !' },
-        ],
+        translation: [{ string: 'my-message = Salut\n    .my-attr = Monde !' }],
     },
 ];
 
-
-function createSimpleEditor({
-    entityIndex = 0,
-} = {}) {
+function createSimpleEditor({ entityIndex = 0 } = {}) {
     const sendTranslationMock = sinon.stub();
     const updateTranslationMock = sinon.stub();
-    const wrapper = shallow(<SimpleEditor
-        editor={ { translation: 'Salut' } }
-        entity={ ENTITIES[entityIndex] }
-        translation={ ENTITIES[entityIndex].translation[0].string }
-        sendTranslation={ sendTranslationMock }
-        updateTranslation={ updateTranslationMock }
-    />);
+    const wrapper = shallow(
+        <SimpleEditor
+            editor={{ translation: 'Salut' }}
+            entity={ENTITIES[entityIndex]}
+            translation={ENTITIES[entityIndex].translation[0].string}
+            sendTranslation={sendTranslationMock}
+            updateTranslation={updateTranslationMock}
+        />,
+    );
 
     return [wrapper, sendTranslationMock, updateTranslationMock];
 }
-
 
 describe('<SimpleEditor>', () => {
     it('parses content that come from an external source', () => {
@@ -47,7 +44,7 @@ describe('<SimpleEditor>', () => {
         wrapper.setProps({
             editor: {
                 changeSource: 'external',
-                translation: 'my-message = Coucou'
+                translation: 'my-message = Coucou',
             },
         });
 
@@ -56,9 +53,11 @@ describe('<SimpleEditor>', () => {
     });
 
     it('sends a reconstructed translation to sendTranslation', () => {
-        const [wrapper, sendTranslationMock, ] = createSimpleEditor();
+        const [wrapper, sendTranslationMock] = createSimpleEditor();
         wrapper.instance().sendTranslation(false, 'Coucou');
         expect(sendTranslationMock.calledOnce).toBeTruthy();
-        expect(sendTranslationMock.calledWith(false, 'my-message = Coucou\n')).toBeTruthy();
+        expect(
+            sendTranslationMock.calledWith(false, 'my-message = Coucou\n'),
+        ).toBeTruthy();
     });
 });

@@ -2,7 +2,6 @@
 
 import { push, replace } from 'connected-react-router';
 
-
 /**
  * Update the URL with a set of new parameters.
  *
@@ -15,8 +14,12 @@ import { push, replace } from 'connected-react-router';
  * @param {Object} params A list of parameters to update in the current URL.
  * @param {boolean} replaceHistory Whether or not to push a new URL or replace the current one in the browser history.
  */
-export function update(router: Object, params: { [string]: ?string }, replaceHistory?: boolean): Function {
-    return dispatch => {
+export function update(
+    router: Object,
+    params: { [string]: ?string },
+    replaceHistory?: boolean,
+): Function {
+    return (dispatch) => {
         const queryString = router.location.search;
         const currentParams = new URLSearchParams(queryString);
 
@@ -30,8 +33,7 @@ export function update(router: Object, params: { [string]: ?string }, replaceHis
 
             if (!value) {
                 currentParams.delete(param);
-            }
-            else {
+            } else {
                 currentParams.set(param, value);
             }
         });
@@ -54,9 +56,8 @@ export function update(router: Object, params: { [string]: ?string }, replaceHis
         }
 
         dispatch(updateMethod('?' + currentParams.toString()));
-    }
+    };
 }
-
 
 /**
  * Update the URL with a new `author` parameter.
@@ -70,16 +71,18 @@ export function updateAuthor(router: Object, author: ?string): Function {
     return update(router, { author });
 }
 
-
 /**
  * Update the URL with a new `string` parameter.
  *
  * This function keeps all other parameters in the URL the same.
  */
-export function updateEntity(router: Object, entity: string, replaceHistory?: boolean): Function {
+export function updateEntity(
+    router: Object,
+    entity: string,
+    replaceHistory?: boolean,
+): Function {
     return update(router, { string: entity }, replaceHistory);
 }
-
 
 /**
  * Update the URL with a new `extra` parameter.
@@ -93,7 +96,6 @@ export function updateExtra(router: Object, extra: ?string): Function {
     return update(router, { extra });
 }
 
-
 /**
  * Update the URL with a new `search` parameter.
  *
@@ -105,7 +107,6 @@ export function updateExtra(router: Object, extra: ?string): Function {
 export function updateSearch(router: Object, search: ?string): Function {
     return update(router, { search });
 }
-
 
 /**
  * Update the URL with a new `status` parameter.
@@ -119,7 +120,6 @@ export function updateStatus(router: Object, status: ?string): Function {
     return update(router, { status });
 }
 
-
 /**
  * Update the URL with a new `tag` parameter.
  *
@@ -132,7 +132,6 @@ export function updateTag(router: Object, tag: ?string): Function {
     return update(router, { tag });
 }
 
-
 /**
  * Update the URL with a new `time` parameter.
  *
@@ -144,7 +143,6 @@ export function updateTag(router: Object, tag: ?string): Function {
 export function updateTime(router: Object, time: ?string): Function {
     return update(router, { time });
 }
-
 
 export default {
     update,

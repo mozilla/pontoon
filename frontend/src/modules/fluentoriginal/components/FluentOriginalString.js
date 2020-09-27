@@ -11,13 +11,13 @@ import SourceString from './SourceString';
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
 
-
 type Props = {|
     +entity: Entity,
     +terms: TermState,
-    +handleClickOnPlaceable: (SyntheticMouseEvent<HTMLParagraphElement>) => void,
+    +handleClickOnPlaceable: (
+        SyntheticMouseEvent<HTMLParagraphElement>,
+    ) => void,
 |};
-
 
 /**
  * Show the original string of a Fluent entity.
@@ -30,25 +30,31 @@ export default function FluentOriginalString(props: Props) {
     const syntax = fluent.getSyntaxType(message);
 
     if (syntax === 'simple') {
-        return <SimpleString
-            entity={ props.entity }
-            terms={ props.terms }
-            handleClickOnPlaceable={ props.handleClickOnPlaceable }
-        />;
+        return (
+            <SimpleString
+                entity={props.entity}
+                terms={props.terms}
+                handleClickOnPlaceable={props.handleClickOnPlaceable}
+            />
+        );
     }
 
     if (syntax === 'rich') {
-        return <RichString
-            entity={ props.entity }
-            terms={ props.terms }
-            handleClickOnPlaceable={ props.handleClickOnPlaceable }
-        />;
+        return (
+            <RichString
+                entity={props.entity}
+                terms={props.terms}
+                handleClickOnPlaceable={props.handleClickOnPlaceable}
+            />
+        );
     }
 
     // Complex, unsupported strings.
-    return <SourceString
-        entity={ props.entity }
-        terms={ props.terms }
-        handleClickOnPlaceable={ props.handleClickOnPlaceable }
-    />
+    return (
+        <SourceString
+            entity={props.entity}
+            terms={props.terms}
+            handleClickOnPlaceable={props.handleClickOnPlaceable}
+        />
+    );
 }

@@ -22,9 +22,7 @@ import type {
 
 import isEqual from 'lodash.isequal';
 
-
 type MessagePath = Array<string | number>;
-
 
 /**
  * Return a clone of a translation with one of its elements replaced with a new
@@ -50,7 +48,6 @@ function getUpdatedTranslation(
     return source;
 }
 
-
 /**
  * Render a Rich editor for Fluent string editing.
  */
@@ -72,7 +69,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
         // If the translation is a string, that means we're in a transitional
         // state and there's going to be another render with a Fluent AST.
-        if (typeof(editor.translation) === 'string') {
+        if (typeof editor.translation === 'string') {
             return;
         }
 
@@ -90,12 +87,12 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // content. So we have to revert translation to the previous one first and then only
         // replace content of the focused or first text element with Machinery suggestion.
         if (
-            typeof(editor.translation) === 'string' &&
+            typeof editor.translation === 'string' &&
             editor.translation !== prevProps.editor.translation &&
             editor.changeSource === 'machinery'
         ) {
             this.props.updateTranslation(prevProps.editor.translation, true);
-            if (typeof(editor.translation) === 'string') {
+            if (typeof editor.translation === 'string') {
                 this.machineryElementId = this.focusedElementId;
                 this.machineryText = editor.translation;
                 this.props.addTextToEditorTranslation(editor.translation);
@@ -108,14 +105,14 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         // it happens to be passed as a string and not a Fluent AST).
         if (
             this.props.entity !== prevProps.entity ||
-            typeof(editor.translation) === 'string'
+            typeof editor.translation === 'string'
         ) {
             this.focusedElementId = null;
         }
 
         // If the translation is a string, that means we're in a transitional
         // state and there's going to be another render with a Fluent AST.
-        if (typeof(editor.translation) === 'string') {
+        if (typeof editor.translation === 'string') {
             return;
         }
 
@@ -133,7 +130,10 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         if (!translation.equals(prevEditor.translation)) {
             // Walks the tree and unify all simple elements into just one.
             const message = fluent.flattenMessage(translation);
-            this.props.updateTranslation(message, editor.changeSource !== 'internal');
+            this.props.updateTranslation(
+                message,
+                editor.changeSource !== 'internal',
+            );
         }
 
         // Close failed checks popup when content of the editor changes,
@@ -173,15 +173,16 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
                 const element = 'textarea#' + this.machineryElementId;
                 this.tableBodyRef.current.querySelector(element).select();
 
-                if (typeof(this.machineryText) === 'string') {
+                if (typeof this.machineryText === 'string') {
                     this.updateTranslationSelectionWith(this.machineryText);
                 }
 
                 this.machineryElementId = null;
                 this.machineryText = null;
-            }
-            else {
-                this.updateTranslationSelectionWith(this.props.editor.selectionReplacementContent);
+            } else {
+                this.updateTranslationSelectionWith(
+                    this.props.editor.selectionReplacementContent,
+                );
             }
             this.props.resetSelectionContent();
         }
@@ -189,7 +190,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const prevPropsWithoutUser = this.removeUser(prevProps);
         const propsWithoutUser = this.removeUser(this.props);
 
-        if(!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
+        if (!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
             this.focusInput(editor.changeSource !== 'internal');
         }
     }
@@ -219,21 +220,25 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
 
     getFirstInput() {
         if (this.tableBodyRef.current) {
-            return this.tableBodyRef.current.querySelector('textarea:first-of-type');
+            return this.tableBodyRef.current.querySelector(
+                'textarea:first-of-type',
+            );
         }
         return null;
     }
 
     getFocusedElement() {
         if (this.focusedElementId && this.tableBodyRef.current) {
-            return this.tableBodyRef.current.querySelector('textarea#' + this.focusedElementId);
+            return this.tableBodyRef.current.querySelector(
+                'textarea#' + this.focusedElementId,
+            );
         }
         return null;
     }
 
     setFocusedInput = (event: SyntheticFocusEvent<HTMLTextAreaElement>) => {
         this.focusedElementId = event.currentTarget.id;
-    }
+    };
 
     updateTranslationSelectionWith(content: string) {
         let target = this.getFocusedElement();
@@ -253,10 +258,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         target.setRangeText(content);
 
         // Put the cursor right after the newly inserted content.
-        target.setSelectionRange(
-            newSelectionPos,
-            newSelectionPos,
-        );
+        target.setSelectionRange(newSelectionPos, newSelectionPos);
 
         // Update the state to show the new content in the Editor.
         this.updateTranslation(target.value, target.id.split('-'));
@@ -269,24 +271,24 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             this.props.clearEditor,
             this.props.copyOriginalIntoEditor,
         );
-    }
+    };
 
     updateTranslation = (value: string, path: MessagePath) => {
         const translation = this.props.editor.translation;
 
-        if (typeof(translation) === 'string') {
+        if (typeof translation === 'string') {
             return null;
         }
 
         const source = getUpdatedTranslation(translation, value, path);
         this.props.updateTranslation(source);
-    }
+    };
 
     createHandleChange = (path: MessagePath) => {
         return (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
             this.updateTranslation(event.currentTarget.value, path);
-        }
-    }
+        };
+    };
 
     handleAccessKeyClick = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         if (this.props.isReadOnlyEditor) {
@@ -298,22 +300,24 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             // $FLOW_IGNORE: Bug in Flow, again.
             this.accessKeyElementId.split('-'),
         );
-    }
+    };
 
     renderTextarea(value: string, path: MessagePath, maxlength: ?number) {
-        return <textarea
-            id={ `${path.join('-')}` }
-            key={ `${path.join('-')}` }
-            readOnly={ this.props.isReadOnlyEditor }
-            value={ value }
-            maxLength={ maxlength }
-            onChange={ this.createHandleChange(path) }
-            onFocus={ this.setFocusedInput }
-            onKeyDown={ this.handleShortcuts }
-            dir={ this.props.locale.direction }
-            lang={ this.props.locale.code }
-            data-script={ this.props.locale.script }
-        />;
+        return (
+            <textarea
+                id={`${path.join('-')}`}
+                key={`${path.join('-')}`}
+                readOnly={this.props.isReadOnlyEditor}
+                value={value}
+                maxLength={maxlength}
+                onChange={this.createHandleChange(path)}
+                onFocus={this.setFocusedInput}
+                onKeyDown={this.handleShortcuts}
+                dir={this.props.locale.direction}
+                lang={this.props.locale.code}
+                data-script={this.props.locale.script}
+            />
+        );
     }
 
     renderAccessKeys(candidates: Array<string>) {
@@ -321,58 +325,68 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         const id = this.accessKeyElementId;
         let accessKey = null;
         if (id && this.tableBodyRef.current) {
-            const accessKeyElement = this.tableBodyRef.current.querySelector('textarea#' + id);
+            const accessKeyElement = this.tableBodyRef.current.querySelector(
+                'textarea#' + id,
+            );
             if (accessKeyElement) {
                 accessKey = accessKeyElement.value;
             }
         }
 
-        return <div className="accesskeys">
-            { candidates.map((key, i) => <button
-                className={ `key ${ key === accessKey ? 'active' : '' }` }
-                key={ i }
-                onClick={ this.handleAccessKeyClick }
-            >{ key }</button>) }
-        </div>;
+        return (
+            <div className='accesskeys'>
+                {candidates.map((key, i) => (
+                    <button
+                        className={`key ${key === accessKey ? 'active' : ''}`}
+                        key={i}
+                        onClick={this.handleAccessKeyClick}
+                    >
+                        {key}
+                    </button>
+                ))}
+            </div>
+        );
     }
 
     renderLabel(label: string, example: number) {
-        return <Localized
-            id="fluenteditor-RichTranslationForm--plural-example"
-            vars={{
-                example,
-                plural: label,
-            }}
-            elems={{ stress: <span className="stress" /> }}
-        >
-            <span className="example">
-                { '{ $plural } (e.g. <stress>{ $example }</stress>)' }
-            </span>
-        </Localized>;
+        return (
+            <Localized
+                id='fluenteditor-RichTranslationForm--plural-example'
+                vars={{
+                    example,
+                    plural: label,
+                }}
+                elems={{ stress: <span className='stress' /> }}
+            >
+                <span className='example'>
+                    {'{ $plural } (e.g. <stress>{ $example }</stress>)'}
+                </span>
+            </Localized>
+        );
     }
 
     renderInput(value: string, path: MessagePath, label: string) {
         const message = this.props.editor.translation;
 
         let candidates = null;
-        if (typeof(message) !== 'string' && label === 'accesskey') {
+        if (typeof message !== 'string' && label === 'accesskey') {
             candidates = fluent.extractAccessKeyCandidates(message);
         }
 
         // Access Key UI
         if (candidates && candidates.length && value.length < 2) {
             this.accessKeyElementId = path.join('-');
-            return <td>
-                { this.renderTextarea(value, path, 1) }
-                { this.renderAccessKeys(candidates) }
-            </td>;
+            return (
+                <td>
+                    {this.renderTextarea(value, path, 1)}
+                    {this.renderAccessKeys(candidates)}
+                </td>
+            );
         }
 
         // Default UI
         else {
-            return <td>
-                { this.renderTextarea(value, path) }
-            </td>;
+            return <td>{this.renderTextarea(value, path)}</td>;
         }
     }
 
@@ -384,25 +398,28 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         className: ?string,
         example: ?number,
     ) {
-        return <tr key={ `${path.join('-')}` } className={ className }>
-            <td>
-                <label htmlFor={ `${path.join('-')}` }>
-                    { typeof(example) === 'number' ?
-                        this.renderLabel(label, example)
-                        :
-                        attributeName ?
+        return (
+            <tr key={`${path.join('-')}`} className={className}>
+                <td>
+                    <label htmlFor={`${path.join('-')}`}>
+                        {typeof example === 'number' ? (
+                            this.renderLabel(label, example)
+                        ) : attributeName ? (
                             <span>
-                                <span className='attribute-label'>{ attributeName }</span>
+                                <span className='attribute-label'>
+                                    {attributeName}
+                                </span>
                                 <span className='divider'>&middot;</span>
-                                <span className='label'>{ label }</span>
+                                <span className='label'>{label}</span>
                             </span>
-                            :
-                            <span>{ label }</span>
-                    }
-                </label>
-            </td>
-            { this.renderInput(value, path, label) }
-        </tr>;
+                        ) : (
+                            <span>{label}</span>
+                        )}
+                    </label>
+                </td>
+                {this.renderInput(value, path, label)}
+            </tr>
+        );
     }
 
     renderVariant(
@@ -420,7 +437,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         }
 
         const value = element.value;
-        if (typeof(value) !== 'string') {
+        if (typeof value !== 'string') {
             return null;
         }
 
@@ -432,7 +449,16 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
             example = pluralExamples[pluralForm];
         }
 
-        const vPath = [eIndex, 'expression', 'variants', vIndex, 'value', 'elements', 0, 'value'];
+        const vPath = [
+            eIndex,
+            'expression',
+            'variants',
+            vIndex,
+            'value',
+            'elements',
+            0,
+            'value',
+        ];
 
         return this.renderItem(
             value,
@@ -454,59 +480,70 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return elements.map((element, eIndex) => {
             if (
                 element.type === 'Placeable' &&
-                element.expression && element.expression.type === 'SelectExpression'
+                element.expression &&
+                element.expression.type === 'SelectExpression'
             ) {
                 let pluralExamples = null;
                 if (fluent.isPluralExpression(element.expression)) {
-                    pluralExamples = locale.getPluralExamples(this.props.locale);
-                }
-                const variants = element.expression.variants.map((variant, vIndex) => {
-                    return this.renderVariant(
-                        variant,
-                        path,
-                        indent,
-                        eIndex,
-                        vIndex,
-                        pluralExamples,
-                        attributeName,
+                    pluralExamples = locale.getPluralExamples(
+                        this.props.locale,
                     );
-                });
+                }
+                const variants = element.expression.variants.map(
+                    (variant, vIndex) => {
+                        return this.renderVariant(
+                            variant,
+                            path,
+                            indent,
+                            eIndex,
+                            vIndex,
+                            pluralExamples,
+                            attributeName,
+                        );
+                    },
+                );
 
                 indent = false;
                 return variants;
-            }
-            else {
+            } else {
                 // When rendering Message attribute, set label to attribute name.
                 // When rendering Message value, set label to "Value".
                 const label = attributeName || 'Value';
 
                 indent = true;
-                if (typeof(element.value) !== 'string') {
+                if (typeof element.value !== 'string') {
                     return null;
                 }
 
                 return this.renderItem(
                     element.value,
-                    [].concat(path, [ eIndex, 'value' ]),
+                    [].concat(path, [eIndex, 'value']),
                     label,
                 );
             }
         });
     }
 
-    renderValue(value: Pattern, path: MessagePath, attributeName?: string): React.Node {
+    renderValue(
+        value: Pattern,
+        path: MessagePath,
+        attributeName?: string,
+    ): React.Node {
         if (!value) {
             return null;
         }
 
         return this.renderElements(
             value.elements,
-            [].concat(path, [ 'elements' ]),
+            [].concat(path, ['elements']),
             attributeName,
         );
     }
 
-    renderAttributes(attributes: ?FluentAttributes, path: MessagePath): React.Node {
+    renderAttributes(
+        attributes: ?FluentAttributes,
+        path: MessagePath,
+    ): React.Node {
         if (!attributes) {
             return null;
         }
@@ -514,7 +551,7 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
         return attributes.map((attribute: FluentAttribute, index: number) => {
             return this.renderValue(
                 attribute.value,
-                [].concat(path, [ index, 'value' ]),
+                [].concat(path, [index, 'value']),
                 attribute.id.name,
             );
         });
@@ -523,17 +560,21 @@ export default class RichTranslationForm extends React.Component<EditorProps> {
     render() {
         const message = this.props.editor.translation;
 
-        if (typeof(message) === 'string') {
+        if (typeof message === 'string') {
             return null;
         }
 
-        return <div className="fluent-rich-translation-form">
-            <table>
-                <tbody ref={ this.tableBodyRef }>
-                    { this.renderValue(message.value, [ 'value' ]) }
-                    { this.renderAttributes(message.attributes, [ 'attributes' ]) }
-                </tbody>
-            </table>
-        </div>;
+        return (
+            <div className='fluent-rich-translation-form'>
+                <table>
+                    <tbody ref={this.tableBodyRef}>
+                        {this.renderValue(message.value, ['value'])}
+                        {this.renderAttributes(message.attributes, [
+                            'attributes',
+                        ])}
+                    </tbody>
+                </table>
+            </div>
+        );
     }
 }

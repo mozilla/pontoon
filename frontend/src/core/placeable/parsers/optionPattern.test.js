@@ -6,15 +6,13 @@ import createMarker from 'react-content-marker';
 
 import optionPattern from './optionPattern';
 
-
 describe('optionPattern', () => {
     each([
         ['--help', 'Type --help for this help'],
         ['-S', 'Short -S ones also'],
-    ])
-    .it('marks `%s` in `%s`', (mark, content) => {
+    ]).it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([optionPattern]);
-        const wrapper = shallow(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });

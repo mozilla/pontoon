@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks `alt` attributes and their values inside XML tags.
  *
@@ -18,14 +17,19 @@ import { Localized } from '@fluent/react';
 const altAttribute = {
     rule: /(alt=".*?")/i,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-altAttribute'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title="'alt' attribute inside XML tag">
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-altAttribute'
+                attrs={{ title: true }}
+            >
+                <mark
+                    className='placeable'
+                    title="'alt' attribute inside XML tag"
+                >
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

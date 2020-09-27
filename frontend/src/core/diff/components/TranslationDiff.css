@@ -1,22 +1,22 @@
 .translation p ins,
 .translation p del {
-  border-radius: 2px;
-  white-space: pre-wrap;
+    border-radius: 2px;
+    white-space: pre-wrap;
 }
 
 .translation p ins {
-  background: #4B6259;
-  color: #9CD699;
+    background: #4b6259;
+    color: #9cd699;
 }
 
 .translation p del {
-  background: #674B54;
-  color: #FE8F8F;
+    background: #674b54;
+    color: #fe8f8f;
 }
 
 .translation p ins mark,
 .translation p del mark {
-  background: transparent;
-  border-color: transparent;
-  margin: 0;
+    background: transparent;
+    border-color: transparent;
+    margin: 0;
 }

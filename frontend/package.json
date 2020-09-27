@@ -54,12 +54,21 @@
     "test": "react-scripts test --modulePaths=src",
     "eject": "react-scripts eject",
     "flow": "flow",
-    "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
+    "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial",
+    "prettier": "prettier --write 'src/**/*'"
   },
   "devDependencies": {
     "chokidar-cli": "2.1.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
+    "prettier": "2.1.2",
     "sinon": "7.3.1"
+  },
+  "prettier": {
+    "endOfLine": "lf",
+    "trailingComma": "all",
+    "tabWidth": 4,
+    "jsxSingleQuote": true,
+    "singleQuote": true
   }
 }

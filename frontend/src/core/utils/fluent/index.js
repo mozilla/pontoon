@@ -18,7 +18,6 @@ import parser from './parser';
 import serialize from './serialize';
 import serializer from './serializer';
 
-
 export default {
     areSupportedElements,
     convertSyntax,

@@ -1,13 +1,12 @@
 import reducer from './reducer';
 import { RESET, SELECT } from './actions';
 
-
 describe('reducer', () => {
     it('returns the initial state', () => {
         const res = reducer(undefined, {});
         const expected = {
             pluralForm: -1,
-        }
+        };
         expect(res).toEqual(expected);
     });
 

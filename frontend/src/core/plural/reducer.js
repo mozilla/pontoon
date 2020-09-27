@@ -6,16 +6,11 @@ import { RESET, SELECT } from './actions';
 
 import type { ResetAction, SelectAction } from './actions';
 
-
-type Action =
-    | ResetAction
-    | SelectAction
-;
+type Action = ResetAction | SelectAction;
 
 export type PluralState = {|
     +pluralForm: number,
 |};
-
 
 const initial: PluralState = {
     pluralForm: -1,

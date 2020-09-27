@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import RejectAll from './RejectAll';
 
-
 const DEFAULT_BATCH_ACTIONS = {
     entities: [],
     lastCheckedEntity: null,
@@ -12,20 +11,23 @@ const DEFAULT_BATCH_ACTIONS = {
     response: null,
 };
 
-
 describe('<RejectAll>', () => {
     it('renders default button correctly', () => {
         const wrapper = shallow(
-            <RejectAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-            />
+            <RejectAll batchactions={DEFAULT_BATCH_ACTIONS} />,
         );
 
         expect(wrapper.find('.reject-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -39,14 +41,20 @@ describe('<RejectAll>', () => {
                         error: true,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.reject-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -60,14 +68,20 @@ describe('<RejectAll>', () => {
                         changedCount: 2,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.reject-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -82,14 +96,20 @@ describe('<RejectAll>', () => {
                         invalidCount: 1,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.reject-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -98,15 +118,17 @@ describe('<RejectAll>', () => {
 
         const wrapper = shallow(
             <RejectAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                rejectAll={ mockRejectAll }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                rejectAll={mockRejectAll}
+            />,
         );
 
         expect(mockRejectAll.called).toBeFalsy();
         wrapper.find('.reject-all').simulate('click');
         expect(mockRejectAll.called).toBeFalsy();
-        expect(wrapper.find('#batchactions-RejectAll--confirmation')).toHaveLength(1);
+        expect(
+            wrapper.find('#batchactions-RejectAll--confirmation'),
+        ).toHaveLength(1);
     });
 
     it('performs reject all action when Reject All button is confirmed', () => {
@@ -114,12 +136,12 @@ describe('<RejectAll>', () => {
 
         const wrapper = shallow(
             <RejectAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                rejectAll={ mockRejectAll }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                rejectAll={mockRejectAll}
+            />,
         );
 
-        wrapper.instance().setState({isConfirmationVisible: true});
+        wrapper.instance().setState({ isConfirmationVisible: true });
 
         expect(mockRejectAll.called).toBeFalsy();
         wrapper.find('.reject-all').simulate('click');

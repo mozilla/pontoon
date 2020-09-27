@@ -5,12 +5,7 @@ import sinon from 'sinon';
 import { FiltersPanelBase } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
 
-
-const FILTERS = [].concat(
-    FILTERS_STATUS,
-    FILTERS_EXTRA,
-);
-
+const FILTERS = [].concat(FILTERS_STATUS, FILTERS_EXTRA);
 
 describe('<FiltersPanelBase>', () => {
     it('shows a panel with filters on click', () => {
@@ -19,18 +14,18 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         expect(wrapper.find('div.menu')).toHaveLength(0);
@@ -49,28 +44,27 @@ describe('<FiltersPanelBase>', () => {
 
             if (FILTERS_STATUS.includes(filter)) {
                 statuses = value;
-            }
-            else if (FILTERS_EXTRA.includes(filter)) {
+            } else if (FILTERS_EXTRA.includes(filter)) {
                 extras = value;
             }
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    statuses={ statuses }
-                    extras={ extras }
-                    tags={ {} }
-                    authors={ {} }
-                    authorsData={ []}
-                    timeRangeData={ []}
-                    tagsData={ [] }
-                    stats={ {} }
-                    parameters={ {} }
-                    getAuthorsAndTimeRangeData={ sinon.spy() }
-                />
+                    statuses={statuses}
+                    extras={extras}
+                    tags={{}}
+                    authors={{}}
+                    authorsData={[]}
+                    timeRangeData={[]}
+                    tagsData={[]}
+                    stats={{}}
+                    parameters={{}}
+                    getAuthorsAndTimeRangeData={sinon.spy()}
+                />,
             );
 
             expect(
-                wrapper.find('.visibility-switch').hasClass(filter.slug)
+                wrapper.find('.visibility-switch').hasClass(filter.slug),
             ).toBeTruthy();
         }
     });
@@ -89,18 +83,18 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -110,17 +104,17 @@ describe('<FiltersPanelBase>', () => {
 
             if (FILTERS_STATUS.includes(filter)) {
                 isFilterSelected = statuses[filter.slug];
-            }
-            else if (FILTERS_EXTRA.includes(filter)) {
+            } else if (FILTERS_EXTRA.includes(filter)) {
                 isFilterSelected = extras[filter.slug];
             }
 
-            const isClassSet = wrapper.find(`.menu .${filter.slug}`).hasClass('selected');
+            const isClassSet = wrapper
+                .find(`.menu .${filter.slug}`)
+                .hasClass('selected');
 
             if (isFilterSelected) {
                 expect(isClassSet).toBeTruthy();
-            }
-            else {
+            } else {
                 expect(isClassSet).toBeFalsy();
             }
         }
@@ -139,28 +133,27 @@ describe('<FiltersPanelBase>', () => {
 
             if (FILTERS_STATUS.includes(filter)) {
                 statuses = value;
-            }
-            else if (FILTERS_EXTRA.includes(filter)) {
+            } else if (FILTERS_EXTRA.includes(filter)) {
                 extras = value;
             }
 
-            applySingleFilter = sinon.spy()
+            applySingleFilter = sinon.spy();
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    statuses={ statuses }
-                    extras={ extras }
-                    tags={ {} }
-                    authors={ {} }
-                    authorsData={ []}
-                    timeRangeData={ []}
-                    tagsData={ [] }
-                    stats={ {} }
-                    parameters={ {} }
-                    getAuthorsAndTimeRangeData={ sinon.spy() }
-                    applySingleFilter= { applySingleFilter }
-                    updateFiltersFromURLParams={ sinon.spy() }
-                />
+                    statuses={statuses}
+                    extras={extras}
+                    tags={{}}
+                    authors={{}}
+                    authorsData={[]}
+                    timeRangeData={[]}
+                    tagsData={[]}
+                    stats={{}}
+                    parameters={{}}
+                    getAuthorsAndTimeRangeData={sinon.spy()}
+                    applySingleFilter={applySingleFilter}
+                    updateFiltersFromURLParams={sinon.spy()}
+                />,
             );
             wrapper.find('.visibility-switch').simulate('click');
             wrapper.find(`.menu .${filter.slug}`).simulate('click');
@@ -182,39 +175,36 @@ describe('<FiltersPanelBase>', () => {
 
             if (FILTERS_STATUS.includes(filter)) {
                 statuses = value;
-            }
-            else if (FILTERS_EXTRA.includes(filter)) {
+            } else if (FILTERS_EXTRA.includes(filter)) {
                 extras = value;
             }
 
-            toggleFilter = sinon.spy()
+            toggleFilter = sinon.spy();
 
             const wrapper = shallow(
                 <FiltersPanelBase
-                    statuses={ statuses }
-                    extras={ extras }
-                    tags={ {} }
-                    authors={ {} }
-                    authorsData={ []}
-                    timeRangeData={ []}
-                    tagsData={ [] }
-                    stats={ {} }
-                    parameters={ {} }
-                    getAuthorsAndTimeRangeData={ sinon.spy() }
-                    toggleFilter= { toggleFilter }
-                    updateFiltersFromURLParams={ sinon.spy() }
-                />
+                    statuses={statuses}
+                    extras={extras}
+                    tags={{}}
+                    authors={{}}
+                    authorsData={[]}
+                    timeRangeData={[]}
+                    tagsData={[]}
+                    stats={{}}
+                    parameters={{}}
+                    getAuthorsAndTimeRangeData={sinon.spy()}
+                    toggleFilter={toggleFilter}
+                    updateFiltersFromURLParams={sinon.spy()}
+                />,
             );
             wrapper.find('.visibility-switch').simulate('click');
-            wrapper.find(`.menu .${filter.slug} .status`).simulate(
-                'click',
-                { stopPropagation: sinon.fake() }
-            );
+            wrapper
+                .find(`.menu .${filter.slug} .status`)
+                .simulate('click', { stopPropagation: sinon.fake() });
 
             if (filter.slug === 'all') {
                 expect(toggleFilter.called).toBeFalsy();
-            }
-            else {
+            } else {
                 expect(toggleFilter.calledWith(filter.slug)).toBeTruthy();
             }
         }
@@ -233,18 +223,18 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -264,18 +254,18 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -296,19 +286,19 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                resetFilters={ resetFilters }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                resetFilters={resetFilters}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         wrapper.find('.visibility-switch').simulate('click');
@@ -331,19 +321,19 @@ describe('<FiltersPanelBase>', () => {
 
         const wrapper = shallow(
             <FiltersPanelBase
-                statuses={ statuses }
-                extras={ extras }
-                tags={ {} }
-                authors={ {} }
-                authorsData={ []}
-                timeRangeData={ []}
-                tagsData={ [] }
-                stats={ {} }
-                parameters={ {} }
-                getAuthorsAndTimeRangeData={ sinon.spy() }
-                update={ update }
-                updateFiltersFromURLParams={ sinon.spy() }
-            />
+                statuses={statuses}
+                extras={extras}
+                tags={{}}
+                authors={{}}
+                authorsData={[]}
+                timeRangeData={[]}
+                tagsData={[]}
+                stats={{}}
+                parameters={{}}
+                getAuthorsAndTimeRangeData={sinon.spy()}
+                update={update}
+                updateFiltersFromURLParams={sinon.spy()}
+            />,
         );
 
         wrapper.find('.visibility-switch').simulate('click');

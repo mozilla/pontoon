@@ -6,17 +6,12 @@ import { RECEIVE, REQUEST } from './actions';
 
 import type { ReceiveAction, RequestAction } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-;
+type Action = ReceiveAction | RequestAction;
 
 export type L10nState = {|
     +fetching: boolean,
     +localization: ReactLocalization,
 |};
-
 
 const initial: L10nState = {
     fetching: false,

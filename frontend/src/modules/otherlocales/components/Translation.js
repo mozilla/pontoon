@@ -11,7 +11,6 @@ import { TranslationProxy } from 'core/translation';
 import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 
-
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
@@ -19,7 +18,6 @@ type Props = {|
     parameters: NavigationParams,
     updateEditorTranslation: (string, string) => void,
 |};
-
 
 /**
  * Render a Translation in the Locales tab.
@@ -38,64 +36,79 @@ export default class Translation extends React.Component<Props> {
             return;
         }
 
-        this.props.updateEditorTranslation(this.props.translation.translation, 'otherlocales');
-    }
+        this.props.updateEditorTranslation(
+            this.props.translation.translation,
+            'otherlocales',
+        );
+    };
 
     render() {
-        const { entity, translation, parameters, isReadOnlyEditor } = this.props;
+        const {
+            entity,
+            translation,
+            parameters,
+            isReadOnlyEditor,
+        } = this.props;
 
         let className = 'translation';
 
         if (isReadOnlyEditor) {
             // Copying into the editor is not allowed
-            className += ' cannot-copy'
+            className += ' cannot-copy';
         }
 
-        return <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
-            <li
-                className={ className }
-                title='Copy Into Translation'
-                onClick={ this.copyTranslationIntoEditor }
+        return (
+            <Localized
+                id='otherlocales-Translation--copy'
+                attrs={{ title: true }}
             >
-                <header>
-                    { translation.locale.code === 'en-US' ?
-                        <div>
-                            { translation.locale.name }
-                            <span>{ translation.locale.code }</span>
-                        </div>
-                    :
-                        <Localized
-                            id='otherlocales-Translation--header-link'
-                            attrs={{ title: true }}
-                            vars={{
-                                locale: translation.locale.name,
-                                code: translation.locale.code,
-                            }}
-                        >
-                            <Link
-                                to={ `/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}` }
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                title='Open string in { $locale } ({ $code })'
-                                onClick={ (e: SyntheticMouseEvent<>) => e.stopPropagation() }
-                            >
-                                { translation.locale.name }
-                                <span>{ translation.locale.code }</span>
-                            </Link>
-                        </Localized>
-                    }
-                </header>
-                <p
-                    lang={ translation.locale.code }
-                    dir={ translation.locale.direction }
-                    script={ translation.locale.script }
+                <li
+                    className={className}
+                    title='Copy Into Translation'
+                    onClick={this.copyTranslationIntoEditor}
                 >
-                    <TranslationProxy
-                        content={ translation.translation }
-                        format={ entity.format }
-                    />
-                </p>
-            </li>
-        </Localized>;
+                    <header>
+                        {translation.locale.code === 'en-US' ? (
+                            <div>
+                                {translation.locale.name}
+                                <span>{translation.locale.code}</span>
+                            </div>
+                        ) : (
+                            <Localized
+                                id='otherlocales-Translation--header-link'
+                                attrs={{ title: true }}
+                                vars={{
+                                    locale: translation.locale.name,
+                                    code: translation.locale.code,
+                                }}
+                            >
+                                <Link
+                                    to={`/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    title='Open string in { $locale } ({ $code })'
+                                    onClick={(e: SyntheticMouseEvent<>) =>
+                                        e.stopPropagation()
+                                    }
+                                >
+                                    {translation.locale.name}
+                                    <span>{translation.locale.code}</span>
+                                </Link>
+                            </Localized>
+                        )}
+                    </header>
+                    <p
+                        lang={translation.locale.code}
+                        dir={translation.locale.direction}
+                        script={translation.locale.script}
+                    >
+                        <TranslationProxy
+                            content={translation.translation}
+                            format={entity.format}
+                        />
+                    </p>
+                </li>
+            </Localized>
+        );
     }
 }

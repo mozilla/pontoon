@@ -4,17 +4,12 @@ import { RECEIVE, REQUEST } from './actions';
 
 import type { Locale, ReceiveAction, RequestAction } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-;
+type Action = ReceiveAction | RequestAction;
 
 export type LocaleState = {|
     ...Locale,
     +fetching: boolean,
 |};
-
 
 const initial: LocaleState = {
     code: '',

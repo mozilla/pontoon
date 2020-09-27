@@ -25,15 +25,15 @@
 }
 
 .project-menu .selector .icon {
-    color: #7BC876;
+    color: #7bc876;
     padding-left: 7px;
 }
 
 .project-menu .menu {
-    background-color: #272A2F;
+    background-color: #272a2f;
     border: 1px solid #333941;
     border-top: none;
-    color: #AAAAAA;
+    color: #aaaaaa;
     line-height: 1.231em;
     list-style: none;
     padding: 10px 12px;
@@ -50,7 +50,7 @@
 }
 
 .project-menu .menu .search-wrapper .icon {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 1.2em;
     position: absolute;
     left: 6px;
@@ -58,11 +58,11 @@
     z-index: 20;
 }
 
-.project-menu .menu .search-wrapper input[type="search"] {
-    color: #FFFFFF;
+.project-menu .menu .search-wrapper input[type='search'] {
+    color: #ffffff;
     padding: 4px 3px 3px 25px;
     background: #333941;
-    border: 1px solid #4D5967;
+    border: 1px solid #4d5967;
     border-radius: 3px;
     font-weight: 300;
     height: 28px;
@@ -72,12 +72,18 @@
 }
 
 /* Remove highlight in Chrome */
-.project-menu .menu .search-wrapper input[type="search"]:focus {
+.project-menu .menu .search-wrapper input[type='search']:focus {
     outline: none;
 }
 
-.project-menu .menu .search-wrapper input[type="search"]::-webkit-search-decoration,
-.project-menu .menu .search-wrapper input[type="search"]::-webkit-search-cancel-button {
+.project-menu
+    .menu
+    .search-wrapper
+    input[type='search']::-webkit-search-decoration,
+.project-menu
+    .menu
+    .search-wrapper
+    input[type='search']::-webkit-search-cancel-button {
     display: none;
 }
 
@@ -87,17 +93,17 @@
 }
 
 .project-menu .menu .static-links {
-    border-top: 1px solid #5E6475;
+    border-top: 1px solid #5e6475;
     margin-top: 5px;
     padding-top: 5px;
 }
 
 .project-menu .menu .current a {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .project-menu .menu .header {
-    border-bottom: 1px solid #5E6475;
+    border-bottom: 1px solid #5e6475;
     padding: 5px 4px;
     overflow: auto;
     font-size: 13px;

@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks Qt string formatting variables.
  *
@@ -30,14 +29,19 @@ const qtFormatting = {
     rule: /(%L?[1-9]\d{0,1}(?=([^\d]|$)))/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-qtFormatting'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Qt string formatting variable'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-qtFormatting'
+                attrs={{ title: true }}
+            >
+                <mark
+                    className='placeable'
+                    title='Qt string formatting variable'
+                >
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

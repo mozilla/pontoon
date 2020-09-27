@@ -3,23 +3,24 @@ import { shallow } from 'enzyme';
 
 import getMarker from './getMarker';
 
-
 describe('markTerms', () => {
     it('marks terms properly', () => {
         const string = 'foo bar baz';
         const terms = {
             terms: [
                 {
-                    text: 'bar'
+                    text: 'bar',
                 },
                 {
-                    text: 'baz'
+                    text: 'baz',
                 },
-            ]
+            ],
         };
 
         const TermsAndPlaceablesMarker = getMarker(terms);
-        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+        const wrapper = shallow(
+            <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
+        );
 
         expect(wrapper.find('mark')).toHaveLength(2);
         expect(wrapper.find('mark').at(0).text()).toEqual('bar');
@@ -31,13 +32,15 @@ describe('markTerms', () => {
         const terms = {
             terms: [
                 {
-                    text: 'add-on'
+                    text: 'add-on',
                 },
-            ]
+            ],
         };
 
         const TermsAndPlaceablesMarker = getMarker(terms);
-        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+        const wrapper = shallow(
+            <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
+        );
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('Add-Ons');
@@ -48,13 +51,15 @@ describe('markTerms', () => {
         const terms = {
             terms: [
                 {
-                    text: 'native'
+                    text: 'native',
                 },
-            ]
+            ],
         };
 
         const TermsAndPlaceablesMarker = getMarker(terms);
-        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+        const wrapper = shallow(
+            <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
+        );
 
         expect(wrapper.find('mark')).toHaveLength(0);
     });
@@ -64,36 +69,41 @@ describe('markTerms', () => {
         const terms = {
             terms: [
                 {
-                    text: 'translation'
+                    text: 'translation',
                 },
                 {
-                    text: 'translation tool'
+                    text: 'translation tool',
                 },
-            ]
+            ],
         };
 
         const TermsAndPlaceablesMarker = getMarker(terms);
-        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+        const wrapper = shallow(
+            <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
+        );
 
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual('translation tool');
     });
 
     it('does not mark terms within placeables', () => {
-        const string = 'This browser { $version } does not support { $bits }-bit systems.';
+        const string =
+            'This browser { $version } does not support { $bits }-bit systems.';
         const terms = {
             terms: [
                 {
-                    text: 'browser'
+                    text: 'browser',
                 },
                 {
-                    text: 'version'
+                    text: 'version',
                 },
-            ]
+            ],
         };
 
         const TermsAndPlaceablesMarker = getMarker(terms);
-        const wrapper = shallow(<TermsAndPlaceablesMarker>{ string }</TermsAndPlaceablesMarker>);
+        const wrapper = shallow(
+            <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
+        );
 
         expect(wrapper.find('mark')).toHaveLength(3);
         expect(wrapper.find('mark').at(0).text()).toEqual('browser');

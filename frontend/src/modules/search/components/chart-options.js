@@ -28,46 +28,56 @@ export const CHART_OPTIONS = {
             fontFamily: 'inherit',
         },
     },
-    xAxis: [{
-        lineWidth: 0,
-        tickLength: 0,
-        labels: {
-            enabled: false,
+    xAxis: [
+        {
+            lineWidth: 0,
+            tickLength: 0,
+            labels: {
+                enabled: false,
+            },
+            events: {
+                setExtremes: null,
+            },
         },
-        events: {
-            setExtremes: null,
+    ],
+    yAxis: [
+        {
+            type: 'logarithmic',
+            minorTickInterval: 0,
+            gridLineWidth: 0,
+            labels: {
+                enabled: false,
+            },
         },
-    }],
-    yAxis: [{
-        type: 'logarithmic',
-        minorTickInterval: 0,
-        gridLineWidth: 0,
-        labels: {
-            enabled: false,
-        },
-    }],
+    ],
     rangeSelector: {
         selected: 0,
-        buttons: [{
-            type: 'all',
-            text: 'All',
-        }, {
-            type: 'day',
-            count: 30,
-            text: '30 days',
-        }, {
-            type: 'day',
-            count: 7,
-            text: '7 days',
-        }, {
-            type: 'day',
-            count: 1,
-            text: '24 h',
-        }, {
-            type: 'minute',
-            count: 60,
-            text: '60 min',
-        }],
+        buttons: [
+            {
+                type: 'all',
+                text: 'All',
+            },
+            {
+                type: 'day',
+                count: 30,
+                text: '30 days',
+            },
+            {
+                type: 'day',
+                count: 7,
+                text: '7 days',
+            },
+            {
+                type: 'day',
+                count: 1,
+                text: '24 h',
+            },
+            {
+                type: 'minute',
+                count: 60,
+                text: '60 min',
+            },
+        ],
         buttonPosition: {
             x: -4,
             y: 95,
@@ -99,7 +109,7 @@ export const CHART_OPTIONS = {
                     style: {
                         color: '#888888',
                         cursor: 'default',
-                    }
+                    },
                 },
             },
         },
@@ -108,27 +118,29 @@ export const CHART_OPTIONS = {
     navigator: {
         height: 80,
         maskFill: 'rgba(77, 89, 103, 0.2)',
-        outlineColor: "#4D5967",
+        outlineColor: '#4D5967',
         handles: {
-            backgroundColor: "#4D5967",
-            borderColor: "#272A2F",
+            backgroundColor: '#4D5967',
+            borderColor: '#272A2F',
         },
         series: {
-            type: "column",
+            type: 'column',
             color: '#7BC876',
         },
         xAxis: {
             lineWidth: 1,
-            lineColor: "#4D5967",
+            lineColor: '#4D5967',
             gridLineWidth: 0,
             labels: {
                 enabled: false,
             },
         },
     },
-    series: [{
-        animation: false,
-        data: [],
-        type: 'column',
-    }],
+    series: [
+        {
+            animation: false,
+            data: [],
+            type: 'column',
+        },
+    ],
 };

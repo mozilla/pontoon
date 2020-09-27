@@ -2,10 +2,8 @@
 
 import api from 'core/api';
 
-
 export const RECEIVE: 'resource/RECEIVE' = 'resource/RECEIVE';
 export const UPDATE: 'resource/UPDATE' = 'resource/UPDATE';
-
 
 export type Resource = {|
     +path: string,
@@ -13,7 +11,6 @@ export type Resource = {|
     +stringsWithWarnings: number,
     +totalStrings: number,
 |};
-
 
 export type UpdateAction = {|
     type: typeof UPDATE,
@@ -34,7 +31,6 @@ export function update(
     };
 }
 
-
 export type ReceiveAction = {|
     type: typeof RECEIVE,
     resources: Array<Resource>,
@@ -51,12 +47,11 @@ export function receive(
     };
 }
 
-
 export function get(locale: string, project: string): Function {
-    return async dispatch => {
+    return async (dispatch) => {
         const results = await api.resource.getAll(locale, project);
 
-        const resources = results.map(resource => {
+        const resources = results.map((resource) => {
             return {
                 path: resource.title,
                 approvedStrings: resource.approved_strings,
@@ -68,7 +63,7 @@ export function get(locale: string, project: string): Function {
         const allResources = resources.pop();
 
         dispatch(receive(resources, allResources));
-    }
+    };
 }
 
 export default {

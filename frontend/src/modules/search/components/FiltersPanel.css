@@ -9,7 +9,7 @@
 }
 
 .filters-panel .visibility-switch {
-    color: #FFFFFF;
+    color: #ffffff;
     cursor: pointer;
     display: inline-block;
     font-weight: 300;
@@ -30,14 +30,14 @@
 }
 
 .filters-panel .visibility-switch:hover .status:before {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .filters-panel .menu {
-    background: #272A2F;
+    background: #272a2f;
     bottom: auto;
     box-sizing: border-box;
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     left: 5px;
     list-style: none;
@@ -64,15 +64,15 @@
 }
 
 .filters-panel .menu li {
-    color: #AAAAAA;
+    color: #aaaaaa;
     cursor: pointer;
     font-weight: 300;
     padding: 2px 4px;
 }
 
 .filters-panel .menu li:hover {
-    color: #FFFFFF;
-    background-color: #3F4752;
+    color: #ffffff;
+    background-color: #3f4752;
 }
 
 .filters-panel .menu li:not(.horizontal-separator) {
@@ -105,7 +105,7 @@
 .filters-panel .menu li.horizontal-separator {
     background: transparent;
     border-top: none;
-    color: #7BC876;
+    color: #7bc876;
     cursor: default;
     font-size: 13px;
     height: auto;
@@ -131,17 +131,17 @@
     position: absolute;
 }
 
-.filters-panel .menu li .count{
-    background: #3F4752;
+.filters-panel .menu li .count {
+    background: #3f4752;
     border-radius: 3px;
-    color: #CCCCCC;
+    color: #cccccc;
     right: 4px;
     top: 4px;
 }
 
 .filters-panel .menu li:hover .count {
-    background: #4D5967;
-    color: #CCCCCC;
+    background: #4d5967;
+    color: #cccccc;
 }
 
 .filters-panel .menu li .priority {
@@ -155,15 +155,18 @@
 }
 
 .filters-panel .menu li .priority .fa-star.active {
-    color: #7BC876;
+    color: #7bc876;
 }
 
-.filters-panel .menu li:not(.selected):not(.all):not(.editing) .status:hover:before {
-    content: "";
+.filters-panel
+    .menu
+    li:not(.selected):not(.all):not(.editing)
+    .status:hover:before {
+    content: '';
 }
 
 .filters-panel .menu li.selected .status:before {
-    content: "";
+    content: '';
 }
 
 .filters-panel .menu li.author {
@@ -188,13 +191,13 @@
 }
 
 .filters-panel .menu li.author .name {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 16px;
     padding-bottom: 4px;
 }
 
 .filters-panel .menu li.author .role {
-    color: #AAAAAA;
+    color: #aaaaaa;
 }
 
 .filters-panel .menu li.author .count {
@@ -219,9 +222,8 @@
 }
 
 .filters-panel .menu li.author .status:before {
-    color: #AAAAAA;
+    color: #aaaaaa;
 }
-
 
 .filters-panel .menu li.author.selected .status,
 .filters-panel .menu li.author .sel:hover .status {
@@ -235,7 +237,7 @@
 
 .filters-panel .toolbar {
     background: #111111;
-    border-top: 1px solid #5E6475;
+    border-top: 1px solid #5e6475;
     box-sizing: border-box;
     line-height: 23px;
     padding: 10px 12px;
@@ -274,5 +276,5 @@
 .filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
-    color: #7BC876;
+    color: #7bc876;
 }

@@ -4,21 +4,19 @@ import sinon from 'sinon';
 
 import { EditorSettingsBase } from './EditorSettings';
 
-
 function createEditorSettings() {
     const updateSettingMock = sinon.stub();
-    const wrapper = shallow(<EditorSettingsBase
-        settings={
-            {
+    const wrapper = shallow(
+        <EditorSettingsBase
+            settings={{
                 runQualityChecks: false,
                 forceSuggestions: false,
-            }
-        }
-        updateSetting={ updateSettingMock }
-    />);
+            }}
+            updateSetting={updateSettingMock}
+        />,
+    );
     return [wrapper, updateSettingMock];
 }
-
 
 describe('<EditorSettings>', () => {
     it('toggles the runQualityChecks setting', () => {
@@ -29,7 +27,7 @@ describe('<EditorSettings>', () => {
         wrapper.find('.menu li').at(0).simulate('click');
         expect(updateSettingMock.calledOnce).toBeTruthy();
         expect(
-            updateSettingMock.calledWith('runQualityChecks', true)
+            updateSettingMock.calledWith('runQualityChecks', true),
         ).toBeTruthy();
 
         // Do it twice to turn it off.
@@ -39,7 +37,7 @@ describe('<EditorSettings>', () => {
         wrapper.find('.menu li').at(0).simulate('click');
         expect(updateSettingMock.calledTwice).toBeTruthy();
         expect(
-            updateSettingMock.calledWith('runQualityChecks', false)
+            updateSettingMock.calledWith('runQualityChecks', false),
         ).toBeTruthy();
     });
 
@@ -51,7 +49,7 @@ describe('<EditorSettings>', () => {
         wrapper.find('.menu li').at(1).simulate('click');
         expect(updateSettingMock.calledOnce).toBeTruthy();
         expect(
-            updateSettingMock.calledWith('forceSuggestions', true)
+            updateSettingMock.calledWith('forceSuggestions', true),
         ).toBeTruthy();
 
         // Do it twice to turn it off.
@@ -61,7 +59,7 @@ describe('<EditorSettings>', () => {
         wrapper.find('.menu li').at(1).simulate('click');
         expect(updateSettingMock.calledTwice).toBeTruthy();
         expect(
-            updateSettingMock.calledWith('forceSuggestions', false)
+            updateSettingMock.calledWith('forceSuggestions', false),
         ).toBeTruthy();
     });
 });

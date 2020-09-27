@@ -24,7 +24,6 @@ import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
-
 type Props = {|
     batchactions: BatchActionsState,
     entities: EntitiesState,
@@ -40,7 +39,6 @@ type InternalProps = {|
     ...Props,
     dispatch: Function,
 |};
-
 
 /**
  * Displays a list of entities and their current translation.
@@ -110,10 +108,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // and when entity list loads for the first time
         if (
             previous.entity !== current.entity ||
-            (
-                !prevProps.entities.entities.length &&
-                this.props.entities.entities.length
-            )
+            (!prevProps.entities.entities.length &&
+                this.props.entities.entities.length)
         ) {
             this.scrollToSelectedElement();
         }
@@ -149,10 +145,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                     tag,
                     author,
                     time,
-                )
+                ),
             );
         }
-    }
+    };
 
     scrollToSelectedElement() {
         const list = this.list.current;
@@ -172,8 +168,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         if (elementTop < listTop) {
             list.scrollTop = elementTop;
-        }
-        else if (elementBottom >= listBottom) {
+        } else if (elementBottom >= listBottom) {
             list.scrollTop = Math.max(elementBottom - listHeight, 0);
         }
     }
@@ -187,7 +182,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const selectedEntity = props.parameters.entity;
         const firstEntity = props.entities.entities[0];
 
-        const entityIds = props.entities.entities.map(entity => entity.pk);
+        const entityIds = props.entities.entities.map((entity) => entity.pk);
         const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
 
         if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
@@ -197,11 +192,15 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             );
 
             // Only do this the very first time entities are loaded.
-            if (props.entities.fetchCount === 1 && selectedEntity && !isSelectedEntityValid) {
+            if (
+                props.entities.fetchCount === 1 &&
+                selectedEntity &&
+                !isSelectedEntityValid
+            ) {
                 props.dispatch(
                     notification.actions.add(
-                        notification.messages.ENTITY_NOT_FOUND
-                    )
+                        notification.messages.ENTITY_NOT_FOUND,
+                    ),
                 );
             }
         }
@@ -211,67 +210,63 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { dispatch, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(
-                this.props.unsavedchanges,
-                () => {
-                    dispatch(
-                        batchactions.actions.resetSelection()
-                    );
-                    dispatch(
-                        navigation.actions.updateEntity(
-                            router,
-                            entity.pk.toString(),
-                            replaceHistory,
-                        )
-                    );
-                }
-            )
+            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
+                dispatch(batchactions.actions.resetSelection());
+                dispatch(
+                    navigation.actions.updateEntity(
+                        router,
+                        entity.pk.toString(),
+                        replaceHistory,
+                    ),
+                );
+            }),
         );
-    }
+    };
 
     toggleForBatchEditing = (entity: number, shiftKeyPressed: boolean) => {
         const props = this.props;
         const { dispatch } = props;
 
         dispatch(
-            unsavedchanges.actions.check(
-                props.unsavedchanges,
-                () => {
-                    // If holding Shift, check all entities in the entity list between the
-                    // lastCheckedEntity and the entity if entity not checked. If entity
-                    // checked, uncheck all entities in-between.
-                    const lastCheckedEntity = props.batchactions.lastCheckedEntity;
+            unsavedchanges.actions.check(props.unsavedchanges, () => {
+                // If holding Shift, check all entities in the entity list between the
+                // lastCheckedEntity and the entity if entity not checked. If entity
+                // checked, uncheck all entities in-between.
+                const lastCheckedEntity = props.batchactions.lastCheckedEntity;
 
-                    if (shiftKeyPressed && lastCheckedEntity) {
-                        const entityListIds = props.entities.entities.map(e => e.pk);
-                        const start = entityListIds.indexOf(entity);
-                        const end = entityListIds.indexOf(lastCheckedEntity);
+                if (shiftKeyPressed && lastCheckedEntity) {
+                    const entityListIds = props.entities.entities.map(
+                        (e) => e.pk,
+                    );
+                    const start = entityListIds.indexOf(entity);
+                    const end = entityListIds.indexOf(lastCheckedEntity);
 
-                        const entitySelection = entityListIds.slice(
-                            Math.min(start, end),
-                            Math.max(start, end) + 1
-                        )
+                    const entitySelection = entityListIds.slice(
+                        Math.min(start, end),
+                        Math.max(start, end) + 1,
+                    );
 
-                        if (props.batchactions.entities.includes(entity)) {
-                            dispatch(
-                                batchactions.actions.uncheckSelection(entitySelection, entity)
-                            );
-                        }
-                        else {
-                            dispatch(
-                                batchactions.actions.checkSelection(entitySelection, entity)
-                            );
-                        }
-                    }
-                    else {
+                    if (props.batchactions.entities.includes(entity)) {
                         dispatch(
-                            batchactions.actions.toggleSelection(entity)
+                            batchactions.actions.uncheckSelection(
+                                entitySelection,
+                                entity,
+                            ),
+                        );
+                    } else {
+                        dispatch(
+                            batchactions.actions.checkSelection(
+                                entitySelection,
+                                entity,
+                            ),
                         );
                     }
+                } else {
+                    dispatch(batchactions.actions.toggleSelection(entity));
                 }
-            )
+            }),
         );
-    }
+    };
 
     getMoreEntities = () => {
         const props = this.props;
@@ -300,7 +295,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const entityIds = null;
 
         // Currently shown entities should be excluded from the next results.
-        const currentEntityIds = props.entities.entities.map(entity => entity.pk);
+        const currentEntityIds = props.entities.entities.map(
+            (entity) => entity.pk,
+        );
 
         props.dispatch(
             entities.actions.get(
@@ -316,9 +313,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 tag,
                 author,
                 time,
-            )
+            ),
         );
-    }
+    };
 
     render() {
         const props = this.props;
@@ -327,52 +324,62 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // InfiniteScroll will display information about loading during the request
         const hasMore = props.entities.fetching || props.entities.hasMore;
 
-        return <div
-            className="entities unselectable"
-            ref={ this.list }
-        >
-            <InfiniteScroll
-                pageStart={ 1 }
-                loadMore={ this.getMoreEntities }
-                hasMore={ hasMore }
-                loader={ <SkeletonLoader key={ 0 } entities={ props.entities.entities } /> }
-                useWindow={ false }
-                threshold={ 600 }
-            >
-            { (hasMore || props.entities.entities.length) ?
-                <ul>
-                    { props.entities.entities.map((entity, i) => {
-                        const selected = (
-                            !props.batchactions.entities.length &&
-                            entity.pk === props.parameters.entity
-                        );
+        return (
+            <div className='entities unselectable' ref={this.list}>
+                <InfiniteScroll
+                    pageStart={1}
+                    loadMore={this.getMoreEntities}
+                    hasMore={hasMore}
+                    loader={
+                        <SkeletonLoader
+                            key={0}
+                            entities={props.entities.entities}
+                        />
+                    }
+                    useWindow={false}
+                    threshold={600}
+                >
+                    {hasMore || props.entities.entities.length ? (
+                        <ul>
+                            {props.entities.entities.map((entity, i) => {
+                                const selected =
+                                    !props.batchactions.entities.length &&
+                                    entity.pk === props.parameters.entity;
 
-                        return <Entity
-                            checkedForBatchEditing={ props.batchactions.entities.includes(entity.pk) }
-                            toggleForBatchEditing={ this.toggleForBatchEditing }
-                            entity={ entity }
-                            isReadOnlyEditor={ props.isReadOnlyEditor }
-                            isTranslator={ props.isTranslator }
-                            locale={ props.locale }
-                            search={ search }
-                            selected={ selected }
-                            selectEntity={ this.selectEntity }
-                            key={ i }
-                        />;
-                    }) }
-                </ul>
-                :
-                // When there are no results for the current search.
-                <h3 className="no-results">
-                    <div className="fa fa-exclamation-circle"></div>
-                    No results
-                </h3>
-            }
-            </InfiniteScroll>
-        </div>;
+                                return (
+                                    <Entity
+                                        checkedForBatchEditing={props.batchactions.entities.includes(
+                                            entity.pk,
+                                        )}
+                                        toggleForBatchEditing={
+                                            this.toggleForBatchEditing
+                                        }
+                                        entity={entity}
+                                        isReadOnlyEditor={
+                                            props.isReadOnlyEditor
+                                        }
+                                        isTranslator={props.isTranslator}
+                                        locale={props.locale}
+                                        search={search}
+                                        selected={selected}
+                                        selectEntity={this.selectEntity}
+                                        key={i}
+                                    />
+                                );
+                            })}
+                        </ul>
+                    ) : (
+                        // When there are no results for the current search.
+                        <h3 className='no-results'>
+                            <div className='fa fa-exclamation-circle'></div>
+                            No results
+                        </h3>
+                    )}
+                </InfiniteScroll>
+            </div>
+        );
     }
 }
-
 
 const mapStateToProps = (state: Object): Props => {
     return {

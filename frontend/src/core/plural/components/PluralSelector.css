@@ -6,8 +6,8 @@
 }
 
 .plural-selector ul li {
-    background: #4D5967;
-    border: 1px solid #5E6475;
+    background: #4d5967;
+    border: 1px solid #5e6475;
     border-left: none;
     display: table-cell;
     text-align: center;
@@ -15,7 +15,7 @@
 
 .plural-selector ul li.active,
 .plural-selector ul li:hover {
-    background: #3F4752;
+    background: #3f4752;
 }
 
 .plural-selector ul li.active {
@@ -35,7 +35,7 @@
 }
 
 .plural-selector ul li button sup {
-    color: #7BC876;
+    color: #7bc876;
     font-size: 11px;
     font-weight: 400;
     padding-left: 1px;

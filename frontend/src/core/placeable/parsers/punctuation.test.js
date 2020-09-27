@@ -6,7 +6,6 @@ import createMarker from 'react-content-marker';
 
 import punctuation from './punctuation';
 
-
 describe('punctuation', () => {
     each([
         ['™', 'Pontoon™'],
@@ -19,20 +18,19 @@ describe('punctuation', () => {
         ['—', 'Hello — Lisa'],
         ['–', 'Hello – Lisa'],
         [' ', 'Hello\u202Fworld'],
-    ])
-    .it('marks `%s` in `%s`', (mark, content) => {
+    ]).it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([punctuation]);
-        const wrapper = shallow(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });
 
-    each([
-        ['These, are not. Special: punctuation; marks! Or are "they"?'],
-    ])
-    .it('does not mark anything in `%s`', (content) => {
-        const Marker = createMarker([punctuation]);
-        const wrapper = shallow(<Marker>{ content }</Marker>);
-        expect(wrapper.find('mark')).toHaveLength(0);
-    });
+    each([['These, are not. Special: punctuation; marks! Or are "they"?']]).it(
+        'does not mark anything in `%s`',
+        (content) => {
+            const Marker = createMarker([punctuation]);
+            const wrapper = shallow(<Marker>{content}</Marker>);
+            expect(wrapper.find('mark')).toHaveLength(0);
+        },
+    );
 });

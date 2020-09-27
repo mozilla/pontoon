@@ -6,41 +6,33 @@ import api from 'core/api';
 
 import type { TermType } from 'core/api';
 
-
 export const RECEIVE: 'terms/RECEIVE' = 'terms/RECEIVE';
 export const REQUEST: 'terms/REQUEST' = 'terms/REQUEST';
-
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +terms: Array<TermType>,
 |};
-export function receive(
-    terms: Array<TermType>,
-): ReceiveAction {
+export function receive(terms: Array<TermType>): ReceiveAction {
     return {
         type: RECEIVE,
         terms,
     };
 }
 
-
 export type RequestAction = {|
     +type: typeof REQUEST,
     +sourceString: string,
 |};
-export function request(
-    sourceString: string,
-): RequestAction {
+export function request(sourceString: string): RequestAction {
     return {
         type: REQUEST,
         sourceString,
     };
 }
 
-
 export function get(sourceString: string, locale: string): Function {
-    return async dispatch => {
+    return async (dispatch) => {
         dispatch(request(sourceString));
 
         // Abort all previously running requests.
@@ -55,9 +47,8 @@ export function get(sourceString: string, locale: string): Function {
         }
 
         dispatch(receive(content));
-    }
+    };
 }
-
 
 export default {
     get,

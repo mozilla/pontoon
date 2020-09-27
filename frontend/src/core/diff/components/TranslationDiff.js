@@ -6,7 +6,6 @@ import './TranslationDiff.css';
 
 import { getDiff } from '../withDiff';
 
-
 type Props = {|
     base: string,
     target: string,

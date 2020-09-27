@@ -12,7 +12,6 @@ import type { LocaleState, Localization } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 
-
 type Props = {|
     parameters: NavigationParams,
     locale: LocaleState,
@@ -28,7 +27,6 @@ type State = {|
     sortActive: string,
     sortAsc: boolean,
 |};
-
 
 /**
  * Render a project breadcrumb for the main navigation bar in the regular view.
@@ -51,7 +49,7 @@ export class ProjectMenuBase extends React.Component<Props, State> {
         this.setState((state) => {
             return { visible: !state.visible };
         });
-    }
+    };
 
     sortByProject = () => {
         this.setState((state) => {
@@ -60,7 +58,7 @@ export class ProjectMenuBase extends React.Component<Props, State> {
                 sortAsc: state.sortActive !== 'project' || !state.sortAsc,
             };
         });
-    }
+    };
 
     sortByProgress = () => {
         this.setState((state) => {
@@ -69,11 +67,14 @@ export class ProjectMenuBase extends React.Component<Props, State> {
                 sortAsc: state.sortActive !== 'progress' || !state.sortAsc,
             };
         });
-    }
+    };
 
     getProgress(local: Localization) {
-        const completeStrings = local.approvedStrings + local.stringsWithWarnings;
-        const percent = Math.floor(completeStrings / local.totalStrings * 100);
+        const completeStrings =
+            local.approvedStrings + local.stringsWithWarnings;
+        const percent = Math.floor(
+            (completeStrings / local.totalStrings) * 100,
+        );
         return percent;
     }
 
@@ -87,7 +88,7 @@ export class ProjectMenuBase extends React.Component<Props, State> {
         this.setState({
             visible: false,
         });
-    }
+    };
 
     navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
@@ -98,22 +99,22 @@ export class ProjectMenuBase extends React.Component<Props, State> {
         this.setState({
             visible: false,
         });
-    }
+    };
 
     updateProjectList = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
         });
-    }
+    };
 
     renderBreadcrumb() {
         const { locale, project } = this.props;
 
-        return <li>
-            <a href={ `/${locale.code}/${project.slug}/` }>
-                { project.name }
-            </a>
-        </li>
+        return (
+            <li>
+                <a href={`/${locale.code}/${project.slug}/`}>{project.name}</a>
+            </li>
+        );
     }
 
     renderMenu() {
@@ -126,120 +127,133 @@ export class ProjectMenuBase extends React.Component<Props, State> {
 
         // Search projects
         const search = this.state.search;
-        const localizationElements = locale.localizations.filter(localization =>
-            localization.project.name.toLowerCase().indexOf(search.toLowerCase()) > -1
+        const localizationElements = locale.localizations.filter(
+            (localization) =>
+                localization.project.name
+                    .toLowerCase()
+                    .indexOf(search.toLowerCase()) > -1,
         );
 
         const sort = this.state.sortAsc ? 'fa fa-caret-up' : 'fa fa-caret-down';
         const projectClass = this.state.sortActive === 'project' ? sort : '';
         const progressClass = this.state.sortActive === 'progress' ? sort : '';
 
-        return <li className={ className }>
-            <div
-                className="selector unselectable"
-                onClick={ this.toggleVisibility }
-            >
-                <Localized id='project-ProjectMenu--all-projects'>
-                    <span>All Projects</span>
-                </Localized>
-                <span className="icon fa fa-caret-down"></span>
-            </div>
-
-            { !this.state.visible ? null :
-            <div className="menu">
-                <div className="search-wrapper">
-                    <div className="icon fa fa-search"></div>
-                    <Localized id="project-ProjectMenu--search-placeholder" attrs={{ placeholder: true }}>
-                        <input
-                            type="search"
-                            autoComplete="off"
-                            autoFocus
-                            value={ this.state.search }
-                            onChange={ this.updateProjectList }
-                            placeholder="Filter projects"
-                        />
+        return (
+            <li className={className}>
+                <div
+                    className='selector unselectable'
+                    onClick={this.toggleVisibility}
+                >
+                    <Localized id='project-ProjectMenu--all-projects'>
+                        <span>All Projects</span>
                     </Localized>
+                    <span className='icon fa fa-caret-down'></span>
                 </div>
 
-                <div className="header">
-                    <Localized id="project-ProjectMenu--project">
-                        <span
-                            className="project"
-                            onClick={ this.sortByProject }
-                        >
-                            Project
-                        </span>
-                    </Localized>
-                    <span
-                        className={"project icon " + projectClass}
-                        onClick={ this.sortByProject }
-                    />
-                    <Localized id="project-ProjectMenu--progress">
-                        <span
-                            className="progress"
-                            onClick={ this.sortByProgress }
-                        >
-                            Progress
-                        </span>
-                    </Localized>
-                    <span
-                        className={"progress icon " + progressClass}
-                        onClick={ this.sortByProgress }
-                    />
-                </div>
+                {!this.state.visible ? null : (
+                    <div className='menu'>
+                        <div className='search-wrapper'>
+                            <div className='icon fa fa-search'></div>
+                            <Localized
+                                id='project-ProjectMenu--search-placeholder'
+                                attrs={{ placeholder: true }}
+                            >
+                                <input
+                                    type='search'
+                                    autoComplete='off'
+                                    autoFocus
+                                    value={this.state.search}
+                                    onChange={this.updateProjectList}
+                                    placeholder='Filter projects'
+                                />
+                            </Localized>
+                        </div>
 
-                <ul>
-                    { localizationElements.length ?
-                        (this.state.sortActive === 'project' ?
-                            localizationElements.sort((a, b) => {
-                                const projectA = this.getProject(a);
-                                const projectB = this.getProject(b);
+                        <div className='header'>
+                            <Localized id='project-ProjectMenu--project'>
+                                <span
+                                    className='project'
+                                    onClick={this.sortByProject}
+                                >
+                                    Project
+                                </span>
+                            </Localized>
+                            <span
+                                className={'project icon ' + projectClass}
+                                onClick={this.sortByProject}
+                            />
+                            <Localized id='project-ProjectMenu--progress'>
+                                <span
+                                    className='progress'
+                                    onClick={this.sortByProgress}
+                                >
+                                    Progress
+                                </span>
+                            </Localized>
+                            <span
+                                className={'progress icon ' + progressClass}
+                                onClick={this.sortByProgress}
+                            />
+                        </div>
 
-                                let result = 0;
+                        <ul>
+                            {localizationElements.length ? (
+                                (this.state.sortActive === 'project'
+                                    ? localizationElements.sort((a, b) => {
+                                          const projectA = this.getProject(a);
+                                          const projectB = this.getProject(b);
 
-                                if (projectA < projectB) {
-                                    result = -1;
-                                }
-                                if (projectA > projectB) {
-                                    result = 1;
-                                }
+                                          let result = 0;
 
-                                return this.state.sortAsc ? result : result * -1;
-                            })
-                            :
-                            localizationElements.sort((a, b) => {
-                                const percentA = this.getProgress(a);
-                                const percentB = this.getProgress(b);
+                                          if (projectA < projectB) {
+                                              result = -1;
+                                          }
+                                          if (projectA > projectB) {
+                                              result = 1;
+                                          }
 
-                                let result = 0;
+                                          return this.state.sortAsc
+                                              ? result
+                                              : result * -1;
+                                      })
+                                    : localizationElements.sort((a, b) => {
+                                          const percentA = this.getProgress(a);
+                                          const percentB = this.getProgress(b);
 
-                                if (percentA < percentB ) {
-                                    result = -1;
-                                }
-                                if (percentA > percentB ) {
-                                    result = 1;
-                                }
+                                          let result = 0;
 
-                                return this.state.sortAsc ? result : result * -1;
-                            }))
-                            .map((localization, index) => {
-                                return <ProjectItem
-                                    parameters={ parameters }
-                                    localization={ localization }
-                                    navigateToPath={ this.navigateToPath }
-                                    key={ index }
-                                />;
-                            })
-                        :
-                        // No projects found
-                        <Localized id='project-ProjectMenu--no-results'>
-                            <li className="no-results">No results</li>
-                        </Localized>
-                    }
-                </ul>
-            </div>
-            }
-        </li>;
+                                          if (percentA < percentB) {
+                                              result = -1;
+                                          }
+                                          if (percentA > percentB) {
+                                              result = 1;
+                                          }
+
+                                          return this.state.sortAsc
+                                              ? result
+                                              : result * -1;
+                                      })
+                                ).map((localization, index) => {
+                                    return (
+                                        <ProjectItem
+                                            parameters={parameters}
+                                            localization={localization}
+                                            navigateToPath={this.navigateToPath}
+                                            key={index}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                // No projects found
+                                <Localized id='project-ProjectMenu--no-results'>
+                                    <li className='no-results'>No results</li>
+                                </Localized>
+                            )}
+                        </ul>
+                    </div>
+                )}
+            </li>
+        );
     }
 
     render() {
