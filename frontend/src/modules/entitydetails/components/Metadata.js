@@ -27,7 +27,7 @@ type Props = {|
     +terms: TermState,
     +teamComments: TeamCommentState,
     +user: UserState,
-    tabRef: Object,
+    +tabRef: Object,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
