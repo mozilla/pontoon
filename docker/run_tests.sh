@@ -25,6 +25,13 @@ echo "--------------------------------------------------------------------------
 echo "Linting Python code"
 $FLAKE8 pontoon/
 
+
+echo ""
+echo "--------------------------------------------------------------------------------------------"
+echo "Formatting Javascript code"
+./frontend/node_modules/.bin/prettier --check '**/src/**/*'
+
+echo ""
 echo "Linting JavaScript code"
 ./node_modules/.bin/eslint .
 
