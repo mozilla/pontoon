@@ -45,14 +45,16 @@ export default function AddComment(props: Props) {
         () => withMentions(withReact(createEditor())),
         [],
     );
+    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
+    const [value, setValue] = React.useState(initialValue);
     const usersList = users.users;
-    const insertProjectManager = () => {
+
+    // Insert project manager as mention when 'Request context / Report issue' button used
+    React.useEffect(() => {
         if (projectManager) {
             insertMention(editor, projectManager, usersList);
         }
-    };
-    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
-    const [value, setValue] = React.useState(initialValue);
+    }, [editor, projectManager, usersList]);
 
     // Set focus on Editor
     React.useEffect(() => {
@@ -61,10 +63,6 @@ export default function AddComment(props: Props) {
             Transforms.select(editor, Editor.end(editor, []));
         }
     }, [editor, parameters]);
-
-    React.useEffect(() => {
-        insertProjectManager();
-    }, []);
 
     const USERS = usersList.map((user) => user.name);
     const suggestedUsers = USERS.filter((c) =>
