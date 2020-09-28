@@ -752,7 +752,7 @@ except ValueError:
 
 SYNC_LOG_RETENTION = 90  # days
 
-MANUAL_SYNC = os.environ.get("MANUAL_SYNC", "False") != "False"
+MANUAL_SYNC = os.environ.get("MANUAL_SYNC", "True") != "False"
 
 # Celery
 
