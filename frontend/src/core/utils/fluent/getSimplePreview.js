@@ -5,7 +5,6 @@ import flattenDeep from 'lodash.flattendeep';
 import parser from './parser';
 import serialize from './serialize';
 
-
 /**
  * Turn a Fluent message into a simple string, without any syntax sigils.
  *
@@ -43,8 +42,7 @@ export default function getSimplePreview(content: ?string) {
     let tree;
     if (message.value) {
         tree = message;
-    }
-    else {
+    } else {
         tree = message.attributes[0];
     }
 

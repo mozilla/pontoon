@@ -1,7 +1,6 @@
 import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
 import parser from './parser';
 
-
 describe('isSimpleSingleAttributeMessage', () => {
     it('returns true for a string with a single attribute', () => {
         const input = 'my-entry =\n    .an-atribute = Hello!';
@@ -18,7 +17,8 @@ describe('isSimpleSingleAttributeMessage', () => {
     });
 
     it('returns false for string with several attributes', () => {
-        const input = 'my-entry =\n    .an-atribute = Hello!\n    .two-attrites = World!';
+        const input =
+            'my-entry =\n    .an-atribute = Hello!\n    .two-attrites = World!';
         const message = parser.parseEntry(input);
 
         expect(isSimpleSingleAttributeMessage(message)).toEqual(false);

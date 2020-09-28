@@ -5,31 +5,29 @@ import { Localized } from '@fluent/react';
 
 import type { BatchActionsState } from 'modules/batchactions';
 
-
 type Props = {|
     approveAll: () => void,
     batchactions: BatchActionsState,
 |};
-
 
 /**
  * Renders Approve All batch action button.
  */
 export default class ApproveAll extends React.Component<Props> {
     renderDefault() {
-        return <Localized
-            id="batchactions-ApproveAll--default"
-        >
-            { 'Approve all' }
-        </Localized>;
+        return (
+            <Localized id='batchactions-ApproveAll--default'>
+                {'Approve all'}
+            </Localized>
+        );
     }
 
     renderError() {
-        return <Localized
-            id="batchactions-ApproveAll--error"
-        >
-            { 'Oops, something went wrong' }
-        </Localized>;
+        return (
+            <Localized id='batchactions-ApproveAll--error'>
+                {'Oops, something went wrong'}
+            </Localized>
+        );
     }
 
     renderInvalid() {
@@ -39,12 +37,14 @@ export default class ApproveAll extends React.Component<Props> {
             return null;
         }
 
-        return <Localized
-            id="batchactions-ApproveAll--invalid"
-            vars={{ invalidCount: response.invalidCount }}
-        >
-            { '{ $invalidCount } failed' }
-        </Localized>;
+        return (
+            <Localized
+                id='batchactions-ApproveAll--invalid'
+                vars={{ invalidCount: response.invalidCount }}
+            >
+                {'{ $invalidCount } failed'}
+            </Localized>
+        );
     }
 
     renderSuccess() {
@@ -54,12 +54,14 @@ export default class ApproveAll extends React.Component<Props> {
             return null;
         }
 
-        return <Localized
-            id="batchactions-ApproveAll--success"
-            vars={{ changedCount: response.changedCount }}
-        >
-            { '{ $changedCount } strings approved' }
-        </Localized>;
+        return (
+            <Localized
+                id='batchactions-ApproveAll--success'
+                vars={{ changedCount: response.changedCount }}
+            >
+                {'{ $changedCount } strings approved'}
+            </Localized>
+        );
     }
 
     renderTitle() {
@@ -68,32 +70,31 @@ export default class ApproveAll extends React.Component<Props> {
         if (response && response.action === 'approve') {
             if (response.error) {
                 return this.renderError();
-            }
-            else if (response.invalidCount) {
-                return <>
-                    { this.renderSuccess() }
-                    { ' · ' }
-                    { this.renderInvalid() }
-                </>;
-            }
-            else {
+            } else if (response.invalidCount) {
+                return (
+                    <>
+                        {this.renderSuccess()}
+                        {' · '}
+                        {this.renderInvalid()}
+                    </>
+                );
+            } else {
                 return this.renderSuccess();
             }
-        }
-        else {
+        } else {
             return this.renderDefault();
         }
     }
 
     render() {
-        return <button
-            className="approve-all"
-            onClick={ this.props.approveAll }
-        >
-            { this.renderTitle() }
-            { this.props.batchactions.requestInProgress !== 'approve' ? null :
-                <i className="fa fa-2x fa-circle-notch fa-spin"></i>
-            }
-        </button>;
+        return (
+            <button className='approve-all' onClick={this.props.approveAll}>
+                {this.renderTitle()}
+                {this.props.batchactions.requestInProgress !==
+                'approve' ? null : (
+                    <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+                )}
+            </button>
+        );
     }
 }

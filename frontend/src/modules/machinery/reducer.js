@@ -5,11 +5,7 @@ import { ADD_TRANSLATIONS, RESET } from './actions';
 import type { MachineryTranslation } from 'core/api';
 import type { AddTranslationsAction, ResetAction } from './actions';
 
-
-type Action =
-    | AddTranslationsAction
-    | ResetAction
-;
+type Action = AddTranslationsAction | ResetAction;
 
 type Translations = Array<MachineryTranslation>;
 
@@ -18,7 +14,6 @@ export type MachineryState = {|
     sourceString: string,
     translations: Translations,
 |};
-
 
 /**
  * Return a list of translations that are deduplicated and sorted.
@@ -32,13 +27,15 @@ export type MachineryState = {|
  */
 function dedupedTranslations(
     oldTranslations: Translations,
-    newTranslations: Translations
+    newTranslations: Translations,
 ): Translations {
-    const translations = oldTranslations.map(item => ({ ...item }));
+    const translations = oldTranslations.map((item) => ({ ...item }));
 
-    newTranslations.forEach(newT => {
+    newTranslations.forEach((newT) => {
         const sameTranslation = translations.findIndex(
-            oldT => newT.original === oldT.original && newT.translation === oldT.translation
+            (oldT) =>
+                newT.original === oldT.original &&
+                newT.translation === oldT.translation,
         );
 
         if (sameTranslation >= 0) {
@@ -47,8 +44,7 @@ function dedupedTranslations(
             if (newT.quality && !translations[sameTranslation].quality) {
                 translations[sameTranslation].quality = newT.quality;
             }
-        }
-        else {
+        } else {
             translations.push({ ...newT });
         }
     });
@@ -71,7 +67,6 @@ function dedupedTranslations(
         return 0;
     });
 }
-
 
 const initial: MachineryState = {
     entity: null,

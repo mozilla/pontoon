@@ -1,6 +1,6 @@
 .unsaved-changes {
-    background: #272A2F;
-    border-top: 1px solid #5E6475;
+    background: #272a2f;
+    border-top: 1px solid #5e6475;
     bottom: 0;
     box-sizing: border-box;
     left: 0;
@@ -16,7 +16,7 @@
 .unsaved-changes .close {
     background: none;
     border: none;
-    color: #AAAAAA;
+    color: #aaaaaa;
     float: right;
     font-size: 24px;
     font-weight: 100;
@@ -26,11 +26,11 @@
 }
 
 .unsaved-changes .close:hover {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .unsaved-changes .title {
-    color: #F36;
+    color: #f36;
     font-size: 14px;
     font-weight: 300;
     text-transform: uppercase;
@@ -42,11 +42,11 @@
 }
 
 .unsaved-changes .anyway {
-    background: #FF0A43;
+    background: #ff0a43;
     border: none;
     border-radius: 3px;
     bottom: 10px;
-    color: #272A2F;
+    color: #272a2f;
     font-weight: 600;
     margin-left: 10px;
     padding: 10px;
@@ -56,5 +56,5 @@
 }
 
 .unsaved-changes .anyway:hover {
-    color: #EBEBEB;
+    color: #ebebeb;
 }

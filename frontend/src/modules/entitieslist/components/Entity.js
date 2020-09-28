@@ -9,7 +9,6 @@ import { TranslationProxy } from 'core/translation';
 import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locale';
 
-
 type Props = {
     checkedForBatchEditing: boolean,
     toggleForBatchEditing: Function,
@@ -54,17 +53,14 @@ export default class Entity extends React.Component<Props> {
                 (translation.approved || translation.fuzzy)
             ) {
                 errors++;
-            }
-            else if (
+            } else if (
                 translation.warnings.length &&
                 (translation.approved || translation.fuzzy)
             ) {
                 warnings++;
-            }
-            else if (translation.approved) {
+            } else if (translation.approved) {
                 approved++;
-            }
-            else if (translation.fuzzy) {
+            } else if (translation.fuzzy) {
                 fuzzy++;
             }
         });
@@ -97,7 +93,7 @@ export default class Entity extends React.Component<Props> {
         }
 
         this.props.selectEntity(this.props.entity);
-    }
+    };
 
     toggleForBatchEditing = (e: SyntheticMouseEvent<HTMLSpanElement>) => {
         const { entity, isReadOnlyEditor, isTranslator } = this.props;
@@ -105,7 +101,7 @@ export default class Entity extends React.Component<Props> {
         if (isTranslator && !isReadOnlyEditor) {
             this.props.toggleForBatchEditing(entity.pk, e.shiftKey);
         }
-    }
+    };
 
     render() {
         const {
@@ -120,37 +116,38 @@ export default class Entity extends React.Component<Props> {
 
         const classSelected = selected ? 'selected' : '';
 
-        const classBatchEditable = (isTranslator && !isReadOnlyEditor) ? 'batch-editable' : '';
+        const classBatchEditable =
+            isTranslator && !isReadOnlyEditor ? 'batch-editable' : '';
 
         const classChecked = checkedForBatchEditing ? 'checked' : '';
 
         return (
             <li
-                className={ `entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}` }
-                onClick={ this.selectEntity }
+                className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}`}
+                onClick={this.selectEntity}
             >
                 <span
                     className='status fa'
-                    onClick={ this.toggleForBatchEditing }
+                    onClick={this.toggleForBatchEditing}
                 />
                 <div>
                     <p className='source-string'>
                         <TranslationProxy
-                            content={ entity.original }
-                            format={ entity.format }
-                            search={ search }
+                            content={entity.original}
+                            format={entity.format}
+                            search={search}
                         />
                     </p>
                     <p
                         className='translation-string'
-                        dir={ locale.direction }
-                        lang={ locale.code }
-                        data-script={ locale.script }
+                        dir={locale.direction}
+                        lang={locale.code}
+                        data-script={locale.script}
                     >
                         <TranslationProxy
-                            content={ entity.translation[0].string }
-                            format={ entity.format }
-                            search={ search }
+                            content={entity.translation[0].string}
+                            format={entity.format}
+                            search={search}
                         />
                     </p>
                 </div>

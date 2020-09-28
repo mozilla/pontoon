@@ -17,16 +17,17 @@ type Props = {|
     user: UserState,
     users: UserState,
     addComment: (string, ?number) => void,
+    togglePinnedStatus: (boolean, number) => void,
 |};
 
-
 export default function TeamComments(props: Props) {
-    const { 
-        teamComments, 
+    const {
+        teamComments,
         user,
         parameters,
         users,
-        addComment, 
+        addComment,
+        togglePinnedStatus,
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -36,21 +37,26 @@ export default function TeamComments(props: Props) {
     const comments = teamComments.comments;
 
     let canComment = user.isAuthenticated;
+    const canPin = user.isAdmin;
 
-    return <section className="team-comments">
-        { !comments.length && !canComment ?
-            <Localized id="entitydetails-Helpers--no-comments">
-                <p className="no-team-comments">No comments available.</p>
-            </Localized>
-            :
-            <CommentsList
-                comments={ comments }
-                parameters={ parameters }
-                user={ user }
-                users={ users }
-                canComment={ canComment }
-                addComment={ addComment }
-            />
-        }
-    </section>
+    return (
+        <section className='team-comments'>
+            {!comments.length && !canComment ? (
+                <Localized id='entitydetails-Helpers--no-comments'>
+                    <p className='no-team-comments'>No comments available.</p>
+                </Localized>
+            ) : (
+                <CommentsList
+                    comments={comments}
+                    parameters={parameters}
+                    user={user}
+                    users={users}
+                    canComment={canComment}
+                    canPin={canPin}
+                    addComment={addComment}
+                    togglePinnedStatus={togglePinnedStatus}
+                />
+            )}
+        </section>
+    );
 }

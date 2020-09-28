@@ -5,13 +5,11 @@ import { Localized } from '@fluent/react';
 
 import './EntityNavigation.css';
 
-
 type Props = {|
     +copyLinkToClipboard: () => void,
     +goToNextEntity: () => void,
     +goToPreviousEntity: () => void,
 |};
-
 
 /**
  * Component showing entity navigation toolbar.
@@ -49,49 +47,53 @@ export default class EntityNavigation extends React.Component<Props> {
         if (handledEvent) {
             event.preventDefault();
         }
-    }
+    };
 
     render(): React.Node {
-        return <div className='entity-navigation clearfix'>
-            <Localized
-                id="entitydetails-EntityNavigation--link"
-                attrs={{ title: true }}
-                elems={{ glyph: <i className="fa fa-link fa-lg" /> }}
-            >
-                <button
-                    className="link"
-                    title="Copy Link to String"
-                    onClick={ this.props.copyLinkToClipboard }
+        return (
+            <div className='entity-navigation clearfix'>
+                <Localized
+                    id='entitydetails-EntityNavigation--link'
+                    attrs={{ title: true }}
+                    elems={{ glyph: <i className='fa fa-link fa-lg' /> }}
                 >
-                    { '<glyph></glyph>Copy Link' }
-                </button>
-            </Localized>
-            <Localized
-                id="entitydetails-EntityNavigation--next"
-                attrs={{ title: true }}
-                elems={{ glyph: <i className="fa fa-chevron-down fa-lg" /> }}
-            >
-                <button
-                    className="next"
-                    title="Go To Next String (Alt + Down)"
-                    onClick={ this.props.goToNextEntity }
+                    <button
+                        className='link'
+                        title='Copy Link to String'
+                        onClick={this.props.copyLinkToClipboard}
+                    >
+                        {'<glyph></glyph>Copy Link'}
+                    </button>
+                </Localized>
+                <Localized
+                    id='entitydetails-EntityNavigation--next'
+                    attrs={{ title: true }}
+                    elems={{
+                        glyph: <i className='fa fa-chevron-down fa-lg' />,
+                    }}
                 >
-                    { '<glyph></glyph>Next' }
-                </button>
-            </Localized>
-            <Localized
-                id="entitydetails-EntityNavigation--previous"
-                attrs={{ title: true }}
-                elems={{ glyph: <i className="fa fa-chevron-up fa-lg" /> }}
-            >
-                <button
-                    className="previous"
-                    title="Go To Previous String (Alt + Up)"
-                    onClick={ this.props.goToPreviousEntity }
+                    <button
+                        className='next'
+                        title='Go To Next String (Alt + Down)'
+                        onClick={this.props.goToNextEntity}
+                    >
+                        {'<glyph></glyph>Next'}
+                    </button>
+                </Localized>
+                <Localized
+                    id='entitydetails-EntityNavigation--previous'
+                    attrs={{ title: true }}
+                    elems={{ glyph: <i className='fa fa-chevron-up fa-lg' /> }}
                 >
-                    { '<glyph></glyph>Previous' }
-                </button>
-            </Localized>
-        </div>;
+                    <button
+                        className='previous'
+                        title='Go To Previous String (Alt + Up)'
+                        onClick={this.props.goToPreviousEntity}
+                    >
+                        {'<glyph></glyph>Previous'}
+                    </button>
+                </Localized>
+            </div>
+        );
     }
 }

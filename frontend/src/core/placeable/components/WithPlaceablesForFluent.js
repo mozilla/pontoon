@@ -11,9 +11,8 @@ import fluentString from '../parsers/fluentString';
 import fluentTerm from '../parsers/fluentTerm';
 import multipleSpaces from '../parsers/multipleSpaces';
 
-
 export function getRulesWithFluent(rules: Array<Object>) {
-    const newRules = [ ...rules ];
+    const newRules = [...rules];
 
     // Insert after the last space-related rule.
     let insertAfter = newRules.indexOf(multipleSpaces);
@@ -25,7 +24,6 @@ export function getRulesWithFluent(rules: Array<Object>) {
     return newRules;
 }
 
-
 /**
  * Component that marks placeables in a string. Same as WithPlaceables but
  * with all the rules specific to the Fluent syntax at the beginning.
@@ -34,6 +32,5 @@ export function getRulesWithFluent(rules: Array<Object>) {
  * generates a lot of false positives.
  */
 const WithPlaceablesForFluent = createMarker(getRulesWithFluent(rules));
-
 
 export default WithPlaceablesForFluent;

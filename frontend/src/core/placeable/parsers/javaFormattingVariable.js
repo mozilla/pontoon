@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-
 /**
  * Marks Java MessageFormat formatting variables.
  *
@@ -28,14 +27,19 @@ const javaFormattingVariable = {
     rule: /({[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?})/,
     matchIndex: 0,
     tag: (x: string) => {
-        return <Localized
-            id='placeable-parser-javaFormattingVariable'
-            attrs={{ title: true }}
-        >
-            <mark className='placeable' title='Java Message formatting variable'>
-                { x }
-            </mark>
-        </Localized>;
+        return (
+            <Localized
+                id='placeable-parser-javaFormattingVariable'
+                attrs={{ title: true }}
+            >
+                <mark
+                    className='placeable'
+                    title='Java Message formatting variable'
+                >
+                    {x}
+                </mark>
+            </Localized>
+        );
     },
 };
 

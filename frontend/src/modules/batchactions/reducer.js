@@ -7,7 +7,7 @@ import {
     RESET,
     RESET_RESPONSE,
     TOGGLE,
-    UNCHECK
+    UNCHECK,
 } from './actions';
 
 import type {
@@ -18,9 +18,8 @@ import type {
     ResetResponseAction,
     ResponseType,
     ToggleAction,
-    UncheckAction
+    UncheckAction,
 } from './actions';
-
 
 type Action =
     | CheckAction
@@ -29,8 +28,7 @@ type Action =
     | ResetAction
     | ResetResponseAction
     | ToggleAction
-    | UncheckAction
-;
+    | UncheckAction;
 
 export type BatchActionsState = {|
     +entities: Array<number>,
@@ -39,7 +37,6 @@ export type BatchActionsState = {|
     +response: ?ResponseType,
 |};
 
-
 const initial: BatchActionsState = {
     entities: [],
     lastCheckedEntity: null,
@@ -47,27 +44,20 @@ const initial: BatchActionsState = {
     response: null,
 };
 
-
 function checkEntities(
     stateEntities: Array<number>,
     actionEntities: Array<number>,
 ) {
     // Union with duplicates removed
     return stateEntities.concat(
-        actionEntities.filter(
-            e => stateEntities.indexOf(e) < 0
-        )
+        actionEntities.filter((e) => stateEntities.indexOf(e) < 0),
     );
 }
 
-
-function toggleEntity(
-    entities: Array<number>,
-    entity: number,
-) {
+function toggleEntity(entities: Array<number>, entity: number) {
     // Remove entity if present
     if (entities.includes(entity)) {
-        return entities.filter(e => e !== entity);
+        return entities.filter((e) => e !== entity);
     }
     // Add entity if not present
     else {
@@ -75,14 +65,12 @@ function toggleEntity(
     }
 }
 
-
 function uncheckEntities(
     stateEntities: Array<number>,
     actionEntities: Array<number>,
 ) {
-    return stateEntities.filter(e => actionEntities.indexOf(e) < 0);
+    return stateEntities.filter((e) => actionEntities.indexOf(e) < 0);
 }
-
 
 export default function reducer(
     state: BatchActionsState = initial,

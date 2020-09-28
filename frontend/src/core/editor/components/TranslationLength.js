@@ -4,14 +4,12 @@ import * as React from 'react';
 
 import './TranslationLength.css';
 
-
 type Props = {|
     comment: string,
     format: string,
     original: string,
     translation: string,
 |};
-
 
 /**
  * Shows translation length vs. original string length, or countdown.
@@ -63,18 +61,21 @@ export default class TranslationLength extends React.Component<Props> {
         const translationLength = this.stripHTML(translation).length;
         const countdown = limit !== null ? limit - translationLength : null;
 
-        return <div className="translation-length">
-            { countdown !== null ?
-                <div className="countdown">
-                    <span className={ countdown < 0 ? "overflow" : null }>
-                        { countdown }
-                    </span>
-                </div>
-            :
-                <div className="translation-vs-original">
-                    <span>{ translation.length }</span>|<span>{ original.length }</span>
-                </div>
-            }
-        </div>;
+        return (
+            <div className='translation-length'>
+                {countdown !== null ? (
+                    <div className='countdown'>
+                        <span className={countdown < 0 ? 'overflow' : null}>
+                            {countdown}
+                        </span>
+                    </div>
+                ) : (
+                    <div className='translation-vs-original'>
+                        <span>{translation.length}</span>|
+                        <span>{original.length}</span>
+                    </div>
+                )}
+            </div>
+        );
     }
 }

@@ -2,7 +2,6 @@
 
 import isSimpleElement from './isSimpleElement';
 
-
 /**
  * Return true when message represents a simple message.
  *

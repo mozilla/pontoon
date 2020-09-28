@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import ReplaceAll from './ReplaceAll';
 
-
 const DEFAULT_BATCH_ACTIONS = {
     entities: [],
     lastCheckedEntity: null,
@@ -12,20 +11,23 @@ const DEFAULT_BATCH_ACTIONS = {
     response: null,
 };
 
-
 describe('<ReplaceAll>', () => {
     it('renders default button correctly', () => {
         const wrapper = shallow(
-            <ReplaceAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-            />
+            <ReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />,
         );
 
         expect(wrapper.find('.replace-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -39,14 +41,20 @@ describe('<ReplaceAll>', () => {
                         error: true,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.replace-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(
+            0,
+        );
+        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -60,14 +68,20 @@ describe('<ReplaceAll>', () => {
                         changedCount: 2,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.replace-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -82,14 +96,20 @@ describe('<ReplaceAll>', () => {
                         invalidCount: 1,
                     },
                 }}
-            />
+            />,
         );
 
         expect(wrapper.find('.replace-all')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
+        expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(
+            0,
+        );
         expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(1);
-        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(1);
+        expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(
+            1,
+        );
+        expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(
+            1,
+        );
         expect(wrapper.find('.fa')).toHaveLength(0);
     });
 
@@ -98,9 +118,9 @@ describe('<ReplaceAll>', () => {
 
         const wrapper = shallow(
             <ReplaceAll
-                batchactions={ DEFAULT_BATCH_ACTIONS }
-                replaceAll={ mockReplaceAll }
-            />
+                batchactions={DEFAULT_BATCH_ACTIONS}
+                replaceAll={mockReplaceAll}
+            />,
         );
 
         expect(mockReplaceAll.called).toBeFalsy();

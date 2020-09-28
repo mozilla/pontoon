@@ -1,6 +1,6 @@
 .metadata {
     background-color: #3f4752;
-    color: #AAA;
+    color: #aaa;
     font-size: 12px;
     font-style: italic;
     height: 20%;
@@ -26,8 +26,12 @@
 }
 
 .metadata p a {
-    color: #7BC876;
+    color: #7bc876;
     text-decoration: none;
+}
+
+.metadata .comment .content p {
+    display: inline-block;
 }
 
 .metadata p .divider {
@@ -52,7 +56,7 @@
 
 .metadata .original .term {
     background: inherit;
-    border-bottom: 1px solid #7BC876;
+    border-bottom: 1px solid #7bc876;
     color: inherit;
     cursor: pointer;
     font-weight: normal;
@@ -68,7 +72,7 @@
 .metadata button {
     background: none;
     border: none;
-    color: #7BC876;
+    color: #7bc876;
     font-style: italic;
     padding: 0 0 0 2px;
 }

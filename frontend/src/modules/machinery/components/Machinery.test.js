@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import Machinery from './Machinery';
 
-
 describe('<Machinery>', () => {
     const LOCALE = {
         code: 'kg',
@@ -13,10 +12,14 @@ describe('<Machinery>', () => {
         const machinery = {
             translations: [],
         };
-        const wrapper = shallow(<Machinery machinery={ machinery } locale={ LOCALE } />);
+        const wrapper = shallow(
+            <Machinery machinery={machinery} locale={LOCALE} />,
+        );
 
         expect(wrapper.find('.search-wrapper')).toHaveLength(1);
-        expect(wrapper.find('#machinery-Machinery--search-placeholder')).toHaveLength(1);
+        expect(
+            wrapper.find('#machinery-Machinery--search-placeholder'),
+        ).toHaveLength(1);
     });
 
     it('shows the correct number of translations', () => {
@@ -27,13 +30,15 @@ describe('<Machinery>', () => {
                 { original: '3' },
             ],
         };
-        const wrapper = shallow(<Machinery machinery={ machinery } locale={ LOCALE } />);
+        const wrapper = shallow(
+            <Machinery machinery={machinery} locale={LOCALE} />,
+        );
 
         expect(wrapper.find('Translation')).toHaveLength(3);
     });
 
     it('returns null if there is no locale', () => {
-        const wrapper = shallow(<Machinery locale={ null } />);
+        const wrapper = shallow(<Machinery locale={null} />);
         expect(wrapper.type()).toBeNull();
     });
 });

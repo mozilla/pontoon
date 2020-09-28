@@ -27,7 +27,6 @@ import type {
     UpdateMachinerySourcesAction,
 } from './actions';
 
-
 type Action =
     | EndUpdateTranslationAction
     | InitialTranslationAction
@@ -37,8 +36,7 @@ type Action =
     | UpdateAction
     | UpdateFailedChecksAction
     | UpdateSelectionAction
-    | UpdateMachinerySourcesAction
-;
+    | UpdateMachinerySourcesAction;
 
 export type EditorState = {|
     +translation: Translation,
@@ -79,7 +77,6 @@ export type EditorState = {|
     +isRunningRequest: boolean,
 |};
 
-
 /**
  * Return a list of failed check messages of a given type.
  */
@@ -100,7 +97,6 @@ function extractFailedChecksOfType(
 
     return extractedFailedChecks;
 }
-
 
 const initial: EditorState = {
     translation: '',
@@ -135,8 +131,14 @@ export default function reducer(
         case UPDATE_FAILED_CHECKS:
             return {
                 ...state,
-                errors: extractFailedChecksOfType(action.failedChecks, 'Errors'),
-                warnings: extractFailedChecksOfType(action.failedChecks, 'Warnings'),
+                errors: extractFailedChecksOfType(
+                    action.failedChecks,
+                    'Errors',
+                ),
+                warnings: extractFailedChecksOfType(
+                    action.failedChecks,
+                    'Warnings',
+                ),
                 source: action.source,
             };
         case UPDATE_SELECTION:
@@ -173,7 +175,7 @@ export default function reducer(
                 ...state,
                 machineryTranslation: action.machineryTranslation,
                 machinerySources: action.machinerySources,
-            }
+            };
         default:
             return state;
     }

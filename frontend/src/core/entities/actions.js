@@ -5,12 +5,10 @@ import * as stats from 'core/stats';
 
 import type { Entities, EntityTranslation } from 'core/api';
 
-
 export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
 export const REQUEST: 'entities/REQUEST' = 'entities/REQUEST';
 export const RESET: 'entities/RESET' = 'entities/RESET';
 export const UPDATE: 'entities/UPDATE' = 'entities/UPDATE';
-
 
 /**
  * Indicate that entities are currently being fetched.
@@ -23,7 +21,6 @@ export function request(): RequestAction {
         type: REQUEST,
     };
 }
-
 
 /**
  * Update entities to a new set.
@@ -41,7 +38,6 @@ export function receive(entities: Entities, hasMore: boolean): ReceiveAction {
     };
 }
 
-
 /**
  * Update the active translation of an entity.
  */
@@ -54,7 +50,7 @@ export type UpdateAction = {
 export function updateEntityTranslation(
     entity: number,
     pluralForm: number,
-    translation: EntityTranslation
+    translation: EntityTranslation,
 ): UpdateAction {
     return {
         type: UPDATE,
@@ -63,7 +59,6 @@ export function updateEntityTranslation(
         translation,
     };
 }
-
 
 /**
  * Fetch entities and their translation.
@@ -82,7 +77,7 @@ export function get(
     author: ?string,
     time: ?string,
 ): Function {
-    return async dispatch => {
+    return async (dispatch) => {
         dispatch(request());
 
         const content = await api.entity.getEntities(
@@ -107,7 +102,6 @@ export function get(
     };
 }
 
-
 export type ResetAction = {
     type: typeof RESET,
 };
@@ -116,7 +110,6 @@ export function reset(): ResetAction {
         type: RESET,
     };
 }
-
 
 export default {
     get,

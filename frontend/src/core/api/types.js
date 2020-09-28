@@ -13,7 +13,6 @@ export type EntityTranslation = {|
     +warnings: Array<string>,
 |};
 
-
 /**
  * Comments pertaining to a translation.
  */
@@ -24,6 +23,7 @@ export type TranslationComment = {|
     +createdAt: string,
     +dateIso: string,
     +content: string,
+    +pinned: boolean,
     +id: number,
 |};
 
@@ -31,7 +31,6 @@ export type TranslationComment = {|
  * Alias to be used for comments pertaining to a Locale
  */
 export type TeamComment = TranslationComment;
-
 
 /**
  * Types used within Slate editor for comments
@@ -41,14 +40,14 @@ export type TextType = {|
 |};
 
 export type MentionType = {|
-    type: string, 
-    character: string, 
-    url: string, 
+    type: string,
+    character: string,
+    url: string,
     children: Array<TextType>,
 |};
 
 export type InitialType = {|
-    type: string, 
+    type: string,
     children: Array<TextType>,
 |};
 
@@ -59,9 +58,8 @@ export type UsersList = {|
     gravatar: string,
     name: string,
     url: string,
-    display: string,    
-|}
-
+    display: string,
+|};
 
 /**
  * Term entry with translation.
@@ -74,7 +72,6 @@ export type TermType = {|
     +translation: string,
     +entityId: number,
 |};
-
 
 /**
  * String that needs to be translated, along with its current metadata,
@@ -97,12 +94,10 @@ export type Entity = {|
     +readonly: boolean,
 |};
 
-
 /**
  * List of Entity objects.
  */
 export type Entities = Array<Entity>;
-
 
 /*
  * A collection of translations of an entity to a locale other than
@@ -112,7 +107,6 @@ export type OtherLocaleTranslations = {|
     +preferred: Array<OtherLocaleTranslation>,
     +other: Array<OtherLocaleTranslation>,
 |};
-
 
 /*
  * Translation of an entity in a locale other than the currently selected locale.
@@ -128,7 +122,6 @@ export type OtherLocaleTranslation = {|
     +translation: string,
 |};
 
-
 /*
  * Translation that comes from a machine (Machine Translation,
  * Translation Memory... ).
@@ -140,8 +133,7 @@ export type SourceType =
     | 'systran-translate'
     | 'microsoft-terminology'
     | 'transvision'
-    | 'caighdean'
-;
+    | 'caighdean';
 
 export type MachineryTranslation = {|
     sources: Array<SourceType>,

@@ -8,12 +8,10 @@ import { GenericTranslationForm } from 'modules/genericeditor';
 
 import type { EditorProps } from 'core/editor';
 
-
 type Props = {
     ...EditorProps,
     ftlSwitch: React.Node,
 };
-
 
 /**
  * Editor for complex Fluent strings.
@@ -25,12 +23,11 @@ export default class SourceEditor extends React.Component<Props> {
     render() {
         const { ftlSwitch, ...props } = this.props;
 
-        return <>
-            <GenericTranslationForm { ...props } />
-            <editor.EditorMenu
-                { ...props }
-                firstItemHook={ ftlSwitch }
-            />
-        </>;
+        return (
+            <>
+                <GenericTranslationForm {...props} />
+                <editor.EditorMenu {...props} firstItemHook={ftlSwitch} />
+            </>
+        );
     }
 }

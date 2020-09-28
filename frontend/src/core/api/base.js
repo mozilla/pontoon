@@ -2,7 +2,6 @@
 
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 
-
 export default class APIBase {
     abortController: AbortController;
     signal: ?AbortSignal;
@@ -36,16 +35,18 @@ export default class APIBase {
     }
 
     toCamelCase = (s: string) => {
-        return s.replace(/([-_][a-z])/ig, ($1) => {
-            return $1.toUpperCase()
-                .replace('-', '')
-                .replace('_', '');
+        return s.replace(/([-_][a-z])/gi, ($1) => {
+            return $1.toUpperCase().replace('-', '').replace('_', '');
         });
-    }
+    };
 
     isObject = function (obj: any) {
-        return obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function';
-    }
+        return (
+            obj === Object(obj) &&
+            !Array.isArray(obj) &&
+            typeof obj !== 'function'
+        );
+    };
 
     async fetch(
         url: string,
@@ -66,20 +67,15 @@ export default class APIBase {
         if (payload !== null) {
             if (method === 'POST') {
                 requestParams.body = payload;
-            }
-            else if (method === 'GET') {
+            } else if (method === 'GET') {
                 fullUrl.search = payload.toString();
             }
         }
 
         let response;
         try {
-            response = await fetch(
-                fullUrl,
-                requestParams
-            );
-        }
-        catch (e) {
+            response = await fetch(fullUrl, requestParams);
+        } catch (e) {
             // Swallow Abort errors because we trigger them ourselves.
             if (e.name === 'AbortError') {
                 return {};
@@ -89,8 +85,7 @@ export default class APIBase {
 
         try {
             return await response.json();
-        }
-        catch (e) {
+        } catch (e) {
             // Catch non-JSON responses
             console.error('The response content is not JSON-compatible');
             console.error(`URL: ${url} - Method: ${method}`);
@@ -104,14 +99,14 @@ export default class APIBase {
         if (this.isObject(results)) {
             const newObj: any = {};
 
-            Object.keys(results)
-                .forEach((key) => {
-                    newObj[this.toCamelCase(key)] = this.keysToCamelCase(results[key]);
-                });
+            Object.keys(results).forEach((key) => {
+                newObj[this.toCamelCase(key)] = this.keysToCamelCase(
+                    results[key],
+                );
+            });
 
             return newObj;
-        }
-        else if (Array.isArray(results)) {
+        } else if (Array.isArray(results)) {
             return results.map((i) => {
                 return this.keysToCamelCase(i);
             });

@@ -3,14 +3,13 @@ import { ReactLocalization } from '@fluent/react';
 import reducer from './reducer';
 import { RECEIVE, REQUEST } from './actions';
 
-
 describe('reducer', () => {
     it('returns the initial state', () => {
         const res = reducer(undefined, {});
         const expected = {
             fetching: false,
             localization: new ReactLocalization([]),
-        }
+        };
         expect(res).toEqual(expected);
     });
 
@@ -22,9 +21,9 @@ describe('reducer', () => {
     it('handles the RECEIVE action', () => {
         const initial = {
             fetching: true,
-            localization: new ReactLocalization([ { messages: ['hello'] } ]),
-        }
-        const localization = new ReactLocalization([ { messages: ['world'] } ]);
+            localization: new ReactLocalization([{ messages: ['hello'] }]),
+        };
+        const localization = new ReactLocalization([{ messages: ['world'] }]);
 
         const res = reducer(initial, { type: RECEIVE, localization });
 

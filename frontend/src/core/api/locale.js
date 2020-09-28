@@ -2,7 +2,6 @@
 
 import APIBase from './base';
 
-
 export default class LocaleAPI extends APIBase {
     async get(code: string) {
         const query = `{

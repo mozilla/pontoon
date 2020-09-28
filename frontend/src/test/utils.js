@@ -19,11 +19,11 @@ import { shallow } from 'enzyme';
  * The `TargetComponent` parameter is the React class (or function) that
  * you want to retrieve from the component tree.
  */
-export function shallowUntilTarget(componentInstance, TargetComponent, {
-    maxTries = 10,
-    shallowOptions,
-    _shallow = shallow,
-} = {}) {
+export function shallowUntilTarget(
+    componentInstance,
+    TargetComponent,
+    { maxTries = 10, shallowOptions, _shallow = shallow } = {},
+) {
     if (!componentInstance) {
         throw new Error('componentInstance parameter is required');
     }
@@ -37,7 +37,7 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
         // If type() is a string then it's a DOM Node.
         // If it were wrapped, it would be a React component.
         throw new Error(
-            'Cannot unwrap this component because it is not wrapped'
+            'Cannot unwrap this component because it is not wrapped',
         );
     }
 
@@ -51,10 +51,8 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
     }
 
     throw new Error(`Could not find ${TargetComponent} in rendered
-        instance: ${componentInstance}; gave up after ${maxTries} tries`
-    );
+        instance: ${componentInstance}; gave up after ${maxTries} tries`);
 }
-
 
 /*
  * Wait until `ms` milliseconds have passed.
@@ -62,9 +60,8 @@ export function shallowUntilTarget(componentInstance, TargetComponent, {
  * Source: https://stackoverflow.com/questions/951021
  */
 export function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
 
 /*
  * Find Localized elements by their ID.
@@ -73,6 +70,6 @@ export function sleep(ms) {
  */
 export function findLocalizedById(wrapper, id) {
     return wrapper.findWhere(
-      elem => elem.type() === Localized && elem.prop("id") === id
+        (elem) => elem.type() === Localized && elem.prop('id') === id,
     );
 }

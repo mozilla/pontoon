@@ -3,11 +3,15 @@
 }
 
 .comments-list .comment a {
-    color: #7BC876;
+    color: #7bc876;
     font-weight: 400;
 }
 
-.comments-list .comment .container .content a[href^="/contributors/"]:not(.comment-author) {
+.comments-list
+    .comment
+    .container
+    .content
+    a[href^='/contributors/']:not(.comment-author) {
     background-color: #3f4752;
     padding: 0 2px;
     border-radius: 2px;
@@ -26,11 +30,12 @@
     padding: 6px;
     word-break: break-word;
     white-space: pre-wrap;
+    position: relative;
 }
 
 .comments-list .comment .content p,
 .comments-list .comment .content span {
-    color: #CCCCCC;
+    color: #cccccc;
 }
 
 .comments-list .comment .content p:first-child {
@@ -38,9 +43,34 @@
 }
 
 .comments-list .comment .info {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 11px;
     font-weight: 300;
     margin-top: -2px;
     padding-left: 8px;
+}
+
+.comments-list .comment .info .pin-button:before {
+    content: '•';
+    padding: 0 3px 0 3px;
+}
+
+.comments-list .comment .info .pin-button {
+    background-color: transparent;
+    border: none;
+    color: #aaaaaa;
+    font-size: 11px;
+    font-weight: 300;
+    padding: 0;
+}
+
+.comments-list .comment .info .pin-button:hover {
+    color: #7bc876;
+}
+
+.comments-list .comment .comment-pin {
+    color: #7bc876;
+    position: absolute;
+    right: 4px;
+    top: -6px;
 }

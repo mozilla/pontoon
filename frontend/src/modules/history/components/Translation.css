@@ -1,5 +1,5 @@
 .history .wrapper {
-    border-bottom: 1px solid #5E6475;
+    border-bottom: 1px solid #5e6475;
 }
 
 .history .translation {
@@ -13,7 +13,7 @@
 }
 
 .history .translation:not(.cannot-copy):hover {
-    background: #4D5967;
+    background: #4d5967;
 }
 
 .history .translation .user-avatar {
@@ -24,7 +24,7 @@
 
 .history .translation .user-avatar img {
     border-radius: 6px;
-    border: 2px solid #5E6475;
+    border: 2px solid #5e6475;
 }
 
 .history .translation:hover .user-avatar img {
@@ -36,7 +36,7 @@
 }
 
 .history .translation .content > header {
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     font-size: 11px;
     font-weight: 300;
@@ -63,12 +63,12 @@
 }
 
 .history .translation .content > header .info time::before {
-    content: "•";
+    content: '•';
     padding-right: 3px;
 }
 
 .history .translation .content > header .info a {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .history .translation .content > header .toggle-diff,
@@ -84,7 +84,7 @@
 .history .translation .content > header .toggle-diff.active,
 .history .translation .content > header .toggle-comments:hover,
 .history .translation .content > header .toggle-comments.active {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .history .translation .content > header .toggle-comments.active {
@@ -103,7 +103,7 @@
 }
 
 .history .translation .content > header .toggle-comments.active .stress {
-    color: #CCC;
+    color: #ccc;
 }
 
 .history .translation .content > header .divider {
@@ -114,7 +114,7 @@
 .history .translation .content > header button {
     background: no-repeat transparent;
     border: none;
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: inline-block;
     padding: 0;
     outline: none;
@@ -149,39 +149,55 @@
 }
 
 .history .translation.fuzzy .content > header button.approve:before {
-    color: #FED271;
+    color: #fed271;
 }
 
 .history .translation .content > header button.approve:before,
 .history .translation .content > header button.unapprove:before {
-    content: "";
+    content: '';
 }
 
 .history .translation.can-approve .content > header button.approve:hover:before,
 .history .translation .content > header button.unapprove:before {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .history .translation:not(.can-approve) .content > header button.approve:before,
-.history .translation.can-approve .content > header button.approve:not(:hover):before,
-.history .translation.can-approve .content > header button.unapprove:hover:before {
+.history
+    .translation.can-approve
+    .content
+    > header
+    button.approve:not(:hover):before,
+.history
+    .translation.can-approve
+    .content
+    > header
+    button.unapprove:hover:before {
     font-weight: 400;
 }
 
 .history .translation .content > header button.reject:before,
 .history .translation .content > header button.unreject:before {
-    content: "";
+    content: '';
     margin-left: 5px;
 }
 
 .history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
-    color: #F36;
+    color: #f36;
 }
 
 .history .translation:not(.can-reject) .content > header button.reject:before,
-.history .translation.can-reject .content > header button.reject:not(:hover):before,
-.history .translation.can-reject .content > header button.unreject:hover:before {
+.history
+    .translation.can-reject
+    .content
+    > header
+    button.reject:not(:hover):before,
+.history
+    .translation.can-reject
+    .content
+    > header
+    button.unreject:hover:before {
     font-weight: 400;
 }
 
@@ -190,26 +206,26 @@
 }
 
 .translation .content > header button.delete:before {
-    content: "";
+    content: '';
     float: left;
     font-size: 19px;
     margin-top: -1px;
 }
 
 .translation .content > header button.delete:hover:before {
-    color: #F36;
+    color: #f36;
 }
 
 .machinery-sources {
     position: absolute;
     top: 0;
     left: -2px;
-    color: #7BC876;
+    color: #7bc876;
     font-size: 14px;
 }
 
 .machinery-sources::before {
-    content: "";
+    content: '';
 }
 
 .history .translation .avatar-container {

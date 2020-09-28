@@ -9,12 +9,10 @@ import RichTranslationForm from './RichTranslationForm';
 
 import type { EditorProps, Translation } from 'core/editor';
 
-
 type Props = {
     ...EditorProps,
     ftlSwitch: React.Node,
 };
-
 
 /**
  * Rich Editor for supported Fluent strings.
@@ -34,7 +32,7 @@ export default class RichEditor extends React.Component<Props> {
             translation !== prevProps.editor.translation &&
             props.editor.changeSource !== 'internal' &&
             this.props.editor.changeSource !== 'machinery' &&
-            typeof(translation) === 'string'
+            typeof translation === 'string'
         ) {
             let message = fluent.parser.parseEntry(translation);
 
@@ -60,22 +58,28 @@ export default class RichEditor extends React.Component<Props> {
                 true,
             );
         }
-    }
+    };
 
     copyOriginalIntoEditor = () => {
         const { entity } = this.props;
         if (entity) {
-            this.props.updateTranslation(fluent.parser.parseEntry(entity.original), true);
+            this.props.updateTranslation(
+                fluent.parser.parseEntry(entity.original),
+                true,
+            );
         }
-    }
+    };
 
     sendTranslation = (ignoreWarnings?: boolean, translation?: Translation) => {
         const message = translation || this.props.editor.translation;
         const fluentString = fluent.serializer.serializeEntry(message);
         this.props.sendTranslation(ignoreWarnings, fluentString, message);
-    }
+    };
 
-    updateUnsavedChanges = (translation?: Translation, initial?: Translation) => {
+    updateUnsavedChanges = (
+        translation?: Translation,
+        initial?: Translation,
+    ) => {
         const props = this.props;
 
         if (!translation) {
@@ -90,26 +94,28 @@ export default class RichEditor extends React.Component<Props> {
             fluent.serializer.serializeEntry(translation),
             fluent.serializer.serializeEntry(initial),
         );
-    }
+    };
 
     render() {
         const { ftlSwitch, ...props } = this.props;
 
-        return <>
-            <RichTranslationForm
-                { ...props }
-                clearEditor={ this.clearEditor }
-                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
-                sendTranslation={ this.sendTranslation }
-                updateUnsavedChanges={ this.updateUnsavedChanges }
-            />
-            <editor.EditorMenu
-                { ...props }
-                firstItemHook={ ftlSwitch }
-                clearEditor={ this.clearEditor }
-                copyOriginalIntoEditor={ this.copyOriginalIntoEditor }
-                sendTranslation={ this.sendTranslation }
-            />
-        </>;
+        return (
+            <>
+                <RichTranslationForm
+                    {...props}
+                    clearEditor={this.clearEditor}
+                    copyOriginalIntoEditor={this.copyOriginalIntoEditor}
+                    sendTranslation={this.sendTranslation}
+                    updateUnsavedChanges={this.updateUnsavedChanges}
+                />
+                <editor.EditorMenu
+                    {...props}
+                    firstItemHook={ftlSwitch}
+                    clearEditor={this.clearEditor}
+                    copyOriginalIntoEditor={this.copyOriginalIntoEditor}
+                    sendTranslation={this.sendTranslation}
+                />
+            </>
+        );
     }
 }

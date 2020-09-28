@@ -11,7 +11,7 @@
 .editor-menu .actions button {
     background: transparent;
     border: none;
-    color: #EBEBEB;
+    color: #ebebeb;
     height: 40px;
     margin: 0 2px;
     padding: 10px 3px;
@@ -19,7 +19,7 @@
 }
 
 .editor-menu .actions button:hover {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .editor-menu .actions button .fa {
@@ -29,22 +29,22 @@
 .editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
-    background: #7BC876;
+    background: #7bc876;
     border-radius: 3px;
-    color: #272A2F;
+    color: #272a2f;
     font-weight: 600;
     margin-left: 10px;
     padding: 10px;
 }
 
 .editor-menu .actions .action-suggest {
-    background: #4FC4F6;
+    background: #4fc4f6;
 }
 
 .editor-menu .actions .action-approve:hover,
 .editor-menu .actions .action-save:hover,
 .editor-menu .actions .action-suggest:hover {
-    color: #EBEBEB;
+    color: #ebebeb;
 }
 
 .editor-menu .banner {
@@ -53,5 +53,5 @@
 }
 
 .editor-menu .banner a {
-    color: #7BC876;
+    color: #7bc876;
 }

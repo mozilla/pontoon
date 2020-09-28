@@ -5,19 +5,13 @@ import { RECEIVE, REQUEST } from './actions';
 import type { TermType } from 'core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
-
-type Action =
-    | ReceiveAction
-    | RequestAction
-;
-
+type Action = ReceiveAction | RequestAction;
 
 export type TermState = {|
     +fetching: boolean,
     +sourceString: string,
     +terms: Array<TermType>,
 |};
-
 
 const initialState = {
     fetching: false,
@@ -27,7 +21,7 @@ const initialState = {
 
 export default function reducer(
     state: TermState = initialState,
-    action: Action
+    action: Action,
 ): TermState {
     switch (action.type) {
         case REQUEST:

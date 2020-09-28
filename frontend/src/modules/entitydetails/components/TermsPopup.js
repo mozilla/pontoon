@@ -9,7 +9,6 @@ import { TermsList } from 'core/term';
 
 import type { TermType } from 'core/api';
 
-
 type Props = {|
     +isReadOnlyEditor: boolean,
     +locale: string,
@@ -18,7 +17,6 @@ type Props = {|
     +hide: () => void,
     +navigateToPath: (string) => void,
 |};
-
 
 /**
  * Shows a popup with a list of all terms belonging to the highlighted one.
@@ -34,20 +32,21 @@ export function TermsPopup(props: Props) {
         return null;
     }
 
-    return <div className="terms-popup" onClick={ props.hide }>
-        <TermsList
-            isReadOnlyEditor={ props.isReadOnlyEditor }
-            locale={ props.locale }
-            terms={ terms }
-            addTextToEditorTranslation={ props.addTextToEditorTranslation }
-            navigateToPath={ props.navigateToPath }
-        />
-    </div>;
+    return (
+        <div className='terms-popup' onClick={props.hide}>
+            <TermsList
+                isReadOnlyEditor={props.isReadOnlyEditor}
+                locale={props.locale}
+                terms={terms}
+                addTextToEditorTranslation={props.addTextToEditorTranslation}
+                navigateToPath={props.navigateToPath}
+            />
+        </div>
+    );
 }
 
-
 const clickOutsideConfig = {
-    handleClickOutside: () => TermsPopup.handleClickOutside
+    handleClickOutside: () => TermsPopup.handleClickOutside,
 };
 
 export default onClickOutside(TermsPopup, clickOutsideConfig);

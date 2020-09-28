@@ -2,7 +2,6 @@
 
 export const UPDATE: 'stats/UPDATE' = 'stats/UPDATE';
 
-
 export type APIStats = {|
     approved: number,
     fuzzy: number,
@@ -12,12 +11,10 @@ export type APIStats = {|
     total: number,
 |};
 
-
 export type Stats = {|
     ...APIStats,
     missing: number,
 |};
-
 
 export type UpdateAction = {|
     +type: typeof UPDATE,
@@ -26,14 +23,18 @@ export type UpdateAction = {|
 export function update(stats: APIStats): UpdateAction {
     const newStats: Stats = {
         ...stats,
-        missing: stats.total - stats.approved - stats.fuzzy - stats.errors - stats.warnings,
+        missing:
+            stats.total -
+            stats.approved -
+            stats.fuzzy -
+            stats.errors -
+            stats.warnings,
     };
     return {
         type: UPDATE,
         stats: newStats,
     };
 }
-
 
 export default {
     update,

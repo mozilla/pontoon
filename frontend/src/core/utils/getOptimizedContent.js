@@ -2,7 +2,6 @@
 
 import fluent from './fluent';
 
-
 /**
  * Return an optimized version of a given translation content.
  *
@@ -11,7 +10,10 @@ import fluent from './fluent';
  * @returns {string} If the format is Fluent ('ftl'), return a simplified
  * version of the translation. Otherwise, return the original translation.
  */
-export default function getOptimizedContent(translation: ?string, format: string): string {
+export default function getOptimizedContent(
+    translation: ?string,
+    format: string,
+): string {
     if (!translation) {
         return '';
     }

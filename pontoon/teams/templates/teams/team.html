@@ -20,6 +20,7 @@
 {% block heading %}
 <section id="heading">
   <div class="container clearfix">
+    {{ HeadingInfo.download_selector(locale.code, "all-projects") }}
     <h1>
       {{ HeadingInfo.heading_item(
         title=locale.name,

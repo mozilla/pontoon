@@ -20,7 +20,6 @@ import type { UserState } from 'core/user';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 
-
 type Props = {|
     entity: Entity,
     isReadOnlyEditor: boolean,
@@ -36,10 +35,10 @@ type Props = {|
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
+    togglePinnedStatus: (boolean, number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
 |};
-
 
 /**
  * Component showing details about an entity.
@@ -63,91 +62,101 @@ export default class Helpers extends React.Component<Props> {
             updateMachinerySources,
             searchMachinery,
             addComment,
+            togglePinnedStatus,
             addTextToEditorTranslation,
             navigateToPath,
         } = this.props;
 
-        return <>
-            <div className="top">
-                <Tabs>
-                    <TabList>
-                        {
-                            parameters.project === 'terminology' ? null :
+        return (
+            <>
+                <div className='top'>
+                    <Tabs>
+                        <TabList>
+                            {parameters.project === 'terminology' ? null : (
+                                <Tab>
+                                    <Localized id='entitydetails-Helpers--terms'>
+                                        {'Terms'}
+                                    </Localized>
+                                    <TermCount terms={terms} />
+                                </Tab>
+                            )}
                             <Tab>
-                                <Localized id='entitydetails-Helpers--terms'>
-                                    { 'Terms' }
+                                <Localized id='entitydetails-Helpers--comments'>
+                                    {'Comments'}
                                 </Localized>
-                                <TermCount terms={ terms }/>
+                                <CommentCount teamComments={teamComments} />
                             </Tab>
-                        }
-                        <Tab>
-                            <Localized id='entitydetails-Helpers--comments'>
-                                { 'Comments' }
-                            </Localized>
-                            <CommentCount teamComments={ teamComments }/>
-                        </Tab>
-                    </TabList>
-                    {
-                        parameters.project === 'terminology' ? null :
+                        </TabList>
+                        {parameters.project === 'terminology' ? null : (
+                            <TabPanel>
+                                <Terms
+                                    isReadOnlyEditor={isReadOnlyEditor}
+                                    locale={locale.code}
+                                    terms={terms}
+                                    addTextToEditorTranslation={
+                                        addTextToEditorTranslation
+                                    }
+                                    navigateToPath={navigateToPath}
+                                />
+                            </TabPanel>
+                        )}
                         <TabPanel>
-                            <Terms
-                                isReadOnlyEditor={ isReadOnlyEditor }
-                                locale={ locale.code }
-                                terms={ terms }
-                                addTextToEditorTranslation={ addTextToEditorTranslation }
-                                navigateToPath={ navigateToPath }
+                            <TeamComments
+                                parameters={parameters}
+                                teamComments={teamComments}
+                                user={user}
+                                addComment={addComment}
+                                users={users}
+                                togglePinnedStatus={togglePinnedStatus}
                             />
                         </TabPanel>
-                    }
-                    <TabPanel>
-                        <TeamComments
-                            parameters={ parameters }
-                            teamComments={ teamComments }
-                            user={ user }
-                            addComment={ addComment }
-                            users={ users }
-                        />
-                    </TabPanel>
-                </Tabs>
-            </div>
-            <div className="bottom">
-                <Tabs>
-                    <TabList>
-                        <Tab>
-                            <Localized id='entitydetails-Helpers--machinery'>
-                                { 'Machinery' }
-                            </Localized>
-                            <MachineryCount machinery={ machinery } />
-                        </Tab>
-                        <Tab>
-                            <Localized id='entitydetails-Helpers--locales'>
-                                { 'Locales' }
-                            </Localized>
-                            <OtherLocalesCount otherlocales={ otherlocales } />
-                        </Tab>
-                    </TabList>
-                    <TabPanel>
-                        <Machinery
-                            isReadOnlyEditor={ isReadOnlyEditor }
-                            locale={ locale }
-                            machinery={ machinery }
-                            updateEditorTranslation={ updateEditorTranslation }
-                            updateMachinerySources={ updateMachinerySources }
-                            searchMachinery={ searchMachinery }
-                        />
-                    </TabPanel>
-                    <TabPanel>
-                        <OtherLocales
-                            entity={ entity }
-                            isReadOnlyEditor={ isReadOnlyEditor }
-                            otherlocales={ otherlocales }
-                            user={ user }
-                            parameters={ parameters }
-                            updateEditorTranslation={ updateEditorTranslation }
-                        />
-                    </TabPanel>
-                </Tabs>
-            </div>
-        </>;
+                    </Tabs>
+                </div>
+                <div className='bottom'>
+                    <Tabs>
+                        <TabList>
+                            <Tab>
+                                <Localized id='entitydetails-Helpers--machinery'>
+                                    {'Machinery'}
+                                </Localized>
+                                <MachineryCount machinery={machinery} />
+                            </Tab>
+                            <Tab>
+                                <Localized id='entitydetails-Helpers--locales'>
+                                    {'Locales'}
+                                </Localized>
+                                <OtherLocalesCount
+                                    otherlocales={otherlocales}
+                                />
+                            </Tab>
+                        </TabList>
+                        <TabPanel>
+                            <Machinery
+                                isReadOnlyEditor={isReadOnlyEditor}
+                                locale={locale}
+                                machinery={machinery}
+                                updateEditorTranslation={
+                                    updateEditorTranslation
+                                }
+                                updateMachinerySources={updateMachinerySources}
+                                searchMachinery={searchMachinery}
+                            />
+                        </TabPanel>
+                        <TabPanel>
+                            <OtherLocales
+                                entity={entity}
+                                isReadOnlyEditor={isReadOnlyEditor}
+                                otherlocales={otherlocales}
+                                user={user}
+                                parameters={parameters}
+                                updateEditorTranslation={
+                                    updateEditorTranslation
+                                }
+                            />
+                        </TabPanel>
+                    </Tabs>
+                </div>
+            </>
+        );
     }
 }

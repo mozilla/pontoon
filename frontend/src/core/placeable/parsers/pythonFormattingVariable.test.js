@@ -6,7 +6,6 @@ import createMarker from 'react-content-marker';
 
 import pythonFormattingVariable from './pythonFormattingVariable';
 
-
 describe('pythonFormattingVariable', () => {
     each([
         ['%%', '100%% correct'],
@@ -20,10 +19,9 @@ describe('pythonFormattingVariable', () => {
         ['%(number)Ld', 'There were %(number)Ld cows'],
         ['%s', 'path/to/file_%s.png'],
         ['%s', 'path/to/%sfile.png'],
-    ])
-    .it('marks `%s` in `%s`', (mark, content) => {
+    ]).it('marks `%s` in `%s`', (mark, content) => {
         const Marker = createMarker([pythonFormattingVariable]);
-        const wrapper = shallow(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
         expect(wrapper.find('mark').text()).toEqual(mark);
     });
@@ -34,10 +32,9 @@ describe('pythonFormattingVariable', () => {
         // false positives.
         // See https://bugzilla.mozilla.org/show_bug.cgi?id=1251186
         ['There were %(number) 3d cows'],
-    ])
-    .it('does not mark anything in `%s`', (content) => {
+    ]).it('does not mark anything in `%s`', (content) => {
         const Marker = createMarker([pythonFormattingVariable]);
-        const wrapper = shallow(<Marker>{ content }</Marker>);
+        const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(0);
     });
 });

@@ -1,14 +1,15 @@
 import reducer from './reducer';
 import { RECEIVE, UPDATE } from './actions';
 
-
 describe('reducer', () => {
-    const RESOURCES = [{
-        path: 'path/to.file',
-        approvedStrings: 1,
-        stringsWithWarnings: 1,
-        totalStrings: 2,
-    }];
+    const RESOURCES = [
+        {
+            path: 'path/to.file',
+            approvedStrings: 1,
+            stringsWithWarnings: 1,
+            totalStrings: 2,
+        },
+    ];
     const ALL_RESOURCES = {
         path: [],
         approvedStrings: 1,
@@ -27,7 +28,7 @@ describe('reducer', () => {
                 stringsWithWarnings: 0,
                 totalStrings: 0,
             },
-        }
+        };
 
         expect(res).toEqual(expected);
     });
@@ -39,7 +40,7 @@ describe('reducer', () => {
                 type: RECEIVE,
                 resources: RESOURCES,
                 allResources: ALL_RESOURCES,
-            }
+            },
         );
 
         const expected = {
@@ -51,18 +52,20 @@ describe('reducer', () => {
     });
 
     it('handles the UPDATE action', () => {
-        const UPDATED_RESOURCES = [{
-            path: 'path/to.file',
-            approvedStrings: 2,
-            stringsWithWarnings: 0,
-            totalStrings: 2,
-        }];
+        const UPDATED_RESOURCES = [
+            {
+                path: 'path/to.file',
+                approvedStrings: 2,
+                stringsWithWarnings: 0,
+                totalStrings: 2,
+            },
+        ];
         const UPDATED_ALL_RESOURCES = {
             path: [],
             approvedStrings: 2,
             stringsWithWarnings: 0,
             totalStrings: 2,
-        }
+        };
 
         const res = reducer(
             {
@@ -74,7 +77,7 @@ describe('reducer', () => {
                 resourcePath: 'path/to.file',
                 approvedStrings: 2,
                 stringsWithWarnings: 0,
-            }
+            },
         );
 
         const expected = {

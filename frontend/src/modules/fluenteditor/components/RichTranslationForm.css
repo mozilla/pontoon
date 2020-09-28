@@ -19,9 +19,9 @@
 
 .fluent-rich-translation-form table tr > td > label {
     background: transparent;
-    border: 1px solid #5E6475;
+    border: 1px solid #5e6475;
     box-sizing: border-box;
-    color: #AAAAAA;
+    color: #aaaaaa;
     display: block;
     font-weight: normal;
     margin: 2px 5px 2px 0;
@@ -33,12 +33,12 @@
 }
 
 .fluent-rich-translation-form table tr > td > label .divider {
-    color: #7BC876;
+    color: #7bc876;
     padding: 0 3px;
 }
 
 .fluent-rich-translation-form table tr > td > label .stress {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .fluent-rich-translation-form table tr > td > textarea {
@@ -48,7 +48,7 @@
     padding: 0 4px;
 }
 
-.fluent-rich-translation-form table tr > td > textarea[maxlength="1"] {
+.fluent-rich-translation-form table tr > td > textarea[maxlength='1'] {
     float: left;
     margin-right: 3px;
     resize: none;
@@ -63,9 +63,9 @@
 }
 
 .fluent-rich-translation-form table tr > td > .accesskeys .key {
-    border: 1px solid #5E6475;
-    background: #4D5967;
-    color: #EBEBEB;
+    border: 1px solid #5e6475;
+    background: #4d5967;
+    color: #ebebeb;
     cursor: pointer;
     display: inline-block;
     line-height: 22px;
@@ -78,5 +78,5 @@
 
 .fluent-rich-translation-form table tr > td > .accesskeys .key.active,
 .fluent-rich-translation-form table tr > td > .accesskeys .key:hover {
-    border-color: #7BC876;
+    border-color: #7bc876;
 }

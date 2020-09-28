@@ -12,10 +12,8 @@ import type { EntityTranslation, Entity } from 'core/api';
 import type { HistoryTranslation, HistoryState } from 'modules/history';
 import type { EditorState } from '.';
 
-
 const editorSelector = (state): EditorState => state[NAME];
 const historySelector = (state): HistoryState => state[history.NAME];
-
 
 export function _existingTranslation(
     editor: EditorState,
@@ -27,21 +25,17 @@ export function _existingTranslation(
 
     let existingTranslation = null;
     if (
-        activeTranslation && activeTranslation.pk
-        && (
-            // If translation is a string, from the generic editor.
-            translation === initialTranslation
+        activeTranslation &&
+        activeTranslation.pk &&
+        // If translation is a string, from the generic editor.
+        (translation === initialTranslation ||
             // If translation is a FluentMessage, from the fluent editor.
-            || (
-                translation.equals
+            (translation.equals &&
                 // $FLOW_IGNORE: `equals`, if defined, will always be a function.
-                && translation.equals(initialTranslation)
-            )
-        )
+                translation.equals(initialTranslation)))
     ) {
         existingTranslation = activeTranslation;
-    }
-    else if (history.translations.length) {
+    } else if (history.translations.length) {
         // If translation is a FluentMessage, from the fluent editor.
         if (translation.equals) {
             // We apply a bunch of logic on the stored translation, to
@@ -50,15 +44,11 @@ export function _existingTranslation(
             // object is a "clean" one, as produced by Fluent. Otherwise
             // we encounter bugs when comparing it with the history items.
             const fluentTranslation = fluent.parser.parseEntry(
-                fluent.serializer.serializeEntry(
-                    translation
-                )
-            )
-            existingTranslation = history.translations.find(
-                t => fluentTranslation.equals(
-                    fluent.parser.parseEntry(t.string)
-                )
-            )
+                fluent.serializer.serializeEntry(translation),
+            );
+            existingTranslation = history.translations.find((t) =>
+                fluentTranslation.equals(fluent.parser.parseEntry(t.string)),
+            );
         }
         // If translation is a string, from the generic editor.
         else {
@@ -77,22 +67,25 @@ export function _existingTranslation(
                     // Note that if the user is actually in the Source editor, and
                     // entered an invalid value (which creates this junk entry),
                     // it doesn't matter as there shouldn't be anything matching anyway.
-                    fluentTranslation = fluent.getReconstructedMessage(entity.original, translation);
+                    fluentTranslation = fluent.getReconstructedMessage(
+                        entity.original,
+                        translation,
+                    );
                 }
-                existingTranslation = history.translations.find(
-                    t => fluentTranslation.equals(fluent.parser.parseEntry(t.string))
+                existingTranslation = history.translations.find((t) =>
+                    fluentTranslation.equals(
+                        fluent.parser.parseEntry(t.string),
+                    ),
                 );
-            }
-            else {
+            } else {
                 existingTranslation = history.translations.find(
-                    t => t.string === translation
-                )
+                    (t) => t.string === translation,
+                );
             }
         }
     }
     return existingTranslation;
 }
-
 
 /**
  * Return a Translation identical to the one currently in the Editor.
@@ -106,9 +99,8 @@ export const sameExistingTranslation: Function = createSelector(
     plural.selectors.getTranslationForSelectedEntity,
     historySelector,
     entities.selectors.getSelectedEntity,
-    _existingTranslation
+    _existingTranslation,
 );
-
 
 export default {
     sameExistingTranslation,

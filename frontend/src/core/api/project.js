@@ -2,7 +2,6 @@
 
 import APIBase from './base';
 
-
 export default class ProjectAPI extends APIBase {
     async get(slug: string) {
         const query = `{

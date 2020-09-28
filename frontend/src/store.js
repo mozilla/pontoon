@@ -6,11 +6,7 @@ import { routerMiddleware } from 'connected-react-router';
 import history from './history';
 import createRootReducer from './rootReducer';
 
-
-const middlewares = [
-    routerMiddleware(history),
-    thunkMiddleware,
-];
+const middlewares = [routerMiddleware(history), thunkMiddleware];
 
 // Log actions only in development.
 if (process.env.NODE_ENV === 'development') {
@@ -21,7 +17,5 @@ if (process.env.NODE_ENV === 'development') {
 export default createStore(
     createRootReducer(history),
     {}, // initial state
-    compose(
-        applyMiddleware(...middlewares),
-    ),
+    compose(applyMiddleware(...middlewares)),
 );

@@ -6,41 +6,33 @@ import api from 'core/api';
 
 import type { OtherLocaleTranslations } from 'core/api';
 
-
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
 export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
-
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
     +translations: ?OtherLocaleTranslations,
 |};
-export function receive(
-    translations: ?OtherLocaleTranslations
-): ReceiveAction {
+export function receive(translations: ?OtherLocaleTranslations): ReceiveAction {
     return {
         type: RECEIVE,
         translations,
     };
 }
 
-
 export type RequestAction = {|
     +type: typeof REQUEST,
     +entity: number,
 |};
-export function request(
-    entity: number,
-): RequestAction {
+export function request(entity: number): RequestAction {
     return {
         type: REQUEST,
         entity,
     };
 }
 
-
 export function get(entity: number, locale: string): Function {
-    return async dispatch => {
+    return async (dispatch) => {
         dispatch(request(entity));
 
         // Abort all previously running requests.
@@ -55,9 +47,8 @@ export function get(entity: number, locale: string): Function {
         }
 
         dispatch(receive(content));
-    }
+    };
 }
-
 
 export default {
     get,

@@ -4,21 +4,15 @@ import { ADD } from './actions';
 
 import type { AddAction, NotificationMessage } from './actions';
 
-
-type Action =
-    | AddAction
-;
-
+type Action = AddAction;
 
 export type NotificationState = {|
     +message: ?NotificationMessage,
 |};
 
-
 const initial: NotificationState = {
     message: null,
 };
-
 
 export default function reducer(
     state: NotificationState = initial,

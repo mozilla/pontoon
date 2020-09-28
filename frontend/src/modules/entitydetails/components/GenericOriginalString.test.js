@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import GenericOriginalString from './GenericOriginalString';
 
-
 const ENTITY = {
     pk: 42,
     original: 'le test',
@@ -15,16 +14,16 @@ const LOCALE = {
     cldrPlurals: [1, 3, 5],
 };
 
-
 function createGenericOriginalString(pluralForm = -1) {
-    return shallow(<GenericOriginalString
-        entity={ ENTITY }
-        locale={ LOCALE }
-        pluralForm={ pluralForm }
-        terms={ {} }
-    />);
+    return shallow(
+        <GenericOriginalString
+            entity={ENTITY}
+            locale={LOCALE}
+            pluralForm={pluralForm}
+            terms={{}}
+        />,
+    );
 }
-
 
 describe('<GenericOriginalString>', () => {
     it('renders correctly', () => {
@@ -37,7 +36,9 @@ describe('<GenericOriginalString>', () => {
     it('renders the selected plural form as original string', () => {
         const wrapper = createGenericOriginalString(2);
 
-        expect(wrapper.find('#entitydetails-GenericOriginalString--plural')).toHaveLength(1);
+        expect(
+            wrapper.find('#entitydetails-GenericOriginalString--plural'),
+        ).toHaveLength(1);
 
         const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original_plural);
@@ -46,7 +47,9 @@ describe('<GenericOriginalString>', () => {
     it('renders the selected singular form as original string', () => {
         const wrapper = createGenericOriginalString(0);
 
-        expect(wrapper.find('#entitydetails-GenericOriginalString--singular')).toHaveLength(1);
+        expect(
+            wrapper.find('#entitydetails-GenericOriginalString--singular'),
+        ).toHaveLength(1);
 
         const originalContent = wrapper.find('ContentMarker').props().children;
         expect(originalContent).toContain(ENTITY.original);

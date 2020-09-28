@@ -18,6 +18,7 @@
 {% block heading %}
 <section id="heading">
   <div class="container clearfix">
+    {{ HeadingInfo.download_selector(locale.code, project.slug) }}
     <h1>
       {{ HeadingInfo.heading_item(
         title=project.name,

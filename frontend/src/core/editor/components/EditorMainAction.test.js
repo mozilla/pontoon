@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import EditorMainAction from './EditorMainAction';
 
-
 describe('<EditorMainAction>', () => {
     it('renders the Approve button when an identical translation exists', () => {
         const updateStatus = sinon.mock();
@@ -12,8 +11,8 @@ describe('<EditorMainAction>', () => {
             isTranslator: true,
             sameExistingTranslation: { pk: 1 },
             updateTranslationStatus: updateStatus,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-approve')).toHaveLength(1);
         expect(wrapper.find('.action-suggest')).toHaveLength(0);
@@ -27,8 +26,8 @@ describe('<EditorMainAction>', () => {
         const params = {
             isTranslator: true,
             forceSuggestions: true,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-suggest')).toHaveLength(1);
         expect(wrapper.find('.action-approve')).toHaveLength(0);
@@ -38,8 +37,8 @@ describe('<EditorMainAction>', () => {
     it('renders the Suggest button when user does not have permission', () => {
         const params = {
             isTranslator: false,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-suggest')).toHaveLength(1);
         expect(wrapper.find('.action-save')).toHaveLength(0);
@@ -51,8 +50,8 @@ describe('<EditorMainAction>', () => {
             isTranslator: true,
             forceSuggestions: true,
             isRunningRequest: true,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-suggest')).toHaveLength(1);
         expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
@@ -62,8 +61,8 @@ describe('<EditorMainAction>', () => {
         const params = {
             isTranslator: true,
             forceSuggestions: false,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-save')).toHaveLength(1);
         expect(wrapper.find('.action-suggest')).toHaveLength(0);
@@ -74,8 +73,8 @@ describe('<EditorMainAction>', () => {
         const params = {
             isTranslator: true,
             sameExistingTranslation: null,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-save')).toHaveLength(1);
         expect(wrapper.find('.action-suggest')).toHaveLength(0);
@@ -86,8 +85,8 @@ describe('<EditorMainAction>', () => {
         const params = {
             isTranslator: true,
             isRunningRequest: true,
-        }
-        const wrapper = shallow(<EditorMainAction { ...params } />);
+        };
+        const wrapper = shallow(<EditorMainAction {...params} />);
 
         expect(wrapper.find('.action-save')).toHaveLength(1);
         expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);

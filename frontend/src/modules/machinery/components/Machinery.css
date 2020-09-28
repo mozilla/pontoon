@@ -14,7 +14,7 @@
 }
 
 .machinery > .search-wrapper > label {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 17px;
     left: auto;
     position: absolute;
@@ -22,12 +22,12 @@
     top: 16px;
 }
 
-.machinery > .search-wrapper input[type=search] {
+.machinery > .search-wrapper input[type='search'] {
     background: #333941;
     border: none;
     border-radius: 20px;
     box-sizing: border-box;
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 14px;
     font-weight: 300;
     line-height: 23px;
@@ -36,16 +36,18 @@
 }
 
 /* Remove highlight in Chrome */
-.machinery > .search-wrapper input[type=search]:focus {
+.machinery > .search-wrapper input[type='search']:focus {
     outline: none;
 }
 
 /* Remove cancel button in Chrome */
-.machinery > .search-wrapper input[type=search]::-webkit-search-cancel-button {
+.machinery
+    > .search-wrapper
+    input[type='search']::-webkit-search-cancel-button {
     display: none;
 }
 
 /* Style placeholder color in Chrome */
-.machinery > .search-wrapper input[type=search]::-webkit-input-placeholder {
-    color: #AAAAAA;
+.machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
+    color: #aaaaaa;
 }

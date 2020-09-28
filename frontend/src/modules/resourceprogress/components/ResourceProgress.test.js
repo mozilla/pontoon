@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import { ResourceProgressBase } from './ResourceProgress';
 
-
 describe('<ResourceProgress>', () => {
     const STATS = {
         approved: 5,
@@ -16,22 +15,26 @@ describe('<ResourceProgress>', () => {
     };
     const PARAMETERS = {
         entity: 0,
-        locale: "en-GB",
-        project: "tutorial",
-        resource: "all-resources",
-        status: "errors",
-        search: null
+        locale: 'en-GB',
+        project: 'tutorial',
+        resource: 'all-resources',
+        status: 'errors',
+        search: null,
     };
 
     it('shows only a selector by default', () => {
-        const wrapper = shallow(<ResourceProgressBase stats={ STATS } parameters={ PARAMETERS } />);
+        const wrapper = shallow(
+            <ResourceProgressBase stats={STATS} parameters={PARAMETERS} />,
+        );
 
         expect(wrapper.find('.selector').exists()).toBeTruthy();
         expect(wrapper.find('.menu').exists()).toBeFalsy();
     });
 
     it('shows the info menu after a click', () => {
-        const wrapper = shallow(<ResourceProgressBase stats={ STATS } parameters={ PARAMETERS } />);
+        const wrapper = shallow(
+            <ResourceProgressBase stats={STATS} parameters={PARAMETERS} />,
+        );
         wrapper.find('.selector').simulate('click');
 
         expect(wrapper.find('.menu').exists()).toBeTruthy();

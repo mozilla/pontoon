@@ -11,18 +11,15 @@ import type { Entities, Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
-
 const entitiesSelector = (state): string => state[NAME].entities;
 const userSelector = (state): UserState => state[user.NAME];
-
 
 export function _getSelectedEntity(
     entities: Entities,
     params: NavigationParams,
 ): ?Entity {
-    return entities.find(element => element.pk === params.entity);
+    return entities.find((element) => element.pk === params.entity);
 }
-
 
 /**
  * Return the currently selected Entity object.
@@ -30,24 +27,24 @@ export function _getSelectedEntity(
 export const getSelectedEntity: Function = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
-    _getSelectedEntity
+    _getSelectedEntity,
 );
-
 
 export function _getNextEntity(
     entities: Entities,
     params: NavigationParams,
 ): ?Entity {
-    const currentIndex = entities.findIndex(element => element.pk === params.entity);
+    const currentIndex = entities.findIndex(
+        (element) => element.pk === params.entity,
+    );
 
     if (currentIndex === -1) {
         return null;
     }
 
-    const next = (currentIndex + 1 >= entities.length) ? 0 : currentIndex + 1;
+    const next = currentIndex + 1 >= entities.length ? 0 : currentIndex + 1;
     return entities[next];
 }
-
 
 /**
  * Return the Entity that follows the current one in the list.
@@ -55,24 +52,25 @@ export function _getNextEntity(
 export const getNextEntity: Function = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
-    _getNextEntity
+    _getNextEntity,
 );
-
 
 export function _getPreviousEntity(
     entities: Entities,
     params: NavigationParams,
 ): ?Entity {
-    const currentIndex = entities.findIndex(element => element.pk === params.entity);
+    const currentIndex = entities.findIndex(
+        (element) => element.pk === params.entity,
+    );
 
     if (currentIndex === -1) {
         return null;
     }
 
-    const previous = (currentIndex === 0) ? entities.length - 1 : currentIndex - 1;
+    const previous =
+        currentIndex === 0 ? entities.length - 1 : currentIndex - 1;
     return entities[previous];
 }
-
 
 /**
  * Return the Entity that preceeds the current one in the list.
@@ -80,20 +78,12 @@ export function _getPreviousEntity(
 export const getPreviousEntity: Function = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
-    _getPreviousEntity
+    _getPreviousEntity,
 );
 
-
-export function _isReadOnlyEditor(
-    entity: Entity,
-    user: UserState,
-): boolean {
-    return (
-        (entity && entity.readonly) ||
-        !user.isAuthenticated
-    );
+export function _isReadOnlyEditor(entity: Entity, user: UserState): boolean {
+    return (entity && entity.readonly) || !user.isAuthenticated;
 }
-
 
 /**
  * Return true if editor must be read-only, which happens when:
@@ -103,9 +93,8 @@ export function _isReadOnlyEditor(
 export const isReadOnlyEditor: Function = createSelector(
     getSelectedEntity,
     userSelector,
-    _isReadOnlyEditor
+    _isReadOnlyEditor,
 );
-
 
 export default {
     getNextEntity,

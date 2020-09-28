@@ -5,9 +5,7 @@ import { fluent } from 'core/utils';
 import type { FluentMessage } from './types';
 import type { Locale } from 'core/locale';
 
-
 type SyntaxType = 'simple' | 'rich' | 'complex';
-
 
 export function getSimpleFromComplex(
     current: string,
@@ -25,9 +23,8 @@ export function getSimpleFromComplex(
         initialContent = '';
     }
 
-    return [ translationContent, initialContent ];
+    return [translationContent, initialContent];
 }
-
 
 export function getComplexFromSimple(
     current: string,
@@ -38,10 +35,7 @@ export function getComplexFromSimple(
     let initialContent = initial;
 
     const translationContent = fluent.serializer.serializeEntry(
-        fluent.getReconstructedMessage(
-            original,
-            current,
-        )
+        fluent.getReconstructedMessage(original, current),
     );
 
     // If there is no active translation (it's an untranslated string)
@@ -49,16 +43,12 @@ export function getComplexFromSimple(
     // showing unchanged content warnings.
     if (!initialContent) {
         initialContent = fluent.serializer.serializeEntry(
-            fluent.getEmptyMessage(
-                fluent.parser.parseEntry(original),
-                locale,
-            )
+            fluent.getEmptyMessage(fluent.parser.parseEntry(original), locale),
         );
     }
 
-    return [ translationContent, initialContent ];
+    return [translationContent, initialContent];
 }
-
 
 export function getRichFromComplex(
     current: string,
@@ -89,9 +79,8 @@ export function getRichFromComplex(
         );
     }
 
-    return [ translationContent, initialContent ];
+    return [translationContent, initialContent];
 }
-
 
 export function getComplexFromRich(
     current: FluentMessage,
@@ -108,16 +97,12 @@ export function getComplexFromRich(
     // showing unchanged content warnings.
     if (!initialContent) {
         initialContent = fluent.serializer.serializeEntry(
-            fluent.getEmptyMessage(
-                fluent.parser.parseEntry(original),
-                locale,
-            )
+            fluent.getEmptyMessage(fluent.parser.parseEntry(original), locale),
         );
     }
 
-    return [ translationContent, initialContent ];
+    return [translationContent, initialContent];
 }
-
 
 /**
  * Update the content for the new type of form from the previous one. This
@@ -142,31 +127,30 @@ export default function convertSyntax(
     if (
         fromSyntax === 'complex' &&
         toSyntax === 'simple' &&
-        typeof(current) === 'string'
+        typeof current === 'string'
     ) {
         return getSimpleFromComplex(current, original, initial);
-    }
-    else if (
+    } else if (
         fromSyntax === 'simple' &&
         toSyntax === 'complex' &&
-        typeof(current) === 'string'
+        typeof current === 'string'
     ) {
         return getComplexFromSimple(current, original, initial, locale);
-    }
-    else if (
+    } else if (
         fromSyntax === 'complex' &&
         toSyntax === 'rich' &&
-        typeof(current) === 'string'
+        typeof current === 'string'
     ) {
         return getRichFromComplex(current, original, initial, locale);
-    }
-    else if (
+    } else if (
         fromSyntax === 'rich' &&
         toSyntax === 'complex' &&
-        typeof(current) !== 'string'
+        typeof current !== 'string'
     ) {
         return getComplexFromRich(current, original, initial, locale);
     }
 
-    throw new Error(`Unsupported conversion: from '${fromSyntax}' to '${toSyntax}'`);
+    throw new Error(
+        `Unsupported conversion: from '${fromSyntax}' to '${toSyntax}'`,
+    );
 }

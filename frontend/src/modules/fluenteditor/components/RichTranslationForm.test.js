@@ -6,7 +6,6 @@ import { fluent } from 'core/utils';
 
 import RichTranslationForm from './RichTranslationForm';
 
-
 const DEFAULT_LOCALE = {
     direction: 'ltr',
     code: 'kg',
@@ -15,8 +14,8 @@ const DEFAULT_LOCALE = {
 };
 
 const TRANSLATION = fluent.parser.parseEntry(
-    'message = Value\n    .attr-1 = And\n    .attr-2 = Attributes'
-)
+    'message = Value\n    .attr-1 = And\n    .attr-2 = Attributes',
+);
 
 const EDITOR = {
     translation: TRANSLATION,
@@ -24,14 +23,15 @@ const EDITOR = {
     warnings: [],
 };
 
-
 describe('<RichTranslationForm>', () => {
     it('renders textarea for a value and each attribute', () => {
-        const wrapper = shallow(<RichTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={EDITOR}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(3);
         expect(wrapper.find('textarea').at(0).html()).toContain('Value');
@@ -52,11 +52,13 @@ my-entry =
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(2);
 
@@ -86,27 +88,37 @@ my-entry =
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(4);
 
-        expect(wrapper.find('label .attribute-label').at(0).html()).toContain('label');
+        expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
+            'label',
+        );
         expect(wrapper.find('label .label').at(0).html()).toContain('macosx');
         expect(wrapper.find('textarea').at(0).html()).toContain('Preferences');
 
-        expect(wrapper.find('label .attribute-label').at(1).html()).toContain('label');
+        expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
+            'label',
+        );
         expect(wrapper.find('label').at(1).html()).toContain('other');
         expect(wrapper.find('textarea').at(1).html()).toContain('Options');
 
-        expect(wrapper.find('label .attribute-label').at(2).html()).toContain('accesskey');
+        expect(wrapper.find('label .attribute-label').at(2).html()).toContain(
+            'accesskey',
+        );
         expect(wrapper.find('label').at(2).html()).toContain('macosx');
         expect(wrapper.find('textarea').at(2).html()).toContain('e');
 
-        expect(wrapper.find('label .attribute-label').at(3).html()).toContain('accesskey');
+        expect(wrapper.find('label .attribute-label').at(3).html()).toContain(
+            'accesskey',
+        );
         expect(wrapper.find('label').at(3).html()).toContain('other');
         expect(wrapper.find('textarea').at(3).html()).toContain('s');
     });
@@ -124,23 +136,31 @@ my-entry =
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(2);
 
         expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
 
-        const varsSingular = wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(0).prop('vars');
+        const varsSingular = wrapper
+            .find('#fluenteditor-RichTranslationForm--plural-example')
+            .at(0)
+            .prop('vars');
         expect(varsSingular.plural).toEqual('one');
         expect(varsSingular.example).toEqual(1);
 
         expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
-        const varsPlural = wrapper.find('#fluenteditor-RichTranslationForm--plural-example').at(1).prop('vars');
+        const varsPlural = wrapper
+            .find('#fluenteditor-RichTranslationForm--plural-example')
+            .at(1)
+            .prop('vars');
         expect(varsPlural.plural).toEqual('other');
         expect(varsPlural.example).toEqual(2);
     });
@@ -156,16 +176,20 @@ title = Title
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('textarea')).toHaveLength(3);
 
         expect(wrapper.find('label').at(1).html()).toContain('label');
-        expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Candidates');
+        expect(wrapper.find('textarea').at(1).prop('value')).toEqual(
+            'Candidates',
+        );
 
         expect(wrapper.find('label').at(2).html()).toContain('accesskey');
         expect(wrapper.find('textarea').at(2).prop('value')).toEqual('C');
@@ -194,11 +218,13 @@ title =
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('.accesskeys')).toHaveLength(0);
     });
@@ -214,11 +240,13 @@ title =
             translation: fluent.parser.parseEntry(input),
         };
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ editor }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ sinon.stub() }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={editor}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={sinon.stub()}
+            />,
+        );
 
         expect(wrapper.find('.accesskeys')).toHaveLength(0);
     });
@@ -226,14 +254,19 @@ title =
     it('calls the updateTranslation function on mount and change', () => {
         const updateMock = sinon.spy();
 
-        const wrapper = shallow(<RichTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-            updateTranslation={ updateMock }
-        />);
+        const wrapper = shallow(
+            <RichTranslationForm
+                editor={EDITOR}
+                locale={DEFAULT_LOCALE}
+                updateTranslation={updateMock}
+            />,
+        );
 
         expect(updateMock.calledOnce).toBeTruthy();
-        wrapper.find('textarea').at(0).simulate('change', { currentTarget: { value: 'good bye' } });
+        wrapper
+            .find('textarea')
+            .at(0)
+            .simulate('change', { currentTarget: { value: 'good bye' } });
         expect(updateMock.calledTwice).toBeTruthy();
     });
 
@@ -241,20 +274,24 @@ title =
         const resetMock = sinon.stub();
         const updateMock = sinon.stub();
 
-        const wrapper = mount(<RichTranslationForm
-            editor={ EDITOR }
-            locale={ DEFAULT_LOCALE }
-            unsavedchanges={ { shown: false } }
-            resetSelectionContent={ resetMock }
-            updateTranslation={ updateMock }
-            updateUnsavedChanges={ sinon.stub() }
-        />);
+        const wrapper = mount(
+            <RichTranslationForm
+                editor={EDITOR}
+                locale={DEFAULT_LOCALE}
+                unsavedchanges={{ shown: false }}
+                resetSelectionContent={resetMock}
+                updateTranslation={updateMock}
+                updateUnsavedChanges={sinon.stub()}
+            />,
+        );
 
-        wrapper.setProps({ editor: { ...EDITOR, selectionReplacementContent: 'hello ' } });
+        wrapper.setProps({
+            editor: { ...EDITOR, selectionReplacementContent: 'hello ' },
+        });
 
         const updatedTranslation = fluent.parser.parseEntry(
-            'message = hello Value\n    .attr-1 = And\n    .attr-2 = Attributes'
-        )
+            'message = hello Value\n    .attr-1 = And\n    .attr-2 = Attributes',
+        );
 
         expect(updateMock.calledTwice).toBeTruthy();
         expect(updateMock.calledWith(updatedTranslation)).toBeTruthy();

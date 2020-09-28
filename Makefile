@@ -25,13 +25,14 @@ help:
 	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
+	@echo "  prettier         Runs the prettier formatter on the frontend code"
+	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change"
 	@echo "  sync-projects    Runs the synchronization task on all projects\n"
-
 
 .docker-build:
 	make build
@@ -71,6 +72,13 @@ black:
 
 flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
+
+prettier:
+	"${DC}" run --rm -w //app/frontend webapp yarn prettier
+
+format:
+	make prettier
+	make black
 
 lint-frontend:
 	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/

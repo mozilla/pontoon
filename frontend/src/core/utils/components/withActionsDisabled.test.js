@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import withActionsDisabled from './withActionsDisabled';
 
-
 describe('withActionsDisabled', () => {
     class FakeComp extends React.Component {}
     const WrappedComp = withActionsDisabled(FakeComp);
@@ -16,7 +15,7 @@ describe('withActionsDisabled', () => {
     });
 
     it('passes other props along', () => {
-        const wrapper = shallow(<WrappedComp foo='bar' baz={ 42 } />);
+        const wrapper = shallow(<WrappedComp foo='bar' baz={42} />);
 
         expect(wrapper.props().foo).toEqual('bar');
         expect(wrapper.props().baz).toEqual(42);

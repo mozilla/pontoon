@@ -4,17 +4,13 @@ import { UPDATE, SET_FOCUS } from './actions';
 
 import type { Author, UpdateAction } from './actions';
 
-
-type Action =
-    | UpdateAction
-;
+type Action = UpdateAction;
 
 export type SearchAndFilters = {|
     +authors: Array<Author>,
     +countsPerMinute: Array<Array<number>>,
     +searchInputFocused: boolean,
 |};
-
 
 const initial: SearchAndFilters = {
     authors: [],

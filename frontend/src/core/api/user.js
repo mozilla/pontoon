@@ -2,12 +2,10 @@
 
 import APIBase from './base';
 
-
 const SETTINGS_NAMES_MAP = {
-    'runQualityChecks': 'quality_checks',
-    'forceSuggestions': 'force_suggestions',
+    runQualityChecks: 'quality_checks',
+    forceSuggestions: 'force_suggestions',
 };
-
 
 export default class UserAPI extends APIBase {
     /**
@@ -37,7 +35,12 @@ export default class UserAPI extends APIBase {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
-        return await this.fetch('/notifications/mark-all-as-read/', 'GET', null, headers);
+        return await this.fetch(
+            '/notifications/mark-all-as-read/',
+            'GET',
+            null,
+            headers,
+        );
     }
 
     /**
@@ -54,7 +57,11 @@ export default class UserAPI extends APIBase {
         return await this.fetch(url, 'POST', payload, headers);
     }
 
-    async updateSetting(username: string, setting: string, value: boolean): Promise<string> {
+    async updateSetting(
+        username: string,
+        setting: string,
+        value: boolean,
+    ): Promise<string> {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -66,7 +73,12 @@ export default class UserAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return await this.fetch(`/api/v1/user/${username}/`, 'POST', payload, headers);
+        return await this.fetch(
+            `/api/v1/user/${username}/`,
+            'POST',
+            payload,
+            headers,
+        );
     }
 
     /**
@@ -83,6 +95,11 @@ export default class UserAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return await this.fetch('/update-tour-status/', 'POST', payload, headers);
+        return await this.fetch(
+            '/update-tour-status/',
+            'POST',
+            payload,
+            headers,
+        );
     }
 }
