@@ -3,14 +3,15 @@ from __future__ import absolute_import
 import codecs
 import functools
 import os
-import pytz
-import requests
 import tempfile
 import time
 import zipfile
 
 from datetime import datetime, timedelta
+from urllib.parse import urljoin
 
+import pytz
+import requests
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.utils.text import slugify
@@ -147,7 +148,7 @@ def _download_file(prefixes, dirnames, vcs_project, relative_path):
                 relative_l10n_path = os.path.relpath(
                     absolute_l10n_path, vcs_project.locale_directory_paths[locale.code],
                 )
-                url = prefix.format(locale_code=relative_l10n_path)
+                url = urljoin(prefix, relative_l10n_path)
             else:
                 url = os.path.join(prefix.format(locale_code=dirname), relative_path)
 
@@ -191,6 +192,7 @@ def get_download_content(slug, code, part):
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
+    from pontoon.sync.utils import source_to_locale_path
     from pontoon.sync.vcs.models import VCSProject
     from pontoon.base.models import Entity, Locale, Project, Resource
 
@@ -214,13 +216,23 @@ def get_download_content(slug, code, part):
             get_object_or_404(Resource, project__slug=slug, path=relative_path)
         ]
 
+    locale_prefixes = project.repositories
+
+    if not project.configuration_file:
+        locale_prefixes = locale_prefixes.filter(
+            permalink_prefix__contains="{locale_code}"
+        )
+
+    locale_prefixes = locale_prefixes.values_list(
+        "permalink_prefix", flat=True
+    ).distinct()
+
+    source_prefixes = project.repositories.values_list(
+        "permalink_prefix", flat=True
+    ).distinct()
+
     for resource in resources:
         # Get locale file
-        locale_prefixes = (
-            project.repositories.filter(permalink_prefix__contains="{locale_code}")
-            .values_list("permalink_prefix", flat=True)
-            .distinct()
-        )
         dirnames = set([locale.code, locale.code.replace("-", "_")])
         locale_path = _download_file(
             locale_prefixes, dirnames, vcs_project, resource.path
@@ -231,9 +243,6 @@ def get_download_content(slug, code, part):
         # Get source file if needed
         source_path = None
         if resource.is_asymmetric:
-            source_prefixes = project.repositories.values_list(
-                "permalink_prefix", flat=True
-            ).distinct()
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
                 source_prefixes, dirnames, vcs_project, resource.path
@@ -279,11 +288,11 @@ def get_download_content(slug, code, part):
             return None, None
 
         if isZipable:
-            zf.write(locale_path, resource.path)
+            zf.write(locale_path, source_to_locale_path(resource.path))
         else:
             with codecs.open(locale_path, "r", "utf-8") as f:
                 content = f.read()
-            filename = os.path.basename(resource.path)
+            filename = os.path.basename(source_to_locale_path(resource.path))
 
         # Remove temporary files
         os.remove(locale_path)

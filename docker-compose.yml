@@ -21,6 +21,7 @@ services:
       - ./frontend/src:/app/frontend/src
       - ./frontend/public:/app/frontend/public
       - ./tests:/app/tests
+      - ~/.ssh:/home/pontoon/.ssh
 
   # Database
   postgresql:

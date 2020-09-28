@@ -20,8 +20,10 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  jest             Runs the new frontend's test suite (Translate.Next)"
+	@echo "  test-frontend    Runs the new frontend's test suite (Translate.Next)"
+	@echo "  jest             Runs the jest test runner on all Translate.Next tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
+	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  format           Runs formatters for both the frontend and Python code"
@@ -29,8 +31,8 @@ help:
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
-	@echo "  build-frontend-w Watches the frontend static files and builds on change\n"
-
+	@echo "  build-frontend-w Watches the frontend static files and builds on change"
+	@echo "  sync-projects    Runs the synchronization task on all projects\n"
 
 .docker-build:
 	make build
@@ -101,3 +103,6 @@ build-frontend:
 
 build-frontend-w:
 	"${DC}" run --rm webapp npm run build-w
+
+sync-projects:
+	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)

@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 
+import tempfile
 import os
+
+from http.client import HTTPException
+
 import scandir
 
 from django_nose.tools import (
@@ -29,9 +33,11 @@ from pontoon.sync.tests import (
     VCSTranslationFactory,
 )
 from pontoon.sync.vcs.models import (
+    MissingRepositoryPermalink,
     VCSConfiguration,
     VCSResource,
     VCSProject,
+    DownloadTOMLParser,
 )
 
 
@@ -40,7 +46,23 @@ TEST_CHECKOUT_PATH = os.path.join(
 )
 
 
-class VCSProjectTests(TestCase):
+class VCSTestCase(TestCase):
+    """
+    Setup fixtures that are shared between VCS tests.
+    """
+
+    def setUp(self):
+        self.get_project_config_patcher = patch(
+            "pontoon.sync.vcs.models.DownloadTOMLParser.get_project_config"
+        )
+        self.get_project_config_mock = self.get_project_config_patcher.start()
+        self.get_project_config_mock.side_effect = lambda config_path: os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, config_path
+        )
+        self.addCleanup(self.get_project_config_patcher.stop)
+
+
+class VCSProjectTests(VCSTestCase):
     def setUp(self):
         # Force the checkout path to point to a test directory to make
         # resource file loading pass during tests.
@@ -53,8 +75,22 @@ class VCSProjectTests(TestCase):
         self.mock_checkout_path = checkout_path_patch.start()
         self.addCleanup(checkout_path_patch.stop)
 
-        self.project = ProjectFactory.create()
+        self.project = ProjectFactory.create(
+            repositories__permalink="https://example.com/l10n/{locale_code}"
+        )
         self.vcs_project = VCSProject(self.project)
+        super(VCSProjectTests, self).setUp()
+
+    def test_missing_permalink_prefix(self):
+        """
+        Fail when the source repository of a project with the project
+        config doesn't have the permalink defined.
+        """
+        with self.assertRaises(MissingRepositoryPermalink):
+            self.project.configuration_file = "l10n.toml"
+            self.project.source_repository.permalink_prefix = ""
+            self.project.source_repository.save()
+            VCSProject(self.project,)
 
     def test_relative_resource_paths(self):
         with patch.object(
@@ -264,10 +300,11 @@ class VCSProjectTests(TestCase):
             )
 
 
-class VCSConfigurationTests(TestCase):
+class VCSConfigurationTests(VCSTestCase):
     toml = "l10n.toml"
 
     def setUp(self):
+        super(VCSConfigurationTests, self).setUp()
         self.locale, _ = Locale.objects.get_or_create(code="fr")
 
         self.repository = RepositoryFactory()
@@ -297,11 +334,8 @@ class VCSConfigurationTests(TestCase):
 
         # Make sure VCSConfiguration instance is initialized
         self.db_project.configuration_file = self.toml
+        self.db_project.source_repository.permalink_prefix = "https://example.com/"
         self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
-
-        self.vcs_project.configuration.configuration_path = os.path.join(
-            PROJECT_CONFIG_CHECKOUT_PATH, self.db_project.configuration_file,
-        )
 
     def test_add_locale(self):
         config = self.vcs_project.configuration.parsed_configuration
@@ -417,17 +451,16 @@ def setUpResource(self):
 
     # Make sure VCSConfiguration instance is initialized
     self.db_project.configuration_file = "l10n.toml"
+
+    self.db_project.source_repository.permalink_prefix = "https://example.com/"
     self.vcs_project = VCSProject(self.db_project, locales=[self.locale])
 
-    self.vcs_project.configuration.configuration_path = os.path.join(
-        PROJECT_CONFIG_CHECKOUT_PATH, self.db_project.configuration_file,
-    )
 
-
-class VCSConfigurationFullLocaleTests(TestCase):
+class VCSConfigurationFullLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="fr")
         setUpResource(self)
+        super(VCSConfigurationFullLocaleTests, self).setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -462,10 +495,11 @@ class VCSConfigurationFullLocaleTests(TestCase):
         )
 
 
-class VCSConfigurationPartialLocaleTests(TestCase):
+class VCSConfigurationPartialLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="sl")
         setUpResource(self)
+        super(VCSConfigurationPartialLocaleTests, self).setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -490,7 +524,7 @@ class VCSConfigurationPartialLocaleTests(TestCase):
         assert_equal(r.files, {})
 
 
-class VCSEntityTests(TestCase):
+class VCSEntityTests(VCSTestCase):
     def test_has_translation_for(self):
         """
         Return True if a translation exists for the given locale, even
@@ -504,3 +538,53 @@ class VCSEntityTests(TestCase):
         assert_false(entity.has_translation_for("missing"))
         assert_true(entity.has_translation_for("empty"))
         assert_true(entity.has_translation_for("full"))
+
+
+class DownloadTOMLParserTests(TestCase):
+    def setUp(self):
+        self.requests_patcher = patch("pontoon.sync.vcs.models.requests.get")
+        self.requests_mock = self.requests_patcher.start()
+        self.temp_dir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        self.requests_patcher.stop()
+
+    def test_config_file_not_found(self):
+        """
+        When the project config file is not available, throw an error.
+        """
+        self.requests_mock.return_value.raise_for_status.side_effect = HTTPException(
+            "not found"
+        )
+
+        with self.assertRaises(HTTPException):
+            parser = DownloadTOMLParser(
+                self.temp_dir, "https://example.com/", "l10n.toml"
+            )
+            parser.parse()
+
+    def test_remote_path(self):
+        parser = DownloadTOMLParser(
+            "", "https://example.com/without-locale-code/", "l10n.toml"
+        )
+        self.assertEqual(
+            parser.get_remote_path("l10n.toml"),
+            "https://example.com/without-locale-code/l10n.toml",
+        )
+        self.assertEqual(
+            parser.get_remote_path("subdir/l10n.toml"),
+            "https://example.com/without-locale-code/subdir/l10n.toml",
+        )
+
+    def test_local_path(self):
+        parser = DownloadTOMLParser(self.temp_dir, "", "aaa.toml")
+        self.assertEqual(parser.get_local_path("aaa.toml"), f"{self.temp_dir}/aaa.toml")
+
+    def test_get_project_config(self):
+        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/", "l10n.toml")
+        self.requests_mock.return_value.content = b"test-content"
+        project_config_path = parser.get_project_config("l10n.toml")
+
+        self.assertTrue(self.requests_mock.called)
+        self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
+        self.assertEqual(open(project_config_path, "r").read(), "test-content")
