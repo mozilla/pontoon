@@ -8,13 +8,17 @@ import os
 import scandir
 import shutil
 
+import requests
+
+from datetime import datetime
+from itertools import chain
+from pathlib import Path
+from urllib.parse import urljoin, urlparse
+
 from compare_locales.paths import (
     ProjectFiles,
     TOMLParser,
 )
-from datetime import datetime
-from itertools import chain
-
 from django.utils import timezone
 from django.utils.functional import cached_property
 
@@ -35,6 +39,59 @@ from pontoon.sync.vcs.repositories import get_changed_files
 
 
 log = logging.getLogger(__name__)
+
+
+class DownloadTOMLParser(TOMLParser):
+    """
+    This wrapper is a workaround for the lack of the shared and persistent filesystem
+    on Heroku workers.
+    Related: https://bugzilla.mozilla.org/show_bug.cgi?id=1530988
+    """
+
+    def __init__(self, checkout_path, permalink_prefix, configuration_file):
+        self.checkout_path = os.path.join(checkout_path, "")
+        self.permalink_prefix = permalink_prefix
+        self.config_path = urlparse(permalink_prefix).path
+        self.config_file = configuration_file
+
+    def get_local_path(self, path):
+        """Return the directory in which the config file should be stored."""
+        local_path = path.replace(self.config_path, "")
+
+        return os.path.join(self.checkout_path, local_path)
+
+    def get_remote_path(self, path):
+        """Construct the link to the remote resource based on the local path."""
+        remote_config_path = path.replace(self.checkout_path, "")
+
+        return urljoin(self.permalink_prefix, remote_config_path)
+
+    def get_project_config(self, path):
+        """Download the project config file and return its local path."""
+        local_path = Path(self.get_local_path(path))
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with local_path.open("wb") as f:
+            remote_path = self.get_remote_path(path)
+            config_file = requests.get(remote_path)
+            config_file.raise_for_status()
+            f.write(config_file.content)
+        return str(local_path)
+
+    def parse(self, path=None, env=None, ignore_missing_includes=True):
+        """Download the config file before it gets parsed."""
+        return super(DownloadTOMLParser, self).parse(
+            self.get_project_config(path or self.config_file),
+            env,
+            ignore_missing_includes,
+        )
+
+
+class MissingRepositoryPermalink(Exception):
+    """
+    Raised when a project uses project config files and
+    its source repository doesn't have the permalink.
+    """
 
 
 class MissingSourceRepository(Exception):
@@ -114,6 +171,10 @@ class VCSProject(object):
 
         self.configuration = None
         if db_project.configuration_file:
+            # Permalink is required to download project config files.
+            if not db_project.source_repository.permalink_prefix:
+                raise MissingRepositoryPermalink()
+
             self.configuration = VCSConfiguration(self)
 
     @cached_property
@@ -510,10 +571,6 @@ class VCSConfiguration(object):
     def __init__(self, vcs_project):
         self.vcs_project = vcs_project
         self.configuration_file = vcs_project.db_project.configuration_file
-        self.configuration_path = os.path.join(
-            self.vcs_project.db_project.source_repository.checkout_path,
-            self.configuration_file,
-        )
         self.project_files = {}
 
     @cached_property
@@ -527,9 +584,11 @@ class VCSConfiguration(object):
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        return TOMLParser().parse(
-            self.configuration_path, env={"l10n_base": self.l10n_base},
-        )
+        return DownloadTOMLParser(
+            self.vcs_project.db_project.source_repository.checkout_path,
+            self.vcs_project.db_project.source_repository.permalink_prefix,
+            self.configuration_file,
+        ).parse(env={"l10n_base": self.l10n_base})
 
     def add_locale(self, locale_code):
         """
