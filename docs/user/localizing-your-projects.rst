@@ -68,7 +68,7 @@ following required fields:
 #. **Locales**: select at least one Localizable locale by clicking on it.
 #. **Repository URL**: enter your repository's SSH URL of the form
    ``git@github.com:user/repo.git``.
-#. **Download prefix**: a URL prefix for downloading localized files. For
+#. **Download prefix or path to TOML file**: a URL prefix for downloading localized files. For
    GitHub repositories, select any localized file on GitHub, click ``Raw`` and
    replace locale code and the following bits in the URL with ``{locale_code}``.
    If you use one, you need to select the `project configuration file`_ instead
