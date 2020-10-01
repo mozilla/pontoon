@@ -755,15 +755,7 @@ def upload(request):
 
 
 @condition(etag_func=None)
-def download_translation_memory(request, filename):
-
-    vars = filename.split(".")
-    try:
-        locale = vars[0]
-        slug = vars[1]
-    except len(var) != 2:
-        raise Http404
-
+def download_translation_memory(request, locale, slug):
     locale = get_object_or_404(Locale, code=locale)
 
     if slug.lower() == "all-projects":
