@@ -30,7 +30,7 @@ Folder structure
 ----------------
 
 To let Pontoon discover your localizable files, you'll either need to specify
-paths in the `project config file`_ or strictly follow the file and folder
+paths in the `project configuration file`_ or strictly follow the file and folder
 structure as expected by Pontoon:
 
 #. Locale folders (including source locale) must be located at the same nesting
@@ -52,7 +52,7 @@ Incorrect pattern::
 
     locales/{locale_code}/path/to/file.{locale_code}.extension
 
-.. _project config file: https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html
+.. _project configuration file: https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html
 
 Adding a new project to Pontoon
 -------------------------------
@@ -68,14 +68,16 @@ following required fields:
 #. **Locales**: select at least one Localizable locale by clicking on it.
 #. **Repository URL**: enter your repository's SSH URL of the form
    ``git@github.com:user/repo.git``.
-#. **Download prefix**: used for manually downloading files. Select any
-   localizable file on GitHub, click ``Raw`` and replace locale code and the
-   following bits in the URL with {locale_code}.
+#. **Download prefix or path to TOML file**: a URL prefix for downloading localized files. For
+   GitHub repositories, select any localized file on GitHub, click ``Raw`` and
+   replace locale code and the following bits in the URL with ``{locale_code}``.
+   If you use one, you need to select the `project configuration file`_ instead
+   of a localized file.
 #. Click **SAVE PROJECT** at the bottom of the page.
 #. After the page reloads, click **SYNC** and wait for Pontoon to import
    strings. You can monitor the progress in the Sync log (``/sync/log/``).
 #. When the synchronization is finished, you should check the imported resources
-    and the entities. If everything went okay, you can proceed to the next step.
+   and the entities. If everything went okay, you can proceed to the next step.
 #. Go to the project's admin page and change the visibility option to make
    the project public. It's required because all new projects in Pontoon are private
    by default and aren't visible to localizers and locale managers.

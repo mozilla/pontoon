@@ -1754,13 +1754,15 @@ class Repository(models.Model):
 
     # TODO: We should be able to remove this once we have persistent storage
     permalink_prefix = models.CharField(
-        "Download prefix",
+        "Download prefix or path to TOML file",
         blank=True,
         max_length=2000,
         help_text="""
         A URL prefix for downloading localized files. For GitHub repositories,
         select any localized file on GitHub, click Raw and replace locale code
-        and the following bits in the URL with `{locale_code}`.
+        and the following bits in the URL with `{locale_code}`. If you use a
+        project configuration file, you need to provide the path to the raw TOML
+        file on GitHub.
     """,
     )
 
