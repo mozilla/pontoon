@@ -56,7 +56,7 @@ urlpatterns = [
     ),
     # Download translation memory
     url(
-        r"^(?P<locale>[A-Za-z0-9\-\@\.]+)/(?P<slug>[\w-]+)/(?P<filename>.+)\.tmx$",
+        r"^translation-memory/(?P<filename>.+)\.tmx$",
         views.download_translation_memory,
         name="pontoon.download_tmx",
     ),
@@ -78,7 +78,7 @@ urlpatterns = [
         views.get_translations_from_other_locales,
         name="pontoon.other_locales",
     ),
-    url(r"^download/", views.download, name="pontoon.download"),
+    url(r"^translations/", views.translations, name="pontoon.translations"),
     url(r"^upload/", views.upload, name="pontoon.upload"),
     url(r"^user-data/", views.user_data, name="pontoon.user_data"),
 ]
