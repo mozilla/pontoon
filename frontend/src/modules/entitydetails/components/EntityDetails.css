@@ -1,6 +1,7 @@
 .entity-details {
     background: #3f4752;
     height: 100%;
+    display: flex;
 }
 
 .entity-details > section {
@@ -8,12 +9,10 @@
 }
 
 .entity-details .main-column {
-    float: left;
     width: 66.67%;
 }
 
 .entity-details .third-column {
-    float: right;
     width: 33.33%;
     border-left: 1px solid #5e6475;
     box-sizing: border-box;
