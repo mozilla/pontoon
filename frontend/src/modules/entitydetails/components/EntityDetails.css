@@ -10,6 +10,7 @@
 
 .entity-details .main-column {
     width: 66.67%;
+    overflow: auto;
 }
 
 .entity-details .third-column {
