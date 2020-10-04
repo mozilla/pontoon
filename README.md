@@ -45,7 +45,7 @@ If you want to go further, you can:
 * See Mozilla's Pontoon servers:
     * [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
     * [Production](https://pontoon.mozilla.org/)
-* Get in touch with us on [chat.mozilla.org](https://chat.mozilla.org/#/room/#pontoon:mozilla.org).
+* Get in touch with us on [chat.mozilla.org](https://chat.mozilla.org/#/room/#pontoon:mozilla.org) _(**Please note:** This channel is dedicated exclusively for discussing Pontoon's development. Questions about third-party deployment, syntax of localizable resources, general support, etc; are better suited for [our discourse forum](https://discourse.mozilla.org/c/pontoon/)_.
 
 ## License
 
