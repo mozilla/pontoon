@@ -200,7 +200,7 @@ export default class Metadata extends React.Component<Props, State> {
                                       >
                                           {/* We can safely use parse with pinnedComment.content as it is
                                            * sanitized when coming from the DB. See:
-                                           *   - pontoon.base.forms.AddCommentsForm(}
+                                           *   - pontoon.base.forms.AddCommentForm(}
                                            *   - pontoon.base.forms.HtmlField()
                                            */}
                                           {parse(pinnedComment.content)}

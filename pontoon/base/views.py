@@ -563,7 +563,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
 @transaction.atomic
 def add_comment(request):
     """Add a comment."""
-    form = forms.AddCommentsForm(request.POST)
+    form = forms.AddCommentForm(request.POST)
     if not form.is_valid():
         return JsonResponse(
             {

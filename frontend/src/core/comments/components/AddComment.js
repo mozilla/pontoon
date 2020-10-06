@@ -24,7 +24,7 @@ type Props = {|
     addComment: (string, ?number) => void,
 |};
 
-export default function AddComments(props: Props) {
+export default function AddComment(props: Props) {
     const {
         username,
         imageURL,
