@@ -96,7 +96,7 @@ export default class UserNotification extends React.Component<Props, State> {
                             >
                                 {/* We can safely use parse with notification.description.content as it is
                                  *  sanitized when coming from the DB. See:
-                                 *    - pontoon.base.forms.AddCommentsForm(}
+                                 *    - pontoon.base.forms.AddCommentForm(}
                                  *    - pontoon.base.forms.HtmlField()
                                  */}
                                 {parse(notification.description.content)}
