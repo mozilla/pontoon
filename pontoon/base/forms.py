@@ -315,9 +315,9 @@ class GetEntitiesForm(forms.Form):
         return utils.split_ints(self.cleaned_data["entity_ids"])
 
 
-class AddCommentsForm(forms.Form):
+class AddCommentForm(forms.Form):
     """
-    Form for parameters to the `add_comments` view.
+    Form for parameters to the `add_comment` view.
     """
 
     locale = forms.CharField(required=False)
