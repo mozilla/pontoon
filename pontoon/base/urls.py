@@ -78,7 +78,11 @@ urlpatterns = [
         views.get_translations_from_other_locales,
         name="pontoon.other_locales",
     ),
-    url(r"^translations/", views.translations, name="pontoon.translations"),
+    url(
+        r"^translations/",
+        views.download_translations,
+        name="pontoon.download.translations",
+    ),
     url(r"^upload/", views.upload, name="pontoon.upload"),
     url(r"^user-data/", views.user_data, name="pontoon.user_data"),
 ]

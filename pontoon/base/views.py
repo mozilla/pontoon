@@ -691,7 +691,7 @@ def perform_checks(request):
 
 
 @transaction.atomic
-def translations(request):
+def download_translations(request):
     """Download translated resource."""
     try:
         slug = request.GET["slug"]
