@@ -33,6 +33,7 @@
 
 .search-box > label {
     color: #aaaaaa;
+    cursor: text;
     font-size: 17px;
     left: auto;
     position: absolute;
