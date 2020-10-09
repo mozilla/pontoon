@@ -691,7 +691,7 @@ def perform_checks(request):
 
 
 @transaction.atomic
-def download(request):
+def download_translations(request):
     """Download translated resource."""
     try:
         slug = request.GET["slug"]
@@ -755,7 +755,7 @@ def upload(request):
 
 
 @condition(etag_func=None)
-def download_translation_memory(request, locale, slug, filename):
+def download_translation_memory(request, locale, slug):
     locale = get_object_or_404(Locale, code=locale)
 
     if slug.lower() == "all-projects":

@@ -130,7 +130,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                                 }}
                             >
                                 <a
-                                    href={`/${locale}/${project}/${locale}.${project}.tmx`}
+                                    href={`/translation-memory/${locale}.${project}.tmx`}
                                 >
                                     {
                                         '<glyph></glyph>Download Translation Memory'
@@ -150,7 +150,7 @@ export class UserMenuBase extends React.Component<Props, State> {
                                     }}
                                 >
                                     <a
-                                        href={`/download/?code=${locale}&slug=${project}&part=${resource}`}
+                                        href={`/translations/?code=${locale}&slug=${project}&part=${resource}`}
                                     >
                                         {'<glyph></glyph>Download Translations'}
                                     </a>
