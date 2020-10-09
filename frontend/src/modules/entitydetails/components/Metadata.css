@@ -25,7 +25,7 @@
     text-transform: uppercase;
 }
 
-.metadata p a {
+.metadata div a {
     color: #7bc876;
     text-decoration: none;
 }
@@ -34,7 +34,7 @@
     display: inline-block;
 }
 
-.metadata p .divider {
+.metadata div .divider {
     font-style: normal;
     font-weight: 100;
     margin: 0 3px;
