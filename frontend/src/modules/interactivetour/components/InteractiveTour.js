@@ -309,8 +309,8 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         <Localized
                             id='interactivetour-InteractiveTour--end-content'
                             elems={{
+                                // eslint-disable-next-line
                                 a: (
-                                    // eslint-disable-next-line
                                     <a href='https://mozilla-l10n.github.io/localizer-documentation/' />
                                 ),
                             }}

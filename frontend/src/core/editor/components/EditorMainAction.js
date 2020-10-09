@@ -1,18 +1,15 @@
 /* @flow */
 
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
-import type { EntityTranslation } from 'core/api';
-import type { ChangeOperation } from 'modules/history';
+import * as user from 'core/user';
+
+import * as editor from '..';
 
 type Props = {
-    isRunningRequest: boolean,
-    isTranslator: boolean,
-    forceSuggestions: boolean,
-    sameExistingTranslation: ?EntityTranslation,
-    sendTranslation: () => void,
-    updateTranslationStatus: (number, ChangeOperation, ?boolean) => void,
+    sendTranslation: (ignoreWarnings?: boolean) => void,
 };
 
 /**
@@ -27,14 +24,20 @@ type Props = {
  * Otherwise, it renders "Save".
  */
 export default function EditorMainAction(props: Props) {
-    const {
-        isRunningRequest,
-        isTranslator,
-        forceSuggestions,
-        sameExistingTranslation,
-        sendTranslation,
-        updateTranslationStatus,
-    } = props;
+    const isRunningRequest = useSelector(
+        (state) => state.editor.isRunningRequest,
+    );
+    const forceSuggestions = useSelector(
+        (state) => state.user.settings.forceSuggestions,
+    );
+    const isTranslator = useSelector((state) =>
+        user.selectors.isTranslator(state),
+    );
+    const sameExistingTranslation = useSelector((state) =>
+        editor.selectors.sameExistingTranslation(state),
+    );
+
+    const updateTranslationStatus = editor.useUpdateTranslationStatus();
 
     function approveTranslation() {
         if (sameExistingTranslation) {
@@ -76,7 +79,7 @@ export default function EditorMainAction(props: Props) {
         btn = {
             id: 'editor-EditorMenu--button-suggest',
             className: 'action-suggest',
-            action: sendTranslation,
+            action: props.sendTranslation,
             title: 'Suggest Translation (Enter)',
             label: 'Suggest',
             glyph: null,
@@ -92,7 +95,7 @@ export default function EditorMainAction(props: Props) {
         btn = {
             id: 'editor-EditorMenu--button-save',
             className: 'action-save',
-            action: sendTranslation,
+            action: props.sendTranslation,
             title: 'Save Translation (Enter)',
             label: 'Save',
             glyph: null,

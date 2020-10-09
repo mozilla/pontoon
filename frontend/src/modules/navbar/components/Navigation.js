@@ -16,14 +16,14 @@ import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 type Props = {|
     locale: Locale,
     parameters: NavigationParams,
     project: ProjectState,
     resources: ResourcesState,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
@@ -80,9 +80,13 @@ export class NavigationBase extends React.Component<InternalProps> {
         const { dispatch } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(push(path));
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(push(path));
+                },
+            ),
         );
     };
 
@@ -135,7 +139,8 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         resources: state[resource.NAME],
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
     };
 };
 

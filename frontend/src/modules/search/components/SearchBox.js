@@ -19,7 +19,6 @@ import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
 import type { SearchAndFilters } from 'modules/search';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 export type TimeRangeType = {|
     from: number,
@@ -32,7 +31,8 @@ type Props = {|
     project: ProjectState,
     stats: Stats,
     router: Object,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
@@ -390,7 +390,8 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     update = () => {
         this.props.dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedchanges,
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
                 this._update,
             ),
         );
@@ -499,7 +500,8 @@ const mapStateToProps = (state: Object): Props => {
         project: state[project.NAME],
         stats: state[STATS_NAME],
         router: state.router,
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
     };
 };
 
