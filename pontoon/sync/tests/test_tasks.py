@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from django_nose.tools import assert_equal, assert_false, assert_raises, assert_true
+import pytest
 from mock import ANY, patch, PropertyMock
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, Repository
@@ -54,20 +54,20 @@ class SyncProjectTests(TestCase):
         If a project with the given PK doesn't exist, log it and exit.
         """
         with patch("pontoon.sync.tasks.log") as mock_log:
-            with assert_raises(Project.DoesNotExist):
+            with pytest.raises(Project.DoesNotExist):
                 sync_project(99999, self.sync_log.pk)
             mock_log.error.assert_called_with(CONTAINS("99999"))
-            assert_false(self.mock_update_originals.called)
+            assert not self.mock_update_originals.called
 
     def test_missing_log(self):
         """
         If a log with the given PK doesn't exist, log it and exit.
         """
         with patch("pontoon.sync.tasks.log") as mock_log:
-            with assert_raises(SyncLog.DoesNotExist):
+            with pytest.raises(SyncLog.DoesNotExist):
                 sync_project(self.db_project.pk, 99999)
             mock_log.error.assert_called_with(CONTAINS("99999"))
-            assert_false(self.mock_update_originals.called)
+            assert not self.mock_update_originals.called
 
     def test_db_changed_no_repo_changed(self):
         """
@@ -81,7 +81,7 @@ class SyncProjectTests(TestCase):
             sync_project(self.db_project.pk, self.sync_log.pk)
 
         sync_project(self.db_project.pk, self.sync_log.pk)
-        assert_false(self.mock_update_originals.called)
+        assert not self.mock_update_originals.called
         mock_log.info.assert_called_with(
             CONTAINS("Skipping syncing sources", self.db_project.slug)
         )
@@ -97,13 +97,13 @@ class SyncProjectTests(TestCase):
         with patch("pontoon.sync.tasks.log") as mock_log:
             sync_project(self.db_project.pk, self.sync_log.pk)
 
-        assert_false(self.mock_update_originals.called)
+        assert not self.mock_update_originals.called
         mock_log.info.assert_called_with(
             CONTAINS("Skipping project", self.db_project.slug)
         )
 
         # When skipping, mark the project log properly.
-        assert_true(ProjectSyncLog.objects.get(project=self.db_project).skipped)
+        assert ProjectSyncLog.objects.get(project=self.db_project).skipped
 
     def test_no_changes_force(self):
         """
@@ -114,21 +114,21 @@ class SyncProjectTests(TestCase):
         self.mock_project_needs_sync.return_value = False
 
         sync_project(self.db_project.pk, self.sync_log.pk, force=True)
-        assert_true(self.mock_update_originals.called)
+        assert self.mock_update_originals.called
 
     def test_no_pull(self):
         """
         Don't call repo.pull if command.no_pull is True.
         """
         sync_project(self.db_project.pk, self.sync_log.pk, no_pull=True)
-        assert_false(self.mock_pull_source_repo_changes.called)
+        assert not self.mock_pull_source_repo_changes.called
 
     def test_create_project_log(self):
-        assert_false(ProjectSyncLog.objects.exists())
+        assert not ProjectSyncLog.objects.exists()
         sync_project(self.db_project.pk, self.sync_log.pk)
 
         log = ProjectSyncLog.objects.get(project=self.db_project)
-        assert_equal(self.mock_sync_translations.call_args[0][1].pk, log.pk)
+        assert self.mock_sync_translations.call_args[0][1].pk == log.pk
 
 
 class SyncTranslationsTests(FakeCheckoutTestCase):
@@ -169,9 +169,9 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         changed_after.save()
 
         sync_translations(self.db_project, self.project_sync_log, self.now, True)
-        with assert_raises(ChangedEntityLocale.DoesNotExist):
+        with pytest.raises(ChangedEntityLocale.DoesNotExist):
             changed1.refresh_from_db()
-        with assert_raises(ChangedEntityLocale.DoesNotExist):
+        with pytest.raises(ChangedEntityLocale.DoesNotExist):
             changed2.refresh_from_db()
         changed_after.refresh_from_db()  # Should not raise
 
@@ -184,7 +184,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         sync_translations(
             self.db_project, self.project_sync_log, self.now, True, no_commit=True
         )
-        assert_false(self.mock_commit_changes.called)
+        assert not self.mock_commit_changes.called
 
     def test_readonly_locales(self):
         """Don't call commit_changes for locales in read-only mode."""
@@ -203,7 +203,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             self.db_project, self.project_sync_log, self.now, True, no_commit=False,
         )
 
-        assert_false(self.mock_commit_changes.called)
+        assert not self.mock_commit_changes.called
 
     def test_remove_duplicate_approvals(self):
         """
@@ -232,21 +232,19 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             sync_translations(self.db_project, self.project_sync_log, self.now, True)
 
         # Only one translation should be approved: the duplicate_translation.
-        assert_equal(
-            self.main_db_entity.translation_set.filter(approved=True).count(), 1
-        )
+        assert self.main_db_entity.translation_set.filter(approved=True).count() == 1
         new_translation = self.main_db_entity.translation_set.get(
             string="New Translated String"
         )
-        assert_false(new_translation.approved)
-        assert_true(new_translation.approved_date is None)
+        assert not new_translation.approved
+        assert new_translation.approved_date is None
 
         duplicate_translation.refresh_from_db()
-        assert_true(duplicate_translation.approved)
-        assert_equal(duplicate_translation.approved_date, aware_datetime(1970, 1, 3))
+        assert duplicate_translation.approved
+        assert duplicate_translation.approved_date == aware_datetime(1970, 1, 3)
 
     def test_create_repository_log(self):
-        assert_false(RepositorySyncLog.objects.exists())
+        assert not RepositorySyncLog.objects.exists()
 
         repo = RepositoryFactory.create()
         self.db_project.repositories.set([repo])
@@ -259,7 +257,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         sync_translations(self.db_project, self.project_sync_log, self.now, True)
 
         log = RepositorySyncLog.objects.get(repository=repo.pk)
-        assert_equal(log.repository, repo)
+        assert log.repository == repo
 
     def test_no_pretranslation(self):
         """
@@ -283,7 +281,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
         )
 
         # Pretranslation is not enabled
-        assert_false(self.mock_pretranslate.called)
+        assert not self.mock_pretranslate.called
 
         self.db_project.pretranslation_enabled = True
         self.db_project.save()
@@ -294,7 +292,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             sync_translations(self.db_project, self.project_sync_log, self.now, True)
 
         # No new Entity, Locale or TranslatedResource
-        assert_false(self.mock_pretranslate.called)
+        assert not self.mock_pretranslate.called
 
     def test_new_entities_pretranslation(self):
         """
@@ -322,9 +320,9 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
                 ["new_entity"],
             )
 
-        assert_true(self.mock_pretranslate.called)
-        assert_equal(self.mock_pretranslate.call_args[1]["entities"], ["new_entity"])
-        assert_equal(list(self.mock_pretranslate.call_args[1]["locales"]), all_locales)
+        assert self.mock_pretranslate.called
+        assert self.mock_pretranslate.call_args[1]["entities"] == ["new_entity"]
+        assert list(self.mock_pretranslate.call_args[1]["locales"]) == all_locales
 
     def test_new_translated_resource_pretranslation(self):
         """
@@ -348,13 +346,13 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             ["new_entity"],
         )
 
-        assert_true(self.mock_pretranslate.called)
-        assert_equal(
-            self.mock_pretranslate.call_args[1]["locales"], [self.translated_locale.pk]
-        )
+        assert self.mock_pretranslate.called
+        assert self.mock_pretranslate.call_args[1]["locales"] == [
+            self.translated_locale.pk
+        ]
 
         # Ensure that pretranslate is called only once for the locale.
-        assert_equal(self.mock_pretranslate.call_args[1].get("entities"), None)
+        assert self.mock_pretranslate.call_args[1].get("entities") is None
 
 
 class UserError(Exception):
@@ -378,9 +376,10 @@ class SyncExecutionTests(TestCase):
         first_call = test_task.delay(call_subtask=True)
         second_call = first_call.get()
 
-        assert_true(first_call.successful())
-        assert_true(second_call.failed())
-        assert_raises(RuntimeError, second_call.get)
+        assert first_call.successful()
+        assert second_call.failed()
+        with pytest.raises(RuntimeError):
+            second_call.get()
 
     def test_release_lock_after_timeout(self):
         """
@@ -394,8 +393,8 @@ class SyncExecutionTests(TestCase):
 
             first_call = timeout_task.delay()
 
-            assert_true(first_call.successful())
-            assert_equal(first_call.get(), 42)
+            assert first_call.successful()
+            assert first_call.get(), 42
             mock_cache.add.assert_called_with(ANY, ANY, timeout=3)
 
     def test_parametrized_serial_task(self):
@@ -410,10 +409,10 @@ class SyncExecutionTests(TestCase):
 
             first_call = task_lock_key.delay(42)
             second_call = task_lock_key.delay(24)
-            assert_true(first_call.successful())
-            assert_true(second_call.successful())
-            assert_true(first_call.get(), 42)
-            assert_true(second_call.get(), 24)
+            assert first_call.successful()
+            assert second_call.successful()
+            assert first_call.get() == 42
+            assert second_call.get() == 24
             mock_cache.add.assert_any_call(
                 CONTAINS("task_lock_key[param=42]"), ANY, timeout=3
             )
@@ -433,7 +432,9 @@ class SyncExecutionTests(TestCase):
         first_call = exception_task.delay()
         second_call = exception_task.delay()
 
-        assert_true(first_call.failed())
-        assert_true(second_call.failed())
-        assert_raises(UserError, first_call.get)
-        assert_raises(UserError, second_call.get)
+        assert first_call.failed()
+        assert second_call.failed()
+        with pytest.raises(UserError):
+            first_call.get()
+        with pytest.raises(UserError):
+            second_call.get()

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.core.management.base import CommandError
 
-from django_nose.tools import assert_equal, assert_false, assert_raises
+import pytest
 from mock import ANY, patch, PropertyMock
 from six import StringIO
 
@@ -76,7 +76,7 @@ class CommandTests(TestCase):
         If no projects are found that match the given slugs, raise a
         CommandError.
         """
-        with assert_raises(CommandError):
+        with pytest.raises(CommandError):
             self.execute_command(projects="does-not-exist")
 
     def test_invalid_slugs(self):
@@ -91,9 +91,9 @@ class CommandTests(TestCase):
             handle_project.pk, ANY, no_pull=False, no_commit=False, force=False,
         )
 
-        assert_equal(
-            self.command.stderr.getvalue(),
-            "Couldn't find projects with following slugs: aaa, bbb",
+        assert (
+            self.command.stderr.getvalue()
+            == "Couldn't find projects with following slugs: aaa, bbb"
         )
 
     def test_cant_commit(self):
@@ -106,7 +106,7 @@ class CommandTests(TestCase):
             can_commit.return_value = False
 
             self.execute_command(projects=project.slug)
-            assert_false(self.mock_sync_project.delay.called)
+            assert not self.mock_sync_project.delay.called
 
     def test_options(self):
         project = ProjectFactory.create()
@@ -117,7 +117,7 @@ class CommandTests(TestCase):
 
     def test_sync_log(self):
         """Create a new sync log when command is run."""
-        assert_false(SyncLog.objects.exists())
+        assert not SyncLog.objects.exists()
 
         ProjectFactory.create()
         with patch.object(sync_projects, "timezone") as mock_timezone:
@@ -125,4 +125,4 @@ class CommandTests(TestCase):
             self.execute_command()
 
         sync_log = SyncLog.objects.all()[0]
-        assert_equal(sync_log.start_time, aware_datetime(2015, 1, 1))
+        assert sync_log.start_time == aware_datetime(2015, 1, 1)

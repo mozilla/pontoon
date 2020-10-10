@@ -7,11 +7,6 @@ from http.client import HTTPException
 
 import scandir
 
-from django_nose.tools import (
-    assert_equal,
-    assert_false,
-    assert_true,
-)
 from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import (
@@ -103,10 +98,10 @@ class VCSProjectTests(VCSTestCase):
                 return_value=["/root/foo.po", "/root/meh/bar.po"]
             )
 
-            assert_equal(
-                list(self.vcs_project.relative_resource_paths()),
-                ["foo.po", "meh/bar.po"],
-            )
+            assert list(self.vcs_project.relative_resource_paths()) == [
+                "foo.po",
+                "meh/bar.po",
+            ]
 
     def test_relative_resource_paths_pot(self):
         """
@@ -124,10 +119,10 @@ class VCSProjectTests(VCSTestCase):
                 return_value=["/root/foo.pot", "/root/meh/bar.pot"]
             )
 
-            assert_equal(
-                list(self.vcs_project.relative_resource_paths()),
-                ["foo.po", "meh/bar.po"],
-            )
+            assert list(self.vcs_project.relative_resource_paths()) == [
+                "foo.po",
+                "meh/bar.po",
+            ]
 
     def test_source_directory_with_config(self):
         """
@@ -136,9 +131,9 @@ class VCSProjectTests(VCSTestCase):
         """
         self.vcs_project.configuration = Mock(return_value=[True])
 
-        assert_equal(
-            self.vcs_project.source_directory_path,
-            self.vcs_project.db_project.source_repository.checkout_path,
+        assert (
+            self.vcs_project.source_directory_path
+            == self.vcs_project.db_project.source_repository.checkout_path
         )
 
     def test_source_directory_path_no_resource(self):
@@ -149,9 +144,8 @@ class VCSProjectTests(VCSTestCase):
         checkout_path = os.path.join(TEST_CHECKOUT_PATH, "no_resources_test")
         self.mock_checkout_path.return_value = checkout_path
 
-        assert_equal(
-            self.vcs_project.source_directory_path,
-            os.path.join(checkout_path, "real_resources", "templates"),
+        assert self.vcs_project.source_directory_path == os.path.join(
+            checkout_path, "real_resources", "templates"
         )
 
     def test_source_directory_scoring_templates(self):
@@ -162,9 +156,8 @@ class VCSProjectTests(VCSTestCase):
         checkout_path = os.path.join(TEST_CHECKOUT_PATH, "scoring_templates_test")
         self.mock_checkout_path.return_value = checkout_path
 
-        assert_equal(
-            self.vcs_project.source_directory_path,
-            os.path.join(checkout_path, "templates"),
+        assert self.vcs_project.source_directory_path == os.path.join(
+            checkout_path, "templates"
         )
 
     def test_source_directory_scoring_en_US(self):
@@ -175,8 +168,8 @@ class VCSProjectTests(VCSTestCase):
         checkout_path = os.path.join(TEST_CHECKOUT_PATH, "scoring_en_US_test")
         self.mock_checkout_path.return_value = checkout_path
 
-        assert_equal(
-            self.vcs_project.source_directory_path, os.path.join(checkout_path, "en-US")
+        assert self.vcs_project.source_directory_path == os.path.join(
+            checkout_path, "en-US"
         )
 
     def test_source_directory_scoring_source_files(self):
@@ -187,10 +180,9 @@ class VCSProjectTests(VCSTestCase):
         checkout_path = os.path.join(TEST_CHECKOUT_PATH, "scoring_source_files_test")
         self.mock_checkout_path.return_value = checkout_path
 
-        assert_equal(
-            self.vcs_project.source_directory_path,
-            os.path.join(checkout_path, "en"),  # en has pot files in it
-        )
+        assert self.vcs_project.source_directory_path == os.path.join(
+            checkout_path, "en"
+        )  # en has pot files in it
 
     def test_resources_parse_error(self):
         """
@@ -219,7 +211,7 @@ class VCSProjectTests(VCSTestCase):
         ):
             MockVCSResource.side_effect = vcs_resource_constructor
 
-            assert_equal(self.vcs_project.resources, {"success": "successful resource"})
+            assert self.vcs_project.resources == {"success": "successful resource"}
             mock_log.error.assert_called_with(CONTAINS("failure", "error message"))
 
     @patch.object(Repository, "checkout_path", new_callable=PropertyMock)
@@ -232,23 +224,17 @@ class VCSProjectTests(VCSTestCase):
         self.vcs_project.db_project.configuration_file = "l10n.toml"
         self.vcs_project.configuration = VCSConfiguration(self.vcs_project)
 
-        assert_equal(
-            sorted(list(self.vcs_project.resource_paths_with_config())),
-            sorted(
-                [
-                    os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/amo.pot"),
-                    os.path.join(
-                        PROJECT_CONFIG_CHECKOUT_PATH, "values/strings.properties"
-                    ),
-                    os.path.join(
-                        PROJECT_CONFIG_CHECKOUT_PATH, "values/strings_child.properties"
-                    ),
-                    os.path.join(
-                        PROJECT_CONFIG_CHECKOUT_PATH,
-                        "values/strings_reality.properties",
-                    ),
-                ]
-            ),
+        assert sorted(list(self.vcs_project.resource_paths_with_config())) == sorted(
+            [
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/amo.pot"),
+                os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/strings.properties"),
+                os.path.join(
+                    PROJECT_CONFIG_CHECKOUT_PATH, "values/strings_child.properties"
+                ),
+                os.path.join(
+                    PROJECT_CONFIG_CHECKOUT_PATH, "values/strings_reality.properties",
+                ),
+            ]
         )
 
     @patch.object(VCSProject, "source_directory_path", new_callable=PropertyMock)
@@ -272,10 +258,9 @@ class VCSProjectTests(VCSTestCase):
                 ("/root", [], ["foo.pot", "region.properties"])
             ]
 
-            assert_equal(
-                list(self.vcs_project.resource_paths_without_config()),
-                [os.path.join("/root", "foo.pot")],
-            )
+            assert list(self.vcs_project.resource_paths_without_config()) == [
+                os.path.join("/root", "foo.pot")
+            ]
 
     @patch.object(VCSProject, "source_directory_path", new_callable=PropertyMock)
     def test_resource_paths_without_config_exclude_hidden(
@@ -294,10 +279,9 @@ class VCSProjectTests(VCSTestCase):
             wraps=scandir,
             return_value=hidden_paths,
         ):
-            assert_equal(
-                list(self.vcs_project.resource_paths_without_config()),
-                ["/root/templates/foo.pot"],
-            )
+            assert list(self.vcs_project.resource_paths_without_config()) == [
+                "/root/templates/foo.pot"
+            ]
 
 
 class VCSConfigurationTests(VCSTestCase):
@@ -341,50 +325,44 @@ class VCSConfigurationTests(VCSTestCase):
         config = self.vcs_project.configuration.parsed_configuration
         locale_code = "new-locale-code"
 
-        assert_false(locale_code in config.all_locales)
+        assert locale_code not in config.all_locales
 
         self.vcs_project.configuration.add_locale(locale_code)
 
-        assert_true(locale_code in config.locales)
+        assert locale_code in config.locales
 
     def test_get_or_set_project_files_reference(self):
         self.vcs_project.configuration.add_locale = Mock()
         locale_code = None
 
-        assert_equal(
-            self.vcs_project.configuration.get_or_set_project_files(
-                locale_code,
-            ).locale,
-            locale_code,
+        assert (
+            self.vcs_project.configuration.get_or_set_project_files(locale_code,).locale
+            == locale_code
         )
 
-        assert_false(self.vcs_project.configuration.add_locale.called)
+        assert not self.vcs_project.configuration.add_locale.called
 
     def test_get_or_set_project_files_l10n(self):
         self.vcs_project.configuration.add_locale = Mock()
         locale_code = self.locale.code
 
-        assert_equal(
-            self.vcs_project.configuration.get_or_set_project_files(
-                locale_code,
-            ).locale,
-            locale_code,
+        assert (
+            self.vcs_project.configuration.get_or_set_project_files(locale_code,).locale
+            == locale_code
         )
 
-        assert_false(self.vcs_project.configuration.add_locale.called)
+        assert not self.vcs_project.configuration.add_locale.called
 
     def test_get_or_set_project_files_new_locale(self):
         self.vcs_project.configuration.add_locale = Mock()
         locale_code = "new-locale-code"
 
-        assert_equal(
-            self.vcs_project.configuration.get_or_set_project_files(
-                locale_code,
-            ).locale,
-            locale_code,
+        assert (
+            self.vcs_project.configuration.get_or_set_project_files(locale_code,).locale
+            == locale_code
         )
 
-        assert_true(self.vcs_project.configuration.add_locale.called)
+        assert self.vcs_project.configuration.add_locale.called
 
     def test_l10n_path(self):
         absolute_resource_path = os.path.join(
@@ -393,26 +371,23 @@ class VCSConfigurationTests(VCSTestCase):
 
         l10n_path = os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/amo.po",)
 
-        assert_equal(
+        assert (
             self.vcs_project.configuration.l10n_path(
                 self.locale, absolute_resource_path,
-            ),
-            l10n_path,
+            )
+            == l10n_path
         )
 
     def test_locale_resources(self):
-        assert_equal(
-            sorted(
-                self.vcs_project.configuration.locale_resources(self.locale),
-                key=lambda r: r.path,
-            ),
-            [
-                self.resource_amo,
-                self.resource_strings,
-                self.resource_strings_child,
-                self.resource_strings_reality,
-            ],
-        )
+        assert sorted(
+            self.vcs_project.configuration.locale_resources(self.locale),
+            key=lambda r: r.path,
+        ) == [
+            self.resource_amo,
+            self.resource_strings,
+            self.resource_strings_child,
+            self.resource_strings_reality,
+        ]
 
 
 class GrandFatheredVCSConfigurationTest(VCSConfigurationTests):
@@ -422,18 +397,15 @@ class GrandFatheredVCSConfigurationTest(VCSConfigurationTests):
 
     def test_locale_resources(self):
         # no resource_strings, excluded for `fr`
-        assert_equal(
-            sorted(
-                self.vcs_project.configuration.locale_resources(self.locale),
-                key=lambda r: r.path,
-            ),
-            [
-                self.resource_amo,
-                # self.resource_strings,
-                self.resource_strings_child,
-                self.resource_strings_reality,
-            ],
-        )
+        assert sorted(
+            self.vcs_project.configuration.locale_resources(self.locale),
+            key=lambda r: r.path,
+        ) == [
+            self.resource_amo,
+            # self.resource_strings,
+            self.resource_strings_child,
+            self.resource_strings_reality,
+        ]
 
 
 def setUpResource(self):
@@ -465,9 +437,8 @@ class VCSConfigurationFullLocaleTests(VCSTestCase):
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
         r = VCSResource(self.vcs_project, "values/strings.properties", [self.locale])
-        assert_equal(
-            r.files[self.locale].path,
-            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings.properties"),
+        assert r.files[self.locale].path == os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings.properties"
         )
 
     def test_vcs_resource_path(self):
@@ -475,11 +446,8 @@ class VCSConfigurationFullLocaleTests(VCSTestCase):
         r = VCSResource(
             self.vcs_project, "values/strings_reality.properties", [self.locale]
         )
-        assert_equal(
-            r.files[self.locale].path,
-            os.path.join(
-                PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings_reality.properties"
-            ),
+        assert r.files[self.locale].path == os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings_reality.properties"
         )
 
     def test_vcs_resource_child(self):
@@ -487,11 +455,8 @@ class VCSConfigurationFullLocaleTests(VCSTestCase):
         r = VCSResource(
             self.vcs_project, "values/strings_child.properties", [self.locale]
         )
-        assert_equal(
-            r.files[self.locale].path,
-            os.path.join(
-                PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings_child.properties"
-            ),
+        assert r.files[self.locale].path == os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/strings_child.properties"
         )
 
 
@@ -504,9 +469,8 @@ class VCSConfigurationPartialLocaleTests(VCSTestCase):
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
         r = VCSResource(self.vcs_project, "values/strings.properties", [self.locale])
-        assert_equal(
-            r.files[self.locale].path,
-            os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values-sl/strings.properties"),
+        assert r.files[self.locale].path == os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-sl/strings.properties"
         )
 
     def test_vcs_resource_path(self):
@@ -514,14 +478,14 @@ class VCSConfigurationPartialLocaleTests(VCSTestCase):
         r = VCSResource(
             self.vcs_project, "values/strings_reality.properties", [self.locale]
         )
-        assert_equal(r.files, {})
+        assert r.files == {}
 
     def test_vcs_resource_child(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
         r = VCSResource(
             self.vcs_project, "values/strings_child.properties", [self.locale]
         )
-        assert_equal(r.files, {})
+        assert r.files == {}
 
 
 class VCSEntityTests(VCSTestCase):
@@ -535,9 +499,9 @@ class VCSEntityTests(VCSTestCase):
         entity = VCSEntityFactory()
         entity.translations = {"empty": empty_translation, "full": full_translation}
 
-        assert_false(entity.has_translation_for("missing"))
-        assert_true(entity.has_translation_for("empty"))
-        assert_true(entity.has_translation_for("full"))
+        assert not entity.has_translation_for("missing")
+        assert entity.has_translation_for("empty")
+        assert entity.has_translation_for("full")
 
 
 class DownloadTOMLParserTests(TestCase):

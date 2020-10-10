@@ -6,12 +6,7 @@ import tempfile
 
 from textwrap import dedent
 
-from django_nose.tools import (
-    assert_equal,
-    assert_false,
-    assert_raises,
-    assert_true,
-)
+import pytest
 from pontoon.base.tests import (
     assert_attributes_equal,
     create_named_tempfile,
@@ -52,7 +47,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         given, raise a IOError.
         """
         path = self.get_nonexistant_file_path()
-        with assert_raises(IOError):
+        with pytest.raises(IOError):
             ftl.FTLResource(path, locale=None, source_resource=None)
 
     def test_init_missing_resource_with_source(self):
@@ -63,9 +58,8 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        assert_equal(len(translated_resource.translations), 1)
-        translation = translated_resource.translations[0]
-        assert_equal(translation.strings, {})
+        assert len(translated_resource.translations) == 1
+        assert translated_resource.translations[0].strings == {}
 
     def test_save_create_dirs(self):
         """
@@ -77,9 +71,9 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
 
         translated_resource.translations[0].strings = {None: "New Translated String"}
 
-        assert_false(os.path.exists(path))
+        assert not os.path.exists(path)
         translated_resource.save(LocaleFactory.create())
-        assert_true(os.path.exists(path))
+        assert os.path.exists(path)
 
     def test_parse_with_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
@@ -88,10 +82,10 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         )
         path = self.get_nonexistant_file_path()
         obj = ftl.parse(path, source_path=source_path, locale=None)
-        assert_equal(obj.path, path)
-        assert_equal(obj.locale, None)
-        assert_equal(obj.source_resource.path, source_path)
-        assert_equal(obj.source_resource.locale, None)
+        assert obj.path == path
+        assert obj.locale is None
+        assert obj.source_resource.path == source_path
+        assert obj.source_resource.locale is None
 
     def test_parse_with_no_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
@@ -99,9 +93,9 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
         )
         obj = ftl.parse(path, source_path=None, locale=None)
-        assert_equal(obj.path, path)
-        assert_equal(obj.source_resource, None)
-        assert_equal(obj.locale, None)
+        assert obj.path == path
+        assert obj.source_resource is None
+        assert obj.locale is None
 
 
 BASE_FTL_FILE = """
