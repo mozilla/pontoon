@@ -4,7 +4,7 @@ import os.path
 import tempfile
 from textwrap import dedent
 
-from django_nose.tools import assert_equal, assert_raises, assert_true
+import pytest
 from silme.format.dtd import FormatParser as DTDParser
 
 from pontoon.base.tests import (
@@ -24,7 +24,7 @@ class SilmeResourceTests(TestCase):
         is given, raise an IOError.
         """
         path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
-        with assert_raises(IOError):
+        with pytest.raises(IOError):
             silme.SilmeResource(DTDParser, path, source_resource=None)
 
     def create_nonexistant_resource(self, path):
@@ -47,9 +47,8 @@ class SilmeResourceTests(TestCase):
         path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
         translated_resource = self.create_nonexistant_resource(path)
 
-        assert_equal(len(translated_resource.translations), 1)
-        translation = translated_resource.translations[0]
-        assert_equal(translation.strings, {})
+        assert len(translated_resource.translations) == 1
+        assert translated_resource.translations[0].strings == {}
 
     def test_save_create_dirs(self):
         """
@@ -62,7 +61,7 @@ class SilmeResourceTests(TestCase):
         translated_resource.translations[0].strings = {None: "New Translated String"}
         translated_resource.save(LocaleFactory.create())
 
-        assert_true(os.path.exists(path))
+        assert os.path.exists(path)
 
 
 BASE_DTD_FILE = """
@@ -786,7 +785,7 @@ class IncTests(FormatTestsMixin, TestCase):
         )
 
         path, resource = self.parse_string(input_string)
-        assert_equal(len(resource.translations), 2)
+        assert len(resource.translations) == 2
         assert_attributes_equal(
             resource.translations[1],
             key="MOZ_LANGPACK_CONTRIBUTORS",
@@ -814,7 +813,7 @@ class IncTests(FormatTestsMixin, TestCase):
         )
 
         path, resource = self.parse_string(input_string, source_string=source_string)
-        assert_equal(len(resource.translations), 2)
+        assert len(resource.translations) == 2
         assert_attributes_equal(
             resource.translations[1],
             key="MOZ_LANGPACK_CONTRIBUTORS",

@@ -3,11 +3,6 @@ from __future__ import absolute_import
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from django_nose.tools import (
-    assert_equal,
-    assert_code,
-)
-
 from mock import patch
 
 from pontoon.base.tests import (
@@ -24,7 +19,8 @@ class ProjectTests(ViewTestCase):
         """
         Checks if view is returning error when project slug is invalid.
         """
-        assert_code(self.client.get("/projects/project_doesnt_exist/"), 404)
+        response = self.client.get("/projects/project_doesnt_exist/")
+        assert response.status_code == 404
 
     def test_project_view(self):
         """
@@ -35,7 +31,7 @@ class ProjectTests(ViewTestCase):
 
         with patch("pontoon.projects.views.render", wraps=render) as mock_render:
             self.client.get("/projects/{}/".format(project.slug))
-            assert_equal(mock_render.call_args[0][2]["project"], project)
+            assert mock_render.call_args[0][2]["project"] == project
 
 
 class ProjectContributorsTests(ViewTestCase):
@@ -43,9 +39,8 @@ class ProjectContributorsTests(ViewTestCase):
         """
         Checks if view handles invalid project.
         """
-        assert_code(
-            self.client.get("/projects/project_doesnt_exist/contributors/"), 404
-        )
+        response = self.client.get("/projects/project_doesnt_exist/contributors/")
+        assert response.status_code == 404
 
     def test_project_top_contributors(self):
         """
@@ -71,18 +66,16 @@ class ProjectContributorsTests(ViewTestCase):
                 "/projects/{}/ajax/contributors/".format(first_project.slug),
                 HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
-            assert_equal(mock_render.call_args[0][0]["project"], first_project)
-            assert_equal(
-                list(mock_render.call_args[0][0]["contributors"]),
-                [first_project_contributor],
-            )
+            assert mock_render.call_args[0][0]["project"] == first_project
+            assert list(mock_render.call_args[0][0]["contributors"]) == [
+                first_project_contributor
+            ]
 
             self.client.get(
                 "/projects/{}/ajax/contributors/".format(second_project.slug),
                 HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
-            assert_equal(mock_render.call_args[0][0]["project"], second_project)
-            assert_equal(
-                list(mock_render.call_args[0][0]["contributors"]),
-                [second_project_contributor],
-            )
+            assert mock_render.call_args[0][0]["project"] == second_project
+            assert list(mock_render.call_args[0][0]["contributors"]) == [
+                second_project_contributor
+            ]

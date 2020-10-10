@@ -13,7 +13,6 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase as BaseTestCase, Client as BaseClient
 
 import factory
-from django_nose.tools import assert_equal
 from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory
 from mock import patch
@@ -207,8 +206,8 @@ def assert_redirects(response, expected_url, status_code=302, host=None, secure=
     """
     if host is None:
         host = "{}://{}".format("https" if secure else "http", host or "testserver")
-    assert_equal(response.status_code, status_code)
-    assert_equal(response["Location"], host + expected_url)
+    assert response.status_code == status_code
+    assert response["Location"] == host + expected_url
 
 
 def assert_attributes_equal(original, **expected_attrs):
@@ -221,14 +220,10 @@ def assert_attributes_equal(original, **expected_attrs):
 
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
-        assert_equal(
-            original_value,
-            value,
-            (
-                "Attribute `{key}` does not match: {original_value} != {value}".format(
-                    key=key, original_value=original_value, value=value
-                )
-            ),
+        assert (
+            original_value == value
+        ), "Attribute `{key}` does not match: {original_value} != {value}".format(
+            key=key, original_value=original_value, value=value
         )
 
 
@@ -309,7 +304,7 @@ def assert_json(response, expected_obj):
     """
     Checks if response contains a expected json object.
     """
-    assert_equal(json.loads(response.content), expected_obj)
+    assert json.loads(response.content) == expected_obj
 
 
 @contextmanager

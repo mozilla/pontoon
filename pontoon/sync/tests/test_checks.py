@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 from mock import patch, PropertyMock
 
-from django_nose.tools import assert_equal
-
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import TranslationFactory
 from pontoon.checks.models import (
@@ -32,9 +30,9 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
     def test_bulk_check_translations_no_translations(self):
         self.mock_changed_translations.return_value = []
 
-        assert_equal(self.changeset.bulk_check_translations(), set())
-        assert_equal(Error.objects.count(), 0)
-        assert_equal(Warning.objects.count(), 0)
+        assert self.changeset.bulk_check_translations() == set()
+        assert not Error.objects.exists()
+        assert not Warning.objects.exists()
 
     def test_bulk_check_valid_translations(self):
         translation1, translation2 = TranslationFactory.create_batch(
@@ -49,12 +47,12 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
             translation1,
             translation2,
         ]
-        assert_equal(
-            self.changeset.bulk_check_translations(),
-            {translation1.pk, translation2.pk},
-        )
-        assert_equal(Error.objects.count(), 0)
-        assert_equal(Warning.objects.count(), 0)
+        assert self.changeset.bulk_check_translations() == {
+            translation1.pk,
+            translation2.pk,
+        }
+        assert not Error.objects.exists()
+        assert not Warning.objects.exists()
 
     def test_bulk_check_invalid_translations(self):
         """
@@ -83,13 +81,13 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
 
         valid_translations = self.changeset.bulk_check_translations()
 
-        assert_equal(valid_translations, {valid_translation.pk})
+        assert valid_translations == {valid_translation.pk}
 
         (error,) = Error.objects.all()
 
-        assert_equal(error.library, "p")
-        assert_equal(error.message, "Newline characters are not allowed")
-        assert_equal(error.translation, invalid_translation)
+        assert error.library == "p"
+        assert error.message == "Newline characters are not allowed"
+        assert error.translation == invalid_translation
 
         self.changeset.translations_to_update = {
             valid_translation.pk: valid_translation
@@ -97,5 +95,5 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
 
         self.changeset.bulk_create_translation_memory_entries(valid_translations)
 
-        assert_equal(invalid_translation.memory_entries.count(), 0)
-        assert_equal(valid_translation.memory_entries.count(), 1)
+        assert not invalid_translation.memory_entries.exists()
+        assert valid_translation.memory_entries.count() == 1

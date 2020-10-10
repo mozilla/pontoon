@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import os.path
 from textwrap import dedent
 
-from django_nose.tools import assert_equal, assert_raises
+import pytest
 
 from pontoon.base.tests import assert_attributes_equal, TestCase
 from pontoon.sync.exceptions import ParseError
@@ -91,7 +91,7 @@ class LangTests(FormatTestsMixin, TestCase):
         """
         current_dir = os.path.dirname(__file__)
         resource = lang.parse(os.path.join(current_dir, "bom.lang"))
-        assert_equal(len(resource.translations), 1)
+        assert len(resource.translations) == 1
         assert_attributes_equal(
             resource.translations[0],
             source_string="Source String",
@@ -116,16 +116,16 @@ class LangTests(FormatTestsMixin, TestCase):
             )
         )
 
-        assert_equal(resource.children[1].content, "1 hash")
-        assert_equal(resource.children[2].content, "2 hash")
-        assert_equal(resource.children[3].content, "3 hash")
-        assert_equal(resource.translations[0].comments, ["1 hash", "2 hash", "3 hash"])
+        assert resource.children[1].content == "1 hash"
+        assert resource.children[2].content == "2 hash"
+        assert resource.children[3].content == "3 hash"
+        assert resource.translations[0].comments == ["1 hash", "2 hash", "3 hash"]
 
     def test_parse_eof(self):
         """Langfiles do not need to end in a newline."""
         path, resource = self.parse_string(";Source\nTranslation")
-        assert_equal(resource.translations[0].source_string, "Source")
-        assert_equal(resource.translations[0].strings, {None: "Translation"})
+        assert resource.translations[0].source_string == "Source"
+        assert resource.translations[0].strings == {None: "Translation"}
 
     def test_preserve_comment_hashes(self):
         """
@@ -158,7 +158,7 @@ class LangTests(FormatTestsMixin, TestCase):
         If an entity has an empty translation, parse should raise a
         ParseError.
         """
-        with assert_raises(ParseError):
+        with pytest.raises(ParseError):
             self.parse_string(
                 dedent(
                     """

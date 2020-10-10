@@ -12,7 +12,7 @@ from six.moves import range
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.timezone import now, make_aware
-from django_nose.tools import assert_equal, assert_true, assert_code, assert_contains
+from pytest_django.asserts import assertContains
 
 from pontoon.base.models import User
 from pontoon.base.tests import (
@@ -43,29 +43,29 @@ class ContributorProfileTests(UserTestCase):
     def test_invalid_first_name(self):
         response = self.client.post(self.url, {"first_name": '<aa>"\'"'})
 
-        assert_contains(response, "Enter a valid value.")
+        assertContains(response, "Enter a valid value.")
 
     def test_invalid_email(self):
         response = self.client.post(self.url, {"email": "usermail"})
 
-        assert_contains(response, "Enter a valid email address.")
+        assertContains(response, "Enter a valid email address.")
 
     def test_missing_profile_fields(self):
         response = self.client.post(self.url, {})
 
-        assert_contains(response, "This field is required.", count=2)
+        assertContains(response, "This field is required.", count=2)
 
     def test_valid_first_name(self):
         response = self.client.post(
             self.url, {"first_name": "contributor", "email": self.user.email}
         )
 
-        assert_contains(response, "Settings saved.")
+        assertContains(response, "Settings saved.")
 
     def test_user_locales_order(self):
         locale1, locale2, locale3 = LocaleFactory.create_batch(3)
         response = self.client.get(self.url)
-        assert_equal(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post(
             "/settings/",
@@ -76,11 +76,12 @@ class ContributorProfileTests(UserTestCase):
             },
         )
 
-        assert_equal(response.status_code, 200)
-        assert_equal(
-            list(User.objects.get(pk=self.user.pk).profile.sorted_locales),
-            [locale2, locale1, locale3],
-        )
+        assert response.status_code == 200
+        assert list(User.objects.get(pk=self.user.pk).profile.sorted_locales) == [
+            locale2,
+            locale1,
+            locale3,
+        ]
         # Test if you can clear all locales
         response = self.client.post(
             "/settings/",
@@ -90,8 +91,8 @@ class ContributorProfileTests(UserTestCase):
                 "locales_order": "",
             },
         )
-        assert_equal(response.status_code, 200)
-        assert_equal(list(User.objects.get(pk=self.user.pk).profile.sorted_locales), [])
+        assert response.status_code == 200
+        assert list(User.objects.get(pk=self.user.pk).profile.sorted_locales) == []
 
         # Test if form handles duplicated locales
         response = self.client.post(
@@ -102,11 +103,11 @@ class ContributorProfileTests(UserTestCase):
                 "locales_order": commajoin(locale1.pk, locale2.pk, locale2.pk,),
             },
         )
-        assert_equal(response.status_code, 200)
-        assert_equal(
-            list(User.objects.get(pk=self.user.pk).profile.sorted_locales),
-            [locale1, locale2],
-        )
+        assert response.status_code, 200
+        assert list(User.objects.get(pk=self.user.pk).profile.sorted_locales) == [
+            locale1,
+            locale2,
+        ]
 
 
 class ContributorProfileViewTests(UserTestCase):
@@ -123,25 +124,25 @@ class ContributorProfileViewTests(UserTestCase):
         """Users should be able to retrieve contributor's profile by its username."""
         self.client.get("/contributors/{}/".format(self.user.username))
 
-        assert_equal(self.mock_render.call_args[0][2]["contributor"], self.user)
+        assert self.mock_render.call_args[0][2]["contributor"] == self.user
 
     def test_contributor_profile_by_email(self):
         """Check if we can access contributor profile by its email."""
         self.client.get("/contributors/{}/".format(self.user.email))
 
-        assert_equal(self.mock_render.call_args[0][2]["contributor"], self.user)
+        assert self.mock_render.call_args[0][2]["contributor"] == self.user
 
     def test_logged_user_profile(self):
         """Logged user should be able to re"""
         self.client.get("/profile/")
 
-        assert_equal(self.mock_render.call_args[0][2]["contributor"], self.user)
+        assert self.mock_render.call_args[0][2]["contributor"] == self.user
 
     def test_unlogged_user_profile(self):
         """Unlogged users shouldn't have access to edit any profile."""
         self.client.logout()
 
-        assert_equal(self.client.get("/profile/")["Location"], "/403")
+        assert self.client.get("/profile/")["Location"] == "/403"
 
 
 class ContributorTimelineViewTests(UserTestCase):
@@ -181,31 +182,28 @@ class ContributorTimelineViewTests(UserTestCase):
         """Backend should return events filtered by page number requested by user."""
         self.client.get("/contributors/{}/timeline/?page=2".format(self.user.username))
 
-        assert_equal(
-            self.mock_render.call_args[0][2]["events"],
-            [
-                {
-                    "date": dt,
-                    "type": "translation",
-                    "count": count,
-                    "project": self.project,
-                    "translation": translations[0][0],
-                }
-                for (dt, count), translations in list(self.translations.items())[10:20]
-            ],
-        )
+        assert self.mock_render.call_args[0][2]["events"] == [
+            {
+                "date": dt,
+                "type": "translation",
+                "count": count,
+                "project": self.project,
+                "translation": translations[0][0],
+            }
+            for (dt, count), translations in list(self.translations.items())[10:20]
+        ]
 
     def test_timeline_invalid_page(self):
         """Backend should return 404 error when user requests an invalid/empty page."""
-        resp = self.client.get(
+        response = self.client.get(
             "/contributors/{}/timeline/?page=45".format(self.user.username)
         )
-        assert_code(resp, 404)
+        assert response.status_code == 404
 
-        resp = self.client.get(
+        response = self.client.get(
             "/contributors/{}/timeline/?page=-aa45".format(self.user.username)
         )
-        assert_code(resp, 404)
+        assert response.status_code == 404
 
     def test_non_active_contributor(self):
         """Test if backend is able return events for a user without contributions."""
@@ -213,19 +211,18 @@ class ContributorTimelineViewTests(UserTestCase):
         self.client.get(
             "/contributors/{}/timeline/".format(nonactive_contributor.username)
         )
-        assert_equal(
-            self.mock_render.call_args[0][2]["events"],
-            [{"date": nonactive_contributor.date_joined, "type": "join"}],
-        )
+        assert self.mock_render.call_args[0][2]["events"] == [
+            {"date": nonactive_contributor.date_joined, "type": "join"}
+        ]
 
     def test_timeline_join(self):
         """Last page of results should include informations about the when user joined pontoon."""
         self.client.get("/contributors/{}/timeline/?page=3".format(self.user.username))
 
-        assert_equal(
-            self.mock_render.call_args[0][2]["events"][-1],
-            {"date": self.user.date_joined, "type": "join"},
-        )
+        assert self.mock_render.call_args[0][2]["events"][-1] == {
+            "date": self.user.date_joined,
+            "type": "join",
+        }
 
 
 class ContributorsTests(TestCase):
@@ -249,8 +246,8 @@ class ContributorsTests(TestCase):
         Calling the top contributors should result in period being None.
         """
         self.client.get("/contributors/")
-        assert_true(self.mock_render.call_args[0][0]["period"] is None)
-        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
+        assert self.mock_render.call_args[0][0]["period"] is None
+        assert self.mock_users_with_translations_counts.call_args[0][0] is None
 
     def test_invalid_period(self):
         """
@@ -258,13 +255,13 @@ class ContributorsTests(TestCase):
         """
         # If period parameter is invalid value
         self.client.get("/contributors/?period=invalidperiod")
-        assert_true(self.mock_render.call_args[0][0]["period"] is None)
-        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
+        assert self.mock_render.call_args[0][0]["period"] is None
+        assert self.mock_users_with_translations_counts.call_args[0][0] is None
 
         # Period shouldn't be negative integer
         self.client.get("/contributors/?period=-6")
-        assert_true(self.mock_render.call_args[0][0]["period"] is None)
-        assert_true(self.mock_users_with_translations_counts.call_args[0][0] is None)
+        assert self.mock_render.call_args[0][0]["period"] is None
+        assert self.mock_users_with_translations_counts.call_args[0][0] is None
 
     def test_given_period(self):
         """
@@ -276,8 +273,7 @@ class ContributorsTests(TestCase):
             return_value=aware_datetime(2015, 7, 5),
         ):
             self.client.get("/contributors/?period=6")
-            assert_equal(self.mock_render.call_args[0][0]["period"], 6)
-            assert_equal(
-                self.mock_users_with_translations_counts.call_args[0][0],
-                aware_datetime(2015, 1, 5),
-            )
+            assert self.mock_render.call_args[0][0]["period"] == 6
+            assert self.mock_users_with_translations_counts.call_args[0][
+                0
+            ] == aware_datetime(2015, 1, 5)
