@@ -105,19 +105,14 @@ vine==1.3.0 \
     --hash=sha256:ea4947cc56d1fd6f2095c8d543ee25dad966f78692528e68b4fada11ba3f98af
 
 # >=4.4.0,<5.0 celery
-kombu==4.6.6 \
-    --hash=sha256:1760b54b1d15a547c9a26d3598a1c8cdaf2436386ac1f5561934bc8a3cbbbd86 \
-    --hash=sha256:e7465aa85a1db889116819f08c5de29520d2fa103324dcdca5e90af345f01771
+kombu==4.6.11 \
+    --hash=sha256:be48cdffb54a2194d93ad6533d73f69408486483d189fe9f5990ee24255b0e0a \
+    --hash=sha256:ca1b45faac8c0b18493d02a8571792f3c40291cf2bcf1f55afed3d8f3aa7ba74
 
-# >=2.5.2,<2.6 kombu
-amqp==2.5.2 \
-    --hash=sha256:6e649ca13a7df3faacdc8bbb280aa9a6602d22fd9d545336077e573a1f4ff3b8 \
-    --hash=sha256:77f1aef9410698d20eaeac5b73a87817365f457a507d82edf292e12cbb83b08d
-
-# >=0.18 kombu
-importlib-metadata==0.23 \
-    --hash=sha256:aa18d7378b00b40847790e7c27e11673d7fed219354109d0e7b9e5b25dc3ad26 \
-    --hash=sha256:d5f18a79777f3aa179c145737780282e27b508fc8fd688cb17c7a813e8bd39af
+# >=2.6.0,<2.7 kombu
+amqp==2.6.1 \
+    --hash=sha256:70cdb10628468ff14e57ec2f751c7aa9e48e7e3651cfd62d431213c0c4e58f21 \
+    --hash=sha256:aa7f313fb887c91f15474c1229907a04dac0b8135822d6603437803424c0aa59
 
 # >=0.5 importlib-metadata
 zipp==0.6.0 \
@@ -137,10 +132,6 @@ contextlib2==0.6.0.post1 \
 pathlib2==2.3.5 \
     --hash=sha256:0ec8205a157c80d7acc301c0b18fbd5d44fe655968f5d947b6ecef5290fc35db \
     --hash=sha256:6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868
-
-# >=0.3.3 kombu
-anyjson==0.3.3 \
-    --hash=sha256:37812d863c9ad3e35c0734c42e0bf0320ce8c3bed82cd20ad54cb34d158157ba
 
 # >=2.2.5 django-allauth
 python-openid==2.2.5 \
@@ -287,6 +278,8 @@ diff-match-patch==20121119 \
     --hash=sha256:9dba5611fbf27893347349fd51cc1911cb403682a7163373adacc565d11e2e4c
 
 # caighdean
+# >=2.7.9, codecov
+# >=2.3,<3, requests_mock
 requests==2.21.0 \
     --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b
 
@@ -359,10 +352,20 @@ blessings==1.6 \
 snowballstemmer==1.2.1 \
     --hash=sha256:9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89
 
-# >=1.4.33 pytest
-py==1.4.34 \
-    --hash=sha256:2ccb79b01769d99115aa600d7eed99f524bf752bba8f041dc1c184853514655a \
-    --hash=sha256:0f2d585d22050e90c7d293b6451c83db097df77871974d90efd5a30dc12fcde3
+# >=1.8.2 pytest
+py==1.9.0 \
+    --hash=sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2 \
+    --hash=sha256:9ca6883ce56b4e8da7e79ac18787889fa5206c79dcc67fb065376cd2fe03f342
+
+# <1.0,>=0.12 pytest
+pluggy==0.13.1 \
+    --hash=sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0 \
+    --hash=sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d
+
+# pytest
+iniconfig==1.0.1 \
+    --hash=sha256:80cf40c597eb564e86346103f609d74efce0f6b4d4f30ec8ce9e2c26411ba437 \
+    --hash=sha256:e5f92f89355a67de0595932a6c6c02ab4afddc6fcdc0bfc5becd0d60884d3f69
 
 # >=0.10.1 wsgi-sslify
 Werkzeug==0.15.5 \
