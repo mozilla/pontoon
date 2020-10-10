@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from textwrap import dedent
 
-from django_nose.tools import assert_equal, assert_true
 from mock import patch
 
 from pontoon.sync.vcs.repositories import VCSRepository
@@ -21,9 +20,10 @@ class VCSRepositoryTests(TestCase):
             "pontoon.sync.vcs.repositories.log"
         ) as mock_log:
             mock_execute.return_value = 1, "output", "stderr"
-            assert_equal(
-                repo.execute("command", cwd="working_dir", log_errors=True),
-                (1, "output", "stderr"),
+            assert repo.execute("command", cwd="working_dir", log_errors=True) == (
+                1,
+                "output",
+                "stderr",
             )
             mock_log.error.assert_called_with(
                 CONTAINS("stderr", "command", "working_dir")
@@ -61,34 +61,36 @@ class VCSChangedFilesTests(object):
             self.vcsrepository, "execute", side_effect=self.execute_success
         ) as mock_execute:
             changed_files = self.vcsrepository.get_changed_files("/path", "1")
-            assert_true(mock_execute.called)
-            assert_equal(
-                changed_files, ["changed_file1.properties", "changed_file2.properties"]
-            )
+            assert mock_execute.called
+            assert changed_files == [
+                "changed_file1.properties",
+                "changed_file2.properties",
+            ]
 
     def test_changed_files_error(self):
         with patch.object(
             self.vcsrepository, "execute", side_effect=self.execute_failure
         ) as mock_execute:
-            assert_equal(self.vcsrepository.get_changed_files("path", "1"), [])
-            assert_true(mock_execute.called)
+            assert self.vcsrepository.get_changed_files("path", "1") == []
+            assert mock_execute.called
 
     def test_removed_files(self):
         with patch.object(
             self.vcsrepository, "execute", side_effect=self.execute_success
         ) as mock_execute:
             removed_files = self.vcsrepository.get_removed_files("/path", "1")
-            assert_true(mock_execute.called)
-            assert_equal(
-                removed_files, ["removed_file1.properties", "removed_file2.properties"]
-            )
+            assert mock_execute.called
+            assert removed_files == [
+                "removed_file1.properties",
+                "removed_file2.properties",
+            ]
 
     def test_removed_files_error(self):
         with patch.object(
             self.vcsrepository, "execute", side_effect=self.execute_failure
         ) as mock_execute:
-            assert_equal(self.vcsrepository.get_removed_files("path", "1"), [])
-            assert_true(mock_execute.called)
+            assert self.vcsrepository.get_removed_files("path", "1") == []
+            assert mock_execute.called
 
 
 class GitChangedFilesTest(VCSChangedFilesTests, TestCase):

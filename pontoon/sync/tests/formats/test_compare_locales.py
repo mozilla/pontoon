@@ -6,12 +6,7 @@ import tempfile
 
 from textwrap import dedent
 
-from django_nose.tools import (
-    assert_equal,
-    assert_false,
-    assert_raises,
-    assert_true,
-)
+import pytest
 
 from pontoon.base.tests import (
     create_named_tempfile,
@@ -62,7 +57,7 @@ class CompareLocalesResourceTests(TestCase):
         raise a ParseError.
         """
         path = self.get_invalid_file_path()
-        with assert_raises(ParseError):
+        with pytest.raises(ParseError):
             compare_locales.CompareLocalesResource(path, source_resource=None)
 
     def test_init_missing_resource(self):
@@ -71,7 +66,7 @@ class CompareLocalesResourceTests(TestCase):
         given, raise a ParseError.
         """
         path = self.get_nonexistant_file_path()
-        with assert_raises(ParseError):
+        with pytest.raises(ParseError):
             compare_locales.CompareLocalesResource(path, source_resource=None)
 
     def test_init_missing_resource_with_source(self):
@@ -82,9 +77,8 @@ class CompareLocalesResourceTests(TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        assert_equal(len(translated_resource.translations), 1)
-        translation = translated_resource.translations[0]
-        assert_equal(translation.strings, {})
+        assert len(translated_resource.translations) == 1
+        assert translated_resource.translations[0].strings == {}
 
     def test_save_create_dirs(self):
         """
@@ -96,9 +90,9 @@ class CompareLocalesResourceTests(TestCase):
 
         translated_resource.translations[0].strings = {None: "New Translated String"}
 
-        assert_false(os.path.exists(path))
+        assert not os.path.exists(path)
         translated_resource.save(LocaleFactory.create())
-        assert_true(os.path.exists(path))
+        assert os.path.exists(path)
 
 
 BASE_ANDROID_XML_FILE = """<?xml version="1.0" encoding="utf-8"?>

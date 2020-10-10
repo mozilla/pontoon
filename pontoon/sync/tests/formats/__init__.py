@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-from django_nose.tools import assert_equal
-
 from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
@@ -85,9 +83,7 @@ class FormatTestsMixin(object):
         )
 
         if self.supports_source:
-            assert_equal(
-                resource.translations[translation_index].source, [("file.py", "1")]
-            )
+            assert resource.translations[translation_index].source == [("file.py", "1")]
 
         if self.supports_source_string:
             assert_attributes_equal(
