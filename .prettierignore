@@ -13,6 +13,7 @@
 *.env.development.local
 *.env.test.local
 *.env.production.local
+*.html
 
 **/package.json*
 npm-debug.log*
