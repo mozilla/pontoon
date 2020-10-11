@@ -193,7 +193,7 @@ export default function AddComment(props: Props) {
             setScrollPosition(element.scrollTop);
         };
 
-        const historyScroll = document.querySelector('.main-column');
+        const historyScroll = document.querySelector('#history-list');
         const teamsScroll = document.querySelector('#react-tabs-3');
 
         if (!historyScroll && !teamsScroll) {
