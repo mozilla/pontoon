@@ -1,6 +1,7 @@
 .metadata {
     background-color: #3f4752;
     color: #aaa;
+    flex-shrink: 0;
     font-size: 12px;
     font-style: italic;
     height: 20%;
