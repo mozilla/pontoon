@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import unittest
 from graphql import Source, parse as parse_source
 
 from pontoon.api.util import get_fields
@@ -26,217 +25,207 @@ def parse_graphql_query(query):
     return document.definitions
 
 
-class TestUtil(unittest.TestCase):
-    def test_get_fields_one(self):
-        input = """
-            query {
-                projects {
-                    name
-                }
+def test_get_fields_one():
+    input = """
+        query {
+            projects {
+                name
             }
-        """
+        }
+    """
 
-        (query,) = parse_graphql_query(input)
-        info = MockResolveInfo(query)
+    (query,) = parse_graphql_query(input)
+    info = MockResolveInfo(query)
 
-        self.assertEqual(get_fields(info), ["projects", "projects.name"])
+    assert get_fields(info) == ["projects", "projects.name"]
 
-    def test_get_fields_many(self):
-        input = """
-            query {
-                projects {
-                    name
-                    slug
-                }
+
+def test_get_fields_many():
+    input = """
+        query {
+            projects {
+                name
+                slug
             }
-        """
+        }
+    """
 
-        (query,) = parse_graphql_query(input)
-        info = MockResolveInfo(query)
+    (query,) = parse_graphql_query(input)
+    info = MockResolveInfo(query)
 
-        self.assertEqual(
-            get_fields(info), ["projects", "projects.name", "projects.slug"]
-        )
+    assert get_fields(info) == ["projects", "projects.name", "projects.slug"]
 
-    def test_get_fields_fragment(self):
-        input = """
-            query {
-                projects {
-                    name
-                    slug
-                    ...stats
-                }
+
+def test_get_fields_fragment():
+    input = """
+        query {
+            projects {
+                name
+                slug
+                ...stats
             }
+        }
 
-            fragment stats on Project {
-                totalStrings
-                missingStrings
-            }
-        """
+        fragment stats on Project {
+            totalStrings
+            missingStrings
+        }
+    """
 
-        query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {"stats": frag})
+    query, frag = parse_graphql_query(input)
+    info = MockResolveInfo(query, {"stats": frag})
 
-        self.assertEqual(
-            get_fields(info),
-            [
-                "projects",
-                "projects.name",
-                "projects.slug",
-                "projects.totalStrings",
-                "projects.missingStrings",
-            ],
-        )
+    assert get_fields(info) == [
+        "projects",
+        "projects.name",
+        "projects.slug",
+        "projects.totalStrings",
+        "projects.missingStrings",
+    ]
 
-    def test_get_fields_cyclic(self):
-        input = """
-            query {
-                projects {
-                    name
-                    slug
-                    localizations {
-                        locale {
-                            localizations {
-                                totalStrings
-                            }
-                        }
-                    }
-                }
-            }
-        """
 
-        (query,) = parse_graphql_query(input)
-        info = MockResolveInfo(query)
-
-        self.assertEqual(
-            get_fields(info),
-            [
-                "projects",
-                "projects.name",
-                "projects.slug",
-                "projects.localizations",
-                "projects.localizations.locale",
-                "projects.localizations.locale.localizations",
-                "projects.localizations.locale.localizations.totalStrings",
-            ],
-        )
-
-    def test_get_fields_cyclic_with_fragment(self):
-        input = """
-            query {
-                projects {
-                    name
-                    slug
-                    localizations {
-                        locale {
-                            localizations {
-                                ...stats
-                            }
-                        }
-                    }
-                }
-            }
-
-            fragment stats on ProjectLocale {
-                totalStrings
-                missingStrings
-            }
-        """
-
-        query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {"stats": frag})
-
-        self.assertEqual(
-            get_fields(info),
-            [
-                "projects",
-                "projects.name",
-                "projects.slug",
-                "projects.localizations",
-                "projects.localizations.locale",
-                "projects.localizations.locale.localizations",
-                "projects.localizations.locale.localizations.totalStrings",
-                "projects.localizations.locale.localizations.missingStrings",
-            ],
-        )
-
-    def test_get_fields_cyclic_in_fragment(self):
-        input = """
-            query {
-                projects {
-                    name
-                    slug
-                    localizations {
-                        locale {
-                            ...localizations
-                        }
-                    }
-                }
-            }
-
-            fragment localizations on Locale {
+def test_get_fields_cyclic():
+    input = """
+        query {
+            projects {
+                name
+                slug
                 localizations {
-                    totalStrings
-                    missingStrings
+                    locale {
+                        localizations {
+                            totalStrings
+                        }
+                    }
                 }
             }
-        """
+        }
+    """
 
-        query, frag = parse_graphql_query(input)
-        info = MockResolveInfo(query, {"localizations": frag})
+    (query,) = parse_graphql_query(input)
+    info = MockResolveInfo(query)
 
-        self.assertEqual(
-            get_fields(info),
-            [
-                "projects",
-                "projects.name",
-                "projects.slug",
-                "projects.localizations",
-                "projects.localizations.locale",
-                "projects.localizations.locale.localizations",
-                "projects.localizations.locale.localizations.totalStrings",
-                "projects.localizations.locale.localizations.missingStrings",
-            ],
-        )
+    assert get_fields(info) == [
+        "projects",
+        "projects.name",
+        "projects.slug",
+        "projects.localizations",
+        "projects.localizations.locale",
+        "projects.localizations.locale.localizations",
+        "projects.localizations.locale.localizations.totalStrings",
+    ]
 
-    def test_get_fields_two_queries(self):
-        input = """
-            query {
-                projects {
-                    name
+
+def test_get_fields_cyclic_with_fragment():
+    input = """
+        query {
+            projects {
+                name
+                slug
+                localizations {
+                    locale {
+                        localizations {
+                            ...stats
+                        }
+                    }
                 }
             }
+        }
 
-            query {
-                locales {
-                    name
+        fragment stats on ProjectLocale {
+            totalStrings
+            missingStrings
+        }
+    """
+
+    query, frag = parse_graphql_query(input)
+    info = MockResolveInfo(query, {"stats": frag})
+
+    assert get_fields(info) == [
+        "projects",
+        "projects.name",
+        "projects.slug",
+        "projects.localizations",
+        "projects.localizations.locale",
+        "projects.localizations.locale.localizations",
+        "projects.localizations.locale.localizations.totalStrings",
+        "projects.localizations.locale.localizations.missingStrings",
+    ]
+
+
+def test_get_fields_cyclic_in_fragment():
+    input = """
+        query {
+            projects {
+                name
+                slug
+                localizations {
+                    locale {
+                        ...localizations
+                    }
                 }
             }
-        """
+        }
 
-        query1, query2 = parse_graphql_query(input)
-
-        info1 = MockResolveInfo(query1)
-        self.assertEqual(get_fields(info1), ["projects", "projects.name"])
-
-        info2 = MockResolveInfo(query2)
-        self.assertEqual(get_fields(info2), ["locales", "locales.name"])
-
-    def test_get_fields_two_fields(self):
-        input = """
-            query {
-                projects {
-                    name
-                }
-                locales {
-                    name
-                }
+        fragment localizations on Locale {
+            localizations {
+                totalStrings
+                missingStrings
             }
-        """
+        }
+    """
 
-        (query,) = parse_graphql_query(input)
-        info = MockResolveInfo(query)
+    query, frag = parse_graphql_query(input)
+    info = MockResolveInfo(query, {"localizations": frag})
 
-        self.assertEqual(
-            get_fields(info), ["projects", "projects.name", "locales", "locales.name"]
-        )
+    assert get_fields(info) == [
+        "projects",
+        "projects.name",
+        "projects.slug",
+        "projects.localizations",
+        "projects.localizations.locale",
+        "projects.localizations.locale.localizations",
+        "projects.localizations.locale.localizations.totalStrings",
+        "projects.localizations.locale.localizations.missingStrings",
+    ]
+
+
+def test_get_fields_two_queries():
+    input = """
+        query {
+            projects {
+                name
+            }
+        }
+
+        query {
+            locales {
+                name
+            }
+        }
+    """
+
+    query1, query2 = parse_graphql_query(input)
+
+    info1 = MockResolveInfo(query1)
+    assert get_fields(info1) == ["projects", "projects.name"]
+
+    info2 = MockResolveInfo(query2)
+    assert get_fields(info2) == ["locales", "locales.name"]
+
+
+def test_get_fields_two_fields():
+    input = """
+        query {
+            projects {
+                name
+            }
+            locales {
+                name
+            }
+        }
+    """
+
+    (query,) = parse_graphql_query(input)
+    info = MockResolveInfo(query)
+
+    assert get_fields(info) == ["projects", "projects.name", "locales", "locales.name"]

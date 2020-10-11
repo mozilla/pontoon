@@ -1,79 +1,85 @@
 from __future__ import absolute_import
 
 import sys
-import unittest
-
-from django.test import TestCase
-from django.conf import settings
+import pytest
 from django.urls import clear_url_caches
 
 from six.moves import reload_module
 
 
-def reload_urls():
+def reload_urls(settings):
     clear_url_caches()
     reload_module(sys.modules[settings.ROOT_URLCONF])
 
 
-class TestGraphQL(TestCase):
-
-    body = {"query": "{projects{name}}"}
-
-    def test_graphql_dev_get(self):
-        with self.settings(DEV=True):
-            response = self.client.get(
-                "/graphql", self.body, HTTP_ACCEPT="application/json"
-            )
-            self.assertEqual(response.status_code, 200)
-
-    def test_graphql_dev_post(self):
-        with self.settings(DEV=True):
-            response = self.client.post(
-                "/graphql", self.body, HTTP_ACCEPT="application/json"
-            )
-            self.assertEqual(response.status_code, 200)
-
-    @unittest.skip("Overriding DEV does not work.")
-    def test_graphql_prod_get(self):
-        with self.settings(DEV=False):
-            response = self.client.get(
-                "/graphql", self.body, HTTP_ACCEPT="application/json"
-            )
-            self.assertEqual(response.status_code, 200)
-
-    @unittest.skip("Overriding DEV does not work.")
-    def test_graphql_prod_post(self):
-        with self.settings(DEV=False):
-            response = self.client.post(
-                "/graphql", self.body, HTTP_ACCEPT="application/json"
-            )
-            self.assertEqual(response.status_code, 200)
+@pytest.fixture
+@pytest.mark.django_db
+def projects_query():
+    return {"query": "{projects{name}}"}
 
 
-class TestGraphiQL(TestCase):
+@pytest.mark.django_db
+def test_graphql_dev_get(settings, projects_query, client):
+    settings.DEV = True
 
-    body = {"query": "{projects{name}}"}
+    response = client.get("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
 
-    def test_graphiql_dev_get(self):
-        with self.settings(DEV=True):
-            response = self.client.get("/graphql", self.body, HTTP_ACCEPT="text/html")
-            self.assertEqual(response.status_code, 200)
 
-    def test_graphiql_dev_post(self):
-        with self.settings(DEV=True):
-            response = self.client.post("/graphql", self.body, HTTP_ACCEPT="text/html")
-            self.assertEqual(response.status_code, 200)
+@pytest.mark.django_db
+def test_graphql_dev_post(settings, projects_query, client):
+    settings.DEV = True
 
-    @unittest.skip("Overriding DEV does not work.")
-    def test_graphiql_prod_get(self):
-        with self.settings(DEV=False):
-            reload_urls()
-            response = self.client.get("/graphql", self.body, HTTP_ACCEPT="text/html")
-            self.assertEqual(response.status_code, 400)
+    response = client.post("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
 
-    @unittest.skip("Overriding DEV does not work.")
-    def test_graphiql_prod_post(self):
-        with self.settings(DEV=False):
-            reload_urls()
-            response = self.client.post("/graphql", self.body, HTTP_ACCEPT="text/html")
-            self.assertEqual(response.status_code, 400)
+
+@pytest.mark.skipif(reason="Overriding DEV does not work.")
+@pytest.mark.django_db
+def test_graphql_prod_get(settings, projects_query, client):
+    settings.DEV = True
+
+    response = client.get("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+
+
+@pytest.mark.skipif(reason="Overriding DEV does not work.")
+@pytest.mark.django_db
+def test_graphql_prod_post(settings, projects_query, client):
+    settings.DEV = False
+
+    response = client.post("/graphql", projects_query, HTTP_ACCEPT="appication/json")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_graphiql_dev_get(settings, projects_query, client):
+    settings.DEV = True
+
+    response = client.get("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_graphiql_dev_post(settings, projects_query, client):
+    settings.DEV = True
+    response = client.post("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    assert response.status_code == 200
+
+
+@pytest.mark.skipif(reason="Overriding DEV does not work.")
+@pytest.mark.django_db
+def test_graphiql_prod_get(settings, projects_query, client):
+    settings.DEV = False
+    reload_urls(settings)
+    response = client.get("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    assert response.status_code == 400
+
+
+@pytest.mark.skipif(reason="Overriding DEV does not work.")
+@pytest.mark.django_db
+def test_graphiql_prod_post(projects_query, client, settings):
+    settings.DEV = False
+    reload_urls(settings)
+    response = client.post("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    assert response.status_code == 400
