@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,

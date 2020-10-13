@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, unicode_literals
-
 import hashlib
 import json
 import logging
@@ -17,8 +15,8 @@ import django
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 from django.db.models.functions import Length, Substr, Cast
-from six.moves import reduce
-from six.moves.urllib.parse import quote, urlencode, urlparse
+from functools import reduce
+from urllib.parse import quote, urlencode, urlparse
 from bulk_update.helper import bulk_update
 
 from django.conf import settings
@@ -41,7 +39,6 @@ from django.db.models import (
 )
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 
 from guardian.shortcuts import get_objects_for_user
@@ -563,7 +560,6 @@ class LocaleQuerySet(models.QuerySet):
         return AggregatedStats.get_top_instances(self)
 
 
-@python_2_unicode_compatible
 class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
 
@@ -1181,7 +1177,6 @@ PRIORITY_CHOICES = (
 )
 
 
-@python_2_unicode_compatible
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
@@ -1558,7 +1553,6 @@ class UserProfile(models.Model):
         return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
 
 
-@python_2_unicode_compatible
 class ExternalResource(models.Model):
     """
     Represents links to external project resources like staging websites,
@@ -1995,7 +1989,6 @@ class ResourceQuerySet(models.QuerySet):
         return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
 
 
-@python_2_unicode_compatible
 class Resource(models.Model):
     project = models.ForeignKey(Project, models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
@@ -2079,7 +2072,6 @@ class Resource(models.Model):
             return path_format
 
 
-@python_2_unicode_compatible
 class Subpage(models.Model):
     project = models.ForeignKey(Project, models.CASCADE)
     name = models.CharField(max_length=128)
@@ -2462,7 +2454,6 @@ class EntityQuerySet(models.QuerySet):
         return bulk_update(objs, update_fields=update_fields, batch_size=batch_size)
 
 
-@python_2_unicode_compatible
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
     string = models.TextField()
@@ -2966,7 +2957,6 @@ class TranslationQuerySet(models.QuerySet):
         return translations
 
 
-@python_2_unicode_compatible
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity, models.CASCADE)
     locale = models.ForeignKey(Locale, models.CASCADE)

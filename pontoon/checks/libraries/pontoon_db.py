@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-
+import html
 import re
 
 import bleach
@@ -10,12 +9,8 @@ from fluent.syntax import FluentParser, ast
 from pontoon.sync.formats.ftl import localizable_entries
 
 
-from six.moves import html_parser
-
-
 MAX_LENGTH_RE = re.compile(r"MAX_LENGTH:( *)(\d+)", re.MULTILINE)
 parser = FluentParser()
-html_parser = html_parser.HTMLParser()
 
 
 def get_max_length(comment):
@@ -50,7 +45,7 @@ def run_checks(entity, original, string):
 
         if max_length:
             string_length = len(
-                html_parser.unescape(bleach.clean(string, strip=True, tags=()))
+                html.unescape(bleach.clean(string, strip=True, tags=()))
             )
 
             if string_length > max_length:

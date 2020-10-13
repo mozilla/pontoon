@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import factory
 from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory

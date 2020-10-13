@@ -1,6 +1,4 @@
 """Django settings for Pontoon."""
-from __future__ import absolute_import
-
 import re
 import os
 import socket
@@ -534,8 +532,8 @@ STATICFILES_DIRS = [
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
 def _allowed_hosts():
+    from urllib.parse import urlparse
     from django.conf import settings
-    from six.moves.urllib.parse import urlparse
 
     host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
     result = [host]

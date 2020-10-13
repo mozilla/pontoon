@@ -1,8 +1,6 @@
 """
 Parser for to pofile translation format.
 """
-from __future__ import absolute_import
-
 from datetime import datetime
 
 from django.utils import timezone

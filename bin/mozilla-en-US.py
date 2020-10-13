@@ -10,9 +10,6 @@ This is his code:
 https://bitbucket.org/ogi/mozilla-l10n-po/
 """
 
-from __future__ import print_function
-from six import text_type
-
 import datetime
 import os
 import shutil
@@ -77,7 +74,7 @@ def pull(url, target):
 
     # Clone
     else:
-        write(text_type(error))
+        write(str(error))
         write('Clone instead.')
 
         # Clean up target directory on a failed pull, so that it's empty for a clone
@@ -88,7 +85,7 @@ def pull(url, target):
         if code == 0:
             write('Repository at ' + url + ' cloned.')
         else:
-            write(text_type(error))
+            write(str(error))
 
     return code
 
@@ -100,14 +97,14 @@ def push(path):
     # Commit
     code, output, error = execute(['hg', 'commit', '-m', 'Update'], path)
     if code != 0 and len(error):
-        write(text_type(error))
+        write(str(error))
 
     # Push
     code, output, error = execute(['hg', 'push'], path)
     if code == 0:
         write('Repository at ' + path + ' pushed.')
     elif len(error):
-        write(text_type(error))
+        write(str(error))
 
 
 def quit_or_pass(code):

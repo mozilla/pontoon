@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from pontoon.base.tests import ProjectFactory, RepositoryFactory, TestCase
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.models import ProjectSyncLog

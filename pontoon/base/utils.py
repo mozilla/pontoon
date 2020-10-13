@@ -1,7 +1,6 @@
-from __future__ import absolute_import
-
 import codecs
 import functools
+import io
 import os
 import tempfile
 import time
@@ -15,7 +14,6 @@ import requests
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.utils.text import slugify
-from six import BytesIO
 
 from xml.sax.saxutils import escape, quoteattr
 
@@ -206,7 +204,7 @@ def get_download_content(slug, code, part):
     )
     isZipable = 1 < len(resources) < 10
     if isZipable:
-        s = BytesIO()
+        s = io.BytesIO()
         zf = zipfile.ZipFile(s, "w")
 
     # Download a single file if project has 1 or >= 10 resources

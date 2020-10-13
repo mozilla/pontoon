@@ -1,8 +1,7 @@
-from __future__ import absolute_import
-
 import logging
 import re
 from datetime import datetime
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -27,7 +26,6 @@ from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
 
 from notifications.signals import notify
-from six.moves.urllib.parse import urlparse
 
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms

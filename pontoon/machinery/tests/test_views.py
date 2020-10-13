@@ -1,14 +1,11 @@
-from __future__ import absolute_import
-
 import json
+import urllib.parse
 
 import caighdean
 import pytest
 import requests_mock
 
 from django.urls import reverse
-
-from six.moves import urllib
 
 from pontoon.base.models import (
     Entity,

@@ -1,8 +1,4 @@
-from __future__ import absolute_import
-
 import pytest
-
-from six import text_type
 
 from pontoon.base.models import Entity, Project
 from pontoon.test.factories import (
@@ -276,13 +272,13 @@ def test_entity_project_locale_no_paths(
         "format": "po",
         "obsolete": False,
         "key": "",
-        "path": text_type(resource0.path),
+        "path": str(resource0.path),
         "project": project_a.serialize(),
         "translation": [
             {
                 "pk": tr0.pk,
                 "fuzzy": False,
-                "string": text_type(tr0.string),
+                "string": str(tr0.string),
                 "approved": False,
                 "rejected": False,
                 "warnings": [],
@@ -291,7 +287,7 @@ def test_entity_project_locale_no_paths(
             {
                 "pk": tr0pl.pk,
                 "fuzzy": False,
-                "string": text_type(tr0pl.string),
+                "string": str(tr0pl.string),
                 "approved": False,
                 "rejected": False,
                 "warnings": [],
@@ -300,10 +296,10 @@ def test_entity_project_locale_no_paths(
         ],
         "order": 0,
         "source": [],
-        "original_plural": text_type(entity_a.string_plural),
+        "original_plural": str(entity_a.string_plural),
         "pk": entity_a.pk,
-        "original": text_type(entity_a.string),
-        "machinery_original": text_type(entity_a.string),
+        "original": str(entity_a.string),
+        "machinery_original": str(entity_a.string),
         "readonly": False,
         "visible": False,
     }
