@@ -264,9 +264,6 @@ AUTHENTICATION_BACKENDS = [
     "guardian.backends.ObjectPermissionBackend",
 ]
 
-# This variable is required by django-guardian.
-# App supports giving permissions for anonymous users.
-ANONYMOUS_USER_ID = -1
 GUARDIAN_RAISE_403 = True
 
 PIPELINE_CSS = {
