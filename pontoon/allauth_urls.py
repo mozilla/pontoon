@@ -3,8 +3,6 @@ Pontoon requires a very specific subset of functionality implemented in django a
 Because of concerns related to the security concerns it's a better to keep only selected
 views and don't allow user to tamper with the state of an account.
 """
-from __future__ import absolute_import
-
 import importlib
 
 from django.conf.urls import url

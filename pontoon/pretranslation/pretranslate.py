@@ -1,4 +1,4 @@
-from six.moves import reduce
+from functools import reduce
 import operator
 
 from django.db.models import CharField, Value as V

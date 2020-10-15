@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import fnmatch
 import pytest
 from mock import MagicMock, PropertyMock, patch

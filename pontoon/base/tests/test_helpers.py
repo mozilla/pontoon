@@ -1,12 +1,9 @@
 # coding: utf-8
-from __future__ import absolute_import
-
 from collections import OrderedDict
 
 import pytest
 
 from datetime import timedelta
-from six import text_type
 
 from pontoon.base.templatetags.helpers import (
     as_simple_translation,
@@ -144,7 +141,7 @@ def test_helper_base_format_timedelta_0(settings):
 
 
 def test_helper_base_nospam_unicode(settings):
-    assert text_type(nospam(u"<łążźćń>")) == u"&lt;łążźćń&gt;"
+    assert str(nospam(u"<łążźćń>")) == u"&lt;łążźćń&gt;"
 
 
 def test_helper_base_nospam_escape(settings):

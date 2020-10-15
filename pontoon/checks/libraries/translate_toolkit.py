@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from translate.filters import checks
 from translate.lang import data as lang_data
 from translate.storage import base as storage_base

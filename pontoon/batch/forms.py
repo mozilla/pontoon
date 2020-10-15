@@ -1,7 +1,6 @@
-from __future__ import absolute_import
+import urllib.parse
 
 from django import forms
-from six.moves import urllib
 
 from pontoon.base import utils
 from pontoon.batch.actions import ACTIONS_FN_MAP

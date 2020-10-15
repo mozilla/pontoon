@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from collections import OrderedDict
 from datetime import (
     datetime,
@@ -7,7 +5,6 @@ from datetime import (
 )
 from mock import patch
 from random import randint
-from six.moves import range
 
 from django.http import HttpResponse
 from django.urls import reverse

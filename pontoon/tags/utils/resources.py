@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from django.db.models import Q
 
 from pontoon.tags.exceptions import InvalidProjectError

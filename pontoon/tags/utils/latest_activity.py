@@ -1,8 +1,6 @@
 # The classes here provide similar functionality to
 # ProjectLocale.get_latest_activity in mangling latest activity data,
 # although they use queryset `values` rather than objects
-from __future__ import absolute_import
-
 from pontoon.base.models import user_gravatar_url
 
 

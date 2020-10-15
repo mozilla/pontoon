@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import html
 import datetime
 import json
@@ -11,8 +9,6 @@ from bleach.linkifier import Linker
 from django_jinja import library
 from fluent.syntax import FluentParser, FluentSerializer, ast
 from fluent.syntax.serializer import serialize_expression
-from six import text_type
-from six.moves.urllib import parse as six_parse
 
 from django import template
 from django.conf import settings
@@ -20,7 +16,6 @@ from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import QuerySet
 from django.urls import reverse
-from django.utils.encoding import smart_str
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.http import is_safe_url
@@ -73,44 +68,6 @@ def return_url(request):
     if not is_safe_url(url, settings.ALLOWED_HOSTS):
         return settings.SITE_URL
     return url
-
-
-@library.filter
-def urlparams(url_, hash=None, **query):
-    """Add a fragment and/or query paramaters to a URL.
-
-    New query params will be appended to exising parameters, except duplicate
-    names, which will be replaced.
-    """
-    url = six_parse.urlparse(url_)
-    fragment = hash if hash is not None else url.fragment
-
-    # Use dict(parse_qsl) so we don't get lists of values.
-    q = url.query
-    query_dict = dict(six_parse.parse_qsl(smart_str(q))) if q else {}
-    query_dict.update((k, v) for k, v in query.items())
-
-    query_string = _urlencode([(k, v) for k, v in query_dict.items() if v is not None])
-    new = six_parse.ParseResult(
-        url.scheme, url.netloc, url.path, url.params, query_string, fragment
-    )
-    return new.geturl()
-
-
-def _urlencode(items):
-    """A Unicode-safe URLencoder."""
-    try:
-        return six_parse.urlencode(items)
-    except UnicodeEncodeError:
-        return six_parse.urlencode([(k, smart_str(v)) for k, v in items])
-
-
-@library.filter
-def urlencode(txt):
-    """Url encode a path."""
-    if isinstance(txt, text_type):
-        txt = txt.encode("utf-8")
-    return six_parse.quote_plus(txt)
 
 
 @library.global_function

@@ -1,11 +1,9 @@
-from __future__ import absolute_import
-
 import os
+
+from urllib.parse import urlparse, urljoin
 
 from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
-
-from six.moves.urllib.parse import urlparse, urljoin
 
 from pontoon.base.models import Project, User
 

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from csp.decorators import csp_exempt
 from graphene_django.views import GraphQLView
 

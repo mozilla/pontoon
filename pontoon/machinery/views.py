@@ -1,13 +1,12 @@
-from __future__ import absolute_import
-
 import json
 import logging
 import requests
 import xml.etree.ElementTree as ET
 
+from urllib.parse import quote
+
 from caighdean import Translator
 from caighdean.exceptions import TranslationError
-from six.moves.urllib.parse import quote
 from uuid import uuid4
 
 from django.conf import settings
