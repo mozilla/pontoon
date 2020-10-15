@@ -5,8 +5,6 @@ https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
 See also:
 https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
 """
-from __future__ import absolute_import
-
 import codecs
 import copy
 import json

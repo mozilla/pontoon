@@ -1,10 +1,9 @@
-from __future__ import absolute_import
+import io
 
 from django.core.management.base import CommandError
 
 import pytest
 from mock import ANY, patch, PropertyMock
-from six import StringIO
 
 from pontoon.base.models import Project
 from pontoon.base.tests import ProjectFactory, TestCase
@@ -21,7 +20,7 @@ class CommandTests(TestCase):
         self.command.no_commit = False
         self.command.no_pull = False
         self.command.force = False
-        self.command.stderr = StringIO()
+        self.command.stderr = io.StringIO()
 
         Project.objects.filter(slug="pontoon-intro").delete()
 

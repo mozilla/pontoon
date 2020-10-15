@@ -2,8 +2,6 @@
 Parser and serializer for file formats supported by compare-locales library:
 https://hg.mozilla.org/l10n/compare-locales/
 """
-from __future__ import absolute_import
-
 import logging
 
 from collections import OrderedDict

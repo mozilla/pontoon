@@ -1,15 +1,13 @@
-from __future__ import absolute_import
-
+import importlib
 import sys
+
 import pytest
 from django.urls import clear_url_caches
-
-from six.moves import reload_module
 
 
 def reload_urls(settings):
     clear_url_caches()
-    reload_module(sys.modules[settings.ROOT_URLCONF])
+    importlib.reload(sys.modules[settings.ROOT_URLCONF])
 
 
 @pytest.fixture

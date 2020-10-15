@@ -30,7 +30,7 @@ to send your contributions our way.
 +==============+===================+===================+
 | git          | Basic knowledge   |                   |
 +--------------+-------------------+-------------------+
-| Python       | Some experience   | Python 2 & 3      |
+| Python       | Some experience   | Python 3          |
 +--------------+-------------------+-------------------+
 | Django       | Basic knowledge   |                   |
 +--------------+-------------------+-------------------+

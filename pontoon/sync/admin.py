@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe

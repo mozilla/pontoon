@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from . import compare_locales
 from . import translate_toolkit
 from . import pontoon_db, pontoon_non_db

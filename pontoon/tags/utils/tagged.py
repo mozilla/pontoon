@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from .latest_activity import LatestActivity
 from .chart import TagChart
 

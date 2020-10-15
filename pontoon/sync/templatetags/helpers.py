@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from django_jinja import library
 
 from pontoon.sync.models import ProjectSyncLog

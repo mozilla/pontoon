@@ -1,8 +1,6 @@
 """
 Collation lookups allow a user to set text-collation to search queries.
 """
-from __future__ import absolute_import
-
 import pytest
 
 from pontoon.db import IContainsCollate  # noqa

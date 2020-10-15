@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 import math
 
 from django.db.models import Q

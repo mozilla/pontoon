@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import pytest
 
 from pontoon.checks.libraries.translate_toolkit import run_checks

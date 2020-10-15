@@ -1,7 +1,5 @@
 """A various settings that enable additional packages that are helpful in day to day development.
 """
-from __future__ import absolute_import
-
 import copy
 import re
 from . import base

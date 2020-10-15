@@ -1,11 +1,8 @@
 """
 Parser for the .lang translation format.
 """
-from __future__ import absolute_import
-
 import codecs
 import re
-import sys
 
 from parsimonious.exceptions import (
     ParseError as ParsimoniousParseError,
@@ -13,8 +10,6 @@ from parsimonious.exceptions import (
 )
 from parsimonious.grammar import Grammar
 from parsimonious.nodes import NodeVisitor
-
-from six import reraise
 
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
@@ -207,9 +202,8 @@ def parse(path, source_path=None, locale=None):
     try:
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
-        wrapped = ParseError(
+        raise ParseError(
             u"Failed to parse {path}: {err}".format(path=path, err=err)
-        )
-        reraise(ParseError, wrapped, sys.exc_info()[2])  # NOQA
+        ) from err
 
     return LangResource(path, children)
