@@ -21,9 +21,6 @@
 # ----------------------------------------------------------------------------------
 -c constraints.txt
 
-backports.csv==1.0.5 \
-    --hash=sha256:d3b0cefaaca92be3d2d4ceec140827cae1d871da7fff5db70697d72328357d65 \
-    --hash=sha256:8c421385cbc6042ba90c68c871c5afc13672acaf91e1508546d6cda6725ebfc6
 bleach==3.1.4 \
     --hash=sha256:cc8da25076a1fe56c3ac63671e2194458e0c4d9c7becfd52ca251650d517903c \
     --hash=sha256:e78e426105ac07026ba098f04de8abe9b6e3e98b5befbf89b51a5ef0a4292b03
