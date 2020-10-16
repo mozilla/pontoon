@@ -87,7 +87,7 @@ def test_helper_to_json():
         "a": "foo",
         "b": aware_datetime(2015, 1, 1),
     }
-    string = '{"a": "foo", "b": "2015-01-01T00:00:00+00:00"}'
+    string = '{"a": "foo", "b": "2015-01-01T00:00:00Z"}'
     assert to_json(obj) == string
 
 
