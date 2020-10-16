@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<tmx version="1.4">
+	<header adminlang="en-US" creationtoolversion="0.1" creationtool="pontoon" datatype="plaintext" segtype="sentence" o-tmf="plain text" srclang="en-US" creationdate="2010-01-01T00:00:00">
+	</header>
+	<body>
+		<tu tuid="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+			<tuv xml:lang="en-US">
+				<seg>source string</seg>
+			</tuv>
+			<tuv xml:lang="sl">
+				<seg>translation</seg>
+			</tuv>
+		</tu>
+		<tu tuid="pontoon:aa/bb/ccc:xyz" srclang="en-US">
+			<tuv xml:lang="en-US">
+				<seg>source string</seg>
+			</tuv>
+			<tuv xml:lang="sl">
+				<seg>translation</seg>
+			</tuv>
+		</tu>
+		<tu tuid="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+			<tuv xml:lang="en-US">
+				<seg>source string łążśźć</seg>
+			</tuv>
+			<tuv xml:lang="sl">
+				<seg>translation łążśźć</seg>
+			</tuv>
+		</tu>
+		<tu tuid="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+			<tuv xml:lang="en-US">
+				<seg>&lt;p&gt;source &lt;strong&gt;string&lt;/p&gt;</seg>
+			</tuv>
+			<tuv xml:lang="sl">
+				<seg>&lt;p&gt;translation łążśźć&lt;/p&gt;</seg>
+			</tuv>
+		</tu>
+	</body>
+</tmx>
