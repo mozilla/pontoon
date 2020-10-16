@@ -14,45 +14,14 @@ from django import template
 from django.conf import settings
 from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.db.models import QuerySet
+from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
-from django.utils.encoding import force_text
-from django.utils.functional import Promise
 from django.utils.http import is_safe_url
 
 
 register = template.Library()
 parser = FluentParser()
 serializer = FluentSerializer()
-
-
-class DatetimeAwareJSONEncoder(json.JSONEncoder):
-    """Default encoder isn't able to handle datetime objects."""
-
-    def default(self, obj):
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-
-        return json.JSONEncoder.default(self, obj)
-
-
-class LazyObjectsJSONEncoder(DatetimeAwareJSONEncoder):
-    """Default encoder isn't able to handle Django lazy-objects."""
-
-    def default(self, obj):
-        if isinstance(obj, Promise):
-            return force_text(obj)
-
-        if isinstance(obj, QuerySet):
-            return list(map(str, obj))
-
-        return super(LazyObjectsJSONEncoder, self).default(obj)
-
-
-@library.global_function
-def thisyear():
-    """The current year."""
-    return jinja2.Markup(datetime.date.today().year)
 
 
 @library.global_function
@@ -77,12 +46,7 @@ def static(path):
 
 @library.filter
 def to_json(value):
-    return json.dumps(value, cls=LazyObjectsJSONEncoder)
-
-
-@library.filter
-def naturalday(source, arg=None):
-    return humanize.naturalday(source, arg)
+    return json.dumps(value, cls=DjangoJSONEncoder)
 
 
 @library.filter
