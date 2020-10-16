@@ -1,6 +1,5 @@
+import csv
 import logging
-
-from backports import csv
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -284,7 +283,7 @@ def _get_project_strings_csv(project, entities, output):
 
     :arg Project project: the project from which to take strings
     :arg list entities: the list of all entities of the project
-    :arg buffer output: a buffer to which the CSV writed will send its data
+    :arg buffer output: a buffer to which the CSV writer will send its data
 
     :returns: the same output object with the CSV data
 
@@ -300,12 +299,10 @@ def _get_project_strings_csv(project, entities, output):
     for translation in translations:
         all_data[translation.entity.id][translation.locale.code] = translation.string
 
-    writer = csv.writer(output)
     headers = ["source"] + [x.code for x in locales]
-    writer.writerow(headers)
-    for string in all_data.values():
-        row = [string.get(key, "") for key in headers]
-        writer.writerow(row)
+    writer = csv.DictWriter(output, fieldnames=headers)
+    writer.writeheader()
+    writer.writerows(all_data.values())
 
     return output
 
