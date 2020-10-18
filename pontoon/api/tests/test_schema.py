@@ -2,7 +2,7 @@ import sys
 from itertools import product
 
 import pytest
-from pontoon.base.models import Project
+from pontoon.base.models import Project, ProjectLocale
 
 from pontoon.test.factories import ProjectFactory
 
@@ -49,98 +49,80 @@ def test_projects(client):
 
 
 @pytest.fixture()
-def regular_projects():
-    return ProjectFactory.create_batch(3, visibility='public') + \
-            list(Project.objects.filter(slug__in=['terminology']))
+def regular_projects(locale_a):
+    return ProjectFactory.create_batch(3, visibility="public") + list(
+        Project.objects.filter(slug__in=["terminology"])
+    )
 
 
 @pytest.fixture()
-def disabled_projects():
+def disabled_projects(locale_a):
     return ProjectFactory.create_batch(3, disabled=True)
 
 
 @pytest.fixture()
-def system_projects():
-    return ProjectFactory.create_batch(3, system_project=True) + \
-           list(Project.objects.filter(slug__in=['pontoon-intro', 'tutorial']))
+def system_projects(locale_a):
+    return ProjectFactory.create_batch(3, system_project=True) + list(
+        Project.objects.filter(slug__in=["pontoon-intro", "tutorial"])
+    )
+
 
 @pytest.fixture()
 def private_projects():
-    return ProjectFactory.create_batch(3, visibility='private')
+    return ProjectFactory.create_batch(3, visibility="private")
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "include_disabled,include_system,include_private",
-    # Produces a product with all possible project filters combinations.
-    product(*([[True, False]] * 3))
+    "include_disabled,include_system,is_admin",
+    # Produces a product with all possible project filters combinations
+    product(*([[True, False]] * 3)),
 )
-def test_project_filters(include_disabled, include_system, include_private, regular_projects, disabled_projects, system_projects, private_projects, client, admin):
-    print("test_project_filters", include_disabled, include_system, include_private)
-    expected_projects = set(regular_projects + \
-                        (disabled_projects if include_disabled else []) + \
-                        (system_projects if include_system else []) + \
-                        (private_projects if True else []))
+def test_project_filters(
+    include_disabled,
+    include_system,
+    is_admin,
+    regular_projects,
+    disabled_projects,
+    system_projects,
+    private_projects,
+    client,
+    admin,
+):
+    expected_projects = set(
+        regular_projects
+        + (disabled_projects if include_disabled else [])
+        + (system_projects if include_system else [])
+        + (private_projects if is_admin else [])
+    )
     body = {
         "query": """{{
             projects(includeDisabled: {include_disabled}, includeSystem: {include_system}) {{
                 slug,
-                disabled, 
+                disabled,
                 systemProject,
                 visibility
             }}
         }}""".format(
             include_disabled=str(include_disabled).lower(),
             include_system=str(include_system).lower(),
-            include_private=str(include_private).lower(),
         )
     }
-    client.force_login(admin)
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
-
-    print(response.content)
-    assert response.status_code == 200
-    assert response.json() == {
-        "data": {
-            "projects": [{"slug": p.slug, "visibility": p.visibility, "systemProject": p.system_project, "disabled": p.disabled} for p in sorted(expected_projects, key=lambda p: p.pk)]
-        }
-    }
-
-@pytest.mark.django_db
-def test_project_private(client, admin):
-    body = {
-        "query": """{
-            projects {
-                name
-            }
-        }"""
-    }
-
-    private_project = ProjectFactory.create(visibility="private")
+    if is_admin:
+        client.force_login(admin)
     response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
         "data": {
             "projects": [
-                {"name": "Pontoon Intro"},
-                {"name": "Terminology"},
-                {"name": "Tutorial"},
-            ]
-        }
-    }
-
-    client.force_login(admin)
-
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "data": {
-            "projects": [
-                {"name": "Pontoon Intro"},
-                {"name": "Terminology"},
-                {"name": "Tutorial"},
-                {"name": private_project.name},
+                {
+                    "slug": p.slug,
+                    "visibility": p.visibility,
+                    "systemProject": p.system_project,
+                    "disabled": p.disabled,
+                }
+                for p in sorted(expected_projects, key=lambda p: p.pk)
             ]
         }
     }
@@ -165,6 +147,85 @@ def test_project_localizations(client):
     assert response.status_code == 200
     assert response.json() == {
         "data": {"project": {"localizations": [{"locale": {"name": "English"}}]}}
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "include_disabled,include_system,is_admin",
+    # Produces a product with all possible filters combinations
+    product(*([[True, False]] * 3)),
+)
+def test_localization_filters(
+    include_disabled,
+    include_system,
+    is_admin,
+    locale_a,
+    regular_projects,
+    disabled_projects,
+    system_projects,
+    private_projects,
+    client,
+    admin,
+):
+    expected_projects = set(
+        regular_projects
+        + (disabled_projects if include_disabled else [])
+        + (system_projects if include_system else [])
+        + (private_projects if is_admin else [])
+    )
+    ProjectLocale.objects.bulk_create(
+        [
+            ProjectLocale(project=p, locale=locale_a)
+            for p in expected_projects
+            if p.slug not in ("pontoon-intro", "tutorial", "terminology")
+        ]
+    )
+
+    body = {
+        "query": """{{
+            locale (code: \"{locale_code}\") {{
+                localizations(includeDisabled: {include_disabled}, includeSystem: {include_system}) {{
+                    project {{
+                        slug,
+                        disabled,
+                        systemProject,
+                        visibility
+                    }}
+                }}
+            }}
+        }}""".format(
+            locale_code=locale_a.code,
+            include_disabled=str(include_disabled).lower(),
+            include_system=str(include_system).lower(),
+        )
+    }
+
+    if is_admin:
+        client.force_login(admin)
+
+    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "locale": {
+                "localizations": [
+                    {
+                        "project": {
+                            "slug": p.slug,
+                            "visibility": p.visibility,
+                            "systemProject": p.system_project,
+                            "disabled": p.disabled,
+                        }
+                    }
+                    for p in sorted(
+                        expected_projects,
+                        key=lambda p: p.project_locale.filter(locale=locale_a)[0].pk,
+                    )
+                ]
+            }
+        }
     }
 
 
