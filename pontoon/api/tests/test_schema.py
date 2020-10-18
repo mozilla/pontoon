@@ -1,8 +1,10 @@
 import sys
+from itertools import product
 
 import pytest
+from pontoon.base.models import Project
 
-from pontoon.test.factories import ProjectFactory, UserFactory
+from pontoon.test.factories import ProjectFactory
 
 
 @pytest.fixture
@@ -31,34 +33,90 @@ def test_projects(client):
         }"""
     }
 
-        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
-        ProjectFactory.create(visibility="private")
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content,
-            {
-                "data": {
-                    "projects": [
-                        {"name": "Pontoon Intro"},
-                        {"name": "Terminology"},
-                        {"name": "Tutorial"},
-                    ]
-                }
-            },
-        )
-
-    def test_project_private(self):
-        body = {
-            "query": """{
-                projects {
-                    name
-                }
-            }"""
+    ProjectFactory.create(visibility="private")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "projects": [
+                {"name": "Pontoon Intro"},
+                {"name": "Terminology"},
+                {"name": "Tutorial"},
+            ]
         }
+    }
 
-        private_project = ProjectFactory.create(visibility="private")
-        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
+
+@pytest.fixture()
+def regular_projects():
+    return ProjectFactory.create_batch(3, visibility='public') + \
+            list(Project.objects.filter(slug__in=['terminology']))
+
+
+@pytest.fixture()
+def disabled_projects():
+    return ProjectFactory.create_batch(3, disabled=True)
+
+
+@pytest.fixture()
+def system_projects():
+    return ProjectFactory.create_batch(3, system_project=True) + \
+           list(Project.objects.filter(slug__in=['pontoon-intro', 'tutorial']))
+
+@pytest.fixture()
+def private_projects():
+    return ProjectFactory.create_batch(3, visibility='private')
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "include_disabled,include_system,include_private",
+    # Produces a product with all possible project filters combinations.
+    product(*([[True, False]] * 3))
+)
+def test_project_filters(include_disabled, include_system, include_private, regular_projects, disabled_projects, system_projects, private_projects, client, admin):
+    print("test_project_filters", include_disabled, include_system, include_private)
+    expected_projects = set(regular_projects + \
+                        (disabled_projects if include_disabled else []) + \
+                        (system_projects if include_system else []) + \
+                        (private_projects if True else []))
+    body = {
+        "query": """{{
+            projects(includeDisabled: {include_disabled}, includeSystem: {include_system}) {{
+                slug,
+                disabled, 
+                systemProject,
+                visibility
+            }}
+        }}""".format(
+            include_disabled=str(include_disabled).lower(),
+            include_system=str(include_system).lower(),
+            include_private=str(include_private).lower(),
+        )
+    }
+    client.force_login(admin)
+    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+
+    print(response.content)
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "projects": [{"slug": p.slug, "visibility": p.visibility, "systemProject": p.system_project, "disabled": p.disabled} for p in sorted(expected_projects, key=lambda p: p.pk)]
+        }
+    }
+
+@pytest.mark.django_db
+def test_project_private(client, admin):
+    body = {
+        "query": """{
+            projects {
+                name
+            }
+        }"""
+    }
+
+    private_project = ProjectFactory.create(visibility="private")
+    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -71,37 +129,36 @@ def test_projects(client):
         }
     }
 
-        self.client.force_login(self.admin)
+    client.force_login(admin)
 
-        response = self.client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content,
-            {
-                "data": {
-                    "projects": [
-                        {"name": "Pontoon Intro"},
-                        {"name": "Terminology"},
-                        {"name": "Tutorial"},
-                        {"name": private_project.name},
-                    ]
-                }
-            },
-        )
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "projects": [
+                {"name": "Pontoon Intro"},
+                {"name": "Terminology"},
+                {"name": "Tutorial"},
+                {"name": private_project.name},
+            ]
+        }
+    }
 
-    def test_project_localizations(self):
-        body = {
-            "query": """{
-                project(slug: "pontoon-intro") {
-                    localizations {
-                        locale {
-                            name
-                        }
+
+@pytest.mark.django_db
+def test_project_localizations(client):
+    body = {
+        "query": """{
+            project(slug: "pontoon-intro") {
+                localizations {
+                    locale {
+                        name
                     }
                 }
-            }"""
-        }
+            }
+        }"""
+    }
 
     response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
