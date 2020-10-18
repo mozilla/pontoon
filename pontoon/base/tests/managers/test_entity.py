@@ -811,9 +811,9 @@ def test_lookup_collation(resource_a, locale_a):
         Translation.objects.filter(string__icontains_collate=(u"string", "C"))
     ) == set([translations[n] for n in [0, 3, 4]])
     # Compare the icontains_collate query with regular i_contains query
-    assert list(Translation.objects.filter(string__icontains=u"string")) == [
-        translations[n] for n in [0, 2, 3, 4]
-    ]
+    assert set(Translation.objects.filter(string__icontains=u"string")) == set(
+        [translations[n] for n in [0, 2, 3, 4]]
+    )
 
 
 @pytest.mark.django_db

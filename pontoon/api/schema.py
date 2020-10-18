@@ -22,7 +22,7 @@ class Tag(DjangoObjectType):
     class Meta:
         convert_choices_to_enum = False
         model = TagModel
-        only_fields = (
+        fields = (
             "slug",
             "name",
             "priority",
@@ -32,7 +32,7 @@ class Tag(DjangoObjectType):
 class ProjectLocale(DjangoObjectType, Stats):
     class Meta:
         model = ProjectLocaleModel
-        only_fields = (
+        fields = (
             "project",
             "locale",
             "total_strings",
@@ -48,7 +48,7 @@ class Project(DjangoObjectType, Stats):
     class Meta:
         convert_choices_to_enum = False
         model = ProjectModel
-        only_fields = (
+        fields = (
             "name",
             "slug",
             "disabled",
@@ -81,7 +81,7 @@ class Project(DjangoObjectType, Stats):
 class Locale(DjangoObjectType, Stats):
     class Meta:
         model = LocaleModel
-        only_fields = (
+        fields = (
             "name",
             "code",
             "direction",
