@@ -4,7 +4,7 @@ from django.db import migrations
 
 
 def make_tutorial_public(apps, schema_editor):
-    """Tutorial should be public by default."""
+    """We need this migration, because migration base.0004 executes before migration tour.0001."""
 
     Project = apps.get_model("base", "Project")
     Project.objects.filter(slug="tutorial").update(visibility="public")
