@@ -1,6 +1,5 @@
 import logging
 
-from bulk_update.helper import bulk_update
 from collections import defaultdict
 from django.contrib.auth.models import User
 from django.db import connection
@@ -436,9 +435,9 @@ class ChangeSet(object):
 
     def bulk_update_entities(self):
         if len(self.entities_to_update) > 0:
-            bulk_update(
+            Entity.objects.bulk_update(
                 self.entities_to_update,
-                update_fields=[
+                fields=[
                     "resource",
                     "string",
                     "string_plural",
@@ -465,9 +464,9 @@ class ChangeSet(object):
 
     def bulk_update_translations(self):
         if len(self.translations_to_update) > 0:
-            bulk_update(
+            Translation.objects.bulk_update(
                 list(self.translations_to_update.values()),
-                update_fields=[
+                fields=[
                     "entity",
                     "locale",
                     "string",

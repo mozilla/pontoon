@@ -13,7 +13,6 @@ import partial_index
 
 import pontoon.db.migrations
 
-from bulk_update.helper import bulk_update
 from django.conf import settings
 from django.db import connection, migrations, models, ProgrammingError
 
@@ -1499,7 +1498,9 @@ def migration_0081_add_locale_data(apps, schema_editor):
         except KeyError:
             pass
     if locales:
-        bulk_update(locales)
+        Locale.objects.bulk_update(
+            locales, fields=["script", "direction", "population"]
+        )
 
 
 def migration_0081_remove_locale_data(apps, schema_editor):
@@ -1510,7 +1511,9 @@ def migration_0081_remove_locale_data(apps, schema_editor):
         l.direction = "ltr"
         l.population = 0
     if locales:
-        bulk_update(locales)
+        Locale.objects.bulk_update(
+            locales, fields=["script", "direction", "population"]
+        )
 
 
 def migration_0089_create_pm_groups(apps, schema_editor):
@@ -1557,9 +1560,8 @@ def migration_0098_migrate_locales(apps, schema_editor):
     ):
         if pontoon_code in locale_map:
             locale_map[pontoon_code].ms_terminology_code = ms_code
-    bulk_update(
-        list(locale_map.values()),
-        update_fields=["ms_translator_code", "ms_terminology_code"],
+    Locale.objects.bulk_update(
+        list(locale_map.values()), fields=["ms_translator_code", "ms_terminology_code"],
     )
 
 
@@ -1661,7 +1663,9 @@ def migration_0134_populate_google_translate_code(apps, schema_editor):
     ) in MIGRATION_0134_PONTOON_TO_GOOGLE_TRANSLATE_MAP:
         if pontoon_code in locale_map:
             locale_map[pontoon_code].google_translate_code = google_translate_code
-    bulk_update(list(locale_map.values()), update_fields=["google_translate_code"])
+    Locale.objects.bulk_update(
+        list(locale_map.values()), fields=["google_translate_code"]
+    )
 
 
 def migration_0146_add_pretranslation_users(apps, schema_editor):
@@ -1692,7 +1696,7 @@ def migration_0153_add_word_count(apps, schema_editor):
     for e in Entity.objects.all():
         e.word_count = get_word_count(e.string)
         entities.append(e)
-    bulk_update(entities, update_fields=["word_count"], batch_size=1000)
+    Entity.objects.bulk_update(entities, fields=["word_count"], batch_size=1000)
 
 
 def migration_0153_reset_word_count(apps, schema_editor):
