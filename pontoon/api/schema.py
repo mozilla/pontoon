@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
@@ -73,10 +71,10 @@ class Project(DjangoObjectType, Stats):
     localizations = graphene.List(ProjectLocale)
     tags = graphene.List(Tag)
 
-    def resolve_localizations(obj, _info):
+    def resolve_localizations(obj, info):
         return obj.project_locale.all()
 
-    def resolve_tags(obj, _info):
+    def resolve_tags(obj, info):
         return obj.tag_set.all()
 
 
@@ -110,8 +108,8 @@ class Locale(DjangoObjectType, Stats):
         include_system=graphene.Boolean(False),
     )
 
-    def resolve_localizations(obj, _info, include_disabled, include_system):
-        projects = obj.project_locale.visible_for(_info.context.user)
+    def resolve_localizations(obj, info, include_disabled, include_system):
+        projects = obj.project_locale.visible_for(info.context.user)
 
         records = projects.filter(
             project__disabled=False, project__system_project=False
@@ -148,10 +146,10 @@ class Query(graphene.ObjectType):
         records = projects.filter(disabled=False, system_project=False)
 
         if include_disabled:
-            records |= projects.filter(disabled=include_disabled)
+            records |= projects.filter(disabled=True)
 
         if include_system:
-            records |= projects.filter(system_project=include_system)
+            records |= projects.filter(system_project=True)
 
         if "projects.localizations" in fields:
             records = records.prefetch_related("project_locale__locale")
