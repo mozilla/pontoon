@@ -2,11 +2,8 @@ import uuid
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import (
-    UserAdmin as AuthUserAdmin,
-    GroupAdmin,
-)
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
+from django.contrib.auth.models import User
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
@@ -366,8 +363,8 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
     performed_by_email.allow_tags = True
 
 
+admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-admin.site.register(Group, GroupAdmin)
 admin.site.register(models.Locale, LocaleAdmin)
 admin.site.register(models.Project, ProjectAdmin)
 admin.site.register(models.Resource, ResourceAdmin)
