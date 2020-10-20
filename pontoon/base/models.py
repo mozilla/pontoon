@@ -356,7 +356,6 @@ def serialized_notifications(self):
         "notifications": notifications,
     }
 
-
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -1525,7 +1524,9 @@ class Project(AggregatedStats):
 
 class UserProfile(models.Model):
     # This field is required.
-    user = models.OneToOneField(User, models.CASCADE, related_name="profile")
+    user = models.OneToOneField(
+        User, models.CASCADE, related_name="profile", primary_key=True
+    )
     # Other fields here.
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
