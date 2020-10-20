@@ -43,6 +43,16 @@ class UserAdmin(AuthUserAdmin):
     list_filter = ("is_staff", "is_superuser")
     inlines = (UserProfileInline,)
 
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": "wide",
+                "fields": ("username", "email", "password1", "password2"),
+            },
+        ),
+    )
+
     def save_model(self, request, obj, form, change):
         """
         Save a user and log changes in its roles.

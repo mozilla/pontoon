@@ -1525,7 +1525,9 @@ class Project(AggregatedStats):
 
 class UserProfile(models.Model):
     # This field is required.
-    user = models.OneToOneField(User, models.CASCADE, related_name="profile")
+    user = models.OneToOneField(
+        User, models.CASCADE, related_name="profile", primary_key=True
+    )
     # Other fields here.
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
