@@ -318,6 +318,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.setState({ projectManager: contact });
     };
 
+    resetProjectManager = () => {
+        this.setState({ projectManager: '' });
+    };
+
     addComment = (comment: string, translation: ?number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(
@@ -455,6 +459,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         tabIndex={this.state.tabIndex}
                         setTabState={this.setTabState}
                         projectManager={this.state.projectManager}
+                        resetProjectManager={this.resetProjectManager}
                     />
                 </section>
             </section>

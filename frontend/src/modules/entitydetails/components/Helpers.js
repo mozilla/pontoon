@@ -42,6 +42,7 @@ type Props = {|
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
     setTabState: (number) => void,
+    resetProjectManager: () => void,
 |};
 
 /**
@@ -73,6 +74,7 @@ export default class Helpers extends React.Component<Props> {
             addTextToEditorTranslation,
             navigateToPath,
             setTabState,
+            resetProjectManager,
         } = this.props;
 
         return (
@@ -120,6 +122,7 @@ export default class Helpers extends React.Component<Props> {
                                 users={users}
                                 togglePinnedStatus={togglePinnedStatus}
                                 projectManager={projectManager}
+                                resetProjectManager={resetProjectManager}
                             />
                         </TabPanel>
                     </Tabs>
