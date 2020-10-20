@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import pytest
+from unittest.mock import MagicMock
 
-from mock import MagicMock
+import pytest
 
 from pontoon.checks.libraries.pontoon_db import get_max_length, run_checks
 

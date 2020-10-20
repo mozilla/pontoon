@@ -2,9 +2,9 @@
 import os
 
 from textwrap import dedent
+from unittest.mock import MagicMock
 
 import pytest
-from mock import MagicMock
 
 from pontoon.checks.libraries.compare_locales import (
     CompareDTDEntity,

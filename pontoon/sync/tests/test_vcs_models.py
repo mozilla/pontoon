@@ -2,10 +2,9 @@ import tempfile
 import os
 
 from http.client import HTTPException
+from unittest.mock import Mock, patch, PropertyMock
 
 import scandir
-
-from mock import Mock, patch, PropertyMock
 
 from pontoon.base.models import (
     Locale,

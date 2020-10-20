@@ -1,9 +1,9 @@
 import io
+from unittest.mock import ANY, patch, PropertyMock
 
 from django.core.management.base import CommandError
 
 import pytest
-from mock import ANY, patch, PropertyMock
 
 from pontoon.base.models import Project
 from pontoon.base.tests import ProjectFactory, TestCase

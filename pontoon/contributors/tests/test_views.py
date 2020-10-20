@@ -3,8 +3,8 @@ from datetime import (
     datetime,
     timedelta,
 )
-from mock import patch
 from random import randint
+from unittest.mock import patch
 
 from django.http import HttpResponse
 from django.urls import reverse

@@ -1,6 +1,7 @@
 import fnmatch
+from unittest.mock import MagicMock, PropertyMock, patch
+
 import pytest
-from mock import MagicMock, PropertyMock, patch
 
 from django.db.models import QuerySet
 

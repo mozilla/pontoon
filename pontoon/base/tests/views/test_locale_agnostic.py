@@ -1,6 +1,6 @@
-import pytest
+from unittest.mock import MagicMock, PropertyMock, patch
 
-from mock import MagicMock, PropertyMock, patch
+import pytest
 
 from django.http import HttpResponse
 from django.urls import reverse

@@ -1,6 +1,6 @@
-import pytest
+from unittest.mock import patch
 
-from mock import patch
+import pytest
 
 from django.urls import reverse
 from django.shortcuts import render

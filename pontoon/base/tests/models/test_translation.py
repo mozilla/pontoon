@@ -1,6 +1,6 @@
-import pytest
+from unittest.mock import patch, call
 
-from mock import patch, call
+import pytest
 
 from pontoon.base.models import Project, TranslationMemoryEntry
 from pontoon.test.factories import (

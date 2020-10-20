@@ -1,7 +1,7 @@
 import os.path
+from unittest.mock import ANY, Mock, patch, PropertyMock, MagicMock
 
 import pytest
-from mock import ANY, Mock, patch, PropertyMock, MagicMock
 
 from pontoon.base.models import (
     Entity,
