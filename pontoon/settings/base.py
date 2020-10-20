@@ -763,7 +763,7 @@ CELERY_ACCEPT_CONTENT = ["pickle"]
 # For the sake of integration with other sites,
 # some of javascript files (e.g. pontoon.js)
 # require Access-Control-Allow-Origin header to be set as '*'.
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"^/(pontoon\.js|graphql/?)$"
 
 SOCIALACCOUNT_ENABLED = True
