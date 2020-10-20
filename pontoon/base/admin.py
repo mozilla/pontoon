@@ -44,10 +44,13 @@ class UserAdmin(AuthUserAdmin):
     inlines = (UserProfileInline,)
 
     add_fieldsets = (
-        (None, {
-            'classes': 'wide',
-            'fields': ('username', 'email', 'password1', 'password2')
-        }),
+        (
+            None,
+            {
+                "classes": "wide",
+                "fields": ("username", "email", "password1", "password2"),
+            },
+        ),
     )
 
     def save_model(self, request, obj, form, change):

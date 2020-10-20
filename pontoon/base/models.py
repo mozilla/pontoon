@@ -356,6 +356,7 @@ def serialized_notifications(self):
         "notifications": notifications,
     }
 
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
