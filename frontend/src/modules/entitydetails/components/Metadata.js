@@ -27,7 +27,7 @@ type Props = {|
     +terms: TermState,
     +teamComments: TeamCommentState,
     +user: UserState,
-    +tabRef: Object,
+    +commentTabRef: Object,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
@@ -343,7 +343,7 @@ export default class Metadata extends React.Component<Props, State> {
     };
 
     openTeamComments = () => {
-        const teamCommentsTab = this.props.tabRef.current;
+        const teamCommentsTab = this.props.commentTabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
         this.props.setTabState(index);
         this.props.mentionProjectManager(

@@ -31,7 +31,7 @@ type Props = {|
     parameters: NavigationParams,
     user: UserState,
     users: UserState,
-    tabRef: Object,
+    commentTabRef: Object,
     tabIndex: number,
     projectManager: string,
     updateEditorTranslation: (string, string) => void,
@@ -63,7 +63,7 @@ export default class Helpers extends React.Component<Props> {
             parameters,
             user,
             users,
-            tabRef,
+            commentTabRef,
             tabIndex,
             projectManager,
             updateEditorTranslation,
@@ -93,7 +93,7 @@ export default class Helpers extends React.Component<Props> {
                                     <TermCount terms={terms} />
                                 </Tab>
                             )}
-                            <Tab ref={tabRef}>
+                            <Tab ref={commentTabRef}>
                                 <Localized id='entitydetails-Helpers--comments'>
                                     {'Comments'}
                                 </Localized>

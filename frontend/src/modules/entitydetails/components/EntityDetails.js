@@ -80,7 +80,7 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
-    tabRef: { current: Object };
+    commentTabRef: { current: Object };
     constructor(props: InternalProps, state: State) {
         super(props);
         this.state = {
@@ -88,7 +88,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             tabIndex: 0,
             projectManager: '',
         };
-        this.tabRef = React.createRef();
+        this.commentTabRef = React.createRef();
     }
     componentDidMount() {
         this.updateFailedChecks();
@@ -411,7 +411,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         navigateToPath={this.navigateToPath}
                         teamComments={state.teamComments}
                         user={state.user}
-                        tabRef={this.tabRef}
+                        commentTabRef={this.commentTabRef}
                         setTabState={this.setTabState}
                         mentionProjectManager={this.mentionProjectManager}
                     />
@@ -455,7 +455,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                             this.addTextToEditorTranslation
                         }
                         navigateToPath={this.navigateToPath}
-                        tabRef={this.tabRef}
+                        commentTabRef={this.commentTabRef}
                         tabIndex={this.state.tabIndex}
                         setTabState={this.setTabState}
                         projectManager={this.state.projectManager}
