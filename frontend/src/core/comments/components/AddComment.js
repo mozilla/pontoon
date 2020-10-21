@@ -533,6 +533,8 @@ const insertMention = (editor, character, users) => {
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
     Transforms.insertText(editor, ' ');
+    ReactEditor.focus(editor);
+    Transforms.select(editor, Editor.end(editor, []));
 };
 
 const MentionElement = ({ attributes, children, element }) => {
