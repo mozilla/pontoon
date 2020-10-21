@@ -9,15 +9,12 @@ import re
 import requests
 
 import Levenshtein
-import warnings
-import django
 
 from collections import defaultdict
 from dirtyfields import DirtyFieldsMixin
 from django.db.models.functions import Length, Substr, Cast
 from functools import reduce
 from urllib.parse import quote, urlencode, urlparse
-from bulk_update.helper import bulk_update
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -2446,14 +2443,13 @@ class EntityQuerySet(models.QuerySet):
         kwargs["word_count"] = get_word_count(kwargs["string"])
         return super(EntityQuerySet, self).get_or_create(defaults=defaults, **kwargs)
 
-    def bulk_update(self, objs, update_fields=None, batch_size=None):
-        if django.VERSION[0] >= 2:
-            msg = "Django version is 2 or higher. Function bulk_update needs to be removed"
-            warnings.warn(msg, PendingDeprecationWarning)
-        if objs:
+    def bulk_update(self, objs, fields, batch_size=None):
+        if "string" in fields:
             for obj in objs:
                 obj.word_count = get_word_count(obj.string)
-        return bulk_update(objs, update_fields=update_fields, batch_size=batch_size)
+            if "word_count" not in fields:
+                fields.append("word_count")
+        super().bulk_update(objs, fields=fields, batch_size=batch_size)
 
 
 class Entity(DirtyFieldsMixin, models.Model):
@@ -3519,9 +3515,9 @@ class TranslatedResourceQuerySet(models.QuerySet):
         for translated_resource in self:
             translated_resource.calculate_stats(save=False)
 
-        bulk_update(
+        TranslatedResource.objects.bulk_update(
             list(self),
-            update_fields=[
+            fields=[
                 "total_strings",
                 "approved_strings",
                 "fuzzy_strings",

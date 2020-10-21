@@ -1,7 +1,5 @@
 import logging
 
-from bulk_update.helper import bulk_update
-
 from django.urls import reverse
 from django.db import models
 from django.db.models import F, Max, Sum
@@ -76,7 +74,9 @@ class SyncLog(BaseLog):
                 )
             )
 
-        bulk_update(translated_resources, update_fields=["total_strings"])
+        TranslatedResource.objects.bulk_update(
+            translated_resources, fields=["total_strings"]
+        )
 
         # total_strings missmatch in ProjectLocales within the same project
         for p in Project.objects.available():
