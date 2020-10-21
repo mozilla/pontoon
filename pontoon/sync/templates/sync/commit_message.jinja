@@ -1,6 +1,5 @@
 Pontoon: Update {{ locale.name }} ({{ locale.code }}) localization of {{ project.name }}
-
-{%- if authors %}
+{% if authors %}
 {% for author in authors -%}
 Co-authored-by: {{ author.display_name_and_email|safe }}
 {% endfor %}
