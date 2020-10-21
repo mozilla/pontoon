@@ -990,9 +990,9 @@ def test_mgr_bulk_update(get_word_count_mock, admin, resource_a, locale_a):
     testEntitiesQuerySet = Entity.for_project_locale(
         admin, resource_a.project, locale_a
     )
-    updated_count = testEntitiesQuerySet.bulk_update(
+    testEntitiesQuerySet.bulk_update(
         objs,
-        update_fields=[
+        fields=[
             "resource",
             "string",
             "string_plural",
@@ -1006,4 +1006,3 @@ def test_mgr_bulk_update(get_word_count_mock, admin, resource_a, locale_a):
     )
 
     assert get_word_count_mock.call_count == 4
-    assert updated_count == len(objs)
