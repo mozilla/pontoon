@@ -532,6 +532,7 @@ const insertMention = (editor, character, users) => {
     };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
+    Transforms.insertText(editor, ' ');
 };
 
 const MentionElement = ({ attributes, children, element }) => {
