@@ -369,7 +369,7 @@ export default class Metadata extends React.Component<Props, State> {
                     <div className='source-string-comment'>
                         <Localized id='entitydetails-Metadata--context-issue-button'>
                             <button
-                                className='context-button'
+                                className='context-issue-button'
                                 onClick={this.openTeamComments}
                             >
                                 {'REQUEST CONTEXT or REPORT ISSUE'}

@@ -46,6 +46,7 @@
     font-size: 14px;
     font-style: normal;
     line-height: 22px;
+    margin-top: -2px; /* Align with the source string comment button */
     padding-bottom: 6px;
     text-align: start;
     white-space: pre-wrap;
@@ -78,18 +79,23 @@
     padding: 0 0 0 2px;
 }
 
-.metadata .source-string-comment {
-    float: right;
+.metadata .source-string-comment .context-issue-button {
     background: #333941;
     border: 1px solid #3f4752;
     border-radius: 4px;
+    color: #ccc;
+    float: right;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 100;
+    margin: -1px -1px 0 2px; /* Compensate for invisible border in default state */
     padding: 2px 4px;
 }
 
-.metadata .source-string-comment:hover {
+.metadata .source-string-comment .context-issue-button:hover {
     border-color: #637283;
 }
 
-.metadata .source-string-comment .context-button {
+.metadata .source-string-comment .context-issue-button {
     color: #aaa;
 }
