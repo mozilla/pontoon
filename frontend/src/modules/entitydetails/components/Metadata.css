@@ -11,6 +11,10 @@
     padding: 10px;
 }
 
+.metadata .container {
+    display: flex;
+}
+
 .metadata h2 {
     font-style: normal;
     font-size: 11px;
@@ -65,6 +69,10 @@
     font-style: inherit;
 }
 
+.metadata table {
+    flex: 2 0 auto;
+}
+
 .metadata ul {
     list-style: none;
     margin: 0;
@@ -77,6 +85,10 @@
     color: #7bc876;
     font-style: italic;
     padding: 0 0 0 2px;
+}
+
+.metadata .source-string-comment {
+    flex: 1 0 auto;
 }
 
 .metadata .source-string-comment .context-issue-button {

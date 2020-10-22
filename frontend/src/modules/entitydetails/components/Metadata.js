@@ -365,30 +365,32 @@ export default class Metadata extends React.Component<Props, State> {
 
         return (
             <div className='metadata'>
-                {!user.isAuthenticated || !contactPerson ? null : (
-                    <div className='source-string-comment'>
-                        <Localized id='entitydetails-Metadata--context-issue-button'>
-                            <button
-                                className='context-issue-button'
-                                onClick={this.openTeamComments}
-                            >
-                                {'REQUEST CONTEXT or REPORT ISSUE'}
-                            </button>
-                        </Localized>
-                    </div>
-                )}
                 <Screenshots
                     source={entity.comment}
                     locale={locale.code}
                     openLightbox={openLightbox}
                 />
-                <OriginalStringProxy
-                    entity={entity}
-                    locale={locale}
-                    pluralForm={pluralForm}
-                    terms={terms}
-                    handleClickOnPlaceable={this.handleClickOnPlaceable}
-                />
+                <div className='container'>
+                    <OriginalStringProxy
+                        entity={entity}
+                        locale={locale}
+                        pluralForm={pluralForm}
+                        terms={terms}
+                        handleClickOnPlaceable={this.handleClickOnPlaceable}
+                    />
+                    {!user.isAuthenticated || !contactPerson ? null : (
+                        <div className='source-string-comment'>
+                            <Localized id='entitydetails-Metadata--context-issue-button'>
+                                <button
+                                    className='context-issue-button'
+                                    onClick={this.openTeamComments}
+                                >
+                                    {'REQUEST CONTEXT or REPORT ISSUE'}
+                                </button>
+                            </Localized>
+                        </div>
+                    )}
+                </div>
                 <TermsPopup
                     isReadOnlyEditor={isReadOnlyEditor}
                     locale={locale.code}
