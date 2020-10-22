@@ -1,4 +1,4 @@
-from mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock
 
 from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import TranslationFactory

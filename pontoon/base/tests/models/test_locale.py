@@ -1,6 +1,6 @@
-import pytest
+from unittest.mock import patch
 
-from mock import patch
+import pytest
 
 from pontoon.base.models import ProjectLocale
 from pontoon.test.factories import (

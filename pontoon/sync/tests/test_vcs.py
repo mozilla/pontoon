@@ -1,6 +1,5 @@
 from textwrap import dedent
-
-from mock import patch
+from unittest.mock import patch
 
 from pontoon.sync.vcs.repositories import VCSRepository
 from pontoon.base.tests import CONTAINS, TestCase

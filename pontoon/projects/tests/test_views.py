@@ -1,7 +1,7 @@
+from unittest.mock import patch
+
 from django.http import HttpResponse
 from django.shortcuts import render
-
-from mock import patch
 
 from pontoon.base.tests import (
     ProjectFactory,

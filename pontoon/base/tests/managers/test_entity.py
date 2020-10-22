@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import pytest
+from unittest.mock import patch, call
 
-from mock import patch, call
+import pytest
 
 from pontoon.base.models import (
     get_word_count,
