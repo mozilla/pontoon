@@ -1,7 +1,7 @@
 import os.path
+from unittest.mock import patch, PropertyMock
 
 import factory
-from mock import patch, PropertyMock
 
 from pontoon.base.models import Project
 from pontoon.base.tests import (

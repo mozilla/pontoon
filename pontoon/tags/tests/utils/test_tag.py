@@ -1,8 +1,7 @@
 import types
+from unittest.mock import patch, MagicMock, PropertyMock
 
 import pytest
-
-from mock import patch, MagicMock, PropertyMock
 
 from pontoon.tags.utils import TagsTool, TagTool
 

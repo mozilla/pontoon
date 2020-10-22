@@ -1,6 +1,6 @@
-import pytest
+from unittest.mock import MagicMock, patch, PropertyMock
 
-from mock import MagicMock, patch, PropertyMock
+import pytest
 
 from pontoon.tags.models import Tag
 from pontoon.tags.utils import (

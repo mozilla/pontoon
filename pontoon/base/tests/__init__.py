@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 from contextlib import contextmanager
+from unittest.mock import patch
 
 from django.contrib.auth.models import (
     Group,
@@ -13,7 +14,6 @@ from django.test import TestCase as BaseTestCase, Client as BaseClient
 import factory
 from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
 from factory.django import DjangoModelFactory
-from mock import patch
 
 from pontoon.base.models import (
     ChangedEntityLocale,

@@ -1,5 +1,6 @@
+from unittest.mock import Mock, MagicMock, patch
+
 import pytest
-from mock import Mock, MagicMock, patch
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity
