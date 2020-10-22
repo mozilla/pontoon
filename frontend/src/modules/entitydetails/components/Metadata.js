@@ -365,6 +365,18 @@ export default class Metadata extends React.Component<Props, State> {
 
         return (
             <div className='metadata'>
+                {!user.isAuthenticated || !projectManager ? null : (
+                    <div className='source-string-comment'>
+                        <Localized id='entitydetails-Metadata--context-issue-button'>
+                            <button
+                                className='context-button'
+                                onClick={this.openTeamComments}
+                            >
+                                {'REQUEST CONTEXT or REPORT ISSUE'}
+                            </button>
+                        </Localized>
+                    </div>
+                )}
                 <Screenshots
                     source={entity.comment}
                     locale={locale.code}
@@ -412,18 +424,6 @@ export default class Metadata extends React.Component<Props, State> {
                         </a>
                     </Property>
                 </Localized>
-                {!user.isAuthenticated || !projectManager ? null : (
-                    <div className='source-comment-button'>
-                        <Localized id='entitydetails-Metadata-context-issue-button'>
-                            <button
-                                className='context-button'
-                                onClick={this.openTeamComments}
-                            >
-                                {'Request context / Report issue'}
-                            </button>
-                        </Localized>
-                    </div>
-                )}
             </div>
         );
     }

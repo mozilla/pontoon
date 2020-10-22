@@ -78,6 +78,18 @@
     padding: 0 0 0 2px;
 }
 
-.metadata .source-comments-button {
-    margin-top: 10px;
+.metadata .source-string-comment {
+    float: right;
+    background: #333941;
+    border: 1px solid #3f4752;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.metadata .source-string-comment:hover {
+    border-color: #637283;
+}
+
+.metadata .source-string-comment .context-button {
+    color: #aaa;
 }
