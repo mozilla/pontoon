@@ -359,7 +359,7 @@ def user_serialize(self):
 
     return {
         "avatar": self.gravatar_url_small,
-        "name": self.first_name or self.email,
+        "name": self.name_or_email,
         "url": self.profile_url,
     }
 
