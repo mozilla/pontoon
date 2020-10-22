@@ -17,12 +17,12 @@ type Props = {|
     translation?: HistoryTranslation,
     user: UserState,
     users: UserState,
-    projectManager?: string,
+    contactPerson?: string,
     canComment: boolean,
     canPin?: boolean,
     addComment: (string, ?number) => void,
     togglePinnedStatus?: (boolean, number) => void,
-    resetProjectManager?: () => void,
+    resetContactPerson?: () => void,
 |};
 
 export default function CommentsList(props: Props) {
@@ -36,8 +36,8 @@ export default function CommentsList(props: Props) {
         addComment,
         users,
         togglePinnedStatus,
-        projectManager,
-        resetProjectManager,
+        contactPerson,
+        resetContactPerson,
     } = props;
 
     const translationId = translation ? translation.pk : null;
@@ -62,8 +62,8 @@ export default function CommentsList(props: Props) {
                     translation={translationId}
                     users={users}
                     addComment={addComment}
-                    projectManager={projectManager}
-                    resetProjectManager={resetProjectManager}
+                    contactPerson={contactPerson}
+                    resetContactPerson={resetContactPerson}
                 />
             )}
         </div>

@@ -21,9 +21,9 @@ type Props = {|
     parameters: ?NavigationParams,
     translation?: ?number,
     users: UserState,
-    projectManager?: string,
+    contactPerson?: string,
     addComment: (string, ?number) => void,
-    resetProjectManager?: () => void,
+    resetContactPerson?: () => void,
 |};
 
 export default function AddComment(props: Props) {
@@ -33,9 +33,9 @@ export default function AddComment(props: Props) {
         parameters,
         translation,
         users,
-        projectManager,
+        contactPerson,
         addComment,
-        resetProjectManager,
+        resetContactPerson,
     } = props;
 
     const mentionList: any = React.useRef();
@@ -54,14 +54,14 @@ export default function AddComment(props: Props) {
     // Insert project manager as mention when 'Request context / Report issue' button used
     // and then clear the value from state
     React.useEffect(() => {
-        if (projectManager) {
-            insertMention(editor, projectManager, usersList);
+        if (contactPerson) {
+            insertMention(editor, contactPerson, usersList);
 
-            if (resetProjectManager) {
-                resetProjectManager();
+            if (resetContactPerson) {
+                resetContactPerson();
             }
         }
-    }, [editor, projectManager, usersList, resetProjectManager]);
+    }, [editor, contactPerson, usersList, resetContactPerson]);
 
     // Set focus on Editor
     React.useEffect(() => {

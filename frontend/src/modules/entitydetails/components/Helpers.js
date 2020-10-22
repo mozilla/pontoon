@@ -33,7 +33,7 @@ type Props = {|
     users: UserState,
     commentTabRef: Object,
     tabIndex: number,
-    projectManager: string,
+    contactPerson: string,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
@@ -42,7 +42,7 @@ type Props = {|
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
     setTabState: (number) => void,
-    resetProjectManager: () => void,
+    resetContactPerson: () => void,
 |};
 
 /**
@@ -65,7 +65,7 @@ export default class Helpers extends React.Component<Props> {
             users,
             commentTabRef,
             tabIndex,
-            projectManager,
+            contactPerson,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
@@ -74,7 +74,7 @@ export default class Helpers extends React.Component<Props> {
             addTextToEditorTranslation,
             navigateToPath,
             setTabState,
-            resetProjectManager,
+            resetContactPerson,
         } = this.props;
 
         return (
@@ -121,8 +121,8 @@ export default class Helpers extends React.Component<Props> {
                                 addComment={addComment}
                                 users={users}
                                 togglePinnedStatus={togglePinnedStatus}
-                                projectManager={projectManager}
-                                resetProjectManager={resetProjectManager}
+                                contactPerson={contactPerson}
+                                resetContactPerson={resetContactPerson}
                             />
                         </TabPanel>
                     </Tabs>

@@ -16,10 +16,10 @@ type Props = {|
     teamComments: TeamCommentState,
     user: UserState,
     users: UserState,
-    projectManager: string,
+    contactPerson: string,
     addComment: (string, ?number) => void,
     togglePinnedStatus: (boolean, number) => void,
-    resetProjectManager: () => void,
+    resetContactPerson: () => void,
 |};
 
 export default function TeamComments(props: Props) {
@@ -30,8 +30,8 @@ export default function TeamComments(props: Props) {
         users,
         addComment,
         togglePinnedStatus,
-        projectManager,
-        resetProjectManager,
+        contactPerson,
+        resetContactPerson,
     } = props;
 
     if (teamComments.fetching || !teamComments.comments) {
@@ -59,8 +59,8 @@ export default function TeamComments(props: Props) {
                     canPin={canPin}
                     addComment={addComment}
                     togglePinnedStatus={togglePinnedStatus}
-                    projectManager={projectManager}
-                    resetProjectManager={resetProjectManager}
+                    contactPerson={contactPerson}
+                    resetContactPerson={resetContactPerson}
                 />
             )}
         </section>

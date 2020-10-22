@@ -71,7 +71,7 @@ type InternalProps = {|
 type State = {|
     translation: string,
     tabIndex: number,
-    projectManager: string,
+    contactPerson: string,
 |};
 
 /**
@@ -86,7 +86,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.state = {
             ...state,
             tabIndex: 0,
-            projectManager: '',
+            contactPerson: '',
         };
         this.commentTabRef = React.createRef();
     }
@@ -314,12 +314,12 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.setState({ tabIndex: tab });
     };
 
-    mentionProjectManager = (contact: string) => {
-        this.setState({ projectManager: contact });
+    setContactPerson = (contact: string) => {
+        this.setState({ contactPerson: contact });
     };
 
-    resetProjectManager = () => {
-        this.setState({ projectManager: '' });
+    resetContactPerson = () => {
+        this.setState({ contactPerson: '' });
     };
 
     addComment = (comment: string, translation: ?number) => {
@@ -413,7 +413,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         user={state.user}
                         commentTabRef={this.commentTabRef}
                         setTabState={this.setTabState}
-                        mentionProjectManager={this.mentionProjectManager}
+                        setContactPerson={this.setContactPerson}
                     />
                     {state.selectedEntity.format === 'ftl' ? (
                         <fluenteditor.Editor />
@@ -458,8 +458,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         commentTabRef={this.commentTabRef}
                         tabIndex={this.state.tabIndex}
                         setTabState={this.setTabState}
-                        projectManager={this.state.projectManager}
-                        resetProjectManager={this.resetProjectManager}
+                        contactPerson={this.state.contactPerson}
+                        resetContactPerson={this.resetContactPerson}
                     />
                 </section>
             </section>
