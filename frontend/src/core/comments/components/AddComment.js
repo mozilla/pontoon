@@ -523,12 +523,12 @@ const insertMention = (editor, character, users) => {
         return;
     }
     const userUrl = selectedUser.url;
-    const display = selectedUser.display;
+    const name = selectedUser.name;
     const mention = {
         type: 'mention',
         character,
         url: userUrl,
-        children: [{ text: display }],
+        children: [{ text: name }],
     };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);

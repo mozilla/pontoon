@@ -361,7 +361,6 @@ def user_serialize(self):
         "avatar": self.gravatar_url_small,
         "name": self.first_name or self.email,
         "url": self.profile_url,
-        "display": self.name_or_email,
     }
 
 
