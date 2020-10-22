@@ -70,7 +70,7 @@ type InternalProps = {|
 
 type State = {|
     translation: string,
-    tabIndex: number,
+    commentTabIndex: number,
     contactPerson: string,
 |};
 
@@ -85,7 +85,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         super(props);
         this.state = {
             ...state,
-            tabIndex: 0,
+            commentTabIndex: 0,
             contactPerson: '',
         };
         this.commentTabRef = React.createRef();
@@ -310,8 +310,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    setTabState = (tab: number) => {
-        this.setState({ tabIndex: tab });
+    setCommentTabIndex = (tab: number) => {
+        this.setState({ commentTabIndex: tab });
     };
 
     setContactPerson = (contact: string) => {
@@ -412,7 +412,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         teamComments={state.teamComments}
                         user={state.user}
                         commentTabRef={this.commentTabRef}
-                        setTabState={this.setTabState}
+                        setCommentTabIndex={this.setCommentTabIndex}
                         setContactPerson={this.setContactPerson}
                     />
                     {state.selectedEntity.format === 'ftl' ? (
@@ -456,8 +456,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         }
                         navigateToPath={this.navigateToPath}
                         commentTabRef={this.commentTabRef}
-                        tabIndex={this.state.tabIndex}
-                        setTabState={this.setTabState}
+                        commentTabIndex={this.state.commentTabIndex}
+                        setCommentTabIndex={this.setCommentTabIndex}
                         contactPerson={this.state.contactPerson}
                         resetContactPerson={this.resetContactPerson}
                     />

@@ -31,7 +31,7 @@ type Props = {|
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
-    setTabState: (number) => void,
+    setCommentTabIndex: (number) => void,
     setContactPerson: (string) => void,
 |};
 
@@ -345,7 +345,7 @@ export default class Metadata extends React.Component<Props, State> {
     openTeamComments = () => {
         const teamCommentsTab = this.props.commentTabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
-        this.props.setTabState(index);
+        this.props.setCommentTabIndex(index);
         this.props.setContactPerson(this.props.entity.project.contact.name);
     };
 
@@ -361,11 +361,11 @@ export default class Metadata extends React.Component<Props, State> {
             teamComments,
         } = this.props;
         const { popupTerms } = this.state;
-        const projectManager = entity.project.contact;
+        const contactPerson = entity.project.contact;
 
         return (
             <div className='metadata'>
-                {!user.isAuthenticated || !projectManager ? null : (
+                {!user.isAuthenticated || !contactPerson ? null : (
                     <div className='source-string-comment'>
                         <Localized id='entitydetails-Metadata--context-issue-button'>
                             <button

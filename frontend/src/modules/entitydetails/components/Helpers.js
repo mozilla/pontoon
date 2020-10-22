@@ -32,7 +32,7 @@ type Props = {|
     user: UserState,
     users: UserState,
     commentTabRef: Object,
-    tabIndex: number,
+    commentTabIndex: number,
     contactPerson: string,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
@@ -41,7 +41,7 @@ type Props = {|
     togglePinnedStatus: (boolean, number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
-    setTabState: (number) => void,
+    setCommentTabIndex: (number) => void,
     resetContactPerson: () => void,
 |};
 
@@ -64,7 +64,7 @@ export default class Helpers extends React.Component<Props> {
             user,
             users,
             commentTabRef,
-            tabIndex,
+            commentTabIndex,
             contactPerson,
             updateEditorTranslation,
             updateMachinerySources,
@@ -73,7 +73,7 @@ export default class Helpers extends React.Component<Props> {
             togglePinnedStatus,
             addTextToEditorTranslation,
             navigateToPath,
-            setTabState,
+            setCommentTabIndex,
             resetContactPerson,
         } = this.props;
 
@@ -81,8 +81,8 @@ export default class Helpers extends React.Component<Props> {
             <>
                 <div className='top'>
                     <Tabs
-                        selectedIndex={tabIndex}
-                        onSelect={(tab) => setTabState(tab)}
+                        selectedIndex={commentTabIndex}
+                        onSelect={(tab) => setCommentTabIndex(tab)}
                     >
                         <TabList>
                             {parameters.project === 'terminology' ? null : (
