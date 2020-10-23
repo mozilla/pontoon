@@ -96,11 +96,10 @@
     border: 1px solid #3f4752;
     border-radius: 4px;
     color: #ccc;
-    float: right;
     font-size: 11px;
     font-style: normal;
     font-weight: 100;
-    margin: -1px -1px 0 2px; /* Compensate for invisible border in default state */
+    margin: -1px -1px 0 4px; /* Compensate for invisible border in default state */
     padding: 2px 4px;
 }
 
