@@ -43,7 +43,7 @@ export default function OriginalStringProxy(props: Props) {
     }
 
     return (
-        <div>
+        <>
             {!props.showContextIssueButton ? null : (
                 <ContextIssueButton openTeamComments={props.openTeamComments} />
             )}
@@ -54,6 +54,6 @@ export default function OriginalStringProxy(props: Props) {
                 terms={props.terms}
                 handleClickOnPlaceable={props.handleClickOnPlaceable}
             />
-        </div>
+        </>
     );
 }

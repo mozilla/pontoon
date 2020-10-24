@@ -35,7 +35,7 @@ export default function FluentOriginalString(props: Props) {
 
     if (syntax === 'simple') {
         return (
-            <div>
+            <>
                 {!props.showContextIssueButton ? null : (
                     <ContextIssueButton
                         openTeamComments={props.openTeamComments}
@@ -46,7 +46,7 @@ export default function FluentOriginalString(props: Props) {
                     terms={props.terms}
                     handleClickOnPlaceable={props.handleClickOnPlaceable}
                 />
-            </div>
+            </>
         );
     }
 
@@ -69,7 +69,7 @@ export default function FluentOriginalString(props: Props) {
 
     // Complex, unsupported strings.
     return (
-        <div>
+        <>
             {!props.showContextIssueButton ? null : (
                 <ContextIssueButton openTeamComments={props.openTeamComments} />
             )}
@@ -78,6 +78,6 @@ export default function FluentOriginalString(props: Props) {
                 terms={props.terms}
                 handleClickOnPlaceable={props.handleClickOnPlaceable}
             />
-        </div>
+        </>
     );
 }
