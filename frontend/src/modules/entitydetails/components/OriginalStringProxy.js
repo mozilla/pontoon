@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { FluentOriginalString } from 'modules/fluentoriginal';
 
+import ContextIssueButton from './ContextIssueButton';
 import GenericOriginalString from './GenericOriginalString';
 
 import type { Entity } from 'core/api';
@@ -15,9 +16,11 @@ type Props = {|
     +locale: Locale,
     +pluralForm: number,
     +terms: TermState,
+    +showContextIssueButton: boolean,
     +handleClickOnPlaceable: (
         SyntheticMouseEvent<HTMLParagraphElement>,
     ) => void,
+    +openTeamComments: () => void,
 |};
 
 /**
@@ -32,18 +35,25 @@ export default function OriginalStringProxy(props: Props) {
             <FluentOriginalString
                 entity={props.entity}
                 terms={props.terms}
+                showContextIssueButton={props.showContextIssueButton}
                 handleClickOnPlaceable={props.handleClickOnPlaceable}
+                openTeamComments={props.openTeamComments}
             />
         );
     }
 
     return (
-        <GenericOriginalString
-            entity={props.entity}
-            locale={props.locale}
-            pluralForm={props.pluralForm}
-            terms={props.terms}
-            handleClickOnPlaceable={props.handleClickOnPlaceable}
-        />
+        <div>
+            {!props.showContextIssueButton ? null : (
+                <ContextIssueButton openTeamComments={props.openTeamComments} />
+            )}
+            <GenericOriginalString
+                entity={props.entity}
+                locale={props.locale}
+                pluralForm={props.pluralForm}
+                terms={props.terms}
+                handleClickOnPlaceable={props.handleClickOnPlaceable}
+            />
+        </div>
     );
 }

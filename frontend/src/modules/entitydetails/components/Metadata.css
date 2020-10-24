@@ -86,27 +86,3 @@
     font-style: italic;
     padding: 0 0 0 2px;
 }
-
-.metadata .source-string-comment {
-    flex: 1 0 auto;
-}
-
-.metadata .source-string-comment .context-issue-button {
-    background: #333941;
-    border: 1px solid #3f4752;
-    border-radius: 4px;
-    color: #ccc;
-    font-size: 11px;
-    font-style: normal;
-    font-weight: 100;
-    margin: -1px -1px 0 4px; /* Compensate for invisible border in default state */
-    padding: 2px 4px;
-}
-
-.metadata .source-string-comment .context-issue-button:hover {
-    border-color: #637283;
-}
-
-.metadata .source-string-comment .context-issue-button {
-    color: #aaa;
-}

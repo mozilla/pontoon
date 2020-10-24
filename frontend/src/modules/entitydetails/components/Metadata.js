@@ -362,6 +362,7 @@ export default class Metadata extends React.Component<Props, State> {
         } = this.props;
         const { popupTerms } = this.state;
         const contactPerson = entity.project.contact;
+        const showContextIssueButton = user.isAuthenticated && contactPerson;
 
         return (
             <div className='metadata'>
@@ -370,27 +371,15 @@ export default class Metadata extends React.Component<Props, State> {
                     locale={locale.code}
                     openLightbox={openLightbox}
                 />
-                <div className='container'>
-                    <OriginalStringProxy
-                        entity={entity}
-                        locale={locale}
-                        pluralForm={pluralForm}
-                        terms={terms}
-                        handleClickOnPlaceable={this.handleClickOnPlaceable}
-                    />
-                    {!user.isAuthenticated || !contactPerson ? null : (
-                        <div className='source-string-comment'>
-                            <Localized id='entitydetails-Metadata--context-issue-button'>
-                                <button
-                                    className='context-issue-button'
-                                    onClick={this.openTeamComments}
-                                >
-                                    {'REQUEST CONTEXT or REPORT ISSUE'}
-                                </button>
-                            </Localized>
-                        </div>
-                    )}
-                </div>
+                <OriginalStringProxy
+                    entity={entity}
+                    locale={locale}
+                    pluralForm={pluralForm}
+                    terms={terms}
+                    showContextIssueButton={showContextIssueButton}
+                    handleClickOnPlaceable={this.handleClickOnPlaceable}
+                    openTeamComments={this.openTeamComments}
+                />
                 <TermsPopup
                     isReadOnlyEditor={isReadOnlyEditor}
                     locale={locale.code}
