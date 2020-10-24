@@ -8,7 +8,7 @@ import RichString from './RichString';
 import SimpleString from './SimpleString';
 import SourceString from './SourceString';
 
-import ContextIssueButton from 'modules/entitydetails/components/ContextIssueButton';
+import { ContextIssueButton } from 'modules/entitydetails';
 
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';

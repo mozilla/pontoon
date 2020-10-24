@@ -22,7 +22,7 @@ export default function ContextIssueButton(props: Props) {
     };
     return (
         <div className='source-string-comment'>
-            <Localized id='entitydetails-Metadata--context-issue-button'>
+            <Localized id='entitydetails-ContextIssueButton--context-issue-button'>
                 <button
                     className='context-issue-button'
                     onClick={handleClick}
