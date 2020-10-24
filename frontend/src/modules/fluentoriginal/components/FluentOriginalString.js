@@ -4,11 +4,11 @@ import * as React from 'react';
 
 import { fluent } from 'core/utils';
 
-import ContextIssueButton from 'modules/entitydetails/components/ContextIssueButton';
-
 import RichString from './RichString';
 import SimpleString from './SimpleString';
 import SourceString from './SourceString';
+
+import ContextIssueButton from 'modules/entitydetails/components/ContextIssueButton';
 
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
