@@ -58,15 +58,15 @@ export default function AddComment(props: Props) {
     // Insert project manager as mention when 'Request context / Report issue' button used
     // and then clear the value from state
     React.useEffect(() => {
-        const [result] = Editor.nodes(editor, {
+        // check to see if contact person is already mentioned
+        const [isMentioned] = Editor.nodes(editor, {
             at: [],
-            match: (n) => n.type === 'mention',
+            match: (n) => n.character === contactPerson,
         });
-        const preventDuplicate = result ? result[0].character : 'undefined';
+
         if (contactPerson) {
-            if (preventDuplicate !== contactPerson) {
+            if (!isMentioned) {
                 insertMention(editor, contactPerson, usersList);
-                placeFocus();
             }
 
             if (resetContactPerson) {
