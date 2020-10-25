@@ -153,7 +153,6 @@ INSTALLED_APPS = (
     # Third-party apps, patches, fixes
     "django_jinja",
     "pipeline",
-    "session_csrf",
     "guardian",
     "corsheaders",
     "allauth",
@@ -181,7 +180,7 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "session_csrf.CsrfMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
@@ -193,7 +192,6 @@ CONTEXT_PROCESSORS = (
     "django.template.context_processors.debug",
     "django.template.context_processors.media",
     "django.template.context_processors.request",
-    "session_csrf.context_processor",
     "django.contrib.messages.context_processors.messages",
     "pontoon.base.context_processors.globals",
 )
@@ -600,8 +598,8 @@ LOGIN_REDIRECT_URL_FAILURE = "/"
 # everything.
 ENGAGE_ROBOTS = False
 
-# Always generate a CSRF token for anonymous users.
-ANON_ALWAYS = True
+# Store the CSRF token in the user's session instead of in a cookie.
+CSRF_USE_SESSIONS = True
 
 # Set X-Frame-Options to DENY by default on all responses.
 X_FRAME_OPTIONS = "DENY"
