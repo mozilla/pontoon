@@ -50,26 +50,38 @@ export default function AddComment(props: Props) {
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     const [value, setValue] = React.useState(initialValue);
     const usersList = users.users;
+    const placeFocus = React.useCallback(() => {
+        ReactEditor.focus(editor);
+        Transforms.select(editor, Editor.end(editor, []));
+    }, [editor]);
 
     // Insert project manager as mention when 'Request context / Report issue' button used
     // and then clear the value from state
     React.useEffect(() => {
+        const [result] = Editor.nodes(editor, {
+            at: [],
+            match: (n) => n.type === 'mention',
+        });
+        const preventDuplicate = result ? result[0].character : 'undefined';
         if (contactPerson) {
-            insertMention(editor, contactPerson, usersList);
+            if (preventDuplicate !== contactPerson) {
+                insertMention(editor, contactPerson, usersList);
+                placeFocus();
+            }
 
             if (resetContactPerson) {
                 resetContactPerson();
+                placeFocus();
             }
         }
-    }, [editor, contactPerson, usersList, resetContactPerson]);
+    }, [editor, contactPerson, usersList, resetContactPerson, placeFocus]);
 
     // Set focus on Editor
     React.useEffect(() => {
         if (!parameters || parameters.project !== 'terminology') {
-            ReactEditor.focus(editor);
-            Transforms.select(editor, Editor.end(editor, []));
+            placeFocus();
         }
-    }, [editor, parameters]);
+    }, [parameters, placeFocus]);
 
     const USERS = usersList.map((user) => user.name);
     const suggestedUsers = USERS.filter((c) =>
@@ -258,6 +270,7 @@ export default function AddComment(props: Props) {
                 Transforms.select(editor, target);
                 insertMention(editor, suggestedUsers[index], usersList);
                 setTarget(null);
+                placeFocus();
                 break;
             case 'Escape':
                 event.preventDefault();
@@ -533,8 +546,6 @@ const insertMention = (editor, character, users) => {
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
     Transforms.insertText(editor, ' ');
-    ReactEditor.focus(editor);
-    Transforms.select(editor, Editor.end(editor, []));
 };
 
 const MentionElement = ({ attributes, children, element }) => {

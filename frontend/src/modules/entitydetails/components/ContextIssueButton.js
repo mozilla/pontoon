@@ -10,23 +10,12 @@ type Props = {|
 |};
 
 export default function ContextIssueButton(props: Props) {
-    const [isDisabled, setIsDisabled] = React.useState(false);
-
-    const handleClick = () => {
-        setIsDisabled(true);
-        props.openTeamComments();
-
-        setTimeout(() => {
-            setIsDisabled(false);
-        }, 3000);
-    };
     return (
         <div className='source-string-comment'>
             <Localized id='entitydetails-ContextIssueButton--context-issue-button'>
                 <button
                     className='context-issue-button'
-                    onClick={handleClick}
-                    disabled={isDisabled}
+                    onClick={props.openTeamComments}
                 >
                     {'REQUEST CONTEXT or REPORT ISSUE'}
                 </button>
