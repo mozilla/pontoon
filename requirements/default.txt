@@ -69,9 +69,9 @@ django-notifications-hq==1.6.0 \
 django-partial-index==0.5.2 \
     --hash=sha256:1eae3c5274b7729e92b33bf06abe95b55288c2718904384907e18f88c3d82155 \
     --hash=sha256:8a805b52971a58cb78c925dbb976fecf59c662a1c767846061444a2587247804
-django-pipeline==1.7.0 \
-    --hash=sha256:0ded22b974e3d627c27fc490ef5b23fcdcf0cdb00b704d628b5ca6d0b010d6fe \
-    --hash=sha256:f7da70f00aa4baea3e0811f88927a116425deee05871fa2bfd2f8247f42d8847
+django-pipeline==2.0.5 \
+    --hash=sha256:6c7bd5c2a922ddb7e989a1c5a6852f3a8bffcf6e14d9f228261c8ba04b5b79a7 \
+    --hash=sha256:7bf3d304c655ca20f77d66a4f4f3511a7b2f317768110967828aa5088806d4ce
 django-webpack-loader==0.5.0 \
     --hash=sha256:0a8536e36a30d719018cd4c5da6e9d2377771134e713c14e617bb484b4f0acce
 graphene-django==2.13.0 \
