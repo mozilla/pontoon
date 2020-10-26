@@ -48,12 +48,12 @@ class VCSTranslationFactory(factory.Factory):
         model = VCSTranslation
 
 
-class SyncLogFactory(factory.DjangoModelFactory):
+class SyncLogFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = SyncLog
 
 
-class ProjectSyncLogFactory(factory.DjangoModelFactory):
+class ProjectSyncLogFactory(factory.django.DjangoModelFactory):
     sync_log = factory.SubFactory(SyncLogFactory)
     project = factory.SubFactory(ProjectFactory)
 
@@ -61,7 +61,7 @@ class ProjectSyncLogFactory(factory.DjangoModelFactory):
         model = ProjectSyncLog
 
 
-class RepositorySyncLogFactory(factory.DjangoModelFactory):
+class RepositorySyncLogFactory(factory.django.DjangoModelFactory):
     project_sync_log = factory.SubFactory(ProjectSyncLogFactory)
     repository = factory.SubFactory(RepositoryFactory)
 
