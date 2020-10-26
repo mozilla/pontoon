@@ -159,8 +159,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
 
     renderCommentToggle(commentCount: number) {
         const className =
-            'toggle comments ' +
-            (this.state.areCommentsVisible ? 'on' : 'off');
+            'toggle comments ' + (this.state.areCommentsVisible ? 'on' : 'off');
         const title = 'Toggle translation comments';
 
         if (commentCount === 0) {
@@ -240,7 +239,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             locale,
             user,
             users,
-            index,
             activeTranslation,
             addComment,
         } = this.props;
