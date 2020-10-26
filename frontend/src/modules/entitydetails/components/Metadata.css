@@ -11,12 +11,6 @@
     padding: 10px;
 }
 
-.metadata .container {
-    display: grid;
-    grid-template-columns: 75% 25%;
-    grid-template-rows: auto;
-}
-
 .metadata h2 {
     font-style: normal;
     font-size: 11px;

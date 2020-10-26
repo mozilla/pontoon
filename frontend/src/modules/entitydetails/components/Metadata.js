@@ -7,6 +7,7 @@ import parse from 'html-react-parser';
 
 import './Metadata.css';
 
+import ContextIssueButton from './ContextIssueButton';
 import FluentAttribute from './FluentAttribute';
 import OriginalStringProxy from './OriginalStringProxy';
 import Property from './Property';
@@ -366,6 +367,11 @@ export default class Metadata extends React.Component<Props, State> {
 
         return (
             <div className='metadata'>
+                {!showContextIssueButton ? null : (
+                    <ContextIssueButton
+                        openTeamComments={this.openTeamComments}
+                    />
+                )}
                 <Screenshots
                     source={entity.comment}
                     locale={locale.code}
@@ -376,9 +382,7 @@ export default class Metadata extends React.Component<Props, State> {
                     locale={locale}
                     pluralForm={pluralForm}
                     terms={terms}
-                    showContextIssueButton={showContextIssueButton}
                     handleClickOnPlaceable={this.handleClickOnPlaceable}
-                    openTeamComments={this.openTeamComments}
                 />
                 <TermsPopup
                     isReadOnlyEditor={isReadOnlyEditor}

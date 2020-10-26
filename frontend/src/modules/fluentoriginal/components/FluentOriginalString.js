@@ -8,19 +8,15 @@ import RichString from './RichString';
 import SimpleString from './SimpleString';
 import SourceString from './SourceString';
 
-import { ContextIssueButton } from 'modules/entitydetails';
-
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
 
 type Props = {|
     +entity: Entity,
     +terms: TermState,
-    +showContextIssueButton: boolean,
     +handleClickOnPlaceable: (
         SyntheticMouseEvent<HTMLParagraphElement>,
     ) => void,
-    +openTeamComments: () => void,
 |};
 
 /**
@@ -35,49 +31,30 @@ export default function FluentOriginalString(props: Props) {
 
     if (syntax === 'simple') {
         return (
-            <>
-                {!props.showContextIssueButton ? null : (
-                    <ContextIssueButton
-                        openTeamComments={props.openTeamComments}
-                    />
-                )}
-                <SimpleString
-                    entity={props.entity}
-                    terms={props.terms}
-                    handleClickOnPlaceable={props.handleClickOnPlaceable}
-                />
-            </>
+            <SimpleString
+                entity={props.entity}
+                terms={props.terms}
+                handleClickOnPlaceable={props.handleClickOnPlaceable}
+            />
         );
     }
 
     if (syntax === 'rich') {
         return (
-            <div className='container'>
-                <RichString
-                    entity={props.entity}
-                    terms={props.terms}
-                    handleClickOnPlaceable={props.handleClickOnPlaceable}
-                />
-                {!props.showContextIssueButton ? null : (
-                    <ContextIssueButton
-                        openTeamComments={props.openTeamComments}
-                    />
-                )}
-            </div>
+            <RichString
+                entity={props.entity}
+                terms={props.terms}
+                handleClickOnPlaceable={props.handleClickOnPlaceable}
+            />
         );
     }
 
     // Complex, unsupported strings.
     return (
-        <>
-            {!props.showContextIssueButton ? null : (
-                <ContextIssueButton openTeamComments={props.openTeamComments} />
-            )}
-            <SourceString
-                entity={props.entity}
-                terms={props.terms}
-                handleClickOnPlaceable={props.handleClickOnPlaceable}
-            />
-        </>
+        <SourceString
+            entity={props.entity}
+            terms={props.terms}
+            handleClickOnPlaceable={props.handleClickOnPlaceable}
+        />
     );
 }
