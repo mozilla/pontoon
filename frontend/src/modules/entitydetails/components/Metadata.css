@@ -12,7 +12,9 @@
 }
 
 .metadata .container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 75% 25%;
+    grid-template-rows: auto;
 }
 
 .metadata h2 {
@@ -69,10 +71,6 @@
     font-style: inherit;
 }
 
-.metadata table {
-    flex: 2 0 auto;
-}
-
 .metadata ul {
     list-style: none;
     margin: 0;
@@ -85,11 +83,4 @@
     color: #7bc876;
     font-style: italic;
     padding: 0 0 0 2px;
-}
-
-@media (max-width: 640px) {
-    .metadata .container {
-        flex-direction: column-reverse;
-        align-items: center;
-    }
 }

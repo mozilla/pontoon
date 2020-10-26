@@ -1,7 +1,3 @@
-.metadata .source-string-comment {
-    flex: 1 0 auto;
-}
-
 .metadata .source-string-comment .context-issue-button {
     background: #333941;
     border: 1px solid #3f4752;
@@ -21,17 +17,4 @@
 
 .metadata .source-string-comment .context-issue-button {
     color: #aaa;
-}
-
-@media (max-width: 780px) {
-    .metadata .source-string-comment {
-        flex: 0 1 auto;
-    }
-}
-
-@media (max-width: 640px) {
-    .metadata .source-string-comment {
-        flex: 1 0 auto;
-        margin-bottom: 8px;
-    }
 }
