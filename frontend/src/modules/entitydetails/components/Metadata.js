@@ -7,6 +7,7 @@ import parse from 'html-react-parser';
 
 import './Metadata.css';
 
+import ContextIssueButton from './ContextIssueButton';
 import FluentAttribute from './FluentAttribute';
 import OriginalStringProxy from './OriginalStringProxy';
 import Property from './Property';
@@ -17,6 +18,7 @@ import type { Entity, TermType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
+import type { UserState } from 'core/user';
 
 type Props = {|
     +entity: Entity,
@@ -25,9 +27,13 @@ type Props = {|
     +pluralForm: number,
     +terms: TermState,
     +teamComments: TeamCommentState,
+    +user: UserState,
+    +commentTabRef: Object,
     +openLightbox: (string) => void,
     +addTextToEditorTranslation: (string) => void,
     +navigateToPath: (string) => void,
+    setCommentTabIndex: (number) => void,
+    setContactPerson: (string) => void,
 |};
 
 type State = {|
@@ -337,6 +343,13 @@ export default class Metadata extends React.Component<Props, State> {
         this.props.navigateToPath(path);
     };
 
+    openTeamComments = () => {
+        const teamCommentsTab = this.props.commentTabRef.current;
+        const index = teamCommentsTab._reactInternalFiber.index;
+        this.props.setCommentTabIndex(index);
+        this.props.setContactPerson(this.props.entity.project.contact.name);
+    };
+
     render(): React.Node {
         const {
             entity,
@@ -345,12 +358,20 @@ export default class Metadata extends React.Component<Props, State> {
             openLightbox,
             pluralForm,
             terms,
+            user,
             teamComments,
         } = this.props;
         const { popupTerms } = this.state;
+        const contactPerson = entity.project.contact;
+        const showContextIssueButton = user.isAuthenticated && contactPerson;
 
         return (
             <div className='metadata'>
+                {!showContextIssueButton ? null : (
+                    <ContextIssueButton
+                        openTeamComments={this.openTeamComments}
+                    />
+                )}
                 <Screenshots
                     source={entity.comment}
                     locale={locale.code}

@@ -135,11 +135,6 @@ history-History--no-translations = Pas de traduction disponible.
 history-Translation--copy =
     .title = Copier la traduction
 
-history-Translation--hide-diff = Cacher diff
-    .title = Cacher la différence avec la traduction active
-history-Translation--show-diff = Montrer diff
-    .title = Montrer la différence avec la traduction active
-
 history-Translation--button-delete =
     .title = Supprimer
 

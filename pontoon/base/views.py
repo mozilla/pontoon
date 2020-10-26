@@ -646,9 +646,8 @@ def get_users(request):
         payload.append(
             {
                 "gravatar": u.gravatar_url(44),
-                "name": u.first_name or u.email,
+                "name": u.name_or_email,
                 "url": u.profile_url,
-                "display": u.name_or_email,
             }
         )
 

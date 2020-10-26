@@ -354,6 +354,16 @@ def serialized_notifications(self):
     }
 
 
+def user_serialize(self):
+    """ Serialize Project contact """
+
+    return {
+        "avatar": self.gravatar_url_small,
+        "name": self.name_or_email,
+        "url": self.profile_url,
+    }
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -371,6 +381,7 @@ User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("serialize", user_serialize)
 
 
 class PermissionChangelog(models.Model):
@@ -1319,6 +1330,7 @@ class Project(AggregatedStats):
             "width": self.width or "",
             "links": self.links or "",
             "langpack_url": self.langpack_url or "",
+            "contact": self.contact.serialize() if self.contact else None,
         }
 
     def save(self, *args, **kwargs):

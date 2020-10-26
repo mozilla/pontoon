@@ -21,7 +21,9 @@ type Props = {|
     parameters: ?NavigationParams,
     translation?: ?number,
     users: UserState,
+    contactPerson?: string,
     addComment: (string, ?number) => void,
+    resetContactPerson?: () => void,
 |};
 
 export default function AddComment(props: Props) {
@@ -31,7 +33,9 @@ export default function AddComment(props: Props) {
         parameters,
         translation,
         users,
+        contactPerson,
         addComment,
+        resetContactPerson,
     } = props;
 
     const mentionList: any = React.useRef();
@@ -45,16 +49,40 @@ export default function AddComment(props: Props) {
     );
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     const [value, setValue] = React.useState(initialValue);
+    const usersList = users.users;
+    const placeFocus = React.useCallback(() => {
+        ReactEditor.focus(editor);
+        Transforms.select(editor, Editor.end(editor, []));
+    }, [editor]);
+
+    // Insert project manager as mention when 'Request context / Report issue' button used
+    // and then clear the value from state
+    React.useEffect(() => {
+        // check to see if contact person is already mentioned
+        const [isMentioned] = Editor.nodes(editor, {
+            at: [],
+            match: (n) => n.character === contactPerson,
+        });
+
+        if (contactPerson) {
+            if (!isMentioned) {
+                insertMention(editor, contactPerson, usersList);
+            }
+
+            if (resetContactPerson) {
+                resetContactPerson();
+                placeFocus();
+            }
+        }
+    }, [editor, contactPerson, usersList, resetContactPerson, placeFocus]);
 
     // Set focus on Editor
     React.useEffect(() => {
         if (!parameters || parameters.project !== 'terminology') {
-            ReactEditor.focus(editor);
-            Transforms.select(editor, Editor.end(editor, []));
+            placeFocus();
         }
-    }, [editor, parameters]);
+    }, [parameters, placeFocus]);
 
-    const usersList = users.users;
     const USERS = usersList.map((user) => user.name);
     const suggestedUsers = USERS.filter((c) =>
         c.toLowerCase().startsWith(search.toLowerCase()),
@@ -242,6 +270,7 @@ export default function AddComment(props: Props) {
                 Transforms.select(editor, target);
                 insertMention(editor, suggestedUsers[index], usersList);
                 setTarget(null);
+                placeFocus();
                 break;
             case 'Escape':
                 event.preventDefault();
@@ -507,15 +536,16 @@ const insertMention = (editor, character, users) => {
         return;
     }
     const userUrl = selectedUser.url;
-    const display = selectedUser.display;
+    const name = selectedUser.name;
     const mention = {
         type: 'mention',
         character,
         url: userUrl,
-        children: [{ text: display }],
+        children: [{ text: name }],
     };
     Transforms.insertNodes(editor, mention);
     Transforms.move(editor);
+    Transforms.insertText(editor, ' ');
 };
 
 const MentionElement = ({ attributes, children, element }) => {

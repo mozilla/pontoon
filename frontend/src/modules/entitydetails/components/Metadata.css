@@ -46,6 +46,7 @@
     font-size: 14px;
     font-style: normal;
     line-height: 22px;
+    margin-top: -2px; /* Align with the source string comment button */
     padding-bottom: 6px;
     text-align: start;
     white-space: pre-wrap;

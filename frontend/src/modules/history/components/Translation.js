@@ -158,6 +158,10 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     };
 
     renderCommentToggle(commentCount: number) {
+        const className =
+            'toggle comments ' + (this.state.areCommentsVisible ? 'on' : 'off');
+        const title = 'Toggle translation comments';
+
         if (commentCount === 0) {
             return (
                 <Localized
@@ -165,8 +169,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     attrs={{ title: true }}
                 >
                     <button
-                        className='toggle-comments'
-                        title='Toggle translation comments'
+                        className={className}
+                        title={title}
                         onClick={this.toggleComments}
                     >
                         {'Comment'}
@@ -182,8 +186,8 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     vars={{ commentCount }}
                 >
                     <button
-                        className='toggle-comments active'
-                        title='Toggle translation comments'
+                        className={className + ' active'}
+                        title={title}
                         onClick={this.toggleComments}
                     >
                         {'<stress>{ $commentCount }</stress> Comments'}
@@ -207,41 +211,23 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             return null;
         }
 
-        // Hide Diff
-        if (this.state.isDiffVisible) {
-            return (
-                <Localized
-                    id='history-Translation--hide-diff'
-                    attrs={{ title: true }}
+        return (
+            <Localized
+                id='history-Translation--toggle-diff'
+                attrs={{ title: true }}
+            >
+                <button
+                    className={
+                        'toggle diff ' +
+                        (this.state.isDiffVisible ? 'on' : 'off')
+                    }
+                    title='Toggle diff against the currently active translation'
+                    onClick={this.toggleDiff}
                 >
-                    <button
-                        className='toggle-diff hide'
-                        title='Hide diff against the currently active translation'
-                        onClick={this.toggleDiff}
-                    >
-                        {'Hide diff'}
-                    </button>
-                </Localized>
-            );
-        }
-
-        // Show Diff
-        else {
-            return (
-                <Localized
-                    id='history-Translation--show-diff'
-                    attrs={{ title: true }}
-                >
-                    <button
-                        className='toggle-diff show'
-                        title='Show diff against the currently active translation'
-                        onClick={this.toggleDiff}
-                    >
-                        {'Show diff'}
-                    </button>
-                </Localized>
-            );
-        }
+                    {'Diff'}
+                </button>
+            </Localized>
+        );
     }
 
     render() {
@@ -253,7 +239,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
             locale,
             user,
             users,
-            index,
             activeTranslation,
             addComment,
         } = this.props;
@@ -336,12 +321,6 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                                 </div>
                                 <menu className='toolbar'>
                                     {this.renderDiffToggle()}
-
-                                    {index === 0 ||
-                                    (!canComment &&
-                                        commentCount === 0) ? null : (
-                                        <span className='divider'>&bull;</span>
-                                    )}
 
                                     {!canComment && commentCount === 0
                                         ? null
@@ -495,7 +474,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                             <p
                                 className={
                                     this.state.isDiffVisible
-                                        ? 'diff'
+                                        ? 'diff-visible'
                                         : 'default'
                                 }
                                 dir={locale.direction}

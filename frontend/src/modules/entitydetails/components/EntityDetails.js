@@ -70,6 +70,8 @@ type InternalProps = {|
 
 type State = {|
     translation: string,
+    commentTabIndex: number,
+    contactPerson: string,
 |};
 
 /**
@@ -78,6 +80,16 @@ type State = {|
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
+    commentTabRef: { current: Object };
+    constructor(props: InternalProps, state: State) {
+        super(props);
+        this.state = {
+            ...state,
+            commentTabIndex: 0,
+            contactPerson: '',
+        };
+        this.commentTabRef = React.createRef();
+    }
     componentDidMount() {
         this.updateFailedChecks();
         this.fetchHelpersData();
@@ -298,6 +310,18 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
+    setCommentTabIndex = (tab: number) => {
+        this.setState({ commentTabIndex: tab });
+    };
+
+    setContactPerson = (contact: string) => {
+        this.setState({ contactPerson: contact });
+    };
+
+    resetContactPerson = () => {
+        this.setState({ contactPerson: '' });
+    };
+
     addComment = (comment: string, translation: ?number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(
@@ -386,6 +410,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         }
                         navigateToPath={this.navigateToPath}
                         teamComments={state.teamComments}
+                        user={state.user}
+                        commentTabRef={this.commentTabRef}
+                        setCommentTabIndex={this.setCommentTabIndex}
+                        setContactPerson={this.setContactPerson}
                     />
                     {state.selectedEntity.format === 'ftl' ? (
                         <fluenteditor.Editor />
@@ -427,6 +455,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                             this.addTextToEditorTranslation
                         }
                         navigateToPath={this.navigateToPath}
+                        commentTabRef={this.commentTabRef}
+                        commentTabIndex={this.state.commentTabIndex}
+                        setCommentTabIndex={this.setCommentTabIndex}
+                        contactPerson={this.state.contactPerson}
+                        resetContactPerson={this.resetContactPerson}
                     />
                 </section>
             </section>
