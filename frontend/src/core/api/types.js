@@ -58,7 +58,6 @@ export type UsersList = {|
     gravatar: string,
     name: string,
     url: string,
-    display: string,
 |};
 
 /**

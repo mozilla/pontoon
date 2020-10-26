@@ -71,44 +71,32 @@
     color: #7bc876;
 }
 
-.history .translation .content > header .toggle-diff,
-.history .translation .content > header .toggle-comments {
-    font-size: inherit;
-    font-weight: 300;
-    margin-right: 6px;
-    text-transform: uppercase;
-    pointer-events: auto;
-}
-
-.history .translation .content > header .toggle-diff:hover,
-.history .translation .content > header .toggle-diff.active,
-.history .translation .content > header .toggle-comments:hover,
-.history .translation .content > header .toggle-comments.active {
-    color: #7bc876;
-}
-
-.history .translation .content > header .toggle-comments.active {
+.history .translation .content > header .toggle {
     background: #333941;
     border: 1px solid #3f4752;
     border-radius: 4px;
+    font-size: inherit;
+    font-weight: 100;
+    margin-right: 6px;
     padding: 2px 4px;
+    pointer-events: auto;
+    text-transform: uppercase;
 }
 
-.history .translation:hover .content > header .toggle-comments.active {
+.history .translation .content > header .toggle.on {
+    color: #7bc876;
+}
+
+.history .translation:hover .content > header .toggle {
     border-color: #4d5967;
 }
 
-.history .translation .content > header .toggle-comments.active:hover {
+.history .translation .content > header .toggle:hover {
     border-color: #637283;
 }
 
-.history .translation .content > header .toggle-comments.active .stress {
-    color: #ccc;
-}
-
-.history .translation .content > header .divider {
-    margin-right: 3px;
-    margin-left: -3px;
+.history .translation .content > header .toggle.active .stress {
+    color: #7bc876;
 }
 
 .history .translation .content > header button {

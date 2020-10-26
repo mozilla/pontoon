@@ -366,10 +366,10 @@ describe('<TranslationBase>', () => {
             );
 
             expect(wrapper.find('.default')).toHaveLength(1);
-            expect(wrapper.find('.diff')).toHaveLength(0);
+            expect(wrapper.find('.diff-visible')).toHaveLength(0);
 
-            expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
-            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(0);
+            expect(wrapper.find('.toggle.diff.off')).toHaveLength(0);
+            expect(wrapper.find('.toggle.diff.on')).toHaveLength(0);
         });
 
         it('shows default translation and the Show diff button for a non-first translation', () => {
@@ -387,10 +387,10 @@ describe('<TranslationBase>', () => {
             wrapper.instance().setState({ isDiffVisible: false });
 
             expect(wrapper.find('.default')).toHaveLength(1);
-            expect(wrapper.find('.diff')).toHaveLength(0);
+            expect(wrapper.find('.diff-visible')).toHaveLength(0);
 
-            expect(wrapper.find('.toggle-diff.show')).toHaveLength(1);
-            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(0);
+            expect(wrapper.find('.toggle.diff.off')).toHaveLength(1);
+            expect(wrapper.find('.toggle.diff.on')).toHaveLength(0);
         });
 
         it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
@@ -408,10 +408,10 @@ describe('<TranslationBase>', () => {
             wrapper.instance().setState({ isDiffVisible: true });
 
             expect(wrapper.find('.default')).toHaveLength(0);
-            expect(wrapper.find('.diff')).toHaveLength(1);
+            expect(wrapper.find('.diff-visible')).toHaveLength(1);
 
-            expect(wrapper.find('.toggle-diff.show')).toHaveLength(0);
-            expect(wrapper.find('.toggle-diff.hide')).toHaveLength(1);
+            expect(wrapper.find('.toggle.diff.off')).toHaveLength(0);
+            expect(wrapper.find('.toggle.diff.on')).toHaveLength(1);
         });
     });
 });

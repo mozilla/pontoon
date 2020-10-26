@@ -31,6 +31,9 @@ type Props = {|
     parameters: NavigationParams,
     user: UserState,
     users: UserState,
+    commentTabRef: Object,
+    commentTabIndex: number,
+    contactPerson: string,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
@@ -38,6 +41,8 @@ type Props = {|
     togglePinnedStatus: (boolean, number) => void,
     addTextToEditorTranslation: (string) => void,
     navigateToPath: (string) => void,
+    setCommentTabIndex: (number) => void,
+    resetContactPerson: () => void,
 |};
 
 /**
@@ -58,6 +63,9 @@ export default class Helpers extends React.Component<Props> {
             parameters,
             user,
             users,
+            commentTabRef,
+            commentTabIndex,
+            contactPerson,
             updateEditorTranslation,
             updateMachinerySources,
             searchMachinery,
@@ -65,12 +73,17 @@ export default class Helpers extends React.Component<Props> {
             togglePinnedStatus,
             addTextToEditorTranslation,
             navigateToPath,
+            setCommentTabIndex,
+            resetContactPerson,
         } = this.props;
 
         return (
             <>
                 <div className='top'>
-                    <Tabs>
+                    <Tabs
+                        selectedIndex={commentTabIndex}
+                        onSelect={(tab) => setCommentTabIndex(tab)}
+                    >
                         <TabList>
                             {parameters.project === 'terminology' ? null : (
                                 <Tab>
@@ -80,7 +93,7 @@ export default class Helpers extends React.Component<Props> {
                                     <TermCount terms={terms} />
                                 </Tab>
                             )}
-                            <Tab>
+                            <Tab ref={commentTabRef}>
                                 <Localized id='entitydetails-Helpers--comments'>
                                     {'Comments'}
                                 </Localized>
@@ -108,6 +121,8 @@ export default class Helpers extends React.Component<Props> {
                                 addComment={addComment}
                                 users={users}
                                 togglePinnedStatus={togglePinnedStatus}
+                                contactPerson={contactPerson}
+                                resetContactPerson={resetContactPerson}
                             />
                         </TabPanel>
                     </Tabs>

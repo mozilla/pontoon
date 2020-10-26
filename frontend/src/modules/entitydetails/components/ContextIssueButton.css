@@ -1,0 +1,16 @@
+.metadata .source-string-comment .context-issue-button {
+    background: #333941;
+    border: 1px solid #3f4752;
+    border-radius: 4px;
+    color: #ccc;
+    float: right;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 100;
+    margin: -1px -1px -1px 4px; /* Compensate for invisible border in default state */
+    padding: 2px 4px;
+}
+
+.metadata .source-string-comment .context-issue-button:hover {
+    border-color: #637283;
+}

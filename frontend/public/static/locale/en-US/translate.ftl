@@ -238,6 +238,11 @@ entitydetails-Metadata--resource =
     .title = Resource
 
 
+## Entity Details ContextIssueButton
+## Shows the request context or report issue button
+
+entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPORT ISSUE
+
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity
 
@@ -263,10 +268,8 @@ history-History--no-translations = No translations available.
 history-Translation--copy =
     .title = Copy Into Translation
 
-history-Translation--hide-diff = Hide diff
-    .title = Hide diff against the currently active translation
-history-Translation--show-diff = Show diff
-    .title = Show diff against the currently active translation
+history-Translation--toggle-diff = Diff
+    .title = Toggle diff against the currently active translation
 
 history-Translation--button-delete =
     .title = Delete
