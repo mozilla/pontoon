@@ -8,9 +8,9 @@ Create a team-specific health dashboard targeted at Pontoon users with Manager r
 
 # Motivation
 
-Team managers as well as project managers should have the ability to understand how localization communities are performing. Team dashboards already provide some of the answers, including the overall status of completion and translation statistics, but the information is only available in form of a current snapshot.
+Team managers as well as project managers should have the ability to understand how localization communities are performing. Team dashboards already provide some of the answers, including the overall status of completion and translation statistics, but the information is only available in the form of a current snapshot.
 
-There's no historic data to provide insights into how the community health is developing. Missing is the information on how completion and the volume of unreviewed strings are changing over time. It's also not clear what share of translations went through a proper review process, what share was self-approved and what share of translations was copied from the Machinery.
+There's no historic data to provide insights into how the community health is developing. Missing is the information on how completion and volume of unreviewed strings are changing over time. It's not clear what share of translations was copied from the Machinery. We also don't know the ratio of translations approved without a peer review.
 
 # Out of scope
 
@@ -18,25 +18,25 @@ At this stage we’re only interested in presenting data we already collect in P
 
 # Feature explanation
 
-A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each of the sections in described below. Fore more details about the design, see the [Mockup](#mockup) section.
+A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each section is described below. Fore more details about the design, see the [Mockup](#mockup) section.
 
 ## Active users
 
-Pie charts showing ratios of active vs. all managers, reviewers and contributors. See the existing scripts ([1](https://github.com/flodolo/scripts/blob/master/pontoon/active_contributors.py), [2](https://github.com/flodolo/scripts/blob/master/pontoon/list_reviewers_with_contribution_stats.py)) for criteria of defining active users and for details on how to retrieve data.
+Pie charts showing ratios of active vs. all managers, reviewers and contributors. See the existing scripts ([1](https://github.com/flodolo/scripts/blob/954fa85/pontoon/active_contributors.py), [2](https://github.com/flodolo/scripts/blob/954fa85/pontoon/list_reviewers_with_contribution_stats.py)) for criteria of defining active users and for details on how to retrieve data.
 
-## Average review lag
+## Unreviewed suggestion lifespan
 
-A line chart showing average unreviewed suggestion lifespans over time. See the [existing script](https://github.com/flodolo/scripts/blob/master/pontoon/unreviewed_suggestions_lifespan.py) for details on how to retrieve data. A tooltip showing exact data at the given time appears when hovering a chart.
+A line chart showing time before suggestion gets approved or rejected. See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/unreviewed_suggestions_lifespan.py) for details on how to retrieve data. A tooltip showing the exact data at a given time appears when hovering over a chart.
 
 ## Translation activity
 
-A combination of a line chart showing completion over time and a column chart showing approved translation submissions and source string additions over time in two separate columns. The translation submission column is a stack of two columns - human translations and Machinery translations. A tooltip showing exact data at the given time appears when hovering a chart.
+A combination of a line chart showing completion over time and a column chart showing approved translation submissions and source string additions over time in two separate columns. The translation submission column is a stack of two columns - human translations (`Translation.machinery_sources` not set) and Machinery translations (`Translation.machinery_sources` set). A tooltip showing the exact data at a given time appears when hovering over a chart.
 
-See the [existing script](https://github.com/flodolo/scripts/blob/master/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
+See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
 
 ## Review activity
 
-A combination of a line chart showing volume of unreviewed strings over time and a column chart showing review actions and suggestion submissions over time in two separate columns. The review actions column is a stack of three columns - peer-approvals, self-approvals and rejections. A tooltip showing exact data at the given time appears when hovering a chart.
+A combination of a line chart showing the number of unreviewed strings over time and a column chart showing review actions and suggestion submissions over time in two separate columns. The review actions column is a stack of three columns - peer-approvals, self-approvals and rejections. A tooltip showing the exact data at a given time appears when hovering over a chart.
 
 # Retrieving data
 
