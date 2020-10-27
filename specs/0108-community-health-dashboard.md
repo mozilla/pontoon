@@ -32,11 +32,11 @@ A line chart showing time before suggestion gets approved or rejected. See the [
 
 A combination of a line chart showing completion over time and a column chart showing approved translation submissions and source string additions over time in two separate columns. The translation submission column is a stack of two columns - human translations (`Translation.machinery_sources` not set) and Machinery translations (`Translation.machinery_sources` set). A tooltip showing the exact data at a given time appears when hovering over a chart.
 
-See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
-
 ## Review activity
 
-A combination of a line chart showing the number of unreviewed strings over time and a column chart showing review actions and suggestion submissions over time in two separate columns. The review actions column is a stack of three columns - peer-approvals, self-approvals and rejections. A tooltip showing the exact data at a given time appears when hovering over a chart.
+A combination of a line chart showing the number of unreviewed suggestions over time and a column chart showing review actions and suggestion submissions over time in two separate columns. The review actions column is a stack of three columns - peer-approvals, self-approvals and rejections. A tooltip showing the exact data at a given time appears when hovering over a chart.
+
+See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
 
 # Retrieving data
 
