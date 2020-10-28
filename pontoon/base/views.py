@@ -455,8 +455,10 @@ def get_team_comments(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    comments = Comment.objects.filter(entity=entity, locale=locale).order_by(
-        "timestamp"
+    comments = (
+        Comment.objects.filter(entity=entity)
+        .filter(Q(locale=locale) | Q(pinned=True))
+        .order_by("timestamp")
     )
 
     payload = [c.serialize() for c in comments]
