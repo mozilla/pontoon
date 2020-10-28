@@ -28,11 +28,7 @@ describe('<Count>', () => {
 
     it('shows the correct number of remaining comments', () => {
         const teamComments = {
-            comments: [
-                {},
-                {},
-                {},
-            ],
+            comments: [{}, {}, {}],
         };
         const wrapper = shallow(<Count teamComments={teamComments} />);
 

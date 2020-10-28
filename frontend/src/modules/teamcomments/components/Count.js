@@ -18,7 +18,8 @@ export default function Count(props: Props) {
     const pinnedCommentCount = teamComments.comments.filter((comment) => {
         return comment.pinned === true;
     }).length;
-    const remainingCommentCount = teamComments.comments.length - pinnedCommentCount;
+    const remainingCommentCount =
+        teamComments.comments.length - pinnedCommentCount;
 
     if (!pinnedCommentCount && !remainingCommentCount) {
         return null;
@@ -33,7 +34,9 @@ export default function Count(props: Props) {
     );
 
     const plus =
-        !pinnedCommentCount || !remainingCommentCount ? null : <span>{'+'}</span>;
+        !pinnedCommentCount || !remainingCommentCount ? null : (
+            <span>{'+'}</span>
+        );
 
     return (
         <span className='count'>
