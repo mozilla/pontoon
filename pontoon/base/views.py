@@ -1,5 +1,7 @@
 import logging
 import re
+
+from collections import defaultdict
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -557,6 +559,40 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         )
 
 
+def _send_pin_comment_notifications(user, comment):
+    # When pinning a comment, notify:
+    #   - authors of existing translations across all locales
+    #   - reviewers of existing translations across all locales
+    recipient_data = defaultdict(list)
+    entity = comment.entity
+    translations = Translation.objects.filter(entity=entity)
+
+    for t in translations:
+        for u in (
+            t.user,
+            t.approved_user,
+            t.unapproved_user,
+            t.rejected_user,
+            t.unrejected_user,
+        ):
+            if u:
+                recipient_data[u.pk].append(t.locale.pk)
+
+    for recipient in User.objects.filter(pk__in=recipient_data.keys()).exclude(
+        pk=user.pk
+    ):
+        # Send separate notification for each locale (which results in links to corresponding translate views)
+        for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
+            notify.send(
+                user,
+                recipient=recipient,
+                verb="has pinned a comment in",
+                action_object=locale,
+                target=entity,
+                description=comment.content,
+            )
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -616,6 +652,8 @@ def pin_comment(request):
 
     comment.pinned = True
     comment.save()
+
+    _send_pin_comment_notifications(request.user, comment)
 
     return JsonResponse({"status": True})
 
