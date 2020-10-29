@@ -679,7 +679,13 @@ def unpin_comment(request):
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):
     """Get all users."""
-    users = User.objects.all()
+    users = (
+        User.objects
+        # Exclude system users
+        .exclude(email__regex=r"^pontoon-(\w+)@example.com$")
+        # Exclude deleted users
+        .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
+    )
     payload = []
 
     for u in users:
