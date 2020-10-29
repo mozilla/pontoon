@@ -8,7 +8,7 @@ Create a team-specific health dashboard targeted at Pontoon users with Manager r
 
 # Motivation
 
-Team managers as well as project managers should have the ability to understand how localization communities are performing. Team dashboards already provide some of the answers, including the overall status of completion and translation statistics, but the information is only available in the form of a current snapshot.
+Team managers as well as project managers should have the ability to understand engagement of the localization communities. Team dashboards already provide some of the answers, including the overall status of completion and translation statistics, but the information is only available in the form of a current snapshot.
 
 There's no historic data to provide insights into how the community health is developing. Missing is the information on how completion and volume of unreviewed strings are changing over time. It's not clear what share of translations was copied from the Machinery. We also don't know the ratio of translations approved without a peer review.
 
