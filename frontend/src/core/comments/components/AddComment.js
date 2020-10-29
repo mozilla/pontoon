@@ -339,7 +339,9 @@ export default function AddComment(props: Props) {
             const beforeRange = before && Editor.range(editor, before, start);
             const beforeText =
                 beforeRange && Editor.string(editor, beforeRange);
-            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/);
+            // Unicode property escapes allow for matching non-ASCII characters
+            const beforeMatch =
+                beforeText && beforeText.match(/^@((\p{L}|\p{N}|\p{P})+)$/u);
             const after = Editor.after(editor, start);
             const afterRange = Editor.range(editor, start, after);
             const afterText = Editor.string(editor, afterRange);
