@@ -9,7 +9,6 @@ import django.db.migrations.operations.special
 import django.db.models.deletion
 import django.utils.timezone
 import jsonfield.fields
-import partial_index
 
 import pontoon.db.migrations
 
@@ -3528,24 +3527,6 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             code=migration_0129_drop_entity_document,
             reverse_code=django.db.migrations.operations.special.RunPython.noop,
-        ),
-        migrations.AddIndex(
-            model_name="translation",
-            index=partial_index.PartialIndex(
-                fields=["entity", "locale", "plural_form", "active"],
-                name="base_transl_entity__fbea1e_partial",
-                unique=True,
-                where=partial_index.PQ(active=True),
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="translation",
-            index=partial_index.PartialIndex(
-                fields=["entity", "locale", "active"],
-                name="base_transl_entity__ed9592_partial",
-                unique=True,
-                where=partial_index.PQ(("active", True), ("plural_form__isnull", True)),
-            ),
         ),
         migrations.AddField(
             model_name="locale",
