@@ -22,7 +22,7 @@ A new "Insights" tab is made available on the Team page, positioned next to the 
 
 ## Active users
 
-Pie charts showing ratios of active vs. all managers, reviewers and contributors. See the existing scripts ([1](https://github.com/flodolo/scripts/blob/954fa85/pontoon/active_contributors.py), [2](https://github.com/flodolo/scripts/blob/954fa85/pontoon/list_reviewers_with_contribution_stats.py)) for criteria of defining active users and for details on how to retrieve data.
+Pie charts showing ratios of active vs. all managers, reviewers and contributors. See the existing scripts ([1](https://github.com/flodolo/scripts/blob/954fa85/pontoon/active_contributors.py), [2](https://github.com/flodolo/scripts/blob/954fa85/pontoon/list_reviewers_with_contribution_stats.py)) for criteria of defining active users and for details on how to retrieve data. Active managers are managers who logged into Pontoon within a selected time frame.
 
 ## Unreviewed suggestion lifespan
 
