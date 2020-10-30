@@ -18,7 +18,7 @@ At this stage we’re only interested in presenting data we already collect in P
 
 # Feature explanation
 
-A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each section is described below. Fore more details about the design, see the [Mockup](#mockup) section.
+A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each section is described below. Description of each data series plotted on charts appears when hovering over a legend item. Fore more details about the design, see the [Mockup](#mockup) section.
 
 ## Active users
 
