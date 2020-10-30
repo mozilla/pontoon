@@ -5,6 +5,30 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+# This is needed for https://bugzilla.mozilla.org/show_bug.cgi?id=1671836
+# This and its calls in this migration can be removed once this migration is squashed.
+class TryRemoveIndex(migrations.RemoveIndex):
+    """
+    Removes an index from a model if the index is present. Otherwise, nothing happens.
+    """
+
+    def state_forwards(self, app_label, state):
+        try:
+            super().state_forwards(app_label, state)
+        except ValueError:
+            pass
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        try:
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
+        except ValueError:
+            pass
+
+    def database_backwards(self, app_label, schema_editor, from_state, to_state):
+        # Don't do anything, since we don't want to recreate the index
+        pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -98,10 +122,10 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
-        migrations.RemoveIndex(
+        TryRemoveIndex(
             model_name="translation", name="base_transl_entity__fbea1e_partial",
         ),
-        migrations.RemoveIndex(
+        TryRemoveIndex(
             model_name="translation", name="base_transl_entity__ed9592_partial",
         ),
         migrations.AddConstraint(
