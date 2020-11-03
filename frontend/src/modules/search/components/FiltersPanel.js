@@ -299,64 +299,59 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                     </Localized>
 
                                     {this.props.tagsData
-                                        
-                                        .sort((a:  Tag, b:  Tag) =>  {
-                                                return b.priority - a.priority;
-                                            })
-                                        
+                                        .sort((a: Tag, b: Tag) => {
+                                            return b.priority - a.priority;
+                                        })
                                         .map((tag, i) => {
-                                                const selected =
-                   
-                                                                            props.tags[tag.slug];
+                                            const selected =
+                                                props.tags[tag.slug];
 
-                                                let className = tag.slug;
-                                                if (selected) {
-                                                    className += ' selected';
-                                                }
+                                            let className = tag.slug;
+                                            if (selected) {
+                                                className += ' selected';
+                                            }
 
-                                                return (
-                                                    <li
-                                                        className={`tag ${className}`}
-                                                        key={i}
-                                                        onClick={this.createApplySingleFilter(
+                                            return (
+                                                <li
+                                                    className={`tag ${className}`}
+                                                    key={i}
+                                                    onClick={this.createApplySingleFilter(
+                                                        tag.slug,
+                                                        'tags',
+                                                    )}
+                                                >
+                                                    <span
+                                                        className='status fa'
+                                                        onClick={this.createToggleFilter(
                                                             tag.slug,
                                                             'tags',
                                                         )}
-                                                    >
-                                                        <span
-                                                            className='status fa'
-                                                            onClick={this.createToggleFilter(
-                                                                tag.slug,
-                                                                'tags',
-                                                            )}
-                                                        ></span>
-                                                        <span className='title'>
-                                                            {tag.name}
-                                                        </span>
-                                                        <span className='priority'>
-                                                            {[1, 2, 3, 4, 5].map(
-                                                                (index) => {
-                                                                    const active =
-                                                                        index <=
-                                                                        tag.priority
-                                                                            ? 'active'
-                                                                            : '';
-                                                                    return (
-                                                                        <span
-                                                                            className={`fa fa-star ${active}`}
-                                                                            key={
-                                                                            
+                                                    ></span>
+                                                    <span className='title'>
+                                                        {tag.name}
+                                                    </span>
+                                                    <span className='priority'>
+                                                        {[1, 2, 3, 4, 5].map(
+                                                            (index) => {
+                                                                const active =
+                                                                    index <=
+                                                                    tag.priority
+                                                                        ? 'active'
+                                                                        : '';
+                                                                return (
+                                                                    <span
+                                                                        className={`fa fa-star ${active}`}
+                                                                        key={
                                                                             index
-                                                                        
                                                                         }
-                                                                        ></span>
-                                                                    );
-                                                                },
-                                                            )}
-                                                        </span>
-                                                    </li>
-                                                );
-                                            })}
+                                                                    ></span>
+                                                                );
+                                                            },
+                                                        )}
+                                                    </span>
+                                                </li>
+                                            );
+                                        })}
                                 </>
                             )}
 
