@@ -76,20 +76,23 @@ export default class RichEditor extends React.Component<Props> {
         this.props.sendTranslation(ignoreWarnings, fluentString, message);
     };
 
-    updateUnsavedChanges = (
-        translation?: Translation,
-        initial?: Translation,
-    ) => {
+    updateUnsavedChanges = () => {
         const props = this.props;
 
-        this.props.updateUnsavedChanges(
-            !translation
-                ? props.editor.translation
-                : fluent.serializer.serializeEntry(translation),
-            !initial
-                ? props.editor.initialTranslation
-                : fluent.serializer.serializeEntry(initial),
-        );
+        let translation = props.editor.translation;
+        let initial = props.editor.initialTranslation;
+
+        // If we're switching from or to a simple editor, we will not be able
+        // to serialize the current or initial translation
+        try {
+            translation = fluent.serializer.serializeEntry(translation);
+        } catch (e) {}
+
+        try {
+            initial = fluent.serializer.serializeEntry(initial);
+        } catch (e) {}
+
+        props.updateUnsavedChanges(translation, initial);
     };
 
     render() {
