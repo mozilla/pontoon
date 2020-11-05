@@ -18,7 +18,7 @@ At this stage we’re only interested in presenting data we already collect in P
 
 # Feature explanation
 
-A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each section is described below. Description of each data series plotted on charts appears when hovering over a legend item. Fore more details about the design, see the [Mockup](#mockup) section.
+A new "Insights" tab is made available on the Team page, positioned next to the "Contributors" tab. It consists of several sections, presenting data for the period of the last 12 months. Each section is described below. Detailed description of each chart appears when hovering over the info icon. Fore more details about the design, see the [Mockup](#mockup) section.
 
 ## Active users
 
@@ -30,11 +30,11 @@ A line chart showing time before suggestion gets approved or rejected. See the [
 
 ## Translation activity
 
-A combination of a line chart showing completion over time and a column chart showing approved translation submissions and source string additions over time in two separate columns. The translation submission column is a stack of two columns - human translations (`Translation.machinery_sources` not set) and Machinery translations (`Translation.machinery_sources` set). A tooltip showing the exact data at a given time appears when hovering over a chart.
+A combination of a line chart showing completion over time and a column chart showing approved translation submissions in a stack of two columns - human translations (`Translation.machinery_sources` not set) and Machinery translations (`Translation.machinery_sources` set). Source string additions are plotted in a separate column, which is hidden by default. A tooltip showing the exact data and ratios at a given time appears when hovering over a chart.
 
 ## Review activity
 
-A combination of a line chart showing the number of unreviewed suggestions over time and a column chart showing review actions and suggestion submissions over time in two separate columns. The review actions column is a stack of three columns - peer-approvals, self-approvals and rejections. A tooltip showing the exact data at a given time appears when hovering over a chart.
+A combination of a line chart showing the number of unreviewed suggestions over time and a column chart showing review actions in a stack of three columns - peer-approvals, self-approvals and rejections. Suggestion submissions are plotted in a separate column, which is hidden by default. The review actions column is A tooltip showing the exact data and ratios at a given time appears when hovering over a chart.
 
 See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
 
