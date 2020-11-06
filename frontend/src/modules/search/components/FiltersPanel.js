@@ -298,8 +298,8 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                         </li>
                                     </Localized>
 
-                                    {this.props.tagsData
-                                        .sort((a: Tag, b: Tag) => {
+                                    {props.tagsData
+                                        .sort((a, b) => {
                                             return b.priority - a.priority;
                                         })
                                         .map((tag, i) => {
