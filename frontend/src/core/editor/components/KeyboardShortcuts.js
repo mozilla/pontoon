@@ -54,13 +54,13 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                 {!this.state.visible ? null : (
                     <div className='overlay' onClick={this.toggleVisibility}>
                         <Localized id='editor-KeyboardShortcuts--overlay-title'>
-                            <h2>Keyboard Shortcuts</h2>
+                            <h2>KEYBOARD SHORTCUTS</h2>
                         </Localized>
                         <table>
                             <tbody>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--save-translation'>
-                                        <td>Save Translation</td>
+                                        <td>SAVE TRANSLATION</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--save-translation-shortcut'
@@ -68,12 +68,12 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                             accel: <span />,
                                         }}
                                     >
-                                        <td>{'<accel>Enter</accel>'}</td>
+                                        <td>{'<accel>ENTER</accel>'}</td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--cancel-translation'>
-                                        <td>Cancel Translation</td>
+                                        <td>CANCEL TRANSLATION</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--cancel-translation-shortcut'
@@ -81,12 +81,12 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                             accel: <span />,
                                         }}
                                     >
-                                        <td>{'<accel>Esc</accel>'}</td>
+                                        <td>{'<accel>ESC</accel>'}</td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--insert-a-new-line'>
-                                        <td>Insert A New Line</td>
+                                        <td>INSERT A NEW LINE</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--insert-a-new-line-shortcut'
@@ -97,14 +97,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Shift</mod1> + <accel>Enter</accel>'
+                                                '<mod1>SHIFT</mod1> + <accel>ENTER</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--go-to-next-string'>
-                                        <td>Go To Next String</td>
+                                        <td>GO TO NEXT STRING</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--go-to-next-string-shortcut'
@@ -115,14 +115,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Alt</mod1> + <accel>Down</accel>'
+                                                '<mod1>ALT</mod1> + <accel>DOWN</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--go-to-previous-string'>
-                                        <td>Go To Previous String</td>
+                                        <td>GO TO PREVIOUS STRING</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--go-to-previous-string-shortcut'
@@ -133,14 +133,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Alt</mod1> + <accel>Up</accel>'
+                                                '<mod1>ALT</mod1> + <accel>UP</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--copy-from-source'>
-                                        <td>Copy From Source</td>
+                                        <td>COPY FROM SOURCE</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--copy-from-source-shortcut'
@@ -152,14 +152,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>'
+                                                '<mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>C</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--clear-translation'>
-                                        <td>Clear Translation</td>
+                                        <td>CLEAR TRANSLATION</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--clear-translation-shortcut'
@@ -171,14 +171,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>'
+                                                '<mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>Backspace</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--search-strings'>
-                                        <td>Search Strings</td>
+                                        <td>SEARCH STRINGS</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--search-strings-shortcut'
@@ -190,14 +190,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>'
+                                                '<mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>F</accel>'
                                             }
                                         </td>
                                     </Localized>
                                 </tr>
                                 <tr>
                                     <Localized id='editor-KeyboardShortcuts--select-all-strings'>
-                                        <td>Select All Strings</td>
+                                        <td>SELECT ALL STRINGS</td>
                                     </Localized>
                                     <Localized
                                         id='editor-KeyboardShortcuts--select-all-strings-shortcut'
@@ -209,7 +209,7 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     >
                                         <td>
                                             {
-                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>'
+                                                '<mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>A</accel>'
                                             }
                                         </td>
                                     </Localized>

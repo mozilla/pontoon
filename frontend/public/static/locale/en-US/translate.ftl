@@ -28,14 +28,14 @@ batchactions-BatchActions--header-selected-count =
        *[other] <glyph></glyph> <stress>{ $count }</stress> strings selected
     }
     .title = Quit Batch Editing (Esc)
-batchactions-BatchActions--header-select-all = <glyph></glyph> Select All
+batchactions-BatchActions--header-select-all = <glyph></glyph> SELECT ALL
     .title = Select All Strings (Ctrl + Shift + A)
 
-batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
+batchactions-BatchActions--warning = <stress>WARNING:</stress> THESE ACTIONS WILL BE APPLIED TO ALL SELECTED STRINGS AND CANNOT BE UNDONE.
 
-batchactions-BatchActions--review-heading = Review translations
+batchactions-BatchActions--review-heading = REVIEW TRANSLATIONS
 
-batchactions-BatchActions--find-replace-heading = Find & Replace in translations
+batchactions-BatchActions--find-replace-heading = FIND & REPLACE IN TRANSLATIONS
 batchactions-BatchActions--find =
     .placeholder = Find
 batchactions-BatchActions--replace-with =
@@ -72,13 +72,13 @@ batchactions-ReplaceAll--error = Oops, something went wrong
 ## ResourceProgress
 ##  Show a panel with progress chart and stats for the current resource.
 
-resourceprogress-ResourceProgress--all-strings = All strings
-resourceprogress-ResourceProgress--unreviewed = Unreviewed
-resourceprogress-ResourceProgress--translated = Translated
-resourceprogress-ResourceProgress--fuzzy = Fuzzy
-resourceprogress-ResourceProgress--warnings = Warnings
-resourceprogress-ResourceProgress--errors = Errors
-resourceprogress-ResourceProgress--missing = Missing
+resourceprogress-ResourceProgress--all-strings = ALL STRINGS
+resourceprogress-ResourceProgress--unreviewed = UNREVIEWED
+resourceprogress-ResourceProgress--translated = TRANSLATED
+resourceprogress-ResourceProgress--fuzzy = FUZZY
+resourceprogress-ResourceProgress--warnings = WARNINGS
+resourceprogress-ResourceProgress--errors = ERRORS
+resourceprogress-ResourceProgress--missing = MISSING
 
 
 ## Comments
@@ -101,9 +101,9 @@ comments-Comment--unpin-button = UNPIN
 
 editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
 editor-EditorMenu--read-only-localization = This is a read-only localization.
-editor-EditorMenu--button-copy = Copy
+editor-EditorMenu--button-copy = COPY
     .title = Copy From Source (Ctrl + Shift + C)
-editor-EditorMenu--button-clear = Clear
+editor-EditorMenu--button-clear = CLEAR
     .title = Clear Translation (Ctrl + Shift + Backspace)
 editor-EditorMenu--button-approve = Approve
     .title = Approve Translation (Enter)
@@ -134,12 +134,12 @@ editor-EditorSettings--change-all = Change All Settings
 ## Editor Failed Checks
 ## Renders the failed checks popup
 
-editor-FailedChecks--close = ×
+editor-FailedChecks--close = X
     .aria-label = Close failed checks popup
 editor-FailedChecks--title = The following checks have failed
-editor-FailedChecks--save-anyway = Save anyway
-editor-FailedChecks--suggest-anyway = Suggest anyway
-editor-FailedChecks--approve-anyway = Approve anyway
+editor-FailedChecks--save-anyway = SAVE ANYWAY 
+editor-FailedChecks--suggest-anyway = SUGGEST ANYWAY
+editor-FailedChecks--approve-anyway = APPROVE ANYWAY
 
 
 ## Editor Keyboard Shortcuts
@@ -148,34 +148,34 @@ editor-FailedChecks--approve-anyway = Approve anyway
 editor-KeyboardShortcuts--button =
     .title = Keyboard Shortcuts
 
-editor-KeyboardShortcuts--overlay-title = Keyboard Shortcuts
+editor-KeyboardShortcuts--overlay-title = KEYBOARD SHORTCUTS
 
-editor-KeyboardShortcuts--save-translation = Save Translation
-editor-KeyboardShortcuts--save-translation-shortcut = <accel>Enter</accel>
+editor-KeyboardShortcuts--save-translation = SAVE TRANSLATION
+editor-KeyboardShortcuts--save-translation-shortcut = <accel>ENTER</accel>
 
-editor-KeyboardShortcuts--cancel-translation = Cancel Translation
-editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
+editor-KeyboardShortcuts--cancel-translation = CANCEL TRANSLATION
+editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>ESC</accel>
 
-editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
-editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
+editor-KeyboardShortcuts--insert-a-new-line = INSERT A NEW LINE
+editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>SHIFT</mod1> + <accel>ENTER</accel>
 
-editor-KeyboardShortcuts--go-to-next-string = Go To Next String
-editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
+editor-KeyboardShortcuts--go-to-next-string = GO TO NEXT STRING
+editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>ALT</mod1> + <accel>DOWN</accel>
 
-editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
-editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
+editor-KeyboardShortcuts--go-to-previous-string = GO TO PREVIOUS STRING
+editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>ALT</mod1> + <accel>UP</accel>
 
-editor-KeyboardShortcuts--copy-from-source = Copy From Source
-editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
+editor-KeyboardShortcuts--copy-from-source = COPY FROM SOURCE
+editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>C</accel>
 
-editor-KeyboardShortcuts--clear-translation = Clear Translation
-editor-KeyboardShortcuts--clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>
+editor-KeyboardShortcuts--clear-translation = CLEAR TRANSLATION
+editor-KeyboardShortcuts--clear-translation-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>Backspace</accel>
 
-editor-KeyboardShortcuts--search-strings = Search Strings
-editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>
+editor-KeyboardShortcuts--search-strings = SEARCH STRINGS
+editor-KeyboardShortcuts--search-strings-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>F</accel>
 
-editor-KeyboardShortcuts--select-all-strings = Select All Strings
-editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
+editor-KeyboardShortcuts--select-all-strings = SELECT ALL STRINGS
+editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>A</accel>
 
 
 ## Editor Unsaved Changes
