@@ -63,7 +63,7 @@ def test_terms_for_string(string, found_terms, available_terms):
     assert len(terms) == len(found_terms)
 
     for i, term in enumerate(terms):
-        term.text = found_terms[i]
+        assert term.text == found_terms[i]
 
 
 @pytest.mark.django_db
