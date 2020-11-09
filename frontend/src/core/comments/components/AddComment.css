@@ -17,6 +17,7 @@
     margin: auto;
     overflow: auto;
     padding: 7px;
+    word-break: break-word;
 }
 
 .comments-list .add-comment .comment-editor .mention-element {
