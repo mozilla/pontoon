@@ -78,6 +78,9 @@ export function getRichFromComplex(
             locale,
         );
     }
+    else {
+        initialContent = fluent.flattenMessage(initialContent);
+    }
 
     return [translationContent, initialContent];
 }

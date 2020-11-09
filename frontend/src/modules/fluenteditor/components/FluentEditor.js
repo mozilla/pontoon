@@ -65,7 +65,7 @@ function useLoadTranslation(syntaxType, forceSource) {
                 const source = activeTranslationString || entity.original;
                 const message = fluent.parser.parseEntry(source);
 
-                let translationContent = message;
+                let translationContent = fluent.flattenMessage(message);
                 if (!activeTranslationString) {
                     translationContent = fluent.getEmptyMessage(
                         message,
