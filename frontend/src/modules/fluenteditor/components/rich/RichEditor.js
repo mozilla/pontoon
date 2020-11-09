@@ -31,14 +31,15 @@ export default function RichEditor(props: Props) {
     const entity = useSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
+    const changeSource = useSelector((state) => state.editor.changeSource);
     const locale = useSelector((state) => state.locale);
 
     React.useLayoutEffect(() => {
         if (typeof translation === 'string') {
             const message = fluent.parser.parseEntry(translation);
-            updateTranslation(message);
+            updateTranslation(message, changeSource);
         }
-    }, [translation, updateTranslation, dispatch]);
+    }, [translation, changeSource, updateTranslation, dispatch]);
 
     function clearEditor() {
         if (entity) {

@@ -49,7 +49,7 @@ function useLoadTranslation(syntaxType, forceSource) {
                         activeTranslationString,
                     ),
                 );
-                updateTranslation(activeTranslationString);
+                updateTranslation(activeTranslationString, 'entities-list');
             } else if (syntaxType === 'simple') {
                 // Use a simplified preview of the Fluent message.
                 const translationContent = fluent.getSimplePreview(
@@ -59,7 +59,7 @@ function useLoadTranslation(syntaxType, forceSource) {
                 dispatch(
                     editor.actions.setInitialTranslation(translationContent),
                 );
-                updateTranslation(translationContent);
+                updateTranslation(translationContent, 'entities-list');
             } else if (syntaxType === 'rich') {
                 // Use a Fluent Message object.
                 const source = activeTranslationString || entity.original;
@@ -76,7 +76,7 @@ function useLoadTranslation(syntaxType, forceSource) {
                 dispatch(
                     editor.actions.setInitialTranslation(translationContent),
                 );
-                updateTranslation(translationContent);
+                updateTranslation(translationContent, 'entities-list');
             }
         }
 

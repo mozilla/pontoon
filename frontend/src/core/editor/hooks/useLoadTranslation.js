@@ -29,7 +29,7 @@ export default function useLoadTranslation() {
 
     React.useEffect(() => {
         dispatch(actions.setInitialTranslation(activeTranslationString));
-        updateTranslation(activeTranslationString);
+        updateTranslation(activeTranslationString, 'entities-list');
     }, [
         entity,
         pluralForm,

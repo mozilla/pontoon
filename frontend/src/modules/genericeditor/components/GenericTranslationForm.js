@@ -36,7 +36,7 @@ export default function GenericTranslationForm(props: Props) {
     const textareaRef = React.useRef(null);
 
     // Focus the textarea when something changes.
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         const input = textareaRef.current;
 
         if (!input || searchInputFocused) {
