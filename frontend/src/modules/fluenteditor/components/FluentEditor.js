@@ -47,6 +47,7 @@ function useLoadTranslation(syntaxType, forceSource) {
     React.useLayoutEffect(() => {
         if (
             prevForceSource.current !== forceSource ||
+            !entity ||
             prevEntityPK.current === entity.pk
         ) {
             prevForceSource.current = forceSource;

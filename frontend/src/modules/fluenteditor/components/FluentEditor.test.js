@@ -1,3 +1,4 @@
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as navigation from 'core/navigation';
 
@@ -17,6 +18,11 @@ const NESTED_SELECTORS_STRING = `my-message =
         }
         [select] WOW
     }
+`;
+
+const RICH_MESSAGE_STRING = `my-message =
+    Why so serious?
+    .reason = Because
 `;
 
 const ENTITIES = [
@@ -46,9 +52,14 @@ const ENTITIES = [
         original: 'my-message = Hello',
         translation: [{ string: '' }],
     },
+    {
+        pk: 5,
+        original: RICH_MESSAGE_STRING,
+        translation: [],
+    },
 ];
 
-async function createComponent(entityIndex = 0) {
+async function createComponent(entityPk = 0) {
     const store = createReduxStore();
     createDefaultUser(store);
 
@@ -56,38 +67,44 @@ async function createComponent(entityIndex = 0) {
 
     store.dispatch(entities.actions.receive(ENTITIES));
     await store.dispatch(
-        navigation.actions.updateEntity(store.getState().router, entityIndex),
+        navigation.actions.updateEntity(store.getState().router, entityPk),
     );
 
     wrapper.update();
 
-    return wrapper;
+    return [wrapper, store];
 }
 
 describe('<FluentEditor>', () => {
     it('renders the simple form when passing a simple string', async () => {
-        const wrapper = await createComponent(1);
+        const [wrapper] = await createComponent(1);
 
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
 
     it('renders the simple form when passing a simple string with one attribute', async () => {
-        const wrapper = await createComponent(2);
+        const [wrapper] = await createComponent(2);
 
         expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
     });
 
+    it('renders the rich form when passing a supported rich message', async () => {
+        const [wrapper] = await createComponent(5);
+
+        expect(wrapper.find('RichEditor').exists()).toBeTruthy();
+    });
+
     it('renders the source form when passing a complex string', async () => {
-        const wrapper = await createComponent(3);
+        const [wrapper] = await createComponent(3);
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
         expect(wrapper.find('SimpleEditor').exists()).toBeFalsy();
     });
 
     it('converts translation when switching source mode', async () => {
-        const wrapper = await createComponent(1);
+        const [wrapper] = await createComponent(1);
         expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
 
         // Force source mode.
@@ -98,12 +115,23 @@ describe('<FluentEditor>', () => {
     });
 
     it('sets empty initial translation in source mode when untranslated', async () => {
-        const wrapper = await createComponent(4);
+        const [wrapper] = await createComponent(4);
 
         // Force source mode.
         wrapper.find('button.ftl').simulate('click');
 
         expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
         expect(wrapper.find('textarea').text()).toEqual('my-message = ');
+    });
+
+    it('changes editor implementation when changing translation syntax', async () => {
+        const [wrapper, store] = await createComponent(1);
+        expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
+
+        // Change translation to a rich string.
+        store.dispatch(editor.actions.update(RICH_MESSAGE_STRING, 'external'));
+        wrapper.update();
+
+        expect(wrapper.find('RichEditor').exists()).toBeTruthy();
     });
 });
