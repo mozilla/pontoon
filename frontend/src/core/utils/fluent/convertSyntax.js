@@ -10,7 +10,7 @@ import serializer from './serializer';
 import type { FluentMessage } from './types';
 import type { Locale } from 'core/locale';
 
-type SyntaxType = 'simple' | 'rich' | 'complex';
+type SyntaxType = 'simple' | 'rich' | 'complex' | '';
 
 export function getSimpleFromComplex(
     current: string,

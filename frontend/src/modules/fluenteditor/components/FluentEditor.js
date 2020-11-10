@@ -40,47 +40,49 @@ function useLoadTranslation(syntaxType, forceSource) {
     // value and only update when it didn't change since the last render.
     const prevForceSource = React.useRef(forceSource);
 
+    // We want to run the following effect only when the entity changes, and in
+    // no other cases. We thus track the entity's pk.
+    const prevEntityPK = React.useRef(null);
+
     React.useLayoutEffect(() => {
-        if (prevForceSource.current === forceSource) {
-            if (syntaxType === 'complex') {
-                // Use the actual content that we get from the server: a Fluent message as a string.
-                dispatch(
-                    editor.actions.setInitialTranslation(
-                        activeTranslationString,
-                    ),
-                );
-                updateTranslation(activeTranslationString, 'entities-list');
-            } else if (syntaxType === 'simple') {
-                // Use a simplified preview of the Fluent message.
-                const translationContent = fluent.getSimplePreview(
-                    activeTranslationString,
-                );
-
-                dispatch(
-                    editor.actions.setInitialTranslation(translationContent),
-                );
-                updateTranslation(translationContent, 'entities-list');
-            } else if (syntaxType === 'rich') {
-                // Use a Fluent Message object.
-                const source = activeTranslationString || entity.original;
-                const message = fluent.parser.parseEntry(source);
-
-                let translationContent = fluent.flattenMessage(message);
-                if (!activeTranslationString) {
-                    translationContent = fluent.getEmptyMessage(
-                        message,
-                        locale,
-                    );
-                }
-
-                dispatch(
-                    editor.actions.setInitialTranslation(translationContent),
-                );
-                updateTranslation(translationContent, 'entities-list');
-            }
+        if (
+            prevForceSource.current !== forceSource ||
+            prevEntityPK.current === entity.pk
+        ) {
+            prevForceSource.current = forceSource;
+            return;
         }
 
-        prevForceSource.current = forceSource;
+        if (syntaxType === '') {
+            return;
+        }
+
+        let translationContent = '';
+        if (syntaxType === 'complex') {
+            // Use the actual content that we get from the server: a Fluent message as a string.
+            translationContent = activeTranslationString;
+        } else if (syntaxType === 'simple') {
+            // Use a simplified preview of the Fluent message.
+            translationContent = fluent.getSimplePreview(
+                activeTranslationString,
+            );
+        } else if (syntaxType === 'rich') {
+            // Use a Fluent Message object.
+            if (activeTranslationString) {
+                translationContent = fluent.flattenMessage(
+                    fluent.parser.parseEntry(activeTranslationString),
+                );
+            } else {
+                translationContent = fluent.getEmptyMessage(
+                    fluent.parser.parseEntry(entity.original),
+                    locale,
+                );
+            }
+        }
+        dispatch(editor.actions.setInitialTranslation(translationContent));
+        updateTranslation(translationContent, 'initial');
+
+        prevEntityPK.current = entity.pk;
     }, [
         syntaxType,
         forceSource,
@@ -93,21 +95,39 @@ function useLoadTranslation(syntaxType, forceSource) {
 }
 
 /**
- * Hook to analyze a translation and determine what its appropriate syntax is.
- *
- * This hook recomputes the syntax type every time the entity changes. It also updates
- * the translation and initial translation, meaning specialized Fluent editors don't
- * need to do it themselves.
+ * Function to analyze a translation and determine what its appropriate syntax is.
  *
  * @returns { string } The syntax of the translation, can be "simple", "rich" or "complex".
  *      - "simple" if the translation can be shown as a simple preview
  *      - "rich" if the translation is not simple but can be handled by the Rich editor
  *      - "complex" otherwise
  */
-function useAnalyzeFluentMessage() {
-    // The type of form to use to show the translation.
-    const [syntaxType, setSyntaxType] = React.useState('complex');
+function getSyntaxType(source) {
+    if (source && typeof source !== 'string') {
+        return fluent.getSyntaxType(source);
+    }
 
+    const message = fluent.parser.parseEntry(source);
+
+    // In case a simple message gets analyzed again.
+    if (message.type === 'Junk') {
+        return 'simple';
+    }
+
+    // Figure out and set the syntax type.
+    return fluent.getSyntaxType(message);
+}
+
+/**
+ * Hook that analyzes editor content and determines what its syntax is.
+ *
+ * @returns { string } See `getSyntaxType`.
+ */
+function useAnalyzeSyntax() {
+    const [syntaxType, setSyntaxType] = React.useState('');
+
+    const translation = useSelector((state) => state.editor.translation);
+    const changeSource = useSelector((state) => state.editor.changeSource);
     const activeTranslationString = useSelector((state) =>
         plural.selectors.getTranslationStringForSelectedEntity(state),
     );
@@ -115,23 +135,21 @@ function useAnalyzeFluentMessage() {
         entities.selectors.getSelectedEntity(state),
     );
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (!entity) {
             return;
         }
-
         const source = activeTranslationString || entity.original;
-        const message = fluent.parser.parseEntry(source);
-
-        // In case a simple message gets analyzed again.
-        if (message.type === 'Junk') {
-            return;
-        }
-
-        // Figure out and set the syntax type.
-        const syntax = fluent.getSyntaxType(message);
+        const syntax = getSyntaxType(source);
         setSyntaxType(syntax);
     }, [entity, activeTranslationString]);
+
+    React.useLayoutEffect(() => {
+        if (translation && changeSource !== 'internal') {
+            const syntax = getSyntaxType(translation);
+            setSyntaxType(syntax);
+        }
+    }, [translation, changeSource]);
 
     return syntaxType;
 }
@@ -143,7 +161,7 @@ function useAnalyzeFluentMessage() {
  *      - a boolean indicating if the source mode is enabled;
  *      - a function to toggle the source mode.
  */
-function useForceSource() {
+function useForceSource(syntaxType) {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);
@@ -157,8 +175,6 @@ function useForceSource() {
 
     // Force using the source editor.
     const [forceSource, setForceSource] = React.useState(false);
-
-    const syntaxType = useAnalyzeFluentMessage();
 
     // When the entity changes, reset the `forceSource` setting. Never show the source
     // editor by default.
@@ -203,10 +219,14 @@ export default function FluentEditor() {
     );
     const user = useSelector((state) => state.user);
 
-    const [forceSource, changeForceSource] = useForceSource();
-    const syntaxType = useAnalyzeFluentMessage();
-
+    const syntaxType = useAnalyzeSyntax();
+    const [forceSource, changeForceSource] = useForceSource(syntaxType);
     useLoadTranslation(syntaxType, forceSource);
+
+    // Do not render if the syntax has not yet been computed.
+    if (syntaxType === '') {
+        return null;
+    }
 
     // Choose which editor implementation to render.
     let EditorImplementation = RichEditor;

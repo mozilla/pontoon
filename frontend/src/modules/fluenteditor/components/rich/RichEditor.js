@@ -34,9 +34,21 @@ export default function RichEditor(props: Props) {
     const changeSource = useSelector((state) => state.editor.changeSource);
     const locale = useSelector((state) => state.locale);
 
+    /**
+     * Hook that makes sure the translation is a Fluent message.
+     */
     React.useLayoutEffect(() => {
         if (typeof translation === 'string') {
             const message = fluent.parser.parseEntry(translation);
+            // We need to check the syntax, because it can happen that a
+            // translation changes syntax, for example if loading a new one
+            // from history. In such cases, this RichEditor will render with
+            // the new translation, but must not re-format it. We thus make sure
+            // that the syntax of the translation is "rich" before we update it.
+            const syntax = fluent.getSyntaxType(message);
+            if (syntax !== 'rich') {
+                return;
+            }
             updateTranslation(message, changeSource);
         }
     }, [translation, changeSource, updateTranslation, dispatch]);

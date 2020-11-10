@@ -42,7 +42,10 @@ export default function SimpleEditor(props: Props) {
             fluent.isSimpleMessage(message) ||
             fluent.isSimpleSingleAttributeMessage(message)
         ) {
-            updateTranslation(fluent.getSimplePreview(translation), changeSource);
+            updateTranslation(
+                fluent.getSimplePreview(translation),
+                changeSource,
+            );
         }
     }, [translation, changeSource, updateTranslation]);
 

@@ -17,6 +17,7 @@ import type { FluentMessage } from 'core/utils/fluent/types';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
     'editor/END_UPDATE_TRANSLATION';
+export const RESET_EDITOR: 'editor/RESET_EDITOR' = 'editor/RESET_EDITOR';
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' =
     'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' =
@@ -137,7 +138,7 @@ export function updateFailedChecks(
 }
 
 /**
- * Reset content to default value.
+ * Reset selected content to default value.
  */
 export type ResetSelectionAction = {|
     +type: typeof RESET_SELECTION,
@@ -145,6 +146,18 @@ export type ResetSelectionAction = {|
 export function resetSelection(): ResetSelectionAction {
     return {
         type: RESET_SELECTION,
+    };
+}
+
+/**
+ * Reset the whole editor's data to its initial value.
+ */
+export type ResetEditorAction = {|
+    +type: typeof RESET_EDITOR,
+|};
+export function reset(): ResetEditorAction {
+    return {
+        type: RESET_EDITOR,
     };
 }
 
@@ -270,6 +283,7 @@ export function sendTranslation(
 
 export default {
     endUpdateTranslation,
+    reset,
     resetFailedChecks,
     resetSelection,
     sendTranslation,
