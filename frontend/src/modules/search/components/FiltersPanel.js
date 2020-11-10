@@ -7,16 +7,15 @@ import { Localized } from '@fluent/react';
 
 import './FiltersPanel.css';
 
-import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import TimeRangeFilter from './TimeRangeFilter';
 
 import { asLocaleString } from 'core/utils';
 
-import type { TimeRangeType } from '..';
+import type { Author, TimeRangeType } from '..';
 import type { NavigationParams } from 'core/navigation';
 import type { Tag } from 'core/project';
 import type { Stats } from 'core/stats';
-import type { Author } from 'modules/search';
 
 type Props = {|
     statuses: { [string]: boolean },

@@ -7,7 +7,7 @@ import { shallowUntilTarget } from 'test/utils';
 
 import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
-import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 
 const FILTERS = [].concat(FILTERS_STATUS, FILTERS_EXTRA);
 

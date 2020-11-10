@@ -13,7 +13,7 @@ import { NAME as STATS_NAME } from 'core/stats';
 import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import FiltersPanel from './FiltersPanel';
 
 import type { NavigationParams } from 'core/navigation';
@@ -376,7 +376,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const authors = this.getSelectedAuthors();
         const author = authors.join(',');
 
-        this.props.dispatch(editor.actions.reset());
+        // this.props.dispatch(editor.actions.reset());
         this.props.dispatch(
             navigation.actions.update(this.props.router, {
                 search: this.state.search,
