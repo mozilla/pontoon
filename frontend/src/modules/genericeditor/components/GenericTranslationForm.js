@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
-import * as unsavedchanges from 'modules/unsavedchanges';
 
 type Props = {|
     sendTranslation: (ignoreWarnings?: boolean) => void,
@@ -19,9 +18,6 @@ export default function GenericTranslationForm(props: Props) {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);
-    const initialTranslation = useSelector(
-        (state) => state.editor.initialTranslation,
-    );
     const changeSource = useSelector((state) => state.editor.changeSource);
     const searchInputFocused = useSelector(
         (state) => state.search.searchInputFocused,
@@ -55,14 +51,8 @@ export default function GenericTranslationForm(props: Props) {
         dispatch(editor.actions.resetFailedChecks());
     }, [translation, dispatch]);
 
-    // When the translation or the active translation or the initial translation change,
-    // check for unsaved changes.
-    React.useEffect(() => {
-        dispatch(unsavedchanges.actions.hide());
-        dispatch(
-            unsavedchanges.actions.update(translation !== initialTranslation),
-        );
-    }, [translation, initialTranslation, dispatch]);
+    // When the translation or the initial translation changes, check for unsaved changes.
+    editor.useUpdateUnsavedChanges(false);
 
     // Replace selected content on external actions (for example, when a user clicks
     // on a placeable).

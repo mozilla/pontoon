@@ -12,7 +12,6 @@ import * as entities from 'core/entities';
 import * as locale from 'core/locale';
 import { CLDR_PLURALS } from 'core/plural';
 import { fluent } from 'core/utils';
-import * as unsavedchanges from 'modules/unsavedchanges';
 
 import type { Translation } from 'core/editor';
 import type {
@@ -83,9 +82,6 @@ export default function RichTranslationForm(props: Props) {
     );
     const entity = useSelector((state) =>
         entities.selectors.getSelectedEntity(state),
-    );
-    const initialTranslation = useSelector(
-        (state) => state.editor.initialTranslation,
     );
 
     const tableBodyRef: { current: any } = React.useRef();
@@ -172,19 +168,8 @@ export default function RichTranslationForm(props: Props) {
         dispatch(editor.actions.resetFailedChecks());
     }, [message, dispatch]);
 
-    // When content of the translation changes
-    //   - close unsaved changes popup if open
-    //   - update unsaved changes status
-    React.useEffect(() => {
-        if (typeof message === 'string') {
-            return;
-        }
-
-        dispatch(unsavedchanges.actions.hide());
-        dispatch(
-            unsavedchanges.actions.update(!message.equals(initialTranslation)),
-        );
-    }, [message, initialTranslation, dispatch]);
+    // When content of the translation changes, update unsaved changes.
+    editor.useUpdateUnsavedChanges(false);
 
     // Put focus on input.
     React.useEffect(() => {
