@@ -114,12 +114,10 @@
 
 .project-menu .menu .header .project {
     float: left;
-    text-transform: uppercase;
 }
 
 .project-menu .menu .header .progress {
     float: right;
-    text-transform: uppercase;
 }
 
 .project-menu .menu .header .icon {

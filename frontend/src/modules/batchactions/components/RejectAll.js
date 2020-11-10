@@ -42,7 +42,7 @@ export default class RejectAll extends React.Component<Props, State> {
     renderConfirmation() {
         return (
             <Localized id='batchactions-RejectAll--confirmation'>
-                {'Are you sure?'}
+                {'ARE YOU SURE?'}
             </Localized>
         );
     }
@@ -50,7 +50,7 @@ export default class RejectAll extends React.Component<Props, State> {
     renderDefault() {
         return (
             <Localized id='batchactions-RejectAll--default'>
-                {'Reject all suggestions'}
+                {'REJECT ALL SUGGESTIONS'}
             </Localized>
         );
     }
@@ -58,7 +58,7 @@ export default class RejectAll extends React.Component<Props, State> {
     renderError() {
         return (
             <Localized id='batchactions-RejectAll--error'>
-                {'Oops, something went wrong'}
+                {'OOPS, SOMETHING WENT WRONG'}
             </Localized>
         );
     }
@@ -75,7 +75,7 @@ export default class RejectAll extends React.Component<Props, State> {
                 id='batchactions-RejectAll--invalid'
                 vars={{ invalidCount: response.invalidCount }}
             >
-                {'{ $invalidCount } failed'}
+                {'{ $invalidCount } FAILED'}
             </Localized>
         );
     }
@@ -92,7 +92,7 @@ export default class RejectAll extends React.Component<Props, State> {
                 id='batchactions-RejectAll--success'
                 vars={{ changedCount: response.changedCount }}
             >
-                {'{ $changedCount } strings rejected'}
+                {'{ $changedCount } STRINGS REJECTED'}
             </Localized>
         );
     }

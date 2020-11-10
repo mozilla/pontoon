@@ -114,12 +114,10 @@
 
 .resource-menu .menu .header .resource {
     float: left;
-    text-transform: uppercase;
 }
 
 .resource-menu .menu .header .progress {
     float: right;
-    text-transform: uppercase;
 }
 
 .resource-menu .menu .header .icon {

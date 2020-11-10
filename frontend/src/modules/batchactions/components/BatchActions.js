@@ -225,7 +225,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                         >
                             <p>
                                 {
-                                    '<stress>WARNING:</stress> THESE ACTIONS WILL BE APPLIED TO ALL SELECTED STRINGS AND CANNOT BE UNDONE.'
+                                    '<stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.'
                                 }
                             </p>
                         </Localized>

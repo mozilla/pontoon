@@ -65,13 +65,13 @@ export default function EditorMainAction(props: Props) {
             className: 'action-approve',
             action: approveTranslation,
             title: 'Approve Translation (Enter)',
-            label: 'Approve',
+            label: 'APPROVE',
             glyph: null,
         };
 
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-approving';
-            btn.label = 'Approving';
+            btn.label = 'APPROVING';
             btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
     } else if (forceSuggestions || !isTranslator) {
@@ -81,13 +81,13 @@ export default function EditorMainAction(props: Props) {
             className: 'action-suggest',
             action: props.sendTranslation,
             title: 'Suggest Translation (Enter)',
-            label: 'Suggest',
+            label: 'SUGGEST',
             glyph: null,
         };
 
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-suggesting';
-            btn.label = 'Suggesting';
+            btn.label = 'SUGGESTING';
             btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
     } else {
@@ -97,13 +97,13 @@ export default function EditorMainAction(props: Props) {
             className: 'action-save',
             action: props.sendTranslation,
             title: 'Save Translation (Enter)',
-            label: 'Save',
+            label: 'SAVE',
             glyph: null,
         };
 
         if (isRunningRequest) {
             btn.id = 'editor-EditorMenu--button-saving';
-            btn.label = 'Saving';
+            btn.label = 'SAVING';
             btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
         }
     }

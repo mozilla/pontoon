@@ -112,7 +112,6 @@
     margin: 5px 0;
     padding: 0;
     padding-top: 20px;
-    text-transform: uppercase;
 }
 
 .filters-panel .menu li.horizontal-separator:first-child {
@@ -241,7 +240,6 @@
     box-sizing: border-box;
     line-height: 23px;
     padding: 10px 12px;
-    text-transform: uppercase;
     width: 100%;
 }
 
@@ -257,7 +255,6 @@
     border: none;
     color: #aaa;
     font-weight: 300;
-    text-transform: uppercase;
 }
 
 .filters-panel .toolbar button .fa {

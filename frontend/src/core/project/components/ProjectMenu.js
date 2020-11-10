@@ -175,7 +175,7 @@ export class ProjectMenuBase extends React.Component<Props, State> {
                                     className='project'
                                     onClick={this.sortByProject}
                                 >
-                                    Project
+                                    PROJECT
                                 </span>
                             </Localized>
                             <span
@@ -187,7 +187,7 @@ export class ProjectMenuBase extends React.Component<Props, State> {
                                     className='progress'
                                     onClick={this.sortByProgress}
                                 >
-                                    Progress
+                                    PROGRESS
                                 </span>
                             </Localized>
                             <span

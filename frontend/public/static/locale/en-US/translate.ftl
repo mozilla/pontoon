@@ -9,14 +9,14 @@
 ## ApproveAll
 ## Renders Approve All batch action button.
 
-batchactions-ApproveAll--default = Approve all
+batchactions-ApproveAll--default = APPROVE ALL
 batchactions-ApproveAll--success =
     { $changedCount ->
-        [one] { $changedCount } string approved
-       *[other] { $changedCount } strings approved
+        [one] { $changedCount } STRING APPROVED
+       *[other] { $changedCount } STRINGS APPROVED
     }
-batchactions-ApproveAll--invalid = { $invalidCount } failed
-batchactions-ApproveAll--error = Oops, something went wrong
+batchactions-ApproveAll--invalid = { $invalidCount } FAILED
+batchactions-ApproveAll--error = OPPS, SOMETHING WENT WRONG
 
 
 ## BatchActions
@@ -31,7 +31,7 @@ batchactions-BatchActions--header-selected-count =
 batchactions-BatchActions--header-select-all = <glyph></glyph> SELECT ALL
     .title = Select All Strings (Ctrl + Shift + A)
 
-batchactions-BatchActions--warning = <stress>WARNING:</stress> THESE ACTIONS WILL BE APPLIED TO ALL SELECTED STRINGS AND CANNOT BE UNDONE.
+batchactions-BatchActions--warning = <stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.
 
 batchactions-BatchActions--review-heading = REVIEW TRANSLATIONS
 
@@ -45,28 +45,28 @@ batchactions-BatchActions--replace-with =
 ## RejectAll
 ## Renders Reject All batch action button.
 
-batchactions-RejectAll--default = Reject all suggestions
-batchactions-RejectAll--confirmation = Are you sure?
+batchactions-RejectAll--default = REJECT ALL SUGGESTIONS
+batchactions-RejectAll--confirmation = ARE YOU SURE?
 batchactions-RejectAll--success =
     { $changedCount ->
-        [one] { $changedCount } string rejected
-       *[other] { $changedCount } strings rejected
+        [one] { $changedCount } STRING REJECTED
+       *[other] { $changedCount } STRINGS REJECTED
     }
-batchactions-RejectAll--invalid = { $invalidCount } failed
-batchactions-RejectAll--error = Oops, something went wrong
+batchactions-RejectAll--invalid = { $invalidCount } FAILED
+batchactions-RejectAll--error = OOPS, SOMETHING WENT WRONG
 
 
 ## ReplaceAll
 ## Renders Replace All batch action button.
 
-batchactions-ReplaceAll--default = Replace all
+batchactions-ReplaceAll--default = REPLACE ALL
 batchactions-ReplaceAll--success =
     { $changedCount ->
-        [one] { $changedCount } string replaced
-       *[other] { $changedCount } strings replaced
+        [one] { $changedCount } STRING REPLACED
+       *[other] { $changedCount } STRINGS REPLACED
     }
-batchactions-ReplaceAll--invalid = { $invalidCount } failed
-batchactions-ReplaceAll--error = Oops, something went wrong
+batchactions-ReplaceAll--invalid = { $invalidCount } FAILED
+batchactions-ReplaceAll--error = OOPS, SOMETHING WENT WRONG
 
 
 ## ResourceProgress
@@ -105,17 +105,17 @@ editor-EditorMenu--button-copy = COPY
     .title = Copy From Source (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = CLEAR
     .title = Clear Translation (Ctrl + Shift + Backspace)
-editor-EditorMenu--button-approve = Approve
+editor-EditorMenu--button-approve = APPROVE
     .title = Approve Translation (Enter)
-editor-EditorMenu--button-approving = <glyph></glyph>Approving
+editor-EditorMenu--button-approving = <glyph></glyph>APPROVING
     .title = Approving Translation…
-editor-EditorMenu--button-save = Save
+editor-EditorMenu--button-save = SAVE
     .title = Save Translation (Enter)
-editor-EditorMenu--button-saving = <glyph></glyph>Saving
+editor-EditorMenu--button-saving = <glyph></glyph>SAVING
     .title = Saving Translation…
-editor-EditorMenu--button-suggest = Suggest
+editor-EditorMenu--button-suggest = SUGGEST
     .title = Suggest Translation (Enter)
-editor-EditorMenu--button-suggesting = <glyph></glyph>Suggesting
+editor-EditorMenu--button-suggesting = <glyph></glyph>SUGGESTING
     .title = Suggesting Translation…
 
 
@@ -134,9 +134,9 @@ editor-EditorSettings--change-all = Change All Settings
 ## Editor Failed Checks
 ## Renders the failed checks popup
 
-editor-FailedChecks--close = X
+editor-FailedChecks--close = x
     .aria-label = Close failed checks popup
-editor-FailedChecks--title = The following checks have failed
+editor-FailedChecks--title = THE FOLLOWING CHECKS HAVE FAILED
 editor-FailedChecks--save-anyway = SAVE ANYWAY 
 editor-FailedChecks--suggest-anyway = SUGGEST ANYWAY
 editor-FailedChecks--approve-anyway = APPROVE ANYWAY
@@ -150,32 +150,32 @@ editor-KeyboardShortcuts--button =
 
 editor-KeyboardShortcuts--overlay-title = KEYBOARD SHORTCUTS
 
-editor-KeyboardShortcuts--save-translation = SAVE TRANSLATION
-editor-KeyboardShortcuts--save-translation-shortcut = <accel>ENTER</accel>
+editor-KeyboardShortcuts--save-translation = Save Translation
+editor-KeyboardShortcuts--save-translation-shortcut = <accel>Enter</accel>
 
-editor-KeyboardShortcuts--cancel-translation = CANCEL TRANSLATION
-editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>ESC</accel>
+editor-KeyboardShortcuts--cancel-translation = Cancel Translation
+editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
 
-editor-KeyboardShortcuts--insert-a-new-line = INSERT A NEW LINE
-editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>SHIFT</mod1> + <accel>ENTER</accel>
+editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
+editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
-editor-KeyboardShortcuts--go-to-next-string = GO TO NEXT STRING
-editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>ALT</mod1> + <accel>DOWN</accel>
+editor-KeyboardShortcuts--go-to-next-string = Go To Next String
+editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
 
-editor-KeyboardShortcuts--go-to-previous-string = GO TO PREVIOUS STRING
-editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>ALT</mod1> + <accel>UP</accel>
+editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
+editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
 
-editor-KeyboardShortcuts--copy-from-source = COPY FROM SOURCE
-editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>C</accel>
+editor-KeyboardShortcuts--copy-from-source = Copy From Source
+editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
 
-editor-KeyboardShortcuts--clear-translation = CLEAR TRANSLATION
-editor-KeyboardShortcuts--clear-translation-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>Backspace</accel>
+editor-KeyboardShortcuts--clear-translation = Clear Translation
+editor-KeyboardShortcuts--clear-translation-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Backspace</accel>
 
-editor-KeyboardShortcuts--search-strings = SEARCH STRINGS
-editor-KeyboardShortcuts--search-strings-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>F</accel>
+editor-KeyboardShortcuts--search-strings = Search Strings
+editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>F</accel>
 
-editor-KeyboardShortcuts--select-all-strings = SELECT ALL STRINGS
-editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>CTRL</mod1> + <mod2>SHIFT</mod2> + <accel>A</accel>
+editor-KeyboardShortcuts--select-all-strings = Select All Strings
+editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
 
 ## Editor Unsaved Changes
@@ -570,8 +570,8 @@ placeable-parser-xmlTag =
 ## Project menu
 ## Used in the project menu in the main navigation bar.
 project-ProjectMenu--no-results = No results
-project-ProjectMenu--project = Project
-project-ProjectMenu--progress = Progress
+project-ProjectMenu--project = PROJECT
+project-ProjectMenu--progress = PPROGRESS
 project-ProjectMenu--all-projects = All Projects
 project-ProjectMenu--search-placeholder =
     .placeholder = Filter projects
@@ -580,8 +580,8 @@ project-ProjectMenu--search-placeholder =
 ## Resource menu
 ## Used in the resource menu in the main navigation bar.
 resource-ResourceMenu--no-results = No results
-resource-ResourceMenu--resource = Resource
-resource-ResourceMenu--progress = Progress
+resource-ResourceMenu--resource = RESOURCE
+resource-ResourceMenu--progress = PROGRESS
 resource-ResourceMenu--all-resources = All Resources
 resource-ResourceMenu--all-projects = All Projects
 resource-ResourceMenu--search-placeholder =
@@ -590,10 +590,10 @@ resource-ResourceMenu--search-placeholder =
 
 ## Filters Panel
 ## Shows a list of filters, used to filter the list of entities.
-search-FiltersPanel--heading-status = Translation Status
-search-FiltersPanel--heading-tags = Tags
-search-FiltersPanel--heading-extra = Extra Filters
-search-FiltersPanel--heading-authors = Translation Authors
+search-FiltersPanel--heading-status = TRANSLATION STATUS
+search-FiltersPanel--heading-tags = TAGS
+search-FiltersPanel--heading-extra = EXTRA FILTERS
+search-FiltersPanel--heading-authors = TRANSLATION AUTHORS
 search-FiltersPanel--status-name-all = All
 search-FiltersPanel--status-name-translated = Translated
 search-FiltersPanel--status-name-fuzzy = Fuzzy
@@ -605,13 +605,13 @@ search-FiltersPanel--extra-name-unchanged = Unchanged
 search-FiltersPanel--extra-name-empty = Empty
 search-FiltersPanel--extra-name-rejected = Rejected
 
-search-FiltersPanel--clear-selection = <glyph></glyph>Clear
+search-FiltersPanel--clear-selection = <glyph></glyph> CLEAR
     .title = Uncheck selected filters
 
 search-FiltersPanel--apply-filters =
-    <glyph></glyph>Apply <stress>{ $count }</stress> { $count ->
-        [one] filter
-       *[other] filters
+    <glyph></glyph>APPLY <stress>{ $count }</stress> { $count ->
+        [one] FILTER
+       *[other] FILTERS
     }
     .title = Apply Selected Filters
 
@@ -620,8 +620,8 @@ search-FiltersPanel--apply-filters =
 ## Time Range filter title, input fields and chart.
 
 search-TimeRangeFilter--heading-time = Translation Time
-search-TimeRangeFilter--edit-range = <glyph></glyph>Edit Range
-search-TimeRangeFilter--save-range = Save Range
+search-TimeRangeFilter--edit-range = <glyph></glyph>EDIT RANGE
+search-TimeRangeFilter--save-range = SAVE RANGE
 
 
 ## Term
