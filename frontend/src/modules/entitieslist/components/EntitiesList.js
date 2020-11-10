@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
@@ -215,6 +216,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                 this.props.unsavedChangesIgnored,
                 () => {
                     dispatch(batchactions.actions.resetSelection());
+                    dispatch(editor.actions.reset());
                     dispatch(
                         navigation.actions.updateEntity(
                             router,

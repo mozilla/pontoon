@@ -2,8 +2,6 @@
 
 import { push, replace } from 'connected-react-router';
 
-import * as editor from 'core/editor';
-
 /**
  * Update the URL with a set of new parameters.
  *
@@ -57,7 +55,6 @@ export function update(
             updateMethod = replace;
         }
 
-        dispatch(editor.actions.reset());
         dispatch(updateMethod('?' + currentParams.toString()));
     };
 }

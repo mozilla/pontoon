@@ -6,6 +6,7 @@ import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
+import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
 import * as project from 'core/project';
 import { NAME as STATS_NAME } from 'core/stats';
@@ -375,6 +376,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const authors = this.getSelectedAuthors();
         const author = authors.join(',');
 
+        this.props.dispatch(editor.actions.reset());
         this.props.dispatch(
             navigation.actions.update(this.props.router, {
                 search: this.state.search,

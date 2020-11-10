@@ -239,6 +239,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 this.props.unsavedChangesExist,
                 this.props.unsavedChangesIgnored,
                 () => {
+                    dispatch(editor.actions.reset());
                     dispatch(
                         navigation.actions.updateEntity(
                             router,
@@ -258,6 +259,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 this.props.unsavedChangesExist,
                 this.props.unsavedChangesIgnored,
                 () => {
+                    dispatch(editor.actions.reset());
                     dispatch(
                         navigation.actions.updateEntity(
                             router,
