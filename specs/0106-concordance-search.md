@@ -16,12 +16,10 @@ Alternativelly, you can switch to the All Projects view and use the string list 
 
 # Feature explanation
 
-This feature changes the way "Search in Machinery" searches Translation Memory. Instead of searching for fuzzy matches of whole strings stored in Translation Memory, `source` and `target` fields of the `TranslationMemoryEntry` model are searched for each input keyword separately. For inspiration, see `Entity.for_project_locale()` in `pontoon.base.models`, which is used in string list search.
+This feature changes the way "Search in Machinery" searches Translation Memory. Instead of searching for fuzzy matches of whole strings stored in Translation Memory, `source` and `target` fields of the `TranslationMemoryEntry` model are searched for each keyword and each phrase within quotes separately.
 
-Only `source` and `target` fields are used for searching (unlike in `Entity.for_project_locale()`, which also searches comments).
+For inspiration, see `Entity.for_project_locale()` in `pontoon.base.models`, which is used in string list search. Note that only `source` and `target` fields are used for searching (unlike in `Entity.for_project_locale()`, which also searches comments).
+
+Placeholder text of the search box is changed from "Search in Machinery" to "Concordance Search". When results for Concordance search are displayed, the magnifier icon in the search box changes from fa-search to fa-times. Clicking on it reverts to the default Machinery results. In output, project name is used as the title instead of "Translation Memory", unless `TranslationMemoryEntry.project` field is None.
 
 Search behaviour of other sources (e.g. Machine Translation) remains unchanged.
-
-Placeholder text is changed from "Search in Machinery" to "Concordance Search".
-
-Project name is used as the title instead of "Translation Memory", unless `TranslationMemoryEntry.project` field is None.
