@@ -183,19 +183,19 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 
 editor-UnsavedChanges--close = ×
     .aria-label = Close unsaved changes popup
-editor-UnsavedChanges--title = You have unsaved changes
+editor-UnsavedChanges--title = YOU HAVE UNSAVED CHANGES
 editor-UnsavedChanges--body = Are you sure you want to proceed?
-editor-UnsavedChanges--proceed = Proceed
+editor-UnsavedChanges--proceed = PROCEED
 
 
 ## Entity Details Navigation
 ## Shows Copy Link and Next/Previous buttons.
 
-entitydetails-EntityNavigation--link = <glyph></glyph>Copy Link
+entitydetails-EntityNavigation--link = <glyph></glyph>COPY LINK
     .title = Copy Link to String
-entitydetails-EntityNavigation--next = <glyph></glyph>Next
+entitydetails-EntityNavigation--next = <glyph></glyph>NEXT
     .title = Go To Next String (Alt + Down)
-entitydetails-EntityNavigation--previous = <glyph></glyph>Previous
+entitydetails-EntityNavigation--previous = <glyph></glyph>PREVIOUS
     .title = Go To Previous String (Alt + Up)
 
 
@@ -627,7 +627,7 @@ search-TimeRangeFilter--save-range = SAVE RANGE
 ## Term
 ## Shows term entry with its metadata
 
-term-Term--for-example = E.g.
+term-Term--for-example = E.G.
 
 
 ## User Avatar
@@ -671,4 +671,4 @@ user-UserNotificationsMenu--see-all-notifications = See all Notifications
 ## Project Info
 ## Shows information of all projects
 
-projectinfo-ProjectInfo--project-info-title = Project Info
+projectinfo-ProjectInfo--project-info-title = PROJECT INFO

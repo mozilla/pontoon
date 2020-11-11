@@ -64,7 +64,7 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
                 </Localized>
 
                 <Localized id='editor-UnsavedChanges--title'>
-                    <p className='title'>You have unsaved changes</p>
+                    <p className='title'>YOU HAVE UNSAVED CHANGES</p>
                 </Localized>
 
                 <Localized id='editor-UnsavedChanges--body'>
@@ -76,7 +76,7 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
                         className='proceed anyway'
                         onClick={this.ignoreUnsavedChanges}
                     >
-                        Proceed
+                        PROCEED
                     </button>
                 </Localized>
             </div>
