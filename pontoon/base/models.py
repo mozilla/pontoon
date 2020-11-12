@@ -1138,14 +1138,17 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.available().filter(system_project=False)
 
+    def force_syncable(self):
+        """
+        Projects that can be force-synced are not disabled and use repository as their data source type.
+        """
+        return self.filter(disabled=False, data_source="repository")
+
     def syncable(self):
         """
-        Syncable projects are not disabled, don't have sync disabled and use
-        repository as their data source type.
+        Syncable projects are same as force-syncable, but must not have sync disabled.
         """
-        return self.filter(
-            disabled=False, sync_disabled=False, data_source="repository",
-        )
+        return self.force_syncable().filter(sync_disabled=False)
 
     def prefetch_project_locale(self, locale):
         """
