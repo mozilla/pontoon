@@ -605,7 +605,7 @@ search-FiltersPanel--extra-name-unchanged = Unchanged
 search-FiltersPanel--extra-name-empty = Empty
 search-FiltersPanel--extra-name-rejected = Rejected
 
-search-FiltersPanel--clear-selection = <glyph></glyph> CLEAR
+search-FiltersPanel--clear-selection = <glyph></glyph>CLEAR
     .title = Uncheck selected filters
 
 search-FiltersPanel--apply-filters =

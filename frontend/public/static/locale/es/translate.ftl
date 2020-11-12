@@ -9,10 +9,10 @@
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
-editor-EditorMenu--button-copy = Copiar
-editor-EditorMenu--button-clear = Borrar
-editor-EditorMenu--button-save = Guardar
-editor-EditorMenu--button-suggest = Sugerir
+editor-EditorMenu--button-copy = COPIAR 
+editor-EditorMenu--button-clear = BORRAR
+editor-EditorMenu--button-save = GUARDAR
+editor-EditorMenu--button-suggest = SUGERIR
 
 
 ## Entity Navigation

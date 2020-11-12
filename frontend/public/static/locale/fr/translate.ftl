@@ -11,10 +11,10 @@
 
 editor-EditorMenu--sign-in-to-translate = <a>Connectez-vous</a> pour traduire.
 editor-EditorMenu--read-only-localization = Cette traduction est en lecture seule.
-editor-EditorMenu--button-copy = Copier
-editor-EditorMenu--button-clear = Effacer
-editor-EditorMenu--button-save = Sauvegarder
-editor-EditorMenu--button-suggest = Suggérer
+editor-EditorMenu--button-copy = COPIER
+editor-EditorMenu--button-clear = EFFACER
+editor-EditorMenu--button-save = SAUVEGARDER
+editor-EditorMenu--button-suggest = SUGGÈRER
 
 
 ## Editor Settings
@@ -34,10 +34,10 @@ editor-EditorSettings--change-all = Changer tous les paramètres
 
 editor-FailedChecks--close = ×
     .aria-label = Cacher les vérifications échouées
-editor-FailedChecks--title = Les vérifications suivantes ont échoué
-editor-FailedChecks--save-anyway = Sauvegarder quand même
-editor-FailedChecks--suggest-anyway = Suggérer quand même
-editor-FailedChecks--approve-anyway = Approuver quand même
+editor-FailedChecks--title = LES VÈRIFICATIONS SUIVANTES ONT ÈCHOUÈ 
+editor-FailedChecks--save-anyway = SAUVEGARDER QUAND MÈME
+editor-FailedChecks--suggest-anyway = SUGGÈRER QUAND MÈME
+editor-FailedChecks--approve-anyway = APPROUVER QUAND MÈME
 
 
 ## Editor Keyboard Shortcuts
@@ -46,7 +46,7 @@ editor-FailedChecks--approve-anyway = Approuver quand même
 editor-KeyboardShortcuts--button =
     .title = Raccourcis clavier
 
-editor-KeyboardShortcuts--overlay-title = Raccourcis clavier
+editor-KeyboardShortcuts--overlay-title = RACCOURCIS CALVIER
 
 editor-KeyboardShortcuts--save-translation = Sauvegarder une traduction
 editor-KeyboardShortcuts--save-translation-shortcut = <accel>Entrée</accel>
@@ -81,15 +81,15 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 
 editor-UnsavedChanges--close = ×
     .aria-label = Cacher les changements non-sauvegardés
-editor-UnsavedChanges--title = Vous avez des changements non-sauvegardés
+editor-UnsavedChanges--title = VOUS AVEZ DES CHANGEMENTS NON-SAUVEGARDÈS
 
 
 ## Entity Navigation
 ## Shows next/previous buttons.
 
-entitydetails-EntityNavigation--next = <glyph></glyph>Suivant
+entitydetails-EntityNavigation--next = <glyph></glyph>SUIVANTES
     .title = Aller à la chaîne suivante (Alt + Bas)
-entitydetails-EntityNavigation--previous = <glyph></glyph>Précédent
+entitydetails-EntityNavigation--previous = <glyph></glyph>PRÈCEDENT
     .title = Aller à la chaîne précédente (Alt + Haut)
 
 
@@ -261,13 +261,13 @@ resource-ResourceMenu--all-projects = Tous les projets
 ## Search
 ## The search bar and filters menu.
 
-search-FiltersPanel--clear-selection = <glyph></glyph>Effacer
+search-FiltersPanel--clear-selection = <glyph></glyph>EFFACER
     .title = Désélectionner les filtres
 
 search-FiltersPanel--apply-filters =
     <glyph></glyph>Appliquer <stress>{ $count }</stress> { $count ->
-        [one] filtre
-       *[other] filtres
+        [one] FILTRE
+       *[other] FILTRES
     }
     .title = Appliquer les filtres sélectionnés
 
