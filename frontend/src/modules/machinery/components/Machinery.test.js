@@ -38,7 +38,11 @@ describe('<Machinery>', () => {
     });
 
     it('returns null if there is no locale', () => {
-        const wrapper = shallow(<Machinery locale={null} />);
+        const machinery = {};
+        const wrapper = shallow(
+            <Machinery machinery={machinery} locale={null} />,
+        );
+
         expect(wrapper.type()).toBeNull();
     });
 });
