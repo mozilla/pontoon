@@ -35,6 +35,25 @@ export default class Machinery extends React.Component<Props> {
         this.searchInput = React.createRef();
     }
 
+    componentDidMount() {
+        const { machinery } = this.props;
+
+        // Restore custom input in search field,
+        // e.g. when switching from Locales tab back to Machinery
+        if (!machinery.entity && machinery.sourceString) {
+            this.searchInput.current.value = machinery.sourceString;
+        }
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        const { machinery } = this.props;
+
+        // Clear search field after switching to a different entity
+        if (machinery.entity && !prevProps.machinery.entity) {
+            this.searchInput.current.value = '';
+        }
+    }
+
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
