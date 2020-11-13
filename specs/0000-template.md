@@ -28,4 +28,3 @@ Feel free to add additional sections as needed. Common examples include (and are
 - **Out of scope:** In describing a feature scope it's sometimes helpful to explaining what doesn't fit in.
 
 Note that you are welcome to use all features of the [Markdown](https://guides.github.com/features/mastering-markdown/) syntax in formatting your specification.
-
