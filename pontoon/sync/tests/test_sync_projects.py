@@ -92,7 +92,7 @@ class CommandTests(TestCase):
 
         assert (
             self.command.stderr.getvalue()
-            == "Couldn't find projects with following slugs: aaa, bbb"
+            == "Couldn't find projects to sync with following slugs: aaa, bbb"
         )
 
     def test_cant_commit(self):
