@@ -7,7 +7,8 @@ from pontoon.test.factories import EntityFactory, TermFactory, TermTranslationFa
 
 
 @pytest.fixture
-def available_terms():
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def available_terms(_):
     """This fixture provides:
 
     - 4 generic terms
@@ -25,7 +26,8 @@ def available_terms():
 
 
 @pytest.fixture
-def localizable_term():
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def localizable_term(_):
     """
     This fixture provides a localizable term.
     """
@@ -33,7 +35,8 @@ def localizable_term():
 
 
 @pytest.fixture
-def non_localizable_term():
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def non_localizable_term(_):
     """
     This fixture provides a localizable term.
     """
@@ -63,11 +66,12 @@ def test_terms_for_string(string, found_terms, available_terms):
     assert len(terms) == len(found_terms)
 
     for i, term in enumerate(terms):
-        term.text = found_terms[i]
+        assert term.text == found_terms[i]
 
 
 @pytest.mark.django_db
-def test_term_translation(locale_a):
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def test_term_translation(_, locale_a):
     term = TermFactory.create(text="term")
     assert term.translation(locale_a) is None
 
@@ -81,7 +85,8 @@ def test_term_translation(locale_a):
 
 
 @pytest.mark.django_db
-def test_term_localizable():
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def test_term_localizable(_):
     term_a = TermFactory.create(text="term A")
     assert term_a.localizable is True
 
@@ -99,7 +104,8 @@ def test_term_localizable():
 
 
 @pytest.mark.django_db
-def test_term_entity_comment():
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def test_term_entity_comment(_):
     term_a = TermFactory.create(
         text="term", part_of_speech="noun", definition="definition",
     )
