@@ -24,7 +24,9 @@ Feel free to add additional sections as needed. Common examples include (and are
 
 - **Mockup(s):** Sometimes it's easier to explain the UI with a screenshot or a drawing.
 - **Algorithm:** Explain parts of the feature with pseudocode (or Python or JS code).
-- **Roles:** Provide details on how the feature impacts different user roles?
+- **Roles:** Provide details on how the feature impacts different user roles.
 - **Out of scope:** In describing a feature scope it's sometimes helpful to explain what doesn't fit in.
 
 Note that you are welcome to use all features of the [Markdown](https://guides.github.com/features/mastering-markdown/) syntax in formatting your specification.
+
+*Save the file as ABCD-feature-name.md, where ABCD is the spec number. The spec number is determined by increasing the spec with the highest number by one (including specs under review). If your specification includes any auxiliary files such as mockups, save them in the subdirectory called ABCD. There are no constraints on the auxiliary file names.*
