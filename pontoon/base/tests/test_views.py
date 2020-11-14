@@ -16,13 +16,3 @@ class UserTestCase(TestCase):
         self.user = UserFactory.create()
         self.client.force_login(self.user)
 
-
-class ViewTestCase(TestCase):
-    def setUp(self):
-        """
-        We don't call project synchronization during the tests, so we have to
-        create dummy resource project to avoid recurse redirect at /.
-        """
-        ResourceFactory.create(project=Project.objects.get(pk=1))
-
-        self.factory = RequestFactory()
