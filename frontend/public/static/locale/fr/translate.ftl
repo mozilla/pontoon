@@ -45,7 +45,7 @@ editor-FailedChecks--approve-anyway = APPROUVER QUAND MÊME
 editor-KeyboardShortcuts--button =
     .title = Raccourcis clavier
 
-editor-KeyboardShortcuts--overlay-title = RACCOURCIS CALVIER
+editor-KeyboardShortcuts--overlay-title = RACCOURCIS CLAVIER
 
 editor-KeyboardShortcuts--save-translation = Sauvegarder une traduction
 editor-KeyboardShortcuts--save-translation-shortcut = <accel>Entrée</accel>
