@@ -1,6 +1,7 @@
 import json
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -63,8 +64,9 @@ def contributor_timeline(request, username):
     counts_by_day = contributor_translations.values("day").annotate(count=Count("id"))
 
     try:
-        events_paginator = Paginator(counts_by_day, 10)
-        timeline_events = []
+        events_paginator = Paginator(
+            counts_by_day, django_settings.CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE
+        )
 
         timeline_events = map_translations_to_events(
             events_paginator.page(page).object_list, contributor_translations
