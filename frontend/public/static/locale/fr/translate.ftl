@@ -14,7 +14,7 @@ editor-EditorMenu--read-only-localization = Cette traduction est en lecture seul
 editor-EditorMenu--button-copy = COPIER
 editor-EditorMenu--button-clear = EFFACER
 editor-EditorMenu--button-save = SAUVEGARDER
-editor-EditorMenu--button-suggest = SUGGÈRER
+editor-EditorMenu--button-suggest = SUGGÉRER
 
 
 ## Editor Settings
@@ -34,11 +34,10 @@ editor-EditorSettings--change-all = Changer tous les paramètres
 
 editor-FailedChecks--close = ×
     .aria-label = Cacher les vérifications échouées
-editor-FailedChecks--title = LES VÈRIFICATIONS SUIVANTES ONT ÈCHOUÈ 
-editor-FailedChecks--save-anyway = SAUVEGARDER QUAND MÈME
-editor-FailedChecks--suggest-anyway = SUGGÈRER QUAND MÈME
-editor-FailedChecks--approve-anyway = APPROUVER QUAND MÈME
-
+editor-FailedChecks--title = LES VÉRIFICATIONS SUIVANTES ONT ÉCHOUÉ
+editor-FailedChecks--save-anyway = SAUVEGARDER QUAND MÊME
+editor-FailedChecks--suggest-anyway = SUGGÉRER QUAND MÊME
+editor-FailedChecks--approve-anyway = APPROUVER QUAND MÊME
 
 ## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
@@ -87,9 +86,9 @@ editor-UnsavedChanges--title = VOUS AVEZ DES CHANGEMENTS NON-SAUVEGARDÈS
 ## Entity Navigation
 ## Shows next/previous buttons.
 
-entitydetails-EntityNavigation--next = <glyph></glyph>SUIVANTES
+entitydetails-EntityNavigation--next = <glyph></glyph>SUIVANT
     .title = Aller à la chaîne suivante (Alt + Bas)
-entitydetails-EntityNavigation--previous = <glyph></glyph>PRÈCEDENT
+entitydetails-EntityNavigation--previous = <glyph></glyph>PRÉCÉDENT
     .title = Aller à la chaîne précédente (Alt + Haut)
 
 

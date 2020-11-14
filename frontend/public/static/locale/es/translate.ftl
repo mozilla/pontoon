@@ -9,7 +9,7 @@
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
-editor-EditorMenu--button-copy = COPIAR 
+editor-EditorMenu--button-copy = COPIAR
 editor-EditorMenu--button-clear = BORRAR
 editor-EditorMenu--button-save = GUARDAR
 editor-EditorMenu--button-suggest = SUGERIR
