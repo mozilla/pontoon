@@ -60,9 +60,9 @@ django-dotenv==1.3.0 \
 django-guardian==2.3.0 \
     --hash=sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8 \
     --hash=sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b
-django-jinja==2.6.0 \
-    --hash=sha256:4e3e97d7b40669926a9517eb4522cd98dce2e32dcba908aad156810b74744148 \
-    --hash=sha256:7459985c25ddb6584c6bab345761c8c5557713448e6fbb322af1b6dd7f5512bd
+django-jinja==2.7.0 \
+    --hash=sha256:ce4640e4bc329d9e938c3a7673dafc66dfcc921e4667cfd1002f0089e2599103 \
+    --hash=sha256:d56ecddaa6d3caf508509aae5a979ebd8a3427477c34fcbcac14bf8389a21a12
 django-notifications-hq==1.6.0 \
     --hash=sha256:debeb71b7076b08487b40bf07664d1cc43b9977c4480bbc969b30236dda7a461 \
     --hash=sha256:dfc6f8bd4034ceae91143bc3802ddfb6e276eaec90e63dd23e2584c052561576
