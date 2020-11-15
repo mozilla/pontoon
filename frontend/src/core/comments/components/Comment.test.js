@@ -38,7 +38,7 @@ describe('<Comment>', () => {
         );
 
         // Comments are hidden in a Linkify component.
-        const content = wrapper.find('Linkify').find('div').text();
+        const content = wrapper.find('Linkify').find('span').text();
         expect(content).toEqual(
             "What I hear when I'm being yelled at is people caring loudly at me.",
         );
