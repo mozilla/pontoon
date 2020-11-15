@@ -59,3 +59,4 @@ env:
     - DATABASE_URL=postgres://postgres@localhost/pontoon
     - HMAC_KEY=asdf
     - HGPYTHON3=1
+    - PGPORT=5433
