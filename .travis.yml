@@ -50,6 +50,8 @@ addons:
   apt:
     packages:
       - language-pack-tr
+      - postgresql-11.5
+      - postgresql-client-11.5
 
 env:
   global:
