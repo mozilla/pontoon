@@ -39,7 +39,7 @@ export default function Comment(props: Props) {
                 imageUrl={comment.userGravatarUrlSmall}
             />
             <div className='container'>
-                <div className='content' dir='auto'>
+                <div className='content'>
                     <div>
                         <a
                             className='comment-author'
@@ -63,7 +63,7 @@ export default function Comment(props: Props) {
                              *   - pontoon.base.forms.AddCommentForm(}
                              *   - pontoon.base.forms.HtmlField()
                              */}
-                            {parse(comment.content)}
+                            <span dir='auto'>{parse(comment.content)}</span>
                         </Linkify>
                         {!comment.pinned ? null : (
                             <div className='fa fa-thumbtack comment-pin'></div>
