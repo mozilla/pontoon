@@ -39,36 +39,34 @@ export default function Comment(props: Props) {
                 imageUrl={comment.userGravatarUrlSmall}
             />
             <div className='container'>
-                <div className='content' dir='auto'>
-                    <div>
-                        <a
-                            className='comment-author'
-                            href={`/contributors/${comment.username}`}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            onClick={(e: SyntheticMouseEvent<>) =>
-                                e.stopPropagation()
-                            }
-                        >
-                            {comment.author}
-                        </a>
-                        <Linkify
-                            properties={{
-                                target: '_blank',
-                                rel: 'noopener noreferrer',
-                            }}
-                        >
-                            {/* We can safely use parse with comment.content as it is
-                             * sanitized when coming from the DB. See:
-                             *   - pontoon.base.forms.AddCommentForm(}
-                             *   - pontoon.base.forms.HtmlField()
-                             */}
-                            {parse(comment.content)}
-                        </Linkify>
-                        {!comment.pinned ? null : (
-                            <div className='fa fa-thumbtack comment-pin'></div>
-                        )}
-                    </div>
+                <div className='content'>
+                    <a
+                        className='comment-author'
+                        href={`/contributors/${comment.username}`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        onClick={(e: SyntheticMouseEvent<>) =>
+                            e.stopPropagation()
+                        }
+                    >
+                        {comment.author}
+                    </a>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {/* We can safely use parse with comment.content as it is
+                         * sanitized when coming from the DB. See:
+                         *   - pontoon.base.forms.AddCommentForm(}
+                         *   - pontoon.base.forms.HtmlField()
+                         */}
+                        <div dir='auto'>{parse(comment.content)}</div>
+                    </Linkify>
+                    {!comment.pinned ? null : (
+                        <div className='fa fa-thumbtack comment-pin'></div>
+                    )}
                 </div>
                 <div className='info'>
                     <ReactTimeAgo
