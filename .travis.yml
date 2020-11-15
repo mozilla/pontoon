@@ -48,7 +48,7 @@ script:
   - cat app.json | python -m json.tool > /dev/null
 
 addons:
-  postgresql: "11.5"
+  postgresql: "11"
   apt:
     packages:
       - language-pack-tr
@@ -59,4 +59,3 @@ env:
     - DATABASE_URL=postgres://postgres@localhost/pontoon
     - HMAC_KEY=asdf
     - HGPYTHON3=1
-    - PGPORT=5433
