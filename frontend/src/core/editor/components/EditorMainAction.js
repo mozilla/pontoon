@@ -106,7 +106,11 @@ export default function EditorMainAction(props: Props) {
     }
 
     return (
-        <Localized id={btn.id} attrs={{ title: true }} glyph={btn.glyph}>
+        <Localized
+            id={btn.id}
+            attrs={{ title: true }}
+            elems={{ glyph: btn.glyph }}
+        >
             <button
                 className={btn.className}
                 onClick={btn.action}
