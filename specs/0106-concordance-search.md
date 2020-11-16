@@ -20,6 +20,8 @@ This feature changes the way "Search in Machinery" searches Translation Memory. 
 
 For inspiration, see `Entity.for_project_locale()` in `pontoon.base.models`, which is used in string list search. Note that only `source` and `target` fields are used for searching (unlike in `Entity.for_project_locale()`, which also searches comments).
 
-Placeholder text of the search box is changed from "Search in Machinery" to "Search Translation Memory". When results for Concordance search are displayed, the magnifier icon in the search box changes from fa-search to fa-times. Clicking on it reverts to the default Machinery results. In output, project name is used as the title instead of "Translation Memory", unless `TranslationMemoryEntry.project` field is None.
+Two changes are made to the search box. Placeholder text is changed from "Search in Machinery" to "Search Translation Memory" and the magnifier icon is changed from fa-search to fa-times when results for Concordance search are displayed. Clicking on it reverts to the default Machinery results.
+
+In output, project name is used as the title instead of "Translation Memory", unless `TranslationMemoryEntry.project` field is None. Clicking on each result adds the text to the editor (like when inserting Terms) instead of replacing it (like when using default Machinery results).
 
 Search behaviour of other sources (e.g. Machine Translation) remains unchanged.
