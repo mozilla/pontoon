@@ -370,18 +370,3 @@ If you want to have those files be built automatically when you make changes, yo
 .. code-block:: shell
 
     $ make build-frontend-w
-
-
-Integration with fluent
-=======================
-
-Pontoon is able to synchronize translations produced by libraries provided by
-`Project Fluent <https://projectfluent.org/>`_ and provides an advanced editor for translators.
-
-Because of our very close integration, we'll need to compile the fresh versions of
-javascript/python libraries in order to provide new features.
-
-It's important to remember to update both packages:
-
-* python-fluent (responsible for e.g. server-side sync process)
-* fluent-syntax (required by the fluent editor)
