@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 sudo: false
 language: python
 python:
@@ -9,6 +9,7 @@ cache:
   npm: true
   directories:
     - node_modules
+
 install:
   - pip install -U --force pip
   - pip install --require-hashes -r requirements/default.txt
@@ -18,6 +19,7 @@ install:
   - nvm use --lts node
   - npm install .
   - pushd frontend && npm install && popd
+
 script:
   # Lint code
   - black pontoon/ --check
@@ -46,7 +48,7 @@ script:
   - cat app.json | python -m json.tool > /dev/null
 
 addons:
-  postgresql: "9.4"
+  postgresql: "11"
   apt:
     packages:
       - language-pack-tr
