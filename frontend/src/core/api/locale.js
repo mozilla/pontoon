@@ -35,6 +35,6 @@ export default class LocaleAPI extends APIBase {
         const headers = new Headers();
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
-        return await this.fetch('/graphql/', 'GET', payload, headers);
+        return await this.fetch('/graphql', 'GET', payload, headers);
     }
 }
