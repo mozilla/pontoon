@@ -59,7 +59,7 @@ export default class ApproveAll extends React.Component<Props> {
                 id='batchactions-ApproveAll--success'
                 vars={{ changedCount: response.changedCount }}
             >
-                {'{ $changedCount } STRING APPROVED'}
+                {'{ $changedCount } STRINGS APPROVED'}
             </Localized>
         );
     }

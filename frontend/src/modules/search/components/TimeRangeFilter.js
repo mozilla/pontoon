@@ -303,7 +303,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
             <>
                 <li className='horizontal-separator for-time-range'>
                     <Localized id='search-TimeRangeFilter--heading-time'>
-                        <span>Translation Time</span>
+                        <span>TRANSLATION TIME</span>
                     </Localized>
 
                     {!this.state.visible ? (

@@ -16,7 +16,7 @@ batchactions-ApproveAll--success =
        *[other] { $changedCount } STRINGS APPROVED
     }
 batchactions-ApproveAll--invalid = { $invalidCount } FAILED
-batchactions-ApproveAll--error = OPPS, SOMETHING WENT WRONG
+batchactions-ApproveAll--error = OOPS, SOMETHING WENT WRONG
 
 
 ## BatchActions
@@ -134,7 +134,7 @@ editor-EditorSettings--change-all = Change All Settings
 ## Editor Failed Checks
 ## Renders the failed checks popup
 
-editor-FailedChecks--close = x
+editor-FailedChecks--close = ×
     .aria-label = Close failed checks popup
 editor-FailedChecks--title = THE FOLLOWING CHECKS HAVE FAILED
 editor-FailedChecks--save-anyway = SAVE ANYWAY 
@@ -202,14 +202,14 @@ entitydetails-EntityNavigation--previous = <glyph></glyph>PREVIOUS
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--terms = Terms
+entitydetails-Helpers--terms = TERMS
 entitydetails-Helpers--no-terms = No terms available.
 
-entitydetails-Helpers--comments = Comments
+entitydetails-Helpers--comments = COMMENTS
 entitydetails-Helpers--no-comments = No comments available.
 
-entitydetails-Helpers--machinery = Machinery
-entitydetails-Helpers--locales = Locales
+entitydetails-Helpers--machinery = MACHINERY
+entitydetails-Helpers--locales = LOCALES
 
 ## Entity Details Metadata
 ## Shows metadata about an entity (original string)
@@ -298,12 +298,12 @@ history-Translation--button-not-rejected =
 history-Translation--button-rejected =
     .title = Rejected
 
-history-Translation--button-comment = Comment
+history-Translation--button-comment = COMMENT
     .title = Toggle translation comments
 
 history-Translation--button-comments = { $commentCount ->
-        [one] <stress>{ $commentCount }</stress> Comment
-       *[other] <stress>{ $commentCount }</stress> Comments
+        [one] <stress>{ $commentCount }</stress> COMMENT
+       *[other] <stress>{ $commentCount }</stress> COMMENTS
     }
     .title = Toggle translation comments
 
@@ -571,7 +571,7 @@ placeable-parser-xmlTag =
 ## Used in the project menu in the main navigation bar.
 project-ProjectMenu--no-results = No results
 project-ProjectMenu--project = PROJECT
-project-ProjectMenu--progress = PPROGRESS
+project-ProjectMenu--progress = PROGRESS
 project-ProjectMenu--all-projects = All Projects
 project-ProjectMenu--search-placeholder =
     .placeholder = Filter projects
@@ -619,7 +619,7 @@ search-FiltersPanel--apply-filters =
 ## Time Range Filter
 ## Time Range filter title, input fields and chart.
 
-search-TimeRangeFilter--heading-time = Translation Time
+search-TimeRangeFilter--heading-time = TRANSLATION TIME
 search-TimeRangeFilter--edit-range = <glyph></glyph>EDIT RANGE
 search-TimeRangeFilter--save-range = SAVE RANGE
 
