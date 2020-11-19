@@ -256,7 +256,42 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 ),
             },
             {
-                selector: '#app > .panel-content .entity-details .react-tabs',
+                selector:
+                    '#app > .panel-content .entity-details .third-column .top .react-tabs',
+                content: (
+                    <div>
+                        <Localized id='interactivetour-InteractiveTour--terms-title'>
+                            <h3>Terms</h3>
+                        </Localized>
+                        <Localized id='interactivetour-InteractiveTour--terms-content'>
+                            <p>Test</p>
+                        </Localized>
+                    </div>
+                ),
+                action: (node) => {
+                    node.querySelector('#react-tabs-0').click();
+                },
+            },
+            {
+                selector:
+                    '#app > .panel-content .entity-details .third-column .top .react-tabs',
+                content: (
+                    <div>
+                        <Localized id='interactivetour-InteractiveTour--comments-title'>
+                            <h3>Comments</h3>
+                        </Localized>
+                        <Localized id='interactivetour-InteractiveTour--comments-content'>
+                            <p>Test</p>
+                        </Localized>
+                    </div>
+                ),
+                action: (node) => {
+                    node.querySelector('#react-tabs-2').click();
+                },
+            },
+            {
+                selector:
+                    '#app > .panel-content .entity-details .third-column .bottom .react-tabs',
                 content: (
                     <div>
                         <Localized id='interactivetour-InteractiveTour--machinery-title'>
@@ -274,11 +309,12 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </div>
                 ),
                 action: (node) => {
-                    node.querySelector('#react-tabs-0').click();
+                    node.querySelector('#react-tabs-4').click();
                 },
             },
             {
-                selector: '#app > .panel-content .entity-details .react-tabs',
+                selector:
+                    '#app > .panel-content .entity-details .third-column .bottom .react-tabs',
                 content: (
                     <div>
                         <Localized id='interactivetour-InteractiveTour--locales-title'>
@@ -296,7 +332,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </div>
                 ),
                 action: (node) => {
-                    node.querySelector('#react-tabs-2').click();
+                    node.querySelector('#react-tabs-6').click();
                 },
             },
             {

@@ -377,6 +377,14 @@ interactivetour-InteractiveTour--history-content =
     each entry indicate its review status (Approved, Rejected or
     Unreviewed).
 
+interactivetour-InteractiveTour--terms-title = Terms
+interactivetour-InteractiveTour--terms-content =
+    Test
+
+interactivetour-InteractiveTour--comments-title = Comments
+interactivetour-InteractiveTour--comments-content =
+    Test
+    
 interactivetour-InteractiveTour--machinery-title = Machinery
 interactivetour-InteractiveTour--machinery-content =
     The Machinery tab shows automated translation suggestions from
