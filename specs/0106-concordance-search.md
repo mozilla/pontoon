@@ -12,7 +12,7 @@ Having the ability to search for existing translations is a crucial tool for ass
 
 That being said, Translation Memory is only queried for strings as a whole, even if you "Search in Machinery". If you're interested in the translation of a word "file", but your corpus only uses that word as part of longer strings like "Select a file..." or "Source file uploaded", Machinery won't find any matches.
 
-Alternativelly, you can switch to the All Projects view and use the string list search, which searches for substrings within existing translations for each word separatelly, but that also comes with a few drawbacks. You either lose translation progress in the editor and the state of the string list, or you need to use a separate tab. You also won't be able to search for translations in the projects that aren't active anymore.
+Alternatively, you can switch to the All Projects view and use the string list search, which searches for substrings within existing translations for each word separately, but that also comes with a few drawbacks. You either lose translation progress in the editor and the state of the string list, or you need to use a separate tab. You also won't be able to search for translations in the projects that aren't active anymore.
 
 # Feature explanation
 
