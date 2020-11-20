@@ -744,14 +744,14 @@ class Locale(AggregatedStats):
     )
 
     # Writing direction
-    DIRECTION = (
-        ("ltr", "left-to-right"),
-        ("rtl", "right-to-left"),
-    )
+    class Direction(models.TextChoices):
+        LEFT_TO_RIGHT = "ltr", "left-to-right"
+        RIGHT_TO_LEFT = "rtl", "right-to-left"
+
     direction = models.CharField(
         max_length=3,
-        default="ltr",
-        choices=DIRECTION,
+        default=Direction.LEFT_TO_RIGHT,
+        choices=Direction.choices,
         help_text="""
         Writing direction of the script. Set to "right-to-left" if "rtl" value
         for the locale script is set to "YES" in
