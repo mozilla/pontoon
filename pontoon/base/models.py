@@ -1208,13 +1208,12 @@ class ProjectQuerySet(models.QuerySet):
         return AggregatedStats.get_top_instances(self)
 
 
-PRIORITY_CHOICES = (
-    (1, "Lowest"),
-    (2, "Low"),
-    (3, "Normal"),
-    (4, "High"),
-    (5, "Highest"),
-)
+class Priority(models.IntegerChoices):
+    LOWEST = 1, "Lowest"
+    LOW = 2, "Low"
+    NORMAL = 3, "Normal"
+    HIGH = 4, "High"
+    HIGHEST = 5, "Highest"
 
 
 class Project(AggregatedStats):
@@ -1306,7 +1305,7 @@ class Project(AggregatedStats):
     # Project info
     info = models.TextField("Project info", blank=True)
     deadline = models.DateField(blank=True, null=True)
-    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
+    priority = models.IntegerField(choices=Priority.choices, default=Priority.LOWEST)
     contact = models.ForeignKey(
         User,
         models.SET_NULL,
