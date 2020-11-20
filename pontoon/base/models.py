@@ -388,14 +388,13 @@ class PermissionChangelog(models.Model):
     """
 
     # Managers can perform various action on a user.
-    ACTIONS_TYPES = (
+    class ActionType(models.TextChoices):
         # User has been added to a group (e.g. translators, managers).
-        ("added", "Added"),
+        ADDED = "added", "Added"
         # User has been removed from a group (e.g. translators, managers).
-        ("removed", "Removed"),
-    )
+        REMOVED = "removed", "Removed"
 
-    action_type = models.CharField(max_length=20, choices=ACTIONS_TYPES)
+    action_type = models.CharField(max_length=20, choices=ActionType.choices)
     performed_by = models.ForeignKey(
         User, models.SET_NULL, null=True, related_name="changed_permissions_log"
     )
