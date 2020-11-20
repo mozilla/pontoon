@@ -1171,7 +1171,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         Projects that can be force-synced are not disabled and use repository as their data source type.
         """
-        return self.filter(disabled=False, data_source="repository")
+        return self.filter(disabled=False, data_source=Project.DataSource.REPOSITORY)
 
     def syncable(self):
         """
@@ -1221,10 +1221,12 @@ class Project(AggregatedStats):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
 
+    class DataSource(models.TextChoices):
+        REPOSITORY = "repository", "Repository"
+        DATABASE = "database", "Database"
+
     data_source = models.CharField(
-        max_length=255,
-        default="repository",
-        choices=(("repository", "Repository"), ("database", "Database"),),
+        max_length=255, default=DataSource.REPOSITORY, choices=DataSource.choices,
     )
     can_be_requested = models.BooleanField(
         default=True,

@@ -25,7 +25,9 @@ from pontoon.test.factories import (
 
 @pytest.mark.django_db
 def test_manage_project_strings(client):
-    project = ProjectFactory.create(data_source="database", repositories=[])
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE, repositories=[]
+    )
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
 
     # Test with anonymous user.
@@ -65,7 +67,7 @@ def test_manage_project_strings_bad_request(client_superuser):
 @pytest.mark.django_db
 def test_manage_project_strings_new(admin, client_superuser, locale_a):
     project = ProjectFactory.create(
-        data_source="database", repositories=[], locales=[locale_a],
+        data_source=Project.DataSource.DATABASE, repositories=[], locales=[locale_a],
     )
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
 
@@ -108,7 +110,7 @@ def test_manage_project_strings_new(admin, client_superuser, locale_a):
 @pytest.mark.django_db
 def test_manage_project_strings_existing_resource(client_superuser, locale_a):
     project = ProjectFactory.create(
-        data_source="database", repositories=[], locales=[locale_a],
+        data_source=Project.DataSource.DATABASE, repositories=[], locales=[locale_a],
     )
     ResourceFactory.create(
         path="not_database", project=project,
@@ -143,7 +145,7 @@ def test_manage_project_strings_translated_resource(client_superuser):
         LocaleFactory.create(code="gs", name="Geonosian"),
     ]
     project = ProjectFactory.create(
-        data_source="database", locales=locales, repositories=[]
+        data_source=Project.DataSource.DATABASE, locales=locales, repositories=[]
     )
     locales_count = len(locales)
     _create_or_update_translated_resources(project, locales)
@@ -190,7 +192,9 @@ def test_manage_project_strings_translated_resource(client_superuser):
 def test_manage_project_strings_new_all_empty(client_superuser):
     """Test that sending empty data doesn't create empty strings in the database.
     """
-    project = ProjectFactory.create(data_source="database", repositories=[])
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE, repositories=[]
+    )
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
 
     # Test sending an empty batch of strings.
@@ -205,7 +209,9 @@ def test_manage_project_strings_new_all_empty(client_superuser):
 
 @pytest.mark.django_db
 def test_manage_project_strings_list(client_superuser):
-    project = ProjectFactory.create(data_source="database", repositories=[])
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE, repositories=[]
+    )
     resource = ResourceFactory.create(project=project)
     nb_entities = 2
     entities = EntityFactory.create_batch(nb_entities, resource=resource)
@@ -278,7 +284,9 @@ def test_manage_project_strings_download_csv(client_superuser):
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
     project = ProjectFactory.create(
-        data_source="database", locales=[locale_kl, locale_gs], repositories=[]
+        data_source=Project.DataSource.DATABASE,
+        locales=[locale_kl, locale_gs],
+        repositories=[],
     )
 
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
@@ -367,7 +375,7 @@ def test_project_add_locale(client_superuser):
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
     project = ProjectFactory.create(
-        data_source="database", locales=[locale_kl], repositories=[],
+        data_source=Project.DataSource.DATABASE, locales=[locale_kl], repositories=[],
     )
     _create_or_update_translated_resources(project, [locale_kl])
 
