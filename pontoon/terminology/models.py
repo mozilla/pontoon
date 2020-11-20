@@ -69,13 +69,15 @@ class Term(models.Model):
     usage = models.TextField(blank=True)
     notes = models.TextField(blank=True)
 
-    STATUSES = (
-        ("approved", "Approved"),
-        ("new", "New"),
-        ("obsolete", "Obsolete"),
-        ("review", "Review"),
+    class Status(models.TextChoices):
+        APPROVED = "approved", "Approved"
+        NEW = "new", "New"
+        OBSOLETE = "obsolete", "Obsolete"
+        REVIEW = "review", "Review"
+
+    status = models.CharField(
+        max_length=20, choices=Status.choices, null=True, blank=True
     )
-    status = models.CharField(max_length=20, choices=STATUSES, null=True, blank=True)
 
     case_sensitive = models.BooleanField(default=False)
     exact_match = models.BooleanField(default=False)
