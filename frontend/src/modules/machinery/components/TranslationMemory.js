@@ -20,20 +20,20 @@ export default function TranslationMemory(props: Props) {
                 <a
                     className='translation-source'
                     href='/'
-                    title='Pontoon Homepage'
+                    title='PONTOON HOMEPAGE'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
                     <Localized id='machinery-TranslationMemory--translation-memory'>
-                        <span>Translation memory</span>
+                        <span>TRANSLATION MEMORY</span>
                     </Localized>
                     {!props.itemCount ? null : (
                         <Localized
                             id='machinery-TranslationMemory--number-occurrences'
                             attrs={{ title: true }}
                         >
-                            <sup title='Number of translation occurrences'>
+                            <sup title='NUMBER OF TRANSLATION OCCURRENCES'>
                                 {props.itemCount}
                             </sup>
                         </Localized>

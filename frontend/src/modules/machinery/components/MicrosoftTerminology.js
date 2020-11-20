@@ -29,14 +29,14 @@ export default function MicrosoftTerminology(props: Props) {
                         props.locale.msTerminologyCode
                     }
                     title={
-                        'Visit Microsoft Terminology Service API.\n' +
-                        '© 2018 Microsoft Corporation. All rights reserved.'
+                        'VISIT MICROSOFT TERMINOLOGY SERVICE API.\n' +
+                        '© 2018 MICROSOFT CORPORATION. ALL RIGHTS RESERVED.'
                     }
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Microsoft</span>
+                    <span>MICROSOFT</span>
                 </a>
             </Localized>
         </li>

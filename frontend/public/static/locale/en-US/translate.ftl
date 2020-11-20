@@ -215,27 +215,27 @@ entitydetails-Helpers--locales = LOCALES
 ## Shows metadata about an entity (original string)
 
 entitydetails-Metadata--comment =
-    .title = Comment
+    .title = COMMENT
 
 entitydetails-Metadata--group-comment =
-    .title = Group Comment
+    .title = GROUP COMMENT
 
 entitydetails-Metadata--resource-comment =
-    .title = Resource Comment
+    .title = RESOURCE COMMENT
 
 entitydetails-Metadata--pinned-comment =
-    .title = Pinned Comment
+    .title = PINNED COMMENT
 
-entitydetails-Metadata--see-more = See More
+entitydetails-Metadata--see-more = See more
 
 entitydetails-Metadata--context =
-    .title = Context
+    .title = CONTEXT
 
 entitydetails-Metadata--placeholder =
-    .title = Placeholder Examples
+    .title = PLACEHOLDER EXAMPLES
 
 entitydetails-Metadata--resource =
-    .title = Resource
+    .title = RESOURCE
 
 
 ## Entity Details ContextIssueButton
@@ -246,8 +246,8 @@ entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPO
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity
 
-entitydetails-GenericOriginalString--plural = Plural
-entitydetails-GenericOriginalString--singular = Singular
+entitydetails-GenericOriginalString--plural = PLURAL
+entitydetails-GenericOriginalString--singular = SINGULAR
 
 
 ## Rich editor
@@ -421,34 +421,34 @@ machinery-Machinery--search-placeholder =
 
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.
-machinery-CaighdeanTranslation--visit-caighdean = Caighdean
-    .title = Visit Caighdean Machine Translation
+machinery-CaighdeanTranslation--visit-caighdean = CAIGHDEAN
+    .title = VISIT CAIGHDEAN MACHINE TRANSLATION
 
 
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
-machinery-GoogleTranslation--visit-google = Google Translate
-    .title = Visit Google Translate
+machinery-GoogleTranslation--visit-google = GOOGLE TRANSLATE
+    .title = VISIT GOOGLE TRANSLATE
 
 
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.
-machinery-MicrosoftTranslation--visit-bing = Microsoft Translator
-    .title = Visit Microsoft Translator
+machinery-MicrosoftTranslation--visit-bing = MICROSOFT TRANSLATOR
+    .title = VISIT MICROSOFT TRANSLATOR
 
 
 ## Machinery Systran Translate
 ## Shows the translation source from Systran Translate.
-machinery-SystranTranslate--visit-systran = Systran Translate
-    .title = Visit Systran Translate
+machinery-SystranTranslate--visit-systran = SYSYTRAN TRANSLATE
+    .title = VISIT SYSTRAN TRANSLATE
 
 
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
-machinery-MicrosoftTerminology--visit-microsoft = Microsoft
+machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
     .title =
-        Visit Microsoft Terminology Service API.
-        © 2018 Microsoft Corporation. All rights reserved.
+        VISIT MICROSOFT TERMINOLOGY SERVICE API.
+        © 2018 MICROSOFT CORPORATION. ALL RIGHTS RESERVED.
 
 
 ## Machinery Translation
@@ -460,16 +460,16 @@ machinery-Translation--copy =
 ## Machinery Translation Memory
 ## Shows the translation source from Pontoon's memory.
 machinery-TranslationMemory--pontoon-homepage =
-    .title = Pontoon Homepage
-machinery-TranslationMemory--translation-memory = Translation memory
+    .title = PONTOON HOMEPAGE
+machinery-TranslationMemory--translation-memory = TRANSLATION MEMORY
 machinery-TranslationMemory--number-occurrences =
-    .title = Number of translation occurrences
+    .title = NUMBER OF TRANSLATION OCCURENCES
 
 
 ## Machinery Transvision Memory
 ## Shows the translation source from Transvision.
-machinery-TransvisionMemory--visit-transvision = Mozilla
-    .title = Visit Transvision
+machinery-TransvisionMemory--visit-transvision = MOZILLA
+    .title = VISIT TRANSVISION
 
 
 ## Notification Messages

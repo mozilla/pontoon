@@ -29,12 +29,12 @@ export default function TransvisionMemory(props: Props) {
                         '&locale=' +
                         props.locale.code
                     }
-                    title='Visit Transvision'
+                    title='VISIT TRANSVISION'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Mozilla</span>
+                    <span>MOZILLA</span>
                 </a>
             </Localized>
         </li>

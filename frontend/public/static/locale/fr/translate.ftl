@@ -103,23 +103,23 @@ entitydetails-Helpers--locales = LANGUES
 ## Shows metadata about an entity (original string)
 
 entitydetails-Metadata--comment =
-    .title = Commentaire
+    .title = COMMENTAIRE 
 
 entitydetails-Metadata--context =
-    .title = Contexte
+    .title = CONTEXTE
 
 entitydetails-Metadata--placeholder =
-    .title = Exemples bouche-trous
+    .title = EXEMPLES BOUCHE-TROUS
 
 entitydetails-Metadata--resource =
-    .title = Ressource
+    .title = RESSOURCE
 
 
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity
 
-entitydetails-GenericOriginalString--plural = Pluriel
-entitydetails-GenericOriginalString--singular = Singulier
+entitydetails-GenericOriginalString--plural = PLURIEL
+entitydetails-GenericOriginalString--singular = SINGULIER
 
 
 ## History

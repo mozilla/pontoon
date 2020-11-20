@@ -16,12 +16,12 @@ export default function CaighdeanTranslation() {
                 <a
                     className='translation-source'
                     href='https://github.com/kscanne/caighdean'
-                    title='Visit Caighdean Machine Translation'
+                    title='VISIT CAIGHDEAN MACHINE TRANSLATION'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Caighdean</span>
+                    <span>CAIGHDEAN</span>
                 </a>
             </Localized>
         </li>

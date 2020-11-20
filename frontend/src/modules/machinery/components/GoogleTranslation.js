@@ -16,12 +16,12 @@ export default function GoogleTranslation() {
                 <a
                     className='translation-source'
                     href='https://translate.google.com/'
-                    title='Visit Google Translate'
+                    title='VISIT GOOGLE TRANSLATE'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Google Translate</span>
+                    <span>GOOGLE TRANSLATE</span>
                 </a>
             </Localized>
         </li>

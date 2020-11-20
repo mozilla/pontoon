@@ -16,12 +16,12 @@ export default function SystranTranslation() {
                 <a
                     className='translation-source'
                     href='https://translate.systran.net/translationTools'
-                    title='Visit Systran Translate'
+                    title='VISIT SYSTRAN TRANSLATE'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Systran Translate</span>
+                    <span>SYSYTRAN TRANSLATE</span>
                 </a>
             </Localized>
         </li>
