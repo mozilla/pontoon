@@ -951,7 +951,7 @@ class Locale(AggregatedStats):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
             resource__project__system_project=False,
-            resource__project__visibility="public",
+            resource__project__visibility=Project.Visibility.PUBLIC,
             locale=self,
         ).aggregate_stats(self)
 
@@ -1151,7 +1151,7 @@ class ProjectQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.filter(visibility="public")
+        return self.filter(visibility=Project.Visibility.PUBLIC)
 
     def available(self):
         """
@@ -1271,12 +1271,12 @@ class Project(AggregatedStats):
     """,
     )
 
-    VISIBILITY_TYPES = (
-        ("private", "Private"),
-        ("public", "Public"),
-    )
+    class Visibility(models.TextChoices):
+        PRIVATE = "private", "Private"
+        PUBLIC = "public", "Public"
+
     visibility = models.CharField(
-        max_length=20, default=VISIBILITY_TYPES[0][0], choices=VISIBILITY_TYPES,
+        max_length=20, default=Visibility.PRIVATE, choices=Visibility.choices,
     )
 
     # Website for in place localization
@@ -1622,7 +1622,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.filter(project__visibility="public",)
+        return self.filter(project__visibility=Project.Visibility.PUBLIC,)
 
     def visible(self):
         """
@@ -3045,7 +3045,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         CAIGHDEAN = "caighdean", "Caighdean"
 
     machinery_sources = ArrayField(
-        models.CharField(max_length=30, choices=Source.choices), default=list, blank=True,
+        models.CharField(max_length=30, choices=Source.choices),
+        default=list,
+        blank=True,
     )
 
     objects = TranslationQuerySet.as_manager()
@@ -3504,7 +3506,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         if project.slug == "all-projects":
             translated_resources = translated_resources.filter(
                 resource__project__system_project=False,
-                resource__project__visibility="public",
+                resource__project__visibility=Project.Visibility.PUBLIC,
             )
         else:
             translated_resources = translated_resources.filter(

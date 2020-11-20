@@ -137,7 +137,7 @@ def public_project():
 
 @pytest.fixture
 def private_project():
-    yield ProjectFactory.create(visibility="private")
+    yield ProjectFactory.create(visibility=Project.Visibility.PRIVATE)
 
 
 @pytest.mark.parametrize(
