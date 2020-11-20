@@ -6,19 +6,24 @@ from pontoon.base.models import TranslatedResource
 from pontoon.checks.models import (
     Error,
     Warning,
+    FailedCheck,
 )
 
 
 @pytest.fixture
 def translation_with_error(translation_a):
-    Error.objects.create(translation=translation_a, library="p", message="error")
+    Error.objects.create(
+        translation=translation_a, library=FailedCheck.Library.PONTOON, message="error"
+    )
     return translation_a
 
 
 @pytest.fixture
 def translation_with_warning(translation_a):
     Warning.objects.create(
-        translation=translation_a, library="p", message="warning",
+        translation=translation_a,
+        library=FailedCheck.Library.PONTOON,
+        message="warning",
     )
     return translation_a
 
