@@ -2035,46 +2035,46 @@ class Resource(models.Model):
     date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     # Format
-    FORMAT_CHOICES = (
-        ("dtd", "dtd"),
-        ("ftl", "ftl"),
-        ("inc", "inc"),
-        ("ini", "ini"),
-        ("json", "json"),
-        ("lang", "lang"),
-        ("po", "po"),
-        ("properties", "properties"),
-        ("xlf", "xliff"),
-        ("xliff", "xliff"),
-        ("xml", "xml"),
-    )
+    class Format(models.TextChoices):
+        DTD = "dtd", "dtd"
+        FTL = "ftl", "ftl"
+        INC = "inc", "inc"
+        INI = "ini", "ini"
+        JSON = "json", "json"
+        LANG = "lang", "lang"
+        PO = "po", "po"
+        PROPERTIES = "properties", "properties"
+        XLF = "xlf", "xliff"
+        XLIFF = "xliff", "xliff"
+        XML = "xml", "xml"
+
     format = models.CharField(
-        "Format", max_length=20, blank=True, choices=FORMAT_CHOICES
+        "Format", max_length=20, blank=True, choices=Format.choices
     )
 
     deadline = models.DateField(blank=True, null=True)
 
     SOURCE_EXTENSIONS = ["pot"]  # Extensions of source-only formats.
-    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
+    ALLOWED_EXTENSIONS = Format.values + SOURCE_EXTENSIONS
 
-    ASYMMETRIC_FORMATS = (
-        "dtd",
-        "ftl",
-        "inc",
-        "ini",
-        "json",
-        "properties",
-        "xml",
-    )
+    ASYMMETRIC_FORMATS = {
+        Format.DTD,
+        Format.FTL,
+        Format.INC,
+        Format.INI,
+        Format.JSON,
+        Format.PROPERTIES,
+        Format.XML,
+    }
 
     # Formats that allow empty translations
-    EMPTY_TRANSLATION_FORMATS = (
-        "dtd",
-        "inc",
-        "ini",
-        "properties",
-        "xml",
-    )
+    EMPTY_TRANSLATION_FORMATS = {
+        Format.DTD,
+        Format.INC,
+        Format.INI,
+        Format.PROPERTIES,
+        Format.XML,
+    }
 
     objects = ResourceQuerySet.as_manager()
 
@@ -3127,7 +3127,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_source(self):
         source = self.entity.string
 
-        if self.entity.resource.format == "ftl":
+        if self.entity.resource.format == Resource.Format.FTL:
             return as_simple_translation(source)
 
         return source
@@ -3136,7 +3136,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_target(self):
         target = self.string
 
-        if self.entity.resource.format == "ftl":
+        if self.entity.resource.format == Resource.Format.FTL:
             return as_simple_translation(target)
 
         return target

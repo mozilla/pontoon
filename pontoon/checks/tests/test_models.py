@@ -1,6 +1,6 @@
 import pytest
 
-from pontoon.base.models import Translation
+from pontoon.base.models import Translation, Resource
 from pontoon.checks.utils import (
     save_failed_checks,
     get_failed_checks_db_objects,
@@ -16,7 +16,7 @@ from pontoon.checks.models import (
 def translation_properties(translation_a):
     resource = translation_a.entity.resource
     resource.path = "test.properties"
-    resource.format = "properties"
+    resource.format = Resource.Format.PROPERTIES
     resource.save()
 
     yield translation_a
@@ -58,7 +58,7 @@ def translation_pontoon_error(translation_a):
 
     resource = translation.entity.resource
     resource.path = "test.po"
-    resource.format = "po"
+    resource.format = Resource.Format.PO
     resource.save()
 
     translation.string = ""
