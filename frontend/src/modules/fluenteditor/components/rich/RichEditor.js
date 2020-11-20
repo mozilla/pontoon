@@ -19,7 +19,7 @@ type Props = {
  * This shows the Fluent translation based on its AST, presenting a nicer
  * interface to the user. The translation is stored as an AST, and changes
  * are made directly to that AST. That is why lots of Editor methods are
- * overwritten, to handle the convertion from AST to string and back.
+ * overwritten, to handle the conversion from AST to string and back.
  */
 export default function RichEditor(props: Props) {
     const dispatch = useDispatch();

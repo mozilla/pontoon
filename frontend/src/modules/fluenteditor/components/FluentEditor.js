@@ -20,7 +20,7 @@ import RichEditor from './rich/RichEditor';
  *
  * This hook is in charge of formatting the translation content for each type of Fluent Editor.
  * It does *not* update that content when the user switches the "force source" mode though,
- * as that is dealt with with the `useForceSource` hook.
+ * as that is dealt with by using the `useForceSource` hook.
  */
 function useLoadTranslation(syntaxType, forceSource) {
     const dispatch = useDispatch();
