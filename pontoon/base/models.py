@@ -41,6 +41,7 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.templatetags.helpers import as_simple_translation
@@ -3166,7 +3167,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             # Log that all those translations are rejected.
             for t in approved_translations:
                 log_action(
-                    "translation:rejected",
+                    ActionLog.ActionType.TRANSLATION_REJECTED,
                     self.approved_user or self.user,
                     translation=t,
                 )

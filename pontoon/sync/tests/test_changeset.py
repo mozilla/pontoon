@@ -215,7 +215,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         assert ActionLog.objects.filter(
-            action_type="translation:approved", translation=self.main_db_translation.pk,
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            translation=self.main_db_translation.pk,
         ).exists()
 
     def test_update_db_dont_approve_fuzzy(self):
@@ -255,7 +256,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         assert ActionLog.objects.filter(
-            action_type="translation:created", translation=translation.pk,
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            translation=translation.pk,
         ).exists()
 
     def test_update_db_unfuzzy_existing(self):
@@ -298,7 +300,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         assert ActionLog.objects.filter(
-            action_type="translation:rejected", translation=self.main_db_translation.pk,
+            action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+            translation=self.main_db_translation.pk,
         ).exists()
 
         created_after_translation.refresh_from_db()
@@ -332,7 +335,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         assert ActionLog.objects.filter(
-            action_type="translation:unapproved",
+            action_type=ActionLog.ActionType.TRANSLATION_UNAPPROVED,
             translation=self.main_db_translation.pk,
         ).exists()
 
@@ -369,7 +372,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         assert ActionLog.objects.filter(
-            action_type="translation:rejected", translation=self.main_db_translation.pk,
+            action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+            translation=self.main_db_translation.pk,
         ).exists()
 
     def test_update_db_reject_approved_skip_fuzzy(self):

@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.models import (
@@ -106,7 +107,7 @@ def create_translation(request):
 
     translation.save(failed_checks=failed_checks)
 
-    log_action("translation:created", user, translation=translation)
+    log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
     if translations:
         translation = entity.reset_active_translation(
@@ -166,7 +167,12 @@ def delete_translation(request):
 
     translation.delete()
 
-    log_action("translation:deleted", request.user, entity=entity, locale=locale)
+    log_action(
+        ActionLog.ActionType.TRANSLATION_DELETED,
+        request.user,
+        entity=entity,
+        locale=locale,
+    )
 
     return JsonResponse({"status": True})
 
@@ -241,7 +247,7 @@ def approve_translation(request):
 
     translation.approve(user)
 
-    log_action("translation:approved", user, translation=translation)
+    log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale, plural_form=translation.plural_form,
@@ -299,7 +305,11 @@ def unapprove_translation(request):
 
     translation.unapprove(request.user)
 
-    log_action("translation:unapproved", request.user, translation=translation)
+    log_action(
+        ActionLog.ActionType.TRANSLATION_UNAPPROVED,
+        request.user,
+        translation=translation,
+    )
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale, plural_form=translation.plural_form,
@@ -363,7 +373,9 @@ def reject_translation(request):
 
     translation.reject(request.user)
 
-    log_action("translation:rejected", request.user, translation=translation)
+    log_action(
+        ActionLog.ActionType.TRANSLATION_REJECTED, request.user, translation=translation
+    )
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale, plural_form=translation.plural_form,
@@ -421,7 +433,11 @@ def unreject_translation(request):
 
     translation.unreject(request.user)
 
-    log_action("translation:unrejected", request.user, translation=translation)
+    log_action(
+        ActionLog.ActionType.TRANSLATION_UNREJECTED,
+        request.user,
+        translation=translation,
+    )
 
     active_translation = translation.entity.reset_active_translation(
         locale=locale, plural_form=translation.plural_form,

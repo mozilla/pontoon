@@ -282,7 +282,7 @@ class ChangeSet(object):
                 new_action = None
                 if not db_translation.approved and not vcs_translation.fuzzy:
                     new_action = ActionLog(
-                        action_type="translation:approved",
+                        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
                         performed_by=user or self.sync_user,
                         translation=db_translation,
                     )
@@ -337,7 +337,7 @@ class ChangeSet(object):
                 # because they were approved previously.
                 if not translation.fuzzy:
                     new_action = ActionLog(
-                        action_type="translation:rejected",
+                        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
                         performed_by=user or self.sync_user,
                         translation=translation,
                     )
@@ -346,7 +346,7 @@ class ChangeSet(object):
                     translation.rejected_date = self.now
                 else:
                     new_action = ActionLog(
-                        action_type="translation:unapproved",
+                        action_type=ActionLog.ActionType.TRANSLATION_UNAPPROVED,
                         performed_by=user or self.sync_user,
                         translation=translation,
                     )
@@ -455,7 +455,7 @@ class ChangeSet(object):
         for translation in self.translations_to_create:
             self.actions_to_log.append(
                 ActionLog(
-                    action_type="translation:created",
+                    action_type=ActionLog.ActionType.TRANSLATION_CREATED,
                     created_at=translation.date,
                     performed_by=translation.user or self.sync_user,
                     translation=translation,

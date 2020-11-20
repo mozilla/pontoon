@@ -29,6 +29,7 @@ from django.views.generic.edit import FormView
 
 from notifications.signals import notify
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
 from pontoon.base import utils
@@ -625,12 +626,14 @@ def add_comment(request):
     # Translation comment
     if translation:
         c = Comment(author=user, translation=translation, content=comment)
-        log_action("comment:added", user, translation=translation)
+        log_action(ActionLog.ActionType.COMMENT_ADDED, user, translation=translation)
 
     # Team comment
     else:
         c = Comment(author=user, entity=entity, locale=locale, content=comment)
-        log_action("comment:added", user, entity=entity, locale=locale)
+        log_action(
+            ActionLog.ActionType.COMMENT_ADDED, user, entity=entity, locale=locale
+        )
 
     c.save()
 
