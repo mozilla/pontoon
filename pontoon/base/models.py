@@ -3035,18 +3035,17 @@ class Translation(DirtyFieldsMixin, models.Model):
     )
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
-    SOURCE_TYPES = (
-        ("translation-memory", "Translation Memory"),
-        ("google-translate", "Google Translate"),
-        ("microsoft-translator", "Microsoft Translator"),
-        ("systran-translate", "Systran Translate"),
-        ("microsoft-terminology", "Microsoft"),
-        ("transvision", "Mozilla"),
-        ("caighdean", "Caighdean"),
-    )
+    class Source(models.TextChoices):
+        TRANSLATION_MEMORY = "translation-memory", "Translation Memory"
+        GOOGLE_TRANSLATE = "google-translate", "Google Translate"
+        MICROSOFT_TRANSLATOR = "microsoft-translator", "Microsoft Translator"
+        SYSTRAN_TRANSLATE = "systran-translate", "Systran Translate"
+        MICROSOFT_TERMINOLOGY = "microsoft-terminology", "Microsoft"
+        TRANSVISION = "transvision", "Mozilla"
+        CAIGHDEAN = "caighdean", "Caighdean"
 
     machinery_sources = ArrayField(
-        models.CharField(max_length=30, choices=SOURCE_TYPES), default=list, blank=True,
+        models.CharField(max_length=30, choices=Source.choices), default=list, blank=True,
     )
 
     objects = TranslationQuerySet.as_manager()
@@ -3119,9 +3118,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Returns the corresponding comma-separated machinery_sources values
         """
-        choices = dict(self.SOURCE_TYPES)
-        result = [choices[key] for key in self.machinery_sources]
-
+        result = [self.Source(source).label for source in self.machinery_sources]
         return ", ".join(result)
 
     @property
