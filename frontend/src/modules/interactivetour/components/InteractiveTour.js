@@ -264,7 +264,13 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                             <h3>Terms</h3>
                         </Localized>
                         <Localized id='interactivetour-InteractiveTour--terms-content'>
-                            <p>Test</p>
+                            <p>
+                                The Terms panel contains any specialized words
+                                found in the source string, along with their
+                                definition, usage example, part of speech and
+                                translation. By clicking on the term, its
+                                translation gets inserted into the editor
+                            </p>
                         </Localized>
                     </div>
                 ),
@@ -281,7 +287,13 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                             <h3>Comments</h3>
                         </Localized>
                         <Localized id='interactivetour-InteractiveTour--comments-content'>
-                            <p>Test</p>
+                            <p>
+                                In the Comments tab you can discuss how to
+                                translate a string with your fellow team
+                                members. It's also the place where you can
+                                request more context about or report an issue in
+                                the source string.
+                            </p>
                         </Localized>
                     </div>
                 ),

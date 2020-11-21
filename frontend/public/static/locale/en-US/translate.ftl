@@ -379,11 +379,19 @@ interactivetour-InteractiveTour--history-content =
 
 interactivetour-InteractiveTour--terms-title = Terms
 interactivetour-InteractiveTour--terms-content =
-    Test
+    The Terms panel contains any specialized words
+    found in the source string, along with their
+    definition, usage example, part of speech and
+    translation. By clicking on the term, its
+    translation gets inserted into the editor
 
 interactivetour-InteractiveTour--comments-title = Comments
 interactivetour-InteractiveTour--comments-content =
-    Test
+    In the Comments tab you can discuss how to
+    translate a string with your fellow team
+    members. It's also the place where you can
+    request more context about or report an issue in
+    the source string.
     
 interactivetour-InteractiveTour--machinery-title = Machinery
 interactivetour-InteractiveTour--machinery-content =
