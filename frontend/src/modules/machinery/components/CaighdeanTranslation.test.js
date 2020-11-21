@@ -17,6 +17,6 @@ describe('<CaighdeanTranslation>', () => {
         expect(wrapper.find('li a').props().title).toEqual(
             'Visit Caighdean Machine Translation',
         );
-        expect(wrapper.find('li a span').text()).toEqual('Caighdean');
+        expect(wrapper.find('li a span').text()).toEqual('CAIGHDEAN');
     });
 });

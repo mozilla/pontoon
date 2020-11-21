@@ -33,6 +33,6 @@ describe('<TransvisionMemory>', () => {
         expect(wrapper.find('li a').props().title).toContain(
             'Visit Transvision',
         );
-        expect(wrapper.find('li a span').text()).toEqual('Mozilla');
+        expect(wrapper.find('li a span').text()).toEqual('MOZILLA');
     });
 });
