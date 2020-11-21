@@ -16,7 +16,7 @@ export default function CaighdeanTranslation() {
                 <a
                     className='translation-source'
                     href='https://github.com/kscanne/caighdean'
-                    title='VISIT CAIGHDEAN MACHINE TRANSLATION'
+                    title='Visit Caighdean Machine Translation'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}

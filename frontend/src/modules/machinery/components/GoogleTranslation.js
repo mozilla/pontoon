@@ -16,7 +16,7 @@ export default function GoogleTranslation() {
                 <a
                     className='translation-source'
                     href='https://translate.google.com/'
-                    title='VISIT GOOGLE TRANSLATE'
+                    title='Visit Google Translate'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}

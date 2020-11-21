@@ -16,7 +16,7 @@ export default function MicrosoftTranslation() {
                 <a
                     className='translation-source'
                     href='https://www.bing.com/translator'
-                    title='VISIT MICROSOFT TRANSLATOR'
+                    title='Visit Microsoft Translator'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}

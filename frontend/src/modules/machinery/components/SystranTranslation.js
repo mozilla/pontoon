@@ -16,7 +16,7 @@ export default function SystranTranslation() {
                 <a
                     className='translation-source'
                     href='https://translate.systran.net/translationTools'
-                    title='VISIT SYSTRAN TRANSLATE'
+                    title='Visit Systran Translate'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}

@@ -20,7 +20,7 @@ export default function TranslationMemory(props: Props) {
                 <a
                     className='translation-source'
                     href='/'
-                    title='PONTOON HOMEPAGE'
+                    title='Pontoon Homepage'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
@@ -33,7 +33,7 @@ export default function TranslationMemory(props: Props) {
                             id='machinery-TranslationMemory--number-occurrences'
                             attrs={{ title: true }}
                         >
-                            <sup title='NUMBER OF TRANSLATION OCCURRENCES'>
+                            <sup title='Number of translation occurrences'>
                                 {props.itemCount}
                             </sup>
                         </Localized>

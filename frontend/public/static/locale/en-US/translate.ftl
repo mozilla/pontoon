@@ -226,7 +226,7 @@ entitydetails-Metadata--resource-comment =
 entitydetails-Metadata--pinned-comment =
     .title = PINNED COMMENT
 
-entitydetails-Metadata--see-more = See more
+entitydetails-Metadata--see-more = See More
 
 entitydetails-Metadata--context =
     .title = CONTEXT
@@ -422,33 +422,33 @@ machinery-Machinery--search-placeholder =
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.
 machinery-CaighdeanTranslation--visit-caighdean = CAIGHDEAN
-    .title = VISIT CAIGHDEAN MACHINE TRANSLATION
+    .title = Visit Caighdean Machine Translation
 
 
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
 machinery-GoogleTranslation--visit-google = GOOGLE TRANSLATE
-    .title = VISIT GOOGLE TRANSLATE
+    .title = Visit Google Translate
 
 
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.
 machinery-MicrosoftTranslation--visit-bing = MICROSOFT TRANSLATOR
-    .title = VISIT MICROSOFT TRANSLATOR
+    .title = Visit Microsoft Translator
 
 
 ## Machinery Systran Translate
 ## Shows the translation source from Systran Translate.
 machinery-SystranTranslate--visit-systran = SYSYTRAN TRANSLATE
-    .title = VISIT SYSTRAN TRANSLATE
+    .title = Visit Systran Translate
 
 
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
     .title =
-        VISIT MICROSOFT TERMINOLOGY SERVICE API.
-        © 2018 MICROSOFT CORPORATION. ALL RIGHTS RESERVED.
+        Visit Microsoft Terminology Service API.
+        © 2018 Microsoft Corporation. All rights reserved.
 
 
 ## Machinery Translation
@@ -460,16 +460,16 @@ machinery-Translation--copy =
 ## Machinery Translation Memory
 ## Shows the translation source from Pontoon's memory.
 machinery-TranslationMemory--pontoon-homepage =
-    .title = PONTOON HOMEPAGE
+    .title = Pontoon Homepage
 machinery-TranslationMemory--translation-memory = TRANSLATION MEMORY
 machinery-TranslationMemory--number-occurrences =
-    .title = NUMBER OF TRANSLATION OCCURENCES
+    .title = Number of translation occurrences
 
 
 ## Machinery Transvision Memory
 ## Shows the translation source from Transvision.
 machinery-TransvisionMemory--visit-transvision = MOZILLA
-    .title = VISIT TRANSVISION
+    .title = Visit Transvision
 
 
 ## Notification Messages

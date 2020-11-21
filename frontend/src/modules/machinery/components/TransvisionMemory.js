@@ -29,7 +29,7 @@ export default function TransvisionMemory(props: Props) {
                         '&locale=' +
                         props.locale.code
                     }
-                    title='VISIT TRANSVISION'
+                    title='Visit Transvision'
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}

@@ -29,8 +29,8 @@ export default function MicrosoftTerminology(props: Props) {
                         props.locale.msTerminologyCode
                     }
                     title={
-                        'VISIT MICROSOFT TERMINOLOGY SERVICE API.\n' +
-                        '© 2018 MICROSOFT CORPORATION. ALL RIGHTS RESERVED.'
+                        'Visit Microsoft Terminology Service API.\n' +
+                        '© 2018 Microsoft Corporation. All rights reserved.'
                     }
                     target='_blank'
                     rel='noopener noreferrer'
