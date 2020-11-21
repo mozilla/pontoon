@@ -74,7 +74,7 @@ flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
 prettier:
-	"${DC}" run --rm -w //app/frontend webapp yarn prettier
+	"${DC}" run --rm webapp npm run prettier
 
 format:
 	make prettier
