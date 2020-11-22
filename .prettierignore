@@ -8,6 +8,11 @@
 /build
 
 # misc
+*.html
+*.min.js
+*.min.css
+*.yml
+**/base/static/js/lib*
 **/base/templates/js/pontoon.js
 **/frontend/build*
 **/package.json*

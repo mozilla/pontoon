@@ -29,7 +29,7 @@ $FLAKE8 pontoon/
 echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Formatting Javascript code"
-./frontend/node_modules/.bin/prettier --check '**/src/**/*'
+./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
 
 
 echo ""

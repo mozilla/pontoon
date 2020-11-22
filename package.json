@@ -23,7 +23,8 @@
     "build": "webpack",
     "build-w": "webpack -w",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
-    "prettier": "prettier --write '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'"
+    "prettier": "prettier --write '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
+    "check-prettier": "prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'"
   },
   "jest": {
     "testMatch": [
