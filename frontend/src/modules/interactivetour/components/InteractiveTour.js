@@ -256,7 +256,54 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 ),
             },
             {
-                selector: '#app > .panel-content .entity-details .react-tabs',
+                selector:
+                    '#app > .panel-content .entity-details .third-column .top .react-tabs',
+                content: (
+                    <div>
+                        <Localized id='interactivetour-InteractiveTour--terms-title'>
+                            <h3>Terms</h3>
+                        </Localized>
+                        <Localized id='interactivetour-InteractiveTour--terms-content'>
+                            <p>
+                                The Terms panel contains specialized words
+                                (terms) found in the source string, along with
+                                their definitions, usage examples, part of
+                                speech and translations. By clicking on a term,
+                                its translation gets inserted into the editor.
+                            </p>
+                        </Localized>
+                    </div>
+                ),
+                action: (node) => {
+                    node.querySelector('#react-tabs-0').click();
+                },
+            },
+            {
+                selector:
+                    '#app > .panel-content .entity-details .third-column .top .react-tabs',
+                content: (
+                    <div>
+                        <Localized id='interactivetour-InteractiveTour--comments-title'>
+                            <h3>Comments</h3>
+                        </Localized>
+                        <Localized id='interactivetour-InteractiveTour--comments-content'>
+                            <p>
+                                In the Comments tab you can discuss how to
+                                translate content with your fellow team members.
+                                It’s also the place where you can request more
+                                context about or report an issue in the source
+                                string.
+                            </p>
+                        </Localized>
+                    </div>
+                ),
+                action: (node) => {
+                    node.querySelector('#react-tabs-2').click();
+                },
+            },
+            {
+                selector:
+                    '#app > .panel-content .entity-details .third-column .bottom .react-tabs',
                 content: (
                     <div>
                         <Localized id='interactivetour-InteractiveTour--machinery-title'>
@@ -274,11 +321,12 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </div>
                 ),
                 action: (node) => {
-                    node.querySelector('#react-tabs-0').click();
+                    node.querySelector('#react-tabs-4').click();
                 },
             },
             {
-                selector: '#app > .panel-content .entity-details .react-tabs',
+                selector:
+                    '#app > .panel-content .entity-details .third-column .bottom .react-tabs',
                 content: (
                     <div>
                         <Localized id='interactivetour-InteractiveTour--locales-title'>
@@ -296,7 +344,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                     </div>
                 ),
                 action: (node) => {
-                    node.querySelector('#react-tabs-2').click();
+                    node.querySelector('#react-tabs-6').click();
                 },
             },
             {

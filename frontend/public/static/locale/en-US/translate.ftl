@@ -377,6 +377,19 @@ interactivetour-InteractiveTour--history-content =
     each entry indicate its review status (Approved, Rejected or
     Unreviewed).
 
+interactivetour-InteractiveTour--terms-title = Terms
+interactivetour-InteractiveTour--terms-content =
+    The Terms panel contains specialized words (terms) found in the
+    source string, along with their definitions, usage examples, part
+    of speech and translations. By clicking on a term, its translation
+    gets inserted into the editor.
+
+interactivetour-InteractiveTour--comments-title = Comments
+interactivetour-InteractiveTour--comments-content =
+    In the Comments tab you can discuss how to translate content with
+    your fellow team members. It’s also the place where you can request
+    more context about or report an issue in the source string.
+    
 interactivetour-InteractiveTour--machinery-title = Machinery
 interactivetour-InteractiveTour--machinery-content =
     The Machinery tab shows automated translation suggestions from
