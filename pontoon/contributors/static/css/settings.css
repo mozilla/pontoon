@@ -1,104 +1,104 @@
 #user-preference {
-  margin-top: 30px;
+    margin-top: 30px;
 }
 
 #preferred-locale {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 #user-preference .label {
-  color: #AAA;
-  display: inline-block;
-  font-size: 16px;
-  font-weight: 300;
-  margin: 6px 10px 0 0;
-  text-align: right;
-  width: 280px;
-  vertical-align: top;
+    color: #aaa;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 300;
+    margin: 6px 10px 0 0;
+    text-align: right;
+    width: 280px;
+    vertical-align: top;
 }
 
 #user-preference .locale-selector {
-  display: inline-block;
+    display: inline-block;
 }
 
 #user-preference .locale-selector .locale.select {
-  width: 280px;
+    width: 280px;
 }
 
 #user-preference .locale-selector .locale.select .button {
-  background: #272A2F;
-  color: #AAAAAA;
-  font-size: 16px;
-  font-weight: 400;
-  height: 36px;
-  margin: 0;
-  padding: 8px 12px;
-  width: 100%;
+    background: #272a2f;
+    color: #aaaaaa;
+    font-size: 16px;
+    font-weight: 400;
+    height: 36px;
+    margin: 0;
+    padding: 8px 12px;
+    width: 100%;
 }
 
 #user-preference .locale-selector .locale.select .menu {
-  background: #272A2F;
-  border: 1px solid #333941;
-  border-top: none;
-  top: 36px;
-  left: -1px;
-  width: 282px;
-  z-index: 30;
+    background: #272a2f;
+    border: 1px solid #333941;
+    border-top: none;
+    top: 36px;
+    left: -1px;
+    width: 282px;
+    z-index: 30;
 }
 
 #main form {
-  margin: 0 auto;
+    margin: 0 auto;
 }
 
 #main .multiple-team-selector {
-  margin: 30px 0;
+    margin: 30px 0;
 }
 
 #main .controls .cancel {
-  float: none;
-  margin: 9px;
+    float: none;
+    margin: 9px;
 }
 
 #profile-form {
-  display: block;
-  position: relative;
-  text-align: left;
-  margin: 0 auto 70px auto;
-  width: 620px;
+    display: block;
+    position: relative;
+    text-align: left;
+    margin: 0 auto 70px auto;
+    width: 620px;
 }
 
 #profile-form .field {
-  margin-top: 20px;
-  text-align: left;
+    margin-top: 20px;
+    text-align: left;
 }
 
 #profile-form .field input {
-  color: #FFFFFF;
-  background: #333941;
-  border: 1px solid #4d5967;
-  border-radius: 3px;
-  float: none;
-  width: 290px;
-  padding: 4px;
+    color: #ffffff;
+    background: #333941;
+    border: 1px solid #4d5967;
+    border-radius: 3px;
+    float: none;
+    width: 290px;
+    padding: 4px;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #profile-form button {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 #profile-form .help {
-  color: #888888;
-  font-style: italic;
-  margin-top: 5px;
+    color: #888888;
+    font-style: italic;
+    margin-top: 5px;
 }
 
 .errorlist {
-  color: #F36;
-  list-style: none;
-  margin: 0;
-  margin-top: 5px;
-  text-align: left;
+    color: #f36;
+    list-style: none;
+    margin: 0;
+    margin-top: 5px;
+    text-align: left;
 }

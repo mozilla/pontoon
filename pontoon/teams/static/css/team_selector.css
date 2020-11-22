@@ -1,53 +1,53 @@
 .locale-selector .locale.select .button.breadcrumbs {
-  background: #333941;
-  border-radius: 2px;
-  box-sizing: border-box;
-  font-size: 14px;
-  height: 28px;
-  margin: 0;
-  padding: 6px 12px;
-  text-align: left;
-  text-transform: uppercase;
-  width: 240px;
+    background: #333941;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    height: 28px;
+    margin: 0;
+    padding: 6px 12px;
+    text-align: left;
+    text-transform: uppercase;
+    width: 240px;
 }
 
 .locale-selector .locale.select .button:before,
 .locale-selector .locale.select .button:after {
-  display: none;
+    display: none;
 }
 
 .locale-selector .locale.select.opened .button {
-  border-radius: 2px 2px 0 0;
+    border-radius: 2px 2px 0 0;
 }
 
 .locale-selector .locale.select .button .code {
-  text-transform: none;
+    text-transform: none;
 }
 
 .locale-selector .locale.select .menu {
-  background: #333941;
-  top: 28px;
-  display: none;
-  position: absolute;
-  right: 0;
-  width: 240px;
+    background: #333941;
+    top: 28px;
+    display: none;
+    position: absolute;
+    right: 0;
+    width: 240px;
 }
 
 .locale-selector .locale.select .menu ul {
-  max-height: 214px;
+    max-height: 214px;
 }
 
 .locale-selector .locale.select .menu li {
-  color: #CCCCCC;
-  cursor: pointer;
-  text-align: left;
+    color: #cccccc;
+    cursor: pointer;
+    text-align: left;
 }
 
 .locale-selector .locale.select .code {
-  float: right;
+    float: right;
 }
 
 .locale-selector .locale.select .menu ul li span.code {
-  float: right;
-  width: auto;
+    float: right;
+    width: auto;
 }

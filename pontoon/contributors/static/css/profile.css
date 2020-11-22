@@ -1,202 +1,202 @@
 #middle .container {
-  padding: 1em 0;
+    padding: 1em 0;
 }
 
 #middle .container p {
-  line-height: 18px;
+    line-height: 18px;
 }
 
 #middle .container div {
-  width: 244px;
+    width: 244px;
 }
 
 #middle .container div:last-child {
-  width: 245px;
+    width: 245px;
 }
 
 #main {
-  padding: 5em 0;
+    padding: 5em 0;
 }
 
 #main .container {
-  margin: 0 auto;
-  position: relative;
-  text-align: left;
+    margin: 0 auto;
+    position: relative;
+    text-align: left;
 }
 
 #main .container:before {
-  background: #AAAAAA;
-  content: '';
-  height: calc(100% - 8em);
-  left: 50%;
-  margin-left: -1px;
-  position: absolute;
-  top: 0;
-  width: 2px;
+    background: #aaaaaa;
+    content: '';
+    height: calc(100% - 8em);
+    left: 50%;
+    margin-left: -1px;
+    position: absolute;
+    top: 0;
+    width: 2px;
 }
 
 #main .container > div {
-  position: relative;
-  margin: 8em 0 0;
+    position: relative;
+    margin: 8em 0 0;
 }
 
 #main .container > div:first-child {
-  margin: 0;
+    margin: 0;
 }
 
 #main .container > div:nth-last-child(2) {
-  padding-bottom: 8em;
+    padding-bottom: 8em;
 }
 
 #main .tick {
-  background: #272A2F;
-  border: 4px solid #AAAAAA;
-  position: absolute;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  margin-left: -12px;
-  visibility: hidden;
+    background: #272a2f;
+    border: 4px solid #aaaaaa;
+    position: absolute;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: -12px;
+    visibility: hidden;
 }
 
 #main .content {
-  border: 2px solid #AAAAAA;
-  border-radius: 8px;
-  position: relative;
-  padding: 1.5em;
-  top: -19px;
-  visibility: hidden;
-  width: 39%;
+    border: 2px solid #aaaaaa;
+    border-radius: 8px;
+    position: relative;
+    padding: 1.5em;
+    top: -19px;
+    visibility: hidden;
+    width: 39%;
 }
 
 #main .content:before {
-  content: '';
-  position: absolute;
-  top: 24px;
-  left: 100%;
-  border: 6px solid transparent;
-  border-left-color: #AAAAAA;
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 100%;
+    border: 6px solid transparent;
+    border-left-color: #aaaaaa;
 }
 
 #main .content:after {
-  content: "";
-  display: table;
-  clear: both;
+    content: '';
+    display: table;
+    clear: both;
 }
 
 #main .content h4 {
 }
 
 #main .content h4 > div {
-  display: inline-block;
+    display: inline-block;
 }
 
 #main .content h4 .day {
-  font-size: 36px;
+    font-size: 36px;
 }
 
 #main .content h4 .weekday {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 #main .content h4 .month {
-  font-weight: 300;
+    font-weight: 300;
 }
 
 #main .content h2 {
-  color: #7BC876;
-  font-size: 20px;
+    color: #7bc876;
+    font-size: 20px;
 }
 
 #main .content h2 div {
-  font-size: 0.7em;
+    font-size: 0.7em;
 }
 
 #main .content .quote {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 #main .content .quote.fa-quote-right {
-  text-align: right;
-  width: 100%;
+    text-align: right;
+    width: 100%;
 }
 
 #main .content p {
-  color: #AAAAAA;
-  font-size: 16px;
-  line-height: 1.6;
-  margin: -1em 0 0 2em;
-  text-align: start;
-  word-wrap: break-word;
+    color: #aaaaaa;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: -1em 0 0 2em;
+    text-align: start;
+    word-wrap: break-word;
 }
 
-#main .content p[dir="rtl"] {
-  margin-left: 0;
-  margin-right: 2em;
+#main .content p[dir='rtl'] {
+    margin-left: 0;
+    margin-right: 2em;
 }
 
-#main .content p[data-script="Arabic"] {
-  font-size: 18px;
+#main .content p[data-script='Arabic'] {
+    font-size: 18px;
 }
 
 #main .label {
-  padding: 0.5em 0;
-  position: absolute;
-  width: 100%;
-  left: 122%;
-  top: 0;
+    padding: 0.5em 0;
+    position: absolute;
+    width: 100%;
+    left: 122%;
+    top: 0;
 }
 
 #main .label figure {
-  display: inline-block;
-  text-align: center;
+    display: inline-block;
+    text-align: center;
 }
 
 #main .label .icon {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #main .label figcaption {
-  margin: 4px 2px 0 0;
+    margin: 4px 2px 0 0;
 }
 
 #main .label a,
 #main .label span {
-  color: #EBEBEB;
-  display: inline-block;
-  font-size: 1.4em;
-  font-weight: 400;
-  margin-top: 12px;
-  padding: 0 10px;
-  vertical-align: top;
+    color: #ebebeb;
+    display: inline-block;
+    font-size: 1.4em;
+    font-weight: 400;
+    margin-top: 12px;
+    padding: 0 10px;
+    vertical-align: top;
 }
 
 #main .label span {
-  color: #888888;
+    color: #888888;
 }
 
 #main .container > div:nth-child(even) .content,
 #main .container > div:nth-child(even) .label figure {
-  float: right;
+    float: right;
 }
 
 #main .container > div:nth-child(even) .content:before {
-  top: 24px;
-  left: auto;
-  right: 100%;
-  border-color: transparent;
-  border-right-color: #AAAAAA;
+    top: 24px;
+    left: auto;
+    right: 100%;
+    border-color: transparent;
+    border-right-color: #aaaaaa;
 }
 
 #main .container > div:nth-child(even) .content .read-more {
-  float: right;
+    float: right;
 }
 
 #main .container > div:nth-child(even) .content .label {
-  left: auto;
-  right: 122%;
-  text-align: right;
+    left: auto;
+    right: 122%;
+    text-align: right;
 }
 
 /*
@@ -207,114 +207,114 @@
  */
 
 #main .tick.bounce-in {
-  visibility: visible;
-  -webkit-animation: bounce-1 0.6s;
-  animation: bounce-1 0.6s;
+    visibility: visible;
+    -webkit-animation: bounce-1 0.6s;
+    animation: bounce-1 0.6s;
 }
 
 @-webkit-keyframes bounce-1 {
-  0% {
-    opacity: 0;
-    -webkit-transform: scale(0.5);
-  }
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0.5);
+    }
 
-  60% {
-    opacity: 1;
-    -webkit-transform: scale(1.5);
-  }
+    60% {
+        opacity: 1;
+        -webkit-transform: scale(1.5);
+    }
 
-  100% {
-    -webkit-transform: scale(1);
-  }
+    100% {
+        -webkit-transform: scale(1);
+    }
 }
 
 @keyframes bounce-1 {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
 
-  60% {
-    opacity: 1;
-    transform: scale(1.5);
-  }
+    60% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
 
-  100% {
-    transform: scale(1);
-  }
+    100% {
+        transform: scale(1);
+    }
 }
 
 #main .content.bounce-in {
-  visibility: visible;
-  -webkit-animation: bounce-2 0.6s;
-  animation: bounce-2 0.6s;
+    visibility: visible;
+    -webkit-animation: bounce-2 0.6s;
+    animation: bounce-2 0.6s;
 }
 
 #main .container > div:nth-child(even) .content.bounce-in {
-  -webkit-animation: bounce-2-inverse 0.6s;
-  animation: bounce-2-inverse 0.6s;
+    -webkit-animation: bounce-2-inverse 0.6s;
+    animation: bounce-2-inverse 0.6s;
 }
 
 @-webkit-keyframes bounce-2 {
-  0% {
-    opacity: 0;
-    -webkit-transform: translateX(-100px);
-  }
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(-100px);
+    }
 
-  60% {
-    opacity: 1;
-    -webkit-transform: translateX(20px);
-  }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(20px);
+    }
 
-  100% {
-    -webkit-transform: translateX(0);
-  }
+    100% {
+        -webkit-transform: translateX(0);
+    }
 }
 
 @keyframes bounce-2 {
-  0% {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
 
-  60% {
-    opacity: 1;
-    transform: translateX(20px);
-  }
+    60% {
+        opacity: 1;
+        transform: translateX(20px);
+    }
 
-  100% {
-    transform: translateX(0);
-  }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 @-webkit-keyframes bounce-2-inverse {
-  0% {
-    opacity: 0;
-    -webkit-transform: translateX(100px);
-  }
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(100px);
+    }
 
-  60% {
-    opacity: 1;
-    -webkit-transform: translateX(-20px);
-  }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(-20px);
+    }
 
-  100% {
-    -webkit-transform: translateX(0);
-  }
+    100% {
+        -webkit-transform: translateX(0);
+    }
 }
 
 @keyframes bounce-2-inverse {
-  0% {
-    opacity: 0;
-    transform: translateX(100px);
-  }
+    0% {
+        opacity: 0;
+        transform: translateX(100px);
+    }
 
-  60% {
-    opacity: 1;
-    transform: translateX(-20px);
-  }
+    60% {
+        opacity: 1;
+        transform: translateX(-20px);
+    }
 
-  100% {
-    transform: translateX(0);
-  }
+    100% {
+        transform: translateX(0);
+    }
 }

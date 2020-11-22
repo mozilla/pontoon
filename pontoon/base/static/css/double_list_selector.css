@@ -11,12 +11,12 @@
 
 .double-list-selector .select:first-child .menu ul li .arrow:after,
 .double-list-selector .select:nth-child(2) .menu ul li .arrow:after {
-    content: "";
+    content: '';
 }
 
 .double-list-selector .select:nth-child(2) .menu ul li.left .arrow:after,
 .double-list-selector .select:last-child .menu ul li .arrow:after {
-    content: "";
+    content: '';
 }
 
 .double-list-selector .select:nth-child(2) .menu ul li.left .arrow,

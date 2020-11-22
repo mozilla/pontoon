@@ -1,22 +1,22 @@
 #main .container {
-  color: #AAAAAA;
-  font-size: 16px;
-  font-weight: 300;
+    color: #aaaaaa;
+    font-size: 16px;
+    font-weight: 300;
 }
 
 #main a:link,
 #main a:visited {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #main p,
 #main dd {
-  margin-bottom: 40px;
-  line-height: 1.5em;
+    margin-bottom: 40px;
+    line-height: 1.5em;
 }
 
 #main dt {
-  color: #EBEBEB;
-  font-size: 28px;
-  padding-bottom: 10px;
+    color: #ebebeb;
+    font-size: 28px;
+    padding-bottom: 10px;
 }

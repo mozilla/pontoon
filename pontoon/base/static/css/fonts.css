@@ -1,46 +1,46 @@
 @font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/OpenSans-Regular.eot');
-  src: url('../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
-    url('../fonts/OpenSans-Regular.woff') format('woff'),
-    url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/OpenSans-Regular.eot');
+    src: url('../fonts/OpenSans-Regular.eot') format('embedded-opentype'),
+        url('../fonts/OpenSans-Regular.woff') format('woff'),
+        url('../fonts/OpenSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 300;
-  src: url('../fonts/OpenSans-Light.eot');
-  src: url('../fonts/OpenSans-Light.eot') format('embedded-opentype'),
-    url('../fonts/OpenSans-Light.woff') format('woff'),
-    url('../fonts/OpenSans-Light.ttf') format('truetype');
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/OpenSans-Light.eot');
+    src: url('../fonts/OpenSans-Light.eot') format('embedded-opentype'),
+        url('../fonts/OpenSans-Light.woff') format('woff'),
+        url('../fonts/OpenSans-Light.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../fonts/OpenSans-Bold.eot');
-  src: url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
-    url('../fonts/OpenSans-Bold.woff') format('woff'),
-    url('../fonts/OpenSans-Bold.ttf') format('truetype');
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/OpenSans-Bold.eot');
+    src: url('../fonts/OpenSans-Bold.eot') format('embedded-opentype'),
+        url('../fonts/OpenSans-Bold.woff') format('woff'),
+        url('../fonts/OpenSans-Bold.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Open Sans';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/OpenSans-Italic.eot');
-  src: url('../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
-    url('../fonts/OpenSans-Italic.woff') format('woff'),
-    url('../fonts/OpenSans-Italic.ttf') format('truetype');
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: 400;
+    src: url('../fonts/OpenSans-Italic.eot');
+    src: url('../fonts/OpenSans-Italic.eot') format('embedded-opentype'),
+        url('../fonts/OpenSans-Italic.woff') format('woff'),
+        url('../fonts/OpenSans-Italic.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Ubuntu Regular';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/Ubuntu-RI.ttf')
+    font-family: 'Ubuntu Regular';
+    font-style: italic;
+    font-weight: 400;
+    src: url('../fonts/Ubuntu-RI.ttf');
 }
