@@ -265,10 +265,11 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         </Localized>
                         <Localized id='interactivetour-InteractiveTour--terms-content'>
                             <p>
-                                The Terms panel contains specialized words (terms) found in the
-                                source string, along with their definitions, usage examples, part
-                                of speech and translations. By clicking on a term, its translation
-                                gets inserted into the editor.
+                                The Terms panel contains specialized words
+                                (terms) found in the source string, along with
+                                their definitions, usage examples, part of
+                                speech and translations. By clicking on a term,
+                                its translation gets inserted into the editor.
                             </p>
                         </Localized>
                     </div>
@@ -287,9 +288,11 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                         </Localized>
                         <Localized id='interactivetour-InteractiveTour--comments-content'>
                             <p>
-                                In the Comments tab you can discuss how to translate content with
-                                your fellow team members. It’s also the place where you can request
-                                more context about or report an issue in the source string.
+                                In the Comments tab you can discuss how to
+                                translate content with your fellow team members.
+                                It’s also the place where you can request more
+                                context about or report an issue in the source
+                                string.
                             </p>
                         </Localized>
                     </div>
