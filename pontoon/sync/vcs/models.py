@@ -177,7 +177,7 @@ class VCSProject(object):
 
     @cached_property
     def changed_files(self):
-        if self.force:
+        if self.force or self.changed_config_files:
             # All files are marked as changed
             return None
 
@@ -555,6 +555,24 @@ class VCSProject(object):
             for filename in filenames:
                 if is_resource(filename):
                     yield os.path.join(root, filename)
+
+    @property
+    def changed_config_files(self):
+        """
+        Return True, when a project has PC enabled and the project config files change.
+        """
+        if not self.db_project.configuration_file:
+            return False
+
+        config_files = set(
+            pc.path.replace(os.path.join(self.source_directory_path, ""), "")
+            for pc in self.configuration.parsed_configuration.configs
+        )
+
+        if set(self.changed_files) & config_files:
+            log.info("The project configuration has changed on the VCS")
+            return True
+        return False
 
 
 class VCSConfiguration(object):
