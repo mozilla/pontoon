@@ -568,8 +568,9 @@ class VCSProject(object):
             pc.path.replace(os.path.join(self.source_directory_path, ""), "")
             for pc in self.configuration.parsed_configuration.configs
         )
+        changed_files = set(self.changed_source_files[0])
 
-        if set(self.changed_files) & config_files:
+        if changed_files & config_files:
             log.info("The project configuration has changed on the VCS")
             return True
         return False
