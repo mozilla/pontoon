@@ -101,7 +101,7 @@ describe('<Metadata>', () => {
         });
 
         const sourceContent = wrapper
-            .find('Property[title="Placeholder Examples"] Linkify')
+            .find('Property[title="PLACEHOLDER EXAMPLES"] Linkify')
             .props().children;
         expect(sourceContent).toContain('$ARG1$: example_1');
         expect(sourceContent).toContain('$ARG2$: example_2');
