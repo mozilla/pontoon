@@ -24,8 +24,8 @@ batchactions-ApproveAll--error = OOPS, SOMETHING WENT WRONG
 
 batchactions-BatchActions--header-selected-count =
     { $count ->
-        [one] <glyph></glyph> <stress>{ $count }</stress> string selected
-       *[other] <glyph></glyph> <stress>{ $count }</stress> strings selected
+        [one] <glyph></glyph> <stress>{ $count }</stress> STRING SELECTED
+       *[other] <glyph></glyph> <stress>{ $count }</stress> STRINGS SELECTED
     }
     .title = Quit Batch Editing (Esc)
 batchactions-BatchActions--header-select-all = <glyph></glyph> SELECT ALL
@@ -268,7 +268,7 @@ history-History--no-translations = No translations available.
 history-Translation--copy =
     .title = Copy Into Translation
 
-history-Translation--toggle-diff = Diff
+history-Translation--toggle-diff = DIFF
     .title = Toggle diff against the currently active translation
 
 history-Translation--button-delete =
@@ -439,7 +439,7 @@ machinery-MicrosoftTranslation--visit-bing = MICROSOFT TRANSLATOR
 
 ## Machinery Systran Translate
 ## Shows the translation source from Systran Translate.
-machinery-SystranTranslate--visit-systran = SYSYTRAN TRANSLATE
+machinery-SystranTranslate--visit-systran = SYSTRAN TRANSLATE
     .title = Visit Systran Translate
 
 

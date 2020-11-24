@@ -224,7 +224,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Toggle diff against the currently active translation'
                     onClick={this.toggleDiff}
                 >
-                    {'Diff'}
+                    {'DIFF'}
                 </button>
             </Localized>
         );

@@ -210,7 +210,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                                 onClick={this.quitBatchActions}
                             >
                                 {
-                                    '<glyph></glyph> <stress>{ $count }</stress> strings selected'
+                                    '<glyph></glyph> <stress>{ $count }</stress> STRINGS SELECTED'
                                 }
                             </button>
                         </Localized>
