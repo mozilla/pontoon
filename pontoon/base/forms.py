@@ -1,9 +1,9 @@
-import os
-
 import bleach
 
 from django import forms
 from django.conf import settings
+
+from pathlib import Path
 
 from pontoon.base import utils
 from pontoon.base.models import (
@@ -65,8 +65,8 @@ class UploadFileForm(DownloadFileForm):
 
             # File format validation
             if part:
-                uploadfile_ext = os.path.splitext(uploadfile.name)[1].lower()
-                targetfile_ext = os.path.splitext(part)[1].lower()
+                uploadfile_ext = Path(uploadfile.name).suffix.lower()
+                targetfile_ext = Path(part).suffix.lower()
 
                 # Fail if upload and target file are incompatible
                 if not are_compatible_formats(uploadfile_ext, targetfile_ext):
