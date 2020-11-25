@@ -34,6 +34,22 @@ SUPPORTED_FORMAT_PARSERS = {
 }
 
 
+def are_compatible_formats(extension_a, extension_b):
+    """
+    Return True if given file extensions belong to the same file format.
+    We test that by comparing parsers used by each file extenion.
+    Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
+    """
+    try:
+        return (
+            SUPPORTED_FORMAT_PARSERS[extension_a]
+            == SUPPORTED_FORMAT_PARSERS[extension_b]
+        )
+    # File extension not supported
+    except KeyError:
+        return False
+
+
 def parse(path, source_path=None, locale=None):
     """
     Parse the resource file at the given path and return a
