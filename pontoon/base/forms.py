@@ -1,9 +1,9 @@
-import os
-
 import bleach
 
 from django import forms
 from django.conf import settings
+
+from pathlib import Path
 
 from pontoon.base import utils
 from pontoon.base.models import (
@@ -12,8 +12,8 @@ from pontoon.base.models import (
     User,
     UserProfile,
 )
+from pontoon.sync.formats import are_compatible_formats
 from pontoon.teams.utils import log_group_members
-from pontoon.sync.formats import SUPPORTED_FORMAT_PARSERS
 
 
 class HtmlField(forms.CharField):
@@ -65,16 +65,13 @@ class UploadFileForm(DownloadFileForm):
 
             # File format validation
             if part:
-                file_extension = os.path.splitext(uploadfile.name)[1].lower()
-                part_extension = os.path.splitext(part)[1].lower()
+                uploadfile_ext = Path(uploadfile.name).suffix.lower()
+                targetfile_ext = Path(part).suffix.lower()
 
-                # For now, skip if uploading file while using subpages
-                if (
-                    part_extension in SUPPORTED_FORMAT_PARSERS.keys()
-                    and part_extension != file_extension
-                ):
+                # Fail if upload and target file are incompatible
+                if not are_compatible_formats(uploadfile_ext, targetfile_ext):
                     message = "Upload failed. File format not supported. Use {supported}.".format(
-                        supported=part_extension
+                        supported=targetfile_ext
                     )
                     raise forms.ValidationError(message)
 
