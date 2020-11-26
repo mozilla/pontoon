@@ -177,7 +177,9 @@ class VCSProject(object):
 
     @cached_property
     def changed_files(self):
-        if self.force:
+        if self.force or (
+            self.db_project.configuration_file and self.changed_config_files
+        ):
             # All files are marked as changed
             return None
 
@@ -296,6 +298,18 @@ class VCSProject(object):
                 vcs[path] = vcs[path] if path in vcs else db[path]
 
         return files
+
+    @cached_property
+    def changed_config_files(self):
+        """
+        A set of the changed project config files.
+        """
+        config_files = set(
+            pc.path.replace(os.path.join(self.source_directory_path, ""), "")
+            for pc in self.configuration.parsed_configuration.configs
+        )
+        changed_files = set(self.changed_source_files[0])
+        return changed_files.intersection(config_files)
 
     def locale_path_locales(self, repo_checkout_path):
         """

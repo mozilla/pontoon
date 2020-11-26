@@ -2,7 +2,8 @@ import tempfile
 import os
 
 from http.client import HTTPException
-from unittest.mock import Mock, patch, PropertyMock
+from pathlib import Path
+from unittest.mock import Mock, patch, PropertyMock, MagicMock
 
 import scandir
 
@@ -21,6 +22,7 @@ from pontoon.base.tests import (
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.tests import (
     PROJECT_CONFIG_CHECKOUT_PATH,
+    FakeCheckoutTestCase,
     VCSEntityFactory,
     VCSTranslationFactory,
 )
@@ -31,7 +33,6 @@ from pontoon.sync.vcs.models import (
     VCSProject,
     DownloadTOMLParser,
 )
-
 
 TEST_CHECKOUT_PATH = os.path.join(
     os.path.dirname(__file__), "directory_detection_tests"
@@ -499,6 +500,53 @@ class VCSEntityTests(VCSTestCase):
         assert not entity.has_translation_for("missing")
         assert entity.has_translation_for("empty")
         assert entity.has_translation_for("full")
+
+
+class VCSChangedConfigFilesTests(FakeCheckoutTestCase):
+    """
+    Tests the algorithm that detects changes of Project Config files.
+    """
+
+    def test_no_config_changes(self):
+        changed_source_files = {"file1.po": [], "test.toml": []}
+
+        with patch.object(
+            self.vcs_project, "configuration"
+        ) as changed_config_files_mock, patch.object(
+            self.vcs_project, "changed_source_files", return_value=changed_source_files
+        ) as changed_source_files_mock:
+            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = (
+                set()
+            )
+            changed_source_files_mock.__getitem__.return_value = changed_source_files
+            self.assertSetEqual(self.vcs_project.changed_config_files, set())
+
+    def test_changed_config_files(self):
+        config_file_mock = MagicMock()
+        config_file_mock.path = str(
+            Path(self.vcs_project.source_directory_path).joinpath(
+                Path("test-l10n.toml")
+            )
+        )
+        changed_config_files = [config_file_mock]
+        changed_source_files = {
+            "file1.po": [],
+            "test-l10n.toml": [],
+        }
+
+        with patch.object(
+            self.vcs_project, "configuration"
+        ) as changed_config_files_mock, patch.object(
+            self.vcs_project, "changed_source_files", return_value=changed_source_files
+        ) as changed_source_files_mock:
+            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = (
+                changed_config_files
+            )
+            changed_source_files_mock.__getitem__.return_value = changed_source_files
+
+            self.assertSetEqual(
+                self.vcs_project.changed_config_files, {"test-l10n.toml"}
+            )
 
 
 class DownloadTOMLParserTests(TestCase):
