@@ -314,7 +314,9 @@ class VCSProject(object):
         for locale in self.db_project.locales.all():
             for path in paths:
                 absolute_path = os.path.join(self.source_directory_path, path)
-                reference_path = self.configuration.reference_path(locale, absolute_path)
+                reference_path = self.configuration.reference_path(
+                    locale, absolute_path
+                )
 
                 if reference_path:
                     relative_reference_path = reference_path[
