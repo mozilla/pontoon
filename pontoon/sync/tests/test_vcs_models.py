@@ -269,6 +269,7 @@ class VCSProjectTests(VCSTestCase):
         source resources within the source repository checkout path.
         """
         checkout_path_mock.return_value = PROJECT_CONFIG_CHECKOUT_PATH
+        self.vcs_project.db_project.configuration_file = "l10n.toml"
         self.vcs_project.configuration = VCSConfiguration(self.vcs_project)
 
         assert sorted(list(self.vcs_project.resource_paths_with_config())) == sorted(
@@ -427,10 +428,10 @@ class VCSConfigurationTests(VCSTestCase):
 
     def test_reference_path(self):
         absolute_l10n_path = os.path.join(
-            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/amo.pot",
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/amo.po",
         )
 
-        reference_path = os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/amo.po",)
+        reference_path = os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/amo.pot",)
 
         assert (
             self.vcs_project.configuration.reference_path(
