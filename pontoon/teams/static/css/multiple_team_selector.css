@@ -2,69 +2,70 @@
  * All styles are related to forms visible for the contributor.
  */
 form.user-locales-settings {
-   width: 620px;
+    width: 620px;
 }
 
 form.user-locales-settings div {
-  text-align: right;
+    text-align: right;
 }
 
 /**
  * CSS classes related to the select locale widget.
  */
 form .locale.select.selected {
-  float: right;
+    float: right;
 }
 
 form .locale.select .menu {
-  background: transparent;
-  border-bottom: 1px solid #5E6475;
-  margin: 2px 0 -4px -1px;
-  overflow: auto;
-  padding: 10px 0;
-  width: 295px;
+    background: transparent;
+    border-bottom: 1px solid #5e6475;
+    margin: 2px 0 -4px -1px;
+    overflow: auto;
+    padding: 10px 0;
+    width: 295px;
 }
 
 form > div {
-  margin: 20px 0;
+    margin: 20px 0;
 }
 
 form .locale.select .menu ul {
-  height: 170px;
-  margin-bottom: 0;
+    height: 170px;
+    margin-bottom: 0;
 }
 
 form .locale.select .menu ul li span.code {
-  float: right;
-  width: auto;
+    float: right;
+    width: auto;
 }
 
 form .locale.select {
-  float: left;
-  width: auto;
+    float: left;
+    width: auto;
 }
 
 form .locale li {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 form .locale .sortable li {
-  cursor: grab;
-  cursor: -webkit-grab;
+    cursor: grab;
+    cursor: -webkit-grab;
 }
 
 .select {
-  text-align: left;
+    text-align: left;
 }
 
 label {
-  display: block;
-  padding-bottom: 3px;
-  text-align: left;
+    display: block;
+    padding-bottom: 3px;
+    text-align: left;
 }
 
-form a:link, form a:visited {
-  color: #7BC876;
-  float: right;
-  text-transform: uppercase;
+form a:link,
+form a:visited {
+    color: #7bc876;
+    float: right;
+    text-transform: uppercase;
 }

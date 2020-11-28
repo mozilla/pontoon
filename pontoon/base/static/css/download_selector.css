@@ -1,48 +1,48 @@
 .download-selector {
-  float: right;
-}
-  
-.download-selector .selector {
-  padding-right: 0;
-  padding-top: 0;
-}
-  
-.download-selector .selector .fa {
-  float: right;
-  background: #3f4752;
-  border-radius: 3px;
-  box-sizing: border-box;
-  color: #AAA;
-  font-size: 16px;
-  height: 32px;
-  width: 32px;
-  padding-top: 8px;
-  text-align: center;
+    float: right;
 }
 
-.download-selector .selector .fa:hover { 
-  background: #272a2f;
+.download-selector .selector {
+    padding-right: 0;
+    padding-top: 0;
 }
-  
+
+.download-selector .selector .fa {
+    float: right;
+    background: #3f4752;
+    border-radius: 3px;
+    box-sizing: border-box;
+    color: #aaa;
+    font-size: 16px;
+    height: 32px;
+    width: 32px;
+    padding-top: 8px;
+    text-align: center;
+}
+
+.download-selector .selector .fa:hover {
+    background: #272a2f;
+}
+
 .download-selector.opened .selector .fa {
-  background: #272a2f;
-  border-radius: 2px 2px 0 0;
+    background: #272a2f;
+    border-radius: 2px 2px 0 0;
 }
 
 .download-selector.opened .menu {
-  display: block;
-  top: 32px;
-  right: 0;
-  bottom: auto;
-  width: 220px;
+    display: block;
+    top: 32px;
+    right: 0;
+    bottom: auto;
+    width: 220px;
 }
 
 .download-selector.opened .menu li {
-  padding-bottom: 0;
-  padding-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
 }
-  
+
 .download-selector.opened .menu li a {
-  display: block;
-  line-height: 22px;
+    display: block;
+    line-height: 22px;
 }

@@ -18,9 +18,8 @@
 }
 
 .sync-log .start-time a {
-    color: #7BC876;
+    color: #7bc876;
 }
-
 
 /** @details */
 td {
@@ -44,7 +43,7 @@ td {
 
 .sync-details .detail-label {
     border: none;
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 12px;
     margin: 0.5em 0;
     text-transform: uppercase;
@@ -65,41 +64,41 @@ td {
 }
 
 .command-details .start-time {
-    border-color: #7BC876;
+    border-color: #7bc876;
 }
 
 .command-details .end-time {
-    border-color: #4FC4F6;
+    border-color: #4fc4f6;
 }
 
 .command-details .duration {
-    border-color: #FED271;
+    border-color: #fed271;
 }
 
 .project-details .start-time .detail-label,
 .repository-details .start-time .detail-label {
-    color: #7BC876;
+    color: #7bc876;
 }
 
 .project-details .end-time .detail-label,
 .repository-details .end-time .detail-label {
-    color: #4FC4F6;
+    color: #4fc4f6;
 }
 
 .project-details .duration .detail-label,
 .repository-details .duration .detail-label {
-    color: #FED271;
+    color: #fed271;
 }
 
 .project {
-    border: 1px solid #5C6172;
+    border: 1px solid #5c6172;
     border-radius: 5px;
     margin-bottom: 1em;
     padding: 1em;
 }
 
 .project .project-name {
-    color: #AAAAAA;
+    color: #aaaaaa;
     font-size: 36px;
     text-align: left;
     text-transform: none;
@@ -111,7 +110,7 @@ td {
 }
 
 .repository-logs .repository-logs-column {
-    color: #AAAAAA;
+    color: #aaaaaa;
     padding: 1em;
     text-align: left;
     text-transform: uppercase;
@@ -124,7 +123,6 @@ td {
 .repository:nth-child(even) {
     background: #333941;
 }
-
 
 /** @pagination */
 .pagination {

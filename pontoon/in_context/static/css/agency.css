@@ -6,7 +6,7 @@
 
 body {
     overflow-x: hidden;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 18px;
 }
 
@@ -15,7 +15,7 @@ body {
 }
 
 .text-primary {
-    color: #FD5F60;
+    color: #fd5f60;
 }
 
 p {
@@ -36,14 +36,14 @@ a.active {
 }
 
 a {
-    color: #FD5F60;
+    color: #fd5f60;
 }
 
 a:hover,
 a:focus,
 a:active,
 a.active {
-    color: #4FC4F6;
+    color: #4fc4f6;
 }
 
 h1,
@@ -68,15 +68,15 @@ h4 {
 }
 
 .bg-darkest-gray {
-    background-color: #3F4752;
+    background-color: #3f4752;
 }
 
 .btn-primary {
-    border-color: #FD5F60;
+    border-color: #fd5f60;
     text-transform: uppercase;
     font-weight: 700;
     color: #fff;
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
 .btn-primary:hover,
@@ -84,9 +84,9 @@ h4 {
 .btn-primary:active,
 .btn-primary.active,
 .open .dropdown-toggle.btn-primary {
-    border-color: #4FC4F6;
+    border-color: #4fc4f6;
     color: #fff;
-    background-color: #4FC4F6;
+    background-color: #4fc4f6;
 }
 
 .btn-primary:active,
@@ -110,24 +110,24 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary.disabled.active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
-    border-color: #FD5F60;
-    background-color: #FD5F60;
+    border-color: #fd5f60;
+    background-color: #fd5f60;
 }
 
 .btn-primary .badge {
-    color: #FD5F60;
+    color: #fd5f60;
     background-color: #fff;
 }
 
 .btn-xl {
     padding: 20px 40px;
-    border-color: #FD5F60;
+    border-color: #fd5f60;
     border-radius: 3px;
     text-transform: uppercase;
     font-size: 20px;
     font-weight: 700;
     color: #fff;
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
 .btn-xl:hover,
@@ -135,9 +135,9 @@ fieldset[disabled] .btn-primary.active {
 .btn-xl:active,
 .btn-xl.active,
 .open .dropdown-toggle.btn-xl {
-    border-color: #4FC4F6;
+    border-color: #4fc4f6;
     color: #fff;
-    background-color: #4FC4F6;
+    background-color: #4fc4f6;
 }
 
 .btn-xl:active,
@@ -161,22 +161,22 @@ fieldset[disabled] .btn-xl:active,
 .btn-xl.disabled.active,
 .btn-xl[disabled].active,
 fieldset[disabled] .btn-xl.active {
-    border-color: #FD5F60;
-    background-color: #FD5F60;
+    border-color: #fd5f60;
+    background-color: #fd5f60;
 }
 
 .btn-xl .badge {
-    color: #FD5F60;
+    color: #fd5f60;
     background-color: #fff;
 }
 
 .navbar-default {
     border-color: transparent;
-    background-color: #3F4752;
+    background-color: #3f4752;
 }
 
 .navbar-default .navbar-brand {
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: 100;
 }
 
@@ -184,16 +184,16 @@ fieldset[disabled] .btn-xl.active {
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:active,
 .navbar-default .navbar-brand.active {
-    color: #FD5F60;
+    color: #fd5f60;
 }
 
 .navbar-default .navbar-collapse {
-    border-color: rgba(255,255,255,.02);
+    border-color: rgba(255, 255, 255, 0.02);
 }
 
 .navbar-default .navbar-toggle {
-    border-color: #FD5F60;
-    background-color: #FD5F60;
+    border-color: #fd5f60;
+    background-color: #fd5f60;
 }
 
 .navbar-default .navbar-toggle .icon-bar {
@@ -202,7 +202,7 @@ fieldset[disabled] .btn-xl.active {
 
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
 .navbar-default .nav li a {
@@ -215,22 +215,22 @@ fieldset[disabled] .btn-xl.active {
 .navbar-default .nav li a:hover,
 .navbar-default .nav li a:focus {
     outline: 0;
-    color: #FD5F60;
+    color: #fd5f60;
 }
 
-.navbar-default .navbar-nav>.active>a {
+.navbar-default .navbar-nav > .active > a {
     border-radius: 0;
     color: #fff;
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
-.navbar-default .navbar-nav>.active>a:hover,
-.navbar-default .navbar-nav>.active>a:focus {
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
     color: #fff;
-    background-color: #4FC4F6;
+    background-color: #4fc4f6;
 }
 
-@media(min-width:768px) {
+@media (min-width: 768px) {
     .navbar-default {
         padding: 10px 0;
         border: 0;
@@ -241,19 +241,19 @@ fieldset[disabled] .btn-xl.active {
         font-size: 1.6em;
     }
 
-    .navbar-default .navbar-nav>.active>a {
+    .navbar-default .navbar-nav > .active > a {
         border-radius: 3px;
     }
 
     .navbar-default.navbar-shrink {
-        background-color: #3F4752;
+        background-color: #3f4752;
     }
 }
 
 header {
     text-align: center;
     color: #fff;
-    background: #3F4752;
+    background: #3f4752;
 }
 
 header .wrapper img {
@@ -286,7 +286,7 @@ header .intro-text .intro-heading {
     line-height: 50px;
 }
 
-@media(min-width:768px) {
+@media (min-width: 768px) {
     header .intro-text {
         padding-top: 200px;
         padding-bottom: 150px;
@@ -305,7 +305,7 @@ header .intro-text .intro-heading {
     }
 }
 
-@media(min-width:992px) {
+@media (min-width: 992px) {
     header .intro-text .intro-heading {
         font-size: 85px;
         line-height: 85px;
@@ -329,7 +329,7 @@ section h3.section-subheading {
     font-weight: 300;
 }
 
-@media(min-width:768px) {
+@media (min-width: 768px) {
     section {
         padding: 150px 0;
     }
@@ -370,17 +370,21 @@ section h3.section-subheading {
     width: 100%;
     height: 100%;
     opacity: 0;
-    background: rgba(254,209,54,.9);
-    -webkit-transition: all ease .5s;
-    -moz-transition: all ease .5s;
-    transition: all ease .5s;
+    background: rgba(254, 209, 54, 0.9);
+    -webkit-transition: all ease 0.5s;
+    -moz-transition: all ease 0.5s;
+    transition: all ease 0.5s;
 }
 
 #portfolio .portfolio-item .portfolio-link .portfolio-hover:hover {
     opacity: 1;
 }
 
-#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content {
+#portfolio
+    .portfolio-item
+    .portfolio-link
+    .portfolio-hover
+    .portfolio-hover-content {
     position: absolute;
     top: 50%;
     width: 100%;
@@ -391,12 +395,27 @@ section h3.section-subheading {
     color: #fff;
 }
 
-#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content i {
+#portfolio
+    .portfolio-item
+    .portfolio-link
+    .portfolio-hover
+    .portfolio-hover-content
+    i {
     margin-top: -12px;
 }
 
-#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content h3,
-#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content h4 {
+#portfolio
+    .portfolio-item
+    .portfolio-link
+    .portfolio-hover
+    .portfolio-hover-content
+    h3,
+#portfolio
+    .portfolio-item
+    .portfolio-link
+    .portfolio-hover
+    .portfolio-hover-content
+    h4 {
     margin: 0;
 }
 
@@ -425,7 +444,7 @@ section h3.section-subheading {
     z-index: 2;
 }
 
-@media(min-width:767px) {
+@media (min-width: 767px) {
     #portfolio .portfolio-item {
         margin: 0 0 30px;
     }
@@ -438,7 +457,7 @@ section h3.section-subheading {
 }
 
 .timeline:before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     bottom: 0;
@@ -448,23 +467,23 @@ section h3.section-subheading {
     background-color: #f1f1f1;
 }
 
-.timeline>li {
+.timeline > li {
     position: relative;
     margin-bottom: 50px;
     min-height: 50px;
 }
 
-.timeline>li:before,
-.timeline>li:after {
-    content: " ";
+.timeline > li:before,
+.timeline > li:after {
+    content: ' ';
     display: table;
 }
 
-.timeline>li:after {
+.timeline > li:after {
     clear: both;
 }
 
-.timeline>li .timeline-panel {
+.timeline > li .timeline-panel {
     float: right;
     position: relative;
     width: 100%;
@@ -472,21 +491,21 @@ section h3.section-subheading {
     text-align: left;
 }
 
-.timeline>li .timeline-panel:before {
+.timeline > li .timeline-panel:before {
     right: auto;
     left: -15px;
     border-right-width: 15px;
     border-left-width: 0;
 }
 
-.timeline>li .timeline-panel:after {
+.timeline > li .timeline-panel:after {
     right: auto;
     left: -14px;
     border-right-width: 14px;
     border-left-width: 0;
 }
 
-.timeline>li .timeline-image {
+.timeline > li .timeline-image {
     z-index: 100;
     position: absolute;
     left: 0;
@@ -497,36 +516,36 @@ section h3.section-subheading {
     border-radius: 100%;
     text-align: center;
     color: #fff;
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
-.timeline>li .timeline-image h4 {
+.timeline > li .timeline-image h4 {
     margin-top: 26px;
     font-size: 13px;
     line-height: 14px;
 }
 
-.timeline>li.timeline-inverted>.timeline-panel {
+.timeline > li.timeline-inverted > .timeline-panel {
     float: right;
     padding: 0 20px 0 100px;
     text-align: left;
 }
 
-.timeline>li.timeline-inverted>.timeline-panel:before {
+.timeline > li.timeline-inverted > .timeline-panel:before {
     right: auto;
     left: -15px;
     border-right-width: 15px;
     border-left-width: 0;
 }
 
-.timeline>li.timeline-inverted>.timeline-panel:after {
+.timeline > li.timeline-inverted > .timeline-panel:after {
     right: auto;
     left: -14px;
     border-right-width: 14px;
     border-left-width: 0;
 }
 
-.timeline>li:last-child {
+.timeline > li:last-child {
     margin-bottom: 0;
 }
 
@@ -539,105 +558,105 @@ section h3.section-subheading {
     text-transform: none;
 }
 
-.timeline .timeline-body>p,
-.timeline .timeline-body>ul {
+.timeline .timeline-body > p,
+.timeline .timeline-body > ul {
     margin-bottom: 0;
 }
 
-@media(min-width:768px) {
+@media (min-width: 768px) {
     .timeline:before {
         left: 50%;
     }
 
-    .timeline>li {
+    .timeline > li {
         margin-bottom: 100px;
         min-height: 100px;
     }
 
-    .timeline>li .timeline-panel {
+    .timeline > li .timeline-panel {
         float: left;
         width: 41%;
         padding: 0 20px 20px 30px;
         text-align: right;
     }
 
-    .timeline>li .timeline-image {
+    .timeline > li .timeline-image {
         left: 50%;
         width: 100px;
         height: 100px;
         margin-left: -50px;
     }
 
-    .timeline>li .timeline-image h4 {
+    .timeline > li .timeline-image h4 {
         margin-top: 34px;
         font-size: 16px;
         line-height: 18px;
     }
 
-    .timeline>li.timeline-inverted>.timeline-panel {
+    .timeline > li.timeline-inverted > .timeline-panel {
         float: right;
         padding: 0 30px 20px 20px;
         text-align: left;
     }
 }
 
-@media(min-width:992px) {
-    .timeline>li {
+@media (min-width: 992px) {
+    .timeline > li {
         min-height: 150px;
     }
 
-    .timeline>li .timeline-panel {
+    .timeline > li .timeline-panel {
         padding: 0 20px 20px;
     }
 
-    .timeline>li .timeline-image {
+    .timeline > li .timeline-image {
         width: 150px;
         height: 150px;
         margin-left: -75px;
     }
 
-    .timeline>li .timeline-image h4 {
+    .timeline > li .timeline-image h4 {
         margin-top: 55px;
         font-size: 20px;
         line-height: 26px;
     }
 
-    .timeline>li.timeline-inverted>.timeline-panel {
+    .timeline > li.timeline-inverted > .timeline-panel {
         padding: 0 20px 20px;
     }
 }
 
-@media(min-width:1200px) {
-    .timeline>li {
+@media (min-width: 1200px) {
+    .timeline > li {
         min-height: 170px;
     }
 
-    .timeline>li .timeline-panel {
+    .timeline > li .timeline-panel {
         padding: 0 20px 20px 100px;
     }
 
-    .timeline>li .timeline-image {
+    .timeline > li .timeline-image {
         width: 170px;
         height: 170px;
         margin-left: -85px;
     }
 
-    .timeline>li .timeline-image h4 {
+    .timeline > li .timeline-image h4 {
         margin-top: 65px;
     }
 
-    .timeline>li.timeline-inverted>.timeline-panel {
+    .timeline > li.timeline-inverted > .timeline-panel {
         padding: 0 100px 20px 20px;
     }
 }
 
 #team {
-    background: #272A2F;
+    background: #272a2f;
     padding: 100px 0 50px;
 }
 
 #team h2 {
-    color: #DDDDDD;
+    color: #dddddd;
 }
 
 .team-member {
@@ -646,13 +665,13 @@ section h3.section-subheading {
 }
 
 .team-member > img {
-    background: #F1F1F1;
-    border: 7px solid #F1F1F1;
+    background: #f1f1f1;
+    border: 7px solid #f1f1f1;
     margin: 0 auto;
 }
 
 .team-member h4 {
-    color: #DDDDDD;
+    color: #dddddd;
     margin-top: 25px;
     margin-bottom: 0;
     text-transform: none;
@@ -667,14 +686,14 @@ section h3.section-subheading {
 }
 
 .team-member ul.social-buttons li a {
-    background: #7BC876;
-    -webkit-transition: all .3s;
-    -moz-transition: all .3s;
-    transition: all .3s;
+    background: #7bc876;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 .team-member ul.social-buttons li a:hover {
-    background-color: #4FC4F6;
+    background-color: #4fc4f6;
 }
 
 .team-member ul.social-buttons li a i {
@@ -686,14 +705,14 @@ aside.clients img {
 }
 
 footer {
-    background-color: #3F4752;
+    background-color: #3f4752;
     font-size: 14px;
     padding: 25px 0;
     text-align: center;
 }
 
 footer span.copyright {
-    color: #FFFFFF;
+    color: #ffffff;
     text-transform: uppercase;
     text-transform: none;
     line-height: 40px;
@@ -719,16 +738,16 @@ ul.social-buttons li a {
     line-height: 40px;
     outline: 0;
     color: #fff;
-    background-color: #272A2F;
-    -webkit-transition: all .3s;
-    -moz-transition: all .3s;
-    transition: all .3s;
+    background-color: #272a2f;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 ul.social-buttons li a:hover,
 ul.social-buttons li a:focus,
 ul.social-buttons li a:active {
-    background-color: #FD5F60;
+    background-color: #fd5f60;
 }
 
 ul.social-buttons li a img {
@@ -787,7 +806,7 @@ ul.social-buttons li a img {
 }
 
 .portfolio-modal .close-modal:hover {
-    opacity: .3;
+    opacity: 0.3;
 }
 
 .portfolio-modal .close-modal .lr {
@@ -795,7 +814,7 @@ ul.social-buttons li a img {
     width: 1px;
     height: 75px;
     margin-left: 35px;
-    background-color: #3F4752;
+    background-color: #3f4752;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
@@ -805,7 +824,7 @@ ul.social-buttons li a img {
     z-index: 1052;
     width: 1px;
     height: 75px;
-    background-color: #3F4752;
+    background-color: #3f4752;
     -webkit-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
@@ -813,12 +832,12 @@ ul.social-buttons li a img {
 
 ::-moz-selection {
     text-shadow: none;
-    background: #FED271;
+    background: #fed271;
 }
 
 ::selection {
     text-shadow: none;
-    background: #FED271;
+    background: #fed271;
 }
 
 img::selection {
@@ -830,5 +849,5 @@ img::-moz-selection {
 }
 
 body {
-    webkit-tap-highlight-color: #FED271;
+    webkit-tap-highlight-color: #fed271;
 }

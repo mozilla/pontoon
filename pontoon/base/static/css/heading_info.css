@@ -1,192 +1,192 @@
 ul {
-  list-style: none;
-  margin: 0;
+    list-style: none;
+    margin: 0;
 }
 
 #heading:not(.simple) {
-  padding: 30px 0;
+    padding: 30px 0;
 }
 
 #heading:not(.simple) h1 {
-  padding-bottom: 30px;
+    padding-bottom: 30px;
 }
 
 #heading h1 a {
-  color: #EBEBEB;
-  font-weight: bold;
-  font-size: 32px;
+    color: #ebebeb;
+    font-weight: bold;
+    font-size: 32px;
 }
 
 #heading h1 .small {
-  color: #7BC876;
-  font-weight: 300;
-  padding-left: 5px;
+    color: #7bc876;
+    font-weight: 300;
+    padding-left: 5px;
 }
 
 #heading .details,
 #heading .legend {
-  font-weight: 300;
+    font-weight: 300;
 }
 
 #heading .details li,
 #heading .legend li {
-  line-height: 24px;
+    line-height: 24px;
 }
 
 #heading .details {
-  float: left;
-  width: 360px;
+    float: left;
+    width: 360px;
 }
 
 #heading .details .title {
-  color: #AAAAAA;
-  padding-right: 5px;
-  position: relative;
-  text-transform: uppercase;
+    color: #aaaaaa;
+    padding-right: 5px;
+    position: relative;
+    text-transform: uppercase;
 }
 
 #heading .details .title sup {
-  position: absolute;
-  top: -5px;
+    position: absolute;
+    top: -5px;
 }
 
 #heading .details .value {
-  color: #AAA;
-  float: right;
+    color: #aaa;
+    float: right;
 }
 
 #heading .details .value a {
-  color: #FFFFFF;
+    color: #ffffff;
 }
 
 #heading .details .value a:hover {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #heading .details .priority .value {
-  margin-top: 6px;
+    margin-top: 6px;
 }
 
 #heading .details .value.overflow {
-  max-width: 275px;
-  overflow: hidden;
-  padding-left: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
-  padding-right: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    max-width: 275px;
+    overflow: hidden;
+    padding-left: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
+    padding-right: 1px; /* Needed to avoid cutting off overlay due to overflow: hidden; */
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #heading .details .resources .value.overflow {
-  max-width: 280px;
-  white-space: normal;
+    max-width: 280px;
+    white-space: normal;
 }
 
 #heading .progress {
-  float: left;
-  margin: -10px 65px 0;
-  position: relative;
-  text-align: center;
+    float: left;
+    margin: -10px 65px 0;
+    position: relative;
+    text-align: center;
 }
 
 #heading .progress .number {
-  display: none;
-  font-size: 50px;
-  font-weight: bold;
-  left: 0;
-  right: 0;
-  top: 25px;
-  margin: 0;
-  position: absolute;
+    display: none;
+    font-size: 50px;
+    font-weight: bold;
+    left: 0;
+    right: 0;
+    top: 25px;
+    margin: 0;
+    position: absolute;
 }
 
 #heading .progress .number:after {
-  content: "%";
-  color: #888888;
-  display: block;
-  font-size: 20px;
-  font-weight: 100;
-  line-height: 10px;
+    content: '%';
+    color: #888888;
+    display: block;
+    font-size: 20px;
+    font-weight: 100;
+    line-height: 10px;
 }
 
 #heading .legend {
-  float: left;
-  width: 190px;
+    float: left;
+    width: 190px;
 }
 
 #heading .legend li {
-  color: #AAAAAA;
-  padding-left: 25px;
-  position: relative;
-  text-align: left;
-  text-transform: uppercase;
+    color: #aaaaaa;
+    padding-left: 25px;
+    position: relative;
+    text-align: left;
+    text-transform: uppercase;
 }
 
 #heading .legend li a {
-  color: #FFFFFF;
+    color: #ffffff;
 }
 
 #heading .legend li:hover a {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #heading .legend li .status.fa {
-  left: 0;
-  top: 4px;
+    left: 0;
+    top: 4px;
 }
 
 #heading .legend li span.value {
-  color: #AAA;
-  float: right;
+    color: #aaa;
+    float: right;
 }
 
 #heading .legend li a span.value {
-  color: #FFFFFF;
+    color: #ffffff;
 }
 
 #heading .legend li:hover a span.value {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #heading .non-plottable {
-  float: right;
+    float: right;
 }
 
 #heading .non-plottable p {
-  color: #AAA;
-  font-weight: 300;
-  line-height: 24px;
-  text-align: right;
-  text-transform: uppercase;
+    color: #aaa;
+    font-weight: 300;
+    line-height: 24px;
+    text-align: right;
+    text-transform: uppercase;
 }
 
 #heading .non-plottable a p {
-  color: #FFFFFF;
+    color: #ffffff;
 }
 
 #heading .non-plottable a:hover p {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #heading .non-plottable p.value {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 #heading .non-plottable .all {
-  padding-bottom: 21px;
+    padding-bottom: 21px;
 }
 
 #heading .non-plottable .unreviewed .status.fa {
-  left: auto;
-  position: relative;
-  top: -1px;
+    left: auto;
+    position: relative;
+    top: -1px;
 }
 
 #heading .non-plottable .unreviewed .status.fa:before {
-  color: #4D5967;
-  font-size: 18px;
+    color: #4d5967;
+    font-size: 18px;
 }
 
 #heading .non-plottable .unreviewed.pending .status.fa:before {
-  color: #4FC4F6;
+    color: #4fc4f6;
 }

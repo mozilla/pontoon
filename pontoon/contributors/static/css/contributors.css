@@ -1,94 +1,94 @@
 #heading .banner .title {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 #heading .legend {
-  width: 360px;
+    width: 360px;
 }
 
 #heading .legend li,
 #heading .legend li.unreviewed {
-  padding-left: 0;
+    padding-left: 0;
 }
 
 #heading .legend li.banner {
-  padding: 0;
+    padding: 0;
 }
 
 body.top-contributors #heading .legend li .status.fa {
-  display: none;
+    display: none;
 }
 
 .controls .submenu .links {
-  text-align: right;
+    text-align: right;
 }
 
 .contributor {
-  display: inline-block;
-  position: relative;
-  width: 580px;
+    display: inline-block;
+    position: relative;
+    width: 580px;
 }
 
 .contributor img {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .contributor p {
-  overflow: hidden;
-  padding-left: 2px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 520px;
+    overflow: hidden;
+    padding-left: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 520px;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .contributor p.name {
-  display: inline-block;
-  font-size: 1.5em;
-  height: 1.5em;
+    display: inline-block;
+    font-size: 1.5em;
+    height: 1.5em;
 }
 
 .contributor p.role {
-  color: #EBEBEB;
-  left: 67px;
-  position: absolute;
-  top: 42px;
+    color: #ebebeb;
+    left: 67px;
+    position: absolute;
+    top: 42px;
 }
 
 th:last-child,
 .stats .details {
-  text-align: center;
-  width: 360px;
+    text-align: center;
+    width: 360px;
 }
 
 th:last-child {
-  position: relative;
+    position: relative;
 }
 
 th:last-child sup {
-  top: 7px;
-  position: absolute;
+    top: 7px;
+    position: absolute;
 }
 
 .stats .details div {
-  border: none;
+    border: none;
 }
 
 .stats .details div.approved {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .stats .details div.fuzzy {
-  color: #FED271;
+    color: #fed271;
 }
 
 .stats .details div.unreviewed {
-  color: #4FC4F6;
+    color: #4fc4f6;
 }
 
 .stats .details div p {
-  font-size: 20px;
-  padding: 3px 0 0;
+    font-size: 20px;
+    padding: 3px 0 0;
 }
