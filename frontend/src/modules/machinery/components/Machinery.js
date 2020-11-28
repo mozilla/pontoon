@@ -54,6 +54,12 @@ export default class Machinery extends React.Component<Props> {
         }
     }
 
+    handleResetSearch = (event: SyntheticMouseEvent<>) => {
+        event.preventDefault();
+        this.searchInput.current.value = '';
+        this.props.searchMachinery(this.searchInput.current.value);
+    };
+
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
@@ -75,9 +81,19 @@ export default class Machinery extends React.Component<Props> {
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
-                    <label htmlFor='machinery-search'>
-                        <div className='fa fa-search'></div>
-                    </label>
+                    {!this.searchInput.current ||
+                    this.searchInput.current.value === '' ? (
+                        <label htmlFor='machinery-search'>
+                            <div className='fa fa-search'></div>
+                        </label>
+                    ) : (
+                        <label htmlFor='machinery-search'>
+                            <button
+                                className='fa fa-times'
+                                onClick={this.handleResetSearch}
+                            ></button>
+                        </label>
+                    )}
                     <form onSubmit={this.submitForm}>
                         <Localized
                             id='machinery-Machinery--search-placeholder'
