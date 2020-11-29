@@ -77,20 +77,21 @@ export default class Machinery extends React.Component<Props> {
             return null;
         }
 
+        const showResetButton = !machinery.entity && machinery.sourceString;
+
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
-                    {!this.searchInput.current ||
-                    this.searchInput.current.value === '' ? (
-                        <label htmlFor='machinery-search'>
-                            <div className='fa fa-search'></div>
-                        </label>
-                    ) : (
+                    {showResetButton ? (
                         <label htmlFor='machinery-search'>
                             <button
                                 className='fa fa-times'
                                 onClick={this.handleResetSearch}
                             ></button>
+                        </label>
+                    ) : (
+                        <label htmlFor='machinery-search'>
+                            <div className='fa fa-search'></div>
                         </label>
                     )}
                     <form onSubmit={this.submitForm}>
