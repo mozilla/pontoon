@@ -54,7 +54,7 @@ export default class Machinery extends React.Component<Props> {
         }
     }
 
-    handleResetSearch = (event: SyntheticMouseEvent<>) => {
+    handleResetSearch = () => {
         this.searchInput.current.value = '';
         this.props.searchMachinery('');
     };
