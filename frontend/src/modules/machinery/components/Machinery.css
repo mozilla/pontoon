@@ -27,6 +27,7 @@
     background-color: transparent;
     border: none;
     color: #aaaaaa;
+    padding: 0 4px;
 }
 
 .machinery > .search-wrapper input[type='search'] {
