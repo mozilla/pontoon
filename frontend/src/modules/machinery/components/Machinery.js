@@ -54,6 +54,10 @@ export default class Machinery extends React.Component<Props> {
         }
     }
 
+    handleResetSearch = () => {
+        this.props.searchMachinery('');
+    };
+
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
@@ -72,11 +76,20 @@ export default class Machinery extends React.Component<Props> {
             return null;
         }
 
+        const showResetButton = !machinery.entity && machinery.sourceString;
+
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
                     <label htmlFor='machinery-search'>
-                        <div className='fa fa-search'></div>
+                        {showResetButton ? (
+                            <button
+                                className='fa fa-times'
+                                onClick={this.handleResetSearch}
+                            ></button>
+                        ) : (
+                            <div className='fa fa-search'></div>
+                        )}
                     </label>
                     <form onSubmit={this.submitForm}>
                         <Localized
