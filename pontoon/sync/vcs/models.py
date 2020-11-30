@@ -265,21 +265,13 @@ class VCSProject(object):
                     )
                 )
 
-                # Find relevant changes in repository by matching changed
-                # paths against locale repository paths
-                locale_path_locales = self.locale_path_locales(repo.checkout_path)
-                locale_paths = locale_path_locales.keys()
-
-                for path in changed_files:
-                    if is_hidden(path):
-                        continue
-
-                    for locale_path in locale_paths:
-                        if path.startswith(locale_path):
-                            locale = locale_path_locales[locale_path]
-                            path = path[len(locale_path) :].lstrip(os.sep)
-                            files.setdefault(path, []).append(locale)
-                            break
+                # Include only relevant (localizable) files
+                if self.configuration:
+                    files = self.get_relevant_files_with_config(changed_files)
+                else:
+                    files = self.get_relevant_files_without_config(
+                        changed_files, self.locale_path_locales(repo.checkout_path)
+                    )
 
         log.info(
             "Changed files in {} repository, relevant for enabled locales: {}".format(
@@ -310,6 +302,51 @@ class VCSProject(object):
         )
         changed_files = set(self.changed_source_files[0])
         return changed_files.intersection(config_files)
+
+    def get_relevant_files_with_config(self, paths):
+        """
+        Check if given paths represent localizable files using project configuration.
+        Return a dict of relative reference paths of such paths and corresponding Locale
+        objects.
+        """
+        files = {}
+
+        for locale in self.db_project.locales.all():
+            for path in paths:
+                absolute_path = os.path.join(self.source_directory_path, path)
+                reference_path = self.configuration.reference_path(
+                    locale, absolute_path
+                )
+
+                if reference_path:
+                    relative_reference_path = reference_path[
+                        len(self.source_directory_path) :
+                    ].lstrip(os.sep)
+                    files.setdefault(relative_reference_path, []).append(locale)
+
+        return files
+
+    def get_relevant_files_without_config(self, paths, locale_path_locales):
+        """
+        Check if given paths represent localizable files by matching them against locale
+        repository paths. Return a dict of relative reference paths of such paths and
+        corresponding Locale objects.
+        """
+        files = {}
+        locale_paths = locale_path_locales.keys()
+
+        for path in paths:
+            if is_hidden(path):
+                continue
+
+            for locale_path in locale_paths:
+                if path.startswith(locale_path):
+                    locale = locale_path_locales[locale_path]
+                    path = path[len(locale_path) :].lstrip(os.sep)
+                    files.setdefault(path, []).append(locale)
+                    break
+
+        return files
 
     def locale_path_locales(self, repo_checkout_path):
         """
@@ -664,6 +701,15 @@ class VCSConfiguration(object):
 
         m = project_files.match(reference_path)
         return m[0] if m is not None else None
+
+    def reference_path(self, locale, l10n_path):
+        """
+        Return reference path for the given locale and l10n path.
+        """
+        project_files = self.get_or_set_project_files(locale.code)
+
+        m = project_files.match(l10n_path)
+        return m[1] if m is not None else None
 
     def locale_resources(self, locale):
         """

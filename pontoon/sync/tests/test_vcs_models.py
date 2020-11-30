@@ -14,6 +14,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.tests import (
     CONTAINS,
+    LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
@@ -68,11 +69,60 @@ class VCSProjectTests(VCSTestCase):
         self.mock_checkout_path = checkout_path_patch.start()
         self.addCleanup(checkout_path_patch.stop)
 
+        self.locale = LocaleFactory.create(code="XY")
         self.project = ProjectFactory.create(
-            repositories__permalink="https://example.com/l10n/{locale_code}"
+            locales=[self.locale],
+            repositories__permalink="https://example.com/l10n/{locale_code}",
         )
         self.vcs_project = VCSProject(self.project)
         super(VCSProjectTests, self).setUp()
+
+    @patch.object(VCSProject, "source_directory_path", new_callable=PropertyMock)
+    def test_get_relevant_files_with_config(self, source_directory_path_mock):
+        """
+        Return relative reference paths and locales of paths found in project configuration.
+        """
+        source_directory_path_mock.return_value = ""
+        paths = ["locale/path/to/localizable_file.ftl"]
+        self.vcs_project.configuration = VCSConfiguration(self.vcs_project)
+
+        # Return empty dict if no reference path found for any of the paths
+        with patch(
+            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            return_value=None,
+        ):
+            files = self.vcs_project.get_relevant_files_with_config(paths)
+            assert files == {}
+
+        # Return empty dict if no reference path found for any of the paths
+        with patch(
+            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            return_value="reference/path/to/localizable_file.ftl",
+        ):
+            files = self.vcs_project.get_relevant_files_with_config(paths)
+            assert files == {"reference/path/to/localizable_file.ftl": [self.locale]}
+
+    def test_get_relevant_files_without_config(self):
+        """
+        Return relative paths and their locales if they start with locale repository paths.
+        """
+        paths = [
+            "locales/xy/path/to/localizable_file.ftl",
+            "some.random.file",
+            ".hidden_file",
+        ]
+
+        locale_path_locales = {
+            "locales/ab": "AB",
+            "locales/cd": "CD",
+            "locales/xy": "XY",
+        }
+
+        files = self.vcs_project.get_relevant_files_without_config(
+            paths, locale_path_locales
+        )
+
+        assert files == {"path/to/localizable_file.ftl": ["XY"]}
 
     def test_missing_permalink_prefix(self):
         """
@@ -374,6 +424,20 @@ class VCSConfigurationTests(VCSTestCase):
                 self.locale, absolute_resource_path,
             )
             == l10n_path
+        )
+
+    def test_reference_path(self):
+        absolute_l10n_path = os.path.join(
+            PROJECT_CONFIG_CHECKOUT_PATH, "values-fr/amo.po",
+        )
+
+        reference_path = os.path.join(PROJECT_CONFIG_CHECKOUT_PATH, "values/amo.pot",)
+
+        assert (
+            self.vcs_project.configuration.reference_path(
+                self.locale, absolute_l10n_path,
+            )
+            == reference_path
         )
 
     def test_locale_resources(self):
