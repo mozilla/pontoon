@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 
 import Machinery from './Machinery';
 
@@ -44,5 +44,17 @@ describe('<Machinery>', () => {
         );
 
         expect(wrapper.type()).toBeNull();
+    });
+
+    it('renders a reset button if a source string is present', () => {
+        const machinery = {
+            translations: [],
+            sourceString: 'test',
+        };
+        const wrapper = mount(
+            <Machinery machinery={machinery} locale={LOCALE} />,
+        );
+
+        expect(wrapper.find('button')).toHaveLength(1);
     });
 });

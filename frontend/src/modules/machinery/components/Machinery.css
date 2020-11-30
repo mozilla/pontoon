@@ -23,6 +23,13 @@
     top: 16px;
 }
 
+.machinery > .search-wrapper > label > button {
+    background-color: transparent;
+    border: none;
+    color: #aaaaaa;
+    padding: 0 4px;
+}
+
 .machinery > .search-wrapper input[type='search'] {
     background: #333941;
     border: none;
