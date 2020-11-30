@@ -55,7 +55,6 @@ export default class Machinery extends React.Component<Props> {
     }
 
     handleResetSearch = () => {
-        this.searchInput.current.value = '';
         this.props.searchMachinery('');
     };
 
@@ -82,18 +81,16 @@ export default class Machinery extends React.Component<Props> {
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
-                    {showResetButton ? (
-                        <label htmlFor='machinery-search'>
+                    <label htmlFor='machinery-search'>
+                        {showResetButton ? (
                             <button
                                 className='fa fa-times'
                                 onClick={this.handleResetSearch}
                             ></button>
-                        </label>
-                    ) : (
-                        <label htmlFor='machinery-search'>
+                        ) : (
                             <div className='fa fa-search'></div>
-                        </label>
-                    )}
+                        )}
+                    </label>
                     <form onSubmit={this.submitForm}>
                         <Localized
                             id='machinery-Machinery--search-placeholder'
