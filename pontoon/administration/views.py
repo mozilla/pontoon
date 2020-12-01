@@ -21,7 +21,7 @@ from pontoon.administration.forms import (
     TagInlineFormSet,
 )
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, is_ajax
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -61,7 +61,7 @@ def get_slug(request):
         log.error("Insufficient privileges.")
         return HttpResponse("error")
 
-    if not request.is_ajax():
+    if not is_ajax(request):
         log.error("Non-AJAX request")
         return HttpResponse("error")
 

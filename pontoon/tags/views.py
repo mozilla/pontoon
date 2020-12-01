@@ -2,6 +2,7 @@ from django.http import Http404
 
 from .utils import TagsTool
 from pontoon.base.models import Project
+from pontoon.base.utils import is_ajax
 
 from django.views.generic import DetailView
 
@@ -19,7 +20,7 @@ class ProjectTagView(DetailView):
         return super().get_queryset().visible_for(self.request.user)
 
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
+        if is_ajax(request):
             return self.get_AJAX(request, *args, **kwargs)
         return super(ProjectTagView, self).get(request, *args, **kwargs)
 
@@ -35,7 +36,7 @@ class ProjectTagView(DetailView):
         except IndexError:
             raise Http404
 
-        if self.request.is_ajax():
+        if is_ajax(self.request):
             return dict(project=self.object, locales=list(tag.iter_locales()), tag=tag,)
 
         return dict(project=self.object, tag=tag)

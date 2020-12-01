@@ -16,7 +16,7 @@ from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 register = template.Library()
@@ -34,7 +34,7 @@ def url(viewname, *args, **kwargs):
 def return_url(request):
     """Get an url of the previous page."""
     url = request.POST.get("return_url", request.META.get("HTTP_REFERER", "/"))
-    if not is_safe_url(url, settings.ALLOWED_HOSTS):
+    if not url_has_allowed_host_and_scheme(url, settings.ALLOWED_HOSTS):
         return settings.SITE_URL
     return url
 
