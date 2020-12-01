@@ -11,12 +11,12 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import { actions, CLDR_PLURALS, selectors } from '..';
 
 import type { Locale } from 'core/locale';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 type Props = {|
     locale: Locale,
     pluralForm: number,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
@@ -39,9 +39,13 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
         const { dispatch } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(actions.select(pluralForm));
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(actions.select(pluralForm));
+                },
+            ),
         );
     }
 
@@ -87,7 +91,8 @@ const mapStateToProps = (state: Object): Props => {
     return {
         locale: state[locale.NAME],
         pluralForm: selectors.getPluralForm(state),
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
     };
 };
 

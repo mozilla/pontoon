@@ -1,19 +1,24 @@
 /* @flow */
 
-import { fluent } from 'core/utils';
+import flattenMessage from './flattenMessage';
+import getEmptyMessage from './getEmptyMessage';
+import getReconstructedMessage from './getReconstructedMessage';
+import getSimplePreview from './getSimplePreview';
+import parser from './parser';
+import serializer from './serializer';
 
 import type { FluentMessage } from './types';
 import type { Locale } from 'core/locale';
 
-type SyntaxType = 'simple' | 'rich' | 'complex';
+type SyntaxType = 'simple' | 'rich' | 'complex' | '';
 
 export function getSimpleFromComplex(
     current: string,
     original: string,
     initial: string,
 ): [string, string] {
-    let translationContent = fluent.getSimplePreview(current);
-    let initialContent = fluent.getSimplePreview(initial);
+    let translationContent = getSimplePreview(current);
+    let initialContent = getSimplePreview(initial);
 
     // If any of the contents are junk, discard them.
     if (translationContent === current) {
@@ -34,16 +39,16 @@ export function getComplexFromSimple(
 ): [string, string] {
     let initialContent = initial;
 
-    const translationContent = fluent.serializer.serializeEntry(
-        fluent.getReconstructedMessage(original, current),
+    const translationContent = serializer.serializeEntry(
+        getReconstructedMessage(original, current),
     );
 
     // If there is no active translation (it's an untranslated string)
     // we make the initial translation an empty fluent message to avoid
     // showing unchanged content warnings.
     if (!initialContent) {
-        initialContent = fluent.serializer.serializeEntry(
-            fluent.getEmptyMessage(fluent.parser.parseEntry(original), locale),
+        initialContent = serializer.serializeEntry(
+            getEmptyMessage(parser.parseEntry(original), locale),
         );
     }
 
@@ -56,27 +61,26 @@ export function getRichFromComplex(
     initial: string,
     locale: Locale,
 ): [FluentMessage, FluentMessage] {
-    let translationContent = fluent.parser.parseEntry(current);
+    let translationContent = parser.parseEntry(current);
 
     // If the parsed content is invalid, create an empty message instead.
     // Note that this should be replaced with a check that prevents
     // turning back to the Rich editor, in order to avoid losing data.
     if (translationContent.type === 'Junk') {
-        translationContent = fluent.getEmptyMessage(
-            fluent.parser.parseEntry(original),
+        translationContent = getEmptyMessage(
+            parser.parseEntry(original),
             locale,
         );
     }
 
-    let initialContent = fluent.parser.parseEntry(initial);
+    let initialContent = parser.parseEntry(initial);
 
     // If there is no active translation for this entity, create an
     // empty message to serve as the reference for unsaved changes.
     if (initialContent.type === 'Junk') {
-        initialContent = fluent.getEmptyMessage(
-            fluent.parser.parseEntry(original),
-            locale,
-        );
+        initialContent = getEmptyMessage(parser.parseEntry(original), locale);
+    } else {
+        initialContent = flattenMessage(initialContent);
     }
 
     return [translationContent, initialContent];
@@ -90,14 +94,14 @@ export function getComplexFromRich(
 ): [string, string] {
     let initialContent = initial;
 
-    const translationContent = fluent.serializer.serializeEntry(current);
+    const translationContent = serializer.serializeEntry(current);
 
     // If there is no active translation (it's an untranslated string)
     // we make the initial translation an empty fluent message to avoid
     // showing unchanged content warnings.
     if (!initialContent) {
-        initialContent = fluent.serializer.serializeEntry(
-            fluent.getEmptyMessage(fluent.parser.parseEntry(original), locale),
+        initialContent = serializer.serializeEntry(
+            getEmptyMessage(parser.parseEntry(original), locale),
         );
     }
 
@@ -113,6 +117,7 @@ export function getComplexFromRich(
  * @param {string | FluentMessage} current Current content of the translation, as entered by the user.
  * @param {string} original Original string of the entity.
  * @param {string} initial Currently active translation, if any.
+ * @param {Locale} locale Current locale.
  *
  * @returns {[ string | FluentMessage, string ]} The converted current translation and initial translation.
  */

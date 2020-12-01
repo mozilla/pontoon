@@ -150,6 +150,9 @@ export default class Helpers extends React.Component<Props> {
                                 isReadOnlyEditor={isReadOnlyEditor}
                                 locale={locale}
                                 machinery={machinery}
+                                addTextToEditorTranslation={
+                                    addTextToEditorTranslation
+                                }
                                 updateEditorTranslation={
                                     updateEditorTranslation
                                 }

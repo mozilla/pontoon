@@ -19,18 +19,16 @@ import * as utils from 'core/utils';
 import * as history from 'modules/history';
 import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
-import * as genericeditor from 'modules/genericeditor';
-import * as fluenteditor from 'modules/fluenteditor';
 import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 import * as notification from 'core/notification';
 
+import EditorSelector from './EditorSelector';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
 import type { Entity, SourceType } from 'core/api';
-import type { EditorState } from 'core/editor';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { TermState } from 'core/term';
@@ -39,11 +37,9 @@ import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 import type { TeamCommentState } from 'modules/teamcomments';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 type Props = {|
     activeTranslationString: string,
-    editor: EditorState,
     history: HistoryState,
     isReadOnlyEditor: boolean,
     isTranslator: boolean,
@@ -58,7 +54,8 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: Entity,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
     user: UserState,
     users: UserState,
 |};
@@ -238,14 +235,19 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, nextEntity, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(
-                    navigation.actions.updateEntity(
-                        router,
-                        nextEntity.pk.toString(),
-                    ),
-                );
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(editor.actions.reset());
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            nextEntity.pk.toString(),
+                        ),
+                    );
+                },
+            ),
         );
     };
 
@@ -253,14 +255,19 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch, previousEntity, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(
-                    navigation.actions.updateEntity(
-                        router,
-                        previousEntity.pk.toString(),
-                    ),
-                );
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(editor.actions.reset());
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            previousEntity.pk.toString(),
+                        ),
+                    );
+                },
+            ),
         );
     };
 
@@ -268,9 +275,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         const { dispatch } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(push(path));
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(push(path));
+                },
+            ),
         );
     };
 
@@ -294,8 +305,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    addTextToEditorTranslation = (content: string) => {
-        this.props.dispatch(editor.actions.updateSelection(content));
+    addTextToEditorTranslation = (content: string, changeSource?: string) => {
+        this.props.dispatch(
+            editor.actions.updateSelection(content, changeSource),
+        );
     };
 
     deleteTranslation = (translationId: number) => {
@@ -362,20 +375,24 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
         // because it cannot be triggered for the use case of bug 1508474.
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(
-                    history.actions.updateStatus(
-                        change,
-                        selectedEntity,
-                        locale,
-                        parameters.resource,
-                        pluralForm,
-                        translationId,
-                        nextEntity,
-                        router,
-                    ),
-                );
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(
+                        history.actions.updateStatus(
+                            change,
+                            selectedEntity,
+                            locale,
+                            parameters.resource,
+                            pluralForm,
+                            translationId,
+                            nextEntity,
+                            router,
+                        ),
+                    );
+                },
+            ),
         );
     };
 
@@ -415,11 +432,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         setCommentTabIndex={this.setCommentTabIndex}
                         setContactPerson={this.setContactPerson}
                     />
-                    {state.selectedEntity.format === 'ftl' ? (
-                        <fluenteditor.Editor />
-                    ) : (
-                        <genericeditor.Editor />
-                    )}
+                    <EditorSelector
+                        fileFormat={state.selectedEntity.format}
+                        key={state.selectedEntity.pk}
+                    />
                     <history.History
                         entity={state.selectedEntity}
                         history={state.history}
@@ -472,7 +488,6 @@ const mapStateToProps = (state: Object): Props => {
         activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(
             state,
         ),
-        editor: state[editor.NAME],
         history: state[history.NAME],
         isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
         isTranslator: user.selectors.isTranslator(state),
@@ -487,7 +502,8 @@ const mapStateToProps = (state: Object): Props => {
         pluralForm: plural.selectors.getPluralForm(state),
         router: state.router,
         selectedEntity: entities.selectors.getSelectedEntity(state),
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
         user: state[user.NAME],
         users: state[user.NAME],
     };

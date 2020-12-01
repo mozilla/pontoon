@@ -27,7 +27,6 @@ export const getNavigationParams: Function = createSelector(
     querySelector,
     (path: string, query: string): NavigationParams => {
         const parts = path.split('/');
-
         // Because pathname always starts and finishes with a '/',
         // the first and last elements of `parts` are empty strings.
         parts.shift();

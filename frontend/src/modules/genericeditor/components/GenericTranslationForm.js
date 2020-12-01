@@ -1,142 +1,106 @@
 /* @flow */
 
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { EditorProps } from 'core/editor';
+import * as editor from 'core/editor';
+import * as entities from 'core/entities';
 
-import isEqual from 'lodash.isequal';
+type Props = {|
+    sendTranslation: (ignoreWarnings?: boolean) => void,
+    updateTranslation: (string) => void,
+|};
 
-/*
- * Render a simple textarea to edit a translation.
+/**
+ * Shows a generic translation form, a simple textarea.
  */
-export default class GenericTranslationForm extends React.Component<EditorProps> {
-    textarea: { current: any };
+export default function GenericTranslationForm(props: Props) {
+    const dispatch = useDispatch();
 
-    constructor(props: EditorProps) {
-        super(props);
+    const translation = useSelector((state) => state.editor.translation);
+    const changeSource = useSelector((state) => state.editor.changeSource);
+    const searchInputFocused = useSelector(
+        (state) => state.search.searchInputFocused,
+    );
+    const locale = useSelector((state) => state.locale);
+    const isReadOnlyEditor = useSelector((state) =>
+        entities.selectors.isReadOnlyEditor(state),
+    );
 
-        this.textarea = React.createRef();
-    }
+    const handleShortcutsFn = editor.useHandleShortcuts();
 
-    componentDidMount() {
-        this.focusInput(true);
-    }
+    const textareaRef = React.useRef(null);
 
-    componentDidUpdate(prevProps: EditorProps) {
-        // Close failed checks popup when content of the editor changes,
-        // but only if the errors and warnings did not change
-        // meaning they were already shown in the previous render
-        const prevEditor = prevProps.editor;
-        const editor = this.props.editor;
-        if (
-            prevProps.editor.translation !== this.props.editor.translation &&
-            prevEditor.errors === editor.errors &&
-            prevEditor.warnings === editor.warnings &&
-            (editor.errors.length || editor.warnings.length)
-        ) {
-            this.props.resetFailedChecks();
-        }
+    // Focus the textarea when something changes.
+    React.useLayoutEffect(() => {
+        const input = textareaRef.current;
 
-        // When content of the translation changes
-        //   - close unsaved changes popup if open
-        //   - update unsaved changes status
-        if (prevEditor.translation !== editor.translation) {
-            if (this.props.unsavedchanges.shown) {
-                this.props.hideUnsavedChanges();
-            }
-            this.props.updateUnsavedChanges();
-        }
-
-        // If there is content to add to the editor, do so, then remove
-        // the content so it isn't added again.
-        // This is an abuse of the redux store, because we want to update
-        // the content differently for each Editor type. Thus each Editor
-        // implements an `updateTranslationSelectionWith` method and that is
-        // used to update the translation.
-        if (editor.selectionReplacementContent) {
-            this.updateTranslationSelectionWith(
-                editor.selectionReplacementContent,
-            );
-            this.props.resetSelectionContent();
-        }
-
-        const prevPropsWithoutUser = this.removeUser(prevProps);
-        const propsWithoutUser = this.removeUser(this.props);
-
-        if (!isEqual(prevPropsWithoutUser, propsWithoutUser)) {
-            this.focusInput(editor.changeSource !== 'internal');
-        }
-    }
-
-    removeUser(props: EditorProps) {
-        const { user, ...propsWithoutUser } = props;
-        return propsWithoutUser;
-    }
-
-    focusInput(putCursorToStart: boolean) {
-        const input = this.textarea.current;
-
-        if (!input) {
-            return;
-        }
-
-        if (this.props.searchInputFocused) {
+        if (!input || searchInputFocused) {
             return;
         }
 
         input.focus();
 
-        if (putCursorToStart) {
+        if (changeSource !== 'internal') {
             input.setSelectionRange(0, 0);
         }
-    }
+    }, [translation, changeSource, searchInputFocused]);
 
-    updateTranslationSelectionWith(content: string) {
-        if (!this.textarea.current) {
+    // Reset checks when content of the editor changes.
+    React.useEffect(() => {
+        dispatch(editor.actions.resetFailedChecks());
+    }, [translation, dispatch]);
+
+    // When the translation or the initial translation changes, check for unsaved changes.
+    editor.useUpdateUnsavedChanges(false);
+
+    // Replace selected content on external actions (for example, when a user clicks
+    // on a placeable).
+    editor.useReplaceSelectionContent((content: string) => {
+        const input = textareaRef.current;
+
+        if (!input) {
             return;
         }
 
-        const newSelectionPos =
-            this.textarea.current.selectionStart + content.length;
+        const newSelectionPos = input.selectionStart + content.length;
 
         // Update content in the textarea.
-        this.textarea.current.setRangeText(content);
+        input.setRangeText(content);
 
         // Put the cursor right after the newly inserted content.
-        this.textarea.current.setSelectionRange(
-            newSelectionPos,
-            newSelectionPos,
-        );
+        input.setSelectionRange(newSelectionPos, newSelectionPos);
 
         // Update the state to show the new content in the Editor.
-        this.props.updateTranslation(this.textarea.current.value);
+        props.updateTranslation(input.value);
+    });
+
+    function handleChange(event: SyntheticInputEvent<HTMLTextAreaElement>) {
+        props.updateTranslation(event.currentTarget.value);
     }
 
-    handleShortcuts = (event: SyntheticKeyboardEvent<HTMLTextAreaElement>) => {
-        this.props.handleShortcuts(event, this.props.sendTranslation);
-    };
-
-    handleChange = (event: SyntheticInputEvent<HTMLTextAreaElement>) => {
-        this.props.updateTranslation(event.currentTarget.value);
-    };
-
-    render() {
-        return (
-            <textarea
-                placeholder={
-                    this.props.isReadOnlyEditor
-                        ? null
-                        : 'Type translation and press Enter to save'
-                }
-                readOnly={this.props.isReadOnlyEditor}
-                ref={this.textarea}
-                value={this.props.editor.translation}
-                onKeyDown={this.handleShortcuts}
-                onChange={this.handleChange}
-                dir={this.props.locale.direction}
-                lang={this.props.locale.code}
-                data-script={this.props.locale.script}
-            />
-        );
+    function handleShortcuts(
+        event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
+    ) {
+        handleShortcutsFn(event, props.sendTranslation);
     }
+
+    return (
+        <textarea
+            placeholder={
+                isReadOnlyEditor
+                    ? null
+                    : 'Type translation and press Enter to save'
+            }
+            readOnly={isReadOnlyEditor}
+            // $FLOW_IGNORE: No idea why this is erroring out.
+            ref={textareaRef}
+            value={translation}
+            onKeyDown={handleShortcuts}
+            onChange={handleChange}
+            dir={locale.direction}
+            lang={locale.code}
+            data-script={locale.script}
+        />
+    );
 }

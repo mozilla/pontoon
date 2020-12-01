@@ -1,8 +1,10 @@
-import React from 'react';
-import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
+import * as editor from 'core/editor';
+import * as locale from 'core/locale';
 import { fluent } from 'core/utils';
+
+import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import RichTranslationForm from './RichTranslationForm';
 
@@ -13,24 +15,34 @@ const DEFAULT_LOCALE = {
     cldrPlurals: [1, 5],
 };
 
-const TRANSLATION = fluent.parser.parseEntry(
-    'message = Value\n    .attr-1 = And\n    .attr-2 = Attributes',
-);
+function createComponent(entityString, updateTranslation) {
+    if (!updateTranslation) {
+        updateTranslation = sinon.fake();
+    }
 
-const EDITOR = {
-    translation: TRANSLATION,
-    errors: [],
-    warnings: [],
-};
+    const store = createReduxStore();
+    store.dispatch(locale.actions.receive(DEFAULT_LOCALE));
+
+    const message = fluent.parser.parseEntry(entityString);
+    store.dispatch(editor.actions.update(message));
+    store.dispatch(editor.actions.setInitialTranslation(message));
+
+    const wrapper = mountComponentWithStore(RichTranslationForm, store, {
+        updateTranslation,
+    });
+
+    wrapper.update();
+
+    return [wrapper, store];
+}
 
 describe('<RichTranslationForm>', () => {
     it('renders textarea for a value and each attribute', () => {
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={EDITOR}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+        const [wrapper] = createComponent(
+            `message = Value
+    .attr-1 = And
+    .attr-2 = Attributes
+`,
         );
 
         expect(wrapper.find('textarea')).toHaveLength(3);
@@ -40,24 +52,13 @@ describe('<RichTranslationForm>', () => {
     });
 
     it('renders select expression properly', () => {
-        const input = `
-my-entry =
+        const [wrapper] = createComponent(
+            `my-entry =
     { PLATFORM() ->
         [variant] Hello!
        *[another-variant] World!
-    }`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+    }
+`,
         );
 
         expect(wrapper.find('textarea')).toHaveLength(2);
@@ -70,8 +71,8 @@ my-entry =
     });
 
     it('renders select expression in attributes properly', () => {
-        const input = `
-my-entry =
+        const [wrapper] = createComponent(
+            `my-entry =
     .label =
         { PLATFORM() ->
             [macosx] Preferences
@@ -81,19 +82,8 @@ my-entry =
         { PLATFORM() ->
             [macosx] e
            *[other] s
-        }`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+        }
+`,
         );
 
         expect(wrapper.find('textarea')).toHaveLength(4);
@@ -124,24 +114,13 @@ my-entry =
     });
 
     it('renders plural string properly', () => {
-        const input = `
-my-entry =
+        const [wrapper] = createComponent(
+            `my-entry =
     { $num ->
         [one] Hello!
        *[other] World!
-    }`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+    }
+`,
         );
 
         expect(wrapper.find('textarea')).toHaveLength(2);
@@ -166,22 +145,11 @@ my-entry =
     });
 
     it('renders access keys properly', () => {
-        const input = `
-title = Title
+        const [wrapper] = createComponent(
+            `title = Title
     .label = Candidates
-    .accesskey = C`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+    .accesskey = C
+`,
         );
 
         expect(wrapper.find('textarea')).toHaveLength(3);
@@ -208,93 +176,47 @@ title = Title
     });
 
     it('does not render the access key UI if no candidates can be generated', () => {
-        const input = `
-title =
+        const [wrapper] = createComponent(
+            `title =
     .label = { reference }
-    .accesskey = C`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+    .accesskey = C
+`,
         );
 
         expect(wrapper.find('.accesskeys')).toHaveLength(0);
     });
 
     it('does not render the access key UI if access key is longer than 1 character', () => {
-        const input = `
-title =
+        const [wrapper] = createComponent(
+            `title =
     .label = Candidates
-    .accesskey = { reference }`;
-
-        const editor = {
-            ...EDITOR,
-            translation: fluent.parser.parseEntry(input),
-        };
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={editor}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={sinon.stub()}
-            />,
+    .accesskey = { reference }
+`,
         );
 
         expect(wrapper.find('.accesskeys')).toHaveLength(0);
     });
 
-    it('calls the updateTranslation function on mount and change', () => {
+    it('updates the translation when selectionReplacementContent is passed', async () => {
         const updateMock = sinon.spy();
-
-        const wrapper = shallow(
-            <RichTranslationForm
-                editor={EDITOR}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={updateMock}
-            />,
+        const [wrapper, store] = createComponent(
+            `title = Value
+    .label = Something
+`,
+            updateMock,
         );
 
-        expect(updateMock.calledOnce).toBeTruthy();
-        wrapper
-            .find('textarea')
-            .at(0)
-            .simulate('change', { currentTarget: { value: 'good bye' } });
-        expect(updateMock.calledTwice).toBeTruthy();
-    });
+        await store.dispatch(editor.actions.updateSelection('Add'));
 
-    it('updates the translation when selectionReplacementContent is passed', () => {
-        const resetMock = sinon.stub();
-        const updateMock = sinon.stub();
+        // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
+        wrapper.setProps({});
 
-        const wrapper = mount(
-            <RichTranslationForm
-                editor={EDITOR}
-                locale={DEFAULT_LOCALE}
-                unsavedchanges={{ shown: false }}
-                resetSelectionContent={resetMock}
-                updateTranslation={updateMock}
-                updateUnsavedChanges={sinon.stub()}
-            />,
+        expect(updateMock.called).toBeTruthy();
+        const replaceContent = fluent.parser.parseEntry(
+            `title = AddValue
+    .label = Something
+`,
         );
-
-        wrapper.setProps({
-            editor: { ...EDITOR, selectionReplacementContent: 'hello ' },
-        });
-
-        const updatedTranslation = fluent.parser.parseEntry(
-            'message = hello Value\n    .attr-1 = And\n    .attr-2 = Attributes',
-        );
-
-        expect(updateMock.calledTwice).toBeTruthy();
-        expect(updateMock.calledWith(updatedTranslation)).toBeTruthy();
-        expect(resetMock.calledOnce).toBeTruthy();
+        expect(updateMock.calledWith(replaceContent)).toBeTruthy();
     });
 });
