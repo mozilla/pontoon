@@ -94,6 +94,13 @@ def get_object_or_none(model, *args, **kwargs):
         return None
 
 
+def is_ajax(request):
+    """
+    Checks whether the given request is an AJAX request.
+    """
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+
 def require_AJAX(f):
     """
     AJAX request required decorator
@@ -101,7 +108,7 @@ def require_AJAX(f):
 
     @functools.wraps(f)  # Required by New Relic
     def wrap(request, *args, **kwargs):
-        if not request.is_ajax():
+        if not is_ajax(request):
             return HttpResponseBadRequest("Bad Request: Request must be AJAX")
         return f(request, *args, **kwargs)
 

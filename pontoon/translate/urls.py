@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path, re_path
 from django.views.generic import RedirectView
 
 from . import views
@@ -12,20 +12,16 @@ RESOURCE_PART = r"(?P<resource>.+)"
 
 urlpatterns = [
     # For backwards compatibility, redirect old `translate/` URLs.
-    url(
-        r"^translate/{locale}/{project}/{resource}/$".format(
-            locale=LOCALE_PART, project=PROJECT_PART, resource=RESOURCE_PART,
-        ),
+    path(
+        "translate/<locale:locale>/<slug:project>/<path:resource>/",
         RedirectView.as_view(
             url="/%(locale)s/%(project)s/%(resource)s/",
             query_string=True,
             permanent=False,
         ),
     ),
-    url(
-        r"^{locale}/{project}/{resource}/$".format(
-            locale=LOCALE_PART, project=PROJECT_PART, resource=RESOURCE_PART,
-        ),
+    path(
+        "<locale:locale>/<slug:project>/<path:resource>/",
         views.translate,
         name="pontoon.translate",
     ),
@@ -43,6 +39,6 @@ urlpatterns = [
 # automatically done when running with `make run`.
 if settings.DEV:
     urlpatterns += [
-        url(r"^static/(?P<path>.*)$", views.static_serve_dev,),
-        url(r"^sockjs-node/.*$", views.translate,),
+        path("static/<path:path>", views.static_serve_dev,),
+        re_path(r"^sockjs-node/.*$", views.translate,),
     ]

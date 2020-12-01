@@ -282,7 +282,7 @@ class LocaleContributorsView(ContributorsMixin, DetailView):
     template_name = "teams/includes/contributors.html"
     model = Locale
     slug_field = "code"
-    slug_url_kwarg = "code"
+    slug_url_kwarg = "locale"
 
     def get_context_object_name(self, obj):
         return "locale"
