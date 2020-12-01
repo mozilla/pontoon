@@ -5,6 +5,7 @@ import {
     END_UPDATE_TRANSLATION,
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
+    RESET_EDITOR,
     SET_INITIAL_TRANSLATION,
     START_UPDATE_TRANSLATION,
     UPDATE,
@@ -17,6 +18,7 @@ import type {
     FailedChecks,
     EndUpdateTranslationAction,
     InitialTranslationAction,
+    ResetEditorAction,
     ResetFailedChecksAction,
     ResetSelectionAction,
     StartUpdateTranslationAction,
@@ -30,6 +32,7 @@ import type {
 type Action =
     | EndUpdateTranslationAction
     | InitialTranslationAction
+    | ResetEditorAction
     | ResetFailedChecksAction
     | ResetSelectionAction
     | StartUpdateTranslationAction
@@ -145,7 +148,7 @@ export default function reducer(
             return {
                 ...state,
                 selectionReplacementContent: action.content,
-                changeSource: 'internal',
+                changeSource: action.changeSource,
             };
         case SET_INITIAL_TRANSLATION:
             return {
@@ -169,6 +172,12 @@ export default function reducer(
             return {
                 ...state,
                 selectionReplacementContent: '',
+                changeSource: 'internal',
+            };
+        case RESET_EDITOR:
+            return {
+                ...initial,
+                isRunningRequest: state.isRunningRequest,
             };
         case UPDATE_MACHINERY_SOURCES:
             return {

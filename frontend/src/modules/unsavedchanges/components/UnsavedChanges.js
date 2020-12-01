@@ -8,7 +8,7 @@ import './UnsavedChanges.css';
 
 import { actions, NAME } from '..';
 
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
+import type { UnsavedChangesState } from '../reducer';
 
 type Props = {|
     unsavedchanges: UnsavedChangesState,

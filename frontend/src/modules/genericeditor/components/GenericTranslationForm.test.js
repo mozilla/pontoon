@@ -1,67 +1,53 @@
-import React from 'react';
-import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
+
+import * as editor from 'core/editor';
+import * as locale from 'core/locale';
+
+import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import GenericTranslationForm from './GenericTranslationForm';
 
-const DEFAULT_LOCALE = {
-    direction: 'ltr',
-    code: 'kg',
-    script: 'Latin',
-};
+function createComponent(updateTranslation) {
+    const store = createReduxStore();
+    store.dispatch(locale.actions.receive({ code: 'kg' }));
+    store.dispatch(editor.actions.update('Hello'));
 
-const EDITOR = {
-    translation: 'world',
-    errors: [],
-    warnings: [],
-};
+    const wrapper = mountComponentWithStore(GenericTranslationForm, store, {
+        updateTranslation,
+    });
+
+    return [wrapper, store];
+}
 
 describe('<GenericTranslationForm>', () => {
     it('renders a textarea with some content', () => {
-        const wrapper = shallow(
-            <GenericTranslationForm editor={EDITOR} locale={DEFAULT_LOCALE} />,
-        );
+        const [wrapper] = createComponent();
 
         expect(wrapper.find('textarea')).toHaveLength(1);
-        expect(wrapper.find('textarea').html()).toContain('world');
+        expect(wrapper.find('textarea').html()).toContain('Hello');
     });
 
     it('calls the updateTranslation function on change', () => {
-        const mockUpdate = sinon.spy();
-        const wrapper = shallow(
-            <GenericTranslationForm
-                editor={EDITOR}
-                locale={DEFAULT_LOCALE}
-                updateTranslation={mockUpdate}
-            />,
-        );
+        const updateMock = sinon.spy();
+        const [wrapper] = createComponent(updateMock);
 
-        expect(mockUpdate.called).toBeFalsy();
+        expect(updateMock.called).toBeFalsy();
         wrapper
             .find('textarea')
             .simulate('change', { currentTarget: { value: 'good bye' } });
-        expect(mockUpdate.called).toBeTruthy();
+        expect(updateMock.called).toBeTruthy();
     });
 
-    it('updates the translation when selectionReplacementContent is passed', () => {
-        const resetMock = sinon.stub();
-        const updateMock = sinon.stub();
+    it('updates the translation when selectionReplacementContent is passed', async () => {
+        const updateMock = sinon.spy();
+        const [wrapper, store] = createComponent(updateMock);
 
-        const wrapper = mount(
-            <GenericTranslationForm
-                editor={EDITOR}
-                locale={DEFAULT_LOCALE}
-                unsavedchanges={{ shown: false }}
-                resetSelectionContent={resetMock}
-                updateTranslation={updateMock}
-                updateUnsavedChanges={sinon.stub()}
-            />,
-        );
+        await store.dispatch(editor.actions.updateSelection('World, '));
 
-        wrapper.setProps({ editor: { selectionReplacementContent: 'hello ' } });
+        // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
+        wrapper.setProps({});
 
         expect(updateMock.calledOnce).toBeTruthy();
-        expect(updateMock.calledWith('hello world')).toBeTruthy();
-        expect(resetMock.calledOnce).toBeTruthy();
+        expect(updateMock.calledWith('World, Hello')).toBeTruthy();
     });
 });

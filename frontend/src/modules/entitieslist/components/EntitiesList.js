@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
@@ -22,7 +23,6 @@ import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
-import type { UnsavedChangesState } from 'modules/unsavedchanges';
 
 type Props = {|
     batchactions: BatchActionsState,
@@ -32,7 +32,8 @@ type Props = {|
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
-    unsavedchanges: UnsavedChangesState,
+    unsavedChangesExist: boolean,
+    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
@@ -210,16 +211,21 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { dispatch, router } = this.props;
 
         dispatch(
-            unsavedchanges.actions.check(this.props.unsavedchanges, () => {
-                dispatch(batchactions.actions.resetSelection());
-                dispatch(
-                    navigation.actions.updateEntity(
-                        router,
-                        entity.pk.toString(),
-                        replaceHistory,
-                    ),
-                );
-            }),
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    dispatch(batchactions.actions.resetSelection());
+                    dispatch(editor.actions.reset());
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            entity.pk.toString(),
+                            replaceHistory,
+                        ),
+                    );
+                },
+            ),
         );
     };
 
@@ -228,43 +234,48 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const { dispatch } = props;
 
         dispatch(
-            unsavedchanges.actions.check(props.unsavedchanges, () => {
-                // If holding Shift, check all entities in the entity list between the
-                // lastCheckedEntity and the entity if entity not checked. If entity
-                // checked, uncheck all entities in-between.
-                const lastCheckedEntity = props.batchactions.lastCheckedEntity;
+            unsavedchanges.actions.check(
+                this.props.unsavedChangesExist,
+                this.props.unsavedChangesIgnored,
+                () => {
+                    // If holding Shift, check all entities in the entity list between the
+                    // lastCheckedEntity and the entity if entity not checked. If entity
+                    // checked, uncheck all entities in-between.
+                    const lastCheckedEntity =
+                        props.batchactions.lastCheckedEntity;
 
-                if (shiftKeyPressed && lastCheckedEntity) {
-                    const entityListIds = props.entities.entities.map(
-                        (e) => e.pk,
-                    );
-                    const start = entityListIds.indexOf(entity);
-                    const end = entityListIds.indexOf(lastCheckedEntity);
-
-                    const entitySelection = entityListIds.slice(
-                        Math.min(start, end),
-                        Math.max(start, end) + 1,
-                    );
-
-                    if (props.batchactions.entities.includes(entity)) {
-                        dispatch(
-                            batchactions.actions.uncheckSelection(
-                                entitySelection,
-                                entity,
-                            ),
+                    if (shiftKeyPressed && lastCheckedEntity) {
+                        const entityListIds = props.entities.entities.map(
+                            (e) => e.pk,
                         );
+                        const start = entityListIds.indexOf(entity);
+                        const end = entityListIds.indexOf(lastCheckedEntity);
+
+                        const entitySelection = entityListIds.slice(
+                            Math.min(start, end),
+                            Math.max(start, end) + 1,
+                        );
+
+                        if (props.batchactions.entities.includes(entity)) {
+                            dispatch(
+                                batchactions.actions.uncheckSelection(
+                                    entitySelection,
+                                    entity,
+                                ),
+                            );
+                        } else {
+                            dispatch(
+                                batchactions.actions.checkSelection(
+                                    entitySelection,
+                                    entity,
+                                ),
+                            );
+                        }
                     } else {
-                        dispatch(
-                            batchactions.actions.checkSelection(
-                                entitySelection,
-                                entity,
-                            ),
-                        );
+                        dispatch(batchactions.actions.toggleSelection(entity));
                     }
-                } else {
-                    dispatch(batchactions.actions.toggleSelection(entity));
-                }
-            }),
+                },
+            ),
         );
     };
 
@@ -390,7 +401,8 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         locale: state[locale.NAME],
         router: state.router,
-        unsavedchanges: state[unsavedchanges.NAME],
+        unsavedChangesExist: state[unsavedchanges.NAME].exist,
+        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
     };
 };
 

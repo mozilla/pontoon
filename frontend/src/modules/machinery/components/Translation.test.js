@@ -1,30 +1,39 @@
-import React from 'react';
-import { shallow } from 'enzyme';
 import sinon from 'sinon';
+
+import {
+    createDefaultUser,
+    createReduxStore,
+    mountComponentWithStore,
+} from 'test/store';
 
 import Translation from './Translation';
 
+const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
+const DEFAULT_TRANSLATION = {
+    sources: [
+        {
+            type: 'translation-memory',
+        },
+    ],
+    original: ORIGINAL,
+    translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
+};
+
+function createTranslation(translation, updateMachinerySources) {
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(Translation, store, {
+        translation,
+        updateMachinerySources,
+        updateEditorTranslation: sinon.mock(),
+        addTextToEditorTranslation: sinon.mock(),
+    });
+
+    createDefaultUser(store);
+
+    return wrapper;
+}
+
 describe('<Translation>', () => {
-    const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
-    const DEFAULT_TRANSLATION = {
-        sources: [
-            {
-                type: 'translation-memory',
-            },
-        ],
-        original: ORIGINAL,
-        translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
-    };
-    const DEFAULT_LOCALE = {
-        direction: 'ltr',
-        code: 'kg',
-        script: 'Latin',
-    };
-
-    const DEFAULT_ENTITY = {
-        original: ORIGINAL,
-    };
-
     let getSelectionBackup;
 
     beforeAll(() => {
@@ -41,13 +50,7 @@ describe('<Translation>', () => {
     });
 
     it('renders a translation correctly', () => {
-        const wrapper = shallow(
-            <Translation
-                translation={DEFAULT_TRANSLATION}
-                locale={DEFAULT_LOCALE}
-                entity={DEFAULT_ENTITY}
-            />,
-        );
+        const wrapper = createTranslation(DEFAULT_TRANSLATION);
 
         expect(
             wrapper.find('.original').find('GenericTranslation'),
@@ -57,8 +60,6 @@ describe('<Translation>', () => {
                 .content,
         ).toContain('Un cheval, un cheval !');
 
-        // No count.
-        expect(wrapper.find('ul li sup')).toHaveLength(0);
         // No quality.
         expect(wrapper.find('.quality')).toHaveLength(0);
     });
@@ -68,34 +69,20 @@ describe('<Translation>', () => {
             ...DEFAULT_TRANSLATION,
             quality: 100,
         };
-        const wrapper = shallow(
-            <Translation
-                translation={translation}
-                locale={DEFAULT_LOCALE}
-                entity={DEFAULT_ENTITY}
-            />,
-        );
+        const wrapper = createTranslation(translation);
 
         expect(wrapper.find('.quality')).toHaveLength(1);
         expect(wrapper.find('.quality').text()).toEqual('100%');
     });
 
-    it('updateMachinerySources is called while copying', () => {
-        const translationMock = sinon.stub();
+    it('calls updateMachinerySources when clicking a translation', () => {
         const machineryMock = sinon.stub();
-
-        const wrapper = shallow(
-            <Translation
-                translation={DEFAULT_TRANSLATION}
-                locale={DEFAULT_LOCALE}
-                entity={DEFAULT_ENTITY}
-                updateEditorTranslation={translationMock}
-                updateMachinerySources={machineryMock}
-            />,
-        );
+        const wrapper = createTranslation(DEFAULT_TRANSLATION, machineryMock);
 
         expect(machineryMock.calledOnce).toBeFalsy();
+        expect(wrapper.find('li.translation')).toHaveLength(1);
         wrapper.find('li.translation').simulate('click');
+
         expect(machineryMock.calledOnce).toBeTruthy();
         expect(
             machineryMock.calledWith(

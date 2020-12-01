@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { FiltersPanelBase } from './FiltersPanel';
-import { FILTERS_STATUS, FILTERS_EXTRA } from '..';
+import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 
 const FILTERS = [].concat(FILTERS_STATUS, FILTERS_EXTRA);
 
