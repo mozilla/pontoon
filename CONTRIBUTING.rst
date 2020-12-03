@@ -237,7 +237,7 @@ a virtualenv to build docs, do this:
     $ cd docs/
     $ virtualenv venv
     $ source venv/bin/activate
-    $ pip install --require-hashes -r requirements/default.txt
+    $ pip install --require-hashes --use-deprecated=legacy-resolver -r requirements/default.txt
 
 Then, to build the docs, run this:
 
@@ -348,7 +348,7 @@ steps, as they don't affect your setup if nothing has changed:
    git pull origin master
 
    # Install new dependencies or update existing ones.
-   pip2 install -U --force --require-hashes -r requirements/default.txt
+   pip2 install -U --force --require-hashes --use-deprecated=legacy-resolver -r requirements/default.txt
 
    # Run database migrations.
    python manage.py migrate
