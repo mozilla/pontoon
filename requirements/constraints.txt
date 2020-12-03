@@ -267,10 +267,9 @@ diff-match-patch==20121119 \
 requests==2.21.0 \
     --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b
 
-# >=0.17.0, <0.18 compare-locales
-fluent.syntax==0.17.0 \
-    --hash=sha256:e26be470aeebe4badd84f7bb0b648414e0f2ef95d26e5336d634af99e402ea61 \
-    --hash=sha256:ac3db2f77d62b032fdf1f17ef5c390b7801a9e9fb58d41eca3825c0d47b88d79
+# >=0.18.0, <0.19 compare-locales
+fluent.syntax==0.18.1 \
+    --hash=sha256:0e63679fa4f1b3042565220a5127b4bab842424f07d6a13c12299e3b3835486a
 
 # compare-locales
 pytoml==0.1.14 \
