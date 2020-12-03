@@ -176,6 +176,7 @@ export function updateStatus(
                     pluralForm,
                     locale,
                 );
+                dispatch(editorActions.reset());
             } else {
                 dispatch(get(entity.pk, locale.code, pluralForm));
             }

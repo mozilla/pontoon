@@ -16,86 +16,6 @@ import SimpleEditor from './simple/SimpleEditor';
 import RichEditor from './rich/RichEditor';
 
 /**
- * Hook to update the editor content whenever the entity changes.
- *
- * This hook is in charge of formatting the translation content for each type of Fluent Editor.
- * It does *not* update that content when the user switches the "force source" mode though,
- * as that is dealt with by using the `useForceSource` hook.
- */
-function useLoadTranslation(syntaxType, forceSource) {
-    const dispatch = useDispatch();
-
-    const updateTranslation = editor.useUpdateTranslation();
-
-    const entity = useSelector((state) =>
-        entities.selectors.getSelectedEntity(state),
-    );
-    const locale = useSelector((state) => state.locale);
-    const activeTranslationString = useSelector((state) =>
-        plural.selectors.getTranslationStringForSelectedEntity(state),
-    );
-
-    // We do not want to perform any formatting when the user switches "force source",
-    // as that is handled in the `useForceSource` hook. We thus keep track of that variable's
-    // value and only update when it didn't change since the last render.
-    const prevForceSource = React.useRef(forceSource);
-
-    // We want to run the following effect only when the entity changes, and in
-    // no other cases. We thus track the entity's pk.
-    const prevEntityPK = React.useRef(null);
-
-    React.useLayoutEffect(() => {
-        if (
-            prevForceSource.current !== forceSource ||
-            !entity ||
-            prevEntityPK.current === entity.pk
-        ) {
-            prevForceSource.current = forceSource;
-            return;
-        }
-
-        if (syntaxType === '') {
-            return;
-        }
-
-        let translationContent = '';
-        if (syntaxType === 'complex') {
-            // Use the actual content that we get from the server: a Fluent message as a string.
-            translationContent = activeTranslationString;
-        } else if (syntaxType === 'simple') {
-            // Use a simplified preview of the Fluent message.
-            translationContent = fluent.getSimplePreview(
-                activeTranslationString,
-            );
-        } else if (syntaxType === 'rich') {
-            // Use a Fluent Message object.
-            if (activeTranslationString) {
-                translationContent = fluent.flattenMessage(
-                    fluent.parser.parseEntry(activeTranslationString),
-                );
-            } else {
-                translationContent = fluent.getEmptyMessage(
-                    fluent.parser.parseEntry(entity.original),
-                    locale,
-                );
-            }
-        }
-        dispatch(editor.actions.setInitialTranslation(translationContent));
-        updateTranslation(translationContent, 'initial');
-
-        prevEntityPK.current = entity.pk;
-    }, [
-        syntaxType,
-        forceSource,
-        entity,
-        activeTranslationString,
-        locale,
-        updateTranslation,
-        dispatch,
-    ]);
-}
-
-/**
  * Function to analyze a translation and determine what its appropriate syntax is.
  *
  * @returns { string } The syntax of the translation, can be "simple", "rich" or "complex".
@@ -120,39 +40,83 @@ function getSyntaxType(source) {
 }
 
 /**
- * Hook that analyzes editor content and determines what its syntax is.
+ * Hook to update the editor content whenever the entity changes.
  *
- * @returns { string } See `getSyntaxType`.
+ * This hook is in charge of formatting the translation content for each type of Fluent Editor.
+ * It does *not* update that content when the user switches the "force source" mode though,
+ * as that is dealt with by using the `useForceSource` hook.
  */
-function useAnalyzeSyntax() {
-    const [syntaxType, setSyntaxType] = React.useState('');
+function useLoadTranslation(forceSource) {
+    const dispatch = useDispatch();
 
-    const translation = useSelector((state) => state.editor.translation);
+    const updateTranslation = editor.useUpdateTranslation();
     const changeSource = useSelector((state) => state.editor.changeSource);
-    const activeTranslationString = useSelector((state) =>
-        plural.selectors.getTranslationStringForSelectedEntity(state),
-    );
+
     const entity = useSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
+    const locale = useSelector((state) => state.locale);
+    const activeTranslationString = useSelector((state) =>
+        plural.selectors.getTranslationStringForSelectedEntity(state),
+    );
+
+    // We do not want to perform any formatting when the user switches "force source",
+    // as that is handled in the `useForceSource` hook. We thus keep track of that variable's
+    // value and only update when it didn't change since the last render.
+    const prevForceSource = React.useRef(forceSource);
 
     React.useLayoutEffect(() => {
-        if (!entity) {
+        if (
+            prevForceSource.current !== forceSource ||
+            !entity ||
+            // We want to run this only when the editor state has been reset.
+            changeSource !== 'reset'
+        ) {
+            prevForceSource.current = forceSource;
             return;
         }
-        const source = activeTranslationString || entity.original;
-        const syntax = getSyntaxType(source);
-        setSyntaxType(syntax);
-    }, [entity, activeTranslationString]);
 
-    React.useLayoutEffect(() => {
-        if (translation && changeSource !== 'internal') {
-            const syntax = getSyntaxType(translation);
-            setSyntaxType(syntax);
+        const syntax = getSyntaxType(
+            activeTranslationString || entity.original,
+        );
+
+        if (syntax === '') {
+            return;
         }
-    }, [translation, changeSource]);
 
-    return syntaxType;
+        let translationContent = '';
+        if (syntax === 'complex') {
+            // Use the actual content that we get from the server: a Fluent message as a string.
+            translationContent = activeTranslationString;
+        } else if (syntax === 'simple') {
+            // Use a simplified preview of the Fluent message.
+            translationContent = fluent.getSimplePreview(
+                activeTranslationString,
+            );
+        } else if (syntax === 'rich') {
+            // Use a Fluent Message object.
+            if (activeTranslationString) {
+                translationContent = fluent.flattenMessage(
+                    fluent.parser.parseEntry(activeTranslationString),
+                );
+            } else {
+                translationContent = fluent.getEmptyMessage(
+                    fluent.parser.parseEntry(entity.original),
+                    locale,
+                );
+            }
+        }
+        dispatch(editor.actions.setInitialTranslation(translationContent));
+        updateTranslation(translationContent, 'initial');
+    }, [
+        changeSource,
+        forceSource,
+        entity,
+        activeTranslationString,
+        locale,
+        updateTranslation,
+        dispatch,
+    ]);
 }
 
 /**
@@ -162,7 +126,7 @@ function useAnalyzeSyntax() {
  *      - a boolean indicating if the source mode is enabled;
  *      - a function to toggle the source mode.
  */
-function useForceSource(syntaxType) {
+function useForceSource() {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);
@@ -186,11 +150,13 @@ function useForceSource(syntaxType) {
     // When a user wants to force (or unforce) the source editor, we need to convert
     // the existing translation to a format appropriate for the next editor type.
     function changeForceSource() {
-        if (syntaxType === 'complex') {
+        const syntax = getSyntaxType(translation);
+
+        if (syntax === 'complex') {
             return;
         }
-        const fromSyntax = forceSource ? 'complex' : syntaxType;
-        const toSyntax = forceSource ? syntaxType : 'complex';
+        const fromSyntax = forceSource ? 'complex' : syntax;
+        const toSyntax = forceSource ? syntax : 'complex';
         const [translationContent, initialContent] = fluent.convertSyntax(
             fromSyntax,
             toSyntax,
@@ -215,25 +181,39 @@ function useForceSource(syntaxType) {
 export default function FluentEditor() {
     const dispatch = useDispatch();
 
+    const translation = useSelector((state) => state.editor.translation);
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
+    const entity = useSelector((state) =>
+        entities.selectors.getSelectedEntity(state),
+    );
+    const activeTranslationString = useSelector((state) =>
+        plural.selectors.getTranslationStringForSelectedEntity(state),
+    );
     const user = useSelector((state) => state.user);
 
-    const syntaxType = useAnalyzeSyntax();
-    const [forceSource, changeForceSource] = useForceSource(syntaxType);
-    useLoadTranslation(syntaxType, forceSource);
+    const [forceSource, changeForceSource] = useForceSource();
+    useLoadTranslation(forceSource);
+
+    if (!entity) {
+        return null;
+    }
+
+    const syntax = getSyntaxType(
+        translation || activeTranslationString || entity.original,
+    );
 
     // Do not render if the syntax has not yet been computed.
-    if (syntaxType === '') {
+    if (syntax === '') {
         return null;
     }
 
     // Choose which editor implementation to render.
     let EditorImplementation = RichEditor;
-    if (forceSource || syntaxType === 'complex') {
+    if (forceSource || syntax === 'complex') {
         EditorImplementation = SourceEditor;
-    } else if (syntaxType === 'simple') {
+    } else if (syntax === 'simple') {
         EditorImplementation = SimpleEditor;
     }
 
@@ -252,7 +232,7 @@ export default function FluentEditor() {
     let ftlSwitch = null;
     // But only if the user is logged in and the string is not read-only.
     if (user.isAuthenticated && !isReadOnlyEditor) {
-        if (syntaxType === 'complex') {
+        if (syntax === 'complex') {
             // TODO: To Localize
             ftlSwitch = (
                 <button
