@@ -23,9 +23,9 @@ export default function useCopyOriginalIntoEditor() {
     return () => {
         if (entity) {
             if (pluralForm === -1 || pluralForm === 0) {
-                updateTranslation(entity.original);
+                updateTranslation(entity.original, 'original');
             } else {
-                updateTranslation(entity.original_plural);
+                updateTranslation(entity.original_plural, 'original');
             }
         }
     };
