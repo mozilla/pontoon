@@ -168,6 +168,7 @@ export function updateStatus(
 
             if (results.translation && change === 'approve' && nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
+                dispatch(editorActions.reset());
                 pluralActions.moveToNextTranslation(
                     dispatch,
                     router,
