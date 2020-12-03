@@ -185,12 +185,20 @@ export default function FluentEditor() {
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
+    const entity = useSelector((state) =>
+        entities.selectors.getSelectedEntity(state),
+    );
+    const activeTranslationString = useSelector((state) =>
+        plural.selectors.getTranslationStringForSelectedEntity(state),
+    );
     const user = useSelector((state) => state.user);
 
     const [forceSource, changeForceSource] = useForceSource();
     useLoadTranslation(forceSource);
 
-    const syntax = getSyntaxType(translation);
+    const syntax = getSyntaxType(
+        translation || activeTranslationString || entity.original,
+    );
 
     // Do not render if the syntax has not yet been computed.
     if (syntax === '') {
