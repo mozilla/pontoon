@@ -104,7 +104,7 @@ function extractFailedChecksOfType(
 const initial: EditorState = {
     translation: '',
     initialTranslation: '',
-    changeSource: 'internal',
+    changeSource: 'reset',
     machinerySources: [],
     machineryTranslation: '',
     selectionReplacementContent: '',

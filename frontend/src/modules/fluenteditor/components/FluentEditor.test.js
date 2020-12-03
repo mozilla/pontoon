@@ -59,7 +59,7 @@ const ENTITIES = [
     },
 ];
 
-async function createComponent(entityPk = 0) {
+async function createComponent(entityPk = 1) {
     const store = createReduxStore();
     createDefaultUser(store);
 
@@ -69,6 +69,7 @@ async function createComponent(entityPk = 0) {
     await store.dispatch(
         navigation.actions.updateEntity(store.getState().router, entityPk),
     );
+    store.dispatch(editor.actions.reset());
 
     wrapper.update();
 
