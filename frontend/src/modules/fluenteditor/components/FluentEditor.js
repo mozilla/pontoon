@@ -196,6 +196,10 @@ export default function FluentEditor() {
     const [forceSource, changeForceSource] = useForceSource();
     useLoadTranslation(forceSource);
 
+    if (!entity) {
+        return null;
+    }
+
     const syntax = getSyntaxType(
         translation || activeTranslationString || entity.original,
     );
