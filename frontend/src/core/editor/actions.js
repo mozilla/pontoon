@@ -265,7 +265,6 @@ export function sendTranslation(
 
             if (nextEntity) {
                 // The change did work, we want to move on to the next Entity or pluralForm.
-                dispatch(reset());
                 pluralActions.moveToNextTranslation(
                     dispatch,
                     router,
@@ -274,6 +273,7 @@ export function sendTranslation(
                     pluralForm,
                     locale,
                 );
+                dispatch(reset());
             }
         }
 
