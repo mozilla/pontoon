@@ -26,11 +26,11 @@ $(function() {
     $('#admin-form').attr('action', $('#admin-form').attr('action').split('/projects/')[0] + '/projects/' + slug);
   });
 
-  // Submit form with Enter
+  // Submit form with Enter (keyCode === 13)
   $('html').unbind("keydown.pontoon").bind("keydown.pontoon", function (e) {
     if ($('input[type=text]:focus').length > 0 || $('input[type=url]:focus').length > 0) {
       var key = e.keyCode || e.which;
-      if (key === 13) { // Enter
+      if (key === 13) {
         // A short delay to allow digest of autocomplete before submit
         setTimeout(function() {
           $('#admin-form').submit();
