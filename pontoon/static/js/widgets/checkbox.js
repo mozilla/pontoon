@@ -1,16 +1,19 @@
+
 import React from 'react';
 
+
 export default class Checkbox extends React.Component {
+
     /* A checkbox which you can set `indeterminate` on
      *
      */
 
-    constructor(props) {
+    constructor (props) {
         super(props);
         this.el = {};
     }
 
-    get indeterminate() {
+    get indeterminate () {
         return this.props.indeterminate ? true : false;
     }
 
@@ -25,9 +28,9 @@ export default class Checkbox extends React.Component {
     }
 
     render() {
-        const { indeterminate, ...props } = this.props;
+        const {indeterminate, ...props} = this.props;
         return (
-            <input {...props} type='checkbox' ref={(el) => (this.el = el)} />
+            <input {...props} type="checkbox" ref={el => this.el = el} />
         );
     }
 }
