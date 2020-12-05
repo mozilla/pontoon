@@ -8,14 +8,29 @@
 /build
 
 # misc
+*.html
+*.min.js
+*.min.css
+*.yml
+**/base/static/js/lib*
+**/base/templates/js/pontoon.js
+**/base/static/css/boilerplate.css
+**/base/static/css/fontawesome-all.css
+**/base/static/css/jquery-ui.css
+**/base/static/css/nprogress.css
+**/homepage/static/css/fullpage.css
+**/homepage/static/js/lib/fullpage.js
+**/in_context/static/css/agency.css
+**/in_context/static/js/agency.js
+**/frontend/build*
+**/package.json*
+
 *.DS_Store
 *.env.local
 *.env.development.local
 *.env.test.local
 *.env.production.local
-*.html
 
-**/package.json*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

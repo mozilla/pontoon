@@ -1,11 +1,9 @@
-
-
 .tag-resources {
     text-align: left;
 }
 
 .tag-resources button {
-    margin: .2em auto 1em auto;
+    margin: 0.2em auto 1em auto;
     display: block;
 }
 
@@ -16,7 +14,7 @@
 .tag-resource-widget {
     background: #999;
     margin-bottom: 2em;
-    padding-bottom: .3em;
+    padding-bottom: 0.3em;
 }
 
 .tag-resources .rt-table input {
@@ -24,7 +22,7 @@
     display: block;
 }
 
-.tag-resources .ReactTable .pagination-bottom  .-pageInfo {
+.tag-resources .ReactTable .pagination-bottom .-pageInfo {
     color: #333;
 }
 
@@ -32,9 +30,8 @@
     text-align: left;
 }
 
-
 button.tag-resources-associate {
-    margin-top: .5em;
+    margin-top: 0.5em;
 }
 
 .tag-resources select.search-tag-resource-type {
@@ -43,7 +40,6 @@ button.tag-resources-associate {
     margin: 1em auto;
     float: none;
 }
-
 
 .tag-resources input.search-tag-resources {
     width: 90%;

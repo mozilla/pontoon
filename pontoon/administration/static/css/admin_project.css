@@ -1,558 +1,558 @@
 body {
-  overflow: auto;
-  position: relative;
+    overflow: auto;
+    position: relative;
 }
 
 .select {
-  padding-left: 0;
-  text-align: left;
+    padding-left: 0;
+    text-align: left;
 }
 
 select {
-  margin-top: 4px;
+    margin-top: 4px;
 }
 
 h1 {
-  color: #EBEBEB;
-  font-size: 48px;
-  letter-spacing: -1px;
-  margin-bottom: 40px;
-  position: relative;
+    color: #ebebeb;
+    font-size: 48px;
+    letter-spacing: -1px;
+    margin-bottom: 40px;
+    position: relative;
 }
 
 h1 aside {
-  bottom: 8px;
-  position: absolute;
-  right: 0;
+    bottom: 8px;
+    position: absolute;
+    right: 0;
 }
 
 h1 a {
-  color: #7BC876;
-  font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 0;
-  margin-left: 20px;
+    color: #7bc876;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0;
+    margin-left: 20px;
 }
 
 body > form {
-  color: #AAAAAA;
-  font-size: 14px;
-  padding: 40px 20px 100px;
+    color: #aaaaaa;
+    font-size: 14px;
+    padding: 40px 20px 100px;
 }
 
 form > div {
-  margin: 20px 0;
-  text-align: right;
+    margin: 20px 0;
+    text-align: right;
 }
 
 form > div.controls {
-  margin-top: 70px;
+    margin-top: 70px;
 }
 
 form > section > div {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 form > div.inline.delete,
 form > section > div.inline.delete {
-  opacity: 0.3;
+    opacity: 0.3;
 }
 
 h3 {
-  font-size: 30px;
-  margin-top: 70px;
+    font-size: 30px;
+    margin-top: 70px;
 }
 
 h4 {
-  color: #EBEBEB;
-  font-size: 18px;
-  font-style: italic;
-  font-weight: 300;
-  margin-top: 40px;
+    color: #ebebeb;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 300;
+    margin-top: 40px;
 }
 
 label {
-  display: block;
-  padding-bottom: 3px;
-  text-align: left;
+    display: block;
+    padding-bottom: 3px;
+    text-align: left;
 }
 
-input[type=text],
-input[type=password],
-input[type=url],
-input[type=number],
+input[type='text'],
+input[type='password'],
+input[type='url'],
+input[type='number'],
 textarea {
-  display: block;
-  height: 24px;
-  margin-left: -1px;
-  width: 975px;
+    display: block;
+    height: 24px;
+    margin-left: -1px;
+    width: 975px;
 }
 
 .half label {
-  float: left;
-  width: 490px;
+    float: left;
+    width: 490px;
 }
 
 .half input {
-  margin-right: 5px;
-  width: 482px;
+    margin-right: 5px;
+    width: 482px;
 }
 
 .half input:last-child {
-  margin-right: 0;
-  width: 483px;
+    margin-right: 0;
+    width: 483px;
 }
 
 .half .for-name .errorlist {
-  float: left;
+    float: left;
 }
 
 .half .for-slug .errorlist {
-  float: right;
+    float: right;
 }
 
 .half .errorlist li {
-  margin: 0;
+    margin: 0;
 }
 
 form .button {
-  background: #888888;
-  border: none;
-  display: block;
-  float: right;
-  font-size: 14px;
-  height: 31px;
-  width: 31px;
+    background: #888888;
+    border: none;
+    display: block;
+    float: right;
+    font-size: 14px;
+    height: 31px;
+    width: 31px;
 }
 
 .button.delete-inline {
-  color: #333333;
-  font-size: 20px;
-  padding: 4px;
+    color: #333333;
+    font-size: 20px;
+    padding: 4px;
 }
 
 #admin-strings-form .controls .button,
 #admin-form .controls .button {
-  border-radius: 3px;
-  font-weight: 400;
-  text-transform: uppercase;
-  width: 150px;
+    border-radius: 3px;
+    font-weight: 400;
+    text-transform: uppercase;
+    width: 150px;
 }
 
 #admin-strings-form .controls .add-inline {
-  float: left;
-  margin-left: 0;
+    float: left;
+    margin-left: 0;
 }
 
 #admin-strings-form .strings-list .entity textarea:nth-child(3) {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .controls .button.sync,
 .controls .button.sync:hover {
-  background: #333941;
-  color: #aaa;
-  float: left;
+    background: #333941;
+    color: #aaa;
+    float: left;
 }
 
 .controls .button.pretranslate,
 .controls .button.pretranslate:hover {
-  background: #333941;
-  color: #aaa;
-  float: right;
+    background: #333941;
+    color: #aaa;
+    float: right;
 }
 
-form a:link, form a:visited {
-  color: #7BC876;
-  float: right;
-  text-transform: uppercase;
+form a:link,
+form a:visited {
+    color: #7bc876;
+    float: right;
+    text-transform: uppercase;
 }
 
 #admin-form a.add-inline,
 #admin-form a.add-repo {
-  font-size: 14px;
-  font-style: normal;
-  letter-spacing: 0;
-  margin-top: 17px;
+    font-size: 14px;
+    font-style: normal;
+    letter-spacing: 0;
+    margin-top: 17px;
 }
 
 .controls a {
-  margin: 5px 9px;
+    margin: 5px 9px;
 }
 
 .controls .checkbox {
-  float: left;
-  margin: -1px 20px 0 0;
-  text-transform: uppercase;
+    float: left;
+    margin: -1px 20px 0 0;
+    text-transform: uppercase;
 }
 
 .double-list-selector .locale.select .menu {
-  border-bottom: 1px solid #5E6475;
-  margin: 2px 0 -4px -1px;
-  padding: 10px 0;
-  width: 295px;
+    border-bottom: 1px solid #5e6475;
+    margin: 2px 0 -4px -1px;
+    padding: 10px 0;
+    width: 295px;
 }
 
 .double-list-selector .locale.select .menu ul li {
-  padding-left: 20px;
-  padding-right: 20px;
-  position: relative;
-  width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+    width: 100%;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .double-list-selector .locale.select.selected label {
-  text-align: center;
+    text-align: center;
 }
 
 .double-list-selector .locale.select.selected label .left {
-  float: left;
+    float: left;
 }
 
 .double-list-selector .locale.select.readonly label {
-  text-align: right;
+    text-align: right;
 }
 
 .double-list-selector .locale.select.readonly label a {
-  float: left;
+    float: left;
 }
 
 .locale.select {
-  float: left;
-  width: auto;
+    float: left;
+    width: auto;
 }
 
 form .locale.select.selected {
-  float: none;
-  margin-right: 49px;
+    float: none;
+    margin-right: 49px;
 }
 
 .locale.select.readonly {
-  float: right;
+    float: right;
 }
 
 .locale.select .menu ul {
-  height: 170px;
-  margin-bottom: 0;
+    height: 170px;
+    margin-bottom: 0;
 }
 
 .locale.select .menu ul li span.code {
-  float: right;
-  width: auto;
+    float: right;
+    width: auto;
 }
 
 #id_locales,
 #id_locales_readonly {
-  display: none;
+    display: none;
 }
 
 .can-be-requested {
-  float: left;
-  width: 295px;
+    float: left;
+    width: 295px;
 }
 
 .copy-locales {
-  float: left;
-  margin-left: 48px;
-  width: 295px;
+    float: left;
+    margin-left: 48px;
+    width: 295px;
 }
 
 .deadline {
-  float: left;
-  width: 150px;
+    float: left;
+    width: 150px;
 }
 
 .priority {
-  float: left;
-  margin-left: 10px;
-  width: 165px;
+    float: left;
+    margin-left: 10px;
+    width: 165px;
 }
 
 .contact {
-  float: right;
-  width: 300px;
+    float: right;
+    width: 300px;
 }
 
 .copy-locales select,
 .priority select,
 .contact select {
-  width: 100%;
+    width: 100%;
 }
 
 .deadline input {
-  width: 144px;
+    width: 144px;
 }
 
 .checkbox label {
-  float: left;
-  padding: 6px 0 0 15px;
-  text-transform: uppercase;
+    float: left;
+    padding: 6px 0 0 15px;
+    text-transform: uppercase;
 }
 
 .data-source,
 .new-strings,
 .visibility {
-  position: relative;
+    position: relative;
 }
 
 .data-source #id_data_source,
 .new-strings .manage-strings,
 .visibility #id_visibility {
-  position: absolute;
-  right: 0;
+    position: absolute;
+    right: 0;
 }
 
 .data-source #id_data_source,
 .visibility #id_visibility {
-  top: 5px;
+    top: 5px;
 }
 
 .new-strings .manage-strings {
-  top: -3px;
+    top: -3px;
 }
 
 .repository .delete-wrapper label {
-  display: inline;
+    display: inline;
 }
 
-.repository .delete-wrapper input[type=checkbox] {
-  float: right;
-  margin: 2px;
+.repository .delete-wrapper input[type='checkbox'] {
+    float: right;
+    margin: 2px;
 }
 
 .checkbox label input {
-  float: left;
-  margin-left: -18px;
-  margin-top: 1px;
+    float: left;
+    margin-left: -18px;
+    margin-top: 1px;
 }
 
 .repository .type-wrapper {
-  float: left;
-  margin-right: 6px;
+    float: left;
+    margin-right: 6px;
 }
 
 .repository .details-wrapper {
-  float: left;
-  width: 552px;
+    float: left;
+    width: 552px;
 }
 
 .repository.git .details-wrapper {
-  width: 768px;
+    width: 768px;
 }
 
 .repository .details-wrapper input {
-  width: 908px;
+    width: 908px;
 }
 
 .repository.git .details-wrapper input {
-  width: 763px;
+    width: 763px;
 }
 
 .repository .branch-wrapper {
-  display: none;
-  float: left;
-  margin-left: 6px;
-  width: 138px;
+    display: none;
+    float: left;
+    margin-left: 6px;
+    width: 138px;
 }
 
 .repository.git .branch-wrapper {
-  display: block;
+    display: block;
 }
 
 .repository .website-wrapper,
 .repository .prefix-wrapper,
 .repository .repository-toolbar {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .repository .repository-toolbar > section {
-  display: inline-block;
-  float: left;
+    display: inline-block;
+    float: left;
 }
 
 .repository .repository-toolbar > section.delete-wrapper {
-  float: right;
+    float: right;
 }
 
-.inline input[id*=url] {
-  float: left;
-  width: 607px;
+.inline input[id*='url'] {
+    float: left;
+    width: 607px;
 }
 
-.branch-wrapper input[type=text] {
-  width: 134px;
+.branch-wrapper input[type='text'] {
+    width: 134px;
 }
 
 .edit section .bottom {
-  font-size: 12px;
-  text-transform: uppercase;
+    font-size: 12px;
+    text-transform: uppercase;
 }
 
 .inline[data-count],
 .entity[data-count],
 .repository-empty {
-  display: none;
+    display: none;
 }
 
-.inline input[id*=name]::-webkit-calendar-picker-indicator {
-  display: none; /* remove default arrow */
+.inline input[id*='name']::-webkit-calendar-picker-indicator {
+    display: none; /* remove default arrow */
 }
 
 input#id_configuration_file {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
-label[for=id_configuration_file] a {
-  float: none;
-  text-transform: none;
+label[for='id_configuration_file'] a {
+    float: none;
+    text-transform: none;
 }
 
 .externalresource .arrow::after {
-  content: "▾";
-  color: #000;
-  float: left;
-  margin: 6px 0 0 -20px;
-  pointer-events: none;
+    content: '▾';
+    color: #000;
+    float: left;
+    margin: 6px 0 0 -20px;
+    pointer-events: none;
 }
 
-.inline label[for*=name] {
-  float: left;
-  width: 325px;
+.inline label[for*='name'] {
+    float: left;
+    width: 325px;
 }
 
-.inline input[id*=name] {
-  float: left;
-  width: 321px;
+.inline input[id*='name'] {
+    float: left;
+    width: 321px;
 }
 
-.inline input[id$=DELETE],
-.inline input[id$=obsolete] {
-  display: none;
+.inline input[id$='DELETE'],
+.inline input[id$='obsolete'] {
+    display: none;
 }
 
-.inline label[for*=url] {
-  float: left;
-  width: 649px;
+.inline label[for*='url'] {
+    float: left;
+    width: 649px;
 }
 
-.inline input[id*=name],
-.inline label[for*=name] {
-  margin-right: 6px;
+.inline input[id*='name'],
+.inline label[for*='name'] {
+    margin-right: 6px;
 }
 
 textarea {
-  height: 60px;
+    height: 60px;
 }
 textarea.strings-source {
     height: 300px;
 }
 
 .subtitle {
-  font-size: 12px;
-  margin-top: 4px;
-  text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 4px;
+    text-transform: uppercase;
 }
 
 .errorlist {
-  color: #F36;
-  display: inline-block;
-  font-size: 12px;
-  line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
-  list-style: none;
-  margin-left: 0;
-  margin-top: 2px;
-  text-transform: uppercase;
+    color: #f36;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
+    list-style: none;
+    margin-left: 0;
+    margin-top: 2px;
+    text-transform: uppercase;
 }
 
 .errorlist li {
-  display: inline;
-  margin-left: 5px;
+    display: inline;
+    margin-left: 5px;
 }
 
 .locales .errorlist {
-  margin-top: 10px;
-  text-align: center;
-  width: 100%;
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
 }
 
 .notification {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .new-strings {
-  display: none;
+    display: none;
 }
 .manage-strings a {
-  margin-left: 20px;
+    margin-left: 20px;
 }
 
 /* Code specific to the manage strings page */
 .strings-list .entity {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
-
 
 /* Code specific to the manage tags widget */
 
-.tag.inline label[for*=name] {
-  float: left;
-  width: 330px;
+.tag.inline label[for*='name'] {
+    float: left;
+    width: 330px;
 }
 
-.tag.inline input[id*=name] {
-  float: left;
-  width: 324px;
-  margin-right: 6px;
+.tag.inline input[id*='name'] {
+    float: left;
+    width: 324px;
+    margin-right: 6px;
 }
 
-.tag.inline label[for*=slug] {
-  float: left;
-  width: 331px;
+.tag.inline label[for*='slug'] {
+    float: left;
+    width: 331px;
 }
 
-.tag.inline input[id*=slug] {
-  float: left;
-  width: 321px;
-  margin-right: 6px;
+.tag.inline input[id*='slug'] {
+    float: left;
+    width: 321px;
+    margin-right: 6px;
 }
 
-.tag.inline label[for*=priority] {
-  float: left;
-  width: 311px;
+.tag.inline label[for*='priority'] {
+    float: left;
+    width: 311px;
 }
 
-.tag.inline input[id*=priority] {
-  float: left;
-  width: 270px;
-  margin-right: 6px;
+.tag.inline input[id*='priority'] {
+    float: left;
+    width: 270px;
+    margin-right: 6px;
 }
 
 .tag.inline .form-errors {
-  clear: both;
+    clear: both;
 }
 
 .tag.inline .form-errors .name-errors {
-  float: left;
-  width: 324px;
-  margin-right: 5px;
-  min-height: 1px;
+    float: left;
+    width: 324px;
+    margin-right: 5px;
+    min-height: 1px;
 }
 
 .tag.inline .form-errors .slug-errors {
-  float: left;
-  width: 321px;
+    float: left;
+    width: 321px;
 }
 
 .tag.inline .form-errors .priority-errors {
-  float: left;
-  width: 311px;
+    float: left;
+    width: 311px;
 }
 
-.tag.inline select[name^=tag_set-][name$=-priority] {
-  width: 276px;
-  margin-top: 0;
+.tag.inline select[name^='tag_set-'][name$='-priority'] {
+    width: 276px;
+    margin-top: 0;
 }

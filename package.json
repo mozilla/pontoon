@@ -22,7 +22,9 @@
     "test": "jest",
     "build": "webpack",
     "build-w": "webpack -w",
-    "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile"
+    "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
+    "prettier": "prettier --write '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
+    "check-prettier": "prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'"
   },
   "jest": {
     "testMatch": [
@@ -73,6 +75,7 @@
     "jest": "^24.8.0",
     "jsdom": "^11.12.0",
     "mini-css-extract-plugin": "^0.4.1",
+    "prettier": "2.2.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-table": "^6.8.6",
@@ -83,5 +86,12 @@
     "webpack-bundle-tracker": "^0.4.2-beta",
     "webpack-cli": "^3.1.1",
     "yuglify": "^2.0.0"
+  },
+  "prettier": {
+    "endOfLine": "lf",
+    "trailingComma": "all",
+    "tabWidth": 4,
+    "jsxSingleQuote": true,
+    "singleQuote": true
   }
 }

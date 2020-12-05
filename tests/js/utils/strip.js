@@ -1,11 +1,8 @@
-
-import {Strip, strip} from 'utils/strip';
-
+import { Strip, strip } from 'utils/strip';
 
 test('Strip instance', () => {
     expect(strip instanceof Strip).toBe(true);
-})
-
+});
 
 test('Strip lstrip', () => {
     const _strip = new Strip();
@@ -17,8 +14,7 @@ test('Strip lstrip', () => {
     expect(_strip.lstrip('   bbaxyz')).toBe('bbaxyz');
     expect(_strip.lstrip('   bb   axyz')).toBe('bb   axyz');
     expect(_strip.lstrip('   bb   axyz   ')).toBe('bb   axyz   ');
-})
-
+});
 
 test('Strip rstrip', () => {
     const _strip = new Strip();
@@ -30,8 +26,7 @@ test('Strip rstrip', () => {
     expect(_strip.rstrip('bbaxyz   ')).toBe('bbaxyz');
     expect(_strip.rstrip('bb   axyz   ')).toBe('bb   axyz');
     expect(_strip.rstrip('   bb   axyz   ')).toBe('   bb   axyz');
-})
-
+});
 
 test('Strip strip', () => {
     const _strip = new Strip();
@@ -46,4 +41,4 @@ test('Strip strip', () => {
     expect(_strip.strip('   bbaxyz')).toBe('bbaxyz');
     expect(_strip.strip('   bb   axyz')).toBe('bb   axyz');
     expect(_strip.strip('   bb   axyz   ')).toBe('bb   axyz');
-})
+});

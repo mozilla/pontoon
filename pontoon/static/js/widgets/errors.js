@@ -1,48 +1,44 @@
-
 import React from 'react';
 
 import './errors.css';
 
-
 export class Error extends React.PureComponent {
-
-    get className () {
+    get className() {
         return 'error';
     }
 
-    render () {
-        let {className, error, name, ...props} = this.props;
-        className = className ? className + ' ' + this.className: this.className;
+    render() {
+        let { className, error, name, ...props } = this.props;
+        className = className
+            ? className + ' ' + this.className
+            : this.className;
         return (
             <li className={className} {...props}>
-              {name}: {error}
-            </li>);
+                {name}: {error}
+            </li>
+        );
     }
 }
 
-
 export class ErrorList extends React.PureComponent {
-
-    get className () {
+    get className() {
         return 'errors';
     }
 
-    get errorComponent () {
+    get errorComponent() {
         return Error;
     }
 
-    renderError (key, name, error) {
+    renderError(key, name, error) {
         const ErrorComponent = this.errorComponent;
-        return (
-            <ErrorComponent
-               error={error}
-               key={key}
-               name={name} />);
+        return <ErrorComponent error={error} key={key} name={name} />;
     }
 
-    render () {
-        let {errors, className, ...props} = this.props;
-        className = className ? className + ' ' + this.className: this.className;
+    render() {
+        let { errors, className, ...props } = this.props;
+        className = className
+            ? className + ' ' + this.className
+            : this.className;
         if (!Object.keys(errors).length) {
             return '';
         }
@@ -51,6 +47,7 @@ export class ErrorList extends React.PureComponent {
                 {Object.entries(errors).map(([name, error], key) => {
                     return this.renderError(key, name, error);
                 })}
-            </ul>);
+            </ul>
+        );
     }
 }

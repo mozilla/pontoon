@@ -1,17 +1,15 @@
-
 import React from 'react';
 
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 
-import {Columns} from 'widgets/columns';
+import { Columns } from 'widgets/columns';
 
 import CheckboxTable from 'widgets/tables/checkbox';
 
 import TagResourcesButton from 'tags/admin/button';
-import {TagResourceManagerWidget} from 'tags/admin/manager';
+import { TagResourceManagerWidget } from 'tags/admin/manager';
 import TagResourceSearch from 'tags/admin/search';
 import TagResourceTable from 'tags/admin/table';
-
 
 test('TagResourcesButton render', () => {
     // shallow render of TagResourcesButton to ensure that
@@ -19,27 +17,25 @@ test('TagResourcesButton render', () => {
     // render method
 
     class MockTagResourcesButton extends TagResourcesButton {
-
-        renderButton () {
+        renderButton() {
             return 7;
         }
 
-        renderResourceManager () {
+        renderResourceManager() {
             return 23;
         }
     }
     const button = shallow(<MockTagResourcesButton />);
     // just the 2 components
-    expect(button.text()).toBe("723");
+    expect(button.text()).toBe('723');
 });
-
 
 test('TagResourcesButton handleClick', () => {
     // test that TagResourceButton component state is updated
     // appropriately when button is clicked
 
     const button = shallow(<TagResourcesButton />);
-    const evt = {preventDefault: jest.fn()};
+    const evt = { preventDefault: jest.fn() };
 
     // button is closed by default
     expect(button.state().open).toBe(false);
@@ -63,7 +59,6 @@ test('TagResourcesButton handleClick', () => {
     expect(evt.preventDefault.mock.calls).toEqual([[], []]);
 });
 
-
 test('TagResourcesButton renderButton', () => {
     // test that renderButton creates component with expected props and
     // displays appropriate message according to whether its open/cosed
@@ -72,35 +67,34 @@ test('TagResourcesButton renderButton', () => {
     let result = button.instance().renderButton();
 
     // by default prompt is to manage resources
-    expect(result.props.children).toBe("Manage resources for this tag");
+    expect(result.props.children).toBe('Manage resources for this tag');
 
     // and the button is set up with the handler
     expect(result.props.onClick).toBe(button.instance().handleClick);
 
-    button.setState({open: true});
+    button.setState({ open: true });
     result = button.instance().renderButton();
 
     // prompt is now to hide the resource manager
-    expect(result.props.children).toBe("Hide the resource manager for this tag");
+    expect(result.props.children).toBe(
+        'Hide the resource manager for this tag',
+    );
 
     // and the handler is still set on the component
     expect(result.props.onClick).toBe(button.instance().handleClick);
 });
 
-
 test('TagResourcesButton renderResourceManager', () => {
     // Shallow rendering of the resource manager widget
 
     const button = shallow(
-        <TagResourcesButton
-           tag='foo'
-           api='bar'
-           project='baz' />);
+        <TagResourcesButton tag='foo' api='bar' project='baz' />,
+    );
     let result = button.instance().renderResourceManager();
 
     // nothing there as the resource manager is hidden by default
     expect(result).toBe('');
-    button.setState({open: true});
+    button.setState({ open: true });
 
     // now its open - result is an instance of TagResourceManager
     result = button.instance().renderResourceManager();
@@ -111,12 +105,11 @@ test('TagResourcesButton renderResourceManager', () => {
     expect(result.props.project).toBe('baz');
 });
 
-
 test('TagResourceManagerWidget componentDidUpdate', async () => {
     const refreshData = jest.fn();
     const manager = shallow(
-        <TagResourceManagerWidget
-           refreshData={refreshData} />);
+        <TagResourceManagerWidget refreshData={refreshData} />,
+    );
     refreshData.mockClear();
 
     // state is the same, refreshData not called
@@ -124,11 +117,10 @@ test('TagResourceManagerWidget componentDidUpdate', async () => {
     expect(refreshData.mock.calls).toEqual([]);
 
     // state "changed", refreshData called with current state
-    const prevState = Object.assign({}, manager.state(), {foo: 7, bar: 23});
+    const prevState = Object.assign({}, manager.state(), { foo: 7, bar: 23 });
     manager.instance().componentDidUpdate(undefined, prevState);
     expect(refreshData.mock.calls).toEqual([[manager.state()]]);
 });
-
 
 test('TagResourceManagerWidget handleSubmit', async () => {
     // Tests that handleSubmit calls this.props.handleSubmit with state and the
@@ -138,30 +130,34 @@ test('TagResourceManagerWidget handleSubmit', async () => {
     const refreshData = jest.fn();
     const manager = shallow(
         <TagResourceManagerWidget
-           refreshData={refreshData}
-           handleSubmit={handleSubmit} />);
-    manager.setState({foo: 7, bar: 23});
-    expect(await manager.instance().handleSubmit({bar: 43, baz: 73})).toBe(23);
-    expect(handleSubmit.mock.calls).toEqual(
-        [[{"bar": 43, "baz": 73, "foo": 7, "search": "", "type": "assoc"}]]);
+            refreshData={refreshData}
+            handleSubmit={handleSubmit}
+        />,
+    );
+    manager.setState({ foo: 7, bar: 23 });
+    expect(await manager.instance().handleSubmit({ bar: 43, baz: 73 })).toBe(
+        23,
+    );
+    expect(handleSubmit.mock.calls).toEqual([
+        [{ bar: 43, baz: 73, foo: 7, search: '', type: 'assoc' }],
+    ]);
 });
-
 
 test('TagResourceManagerWidget handleSearchChange', async () => {
     // Tests what happens when the user makes a change to the search furniture
     // Its expected to call refreshData, after updating state appropriately.
 
     const refreshData = jest.fn(async () => 23);
-    const manager = shallow(<TagResourceManagerWidget refreshData={refreshData} />);
+    const manager = shallow(
+        <TagResourceManagerWidget refreshData={refreshData} />,
+    );
 
     // something changed...
-    manager.instance().handleSearchChange({foo: 7, search: 23});
+    manager.instance().handleSearchChange({ foo: 7, search: 23 });
 
     // state was updated
-    expect(manager.state()).toEqual(
-        {foo: 7, search: 23, type: "assoc"});
+    expect(manager.state()).toEqual({ foo: 7, search: 23, type: 'assoc' });
 });
-
 
 test('TagResourceSearch render', () => {
     // tests that the search widget (shallow) renders as expected
@@ -169,13 +165,12 @@ test('TagResourceSearch render', () => {
     const search = shallow(<TagResourceSearch />);
 
     // its a container
-    expect(search.text()).toBe("<Columns />");
+    expect(search.text()).toBe('<Columns />');
     let container = search.find(Columns);
 
     // it has 2 columns
     expect(container.props().columns.length).toBe(2);
 });
-
 
 test('TagResourceSearch renderSearchInput', () => {
     // tests the search textinput widget (shallow) renders as expected
@@ -195,7 +190,6 @@ test('TagResourceSearch renderSearchInput', () => {
     // it fires props.handleSearchChange when changed
     expect(input.props.onChange).toBe(search.instance().handleChange);
 });
-
 
 test('TagResourceSearch renderSearchSelect', () => {
     // Renders the search select widget for changing action
@@ -219,26 +213,26 @@ test('TagResourceSearch renderSearchSelect', () => {
     expect(select.props.children[1].props.value).toBe('nonassoc');
 });
 
-
 test('TagResourceSearch handleChange', async () => {
     const handleChange = jest.fn(async () => 23);
-    const search = shallow(<TagResourceSearch handleSearchChange={handleChange} />);
+    const search = shallow(
+        <TagResourceSearch handleSearchChange={handleChange} />,
+    );
 
     // onChange was called with search and returned
-    const evt = {target: {name: 'SEARCH', value: "FOO"}};
+    const evt = { target: { name: 'SEARCH', value: 'FOO' } };
     let result = await search.instance().handleChange(evt);
     expect(result).toBe(23);
-    expect(handleChange.mock.calls).toEqual([[{SEARCH: "FOO"}]]);
+    expect(handleChange.mock.calls).toEqual([[{ SEARCH: 'FOO' }]]);
 
     handleChange.mockClear();
 
     // onChange was called with type and returned
-    evt.target = {name: 'TYPE', value: "BAR"};
+    evt.target = { name: 'TYPE', value: 'BAR' };
     result = await search.instance().handleChange(evt);
     expect(result).toBe(23);
-    expect(handleChange.mock.calls).toEqual([[{TYPE: "BAR"}]]);
+    expect(handleChange.mock.calls).toEqual([[{ TYPE: 'BAR' }]]);
 });
-
 
 test('TagResourceTable render', () => {
     // Tests (shallow) rendering of TagResourceTable
@@ -246,7 +240,7 @@ test('TagResourceTable render', () => {
     let table = shallow(<TagResourceTable />);
 
     // we should have a single CheckboxTable here
-    expect(table.text()).toBe("<CheckboxTable />");
+    expect(table.text()).toBe('<CheckboxTable />');
     let checkboxTable = table.find(CheckboxTable);
     expect(checkboxTable.length).toBe(1);
     expect(checkboxTable.props().submitMessage).toBe('Link resources');
@@ -255,11 +249,11 @@ test('TagResourceTable render', () => {
     expect(checkboxTable.props().columns).toEqual(table.instance().columns);
 
     // lets render another table with different action
-    table = shallow(<TagResourceTable type="assoc" />);
+    table = shallow(<TagResourceTable type='assoc' />);
 
     // prompt text has changed
     // but we still get our table
-    expect(table.text()).toBe("<CheckboxTable />");
+    expect(table.text()).toBe('<CheckboxTable />');
     checkboxTable = table.find(CheckboxTable);
     expect(checkboxTable.length).toBe(1);
     expect(checkboxTable.props().submitMessage).toBe('Unlink resources');
@@ -267,7 +261,6 @@ test('TagResourceTable render', () => {
     // and the expected columns
     expect(checkboxTable.props().columns).toEqual(table.instance().columns);
 });
-
 
 test('TagResourceTable columns', () => {
     // tests the column descriptors for the resource table
@@ -277,9 +270,9 @@ test('TagResourceTable columns', () => {
 
     // Cell[1] is the resource itself.
     expect(checkboxTable.props().columns[0].Cell).toBe(
-        table.instance().renderResource);
+        table.instance().renderResource,
+    );
 });
-
 
 test('TagResourceTable renderResource', () => {
     // When an item is rendered, apart from creating the necessary
@@ -288,7 +281,7 @@ test('TagResourceTable renderResource', () => {
     // visible index.
 
     const table = shallow(<TagResourceTable />);
-    let resource = table.instance().renderResource({original: ['FOO']});
+    let resource = table.instance().renderResource({ original: ['FOO'] });
 
     // and our resource has happily rendered
     expect(resource.props.children).toEqual('FOO');

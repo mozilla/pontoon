@@ -1,186 +1,185 @@
 .request-toggle {
-  float: right;
+    float: right;
 }
 
 .request-toggle:before {
-  margin-right: 2px;
+    margin-right: 2px;
 }
 
 .request-toggle.back:after {
-  margin-left: 2px;
+    margin-left: 2px;
 }
 
 /* Bug 1468997 */
 .request-team {
-  display: none;
+    display: none;
 }
 
 .request-team:before {
-  content: "Request new team";
+    content: 'Request new team';
 }
 
 .request-team.back:after {
-  content: "Back to enabled teams";
+    content: 'Back to enabled teams';
 }
 
 .request-projects:before {
-  content: "Request more projects";
+    content: 'Request more projects';
 }
 
 .request-projects.back:after {
-  content: "Back to enabled projects";
+    content: 'Back to enabled projects';
 }
 
 .request-teams:before {
-  content: "Request new language";
+    content: 'Request new language';
 }
 
 .request-teams.back:after {
-  content: "Back to enabled languages";
+    content: 'Back to enabled languages';
 }
 
 .request-toggle:after,
 .request-toggle.back:before {
-  content: "";
+    content: '';
 }
 
 #request-team-form {
-  margin: 0 auto;
-  display: none;
+    margin: 0 auto;
+    display: none;
 }
 
 #request-item-note {
-  margin: 25px 0 5px;
-  display: none;
+    margin: 25px 0 5px;
+    display: none;
 }
 
 #request-item-note p {
-  font-style: italic;
-  color: #AAAAAA;
-  text-align: center;
-  display: block;
+    font-style: italic;
+    color: #aaaaaa;
+    text-align: center;
+    display: block;
 }
 
 #request-item {
-  display: none;
-  background: #7BC876;
-  border: none;
-  border-radius: 3px;
-  margin-top: 15px;
-  padding: 10px;
-  text-transform: uppercase;
-  width: 100%;
+    display: none;
+    background: #7bc876;
+    border: none;
+    border-radius: 3px;
+    margin-top: 15px;
+    padding: 10px;
+    text-transform: uppercase;
+    width: 100%;
 }
 
 #request-item.confirmed {
-  background: #FED271;
+    background: #fed271;
 }
 
 #team-form {
-  display: flex;
-  position: relative;
-  text-align: left;
-  margin: 0 auto;
-  justify-content: space-between;
+    display: flex;
+    position: relative;
+    text-align: left;
+    margin: 0 auto;
+    justify-content: space-between;
 }
 
 #team-form .field {
-  display: inline-block;
-  margin-top: 10px;
-  text-align: left;
+    display: inline-block;
+    margin-top: 10px;
+    text-align: left;
 }
 
 #team-form .field input {
-  color: #FFFFFF;
-  background: #333941;
-  border: 1px solid #4d5967;
-  border-radius: 3px;
-  float: none;
-  width: 480px;
-  padding: 4px;
-  box-shadow: none;
+    color: #ffffff;
+    background: #333941;
+    border: 1px solid #4d5967;
+    border-radius: 3px;
+    float: none;
+    width: 480px;
+    padding: 4px;
+    box-shadow: none;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #team-form .field label {
-  display: block;
-  padding-bottom: 3px;
-  text-align: left;
+    display: block;
+    padding-bottom: 3px;
+    text-align: left;
 }
 
 .item-list tbody tr:not(.limited) {
-  display: none;
+    display: none;
 }
 
 .items.request .item-list .all-strings {
-  display: table-cell;
+    display: table-cell;
 }
 
 .items.request .item-list th.check {
-  text-align: right;
-  width: auto;
+    text-align: right;
+    width: auto;
 }
 
 .item-list .check,
 .item-list .radio,
 .item-list .all-strings {
-  display: none;
+    display: none;
 }
 
 .items.request .item-list .check,
 .items.request .item-list .radio {
-  cursor: pointer;
-  display: block;
+    cursor: pointer;
+    display: block;
 }
 
 .item-list td.check,
 .item-list td.radio {
-  color: #3F4752;
-  float: right;
-  font-size: 16px;
-  height: 47px;
-  text-align: right;
-  width: 100%;
+    color: #3f4752;
+    float: right;
+    font-size: 16px;
+    height: 47px;
+    text-align: right;
+    width: 100%;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .item-list td.radio {
-  color: #4d5967;
+    color: #4d5967;
 }
 
-
 .item-list td.check:before {
-  content: "";
-  display: block;
-  margin-top: 16px;
+    content: '';
+    display: block;
+    margin-top: 16px;
 }
 
 .item-list td.check:hover:before,
 .item-list td.check.enabled:before {
-  content: "";
-  color: #7BC876;
+    content: '';
+    color: #7bc876;
 }
 
 .item-list td.check.enabled:before {
-  content: "";
+    content: '';
 }
 
 .item-list td.radio:before {
-  display: block;
-  margin-top: 16px;
+    display: block;
+    margin-top: 16px;
 }
 
 .item-list td.radio:hover:before,
 .item-list td.radio.enabled:before {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .items.request .item-list .latest-activity,
 .items.request .item-list .progress,
 .items.request .item-list .unreviewed-status {
-  display: none;
+    display: none;
 }
