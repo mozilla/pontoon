@@ -26,6 +26,7 @@ help:
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
+	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
@@ -74,7 +75,10 @@ flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 
 prettier:
-	"${DC}" run --rm -w //app/frontend webapp yarn prettier
+	"${DC}" run --rm webapp npm run prettier
+
+check-prettier:
+	"${DC}" run --rm webapp npm run check-prettier
 
 format:
 	make prettier

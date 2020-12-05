@@ -1,32 +1,32 @@
 .controls {
-  margin-bottom: 40px;
+    margin-bottom: 40px;
 }
 
 .locale-selector {
-  float: right;
-  width: auto;
+    float: right;
+    width: auto;
 }
 
 .controls > .search-wrapper .fa-spin,
 .controls > .search-wrapper.loading .fa-search {
-  display: none;
+    display: none;
 }
 
 .controls > .search-wrapper.loading .fa-spin {
-  display: block;
+    display: block;
 }
 
 .clipboard-success {
-  float: left;
-  color: #7BC876;
+    float: left;
+    color: #7bc876;
 }
 
 #helpers .machinery li {
-  padding-left: 5px;
-  padding-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 #helpers .machinery li:hover {
-  background: #333941;
-  cursor: pointer;
+    background: #333941;
+    cursor: pointer;
 }

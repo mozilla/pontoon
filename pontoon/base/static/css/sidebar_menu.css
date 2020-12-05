@@ -1,54 +1,54 @@
 .menu.left-column {
-  float: left;
-  width: 300px;
+    float: left;
+    width: 300px;
 }
 
 .menu.left-column ul {
-  max-height: none;
+    max-height: none;
 }
 
 .menu.left-column li.selected {
-  background: #3F4752;
+    background: #3f4752;
 }
 
 .menu.left-column li.selected a {
-  color: #FFFFFF;
+    color: #ffffff;
 }
 
 .menu.left-column li {
-  padding: 0;
+    padding: 0;
 }
 
 .menu.left-column li a {
-  display: block;
-  font-size: 15px;
-  padding: 5px;
+    display: block;
+    font-size: 15px;
+    padding: 5px;
 }
 
 .menu.left-column .count {
-  background: #333941;
-  float: right;
+    background: #333941;
+    float: right;
 }
 
 .menu.right-column {
-  background: #333941;
-  float: right;
-  width: 640px;
+    background: #333941;
+    float: right;
+    width: 640px;
 }
 
 .menu.right-column > section {
-  display: none;
+    display: none;
 }
 
 .menu.right-column > section.selected {
-  display: block;
+    display: block;
 }
 
 .menu.right-column li.no .title {
-  font-size: 22px;
-  margin-top: 10px;
+    font-size: 22px;
+    margin-top: 10px;
 }
 
 .menu.right-column li.no .description {
-  font-size: 14px;
+    font-size: 14px;
 }

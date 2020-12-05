@@ -1,221 +1,221 @@
 .buglist {
-  display: none;
-  table-layout: fixed;
+    display: none;
+    table-layout: fixed;
 }
 
 .buglist .id {
-  width: 80px;
+    width: 80px;
 }
 
 .buglist .summary {
-  width: 430px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    width: 430px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .buglist .last-changed {
-  text-align: left;
-  width: 130px;
+    text-align: left;
+    width: 130px;
 }
 
 .buglist .assigned-to {
-  width: 260px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: left;
+    width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
 }
 
 .buglist tbody .id a {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .buglist th {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .buglist th:hover {
-  color: #ebebeb;
+    color: #ebebeb;
 }
 
 .buglist th i {
-  margin-left: 5px;
-  position: absolute;
+    margin-left: 5px;
+    position: absolute;
 }
 
 .buglist th.asc i:after {
-  content: "";
-  display: inline-block;
-  margin-top: 5px;
+    content: '';
+    display: inline-block;
+    margin-top: 5px;
 }
 
 .buglist th.desc i:after {
-  content: "";
-  display: inline-block;
-  margin-top: -5px;
+    content: '';
+    display: inline-block;
+    margin-top: -5px;
 }
 
 .controls.no-projects {
-  text-align: right;
+    text-align: right;
 }
 
 .controls.no-projects > .request-toggle.button {
-  float: none;
+    float: none;
 }
 
 .controls.no-projects > .search-wrapper {
-  display: none;
+    display: none;
 }
 
 #permissions-form .selector-wrapper {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 #permissions-form h3 {
-  padding-bottom: 30px;
+    padding-bottom: 30px;
 }
 
 #permissions-form h3 .remove-project {
-  bottom: 25px;
-  font-size: 13px;
-  font-style: normal;
-  letter-spacing: 0;
-  position: absolute;
-  right: 0;
+    bottom: 25px;
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0;
+    position: absolute;
+    right: 0;
 }
 
 #permissions-form h3 .remove-project:hover {
-  background: #F36;
+    background: #f36;
 }
 
 #permissions-form h3 .remove-project .fa {
-  float: left;
-  font-size: 13px;
-  margin-top: 2px;
-  padding-right: 5px;
+    float: left;
+    font-size: 13px;
+    margin-top: 2px;
+    padding-right: 5px;
 }
 
 #permissions-form .permissions-groups {
-  margin-bottom: 80px;
+    margin-bottom: 80px;
 }
 
 #permissions-form .user.select {
-  display: inline-block;
-  vertical-align: top;
-  width: 300px;
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
 }
 
 #permissions-form .user.select.translators {
-  text-align: center;
+    text-align: center;
 }
 
 #permissions-form .user.select.managers {
-  text-align: right;
+    text-align: right;
 }
 
 #permissions-form .user.select.translators,
 #permissions-form .user.select.managers {
-  margin-left: 40px;
+    margin-left: 40px;
 }
 
 #permissions-form .user.select label {
-  display: block;
+    display: block;
 }
 
 #permissions-form .user.select label,
 #permissions-form .user.select label a {
-  color: #AAAAAA;
-  font-size: 13px;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
+    color: #aaaaaa;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
 }
 
 #permissions-form .user.select label a {
-  display: inline-block;
+    display: inline-block;
 }
 
 #permissions-form .user.select.translators label:hover,
 #permissions-form .user.select.managers label:hover,
 #permissions-form .user.select label a.active,
 #permissions-form .user.select label a:hover {
-  color: #EBEBEB;
+    color: #ebebeb;
 }
 
 #permissions-form .user.select .menu {
-  border-bottom: 1px solid #5E6475;
-  overflow: auto;
-  padding: 10px 0;
+    border-bottom: 1px solid #5e6475;
+    overflow: auto;
+    padding: 10px 0;
 }
 
-#permissions-form .user.select .menu input[type="search"] {
-  width: 100%;
+#permissions-form .user.select .menu input[type='search'] {
+    width: 100%;
 }
 
 #permissions-form .user.select .menu ul {
-  height: 168px;
-  margin-bottom: 0;
-  white-space: normal;
+    height: 168px;
+    margin-bottom: 0;
+    white-space: normal;
 }
 
 #permissions-form .user.select .menu ul li {
-  cursor: pointer;
-  line-height: 17px;
-  position: relative;
-  width: 100%;
+    cursor: pointer;
+    line-height: 17px;
+    position: relative;
+    width: 100%;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #permissions-form .user.select.available .menu ul li:not(.contributor) {
-  display: none;
+    display: none;
 }
 
 #permissions-form .user.select .intro {
-  color: #AAA;
-  font-size: 13px;
-  font-style: italic;
-  font-weight: 300;
-  margin: 10px 0;
-  text-align: center;
-  white-space: normal;
+    color: #aaa;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 300;
+    margin: 10px 0;
+    text-align: center;
+    white-space: normal;
 }
 
 #permissions-form .button.save {
-  float: right;
+    float: right;
 }
 
-#permissions-form #project-selector  {
-  float: right;
+#permissions-form #project-selector {
+    float: right;
 }
 
 #permissions-form #project-selector .button {
-  margin-right: 10px;
-  padding: 6px 12px;
+    margin-right: 10px;
+    padding: 6px 12px;
 }
 
 #permissions-form #project-selector .button .icon {
-  float: right;
-  margin-left: 5px;
+    float: right;
+    margin-left: 5px;
 }
 
 #permissions-form #project-selector .menu {
-  background: #333941;
-  bottom: 28px;
-  width: 287px;
+    background: #333941;
+    bottom: 28px;
+    width: 287px;
 }
 
 #permissions-form #project-selector .menu .search-wrapper input {
-  width: 100%;
+    width: 100%;
 }
 
 #permissions-form #project-selector .menu li {
-  color: #CCCCCC;
-  cursor: pointer;
+    color: #cccccc;
+    cursor: pointer;
 }
 
 #project-selector .menu li:not(.limited) {
-  display: none;
+    display: none;
 }

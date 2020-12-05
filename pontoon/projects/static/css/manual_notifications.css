@@ -1,85 +1,85 @@
 .manual-notifications .right-column #compose {
-  padding: 20px;
+    padding: 20px;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .manual-notifications #compose h3 {
-  color: #EBEBEB;
-  font-size: 22px;
-  letter-spacing: 0;
+    color: #ebebeb;
+    font-size: 22px;
+    letter-spacing: 0;
 }
 
 .manual-notifications #compose h3 .stress {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .manual-notifications #compose .toolbar {
-  padding: 10px 0 0;
+    padding: 10px 0 0;
 }
 
 .manual-notifications #compose .controls {
-  margin: 0;
-  text-align: right;
+    margin: 0;
+    text-align: right;
 }
 
 .manual-notifications #compose .errors {
-  float: right;
-  text-align: right;
+    float: right;
+    text-align: right;
 }
 
 .manual-notifications #compose .errors p {
-  color: #F36;
-  text-transform: uppercase;
-  visibility: hidden;
+    color: #f36;
+    text-transform: uppercase;
+    visibility: hidden;
 }
 
 .manual-notifications #compose .locale-selector {
-  margin: 20px 0 40px;
+    margin: 20px 0 40px;
 }
 
 .manual-notifications #compose .locale-selector .locale.select .menu {
-  width: 285px; /* must be same as .shortcuts */
+    width: 285px; /* must be same as .shortcuts */
 }
 
-.manual-notifications #compose .locale-selector .shortcuts  {
-  float: left;
-  font-size: 14px;
-  width: 285px; /* must be same as .menu */
+.manual-notifications #compose .locale-selector .shortcuts {
+    float: left;
+    font-size: 14px;
+    width: 285px; /* must be same as .menu */
 }
 
 .manual-notifications #compose .locale-selector .shortcuts .complete {
-  float: left;
+    float: left;
 }
 
 .manual-notifications #compose .locale-selector .shortcuts .incomplete {
-  float: right;
+    float: right;
 }
 
-.manual-notifications #compose .message-wrapper .subtitle  {
-  color: #AAA;
-  float: left;
-  text-transform: uppercase;
+.manual-notifications #compose .message-wrapper .subtitle {
+    color: #aaa;
+    float: left;
+    text-transform: uppercase;
 }
 
 .manual-notifications #compose textarea {
-  background: #272A2F;
-  color: #EBEBEB;
-  font-size: 14px;
-  font-weight: 300;
-  height: 150px;
-  padding: 10px;
-  width: 100%;
+    background: #272a2f;
+    color: #ebebeb;
+    font-size: 14px;
+    font-weight: 300;
+    height: 150px;
+    padding: 10px;
+    width: 100%;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .manual-notifications #sent li.no {
-  padding-top: 14px;
+    padding-top: 14px;
 }
 
 .manual-notifications #sent li.no .icon {
-  color: #272A2F;
+    color: #272a2f;
 }

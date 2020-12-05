@@ -1,13 +1,15 @@
-
 import React from 'react';
 
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 
-import {Columns, Container, Column} from 'widgets/columns';
-
+import { Columns, Container, Column } from 'widgets/columns';
 
 test('Columns render', () => {
-    const columndescriptors = [['a', 2], ['b', 3], ['c', 7]];
+    const columndescriptors = [
+        ['a', 2],
+        ['b', 3],
+        ['c', 7],
+    ];
     const columns = shallow(<Columns columns={columndescriptors} />);
     const container = columns.find(Container);
     expect(container.length).toBe(1);
@@ -23,7 +25,6 @@ test('Columns render', () => {
     expect(columns.text()).toBe('<Container />');
 });
 
-
 test('Column render', () => {
     let column = shallow(<Column />);
     expect(column.text()).toBe('');
@@ -38,47 +39,73 @@ test('Column render', () => {
     expect(div.props().className).toBe('column special-column');
 });
 
-
 test('Container render', () => {
     let container = shallow(<Container />);
     expect(container.text()).toBe('');
     expect(container.instance().columnStyles).toEqual([]);
     let div = container.find('div');
     expect(div.props().className).toBe('container');
-    expect(div.props().style).toEqual(
-        {"content": "", "display": "table", "width": "100%"});
+    expect(div.props().style).toEqual({
+        content: '',
+        display: 'table',
+        width: '100%',
+    });
     expect(div.props().children).toEqual([]);
     container = shallow(<Container columns={3} />);
     expect(container.text()).toBe('');
     div = container.find('div');
-    expect(container.instance().columnStyles).toEqual(
-        [{"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"},
-         {"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"},
-         {"boxSizing": "border-box", "float": "left", "width": "33.333333333333336%"}]);
+    expect(container.instance().columnStyles).toEqual([
+        {
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '33.333333333333336%',
+        },
+        {
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '33.333333333333336%',
+        },
+        {
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '33.333333333333336%',
+        },
+    ]);
     expect(div.props().children).toEqual([]);
-    expect(div.props().style).toEqual(
-        {"content": "", "display": "table", "width": "100%"});
+    expect(div.props().style).toEqual({
+        content: '',
+        display: 'table',
+        width: '100%',
+    });
     expect(div.props().children).toEqual([]);
     container = shallow(<Container columns={3} ratios={[2, 3, 7]} />);
     expect(container.text()).toBe('');
-    expect(container.instance().columnStyles).toEqual(
-        [{"boxSizing": "border-box", "float": "left", "width": "16.666666666666664%"},
-         {"boxSizing": "border-box", "float": "left", "width": "25%"},
-         {"boxSizing": "border-box", "float": "left", "width": "58.333333333333336%"}]);
+    expect(container.instance().columnStyles).toEqual([
+        {
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '16.666666666666664%',
+        },
+        { boxSizing: 'border-box', float: 'left', width: '25%' },
+        {
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '58.333333333333336%',
+        },
+    ]);
 });
-
 
 test('Container render children', () => {
     const children = [<div key={1}>FOO...</div>, <div key={2}>...BAR</div>];
     const styles = jest.fn(() => {
         return [
-            {background: 'black', color: 'red'},
-            {background: 'green', color: 'gold'}];
+            { background: 'black', color: 'red' },
+            { background: 'green', color: 'gold' },
+        ];
     });
 
     class MockContainer extends Container {
-
-        get columnStyles () {
+        get columnStyles() {
             return styles();
         }
     }
@@ -91,10 +118,8 @@ test('Container render children', () => {
     expect(div.props().children.length).toBe(2);
     const child0 = div.props().children[0];
     const child1 = div.props().children[1];
-    expect(child0.props.style).toEqual(
-        {background: 'black', color: 'red'});
+    expect(child0.props.style).toEqual({ background: 'black', color: 'red' });
     expect(child0.props.children).toEqual(children[0]);
-    expect(child1.props.style).toEqual(
-        {background: 'green', color: 'gold'});
+    expect(child1.props.style).toEqual({ background: 'green', color: 'gold' });
     expect(child1.props.children).toEqual(children[1]);
 });

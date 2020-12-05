@@ -1,38 +1,38 @@
 #info-wrapper .edit-info .fa {
-  padding-right: 5px;
+    padding-right: 5px;
 }
 
 #info-wrapper .read-write-info textarea {
-  background: #333941;
-  border: 1px solid #4D5967;
-  border-radius: 3px;
-  color: #FFFFFF;
-  font-weight: 300;
-  margin-bottom: 10px;
-  padding: 5px;
-  width: 100%;
+    background: #333941;
+    border: 1px solid #4d5967;
+    border-radius: 3px;
+    color: #ffffff;
+    font-weight: 300;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 100%;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #info-wrapper .read-write-info .toolbar .subtitle {
-  color: #AAA;
-  float: left;
-  text-transform: uppercase;
+    color: #aaa;
+    float: left;
+    text-transform: uppercase;
 }
 
 #info-wrapper .controls {
-  text-align: right;
+    text-align: right;
 }
 
 #info-wrapper .controls .cancel {
-  display: none;
-  color: #7BC876;
-  margin: 9px;
-  text-transform: uppercase;
+    display: none;
+    color: #7bc876;
+    margin: 9px;
+    text-transform: uppercase;
 }
 
 #info-wrapper .controls .save {
-  display: none;
+    display: none;
 }

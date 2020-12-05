@@ -1,83 +1,84 @@
-#heading, #middle {
-  text-align: center;
+#heading,
+#middle {
+    text-align: center;
 }
 
 a.avatar {
-  display: block;
-  position: relative;
+    display: block;
+    position: relative;
 }
 
 a.avatar .desc {
-  bottom: 0;
-  color: #FFFFFF;
-  display: none;
-  font-size: 16px;
-  font-weight: bold;
-  height: 20px;
-  left: 0;
-  letter-spacing: 0;
-  margin: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
+    bottom: 0;
+    color: #ffffff;
+    display: none;
+    font-size: 16px;
+    font-weight: bold;
+    height: 20px;
+    left: 0;
+    letter-spacing: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 a.avatar:hover .desc {
-  display: block;
+    display: block;
 }
 
 a.avatar:hover .desc ~ img {
-  opacity: 0.3;
+    opacity: 0.3;
 }
 
 #username {
-  color: #EBEBEB;
-  font-size: 48px;
-  letter-spacing: normal;
-  padding: 8px 0 20px;
-  text-transform: none;
+    color: #ebebeb;
+    font-size: 48px;
+    letter-spacing: normal;
+    padding: 8px 0 20px;
+    text-transform: none;
 }
 
 .info {
-  list-style: none;
-  margin: 0;
-  display: inline-block;
-  text-align: left;
+    list-style: none;
+    margin: 0;
+    display: inline-block;
+    text-align: left;
 }
 
 .info li {
-  color: #AAAAAA;
-  display: block;
-  font-size: 16px;
-  font-weight: 300;
-  overflow: hidden;
-  padding: 4px 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 980px;
+    color: #aaaaaa;
+    display: block;
+    font-size: 16px;
+    font-weight: 300;
+    overflow: hidden;
+    padding: 4px 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 980px;
 }
 
 .info a {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .info .fa {
-  margin-right: 6px;
+    margin-right: 6px;
 }
 
 .info li.check-box {
-  cursor: pointer;
-  display: table;
+    cursor: pointer;
+    display: table;
 }
 
 #timeline-loader {
-  display: none;
-  margin: 0 auto;
-  height: 50px;
-  width: 50px;
+    display: none;
+    margin: 0 auto;
+    height: 50px;
+    width: 50px;
 }
 
 #timeline-loader div {
-  color: #7BC876;
-  font-size: 48px;
+    color: #7bc876;
+    font-size: 48px;
 }

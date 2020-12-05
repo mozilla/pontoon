@@ -1,388 +1,388 @@
 table.table {
-  text-align: center;
+    text-align: center;
 }
 
 table.table.project-list.hidden {
-  display: none;
+    display: none;
 }
 
 .table td {
-  padding: 0 10px;
-  vertical-align: middle;
+    padding: 0 10px;
+    vertical-align: middle;
 }
 
 /* Used to designate from main style, e.g. deadline not set, no latest activity, project not ready... */
 .table td .not,
 .table td .not-ready {
-  font-style: italic;
+    font-style: italic;
 }
 
 .table tbody tr:hover {
-  background: #333941;
+    background: #333941;
 }
 
 .table th:first-child {
-  text-align: left;
+    text-align: left;
 }
 
 .table th.name {
-  width: 220px;
+    width: 220px;
 }
 
 .table th.resource {
-  width: 420px;
+    width: 420px;
 }
 
 .table th.resource.with-deadline:not(.with-priority) {
-  width: 310px;
+    width: 310px;
 }
 
 .table th.resource.with-priority:not(.with-deadline) {
-  width: 330px;
+    width: 330px;
 }
 
 .table th.resource.with-deadline.with-priority {
-  width: 220px;
+    width: 220px;
 }
 
 .table th.tag {
-  width: 330px;
+    width: 330px;
 }
 
 .table th.population,
 .table th.deadline {
-  width: 90px;
+    width: 90px;
 }
 
 .table th.code,
 .table th.priority {
-  width: 70px;
+    width: 70px;
 }
 
 .table th.latest-activity,
 .table th.all-strings {
-  width: 140px;
+    width: 140px;
 }
 
 .table th.unreviewed-status {
-  position: relative;
-  width: 16px;
+    position: relative;
+    width: 16px;
 }
 
 .table-sort th.unreviewed-status i {
-  margin: -13px 0 0 13px;
+    margin: -13px 0 0 13px;
 }
 
 .table .unreviewed-status span {
-  position: absolute;
-  font-size: 18px;
-  margin: -15px 0 0 -5px;
+    position: absolute;
+    font-size: 18px;
+    margin: -15px 0 0 -5px;
 }
 
 .table .progress {
-  text-align: left;
+    text-align: left;
 }
 
 .table h4 {
-  overflow: hidden;
-  padding-left: 1px; /* Needed to avoid cutting off text due to overflow: hidden; */
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    padding-left: 1px; /* Needed to avoid cutting off text due to overflow: hidden; */
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table .name h4 {
-  width: 219px;
+    width: 219px;
 }
 
 .table .resource h4 {
-  width: 419px;
+    width: 419px;
 }
 
 .table .resource.with-deadline:not(.with-priority) h4 {
-  width: 309px;
+    width: 309px;
 }
 
 .table .resource.with-priority:not(.with-deadline) h4 {
-  width: 329px;
+    width: 329px;
 }
 
 .table .resource.with-deadline.with-priority h4 {
-  width: 219px;
+    width: 219px;
 }
 
 .table h4 a {
-  font-size: 15px;
-  line-height: 47px;
-  padding: 12px 0 11px;
+    font-size: 15px;
+    line-height: 47px;
+    padding: 12px 0 11px;
 }
 
 .table a {
-  color: #EBEBEB;
+    color: #ebebeb;
 }
 
 .table a:hover {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 /* Selector must also match heading-info */
 .deadline time.approaching {
-  color: #FFA10F;
+    color: #ffa10f;
 }
 
 /* Selector must also match heading-info */
 .deadline time.overdue {
-  color: #F36;
+    color: #f36;
 }
 
 .table td.code div {
-  width: 70px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table td.code a {
-  color: #7BC876;
-  line-height: 47px;
-  padding: 15px 5px 14px;
+    color: #7bc876;
+    line-height: 47px;
+    padding: 15px 5px 14px;
 }
 
 .table td.priority {
-  padding-left: 15px;
+    padding-left: 15px;
 }
 
 .table td.priority .fa {
-  margin-left: -1px;
-  font-size: 12px;
+    margin-left: -1px;
+    font-size: 12px;
 }
 
 .table .latest-activity .latest {
-  display: block;
-  position: relative;
-  width: 140px;
+    display: block;
+    position: relative;
+    width: 140px;
 
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .table .latest-activity time {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 .table .latest-activity time:hover {
-  color: #EBEBEB;
+    color: #ebebeb;
 }
 
 .table .latest-activity .tooltip {
-  display: block;
-  background: #1C1E21;
-  border-radius: 10px;
-  bottom: 30px;
-  color: #EBEBEB;
-  left: -100px;
-  padding: 10px;
-  position: absolute;
-  text-align: left;
-  width: 320px;
-  z-index: 20;
+    display: block;
+    background: #1c1e21;
+    border-radius: 10px;
+    bottom: 30px;
+    color: #ebebeb;
+    left: -100px;
+    padding: 10px;
+    position: absolute;
+    text-align: left;
+    width: 320px;
+    z-index: 20;
 }
 
 .table .latest-activity .tooltip:after {
-  content: "";
-  position: absolute;
-  border: 10px solid;
-  border-color: #1C1E21 transparent transparent transparent;
-  bottom: -20px;
-  left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
-  clip: rect(0 20px 10px 0);
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
-  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    content: '';
+    position: absolute;
+    border: 10px solid;
+    border-color: #1c1e21 transparent transparent transparent;
+    bottom: -20px;
+    left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
+    clip: rect(0 20px 10px 0);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
 }
 
 .table .latest-activity .tooltip .quote {
-  color: #7BC876;
-  font-size: 30px;
+    color: #7bc876;
+    font-size: 30px;
 }
 
 .table .latest-activity .tooltip .translation {
-  display: block;
-  margin: -20px 0 0 40px;
-  overflow-wrap: break-word;
+    display: block;
+    margin: -20px 0 0 40px;
+    overflow-wrap: break-word;
 }
 
 .table .latest-activity .tooltip footer {
-  color: #888888;
-  font-style: italic;
-  height: 48px;
-  margin-top: 10px;
-  position: relative;
+    color: #888888;
+    font-style: italic;
+    height: 48px;
+    margin-top: 10px;
+    position: relative;
 }
 
 .table .latest-activity .tooltip footer .wrapper {
-  bottom: 0;
-  position: absolute;
-  right: 0;
+    bottom: 0;
+    position: absolute;
+    right: 0;
 }
 
 .table .latest-activity .tooltip footer .translation-details {
-  display: inline-block;
-  padding-top: 8px;
-  text-align: right;
+    display: inline-block;
+    padding-top: 8px;
+    text-align: right;
 }
 
 .table .latest-activity .tooltip footer .translation-action {
-  overflow-y: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 264px;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 264px;
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .table .latest-activity .tooltip footer img {
-  display: inline-block;
-  margin-left: 8px;
+    display: inline-block;
+    margin-left: 8px;
 }
 
 .table .progress .chart-wrapper {
-  position: relative;
+    position: relative;
 }
 
 .table .progress .chart-wrapper .chart {
-  display: table;
-  font-size: 0;
-  height: 3px;
-  margin-top: 2px;
-  table-layout: fixed;
-  width: 295px;
+    display: table;
+    font-size: 0;
+    height: 3px;
+    margin-top: 2px;
+    table-layout: fixed;
+    width: 295px;
 }
 
 .table .progress .chart-wrapper .chart span {
-  display: table-cell;
-  height: 100%;
+    display: table-cell;
+    height: 100%;
 }
 
 .table .progress .chart-wrapper .percent {
-  position: absolute;
-  right: 25px;
-  top: -7px;
+    position: absolute;
+    right: 25px;
+    top: -7px;
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
-  color: #3F4752;
-  font-size: 18px;
-  position: absolute;
-  right: 0;
-  top: -9px;
+    color: #3f4752;
+    font-size: 18px;
+    position: absolute;
+    right: 0;
+    top: -9px;
 }
 
 .table .progress .chart-wrapper .unreviewed-status.pending {
-  color: #4FC4F6;
+    color: #4fc4f6;
 }
 
 .table .progress .chart-wrapper .translated {
-  background: #7BC876;
+    background: #7bc876;
 }
 
 .table .progress .chart-wrapper .fuzzy {
-  background: #FED271;
+    background: #fed271;
 }
 
 .table .progress .chart-wrapper .warnings {
-  background: #FFA10F;
+    background: #ffa10f;
 }
 
 .table .progress .chart-wrapper .errors {
-  background: #F36;
+    background: #f36;
 }
 
 .table .progress .chart-wrapper .missing {
-  background: #5F7285;
+    background: #5f7285;
 }
 
 .table tr:hover .progress .chart-wrapper {
-  display: none;
+    display: none;
 }
 
 .table .progress .legend {
-  display: none;
-  margin-bottom: -9px;
+    display: none;
+    margin-bottom: -9px;
 }
 
 .table tr:hover .progress .legend {
-  display: block;
+    display: block;
 }
 
 .table .progress .legend ul {
-  font-size: 0;
-  margin-top: -1px;
+    font-size: 0;
+    margin-top: -1px;
 }
 
 .table .progress .legend li {
-  display: inline-block;
-  padding: 0;
-  text-align: center;
-  width: 51px;
+    display: inline-block;
+    padding: 0;
+    text-align: center;
+    width: 51px;
 }
 
 .table .progress .legend li:last-child {
-  width: 54px;
+    width: 54px;
 }
 
 .table .progress .legend li a {
-  color: #AAAAAA;
-  display: block;
-  margin-top: -5px;
+    color: #aaaaaa;
+    display: block;
+    margin-top: -5px;
 }
 
 .table .progress .legend li .title {
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 10px;
-  text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 10px;
+    text-transform: uppercase;
 }
 
 .table .progress .legend li.translated .title {
-  color: #7BC876;
+    color: #7bc876;
 }
 
 .table .progress .legend li.fuzzy .title {
-  color: #FED271;
+    color: #fed271;
 }
 
 .table .progress .legend li.warnings .title {
-  color: #FFA10F;
+    color: #ffa10f;
 }
 
 .table .progress .legend li.errors .title {
-  color: #F36;
+    color: #f36;
 }
 
 .table .progress .legend li.missing .title {
-  color: #7C8B9C;
+    color: #7c8b9c;
 }
 
 .table .progress .legend li.unreviewed .title {
-  color: #4FC4F6;
+    color: #4fc4f6;
 }
 
 .table .progress .legend li.all .title {
-  color: #AAAAAA;
+    color: #aaaaaa;
 }
 
 .table .progress .legend li .value {
-  font-size: 15px;
-  line-height: 22px;
+    font-size: 15px;
+    line-height: 22px;
 }
 
 .table .progress .legend li a:hover .title {
-  color: #EBEBEB;
+    color: #ebebeb;
 }
 
 .table .progress .legend li a:hover .value {
-  color: #EBEBEB;
-  font-weight: 700;
+    color: #ebebeb;
+    font-weight: 700;
 }
