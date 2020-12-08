@@ -239,13 +239,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 this.props.unsavedChangesExist,
                 this.props.unsavedChangesIgnored,
                 () => {
-                    dispatch(editor.actions.reset());
                     dispatch(
                         navigation.actions.updateEntity(
                             router,
                             nextEntity.pk.toString(),
                         ),
                     );
+                    dispatch(editor.actions.reset());
                 },
             ),
         );
@@ -259,13 +259,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 this.props.unsavedChangesExist,
                 this.props.unsavedChangesIgnored,
                 () => {
-                    dispatch(editor.actions.reset());
                     dispatch(
                         navigation.actions.updateEntity(
                             router,
                             previousEntity.pk.toString(),
                         ),
                     );
+                    dispatch(editor.actions.reset());
                 },
             ),
         );
