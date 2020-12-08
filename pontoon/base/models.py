@@ -499,8 +499,36 @@ class AggregatedStats(models.Model):
         )
 
     @property
+    def completed_strings(self):
+        return self.approved_strings + self.strings_with_warnings
+
+    @property
     def complete(self):
-        return self.total_strings == self.approved_strings
+        return self.total_strings == self.completed_strings
+
+    @property
+    def completed_percent(self):
+        return self.completed_strings / self.total_strings * 100
+
+    @property
+    def approved_percent(self):
+        return self.approved_strings / self.total_strings * 100
+
+    @property
+    def fuzzy_percent(self):
+        return self.fuzzy_strings / self.total_strings * 100
+
+    @property
+    def errors_percent(self):
+        return self.strings_with_errors / self.total_strings * 100
+
+    @property
+    def warnings_percent(self):
+        return self.strings_with_warnings / self.total_strings * 100
+
+    @property
+    def unreviewed_percent(self):
+        return self.unreviewed_strings / self.total_strings * 100
 
 
 def validate_cldr(value):
@@ -1713,24 +1741,12 @@ class ProjectLocale(AggregatedStats):
                 "strings_with_errors": obj.strings_with_errors,
                 "strings_with_warnings": obj.strings_with_warnings,
                 "unreviewed_strings": obj.unreviewed_strings,
-                "approved_share": round(obj.approved_strings / obj.total_strings * 100),
-                "fuzzy_share": round(obj.fuzzy_strings / obj.total_strings * 100),
-                "errors_share": round(
-                    obj.strings_with_errors / obj.total_strings * 100
-                ),
-                "warnings_share": round(
-                    obj.strings_with_warnings / obj.total_strings * 100
-                ),
-                "unreviewed_share": round(
-                    obj.unreviewed_strings / obj.total_strings * 100
-                ),
-                "completion_percent": int(
-                    math.floor(
-                        (obj.approved_strings + obj.strings_with_warnings)
-                        / obj.total_strings
-                        * 100
-                    )
-                ),
+                "approved_share": round(obj.approved_percent),
+                "fuzzy_share": round(obj.fuzzy_percent),
+                "errors_share": round(obj.errors_percent),
+                "warnings_share": round(obj.warnings_percent),
+                "unreviewed_share": round(obj.unreviewed_percent),
+                "completion_percent": int(math.floor(obj.completed_percent)),
             }
 
     def aggregate_stats(self):
