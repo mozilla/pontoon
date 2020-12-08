@@ -316,8 +316,9 @@ PIPELINE_CSS = {
             "css/contributors.css",
             "css/heading_info.css",
             "css/team.css",
-            "css/info.css",
             "css/request.css",
+            "css/insights.css",
+            "css/info.css",
         ),
         "output_filename": "css/team.min.css",
     },
@@ -422,6 +423,7 @@ PIPELINE_JS = {
     },
     "team": {
         "source_filenames": (
+            "js/lib/highcharts.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -429,6 +431,7 @@ PIPELINE_JS = {
             "js/tabs.js",
             "js/request.js",
             "js/permissions.js",
+            "js/insights.js",
             "js/info.js",
         ),
         "output_filename": "js/team.min.js",
