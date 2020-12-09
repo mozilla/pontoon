@@ -1,0 +1,27 @@
+# This requirements file should only contain direct dependencies of our project.
+#
+# The dependencies are grouped by function:
+# default.in: required for running a pontoon instance
+# dev.in: required for development
+# test.in: required for running tests or linting
+#
+# All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
+# This step is only required when adding, removing or updating dependencies,
+# or to force an update of indirect dependencies.
+# Run './requirements/compile_all.sh' for compiling these files.
+#
+# The dependencies are sorted by alphabetical order.
+# Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
+# -------------------------------------------------------------------------------------------------
+# requirements/default.txt contains all dependencies required to run the project in the production environment.
+-r default.txt
+
+black==19.10b0
+codecov==2.1.10
+coverage==5.3
+factory-boy==3.1.0
+flake8==3.7.7
+pytest==6.1.1
+pytest-cov==2.10.1
+pytest-django==3.10.0
+requests-mock==1.8.0
