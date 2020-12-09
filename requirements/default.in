@@ -1,0 +1,54 @@
+# This requirements file should only contain direct dependencies of our project.
+#
+# The dependencies are grouped by function:
+# default.in: required for running a pontoon instance
+# dev.in: required for development
+# test.in: required for running tests or linting
+#
+# All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
+# This step is only required when adding, removing or updating dependencies,
+# or to force an update of indirect dependencies.
+# Run './requirements/compile_all.sh' for compiling these files.
+#
+# The dependencies are sorted by alphabetical order.
+# Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
+# -------------------------------------------------------------------------------------------------
+bleach==3.1.4
+caighdean==0.0.4
+celery==4.3.0
+compare-locales==8.1.0
+dj-database-url==0.3.0
+Django==3.1.3
+django-ace==1.0.5
+django-allauth==0.42.0
+django-bmemcached==0.2.3
+django-cors-headers==3.5.0
+django-csp==3.7
+django-dirtyfields==1.3.1
+django-dotenv==1.3.0
+django-guardian==2.3.0
+django-jinja==2.7.0
+django-notifications-hq==1.6.0
+django-pipeline==2.0.5
+django-webpack-loader==0.5.0
+graphene-django==2.13.0
+gunicorn==19.9.0
+jsonfield==3.1.0
+jsonschema==2.6.0
+lxml==4.3.3
+mercurial==5.2.2
+newrelic==2.106.1.88
+parsimonious==0.6.2
+polib==1.0.6
+psycopg2==2.8.5
+python-dateutil==2.8.1
+python-levenshtein==0.12.0
+pytz==2019.3
+raygun4py==4.3.0
+scandir==1.5
+translate-toolkit==2.4.0
+whitenoise==5.2.0
+wsgi-sslify==1.0.1
+
+# Dependencies loaded from outside pypi.
+https://github.com/mathjazz/silme/archive/v0.10.0.zip#egg=silme==0.10.0
