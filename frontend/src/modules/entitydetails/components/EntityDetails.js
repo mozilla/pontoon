@@ -212,7 +212,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
 
         // On empty query, use source string as input
         if (selectedEntity && !query.length) {
-            source = selectedEntity.original;
+            source = utils.getOptimizedContent(
+                selectedEntity.machinery_original,
+                selectedEntity.format,
+            );
             pk = selectedEntity.pk;
         }
 
