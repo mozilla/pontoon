@@ -12,8 +12,7 @@ cache:
 
 install:
   - pip install -U --force pip
-  - pip install --require-hashes --use-deprecated=legacy-resolver -r requirements/default.txt
-  - pip install --require-hashes --use-deprecated=legacy-resolver -r requirements/test.txt
+  - pip install --require-hashes -r requirements/test.txt
   - source $HOME/.nvm/nvm.sh
   - nvm install --lts node
   - nvm use --lts node

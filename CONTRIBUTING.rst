@@ -197,24 +197,27 @@ Code reviews should review the changes in the context of the rest of the system.
 Dependencies
 ============
 
-Dependencies for production Pontoon are in ``requirements/default.txt``. Development dependencies are in
-``requirements/dev.txt``. They need to be pinned and hashed, and we use `hashin <https://pypi.python.org/pypi/hashin>`_ for that.
+Direct dependencies for Pontoon are distributed across three files:
 
-Note that we use a specific format for our dependencies, in order to make them more maintainable. When adding a new requirement, you should add it to the appropriate section and put its sub-dependencies in ``requirements/contraints.txt`` if applicable.
-For example, to add ``foobar`` version 5:
+1. ``requirements/default.in``: Running Pontoon in production
+2. ``requirements/dev.in``: Development
+3. ``requirements/test.in``: Testing and linting
+
+In order to pin and hash the direct and indirect dependencies, we use `pip-compile <https://pypi.org/project/pip-tools/>`_,
+which yields corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and indirect dependencies,
+and can be used for installation with ``pip``. After any change to the ``*.in`` files,
+you should run the following script to update all ``requirements/*.txt`` files.
 
 .. code-block:: shell
 
-    $ hashin -r requirements/default.txt foobar==5
+    $ ./requirements/compile_all.sh
 
-Then open ``requirements/default.txt`` and move the added dependencies to:
+When adding a new requirement, add it to the appropriate ``requirements/*.in`` file.
+For example, to add the development dependency ``foobar`` version 5, add ``foobar==5`` to ``requirements/dev.in``,
+and then run the script from above. Make sure to run it in the same environment (operating system, Python version)
+as the docker and production environment!
 
-* the first section if it has no other requirements
-* the ``requirements/constraints.txt`` if they are sub-dependencies, and add all their dependencies there as well.
-
-That format is documented more extensively inside the ``requirements/default.txt`` file.
-
-Once you are done adding or updating requirements, rebuild your docker environment:
+Once you are done adding, removing or updating requirements, rebuild your docker environment:
 
 .. code-block:: shell
 
@@ -237,7 +240,7 @@ a virtualenv to build docs, do this:
     $ cd docs/
     $ virtualenv venv
     $ source venv/bin/activate
-    $ pip install --require-hashes --use-deprecated=legacy-resolver -r requirements/default.txt
+    $ pip install --require-hashes -r requirements.txt
 
 Then, to build the docs, run this:
 
@@ -348,7 +351,7 @@ steps, as they don't affect your setup if nothing has changed:
    git pull origin master
 
    # Install new dependencies or update existing ones.
-   pip2 install -U --force --require-hashes --use-deprecated=legacy-resolver -r requirements/default.txt
+   pip install -U --force --require-hashes -r requirements/default.txt
 
    # Run database migrations.
    python manage.py migrate
