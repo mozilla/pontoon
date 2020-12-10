@@ -508,27 +508,30 @@ class AggregatedStats(models.Model):
 
     @property
     def completed_percent(self):
-        return self.completed_strings / self.total_strings * 100
+        return self.percent_of_total(self.completed_strings)
 
     @property
     def approved_percent(self):
-        return self.approved_strings / self.total_strings * 100
+        return self.percent_of_total(self.approved_strings)
 
     @property
     def fuzzy_percent(self):
-        return self.fuzzy_strings / self.total_strings * 100
+        return self.percent_of_total(self.fuzzy_strings)
 
     @property
     def errors_percent(self):
-        return self.strings_with_errors / self.total_strings * 100
+        return self.percent_of_total(self.strings_with_errors)
 
     @property
     def warnings_percent(self):
-        return self.strings_with_warnings / self.total_strings * 100
+        return self.percent_of_total(self.strings_with_warnings)
 
     @property
     def unreviewed_percent(self):
-        return self.unreviewed_strings / self.total_strings * 100
+        return self.percent_of_total(self.unreviewed_strings)
+
+    def percent_of_total(self, n):
+        return n / self.total_strings * 100 if self.total_strings else 0
 
 
 def validate_cldr(value):
