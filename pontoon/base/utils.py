@@ -2,19 +2,16 @@ import codecs
 import functools
 import io
 import os
+import pytz
+import requests
 import tempfile
 import time
 import zipfile
 
 from datetime import datetime, timedelta
-from urllib.parse import urljoin
-
-import pytz
-import requests
+from dateutil.relativedelta import relativedelta
 from guardian.decorators import permission_required as guardian_permission_required
-
-from django.utils.text import slugify
-
+from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
 
 from django.db.models import Prefetch
@@ -22,6 +19,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import trans_real
 
 
@@ -63,11 +61,6 @@ def match_attr(collection, **attributes):
         ),
         default=None,
     )
-
-
-def aware_datetime(*args, **kwargs):
-    """Return an aware datetime using Django's configured timezone."""
-    return timezone.make_aware(datetime(*args, **kwargs))
 
 
 def extension_in(filename, extensions):
@@ -429,6 +422,11 @@ def handle_upload_content(slug, code, part, f, user):
         changeset.translations_to_create[-1].update_latest_translation()
 
 
+def aware_datetime(*args, **kwargs):
+    """Return an aware datetime using Django's configured timezone."""
+    return timezone.make_aware(datetime(*args, **kwargs))
+
+
 def latest_datetime(datetimes):
     """
     Return the latest datetime in the given list of datetimes,
@@ -465,6 +463,16 @@ def convert_to_unix_time(my_datetime):
     Convert datetime object to UNIX time
     """
     return int(time.mktime(my_datetime.timetuple()) * 1000)
+
+
+def get_last_months(n):
+    """
+    Return a list of tuples representing last n months
+    """
+    start_date = datetime.now()
+    for _ in range(n):
+        yield (start_date.year, start_date.month)
+        start_date += relativedelta(months=-1)
 
 
 def build_translation_memory_file(creation_date, locale_code, entries):

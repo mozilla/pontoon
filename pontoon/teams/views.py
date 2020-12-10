@@ -21,6 +21,7 @@ from pontoon.base.models import Locale, Project
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.contributors.views import ContributorsMixin
+from pontoon.insights.utils import get_insights
 from pontoon.teams.forms import LocaleRequestForm
 
 
@@ -94,6 +95,16 @@ def ajax_projects(request, locale):
             "has_projects_to_request": has_projects_to_request,
         },
     )
+
+
+@require_AJAX
+def ajax_insights(request, locale):
+    """Insights tab."""
+    locale = get_object_or_404(Locale, code=locale)
+
+    data = get_insights(Q(locale=locale))
+
+    return render(request, "teams/includes/insights.html", {"data": data},)
 
 
 @require_AJAX
