@@ -89,7 +89,7 @@ function MenuContent(props: Props) {
                         onClick={props.copyOriginalIntoEditor}
                         title='Copy From Source (Ctrl + Shift + C)'
                     >
-                        Copy
+                        COPY
                     </button>
                 </Localized>
                 <Localized
@@ -101,7 +101,7 @@ function MenuContent(props: Props) {
                         onClick={props.clearEditor}
                         title='Clear Translation (Ctrl + Shift + Backspace)'
                     >
-                        Clear
+                        CLEAR
                     </button>
                 </Localized>
                 <EditorMainAction sendTranslation={props.sendTranslation} />

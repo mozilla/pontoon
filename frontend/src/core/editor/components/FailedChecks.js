@@ -64,7 +64,7 @@ export default function FailedChecks(props: FailedChecksProps) {
                 </button>
             </Localized>
             <Localized id='editor-FailedChecks--title'>
-                <p className='title'>The following checks have failed</p>
+                <p className='title'>THE FOLLOWING CHECKS HAVE FAILED</p>
             </Localized>
             <ul>
                 {errors.map((error, key) => (
@@ -120,7 +120,7 @@ function MainAction(props: MainActionProps) {
         return (
             <Localized id='editor-FailedChecks--approve-anyway'>
                 <button className='approve anyway' onClick={approveAnyway}>
-                    Approve anyway
+                    APPROVE ANYWAY
                 </button>
             </Localized>
         );
@@ -130,7 +130,7 @@ function MainAction(props: MainActionProps) {
         return (
             <Localized id='editor-FailedChecks--suggest-anyway'>
                 <button className='suggest anyway' onClick={submitAnyway}>
-                    Suggest anyway
+                    SUGGEST ANYWAY
                 </button>
             </Localized>
         );
@@ -139,7 +139,7 @@ function MainAction(props: MainActionProps) {
     return (
         <Localized id='editor-FailedChecks--save-anyway'>
             <button className='save anyway' onClick={submitAnyway}>
-                Save anyway
+                SAVE ANYWAY
             </button>
         </Localized>
     );
