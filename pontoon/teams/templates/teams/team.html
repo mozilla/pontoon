@@ -91,14 +91,6 @@
           icon = 'users',
         )
       }}
-      {{ Menu.item(
-          'Insights',
-          url('pontoon.teams.insights', locale.code),
-          is_active = (current_page == 'insights'),
-          count = False,
-          icon = 'chart-line',
-        )
-      }}
       {% if settings.ENABLE_BUGS_TAB %}
       {{ Menu.item(
           'Bugs',

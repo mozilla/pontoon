@@ -20,8 +20,6 @@ urlpatterns = [
             [
                 # Team contributors
                 path("contributors/", views.team, name="pontoon.teams.contributors",),
-                # Team insights
-                path("insights/", views.team, name="pontoon.teams.insights",),
                 # Team bugs
                 path("bugs/", views.team, name="pontoon.teams.bugs",),
                 # Team info
@@ -52,12 +50,6 @@ urlpatterns = [
                                 "contributors/",
                                 views.LocaleContributorsView.as_view(),
                                 name="pontoon.teams.ajax.contributors",
-                            ),
-                            # Team insights
-                            path(
-                                "insights/",
-                                views.ajax_insights,
-                                name="pontoon.teams.ajax.insights",
                             ),
                             # Team info
                             path(
