@@ -1,5 +1,3 @@
-import logging
-
 from celery import (
     group,
     signature,
@@ -10,8 +8,6 @@ from pontoon.base.models import Translation
 from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.tasks import check_translations
-
-log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

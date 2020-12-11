@@ -31,7 +31,7 @@ class ActionLog(models.Model):
         "base.Translation", models.CASCADE, blank=True, null=True,
     )
 
-    # Used when a translation has been deleted.
+    # Used when a translation has been deleted or a team comment has been added.
     entity = models.ForeignKey("base.Entity", models.CASCADE, blank=True, null=True,)
     locale = models.ForeignKey("base.Locale", models.CASCADE, blank=True, null=True,)
 
@@ -49,7 +49,7 @@ class ActionLog(models.Model):
             self.translation or not self.entity or not self.locale
         ):
             raise ValidationError(
-                'For action "translation:deleted", `entity` and `locale` are required'
+                'For action type "translation:deleted", `entity` and `locale` are required'
             )
 
         if self.action_type == "comment:added" and not (
@@ -57,7 +57,7 @@ class ActionLog(models.Model):
             or (not self.translation and self.locale and self.entity)
         ):
             raise ValidationError(
-                'For action type "comment:added", either `translation` or `locale` and `entity` are required'
+                'For action type "comment:added", either `translation` or `entity` and `locale` are required'
             )
 
         if (
@@ -65,7 +65,7 @@ class ActionLog(models.Model):
             and self.action_type != "comment:added"
         ) and (not self.translation or self.entity or self.locale):
             raise ValidationError(
-                'Only `translation` is accepted for action type "{}"'.format(
+                'For action type "{}", only `translation` is accepted'.format(
                     self.action_type
                 )
             )
