@@ -76,10 +76,6 @@ $(function () {
                         updateTabCount(tab, count);
                     }
 
-                    if (url.startsWith('/insights/')) {
-                        Pontoon.insights.load();
-                    }
-
                     if (url === '/') {
                         $('.controls input').focus();
                     }
