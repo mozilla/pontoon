@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from datetime import timedelta
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -56,6 +57,11 @@ class Command(BaseCommand):
             .values("locale", "user",)
             .distinct()
         )
+        # Excluded (system) users: excluding directly in the above QuerySet is slow
+        excluded_users = User.objects.filter(
+            email__regex=r"^pontoon-(\w+)@example.com$",
+        ).values("pk")
+        contributors = [c for c in contributors if c["user"] not in excluded_users]
 
         # Get user translation and review actions
         user_actions = (
@@ -165,7 +171,7 @@ class Command(BaseCommand):
         # Get total users for the Active users panel
         all_managers = set()
         all_reviewers = set()
-        all_contributors = contributors
+        all_contributors = {c["user"] for c in contributors}
 
         for user in privileged_users:
             manager = user["managers_group__user"]
@@ -194,16 +200,22 @@ class Command(BaseCommand):
                 if start_of_today - last_login < timedelta(days=365):
                     active_managers.add(manager)
 
+        # Make sure active users are included among all users, otherwise we might
+        # include PMs and privileged users of other locales
         for action in user_actions:
-            if action["action_type"] in (
+            user = action["performed_by"]
+            if user in all_reviewers and action["action_type"] in (
                 "translation:approved",
                 "translation:unapproved",
                 "translation:rejected",
                 "translation:unrejected",
             ):
-                active_reviewers.add(action["performed_by"])
-            if action["action_type"] == "translation:created":
-                active_contributors.add(action["performed_by"])
+                active_reviewers.add(user)
+            if (
+                user in all_contributors
+                and action["action_type"] == "translation:created"
+            ):
+                active_contributors.add(user)
 
         active_users_last_12_months = {
             "managers": len(active_managers),
@@ -244,24 +256,22 @@ class Command(BaseCommand):
             approved_user = action["translation__approved_user"]
 
             if action_type == "translation:created":
-                if is_approved is True and errors is None and warnings is None:
+                if is_approved and errors is None and warnings is None:
                     if len(machinery_sources) == 0:
                         human_translations.add(translation)
                     else:
                         machinery_translations.add(translation)
 
-                elif (
-                    is_approved is False and is_fuzzy is False and is_rejected is False
-                ):
+                elif not is_approved and not is_fuzzy and not is_rejected:
                     new_suggestions.add(translation)
 
-            elif action_type == "translation:approved" and is_approved is True:
+            elif action_type == "translation:approved" and is_approved:
                 if user != approved_user:
                     peer_approved.add(translation)
                 else:
                     self_approved.add(translation)
 
-            elif action_type == "translation:rejected" and is_rejected is True:
+            elif action_type == "translation:rejected" and is_rejected:
                 rejected.add(translation)
 
         return LocaleInsightsSnapshot(
