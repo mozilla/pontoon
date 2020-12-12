@@ -342,9 +342,9 @@ def _serialize_translation_values(query):
 def get_translations_from_other_locales(request):
     """Get entity translations for all but specified locale."""
     try:
-        entity = request.GET["entity"]
+        entity = int(request.GET["entity"])
         locale = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
@@ -399,10 +399,10 @@ def get_translations_from_other_locales(request):
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
     try:
-        entity = request.GET["entity"]
+        entity = int(request.GET["entity"])
         locale = request.GET["locale"]
-        plural_form = request.GET["plural_form"]
-    except MultiValueDictKeyError as e:
+        plural_form = int(request.GET["plural_form"])
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
@@ -415,7 +415,7 @@ def get_translation_history(request):
         entity=entity, locale=locale,
     ).prefetch_related("comments")
 
-    if plural_form != "-1":
+    if plural_form != -1:
         translations = translations.filter(plural_form=plural_form)
     translations = translations.order_by("-active", "rejected", "-date")
 
@@ -447,9 +447,9 @@ def get_translation_history(request):
 def get_team_comments(request):
     """Get team comments for given locale."""
     try:
-        entity = request.GET["entity"]
+        entity = int(request.GET["entity"])
         locale = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
