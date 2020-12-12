@@ -50,8 +50,8 @@ def translation_memory(request):
     try:
         text = request.GET["text"]
         locale = request.GET["locale"]
-        pk = request.GET["pk"]
-    except MultiValueDictKeyError as e:
+        pk = int(request.GET["pk"])
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
