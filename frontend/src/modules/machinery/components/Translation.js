@@ -55,6 +55,8 @@ export default function Translation(props: Props) {
             return;
         }
 
+        // If there is no entity then it is a search term and it is
+        // added to the editor instead of replacing the editor content
         if (!entity) {
             addTextToEditorTranslation(translation.translation);
         } else if (typeof editorContent !== 'string') {
