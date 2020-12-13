@@ -113,6 +113,7 @@ export default class Machinery extends React.Component<Props> {
                             <Translation
                                 sourceString={machinery.sourceString}
                                 translation={translation}
+                                entity={machinery.entity}
                                 addTextToEditorTranslation={
                                     addTextToEditorTranslation
                                 }

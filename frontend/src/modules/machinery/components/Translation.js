@@ -16,6 +16,7 @@ import type { MachineryTranslation, SourceType } from 'core/api';
 type Props = {|
     sourceString: string,
     translation: MachineryTranslation,
+    entity: ?number,
     addTextToEditorTranslation: (string, ?string) => void,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
@@ -35,6 +36,7 @@ export default function Translation(props: Props) {
         updateMachinerySources,
         sourceString,
         translation,
+        entity,
     } = props;
 
     const editorContent = useSelector((state) => state.editor.translation);
@@ -53,7 +55,9 @@ export default function Translation(props: Props) {
             return;
         }
 
-        if (typeof editorContent !== 'string') {
+        if (!entity) {
+            addTextToEditorTranslation(translation.translation);
+        } else if (typeof editorContent !== 'string') {
             // This is a Fluent Message, thus we are in the RichEditor.
             // Handle machinery differently.
             addTextToEditorTranslation(translation.translation, 'machinery');
@@ -64,6 +68,7 @@ export default function Translation(props: Props) {
     }, [
         isReadOnlyEditor,
         translation,
+        entity,
         editorContent,
         addTextToEditorTranslation,
         updateEditorTranslation,
