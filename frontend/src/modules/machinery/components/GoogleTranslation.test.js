@@ -17,6 +17,6 @@ describe('<GoogleTranslation>', () => {
         expect(wrapper.find('li a').props().title).toContain(
             'Visit Google Translate',
         );
-        expect(wrapper.find('li a span').text()).toEqual('Google Translate');
+        expect(wrapper.find('li a span').text()).toEqual('GOOGLE TRANSLATE');
     });
 });

@@ -80,7 +80,6 @@
     margin-right: 6px;
     padding: 2px 4px;
     pointer-events: auto;
-    text-transform: uppercase;
 }
 
 .history .translation .content > header .toggle.on {

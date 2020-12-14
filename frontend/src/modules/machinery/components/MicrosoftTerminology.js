@@ -36,7 +36,7 @@ export default function MicrosoftTerminology(props: Props) {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Microsoft</span>
+                    <span>MICROSOFT</span>
                 </a>
             </Localized>
         </li>

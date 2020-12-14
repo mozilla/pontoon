@@ -22,7 +22,7 @@ describe('<TranslationMemory>', () => {
         expect(wrapper.find('Localized').at(1).props().id).toEqual(
             'machinery-TranslationMemory--translation-memory',
         );
-        expect(wrapper.find('li a span').text()).toEqual('Translation memory');
+        expect(wrapper.find('li a span').text()).toEqual('TRANSLATION MEMORY');
 
         expect(wrapper.find('Localized')).toHaveLength(2);
     });

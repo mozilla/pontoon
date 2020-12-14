@@ -21,7 +21,7 @@ export default function GoogleTranslation() {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Google Translate</span>
+                    <span>GOOGLE TRANSLATE</span>
                 </a>
             </Localized>
         </li>

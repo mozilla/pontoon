@@ -21,7 +21,6 @@
     color: #cccccc;
     font-weight: 300;
     padding: 0;
-    text-transform: uppercase;
 }
 
 .batch-actions .topbar button:hover {
@@ -69,7 +68,6 @@
     font-size: 14px;
     font-weight: 300;
     padding-bottom: 2px;
-    text-transform: uppercase;
 }
 
 .batch-actions .main-content .intro p {
@@ -96,7 +94,6 @@
     margin-top: 10px;
     padding: 15px 5px;
     position: relative;
-    text-transform: uppercase;
 }
 
 .batch-actions .main-content button .fa {

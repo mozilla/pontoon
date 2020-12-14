@@ -17,13 +17,11 @@
     font-weight: 300;
     line-height: 11px;
     margin-top: 6px;
-    text-transform: uppercase;
     padding-bottom: 2px;
 }
 
 .metadata .title {
     color: #888;
-    text-transform: uppercase;
 }
 
 .metadata div a {

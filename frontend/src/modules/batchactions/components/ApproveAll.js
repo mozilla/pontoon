@@ -17,7 +17,7 @@ export default class ApproveAll extends React.Component<Props> {
     renderDefault() {
         return (
             <Localized id='batchactions-ApproveAll--default'>
-                {'Approve all'}
+                {'APPROVE ALL'}
             </Localized>
         );
     }
@@ -25,7 +25,7 @@ export default class ApproveAll extends React.Component<Props> {
     renderError() {
         return (
             <Localized id='batchactions-ApproveAll--error'>
-                {'Oops, something went wrong'}
+                {'OOPS, SOMETHING WENT WRONG'}
             </Localized>
         );
     }
@@ -42,7 +42,7 @@ export default class ApproveAll extends React.Component<Props> {
                 id='batchactions-ApproveAll--invalid'
                 vars={{ invalidCount: response.invalidCount }}
             >
-                {'{ $invalidCount } failed'}
+                {'{ $invalidCount } FAILED'}
             </Localized>
         );
     }
@@ -59,7 +59,7 @@ export default class ApproveAll extends React.Component<Props> {
                 id='batchactions-ApproveAll--success'
                 vars={{ changedCount: response.changedCount }}
             >
-                {'{ $changedCount } strings approved'}
+                {'{ $changedCount } STRINGS APPROVED'}
             </Localized>
         );
     }

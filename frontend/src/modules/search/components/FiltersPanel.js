@@ -243,7 +243,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                         <ul>
                             <Localized id='search-FiltersPanel--heading-status'>
                                 <li className='horizontal-separator'>
-                                    Translation Status
+                                    TRANSLATION STATUS
                                 </li>
                             </Localized>
 
@@ -293,7 +293,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 <>
                                     <Localized id='search-FiltersPanel--heading-tags'>
                                         <li className='horizontal-separator'>
-                                            Tags
+                                            TAGS
                                         </li>
                                     </Localized>
 
@@ -356,7 +356,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
 
                             <Localized id='search-FiltersPanel--heading-extra'>
                                 <li className='horizontal-separator'>
-                                    Extra Filters
+                                    EXTRA FILTERS
                                 </li>
                             </Localized>
 
@@ -409,7 +409,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                 <>
                                     <Localized id='search-FiltersPanel--heading-authors'>
                                         <li className='horizontal-separator'>
-                                            Translation Authors
+                                            TRANSLATION AUTHORS
                                         </li>
                                     </Localized>
 
@@ -489,7 +489,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                         onClick={this.props.resetFilters}
                                         className='clear-selection'
                                     >
-                                        {'<glyph></glyph>Clear'}
+                                        {'<glyph></glyph> CLEAR'}
                                     </button>
                                 </Localized>
                                 <Localized
@@ -511,7 +511,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                                         className='apply-selected'
                                     >
                                         {
-                                            '<glyph></glyph>Apply <stress>{ $count }</stress> filters'
+                                            '<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'
                                         }
                                     </button>
                                 </Localized>

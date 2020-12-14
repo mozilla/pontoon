@@ -186,7 +186,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                             title='Select All Strings (Ctrl + Shift + A)'
                             onClick={this.selectAllEntities}
                         >
-                            {'<glyph></glyph> Select All'}
+                            {'<glyph></glyph> SELECT ALL'}
                         </button>
                     </Localized>
                     {this.props.batchactions.requestInProgress ===
@@ -210,7 +210,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                                 onClick={this.quitBatchActions}
                             >
                                 {
-                                    '<glyph></glyph> <stress>{ $count }</stress> strings selected'
+                                    '<glyph></glyph> <stress>{ $count }</stress> STRINGS SELECTED'
                                 }
                             </button>
                         </Localized>
@@ -233,7 +233,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
 
                     <div className='review'>
                         <Localized id='batchactions-BatchActions--review-heading'>
-                            <h2>Review translations</h2>
+                            <h2>REVIEW TRANSLATIONS</h2>
                         </Localized>
 
                         <ApproveAll
@@ -249,7 +249,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
 
                     <div className='find-replace'>
                         <Localized id='batchactions-BatchActions--find-replace-heading'>
-                            <h2>Find & Replace in translations</h2>
+                            <h2>FIND & REPLACE IN TRANSLATIONS</h2>
                         </Localized>
 
                         <form onSubmit={this.submitReplaceForm}>

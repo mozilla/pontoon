@@ -21,7 +21,7 @@ export default function MicrosoftTranslation() {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Microsoft Translator</span>
+                    <span>MICROSOFT TRANSLATOR</span>
                 </a>
             </Localized>
         </li>

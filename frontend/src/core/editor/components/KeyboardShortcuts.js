@@ -54,7 +54,7 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                 {!this.state.visible ? null : (
                     <div className='overlay' onClick={this.toggleVisibility}>
                         <Localized id='editor-KeyboardShortcuts--overlay-title'>
-                            <h2>Keyboard Shortcuts</h2>
+                            <h2>KEYBOARD SHORTCUTS</h2>
                         </Localized>
                         <table>
                             <tbody>

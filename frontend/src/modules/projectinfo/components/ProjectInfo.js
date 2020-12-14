@@ -59,7 +59,7 @@ export class ProjectInfoBase extends React.Component<Props, State> {
                 {!this.state.visible ? null : (
                     <aside className='panel'>
                         <Localized id='projectinfo-ProjectInfo--project-info-title'>
-                            <h2>Project Info</h2>
+                            <h2>PROJECT INFO</h2>
                         </Localized>
                         {/* We can safely use project.info because it is validated by
                     bleach before being saved into the database. */}

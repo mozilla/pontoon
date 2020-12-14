@@ -173,7 +173,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         title={title}
                         onClick={this.toggleComments}
                     >
-                        {'Comment'}
+                        {'COMMENT'}
                     </button>
                 </Localized>
             );
@@ -190,7 +190,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                         title={title}
                         onClick={this.toggleComments}
                     >
-                        {'<stress>{ $commentCount }</stress> Comments'}
+                        {'<stress>{ $commentCount }</stress> COMMENTS'}
                     </button>
                 </Localized>
             );
@@ -224,7 +224,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                     title='Toggle diff against the currently active translation'
                     onClick={this.toggleDiff}
                 >
-                    {'Diff'}
+                    {'DIFF'}
                 </button>
             </Localized>
         );

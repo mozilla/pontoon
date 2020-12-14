@@ -63,7 +63,6 @@
     font-weight: 300;
     margin-bottom: 5px;
     padding: 4px;
-    text-transform: uppercase;
 }
 
 .progress-chart .menu header h2.small {
@@ -127,7 +126,6 @@
 
 .progress-chart .menu .details div .title {
     font-size: 10px;
-    text-transform: uppercase;
 }
 
 .progress-chart .menu .details div .value {

@@ -303,7 +303,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
             <>
                 <li className='horizontal-separator for-time-range'>
                     <Localized id='search-TimeRangeFilter--heading-time'>
-                        <span>Translation Time</span>
+                        <span>TRANSLATION TIME</span>
                     </Localized>
 
                     {!this.state.visible ? (
@@ -317,7 +317,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
                                 onClick={this.toggleEditingTimeRange}
                                 className='edit-range'
                             >
-                                {'<glyph></glyph>Edit Range'}
+                                {'<glyph></glyph>EDIT RANGE'}
                             </button>
                         </Localized>
                     ) : (
@@ -326,7 +326,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
                                 onClick={this.toggleEditingTimeRange}
                                 className='save-range'
                             >
-                                Save Range
+                                SAVE RANGE
                             </button>
                         </Localized>
                     )}
