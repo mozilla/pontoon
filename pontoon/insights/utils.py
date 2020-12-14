@@ -2,7 +2,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Sum
 
 from pontoon.base.utils import aware_datetime, convert_to_unix_time, get_last_months
-from pontoon.insights.models import LocaleInsightsSnapshot
+from pontoon.insights.models import LocaleInsightsSnapshot, active_users_default
 
 
 def get_insights(query_filters=None):
@@ -54,17 +54,28 @@ def get_insights(query_filters=None):
     )
 
     latest = snapshots.latest("created_at") if snapshots else None
-    active_users = latest.active_users_last_12_months if latest else None
+    default = active_users_default()
 
     return {
         "dates": [convert_to_unix_time(month) for month in months],
         # Active users
-        "total_managers": latest.total_managers if latest else 0,
-        "total_reviewers": latest.total_reviewers if latest else 0,
-        "total_contributors": latest.total_contributors if latest else 0,
-        "active_managers": active_users["managers"] if active_users else 0,
-        "active_reviewers": active_users["reviewers"] if active_users else 0,
-        "active_contributors": active_users["contributors"] if active_users else 0,
+        "total": {
+            "managers": latest.total_managers if latest else 0,
+            "reviewers": latest.total_reviewers if latest else 0,
+            "contributors": latest.total_contributors if latest else 0,
+        },
+        "active_users_last_month": latest.active_users_last_month
+        if latest
+        else default,
+        "active_users_last_3_months": latest.active_users_last_3_months
+        if latest
+        else default,
+        "active_users_last_6_months": latest.active_users_last_6_months
+        if latest
+        else default,
+        "active_users_last_12_months": latest.active_users_last_12_months
+        if latest
+        else default,
         # Unreviewed suggestions lifespan
         "unreviewed_lifespans": [x["unreviewed_lifespan_avg"].days for x in insights],
         # Translation activity
