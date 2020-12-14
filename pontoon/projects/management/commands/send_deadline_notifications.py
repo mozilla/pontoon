@@ -16,7 +16,7 @@ class Command(BaseCommand):
         are due in 7 days. If 2 days before the deadline project still isn't
         complete for the contributor's locale, notifications are sent again.
 
-        Command is designed to run on a daily basis.
+        The command is designed to run daily.
         """
         for project in Project.objects.available():
             if project.deadline:

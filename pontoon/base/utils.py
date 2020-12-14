@@ -8,6 +8,7 @@ import tempfile
 import time
 import zipfile
 
+from collections import defaultdict
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from guardian.decorators import permission_required as guardian_permission_required
@@ -61,6 +62,19 @@ def match_attr(collection, **attributes):
         ),
         default=None,
     )
+
+
+def group_dict_by(list_of_dicts, key):
+    """
+    Group dicts in a list by the given key. Return a defaultdict instance with
+    key used as the key and dict as the value.
+    """
+    group = defaultdict(list)
+
+    for dictionary in list_of_dicts:
+        group[dictionary[key]].append(dictionary)
+
+    return group
 
 
 def extension_in(filename, extensions):

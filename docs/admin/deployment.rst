@@ -280,6 +280,10 @@ RabbitMQ add-on:
 
 Scheduled Jobs
 --------------
+Pontoon requires several scheduled jobs to run regularly.
+
+Sync Projects
+~~~~~~~~~~~~~
 While internal Pontoon DB can be used for storing localizable strings, Pontoon
 specializes in using version control systems for that purpose. If you choose
 this option as well, you'll need to run the following scheduled job:
@@ -291,6 +295,37 @@ this option as well, you'll need to run the following scheduled job:
 It's recommended to run this job at least once an hour. It commits any string
 changes in the database to the remote VCS servers associated with each project,
 and pulls down the latest changes to keep the database in sync.
+
+Send Deadline Notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pontoon allows you to set deadlines for projects. This job sends deadline
+reminders to contributors of projects when they are due in 7 days. If 2 days
+before the deadline project still isn't complete for the contributor's locale,
+notifications are sent again. The command is designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_deadline_notifications
+
+Collect Insights
+~~~~~~~~~~~~~~~~
+The Insights tab in the dashboards presents data that cannot be retrieved from
+the existing data models efficiently upon each request. This job gathers all
+the required data and stores it in a dedicated denormalized data model. The job
+is designed to run in the beginning of the day, every day.
+
+.. code-block:: bash
+
+   ./manage.py collect_insights
+
+Sync Log Retention
+~~~~~~~~~~~~~~~~~~
+You may also optionally run the ``clear_old_sync_logs`` management command on a
+schedule to remove sync logs from the database that are over 90 days old:
+
+.. code-block:: bash
+
+   ./manage.py clear_old_sync_logs
 
 Provisioning Workers
 ~~~~~~~~~~~~~~~~~~~~
@@ -304,15 +339,6 @@ you'll want to provision at least one ``worker`` dyno:
    heroku ps:scale worker=1
 
 .. _Celery: http://www.celeryproject.org/
-
-Sync Log Retention
-~~~~~~~~~~~~~~~~~~
-You may also optionally run the ``clear_old_sync_logs`` management command on a
-schedule to remove sync logs from the database that are over 90 days old:
-
-.. code-block:: bash
-
-   ./manage.py clear_old_sync_logs
 
 Database Migrations
 -------------------
