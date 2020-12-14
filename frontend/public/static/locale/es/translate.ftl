@@ -9,10 +9,10 @@
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
-editor-EditorMenu--button-copy = Copiar
-editor-EditorMenu--button-clear = Borrar
-editor-EditorMenu--button-save = Guardar
-editor-EditorMenu--button-suggest = Sugerir
+editor-EditorMenu--button-copy = COPIAR
+editor-EditorMenu--button-clear = BORRAR
+editor-EditorMenu--button-save = GUARDAR
+editor-EditorMenu--button-suggest = SUGERIR
 
 
 ## Entity Navigation
@@ -51,12 +51,12 @@ history-Translation--button-unreject =
 entitydetails-metadata-plural = Plural
 entitydetails-metadata-singular = Singular
 entitydetails-metadata-comment =
-    .title = Comentario
+    .title = COMENTARIO
 entitydetails-metadata-context =
-    .title = Contexto
+    .title = CONTEXTO
 entitydetails-metadata-placeholder =
-    .title = Ejemplos de variables
+    .title = EJEMPLOS DE VARIABLES
 entitydetails-metadata-resource =
-    .title = Recurso
+    .title = RECURSO 
 entitydetails-metadata-project =
-    .title = Proyecto
+    .title = PROYECTO

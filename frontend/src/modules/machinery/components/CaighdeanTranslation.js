@@ -21,7 +21,7 @@ export default function CaighdeanTranslation() {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Caighdean</span>
+                    <span>CAIGHDEAN</span>
                 </a>
             </Localized>
         </li>

@@ -33,7 +33,6 @@
     color: #f36;
     font-size: 14px;
     font-weight: 300;
-    text-transform: uppercase;
     padding-bottom: 5px;
 }
 
@@ -52,7 +51,6 @@
     padding: 10px;
     position: absolute;
     right: 10px;
-    text-transform: uppercase;
 }
 
 .unsaved-changes .anyway:hover {

@@ -136,7 +136,7 @@ export default class Metadata extends React.Component<Props, State> {
                 id='entitydetails-Metadata--comment'
                 attrs={{ title: true }}
             >
-                <Property title='Comment' className='comment'>
+                <Property title='COMMENT' className='comment'>
                     <Linkify
                         properties={{
                             target: '_blank',
@@ -160,7 +160,7 @@ export default class Metadata extends React.Component<Props, State> {
                 id='entitydetails-Metadata--group-comment'
                 attrs={{ title: true }}
             >
-                <Property title='Group Comment' className='comment'>
+                <Property title='GROUP COMMENT ' className='comment'>
                     <Linkify
                         properties={{
                             target: '_blank',
@@ -195,7 +195,7 @@ export default class Metadata extends React.Component<Props, State> {
                                   key={pinnedComment.id}
                               >
                                   <Property
-                                      title='Pinned Comment'
+                                      title='PINNED COMMENT'
                                       className='comment'
                                   >
                                       <Linkify
@@ -234,7 +234,7 @@ export default class Metadata extends React.Component<Props, State> {
                 id='entitydetails-Metadata--resource-comment'
                 attrs={{ title: true }}
             >
-                <Property title='Resource Comment' className='comment'>
+                <Property title='RESOURCE COMMENT' className='comment'>
                     <Linkify
                         properties={{
                             target: '_blank',
@@ -267,7 +267,7 @@ export default class Metadata extends React.Component<Props, State> {
                 id='entitydetails-Metadata--context'
                 attrs={{ title: true }}
             >
-                <Property title='Context' className='context'>
+                <Property title='CONTEXT' className='context'>
                     {entity.key}
                 </Property>
             </Localized>
@@ -310,7 +310,7 @@ export default class Metadata extends React.Component<Props, State> {
                 id='entitydetails-Metadata--placeholder'
                 attrs={{ title: true }}
             >
-                <Property title='Placeholder Examples' className='placeholder'>
+                <Property title='PLACEHOLDER EXAMPLES' className='placeholder'>
                     <Linkify
                         properties={{
                             target: '_blank',
@@ -405,7 +405,7 @@ export default class Metadata extends React.Component<Props, State> {
                     id='entitydetails-Metadata--resource'
                     attrs={{ title: true }}
                 >
-                    <Property title='Resource' className='resource'>
+                    <Property title='RESOURCE' className='resource'>
                         <a href={`/${locale.code}/${entity.project.slug}/`}>
                             {entity.project.name}
                         </a>

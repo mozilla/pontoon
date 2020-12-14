@@ -17,7 +17,7 @@ export default class ReplaceAll extends React.Component<Props> {
     renderDefault() {
         return (
             <Localized id='batchactions-ReplaceAll--default'>
-                {'Replace all'}
+                {'REPLACE ALL'}
             </Localized>
         );
     }
@@ -25,7 +25,7 @@ export default class ReplaceAll extends React.Component<Props> {
     renderError() {
         return (
             <Localized id='batchactions-ReplaceAll--error'>
-                {'Oops, something went wrong'}
+                {'OOPS, SOMETHING WENT WRONG'}
             </Localized>
         );
     }
@@ -42,7 +42,7 @@ export default class ReplaceAll extends React.Component<Props> {
                 id='batchactions-ReplaceAll--invalid'
                 vars={{ invalidCount: response.invalidCount }}
             >
-                {'{ $invalidCount } failed'}
+                {'{ $invalidCount } FAILED'}
             </Localized>
         );
     }
@@ -59,7 +59,7 @@ export default class ReplaceAll extends React.Component<Props> {
                 id='batchactions-ReplaceAll--success'
                 vars={{ changedCount: response.changedCount }}
             >
-                {'{ $changedCount } strings replaced'}
+                {'{ $changedCount } STRINGS REPLACED'}
             </Localized>
         );
     }

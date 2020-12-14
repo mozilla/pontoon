@@ -32,6 +32,6 @@ describe('<MicrosoftTerminology>', () => {
         expect(wrapper.find('li a').props().title).toContain(
             'Visit Microsoft Terminology Service API.',
         );
-        expect(wrapper.find('li a span').text()).toEqual('Microsoft');
+        expect(wrapper.find('li a span').text()).toEqual('MICROSOFT');
     });
 });

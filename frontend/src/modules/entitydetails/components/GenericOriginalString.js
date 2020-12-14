@@ -33,7 +33,7 @@ function getOriginalContent(props: Props) {
         return {
             title: (
                 <Localized id='entitydetails-GenericOriginalString--singular'>
-                    <h2>Singular</h2>
+                    <h2>SINGULAR</h2>
                 </Localized>
             ),
             original: entity.original,
@@ -43,7 +43,7 @@ function getOriginalContent(props: Props) {
     return {
         title: (
             <Localized id='entitydetails-GenericOriginalString--plural'>
-                <h2>Plural</h2>
+                <h2>PLURAL</h2>
             </Localized>
         ),
         original: entity.original_plural,

@@ -83,7 +83,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <header>
                                 <h2>
                                     <Localized id='resourceprogress-ResourceProgress--all-strings'>
-                                        All strings
+                                        ALL STRINGS
                                     </Localized>
                                     <span className='value'>
                                         {asLocaleString(total)}
@@ -91,7 +91,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                                 </h2>
                                 <h2 className='small'>
                                     <Localized id='resourceprogress-ResourceProgress--unreviewed'>
-                                        Unreviewed
+                                        UNREVIEWED
                                     </Localized>
                                     <span className='value'>
                                         {asLocaleString(unreviewed)}
@@ -108,7 +108,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <div className='approved'>
                                 <span className='title'>
                                     <Localized id='resourceprogress-ResourceProgress--translated'>
-                                        Translated
+                                        TRANSLATED
                                     </Localized>
                                 </span>
                                 <p
@@ -128,7 +128,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <div className='fuzzy'>
                                 <span className='title'>
                                     <Localized id='resourceprogress-ResourceProgress--fuzzy'>
-                                        Fuzzy
+                                        FUZZY
                                     </Localized>
                                 </span>
                                 <p
@@ -148,7 +148,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <div className='warnings'>
                                 <span className='title'>
                                     <Localized id='resourceprogress-ResourceProgress--warnings'>
-                                        Warnings
+                                        WARNINGS
                                     </Localized>
                                 </span>
                                 <p
@@ -168,7 +168,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <div className='errors'>
                                 <span className='title'>
                                     <Localized id='resourceprogress-ResourceProgress--errors'>
-                                        Errors
+                                        ERRORS
                                     </Localized>
                                 </span>
                                 <p
@@ -188,7 +188,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
                             <div className='missing'>
                                 <span className='title'>
                                     <Localized id='resourceprogress-ResourceProgress--missing'>
-                                        Missing
+                                        MISSING
                                     </Localized>
                                 </span>
                                 <p

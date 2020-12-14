@@ -26,7 +26,7 @@ export default function TranslationMemory(props: Props) {
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
                     <Localized id='machinery-TranslationMemory--translation-memory'>
-                        <span>Translation memory</span>
+                        <span>TRANSLATION MEMORY</span>
                     </Localized>
                     {!props.itemCount ? null : (
                         <Localized

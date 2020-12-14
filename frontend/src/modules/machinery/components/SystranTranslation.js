@@ -21,7 +21,7 @@ export default function SystranTranslation() {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Systran Translate</span>
+                    <span>SYSTRAN TRANSLATE</span>
                 </a>
             </Localized>
         </li>

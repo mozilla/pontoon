@@ -18,7 +18,7 @@ describe('<MicrosoftTranslation>', () => {
             'Visit Microsoft Translator',
         );
         expect(wrapper.find('li a span').text()).toEqual(
-            'Microsoft Translator',
+            'MICROSOFT TRANSLATOR',
         );
     });
 });

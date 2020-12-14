@@ -11,10 +11,10 @@
 
 editor-EditorMenu--sign-in-to-translate = <a>Connectez-vous</a> pour traduire.
 editor-EditorMenu--read-only-localization = Cette traduction est en lecture seule.
-editor-EditorMenu--button-copy = Copier
-editor-EditorMenu--button-clear = Effacer
-editor-EditorMenu--button-save = Sauvegarder
-editor-EditorMenu--button-suggest = Suggérer
+editor-EditorMenu--button-copy = COPIER
+editor-EditorMenu--button-clear = EFFACER
+editor-EditorMenu--button-save = SAUVEGARDER
+editor-EditorMenu--button-suggest = SUGGÉRER
 
 
 ## Editor Settings
@@ -34,11 +34,10 @@ editor-EditorSettings--change-all = Changer tous les paramètres
 
 editor-FailedChecks--close = ×
     .aria-label = Cacher les vérifications échouées
-editor-FailedChecks--title = Les vérifications suivantes ont échoué
-editor-FailedChecks--save-anyway = Sauvegarder quand même
-editor-FailedChecks--suggest-anyway = Suggérer quand même
-editor-FailedChecks--approve-anyway = Approuver quand même
-
+editor-FailedChecks--title = LES VÉRIFICATIONS SUIVANTES ONT ÉCHOUÉ
+editor-FailedChecks--save-anyway = SAUVEGARDER QUAND MÊME
+editor-FailedChecks--suggest-anyway = SUGGÉRER QUAND MÊME
+editor-FailedChecks--approve-anyway = APPROUVER QUAND MÊME
 
 ## Editor Keyboard Shortcuts
 ## Shows a list of keyboard shortcuts.
@@ -46,7 +45,7 @@ editor-FailedChecks--approve-anyway = Approuver quand même
 editor-KeyboardShortcuts--button =
     .title = Raccourcis clavier
 
-editor-KeyboardShortcuts--overlay-title = Raccourcis clavier
+editor-KeyboardShortcuts--overlay-title = RACCOURCIS CLAVIER
 
 editor-KeyboardShortcuts--save-translation = Sauvegarder une traduction
 editor-KeyboardShortcuts--save-translation-shortcut = <accel>Entrée</accel>
@@ -81,46 +80,46 @@ editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod
 
 editor-UnsavedChanges--close = ×
     .aria-label = Cacher les changements non-sauvegardés
-editor-UnsavedChanges--title = Vous avez des changements non-sauvegardés
+editor-UnsavedChanges--title = VOUS AVEZ DES CHANGEMENTS NON-SAUVEGARDÉS
 
 
 ## Entity Navigation
 ## Shows next/previous buttons.
 
-entitydetails-EntityNavigation--next = <glyph></glyph>Suivant
+entitydetails-EntityNavigation--next = <glyph></glyph>SUIVANT
     .title = Aller à la chaîne suivante (Alt + Bas)
-entitydetails-EntityNavigation--previous = <glyph></glyph>Précédent
+entitydetails-EntityNavigation--previous = <glyph></glyph>PRÉCÉDENT
     .title = Aller à la chaîne précédente (Alt + Haut)
 
 
 ## Entity Details Helpers
 ## Shows helper tabs
 
-entitydetails-Helpers--machinery = Machinerie
-entitydetails-Helpers--locales = Langues
+entitydetails-Helpers--machinery = MACHINERIE
+entitydetails-Helpers--locales = LANGUES
 
 
 ## Entity Details Metadata
 ## Shows metadata about an entity (original string)
 
 entitydetails-Metadata--comment =
-    .title = Commentaire
+    .title = COMMENTAIRE 
 
 entitydetails-Metadata--context =
-    .title = Contexte
+    .title = CONTEXTE
 
 entitydetails-Metadata--placeholder =
-    .title = Exemples bouche-trous
+    .title = EXEMPLES BOUCHE-TROUS
 
 entitydetails-Metadata--resource =
-    .title = Ressource
+    .title = RESSOURCE
 
 
 ## Entity Details GenericOriginalString
 ## Shows the original string of an entity
 
-entitydetails-GenericOriginalString--plural = Pluriel
-entitydetails-GenericOriginalString--singular = Singulier
+entitydetails-GenericOriginalString--plural = PLURIEL
+entitydetails-GenericOriginalString--singular = SINGULIER
 
 
 ## History
@@ -261,13 +260,13 @@ resource-ResourceMenu--all-projects = Tous les projets
 ## Search
 ## The search bar and filters menu.
 
-search-FiltersPanel--clear-selection = <glyph></glyph>Effacer
+search-FiltersPanel--clear-selection = <glyph></glyph>EFFACER
     .title = Désélectionner les filtres
 
 search-FiltersPanel--apply-filters =
     <glyph></glyph>Appliquer <stress>{ $count }</stress> { $count ->
-        [one] filtre
-       *[other] filtres
+        [one] FILTRE
+       *[other] FILTRES
     }
     .title = Appliquer les filtres sélectionnés
 

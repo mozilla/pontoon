@@ -73,7 +73,7 @@ export default function Term(props: Props) {
                 {!term.usage ? null : (
                     <p className='usage'>
                         <Localized id='term-Term--for-example'>
-                            <span className='title'>E.g.</span>
+                            <span className='title'>E.G.</span>
                         </Localized>
                         <span className='content'>{term.usage}</span>
                     </p>

@@ -88,14 +88,14 @@ export default class Helpers extends React.Component<Props> {
                             {parameters.project === 'terminology' ? null : (
                                 <Tab>
                                     <Localized id='entitydetails-Helpers--terms'>
-                                        {'Terms'}
+                                        {'TERMS'}
                                     </Localized>
                                     <TermCount terms={terms} />
                                 </Tab>
                             )}
                             <Tab ref={commentTabRef}>
                                 <Localized id='entitydetails-Helpers--comments'>
-                                    {'Comments'}
+                                    {'COMMENTS'}
                                 </Localized>
                                 <CommentCount teamComments={teamComments} />
                             </Tab>
@@ -132,13 +132,13 @@ export default class Helpers extends React.Component<Props> {
                         <TabList>
                             <Tab>
                                 <Localized id='entitydetails-Helpers--machinery'>
-                                    {'Machinery'}
+                                    {'MACHINERY'}
                                 </Localized>
                                 <MachineryCount machinery={machinery} />
                             </Tab>
                             <Tab>
                                 <Localized id='entitydetails-Helpers--locales'>
-                                    {'Locales'}
+                                    {'LOCALES'}
                                 </Localized>
                                 <OtherLocalesCount
                                     otherlocales={otherlocales}

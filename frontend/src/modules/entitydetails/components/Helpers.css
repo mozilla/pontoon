@@ -38,7 +38,6 @@
     list-style: none;
     padding: 12px 5px 13px;
     text-align: center;
-    text-transform: uppercase;
 }
 
 .react-tabs__tab:last-child {

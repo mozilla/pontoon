@@ -34,7 +34,7 @@ export default function TransvisionMemory(props: Props) {
                     rel='noopener noreferrer'
                     onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
                 >
-                    <span>Mozilla</span>
+                    <span>MOZILLA</span>
                 </a>
             </Localized>
         </li>

@@ -62,7 +62,7 @@ export default class EntityNavigation extends React.Component<Props> {
                         title='Copy Link to String'
                         onClick={this.props.copyLinkToClipboard}
                     >
-                        {'<glyph></glyph>Copy Link'}
+                        {'<glyph></glyph>COPY LINK'}
                     </button>
                 </Localized>
                 <Localized
@@ -77,7 +77,7 @@ export default class EntityNavigation extends React.Component<Props> {
                         title='Go To Next String (Alt + Down)'
                         onClick={this.props.goToNextEntity}
                     >
-                        {'<glyph></glyph>Next'}
+                        {'<glyph></glyph>NEXT'}
                     </button>
                 </Localized>
                 <Localized
@@ -90,7 +90,7 @@ export default class EntityNavigation extends React.Component<Props> {
                         title='Go To Previous String (Alt + Up)'
                         onClick={this.props.goToPreviousEntity}
                     >
-                        {'<glyph></glyph>Previous'}
+                        {'<glyph></glyph>PREVIOUS'}
                     </button>
                 </Localized>
             </div>

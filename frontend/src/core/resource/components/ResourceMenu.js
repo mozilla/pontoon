@@ -169,7 +169,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                     className='resource'
                                     onClick={this.sortByResource}
                                 >
-                                    Resource
+                                    RESOURCE
                                 </span>
                             </Localized>
                             <span
@@ -181,7 +181,7 @@ export class ResourceMenuBase extends React.Component<Props, State> {
                                     className='progress'
                                     onClick={this.sortByProgress}
                                 >
-                                    Progress
+                                    PROGRESS
                                 </span>
                             </Localized>
                             <span
