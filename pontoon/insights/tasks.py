@@ -2,6 +2,7 @@ import logging
 
 from celery import shared_task
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -75,28 +76,28 @@ def get_privileged_users():
 def get_contributors():
     """Get all contributors without system users.
 
-    Note that excluding system users directly in the QuerySet is slow.
+    Note that excluding system users directly in the contributors QuerySet is slow.
     """
-    contributors = (
-        Translation.objects.filter(user__isnull=False)
-        .values("locale", "user")
-        .distinct()
-    )
-
-    excluded_users = User.objects.filter(
+    system_users = User.objects.filter(
         email__regex=r"^pontoon-(\w+)@example.com$",
     ).values("pk")
 
-    contributors = [c for c in contributors if c["user"] not in excluded_users]
+    contributors = (
+        Translation.objects
+        .filter(user__isnull=False)
+        .exclude(user__pk__in=system_users)
+        .values("locale", "user")
+        .distinct()
+    )
 
     return group_dict_by(contributors, "locale")
 
 
 def get_active_users_actions(start_of_today):
-    """Get actions of the previous 12 months, needed for the Active users charts."""
+    """Get actions of the previous year, needed for the Active users charts."""
     actions = (
         ActionLog.objects.filter(
-            created_at__gte=start_of_today - timedelta(days=365),
+            created_at__gte=start_of_today - relativedelta(year=1),
             created_at__lt=start_of_today,
         )
         .values("action_type", "created_at", "performed_by", "translation__locale")
@@ -125,7 +126,7 @@ def get_activity_actions(start_of_today):
     """Get actions of the previous day, needed for the Translation and Review activity charts."""
     actions = (
         ActionLog.objects.filter(
-            created_at__gte=start_of_today - timedelta(days=1),
+            created_at__gte=start_of_today - relativedelta(days=1),
             created_at__lt=start_of_today,
             translation__entity__resource__project__system_project=False,
             translation__entity__resource__project__visibility="public",
@@ -153,7 +154,7 @@ def get_activity_actions(start_of_today):
 def get_entities(start_of_today):
     """Get entities created on the previous day."""
     entities = Entity.objects.filter(
-        date_created__gte=start_of_today - timedelta(days=1),
+        date_created__gte=start_of_today - relativedelta(days=1),
         date_created__lt=start_of_today,
         obsolete=False,
         resource__project__disabled=False,
@@ -175,7 +176,7 @@ def get_locale_insights_snapshot(
     entities,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
-    all_managers, all_reviewers = get_all_users_data(privileged_users)
+    all_managers, all_reviewers = get_privileged_users_data(privileged_users)
     all_contributors = {c["user"] for c in contributors}
 
     total_managers = len(all_managers)
@@ -188,7 +189,7 @@ def get_locale_insights_snapshot(
         active_users_actions,
         all_managers,
         all_reviewers,
-        days=365 / 12,
+        months=1,
     )
     active_users_last_3_months = get_active_users_data(
         start_of_today,
@@ -196,7 +197,7 @@ def get_locale_insights_snapshot(
         active_users_actions,
         all_managers,
         all_reviewers,
-        days=365 / 4,
+        months=3,
     )
     active_users_last_6_months = get_active_users_data(
         start_of_today,
@@ -204,7 +205,7 @@ def get_locale_insights_snapshot(
         active_users_actions,
         all_managers,
         all_reviewers,
-        days=365 / 2,
+        months=6,
     )
     active_users_last_12_months = get_active_users_data(
         start_of_today,
@@ -212,7 +213,7 @@ def get_locale_insights_snapshot(
         active_users_actions,
         all_managers,
         all_reviewers,
-        days=365,
+        months=12,
     )
 
     unreviewed_suggestions_lifespan = get_unreviewed_suggestions_lifespan_data(
@@ -261,8 +262,8 @@ def get_locale_insights_snapshot(
     )
 
 
-def get_all_users_data(privileged_users):
-    """Get all users for the Active users panel."""
+def get_privileged_users_data(privileged_users):
+    """Get all privileged users for the Active users panel."""
     all_managers = set()
     all_reviewers = set()
 
@@ -285,7 +286,7 @@ def get_active_users_data(
     active_users_actions,
     all_reviewers,
     all_contributors,
-    days=365,
+    months=12,
 ):
     """Get active user counts for the Active users panel."""
     active_managers = set()
@@ -298,7 +299,7 @@ def get_active_users_data(
         last_login = user["managers_group__user__last_login"]
 
         if last_login:
-            if start_of_today - last_login < timedelta(days=days):
+            if last_login + relativedelta(months=months) > start_of_today:
                 active_managers.add(manager)
 
     # Get active reviewers and contributors. Make sure they are included among all
@@ -311,11 +312,11 @@ def get_active_users_data(
             "translation:rejected",
             "translation:unrejected",
         ):
-            if start_of_today - action["created_at"] < timedelta(days=days):
+            if action["created_at"] + relativedelta(months=months) > start_of_today:
                 active_reviewers.add(user)
 
         if user in all_contributors and action["action_type"] == "translation:created":
-            if start_of_today - action["created_at"] < timedelta(days=days):
+            if action["created_at"] + relativedelta(months=months) > start_of_today:
                 active_contributors.add(user)
 
     return {
