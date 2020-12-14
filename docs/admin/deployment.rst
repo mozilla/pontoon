@@ -282,7 +282,7 @@ Scheduled Jobs
 --------------
 Pontoon requires several scheduled jobs to run regularly.
 
-Sync projects
+Sync Projects
 ~~~~~~~~~~~~~
 While internal Pontoon DB can be used for storing localizable strings, Pontoon
 specializes in using version control systems for that purpose. If you choose
@@ -298,7 +298,7 @@ and pulls down the latest changes to keep the database in sync.
 
 Send Deadline Notifications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Pontoon allows you to set deadlines to projects. This job sends deadline
+Pontoon allows you to set deadlines for projects. This job sends deadline
 reminders to contributors of projects when they are due in 7 days. If 2 days
 before the deadline project still isn't complete for the contributor's locale,
 notifications are sent again. The command is designed to run daily.
@@ -307,7 +307,7 @@ notifications are sent again. The command is designed to run daily.
 
    ./manage.py send_deadline_notifications
 
-Collect insights
+Collect Insights
 ~~~~~~~~~~~~~~~~
 The Insights tab in the dashboards presents data that cannot be retrieved from
 the existing data models efficiently upon each request. This job gathers all
