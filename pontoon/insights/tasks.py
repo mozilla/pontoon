@@ -83,8 +83,7 @@ def get_contributors():
     ).values("pk")
 
     contributors = (
-        Translation.objects
-        .filter(user__isnull=False)
+        Translation.objects.filter(user__isnull=False)
         .exclude(user__pk__in=system_users)
         .values("locale", "user")
         .distinct()
