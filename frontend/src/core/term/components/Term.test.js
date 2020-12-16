@@ -6,6 +6,7 @@ import Term from './Term';
 
 describe('<Term>', () => {
     const TERM = {
+        title: 'title',
         text: 'text',
         partOfSpeech: 'partOfSpeech',
         definition: 'definition',
@@ -32,6 +33,7 @@ describe('<Term>', () => {
         const wrapper = shallow(<Term term={TERM} />);
 
         expect(wrapper.find('li')).toHaveLength(1);
+        expect(wrapper.find('.title')).toHaveLength('title');
         expect(wrapper.find('.text').text()).toEqual('text');
         expect(wrapper.find('.part-of-speech').text()).toEqual('partOfSpeech');
         expect(wrapper.find('.definition').text()).toEqual('definition');

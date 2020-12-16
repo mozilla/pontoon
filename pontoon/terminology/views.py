@@ -28,6 +28,7 @@ def get_terms(request):
 
     for term in Term.objects.for_string(source_string):
         data = {
+            "title": term.title,
             "text": term.text,
             "part_of_speech": term.part_of_speech,
             "definition": term.definition,

@@ -194,6 +194,7 @@ class TagFactory(DjangoModelFactory):
 
 
 class TermFactory(DjangoModelFactory):
+    title = "title"
     text = Sequence(lambda n: "Term {0}".format(n))
     definition = "definition"
     part_of_speech = "part_of_speech"

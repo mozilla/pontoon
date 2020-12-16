@@ -57,6 +57,7 @@ export default function Term(props: Props) {
             onClick={() => copyTermIntoEditor(term.translation)}
         >
             <header>
+                <span className='text'>{term.title}</span>
                 <span className='text'>{term.text}</span>
                 <span className='part-of-speech'>{term.partOfSpeech}</span>
                 <a

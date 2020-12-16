@@ -64,6 +64,7 @@ export type UsersList = {|
  * Term entry with translation.
  */
 export type TermType = {|
+    +title: string,
     +text: string,
     +partOfSpeech: string,
     +definition: string,
