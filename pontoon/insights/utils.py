@@ -14,49 +14,83 @@ def get_insights(query_filters=None):
         [aware_datetime(year, month, 1) for year, month in get_last_months(12)]
     )
 
+    snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=months[0])
+
+    if query_filters:
+        snapshots = snapshots.filter(query_filters)
+
+    insights = (
+        snapshots
+        # Truncate to month and add to select list
+        .annotate(month=TruncMonth("created_at"))
+        # Group By month
+        .values("month")
+        # Select the avg/sum of the grouping
+        .annotate(unreviewed_lifespan_avg=Avg("unreviewed_suggestions_lifespan"))
+        .annotate(completion_avg=Avg("completion"))
+        .annotate(human_translations_sum=Sum("human_translations"))
+        .annotate(machinery_sum=Sum("machinery_translations"))
+        .annotate(new_source_strings_sum=Sum("new_source_strings"))
+        .annotate(unreviewed_avg=Avg("unreviewed_strings"))
+        .annotate(peer_approved_sum=Sum("peer_approved"))
+        .annotate(self_approved_sum=Sum("self_approved"))
+        .annotate(rejected_sum=Sum("rejected"))
+        .annotate(new_suggestions_sum=Sum("new_suggestions"))
+        # Select month and values
+        .values(
+            "month",
+            "unreviewed_lifespan_avg",
+            "completion_avg",
+            "human_translations_sum",
+            "machinery_sum",
+            "new_source_strings_sum",
+            "unreviewed_avg",
+            "peer_approved_sum",
+            "self_approved_sum",
+            "rejected_sum",
+            "new_suggestions_sum",
+        )
+        .order_by("month")
+    )
+
+    latest = snapshots.latest("created_at") if snapshots else None
+    default = active_users_default()
+
     return {
         "dates": [convert_to_unix_time(month) for month in months],
         # Active users
         "total": {
-            "managers": 3,
-            "reviewers": 7,
-            "contributors": 29,
+            "managers": latest.total_managers if latest else 0,
+            "reviewers": latest.total_reviewers if latest else 0,
+            "contributors": latest.total_contributors if latest else 0,
         },
-        "active_users_last_month": {
-            "managers": 1,
-            "reviewers": 2,
-            "contributors": 1,
-        },
-        "active_users_last_3_months": {
-            "managers": 2,
-            "reviewers": 3,
-            "contributors": 3,
-        },
-        "active_users_last_6_months": {
-            "managers": 2,
-            "reviewers": 4,
-            "contributors": 6,
-        },
-        "active_users_last_12_months": {
-            "managers": 3,
-            "reviewers": 5,
-            "contributors": 12,
-        },
+        "active_users_last_month": latest.active_users_last_month
+        if latest
+        else default,
+        "active_users_last_3_months": latest.active_users_last_3_months
+        if latest
+        else default,
+        "active_users_last_6_months": latest.active_users_last_6_months
+        if latest
+        else default,
+        "active_users_last_12_months": latest.active_users_last_12_months
+        if latest
+        else default,
         # Unreviewed suggestions lifespan
-        "unreviewed_lifespans": [67, 73, 68, 71, 70, 69, 75, 68, 65, 67, 70, 67],
+        "unreviewed_lifespans": [x["unreviewed_lifespan_avg"].days for x in insights],
         # Translation activity
         "translation_activity": {
-            "completion": [94.84, 94.69, 94.06, 94.98, 94.66, 92.93, 94.84, 95.6, 95.48, 95.29, 95.58, 95.1],
-            "human_translations": [170, 160, 170, 180, 140, 190, 160, 100, 170, 170, 170, 100],
-            "machinery_translations": [65, 90, 90, 60, 80, 65, 90, 60, 115, 65, 85, 25],
-            "new_source_strings": [57, 39, 54, 39, 48, 45, 45, 51, 51, 45, 48, 27],
+            "completion": [round(x["completion_avg"], 2) for x in insights],
+            "human_translations": [x["human_translations_sum"] for x in insights],
+            "machinery_translations": [x["machinery_sum"] for x in insights],
+            "new_source_strings": [x["new_source_strings_sum"] for x in insights],
         },
         # Review activity
         "review_activity": {
-            "unreviewed": [73, 77, 81, 71, 76, 73, 77, 74, 72, 74, 59, 72],
-            "peer_approved": [100, 80, 45, 85, 75, 60, 80, 80, 75, 80, 85, 25],
-            "self_approved": [155, 115, 140, 140, 150, 155, 200, 190, 165, 140, 125, 90],
-            "rejected": [45, 42, 51, 48, 39, 63, 48, 57, 39, 48, 33, 15],
-            "new_suggestions": [108, 96, 132, 104, 124, 116, 132, 140, 156, 124, 104, 76],
+            "unreviewed": [int(round(x["unreviewed_avg"])) for x in insights],
+            "peer_approved": [x["peer_approved_sum"] for x in insights],
+            "self_approved": [x["self_approved_sum"] for x in insights],
+            "rejected": [x["rejected_sum"] for x in insights],
+            "new_suggestions": [x["new_suggestions_sum"] for x in insights],
         },
     }
