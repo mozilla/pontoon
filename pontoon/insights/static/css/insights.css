@@ -137,11 +137,8 @@
     max-width: 570px;
 }
 
-#insights h3 .tooltip p {
-    padding-bottom: 15px;
-}
-
 #insights h3 .tooltip ul {
+    margin-top: 15px;
     margin-left: 15px;
 }
 
@@ -191,7 +188,7 @@
     color: #843650;
 }
 
-#insights h3 .tooltip li.new::marker {
+#insights h3 .tooltip li.new-suggestions::marker {
     color: #272a2f;
 }
 

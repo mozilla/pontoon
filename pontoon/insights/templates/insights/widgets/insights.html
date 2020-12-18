@@ -1,3 +1,5 @@
+{% import "insights/widgets/tooltip.html" as Tooltip %}
+
 {# Widget to display insights. #}
 {% macro display() %}
 <div id="insights" data-dates="{{ dates }}">
@@ -14,24 +16,22 @@
             <div class="block clearfix">
                 <h3 class="controls">
                     Active users
-                    <div class="fa fa-info selector"></div>
-                    <div class="tooltip">
-                        <p>Ratios of active vs. all managers, reviewers, contributors.</p>
-                        <ul>
-                            <li class="active-managers">
-                                <b>Active managers:</b>
-                                Managers who logged into Pontoon within the selected time frame.
-                            </li>
-                            <li class="active-reviewers">
-                                <b>Active reviewers:</b>
-                                Users who reviewed translations within the selected time frame.
-                            </li>
-                            <li class="active-contributors">
-                                <b>Active contributors:</b>
-                                Users who submitted translations within the selected time frame.
-                            </li>
-                        </ul>
-                    </div>
+                    {{ Tooltip.display(
+                        intro='Ratios of active vs. all managers, reviewers, contributors.',
+                        items=[{
+                            'class': 'active-managers',
+                            'name': 'Active managers',
+                            'definition': 'Managers who logged into Pontoon within the selected time frame.',
+                        }, {
+                            'class': 'active-reviewers',
+                            'name': 'Active reviewers',
+                            'definition': 'Users who reviewed translations within the selected time frame.',
+                        }, {
+                            'class': 'active-contributors',
+                            'name': 'Active contributors',
+                            'definition': 'Users who submitted translations within the selected time frame.',
+                        }]
+                    ) }}
                     <ul class="period-selector noselect clearfix">
                         <li><div class="active selector" data-period="12">12m</div></li>
                         <li><div class="selector" data-period="6">6m</div></li>
@@ -69,10 +69,9 @@
             <div class="block clearfix">
                 <h3 class="controls">
                     Unreviewed suggestions lifespan
-                    <div class="fa fa-info selector"></div>
-                    <div class="tooltip">
-                        How much time it takes on average to review a suggestion within the selected time frame.
-                    </div>
+                    {{ Tooltip.display(
+                        intro='How much time it takes on average to review a suggestion within the selected time frame.',
+                    ) }}
                 </h3>
                 <canvas
                     id="unreviewed-suggestions-lifespan-chart"
@@ -88,28 +87,26 @@
         <figure class="block">
             <h3 class="controls">
                 Translation activity
-                <div class="fa fa-info selector"></div>
-                <div class="tooltip">
-                    <p>Impact of adding translations and source strings on the overal translation completion.</p>
-                    <ul>
-                        <li class="completion">
-                            <b>Completion:</b>
-                            Share of translated strings.
-                        </li>
-                        <li class="human-translations">
-                            <b>Human translations:</b>
-                            Translations authored by users.
-                        </li>
-                        <li class="machinery-translations">
-                            <b>Machinery translations:</b>
-                            Translations copied from Machinery.
-                        </li>
-                        <li class="new-source-strings">
-                            <b>New source strings:</b>
-                            Newly added source strings (hidden by default).
-                        </li>
-                    </ul>
-                </div>
+                {{ Tooltip.display(
+                    intro='Impact of adding translations and source strings on the overal translation completion.',
+                    items=[{
+                        'class': 'completion',
+                        'name': 'Completion',
+                        'definition': 'Share of translated strings.',
+                    }, {
+                        'class': 'human-translations',
+                        'name': 'Human translations',
+                        'definition': 'Translations authored by users.',
+                    }, {
+                        'class': 'machinery-translations',
+                        'name': 'Machinery translations',
+                        'definition': 'Translations copied from Machinery.',
+                    }, {
+                        'class': 'new-source-strings',
+                        'name': 'New source strings',
+                        'definition': 'Newly added source strings (hidden by default).',
+                    }]
+                ) }}
             </h3>
             <canvas
                 id="translation-activity-chart"
@@ -128,32 +125,30 @@
         <figure class="block">
             <h3 class="controls">
                 Review activity
-                <div class="fa fa-info selector"></div>
-                <div class="tooltip">
-                    <p>Impact of the review process and adding suggestions on the overal amount of unreviewed suggestions.</p>
-                    <ul>
-                        <li class="unreviewed">
-                            <b>Unreviewed:</b>
-                            Suggestions pending a review.
-                        </li>
-                        <li class="peer-approved">
-                            <b>Peer-approved:</b>
-                            Suggestions approved by peers of the author.
-                        </li>
-                        <li class="self-approved">
-                            <b>Self-approved:</b>
-                            Directly submitted translations.
-                        </li>
-                        <li class="rejected">
-                            <b>Rejected:</b>
-                            Rejected suggestions.
-                        </li>
-                        <li class="new">
-                            <b>New suggestions:</b>
-                            Newly added suggestions (hidden by default).
-                        </li>
-                    </ul>
-                </div>
+                {{ Tooltip.display(
+                    intro='Impact of the review process and adding suggestions on the overal amount of unreviewed suggestions.',
+                    items=[{
+                        'class': 'unreviewed',
+                        'name': 'Unreviewed',
+                        'definition': 'Suggestions pending a review.',
+                    }, {
+                        'class': 'peer-approved',
+                        'name': 'Peer-approved',
+                        'definition': 'Suggestions approved by peers of the author.',
+                    }, {
+                        'class': 'self-approved',
+                        'name': 'Self-approved',
+                        'definition': 'Directly submitted translations.',
+                    }, {
+                        'class': 'rejected',
+                        'name': 'Rejected',
+                        'definition': 'Rejected suggestions.',
+                    }, {
+                        'class': 'new-suggestions',
+                        'name': 'New suggestions',
+                        'definition': 'Newly added suggestions (hidden by default).',
+                    }]
+                ) }}
             </h3>
             <canvas
                 id="review-activity-chart"
