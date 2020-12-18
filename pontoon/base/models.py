@@ -57,8 +57,6 @@ from pontoon.sync.vcs.repositories import (
 
 log = logging.getLogger(__name__)
 
-UNUSABLE_SEARCH_CHAR = "☠"
-
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
     """Return a combination of filters to apply to an Entity object.
@@ -2793,22 +2791,8 @@ class Entity(DirtyFieldsMixin, models.Model):
         # Filter by search parameters
         if search:
             # Split search string on spaces except if between non-escaped quotes.
-            search_list = [
-                x.strip('"').replace(UNUSABLE_SEARCH_CHAR, '"')
-                for x in re.findall(
-                    '([^"]\\S*|".+?")\\s*', search.replace('\\"', UNUSABLE_SEARCH_CHAR)
-                )
-            ]
-
-            # Search for `""` and `"` when entered as search terms
-            if search == '""' and not search_list:
-                search_list = ['""']
-
-            if search == '"' and not search_list:
-                search_list = ['"']
-
+            search_list = utils.get_search_phrases(search)
             search_query_list = [(s, locale.db_collation) for s in search_list]
-
             translation_filters = (
                 Q(translation__string__icontains_collate=search_query)
                 & Q(translation__locale=locale)
@@ -3341,6 +3325,30 @@ class Translation(DirtyFieldsMixin, models.Model):
 
 
 class TranslationMemoryEntryQuerySet(models.QuerySet):
+    def search_result_quality(self, text, target_field=None):
+        text_length = Value(len(text))
+
+        target_field = target_field or F("source")
+        source_target_length = Length(target_field) + text_length
+
+        levenshtein_distance_expression = LevenshteinDistance(
+            target_field, Value(text), 1, 1, 2
+        )
+        return self.annotate(
+            source_length=Length(F("source")),
+            quality=ExpressionWrapper(
+                (
+                    Cast(
+                        (source_target_length - levenshtein_distance_expression),
+                        models.FloatField(),
+                    )
+                    / source_target_length
+                )
+                * 100,
+                output_field=models.DecimalField(),
+            ),
+        )
+
     def postgres_levenshtein_ratio(
         self, text, min_quality, min_dist, max_dist, levenshtein_param=None
     ):
@@ -3357,29 +3365,7 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
             argument of the levenshtein distance function. Default: the 'source' column.
         :return: TranslationMemory Entries enriched with the quality metric.
         """
-        text_length = Value(len(text))
-
-        source_target_length = Length(F("source")) + text_length
-
-        levenshtein_param = levenshtein_param or F("source")
-        levenshtein_distance_expression = LevenshteinDistance(
-            levenshtein_param, Value(text), 1, 2, 2,
-        )
-
-        entries = self.annotate(
-            source_length=Length(F("source")),
-            quality=ExpressionWrapper(
-                (
-                    Cast(
-                        (source_target_length - levenshtein_distance_expression),
-                        models.FloatField(),
-                    )
-                    / source_target_length
-                )
-                * 100,
-                output_field=models.DecimalField(),
-            ),
-        ).filter(
+        entries = self.search_result_quality(text, levenshtein_param).filter(
             source_length__gte=min_dist,
             source_length__lte=max_dist,
             quality__gt=min_quality * 100,

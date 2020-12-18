@@ -19,6 +19,7 @@ from django.utils.html import escape
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation
 from pontoon.machinery.utils import (
+    get_concordance_search_results,
     get_google_translate_data,
     get_translation_memory_data,
 )
@@ -66,6 +67,30 @@ def translation_memory(request):
         )
 
     data = get_translation_memory_data(text, locale, pk)
+    return JsonResponse(data, safe=False)
+
+
+def concordance_search(request):
+    """
+    """
+    try:
+        text = request.GET["text"]
+        locale = request.GET["locale"]
+        pk = int(request.GET["pk"])
+    except (MultiValueDictKeyError, ValueError) as e:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            status=400,
+        )
+
+    try:
+        locale = Locale.objects.get(code=locale)
+    except Locale.DoesNotExist as e:
+        return JsonResponse(
+            {"status": False, "message": "Not Found: {error}".format(error=e)},
+            status=404,
+        )
+    data = get_concordance_search_results(text, locale, pk)
     return JsonResponse(data, safe=False)
 
 
