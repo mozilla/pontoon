@@ -53,44 +53,54 @@ def get_insights(query_filters=None):
         .order_by("month")
     )
 
+    output = {}
     latest = snapshots.latest("created_at") if snapshots else None
-    default = active_users_default()
 
-    return {
-        "dates": [convert_to_unix_time(month) for month in months],
-        # Active users
-        "total_users": {
-            "managers": latest.total_managers if latest else 0,
-            "reviewers": latest.total_reviewers if latest else 0,
-            "contributors": latest.total_contributors if latest else 0,
-        },
-        "active_users_last_month": latest.active_users_last_month
-        if latest
-        else default,
-        "active_users_last_3_months": latest.active_users_last_3_months
-        if latest
-        else default,
-        "active_users_last_6_months": latest.active_users_last_6_months
-        if latest
-        else default,
-        "active_users_last_12_months": latest.active_users_last_12_months
-        if latest
-        else default,
-        # Unreviewed suggestions lifespan
-        "unreviewed_lifespans": [x["unreviewed_lifespan_avg"].days for x in insights],
-        # Translation activity
-        "translation_activity": {
-            "completion": [round(x["completion_avg"], 2) for x in insights],
-            "human_translations": [x["human_translations_sum"] for x in insights],
-            "machinery_translations": [x["machinery_sum"] for x in insights],
-            "new_source_strings": [x["new_source_strings_sum"] for x in insights],
-        },
-        # Review activity
-        "review_activity": {
-            "unreviewed": [int(round(x["unreviewed_avg"])) for x in insights],
-            "peer_approved": [x["peer_approved_sum"] for x in insights],
-            "self_approved": [x["self_approved_sum"] for x in insights],
-            "rejected": [x["rejected_sum"] for x in insights],
-            "new_suggestions": [x["new_suggestions_sum"] for x in insights],
-        },
-    }
+    if latest:
+        output.update(
+            {
+                "total_users": {
+                    "managers": latest.total_managers,
+                    "reviewers": latest.total_reviewers,
+                    "contributors": latest.total_contributors,
+                },
+                "active_users_last_month": latest.active_users_last_month,
+                "active_users_last_3_months": latest.active_users_last_3_months,
+                "active_users_last_6_months": latest.active_users_last_6_months,
+                "active_users_last_12_months": latest.active_users_last_12_months,
+            }
+        )
+    else:
+        output.update(
+            {
+                "total_users": active_users_default(),
+                "active_users_last_month": active_users_default(),
+                "active_users_last_3_months": active_users_default(),
+                "active_users_last_6_months": active_users_default(),
+                "active_users_last_12_months": active_users_default(),
+            }
+        )
+
+    output.update(
+        {
+            "dates": [convert_to_unix_time(month) for month in months],
+            "unreviewed_lifespans": [
+                x["unreviewed_lifespan_avg"].days for x in insights
+            ],
+            "translation_activity": {
+                "completion": [round(x["completion_avg"], 2) for x in insights],
+                "human_translations": [x["human_translations_sum"] for x in insights],
+                "machinery_translations": [x["machinery_sum"] for x in insights],
+                "new_source_strings": [x["new_source_strings_sum"] for x in insights],
+            },
+            "review_activity": {
+                "unreviewed": [int(round(x["unreviewed_avg"])) for x in insights],
+                "peer_approved": [x["peer_approved_sum"] for x in insights],
+                "self_approved": [x["self_approved_sum"] for x in insights],
+                "rejected": [x["rejected_sum"] for x in insights],
+                "new_suggestions": [x["new_suggestions_sum"] for x in insights],
+            },
+        }
+    )
+
+    return output
