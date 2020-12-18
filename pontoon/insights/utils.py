@@ -59,7 +59,7 @@ def get_insights(query_filters=None):
     return {
         "dates": [convert_to_unix_time(month) for month in months],
         # Active users
-        "total": {
+        "total_users": {
             "managers": latest.total_managers if latest else 0,
             "reviewers": latest.total_reviewers if latest else 0,
             "contributors": latest.total_contributors if latest else 0,

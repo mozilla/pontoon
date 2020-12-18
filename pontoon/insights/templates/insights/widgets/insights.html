@@ -1,15 +1,15 @@
 {# Widget to display insights. #}
-{% macro display(data) %}
-<div id="insights" data-dates="{{ data.dates }}">
+{% macro display() %}
+<div id="insights" data-dates="{{ dates }}">
     <section class="clearfix">
         <section
             id="active-users"
             class="half"
-            data-total="{{ data.total|to_json() }}"
-            data-1="{{ data.active_users_last_month|to_json() }}"
-            data-3="{{ data.active_users_last_3_months|to_json() }}"
-            data-6="{{ data.active_users_last_6_months|to_json() }}"
-            data-12="{{ data.active_users_last_12_months|to_json() }}"
+            data-total="{{ total_users|to_json() }}"
+            data-1="{{ active_users_last_month|to_json() }}"
+            data-3="{{ active_users_last_3_months|to_json() }}"
+            data-6="{{ active_users_last_6_months|to_json() }}"
+            data-12="{{ active_users_last_12_months|to_json() }}"
         >
             <div class="block clearfix">
                 <h3 class="controls">
@@ -76,7 +76,7 @@
                 </h3>
                 <canvas
                     id="unreviewed-suggestions-lifespan-chart"
-                    data-lifespans="{{ data.unreviewed_lifespans }}"
+                    data-lifespans="{{ unreviewed_lifespans }}"
                     width="410"
                     height="160">
                 </canvas>
@@ -113,10 +113,10 @@
             </h3>
             <canvas
                 id="translation-activity-chart"
-                data-completion="{{ data.translation_activity.completion }}"
-                data-human-translations="{{ data.translation_activity.human_translations }}"
-                data-machinery-translations="{{ data.translation_activity.machinery_translations }}"
-                data-new-source-strings="{{ data.translation_activity.new_source_strings }}"
+                data-completion="{{ translation_activity.completion }}"
+                data-human-translations="{{ translation_activity.human_translations }}"
+                data-machinery-translations="{{ translation_activity.machinery_translations }}"
+                data-new-source-strings="{{ translation_activity.new_source_strings }}"
                 width="920"
                 height="400">
             </canvas>
@@ -157,11 +157,11 @@
             </h3>
             <canvas
                 id="review-activity-chart"
-                data-unreviewed="{{ data.review_activity.unreviewed }}"
-                data-peer-approved="{{ data.review_activity.peer_approved }}"
-                data-self-approved="{{ data.review_activity.self_approved }}"
-                data-rejected="{{ data.review_activity.rejected }}"
-                data-new-suggestions="{{ data.review_activity.new_suggestions }}"
+                data-unreviewed="{{ review_activity.unreviewed }}"
+                data-peer-approved="{{ review_activity.peer_approved }}"
+                data-self-approved="{{ review_activity.self_approved }}"
+                data-rejected="{{ review_activity.rejected }}"
+                data-new-suggestions="{{ review_activity.new_suggestions }}"
                 width="920"
                 height="400">
             </canvas>

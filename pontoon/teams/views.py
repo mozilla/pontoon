@@ -104,9 +104,9 @@ def ajax_insights(request, locale):
         raise ImproperlyConfigured("ENABLE_INSIGHTS_TAB variable not set in settings.")
 
     locale = get_object_or_404(Locale, code=locale)
-    data = get_insights(Q(locale=locale))
+    insights = get_insights(Q(locale=locale))
 
-    return render(request, "teams/includes/insights.html", {"data": data},)
+    return render(request, "teams/includes/insights.html", insights)
 
 
 @require_AJAX
