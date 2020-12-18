@@ -1,4 +1,5 @@
 {% import "insights/widgets/tooltip.html" as Tooltip %}
+{% import "insights/widgets/active_users.html" as ActiveUsers %}
 
 {# Widget to display insights. #}
 {% macro display() %}
@@ -39,30 +40,9 @@
                         <li><div class="selector" data-period="1">1m</div></li>
                     </ul>
                 </h3>
-                <div id="managers" class="active-users">
-                    <canvas class="chart" height="110" width="110"></canvas>
-                    <div class="active-wrapper">
-                        <span class="active noselect"></span>
-                    </div>
-                    <span class="total noselect"></span>
-                    <h4>Active managers</h4>
-                </div>
-                <div id="reviewers" class="active-users">
-                    <canvas class="chart" height="110" width="110"></canvas>
-                    <div class="active-wrapper">
-                        <span class="active noselect"></span>
-                    </div>
-                    <span class="total noselect"></span>
-                    <h4>Active reviewers</h4>
-                </div>
-                <div id="contributors" class="active-users">
-                    <canvas class="chart" height="110" width="110"></canvas>
-                    <div class="active-wrapper">
-                        <span class="active noselect"></span>
-                    </div>
-                    <span class="total noselect"></span>
-                    <h4>Active contributors</h4>
-                </div>
+                {{ ActiveUsers.chart('managers', 'Active managers') }}
+                {{ ActiveUsers.chart('reviewers', 'Active reviewers') }}
+                {{ ActiveUsers.chart('contributors', 'Active contributors') }}
             </div>
         </section>
         <section class="half">
