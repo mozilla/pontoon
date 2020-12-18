@@ -186,32 +186,32 @@ def get_locale_insights_snapshot(
         start_of_today,
         privileged_users,
         active_users_actions,
-        all_managers,
         all_reviewers,
+        all_contributors,
         months=1,
     )
     active_users_last_3_months = get_active_users_data(
         start_of_today,
         privileged_users,
         active_users_actions,
-        all_managers,
         all_reviewers,
+        all_contributors,
         months=3,
     )
     active_users_last_6_months = get_active_users_data(
         start_of_today,
         privileged_users,
         active_users_actions,
-        all_managers,
         all_reviewers,
+        all_contributors,
         months=6,
     )
     active_users_last_12_months = get_active_users_data(
         start_of_today,
         privileged_users,
         active_users_actions,
-        all_managers,
         all_reviewers,
+        all_contributors,
         months=12,
     )
 
