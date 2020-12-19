@@ -59,11 +59,14 @@ export default function Translation(props: Props) {
         // added to the editor instead of replacing the editor content
         if (!entity) {
             addTextToEditorTranslation(translation.translation);
-        } else if (typeof editorContent !== 'string') {
-            // This is a Fluent Message, thus we are in the RichEditor.
-            // Handle machinery differently.
+        }
+        // This is a Fluent Message, thus we are in the RichEditor.
+        // Handle machinery differently.
+        else if (typeof editorContent !== 'string') {
             addTextToEditorTranslation(translation.translation, 'machinery');
-        } else {
+        }
+        // By default replace editor content
+        else {
             updateEditorTranslation(translation.translation, 'machinery');
         }
         updateMachinerySources(translation.sources, translation.translation);
