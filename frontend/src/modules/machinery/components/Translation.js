@@ -16,6 +16,7 @@ import type { MachineryTranslation, SourceType } from 'core/api';
 type Props = {|
     sourceString: string,
     translation: MachineryTranslation,
+    entity: ?number,
     addTextToEditorTranslation: (string, ?string) => void,
     updateEditorTranslation: (string, string) => void,
     updateMachinerySources: (Array<SourceType>, string) => void,
@@ -35,6 +36,7 @@ export default function Translation(props: Props) {
         updateMachinerySources,
         sourceString,
         translation,
+        entity,
     } = props;
 
     const editorContent = useSelector((state) => state.editor.translation);
@@ -53,17 +55,25 @@ export default function Translation(props: Props) {
             return;
         }
 
-        if (typeof editorContent !== 'string') {
-            // This is a Fluent Message, thus we are in the RichEditor.
-            // Handle machinery differently.
+        // If there is no entity then it is a search term and it is
+        // added to the editor instead of replacing the editor content
+        if (!entity) {
+            addTextToEditorTranslation(translation.translation);
+        }
+        // This is a Fluent Message, thus we are in the RichEditor.
+        // Handle machinery differently.
+        else if (typeof editorContent !== 'string') {
             addTextToEditorTranslation(translation.translation, 'machinery');
-        } else {
+        }
+        // By default replace editor content
+        else {
             updateEditorTranslation(translation.translation, 'machinery');
         }
         updateMachinerySources(translation.sources, translation.translation);
     }, [
         isReadOnlyEditor,
         translation,
+        entity,
         editorContent,
         addTextToEditorTranslation,
         updateEditorTranslation,
