@@ -19,13 +19,20 @@ const DEFAULT_TRANSLATION = {
     translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
 };
 
-function createTranslation(translation, updateMachinerySources) {
+function createTranslation(
+    translation,
+    updateMachinerySources,
+    updateEditorTranslation,
+    addTextToEditorTranslation,
+    entity?,
+) {
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(Translation, store, {
         translation,
         updateMachinerySources,
-        updateEditorTranslation: sinon.mock(),
-        addTextToEditorTranslation: sinon.mock(),
+        updateEditorTranslation,
+        addTextToEditorTranslation,
+        entity,
     });
 
     createDefaultUser(store);
@@ -77,7 +84,14 @@ describe('<Translation>', () => {
 
     it('calls updateMachinerySources when clicking a translation', () => {
         const machineryMock = sinon.stub();
-        const wrapper = createTranslation(DEFAULT_TRANSLATION, machineryMock);
+        const updateEditorTranslationMock = sinon.spy();
+        const addTextToEditorTranslationMock = sinon.spy();
+        const wrapper = createTranslation(
+            DEFAULT_TRANSLATION,
+            machineryMock,
+            updateEditorTranslationMock,
+            addTextToEditorTranslationMock,
+        );
 
         expect(machineryMock.calledOnce).toBeFalsy();
         expect(wrapper.find('li.translation')).toHaveLength(1);
@@ -88,6 +102,51 @@ describe('<Translation>', () => {
             machineryMock.calledWith(
                 DEFAULT_TRANSLATION.sources,
                 DEFAULT_TRANSLATION.translation,
+            ),
+        ).toBeTruthy();
+    });
+
+    it('calls addTextToEditorTranslation when clicking on a search term', () => {
+        const machineryMock = sinon.stub();
+        const updateEditorTranslationMock = sinon.spy();
+        const addTextToEditorTranslationMock = sinon.spy();
+        const wrapper = createTranslation(
+            DEFAULT_TRANSLATION,
+            machineryMock,
+            updateEditorTranslationMock,
+            addTextToEditorTranslationMock,
+        );
+
+        expect(addTextToEditorTranslationMock.called).toBeFalsy();
+        wrapper.find('li.translation').simulate('click');
+        expect(addTextToEditorTranslationMock.called).toBeTruthy();
+        expect(
+            addTextToEditorTranslationMock.calledWith(
+                DEFAULT_TRANSLATION.translation,
+            ),
+        ).toBeTruthy();
+    });
+
+    it('calls updateEditorTranslation when an entity is present', () => {
+        const machineryMock = sinon.stub();
+        const entity = 770;
+        const updateEditorTranslationMock = sinon.spy();
+        const addTextToEditorTranslationMock = sinon.spy();
+        const wrapper = createTranslation(
+            DEFAULT_TRANSLATION,
+            machineryMock,
+            updateEditorTranslationMock,
+            addTextToEditorTranslationMock,
+            entity,
+        );
+
+        expect(updateEditorTranslationMock.called).toBeFalsy();
+        wrapper.find('li.translation').simulate('click');
+        expect(updateEditorTranslationMock.called).toBeTruthy();
+        expect(
+            updateEditorTranslationMock.calledWith(
+                DEFAULT_TRANSLATION.translation,
+                'machinery',
             ),
         ).toBeTruthy();
     });
