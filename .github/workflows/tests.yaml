@@ -20,34 +20,22 @@ jobs:
       HMAC_KEY: asdf
       HGPYTHON3: 1
 
-    services:
-      postgres:
-        image: postgres:11
-        env:
-          POSTGRES_PASSWORD: postgres
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
-      - name: Test PostgreSQL connection
+      - name: Remove existing versions of PostgreSQL
         run: |
-          psql -d postgres://postgres:postgres@localhost/postgres -c "SELECT * FROM pg_collation"
-          exit 1
-
-      - name: Check out repository
-        uses: actions/checkout@v2
+          sudo apt purge -y $(dpkg -l | grep -P 'postgresql-\d+' | awk '{print $2}' | paste -sd ' ')
 
       - name: Install Linux packages
-        # libxslt and libxml2 are needed to compile lxml
         run: |
-          sudo apt update -y
-          sudo apt install -y libxslt-dev libxml2-dev language-pack-tr
+          sudo apt update
+          # libxslt and libxml2 are needed to compile lxml
+          sudo apt install -y libxslt-dev libxml2-dev language-pack-tr postgresql-11 postgresql-client-11
+
+      - name: Set up PostgreSQL connection
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c "SELECT version();"
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
 
       - name: Set up Node
         uses: actions/setup-node@v2
@@ -58,6 +46,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
+
+      - name: Check out repository
+        uses: actions/checkout@v2
 
       - name: Install Node dependencies
         run: |
