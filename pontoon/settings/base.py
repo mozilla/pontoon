@@ -28,6 +28,8 @@ DEV = os.environ.get("DJANGO_DEV", "False") != "False"
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") != "False"
 
+GITHUB_ACTION = os.environ.get("GITHUB_ACTIONS", "False") != "False"
+
 HEROKU_DEMO = os.environ.get("HEROKU_DEMO", "False") != "False"
 
 # Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
@@ -59,7 +61,7 @@ DATABASES = {
 }
 
 # Ensure that psycopg2 uses a secure SSL connection.
-if not DEV and not DEBUG:
+if not DEV and not DEBUG and not GITHUB_ACTION:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
