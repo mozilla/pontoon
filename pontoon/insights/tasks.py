@@ -126,28 +126,21 @@ def get_suggestions():
 
 def get_activity_actions(start_of_today):
     """Get actions of the previous day, needed for the Translation and Review activity charts."""
-    actions = (
-        ActionLog.objects.filter(
-            created_at__gte=start_of_today - relativedelta(days=1),
-            created_at__lt=start_of_today,
-            translation__entity__resource__project__system_project=False,
-            translation__entity__resource__project__visibility="public",
-        )
-        .prefetch_related("translation__errors")
-        .prefetch_related("translation__warnings")
-        .values(
-            "action_type",
-            "translation",
-            "translation__locale",
-            "translation__approved",
-            "translation__fuzzy",
-            "translation__rejected",
-            "translation__errors",
-            "translation__warnings",
-            "translation__machinery_sources",
-            "translation__user",
-            "translation__approved_user",
-        )
+    actions = ActionLog.objects.filter(
+        created_at__gte=start_of_today - relativedelta(days=1),
+        created_at__lt=start_of_today,
+        translation__entity__resource__project__system_project=False,
+        translation__entity__resource__project__visibility="public",
+    ).values(
+        "action_type",
+        "performed_by",
+        "translation",
+        "translation__locale",
+        "translation__machinery_sources",
+        "translation__user",
+        "translation__approved_user",
+        "translation__date",
+        "translation__approved_date",
     )
 
     return group_dict_by(actions, "translation__locale")
@@ -355,33 +348,34 @@ def get_activity_charts_data(activity_actions):
 
     for action in activity_actions:
         action_type = action["action_type"]
+        performed_by = action["performed_by"]
         translation = action["translation"]
-        is_approved = action["translation__approved"]
-        is_fuzzy = action["translation__fuzzy"]
-        is_rejected = action["translation__rejected"]
-        errors = action["translation__errors"]
-        warnings = action["translation__warnings"]
         machinery_sources = action["translation__machinery_sources"]
         user = action["translation__user"]
         approved_user = action["translation__approved_user"]
+        date = action["translation__date"]
+        approved_date = action["translation__approved_date"]
 
         if action_type == "translation:created":
-            if is_approved and errors is None and warnings is None:
-                if len(machinery_sources) == 0:
-                    human_translations.add(translation)
-                else:
-                    machinery_translations.add(translation)
+            if len(machinery_sources) == 0:
+                human_translations.add(translation)
+            else:
+                machinery_translations.add(translation)
 
-            elif not is_approved and not is_fuzzy and not is_rejected:
+            if not approved_date or approved_date > date:
                 new_suggestions.add(translation)
 
-        elif action_type == "translation:approved" and is_approved:
-            if user != approved_user:
-                peer_approved.add(translation)
-            else:
+            # Self-approval can also happen on translation submission
+            if performed_by == approved_user:
                 self_approved.add(translation)
 
-        elif action_type == "translation:rejected" and is_rejected:
+        elif action_type == "translation:approved":
+            if performed_by == user:
+                self_approved.add(translation)
+            else:
+                peer_approved.add(translation)
+
+        elif action_type == "translation:rejected":
             rejected.add(translation)
 
     return (
