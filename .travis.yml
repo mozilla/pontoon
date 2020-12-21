@@ -21,8 +21,6 @@ install:
 
 script:
   # Lint code
-  - black pontoon/ --check
-  - flake8 pontoon/
   - ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
   - ./node_modules/.bin/eslint .
 
