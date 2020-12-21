@@ -4,6 +4,7 @@ from celery import shared_task
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
+from django.db.models import F
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -109,6 +110,8 @@ def get_active_users_actions(start_of_today):
 def get_suggestions():
     """Get currently unreviewed suggestions."""
     suggestions = Translation.objects.filter(
+        # Make sure TranslatedResource is still enabled for the locale
+        locale=F("entity__resource__translatedresources__locale"),
         approved=False,
         fuzzy=False,
         rejected=False,
