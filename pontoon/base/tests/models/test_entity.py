@@ -1,3 +1,4 @@
+
 import pytest
 
 from pontoon.base.models import Entity, Project
