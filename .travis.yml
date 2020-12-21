@@ -16,10 +16,6 @@ install:
   - npm install .
 
 script:
-  # Lint code
-  - ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
-  - ./node_modules/.bin/eslint .
-
   # Build and collect static assets
   - ./node_modules/.bin/webpack
 
