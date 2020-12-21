@@ -4,6 +4,7 @@ from celery import shared_task
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
+from django.db.models import F
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -37,6 +38,8 @@ def collect_insights(self):
     activity_actions = get_activity_actions(start_of_today)
     entities = get_entities(start_of_today)
 
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+
     # Collect insights for each locale
     snapshots = []
     for locale in Locale.objects.available():
@@ -49,6 +52,7 @@ def collect_insights(self):
             suggestions[locale.id],
             activity_actions[locale.id],
             entities[locale.id],
+            sync_user,
         )
         snapshots.append(snapshot)
 
@@ -76,7 +80,7 @@ def get_privileged_users():
 def get_contributors():
     """Get all contributors without system users.
 
-    Note that excluding system users directly in the contributors QuerySet is slow.
+    Note that excluding system user emails in the Translation QuerySet directly is slow.
     """
     system_users = User.objects.filter(
         email__regex=r"^pontoon-(\w+)@example.com$",
@@ -109,6 +113,8 @@ def get_active_users_actions(start_of_today):
 def get_suggestions():
     """Get currently unreviewed suggestions."""
     suggestions = Translation.objects.filter(
+        # Make sure TranslatedResource is still enabled for the locale
+        locale=F("entity__resource__translatedresources__locale"),
         approved=False,
         fuzzy=False,
         rejected=False,
@@ -123,28 +129,21 @@ def get_suggestions():
 
 def get_activity_actions(start_of_today):
     """Get actions of the previous day, needed for the Translation and Review activity charts."""
-    actions = (
-        ActionLog.objects.filter(
-            created_at__gte=start_of_today - relativedelta(days=1),
-            created_at__lt=start_of_today,
-            translation__entity__resource__project__system_project=False,
-            translation__entity__resource__project__visibility="public",
-        )
-        .prefetch_related("translation__errors")
-        .prefetch_related("translation__warnings")
-        .values(
-            "action_type",
-            "translation",
-            "translation__locale",
-            "translation__approved",
-            "translation__fuzzy",
-            "translation__rejected",
-            "translation__errors",
-            "translation__warnings",
-            "translation__machinery_sources",
-            "translation__user",
-            "translation__approved_user",
-        )
+    actions = ActionLog.objects.filter(
+        created_at__gte=start_of_today - relativedelta(days=1),
+        created_at__lt=start_of_today,
+        translation__entity__resource__project__system_project=False,
+        translation__entity__resource__project__visibility="public",
+    ).values(
+        "action_type",
+        "performed_by",
+        "translation",
+        "translation__locale",
+        "translation__machinery_sources",
+        "translation__user",
+        "translation__approved_user",
+        "translation__date",
+        "translation__approved_date",
     )
 
     return group_dict_by(actions, "translation__locale")
@@ -173,6 +172,7 @@ def get_locale_insights_snapshot(
     suggestions,
     activity_actions,
     entities,
+    sync_user,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
     all_managers, all_reviewers = get_privileged_users_data(privileged_users)
@@ -216,7 +216,7 @@ def get_locale_insights_snapshot(
     )
 
     unreviewed_suggestions_lifespan = get_unreviewed_suggestions_lifespan_data(
-        start_of_today, suggestions
+        suggestions
     )
 
     (
@@ -226,7 +226,7 @@ def get_locale_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
-    ) = get_activity_charts_data(activity_actions)
+    ) = get_activity_charts_data(activity_actions, sync_user)
 
     return LocaleInsightsSnapshot(
         locale=locale,
@@ -325,7 +325,7 @@ def get_active_users_data(
     }
 
 
-def get_unreviewed_suggestions_lifespan_data(start_of_today, suggestions):
+def get_unreviewed_suggestions_lifespan_data(suggestions):
     """Get average age of the unreviewed suggestion."""
     unreviewed_suggestions_lifespan = timedelta()
     suggestion_count = len(suggestions)
@@ -334,14 +334,14 @@ def get_unreviewed_suggestions_lifespan_data(start_of_today, suggestions):
         total_suggestion_age = timedelta()
 
         for s in suggestions:
-            total_suggestion_age += start_of_today - s["date"]
+            total_suggestion_age += timezone.now() - s["date"]
 
         unreviewed_suggestions_lifespan = total_suggestion_age / suggestion_count
 
     return unreviewed_suggestions_lifespan
 
 
-def get_activity_charts_data(activity_actions):
+def get_activity_charts_data(activity_actions, sync_user):
     """Get data for Translation activity and Review activity charts."""
     human_translations = set()
     machinery_translations = set()
@@ -352,33 +352,38 @@ def get_activity_charts_data(activity_actions):
 
     for action in activity_actions:
         action_type = action["action_type"]
+        performed_by = action["performed_by"]
         translation = action["translation"]
-        is_approved = action["translation__approved"]
-        is_fuzzy = action["translation__fuzzy"]
-        is_rejected = action["translation__rejected"]
-        errors = action["translation__errors"]
-        warnings = action["translation__warnings"]
         machinery_sources = action["translation__machinery_sources"]
         user = action["translation__user"]
         approved_user = action["translation__approved_user"]
+        date = action["translation__date"]
+        approved_date = action["translation__approved_date"]
+
+        # Review actions performed by the sync process are ignored, because they
+        # aren't explicit user review actions.
+        performed_by_sync = performed_by == sync_user
 
         if action_type == "translation:created":
-            if is_approved and errors is None and warnings is None:
-                if len(machinery_sources) == 0:
-                    human_translations.add(translation)
-                else:
-                    machinery_translations.add(translation)
+            if len(machinery_sources) == 0:
+                human_translations.add(translation)
+            else:
+                machinery_translations.add(translation)
 
-            elif not is_approved and not is_fuzzy and not is_rejected:
+            if not approved_date or approved_date > date:
                 new_suggestions.add(translation)
 
-        elif action_type == "translation:approved" and is_approved:
-            if user != approved_user:
-                peer_approved.add(translation)
-            else:
+            # Self-approval can also happen on translation submission
+            if performed_by == approved_user and not performed_by_sync:
                 self_approved.add(translation)
 
-        elif action_type == "translation:rejected" and is_rejected:
+        elif action_type == "translation:approved" and not performed_by_sync:
+            if performed_by == user:
+                self_approved.add(translation)
+            else:
+                peer_approved.add(translation)
+
+        elif action_type == "translation:rejected" and not performed_by_sync:
             rejected.add(translation)
 
     return (
