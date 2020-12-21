@@ -19,7 +19,6 @@
 # requirements/lint.txt contains all dependencies to lint python code
 -r lint.txt
 
-codecov==2.1.10
 coverage==5.3
 factory-boy==3.1.0
 pytest==6.1.1
