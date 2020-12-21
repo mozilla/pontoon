@@ -4,25 +4,6 @@ language: python
 python:
   - "3.8"
 
-cache:
-  npm: true
-  directories:
-    - node_modules
-
 install:
-  - source $HOME/.nvm/nvm.sh
-  - nvm install --lts node
-  - nvm use --lts node
-  - npm install .
-
-script:
-  # Build and collect static assets
-  - ./node_modules/.bin/webpack
-
-  # Run tests
-  - npm test
-
-  - codecov
-
   # Heroku deployment file is valid
   - cat app.json | python -m json.tool > /dev/null
