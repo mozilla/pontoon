@@ -76,7 +76,7 @@ def get_privileged_users():
 def get_contributors():
     """Get all contributors without system users.
 
-    Note that excluding system users directly in the contributors QuerySet is slow.
+    Note that excluding system user emails in the Translation QuerySet directly is slow.
     """
     system_users = User.objects.filter(
         email__regex=r"^pontoon-(\w+)@example.com$",
