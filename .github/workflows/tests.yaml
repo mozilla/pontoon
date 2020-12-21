@@ -1,0 +1,94 @@
+name: Run Tests
+on:
+  # Trigger on push to master
+  push:
+    branches:
+      - master
+  # Trigger the workflow on pull request events
+  # but only for the master branch
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    env:
+      SECRET_KEY: asdf
+      DATABASE_URL: postgres://postgres:postgres@localhost/pontoon
+      HMAC_KEY: asdf
+      HGPYTHON3: 1
+
+    steps:
+      - name: Remove existing versions of PostgreSQL
+        run: |
+          sudo apt purge -y $(dpkg -l | grep -P 'postgresql-\d+' | awk '{print $2}' | paste -sd ' ')
+
+      - name: Install Linux packages
+        run: |
+          sudo apt update
+          # libxslt and libxml2 are needed to compile lxml
+          sudo apt install -y libxslt-dev libxml2-dev language-pack-tr postgresql-11 postgresql-client-11
+
+      - name: Set up PostgreSQL connection
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c "SELECT version();"
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Node dependencies
+        run: |
+          node --version
+          npm install .
+          pushd frontend && npm install && popd
+
+      - name: Install Python dependencies
+        run: |
+          python --version
+          python -m pip install --upgrade pip
+          pip install --require-hashes -r requirements/test.txt
+
+      - name: Run linters
+        run: |
+          black pontoon/ --check
+          flake8 pontoon/
+          ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
+          ./node_modules/.bin/eslint .
+
+      - name: Build and collect static assets
+        run: |
+          ./node_modules/.bin/webpack
+          pushd frontend && npm run build && popd
+          python manage.py collectstatic -v0 --noinput
+
+      - name: Run tests
+        run: |
+          py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
+          npm test
+
+      - name: Run all front-end checks
+        run: |
+          pushd frontend
+          npm run flow
+          npm test
+          popd
+
+      - name: Run code coverage
+        run: codecov
+
+      - name: Check validity of Heroku deployment file
+        run: cat app.json | python -m json.tool > /dev/null
