@@ -38,6 +38,8 @@ def collect_insights(self):
     activity_actions = get_activity_actions(start_of_today)
     entities = get_entities(start_of_today)
 
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+
     # Collect insights for each locale
     snapshots = []
     for locale in Locale.objects.available():
@@ -50,6 +52,7 @@ def collect_insights(self):
             suggestions[locale.id],
             activity_actions[locale.id],
             entities[locale.id],
+            sync_user,
         )
         snapshots.append(snapshot)
 
@@ -169,6 +172,7 @@ def get_locale_insights_snapshot(
     suggestions,
     activity_actions,
     entities,
+    sync_user,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
     all_managers, all_reviewers = get_privileged_users_data(privileged_users)
@@ -222,7 +226,7 @@ def get_locale_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
-    ) = get_activity_charts_data(activity_actions)
+    ) = get_activity_charts_data(activity_actions, sync_user)
 
     return LocaleInsightsSnapshot(
         locale=locale,
@@ -337,7 +341,7 @@ def get_unreviewed_suggestions_lifespan_data(suggestions):
     return unreviewed_suggestions_lifespan
 
 
-def get_activity_charts_data(activity_actions):
+def get_activity_charts_data(activity_actions, sync_user):
     """Get data for Translation activity and Review activity charts."""
     human_translations = set()
     machinery_translations = set()
@@ -356,6 +360,10 @@ def get_activity_charts_data(activity_actions):
         date = action["translation__date"]
         approved_date = action["translation__approved_date"]
 
+        # Review actions performed by the sync process are ignored, because they
+        # aren't explicit user review actions.
+        performed_by_sync = performed_by == sync_user
+
         if action_type == "translation:created":
             if len(machinery_sources) == 0:
                 human_translations.add(translation)
@@ -366,16 +374,16 @@ def get_activity_charts_data(activity_actions):
                 new_suggestions.add(translation)
 
             # Self-approval can also happen on translation submission
-            if performed_by == approved_user:
+            if performed_by == approved_user and not performed_by_sync:
                 self_approved.add(translation)
 
-        elif action_type == "translation:approved":
+        elif action_type == "translation:approved" and not performed_by_sync:
             if performed_by == user:
                 self_approved.add(translation)
             else:
                 peer_approved.add(translation)
 
-        elif action_type == "translation:rejected":
+        elif action_type == "translation:rejected" and not performed_by_sync:
             rejected.add(translation)
 
     return (
