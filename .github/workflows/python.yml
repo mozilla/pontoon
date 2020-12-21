@@ -7,12 +7,14 @@ on:
     paths:
       - pontoon/**.py
       - .github/workflows/python.yml
+      - requirements/lint.txt
   pull_request:
     branches:
       - master
     paths:
       - pontoon/**.py
       - .github/workflows/python.yml
+      - requirements/lint.txt
 
 jobs:
   flake8:
