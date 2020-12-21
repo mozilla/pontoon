@@ -16,6 +16,7 @@ on:
 
 jobs:
   flow:
+    name: Flow & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,6 +28,9 @@ jobs:
         working-directory: frontend
       - name: flow
         run: npm run flow
+        working-directory: frontend
+      - name: build
+        run: npm run build
         working-directory: frontend
 
   jest:
