@@ -19,7 +19,8 @@ on:
       - .github/workflows/docker.yml
 
 jobs:
-  flow:
+  test:
+    name: pytest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,4 +33,4 @@ jobs:
       - name: Install codecov
         run: pip3 install codecov
       - name: codecov.io
-        run: codecov
+        run: python3 -m codecov
