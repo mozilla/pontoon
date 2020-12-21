@@ -5,19 +5,15 @@ python:
   - "3.8"
 
 cache:
-  pip: true
   npm: true
   directories:
     - node_modules
 
 install:
-  - pip install -U --force pip
-  - pip install --require-hashes -r requirements/test.txt
   - source $HOME/.nvm/nvm.sh
   - nvm install --lts node
   - nvm use --lts node
   - npm install .
-  - pushd frontend && npm install && popd
 
 script:
   # Lint code
@@ -26,26 +22,11 @@ script:
 
   # Build and collect static assets
   - ./node_modules/.bin/webpack
-  - python manage.py collectstatic -v0 --noinput
 
   # Run tests
-  - py.test --cov-append --cov-report=term --cov=. -v --create-db --migrations
   - npm test
 
   - codecov
 
   # Heroku deployment file is valid
   - cat app.json | python -m json.tool > /dev/null
-
-addons:
-  postgresql: "11"
-  apt:
-    packages:
-      - language-pack-tr
-
-env:
-  global:
-    - SECRET_KEY=asdf
-    - DATABASE_URL=postgres://postgres@localhost/pontoon
-    - HMAC_KEY=asdf
-    - HGPYTHON3=1
