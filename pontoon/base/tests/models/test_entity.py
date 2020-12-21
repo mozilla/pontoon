@@ -257,12 +257,12 @@ def test_entity_project_locale_no_paths(
         Entity.for_project_locale(admin, project_a, locale_a),
     )
     assert len(entities) == 2
-    assert entities[0]["path"] == resource0.path
-    assert entities[0]["original"] == entity_a.string
-    assert entities[0]["translation"][0]["string"] == tr0.string
-    assert entities[1]["path"] == trX.entity.resource.path
-    assert entities[1]["original"] == trX.entity.string
-    assert entities[1]["translation"][0]["string"] == trX.string
+    assert entities[1]["path"] == resource0.path
+    assert entities[1]["original"] == entity_a.string
+    assert entities[1]["translation"][0]["string"] == tr0.string
+    assert entities[0]["path"] == trX.entity.resource.path
+    assert entities[0]["original"] == trX.entity.string
+    assert entities[0]["translation"][0]["string"] == trX.string
 
     # Ensure all attributes are assigned correctly
     expected = {
@@ -303,7 +303,7 @@ def test_entity_project_locale_no_paths(
         "readonly": False,
         "visible": False,
     }
-    assert entities[0] == expected
+    assert entities[1] == expected
 
 
 @pytest.mark.django_db
@@ -371,10 +371,10 @@ def test_entity_project_locale_plurals(
         preferred_source_locale,
         Entity.for_project_locale(admin, project_a, locale_a,),
     )
-    assert entities[0]["original"] == entity_a.string
-    assert entities[0]["original_plural"] == entity_a.string_plural
-    assert entities[0]["translation"][0]["string"] == tr0.string
-    assert entities[0]["translation"][1]["string"] == tr0pl.string
+    assert entities[1]["original"] == entity_a.string
+    assert entities[1]["original_plural"] == entity_a.string_plural
+    assert entities[1]["translation"][0]["string"] == tr0.string
+    assert entities[1]["translation"][1]["string"] == tr0pl.string
 
 
 @pytest.mark.django_db
@@ -397,14 +397,15 @@ def test_entity_project_locale_order(admin, entity_test_models):
         preferred_source_locale,
         Entity.for_project_locale(admin, project_a, locale_a,),
     )
-    assert entities[1]["original"] == "First String"
-    assert entities[2]["original"] == "Second String"
+    print(entities)
+    assert entities[2]["original"] == "First String"
+    assert entities[3]["original"] == "Second String"
 
 
 @pytest.mark.django_db
 def test_entity_project_locale_cleaned_key(admin, entity_test_models):
     """
-    If key contanis source string and Translate Toolkit separator,
+    If key contains source string and Translate Toolkit separator,
     remove them.
     """
     resource0 = entity_test_models[0].entity.resource
@@ -416,8 +417,8 @@ def test_entity_project_locale_cleaned_key(admin, entity_test_models):
         preferred_source_locale,
         Entity.for_project_locale(admin, project_a, locale_a,),
     )
-    assert entities[0]["key"] == ""
-    assert entities[1]["key"] == "Key"
+    assert entities[1]["key"] == ""
+    assert entities[0]["key"] == "Key"
 
 
 @pytest.mark.django_db
