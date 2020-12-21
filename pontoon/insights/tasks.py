@@ -219,7 +219,7 @@ def get_locale_insights_snapshot(
     )
 
     unreviewed_suggestions_lifespan = get_unreviewed_suggestions_lifespan_data(
-        start_of_today, suggestions
+        suggestions
     )
 
     (
@@ -328,7 +328,7 @@ def get_active_users_data(
     }
 
 
-def get_unreviewed_suggestions_lifespan_data(start_of_today, suggestions):
+def get_unreviewed_suggestions_lifespan_data(suggestions):
     """Get average age of the unreviewed suggestion."""
     unreviewed_suggestions_lifespan = timedelta()
     suggestion_count = len(suggestions)
@@ -337,7 +337,7 @@ def get_unreviewed_suggestions_lifespan_data(start_of_today, suggestions):
         total_suggestion_age = timedelta()
 
         for s in suggestions:
-            total_suggestion_age += start_of_today - s["date"]
+            total_suggestion_age += timezone.now() - s["date"]
 
         unreviewed_suggestions_lifespan = total_suggestion_age / suggestion_count
 
