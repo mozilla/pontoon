@@ -1,0 +1,11 @@
+{# Widget to display active users chart. #}
+{% macro chart(id, title) %}
+<div id="{{ id }}" class="active-users">
+    <canvas class="chart" height="110" width="110"></canvas>
+    <div class="active-wrapper">
+        <span class="active noselect"></span>
+    </div>
+    <span class="total noselect"></span>
+    <h4>{{ title }}</h4>
+</div>
+{% endmacro %}

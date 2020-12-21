@@ -1,0 +1,17 @@
+{# Widget to display tooltip with more information about the section. #}
+{% macro display(intro, items=[]) %}
+<div class="fa fa-info selector"></div>
+<div class="tooltip">
+    <p>{{ intro }}</p>
+    {% if items %}
+    <ul>
+        {% for item in items %}
+        <li class="{{ item.class }}">
+            <b>{{ item.name }}:</b>
+            {{ item.definition }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endmacro %}

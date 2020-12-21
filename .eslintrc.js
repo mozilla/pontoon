@@ -37,6 +37,7 @@ module.exports = {
         Pontoon: false,
         jQuery: false,
         Clipboard: false,
+        Chart: false,
         NProgress: false,
         diff_match_patch: false,
         Highcharts: false,
