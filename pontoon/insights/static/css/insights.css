@@ -1,0 +1,231 @@
+#insights .half {
+    width: 470px;
+    float: left;
+}
+
+#insights .half:last-child {
+    float: right;
+}
+
+#insights .block {
+    border-radius: 6px;
+    background: #333941;
+    margin-bottom: 40px;
+    padding: 30px;
+}
+
+#insights h3 {
+    color: #ebebeb;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: normal;
+    margin-bottom: 30px;
+}
+
+#insights .controls .period-selector {
+    float: right;
+    font-size: 0;
+    margin-right: 10px;
+}
+
+#insights .controls .period-selector li {
+    display: inline-block;
+}
+
+#insights .controls .period-selector li .selector {
+    font-size: 12px;
+    text-transform: uppercase;
+    width: 32px;
+}
+
+#insights .controls .period-selector li .selector.active,
+#insights .controls .period-selector li .selector:hover {
+    background: #7bc876;
+    color: #272a2f;
+}
+
+#insights .controls .selector {
+    background: #3f4752;
+    color: #aaa;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    border-radius: 3px;
+    margin-left: 5px;
+    padding-top: 5px;
+    box-sizing: border-box;
+}
+
+#insights .active-users,
+#insights #unreviewed-suggestions-lifespan-chart {
+    height: 160px;
+}
+
+#insights .active-users {
+    float: left;
+    margin-right: 40px;
+    position: relative;
+    text-align: center;
+}
+
+#insights .active-users:last-child {
+    margin-right: 0;
+}
+
+#insights .active-users h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 10px auto 0;
+    width: 100px;
+}
+
+#insights .active-users .active-wrapper {
+    left: 0;
+    right: 0;
+    top: 15px;
+    position: absolute;
+}
+
+#insights .active-users .active {
+    border-bottom: 2px solid #888888;
+    display: inline-block;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 48px;
+}
+
+#insights .active-users .total {
+    color: #888;
+    font-size: 16px;
+    left: 0;
+    right: 0;
+    top: 68px;
+    position: absolute;
+}
+
+#insights figure {
+    margin-bottom: 40px;
+}
+
+/* Info tooltip */
+
+#insights h3 .fa {
+    float: right;
+    font-size: 14px;
+}
+
+#insights h3 .fa.active,
+#insights h3 .fa:hover {
+    background: #272a2f;
+}
+
+#insights h3 .tooltip {
+    background: #000000dd;
+    position: absolute;
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    z-index: 1;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.5em;
+    border-radius: 3px;
+    right: 0;
+    max-width: 570px;
+}
+
+#insights h3 .tooltip ul {
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+#insights h3 .tooltip li {
+    list-style-type: disc;
+}
+
+#insights h3 .tooltip li:not(:last-child) {
+    padding-bottom: 5px;
+}
+
+/* Active users info tooltip */
+
+#insights h3 .tooltip li::marker {
+    color: #7bc876;
+}
+
+/* Translation activity info tooltip */
+
+#insights h3 .tooltip li.human-translations::marker {
+    color: #4f7256;
+}
+
+#insights h3 .tooltip li.machinery-translations::marker {
+    color: #41554c;
+}
+
+#insights h3 .tooltip li.new-source-strings::marker {
+    color: #272a2f;
+}
+
+#insights h3 .tooltip li.completion::marker {
+    color: #7bc876;
+}
+
+/* Review activity info tooltip */
+
+#insights h3 .tooltip li.peer-approved::marker {
+    color: #3e7089;
+}
+
+#insights h3 .tooltip li.self-approved::marker {
+    color: #385465;
+}
+
+#insights h3 .tooltip li.rejected::marker {
+    color: #843650;
+}
+
+#insights h3 .tooltip li.new-suggestions::marker {
+    color: #272a2f;
+}
+
+#insights h3 .tooltip li.unreviewed::marker {
+    color: #4fc4f6;
+}
+
+/* Custom chart legend */
+
+#insights .legend {
+    text-align: center;
+}
+
+#insights .legend li {
+    display: inline-block;
+    font-size: 12px;
+    margin: 15px;
+    margin-bottom: 5px;
+}
+
+#insights .legend li .icon {
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 3px;
+    height: 12px;
+    width: 12px;
+}
+
+#insights .legend li .label {
+    cursor: pointer;
+    font-weight: bold;
+    vertical-align: text-top;
+}
+
+#insights .legend li.disabled .label {
+    color: #4d5967;
+}
+
+#insights .legend li.disabled .label:hover {
+    color: #fff;
+}

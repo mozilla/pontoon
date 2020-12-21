@@ -316,8 +316,9 @@ PIPELINE_CSS = {
             "css/contributors.css",
             "css/heading_info.css",
             "css/team.css",
-            "css/info.css",
             "css/request.css",
+            "css/insights.css",
+            "css/info.css",
         ),
         "output_filename": "css/team.min.css",
     },
@@ -422,6 +423,7 @@ PIPELINE_JS = {
     },
     "team": {
         "source_filenames": (
+            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -429,6 +431,7 @@ PIPELINE_JS = {
             "js/tabs.js",
             "js/request.js",
             "js/permissions.js",
+            "js/insights.js",
             "js/info.js",
         ),
         "output_filename": "js/team.min.js",
@@ -695,6 +698,10 @@ USE_L10N = False
 # Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
 # See bug 1567402 for details. A Mozilla-specific variable.
 ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
+
+# Enable Insights tab on the team pages, which presents data that needs to be
+# collected by a scheduled job. See docs/admin/deployment.rst for more information.
+ENABLE_INSIGHTS_TAB = os.environ.get("ENABLE_INSIGHTS_TAB", "False") != "False"
 
 # Bleach tags and attributes
 ALLOWED_TAGS = [

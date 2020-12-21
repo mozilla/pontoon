@@ -103,6 +103,12 @@ you create:
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
 
+``ENABLE_INSIGHTS_TAB``
+   Optional. Enables Insights tab on team pages, which presents data that needs
+   to be collected by the :ref:`collect-insights` scheduled job. It is advised
+   to run the job at least once before enabling the tab, otherwise the content
+   will be empty. See `the spec`_ for more information.
+
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters
    a system error. See `Heroku Reference`_ for more information.
@@ -212,6 +218,7 @@ you create:
 ``VCS_SYNC_EMAIL``
   Optional. Default committer's email used when committing translations to version control system.
 
+.. _the spec: https://github.com/mozilla/pontoon/blob/master/specs/0108-community-health-dashboard.md
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 .. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
@@ -306,6 +313,8 @@ notifications are sent again. The command is designed to run daily.
 .. code-block:: bash
 
    ./manage.py send_deadline_notifications
+
+.. _collect-insights:
 
 Collect Insights
 ~~~~~~~~~~~~~~~~
