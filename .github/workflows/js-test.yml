@@ -1,4 +1,4 @@
-name: Testing JavaScript outside of frontend
+name: Non-frontend JavaScript
 
 on:
   push:
@@ -21,8 +21,8 @@ on:
       - .github/workflows/js-test.yml
 
 jobs:
-  eslint:
-    name: eslint
+  test:
+    name: Test & webpack
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
