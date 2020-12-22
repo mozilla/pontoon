@@ -1,15 +1,13 @@
 import json
 import logging
 import operator
-
-import Levenshtein
-import requests
-
 from collections import defaultdict
 from functools import reduce
 
+import Levenshtein
+import requests
 from django.conf import settings
-from django.db.models import Value, Q, F
+from django.db.models import Q
 
 import pontoon.base as base
 
@@ -64,27 +62,22 @@ def get_google_translate_data(text, locale_code):
 def get_concordance_search_results(text, locale):
     search_phrases = base.utils.get_search_phrases(text)
     search_filters = (
-        Q(
-            Q(target__icontains_collate=(phrase, locale.db_collation))
-            | Q(source__icontains=phrase),
-            locale=locale,
-        )
+        Q(Q(target__icontains_collate=(phrase, locale.db_collation)), locale=locale,)
         for phrase in search_phrases
     )
     search_query = reduce(operator.and_, search_filters)
 
     search_query_results = base.models.TranslationMemoryEntry.objects.filter(
         search_query
-    ).values_list("source", "target", "project__name")
+    ).values_list("target", "project__name")
 
     search_results = [
         {
-            "source": source,
             "target": target,
             "project_name": project_name,
             "quality": int(round(Levenshtein.ratio(text, target) * 100)),
         }
-        for source, target, project_name in search_query_results
+        for target, project_name in search_query_results
     ]
     return sorted(search_results, key=lambda e: e["quality"], reverse=True)
 
