@@ -3332,7 +3332,7 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         source_target_length = Length(target_field) + text_length
 
         levenshtein_distance_expression = LevenshteinDistance(
-            target_field, Value(text), 1, 1, 2
+            target_field, Value(text)
         )
         return self.annotate(
             source_length=Length(F("source")),
