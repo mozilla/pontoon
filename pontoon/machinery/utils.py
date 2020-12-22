@@ -66,10 +66,6 @@ def get_concordance_search_results(text, locale, pk=None):
         Q(target__icontains_collate=(phrase, collation)) | Q(source__icontains=phrase)
         for phrase, collation in search_query_list
     )
-    search_filters = (
-        Q(target__icontains_collate=(phrase, collation)) | Q(source__icontains=phrase)
-        for phrase, collation in search_query_list
-    )
     search_query = reduce(operator.and_, search_filters)
 
     results = base.models.TranslationMemoryEntry.objects.filter(
@@ -79,9 +75,6 @@ def get_concordance_search_results(text, locale, pk=None):
         " ".join(search_list),
         F("target"),
     )
-
-    if pk:
-        results = results.exclude(pk=pk)
 
     entries = results.values("source", "target", "quality").annotate(
         project_name=F("project__name")

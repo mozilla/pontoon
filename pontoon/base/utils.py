@@ -581,7 +581,7 @@ def readonly_exists(projects, locale):
 
 def get_search_phrases(search):
     """
-    Split the search phrase into separate search queries, and assign the database collation.
+    Split the search phrase into separate search queries.
     When the user types a search query without the quotation, e.g.:
     source file
     The function splits it into separate search queries:
