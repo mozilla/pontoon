@@ -1,4 +1,4 @@
-name: Docker automation
+name: Backend
 
 on:
   push:

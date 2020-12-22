@@ -1,4 +1,4 @@
-name: Frontend automation
+name: Frontend
 
 on:
   push:

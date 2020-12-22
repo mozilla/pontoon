@@ -1,4 +1,4 @@
-name: Python linters
+name: Python linting
 
 on:
   push:

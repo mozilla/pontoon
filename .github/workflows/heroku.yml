@@ -1,4 +1,4 @@
-name: Validate heroku app.json
+name: Heroku
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
 
 jobs:
   app-json:
-    name: Validate heroku app.json
+    name: Validating app.json
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
