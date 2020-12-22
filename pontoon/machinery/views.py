@@ -75,7 +75,7 @@ def concordance_search(request):
     try:
         text = request.GET["text"]
         locale = request.GET["locale"]
-    except (MultiValueDictKeyError, ValueError) as e:
+    except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
