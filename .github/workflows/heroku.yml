@@ -1,0 +1,24 @@
+name: Heroku
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - app.json
+      - .github/workflows/heroku.yml
+  pull_request:
+    branches:
+      - master
+    paths:
+      - app.json
+      - .github/workflows/heroku.yml
+
+jobs:
+  app-json:
+    name: Validating app.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate
+        run: python3 -m json.tool < app.json > /dev/null

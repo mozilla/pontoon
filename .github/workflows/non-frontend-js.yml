@@ -1,0 +1,41 @@
+name: Non-frontend JavaScript
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - tests/**.js
+      - pontoon/static/js/**
+      - package.json
+      - webpack.config.js
+      - .github/workflows/non-frontend-js.yml
+  pull_request:
+    branches:
+      - master
+    paths:
+      - tests/**.js
+      - pontoon/static/js/**
+      - package.json
+      - webpack.config.js
+      - .github/workflows/non-frontend-js.yml
+
+jobs:
+  test:
+    name: Test & webpack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+      - name: Install globals
+        run: npm install -g codecov
+      - name: Test
+        run: npm test
+      - name: codecov.io
+        run: codecov
+      - name: Ensure build
+        run: ./node_modules/.bin/webpack

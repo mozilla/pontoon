@@ -1,0 +1,53 @@
+name: Frontend
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - frontend/**
+      - .github/workflows/frontend.yml
+  pull_request:
+    branches:
+      - master
+    paths:
+      - frontend/**
+      - .github/workflows/frontend.yml
+
+jobs:
+  flow:
+    name: Flow & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - name: flow
+        run: npm run flow
+        working-directory: frontend
+      - name: build
+        run: npm run build
+        working-directory: frontend
+
+  jest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install globals
+        run: |
+          npm install -g yarn codecov
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - name: Test
+        run: yarn test --coverage
+        working-directory: frontend
+      - name: codecov.io
+        run: codecov

@@ -73,7 +73,7 @@ Python code conventions
 =======================
 
 Our Python code is automatically formatted using `black <https://black.readthedocs.io/en/stable/>`_.
-We enforce that in our Continuous Integration tool (travis), so you will need to run
+We enforce that in our Continuous Integration, so you will need to run
 black on your code before sending it for review.
 
 You can run black locally either as an
@@ -109,7 +109,7 @@ Outside the ``frontend`` folder, we don't follow strict rules other than using
 2-space indentation.
 
 Inside ``frontend`` (which contains the Translate app), our code is formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
-We enforce that in our Continuous Integration tool (travis), so you will need to run
+We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
 You can run prettier locally either as an

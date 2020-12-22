@@ -1,0 +1,50 @@
+name: JavaScript linting
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.js'
+      - '**.css'
+      - package.json
+      - '.*eslint*'
+      - '.*prettier*'
+      - .github/workflows/js-lint.yml
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '**.js'
+      - '**.css'
+      - package.json
+      - '.*eslint*'
+      - '.*prettier*'
+      - .github/workflows/js-lint.yml
+
+jobs:
+  eslint:
+    name: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+      - name: eslint
+        run: ./node_modules/.bin/eslint .
+
+  prettier:
+    name: prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+      - name: prettier
+        run: ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'

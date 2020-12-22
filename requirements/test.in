@@ -16,11 +16,11 @@
 # requirements/default.txt contains all dependencies required to run the project in the production environment.
 -r default.txt
 
-black==19.10b0
-codecov==2.1.10
+# requirements/lint.txt contains all dependencies to lint python code
+-r lint.txt
+
 coverage==5.3
 factory-boy==3.1.0
-flake8==3.7.7
 pytest==6.1.1
 pytest-cov==2.10.1
 pytest-django==3.10.0
