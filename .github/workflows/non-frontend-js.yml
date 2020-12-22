@@ -9,7 +9,7 @@ on:
       - pontoon/static/js/**
       - package.json
       - webpack.config.js
-      - .github/workflows/js-test.yml
+      - .github/workflows/non-frontend-js.yml
   pull_request:
     branches:
       - master
@@ -18,7 +18,7 @@ on:
       - pontoon/static/js/**
       - package.json
       - webpack.config.js
-      - .github/workflows/js-test.yml
+      - .github/workflows/non-frontend-js.yml
 
 jobs:
   test:

@@ -8,7 +8,7 @@ on:
       - requirements/**
       - docker**
       - pontoon/**
-      - .github/workflows/docker.yml
+      - .github/workflows/backend.yml
   pull_request:
     branches:
       - master
@@ -16,7 +16,7 @@ on:
       - requirements/**
       - docker**
       - pontoon/**
-      - .github/workflows/docker.yml
+      - .github/workflows/backend.yml
 
 jobs:
   test:

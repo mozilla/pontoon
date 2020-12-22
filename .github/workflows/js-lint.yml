@@ -10,7 +10,7 @@ on:
       - package.json
       - '.*eslint*'
       - '.*prettier*'
-      - .github/workflows/eslint.yml
+      - .github/workflows/js-lint.yml
   pull_request:
     branches:
       - master
@@ -20,7 +20,7 @@ on:
       - package.json
       - '.*eslint*'
       - '.*prettier*'
-      - .github/workflows/eslint.yml
+      - .github/workflows/js-lint.yml
 
 jobs:
   eslint:

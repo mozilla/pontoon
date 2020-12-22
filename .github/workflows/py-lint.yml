@@ -6,14 +6,14 @@ on:
       - master
     paths:
       - pontoon/**.py
-      - .github/workflows/python.yml
+      - .github/workflows/py-lint.yml
       - requirements/lint.txt
   pull_request:
     branches:
       - master
     paths:
       - pontoon/**.py
-      - .github/workflows/python.yml
+      - .github/workflows/py-lint.yml
       - requirements/lint.txt
 
 jobs:
