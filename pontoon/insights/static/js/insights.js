@@ -404,7 +404,7 @@ var Pontoon = (function (my) {
                                 type: 'line',
                                 label: 'Unreviewed',
                                 data: chart.data('unreviewed'),
-                                yAxisID: 'unreviewed-y-axis',
+                                yAxisID: 'strings-y-axis',
                                 backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
                                 borderWidth: 2,
@@ -567,30 +567,12 @@ var Pontoon = (function (my) {
                             ],
                             yAxes: [
                                 {
-                                    id: 'unreviewed-y-axis',
-                                    position: 'right',
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'UNREVIEWED',
-                                        fontColor: '#FFF',
-                                        fontStyle: 100,
-                                    },
-                                    gridLines: {
-                                        display: false,
-                                    },
-                                    ticks: {
-                                        beginAtZero: true,
-                                        precision: 0,
-                                        stepSize: 20,
-                                    },
-                                },
-                                {
                                     stacked: true,
                                     id: 'strings-y-axis',
                                     position: 'left',
                                     scaleLabel: {
                                         display: true,
-                                        labelString: 'SUGGESTIONS',
+                                        labelString: 'STRINGS',
                                         fontColor: '#FFF',
                                         fontStyle: 100,
                                     },
