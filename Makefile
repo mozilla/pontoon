@@ -63,7 +63,7 @@ jest:
 	"${DC}" run --rm -w //app/frontend webapp yarn test
 
 pytest:
-	"${DC}" run --rm webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+	"${DC}" run ${run_opts} --rm webapp pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
 flake8:
 	"${DC}" run --rm webapp flake8 pontoon/

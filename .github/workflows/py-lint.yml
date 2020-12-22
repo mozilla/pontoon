@@ -1,0 +1,46 @@
+name: Python linting
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - pontoon/**.py
+      - .github/workflows/py-lint.yml
+      - requirements/lint.txt
+  pull_request:
+    branches:
+      - master
+    paths:
+      - pontoon/**.py
+      - .github/workflows/py-lint.yml
+      - requirements/lint.txt
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          pip install -U pip
+          pip install -r requirements/lint.txt
+      - name: flake8
+        run: flake8 pontoon
+
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          pip install -U pip
+          pip install -r requirements/lint.txt
+      - name: black
+        run: black --check pontoon
