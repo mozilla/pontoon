@@ -71,12 +71,10 @@ def translation_memory(request):
 
 
 def concordance_search(request):
-    """
-    """
+    """Search for translations in the internal translations memory."""
     try:
         text = request.GET["text"]
         locale = request.GET["locale"]
-        pk = int(request.GET["pk"])
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
@@ -90,8 +88,7 @@ def concordance_search(request):
             {"status": False, "message": "Not Found: {error}".format(error=e)},
             status=404,
         )
-    data = get_concordance_search_results(text, locale, pk)
-    return JsonResponse(data, safe=False)
+    return JsonResponse(get_concordance_search_results(text, locale), safe=False)
 
 
 def microsoft_translator(request):

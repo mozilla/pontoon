@@ -1,6 +1,8 @@
 import json
 import logging
 import operator
+
+import Levenshtein
 import requests
 
 from collections import defaultdict
@@ -59,44 +61,32 @@ def get_google_translate_data(text, locale_code):
         }
 
 
-def get_concordance_search_results(text, locale, pk=None):
-    search_list = base.utils.get_search_phrases(text)
-    search_query_list = [(s, locale.db_collation) for s in search_list]
+def get_concordance_search_results(text, locale):
+    search_phrases = base.utils.get_search_phrases(text)
     search_filters = (
-        Q(target__icontains_collate=(phrase, collation)) | Q(source__icontains=phrase)
-        for phrase, collation in search_query_list
+        Q(
+            Q(target__icontains_collate=(phrase, locale.db_collation))
+            | Q(source__icontains=phrase),
+            locale=locale,
+        )
+        for phrase in search_phrases
     )
     search_query = reduce(operator.and_, search_filters)
 
-    results = base.models.TranslationMemoryEntry.objects.filter(
-        search_query  # , locale=locale
-    ).search_result_quality(
-        # Calculate the quality of the results based on the Levenhstein's distance
-        " ".join(search_list),
-        F("target"),
-    )
+    search_query_results = base.models.TranslationMemoryEntry.objects.filter(
+        search_query
+    ).values_list("source", "target", "project__name")
 
-    entries = results.values("source", "target", "quality").annotate(
-        project_name=F("project__name")
-    )
-    return sort_query_results(entries)
-
-
-def sort_query_results(entries):
-    entries_merged = defaultdict(lambda: {"count": 0, "quality": 0})
-
-    # Group entries with the same target and count them
-    for entry in entries:
-        if (
-            entry["target"] not in entries_merged
-            or entry["quality"] > entries_merged[entry["target"]]["quality"]
-        ):
-            entries_merged[entry["target"]].update(entry)
-        entries_merged[entry["target"]]["count"] += 1
-
-    return sorted(
-        entries_merged.values(), key=lambda e: (e["quality"], e["count"]), reverse=True,
-    )[:MAX_RESULTS]
+    search_results = [
+        {
+            "source": source,
+            "target": target,
+            "project_name": project_name,
+            "quality": int(round(Levenshtein.ratio(text, target) * 100)),
+        }
+        for source, target, project_name in search_query_results
+    ]
+    return sorted(search_results, key=lambda e: e["quality"], reverse=True)
 
 
 def get_translation_memory_data(text, locale, pk=None):
@@ -111,4 +101,17 @@ def get_translation_memory_data(text, locale, pk=None):
         entries = entries.exclude(entity__pk=pk)
 
     entries = entries.values("source", "target", "quality")
-    return sort_query_results(entries)
+    entries_merged = defaultdict(lambda: {"count": 0, "quality": 0})
+
+    # Group entries with the same target and count them
+    for entry in entries:
+        if (
+            entry["target"] not in entries_merged
+            or entry["quality"] > entries_merged[entry["target"]]["quality"]
+        ):
+            entries_merged[entry["target"]].update(entry)
+        entries_merged[entry["target"]]["count"] += 1
+
+    return sorted(
+        entries_merged.values(), key=lambda e: (e["quality"], e["count"]), reverse=True,
+    )[:MAX_RESULTS]
