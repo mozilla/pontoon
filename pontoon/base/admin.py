@@ -282,6 +282,12 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 
+class ProjectLocaleAdmin(admin.ModelAdmin):
+    search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
+    list_display = ("pk", "project", "locale", "readonly")
+    ordering = ("-pk",)
+
+
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ["path", "format", "project__name", "project__slug"]
     list_display = ("pk", "project", "path", "format", "deadline")
@@ -367,6 +373,7 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(models.Locale, LocaleAdmin)
 admin.site.register(models.Project, ProjectAdmin)
+admin.site.register(models.ProjectLocale, ProjectLocaleAdmin)
 admin.site.register(models.Resource, ResourceAdmin)
 admin.site.register(models.TranslatedResource, TranslatedResourceAdmin)
 admin.site.register(models.Entity, EntityAdmin)

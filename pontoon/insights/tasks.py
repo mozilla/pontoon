@@ -9,9 +9,13 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Entity, Locale, Translation
+from pontoon.base.models import Entity, Locale, Project, ProjectLocale, Translation
 from pontoon.base.utils import group_dict_by
-from pontoon.insights.models import LocaleInsightsSnapshot
+from pontoon.insights.models import (
+    LocaleInsightsSnapshot,
+    ProjectInsightsSnapshot,
+    ProjectLocaleInsightsSnapshot,
+)
 
 
 log = logging.getLogger(__name__)
@@ -30,6 +34,72 @@ def collect_insights(self):
         .replace(microsecond=0)
     )
 
+    date = start_of_today.date()
+
+    log.info("Collect insights for {}: Begin.".format(date))
+
+    collect_project_insights(start_of_today)
+    log.info("Collect insights for {}: Project insights created.".format(date))
+
+    collect_project_locale_insights(start_of_today)
+    log.info("Collect insights for {}: ProjectLocale insights created.".format(date))
+
+    collect_locale_insights(start_of_today)
+    log.info("Collect insights for {}: Locale insights created.".format(date))
+
+
+def collect_project_insights(start_of_today):
+    """
+    Collect insights for each available Project.
+    """
+    ProjectInsightsSnapshot.objects.bulk_create(
+        [
+            ProjectInsightsSnapshot(
+                project=project,
+                created_at=start_of_today,
+                completion=round(project.completed_percent, 2),
+                # AggregatedStats
+                total_strings=project.total_strings,
+                approved_strings=project.approved_strings,
+                fuzzy_strings=project.fuzzy_strings,
+                strings_with_errors=project.strings_with_errors,
+                strings_with_warnings=project.strings_with_warnings,
+                unreviewed_strings=project.unreviewed_strings,
+            )
+            for project in Project.objects.available()
+        ],
+        batch_size=1000,
+    )
+
+
+def collect_project_locale_insights(start_of_today):
+    """
+    Collect insights for each available ProjectLocale.
+    """
+    ProjectLocaleInsightsSnapshot.objects.bulk_create(
+        [
+            ProjectLocaleInsightsSnapshot(
+                project_locale=project_locale,
+                created_at=start_of_today,
+                completion=round(project_locale.completed_percent, 2),
+                # AggregatedStats
+                total_strings=project_locale.total_strings,
+                approved_strings=project_locale.approved_strings,
+                fuzzy_strings=project_locale.fuzzy_strings,
+                strings_with_errors=project_locale.strings_with_errors,
+                strings_with_warnings=project_locale.strings_with_warnings,
+                unreviewed_strings=project_locale.unreviewed_strings,
+            )
+            for project_locale in ProjectLocale.objects.all()
+        ],
+        batch_size=1000,
+    )
+
+
+def collect_locale_insights(start_of_today):
+    """
+    Collect insights for each available Locale.
+    """
     # Get data sources to retrieve insights from
     privileged_users = get_privileged_users()
     contributors = get_contributors()
@@ -40,25 +110,23 @@ def collect_insights(self):
 
     sync_user = User.objects.get(email="pontoon-sync@example.com").pk
 
-    # Collect insights for each locale
-    snapshots = []
-    for locale in Locale.objects.available():
-        snapshot = get_locale_insights_snapshot(
-            locale,
-            start_of_today,
-            privileged_users[locale.id],
-            contributors[locale.id],
-            active_users_actions[locale.id],
-            suggestions[locale.id],
-            activity_actions[locale.id],
-            entities[locale.id],
-            sync_user,
-        )
-        snapshots.append(snapshot)
-
-    LocaleInsightsSnapshot.objects.bulk_create(snapshots)
-
-    log.info("Task {}: Locale insights created.".format(self.request.id))
+    LocaleInsightsSnapshot.objects.bulk_create(
+        [
+            get_locale_insights_snapshot(
+                locale,
+                start_of_today,
+                privileged_users[locale.id],
+                contributors[locale.id],
+                active_users_actions[locale.id],
+                suggestions[locale.id],
+                activity_actions[locale.id],
+                entities[locale.id],
+                sync_user,
+            )
+            for locale in Locale.objects.available()
+        ],
+        batch_size=1000,
+    )
 
 
 def get_privileged_users():
