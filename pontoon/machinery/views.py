@@ -88,7 +88,8 @@ def concordance_search(request):
             {"status": False, "message": "Not Found: {error}".format(error=e)},
             status=404,
         )
-    return JsonResponse(get_concordance_search_data(text, locale), safe=False)
+    data = get_concordance_search_data(text, locale)
+    return JsonResponse(data, safe=False)
 
 
 def microsoft_translator(request):
