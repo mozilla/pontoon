@@ -2094,7 +2094,7 @@ class Resource(models.Model):
         return self.format in self.EMPTY_TRANSLATION_FORMATS
 
     def __str__(self):
-        return "{project} / {resource}".format(
+        return "{project}: {resource}".format(
             project=self.project.name, resource=self.path,
         )
 
