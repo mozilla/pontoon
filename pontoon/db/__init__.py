@@ -13,6 +13,11 @@ class LevenshteinDistance(Func):
     function = "levenshtein"
     arity = 5
 
+    def __init__(
+        self, expr1, expr2, insertion_cost=1, deletion_cost=2, substitution_cost=2
+    ):
+        super().__init__(expr1, expr2, insertion_cost, deletion_cost, substitution_cost)
+
 
 class IContainsCollate(IContains):
     """

@@ -2,6 +2,8 @@ import codecs
 import functools
 import io
 import os
+import re
+
 import pytz
 import requests
 import tempfile
@@ -22,6 +24,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
+
+UNUSABLE_SEARCH_CHAR = "☠"
 
 
 def split_ints(s):
@@ -573,3 +577,37 @@ def readonly_exists(projects, locale):
     return ProjectLocale.objects.filter(
         project__in=projects, locale=locale, readonly=True,
     ).exists()
+
+
+def get_search_phrases(search):
+    """
+    Split the search phrase into separate search queries.
+    When the user types a search query without the quotation, e.g.:
+    source file
+    The function splits it into separate search queries:
+    ["source", "file"]
+    It works like OR operator, the search engine is going to search for "source" and "file" in a string.
+
+    When the user types a quoted search query, e.g.:
+    "source file"
+    The function is going to use the full phrase without splitting into separate search queries.
+    It works like AND operator, the search engine is going to search for "source file" in a string.
+
+    :arg str search: search query, e.g. source file, "source file"
+    :returns: A list of substrings to search.
+    """
+    search_list = [
+        x.strip('"').replace(UNUSABLE_SEARCH_CHAR, '"')
+        for x in re.findall(
+            '([^"]\\S*|".+?")\\s*', search.replace('\\"', UNUSABLE_SEARCH_CHAR)
+        )
+    ]
+
+    # Search for `""` and `"` when entered as search terms
+    if search == '""' and not search_list:
+        search_list = ['""']
+
+    if search == '"' and not search_list:
+        search_list = ['"']
+
+    return search_list

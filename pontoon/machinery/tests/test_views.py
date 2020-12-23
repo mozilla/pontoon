@@ -4,7 +4,6 @@ import urllib.parse
 import caighdean
 import pytest
 import requests_mock
-
 from django.urls import reverse
 
 from pontoon.base.models import (
@@ -273,3 +272,51 @@ def test_view_tm_minimal_quality(client, locale_a, resource_a):
     )
     assert response.status_code == 200
     assert json.loads(response.content) == []
+
+
+@pytest.mark.django_db
+def test_view_concordance_search(client, project_a, locale_a, resource_a):
+    entities = [
+        EntityFactory(resource=resource_a, string=x, order=i,)
+        for i, x in enumerate(["abaa", "abaf", "aaab", "aaab"])
+    ]
+    TranslationMemoryFactory.create(
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="ccdd",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    response = client.get(
+        "/concordance-search/", {"text": "cdd", "locale": locale_a.code},
+    )
+    result = json.loads(response.content)
+    assert result == [
+        {
+            u"project_name": project_a.name,
+            u"quality": 86,
+            u"source": u"abaf",
+            u"target": u"ccdd",
+        }
+    ]
+
+    response = client.get(
+        "/concordance-search/", {"text": "abaa", "locale": locale_a.code},
+    )
+    result = json.loads(response.content)
+    assert result == [
+        {
+            u"project_name": project_a.name,
+            u"quality": 100,
+            u"source": u"abaa",
+            u"target": u"ccc",
+        }
+    ]

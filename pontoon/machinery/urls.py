@@ -21,6 +21,11 @@ urlpatterns = [
         views.translation_memory,
         name="pontoon.translation_memory",
     ),
+    path(
+        "concordance-search/",
+        views.concordance_search,
+        name="pontoon.concordance_search",
+    ),
     path("google-translate/", views.google_translate, name="pontoon.google_translate"),
     path(
         "microsoft-translator/",
