@@ -103,7 +103,7 @@ var Pontoon = (function (my) {
                 var chart = $('#unreviewed-suggestions-lifespan-chart');
                 var ctx = chart[0].getContext('2d');
 
-                var gradient = ctx.createLinearGradient(0, 0, 0, 130);
+                var gradient = ctx.createLinearGradient(0, 0, 0, 160);
                 gradient.addColorStop(0, '#4fc4f666');
                 gradient.addColorStop(1, 'transparent');
 
@@ -186,7 +186,7 @@ var Pontoon = (function (my) {
                 var chart = $('#translation-activity-chart');
                 var ctx = chart[0].getContext('2d');
 
-                var gradient = ctx.createLinearGradient(0, 0, 0, 250);
+                var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#7BC87633');
                 gradient.addColorStop(1, 'transparent');
 
@@ -391,7 +391,7 @@ var Pontoon = (function (my) {
                 var chart = $('#review-activity-chart');
                 var ctx = chart[0].getContext('2d');
 
-                var gradient = ctx.createLinearGradient(0, 0, 0, 250);
+                var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#4fc4f688');
                 gradient.addColorStop(1, 'transparent');
 
