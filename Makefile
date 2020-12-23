@@ -30,6 +30,7 @@ help:
 	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
 	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
+	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change"
@@ -90,6 +91,9 @@ lint-frontend:
 
 shell:
 	"${DC}" run --rm webapp //bin/bash
+
+dumpdb:
+	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
 
 loaddb:
 	# Stop connections to the database so we can drop it.
