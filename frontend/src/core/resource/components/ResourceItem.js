@@ -28,7 +28,7 @@ export default function ResourceItem(props: Props) {
                 href={`/${parameters.locale}/${parameters.project}/${resource.path}/`}
                 onClick={navigateToPath}
             >
-                <span>{resource.path}</span>
+                <span className='path'>{resource.path}</span>
                 <ResourcePercent resource={resource} />
             </a>
         </li>
