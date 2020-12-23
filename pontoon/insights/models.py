@@ -45,3 +45,15 @@ class InsightsSnapshot(AggregatedStats, models.Model):
 
 class LocaleInsightsSnapshot(InsightsSnapshot):
     locale = models.ForeignKey("base.Locale", models.CASCADE)
+
+
+class ProjectInsightsSnapshot(AggregatedStats):
+    project = models.ForeignKey("base.Project", models.CASCADE)
+    created_at = models.DateField(default=timezone.now)
+    completion = models.FloatField()
+
+
+class ProjectLocaleInsightsSnapshot(AggregatedStats):
+    project_locale = models.ForeignKey("base.ProjectLocale", models.CASCADE)
+    created_at = models.DateField(default=timezone.now)
+    completion = models.FloatField()
