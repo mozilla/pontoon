@@ -19,7 +19,7 @@ from django.utils.html import escape
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation
 from pontoon.machinery.utils import (
-    get_concordance_search_results,
+    get_concordance_search_data,
     get_google_translate_data,
     get_translation_memory_data,
 )
@@ -88,7 +88,7 @@ def concordance_search(request):
             {"status": False, "message": "Not Found: {error}".format(error=e)},
             status=404,
         )
-    return JsonResponse(get_concordance_search_results(text, locale), safe=False)
+    return JsonResponse(get_concordance_search_data(text, locale), safe=False)
 
 
 def microsoft_translator(request):

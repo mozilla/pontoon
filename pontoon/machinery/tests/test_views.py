@@ -278,7 +278,7 @@ def test_view_tm_minimal_quality(client, locale_a, resource_a):
 def test_view_concordance_search(client, project_a, locale_a, resource_a):
     entities = [
         EntityFactory(resource=resource_a, string=x, order=i,)
-        for i, x in enumerate(["abaa", "abaa", "aaab", "aaab"])
+        for i, x in enumerate(["abaa", "abaf", "aaab", "aaab"])
     ]
     TranslationMemoryFactory.create(
         entity=entities[0],
@@ -296,9 +296,27 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     )
 
     response = client.get(
-        "/concordance-search/", {"text": "dd", "locale": locale_a.code},
+        "/concordance-search/", {"text": "cdd", "locale": locale_a.code},
     )
     result = json.loads(response.content)
     assert result == [
-        {u"project_name": project_a.name, u"quality": 67, u"target": u"ccdd"}
+        {
+            u"project_name": project_a.name,
+            u"quality": 86,
+            u"source": u"abaf",
+            u"target": u"ccdd",
+        }
+    ]
+
+    response = client.get(
+        "/concordance-search/", {"text": "abaa", "locale": locale_a.code},
+    )
+    result = json.loads(response.content)
+    assert result == [
+        {
+            u"project_name": project_a.name,
+            u"quality": 100,
+            u"source": u"abaa",
+            u"target": u"ccc",
+        }
     ]
