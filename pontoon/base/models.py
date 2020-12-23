@@ -1670,6 +1670,11 @@ class ProjectLocale(AggregatedStats):
         ordering = ("pk",)
         permissions = (("can_translate_project_locale", "Can add translations"),)
 
+    def __str__(self):
+        return "{project} / {locale}".format(
+            project=self.project.name, locale=self.locale.code,
+        )
+
     @classmethod
     def get_latest_activity(cls, self, extra=None):
         """
@@ -2089,7 +2094,9 @@ class Resource(models.Model):
         return self.format in self.EMPTY_TRANSLATION_FORMATS
 
     def __str__(self):
-        return "%s: %s" % (self.project.name, self.path)
+        return "{project} / {resource}".format(
+            project=self.project.name, resource=self.path,
+        )
 
     @classmethod
     def get_path_format(self, path):
