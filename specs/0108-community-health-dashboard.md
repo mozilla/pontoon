@@ -35,7 +35,7 @@ Note that only users included in the all users counts can be active users. If a 
 
 ## Unreviewed suggestion lifespan
 
-A line chart showing the average age of the unreviewed suggestions in a period of last 12 months.
+A line chart showing the average age of the unreviewed suggestions in a particular month for a period of last 12 months.
 
 Data is available for each day, but aggregated by month in the chart.
 
