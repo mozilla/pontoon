@@ -1,11 +1,13 @@
 /* @flow */
 
 import React from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
 import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 
 import Translation from './Translation';
+import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
 import type { MachineryState } from '..';
@@ -13,7 +15,7 @@ import type { MachineryState } from '..';
 type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
-    searchMachinery: (string) => void,
+    searchMachinery: (string, ?number) => void,
 |};
 
 /**
@@ -59,6 +61,20 @@ export default class Machinery extends React.Component<Props> {
         this.props.searchMachinery(this.searchInput.current.value);
     };
 
+    getMoreResults = (page: number) => {
+        const { machinery } = this.props;
+
+        // Temporary fix for the infinite number of requests from InfiniteScroller
+        // More info at:
+        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
+        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
+        if (machinery.fetching) {
+            return;
+        }
+
+        this.props.searchMachinery(this.searchInput.current.value, page);
+    };
+
     render() {
         const { locale, machinery } = this.props;
 
@@ -67,6 +83,8 @@ export default class Machinery extends React.Component<Props> {
         }
 
         const showResetButton = !machinery.entity && machinery.sourceString;
+
+        const hasMore = machinery.hasMore;
 
         return (
             <section className='machinery'>
@@ -90,24 +108,44 @@ export default class Machinery extends React.Component<Props> {
                                 id='machinery-search'
                                 type='search'
                                 autoComplete='off'
-                                placeholder='Search in Machinery'
+                                placeholder='Concordance Search'
                                 ref={this.searchInput}
                             />
                         </Localized>
                     </form>
                 </div>
-                <ul>
-                    {machinery.translations.map((translation, index) => {
-                        return (
-                            <Translation
-                                index={index}
-                                sourceString={machinery.sourceString}
-                                translation={translation}
-                                key={index}
+                <div className='list-wrapper'>
+                    <InfiniteScroll
+                        pageStart={1}
+                        loadMore={this.getMoreResults}
+                        hasMore={hasMore}
+                        loader={
+                            <SkeletonLoader
+                                key={0}
+                                items={machinery.translations}
                             />
-                        );
-                    })}
-                </ul>
+                        }
+                        useWindow={false}
+                        threshold={300}
+                    >
+                        <ul>
+                            {machinery.translations.map(
+                                (translation, index) => {
+                                    return (
+                                        <Translation
+                                            index={index}
+                                            sourceString={
+                                                machinery.sourceString
+                                            }
+                                            translation={translation}
+                                            key={index}
+                                        />
+                                    );
+                                },
+                            )}
+                        </ul>
+                    </InfiniteScroll>
+                </div>
             </section>
         );
     }

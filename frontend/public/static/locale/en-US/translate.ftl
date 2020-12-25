@@ -425,13 +425,19 @@ interactivetour-InteractiveTour--end-footer =
 ## Machinery
 ## Shows a list of translations from machines.
 machinery-Machinery--search-placeholder =
-    .placeholder = Search in Machinery
+    .placeholder = Concordance Search
 
 
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.
 machinery-CaighdeanTranslation--visit-caighdean = CAIGHDEAN
     .title = Visit Caighdean Machine Translation
+
+## Machinery Concordance Search
+## Shows concordance search results from Pontoon's memory.
+machinery-ConcordanceSearch--pontoon-homepage =
+    .title = Pontoon Homepage
+machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 
 
 ## Machinery Google Translation

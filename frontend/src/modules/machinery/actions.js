@@ -7,7 +7,20 @@ import type { Locale } from 'core/locale';
 
 export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' =
     'machinery/ADD_TRANSLATIONS';
+export const REQUEST: 'machinery/REQUEST' = 'machinery/REQUEST';
 export const RESET: 'machinery/RESET' = 'machinery/RESET';
+
+/**
+ * Indicate that entities are currently being fetched.
+ */
+export type RequestAction = {
+    type: typeof REQUEST,
+};
+export function request(): RequestAction {
+    return {
+        type: REQUEST,
+    };
+}
 
 /**
  * Add a list of machine translations to the current list.
@@ -15,13 +28,16 @@ export const RESET: 'machinery/RESET' = 'machinery/RESET';
 export type AddTranslationsAction = {
     +type: typeof ADD_TRANSLATIONS,
     +translations: Array<MachineryTranslation>,
+    +hasMore?: boolean,
 };
 export function addTranslations(
     translations: Array<MachineryTranslation>,
+    hasMore?: boolean,
 ): AddTranslationsAction {
     return {
         type: ADD_TRANSLATIONS,
         translations: translations,
+        hasMore,
     };
 }
 
@@ -57,16 +73,29 @@ export function get(
     locale: Locale,
     isAuthenticated: boolean,
     pk: ?number,
+    page?: number,
 ): Function {
     return async (dispatch) => {
-        dispatch(reset(pk, source));
+        if (!page) {
+            dispatch(reset(pk, source));
+        }
+
+        dispatch(request());
 
         // Abort all previously running requests.
         await api.machinery.abort();
 
-        api.machinery
-            .getTranslationMemory(source, locale, pk)
-            .then((results) => dispatch(addTranslations(results)));
+        if (!pk) {
+            api.machinery
+                .getConcordanceResults(source, locale, page)
+                .then((results) =>
+                    dispatch(addTranslations(results.results, results.hasMore)),
+                );
+        } else {
+            api.machinery
+                .getTranslationMemory(source, locale, pk)
+                .then((results) => dispatch(addTranslations(results)));
+        }
 
         // Only make requests to paid services if user is authenticated
         if (isAuthenticated) {

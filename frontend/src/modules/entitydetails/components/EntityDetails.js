@@ -212,7 +212,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
     }
 
-    searchMachinery = (query: string) => {
+    searchMachinery = (query: string, page?: number) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
 
         let source = query;
@@ -228,7 +228,13 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         dispatch(
-            machinery.actions.get(source, locale, user.isAuthenticated, pk),
+            machinery.actions.get(
+                source,
+                locale,
+                user.isAuthenticated,
+                pk,
+                page,
+            ),
         );
     };
 

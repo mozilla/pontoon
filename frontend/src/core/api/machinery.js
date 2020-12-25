@@ -6,6 +6,10 @@ import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
 
 type Translations = Array<MachineryTranslation>;
+type ConcordanceTranslations = {|
+    results: Array<MachineryTranslation>,
+    hasMore: boolean,
+|};
 
 export default class MachineryAPI extends APIBase {
     async _get(url: string, params: Object) {
@@ -18,6 +22,42 @@ export default class MachineryAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
 
         return await this.fetch(url, 'GET', payload, headers);
+    }
+
+    /**
+     * Return results from Concordance search.
+     */
+
+    async getConcordanceResults(
+        source: string,
+        locale: Locale,
+        page?: number,
+    ): Promise<ConcordanceTranslations> {
+        const url = '/concordance-search/';
+        const params = {
+            text: source,
+            locale: locale.code,
+            page: page ? page.toString() : 1,
+        };
+
+        const results = await this._get(url, params);
+
+        if (!results.results || !Array.isArray(results.results)) {
+            return { results: [], hasMore: false };
+        }
+
+        const searchResults = results.results.map(
+            (item): MachineryTranslation => {
+                return {
+                    sources: ['concordance-search'],
+                    original: item.source,
+                    translation: item.target,
+                    projectNames: item.project_names,
+                };
+            },
+        );
+
+        return { results: searchResults, hasMore: results.has_next };
     }
 
     /**
@@ -163,7 +203,6 @@ export default class MachineryAPI extends APIBase {
                 sources: ['microsoft-terminology'],
                 original: item.source,
                 translation: item.target,
-                quality: Math.round(item.quality),
             };
         });
     }

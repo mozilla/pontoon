@@ -1,5 +1,15 @@
+#react-tabs-5 {
+    overflow-y: hidden;
+}
+
 .machinery {
+    height: 100%;
     line-height: 22px;
+}
+
+.machinery .list-wrapper {
+    height: calc(100% - 44px);
+    overflow-y: auto;
 }
 
 .machinery ul {
