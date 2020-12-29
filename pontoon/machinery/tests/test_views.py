@@ -320,3 +320,41 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
             u"target": u"ccc",
         }
     ]
+
+
+@pytest.mark.django_db
+def test_view_concordance_search_remove_duplicates(
+    client, project_a, locale_a, resource_a
+):
+    """Check Concordance search doesn't produce duplicated search results."""
+    entities = [
+        EntityFactory(resource=resource_a, string=x, order=i,)
+        for i, x in enumerate(["abaa", "abaf", "aaab", "aaab"])
+    ]
+    TranslationMemoryFactory.create(
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
+    )
+    results = json.loads(response.content)
+    assert results == [
+        {
+            "source": "abaa",
+            "target": "ccc",
+            "project_name": "Project A",
+            "quality": 100,
+        }
+    ]

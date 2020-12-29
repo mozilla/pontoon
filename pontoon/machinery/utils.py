@@ -71,9 +71,11 @@ def get_concordance_search_data(text, locale):
     )
     search_query = reduce(operator.and_, search_filters)
 
-    search_query_results = base.models.TranslationMemoryEntry.objects.filter(
-        search_query
-    ).values_list("source", "target", "project__name")
+    search_query_results = (
+        base.models.TranslationMemoryEntry.objects.filter(search_query)
+        .values_list("source", "target", "project__name")
+        .distinct("project")
+    )
 
     search_results = [
         {
