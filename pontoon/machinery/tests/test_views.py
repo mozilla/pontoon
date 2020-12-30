@@ -376,5 +376,5 @@ def test_view_concordance_search_remove_duplicates(
             "target": "cccbbb",
             "project_name": "Project A",
             "quality": 67,
-        }
+        },
     ]

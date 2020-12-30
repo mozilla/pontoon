@@ -89,7 +89,9 @@ def get_concordance_search_data(text, locale):
         }
         for source, target, project_name in search_query_results
     ]
-    return sorted(search_results, key=lambda e: (e["quality"], e["target"]) , reverse=True)
+    return sorted(
+        search_results, key=lambda e: (e["quality"], e["target"]), reverse=True
+    )
 
 
 def get_translation_memory_data(text, locale, pk=None):
