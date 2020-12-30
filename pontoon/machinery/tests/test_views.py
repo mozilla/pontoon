@@ -329,7 +329,7 @@ def test_view_concordance_search_remove_duplicates(
     """Check Concordance search doesn't produce duplicated search results."""
     entities = [
         EntityFactory(resource=resource_a, string=x, order=i,)
-        for i, x in enumerate(["abaa", "abaf", "aaab", "aaab"])
+        for i, x in enumerate(["abaa", "abaf"])
     ]
     TranslationMemoryFactory.create(
         entity=entities[0],
@@ -346,6 +346,14 @@ def test_view_concordance_search_remove_duplicates(
         project=project_a,
     )
 
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
     response = client.get(
         "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
     )
@@ -356,5 +364,17 @@ def test_view_concordance_search_remove_duplicates(
             "target": "ccc",
             "project_name": "Project A",
             "quality": 100,
+        },
+        {
+            "source": "abaf",
+            "target": "ccc",
+            "project_name": "Project A",
+            "quality": 100,
+        },
+        {
+            "source": "abaf",
+            "target": "cccbbb",
+            "project_name": "Project A",
+            "quality": 67,
         }
     ]
