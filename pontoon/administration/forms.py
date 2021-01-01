@@ -25,6 +25,9 @@ class ProjectForm(forms.ModelForm):
     locales_readonly = forms.ModelMultipleChoiceField(
         queryset=Locale.objects.all(), required=False,
     )
+    locales = forms.ModelMultipleChoiceField(
+        queryset=Locale.objects.all(), required=False,
+    )
 
     class Meta:
         model = Project
