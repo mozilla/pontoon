@@ -299,27 +299,35 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
         "/concordance-search/", {"text": "cdd", "locale": locale_a.code},
     )
     result = json.loads(response.content)
-    assert result == [
-        {
-            u"project_name": project_a.name,
-            u"quality": 86,
-            u"source": u"abaf",
-            u"target": u"ccdd",
-        }
-    ]
+    assert result == {
+        "results": [
+            {
+                u"entity_id": entities[1].pk,
+                u"project_name": project_a.name,
+                u"project_slug": project_a.slug,
+                u"source": u"abaf",
+                u"target": u"ccdd",
+            }
+        ],
+        "has_next": False,
+    }
 
     response = client.get(
         "/concordance-search/", {"text": "abaa", "locale": locale_a.code},
     )
     result = json.loads(response.content)
-    assert result == [
-        {
-            u"project_name": project_a.name,
-            u"quality": 100,
-            u"source": u"abaa",
-            u"target": u"ccc",
-        }
-    ]
+    assert result == {
+        "results": [
+            {
+                u"entity_id": entities[0].pk,
+                u"project_name": project_a.name,
+                u"project_slug": project_a.slug,
+                u"source": u"abaa",
+                u"target": u"ccc",
+            }
+        ],
+        "has_next": False,
+    }
 
 
 @pytest.mark.django_db
@@ -354,27 +362,106 @@ def test_view_concordance_search_remove_duplicates(
         project=project_a,
     )
 
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
     response = client.get(
         "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
     )
     results = json.loads(response.content)
-    assert results == [
-        {
-            "source": "abaa",
-            "target": "ccc",
-            "project_name": "Project A",
-            "quality": 100,
-        },
-        {
-            "source": "abaf",
-            "target": "ccc",
-            "project_name": "Project A",
-            "quality": 100,
-        },
-        {
-            "source": "abaf",
-            "target": "cccbbb",
-            "project_name": "Project A",
-            "quality": 67,
-        },
+    assert results == {
+        "results": [
+            {
+                "source": "abaa",
+                "target": "ccc",
+                "entity_id": entities[0].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+            {
+                "source": "abaf",
+                "target": "ccc",
+                "entity_id": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+            {
+                "source": "abaf",
+                "target": "cccbbb",
+                "entity_id": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": False,
+    }
+
+
+@pytest.mark.django_db
+def test_view_concordance_search_pagination(client, project_a, locale_a, resource_a):
+    entities = [
+        EntityFactory(resource=resource_a, string=x, order=i)
+        for i, x in enumerate(["abaa", "abaf"])
     ]
+    TranslationMemoryFactory.create(
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, "limit": 1},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [
+            {
+                "source": "abaa",
+                "target": "ccc",
+                "entity_id": entities[0].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": True,
+    }
+
+    response = client.get(
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code, "limit": 1, "page": 2},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [
+            {
+                "source": "abaf",
+                "target": "cccbbb",
+                "entity_id": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": False,
+    }

@@ -73,7 +73,7 @@ def get_concordance_search_data(text, locale):
 
     search_query_results = (
         base.models.TranslationMemoryEntry.objects.filter(search_query)
-        .values_list("source", "target", "project__name")
+        .values_list("source", "target", "entity__pk", "project__name", "project__slug")
         .distinct()
     )
 
@@ -81,17 +81,25 @@ def get_concordance_search_data(text, locale):
         {
             "source": source,
             "target": target,
+            "entity_id": entity_id,
             "project_name": project_name,
+            "project_slug": project_slug,
             "quality": max(
                 int(round(Levenshtein.ratio(text, target) * 100)),
                 int(round(Levenshtein.ratio(text, source) * 100)),
             ),
         }
-        for source, target, project_name in search_query_results
+        for source, target, entity_id, project_name, project_slug in search_query_results
     ]
-    return sorted(
+    sorted_results = sorted(
         search_results, key=lambda e: (e["quality"], e["target"]), reverse=True
     )
+
+    # Remove the quality field from the results
+    for result in sorted_results:
+        del result["quality"]
+
+    return sorted_results
 
 
 def get_translation_memory_data(text, locale, pk=None):
