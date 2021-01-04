@@ -465,3 +465,14 @@ def test_view_concordance_search_pagination(client, project_a, locale_a, resourc
         ],
         "has_next": False,
     }
+
+    # Check a query that should return no results
+    response = client.get(
+        "/concordance-search/",
+        {"text": "TEST", "locale": locale_a.code, "limit": 1, "page": 2},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [],
+        "has_next": False,
+    }
