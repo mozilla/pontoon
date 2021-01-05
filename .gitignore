@@ -12,7 +12,8 @@ node_modules
 *-all.js
 .noseids
 tmp/*
-.idea/*
+.idea
+.vscode
 *~
 *.mo
 .vagrant

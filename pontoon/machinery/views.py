@@ -10,6 +10,7 @@ from caighdean.exceptions import TranslationError
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
@@ -75,7 +76,9 @@ def concordance_search(request):
     try:
         text = request.GET["text"]
         locale = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+        page_results_limit = int(request.GET.get("limit", 100))
+        page = int(request.GET.get("page", 1))
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
@@ -88,8 +91,17 @@ def concordance_search(request):
             {"status": False, "message": "Not Found: {error}".format(error=e)},
             status=404,
         )
-    data = get_concordance_search_data(text, locale)
-    return JsonResponse(data, safe=False)
+
+    paginator = Paginator(get_concordance_search_data(text, locale), page_results_limit)
+
+    try:
+        data = paginator.page(page)
+    except EmptyPage:
+        return JsonResponse({"results": [], "has_next": False})
+
+    return JsonResponse(
+        {"results": data.object_list, "has_next": data.has_next()}, safe=False
+    )
 
 
 def microsoft_translator(request):
