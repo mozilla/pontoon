@@ -299,24 +299,198 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
         "/concordance-search/", {"text": "cdd", "locale": locale_a.code},
     )
     result = json.loads(response.content)
-    assert result == [
-        {
-            u"project_name": project_a.name,
-            u"quality": 86,
-            u"source": u"abaf",
-            u"target": u"ccdd",
-        }
-    ]
+    assert result == {
+        "results": [
+            {
+                u"entity_pk": entities[1].pk,
+                u"project_name": project_a.name,
+                u"project_slug": project_a.slug,
+                u"source": u"abaf",
+                u"target": u"ccdd",
+            }
+        ],
+        "has_next": False,
+    }
 
     response = client.get(
         "/concordance-search/", {"text": "abaa", "locale": locale_a.code},
     )
     result = json.loads(response.content)
-    assert result == [
-        {
-            u"project_name": project_a.name,
-            u"quality": 100,
-            u"source": u"abaa",
-            u"target": u"ccc",
-        }
+    assert result == {
+        "results": [
+            {
+                u"entity_pk": entities[0].pk,
+                u"project_name": project_a.name,
+                u"project_slug": project_a.slug,
+                u"source": u"abaa",
+                u"target": u"ccc",
+            }
+        ],
+        "has_next": False,
+    }
+
+
+@pytest.mark.django_db
+def test_view_concordance_search_remove_duplicates(
+    client, project_a, locale_a, resource_a
+):
+    """Check Concordance search doesn't produce duplicated search results."""
+    entities = [
+        EntityFactory(resource=resource_a, string=x, order=i,)
+        for i, x in enumerate(["abaa", "abaf"])
     ]
+    TranslationMemoryFactory.create(
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [
+            {
+                "source": "abaa",
+                "target": "ccc",
+                "entity_pk": entities[0].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+            {
+                "source": "abaf",
+                "target": "ccc",
+                "entity_pk": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+            {
+                "source": "abaf",
+                "target": "cccbbb",
+                "entity_pk": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": False,
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "parameters",
+    (
+        {"limit": "a", "page": 1},
+        {"limit": "a", "page": "a"},
+        {"limit": 1, "page": "a"},
+    ),
+)
+def test_view_concordance_search_invalid_pagination_parameters(
+    parameters, client, locale_a
+):
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, **parameters},
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_view_concordance_search_pagination(client, project_a, locale_a, resource_a):
+    entities = [
+        EntityFactory(resource=resource_a, string=x, order=i)
+        for i, x in enumerate(["abaa", "abaf"])
+    ]
+    TranslationMemoryFactory.create(
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
+        project=project_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    TranslationMemoryFactory.create(
+        entity=entities[1],
+        source=entities[1].string,
+        target="cccbbb",
+        locale=locale_a,
+        project=project_a,
+    )
+
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, "limit": 1},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [
+            {
+                "source": "abaa",
+                "target": "ccc",
+                "entity_pk": entities[0].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": True,
+    }
+
+    response = client.get(
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code, "limit": 1, "page": 2},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [
+            {
+                "source": "abaf",
+                "target": "cccbbb",
+                "entity_pk": entities[1].pk,
+                "project_name": "Project A",
+                "project_slug": project_a.slug,
+            },
+        ],
+        "has_next": False,
+    }
+
+    # Check a query that should return no results
+    response = client.get(
+        "/concordance-search/",
+        {"text": "TEST", "locale": locale_a.code, "limit": 1, "page": 2},
+    )
+    results = json.loads(response.content)
+    assert results == {
+        "results": [],
+        "has_next": False,
+    }
