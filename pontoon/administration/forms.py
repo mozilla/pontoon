@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
+from django.core.exceptions import ValidationError
 
 from pontoon.base.models import (
     Entity,
@@ -28,6 +29,14 @@ class ProjectForm(forms.ModelForm):
     locales = forms.ModelMultipleChoiceField(
         queryset=Locale.objects.all(), required=False,
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        locales_readonly = cleaned_data.get("locales_readonly")
+        locales = cleaned_data.get("locales")
+        if not (locales or locales_readonly):
+            raise ValidationError("This field is required")
+        
 
     class Meta:
         model = Project
