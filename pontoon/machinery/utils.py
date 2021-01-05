@@ -7,7 +7,7 @@ from functools import reduce
 import Levenshtein
 import requests
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import F, Q
 
 import pontoon.base as base
 
@@ -71,22 +71,16 @@ def get_concordance_search_data(text, locale):
     )
     search_query = reduce(operator.and_, search_filters)
 
-    search_query_results = (
+    search_results = (
         base.models.TranslationMemoryEntry.objects.filter(search_query)
-        .values_list("source", "target", "entity__pk", "project__name", "project__slug")
+        .annotate(
+            entity_pk=F("entity__pk"),
+            project_name=F("project__name"),
+            project_slug=F("project__slug"),
+        )
+        .values("source", "target", "entity_pk", "project_name", "project_slug")
         .distinct()
     )
-
-    search_results = [
-        {
-            "source": source,
-            "target": target,
-            "entity_pk": entity_pk,
-            "project_name": project_name,
-            "project_slug": project_slug,
-        }
-        for source, target, entity_pk, project_name, project_slug in search_query_results
-    ]
 
     def sort_by_quality(entity):
         """Sort the results by their best Levenshtein distance from the search query"""
