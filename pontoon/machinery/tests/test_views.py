@@ -302,7 +302,7 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     assert result == {
         "results": [
             {
-                u"entity_id": entities[1].pk,
+                u"entity_pk": entities[1].pk,
                 u"project_name": project_a.name,
                 u"project_slug": project_a.slug,
                 u"source": u"abaf",
@@ -319,7 +319,7 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     assert result == {
         "results": [
             {
-                u"entity_id": entities[0].pk,
+                u"entity_pk": entities[0].pk,
                 u"project_name": project_a.name,
                 u"project_slug": project_a.slug,
                 u"source": u"abaa",
@@ -379,27 +379,45 @@ def test_view_concordance_search_remove_duplicates(
             {
                 "source": "abaa",
                 "target": "ccc",
-                "entity_id": entities[0].pk,
+                "entity_pk": entities[0].pk,
                 "project_name": "Project A",
                 "project_slug": project_a.slug,
             },
             {
                 "source": "abaf",
                 "target": "ccc",
-                "entity_id": entities[1].pk,
+                "entity_pk": entities[1].pk,
                 "project_name": "Project A",
                 "project_slug": project_a.slug,
             },
             {
                 "source": "abaf",
                 "target": "cccbbb",
-                "entity_id": entities[1].pk,
+                "entity_pk": entities[1].pk,
                 "project_name": "Project A",
                 "project_slug": project_a.slug,
             },
         ],
         "has_next": False,
     }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "parameters",
+    (
+        {"limit": "a", "page": 1},
+        {"limit": "a", "page": "a"},
+        {"limit": 1, "page": "a"},
+    ),
+)
+def test_view_concordance_search_invalid_pagination_parameters(
+    parameters, client, locale_a
+):
+    response = client.get(
+        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, **parameters},
+    )
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db
@@ -440,7 +458,7 @@ def test_view_concordance_search_pagination(client, project_a, locale_a, resourc
             {
                 "source": "abaa",
                 "target": "ccc",
-                "entity_id": entities[0].pk,
+                "entity_pk": entities[0].pk,
                 "project_name": "Project A",
                 "project_slug": project_a.slug,
             },
@@ -458,7 +476,7 @@ def test_view_concordance_search_pagination(client, project_a, locale_a, resourc
             {
                 "source": "abaf",
                 "target": "cccbbb",
-                "entity_id": entities[1].pk,
+                "entity_pk": entities[1].pk,
                 "project_name": "Project A",
                 "project_slug": project_a.slug,
             },

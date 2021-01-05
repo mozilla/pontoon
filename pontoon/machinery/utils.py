@@ -81,25 +81,24 @@ def get_concordance_search_data(text, locale):
         {
             "source": source,
             "target": target,
-            "entity_id": entity_id,
+            "entity_pk": entity_pk,
             "project_name": project_name,
             "project_slug": project_slug,
-            "quality": max(
-                int(round(Levenshtein.ratio(text, target) * 100)),
-                int(round(Levenshtein.ratio(text, source) * 100)),
-            ),
         }
-        for source, target, entity_id, project_name, project_slug in search_query_results
+        for source, target, entity_pk, project_name, project_slug in search_query_results
     ]
-    sorted_results = sorted(
-        search_results, key=lambda e: (e["quality"], e["target"]), reverse=True
-    )
 
-    # Remove the quality field from the results
-    for result in sorted_results:
-        del result["quality"]
+    def sort_by_quality(entity):
+        """Sort the results by their best Levenshtein distance from the search query"""
+        return (
+            max(
+                int(round(Levenshtein.ratio(text, entity["target"]) * 100)),
+                int(round(Levenshtein.ratio(text, entity["source"]) * 100)),
+            ),
+            entity["target"],
+        )
 
-    return sorted_results
+    return sorted(search_results, key=sort_by_quality, reverse=True)
 
 
 def get_translation_memory_data(text, locale, pk=None):
