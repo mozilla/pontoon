@@ -35,7 +35,7 @@ class ProjectForm(forms.ModelForm):
         locales_readonly = cleaned_data.get("locales_readonly")
         locales = cleaned_data.get("locales")
         if not (locales or locales_readonly):
-            raise ValidationError("This field is required")  
+            raise ValidationError("This field is required")
 
     class Meta:
         model = Project
